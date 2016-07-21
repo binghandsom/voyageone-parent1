@@ -775,6 +775,7 @@ s-field textarea.s-html {
 }
 
 .img-upload .fix-img{
+    position: relative;
     max-width: 125px;
     max-height: 125px;
     width: auto;
@@ -807,11 +808,18 @@ s-field textarea.s-html {
 }
 
 .switch-main .fix-img{
+    position: relative;
     width: auto;
     height: auto;
     max-width: 125px;
     max-height: 125px;
     margin: 15px auto;
+}
+
+.switch-main .current{
+    border: 2px solid #006cca;
+    box-shadow: 0 1px 8px 0 #006cca;
+    opacity: 0.4;
 }
 
 .switch-main .status{
@@ -823,3 +831,4 @@ s-field textarea.s-html {
     margin: 0px auto;
     width: 95%;
 }
+

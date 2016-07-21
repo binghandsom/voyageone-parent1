@@ -2,7 +2,7 @@
     <form class="form-horizontal" name="productFieldForm" novalidate>
         <div class="panel vo_panel tab_panel">
             <div class="wrapper">
-                <div class="container-fluid"  id="{{cartInfo.name}}1">
+                <div class="container-fluid"  id="common">
                     <div class="row">
                         <div class="col-md-8 form-group">
                             <div class="form-group">
@@ -49,10 +49,7 @@
                                     </button>
                                     <ul uib-dropdown-menu>
                                         <li>
-                                            <a href="javascript:void(0)">
-
-
-
+                                            <a href="javascript:void(0)" ng-click="openOffLinePop(openProductOffLine)">
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;单Code下线
                                             </a>
                                         </li>
@@ -159,7 +156,7 @@
                                 <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl" ng-click="jdCategoryMapping(popupNewCategory)" ng-disabled = "vm.status == 'Approved' || vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                                 </button>
                                 <div class="col-md-8">
-                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.platform.pCatPath" disabled>
+                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched"  ng-model="vm.platform.pCatPath" disabled>
                                     <div class="text-warnings" style="padding-left:0px">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;切换平台类目将影响整个Group中的所有商品，请慎重！
                                     </div>
@@ -176,7 +173,6 @@
                                                     <span class="label label-info" style="margin-left: 10px;">{{item.cName}}</span>
                                                 </li>
                                             </ul>
-                                           <!--<span class="label label-info"  style="margin-left: 10px;">{{item.cName}}</span>-->
                                         </div>
                                     </div>
                                     <div class="text-warnings" style="padding-left:0px">
@@ -228,16 +224,16 @@
                                 <h3 drag-handle>导航栏</h3>
                                 <ul class="nav bs-docs-sidenav">
                                     <li>
-                                        <a href="javascript:void(0)" ng-click="pageAnchor(1,1000)">共通属性</a>
+                                        <a href="javascript:void(0)" ng-click="pageAnchor('common',1000)">共通属性</a>
                                     </li>
                                     <li>
-                                        <a href="javascript:void(0)" ng-click="pageAnchor(2,1000)">商品属性</a>
+                                        <a href="javascript:void(0)" ng-click="pageAnchor('item',1000)">商品属性</a>
                                     </li>
                                     <li>
-                                        <a href="javascript:void(0)" ng-click="pageAnchor(3,1000)">产品属性</a>
+                                        <a href="javascript:void(0)" ng-click="pageAnchor('product',1000)">产品属性</a>
                                     </li>
                                     <li>
-                                        <a href="javascript:void(0)" ng-click="pageAnchor(4,1000)">sku属性</a>
+                                        <a href="javascript:void(0)" ng-click="pageAnchor('sku',1000)">sku属性</a>
                                     </li>
                                 </ul>
                             </nav>
@@ -248,10 +244,12 @@
 
                     <hr>
                     <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;商品详情</span>
-                <!------------------------------------------------以下为商品Schema------------------------------------------------------->
-                    <div class="container-fluid" id="{{cartInfo.name}}2">
+                    <!------------------------------------------------以下为商品Schema------------------------------------------------------->
+                    <div class="container-fluid" id="item">
                         <div class="row">
-                            <div class="col-sm-9" id="itemContainer"></div>
+                            <div class="col-sm-9">
+                                <schema data="vm.platform.schemaFields.item"></schema>
+                            </div>
                         </div>
                         <br>
                     </div>
@@ -259,9 +257,11 @@
                     <hr>
                     <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
                     <!------------------------------------------------以下为产品Schema------------------------------------------------------->
-                    <div class="container-fluid" id="{{cartInfo.name}}3">
+                    <div class="container-fluid" id="product">
                         <div class="row">
-                            <div class="col-sm-9" id="productContainer"></div>
+                            <div class="col-sm-9">
+                                <schema data="vm.platform.schemaFields.product"></schema>
+                            </div>
                         </div>
                         <br>
                     </div>
@@ -271,7 +271,7 @@
                 <hr>
                 <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;Sku属性</span>
                 <!------------------------------------------------以下为产品SKU------------------------------------------------------->
-                <div class="container-fluid" id="{{cartInfo.name}}4">
+                <div class="container-fluid" id="sku">
                     <div class="table-responsive">
                         <ng-form name="skuForm" novalidate>
                             <table class="table text-left">

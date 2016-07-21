@@ -39,7 +39,7 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' |  translate}}</button>
-        <button class="btn btn-vo" ng-click="ctrl.upload()" ng-disabled="ctrl.uploader.queue.length > 10">
+        <button class="btn btn-vo" ng-click="ctrl.upload()" ng-disabled="ctrl.uploader.queue.length > 10 || ctrl.uploader.queue.length == 0">
             <i class="glyphicon glyphicon-share-alt"></i>&nbsp;
             <span ng-if="!ctrl.vm.reUpload">{{'BTN_UPLOAD_FILE' | translate}}</span>
             <span ng-if="ctrl.vm.reUpload">{{'BTN_REUPLOAD_FILE' | translate}}</span>

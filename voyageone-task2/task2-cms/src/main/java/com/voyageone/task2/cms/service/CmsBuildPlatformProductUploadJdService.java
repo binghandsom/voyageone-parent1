@@ -976,20 +976,22 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                     }
                     case MULTICHECK: {
                         // 多选的时候，属性值多个，则用逗号分隔 "属性值1，属性值2，属性值3")
-                        String multiAttrValue = "";
+//                        String multiAttrValue = "";
                         List<Value> valueList = ((MultiCheckField) fieldValue).getValues();
-                        if (ListUtils.notNull(valueList)) {
-                            multiAttrValue = valueList.stream()
-                                    .map(Value::getValue)
-                                    .collect(Collectors.joining(Separtor_Coma));
+//                        if (ListUtils.notNull(valueList)) {
+//                            multiAttrValue = valueList.stream()
+//                                    .map(Value::getValue)
+//                                    .collect(Collectors.joining(Separtor_Coma));
+//                        }
+                        for (Value value : valueList) {
+                            // 输入类型input_type为2(多选)的时候,设置【商品属性列表】
+                            // 设置商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid1:vid1|aid2:vid21|aid2:vid22
+                            sbAttributes.append(fieldId);             // 属性id(fieldId)
+                            sbAttributes.append(Separtor_Colon);      // ":"
+                            // 属性值设置(如果有多个，以前用逗号分隔 "属性值1，属性值2，属性值3" -> 现在分别设置属性:属性值)
+                            sbAttributes.append(value.getValue());      // 第N个属性值
+                            sbAttributes.append(Separtor_Vertical);   // "|"
                         }
-                        // 输入类型input_type为2(多选)的时候,设置【商品属性列表】
-                        // 设置商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1
-                        sbAttributes.append(fieldId);             // 属性id(fieldId)
-                        sbAttributes.append(Separtor_Colon);      // ":"
-                        // 属性值设置(如果有多个，则用逗号分隔 "属性值1，属性值2，属性值3")
-                        sbAttributes.append(multiAttrValue);      // 属性值1,属性值2，属性值3
-                        sbAttributes.append(Separtor_Vertical);   // "|"
                         break;
                     }
                     case INPUT: {
@@ -1133,13 +1135,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 20160630 tom 防止code超长 END
             sbPropertyAlias.append(Separtor_Xor);           // "^"
 
-//            List<BaseMongoMap<String, Object>> objProductSkuList = new ArrayList<>();
-//            CmsBtProductModel_Platform_Cart productPlatformCart = objProduct.getPlatform(sxData.getCartId());
-//            if (productPlatformCart != null) {
-//                objProductSkuList = productPlatformCart.getSkus();
-//            }
-            List<CmsBtProductModel_Sku> objProductSkuList = objProduct.getCommon().getSkus();
-            for (BaseMongoMap<String, Object> objSku:objProductSkuList) {
+            for (BaseMongoMap<String, Object> objSku : skuList) {
                 // sku属性(1000021641:1523005913^1000021641:1523005771|1000021641:1523005913^1000021641:1523005772)
                 // 颜色1^尺码1|颜色1^尺码2|颜色2^尺码1|颜色2^尺码2(这里的尺码1是指从平台上取下来的，存在cms_mt_platform_skus表中的平台尺码值1)
                 sbSkuProperties.append(productColorMap.get(objProduct.getCommon().getFields().getCode()));
