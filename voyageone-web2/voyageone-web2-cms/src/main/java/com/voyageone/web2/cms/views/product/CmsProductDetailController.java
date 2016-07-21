@@ -189,7 +189,7 @@ public class CmsProductDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.DelistinGroup)
     public AjaxResponse delistinGroup(@RequestBody DelistingParameter parameter) {
         parameter.setChannelId(getUser().getSelChannelId());
-        productPropsEditService.delisting(parameter, getUser().getUserName());
+        productPropsEditService.delistinGroup(parameter, getUser().getUserName());
         return success(null);
     }
 }
