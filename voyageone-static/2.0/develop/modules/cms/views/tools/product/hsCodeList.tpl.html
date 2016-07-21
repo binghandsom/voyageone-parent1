@@ -65,12 +65,16 @@
                         <div class="form-group">
                             <label for="getTaskInfo_hsCodeTaskCnt" class="col-sm-3 control-label" translate="TXT_GET_TASK_COUNT"></label>
                             <div class="col-sm-4">
-                                <input id="getTaskInfo_hsCodeTaskCnt" type="number" name="taskCount" class="form-control" ng-model="ctrl.getTaskInfo.hsCodeTaskCnt" min="1" max="10" maxlength="2"
-                                       uib-tooltip="请输入[ 1-10 ]内的整数" tooltip-trigger="mouseenter" tooltip-placement="bottom">
+                                <input id="getTaskInfo_hsCodeTaskCnt" type="number" name="taskCount" class="form-control" ng-model="ctrl.hsCodeTaskCnt"
+                                       uib-tooltip="请输入[1-{{ctrl.max}} ] 的整数" tooltip-trigger="mouseenter" tooltip-placement="bottom" required>
                             </div>
                             <div class="col-sm-2">
                                 <button class="btn btn-success" ng-click="ctrl.get()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
                             </div>
+                        </div>
+                        <div class="form-group" ng-if="ctrl.hsCodeTaskCnt > ctrl.max || !ctrl.hsCodeTaskCnt" style="color: red;">
+                            <span class="col-sm-offset-3" ng-if="ctrl.hsCodeTaskCnt && ctrl.hsCodeTaskCnt > ctrl.max">请输入[1-{{ctrl.max}} ] 的整数</span>
+                            <span class="col-sm-offset-3" ng-if="!ctrl.hsCodeTaskCnt &&!ctrl.getTaskInfo.code">{{'TXT_TRANSLATION_INPUT_TIP'|translate}}</span>
                         </div>
                     </form>
                 </div>
@@ -96,7 +100,8 @@
                         <div class="form-group">
                             <label for="searchInfo_searchCondition" class="col-sm-2 control-label" translate="TXT_FUZZY_SEARCH"></label>
                             <div class="col-sm-10">
-                                <textarea id="searchInfo_searchCondition" rows="2" class="form-control" ng-model="ctrl.searchInfo.searchCondition" uib-tooltip="{{'TXT_TRANSLATION_FUZZY_SEARCH_TIP'|translate}}" tooltip-trigger="mouseenter" tooltip-placement="bottom"></textarea>
+                                <textarea id="searchInfo_searchCondition" rows="2" class="form-control" ng-model="ctrl.searchInfo.searchCondition"
+                                          uib-tooltip="{{'TXT_TRANSLATION_FUZZY_SEARCH_TIP'|translate}}" tooltip-trigger="mouseenter" tooltip-placement="bottom"></textarea>
                             </div>
                         </div>
                         <button class="btn btn-default col-sm-offset-4" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'|translate}} </button>
