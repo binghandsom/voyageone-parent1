@@ -412,7 +412,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         if (models.size() == 0) {
             VmsBtShipmentModel model = new VmsBtShipmentModel();
             model.setChannelId(channelId);
-            model.setShipmentName("Shipment_" + DateTimeUtil.getNow("yyyyMM-d_HHmmss"));
+            model.setShipmentName("Shipment_" + DateTimeUtil.getNow("yyyyMM-dd_HHmmss"));
             model.setShippedDate(new Date(shippedTime));
             model.setExpressCompany(expressCompany);
             model.setTrackingNo(trackingNo);
@@ -431,7 +431,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         if (count > 0) {
             response.setShipmentId(shipmentId);
             $info("synOrderShipment success:reservationId = " + reservationId + ",channelId = " + channelId
-                    + ",status = " + VmsConstants.STATUS_VALUE.PRODUCT_STATUS.SHIPPED);
+                    + ",shipmentId = " + shipmentId);
         } else {
             throw new ApiException("99", "channelId:" + channelId + ",reservationId:" + reservationId + " is not exist.");
         }
