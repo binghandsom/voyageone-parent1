@@ -29,6 +29,18 @@
             <if test="status != null" >
                 `status` = #{status,jdbcType=VARCHAR},
             </if>
+            <if test="arrivedTime != null" >
+                `arrived_time` = #{arrivedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="arriver != null" >
+                `arriver` = #{arriver,jdbcType=VARCHAR},
+            </if>
+            <if test="receivedTime != null" >
+                `received_time` = #{receivedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="receiver != null" >
+                `receiver` = #{receiver,jdbcType=VARCHAR},
+            </if>
             <if test="modified != null" >
                 `modified` = #{modified,jdbcType=TIMESTAMP},
             </if>

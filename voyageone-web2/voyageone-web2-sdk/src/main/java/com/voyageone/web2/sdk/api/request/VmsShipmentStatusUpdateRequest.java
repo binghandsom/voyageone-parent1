@@ -35,6 +35,21 @@ public class VmsShipmentStatusUpdateRequest extends VoApiRequest<VmsOrderStatusU
 	 */
 	private String status;
 
+	/**
+	 * receivedTime（status = 4：Arrived；5：Received时 必须）
+	 */
+	private Long operateTime;
+
+	/**
+	 * receiver（status = 4：Arrived；5：Received时 必须）
+	 */
+	private String operator;
+
+	/**
+	 * comment(6：Receive with Error时 必须)
+	 */
+	private String comment;
+
 	@Override
 	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty("channelId", channelId);
@@ -64,5 +79,29 @@ public class VmsShipmentStatusUpdateRequest extends VoApiRequest<VmsOrderStatusU
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Long getOperateTime() {
+		return operateTime;
+	}
+
+	public void setOperateTime(Long operateTime) {
+		this.operateTime = operateTime;
+	}
+
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 }

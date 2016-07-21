@@ -177,4 +177,62 @@ public class VmsOrderGetRequestTest {
 
         System.out.println(response);
     }
+
+    @Test
+    public void testUpdateShipmentStatus4() throws ParseException {
+        VmsShipmentStatusUpdateRequest request = new VmsShipmentStatusUpdateRequest();
+        request.setChannelId("088");
+        request.setShipmentId(1);
+        request.setStatus("4");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
+        String str="2016-01-01 10:00:00";
+        Date date = sdf.parse(str);
+        request.setOperateTime(date.getTime());
+        request.setOperator("djs");
+
+        //SDK取得Product 数据
+        voApiDefaultClient.setNeedCheckRequest(false);
+        VmsOrderStatusUpdateResponse response = voApiDefaultClient.execute(request);
+
+        System.out.println(response);
+    }
+
+    @Test
+    public void testUpdateShipmentStatus5() throws ParseException {
+        VmsShipmentStatusUpdateRequest request = new VmsShipmentStatusUpdateRequest();
+        request.setChannelId("088");
+        request.setShipmentId(1);
+        request.setStatus("5");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
+        String str="2016-01-01 10:00:00";
+        Date date = sdf.parse(str);
+        request.setOperateTime(date.getTime());
+        request.setOperator("djs");
+
+        //SDK取得Product 数据
+        voApiDefaultClient.setNeedCheckRequest(false);
+        VmsOrderStatusUpdateResponse response = voApiDefaultClient.execute(request);
+
+        System.out.println(response);
+    }
+
+    @Test
+    public void testUpdateShipmentStatus6() throws ParseException {
+        VmsShipmentStatusUpdateRequest request = new VmsShipmentStatusUpdateRequest();
+        request.setChannelId("088");
+        request.setShipmentId(1);
+        request.setStatus("6");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
+        String str="2016-11-11 12:00:00";
+        Date date = sdf.parse(str);
+        request.setOperateTime(date.getTime());
+        request.setComment("not received");
+        request.setOperator("djs");
+
+        //SDK取得Product 数据
+        voApiDefaultClient.setNeedCheckRequest(false);
+        VmsOrderStatusUpdateResponse response = voApiDefaultClient.execute(request);
+
+        System.out.println(response);
+    }
 }

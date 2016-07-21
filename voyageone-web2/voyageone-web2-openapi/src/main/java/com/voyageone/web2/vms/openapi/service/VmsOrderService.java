@@ -3,6 +3,7 @@ package com.voyageone.web2.vms.openapi.service;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.VmsChannelConfigBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.vms.order.OrderDetailService;
 import com.voyageone.service.impl.vms.shipment.ShipmentService;
@@ -49,7 +50,6 @@ public class VmsOrderService extends OpenApiCmsBaseService {
     public VmsOrderAddResponse addOrderInfo(VmsOrderAddRequest request) {
         $info("/vms/order/addOrderInfo is start");
         VmsOrderAddResponse response = new VmsOrderAddResponse();
-        response.setResult(false);
         checkCommRequest(request);
         request.check();
 
@@ -81,9 +81,6 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                 $info("addOrderInfo: reservationId = " + (String) item.get("reservationId") + ", channelId = " + (String) item.get("channelId"));
             }
         }
-
-        // 是否成功
-        response.setResult(true);
 
         $info("/vms/order/addOrderInfo is end");
         return response;
@@ -285,7 +282,6 @@ public class VmsOrderService extends OpenApiCmsBaseService {
     public VmsOrderStatusUpdateResponse updateOrderStatus(VmsOrderStatusUpdateRequest request) {
         $info("/vms/order/updateOrderStatus is start");
         VmsOrderStatusUpdateResponse response = new VmsOrderStatusUpdateResponse();
-        response.setResult(false);
         checkCommRequest(request);
         //ChannelId
         String channelId = request.getChannelId();
@@ -299,9 +295,6 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         String receiver = request.getReceiver();
 
         int count = 0;
-        Map<String, Object> param = new HashMap<>();
-        param.put("channelId", channelId);
-        param.put("reservationId", reservationId);
         // 更新为6：Receive with Error的情况
         if(VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVE_WITH_ERROR.equals(status)) {
             count = orderDetailService.updateReservationStatus(channelId, reservationId,
@@ -315,8 +308,9 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         }
 
         if (count > 0) {
-            response.setResult(true);
             $info("updateOrderStatus success:reservationId = " + reservationId + ",channelId = " + channelId + ",status = " + status);
+        } else {
+            throw new ApiException("99", "channelId:" + channelId + ",reservationId:" + reservationId + " is not exist.");
         }
 
         $info("/vms/order/updateOrderStatus is end");
@@ -333,7 +327,6 @@ public class VmsOrderService extends OpenApiCmsBaseService {
     public VmsShipmentStatusUpdateResponse updateShipmentStatus(VmsShipmentStatusUpdateRequest request) {
         $info("/vms/order/updateShipmentStatus is start");
         VmsShipmentStatusUpdateResponse response = new VmsShipmentStatusUpdateResponse();
-        response.setResult(false);
         checkCommRequest(request);
         //ChannelId
         String channelId = request.getChannelId();
@@ -343,6 +336,9 @@ public class VmsOrderService extends OpenApiCmsBaseService {
 
         Integer shipmentId = request.getShipmentId();
         String status = request.getStatus();
+        Long operateTime = request.getOperateTime();
+        String operator = request.getOperator();
+        String comment = request.getComment();
         int count = 0;
         if(VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.ARRIVED.equals(status)
                 || VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.RECEIVED.equals(status)
@@ -351,17 +347,96 @@ public class VmsOrderService extends OpenApiCmsBaseService {
             model.setChannelId(channelId);
             model.setId(shipmentId);
             model.setStatus(status);
+            model.setModifier(getClassName());
+            if (VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.ARRIVED.equals(status)) {
+                model.setArrivedTime(new Date(operateTime));
+                model.setArriver(operator);
+            } else if (VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.RECEIVED.equals(status)) {
+                model.setReceivedTime(new Date(operateTime));
+                model.setReceiver(operator);
+            } else {
+                // 更新状态为ReceiveWithError的情况下，叠加Comment
+                if (!StringUtils.isEmpty(comment)) {
+                    VmsBtShipmentModel oldModel = shipmentService.select(shipmentId);
+                    if (oldModel != null && !StringUtils.isEmpty(oldModel.getComment())) {
+                        model.setComment(oldModel.getComment() + "\r\nAdd By Vo：" + comment);
+                    } else {
+                        model.setComment("Add By Vo：" + comment);
+                    }
+                }
+            }
             count = shipmentService.save(model);
         } else {
             throw new ApiException("99", "This Status is not allowed to be update.");
         }
 
         if (count > 0) {
-            response.setResult(true);
             $info("updateShipmentStatus success:shipmentId = " + shipmentId + ",channelId = " + channelId + ",status = " + status);
+        } else {
+            throw new ApiException("99", "channelId:" + channelId + ",shipmentId:" + shipmentId + " is not exist.");
         }
 
         $info("/vms/order/updateShipmentStatus is end");
+        return response;
+    }
+
+    /**
+     * 更新不使用vms进行发货的物品状态（3：shipped）及物流信息
+     * @param request VmsShipmentStatusUpdateRequest
+     * @return VmsShipmentStatusUpdateResponse
+     *
+     */
+    @VOTransactional
+    public VmsOrderShipmentSynResponse synOrderShipment(VmsOrderShipmentSynRequest request) {
+        $info("/vms/order/synOrderShipment is start");
+        VmsOrderShipmentSynResponse response = new VmsOrderShipmentSynResponse();
+        checkCommRequest(request);
+        //ChannelId
+        String channelId = request.getChannelId();
+        checkRequestChannelId(channelId);
+
+        request.check();
+
+        String reservationId = request.getReservationId();
+        String expressCompany = request.getExpressCompany();
+        String trackingNo = request.getTrackingNo();
+        Long shippedTime = request.getShippedTime();
+        Integer shipmentId = null;
+
+        // 先看看如果trackingNo不存在那么去生成shipment
+        Map<String, Object> param = new HashMap<>();
+        param.put("channelId", channelId);
+        param.put("trackingNo", trackingNo);
+        List<VmsBtShipmentModel> models = shipmentService.selectList(param);
+        // 不存在shipment，那么新建一个shipment
+        if (models.size() == 0) {
+            VmsBtShipmentModel model = new VmsBtShipmentModel();
+            model.setChannelId(channelId);
+            model.setShipmentName("Shipment_" + DateTimeUtil.getNow("yyyyMM-d_HHmmss"));
+            model.setShippedDate(new Date(shippedTime));
+            model.setExpressCompany(expressCompany);
+            model.setTrackingNo(trackingNo);
+            model.setStatus(VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.SHIPPED);
+            model.setCreater(getClassName());
+            shipmentService.insert(model);
+            shipmentId = model.getId();
+        } else {
+            shipmentId = models.get(0).getId();
+        }
+
+        // 更新物品的状态为5：Received
+        int count = orderDetailService.updateReservationStatus(channelId, reservationId,
+                VmsConstants.STATUS_VALUE.PRODUCT_STATUS.SHIPPED, getClassName(), new Date(shippedTime), null);
+
+        if (count > 0) {
+            response.setShipmentId(shipmentId);
+            $info("synOrderShipment success:reservationId = " + reservationId + ",channelId = " + channelId
+                    + ",status = " + VmsConstants.STATUS_VALUE.PRODUCT_STATUS.SHIPPED);
+        } else {
+            throw new ApiException("99", "channelId:" + channelId + ",reservationId:" + reservationId + " is not exist.");
+        }
+
+        $info("/vms/order/synOrderShipment is end");
         return response;
     }
 

@@ -52,4 +52,9 @@ public class VmsOrderController extends OpenAipCmsBaseController {
     public VmsShipmentStatusUpdateResponse getOrderInfo(@RequestBody VmsShipmentStatusUpdateRequest request) {
         return vmsOrderService.updateShipmentStatus(request);
     }
+
+    @RequestMapping("synOrderShipment")
+    public VmsOrderShipmentSynResponse synOrderShipment(@RequestBody VmsOrderShipmentSynRequest request) {
+        return vmsOrderService.synOrderShipment(request);
+    }
 }

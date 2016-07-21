@@ -52,12 +52,12 @@ public class VmsOrderDetailDataImportService extends BaseTaskService {
             int shipmentId = 1001;
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Date startDate = dateFormat.parse("2011-01-01 01:00:00");
-            while (i < 200000) {
+            while (i < 10000) {
                 if (consOrderIdStartIndex % 10 == 0) {
                     shipmentId++;
                 }
                 // 生成1到3的随机数
-                int detailNumber = makeRandom(1,3);
+                int detailNumber = makeRandom(1,8);
                 // 生成orderTime
                 startDate = addMinutes(startDate, 30);
                  Date orderTime = startDate;
@@ -173,6 +173,8 @@ public class VmsOrderDetailDataImportService extends BaseTaskService {
         model.setClientMsrp(new BigDecimal("100.00"));
         model.setClientNetPrice(new BigDecimal("100.00"));
         model.setClientRetailPrice(new BigDecimal("100.00"));
+        model.setClientPromotionPrice(new BigDecimal("100.00"));
+        model.setRetailPrice(new BigDecimal("100.00"));
         model.setCreater("vendor");
         model.setModifier("vendor");
         vmsBtOrderDetailDao.insert(model);
