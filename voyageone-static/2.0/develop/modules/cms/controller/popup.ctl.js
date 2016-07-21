@@ -351,8 +351,8 @@ define([
                     "templateUrl": "views/pop/jm/promotiondetail.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/jm/promotiondetail.ctl",
                     "controller": 'popJMPromotionDetailCtl',
-                    "size": 'md',
-                    "backdrop": "static"
+                    "backdrop": "static",
+                    "size": 'lg'
                 },
                 "import": {
                     "templateUrl": "views/pop/jm/import.tpl.html",
@@ -1295,7 +1295,7 @@ define([
                 var modalInstance = $uibModal.open({
                     templateUrl: popActions.jumei.jmPromotionDetail.detail.templateUrl,
                     controller: popActions.jumei.jmPromotionDetail.detail.controller,
-                    size:'md',
+                    size:'lg',
                     resolve: {
                         context: function () {
                             return context;
