@@ -7,6 +7,7 @@ import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,8 +31,8 @@ public class ShipmentService {
         return vmsBtShipmentDao.select(shipmentId);
     }
 
-    public VmsBtShipmentModel select(Map<String, Object> shipmentSelectParams) {
-        return vmsBtShipmentDao.selectOne(shipmentSelectParams);
+    public List<VmsBtShipmentModel> select(Map<String, Object> shipmentSelectParams) {
+        return vmsBtShipmentDao.selectList(shipmentSelectParams);
     }
 
     public int save(VmsBtShipmentModel vmsBtShipmentModel) {

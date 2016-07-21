@@ -105,9 +105,9 @@ public class VmsShipmentService {
             put("channelId", user.getSelChannel().getId());
             put("status", VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.OPEN);
         }};
-        VmsBtShipmentModel vmsBtShipmentModel = shipmentService.select(shipmentSearchParams);
-        if (null == vmsBtShipmentModel) return null;
-        return ShipmentBean.getInstance(vmsBtShipmentModel);
+        List<VmsBtShipmentModel> vmsBtShipmentModelList = shipmentService.select(shipmentSearchParams);
+        if (null == vmsBtShipmentModelList) return null;
+        return ShipmentBean.getInstance(vmsBtShipmentModelList.get(0));
     }
 
     /**
