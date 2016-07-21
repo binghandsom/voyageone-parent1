@@ -164,7 +164,7 @@ public class JmBase extends ComponentBase {
 
             res = JsonUtil.jsonToBean(result, JMErrorResult.class);
             if (res.getCode() != null) {
-                throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result), result);
+                throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result), result);//加参数 传值result 临时处理方案
             }
         } catch (JsonSyntaxException ignored) {
         }
