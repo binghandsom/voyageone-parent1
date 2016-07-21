@@ -86,7 +86,8 @@
                                             <i class="fa fa-times" ng-if="vm.checkFlag.category != 1"></i>
                                         </span>
                                     </li>
-                                    <li>
+                                    <!-----------------------------添加聚焦提示------------------------>
+                                    <li ng-click="focusError()" ng-style="{ cursor:!validSchema() ? 'pointer' : 'default' }">
                                         <span ng-class = "{tagFlag:!validSchema()}">{{'TXT_ATTRIBUTE' | translate}}&emsp;
                                             <i class="fa fa-check" ng-if="vm.checkFlag.attribute = validSchema()"></i>
                                             <i class="fa fa-times" ng-if="!validSchema()"></i>

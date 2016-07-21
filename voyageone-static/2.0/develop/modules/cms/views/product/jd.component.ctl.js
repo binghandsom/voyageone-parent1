@@ -39,6 +39,7 @@ define([
                 scope.selectAll = selectAll;
                 scope.pageAnchor = pageAnchor;
                 scope.allSkuSale = allSkuSale;
+                scope.focusError = focusError;
 
                 /**
                  * 获取京东页面初始化数据
@@ -299,6 +300,7 @@ define([
                 }
 
                 function validSchema(){
+
                     return scope.vm.platform == null || scope.vm.platform.schemaFields == null ? false : scope.schemaForm.$valid && scope.skuForm.$valid;
                 }
 
@@ -346,6 +348,14 @@ define([
                     });
                 }
 
+                /**错误聚焦*/
+                function focusError(){
+                   if(!validSchema()){
+                       var firstError = element.find("schema .ng-invalid:first");
+                       firstError.focus();
+                       firstError.addClass("focus-error");
+                   }
+                }
 
             }
         };
