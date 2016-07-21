@@ -576,7 +576,7 @@ define(function () {
         "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
         "BTN_CHOOSE_FILE": "选择文件",
         "BTN_IMPORT_FILE": "Import File",
-        "BTN_UPLOAD_FILE": "Upload File",
+        "BTN_UPLOAD_FILE": "上传",
         "BTN_REUPLOAD_FILE": "重传",
         "BTN_CUSTOMIZE_COLUMNS": "自定义列设置",
         "BTN_GET_TASK": "获取任务",
@@ -762,8 +762,20 @@ define(function () {
         "TXT_EXPORT_REQUESTER": "导出申请者",
 
         "TXT_MATER_CATEGORY_WITH_COLON": "主类目:",
-        "TXT_ACTION_TIME":"操作时间",
-        "TXT_ACTION_USER":"操作者",
-        "TXT_ACTION_COMMENT":"说明"
+        "TXT_ACTION_TIME": "操作时间",
+        "TXT_ACTION_USER": "操作者",
+        "TXT_ACTION_COMMENT": "说明",
+
+        /**工具管理-共通处理*/
+        "TXT_FEED_ALL_NUMBER": "Feed品牌总数",
+        "TXT_FEED_ALL_UNMAPPED_NUMBER": "未匹配Feed品牌总数",
+        "TXT_FEED_ALL_MAPPED_NUMBER": "已匹配Feed品牌总数",
+
+        /**店铺管理-平台品牌设置一览*/
+        "TXT_BRAND_MAPPING_LIST": "平台品牌设置一览",
+        "TXT_CART_NAME": "平台渠道名称",
+        "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配状态",
+        "TXT_MASTER_BRAND": "Master品牌",
+        "TXT_BRAND":"[%s]品牌"
     };
 });
