@@ -135,10 +135,21 @@ public class Tmall_012_Bcbg_DictTest {
 
 					{
 						// 第二个开始，共八个属性（品牌名称,产品类别,适用年龄,使用体重,固定方式,外形尺寸,材质用料,产品重量）
-						for (int index = 0; index < 8; index++) {
+//						for (int index = 0; index < 8; index++) {
+//							RuleExpression ruleExpression = new RuleExpression();
+//							ruleExpression.addRuleWord(new FeedCnWord(true, index));
+//							ruleExpression.addRuleWord(new TextWord("   "));
+//							ruleExpression.addRuleWord(new FeedCnWord(false, index));
+//							imageParams.add(ruleExpression);
+//						}
+						for (int index = 0; index < 4; index++) {
+							// name
 							RuleExpression ruleExpression = new RuleExpression();
 							ruleExpression.addRuleWord(new FeedCnWord(true, index));
-							ruleExpression.addRuleWord(new TextWord("   "));
+							imageParams.add(ruleExpression);
+
+							// value
+							ruleExpression = new RuleExpression();
 							ruleExpression.addRuleWord(new FeedCnWord(false, index));
 							imageParams.add(ruleExpression);
 						}
