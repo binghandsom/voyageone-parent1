@@ -1,7 +1,7 @@
 <div class="product-shema-detail">
     <div class="form-horizontal" name="productFieldForm" novalidate>
         <div class="panel vo_panel tab_panel">
-                <div class="container-fluid"  id="master1">
+                <div class="container-fluid"  id="master">
                     <div class="row wrapper">
                         <!----------------------------------------历史按钮---------------------------------------------->
 
@@ -90,10 +90,10 @@
                                     <h3 drag-handle>导航栏</h3>
                                     <ul class="nav bs-docs-sidenav">
                                         <li class="">
-                                            <a href="javascript:void(0)" ng-click="pageAnchor(1,1000)">共通属性</a>
+                                            <a href="javascript:void(0)" ng-click="pageAnchor('master',1000)">共通属性</a>
                                         </li>
                                         <li class="">
-                                            <a href="javascript:void(0)" ng-click="pageAnchor(2,1000)">产品属性</a>
+                                            <a href="javascript:void(0)" ng-click="pageAnchor('product',1000)">产品属性</a>
                                         </li>
                                         <li>
                                         </li>
@@ -108,7 +108,7 @@
                 <hr>
                 <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
                 <!------------------------------------------------以下为产品schema------------------------------------------------------->
-                <div class="container-fluid" id="master2">
+                <div class="container-fluid" id="product">
                     <ng-form name="schemaForm" novalidate>
                         <div id="schemaContainer" class="col-sm-7"></div>
                     </ng-form>

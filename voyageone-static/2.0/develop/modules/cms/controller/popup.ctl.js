@@ -470,6 +470,12 @@ define([
                 "controllerUrl": "modules/cms/views/pop/product/switchMain.ctl",
                 "controller": 'SwitchMainController as ctrl',
                 "size": 'lg'
+            },
+            "productOffLine":{
+                "templateUrl": "views/pop/product/productOffLine.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/productOffLine.ctl",
+                "controller": 'ProductOffLineController as ctrl',
+                "size": 'lg'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -1353,6 +1359,11 @@ define([
         $scope.openSwitchMain = function (context) {
             return openModel(popActions.product.switchMain, context);
         };
+
+        //产品下线
+        $scope.openProductOffLine = function(context){
+            return openModel(popActions.product.productOffLine, context);
+        }
 
 
     }).factory('popups', function ($controller, $rootScope) {

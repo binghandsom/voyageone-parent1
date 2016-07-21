@@ -576,7 +576,7 @@ define(function () {
         "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
         "BTN_CHOOSE_FILE": "选择文件",
         "BTN_IMPORT_FILE": "Import File",
-        "BTN_UPLOAD_FILE": "Upload File",
+        "BTN_UPLOAD_FILE": "上传",
         "BTN_REUPLOAD_FILE": "重传",
         "BTN_CUSTOMIZE_COLUMNS": "自定义列设置",
         "BTN_GET_TASK": "获取任务",
@@ -651,6 +651,7 @@ define(function () {
         "TXT_GROUP_NAME_FEED_CAT_WITH_COLON": "商品名称/Feed类目/主类目",
         "TXT_HS_CODE_SETTED_SEARCH": "个人设置税号成果搜索",
         "TXT_CARRY_ON_THE_CURRENT_SETTING": "请继续完善税号设置",
+        "TXT_TRANSLATION_INPUT_TIP":"get不到啦，请至少给我产品Code或任务数量",
 
         /**高级检索*/
         "TXT_ADVANCE_SEARCH_NEW": "高级搜索",

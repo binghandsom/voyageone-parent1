@@ -33,12 +33,13 @@ define([
                 scope.jdCategoryMapping = jdCategoryMapping;
                 scope.openSellerCat = openSellerCat;
                 scope.openSwitchMainPop = openSwitchMainPop;
+                scope.openOffLinePop = openOffLinePop;
                 scope.saveProduct = saveProduct;
                 scope.validSchema = validSchema;
                 scope.selectAll = selectAll;
                 scope.pageAnchor = pageAnchor;
                 scope.allSkuSale = allSkuSale;
-                scope.limitNumber = limitNumber;
+
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -75,8 +76,6 @@ define([
                             scope.vm.skuTemp[mSku.skuCode] = mSku;
                         });
 
-                        constructSchema(scope,$compile);
-
                     });
 
                     switch(+scope.cartInfo.value){
@@ -97,39 +96,6 @@ define([
                             break;
                     }
 
-                }
-
-                var itemScope;
-                var productScope;
-
-                function constructSchema(parentScope, compile) {
-
-                    var _plateForm = parentScope.vm.platform;
-
-                    if(_plateForm.schemaFields){
-                        var _item = element.find('#itemContainer');
-                        var _product = element.find('#productContainer');
-
-                        if (itemScope)
-                            itemScope.$destroy();
-                        if (productScope)
-                            productScope.$destroy();
-
-                        _item.empty();
-                        _product.empty();
-
-                        _item.html('<schema data="data"></schema>');
-                        _product.html('<schema data="data"></schema>');
-
-                        itemScope = parentScope.$new();
-                        productScope = parentScope.$new();
-
-                        itemScope.data = _plateForm.schemaFields.item == null ? null : _plateForm.schemaFields.item;
-                        productScope.data = _plateForm.schemaFields.product == null ? null : _plateForm.schemaFields.product;
-
-                        compile(_item)(itemScope);
-                        compile(_product)(productScope);
-                    }
                 }
 
                 /**
@@ -167,8 +133,6 @@ define([
                                 scope.vm.platform.pStatus == 'WaitingPublish';
                                 scope.vm.status =  "Pending";
 
-                                //刷新schema
-                                constructSchema(scope,$compile);
                             });
                         });
                 }
@@ -203,6 +167,29 @@ define([
                     });
                 }
 
+                /**
+                 *  商品下线
+                 */
+                function openOffLinePop(openProductOffLine){
+
+                    if(scope.vm.status != "Approved"){
+                        alert("该商品还未Approved！");
+                        return;
+                    }
+
+                    if(scope.vm.mastData.isMain){
+                        alert("当前商品为主商品，无法单品下线！");
+                        return;
+                    }
+
+                    openProductOffLine({
+                        cartId:scope.cartInfo.value,
+                        productCode:scope.vm.mastData.productCode
+                    }).then(function(){
+                        //刷新子页面
+                        getplatformData();
+                    });
+                }
 
                 /**
                  * 更新操作
@@ -326,10 +313,12 @@ define([
                  * @param index div的index
                  * @param speed 导航速度 ms为单位
                  */
-                function pageAnchor(index,speed){
+                function pageAnchor(area,speed){
                     var offsetTop = 0;
-                    if(index != 1)
-                        offsetTop = ($("#"+scope.cartInfo.name+index).offset().top);
+                    if(area != 'master'){
+                        offsetTop = element.find("#"+area).offset().top;
+                    }
+
                     $("body").animate({ scrollTop:  offsetTop-100}, speed);
                 }
 
@@ -357,24 +346,6 @@ define([
                     });
                 }
 
-                function limitNumber(event,price){
-                    var decimalReg = /^\d+\.{0,1}(\d{1,2})?$/;
-                    var flag = null;
-                    if(event.keyCode != 8){
-                        if(event.keyCode < 48 || event.keyCode > 57){
-                            if(event.keyCode == 46){
-                                flag = decimalReg.test(price);
-                            }else{
-                                flag = false;
-                            }
-                        }else{
-                            flag = decimalReg.test(price) && price < Math.pow(10,14);
-                        }
-                    }
-
-                    if(!flag)
-                        event.preventDefault();
-                }
 
             }
         };

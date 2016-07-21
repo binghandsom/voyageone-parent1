@@ -1252,4 +1252,55 @@ public class CmsProductDetailService extends BaseAppService {
 //    2.1.4	调用插入workload表的共同方法
     }
 
+    //下架
+    public void   delistinGroup(DelistingParameter paramr,String modifier) {
+
+        CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(paramr.getChannelId(), paramr.getProductCode(), paramr.getCartId());
+        String numIID=cmsBtProductGroup.getNumIId();
+        if (paramr.getCartId() == 23)//天猫商品删除接口
+        {
+
+        } else if (paramr.getCartId() == 26) {//天猫商品删除接口
+
+        }
+        else
+        {
+            return;
+        }
+        //3.4 遍历group中的productCodes中的所有的code
+        List<String>codes = cmsBtProductGroup.getProductCodes();
+        codes.forEach(code->{
+            delistingCode(paramr, modifier, code);//下架单个code  3.4.1 Code【status】如果是Approve的场合改成Ready 【pProductId】【pNumIId】【pStatus】清空
+        });
+        cmsBtProductGroup.setNumIId("");
+        cmsBtProductGroup.setPlatformPid("");
+        cmsBtProductGroup.setPublishTime("");
+        cmsBtProductGroup.setOnSaleTime("");
+        cmsBtProductGroup.setInStockTime("");
+        productGroupService.update(cmsBtProductGroup);//3.4.2 Group表中的【numIId】【platformPid】【publishTime】【onSaleTime】【inStockTime】清空
+        //    3 平台商品删除 （只有在京东和天猫的平台才）
+//    3.1 根据 cartId和productCode找到对应pNumIId
+//    3.2 调用平台的删除商品的API
+//    3.3 API调用成功 找到对应的group数据
+//    3.4 遍历group中的productCodes中的所有的code
+//    3.4.1 Code【status】如果是Approve的场合改成Ready 【pProductId】【pNumIId】【pStatus】清空
+//    3.4.2 Group表中的【numIId】【platformPid】【publishTime】【onSaleTime】【inStockTime】清空
+    }
+    private void delistingCode(DelistingParameter paramr, String modifier, String code) {
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode(paramr.getChannelId(),code);
+        CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(paramr.getCartId());
+        platForm.setStatus(CmsConstants.ProductStatus.Ready.name());
+        platForm.setpProductId("");
+        platForm.setpNumIId("");
+        platForm.remove("pStatus");
+        productService.updateProductPlatform(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
+        String comment=paramr.getComment();
+        productStatusHistoryService.insert(paramr.getChannelId(),cmsBtProductModel.getCommon().getFields().getCode(),platForm.getStatus(),paramr.getCartId(), EnumProductOperationType.Delisting,comment,modifier);
+        ImsBtProductModel imsBtProductModel= imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(),paramr.getCartId(),code);
+        if(imsBtProductModel!=null) {
+            imsBtProductModel.setNumIid("");
+            imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, modifier);
+        }
+    }
+
 }

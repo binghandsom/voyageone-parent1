@@ -10,7 +10,7 @@ define([
             restrict: "E",
             templateUrl : "views/product/feed.component.tpl.html",
             scope: {productInfo: "=productInfo"},
-            link: function (scope) {
+            link: function (scope,element) {
                 scope.pageAnchor = pageAnchor;
                 scope.updateFeedInfo = updateFeedInfo;
 
@@ -29,15 +29,16 @@ define([
                         alert("更新失败！");
                     });
                 }
+
                 /**
                  * 右侧导航栏
                  * @param index div的index
                  * @param speed 导航速度 ms为单位
                  */
-                function pageAnchor(index,speed){
+                function pageAnchor(area,speed){
                     var offsetTop = 0;
-                    if(index != 1)
-                        offsetTop = ($("#feed"+index).offset().top);
+                    if(area != "attribute")
+                        offsetTop = element.find("#" + area).offset().top;
                     $("body").animate({ scrollTop:  offsetTop-70}, speed);
                 }
 

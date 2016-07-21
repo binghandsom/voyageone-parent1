@@ -9,7 +9,6 @@ define([
             $menuService.getHomeSumData().then(function (res) {
 
                 $scope.vm.sumData = res.data;
-                console.log( $scope.vm);
             });
         };
         $scope.jump=jump;
