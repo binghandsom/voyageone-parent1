@@ -45,11 +45,29 @@ public class VmsOrderGetRequestTest {
         item.put("orderTime", now);
         item.put("cartId",23);
         item.put("clientMsrp",70.00);
-        item.put("clientNetPrice",70.00);
-        item.put("clientRetailPrice",70.00);
-        item.put("retailPrice", 70.00);
+        item.put("clientNetPrice",71.00);
+        item.put("clientRetailPrice",72.00);
+        item.put("retailPrice", 170.00);
         List<Map<String, Object>> itemList = new ArrayList<>();
         itemList.add(item);
+
+        Map<String, Object> item1 = new HashMap<>();
+        item1.put("channelId", "088");
+        item1.put("reservationId","10002");
+        item1.put("consolidationOrderId","cons_order_10002");
+        item1.put("orderId", "order_10002");
+        item1.put("clientSku", "sku10002");
+        item1.put("barcode","barcode10002");
+        item1.put("consolidationOrderTime", now);
+        item1.put("description", "description10002");
+        item1.put("orderTime", now);
+        item1.put("cartId",23);
+        item1.put("clientMsrp",70.00);
+        item1.put("clientNetPrice",71.00);
+        item1.put("clientRetailPrice",72.00);
+        item1.put("retailPrice", 170.00);
+        itemList.add(item1);
+
         request.setItemList(itemList);
 
         //SDK取得Product 数据
@@ -94,10 +112,31 @@ public class VmsOrderGetRequestTest {
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
         String str="2015-01-01 10:00:00";
         Date date = sdf.parse(str);
-        request.setShipmentTimeFrom(date.getTime());
+        request.setTimeFrom(date.getTime());
         str="2016-12-01 10:00:00";
         date = sdf.parse(str);
-        request.setShipmentTimeTo(date.getTime());
+        request.setTimeTo(date.getTime());
+        request.setType("1");
+
+        //SDK取得Product 数据
+        voApiDefaultClient.setNeedCheckRequest(false);
+        VmsOrderInfoGetResponse response = voApiDefaultClient.execute(request);
+
+        System.out.println(response);
+    }
+
+    @Test
+    public void testGetOrderInfoByCancelTime() throws ParseException {
+        VmsOrderInfoGetRequest request = new VmsOrderInfoGetRequest();
+        request.setChannelId("088");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
+        String str="2015-01-01 10:00:00";
+        Date date = sdf.parse(str);
+        request.setTimeFrom(date.getTime());
+        str="2016-12-01 10:00:00";
+        date = sdf.parse(str);
+        request.setTimeTo(date.getTime());
+        request.setType("2");
 
         //SDK取得Product 数据
         voApiDefaultClient.setNeedCheckRequest(false);

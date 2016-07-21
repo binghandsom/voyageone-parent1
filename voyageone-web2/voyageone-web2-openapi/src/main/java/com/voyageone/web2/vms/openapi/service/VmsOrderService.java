@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.sql.Timestamp;
 
 /**
  * product Service
@@ -46,6 +47,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
      */
     @VOTransactional
     public VmsOrderAddResponse addOrderInfo(VmsOrderAddRequest request) {
+        $info("/vms/order/addOrderInfo is start");
         VmsOrderAddResponse response = new VmsOrderAddResponse();
         response.setResult(false);
         checkCommRequest(request);
@@ -70,17 +72,20 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                 model.setClientMsrp(new BigDecimal((Double) item.get("clientMsrp")));
                 model.setClientNetPrice(new BigDecimal((Double) item.get("clientNetPrice")));
                 model.setClientRetailPrice(new BigDecimal((Double) item.get("clientRetailPrice")));
+                model.setClientPromotionPrice(new BigDecimal((Double) item.get("clientNetPrice")));
                 model.setRetailPrice(new BigDecimal((Double) item.get("retailPrice")));
                 model.setStatus(VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN);
                 model.setCreater(getClassName());
                 model.setModifier(getClassName());
                 orderDetailService.insertOrderInfo(model);
+                $info("addOrderInfo: reservationId = " + (String) item.get("reservationId") + ", channelId = " + (String) item.get("channelId"));
             }
         }
 
         // 是否成功
         response.setResult(true);
 
+        $info("/vms/order/addOrderInfo is end");
         return response;
     }
 
@@ -92,6 +97,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
      */
     @VOTransactional
     public VmsOrderCancelResponse cancelOrder(VmsOrderCancelRequest request) {
+        $info("/vms/order/cancelOrder is start");
         VmsOrderCancelResponse response = new VmsOrderCancelResponse();
         List<String> successReservationIdList = new ArrayList<>();
         response.setSuccessReservationIdList(successReservationIdList);
@@ -174,6 +180,13 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                 }
             }
         }
+        if (successReservationIdList.size() > 0) {
+            response.getSuccessReservationIdList().stream().forEach(item -> System.out.println("cancel success: reservationId = " + item));
+        }
+        if (failReservationIdList.size() > 0) {
+            response.getFailReservationIdList().stream().forEach(item -> System.out.println("cancel fail: reservationId = " + item));
+        }
+        $info("/vms/order/cancelOrder is end");
         return response;
     }
 
@@ -184,6 +197,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
      *
      */
     public VmsOrderInfoGetResponse getOrderInfo(VmsOrderInfoGetRequest request) {
+        $info("/vms/order/getOrderInfo is start");
         VmsOrderInfoGetResponse response = new VmsOrderInfoGetResponse();
         List<Map<String, Object>> itemList = new ArrayList<>();
         response.setItemList(itemList);
@@ -196,26 +210,43 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         request.check();
 
         String reservationId = request.getReservationId();
-        Long shipmentTimeFrom = request.getShipmentTimeFrom();
-        Long shipmentTimeTo = request.getShipmentTimeTo();
+        Long timeFrom = request.getTimeFrom();
+        Long timeTo = request.getTimeTo();
+        String type = request.getType();
 
         Map<String, Object> param = new HashMap<>();
         param.put("channelId", channelId);
         // 按照shipmentTime取数据
         if (StringUtils.isEmpty(reservationId)) {
-            if (shipmentTimeFrom != null) {
-                param.put("shipmentTimeFrom", new Date(shipmentTimeFrom));
+            if (VmsConstants.GET_ORDER_INFO_TYPE_VALUE.SHIPPED.equals(type)) {
+                if (timeFrom != null) {
+                    param.put("shipmentTimeFrom", new Date(timeFrom));
+                }
+                if (timeTo != null) {
+                    param.put("shipmentTimeTo", new Date(timeTo));
+                }
+                param.put("status", VmsConstants.STATUS_VALUE.PRODUCT_STATUS.SHIPPED);
+            } else if (VmsConstants.GET_ORDER_INFO_TYPE_VALUE.CANCELED.equals(type)) {
+                if (timeFrom != null) {
+                    param.put("cancelTimeFrom", new Date(timeFrom));
+                }
+                if (timeTo != null) {
+                    param.put("cancelTimeTo", new Date(timeTo));
+                }
+                param.put("status", VmsConstants.STATUS_VALUE.PRODUCT_STATUS.CANCEL);
+            } else {
+                throw new ApiException("99", "param[type] must be 1 or 2.");
             }
-            if (shipmentTimeTo != null) {
-                param.put("shipmentTimeTo", new Date(shipmentTimeTo));
-            }
-
         } else {
             // 按照reservationId取数据
             param.put("reservationId", reservationId);
         }
         // 有条件不为空白才执行
-        if (param.get("reservationId") != null || param.get("shipmentTimeFrom") != null || param.get("shipmentTimeTo") != null) {
+        if (param.get("reservationId") != null
+                || param.get("shipmentTimeFrom") != null
+                || param.get("shipmentTimeTo") != null
+                || param.get("cancelTimeFrom") != null
+                || param.get("cancelTimeTo") != null) {
             List<Map<String, Object>> items = orderDetailService.getOrderInfo(param);
             for (Map item : items) {
                 Map<String, Object> newItem = new HashMap<>();
@@ -225,6 +256,9 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                 if (item.get("shipment_id") != null) {
                     newItem.put("shipmentId", String.valueOf(item.get("shipment_id")));
                 }
+                if (item.get("shipment_time") != null) {
+                    newItem.put("shipmentTime", ((Timestamp) item.get("shipment_time")).getTime());
+                }
                 if (item.get("express_company") != null) {
                     newItem.put("expressCompany", item.get("express_company"));
                 }
@@ -233,7 +267,11 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                 }
                 itemList.add(newItem);
             }
+        } else {
+            throw new ApiException("99", "param is not correct.");
         }
+
+        $info("/vms/order/getOrderInfo is end");
         return response;
     }
 
@@ -245,6 +283,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
      *
      */
     public VmsOrderStatusUpdateResponse updateOrderStatus(VmsOrderStatusUpdateRequest request) {
+        $info("/vms/order/updateOrderStatus is start");
         VmsOrderStatusUpdateResponse response = new VmsOrderStatusUpdateResponse();
         response.setResult(false);
         checkCommRequest(request);
@@ -269,7 +308,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                     VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVE_WITH_ERROR, getClassName());
         } else if (VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVED.equals(status)) {
             // 更新为5：Received的情况
-            count = orderDetailService.updateOrderStatus(channelId, reservationId,
+            count = orderDetailService.updateReservationStatus(channelId, reservationId,
                     VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVED, getClassName(), new Date(receivedTime), receiver);
         } else {
             throw new ApiException("99", "This Status is not allowed to be update.");
@@ -277,7 +316,10 @@ public class VmsOrderService extends OpenApiCmsBaseService {
 
         if (count > 0) {
             response.setResult(true);
+            $info("updateOrderStatus success:reservationId = " + reservationId + ",channelId = " + channelId + ",status = " + status);
         }
+
+        $info("/vms/order/updateOrderStatus is end");
         return response;
     }
 
@@ -289,6 +331,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
      *
      */
     public VmsShipmentStatusUpdateResponse updateShipmentStatus(VmsShipmentStatusUpdateRequest request) {
+        $info("/vms/order/updateShipmentStatus is start");
         VmsShipmentStatusUpdateResponse response = new VmsShipmentStatusUpdateResponse();
         response.setResult(false);
         checkCommRequest(request);
@@ -315,7 +358,10 @@ public class VmsOrderService extends OpenApiCmsBaseService {
 
         if (count > 0) {
             response.setResult(true);
+            $info("updateShipmentStatus success:shipmentId = " + shipmentId + ",channelId = " + channelId + ",status = " + status);
         }
+
+        $info("/vms/order/updateShipmentStatus is end");
         return response;
     }
 

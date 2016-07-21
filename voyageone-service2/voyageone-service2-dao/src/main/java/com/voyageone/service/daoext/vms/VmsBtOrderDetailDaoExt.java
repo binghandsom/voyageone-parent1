@@ -24,7 +24,7 @@ public interface VmsBtOrderDetailDaoExt {
 
     int updateOrderStatus(Map<String, Object> changeStatusParam);
 
-    List<Map<String, Object>> selectListByShipmentTime(Map<String, Object> orderSearchParams);
+    List<Map<String, Object>> selectListByTime(Map<String, Object> orderSearchParams);
 
     int updateSkuShipmentStatus(Map<String, Object> sortedParams);
 }

@@ -112,11 +112,11 @@ public class OrderDetailService extends BaseService {
      * @param consolidationOrderId 订单号
      * @param status               待更新状态
      * @param operateTime 操作时间
-     * @param operater 操作着
+     * @param operator 操作着
      * @return 更新涉及条数
      */
     @VOTransactional
-    public int updateOrderStatus(String channelId, String consolidationOrderId, String status, String modifier, Date operateTime, String operater) {
+    public int updateOrderStatus(String channelId, String consolidationOrderId, String status, String modifier, Date operateTime, String operator) {
 
         Map<String, Object> changeStatusParams = new HashMap<String, Object>() {{
             // 更新条件
@@ -130,12 +130,12 @@ public class OrderDetailService extends BaseService {
                 put("containerizerNull", "1");
                 put("shipmentIdNull", "1");
                 put("cancelTime", operateTime);
-                put("canceler", operater);
+                put("canceler", operator);
             } else if (STATUS_SHIPPED.equals(status)) {
                 put("shipmentTime", operateTime);
             } else if (STATUS_RECEIVED.equals(status)) {
                 put("receivedTime", operateTime);
-                put("receiver", operater);
+                put("receiver", operator);
             }
         }};
 
@@ -152,13 +152,28 @@ public class OrderDetailService extends BaseService {
     /**
      * 更新订单状态
      *
-     * @param channelId     channelId
-     * @param reservationId 物品id
-     * @param status        待更新状态
+     * @param channelId            channelId
+     * @param consolidationOrderId 订单号
+     * @param status               待更新状态
      * @return 更新涉及条数
      */
     @VOTransactional
-    public int updateReservationStatus(String channelId, String reservationId, String status, String modifier) {
+    public int updateReservationStatus(String channelId, String consolidationOrderId, String status, String modifier) {
+        return updateReservationStatus(channelId, consolidationOrderId, status, modifier, new Date(), modifier);
+    }
+
+    /**
+     * 更新订单状态
+     *
+     * @param channelId     channelId
+     * @param reservationId 物品id
+     * @param status        待更新状态
+     * @param operateTime 操作时间
+     * @param operator 操作着
+     * @return 更新涉及条数
+     */
+    @VOTransactional
+    public int updateReservationStatus(String channelId, String reservationId, String status, String modifier, Date operateTime, String operator) {
 
         Map<String, Object> changeStatusParams = new HashMap<String, Object>() {{
             // 更新条件
@@ -167,6 +182,18 @@ public class OrderDetailService extends BaseService {
             // 更新内容
             put("status", status);
             put("modifier", modifier);
+            if (STATUS_CANCEL.equals(status)) {
+                put("containerizingTimeNull", "1");
+                put("containerizerNull", "1");
+                put("shipmentIdNull", "1");
+                put("cancelTime", operateTime);
+                put("canceler", operator);
+            } else if (STATUS_SHIPPED.equals(status)) {
+                put("shipmentTime", operateTime);
+            } else if (STATUS_RECEIVED.equals(status)) {
+                put("receivedTime", operateTime);
+                put("receiver", operator);
+            }
         }};
 
         int count = vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParams);
@@ -208,7 +235,7 @@ public class OrderDetailService extends BaseService {
      * @return 订单列表
      */
     public List<Map<String, Object>> getOrderInfo(Map<String, Object> searchParam) {
-        return vmsBtOrderDetailDaoExt.selectListByShipmentTime(searchParam);
+        return vmsBtOrderDetailDaoExt.selectListByTime(searchParam);
     }
 
     /**

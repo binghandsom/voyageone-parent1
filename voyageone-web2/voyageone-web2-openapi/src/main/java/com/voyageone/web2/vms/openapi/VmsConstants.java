@@ -53,6 +53,18 @@ public class VmsConstants {
 
     }
 
+    /**
+     * 取得Order信息的类型（vms系统用）
+     */
+    public interface  GET_ORDER_INFO_TYPE_VALUE {
+
+        // 取得状态为shipped的信息
+        String SHIPPED = "1";
+
+        // 取得状态为cancel的信息
+        String CANCELED = "2";
+    }
+
     public interface STATUS_VALUE {
 
         // 物品状态（vms系统用）

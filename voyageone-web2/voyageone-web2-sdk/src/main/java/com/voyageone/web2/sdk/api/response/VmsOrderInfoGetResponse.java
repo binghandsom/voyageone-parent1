@@ -20,8 +20,9 @@ public class VmsOrderInfoGetResponse extends VoApiResponse {
 	 * Map包含以下内容
 	 * "channelId", String型
 	 * "reservationId", String型
-	 * "status", String型(1:Open；2：Package；3：Shipped；5：Recevied；6：Receive with Error；7：Cancel )
+	 * "status", String型(1:Open；2：Package；3：Shipped；5：Received；6：Receive with Error；7：Cancel )
 	 * "shipmentId", String型(可能为null)
+	 * "shipmentTime", Long型(可能为null)
 	 * "expressCompany", String型(1:UPS；2:FedEx；3:US Postal Service)(可能为null)
 	 * "trackingNo, String型(可能为null)
 	 */

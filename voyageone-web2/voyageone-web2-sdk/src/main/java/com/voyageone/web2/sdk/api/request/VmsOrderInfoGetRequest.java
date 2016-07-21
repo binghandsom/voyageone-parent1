@@ -29,19 +29,24 @@ public class VmsOrderInfoGetRequest extends VoApiRequest<VmsOrderInfoGetResponse
 	private String channelId;
 
 	/**
-	 * reservationId（reservationId和shipmentTime 2选1 必须）
+	 * reservationId（reservationId和time 2选1 必须）
 	 */
 	private String reservationId;
 
 	/**
-	 * shipmentTimeFrom（reservationId和shipmentTime 2选1 必须）
+	 * timeFrom（reservationId和time 2选1 必须）
 	 */
-	private Long shipmentTimeFrom;
+	private Long timeFrom;
 
 	/**
-	 * shipmentTimeTo（reservationId和shipmentTime 2选1 必须）
+	 * timeTo（reservationId和time 2选1 必须）
 	 */
-	private Long shipmentTimeTo;
+	private Long timeTo;
+
+	/**
+	 * type（1:按发货时间区间取得状态是shipped的物品列表，2：按取消时间区间取得状态是cancel的物品列表；通过time取数据的情况下，这个字段必须）
+	 */
+	private String type;
 
 	@Override
 	public void requestCheck() throws ApiRuleException {
@@ -64,19 +69,27 @@ public class VmsOrderInfoGetRequest extends VoApiRequest<VmsOrderInfoGetResponse
 		this.reservationId = reservationId;
 	}
 
-	public Long getShipmentTimeFrom() {
-		return shipmentTimeFrom;
+	public Long getTimeFrom() {
+		return timeFrom;
 	}
 
-	public void setShipmentTimeFrom(Long shipmentTimeFrom) {
-		this.shipmentTimeFrom = shipmentTimeFrom;
+	public void setTimeFrom(Long timeFrom) {
+		this.timeFrom = timeFrom;
 	}
 
-	public Long getShipmentTimeTo() {
-		return shipmentTimeTo;
+	public Long getTimeTo() {
+		return timeTo;
 	}
 
-	public void setShipmentTimeTo(Long shipmentTimeTo) {
-		this.shipmentTimeTo = shipmentTimeTo;
+	public void setTimeTo(Long timeTo) {
+		this.timeTo = timeTo;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }
