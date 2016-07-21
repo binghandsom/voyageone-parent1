@@ -116,6 +116,13 @@ define([
                 "templateUrl": "views/pop/channel/newCategory.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/channel/newCategory.ctl",
                 "controller": 'newCategoryCtl as ctrl'
+            },
+            "platformBrandSetting": {
+                "templateUrl": "views/pop/channel/platform_brand_setting.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/channel/platform_brand_setting.ctl",
+                "controller": 'PlatformBrandSettingController as ctrl',
+                "backdrop": 'static',
+                "size": 'lg'
             }
         },
         "custom": {
@@ -1333,6 +1340,10 @@ define([
 
         $scope.openNewCategory = function (context) {
             return openModel(popActions.channel.newCategory, context);
+        };
+
+        $scope.openPlatformMappingSetting = function (context) {
+            return openModel(popActions.channel.platformBrandSetting, context);
         };
 
         //打开高级查询页的通用设置，上下架
