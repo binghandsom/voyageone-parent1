@@ -133,7 +133,8 @@ public class JdWareService extends JdBase {
         // 品牌id
         if (jdProduct.getBrandId() != null)           request.setBrandId(jdProduct.getBrandId());
 
-        long wareId;
+        // 如果新增商品失败，返回0 (如果不设初期值后面有可能会报没有初期化的错误(wareId may not have been initialized))
+        long wareId = 0L;
 
         try {
             // 调用京东新增商品API(360buy.ware.add)
@@ -658,7 +659,6 @@ public class JdWareService extends JdBase {
      * @return boolean  商品上架结果
      */
     public boolean doWareUpdateListing(ShopBean shop, long wareId, boolean updateFlg) throws BusinessException {
-        //List<Image> imageList = new ArrayList<>();
         String errMsg = updateFlg ? "更新商品成功之后上架操作失败" : "新增商品成功之后上架操作失败";
 
         WareUpdateListingRequest request = new WareUpdateListingRequest();
@@ -702,7 +702,6 @@ public class JdWareService extends JdBase {
      * @return boolean  商品下架结果
      */
     public boolean doWareUpdateDelisting(ShopBean shop, long wareId, boolean updateFlg) throws BusinessException {
-        //List<Image> imageList = new ArrayList<>();
         String errMsg = updateFlg ? "更新商品成功之后下架操作失败" : "新增商品成功之后下架操作失败";
 
         WareUpdateDelistingRequest request = new WareUpdateDelistingRequest();
