@@ -40,6 +40,7 @@ class BcbgAnalysisContext {
         sku.setSize(bcbgBean.getSIZE1());
         sku.setBarcode(bcbgBean.getEAN11());
         sku.setClientSku(bcbgBean.getMATNR());
+        sku.setImage(bcbgBean.getStyleBean().getProductImgURLs());
         setPrices(bcbgBean, sku);
 
         CmsBtFeedInfoModel code = getProduct(bcbgBean);
