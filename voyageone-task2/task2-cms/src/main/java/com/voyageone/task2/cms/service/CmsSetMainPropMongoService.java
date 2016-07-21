@@ -298,6 +298,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     feed.setUpdMessage(errMsg);
                     feed.setModifier(getTaskName());
                     feedInfoService.updateFeedInfo(feed);
+
+                    // 价格公式错误时，后面所有的feed都不能导入了
+                    if (errMsg.contains("价格计算公式错误")) {
+                        // 跳出循环，后面的feed导入不做了
+                        break;
+                    }
                 }
                 // update by desmond 2016/07/05 end
 
@@ -2386,6 +2392,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          */
         private Double calculatePriceByFormula(CmsBtFeedInfoModel_Sku feedSkuInfo, String formula) {
 
+            String originalFomula = formula;
             Double priceClientMsrp = feedSkuInfo.getPriceClientMsrp();
             Double priceClientRetail = feedSkuInfo.getPriceClientRetail();
             Double priceNet = feedSkuInfo.getPriceNet();
@@ -2396,7 +2403,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // update by desmond 2016/07/19 start
 //                return 0.00;
                 // 如果传入的价格计算公式为空，则中止feed导入，抛出异常
-                String errMsg = "feed->master导入:calculatePriceByFormula()方法中传入的价格计算公式为空( formula:null )";
+                String errMsg = "feed->master导入:异常终止:calculatePriceByFormula()方法中传入的价格计算公式错误( formula:null )";
                 $error(errMsg);
                 throw new BusinessException(errMsg);
                 // update by desmond 2016/07/19 end
@@ -2426,8 +2433,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 return valueBigDecimal.doubleValue();
 
             } catch (Exception ex) {
+                // 价格计算公式出错时抛出异常，中止feed导入
                 $error(ex);
-                throw new RuntimeException("Formula Calculate Fail!", ex);
+//                throw new RuntimeException("Formula Calculate Fail!", ex);
+                throw new BusinessException(String.format("feed->master导入:异常终止:在cms_mt_channel_config表配置的价格计算公式错误 ( formula: [%s] )", originalFomula));
             }
         }
 
@@ -3190,7 +3199,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                 } catch (Exception e) {
                     // update desmond 2016/07/06 start
-                    String errMsg = String.format("feed->master导入:无法插入或更新wms_bt_item_details表( channel: [%s], sku: [%s], itemcode: [%s], barcode: [%s], size: [%s]  )",
+                    String errMsg = String.format("feed->master导入:异常终止:无法插入或更新wms_bt_item_details表( channel: [%s], sku: [%s], itemcode: [%s], barcode: [%s], size: [%s]  )",
                             channelId,
                             itemDetailsBean.getSku(),
                             itemDetailsBean.getItemcode(),
@@ -3329,12 +3338,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
         if (!StringUtils.isEmpty(feedCategory)) {
             // 根据feed类目未取到相应的价格计算公式时
-            errMsg = String.format("feed->master导入:在cms_mt_channel_config表中没有找到该feed类目对应的" +
+            errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表中没有找到该feed类目对应的" +
                             "价格计算公式( channel: [%s], feedcategory: [%s], formulakey: [%s], feedModel: [%s] )",
                     channelId, feedCategory, formulakey, feedModel);
         } else {
             // 不根据feed类目未取到相应的价格计算公式时
-            errMsg = String.format("feed->master导入:在cms_mt_channel_config表中没有找到该channel对应的" +
+            errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表中没有找到该channel对应的" +
                             "价格计算公式( channel: [%s], formulakey: [%s], feedModel: [%s] )",
                     channelId, formulakey, feedModel);
         }
@@ -3366,7 +3375,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         // cms_mt_channel_config表中当有2条及以上addName1不为空，而name为空的数据的时候，用下面的逻辑抛出异常
         int brandEnCount = comMtValueChannelDao.selectCount(paramsEnMap);
         if (brandEnCount > 1) {
-            String errMsg = String.format("feed->master导入:在cms_mt_channel_config表中有%s条重复的英文品牌mapping数据 " +
+            String errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表中有%s条重复的英文品牌mapping数据 " +
                     "( typeId: [%s] channel: [%s], addName1: [%s], langId: [%s] feedModel: [%s] )",
                     brandEnCount, intTypeId_41, channelId, feedBrandLowerCase, strLangIdEn, feed.getModel());
             $error(errMsg);
@@ -3406,7 +3415,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         // 因为品牌mappping以英文品牌为主，中文品牌数据即使有错也没关系
         int brandCnCount = comMtValueChannelDao.selectCount(paramsCnMap);
         if (brandCnCount > 1) {
-            String errMsg = String.format("feed->master导入:在cms_mt_channel_config表中有%s条重复的中文品牌mapping数据 " +
+            String errMsg = String.format("feed->master导入:警告:在cms_mt_channel_config表中有%s条重复的中文品牌mapping数据 " +
                     "( typeId: [%s] channel: [%s], addName1: [%s], langId: [%s] feedModel: [%s] )",
                     brandCnCount, intTypeId_41, channelId, feedBrandLowerCase, strLangIdCn, feed.getModel());
             $warn(errMsg);

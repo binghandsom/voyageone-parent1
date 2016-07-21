@@ -14,7 +14,7 @@ define([
                 productInfo: "=productInfo",
                 cartInfo:"=cartInfo"
             },
-            link: function (scope) {
+            link: function (scope,element) {
                 scope.vm = {
                     mastData:null,
                     productComm:null,
@@ -118,7 +118,7 @@ define([
                         if(context.length == 0)
                             return;
 
-                        scope.vm.productComm.modified = context.modified;
+                        scope.vm.productComm.modified = context[context.length -1].modified;
 
                         var imgType = null;
                         angular.forEach(context,function(item){
@@ -168,10 +168,10 @@ define([
                  * @param index div的index
                  * @param speed 导航速度 ms为单位
                  */
-                function pageAnchor(index,speed){
+                function pageAnchor(area,speed){
                     var offsetTop = 0;
-                    if(index != 1)
-                        offsetTop = ($("#master"+index).offset().top);
+                    if(area != 'master')
+                        offsetTop = element.find("#"+area).offset().top;
                     $("body").animate({ scrollTop:  offsetTop-100}, speed);
                 }
 

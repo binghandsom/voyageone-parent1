@@ -153,12 +153,12 @@ public class TbProductService extends TbBase {
         return response.getBrandCatMetaData().getIsDarwin();
     }
 
-    public Boolean delTmallItem(ShopBean config, String numId) throws ApiException {
+    public Boolean delItem(ShopBean config, String numId) throws ApiException {
         ItemDeleteRequest req = new ItemDeleteRequest();
         req.setNumIid(Long.parseLong(numId));
         ItemDeleteResponse response = reqTaobaoApi(config,req);
         if (response.getErrorCode() != null) {
-            throw new BusinessException("天猫删除商品失败：" + response.getErrorCode());
+            throw new BusinessException("天猫删除商品失败 京东错误码：" + response.getErrorCode());
         }
         return true;
     }

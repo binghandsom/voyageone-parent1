@@ -11,11 +11,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @author sunpeitao
+ * @version 2.3.0
+ * @since 2.3.0
+ */
 @RestController
 @RequestMapping(method = RequestMethod.POST, value = CmsUrlConstants.PRODUCT.StatusHistory.ROOT)
 public class CmsProductStatusHistoryController extends CmsController {
+
+    private final ProductStatusHistoryService service;
+
     @Autowired
-    ProductStatusHistoryService service;
+    public CmsProductStatusHistoryController(ProductStatusHistoryService service) {
+        this.service = service;
+    }
+
     @RequestMapping(CmsUrlConstants.PRODUCT.StatusHistory.GetPage)
     public AjaxResponse getPage(@RequestBody PageQueryParameters parameters) {
         parameters.put("channelId", getUser().getSelChannelId());

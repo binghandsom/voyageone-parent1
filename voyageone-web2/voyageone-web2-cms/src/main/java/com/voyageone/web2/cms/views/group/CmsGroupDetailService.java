@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.group;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -52,7 +53,7 @@ public class CmsGroupDetailService extends BaseAppService {
         masterData.put("promotionList", promotionService.getPromotionsByChannelId(userInfo.getSelChannelId(), null));
 
         //add by holysky  新增一些页的聚美促销活动预加载
-        masterData.put("jmPromotionList", cmsBtJmPromotionService.getJMActivePromotions(userInfo.getSelChannelId()));
+        masterData.put("jmPromotionList", cmsBtJmPromotionService.getJMActivePromotions(CartEnums.Cart.JM.getValue(), userInfo.getSelChannelId()));
 
         return masterData;
     }

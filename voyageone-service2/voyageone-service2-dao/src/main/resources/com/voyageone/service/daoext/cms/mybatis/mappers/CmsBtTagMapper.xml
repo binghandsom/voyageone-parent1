@@ -237,28 +237,6 @@
         order by tag.id
     </select>
 
-    <!-- Tag信息检索 （根据ChannelId，取得对应子TagList）-->
-    <select id="select_list_by_channel_id" resultMap="TagMap" parameterType="String">
-        select
-            tag.id,
-            tag.tag_name,
-            tag.channel_id,
-            tag.tag_path,
-            tag.tag_path_name,
-            tag.tag_type,
-            tag.tag_status,
-            tag.sort_order,
-            tag.parent_tag_id,
-            tag.created,
-            tag.creater,
-            tag.modified,
-            tag.modifier
-        from voyageone_cms2.cms_bt_tag tag
-        where
-            channel_id = #{channelId,jdbcType=VARCHAR}
-        order by tag.id
-    </select>
-
     <!-- Tag信息检索 （根据ChannelId和tagType，取得对应子TagList）-->
     <select id="select_list_by_channel_id_and_tag_type" resultType="com.voyageone.service.bean.cms.CmsBtTagBean" parameterType="Map">
         select
@@ -288,6 +266,49 @@
         and tag.tag_path_name != ''
         and tag.active = 1
         and tag.tag_status = 0
+        order by tag.id
+    </select>
+
+    <!-- Tag信息检索 （高级检索画面-查询条件用 查询90天内的标签）-->
+    <select id="select_list_by_channel_id_4AdvSearch" resultType="com.voyageone.service.bean.cms.CmsBtTagBean" parameterType="Map">
+        select
+        tag.id,
+        tag.tag_name as tagname,
+        tag.channel_id as channelId,
+        tag.tag_path as tagPath,
+        tag.tag_path_name as tagPathName,
+        tag.tag_path_name as tagChildrenName,
+        tag.tag_type as tagType,
+        tag.tag_status as tagStatus,
+        tag.sort_order as sortOrder,
+        tag.parent_tag_id as parentTagid,
+        tag.active,
+        tag.created,
+        tag.creater,
+        tag.modified,
+        tag.modifier
+        from voyageone_cms2.cms_bt_promotion promo
+        <if test="cartId == 27">
+            inner join voyageone_cms2.cms_bt_jm_promotion jmpromo on jmpromo.id = promo.promotion_id
+        </if>
+        inner join voyageone_cms2.cms_bt_tag tag on tag.id = promo.ref_tag_id
+        where
+        (promo.channel_id = #{channelId}
+        <if test="orgChannelId != null and orgChannelId != ''">
+            or promo.channel_id = #{orgChannelId}
+        </if>
+        )
+        <if test="cartId != null">
+            and promo.cart_id = #{cartId}
+        </if>
+        and promo.activity_end >= concat(date_format(date_add(CURDATE(), interval -90 day),  '%Y-%m-%d'),' 00:00:00')
+        and tag.tag_path_name != ''
+        and (tag.channel_id = #{channelId}
+        <if test="orgChannelId != null and orgChannelId != ''">
+            or tag.channel_id = #{orgChannelId}
+        </if>
+        )
+        and tag_type = '2'
         order by tag.id
     </select>
 
@@ -321,7 +342,7 @@
             and promo.cart_id = #{cartId}
         </if>
         and promo.active=1
-        and promo.promotion_status = 0
+        and promo.promotion_status = 1
         and tag.active = 1
         and tag.tag_status = 0
         and tag.tag_path_name != ''
