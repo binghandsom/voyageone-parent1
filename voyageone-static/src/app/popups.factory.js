@@ -11,8 +11,8 @@ define([
     var popups = {
         orderInfo:{
             newShipment: {
-                templateUrl: "views/pop/orderInfo/newShipment/index.tpl.html",
-                controllerUrl: "views/pop/orderInfo/newShipment/index.ctl",
+                templateUrl: "views/pop/orderInfo/shipment/index.tpl.html",
+                controllerUrl: "views/pop/orderInfo/shipment/index.ctl",
                 controller: 'NewShipmentController as ctrl',
                 backdrop: 'static',
                 size: 'md'

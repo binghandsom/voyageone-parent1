@@ -9,6 +9,7 @@ import com.voyageone.service.daoext.vms.VmsBtOrderDetailDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.service.model.vms.VmsBtOrderLogModel;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -259,9 +260,16 @@ public class OrderDetailService extends BaseService {
         return count;
     }
 
-    public List<VmsBtOrderDetailModel> getScannedSku(String channeldId, String shipmentId) {
-        // TODO: 16-7-19 根据shipmentId查找对应的内容 vantis
-        return null;
+    public List<VmsBtOrderDetailModel> getScannedSku(String channelId, String shipmentId) {
+        Map<String, Object> params = new HashMap<String, Object>() {{
+            put("channelId", channelId);
+            put("shipmentId", shipmentId);
+        }};
+
+        Map<String, Object> modifiedParams = MySqlPageHelper.build(params)
+                .addSort("containerizing_time", Order.Direction.DESC)
+                .toMap();
+        return vmsBtOrderDetailDao.selectList(modifiedParams);
     }
 
     public List<VmsBtOrderDetailModel> getScannedSku(String channelId, int shipmentId, String
@@ -291,5 +299,33 @@ public class OrderDetailService extends BaseService {
         }};
 
         return vmsBtOrderDetailDaoExt.updateSkuShipmentStatus(params);
+    }
+
+    public int removeSkuShipmentId(String channelId, Integer shipmentId) {
+        Map<String, Object> params = new HashMap<String, Object>() {{
+            put("channelId", channelId);
+            put("shipmentId", shipmentId);
+        }};
+        return vmsBtOrderDetailDaoExt.cancelOrderShipmentStatus(params);
+    }
+
+    public int updateOrderStatusWithShipmentId(String channelId, Integer shipmentId, String status, Date shippedDate) {
+
+        // 更新status
+        Map<String, Object> params = new HashMap<String, Object>() {{
+            put("channelId", channelId);
+            put("wShipmentId", shipmentId); // 更新的where条件
+            put("shipmentTime", shippedDate);
+            put("status", status);
+        }};
+        int updated = vmsBtOrderDetailDaoExt.updateOrderStatus(params);
+
+        // 记录订单变更状态
+        if (updated > 0) {
+            params.put("shipmentId", shipmentId); // 搜索条件增加之前更新的shipmentId
+            this.logOrderDetails(params);
+        }
+
+        return updated;
     }
 }

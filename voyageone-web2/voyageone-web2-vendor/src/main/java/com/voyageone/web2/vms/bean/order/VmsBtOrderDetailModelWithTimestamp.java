@@ -22,8 +22,9 @@ public class VmsBtOrderDetailModelWithTimestamp extends VmsBtOrderDetailModel {
         return super.getCreated().getTime();
     }
 
-    public void setCreatedTimestamp(long createdTimestamp) {
-        super.setCreated(new Date(createdTimestamp));
+    public void setCreatedTimestamp(Long createdTimestamp) {
+        if (null != createdTimestamp)
+            super.setCreated(new Date(createdTimestamp));
     }
 
     public Long getModifiedTimestamp() {
@@ -31,8 +32,9 @@ public class VmsBtOrderDetailModelWithTimestamp extends VmsBtOrderDetailModel {
         return super.getModified().getTime();
     }
 
-    public void setModifiedTimestamp(long modifiedTimestamp) {
-        super.setModified(new Date(modifiedTimestamp));
+    public void setModifiedTimestamp(Long modifiedTimestamp) {
+        if (null != modifiedTimestamp)
+            super.setModified(new Date(modifiedTimestamp));
     }
 
     public Long getConsolidationOrderTimestamp() {
@@ -40,8 +42,9 @@ public class VmsBtOrderDetailModelWithTimestamp extends VmsBtOrderDetailModel {
         return super.getConsolidationOrderTime().getTime();
     }
 
-    public void setConsolidationOrderTimestamp(long consolidationOrderTimestamp) {
-        super.setConsolidationOrderTime(new Date(consolidationOrderTimestamp));
+    public void setConsolidationOrderTimestamp(Long consolidationOrderTimestamp) {
+        if (null != consolidationOrderTimestamp)
+            super.setConsolidationOrderTime(new Date(consolidationOrderTimestamp));
     }
 
     public Long getOrderTimestamp() {
@@ -49,8 +52,9 @@ public class VmsBtOrderDetailModelWithTimestamp extends VmsBtOrderDetailModel {
         return super.getOrderTime().getTime();
     }
 
-    public void setOrderTimestamp(long setOrderTimestamp) {
-        super.setOrderTime(new Date(setOrderTimestamp));
+    public void setOrderTimestamp(Long orderTimeStamp) {
+        if (null != orderTimeStamp)
+            super.setOrderTime(new Date(orderTimeStamp));
     }
 
     public Long getShipmentTimestamp() {
@@ -58,8 +62,9 @@ public class VmsBtOrderDetailModelWithTimestamp extends VmsBtOrderDetailModel {
         return super.getShipmentTime().getTime();
     }
 
-    public void setShipmentTimestamp(long shipmentTimestamp) {
-        super.setShipmentTime(new Date(shipmentTimestamp));
+    public void setShipmentTimestamp(Long shipmentTimestamp) {
+        if (null != shipmentTimestamp)
+            super.setShipmentTime(new Date(shipmentTimestamp));
     }
 
     public Long getContainerizingTimestamp() {
@@ -67,8 +72,9 @@ public class VmsBtOrderDetailModelWithTimestamp extends VmsBtOrderDetailModel {
         return super.getContainerizingTime().getTime();
     }
 
-    public void setContainerizingTimestamp(long containerizingTimestamp) {
-        super.setContainerizingTime(new Date(containerizingTimestamp));
+    public void setContainerizingTimestamp(Long containerizingTimestamp) {
+        if (null != containerizingTimestamp)
+            super.setContainerizingTime(new Date(containerizingTimestamp));
     }
 
     public Long getReceivedTimestamp() {
@@ -76,7 +82,8 @@ public class VmsBtOrderDetailModelWithTimestamp extends VmsBtOrderDetailModel {
         return super.getReceivedTime().getTime();
     }
 
-    public void setReceivedTimestamp(long receivedTimestamp) {
-        super.setReceivedTime(new Date(receivedTimestamp));
+    public void setReceivedTimestamp(Long receivedTimestamp) {
+        if (null != receivedTimestamp)
+            super.setReceivedTime(new Date(receivedTimestamp));
     }
 }

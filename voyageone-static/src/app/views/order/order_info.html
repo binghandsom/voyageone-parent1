@@ -161,7 +161,8 @@
                         <td>{{item.sku}}</td>
                         <td>{{item.desc}}</td>
                         <td>{{ctrl.getStatusName(item.status)}}</td>
-                        <td>${{item.price}}</td>
+                        <td>${{item.voPrice}}</td>
+                        <td ng-show="ctrl.channelConfigs.salePriceShow == '1'">¥{{item.retailPrice}}</td>
                         <td>
                             <button ng-show="item.status == 1" class="btn btn-xs btn-warning" ng-click="ctrl.cancelSku(item)" translate="BTN_CANCEL"></button>
                         </td>

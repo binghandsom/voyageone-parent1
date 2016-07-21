@@ -1,5 +1,6 @@
 package com.voyageone.web2.vms.bean.shipment;
 
+import com.voyageone.common.util.BeanUtil;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 
 import java.util.Date;
@@ -11,27 +12,13 @@ import java.util.Date;
 public class ShipmentBean extends VmsBtShipmentModel {
 
     public ShipmentBean() {
-        
+
     }
 
-    public ShipmentBean(VmsBtShipmentModel vmsBtShipmentModel) {
-        if (null != vmsBtShipmentModel) {
-            this.setId(vmsBtShipmentModel.getId());
-            this.setShipmentName(vmsBtShipmentModel.getShipmentName());
-            this.setShippedDate(vmsBtShipmentModel.getShippedDate());
-            this.setExpressCompany(vmsBtShipmentModel.getExpressCompany());
-            this.setTrackingNo(vmsBtShipmentModel.getTrackingNo());
-            this.setComment(vmsBtShipmentModel.getComment());
-            this.setStatus(vmsBtShipmentModel.getStatus());
-            this.setArrivedTime(vmsBtShipmentModel.getArrivedTime());
-            this.setArriver(vmsBtShipmentModel.getArriver());
-            this.setReceivedTime(vmsBtShipmentModel.getReceivedTime());
-            this.setReceiver(vmsBtShipmentModel.getReceiver());
-            this.setCreated(vmsBtShipmentModel.getCreated());
-            this.setCreater(vmsBtShipmentModel.getCreater());
-            this.setModified(vmsBtShipmentModel.getModified());
-            this.setModifier(vmsBtShipmentModel.getModifier());
-        }
+    public static ShipmentBean getInstance(VmsBtShipmentModel vmsBtShipmentModel) {
+        ShipmentBean shipmentBean = new ShipmentBean();
+        BeanUtil.copy(vmsBtShipmentModel, shipmentBean);
+        return shipmentBean;
     }
 
     public Long getShippedDateTimestamp() {
@@ -39,8 +26,9 @@ public class ShipmentBean extends VmsBtShipmentModel {
         return super.getShippedDate().getTime();
     }
 
-    public void setShippedDateTimestamp(long shippedDateTimestamp) {
-        super.setShippedDate(new Date(shippedDateTimestamp));
+    public void setShippedDateTimestamp(Long shippedDateTimestamp) {
+        if (null != shippedDateTimestamp)
+            super.setShippedDate(new Date(shippedDateTimestamp));
     }
 
     public Long getArrivedTimestamp() {
@@ -48,8 +36,9 @@ public class ShipmentBean extends VmsBtShipmentModel {
         return super.getArrivedTime().getTime();
     }
 
-    public void setArrivedTimestamp(long arrivedTimestamp) {
-        super.setArrivedTime(new Date(arrivedTimestamp));
+    public void setArrivedTimestamp(Long arrivedTimestamp) {
+        if (null != arrivedTimestamp)
+            super.setArrivedTime(new Date(arrivedTimestamp));
     }
 
     public Long getReceivedTimestamp() {
@@ -57,7 +46,8 @@ public class ShipmentBean extends VmsBtShipmentModel {
         return super.getReceivedTime().getTime();
     }
 
-    public void setReceivedTimestamp(long receivedTimestamp) {
-        super.setArrivedTime(new Date(receivedTimestamp));
+    public void setReceivedTimestamp(Long receivedTimestamp) {
+        if (null != receivedTimestamp)
+            super.setArrivedTime(new Date(receivedTimestamp));
     }
 }

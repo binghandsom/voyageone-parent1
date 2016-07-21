@@ -23,9 +23,14 @@ define([
             self.barcode = null;
             self.shipmentScanPopupService.scanBarcode(req).then(function (data) {
                 if (data.success == 1) self.notify.success('TXT_SUCCESS');
-                else if (data.success == 0) self.notify.warning('TXT_ITEM_NOT_FOUND');
+                else if (data.success == 0) {
+                    var audio = new Audio('http://developer.mozilla.org/@api/deki/files/2926/=AudioTest_(1).ogg');
+                    audio.play();
+                    self.notify.warning('TXT_ITEM_NOT_FOUND');
+                }
                 self.scannedSkuList = data.scannedSkuList;
                 if (data.finished) {
+                    self.notify.success('TXT_COMPLETE');
                     self.$uibModalInstance.close(data.finished);
                 }
             })

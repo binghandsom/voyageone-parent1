@@ -67,10 +67,10 @@
             <if test="containerizer != null">
                 and `containerizer` = #{containerizer,jdbcType=VARCHAR}
             </if>
-            <if test="cancelTime != null" >
+            <if test="cancelTime != null">
                 and `cancel_time` = #{cancelTime,jdbcType=TIMESTAMP}
             </if>
-            <if test="canceler != null" >
+            <if test="canceler != null">
                 and `canceler` = #{canceler,jdbcType=VARCHAR}
             </if>
             <if test="receivedTime != null">
@@ -91,7 +91,7 @@
             <if test="clientPromotionPrice != null">
                 and `client_promotion_price` = #{clientPromotionPrice,jdbcType=DECIMAL}
             </if>
-            <if test="retailPrice != null" >
+            <if test="retailPrice != null">
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
             <if test="created != null">
@@ -165,10 +165,10 @@
             <if test="containerizer != null">
                 and `containerizer` = #{containerizer,jdbcType=VARCHAR}
             </if>
-            <if test="cancelTime != null" >
+            <if test="cancelTime != null">
                 and `cancel_time` = #{cancelTime,jdbcType=TIMESTAMP}
             </if>
-            <if test="canceler != null" >
+            <if test="canceler != null">
                 and `canceler` = #{canceler,jdbcType=VARCHAR}
             </if>
             <if test="receivedTime != null">
@@ -189,7 +189,7 @@
             <if test="clientPromotionPrice != null">
                 and `client_promotion_price` = #{clientPromotionPrice,jdbcType=DECIMAL}
             </if>
-            <if test="retailPrice != null" >
+            <if test="retailPrice != null">
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
             <if test="created != null">
@@ -262,10 +262,10 @@
             <if test="containerizer != null">
                 and `containerizer` = #{containerizer,jdbcType=VARCHAR}
             </if>
-            <if test="cancelTime != null" >
+            <if test="cancelTime != null">
                 and `cancel_time` = #{cancelTime,jdbcType=TIMESTAMP}
             </if>
-            <if test="canceler != null" >
+            <if test="canceler != null">
                 and `canceler` = #{canceler,jdbcType=VARCHAR}
             </if>
             <if test="receivedTime != null">
@@ -286,7 +286,7 @@
             <if test="clientPromotionPrice != null">
                 and `client_promotion_price` = #{clientPromotionPrice,jdbcType=DECIMAL}
             </if>
-            <if test="retailPrice != null" >
+            <if test="retailPrice != null">
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
             <if test="created != null">
@@ -359,10 +359,10 @@
             <if test="containerizer != null">
                 and `containerizer` = #{containerizer,jdbcType=VARCHAR}
             </if>
-            <if test="cancelTime != null" >
+            <if test="cancelTime != null">
                 and `cancel_time` = #{cancelTime,jdbcType=TIMESTAMP}
             </if>
-            <if test="canceler != null" >
+            <if test="canceler != null">
                 and `canceler` = #{canceler,jdbcType=VARCHAR}
             </if>
             <if test="receivedTime != null">
@@ -383,7 +383,7 @@
             <if test="clientPromotionPrice != null">
                 and `client_promotion_price` = #{clientPromotionPrice,jdbcType=DECIMAL}
             </if>
-            <if test="retailPrice != null" >
+            <if test="retailPrice != null">
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
             <if test="created != null">
@@ -450,19 +450,19 @@
         <if test="containerizerNull != null">
             , `containerizer` = null
         </if>
-        <if test="shipmentTime != null" >
+        <if test="shipmentTime != null">
             , `shipment_time` = #{shipmentTime,jdbcType=TIMESTAMP}
         </if>
-        <if test="cancelTime != null" >
+        <if test="cancelTime != null">
             , `cancel_time` = #{cancelTime,jdbcType=TIMESTAMP}
         </if>
-        <if test="canceler != null" >
+        <if test="canceler != null">
             , `canceler` = #{canceler,jdbcType=VARCHAR}
         </if>
-        <if test="receivedTime != null" >
+        <if test="receivedTime != null">
             ,`received_time` = #{receivedTime,jdbcType=TIMESTAMP}
         </if>
-        <if test="receiver != null" >
+        <if test="receiver != null">
             ,`receiver` = #{receiver,jdbcType=VARCHAR}
         </if>
         <if test="modifier != null">
@@ -472,11 +472,18 @@
         where
         <choose>
             <when test="consolidationOrderId != null">
-                `channel_id` = #{channelId, jdbcType=VARCHAR} and `consolidation_order_id` = #{consolidationOrderId, jdbcType=VARCHAR}
+                `channel_id` = #{channelId, jdbcType=VARCHAR} and `consolidation_order_id` =
+                #{consolidationOrderId, jdbcType=VARCHAR}
             </when>
             <when test="reservationId != null">
                 `channel_id` = #{channelId, jdbcType=VARCHAR} and `reservation_id` = #{reservationId}
             </when>
+            <when test="wShipmentId != null">
+                `channel_id` = #{channelId, jdbcType=VARCHAR} and `shipment_id` = #{wShipmentId, jdbcType = INTEGER}
+            </when>
+            <otherwise>
+                1 = 2
+            </otherwise>
         </choose>
     </update>
 
@@ -492,5 +499,15 @@
               AND `shipment_id` IS NULL
         ORDER BY `consolidation_order_time` ASC
         LIMIT 1
+    </update>
+
+    <update id="cancelOrderShipmentStatus" parameterType="HashMap">
+        UPDATE vms_bt_order_detail
+        SET `shipment_id`         = NULL,
+            `containerizer`       = NULL,
+            `containerizing_time` = NULL
+        WHERE `channel_id` = #{channelId, jdbcType=VARCHAR}
+              AND `shipment_id` = #{shipmentId, jdbcType=VARCHAR}
+              AND `status` = 1
     </update>
 </mapper>

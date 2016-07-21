@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.voyageone.web2.vms.VmsConstants.*;
+
 /**
  * shipment service
  * Created by vantis on 16-7-14.
@@ -75,11 +77,11 @@ public class VmsShipmentService {
     public int submit(UserSessionBean user, VmsBtShipmentModel vmsBtShipmentModel) {
 
         vmsBtShipmentModel.setChannelId(user.getSelChannelId());
-        boolean correct = null != vmsBtShipmentModel.getChannelId();
-        correct = correct && (null != vmsBtShipmentModel.getStatus());
+        boolean correct = null != vmsBtShipmentModel.getStatus()
+                && STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(vmsBtShipmentModel.getStatus());
         correct = correct && (null != vmsBtShipmentModel.getShipmentName());
 
-        if (correct && (VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.SHIPPED.equals(vmsBtShipmentModel.getStatus()))) {
+        if (correct && (!STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(vmsBtShipmentModel.getStatus()))) {
             correct = null != vmsBtShipmentModel.getExpressCompany();
             correct = correct && null != vmsBtShipmentModel.getTrackingNo();
         }
@@ -105,7 +107,7 @@ public class VmsShipmentService {
         }};
         VmsBtShipmentModel vmsBtShipmentModel = shipmentService.select(shipmentSearchParams);
         if (null == vmsBtShipmentModel) return null;
-        return new ShipmentBean(vmsBtShipmentModel);
+        return ShipmentBean.getInstance(vmsBtShipmentModel);
     }
 
     /**

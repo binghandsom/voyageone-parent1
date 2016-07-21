@@ -18,6 +18,7 @@ import com.voyageone.web2.vms.bean.SortParam;
 import com.voyageone.web2.vms.bean.VmsChannelSettings;
 import com.voyageone.web2.vms.bean.order.*;
 import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
+import com.voyageone.web2.vms.bean.shipment.ShipmentEndCountBean;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -558,16 +559,54 @@ public class VmsOrderInfoService extends BaseService {
     /**
      * 确认订单信息
      *
-     * @param user
-     * @param shipmentBean
-     * @return
+     * @param user         当前用户
+     * @param shipmentBean 当前shipment
+     * @return 未完整扫描的订单列表
      */
-    public List<VmsBtOrderDetailModelWithTimestamp> confirmShipment(UserSessionBean user, ShipmentBean shipmentBean) {
+    public List<String> confirmShipment(UserSessionBean user, ShipmentBean shipmentBean) {
 
-        // TODO: 16-7-20 未完成 vantis
         // 获取当前shipment中的订单号
+        Map<String, Object> params = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannelId());
+            put("shipmentId", shipmentBean.getId());
+        }};
+        return orderDetailService.selectPlatformOrderIdList(params).parallelStream()
+                // 获取订单号下的所有sku信息
+                .flatMap(consolidationOrderId -> {
+                    Map<String, Object> orderParams = new HashMap<String, Object>() {{
+                        put("channelId", user.getSelChannelId());
+                        put("consolidationOrderId", consolidationOrderId);
+                    }};
+                    return orderDetailService.select(orderParams).stream();
+                })
+                // 过滤出状态不为package的sku信息
+                .filter(vmsBtOrderDetailModel -> !STATUS_VALUE.PRODUCT_STATUS.PACKAGE.equals(vmsBtOrderDetailModel
+                        .getStatus()))
+                // 获取状态不为package的sku订单号
+                .map(VmsBtOrderDetailModel::getConsolidationOrderId)
+                // 去重
+                .distinct()
+                .collect(Collectors.toList());
+    }
 
-//        orderDetailService.selectPlatformOrderIdList()
-        return null;
+    public ShipmentEndCountBean endShipment(UserSessionBean user, ShipmentBean shipmentBean) {
+
+        shipmentBean.setChannelId(user.getSelChannelId());
+
+        // 去除当前shipment中没有完整扫描的订单
+        int canceledSkuCount = orderDetailService.removeSkuShipmentId(user.getSelChannelId(), shipmentBean.getId());
+
+        // 更新shipment下的sku
+        int succeedSkuCount = orderDetailService.updateOrderStatusWithShipmentId(user.getSelChannelId(), shipmentBean
+                .getId(), STATUS_VALUE.PRODUCT_STATUS.SHIPPED, shipmentBean.getShippedDate());
+
+        // 更新shipment
+        int succeedShipmentCount = shipmentService.save(shipmentBean);
+
+        return new ShipmentEndCountBean() {{
+            setCanceledSkuCount(canceledSkuCount);
+            setSucceedSkuCount(succeedSkuCount);
+            setSucceedShipmentCount(succeedShipmentCount);
+        }};
     }
 }

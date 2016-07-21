@@ -680,13 +680,13 @@ vpagination {
   background-color: #52a452;
 }
 .bg-warning {
-  background-color: rgba(240, 230, 160, 0.8);
+  background-color: rgba(240, 240, 160, 0.8);
 }
 .bg-warning:hover {
-  background-color: #f0e6a0;
+  background-color: #f0f0a0;
 }
 .bg-sub-warning {
-  background-color: rgba(240, 230, 160, 0.65);
+  background-color: rgba(240, 240, 160, 0.65);
 }
 .bg-danger {
   background-color: rgba(240, 174, 174, 0.8);
@@ -698,10 +698,13 @@ vpagination {
   background-color: rgba(240, 174, 174, 0.65);
 }
 .bg-info {
-  background-color: #5bc0de;
+  background-color: rgba(82, 160, 189, 0.8);
 }
 .bg-info:hover {
   background-color: #52a0bd;
+}
+.bg-sub-info {
+  background-color: rgba(82, 160, 189, 0.65);
 }
 .bg-gainsboro {
   background-color: rgba(179, 179, 179, 0.8);
@@ -713,13 +716,13 @@ vpagination {
   background-color: rgba(179, 179, 179, 0.65);
 }
 .bg-default {
-  background-color: rgba(230, 230, 230, 0.8);
+  background-color: rgba(220, 220, 220, 0.8);
 }
 .bg-default:hover {
-  background-color: #e6e6e6;
+  background-color: #dcdcdc;
 }
 .bg-sub-default {
-  background-color: rgba(230, 230, 230, 0.65);
+  background-color: rgba(220, 220, 220, 0.45);
 }
 /*modal blue*/
 .modal-blue {

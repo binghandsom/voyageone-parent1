@@ -61,6 +61,8 @@ define(function () {
         "TXT_ITEM_NOT_FOUND": "Scanned item not found in this order.",
         "TXT_VO_PRICE": "VoPrice",
         "TXT_SALE_PRICE": "SalePrice",
+        "TXT_SCANNED_ORDER_NOT_FINISHED": "SKUs in the orders [%s] have not been scanned completely, do you want to continue with these orders ignored?",
+        "TXT_COMPLETE": "Complete",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
@@ -74,7 +76,7 @@ define(function () {
         "BTN_UPLOAD": "UPLOAD",
         "BTN_CLOSE": "CLOSE",
         "BTN_SUBMIT": "SUBMIT",
-        "BTN_CREATE": "CREATE"
-
+        "BTN_CREATE": "CREATE",
+        "BTN_CONFIRM": "CONFIRM"
     }
 });
