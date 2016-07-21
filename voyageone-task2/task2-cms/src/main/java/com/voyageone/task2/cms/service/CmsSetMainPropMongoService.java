@@ -3338,12 +3338,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
         if (!StringUtils.isEmpty(feedCategory)) {
             // 根据feed类目未取到相应的价格计算公式时
-            errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表中没有找到该feed类目对应的" +
+            errMsg = String.format("feed->master导入:异常终止:价格计算公式错误:在cms_mt_channel_config表中没有找到该feed类目对应的" +
                             "价格计算公式( channel: [%s], feedcategory: [%s], formulakey: [%s], feedModel: [%s] )",
                     channelId, feedCategory, formulakey, feedModel);
         } else {
             // 不根据feed类目未取到相应的价格计算公式时
-            errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表中没有找到该channel对应的" +
+            errMsg = String.format("feed->master导入:异常终止:价格计算公式错误:在cms_mt_channel_config表中没有找到该channel对应的" +
                             "价格计算公式( channel: [%s], formulakey: [%s], feedModel: [%s] )",
                     channelId, formulakey, feedModel);
         }
