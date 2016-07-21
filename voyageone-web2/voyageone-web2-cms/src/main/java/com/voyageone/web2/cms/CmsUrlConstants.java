@@ -548,6 +548,7 @@ public interface CmsUrlConstants {
             String GetChangeMastProductInfo="getChangeMastProductInfo";
             String SetMastProduct="setMastProduct";
             String Delisting="delisting";
+            String DelistinGroup="delistinGroup";
         }
 
         interface HISTORY {

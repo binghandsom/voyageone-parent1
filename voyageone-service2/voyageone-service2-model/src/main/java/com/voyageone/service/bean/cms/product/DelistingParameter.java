@@ -7,6 +7,7 @@ public class DelistingParameter {
     String channelId;
     int cartId;
     String comment;
+    String productCode;
 
     public String getComment() {
         return comment;
@@ -40,5 +41,4 @@ public class DelistingParameter {
         this.channelId = channelId;
     }
 
-    String productCode;
 }
