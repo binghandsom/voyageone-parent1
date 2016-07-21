@@ -33,6 +33,7 @@ define([
                 scope.jdCategoryMapping = jdCategoryMapping;
                 scope.openSellerCat = openSellerCat;
                 scope.openSwitchMainPop = openSwitchMainPop;
+                scope.openOffLinePop = openOffLinePop;
                 scope.saveProduct = saveProduct;
                 scope.validSchema = validSchema;
                 scope.selectAll = selectAll;
@@ -203,6 +204,26 @@ define([
                     });
                 }
 
+                /**
+                 *  商品下线
+                 */
+                function openOffLinePop(openProductOffLine){
+
+                    if(scope.vm.status != "Approved"){
+                        alert("该商品还未Approved！");
+                        return;
+                    }
+
+                    if(scope.vm.mastData.isMain){
+                        alert("当前商品为主商品，无法单品下线！");
+                        return;
+                    }
+
+                    openProductOffLine({
+                        cartId:scope.cartInfo.value,
+                        productCode:scope.vm.mastData.productCode
+                    });
+                }
 
                 /**
                  * 更新操作

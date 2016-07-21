@@ -814,6 +814,11 @@ s-field textarea.s-html {
     margin: 15px auto;
 }
 
+.switch-main .current{
+    border: 2px solid #006cca;
+    box-shadow: 0 1px 8px 0 #006cca;
+}
+
 .switch-main .status{
     position: absolute;
 }
@@ -823,3 +828,4 @@ s-field textarea.s-html {
     margin: 0px auto;
     width: 95%;
 }
+

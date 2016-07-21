@@ -1,0 +1,80 @@
+<div class="vo_modal switch-main" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> 商品下线</h5>
+    </div>
+
+    <div class="modal-body wrapper">
+
+        <div class="container-fluid">
+            <div class="row form-horizontal">
+                <div class="col-md-7">
+                    <label class="col-md-2 control-label"><strong>店铺渠道名称:</strong></label>
+                    <div class="col-md-3">
+                        <label class="control-label">{{ctrl.data.cart.desc}}</label>
+                    </div>
+                    <label class="col-md-2 control-label"><strong>NumIid:</strong></label>
+                    <label class="col-md-3" ng-if="ctrl.data.numIId">
+                           <span class="v-middle">
+                                 <a ng-href="{{ctrl.data.cart.pUrl}}{{ctrl.data.numIId}}" target="_blank">{{ctrl.data.numIId}}</a>
+                           </span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid middle">
+            <div class="row form-group">
+                <div class="col-md-3" ng-repeat="product in ctrl.data.productInList">
+                    <a href="javascript:void(0)" class="thumbnail fix-img" ng-class="{'current':product.productCode == ctrl.context.productCode}">
+                        <strong class="status">
+                            <span class="label" ng-class="{'label-default':product.platFormStatus == 'Pending',
+                                                           'label-warning':product.platFormStatus == 'Ready',
+                                                           'label-success':product.platFormStatus == 'Approved'}">&nbsp;{{product.platFormStatus}}&nbsp;</span>
+                        </strong>
+                        <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{product.imageName}}" title="{{product.productCode}}">
+                    </a>
+                    <div class="row product-info">
+                        <div class="col-md-12">
+                            <strong class="col-md-4"><strong>Code:</strong></strong>
+                            <label class="col-md-8">
+                                <span ng-if="product.productCode.length > 15"><popover-text content="product.productCode" direct="top" size="15"></popover-text></span>
+                                <span ng-if="product.productCode.length <= 15">{{product.productCode}}</span>
+                            </label>
+                        </div>
+                        <div class="col-md-12">
+                            <strong class="col-md-4"><strong>库存:</strong></strong>
+                            <label class="col-md-8">
+                                <span class="label label-warning"><i class="icon fa  fa-inbox"></i>&emsp;{{product.quantity}}</span>
+                            </label>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="checkbox-inline c-radio gray">
+                                <input type="radio" name="isMain"  value="{{product.productCode}}" ng-model="ctrl.data.mainCode" disabled><span class="fa fa-check"></span> 主商品
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <ng-form name="offLineForm" novalidate>
+                    <label class="col-md-1 control-label vo_reqfield"><strong>备注:</strong></label>
+                    <div class="col-md-5">
+                        <textarea type="text" rows="4" class="form-control no-resize" ng-model="parentModel.comment" required></textarea>
+                    </div>
+                </ng-form>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-vo" ng-click="ctrl.delisting()" ><i class="glyphicon glyphicon-floppy-disk"></i> 下线</button>
+    </div>
+</div>

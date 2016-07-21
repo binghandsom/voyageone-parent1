@@ -12,7 +12,6 @@ define([
 
         function SwitchMain(context,$uibModalInstance,menuService,productDetailService,confirm,alert) {
             this.context = context;
-           // this.carts = carts;
             this.uibModalInstance = $uibModalInstance;
             this.menuService = menuService;
             this.productDetailService = productDetailService;

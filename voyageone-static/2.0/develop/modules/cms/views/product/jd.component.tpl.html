@@ -49,10 +49,7 @@
                                     </button>
                                     <ul uib-dropdown-menu>
                                         <li>
-                                            <a href="javascript:void(0)">
-
-
-
+                                            <a href="javascript:void(0)" ng-click="openOffLinePop(openProductOffLine)">
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;单Code下线
                                             </a>
                                         </li>
@@ -159,7 +156,7 @@
                                 <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl" ng-click="jdCategoryMapping(popupNewCategory)" ng-disabled = "vm.status == 'Approved' || vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                                 </button>
                                 <div class="col-md-8">
-                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.platform.pCatPath" disabled>
+                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched"  ng-model="vm.platform.pCatPath" disabled>
                                     <div class="text-warnings" style="padding-left:0px">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;切换平台类目将影响整个Group中的所有商品，请慎重！
                                     </div>
