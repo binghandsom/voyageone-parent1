@@ -136,14 +136,14 @@ public class JmBase extends ComponentBase {
 
                 if (!("0".equals(code) || code.contains("109902") || code.contains("103087") ||
                         "0".equals(codes) || codes.contains("109902") || codes.contains("103087"))) {
-                    throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
+                    throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result),result);
                 }
             } else if (map.containsKey("error_code")) {
                 String error_code = map.get("error_code").toString();
                 if ("500".equals(error_code) || "501".equals(error_code)) {
                     throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s", post_url, result));
                 } else if (!("0".equals(error_code))) {
-                    throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
+                    throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result),result);
                 }
             }
         } catch (BusinessException | ServerErrorException be) {
@@ -157,7 +157,7 @@ public class JmBase extends ComponentBase {
         try {
             res = JsonUtil.jsonToBean(result, JMErrorResult.class);
             if (res.getCode() != null) {
-                throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
+                throw new BusinessException(String.format("调用聚美API错误[%s]：%s: %s", post_url, result, res.getCode()), result);
             }
         } catch (JsonSyntaxException ignored) {
         }
