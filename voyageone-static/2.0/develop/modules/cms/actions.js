@@ -105,7 +105,8 @@ define(function () {
                     "checkCategory":"checkCategory",
                     getChangeMastProductInfo:"getChangeMastProductInfo",
                     setMastProduct:"setMastProduct",
-                    delisting:"delisting"
+                    delisting:"delisting",
+                    delistinGroup:"delistinGroup"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
