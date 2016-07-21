@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.voyageone.task2.cms.service.feed.BcbgConstants.*;
-import static java.math.BigDecimal.TEN;
 
 /**
  * 将 Feed 数据, 转换, 构造为 Cms 数据
@@ -109,6 +107,8 @@ class BcbgAnalysisContext {
                 feedInfoModel.setShortDescription(name);
             return feedInfoModel;
         }
+        
+        String productDesc = bcbgBean.getStyleBean().getProductDesc();
 
         feedInfoModel = new CmsBtFeedInfoModel();
 
@@ -118,16 +118,19 @@ class BcbgAnalysisContext {
         feedInfoModel.setModel(bcbgBean.getSATNR());
         feedInfoModel.setColor(bcbgBean.getCOLOR_ATWTB());
         feedInfoModel.setOrigin(bcbgBean.getWHERL());
-        feedInfoModel.setSizeType("Women's");
+        feedInfoModel.setSizeType("Women");
         feedInfoModel.setImage(bcbgBean.getStyleBean().getProductImgURLs());
         feedInfoModel.setBrand(bcbgBean.getBRAND_ID());
         feedInfoModel.setWeight(Constants.EmptyString);
         feedInfoModel.setShortDescription(name);
-        feedInfoModel.setLongDescription(bcbgBean.getStyleBean().getProductDesc());
+        feedInfoModel.setLongDescription(productDesc);
         feedInfoModel.setSkus(new ArrayList<>());
         feedInfoModel.setAttribute(new HashMap<>());
         feedInfoModel.setUpdFlg(0);
         feedInfoModel.setChannelId(channel.getId());
+        feedInfoModel.setMaterial(productDesc);
+        feedInfoModel.setUsageEn(productDesc);
+        feedInfoModel.setProductType(bcbgBean.getMATKL_ATT1());
 
         codeList.add(feedInfoModel);
         codeMap.put(code, feedInfoModel);
@@ -142,40 +145,12 @@ class BcbgAnalysisContext {
     private void setPrices(SuperFeedBcbgBean bcbgBean, CmsBtFeedInfoModel_Sku sku) {
         BigDecimal msrp = new BigDecimal(bcbgBean.getA304_KBETR());
         BigDecimal price = new BigDecimal(bcbgBean.getA073_KBETR());
-
-        BigDecimal duty;
-
-        switch (bcbgBean.getMATKL_ATT1()) {
-            case ACCESSORIES:
-                duty = other_duty;
-                break;
-            case APPAREL:
-                duty = apparels_duty;
-                break;
-            default:
-                throw new BusinessException("没有找到 MATKL_ATT1 ! 无法计算价格 !");
-        }
-
-        // 先计算 rmb 单位的 msrp (已格式化)
-        BigDecimal iMsrp = toRmb(msrp, duty);
-        // 计算 usd 单位下, msrp 和 price 的比例
-        BigDecimal discount = price.divide(msrp, 2, BigDecimal.ROUND_HALF_DOWN);
-
-        Double current = iMsrp.multiply(discount).setScale(0, BigDecimal.ROUND_DOWN).doubleValue();
-
-        sku.setPriceCurrent(current); // 当前售价
+        BigDecimal retail = price;
+               
+        sku.setPriceCurrent(0d); // 人民币当前售价
         sku.setPriceClientRetail(price.doubleValue()); // 美金售价
-        sku.setPriceMsrp(iMsrp.doubleValue()); // 人民币专柜价
+        sku.setPriceMsrp(0d); // 人民币专柜价
         sku.setPriceClientMsrp(msrp.doubleValue()); // 美金专柜价
-        sku.setPriceNet(0d); // 美金成本价
-    }
-
-    private BigDecimal toRmb(BigDecimal bigDecimal, BigDecimal duty) {
-        return bigDecimal
-                .multiply(fixed_exchange_rate)
-                .divide(duty, BigDecimal.ROUND_DOWN)
-                .setScale(0, BigDecimal.ROUND_DOWN)
-                .divide(TEN, BigDecimal.ROUND_DOWN)
-                .multiply(TEN);
+        sku.setPriceNet(retail.doubleValue()); // 美金成本价
     }
 }
