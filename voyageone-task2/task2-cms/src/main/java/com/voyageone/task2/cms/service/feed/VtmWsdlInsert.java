@@ -82,6 +82,8 @@ public class VtmWsdlInsert extends BaseTaskService {
         private List<CmsBtFeedInfoModel> getModels(String category) throws Exception {
 
             Map colums = getColumns();
+            Map<String, CmsBtFeedInfoModel> codeMap = new HashMap<>();
+
 
             // 条件则根据类目筛选
             String where = String.format("WHERE %s AND %s = '%s' ", INSERT_FLG, colums.get("category").toString(),
@@ -105,9 +107,19 @@ public class VtmWsdlInsert extends BaseTaskService {
 
                 CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(channel);
                 cmsBtFeedInfoModel.setAttribute(attribute);
-                modelBeans.add(cmsBtFeedInfoModel);
 
+                if(codeMap.containsKey(cmsBtFeedInfoModel.getCode())){
+                    CmsBtFeedInfoModel beforeFeed =  codeMap.get(cmsBtFeedInfoModel.getCode());
+                    beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
+                    beforeFeed.getImage().addAll(cmsBtFeedInfoModel.getImage());
+                    beforeFeed.setImage(beforeFeed.getImage().stream().distinct().collect(Collectors.toList()));
+                    beforeFeed.setAttribute(BaseAnalysisService.attributeMerge(beforeFeed.getAttribute(), cmsBtFeedInfoModel.getAttribute()));
+                }else{
+                    modelBeans.add(cmsBtFeedInfoModel);
+                    codeMap.put(cmsBtFeedInfoModel.getCode(),cmsBtFeedInfoModel);
+                }
             }
+
             $info("取得 [ %s ] 的 Product 数 %s", category, modelBeans.size());
 
             return modelBeans;
