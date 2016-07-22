@@ -28,11 +28,14 @@
         <div class="container-fluid middle">
             <div class="row form-group">
                 <div class="col-md-3" ng-repeat="product in ctrl.data.productInList">
-                    <a href="javascript:void(0)" class="thumbnail fix-img" ng-class="{'current':product.productCode == ctrl.context.productCode}">
+                    <a href="javascript:void(0)" class="thumbnail fix-img" ng-class="{'current':product.productCode == ctrl.context.productCode || ctrl.context.type == 'group'}">
                         <strong class="status">
                             <span class="label" ng-class="{'label-default':product.platFormStatus == 'Pending',
                                                            'label-warning':product.platFormStatus == 'Ready',
                                                            'label-success':product.platFormStatus == 'Approved'}">&nbsp;{{product.platFormStatus}}&nbsp;</span>
+                        </strong>
+                        <strong class="status" style="left: 35%;top: 40%;" ng-if="product.productCode == ctrl.context.productCode || ctrl.context.type == 'group'">
+                            <label class="label label-danger">下&nbsp;线</label>
                         </strong>
                         <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{product.imageName}}" title="{{product.productCode}}">
                     </a>
@@ -76,6 +79,7 @@
 
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo" ng-click="ctrl.delisting()" ng-disabled="ctrl.offLineForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i> 下线</button>
+        <button class="btn btn-vo" ng-click="ctrl.delisting()" ng-disabled="ctrl.offLineForm.$invalid" ng-if="ctrl.context.type == 'single'"><i class="glyphicon glyphicon-floppy-disk"></i> 下线</button>
+        <button class="btn btn-vo" ng-click="ctrl.delistinGroup()" ng-disabled="ctrl.offLineForm.$invalid" ng-if="ctrl.context.type == 'group'"><i class="glyphicon glyphicon-floppy-disk"></i>group下线</button>
     </div>
 </div>
