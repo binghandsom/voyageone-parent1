@@ -560,7 +560,6 @@ public interface CmsUrlConstants {
         interface StatusHistory {
             String ROOT = "/cms/product/statushistory";
             String GetPage = "getPage";
-            String GetCount="getCount";
         }
     }
 
