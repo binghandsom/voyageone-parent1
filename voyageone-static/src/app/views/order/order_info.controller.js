@@ -71,12 +71,12 @@ define([
                 self.alert("TXT_PLEASE_INPUT_A_VALID_DATE");
                 return;
             } else if (self.orderDateFrom)
-                self.searchInfo.orderDateFrom = self.orderDateFrom.getTime();
+                self.searchInfo.orderDateFrom = self.orderDateFrom;
             else self.searchInfo.orderDateFrom = undefined;
             if (self.orderDateTo) {
                 var date = angular.copy(self.orderDateTo);
                 date.setDate(date.getDate() + 1);
-                self.searchInfo.orderDateTo = date.getTime();
+                self.searchInfo.orderDateTo = date;
             } else {
                 self.searchInfo.orderDateTo = undefined;
             }
@@ -94,9 +94,9 @@ define([
                         }
                         else if (item.status == '1') {
                             if (self.channelConfigs.vendorOperateType == 'ORDER') {
-                                date = new Date(item.orderDateTimestamp);
+                                date = new Date(item.consolidationOrderTimestamp);
                             } else if (self.channelConfigs.vendorOperateType == 'SKU') {
-                                date = new Date(item.orderDateTimestamp);
+                                date = new Date(item.consolidationOrderTimestamp);
                             } else {
                                 self.alert('TXT_MISSING_REQUIRED_CHANNEL_CONFIG');
                             }

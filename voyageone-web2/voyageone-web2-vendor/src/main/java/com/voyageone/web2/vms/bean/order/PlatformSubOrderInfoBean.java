@@ -82,7 +82,7 @@ public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
 
         if (null == this.status) this.status = orderInfoBean.getStatus();
         else if (!orderInfoBean.getStatus().equals(this.status)) this.status = "-";
-        this.totalVoPrice = totalVoPrice.add(orderInfoBean.getVoPrice());
+        this.totalVoPrice = totalVoPrice.add(orderInfoBean.getClientPromotionPrice());
         this.totalRetailPrice = totalRetailPrice.add(orderInfoBean.getRetailPrice());
         this.orderInfoBeanList.add(orderInfoBean);
         return true;
