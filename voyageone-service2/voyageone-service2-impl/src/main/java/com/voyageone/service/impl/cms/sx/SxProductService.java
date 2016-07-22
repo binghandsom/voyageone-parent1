@@ -1807,22 +1807,47 @@ public class SxProductService extends BaseService {
                 }
                 case TMALL_STYLE_CODE:
                 {
-                    if (processFields == null || processFields.size() != 1) {
-                        throw new BusinessException("tmall style code's platformProps must have only one prop!");
+                    if (processFields == null) {
+                        throw new BusinessException("tmall style code's platformProps does not get!");
                     }
-
-                    Field field = processFields.get(0);
-                    if (field.getType() != FieldTypeEnum.INPUT) {
-                        $error("tmall style code's field(" + field.getId() + ") must be input");
-                    } else {
-                        InputField inputField = (InputField) field;
-                        String styleCode = sxData.getStyleCode();
-                        if (StringUtils.isEmpty(styleCode)) {
-                            styleCode = generateStyleCode(sxData);
+                    if (processFields.size() == 1) {
+                        Field field = processFields.get(0);
+                        if (field.getType() != FieldTypeEnum.INPUT) {
+                            $error("tmall style code's field(" + field.getId() + ") must be input");
+                        } else {
+                            InputField inputField = (InputField) field;
+                            String styleCode = sxData.getStyleCode();
+                            if (StringUtils.isEmpty(styleCode)) {
+                                styleCode = generateStyleCode(sxData);
+                            }
+                            inputField.setValue(styleCode);
+                            $debug("tmall style code[" + field.getId() + "]: " + field.getValue());
+                            retMap.put(field.getId(), inputField);
                         }
-                        inputField.setValue(styleCode);
-                        $debug("tmall style code[" + field.getId() + "]: " + field.getValue());
-                        retMap.put(field.getId(), inputField);
+                    } else if (processFields.size() == 2) {
+                        for (Field processField : processFields) {
+                            if (processField.getType() == FieldTypeEnum.SINGLECHECK) {
+                                // prop_13021751（货号）值设为-1(表示其他）
+                                SingleCheckField field = (SingleCheckField) processField;
+                                field.setValue("-1");
+                                retMap.put(processField.getId(), field);
+                            } else {
+                                // in_prop_13021751其他的货号值填货号
+                                if (processField.getType() != FieldTypeEnum.INPUT) {
+                                    $error("tmall style code's field(" + processField.getId() + ") must be input");
+                                } else {
+                                    InputField field = (InputField) processField;
+                                    String styleCode = sxData.getStyleCode();
+                                    if (StringUtils.isEmpty(styleCode)) {
+                                        styleCode = generateStyleCode(sxData);
+                                    }
+                                    field.setValue(styleCode);
+                                    retMap.put(processField.getId(), field);
+                                }
+                            }
+                        }
+                    } else {
+                        throw new BusinessException("tmall style code's platformProps must have only one or two props!");
                     }
                     break;
                 }
