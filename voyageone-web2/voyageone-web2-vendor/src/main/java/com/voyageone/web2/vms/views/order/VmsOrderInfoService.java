@@ -7,6 +7,7 @@ import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.VmsChannelConfigBean;
+import com.voyageone.common.util.BeanUtil;
 import com.voyageone.common.util.MapUtil;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.vms.order.OrderDetailService;
@@ -353,19 +354,13 @@ public class VmsOrderInfoService extends BaseService {
 
                     // 将订单下的sku信息录入
                     vmsBtOrderDetailModelList.stream()
-                            .map(vmsBtOrderDetailModel -> new SubOrderInfoBean() {{
-
-                                // 整理格式
-                                setReservationId(vmsBtOrderDetailModel.getReservationId());
-                                setConsolidationOrderId(vmsBtOrderDetailModel.getConsolidationOrderId());
-                                setConsolidationOrderTime(vmsBtOrderDetailModel.getConsolidationOrderTime());
-                                setName(vmsBtOrderDetailModel.getName());
-                                setVoPrice(vmsBtOrderDetailModel.getClientPromotionPrice());
-                                if (STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
-                                    setRetailPrice(vmsBtOrderDetailModel.getRetailPrice());
-                                setSku(vmsBtOrderDetailModel.getClientSku());
-                                setStatus(vmsBtOrderDetailModel.getStatus());
-                            }})
+                            .map(vmsBtOrderDetailModel -> {
+                                SubOrderInfoBean orderInfoBean = new SubOrderInfoBean();
+                                BeanUtil.copy(vmsBtOrderDetailModel, orderInfoBean);
+                                if (!STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
+                                    orderInfoBean.setRetailPrice(null);
+                                return orderInfoBean;
+                            })
                             .forEach(platformOrderInfoBean::pushOrderInfoBean);
 
                     return platformOrderInfoBean;
@@ -388,15 +383,15 @@ public class VmsOrderInfoService extends BaseService {
         return vmsBtOrderDetailModelList.stream()
                 .map(vmsBtOrderDetailModel -> {
                     SubOrderInfoBean orderInfoBean = new SubOrderInfoBean();
-                    orderInfoBean.setReservationId(vmsBtOrderDetailModel.getReservationId());
-                    orderInfoBean.setConsolidationOrderId(vmsBtOrderDetailModel.getConsolidationOrderId());
-                    orderInfoBean.setSku(vmsBtOrderDetailModel.getClientSku());
-                    orderInfoBean.setName(vmsBtOrderDetailModel.getName());
-                    orderInfoBean.setConsolidationOrderTime(vmsBtOrderDetailModel.getConsolidationOrderTime());
-                    orderInfoBean.setVoPrice(vmsBtOrderDetailModel.getClientPromotionPrice());
-                    if (STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
-                        orderInfoBean.setRetailPrice(vmsBtOrderDetailModel.getRetailPrice());
-                    orderInfoBean.setStatus(vmsBtOrderDetailModel.getStatus());
+                    BeanUtil.copy(vmsBtOrderDetailModel, orderInfoBean);
+//                    orderInfoBean.setReservationId(vmsBtOrderDetailModel.getReservationId());
+//                    orderInfoBean.setConsolidationOrderId(vmsBtOrderDetailModel.getConsolidationOrderId());
+//                    orderInfoBean.setClientSku(vmsBtOrderDetailModel.getClientSku());
+//                    orderInfoBean.setName(vmsBtOrderDetailModel.getName());
+//                    orderInfoBean.setConsolidationOrderTime(vmsBtOrderDetailModel.getConsolidationOrderTime());
+//                    orderInfoBean.setClientPromotionPrice(vmsBtOrderDetailModel.getClientPromotionPrice());
+                    if (!STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
+                        orderInfoBean.setRetailPrice(null);
                     return orderInfoBean;
                 })
                 .collect(Collectors.toList());
@@ -460,7 +455,7 @@ public class VmsOrderInfoService extends BaseService {
      * @param orderId  当前orderId
      * @return 已扫描的订单列表
      */
-    public List<VmsBtOrderDetailModelWithTimestamp> getScannedSkuList(UserSessionBean user, ShipmentBean shipment,
+    public List<SubOrderInfoBean> getScannedSkuList(UserSessionBean user, ShipmentBean shipment,
                                                                       String orderId) {
 
         // 查找对应OrderId中 是否有已经扫描的SKU不在此shipment下
@@ -481,7 +476,11 @@ public class VmsOrderInfoService extends BaseService {
         if (invalidSkuCount > 0) throw new BusinessException("8000023");
 
         return orderDetailService.getScannedSku(user.getSelChannelId(), shipment.getId(), orderId).stream()
-                .map(VmsBtOrderDetailModelWithTimestamp::getInstance)
+                .map(vmsBtOrderDetailModel -> {
+                    SubOrderInfoBean subOrderInfoBean = new SubOrderInfoBean();
+                    BeanUtil.copy(vmsBtOrderDetailModel, subOrderInfoBean);
+                    return subOrderInfoBean;
+                })
                 .collect(Collectors.toList());
     }
 

@@ -19,10 +19,8 @@ public class OrderSearchInfo {
     private int size = DEFAULT_PAGE_SIZE;
     private int curr = 1;
 
-    @DateTimeFormat
     private Date orderDateFrom = null;
 
-    @DateTimeFormat
     private Date orderDateTo = null;
 
     public String getStatus() {
@@ -63,8 +61,9 @@ public class OrderSearchInfo {
         return orderDateTo;
     }
 
-    public void setOrderDateTo(long orderDateTo) {
-        this.orderDateTo = new Date(orderDateTo);
+    public void setOrderDateTo(Long orderDateTo) {
+        if (null != orderDateTo)
+            this.orderDateTo = new Date(orderDateTo);
     }
 
     public int getSize() {

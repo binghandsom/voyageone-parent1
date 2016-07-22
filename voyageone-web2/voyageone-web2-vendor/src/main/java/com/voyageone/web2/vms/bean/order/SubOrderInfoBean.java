@@ -1,5 +1,8 @@
 package com.voyageone.web2.vms.bean.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -11,10 +14,15 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
     private String reservationId;
     private String consolidationOrderId;
     private Date consolidationOrderTime;
-    private String sku;
+    private String clientSku;
     private String name;
     private String status;
-    private BigDecimal voPrice = BigDecimal.ZERO;
+    private Date containerizingTime;
+    private String containerizer;
+    private String barcode;
+    @JsonProperty("voPrice")
+    private BigDecimal clientPromotionPrice = BigDecimal.ZERO;
+    @JsonProperty("salePrice")
     private BigDecimal retailPrice = BigDecimal.ZERO;
 
     public String getReservationId() {
@@ -41,16 +49,20 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
         this.consolidationOrderTime = new Date(consolidationOrderTimestamp);
     }
 
+    public Date getConsolidationOrderTime() {
+        return consolidationOrderTime;
+    }
+
     public void setConsolidationOrderTime(Date consolidationOrderTime) {
         this.consolidationOrderTime = consolidationOrderTime;
     }
 
-    public String getSku() {
-        return sku;
+    public String getClientSku() {
+        return clientSku;
     }
 
-    public void setSku(String sku) {
-        this.sku = sku;
+    public void setClientSku(String clientSku) {
+        this.clientSku = clientSku;
     }
 
     public String getName() {
@@ -69,23 +81,62 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
         this.status = status;
     }
 
-    public BigDecimal getVoPrice() {
-        return voPrice;
+    public Date getContainerizingTime() {
+        return containerizingTime;
     }
 
-    public void setVoPrice(BigDecimal voPrice) {
-        this.voPrice = voPrice;
+    public void setContainerizingTime(Date containerizingTime) {
+        this.containerizingTime = containerizingTime;
     }
 
+    public Long getContainerizingTimestamp() {
+        if (null == containerizingTime) return null;
+        return containerizingTime.getTime();
+    }
+
+    public void setContainerizingTimestamp(Long containerizingTimestamp) {
+        if (null != containerizingTimestamp)
+        this.containerizingTime = new Date(containerizingTimestamp);
+    }
+
+    public String getContainerizer() {
+        return containerizer;
+    }
+
+    public void setContainerizer(String containerizer) {
+        this.containerizer = containerizer;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    @JsonProperty
+    public BigDecimal getClientPromotionPrice() {
+        return clientPromotionPrice;
+    }
+
+    @JsonIgnore
+    public void setClientPromotionPrice(BigDecimal clientPromotionPrice) {
+        this.clientPromotionPrice = clientPromotionPrice;
+    }
+
+    @JsonProperty
     public BigDecimal getRetailPrice() {
         return retailPrice;
     }
 
+    @JsonIgnore
     public void setRetailPrice(BigDecimal retailPrice) {
         this.retailPrice = retailPrice;
     }
 
     // TODO: 16-7-7 暂未想好后续处理 未做订单信息验证 vantis
+    @JsonIgnore
     public boolean isValid() {
         return true;
     }

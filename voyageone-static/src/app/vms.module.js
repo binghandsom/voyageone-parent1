@@ -31,6 +31,11 @@ define(function (require) {
         'chart.js'
     ]).config(function ($routeProvider, $translateProvider) {
 
+        // 修改时间格式的json转换为时间戳格式
+        Date.prototype.toJSON = function () {
+            return this.getTime();
+        };
+
         $translateProvider.translations('zh', zh);
         $translateProvider.translations('en', en);
 
