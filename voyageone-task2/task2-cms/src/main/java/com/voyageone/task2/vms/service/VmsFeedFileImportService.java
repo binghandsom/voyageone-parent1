@@ -1025,279 +1025,301 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
                 CsvReader reader = new CsvReader(new FileInputStream(feedFile), csvSplitSymbol, Charset.forName(csvEncode));
                 // Head读入
-                reader.readHeaders();
-                reader.getHeaders();
-                int rowNum = 2;
-
-                // Body读入
-                while (reader.readRecord()) {
-                    VmsBtFeedInfoTempModel model = new VmsBtFeedInfoTempModel();
-
-                    int i = 0;
-                    model.setChannelId(channel.getOrder_channel_id());
-                    model.setRow(rowNum);
-                    // sku
-                    String item = reader.get(i++);
-                    // sku必须
-                    if (StringUtils.isEmpty(item)) {
-                        addErrorMessage(error, "8000002", new Object[]{columnMap.get(SKU_INDEX)}, rowNum, columnMap.get(SKU_INDEX));
-                    }
-                    // sku长度验证
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(SKU_INDEX)}, rowNum, columnMap.get(SKU_INDEX));
-                    }
-
-                    model.setSku(item);
-
-                    // parent-id
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(PARENT_ID)}, rowNum, columnMap.get(PARENT_ID));
-                    }
-                    if (StringUtils.isEmpty(item)) {
-                        model.setParentId(BLANK_PARENT_ID);
+                boolean checkHeader = true;
+                if (reader.readHeaders()) {
+                    String headers[] = reader.getHeaders();
+                    if (headers == null || headers.length < columnMap.size()) {
+                        // 列数小于VoyageOneFeedTemplate定义的列数
+                        checkHeader = false;
                     } else {
-                        model.setParentId(item);
+                        for (Map.Entry<Object, String> entry : columnMap.entrySet()) {
+                            // 列名与VoyageOneFeedTemplate定义的列名不匹配
+                            if (!entry.getValue().equals(headers[(int)entry.getKey()])) {
+                                checkHeader = false;
+                                break;
+                            }
+                        }
                     }
+                } else  {
+                    // 空文件的场合
+                    checkHeader = false;
+                }
+                if (!checkHeader) {
+                    addErrorMessage(error, "8000026", null, "", "");
+                }
 
-                    // relationship-type
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(RELATIONSHIP_TYPE)}, rowNum, columnMap.get(RELATIONSHIP_TYPE));
-                    }
-                    model.setRelationshipType(item);
+                int rowNum = 2;
+                // header验证没有问题的情况下，mBody读入
+                if (error.toString().length() == 0) {
+                    while (reader.readRecord()) {
+                        VmsBtFeedInfoTempModel model = new VmsBtFeedInfoTempModel();
 
-                    // variation-theme
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(VARIATION_THEME)}, rowNum, columnMap.get(VARIATION_THEME));
-                    }
-                    model.setVariationTheme(item);
-                    model.setTitle(reader.get(i++));
+                        int i = 0;
+                        model.setChannelId(channel.getOrder_channel_id());
+                        model.setRow(rowNum);
+                        // sku
+                        String item = reader.get(i++);
+                        // sku必须
+                        if (StringUtils.isEmpty(item)) {
+                            addErrorMessage(error, "8000002", new Object[]{columnMap.get(SKU_INDEX)}, String.valueOf(rowNum), columnMap.get(SKU_INDEX));
+                        }
+                        // sku长度验证
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{columnMap.get(SKU_INDEX)}, String.valueOf(rowNum), columnMap.get(SKU_INDEX));
+                        }
 
-                    // product-id
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(PRODUCT_ID)}, rowNum, columnMap.get(PRODUCT_ID));
-                    }
-                    model.setProductId(item);
+                        model.setSku(item);
 
-                    // price
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(PRICE)}, rowNum, columnMap.get(PRICE));
-                    }
-                    model.setPrice(item);
+                        // parent-id
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{columnMap.get(PARENT_ID)}, String.valueOf(rowNum), columnMap.get(PARENT_ID));
+                        }
+                        if (StringUtils.isEmpty(item)) {
+                            model.setParentId(BLANK_PARENT_ID);
+                        } else {
+                            model.setParentId(item);
+                        }
 
-                    // msrp
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(MSRP)}, rowNum, columnMap.get(MSRP));
-                    }
-                    model.setMsrp(item);
+                        // relationship-type
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{columnMap.get(RELATIONSHIP_TYPE)}, String.valueOf(rowNum), columnMap.get(RELATIONSHIP_TYPE));
+                        }
+                        model.setRelationshipType(item);
 
-                    // quantity
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(QUANTITY)}, rowNum, columnMap.get(QUANTITY));
-                    }
-                    model.setQuantity(item);
-                    model.setImages(reader.get(i++));
-                    model.setDescription(reader.get(i++));
-                    model.setShortDescription(reader.get(i++));
+                        // variation-theme
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{columnMap.get(VARIATION_THEME)}, String.valueOf(rowNum), columnMap.get(VARIATION_THEME));
+                        }
+                        model.setVariationTheme(item);
+                        model.setTitle(reader.get(i++));
 
-                    // product-origin
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(PRODUCT_ORIGIN)}, rowNum, columnMap.get(PRODUCT_ORIGIN));
-                    }
-                    model.setProductOrigin(item);
+                        // product-id
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{columnMap.get(PRODUCT_ID)}, String.valueOf(rowNum), columnMap.get(PRODUCT_ID));
+                        }
+                        model.setProductId(item);
 
-                    // category
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 500) {
-                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(CATEGORY)}, rowNum, columnMap.get(CATEGORY));
-                    }
-                    model.setCategory(item);
+                        // price
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{columnMap.get(PRICE)}, String.valueOf(rowNum), columnMap.get(PRICE));
+                        }
+                        model.setPrice(item);
 
-                    // weight
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(WEIGHT)}, rowNum, columnMap.get(WEIGHT));
-                    }
-                    model.setWeight(item);
+                        // msrp
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{columnMap.get(MSRP)}, String.valueOf(rowNum), columnMap.get(MSRP));
+                        }
+                        model.setMsrp(item);
 
-                    // brand
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(BRAND)}, rowNum, columnMap.get(BRAND));
-                    }
-                    model.setBrand(item);
+                        // quantity
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{columnMap.get(QUANTITY)}, String.valueOf(rowNum), columnMap.get(QUANTITY));
+                        }
+                        model.setQuantity(item);
+                        model.setImages(reader.get(i++));
+                        model.setDescription(reader.get(i++));
+                        model.setShortDescription(reader.get(i++));
 
-                    // materials
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{columnMap.get(MATERIALS)}, rowNum, columnMap.get(MATERIALS));
-                    }
-                    model.setMaterials(item);
-                    model.setVendorProductUrl(reader.get(i++));
+                        // product-origin
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{columnMap.get(PRODUCT_ORIGIN)}, String.valueOf(rowNum), columnMap.get(PRODUCT_ORIGIN));
+                        }
+                        model.setProductOrigin(item);
 
-                    // attribute-key-1
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-1"}, rowNum, "attribute-key-1");
-                    }
-                    model.setAttributeKey1(item);
-                    model.setAttributeValue1(reader.get(i++));
-                    // attribute-key-2
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-2"}, rowNum, "attribute-key-2");
-                    }
-                    model.setAttributeKey2(item);
-                    model.setAttributeValue2(reader.get(i++));
-                    // attribute-key-3s
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-3"}, rowNum, "attribute-key-3");
-                    }
-                    model.setAttributeKey3(item);
-                    model.setAttributeValue3(reader.get(i++));
-                    // attribute-key-4
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-4"}, rowNum, "attribute-key-4");
-                    }
-                    model.setAttributeKey4(item);
-                    model.setAttributeValue4(reader.get(i++));
-                    // attribute-key-5
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-5"}, rowNum, "attribute-key-5");
-                    }
-                    model.setAttributeKey5(item);
-                    model.setAttributeValue5(reader.get(i++));
-                    // attribute-key-6
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-6"}, rowNum, "attribute-key-6");
-                    }
-                    model.setAttributeKey6(item);
-                    model.setAttributeValue6(reader.get(i++));
-                    // attribute-key-7
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-7"}, rowNum, "attribute-key-7");
-                    }
-                    model.setAttributeKey7(item);
-                    model.setAttributeValue7(reader.get(i++));
-                    // attribute-key-8
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-8"}, rowNum, "attribute-key-8");
-                    }
-                    model.setAttributeKey8(item);
-                    model.setAttributeValue8(reader.get(i++));
-                    // attribute-key-9
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-9"}, rowNum, "attribute-key-9");
-                    }
-                    model.setAttributeKey9(item);
-                    model.setAttributeValue9(reader.get(i++));
-                    // attribute-key-10
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-10"}, rowNum, "attribute-key-10");
-                    }
-                    model.setAttributeKey10(item);
-                    model.setAttributeValue10(reader.get(i++));
-                    // attribute-key-11
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-11"}, rowNum, "attribute-key-11");
-                    }
-                    model.setAttributeKey11(item);
-                    model.setAttributeValue11(reader.get(i++));
-                    // attribute-key-12
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-12"}, rowNum, "attribute-key-12");
-                    }
-                    model.setAttributeKey12(item);
-                    model.setAttributeValue12(reader.get(i++));
-                    // attribute-key-13
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-13"}, rowNum, "attribute-key-13");
-                    }
-                    model.setAttributeKey13(item);
-                    model.setAttributeValue13(reader.get(i++));
-                    // attribute-key-14
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-14"}, rowNum, "attribute-key-14");
-                    }
-                    model.setAttributeKey14(item);
-                    model.setAttributeValue14(reader.get(i++));
-                    // attribute-key-15
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-15"}, rowNum, "attribute-key-15");
-                    }
-                    model.setAttributeKey15(item);
-                    model.setAttributeValue15(reader.get(i++));
-                    // attribute-key-16
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-16"}, rowNum, "attribute-key-16");
-                    }
-                    model.setAttributeKey16(item);
-                    model.setAttributeValue16(reader.get(i++));
-                    // attribute-key-17
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-17"}, rowNum, "attribute-key-17");
-                    }
-                    model.setAttributeKey17(item);
-                    model.setAttributeValue17(reader.get(i++));
-                    // attribute-key-18
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-18"}, rowNum, "attribute-key-18");
-                    }
-                    model.setAttributeKey18(item);
-                    model.setAttributeValue18(reader.get(i++));
-                    // attribute-key-19
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-19"}, rowNum, "attribute-key-19");
-                    }
-                    model.setAttributeKey19(item);
-                    model.setAttributeValue19(reader.get(i++));
-                    // attribute-key-20
-                    item = reader.get(i++);
-                    if (item.getBytes().length > 128) {
-                        addErrorMessage(error, "8000011", new Object[]{"attribute-key-20"}, rowNum, "attribute-key-20");
-                    }
-                    model.setAttributeKey20(item);
-                    model.setAttributeValue20(reader.get(i++));
+                        // category
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 500) {
+                            addErrorMessage(error, "8000011", new Object[]{columnMap.get(CATEGORY)}, String.valueOf(rowNum), columnMap.get(CATEGORY));
+                        }
+                        model.setCategory(item);
+
+                        // weight
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{columnMap.get(WEIGHT)}, String.valueOf(rowNum), columnMap.get(WEIGHT));
+                        }
+                        model.setWeight(item);
+
+                        // brand
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{columnMap.get(BRAND)}, String.valueOf(rowNum), columnMap.get(BRAND));
+                        }
+                        model.setBrand(item);
+
+                        // materials
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{columnMap.get(MATERIALS)}, String.valueOf(rowNum), columnMap.get(MATERIALS));
+                        }
+                        model.setMaterials(item);
+                        model.setVendorProductUrl(reader.get(i++));
+
+                        // attribute-key-1
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-1"}, String.valueOf(rowNum), "attribute-key-1");
+                        }
+                        model.setAttributeKey1(item);
+                        model.setAttributeValue1(reader.get(i++));
+                        // attribute-key-2
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-2"}, String.valueOf(rowNum), "attribute-key-2");
+                        }
+                        model.setAttributeKey2(item);
+                        model.setAttributeValue2(reader.get(i++));
+                        // attribute-key-3s
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-3"}, String.valueOf(rowNum), "attribute-key-3");
+                        }
+                        model.setAttributeKey3(item);
+                        model.setAttributeValue3(reader.get(i++));
+                        // attribute-key-4
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-4"}, String.valueOf(rowNum), "attribute-key-4");
+                        }
+                        model.setAttributeKey4(item);
+                        model.setAttributeValue4(reader.get(i++));
+                        // attribute-key-5
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-5"}, String.valueOf(rowNum), "attribute-key-5");
+                        }
+                        model.setAttributeKey5(item);
+                        model.setAttributeValue5(reader.get(i++));
+                        // attribute-key-6
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-6"}, String.valueOf(rowNum), "attribute-key-6");
+                        }
+                        model.setAttributeKey6(item);
+                        model.setAttributeValue6(reader.get(i++));
+                        // attribute-key-7
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-7"}, String.valueOf(rowNum), "attribute-key-7");
+                        }
+                        model.setAttributeKey7(item);
+                        model.setAttributeValue7(reader.get(i++));
+                        // attribute-key-8
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-8"}, String.valueOf(rowNum), "attribute-key-8");
+                        }
+                        model.setAttributeKey8(item);
+                        model.setAttributeValue8(reader.get(i++));
+                        // attribute-key-9
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-9"}, String.valueOf(rowNum), "attribute-key-9");
+                        }
+                        model.setAttributeKey9(item);
+                        model.setAttributeValue9(reader.get(i++));
+                        // attribute-key-10
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-10"}, String.valueOf(rowNum), "attribute-key-10");
+                        }
+                        model.setAttributeKey10(item);
+                        model.setAttributeValue10(reader.get(i++));
+                        // attribute-key-11
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-11"}, String.valueOf(rowNum), "attribute-key-11");
+                        }
+                        model.setAttributeKey11(item);
+                        model.setAttributeValue11(reader.get(i++));
+                        // attribute-key-12
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-12"}, String.valueOf(rowNum), "attribute-key-12");
+                        }
+                        model.setAttributeKey12(item);
+                        model.setAttributeValue12(reader.get(i++));
+                        // attribute-key-13
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-13"}, String.valueOf(rowNum), "attribute-key-13");
+                        }
+                        model.setAttributeKey13(item);
+                        model.setAttributeValue13(reader.get(i++));
+                        // attribute-key-14
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-14"}, String.valueOf(rowNum), "attribute-key-14");
+                        }
+                        model.setAttributeKey14(item);
+                        model.setAttributeValue14(reader.get(i++));
+                        // attribute-key-15
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-15"}, String.valueOf(rowNum), "attribute-key-15");
+                        }
+                        model.setAttributeKey15(item);
+                        model.setAttributeValue15(reader.get(i++));
+                        // attribute-key-16
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-16"}, String.valueOf(rowNum), "attribute-key-16");
+                        }
+                        model.setAttributeKey16(item);
+                        model.setAttributeValue16(reader.get(i++));
+                        // attribute-key-17
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-17"}, String.valueOf(rowNum), "attribute-key-17");
+                        }
+                        model.setAttributeKey17(item);
+                        model.setAttributeValue17(reader.get(i++));
+                        // attribute-key-18
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-18"}, String.valueOf(rowNum), "attribute-key-18");
+                        }
+                        model.setAttributeKey18(item);
+                        model.setAttributeValue18(reader.get(i++));
+                        // attribute-key-19
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-19"}, String.valueOf(rowNum), "attribute-key-19");
+                        }
+                        model.setAttributeKey19(item);
+                        model.setAttributeValue19(reader.get(i++));
+                        // attribute-key-20
+                        item = reader.get(i++);
+                        if (item.getBytes().length > 128) {
+                            addErrorMessage(error, "8000011", new Object[]{"attribute-key-20"}, String.valueOf(rowNum), "attribute-key-20");
+                        }
+                        model.setAttributeKey20(item);
+                        model.setAttributeValue20(reader.get(i++));
 //                    model.setMd5(getMd5(model));
-                    model.setCreater(getTaskName());
-                    model.setModifier(getTaskName());
-                    model.setUpdateFlg("0");
-                    if (error.toString().length() == 0) {
-                        feedInfoTempModels.add(model);
+                        model.setCreater(getTaskName());
+                        model.setModifier(getTaskName());
+                        model.setUpdateFlg("0");
+                        if (error.toString().length() == 0) {
+                            feedInfoTempModels.add(model);
+                        }
+                        rowNum++;
+                        if (error.toString().length() == 0 && feedInfoTempModels.size() > 1000) {
+                            vmsBtFeedInfoTempDaoExt.insertList(feedInfoTempModels);
+                            feedInfoTempModels.clear();
+                        }
                     }
-                    rowNum++;
-                    if (error.toString().length() == 0 && feedInfoTempModels.size() > 1000) {
+                    if (error.toString().length() == 0 && feedInfoTempModels.size() > 0) {
                         vmsBtFeedInfoTempDaoExt.insertList(feedInfoTempModels);
                         feedInfoTempModels.clear();
                     }
-                }
-                if (error.toString().length() == 0 && feedInfoTempModels.size() > 0) {
-                    vmsBtFeedInfoTempDaoExt.insertList(feedInfoTempModels);
-                    feedInfoTempModels.clear();
                 }
 
                 reader.close();
@@ -1400,15 +1422,15 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
          *
          * @return FeedInfoModel数据（列表）
          */
-        private void addErrorMessage(StringBuilder error, String messageCode, Object[] args, Integer rowNum, String column) {
+        private void addErrorMessage(StringBuilder error, String messageCode, Object[] args, String rowNum, String column) {
             // 取得具体的ErrorMessage内容
             MessageBean messageBean = messageService.getMessage("en", messageCode);
             if (messageBean != null) {
                 String message = String.format(messageBean.getMessage(), args);
-                error.append(String.valueOf(rowNum) + VmsConstants.COMMA + column + VmsConstants.COMMA + message + "\r");
+                error.append(rowNum + VmsConstants.COMMA + column + VmsConstants.COMMA + message + "\r");
             } else {
                 // 一般情况下不可能，除非ct_message_info表中没有加入这个message
-                error.append(String.valueOf(rowNum) + VmsConstants.COMMA + column + VmsConstants.COMMA + messageCode + "\r");
+                error.append(rowNum + VmsConstants.COMMA + column + VmsConstants.COMMA + messageCode + "\r");
             }
         }
 
