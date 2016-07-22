@@ -171,7 +171,7 @@ define([
                 /**
                  *  商品下线
                  */
-                function openOffLinePop(openProductOffLine){
+                function openOffLinePop(openProductOffLine,type){
 
                     if(scope.vm.status != "Approved"){
                         alert("该商品还未Approved！");
@@ -185,7 +185,8 @@ define([
 
                     openProductOffLine({
                         cartId:scope.cartInfo.value,
-                        productCode:scope.vm.mastData.productCode
+                        productCode:scope.vm.mastData.productCode,
+                        type:type
                     }).then(function(){
                         //刷新子页面
                         getplatformData();

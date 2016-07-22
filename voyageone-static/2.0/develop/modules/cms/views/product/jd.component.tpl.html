@@ -49,12 +49,12 @@
                                     </button>
                                     <ul uib-dropdown-menu>
                                         <li>
-                                            <a href="javascript:void(0)" ng-click="openOffLinePop(openProductOffLine)">
+                                            <a href="javascript:void(0)" ng-click="openOffLinePop(openProductOffLine,'single')">
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;单Code下线
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="javascript:void(0)">
+                                            <a href="javascript:void(0)" ng-click="openOffLinePop(openProductOffLine,'group')">
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;全group下线
                                             </a>
                                         </li>
@@ -210,7 +210,7 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <label class="col-md-2 control-label"><strong>{{"TXT_BRAND"|translate}}</strong></label>
+                                <label class="col-md-2 control-label"><strong>{{"TXT_BRAND" | translate}}</strong></label>
                                 <div class="col-md-8">
                                     <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.platform.pBrandName" disabled>
                                     <div class="text-warnings" style="padding-left:0px">

@@ -12,7 +12,6 @@ define([
 
         function ProductOffLine(context,$uibModalInstance,menuService,productDetailService,confirm,alert) {
             this.context = context;
-           // this.carts = carts;
             this.uibModalInstance = $uibModalInstance;
             this.menuService = menuService;
             this.productDetailService = productDetailService;
@@ -32,6 +31,7 @@ define([
         ProductOffLine.prototype = {
           init:function(){
               var self = this;
+
               self.productDetailService.getChangeMastProductInfo({cartId:self.context.cartId , productCode:self.context.productCode}).then(function(res){
                   self.data.productInList = res.data.productInfoList;
 
@@ -73,7 +73,22 @@ define([
               });
               });
 
-          }
+          },
+           delistinGroup:function(){
+              var self = this;
+              self.confirm("确定要全group商品下线吗？").then(function(){
+                  self.productDetailService.delistinGroup({cartId:self.context.cartId ,
+                      productCode:self.context.productCode,
+                      comment:self.data.comment
+                  }).then(function(){
+                      self.uibModalInstance.close();
+                  },function(res){
+                      if(res.code == 5)
+                          self.alert("更新失败！");
+                  });
+              });
+
+            }
         };
 
         return ProductOffLine;
