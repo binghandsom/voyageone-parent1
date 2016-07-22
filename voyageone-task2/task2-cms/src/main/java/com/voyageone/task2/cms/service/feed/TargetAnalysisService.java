@@ -523,7 +523,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
 
     @Override
     protected boolean backupFeedFile(String channelId){
-        super.backupFeedFile(channelId);
+//        super.backupFeedFile(channelId);
         return backupFeedFile(channelId,FeedEnums.Name.file_id_import_sku);
     }
 }

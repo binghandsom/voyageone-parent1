@@ -22,10 +22,10 @@ public class ProductDaoTest extends AbstractJUnit4SpringContextTests {
         productDao.testExecuteCommand();
     }
 
-    @Test
-    public void testCollectionExists() {
-        System.out.println(productDao.testCollectionExists());
-    }
+//    @Test
+//    public void testCollectionExists() {
+//        System.out.println(productDao.testCollectionExists());
+//    }
 
     @Test
     public void testCreateCollection() {

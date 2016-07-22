@@ -116,6 +116,13 @@ define([
                 "templateUrl": "views/pop/channel/newCategory.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/channel/newCategory.ctl",
                 "controller": 'newCategoryCtl as ctrl'
+            },
+            "platformBrandSetting": {
+                "templateUrl": "views/pop/channel/platform_brand_setting.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/channel/platform_brand_setting.ctl",
+                "controller": 'PlatformBrandSettingController as ctrl',
+                "backdrop": 'static',
+                "size": 'lg'
             }
         },
         "custom": {
@@ -344,8 +351,8 @@ define([
                     "templateUrl": "views/pop/jm/promotiondetail.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/jm/promotiondetail.ctl",
                     "controller": 'popJMPromotionDetailCtl',
-                    "size": 'md',
-                    "backdrop": "static"
+                    "backdrop": "static",
+                    "size": 'lg'
                 },
                 "import": {
                     "templateUrl": "views/pop/jm/import.tpl.html",
@@ -469,6 +476,12 @@ define([
                 "templateUrl": "views/pop/product/switchMain.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/switchMain.ctl",
                 "controller": 'SwitchMainController as ctrl',
+                "size": 'lg'
+            },
+            "productOffLine":{
+                "templateUrl": "views/pop/product/productOffLine.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/productOffLine.ctl",
+                "controller": 'ProductOffLineController as ctrl',
                 "size": 'lg'
             }
         }
@@ -1282,7 +1295,7 @@ define([
                 var modalInstance = $uibModal.open({
                     templateUrl: popActions.jumei.jmPromotionDetail.detail.templateUrl,
                     controller: popActions.jumei.jmPromotionDetail.detail.controller,
-                    size:'md',
+                    size:'lg',
                     resolve: {
                         context: function () {
                             return context;
@@ -1329,6 +1342,10 @@ define([
             return openModel(popActions.channel.newCategory, context);
         };
 
+        $scope.openPlatformMappingSetting = function (context) {
+            return openModel(popActions.channel.platformBrandSetting, context);
+        };
+
         //打开高级查询页的通用设置，上下架
         $scope.openPutOnOff = function (context) {
             return openModel(popActions.bulkUpdate.putOnOff, context);
@@ -1350,12 +1367,14 @@ define([
         };
 
         //切换主类目
-        $scope.openSwitchMain = function (cartId,productCode) {
-            return openModel(popActions.product.switchMain, {
-                cartId : cartId,
-                productCode : productCode
-            });
+        $scope.openSwitchMain = function (context) {
+            return openModel(popActions.product.switchMain, context);
         };
+
+        //产品下线
+        $scope.openProductOffLine = function(context){
+            return openModel(popActions.product.productOffLine, context);
+        }
 
 
     }).factory('popups', function ($controller, $rootScope) {

@@ -37,12 +37,12 @@ define([
 					if(response.data){
 						response.data.imageType = self.context.imageType.replace("image","images");
 						fileItem.uploaded = true;
+						fileItem.message = null;
 						self.files.push(response.data);
 					}else{
 						fileItem.message =  "可能由于网络原因上传异常，请再试";
-						fileItem.progress = 0;
 						self.blockUI.stop();
-						fileItem.uploaded = true;
+						//fileItem.uploaded = true;
 					}
 
 					if(self.files.length == self.vm.total){

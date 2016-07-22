@@ -163,12 +163,14 @@ public class CmsProductDetailController extends CmsController {
         }
         return success(null);
     }
+
     //获取切换主商品  的显示信息
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GetChangeMastProductInfo)
     public AjaxResponse getChangeMastProductInfo(@RequestBody GetChangeMastProductInfoParameter parameter) {
         parameter.setChannelId(getUser().getSelChannelId());
         return success(productPropsEditService.getChangeMastProductInfo(parameter));
     }
+
     //设置主商品
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SetMastProduct)
     public AjaxResponse setMastProduct(@RequestBody SetMastProductParameter parameter) {
@@ -178,8 +180,16 @@ public class CmsProductDetailController extends CmsController {
     }
     //单品下架
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.Delisting)
-    public void delisting(DelistingParameter parameter) {
+    public AjaxResponse delisting(@RequestBody DelistingParameter parameter) {
         parameter.setChannelId(getUser().getSelChannelId());
         productPropsEditService.delisting(parameter, getUser().getUserName());
+        return success(null);
+    }
+    //group下架
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.DelistinGroup)
+    public AjaxResponse delistinGroup(@RequestBody DelistingParameter parameter) {
+        parameter.setChannelId(getUser().getSelChannelId());
+        productPropsEditService.delistinGroup(parameter, getUser().getUserName());
+        return success(null);
     }
 }
