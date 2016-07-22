@@ -34,7 +34,7 @@ class BcbgAnalysisContext {
 
         CmsBtFeedInfoModel_Sku sku = new CmsBtFeedInfoModel_Sku();
 
-        sku.setSku(bcbgBean.getMATNR());
+        sku.setSku(String.format("%s-%s-%s", bcbgBean.getSATNR(), bcbgBean.getCOLOR(), bcbgBean.getSIZE1()));
         sku.setSize(bcbgBean.getSIZE1());
         sku.setBarcode(bcbgBean.getEAN11());
         sku.setClientSku(bcbgBean.getMATNR());

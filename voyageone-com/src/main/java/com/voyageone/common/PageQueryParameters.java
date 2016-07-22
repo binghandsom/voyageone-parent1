@@ -1,11 +1,15 @@
 package com.voyageone.common;
 
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**{"PageIndex":1,"PageRowCount":1000}
+import static java.util.stream.Collectors.joining;
+
+/**
+ * {"PageIndex":1,"PageRowCount":1000}
  * Created by admin on 2014/8/13.
  */
 public class PageQueryParameters implements Serializable {
@@ -16,12 +20,14 @@ public class PageQueryParameters implements Serializable {
     private String maxValue;
     private EnumPaginationType painationType;
     private String[] queryColumn;
+    private Map<String, Object> parameters = new HashMap<>();
+    private Map<String, String> orderBy = new HashMap<>();
 
     public String getParameterValue(String key) {
         if (!containsKey(key)) {
             return null;
         }
-        Object o = Parameters.get(key);
+        Object o = parameters.get(key);
         if (o == null) {
             return null;
         }
@@ -32,7 +38,7 @@ public class PageQueryParameters implements Serializable {
         if (isEmpty(key)) {
             return 0;
         }
-        String value = Parameters.get(key).toString();
+        String value = parameters.get(key).toString();
         if (value == null || value.equals("")) return 0L;
         return Long.parseLong(value);
     }
@@ -41,41 +47,35 @@ public class PageQueryParameters implements Serializable {
         if (isEmpty(key)) {
             return 0;
         }
-        String value = Parameters.get(key).toString();
+        String value = parameters.get(key).toString();
         if (value == null || value.equals("")) return 0;
         return Integer.parseInt(value);
     }
 
     public Boolean containsKey(String key) {
-        return Parameters.containsKey(key);
+        return parameters.containsKey(key);
     }
 
     public Boolean isEmpty(String key) {
-        if (Parameters.containsKey(key)) {
+        if (parameters.containsKey(key)) {
             String value = getParameterValue(key);
-            return value == null || value == "";
+            return StringUtils.isEmpty(value);
         } else {
             return true;
         }
     }
 
-    /// <summary>
-    ///参数值  键值对    值为对象的可以序列化为字符串
-    /// </summary>
-    private HashMap<String, Object> Parameters = new HashMap<String, Object>();
-
-    public HashMap<String, Object> getParameters() {
-        return Parameters;
+    public Map<String, Object> getParameters() {
+        return parameters;
     }
 
     public void setParameters(HashMap<String, Object> parameters) {
-        Parameters = parameters;
+        this.parameters = parameters;
     }
 
     public PageQueryParameters() {
 
     }
-
 
     public int getPageIndex() {
         return this.pageIndex;
@@ -84,7 +84,6 @@ public class PageQueryParameters implements Serializable {
     public void setPageIndex(int pageIndex) {
         this.pageIndex = pageIndex;
     }
-
 
     public int getPageRowCount() {
         return this.pageRowCount;
@@ -107,9 +106,8 @@ public class PageQueryParameters implements Serializable {
     }
 
     public void setMaxValue(String maxValue) {
-       this.maxValue = maxValue;
+        this.maxValue = maxValue;
     }
-
 
     public EnumPaginationType getPainationType() {
         return painationType;
@@ -129,33 +127,35 @@ public class PageQueryParameters implements Serializable {
 
     public String GetValue(String key) {
         if (containsKey(key)) {
-            return Parameters.get(key).toString();
+            return parameters.get(key).toString();
         }
         return "";
     }
 
     public Object GetObject(String key) {
         if (containsKey(key)) {
-            return Parameters.get(key).toString();
+            return parameters.get(key).toString();
         }
         return null;
     }
 
     public String[] GetListValue(String key) {
         if (containsKey(key)) {
-            //string str= Parameters[key];
+            //string str= parameters[key];
             //  return str.EDeserializeObject<String[]>();
         }
         return null;
     }
-    public void put(String key,Object value) {
-        Parameters.put(key, value);
+
+    public void put(String key, Object value) {
+        parameters.put(key, value);
     }
 
-    //mybatis
     public Map<String, Object> getSqlMapParameter() {
         MyPagination myPagination = new MyPagination();
         myPagination.OrderBy = "id desc";//默认
+        if (orderBy.size() > 0)
+            myPagination.OrderBy = orderBy.entrySet().stream().map(entiry -> entiry.getKey() + " " + entiry.getValue()).collect(joining(","));
         myPagination.setPageRowCount(this.getPageRowCount());
         myPagination.setPageIndex(this.getPageIndex());
         Map<String, Object> mapResult = FilerParameter(this.getParameters());
@@ -174,5 +174,13 @@ public class PageQueryParameters implements Serializable {
             }
         }
         return reseltMap;
+    }
+
+    public Map<String, String> getOrderBy() {
+        return orderBy;
+    }
+
+    public void setOrderBy(Map<String, String> orderBy) {
+        this.orderBy = orderBy;
     }
 }
