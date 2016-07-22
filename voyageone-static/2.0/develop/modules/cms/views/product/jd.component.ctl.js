@@ -171,21 +171,22 @@ define([
                 /**
                  *  商品下线
                  */
-                function openOffLinePop(openProductOffLine){
+                function openOffLinePop(openProductOffLine,type){
 
                     if(scope.vm.status != "Approved"){
                         alert("该商品还未Approved！");
                         return;
                     }
 
-                    if(scope.vm.mastData.isMain){
-                        alert("当前商品为主商品，无法单品下线！");
+                    if(scope.vm.mastData.isMain && type != 'group'){
+                        alert("当前商品为主商品，无法单品下线。如果想下线整个商品，请点击【全group下线】按钮");
                         return;
                     }
 
                     openProductOffLine({
                         cartId:scope.cartInfo.value,
-                        productCode:scope.vm.mastData.productCode
+                        productCode:scope.vm.mastData.productCode,
+                        type:type
                     }).then(function(){
                         //刷新子页面
                         getplatformData();
