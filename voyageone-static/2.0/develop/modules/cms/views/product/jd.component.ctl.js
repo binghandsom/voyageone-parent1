@@ -179,7 +179,7 @@ define([
                     }
 
                     if(scope.vm.mastData.isMain && type != 'group'){
-                        alert("当前商品为主商品，无法单品下线。如果想删除整个商品，请点击【全group下线】按钮");
+                        alert("当前商品为主商品，无法单品下线。如果想下线整个商品，请点击【全group下线】按钮");
                         return;
                     }
 
