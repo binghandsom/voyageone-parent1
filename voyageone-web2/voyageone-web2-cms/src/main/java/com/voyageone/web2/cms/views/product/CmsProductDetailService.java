@@ -1262,7 +1262,7 @@ public class CmsProductDetailService extends BaseAppService {
             return;
         }
         // 3.2 调用平台的删除商品的API
-        productService.delPlatfromProduct(paramr.getChannelId(), paramr.getCartId(),numIID);
+        // productService.delPlatfromProduct(paramr.getChannelId(), paramr.getCartId(),numIID);
         //3.4 遍历group中的productCodes中的所有的code
         List<String>codes = cmsBtProductGroup.getProductCodes();
         codes.forEach(code->{
