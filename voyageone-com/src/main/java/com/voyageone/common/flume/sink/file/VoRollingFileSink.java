@@ -93,9 +93,9 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
         * Resist the urge to actually perform rotation in a separate thread!
         */
 
-        long oneDay = 24 * 60 * 60 * 1000;
+        long oneDay = 24 * 60 * 60;
 
-        long initDelay  = getTimeMillis("00:00:01") - System.currentTimeMillis();
+        long initDelay  = System.currentTimeMillis() - getTimeMillis("00:00:01");
         rollService.scheduleAtFixedRate((Runnable) () -> {
             logger.debug("Marking time to rotate file {}", directory.getAbsolutePath());
             if (logFileBeanMap != null) {
@@ -162,7 +162,7 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
                     LogFileBean logFileBean = logFileBeanMap.get(projectFile);
                     if (!logFileBean.currentFile.exists()) {
                         logFileBeanMap.put(projectFile, new LogFileBean(projectFile));
-                        logFileBeanMap.get(projectFile);
+                        logFileBean = logFileBeanMap.get(projectFile);
                     }
 
                     sinkCounter.incrementEventDrainAttemptCount();
@@ -183,7 +183,7 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
                     LogFileBean logFileBean = logFileBeanMap.get(taskLogFile);
                     if (!logFileBean.currentFile.exists()) {
                         logFileBeanMap.put(taskLogFile, new LogFileBean(taskLogFile));
-                        logFileBeanMap.get(taskLogFile);
+                        logFileBean = logFileBeanMap.get(taskLogFile);
                     }
 
                     sinkCounter.incrementEventDrainAttemptCount();
