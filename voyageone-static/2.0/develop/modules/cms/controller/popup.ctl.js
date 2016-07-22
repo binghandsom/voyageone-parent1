@@ -123,6 +123,13 @@ define([
                 "controller": 'PlatformBrandSettingController as ctrl',
                 "backdrop": 'static',
                 "size": 'lg'
+            },
+            "brandMappingConfirm": {
+                "templateUrl": "views/pop/channel/brandMappingConfirm.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/channel/brandMappingConfirm.ctl",
+                "controller": 'BrandMappingConfirmController as ctrl',
+                "backdrop": 'static',
+                "size": 'md'
             }
         },
         "custom": {
@@ -1143,6 +1150,10 @@ define([
 
         $scope.openPlatformMappingSetting = function openPlatformMappingSetting(context) {
             return openModal(popActions.channel.platformBrandSetting, context);
+        };
+
+        $scope.openPlatformMappingConfirm = function openPlatformMappingConfirm(context) {
+            return openModal(popActions.channel.brandMappingConfirm, context);
         };
 
         //打开高级查询页的通用设置，上下架
