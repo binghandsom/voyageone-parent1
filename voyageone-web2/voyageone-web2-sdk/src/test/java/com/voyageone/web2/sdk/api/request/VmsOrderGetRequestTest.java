@@ -38,7 +38,7 @@ public class VmsOrderGetRequestTest {
         item.put("clientSku", "sku10001");
         item.put("barcode","barcode10001");
         item.put("consolidationOrderTime", now);
-        item.put("description", "description10001");
+        item.put("name", "name10001");
         item.put("orderTime", now);
         item.put("cartId",23);
         item.put("clientMsrp",70.00);

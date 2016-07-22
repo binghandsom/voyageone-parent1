@@ -33,7 +33,7 @@ public class VmsOrderAddRequest extends VoApiRequest<VmsOrderAddResponse> {
 	 * "orderId", String型
 	 * "clientSku", String型
 	 * "barcode", String型
-	 * "description", String型
+	 * "name", String型
 	 * "consolidationOrderTime", Long型(时间戳)
 	 * "orderTime", Long型(时间戳)
 	 * "cartId", Integer型
@@ -56,6 +56,7 @@ public class VmsOrderAddRequest extends VoApiRequest<VmsOrderAddResponse> {
 				RequestUtils.checkNotEmpty("orderTime", item.get("orderTime"));
 				RequestUtils.checkNotEmpty("cartId", item.get("cartId"));
 				RequestUtils.checkNotEmpty("clientSku", item.get("clientSku"));
+				RequestUtils.checkNotEmpty("name", item.get("name"));
 				RequestUtils.checkNotEmpty("barcode", item.get("barcode"));
 				RequestUtils.checkNotEmpty("cartId", item.get("cartId"));
 				RequestUtils.checkNotEmpty("clientMsrp", item.get("clientMsrp"));
