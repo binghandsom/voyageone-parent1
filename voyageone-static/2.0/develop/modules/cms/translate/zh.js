@@ -776,6 +776,6 @@ define(function () {
         "TXT_CART_NAME": "平台渠道名称",
         "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配状态",
         "TXT_MASTER_BRAND": "Master品牌",
-        "TXT_BRAND":"[%s]品牌"
+        "TXT_BRAND_CHANGEABLE":"[%s]品牌"
     };
 });
