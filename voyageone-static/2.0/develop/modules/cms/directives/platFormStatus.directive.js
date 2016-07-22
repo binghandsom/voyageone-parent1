@@ -31,27 +31,18 @@ define([
             if(this.statusData.pPublishError)
                 this.statusData.pStatus = "Error";
 
-            if(this.statusData.numberId){
-                switch (+this.statusData.cartId){
-                    case 23:
-                        /**天猫*/
-                        this.statusData.detailUrl = "https://detail.tmall.hk/hk/item.htm?id="+this.statusData.numberId;
-                        break;
-                    case 26:
-                        /**京东*/
-                        this.statusData.detailUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId="+this.statusData.numberId;
-                        break;
-                    case 27:
-                        /**聚美*/
-                        this.statusData.detailUrl = "http://item.jumeiglobal.com/"+this.statusData.numberId+".html";
-                        break;
-                    case 28:
-                        this.statusData.detailUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId="+this.statusData.numberId;
-                        break;
-                    case 29:
-                        this.statusData.detailUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId="+this.statusData.numberId;
-                        break;
+            var _numberId = this.statusData.numberId;
+
+            if(_numberId){
+
+                var _cartId = +this.statusData.cartId;
+
+                if(_cartId != 27){
+                    this.statusData.detailUrl = carts.valueOf(_cartId).pUrl + _numberId;
+                }else{
+                    this.statusData.detailUrl =carts.valueOf(_cartId).pUrl + _numberId + ".html";
                 }
+
             }
         };
 
@@ -61,16 +52,16 @@ define([
             controller: StatusController,
             controllerAs: 'ctrl',
             template: "<span class='plateform-status' ng-if='ctrl.statusData.status != \"Approved\"'>"
-            +"<span class='label' ng-class='{\"pending\": ctrl.statusData.status == \"Pending\",\"ready\":ctrl.statusData.status == \"Ready\" }' title='{{ctrl.statusData.status}}'>"
-            +"<span style='color:black'>{{ctrl.statusData.cartName}}</span>"
-            +"</span>"
-            +"</span>"
-            +"<span class='plateform-status' ng-if='ctrl.statusData.status == \"Approved\"'>"
-            +"<span class='label' ng-class='{\"waiting-publish\": ctrl.statusData.pStatus == \"WaitingPublish\",\"in-stock\": ctrl.statusData.pStatus == \"InStock\",\"on-sale\":ctrl.statusData.pStatus == \"OnSale\",\"error\":ctrl.statusData.pStatus == \"Error\"}'  title='{{ctrl.statusData.pStatus}}'>"
-            +"<span ng-if='ctrl.statusData.numberId'><a ng-href='{{ctrl.statusData.detailUrl}}' target='_blank' style='color: #000;text-decoration: none;'>{{ctrl.statusData.cartName}}</a></span>"
-            +"<span ng-if='!ctrl.statusData.numberId'>{{ctrl.statusData.cartName}}</span>"
-            +"</span>"
-            +"</span>",
+                    + "<span class='label' ng-class='{\"pending\": ctrl.statusData.status == \"Pending\",\"ready\":ctrl.statusData.status == \"Ready\" }' title='{{ctrl.statusData.status}}'>"
+                    + "<span style='color:black'>{{ctrl.statusData.cartName}}</span>"
+                    + "</span>"
+                    + "</span>"
+                    + "<span class='plateform-status' ng-if='ctrl.statusData.status == \"Approved\"'>"
+                    + "<span class='label' ng-class='{\"waiting-publish\": ctrl.statusData.pStatus == \"WaitingPublish\",\"in-stock\": ctrl.statusData.pStatus == \"InStock\",\"on-sale\":ctrl.statusData.pStatus == \"OnSale\",\"error\":ctrl.statusData.pStatus == \"Error\"}'  title='{{ctrl.statusData.pStatus}}'>"
+                    + "<span ng-if='ctrl.statusData.numberId'><a ng-href='{{ctrl.statusData.detailUrl}}' target='_blank' style='color: #000;text-decoration: none;'>{{ctrl.statusData.cartName}}</a></span>"
+                    + "<span ng-if='!ctrl.statusData.numberId'>{{ctrl.statusData.cartName}}</span>"
+                    + "</span>"
+                    + "</span>",
             link: function ($scope) {
                 $scope.ctrl.init();
             }
