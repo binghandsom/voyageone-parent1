@@ -18,7 +18,6 @@ define(['components/dist/voyageone.angular.com'], function () {
         $scope.isSavePwd = false;
         $scope.errorMessage = '';
 
-        $localStorage.$reset();
         $sessionStorage.$reset();
 
         $scope.login = function () {

@@ -222,6 +222,7 @@ define(function () {
         "TXT_ATTRIBUTE_ID": "属性ID",
         "TXT_ATTRIBUTE_NAME": "属性名称",
         "TXT_ATTRIBUTE_TYPE": "属性类型",
+        "TXT_PRODUCT_STATUS_HISTORY": "商品操作历史",
         "TXT_PROMOTION_HISTORY": "活动履历",
         "TXT_PROMOTION_NAME": "活动名称",
         "TXT_PROMOTION_TIME": "活动时间",
