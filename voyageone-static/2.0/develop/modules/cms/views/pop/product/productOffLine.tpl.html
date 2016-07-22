@@ -34,6 +34,9 @@
                                                            'label-warning':product.platFormStatus == 'Ready',
                                                            'label-success':product.platFormStatus == 'Approved'}">&nbsp;{{product.platFormStatus}}&nbsp;</span>
                         </strong>
+                        <strong class="status" style="left: 35%;top: 40%;" ng-if="product.productCode == ctrl.context.productCode">
+                            <label class="label label-danger">下&nbsp;线</label>
+                        </strong>
                         <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{product.imageName}}" title="{{product.productCode}}">
                     </a>
                     <div class="row product-info">
