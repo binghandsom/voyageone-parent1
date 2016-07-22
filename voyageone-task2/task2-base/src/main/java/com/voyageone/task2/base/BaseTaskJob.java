@@ -8,7 +8,7 @@ import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import org.apache.log4j.NDC;
+import org.apache.log4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public abstract class BaseTaskJob extends VOAbsIssueLoggable {
     public void run() {
 
         String taskCheck = getTaskName();
-        NDC.push(taskCheck);
+        MDC.put("taskName", taskCheck);
 
         if (running) {
             $info(taskCheck + "正在运行，忽略");
@@ -51,7 +51,7 @@ public abstract class BaseTaskJob extends VOAbsIssueLoggable {
         $info(taskCheck + "任务结束");
 
         running = false;
-        NDC.remove();
+        MDC.remove("taskName");
     }
 
     @Autowired
