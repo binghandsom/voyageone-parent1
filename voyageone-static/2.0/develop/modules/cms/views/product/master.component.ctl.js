@@ -3,7 +3,8 @@
  * 京东 & 聚美 产品概述（schema）
  */
 define([
-    'cms'
+    'cms',
+    'modules/cms/directives/platFormStatus.directive'
 ],function(cms) {
     cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService, $compile) {
         return {
