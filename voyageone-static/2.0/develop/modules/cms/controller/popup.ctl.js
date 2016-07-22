@@ -471,14 +471,14 @@ define([
                 "size": 'lg'
             }
         },
-        "product":{
-            "switchMain":{
+        "product": {
+            "switchMain": {
                 "templateUrl": "views/pop/product/switchMain.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/switchMain.ctl",
                 "controller": 'SwitchMainController as ctrl',
                 "size": 'lg'
             },
-            "productOffLine":{
+            "productOffLine": {
                 "templateUrl": "views/pop/product/productOffLine.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/productOffLine.ctl",
                 "controller": 'ProductOffLineController as ctrl',
@@ -487,9 +487,9 @@ define([
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
-        function openModel(config, context, contextIsResolve) {
+        function openModal(config, context, contextIsResolve) {
 
-            config.resolve = contextIsResolve ? context: {
+            config.resolve = contextIsResolve ? context : {
                 context: function () {
                     return context;
                 }
@@ -509,7 +509,7 @@ define([
          */
         $scope.openAuthority = function openAuthority(viewSize, data) {
             popActions.authority.new.size = viewSize;
-            openModel(popActions.authority.new, {
+            openModal(popActions.authority.new, {
                 data: function () {
                     return data;
                 }
@@ -521,31 +521,31 @@ define([
          */
         $scope.openAddattributevaluenew = function openAddattributevaluenew(viewSize, data) {
             popActions.addattributevaluenew.new.size = viewSize;
-            openModel(popActions.addattributevaluenew.new, {
+            openModal(popActions.addattributevaluenew.new, {
                 data: function () {
                     return data;
                 }
             }, true);
         };
-        
+
         $scope.openAddattributevaluenews = function openAddattributevaluenews(viewSize, data) {
             popActions.addattributevaluenews.new.size = viewSize;
-            openModel(popActions.addattributevaluenews.new, {
+            openModal(popActions.addattributevaluenews.new, {
                 data: function () {
                     return data;
                 }
             }, true);
         };
-        
+
         $scope.openAddattributevalue = function openAddattributevalue(viewSize, data) {
             popActions.addattributevalue.new.size = viewSize;
-            openModel(popActions.addattributevalue.new, {
+            openModal(popActions.addattributevalue.new, {
                 data: function () {
                     return data;
                 }
             }, true);
         };
-        
+
         /**
          * pop出promotion选择页面,用于设置
          * @type {openAddToPromotion}
@@ -563,7 +563,7 @@ define([
                     });
                 }
             }
-            return openModel(popActions.bulkUpdate.addToPromotion, {
+            return openModal(popActions.bulkUpdate.addToPromotion, {
                 "promotion": promotion,
                 "productIds": productIds,
                 "products": selList,
@@ -592,7 +592,7 @@ define([
                     params = {"productIds": productIds, "cartId": null};
                 }
             }
-            return openModel(popActions.bulkUpdate.fieldEdit, params);
+            return openModal(popActions.bulkUpdate.fieldEdit, params);
         };
 
         /**
@@ -601,7 +601,7 @@ define([
          * @returns {*}
          */
         $scope.popupNewCategory = function popupNewCategory(context) {
-            return openModel(popActions.bulkUpdate.category, context);
+            return openModal(popActions.bulkUpdate.category, context);
         };
 
         /**
@@ -610,16 +610,16 @@ define([
          * @returns {*}
          */
         $scope.popupCategoryNew = function popupCategoryNew(context) {
-            return openModel(popActions.bulkUpdate.categoryNew, context);
+            return openModal(popActions.bulkUpdate.categoryNew, context);
         };
-        
+
         /**
          * 打开类目属性编辑页面
          * @param context
          * @returns {*}
          */
         $scope.openSystemCategory = function openSystemCategory(context) {
-            return openModel(popActions.category.schema, context);
+            return openModal(popActions.category.schema, context);
         };
 
         /**
@@ -628,19 +628,19 @@ define([
          * @returns {*}
          */
         $scope.openAddAttribute = function openAddAttribute(context) {
-            return openModel(popActions.custom.newAttribute, context);
+            return openModal(popActions.custom.newAttribute, context);
         };
-        
+
         /**
          * 新增advance查询页,参加聚美活动弹出
          * */
         $scope.openAddJMActivity = function openAddJMActivity(promotion, selList, context) {
             if (context && context.isSelAll) {
                 // 全选
-                return openModel(popActions.search.joinJM, {promotion: promotion, products: [], 'isSelAll': 1});
+                return openModal(popActions.search.joinJM, {promotion: promotion, products: [], 'isSelAll': 1});
             } else {
                 if (selList && selList.length) {
-                    return openModel(popActions.search.joinJM, {promotion: promotion, products: selList});
+                    return openModal(popActions.search.joinJM, {promotion: promotion, products: selList});
                 }
             }
         };
@@ -651,7 +651,7 @@ define([
          * @returns {*}
          */
         $scope.openAddNewValue = function openAddNewValue(context) {
-            return openModel(popActions.custom.newValue, context);
+            return openModal(popActions.custom.newValue, context);
         };
 
         /**
@@ -659,81 +659,57 @@ define([
          * @type {openConfiguration}
          */
         $scope.openConfiguration = function openConfiguration(viewSize, data) {
-            require([popActions.configuration.new.controllerUrl], function () {
-                $uibModal.open({
-                    templateUrl: popActions.configuration.new.templateUrl,
-                    controller: popActions.configuration.new.controller,
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
+            popActions.configuration.new.size = viewSize;
+            openModal(popActions.configuration.new, {
+                data: function () {
+                    return data;
+                }
+            }, true);
         };
-        
+
         /**
          * 添加字典值页面
          * @type {openDictValue}
          */
         $scope.openDictValue = function openDictValue(viewSize, fnInitial, $index, data) {
-            require([popActions.dictionary.value.controllerUrl], function () {
-                var modalInstance = $uibModal.open({
-                    templateUrl: popActions.dictionary.value.templateUrl,
-                    controller: popActions.dictionary.value.controller,
-                    size: viewSize,
-                    resolve: {
-                        dictValue: function () {
-                            return data;
-                        }
-                    }
-                });
-
-                // 回调主页面的刷新操作
-                modalInstance.result.then(function (data) {
-                    fnInitial(data, $index);
-                })
+            popActions.dictionary.value.size = viewSize;
+            openModal(popActions.dictionary.value, {
+                dictValue: function () {
+                    return data;
+                }
+            }, true).then(function (data) {
+                fnInitial(data, $index);
             });
         };
-        
+
         /**
          * 添加字典自定义页面
          * @type {openDictCustom}
          */
         $scope.openDictCustom = function openDictCustom(viewSize, fnInitial, $index, data) {
-            require([popActions.dictionary.custom.controllerUrl], function () {
-                var modalInstance = $uibModal.open({
-                    templateUrl: popActions.dictionary.custom.templateUrl,
-                    controller: popActions.dictionary.custom.controller,
-                    size: viewSize,
-                    resolve: {
-                        customValue: function () {
-                            return data;
-                        }
-                    }
-                });
-
-                // 回调主页面的刷新操作
-                modalInstance.result.then(function (data) {
-                    fnInitial(data, $index);
-                })
+            popActions.dictionary.custom.size = viewSize;
+            openModal(popActions.dictionary.custom, {
+                customValue: function () {
+                    return data;
+                }
+            }, true).then(function (data) {
+                fnInitial(data, $index);
             });
         };
-        
-        $scope.popupFeed = function popupFeed (context) {
-            return openModel(popActions.feedMapping.attribute, context);
+
+        $scope.popupFeed = function popupFeed(context) {
+            return openModal(popActions.feedMapping.attribute, context);
         };
 
-        $scope.popupFeedValue = function popupFeedValue (context) {
-            return openModel(popActions.feedMapping.value, context);
+        $scope.popupFeedValue = function popupFeedValue(context) {
+            return openModal(popActions.feedMapping.value, context);
         };
 
-        $scope.openOtherPlatform = function openOtherPlatform (context) {
-            return openModel(popActions.platformMapping.otherPlatform, context);
+        $scope.openOtherPlatform = function openOtherPlatform(context) {
+            return openModal(popActions.platformMapping.otherPlatform, context);
         };
 
-        $scope.ppPlatformMapping = function ppPlatformMapping (context) {
+        $scope.ppPlatformMapping = function ppPlatformMapping(context) {
 
             var last = context.path[0];
             var mapping;
@@ -741,7 +717,7 @@ define([
 
             if (_.isNumber(last)) {
                 config = popActions.platformMapping.multiComplex.item;
-                return openModel(config, context);
+                return openModal(config, context);
             }
 
             mapping = last.mapping;
@@ -760,11 +736,11 @@ define([
                     throw 'Unknown mapping type: ' + mapping.type;
             }
 
-            return openModel(config, context);
+            return openModal(config, context);
         };
 
         $scope.ppPlatformMapping.simpleItem = function (context) {
-            return openModel(popActions.platformMapping.simple.item, context);
+            return openModal(popActions.platformMapping.simple.item, context);
         };
 
         /**
@@ -783,94 +759,73 @@ define([
                 }
             });
         };
-        
+
         /**
          * 打开翻译使用的第三方属性页面
          * @type {openTranslate}
          */
         $scope.openTranslate = function openTranslate(viewSize, data) {
-            require([popActions.field.feedDetail.controllerUrl], function () {
-                $uibModal.open({
-                    templateUrl: popActions.field.feedDetail.templateUrl,
-                    controller: popActions.field.feedDetail.controller,
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
+            popActions.field.feedDetail.size = viewSize;
+            openModal(popActions.field.feedDetail, {
+                data: function () {
+                    return data;
+                }
+            }, true);
         };
-        
+
         /**
          * 打开导入文件页面
          * @type {openImport}
          */
         $scope.openImport = function openImport(viewSize, data, fnInitial) {
-            require([popActions.file.import.controllerUrl], function () {
-                var modalInstance = $uibModal.open({
-                    templateUrl: popActions.file.import.templateUrl,
-                    controller: popActions.file.import.controller,
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-                modalInstance.result.then(function () {
-                    if (fnInitial) {
-                        fnInitial();
-                    }
-
-                })
-
+            popActions.file.import.size = viewSize;
+            openModal(popActions.file.import, {
+                data: function () {
+                    return data;
+                }
+            }, true).then(function () {
+                if (fnInitial) {
+                    fnInitial();
+                }
             });
         };
-        
+
         /**
          * 打开promotion历史页面
          * @type {openHistoryPromotion}
          */
         $scope.openHistoryPromotion = function openHistoryPromotion(viewSize, code, selectedCart) {
-            require([popActions.history.promotion.controllerUrl], function () {
-                $uibModal.open({
-                    templateUrl: popActions.history.promotion.templateUrl,
-                    controller: popActions.history.promotion.controller,
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return {
-                                code: code,
-                                cartId: selectedCart
-                            };
-                        }
-                    }
-                });
-            });
+            popActions.history.promotion.size = viewSize;
+            openModal(popActions.history.promotion, {
+                data: function () {
+                    return {
+                        code: code,
+                        cartId: selectedCart
+                    };
+                }
+            }, true);
         };
-        
+
         //产品详情页，弹出历史纪录的上下架历史纪录
-        $scope.openHistoryPutOnOff = function openHistoryPutOnOff (code, cartId, cartList) {
-            return openModel(popActions.history.putOnOff, { code:code, cartId:cartId, cartList:cartList });
+        $scope.openHistoryPutOnOff = function openHistoryPutOnOff(code, cartId, cartList) {
+            return openModal(popActions.history.putOnOff, {code: code, cartId: cartId, cartList: cartList});
         };
 
         //全店操作页面中，操作按钮弹出
-        $scope.openNewOpp = function openNewOpp (header, upLoadFlag) {
-            return openModel(popActions.custom.storeoperation, {header: header, upLoadFlag: upLoadFlag});
+        $scope.openNewOpp = function openNewOpp(header, upLoadFlag) {
+            return openModal(popActions.custom.storeoperation, {header: header, upLoadFlag: upLoadFlag});
         };
 
         //全店操作页面中，确认操作按钮弹出
-        $scope.openConfirmOpp = function openConfirmOpp (header, upLoadFlag) {
-            return openModel(popActions.custom.confirmstoreopp, {header: header, upLoadFlag: upLoadFlag});
+        $scope.openConfirmOpp = function openConfirmOpp(header, upLoadFlag) {
+            return openModal(popActions.custom.confirmstoreopp, {header: header, upLoadFlag: upLoadFlag});
         };
 
         /**
          * 打开price历史页面
          */
         $scope.openHistoryPrice = function openHistoryPrice(code, skuList, selectedSku, selectedCart) {
-            return openModel(popActions.history.price, {
+            return openModal(popActions.history.price, {
                 skuList: skuList,
                 code: code,
                 selected: {
@@ -885,47 +840,38 @@ define([
          * @type {openPromotion}
          */
         $scope.openPromotion = function openPromotion(viewSize, cartList, data, fnInitial) {
-            require([popActions.promotion.detail.controllerUrl], function () {
-                var modalInstance = $uibModal.open({
-                    templateUrl: popActions.promotion.detail.templateUrl,
-                    controller: popActions.promotion.detail.controller,
-                    size: viewSize,
-                    resolve: {
-                        items: function () {
-                            return data;
-                        },
-                        cartList: function () {
-                            return cartList;
-                        }
-                    }
-                });
-
-                modalInstance.result.then(function () {
-                    if (fnInitial) {
-                        fnInitial();
-                    }
-
-                })
+            popActions.promotion.detail.size = viewSize;
+            openModal(popActions.promotion.detail, {
+                items: function () {
+                    return data;
+                },
+                cartList: function () {
+                    return cartList;
+                }
+            }, true).then(function () {
+                if (fnInitial) {
+                    fnInitial();
+                }
             });
         };
-        
+
         /**
          * 打开promotion页面
          * @type {openPromotion}
          */
-        $scope.openImageSetting = function openImageSetting (context) {
-            return openModel(popActions.image.upload, context);
+        $scope.openImageSetting = function openImageSetting(context) {
+            return openModal(popActions.image.upload, context);
         };
-        
+
         /**
          * 打开promotion页面
          */
-        $scope.openNewBeatTask = function openNewBeatTask (context) {
-            return openModel(popActions.promotion.newBeat, context);
+        $scope.openNewBeatTask = function openNewBeatTask(context) {
+            return openModal(popActions.promotion.newBeat, context);
         };
 
-        $scope.popAddBeat = function popAddBeat (context) {
-            return openModel(popActions.promotion.addBeat, context);
+        $scope.popAddBeat = function popAddBeat(context) {
+            return openModal(popActions.promotion.addBeat, context);
         };
 
         /**
@@ -933,117 +879,87 @@ define([
          * @type {openMrbStock}
          */
         $scope.openMrbStock = function openMrbStock(viewSize, data) {
-            require([popActions.promotion.newMrbStock.controllerUrl], function () {
-                $uibModal.open({
-                    templateUrl: popActions.promotion.newMrbStock.templateUrl,
-                    controller: popActions.promotion.newMrbStock.controller,
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
+            popActions.promotion.newMrbStock.size = viewSize;
+            openModal(popActions.promotion.newMrbStock, {
+                data: function () {
+                    return data;
+                }
+            }, true);
         };
-        
+
         /**
          * 导入库存隔离数据
          * @type {openImportStock}
          */
         $scope.openImportStock = function openImportStock(viewSize, data) {
-            require([popActions.file.stock.controllerUrl], function () {
-                $uibModal.open({
-                    templateUrl: popActions.file.stock.templateUrl,
-                    controller: popActions.file.stock.controller,
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
+            popActions.file.stock.size = viewSize;
+            openModal(popActions.file.stock, {
+                data: function () {
+                    return data;
+                }
+            }, true);
         };
-        
+
         /**
          * 新增一个sku的库存隔离
          */
         $scope.openNewMrbStockSku = function openNewMrbStockSku(viewSize, data) {
-            require([popActions.promotion.newMrbStockSku.controllerUrl], function () {
-                $uibModal.open({
-                    templateUrl: popActions.promotion.newMrbStockSku.templateUrl,
-                    controller: popActions.promotion.newMrbStockSku.controller,
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
+            popActions.promotion.newMrbStockSku.size = viewSize;
+            openModal(popActions.promotion.newMrbStockSku, {
+                data: function () {
+                    return data;
+                }
+            }, true);
         };
-        
+
         /**
          * 显示该sku的库存隔离明细
          */
         $scope.openSkuMrbStockDetail = function openSkuMrbStockDetail(viewSize, taskId, cartId, data) {
-            require([popActions.promotion.skuMrbStockDetail.controllerUrl], function () {
-                $uibModal.open({
-                    templateUrl: popActions.promotion.skuMrbStockDetail.templateUrl,
-                    controller: popActions.promotion.skuMrbStockDetail.controller,
-                    size: viewSize,
-                    resolve: {
-                        taskId: function () {
-                            return taskId;
-                        },
-                        cartId: function () {
-                            return cartId;
-                        },
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
+            popActions.promotion.skuMrbStockDetail.size = viewSize;
+            openModal(popActions.promotion.skuMrbStockDetail, {
+                taskId: function () {
+                    return taskId;
+                },
+                cartId: function () {
+                    return cartId;
+                },
+                data: function () {
+                    return data;
+                }
+            }, true);
         };
-        
+
         /**
          * 新增增量隔离库存任务
          */
         $scope.openAddMrbStockIncrement = function openAddMrbStockIncrement(viewSize, data) {
-            require([popActions.promotion.addMrbStockIncrement.controllerUrl], function () {
-                $uibModal.open({
-                    templateUrl: popActions.promotion.addMrbStockIncrement.templateUrl,
-                    controller: popActions.promotion.addMrbStockIncrement.controller,
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
+            popActions.promotion.addMrbStockIncrement.size = viewSize;
+            openModal(popActions.promotion.addMrbStockIncrement, {
+                data: function () {
+                    return data;
+                }
+            }, true);
         };
-        
+
         /**
          * 新增feed查询页图片弹出
          * */
-        $scope.openImagedetail = function openImagedetail (context) {
-            return openModel(popActions.search.imagedetail, context);
+        $scope.openImagedetail = function openImagedetail(context) {
+            return openModal(popActions.search.imagedetail, context);
         };
 
         /**
          * 新增feed查询页code弹出
          * */
-        $scope.openCodeDetail = function openCodeDetail (context) {
-            return openModel(popActions.search.codeDetail, context);
+        $scope.openCodeDetail = function openCodeDetail(context) {
+            return openModal(popActions.search.codeDetail, context);
         };
 
         /**
          * advance查询，添加店铺内分类edit弹出
          */
-        $scope.openAddChannelCategoryEdit = function openAddChannelCategoryEdit (selList, cartId, context) {
+        $scope.openAddChannelCategoryEdit = function openAddChannelCategoryEdit(selList, cartId, context) {
             var productIds = [], data;
             _.forEach(selList, function (object) {
                 productIds.push(object.code);
@@ -1067,250 +983,198 @@ define([
                 data.isQuery = "0";
             }
 
-            return openModel(popActions.bulkUpdate.addChannelCategory, data);
+            return openModal(popActions.bulkUpdate.addChannelCategory, data);
         };
 
         /**
          * 新增ChannelList页,设置操作弹出
          * */
-        $scope.openChannelSetting = function openChannelSetting (context) {
-            return openModel(popActions.system.channelsetting, context);
+        $scope.openChannelSetting = function openChannelSetting(context) {
+            return openModal(popActions.system.channelsetting, context);
         };
 
         /**
          * 新增CartList页,设置操作弹出
          * */
-        $scope.openChannelEdit = function openChannelEdit (context) {
-            return openModel(popActions.system.channeledit, context);
+        $scope.openChannelEdit = function openChannelEdit(context) {
+            return openModal(popActions.system.channeledit, context);
         };
 
-        $scope.openCartEdit = function openCartEdit (context) {
-            return openModel(popActions.system.cartList, context);
+        $scope.openCartEdit = function openCartEdit(context) {
+            return openModal(popActions.system.cartList, context);
         };
-        
+
         /**
          *新增店铺管理-Listing-sizechart页,新增操作弹出
          */
-        $scope.openSizeChartAdd = function openSizeChartAdd (context) {
-            return openModel(popActions.store.listing.sizechart, context);
+        $scope.openSizeChartAdd = function openSizeChartAdd(context) {
+            return openModal(popActions.store.listing.sizechart, context);
         };
-        
+
         /**
          * 新增店铺管理-Listing-sizechart页,设置操作弹出
          * */
-        $scope.openSizeChartSetting = function openSizeChartSetting (context) {
-            return openModel(popActions.store.listing.sizechart, context);
+        $scope.openSizeChartSetting = function openSizeChartSetting(context) {
+            return openModal(popActions.store.listing.sizechart, context);
         };
-        
+
         /**
          * 新增店铺管理-Listing-sizechartimport页,倒入操作弹出
          * */
-        $scope.openSizeChartImport = function openSizeChartImport (context) {
-            return openModel(popActions.store.listing.sizechartimport, context);
+        $scope.openSizeChartImport = function openSizeChartImport(context) {
+            return openModal(popActions.store.listing.sizechartimport, context);
         };
-        
+
         /**
          * 新增店铺管理-Listing-imagetemplate页,设置操作弹出
          * */
-        $scope.openImgTplEditing = function openImgTplEditing (context) {
-            return openModel(popActions.store.listing.imagetemplate, context);
+        $scope.openImgTplEditing = function openImgTplEditing(context) {
+            return openModal(popActions.store.listing.imagetemplate, context);
         };
-        
+
         /**
          * 新增店铺管理-Listing-imagetemplate预览图片页,设置操作弹出
          * */
-        $scope.openImgTplPreview = function openImgTplPreview (context) {
-            return openModel(popActions.store.listing.imagetemplatepreview, context);
+        $scope.openImgTplPreview = function openImgTplPreview(context) {
+            return openModal(popActions.store.listing.imagetemplatepreview, context);
         };
-        
+
         /**
          * 新增店铺管理-Listing-imagegroup页,add操作弹出
          * */
         $scope.openImgGroupAdd = function openImgGroupAdd(data) {
-            require([popActions.store.listing.imagegroupadd.controllerUrl], function () {
-                $uibModal.open({
-                    templateUrl: popActions.store.listing.imagegroupadd.templateUrl,
-                    controller: popActions.store.listing.imagegroupadd.controller,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
+            openModal(popActions.store.listing.imagegroupadd, {
+                data: function () {
+                    return data;
+                }
+            }, true);
         };
-        
+
         /**
          * 新增店铺管理-Listing-imagegroup页,预览查看图片操作弹出
          * */
         $scope.openImgGroupListImg = function openImgGroupListImg(originUrl) {
-            require([popActions.store.listing.imagegroupimg.controllerUrl], function () {
-                $uibModal.open({
-                    templateUrl: popActions.store.listing.imagegroupimg.templateUrl,
-                    controller: popActions.store.listing.imagegroupimg.controller,
-                    resolve: {
-                        originUrl: function () {
-                            return originUrl;
-                        }
-                    }
-                });
-            });
+            openModal(popActions.store.listing.imagegroupimg, {
+                originUrl: function () {
+                    return originUrl;
+                }
+            }, true);
         };
 
         /**
          * 新增店铺管理-Listing-imagegroup_detail页,add操作弹出
          * */
         $scope.openImgGroupDetail = function openImgGroupDetail(data, originUrl) {
-            require([popActions.store.listing.imagedetailadd.controllerUrl], function () {
-                $uibModal.open({
-                    templateUrl: popActions.store.listing.imagedetailadd.templateUrl,
-                    controller: popActions.store.listing.imagedetailadd.controller,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        },
-                        originUrl: function () {
-                            return originUrl;
-                        }
-                    }
-                });
-            });
+            openModal(popActions.store.listing.imagedetailadd, {
+                data: function () {
+                    return data;
+                },
+                originUrl: function () {
+                    return originUrl;
+                }
+            }, true);
         };
-        
+
         /**
          * 弹出自定义属性列
          * @type {openCustomColumn}
          */
         $scope.openCustomColumn = function openCustomColumn(viewSize, fnInitial) {
-            require([popActions.custom.column.controllerUrl], function () {
-                var modalInstance = $uibModal.open({
-                    templateUrl: popActions.custom.column.templateUrl,
-                    controller: popActions.custom.column.controller,
-                    size: viewSize
-                });
-
-                modalInstance.result.then(function () {
-                    if (fnInitial) {
-                        fnInitial();
-                    }
-
-                })
+            popActions.custom.column.size = viewSize;
+            openModal(popActions.custom.column, null, true).then(function () {
+                if (fnInitial) {
+                    fnInitial();
+                }
             });
         };
-        
+
         //TagList一览中，新增标签
-        $scope.openNewTag = function openNewTag (context) {
-            return openModel(popActions.custom.addtaglist, context);
+        $scope.openNewTag = function openNewTag(context) {
+            return openModal(popActions.custom.addtaglist, context);
         };
-        
-        $scope.openJmPromotionDefaultSetting = function openJmPromotionDefaultSetting (context) {
-            return openModel(popActions.jumei.jmPromotionDefaultSetting.batch, context);
+
+        $scope.openJmPromotionDefaultSetting = function openJmPromotionDefaultSetting(context) {
+            return openModal(popActions.jumei.jmPromotionDefaultSetting.batch, context);
         };
 
         //聚美一览中，deal延期
-        $scope.openDealExtension = function openDealExtension (context) {
-            return openModel(popActions.jumei.jmPromotionDetail.dealExtension, context);
-        };
-        
-        //聚美一览中，price
-        $scope.openPriceModify = function openPriceModify (context) {
-            return openModel(popActions.jumei.jmPromotionDetail.priceModify, context);
-        };
-        
-        //聚美图片管理中，追加按钮
-        $scope.openJmImageSetting = function openJmImageSetting (context) {
-            return openModel(popActions.jumei.jmImageManage.imageSetting, context);
+        $scope.openDealExtension = function openDealExtension(context) {
+            return openModal(popActions.jumei.jmPromotionDetail.dealExtension, context);
         };
 
-        $scope.openJmProductDetail = function openJmProductDetail (context) {
-            return openModel(popActions.jumei.jmProductDetail.detail, context);
+        //聚美一览中，price
+        $scope.openPriceModify = function openPriceModify(context) {
+            return openModal(popActions.jumei.jmPromotionDetail.priceModify, context);
+        };
+
+        //聚美图片管理中，追加按钮
+        $scope.openJmImageSetting = function openJmImageSetting(context) {
+            return openModal(popActions.jumei.jmImageManage.imageSetting, context);
+        };
+
+        $scope.openJmProductDetail = function openJmProductDetail(context) {
+            return openModal(popActions.jumei.jmProductDetail.detail, context);
         };
 
         $scope.openJmPromotionDetail = function openJmPromotionDetail(context, fnInitial) {
-            require([popActions.jumei.jmPromotionDetail.detail.controllerUrl], function () {
-                var modalInstance = $uibModal.open({
-                    templateUrl: popActions.jumei.jmPromotionDetail.detail.templateUrl,
-                    controller: popActions.jumei.jmPromotionDetail.detail.controller,
-                    size:'lg',
-                    resolve: {
-                        context: function () {
-                            return context;
-                        }
-                    }
-                });
-
-                modalInstance.result.then(function () {
-                    if (fnInitial) {
-                        fnInitial();
-                    }
-
-                })
+            popActions.jumei.jmPromotionDetail.detail.size = 'lg';
+            openModal(popActions.jumei.jmPromotionDetail.detail, context).then(function () {
+                if (fnInitial) {
+                    fnInitial();
+                }
             });
         };
-        
+
         $scope.openJmPromotionProductImport = function openJmPromotionProductImport(context, fnInitial) {
-            require([popActions.jumei.jmPromotionDetail.import.controllerUrl], function () {
-                var modalInstance = $uibModal.open({
-                    templateUrl: popActions.jumei.jmPromotionDetail.import.templateUrl,
-                    controller: popActions.jumei.jmPromotionDetail.import.controller,
-                    resolve: {
-                        context: function () {
-                            return context;
-                        }
-                    }
-                });
-
-                modalInstance.result.then(function () {
-                    if (fnInitial) {
-                        fnInitial();
-                    }
-
-                })
+            openModal(popActions.jumei.jmPromotionDetail.import, context).then(function () {
+                if (fnInitial) {
+                    fnInitial();
+                }
             });
         };
 
-        $scope.openCategorySetting = function openCategorySetting (context) {
-            return openModel(popActions.channel.categorySetting, context);
+        $scope.openCategorySetting = function openCategorySetting(context) {
+            return openModal(popActions.channel.categorySetting, context);
         };
 
-        $scope.openNewCategory = function openNewCategory (context) {
-            return openModel(popActions.channel.newCategory, context);
+        $scope.openNewCategory = function openNewCategory(context) {
+            return openModal(popActions.channel.newCategory, context);
         };
 
-        $scope.openPlatformMappingSetting = function openPlatformMappingSetting (context) {
-            return openModel(popActions.channel.platformBrandSetting, context);
+        $scope.openPlatformMappingSetting = function openPlatformMappingSetting(context) {
+            return openModal(popActions.channel.platformBrandSetting, context);
         };
 
         //打开高级查询页的通用设置，上下架
-        $scope.openPutOnOff = function openPutOnOff (context) {
-            return openModel(popActions.bulkUpdate.putOnOff, context);
+        $scope.openPutOnOff = function openPutOnOff(context) {
+            return openModal(popActions.bulkUpdate.putOnOff, context);
         };
 
         //打开高级查询页的搜索条件，自由标签
-        $scope.openFreeTag = function openFreeTag (context) {
-            return openModel(popActions.bulkUpdate.freeTag, context);
+        $scope.openFreeTag = function openFreeTag(context) {
+            return openModal(popActions.bulkUpdate.freeTag, context);
         };
 
         //打开高级查询页的共通设置，最终售价
-        $scope.openSalePrice = function openSalePrice (context) {
-            return openModel(popActions.bulkUpdate.salePrice, context);
+        $scope.openSalePrice = function openSalePrice(context) {
+            return openModal(popActions.bulkUpdate.salePrice, context);
         };
 
         //打开高级查询页的共通设置，上新审批
-        $scope.openUpdateApproval = function openUpdateApproval (context) {
-            return openModel(popActions.bulkUpdate.updateProductApproval, context);
+        $scope.openUpdateApproval = function openUpdateApproval(context) {
+            return openModal(popActions.bulkUpdate.updateProductApproval, context);
         };
 
         //切换主类目
-        $scope.openSwitchMain = function openSwitchMain (context) {
-            return openModel(popActions.product.switchMain, context);
+        $scope.openSwitchMain = function openSwitchMain(context) {
+            return openModal(popActions.product.switchMain, context);
         };
 
         //产品下线
-        $scope.openProductOffLine = function(context){
-            return openModel(popActions.product.productOffLine, context);
+        $scope.openProductOffLine = function (context) {
+            return openModal(popActions.product.productOffLine, context);
         }
-        
+
     }).factory('popups', function ($controller, $rootScope) {
 
         var popupScope = $rootScope.$new();
