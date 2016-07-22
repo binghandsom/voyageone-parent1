@@ -282,11 +282,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     feed.setFullAttribute();
                     doSaveProductMainProp(feed, channelId, mapBrandMapping, categoryTreeAllList);
                 } catch (Exception e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                     errCnt++;
                     String errMsg = "feed->master导入:异常终止:";
                     if(StringUtils.isNullOrBlank2(e.getMessage())) {
                         errMsg = errMsg + e.getStackTrace()[0].toString();
+                        $error(errMsg);
                     } else {
                         errMsg = e.getMessage();
                     }
@@ -2386,11 +2387,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         /**
          * calculatePriceByFormula 根据公式计算价格
          *
-         * @param feedSkuInfo Feed的SKU信息
-         * @param formula     计算公式
+         * @param feedSkuInfo CmsBtFeedInfoModel_Sku Feed的SKU信息
+         * @param formula     String   计算公式
+         * @param channelId   String   渠道id
+         * @param feedCategory String  feed类目(有些店铺的价格计算公式时基于类目的)
          * @return 计算后价格
          */
-        private Double calculatePriceByFormula(CmsBtFeedInfoModel_Sku feedSkuInfo, String formula) {
+        private Double calculatePriceByFormula(CmsBtFeedInfoModel_Sku feedSkuInfo, String formula, String channelId, String feedCategory) {
 
             String originalFomula = formula;
             Double priceClientMsrp = feedSkuInfo.getPriceClientMsrp();
@@ -2403,7 +2406,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // update by desmond 2016/07/19 start
 //                return 0.00;
                 // 如果传入的价格计算公式为空，则中止feed导入，抛出异常
-                String errMsg = "feed->master导入:异常终止:calculatePriceByFormula()方法中传入的价格计算公式错误( formula:null )";
+                String errMsg = "";
+                if (isCategoryFormula(channelId)) {
+                    // 基于类目的计算公式为空时，抛出异常之后继续后面的feed导入
+                    errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表中该feed类目配置的价格计算公式为空 " +
+                            "( channel:[%s] feedCategory:[%s] formula:[null] )", channelId, feedCategory);
+                } else {
+                    // 不基于类目的计算公式为空时，该店铺所有商品都不能继续做了，中止后面的feed导入
+                    errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表配置的价格计算公式错误 " +
+                            "( channel:[%s] formula:[null] )", channelId);
+                }
                 $error(errMsg);
                 throw new BusinessException(errMsg);
                 // update by desmond 2016/07/19 end
@@ -2434,9 +2446,20 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             } catch (Exception ex) {
                 // 价格计算公式出错时抛出异常，中止feed导入
-                $error(ex);
+//                $error(ex);
 //                throw new RuntimeException("Formula Calculate Fail!", ex);
-                throw new BusinessException(String.format("feed->master导入:异常终止:在cms_mt_channel_config表配置的价格计算公式错误 ( formula: [%s] )", originalFomula));
+                String errMsg = "";
+                if (isCategoryFormula(channelId)) {
+                    // 基于类目的计算公式为空时，抛出异常之后继续后面的feed导入
+                    errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表中该feed类目配置的价格计算公式不正确 " +
+                            "( channel:[%s] feedCategory:[%s] formula:[%s] )", channelId, feedCategory, originalFomula);
+                } else {
+                    // 不基于类目的计算公式为空时，该店铺所有商品都不能继续做了，中止后面的feed导入
+                    errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表配置的价格计算公式错误 " +
+                            "( channel:[%s] formula: [%s] )", channelId, originalFomula);
+                }
+                $error(errMsg);
+                throw new BusinessException(errMsg);
             }
         }
 
@@ -2844,9 +2867,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA);
             CmsChannelConfigBean cmsChannelConfigBean = null;
             // 有3个渠道('020','025','026')要根据类目税率不一样，要根据类目(config_code字段)取得价格计算公式
-            if (ChannelConfigEnums.Channel.EDCSKINCARE.getId().equals(channelId)           // "020"
-                    || ChannelConfigEnums.Channel.FragranceNet.getId().equals(channelId)   // "025"
-                    || ChannelConfigEnums.Channel.LightHouse.getId().equals(channelId)) {  // "026"
+            if (isCategoryFormula(channelId)) {
                 cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA, feed.getCategory());
 
                 // 如果没有取到feed类目对应的价格计算公式，则中止feed导入，抛出异常
@@ -2872,9 +2893,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //            cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA);
             cmsChannelConfigBean = null;
             // 有3个渠道('020','025','026')要根据类目税率不一样，要根据类目(config_code字段)取得价格计算公式
-            if (ChannelConfigEnums.Channel.EDCSKINCARE.getId().equals(channelId)           // "020"
-                    || ChannelConfigEnums.Channel.FragranceNet.getId().equals(channelId)   // "025"
-                    || ChannelConfigEnums.Channel.LightHouse.getId().equals(channelId)) {  // "026"
+            if (isCategoryFormula(channelId)) {
                 cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA, feed.getCategory());
 
                 // 如果没有取到feed类目对应的价格计算公式，则中止feed导入，抛出异常
@@ -2953,8 +2972,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // delete desmond 2016/07/01 end
 
                 if (commonSku != null) {
-                    commonSku.setPriceMsrp(calculatePriceByFormula(sku, priceMsrpCalcFormula));
-                    commonSku.setPriceRetail(calculatePriceByFormula(sku, priceRetailCalcFormula));
+                    commonSku.setPriceMsrp(calculatePriceByFormula(sku, priceMsrpCalcFormula, channelId, feed.getCategory()));
+                    commonSku.setPriceRetail(calculatePriceByFormula(sku, priceRetailCalcFormula, channelId, feed.getCategory()));
                     commonSku.setClientMsrpPrice(sku.getPriceClientMsrp());
                     commonSku.setClientRetailPrice(sku.getPriceClientRetail());
                     commonSku.setClientNetPrice(sku.getPriceNet());
@@ -3326,26 +3345,43 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     }
 
     /**
+     * 判断该渠道是否是需要基于类目的价格计算公式
+     *
+     * @param channelId String 渠道id
+     */
+    private boolean isCategoryFormula(String channelId) {
+
+        // 有3个渠道('020','025','026')要根据类目税率不一样，要根据类目(config_code字段)取得价格计算公式
+        if (ChannelConfigEnums.Channel.EDCSKINCARE.getId().equals(channelId)           // "020"
+                || ChannelConfigEnums.Channel.FragranceNet.getId().equals(channelId)   // "025"
+                || ChannelConfigEnums.Channel.LightHouse.getId().equals(channelId)) {  // "026"
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * 如果没有取到feed类目对应的价格计算公式时抛出异常处理
      *
      * @param channelId String 渠道id
      * @param feedCategory String 平台id
-     * @param formulakey String 价格公式
+     * @param formula String 价格公式
      * @param feedModel String feed model
      */
-    private void throwNotFoundPriceFormulaException(String channelId, String feedCategory, String formulakey, String feedModel){
+    private void throwNotFoundPriceFormulaException(String channelId, String feedCategory, String formula, String feedModel){
         String errMsg = "";
 
         if (!StringUtils.isEmpty(feedCategory)) {
-            // 根据feed类目未取到相应的价格计算公式时
-            errMsg = String.format("feed->master导入:异常终止:价格计算公式错误:在cms_mt_channel_config表中没有找到该feed类目对应的" +
-                            "价格计算公式( channel: [%s], feedcategory: [%s], formulakey: [%s], feedModel: [%s] )",
-                    channelId, feedCategory, formulakey, feedModel);
+            // 根据feed类目未取到相应的价格计算公式时，抛出异常并继续后面的feed导入
+            errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表中没有找到该feed类目对应的" +
+                            "价格计算公式( channel: [%s], feedCategory: [%s], formula: [%s], feedModel: [%s] )",
+                    channelId, feedCategory, formula, feedModel);
         } else {
-            // 不根据feed类目未取到相应的价格计算公式时
+            // 不根据feed类目未取到相应的价格计算公式时,中止feed导入，后面的feed也不做了
             errMsg = String.format("feed->master导入:异常终止:价格计算公式错误:在cms_mt_channel_config表中没有找到该channel对应的" +
-                            "价格计算公式( channel: [%s], formulakey: [%s], feedModel: [%s] )",
-                    channelId, formulakey, feedModel);
+                            "价格计算公式( channel: [%s], formula: [%s], feedModel: [%s] )",
+                    channelId, formula, feedModel);
         }
 
         $error(errMsg);
