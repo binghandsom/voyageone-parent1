@@ -1262,7 +1262,8 @@ public class CmsProductDetailService extends BaseAppService {
             return;
         }
         // 3.2 调用平台的删除商品的API
-        productService.delPlatfromProduct(paramr.getChannelId(), paramr.getCartId(),numIID);
+        // TODO: 2016/7/22   发布前 记得取消注释 开放商品删除api
+        // productService.delPlatfromProduct(paramr.getChannelId(), paramr.getCartId(),numIID);
         //3.4 遍历group中的productCodes中的所有的code
         List<String>codes = cmsBtProductGroup.getProductCodes();
         codes.forEach(code->{
@@ -1273,6 +1274,7 @@ public class CmsProductDetailService extends BaseAppService {
         cmsBtProductGroup.setPublishTime("");
         cmsBtProductGroup.setOnSaleTime("");
         cmsBtProductGroup.setInStockTime("");
+        cmsBtProductGroup.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
         productGroupService.update(cmsBtProductGroup);//3.4.2 Group表中的【numIId】【platformPid】【publishTime】【onSaleTime】【inStockTime】清空
         //    3 平台商品删除 （只有在京东和天猫的平台才）
 //    3.1 根据 cartId和productCode找到对应pNumIId

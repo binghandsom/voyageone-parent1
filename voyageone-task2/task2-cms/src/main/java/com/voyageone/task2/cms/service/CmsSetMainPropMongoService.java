@@ -282,11 +282,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     feed.setFullAttribute();
                     doSaveProductMainProp(feed, channelId, mapBrandMapping, categoryTreeAllList);
                 } catch (Exception e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                     errCnt++;
                     String errMsg = "feed->master导入:异常终止:";
                     if(StringUtils.isNullOrBlank2(e.getMessage())) {
                         errMsg = errMsg + e.getStackTrace()[0].toString();
+                        $error(errMsg);
                     } else {
                         errMsg = e.getMessage();
                     }
@@ -1224,33 +1225,56 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 商品翻译状态, 翻译者, 翻译时间, 商品编辑状态, 价格审批flg, lock商品: 暂时都不用设置
 
 //            SELECT * from Synship.com_mt_value_channel where type_id in (57,58);
+            String feedProductType = "";
+            String feedSizeType = "";
             switch (feed.getChannelId()) {
                 case "010":
                     // 产品分类
-//                    productField.setProductType(feed.getAttribute().get("ItemClassification").get(0));
-                    productCommonField.setProductType(feed.getAttribute().get("ItemClassification").get(0));
+                    if (newFlg || StringUtils.isEmpty(productCommonField.getProductType()) || "1".equals(feed.getIsFeedReImport())) {
+                        feedProductType = feed.getAttribute().get("ItemClassification").get(0);
+                        productCommonField.setProductType(feedProductType);
+                    }
                     // 适用人群
-                    switch (feed.getSizeType()) {
-                        case "Women's":
-//                            productField.setSizeType("women");
-                            productCommonField.setSizeType("women");
-                            break;
-                        case "Men's":
-//                            productField.setSizeType("men");
-                            productCommonField.setSizeType("men");
-                            break;
+                    if (newFlg || StringUtils.isEmpty(productCommonField.getSizeType()) || "1".equals(feed.getIsFeedReImport())) {
+                        switch (feed.getSizeType()) {
+                            case "Women's":
+                                feedSizeType = "women";
+                                productCommonField.setSizeType(feedSizeType);
+                                break;
+                            case "Men's":
+                                feedSizeType = "men";
+                                productCommonField.setSizeType(feedSizeType);
+                                break;
+                        }
                     }
 
                     break;
                 default:
                     // 产品分类
-//                    productField.setProductType(feed.getProductType());
-                    productCommonField.setProductType(feed.getProductType());
+                    if (newFlg || StringUtils.isEmpty(productCommonField.getProductType()) || "1".equals(feed.getIsFeedReImport())) {
+                        feedProductType = feed.getProductType();
+                        productCommonField.setProductType(feedProductType);
+                    }
                     // 适用人群
-//                    productField.setSizeType(feed.getSizeType());
-                    productCommonField.setSizeType(feed.getSizeType());
+                    if (newFlg || StringUtils.isEmpty(productCommonField.getSizeType()) || "1".equals(feed.getIsFeedReImport())) {
+                        feedSizeType = feed.getSizeType();
+                        productCommonField.setSizeType(feedSizeType);
+                    }
             }
             // jeff 2016/04 change end
+
+            // add by desmond 2016/07/22 start
+            // feed->master导入时，将一些项目(如：sizeType,productType)的初始化中英文mapping信息插入到Synship.com_mt_value_channel表中
+            if (!StringUtils.isEmpty(feedProductType)) {
+                // 插入产品分类初始中英文mapping信息
+                insertComMtValueChannelMappingInfo(57, feed.getChannelId(), feedProductType, feedProductType);
+            }
+
+            if (!StringUtils.isEmpty(feedSizeType)) {
+                // 插入适用人群初始中英文mapping信息
+                insertComMtValueChannelMappingInfo(58, feed.getChannelId(), feedSizeType, feedSizeType);
+            }
+            // add by desmond 2016/07/22 end
 
             // jeff 2016/04 add start
 //            if (newFlg || productField.getAttribute("isMasterMain") == null || "1".equals(feed.getIsFeedReImport())) {
@@ -2386,11 +2410,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         /**
          * calculatePriceByFormula 根据公式计算价格
          *
-         * @param feedSkuInfo Feed的SKU信息
-         * @param formula     计算公式
+         * @param feedSkuInfo CmsBtFeedInfoModel_Sku Feed的SKU信息
+         * @param formula     String   计算公式
+         * @param channelId   String   渠道id
+         * @param feedCategory String  feed类目(有些店铺的价格计算公式时基于类目的)
          * @return 计算后价格
          */
-        private Double calculatePriceByFormula(CmsBtFeedInfoModel_Sku feedSkuInfo, String formula) {
+        private Double calculatePriceByFormula(CmsBtFeedInfoModel_Sku feedSkuInfo, String formula, String channelId, String feedCategory) {
 
             String originalFomula = formula;
             Double priceClientMsrp = feedSkuInfo.getPriceClientMsrp();
@@ -2403,7 +2429,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // update by desmond 2016/07/19 start
 //                return 0.00;
                 // 如果传入的价格计算公式为空，则中止feed导入，抛出异常
-                String errMsg = "feed->master导入:异常终止:calculatePriceByFormula()方法中传入的价格计算公式错误( formula:null )";
+                String errMsg = "";
+                if (isCategoryFormula(channelId)) {
+                    // 基于类目的计算公式为空时，抛出异常之后继续后面的feed导入
+                    errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表中该feed类目配置的价格计算公式为空 " +
+                            "( channel:[%s] feedCategory:[%s] formula:[null] )", channelId, feedCategory);
+                } else {
+                    // 不基于类目的计算公式为空时，该店铺所有商品都不能继续做了，中止后面的feed导入
+                    errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表配置的价格计算公式错误 " +
+                            "( channel:[%s] formula:[null] )", channelId);
+                }
                 $error(errMsg);
                 throw new BusinessException(errMsg);
                 // update by desmond 2016/07/19 end
@@ -2434,9 +2469,20 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             } catch (Exception ex) {
                 // 价格计算公式出错时抛出异常，中止feed导入
-                $error(ex);
+//                $error(ex);
 //                throw new RuntimeException("Formula Calculate Fail!", ex);
-                throw new BusinessException(String.format("feed->master导入:异常终止:在cms_mt_channel_config表配置的价格计算公式错误 ( formula: [%s] )", originalFomula));
+                String errMsg = "";
+                if (isCategoryFormula(channelId)) {
+                    // 基于类目的计算公式为空时，抛出异常之后继续后面的feed导入
+                    errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表中该feed类目配置的价格计算公式不正确 " +
+                            "( channel:[%s] feedCategory:[%s] formula:[%s] )", channelId, feedCategory, originalFomula);
+                } else {
+                    // 不基于类目的计算公式为空时，该店铺所有商品都不能继续做了，中止后面的feed导入
+                    errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表配置的价格计算公式错误 " +
+                            "( channel:[%s] formula: [%s] )", channelId, originalFomula);
+                }
+                $error(errMsg);
+                throw new BusinessException(errMsg);
             }
         }
 
@@ -2844,9 +2890,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA);
             CmsChannelConfigBean cmsChannelConfigBean = null;
             // 有3个渠道('020','025','026')要根据类目税率不一样，要根据类目(config_code字段)取得价格计算公式
-            if (ChannelConfigEnums.Channel.EDCSKINCARE.getId().equals(channelId)           // "020"
-                    || ChannelConfigEnums.Channel.FragranceNet.getId().equals(channelId)   // "025"
-                    || ChannelConfigEnums.Channel.LightHouse.getId().equals(channelId)) {  // "026"
+            if (isCategoryFormula(channelId)) {
                 cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE_MSRP_CALC_FORMULA, feed.getCategory());
 
                 // 如果没有取到feed类目对应的价格计算公式，则中止feed导入，抛出异常
@@ -2872,9 +2916,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //            cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA);
             cmsChannelConfigBean = null;
             // 有3个渠道('020','025','026')要根据类目税率不一样，要根据类目(config_code字段)取得价格计算公式
-            if (ChannelConfigEnums.Channel.EDCSKINCARE.getId().equals(channelId)           // "020"
-                    || ChannelConfigEnums.Channel.FragranceNet.getId().equals(channelId)   // "025"
-                    || ChannelConfigEnums.Channel.LightHouse.getId().equals(channelId)) {  // "026"
+            if (isCategoryFormula(channelId)) {
                 cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE_RETAIL_CALC_FORMULA, feed.getCategory());
 
                 // 如果没有取到feed类目对应的价格计算公式，则中止feed导入，抛出异常
@@ -2953,8 +2995,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // delete desmond 2016/07/01 end
 
                 if (commonSku != null) {
-                    commonSku.setPriceMsrp(calculatePriceByFormula(sku, priceMsrpCalcFormula));
-                    commonSku.setPriceRetail(calculatePriceByFormula(sku, priceRetailCalcFormula));
+                    commonSku.setPriceMsrp(calculatePriceByFormula(sku, priceMsrpCalcFormula, channelId, feed.getCategory()));
+                    commonSku.setPriceRetail(calculatePriceByFormula(sku, priceRetailCalcFormula, channelId, feed.getCategory()));
                     commonSku.setClientMsrpPrice(sku.getPriceClientMsrp());
                     commonSku.setClientRetailPrice(sku.getPriceClientRetail());
                     commonSku.setClientNetPrice(sku.getPriceNet());
@@ -3326,26 +3368,43 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     }
 
     /**
+     * 判断该渠道是否是需要基于类目的价格计算公式
+     *
+     * @param channelId String 渠道id
+     */
+    private boolean isCategoryFormula(String channelId) {
+
+        // 有3个渠道('020','025','026')要根据类目税率不一样，要根据类目(config_code字段)取得价格计算公式
+        if (ChannelConfigEnums.Channel.EDCSKINCARE.getId().equals(channelId)           // "020"
+                || ChannelConfigEnums.Channel.FragranceNet.getId().equals(channelId)   // "025"
+                || ChannelConfigEnums.Channel.LightHouse.getId().equals(channelId)) {  // "026"
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * 如果没有取到feed类目对应的价格计算公式时抛出异常处理
      *
      * @param channelId String 渠道id
      * @param feedCategory String 平台id
-     * @param formulakey String 价格公式
+     * @param formula String 价格公式
      * @param feedModel String feed model
      */
-    private void throwNotFoundPriceFormulaException(String channelId, String feedCategory, String formulakey, String feedModel){
+    private void throwNotFoundPriceFormulaException(String channelId, String feedCategory, String formula, String feedModel){
         String errMsg = "";
 
         if (!StringUtils.isEmpty(feedCategory)) {
-            // 根据feed类目未取到相应的价格计算公式时
-            errMsg = String.format("feed->master导入:异常终止:价格计算公式错误:在cms_mt_channel_config表中没有找到该feed类目对应的" +
-                            "价格计算公式( channel: [%s], feedcategory: [%s], formulakey: [%s], feedModel: [%s] )",
-                    channelId, feedCategory, formulakey, feedModel);
+            // 根据feed类目未取到相应的价格计算公式时，抛出异常并继续后面的feed导入
+            errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表中没有找到该feed类目对应的" +
+                            "价格计算公式( channel: [%s], feedCategory: [%s], formula: [%s], feedModel: [%s] )",
+                    channelId, feedCategory, formula, feedModel);
         } else {
-            // 不根据feed类目未取到相应的价格计算公式时
+            // 不根据feed类目未取到相应的价格计算公式时,中止feed导入，后面的feed也不做了
             errMsg = String.format("feed->master导入:异常终止:价格计算公式错误:在cms_mt_channel_config表中没有找到该channel对应的" +
-                            "价格计算公式( channel: [%s], formulakey: [%s], feedModel: [%s] )",
-                    channelId, formulakey, feedModel);
+                            "价格计算公式( channel: [%s], formula: [%s], feedModel: [%s] )",
+                    channelId, formula, feedModel);
         }
 
         $error(errMsg);
@@ -3383,8 +3442,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         }
 
         ComMtValueChannelModel brandEnModel = comMtValueChannelDao.selectOne(paramsEnMap);
-        if (brandEnModel != null) {
+        if (brandEnModel != null && StringUtils.isEmpty(brandEnModel.getName())) {
             // 说明该条英文版品牌mapping数据不整合(name为空)，更新(正常是一条数据，如果取到多条就会报异常)
+            // 如果Name不为空，可能已经被别人修改过mapping值了，就不能做变更了
             brandEnModel.setValue(feedBrandLowerCase);
             brandEnModel.setName(feedBrandLowerCase);
             brandEnModel.setModifier(getTaskName());
@@ -3423,8 +3483,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         }
 
         ComMtValueChannelModel brandCnModel = comMtValueChannelDao.selectOne(paramsCnMap);
-        if (brandCnModel != null) {
+        if (brandCnModel != null && StringUtils.isEmpty(brandCnModel.getName())) {
             // 说明该条中文版品牌mapping数据不整合(name为空)，更新(正常是一条数据，如果取到多条就会报异常)
+            // 如果Name不为空，可能已经被别人修改过mapping值了，就不能做变更了
             brandCnModel.setValue(feedBrandLowerCase);
             brandCnModel.setName(feedBrandLowerCase);
             brandCnModel.setModifier(getTaskName());
@@ -3438,6 +3499,61 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             brandCnValueChannelModel.setValue(feedBrandLowerCase);
             brandCnValueChannelModel.setName(feedBrandLowerCase);
             brandCnValueChannelModel.setAddName1(feedBrandLowerCase);
+            brandCnValueChannelModel.setLangId(strLangIdCn);
+            brandCnValueChannelModel.setCreater(getTaskName());
+            brandCnValueChannelModel.setModifier(getTaskName());
+            comMtValueChannelDao.insert(brandCnValueChannelModel);
+        }
+    }
+
+    /**
+     * 将一些项目(如：sizeType,productType)的初始化中英文mapping信息插入到Synship.com_mt_value_channel表中
+     *
+     * @param intTypeId int mapping类型id
+     * @param channelId String 渠道id
+     * @param mappingKey String mapping key的值
+     * @param mappingKey String mapping value的值
+     */
+    private void insertComMtValueChannelMappingInfo(int intTypeId, String channelId, String mappingKey, String mappingValue) {
+        String strLangIdEn = "en";
+        String strLangIdCn = "cn";
+
+        // 如果没找到英文mapping数据就插入一条
+        Map<String, Object> paramsEnMap = new HashMap<>();
+        paramsEnMap.put("typeId", intTypeId);   // 57:productType;58:sizeType;
+        paramsEnMap.put("channelId", channelId);
+        paramsEnMap.put("value", mappingKey);   // mapping key
+        paramsEnMap.put("langId", strLangIdEn);
+        int brandEnCount = comMtValueChannelDao.selectCount(paramsEnMap);
+        if (brandEnCount == 0) {
+            // 没有英文版mapping信息则插入一条
+            ComMtValueChannelModel brandEnValueChannelModel = new ComMtValueChannelModel();
+            brandEnValueChannelModel.setTypeId(intTypeId);
+            brandEnValueChannelModel.setChannelId(channelId);
+            brandEnValueChannelModel.setValue(mappingKey);      // mapping key
+            brandEnValueChannelModel.setName(mappingValue);
+            brandEnValueChannelModel.setAddName1(mappingValue);
+            brandEnValueChannelModel.setLangId(strLangIdEn);
+            brandEnValueChannelModel.setCreater(getTaskName());
+            brandEnValueChannelModel.setModifier(getTaskName());
+            comMtValueChannelDao.insert(brandEnValueChannelModel);
+        }
+
+        // 如果没找到中文mapping数据就插入一条
+        Map<String, Object> paramsCnMap = new HashMap<>();
+        paramsCnMap.put("typeId", intTypeId);
+        paramsCnMap.put("channelId", channelId);
+        paramsCnMap.put("value", mappingKey);   // mapping key
+        paramsCnMap.put("langId", strLangIdCn);
+        int brandCnCount = comMtValueChannelDao.selectCount(paramsCnMap);
+        if (brandCnCount == 0) {
+            // 没有中文版mapping信息则插入一条
+            ComMtValueChannelModel brandCnValueChannelModel = new ComMtValueChannelModel();
+            brandCnValueChannelModel.setTypeId(intTypeId);
+            brandCnValueChannelModel.setChannelId(channelId);
+            brandCnValueChannelModel.setValue(mappingKey);     // mapping key
+            brandCnValueChannelModel.setName(mappingValue);
+            brandCnValueChannelModel.setAddName1(mappingValue);
             brandCnValueChannelModel.setLangId(strLangIdCn);
             brandCnValueChannelModel.setCreater(getTaskName());
             brandCnValueChannelModel.setModifier(getTaskName());

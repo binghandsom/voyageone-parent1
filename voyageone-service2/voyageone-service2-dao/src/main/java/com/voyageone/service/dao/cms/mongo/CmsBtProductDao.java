@@ -105,7 +105,12 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     @Override
     public WriteResult update(BaseMongoModel model) {
         throw new BusinessException("not suppert");
-        // return update(model);
+//         return super.update(model);
+    }
+
+    @Deprecated
+    public WriteResult updateByModel(BaseMongoModel model) {
+         return super.update(model);
     }
 
     /**

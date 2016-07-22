@@ -1859,22 +1859,47 @@ public class SxProductService extends BaseService {
                 }
                 case TMALL_STYLE_CODE:
                 {
-                    if (processFields == null || processFields.size() != 1) {
-                        throw new BusinessException("tmall style code's platformProps must have only one prop!");
+                    if (processFields == null) {
+                        throw new BusinessException("tmall style code's platformProps does not get!");
                     }
-
-                    Field field = processFields.get(0);
-                    if (field.getType() != FieldTypeEnum.INPUT) {
-                        $error("tmall style code's field(" + field.getId() + ") must be input");
-                    } else {
-                        InputField inputField = (InputField) field;
-                        String styleCode = sxData.getStyleCode();
-                        if (StringUtils.isEmpty(styleCode)) {
-                            styleCode = generateStyleCode(sxData);
+                    if (processFields.size() == 1) {
+                        Field field = processFields.get(0);
+                        if (field.getType() != FieldTypeEnum.INPUT) {
+                            $error("tmall style code's field(" + field.getId() + ") must be input");
+                        } else {
+                            InputField inputField = (InputField) field;
+                            String styleCode = sxData.getStyleCode();
+                            if (StringUtils.isEmpty(styleCode)) {
+                                styleCode = generateStyleCode(sxData, field.getId());
+                            }
+                            inputField.setValue(styleCode);
+                            $debug("tmall style code[" + field.getId() + "]: " + field.getValue());
+                            retMap.put(field.getId(), inputField);
                         }
-                        inputField.setValue(styleCode);
-                        $debug("tmall style code[" + field.getId() + "]: " + field.getValue());
-                        retMap.put(field.getId(), inputField);
+                    } else if (processFields.size() == 2) {
+                        for (Field processField : processFields) {
+                            if (processField.getType() == FieldTypeEnum.SINGLECHECK) {
+                                // prop_13021751（货号）值设为-1(表示其他）
+                                SingleCheckField field = (SingleCheckField) processField;
+                                field.setValue("-1");
+                                retMap.put(processField.getId(), field);
+                            } else {
+                                // in_prop_13021751其他的货号值填货号
+                                if (processField.getType() != FieldTypeEnum.INPUT) {
+                                    $error("tmall style code's field(" + processField.getId() + ") must be input");
+                                } else {
+                                    InputField field = (InputField) processField;
+                                    String styleCode = sxData.getStyleCode();
+                                    if (StringUtils.isEmpty(styleCode)) {
+                                        styleCode = generateStyleCode(sxData, field.getId());
+                                    }
+                                    field.setValue(styleCode);
+                                    retMap.put(processField.getId(), field);
+                                }
+                            }
+                        }
+                    } else {
+                        throw new BusinessException("tmall style code's platformProps must have only one or two props!");
                     }
                     break;
                 }
@@ -1938,7 +1963,7 @@ public class SxProductService extends BaseService {
                             // modified by morse.lu 2016/07/06 end
                             String styleCode = sxData.getStyleCode();
                             if (StringUtils.isEmpty(styleCode)) {
-                                styleCode = generateStyleCode(sxData);
+                                styleCode = generateStyleCode(sxData, field.getId());
                             }
                             field.setValue(styleCode);
                             retMap.put(processField.getId(), field);
@@ -2433,13 +2458,20 @@ public class SxProductService extends BaseService {
      * 1. 如果不是达尔文体系，那么使用model作为款号直接返回
      * 2. 如果是达尔文体系，暂时不做
      * @param sxData SxData
+     * @param propId 优先从platforms.fields.propId里取，取不到用model
      * @throws Exception
      */
-    public String generateStyleCode(SxData sxData) throws Exception {
+    public String generateStyleCode(SxData sxData, String propId) throws Exception {
         boolean isDarwin = sxData.isDarwin();
         if (!isDarwin) {
             // 不是达尔文
             String styleCode = sxData.getMainProduct().getCommon().getFields().getModel();
+            // added by morse.lu 2016/07/22 start
+            String propVal = sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields().getStringAttribute(propId);
+            if (!StringUtils.isEmpty(propVal)) {
+                styleCode = propVal;
+            }
+            // added by morse.lu 2016/07/22 end
             // test用 start
 //            styleCode = "test." + styleCode;
             // test用 end
