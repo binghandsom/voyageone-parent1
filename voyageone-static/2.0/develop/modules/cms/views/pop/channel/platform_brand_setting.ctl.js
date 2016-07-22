@@ -5,17 +5,19 @@ define([
     'cms'
 ], function (cms) {
     cms.controller('PlatformBrandSettingController', (function () {
-        function PlatformBrandSettingController(context, alert) {
+        function PlatformBrandSettingController(context, alert, popups) {
             this.platformData = context;
             this.alert = alert;
+            this.popups = popups;
             this.platformPageOption = {curr: 1, total: 0, size: 10, fetch: this.search};
             this.platformList = [
-                {id:'01',name:"Vans"},{id:'02',name:"耐克"},{id:'03',name:"阿迪达斯"},
-                {id:'04',name:"NewBalance"},{id:'05',name:"Skechers"},{id:'06',name:"Vansss"},
-                {id:'07',name:"NewBalance3"},{id:'08',name:"Skechers22"},{id:'09',name:"NewBalance444"},
-                {id:'010',name:"耐克a"},{id:'011',name:"阿迪达斯2"},{id:'012',name:"阿迪达斯43"}
+                {id: '01', name: "Vans"}, {id: '02', name: "耐克"}, {id: '03', name: "阿迪达斯"},
+                {id: '04', name: "NewBalance"}, {id: '05', name: "Skechers"}, {id: '06', name: "Vansss"},
+                {id: '07', name: "NewBalance3"}, {id: '08', name: "Skechers22"}, {id: '09', name: "NewBalance444"},
+                {id: '010', name: "耐克a"}, {id: '011', name: "阿迪达斯2"}, {id: '012', name: "阿迪达斯43"}
             ];
-            this.selectedPlatformlist=[];
+            this.selectedPlatformlist = [];
+            this.key = [];
         }
 
         PlatformBrandSettingController.prototype = {
@@ -23,15 +25,19 @@ define([
                 var self = this;
                 self.brand = self.platformData;
             },
-
-            selected:function (item) {
+            byTagChildrenName: function (arr) {
+                var key = this.key;
+                return key ? arr.filter(function (item) {
+                    return item.catName.indexOf(key) > -1;
+                }) : arr;
+            },
+            selected: function (item) {
                 console.log(item);
             },
             submitSet: function () {
                 var self = this;
                 console.log(self.selectedPlatformlist);
-
-                self.alert('聚美平台品牌 “耐克” 已与以下Master品牌完成匹配： “NIKE”、“nike” 确定将Master品牌 “ Nike ” 与聚美平台品牌 “ 耐克 ” 匹配？')
+                self.popups.openPlatformMappingConfirm();
 
             }
         };

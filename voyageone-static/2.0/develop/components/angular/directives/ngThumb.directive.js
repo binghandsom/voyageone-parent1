@@ -1,7 +1,7 @@
 /**
  * The ng-thumb directive
- * @author: nerv
- * @version: 0.1.2, 2014-01-09
+ * @author: piao wenjie
+ * @version: 2.3.0, 2016-7-1
  */
 'use strict';
 angular.module('voyageone.angular.directives').directive('ngThumb', ['$window', function($window) {
