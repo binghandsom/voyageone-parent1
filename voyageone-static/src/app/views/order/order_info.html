@@ -67,11 +67,11 @@
     </div>
     <div class="row margin-bottom-10">
         <div class="col-sm-6" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
-            <button ng-show="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment('new')" translate="BTN_NEW_SHIPMENT"></button>
-            <button ng-show="ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment('end')" translate="BTN_END_SHIPMENT"></button>
+            <button ng-if="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment('new')" translate="BTN_NEW_SHIPMENT"></button>
+            <button ng-if="ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment('end')" translate="BTN_END_SHIPMENT"></button>
             <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
-                <a ng-show="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popNewShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
-                <label ng-show="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
+                <a ng-if="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popNewShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
+                <label ng-if="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
         </div>
         <div class="col-sm-6" ng-if="!(ctrl.channelConfigs.vendorOperateType == 'ORDER')"></div>
         <div class="col-sm-6 text-right form-inline">
@@ -92,42 +92,43 @@
                         <th class="td-1-5" translate="TXT_ORDER_ID"></th>
                         <th class="td-1-5" translate="TXT_ORDER_DATE"></th>
                         <th class="td-1" translate="TXT_SKU"></th>
-                        <th class="td-3" translate="TXT_NAME"></th>
+                        <th class="td-2" translate="TXT_NAME"></th>
                         <th class="td-1" translate="TXT_STATUS"></th>
                         <th class="td-1" translate="TXT_VO_PRICE"></th>
-                        <th class="td-1" ng-show="ctrl.channelConfigs.salePriceShow == '1'" translate="TXT_SALE_PRICE"></th>
-                        <th style="min-width: 300px" translate="TXT_ACTION"></th>
+                        <th class="td-1" ng-if="ctrl.channelConfigs.salePriceShow == '1'" translate="TXT_SALE_PRICE"></th>
+                        <th class="td-3" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat-start="item in ctrl.data" ng-class="::item.className">
-                        <td class="text-right" ng-click="item.collapse = !item.collapse"><i ng-class="{'fa fa-plus': item.collapse, 'fa fa-minus':!item.collapse}"></i></td>
-                        <td ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderId}}</strong></td>
-                        <td ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</strong></td>
-                        <td ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
-                        <td ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
-                        <td ng-click="item.collapse = !item.collapse"><strong>{{ctrl.getStatusName(item.status)}}</strong></td>
-                        <td ng-click="item.collapse = !item.collapse"><strong>${{item.totalVoPrice}}</strong></td>
-                        <td ng-show="ctrl.channelConfigs.salePriceShow == '1'" ng-click="item.collapse = !item.collapse"><strong>¥{{item.totalRetailPrice}}</strong></td>
-                        <td>
-                            <button class="btn btn-xs btn-danger" ng-show="item.status == 1"
+                        <td class="text-right v-middle" ng-click="item.collapse = !item.collapse"><i ng-class="{'fa fa-plus': item.collapse, 'fa fa-minus':!item.collapse}"></i></td>
+                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderId}}</strong></td>
+                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</strong></td>
+                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
+                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
+                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{ctrl.getStatusName(item.status)}}</strong></td>
+                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>${{item.totalVoPrice}}</strong></td>
+                        <td class="v-middle" ng-if="ctrl.channelConfigs.salePriceShow == '1'" ng-click="item.collapse = !item.collapse"><strong>¥{{item.totalRetailPrice}}</strong></td>
+                        <td class="v-middle">
+                            <button class="btn btn-xs btn-danger" ng-if="item.status == 1"
                                     ng-click="ctrl.cancelOrder(item)" translate="BTN_CANCEL"></button>
-                            <button class="btn btn-xs btn-info" ng-show="item.status == 1"
+                            <button class="btn btn-xs btn-info" ng-if="item.status == 1"
                                     ng-click="ctrl.popAddToShipment(item)" ng-disabled="!ctrl.currentShipment"
                                     translate="BTN_ADD_TO_SHIPMENT"></button>
                         </td>
                     </tr>
-                    <tr ng-show="!item.collapse" ng-class="::item.subClassName" ng-repeat="detail in item.orderInfoBeanList"
-                        ng-repeat-end>
-                        <td></td>
-                        <td></td>
-                        <td>{{detail.consolidationOrderTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                        <td>{{detail.clientSku}}</td>
-                        <td>{{detail.name}}</td>
-                        <td>{{ctrl.getStatusName(detail.status)}}</td>
-                        <td>${{detail.voPrice}}</td>
-                        <td ng-show="ctrl.channelConfigs.salePriceShow == '1'">¥{{detail.salePrice}}</td>
-                        <td></td>
+                    <tr ng-if="!item.collapse" ng-class="::item.subClassName" ng-repeat="detail in item.orderInfoBeanList" ng-repeat-end>
+                        <td class="v-middle"></td>
+                        <td class="v-middle"></td>
+                        <td class="v-middle">{{detail.consolidationOrderTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="v-middle">{{detail.clientSku}}</td>
+                        <td class="v-middle">
+                            <span uib-tooltip="{{detail.name}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{detail.name| stringCutter:true:30:' ...'}}</span>
+                        </td>
+                        <td class="v-middle">{{ctrl.getStatusName(detail.status)}}</td>
+                        <td class="v-middle">${{detail.voPrice}}</td>
+                        <td class="v-middle" ng-if="ctrl.channelConfigs.salePriceShow == '1'">¥{{detail.salePrice}}</td>
+                        <td class="v-middle"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -147,25 +148,27 @@
                         <th class="td-1-5" translate="TXT_ORDER_ID"></th>
                         <th class="td-1-5" translate="TXT_ORDER_DATE"></th>
                         <th class="td-1" translate="TXT_SKU"></th>
-                        <th class="td-3" translate="TXT_DESCRIPTION"></th>
+                        <th class="td-2" translate="TXT_NAME"></th>
                         <th class="td-1" translate="TXT_STATUS"></th>
                         <th class="td-1" translate="TXT_VO_PRICE"></th>
-                        <th ng-show="ctrl.channelConfigs.salePriceShow == '1'" class="td-1" translate="TXT_SALE_PRICE"></th>
-                        <th style="width: 150px" translate="TXT_ACTION"></th>
+                        <th ng-if="ctrl.channelConfigs.salePriceShow == '1'" class="td-1" translate="TXT_SALE_PRICE"></th>
+                        <th class="td-3" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="item in ctrl.data" ng-class="::item.className">
                         <!--<td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>-->
-                        <td>{{item.consolidationOrderId}}</td>
-                        <td>{{item.consolidationOrderTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                        <td>{{item.clientSku}}</td>
-                        <td>{{item.name}}</td>
-                        <td>{{ctrl.getStatusName(item.status)}}</td>
-                        <td>${{item.voPrice}}</td>
-                        <td ng-show="ctrl.channelConfigs.salePriceShow == '1'">¥{{item.salePrice}}</td>
-                        <td>
-                            <button ng-show="item.status == 1" class="btn btn-xs btn-warning" ng-click="ctrl.cancelSku(item)" translate="BTN_CANCEL"></button>
+                        <td class="v-middle">{{item.consolidationOrderId}}</td>
+                        <td class="v-middle">{{item.consolidationOrderTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="v-middle">{{item.clientSku}}</td>
+                        <td class="v-middle">
+                            <span uib-tooltip="{{item.name}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{item.name| stringCutter:true:30:' ...'}}</span>
+                        </td>
+                        <td class="v-middle">{{ctrl.getStatusName(item.status)}}</td>
+                        <td class="v-middle">${{item.voPrice}}</td>
+                        <td class="v-middle" ng-if="ctrl.channelConfigs.salePriceShow == '1'">¥{{item.salePrice}}</td>
+                        <td class="v-middle">
+                            <button ng-if="item.status == 1" class="btn btn-xs btn-warning" ng-click="ctrl.cancelSku(item)" translate="BTN_CANCEL"></button>
                         </td>
                     </tr>
                     </tbody>

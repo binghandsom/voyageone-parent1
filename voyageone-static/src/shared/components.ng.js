@@ -21,4 +21,5 @@ define(function (require) {
   require('/shared/ng/services/message.service.js');
   require('/shared/ng/services/permission.service.js');
   require('/shared/ng/services/translate.service.js');
+  require('/shared/ng/filter/stringCutter.filter.js');
 });

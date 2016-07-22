@@ -15,11 +15,14 @@ angular.module('vo.factories', []);
 
 angular.module('vo.services', []);
 
+angular.module('vo.filter', []);
+
 // 总模块, 供子系统一次性引入
 
 angular.module('vo.ng', [
     'vo.controllers',
     'vo.directives',
     'vo.factories',
-    'vo.services'
+    'vo.services',
+    'vo.filter'
 ]);
