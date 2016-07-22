@@ -624,7 +624,7 @@ angular.module("voyageone.angular.directives").directive("uiNav", function () {
 
 /**
  * The ng-thumb directive
- * @author: nerv
+ * @author: piao wenjie
  * @version: 0.1.2, 2014-01-09
  */
 'use strict';
@@ -680,7 +680,7 @@ angular.module('voyageone.angular.directives').directive('ngThumb', ['$window', 
  * @User:    tony-piao
  * @Version: 2.1.0, 2016-6-24
  */
-angular.module('voyageone.angular.directives').directive('platformStatus', function () {
+angular.module('voyageone.angular.directives').directive('platformStatus2', function () {
 
         function StatusController($scope, $attrs) {
 
