@@ -266,7 +266,7 @@ public class VmsOrderInfoService extends BaseService {
             skuCell.setCellStyle(defaultRowCellStyle);
 
             Cell descriptionCell = dataRow.createCell(descriptionCellNumber);
-            descriptionCell.setCellValue(vmsBtOrderDetailModel.getDescription());
+            descriptionCell.setCellValue(vmsBtOrderDetailModel.getName());
             descriptionCell.setCellStyle(defaultRowCellStyle);
 
             Cell orderIdCell = dataRow.createCell(orderIdCellNumber);
@@ -359,7 +359,7 @@ public class VmsOrderInfoService extends BaseService {
                                 setReservationId(vmsBtOrderDetailModel.getReservationId());
                                 setConsolidationOrderId(vmsBtOrderDetailModel.getConsolidationOrderId());
                                 setConsolidationOrderTime(vmsBtOrderDetailModel.getConsolidationOrderTime());
-                                setDesc(vmsBtOrderDetailModel.getDescription());
+                                setName(vmsBtOrderDetailModel.getName());
                                 setVoPrice(vmsBtOrderDetailModel.getClientPromotionPrice());
                                 if (STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
                                     setRetailPrice(vmsBtOrderDetailModel.getRetailPrice());
@@ -391,7 +391,7 @@ public class VmsOrderInfoService extends BaseService {
                     orderInfoBean.setReservationId(vmsBtOrderDetailModel.getReservationId());
                     orderInfoBean.setConsolidationOrderId(vmsBtOrderDetailModel.getConsolidationOrderId());
                     orderInfoBean.setSku(vmsBtOrderDetailModel.getClientSku());
-                    orderInfoBean.setDesc(vmsBtOrderDetailModel.getDescription());
+                    orderInfoBean.setName(vmsBtOrderDetailModel.getName());
                     orderInfoBean.setConsolidationOrderTime(vmsBtOrderDetailModel.getConsolidationOrderTime());
                     orderInfoBean.setVoPrice(vmsBtOrderDetailModel.getClientPromotionPrice());
                     if (STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))

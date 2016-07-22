@@ -68,7 +68,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                 model.setCartId((Integer) item.get("cartId"));
                 model.setClientSku((String) item.get("clientSku"));
                 model.setBarcode((String) item.get("barcode"));
-                model.setDescription((String) item.get("description"));
+                model.setName((String) item.get("name"));
                 model.setClientMsrp(new BigDecimal((Double) item.get("clientMsrp")));
                 model.setClientNetPrice(new BigDecimal((Double) item.get("clientNetPrice")));
                 model.setClientRetailPrice(new BigDecimal((Double) item.get("clientRetailPrice")));

@@ -12,7 +12,7 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
     private String consolidationOrderId;
     private Date consolidationOrderTime;
     private String sku;
-    private String desc;
+    private String name;
     private String status;
     private BigDecimal voPrice = BigDecimal.ZERO;
     private BigDecimal retailPrice = BigDecimal.ZERO;
@@ -53,12 +53,12 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
         this.sku = sku;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getName() {
+        return name;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getStatus() {

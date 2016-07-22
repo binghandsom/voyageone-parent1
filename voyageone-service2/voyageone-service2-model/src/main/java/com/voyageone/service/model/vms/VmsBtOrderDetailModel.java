@@ -63,7 +63,7 @@ public class VmsBtOrderDetailModel extends BaseModel {
     /**
      * 描述
      */
-    protected String description;
+    protected String name;
 
     /**
      * 1:Open；2：Package；3：Shipped；5：Received；6：Receive with Error；7：Cancel 
@@ -201,12 +201,12 @@ public class VmsBtOrderDetailModel extends BaseModel {
         this.barcode = barcode == null ? null : barcode.trim();
     }
 
-    public String getDescription() {
-        return description;
+    public String getName() {
+        return name;
     }
 
-    public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
     public String getStatus() {

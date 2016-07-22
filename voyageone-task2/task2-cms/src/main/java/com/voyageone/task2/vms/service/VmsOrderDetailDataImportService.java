@@ -72,7 +72,7 @@ public class VmsOrderDetailDataImportService extends BaseTaskService {
                             orderTime,
                             "sku" + channelId + sku,
                             channelId + sku,
-                            "description" + channelId + sku,
+                            "name" + channelId + sku,
                             shipmentId,
                             addHours(orderTime, 20),
                             addHours(orderTime, 10),
@@ -113,7 +113,7 @@ public class VmsOrderDetailDataImportService extends BaseTaskService {
                             orderTime,
                             "sku" + channelId + sku,
                             channelId + sku,
-                            "description" + channelId + sku,
+                            "name" + channelId + sku,
                             shipmentId,
                             addHours(startDate, 20),
                             addHours(startDate, 10),
@@ -150,7 +150,7 @@ public class VmsOrderDetailDataImportService extends BaseTaskService {
     }
 
     private void insertDetail(String reservationId, String channelId, String consolidationOrderId, Date consolidationOrderTime,
-    String orderId, Date orderTime, String clientSku, String barCode, String description,
+    String orderId, Date orderTime, String clientSku, String barCode, String name,
     int shipmentId, Date shipmentTime, Date containerizingTime, Date receivedTime) {
         VmsBtOrderDetailModel model = new VmsBtOrderDetailModel();
         model.setReservationId(reservationId);
@@ -162,7 +162,7 @@ public class VmsOrderDetailDataImportService extends BaseTaskService {
         model.setCartId(23);
         model.setClientSku(clientSku);
         model.setBarcode(barCode);
-        model.setDescription(description);
+        model.setName(name);
         model.setStatus("5");
         model.setShipmentId(shipmentId);
         model.setShipmentTime(shipmentTime);
