@@ -401,6 +401,10 @@ define(function () {
                     page: 'page',
                     export: 'export'
                 },
+                statusHistoryService: {
+                    root: "/cms/product/statushistory",
+                    getPage: "getPage"
+                },
                 "$addChannelCategoryService": {
                     "root": "/cms/pop/add_to_channel_category",
                     "init": "getChannelCategory",

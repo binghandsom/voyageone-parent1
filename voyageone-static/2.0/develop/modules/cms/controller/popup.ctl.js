@@ -292,6 +292,12 @@ define([
                 "controllerUrl": "modules/cms/views/pop/history/putOnOff.ctl",
                 "controller": "PutOnOffController as ctrl",
                 "size": "lg"
+            },
+            "productStatus": {
+                "templateUrl": "views/pop/history/productStatus.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/history/productStatus.ctl",
+                "controller": "ProductStatusPopupController as ctrl",
+                "size": "lg"
             }
         },
         "promotion": {
@@ -1182,9 +1188,16 @@ define([
         };
 
         //产品下线
-        $scope.openProductOffLine = function (context) {
+        $scope.openProductOffLine = function openProductOffLine(context) {
             return openModal(popActions.product.productOffLine, context);
-        }
+        };
+
+        $scope.openProductStatusHistory = function openProductStatusHistory(code, cartId) {
+            return openModal(popActions.history.productStatus, {
+                cartId: cartId,
+                code: code
+            });
+        };
 
     }).factory('popups', function ($controller, $rootScope) {
 
