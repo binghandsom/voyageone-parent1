@@ -3,23 +3,21 @@
         <h4 class="modal-title" id="myModalLabel"><i class="fa fa-tasks"></i>Shipment List<i class="fa fa-close pull-right" ng-click="$dismiss()"></i></h4>
     </div>
     <div class="modal-body">
-        <div class="col-sm-8 col-sm-offset-2 m-b-sm">
-            <table class="table table-bordered" style="min-width: 0;">
-                <thead>
-                <tr>
-                    <th class="col-md-4 text-center">Shipment Name</th>
-                    <th class="col-md-4 text-center">Order ID</th>
-                    <th class="col-md-4 text-center">Scanned</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td class="text-center">{{ctrl.shipmentDetails.shipment.shipmentName}}</td>
-                    <td class="text-center">{{ctrl.shipmentDetails.consolidationOrderId}}</td>
-                    <td class="text-center">{{ctrl.scannedSkuList.length}}</td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="col-sm-12 m-b-sm">
+            <div class="form-inline">
+                <div class="form-group">
+                    <label class="control-label">Shipment Name</label>
+                    <input id="Shipment_Name" type="text" class="form-control input-sm" ng-model="ctrl.shipmentDetails.shipment.shipmentName">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Order ID</label>
+                    <input id="Order_ID" type="text" class="form-control input-sm" ng-model="ctrl.shipmentDetails.consolidationOrderId">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Scanned</label>
+                    <input id="Scanned" type="text" class="form-control input-sm" ng-model="ctrl.scannedSkuList.length">
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-sm-12 pop-table table-responsive">
