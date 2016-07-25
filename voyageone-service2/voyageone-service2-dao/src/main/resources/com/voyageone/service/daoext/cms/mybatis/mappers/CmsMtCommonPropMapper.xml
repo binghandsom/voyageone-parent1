@@ -55,20 +55,17 @@
         where
         action_type = 0
         AND is_comm = 1
-        AND (prop_id != 'brand' AND prop_id != 'quantity' AND prop_id != 'code' AND prop_id != 'originalTitleCn' AND prop_id != 'productNameEn')
-        order by creater
-    </select>
-
-    <!-- 查询排序用的自定义列(高级检索画面) -->
-    <select id="select_cms_mt_common_prop_cust_cols_sort" parameterType="HashMap" resultType="HashMap">
-        select
-        prop_id AS propId,
-        prop_name AS propName,
-        value_type AS valType
-        from voyageone_cms2.cms_mt_common_prop
-        where
-        action_type = 0
-        AND is_comm = 1
+        <if test="selType == 1" >
+            AND (prop_id != 'brand' AND prop_id != 'quantity' AND prop_id != 'code' AND prop_id != 'originalTitleCn' AND prop_id != 'productNameEn'
+                AND prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')
+        </if>
+        <if test="selType == 2" >
+            AND (prop_id != 'brand' AND prop_id != 'quantity' AND prop_id != 'code' AND prop_id != 'originalTitleCn' AND prop_id != 'productNameEn'
+                AND prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')
+        </if>
+        <if test="selType == 3" >
+            AND (prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')
+        </if>
         order by creater
     </select>
 

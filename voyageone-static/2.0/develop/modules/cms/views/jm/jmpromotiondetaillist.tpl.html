@@ -13,7 +13,7 @@
                                     <label class="col-sm-3 control-label" translate="TXT_JM_PROMOTION_NAME"></label>
                                     <div class="col-sm-8 yellowLink m-t-xs">
                                         <button title="{{'BTN_EDIT' | translate}}" class="btn btn-default btn-pop btn-xs"
-                                                ng-click="openJmPromotionDetail({id:parentModel.id,search:search})"><i class="fa fa-pencil"></i>
+                                                ng-click="openJmPromotionDetailWin()"><i class="fa fa-pencil"></i>
                                             {{parentModel.name}}
                                         </button>
                                     </div>
@@ -52,7 +52,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label ng-scope" translate="TXT_PROMOTION_COMMENTS"></label>
                                     <div class="col-sm-7">
-                                        <textarea type="text" rows="4"  class="form-control no-resize" ng-model="searchInfo.comment" disabled></textarea>
+                                        <textarea type="text" rows="4"  class="form-control no-resize" ng-model="parentModel.comment" disabled></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -104,7 +104,7 @@
                                     <label class="col-sm-3 control-label">品牌</label>
                                     <div class="col-sm-8">
                                         <select search-contains="true" multiple chosen  class="form-control" ng-model="searchInfo.listBrandName"
-                                                ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
+                                                ng-options="brand.value as brand.name for brand in vm.brandList">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>

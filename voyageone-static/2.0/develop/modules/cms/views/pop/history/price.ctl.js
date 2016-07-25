@@ -26,7 +26,6 @@ define([
             self.code = context.code;
             self.selected = selected;
             self.priceLogService = priceLogService;
-            self.isOnlyShowMsrp = false;
 
             self.paging = {
                 size: 10,
@@ -38,7 +37,7 @@ define([
 
             $menuService.getPlatformType().then(function (res) {
                 var cartList = _.filter(res.data, function (item) {
-                    return item.value >= 20 && item.value < 900;
+                    return item.value >= 20;
                 });
                 var defaultCart = {value: '', label: 'Select...'};
 
@@ -49,7 +48,7 @@ define([
                 cartList.unshift(defaultCart);
 
                 if (!selected.cart)
-                    selected.cart = defaultCart;
+                    selected.cart = cartList[1];
                 else
                     selected.cart = _.find(cartList, function (cart) {
                         return cart.value === selected.cart;
@@ -69,7 +68,7 @@ define([
                 return cart.value == cartId;
             });
 
-            return !cart.value ? "" : cart.label;
+            return (!cart || !cart.value) ? "" : cart.label;
         };
 
         PriceLogPopupController.prototype.export = function () {
@@ -87,8 +86,8 @@ define([
 
             var self = this;
 
-            self.selected.sku = self.skuList[0];
-            self.selected.cart = self.cartList[0];
+            //self.selected.sku = self.skuList[0];
+            //self.selected.cart = self.cartList[0];
 
             self.getData(0);
         };

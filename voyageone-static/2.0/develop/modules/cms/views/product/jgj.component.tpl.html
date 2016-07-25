@@ -31,7 +31,8 @@
                                 <div class="col-md-8">
                                     <div class="row">
                                         <div class="col-xs-6 col-md-2" ng-repeat="image in vm.mastData.images">
-                                            <a href="javascript:void(0)" class="thumbnail" ng-class="{'main': image.isMain == true,'current': image.productCode == vm.mastData.productCode}">
+                                            <a href="javascript:void(0)" class="thumbnail" ng-class="{'current':image.productCode == vm.mastData.productCode}">
+                                                <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
                                         </div>
@@ -54,7 +55,7 @@
                             <div class="row form-group">
                                 <label class="col-md-2 control-label">{{"TXT_PRODUCT_CODE_WITH_COLON"|translate}}</label>
                                 <div class="col-md-8">
-                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.mastData.productCode" disabled>
+                                    <input class="form-control" ng-model="vm.mastData.productCode" disabled>
                                     <div class="text-warnings" style="padding-left:0px" ng-if="cartInfo.value != 27">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;如果此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面
                                     </div>
@@ -63,16 +64,13 @@
                             <div class="row form-group">
                                 <label class="col-md-2 control-label">{{"TXT_PRODUCT_NAME"|translate}}</label>
                                 <div class="col-md-8">
-                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.mastData.productName" disabled>
+                                    <input class="form-control" ng-model="vm.mastData.productName" disabled>
                                 </div>
                             </div>
                             <div class="row form-group">
                                 <label class="col-md-2 control-label">{{"TXT_BRAND"|translate}}</label>
                                 <div class="col-md-8">
-                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.platform.pBrandName" disabled>
-                                    <div class="text-warnings" style="padding-left:0px">
-                                        <i class="icon fa fa-bell-o"></i>&nbsp;如没有显示品牌，请先确认是否在{{cartInfo.name}}后台申请过相应品牌，然后联系IT处理
-                                    </div>
+                                    <input class="form-control" ng-model="vm.platform.pBrandName" disabled>
                                 </div>
                             </div>
                         </div>

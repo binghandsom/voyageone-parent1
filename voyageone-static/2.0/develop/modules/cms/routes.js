@@ -122,6 +122,12 @@ define(function () {
             "templateUrl": "views/channel/taglist/index.tpl.html",
             "controllerUrl": "modules/cms/views/channel/taglist/index.ctl"
         },
+        "channel_brand_mapping_list": {
+            "hash": "/channel/brand_mapping_list",
+            "templateUrl": "views/channel/brandMapping/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/brandMapping/index.ctl",
+            "controller": "BrandMappingController as ctrl"
+        },
         "channel_cart_category_list": {
             "hash": "/channel/cart_category_list",
             "templateUrl": "views/channel/category/index.tpl.html",
@@ -196,6 +202,12 @@ define(function () {
             "templateUrl": "views/system/storeoperation/index.tpl.html",
             "controllerUrl": "modules/cms/views/system/storeoperation/index.ctl",
             "controller": "storeOperationController as store"
+        },
+        "tools_common_master_brand_mapping": {
+            "hash": "/tools/common/masterBrandMapping",
+            "templateUrl": "views/tools/common/masterBrandMapping.tpl.html",
+            "controllerUrl": "modules/cms/views/tools/common/masterBrandMapping.ctl",
+            "controller": "MasterBrandMappingController as ctrl"
         },
         "tools_product_translation_setting": {
             "hash": "/tools/product/translation_setting",
@@ -278,6 +290,10 @@ define(function () {
         "system_cache_set": {
             "hash": "/system/cache/index",
             "templateUrl": "views/system/cache/index.tpl.html"
+        },
+        "system_mq_send": {
+            "hash": "/system/mq/index",
+            "templateUrl": "views/system/mq/index.tpl.html"
         },
         "system_category_setting": {
             "hash": "/system/categorysetting/:type",

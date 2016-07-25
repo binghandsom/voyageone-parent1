@@ -74,6 +74,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
             postNewProduct();
         }
     }
+
     /**
      * OverStock产品文件读入
      */
@@ -85,8 +86,8 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         List<SuperFeedOverStockBean> superfeed = new ArrayList<>();
         while (true) {
             request.setOffset(offset);
-            request.setLimit(20);
-            String sku ="";
+            request.setLimit(200);
+            String sku = "";
             try {
                 Result<ProductsType> result = overstockProductService.queryForMultipleProducts(request);
                 int statusCode = result.getStatusCode();
@@ -108,7 +109,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     superFeedverStockBean.setModel(getValue(variationType.getFullSku().split("-")[0]));
                                     superFeedverStockBean.setClientmodel(getValue(product.getSku()));
                                     superFeedverStockBean.setSku(getValue(variationType.getFullSku()));
-                                    sku=variationType.getFullSku();
+                                    sku = variationType.getFullSku();
                                     superFeedverStockBean.setClientsku(getValue(variationType.getSku()));
                                     superFeedverStockBean.setTitle(getValue(variationType.getProduct().getTitle()));
                                     superFeedverStockBean.setBrand(getValue(variationType.getProduct().getBrand()));
@@ -123,13 +124,13 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     superFeedverStockBean.setDiscountsitesale(getValue(String.valueOf(variationType.getProduct().getDiscountSiteSale())));
                                     superFeedverStockBean.setCondition(getValue(String.valueOf(variationType.getProduct().getCondition())));
                                     superFeedverStockBean.setReturnpolicy(getValue(String.valueOf(variationType.getProduct().getReturnPolicy())));
-                                    List<ProductCategoryType> categoryList=product.getCategories().getCategory();
+                                    List<ProductCategoryType> categoryList = product.getCategories().getCategory();
                                     //category
-                                    if(categoryList.size()>0){
+                                    if (categoryList.size() > 0) {
                                         StringBuilder sb = new StringBuilder();
-                                        for(ProductCategoryType categoryType :categoryList){
+                                        for (ProductCategoryType categoryType : categoryList) {
                                             sb.append(categoryType.getRetailerCategoryName());
-                                            if(categoryList.size()!=1){
+                                            if (categoryList.size() != 1) {
                                                 sb.append("-");
                                             }
                                         }
@@ -137,42 +138,42 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     }
                                     superFeedverStockBean.setDescription(getValue(variationType.getDescription()));
                                     superFeedverStockBean.setInventoryavailable(getValue(String.valueOf(variationType.getInventoryAvailable())));
-                                    if(variationType.getSellingPrice()==null){
+                                    if (variationType.getSellingPrice() == null) {
                                         superFeedverStockBean.setSellingpriceAmount("");
                                         superFeedverStockBean.setSellingpriceCurrency("");
-                                    }else {
+                                    } else {
                                         superFeedverStockBean.setSellingpriceAmount(String.valueOf(variationType.getSellingPrice().getAmount()));
                                         superFeedverStockBean.setSellingpriceCurrency(String.valueOf(variationType.getSellingPrice().getCurrency()));
                                     }
-                                    if(variationType.getMapPrice()==null){
+                                    if (variationType.getMapPrice() == null) {
                                         superFeedverStockBean.setMappriceCurrency("");
                                         superFeedverStockBean.setMappriceAmount("");
-                                    }else{
+                                    } else {
                                         superFeedverStockBean.setMappriceCurrency(String.valueOf(variationType.getMapPrice().getCurrency()));
                                         superFeedverStockBean.setMappriceAmount(String.valueOf(variationType.getMapPrice().getAmount()));
                                     }
-                                    if(variationType.getMsrpPrice()==null){
+                                    if (variationType.getMsrpPrice() == null) {
                                         superFeedverStockBean.setMsrppriceAmount("");
                                         superFeedverStockBean.setMsrppriceCurrency("");
-                                    }else{
+                                    } else {
                                         superFeedverStockBean.setMsrppriceAmount(getValue(String.valueOf(variationType.getMsrpPrice().getAmount())));
                                         superFeedverStockBean.setMsrppriceCurrency(getValue(String.valueOf(variationType.getMsrpPrice().getCurrency())));
                                     }
 
 
                                     superFeedverStockBean.setMsrpexpirationdate(getValue(String.valueOf(variationType.getMsrpExpirationDate())));
-                                    if(variationType.getCompareAtPrice()==null){
+                                    if (variationType.getCompareAtPrice() == null) {
                                         superFeedverStockBean.setCompareatpriceAmount("");
                                         superFeedverStockBean.setCompareatpriceCurrency("");
-                                    }else{
+                                    } else {
                                         superFeedverStockBean.setCompareatpriceAmount(getValue(String.valueOf(variationType.getCompareAtPrice().getAmount())));
                                         superFeedverStockBean.setCompareatpriceCurrency(getValue(String.valueOf(variationType.getCompareAtPrice().getCurrency())));
                                     }
                                     superFeedverStockBean.setCompareatexpirationdate(getValue(String.valueOf(variationType.getCompareAtExpirationDate())));
-                                    if(variationType.getPreviouslyAdvertisedPrice()==null){
+                                    if (variationType.getPreviouslyAdvertisedPrice() == null) {
                                         superFeedverStockBean.setPreviouslyadvertisedpriceAmount("");
                                         superFeedverStockBean.setPreviouslyadvertisedpriceCurrency("");
-                                    }else{
+                                    } else {
                                         superFeedverStockBean.setPreviouslyadvertisedpriceAmount(String.valueOf(variationType.getPreviouslyAdvertisedPrice().getAmount()));
                                         superFeedverStockBean.setPreviouslyadvertisedpriceCurrency(String.valueOf(variationType.getPreviouslyAdvertisedPrice().getCurrency()));
                                     }
@@ -182,39 +183,107 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     superFeedverStockBean.setShippingweight(getValue(String.valueOf(variationType.getShippingWeight())));
                                     superFeedverStockBean.setUpc(getValue(variationType.getUpc()));
                                     superFeedverStockBean.setShipsvialtl(getValue(String.valueOf(variationType.isShipsViaLtl())));
-                                    List<VariationAttributeType>  variationAttributeTypeList =variationType.getAttributes().getAttribute();
+                                    List<VariationAttributeType> variationAttributeTypeList = variationType.getAttributes().getAttribute();
                                     //attribute
-                                    if(variationAttributeTypeList.size()>0){
+                                    if (variationAttributeTypeList.size() > 0) {
                                         StringBuilder sb = new StringBuilder();
-                                        for(VariationAttributeType variationAttributeType:variationAttributeTypeList ){
+                                        for (VariationAttributeType variationAttributeType : variationAttributeTypeList) {
 
-                                            List<String> valueList= variationAttributeType.getValues().getValue();
+                                            List<String> valueList = variationAttributeType.getValues().getValue();
                                             StringBuilder sbValue = new StringBuilder();
-                                            if(valueList.size()>0){
-                                                for(String value :valueList){
-                                                    sbValue.append(value.replace(" ","")+"-");
+                                            if (valueList.size() > 0) {
+                                                for (String value : valueList) {
+                                                    sbValue.append(value.replace(" ", "") + "-");
                                                 }
-                                                sbValue.deleteCharAt(sbValue.length()-1);
+                                                sbValue.deleteCharAt(sbValue.length() - 1);
                                             }
-                                            sb.append(variationAttributeType.getName()+":"+sbValue+"|");
+                                            sb.append(variationAttributeType.getName() + ":" + sbValue + "|");
                                         }
                                         superFeedverStockBean.setAttribute1(sb.deleteCharAt(sb.length() - 1).toString());
                                     }
+                                    //attributeColor attributeMetal attributeSize
+                                    if (variationAttributeTypeList.size() > 0) {
+                                        //按照名称去排序
+                                        variationAttributeTypeList.sort((a, b) -> a.getName().compareTo(b.getName()));
+                                        //attributeColor
+                                        StringBuilder sbColorValue = new StringBuilder();
+                                        //attributeMetal
+                                        StringBuilder sbMetalValue = new StringBuilder();
+                                        //attributeSize
+                                        StringBuilder sbSizeValue = new StringBuilder();
+                                        for (VariationAttributeType variationAttributeType : variationAttributeTypeList) {
+                                            List<String> valueList = variationAttributeType.getValues().getValue();
+                                            String name = variationAttributeType.getName();
+                                            //attributeColor
+                                            if (name.contains("颜色") || name.contains("Color")) {
+                                                if (valueList.size() > 0) {
+                                                    for (String value : valueList) {
+                                                        sbColorValue.append(value.replace(" ", "") + "-");
+                                                    }
+                                                    if (sbColorValue.toString().equals("N/A-")) {
+                                                        continue;
+                                                    }
+                                                }
+                                            }
+                                            //attributeMetal
+                                            if (name.equals("金属") || name.equals("Metal")) {
+                                                if (valueList.size() > 0) {
+                                                    for (String value : valueList) {
+                                                        sbMetalValue.append(value.replace(" ", "") + "-");
+                                                    }
+                                                    if (sbMetalValue.toString().equals("N/A-")) {
+                                                        continue;
+                                                    }
+                                                }
+                                            }
+                                            //attributeSize
+                                            if (name.contains("尺寸") || name.contains("Size")) {
+
+                                                if (valueList.size() > 0) {
+                                                    for (String value : valueList) {
+                                                        sbSizeValue.append(value.replace(" ", "") + "-");
+                                                    }
+                                                    if (sbSizeValue.toString().equals("N/A-")) {
+                                                        continue;
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                        //attributeColor
+                                        if ("".equals(String.valueOf(sbColorValue))) {
+                                            superFeedverStockBean.setAttributeColor("");
+                                        } else {
+                                            superFeedverStockBean.setAttributeColor(String.valueOf(sbColorValue.deleteCharAt(sbColorValue.length() - 1)));
+                                        }
+                                        //attributeMetal
+                                        if ("".equals(String.valueOf(sbMetalValue))) {
+                                            superFeedverStockBean.setAttributeMetal("");
+                                        } else {
+                                            superFeedverStockBean.setAttributeMetal(String.valueOf(sbMetalValue.deleteCharAt(sbMetalValue.length() - 1)));
+                                        }
+                                        //attributeSize
+                                        if ("".equals(String.valueOf(sbSizeValue))) {
+                                            superFeedverStockBean.setAttributeSize("");
+                                        } else {
+                                            superFeedverStockBean.setAttributeSize(String.valueOf(sbSizeValue.deleteCharAt(sbSizeValue.length() - 1)));
+                                        }
+                                    }
                                     //SKU_Image
-                                    List<ImageType>  imageTypeList =variationType.getImages().getImage();
-                                    if(imageTypeList.size()>0){
+                                    List<ImageType> imageTypeList = variationType.getImages().getImage();
+                                    if (imageTypeList.size() > 0) {
                                         StringBuilder sb = new StringBuilder();
-                                        for(ImageType imageType:imageTypeList ){
-                                            sb.append(imageType.getCdnPath()+",");
+                                        for (ImageType imageType : imageTypeList) {
+                                            sb.append(imageType.getCdnPath() + ",");
                                         }
                                         superFeedverStockBean.setImage(sb.deleteCharAt(sb.length() - 1).toString());
                                     }
                                     //model_image
-                                    List<ImageType>  model_imageTypeList = product.getImages().getImage();
-                                    if(model_imageTypeList.size()>0){
+                                    List<ImageType> model_imageTypeList = product.getImages().getImage();
+                                    if (model_imageTypeList.size() > 0) {
                                         StringBuilder sb = new StringBuilder();
-                                        for(ImageType imageType:model_imageTypeList ){
-                                            sb.append(imageType.getCdnPath()+",");
+                                        for (ImageType imageType : model_imageTypeList) {
+                                            sb.append(imageType.getCdnPath() + ",");
                                         }
                                         superFeedverStockBean.setModelImage(sb.deleteCharAt(sb.length() - 1).toString());
                                     }
@@ -232,26 +301,38 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     superFeedverStockBean.setModelDiscountsitesale(getValue(String.valueOf(product.getDiscountSiteSale())));
                                     superFeedverStockBean.setModelCondition(getValue(String.valueOf(product.getCondition())));
                                     superFeedverStockBean.setModelReturnpolicy(getValue(String.valueOf(product.getReturnPolicy())));
-                                    //按照名称去排序
-                                    variationAttributeTypeList.sort((a, b) -> a.getName().compareTo(b.getName()));
-                                    if(variationAttributeTypeList.size()>0){
+                                    if (variationAttributeTypeList.size() > 0) {
+                                        //按照名称去排序
+                                        variationAttributeTypeList.sort((a, b) -> a.getName().compareTo(b.getName()));
                                         StringBuilder sb = new StringBuilder();
-                                        for(VariationAttributeType variationAttributeType:variationAttributeTypeList ){
-                                            List<String> valueList= variationAttributeType.getValues().getValue();
+                                        for (VariationAttributeType variationAttributeType : variationAttributeTypeList) {
+                                            List<String> valueList = variationAttributeType.getValues().getValue();
                                             StringBuilder sbValue = new StringBuilder();
-                                            if(valueList.size()>0){
-                                                for(String value :valueList){
-                                                    sbValue.append(value.replace(" ","")+"-");
+                                            String name = variationAttributeType.getName();
+                                            //attributeSize
+                                            if (name.contains("尺寸") || name.contains("Size")) {
+                                                continue;
+                                            }
+                                            if (valueList.size() > 0) {
+                                                for (String value : valueList) {
+                                                    sbValue.append(value.replace(" ", "") + "-");
+                                                }
+                                                if (sbValue.toString().equals("N/A-")) {
+                                                    continue;
                                                 }
                                                 sb.append(sbValue);
                                             }
                                         }
-                                        superFeedverStockBean.setSalepoint(sb.deleteCharAt(sb.length() - 1).toString());
+                                        if ("".equals(String.valueOf(sb))) {
+                                            superFeedverStockBean.setSalepoint("");
+                                        } else {
+                                            superFeedverStockBean.setSalepoint(String.valueOf(sb.deleteCharAt(sb.length() - 1)));
+                                        }
                                     }
                                     //取得bean
                                     superfeed.add(superFeedverStockBean);
                                     count++;
-                                    $info("SKU:"+count+"---"+sku);
+                                    $info("SKU:" + count + "---" + sku);
                                     if (superfeed.size() > 1000) {
                                         transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                                         superfeed.clear();
@@ -272,7 +353,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                 break;
             }
         }
-        if (superfeed.size() >0) {
+        if (superfeed.size() > 0) {
             transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
             superfeed.clear();
         }
@@ -283,15 +364,17 @@ public class OverStockAnalysisService extends BaseAnalysisService {
 
     /**
      * 空值转换
+     *
      * @param value
      * @return value
      */
-    public String getValue(String value){
-        if(value==null||value.equals("null")){
-            value="";
+    public String getValue(String value) {
+        if (value == null || value.equals("null")) {
+            value = "";
         }
         return value;
     }
+
     /**
      * OverStock产品信息插入
      *
@@ -302,7 +385,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         for (SuperFeedOverStockBean superfeed : superfeedlist) {
 
             if (overStockFeedDao.insertSelective(superfeed) <= 0) {
-                $info("OverStock产品信息插入失败 InventoryNumber = " + "11111");
+                $info("ShoeZoo产品信息插入失败sku = " + superfeed.getSku());
             }
         }
         return true;

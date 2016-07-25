@@ -3,11 +3,14 @@ package com.voyageone.service.impl.cms.product;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -29,14 +32,18 @@ import java.util.Map;
 @Service
 public class CmsBtPriceLogService extends BaseService {
 
-    @Autowired
-    private CmsBtPriceLogDao priceLogDao;
+    private final CmsBtPriceLogDao priceLogDao;
+    private final CmsBtPriceLogDaoExt priceLogDaoExt;
+    private final CmsBtProductDao productDao;
+    private final MqSender sender;
 
     @Autowired
-    private CmsBtPriceLogDaoExt priceLogDaoExt;
-
-    @Autowired
-    private CmsBtProductDao productDao;
+    public CmsBtPriceLogService(CmsBtPriceLogDao priceLogDao, CmsBtPriceLogDaoExt priceLogDaoExt, CmsBtProductDao productDao, MqSender sender) {
+        this.priceLogDao = priceLogDao;
+        this.priceLogDaoExt = priceLogDaoExt;
+        this.productDao = productDao;
+        this.sender = sender;
+    }
 
     public List<CmsBtPriceLogModel> getList(String sku, String code, String cartId, String channelId) {
         return priceLogDaoExt.selectListBySkuOnCart(sku, code, cartId, channelId);
@@ -50,20 +57,26 @@ public class CmsBtPriceLogService extends BaseService {
         return priceLogDaoExt.selectCountBySkuOnCart(sku, code, cartId, channelId);
     }
 
-    public void forceLog(CmsBtPriceLogModel logModel) {
-        priceLogDao.insert(logModel);
-    }
-
     /**
-     * 对指定的 sku 进行价格变动检查
-     *
-     * @param skuList   将要检查的 sku 列表
-     * @param channelId 所属渠道
-     * @param username  变动人 / 检查人
-     * @param comment   变动备注 / 检查备注
+     * 高级搜索专用日志记录方法, 中国最终售价设置专用, 只更新了sku的中国最终售价
+     * <p>
+     * 日志记录后, 会调用 MQ 发送价格同步请求
+     * create by jiangjusheng
      */
-    public void logAll(List<String> skuList, String channelId, String username, String comment) {
-        logAll(skuList, channelId, null, username, comment);
+    public int addLogListAndCallSyncPriceJob(List<CmsBtPriceLogModel> paramList) {
+        if (paramList == null || paramList.isEmpty()) {
+            $warn("CmsBtPriceLogService:addLogListAndCallSyncPriceJob 输入为空");
+            return 0;
+        }
+        int rs = priceLogDaoExt.insertCmsBtPriceLogList(paramList);
+
+        // 向Mq发送消息同步sku,code,group价格范围
+        for (CmsBtPriceLogModel newLog : paramList) {
+            newLog.setRetailPrice(null);
+            newLog.setMsrpPrice(null);
+            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(newLog)));
+        }
+        return rs;
     }
 
     /**
@@ -75,23 +88,24 @@ public class CmsBtPriceLogService extends BaseService {
      * @param username  变动人 / 检查人
      * @param comment   变动备注 / 检查备注
      */
-    public void logAll(List<String> skuList, String channelId, Integer cartId, String username, String comment) {
+    public void addLogForSkuListAndCallSyncPriceJob(List<String> skuList, String channelId, Integer cartId, String username, String comment) {
         for (String sku : skuList)
-            log(sku, channelId, cartId, username, comment);
+            addLogAndCallSyncPriceJob(sku, channelId, cartId, username, comment);
     }
 
-    private void log(String sku, String channelId, Integer cartId, String username, String comment) {
+    private void addLogAndCallSyncPriceJob(String sku, String channelId, Integer cartId, String username, String comment) {
 
         CmsBtProductModel productModel = getProduct(sku, channelId);
 
-        if (productModel == null)
+        if (productModel == null) {
+            $warn(String.format("价格变更历史 产品不存在 sku=%s, channelid=%s", sku, channelId));
             return;
-
+        }
         CmsBtProductModel_Sku commonSku = productModel.getCommon().getSku(sku);
-
-        if (commonSku == null)
+        if (commonSku == null) {
+            $error(String.format("价格变更历史 产品common数据不存在 sku=%s, channelid=%s", sku, channelId));
             return;
-
+        }
         if (cartId != null) {
 
             if (cartId < CmsConstants.ACTIVE_CARTID_MIN)
@@ -99,11 +113,11 @@ public class CmsBtPriceLogService extends BaseService {
 
             CmsBtProductModel_Platform_Cart cartProduct = productModel.getPlatform(cartId);
 
-            if (cartProduct == null)
+            if (cartProduct == null) {
+                $error(String.format("价格变更历史 产品platform数据不存在 sku=%s, channelid=%s, cartid=%d", sku, channelId, cartId));
                 return;
-
-            log(sku, cartProduct, channelId, commonSku, productModel, username, comment);
-
+            }
+            addLogAndCallSyncPriceJob(sku, cartProduct, channelId, commonSku, productModel, username, comment);
             return;
         }
 
@@ -121,11 +135,11 @@ public class CmsBtPriceLogService extends BaseService {
             if (iCartId < CmsConstants.ACTIVE_CARTID_MIN)
                 continue;
 
-            log(sku, entry.getValue(), channelId, commonSku, productModel, username, comment);
+            addLogAndCallSyncPriceJob(sku, entry.getValue(), channelId, commonSku, productModel, username, comment);
         }
     }
 
-    private void log(String sku, CmsBtProductModel_Platform_Cart cartProduct, String channelId, CmsBtProductModel_Sku commonSku, CmsBtProductModel productModel, String username, String comment) {
+    private void addLogAndCallSyncPriceJob(String sku, CmsBtProductModel_Platform_Cart cartProduct, String channelId, CmsBtProductModel_Sku commonSku, CmsBtProductModel productModel, String username, String comment) {
 
         BaseMongoMap<String, Object> cartSku = cartProduct.getSkus().stream().filter(i -> i.getStringAttribute("skuCode").equals(sku)).findFirst().orElseGet(null);
 
@@ -140,8 +154,11 @@ public class CmsBtPriceLogService extends BaseService {
             return;
 
         CmsBtPriceLogModel newLog = makeLog(sku, cartId, channelId, productModel, commonSku, cartSku, username, comment);
+        int rs = priceLogDao.insert(newLog);
+        $debug(String.format("价格变更历史 结果=%d sku=%s, channelid=%s, cartid=%d", rs, sku, channelId, cartId));
 
-        priceLogDao.insert(newLog);
+        // 向Mq发送消息同步sku,code,group价格范围
+        sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
     }
 
     private CmsBtPriceLogModel makeLog(String sku, Integer cartId, String channelId, CmsBtProductModel productModel, CmsBtProductModel_Sku commonSku, BaseMongoMap<String, Object> platformSku, String username, String comment) {
@@ -153,12 +170,12 @@ public class CmsBtPriceLogService extends BaseService {
         logModel.setSku(sku);
         logModel.setCartId(cartId);
         logModel.setChannelId(channelId);
-        logModel.setClientMsrpPrice(String.valueOf(commonSku.getClientMsrpPrice()));
-        logModel.setClientNetPrice(String.valueOf(commonSku.getClientNetPrice()));
-        logModel.setClientRetailPrice(String.valueOf(commonSku.getClientRetailPrice()));
-        logModel.setMsrpPrice(platformSku.getStringAttribute("priceMsrp"));
-        logModel.setRetailPrice(platformSku.getStringAttribute("priceRetail"));
-        logModel.setSalePrice(platformSku.getStringAttribute("priceSale"));
+        logModel.setClientMsrpPrice(tryGetPrice(commonSku.getClientMsrpPrice()));
+        logModel.setClientNetPrice(tryGetPrice(commonSku.getClientNetPrice()));
+        logModel.setClientRetailPrice(tryGetPrice(commonSku.getClientRetailPrice()));
+        logModel.setMsrpPrice(platformSku.getDoubleAttribute("priceMsrp"));
+        logModel.setRetailPrice(platformSku.getDoubleAttribute("priceRetail"));
+        logModel.setSalePrice(platformSku.getDoubleAttribute("priceSale"));
         logModel.setComment(comment);
         Date now = new Date();
         logModel.setCreated(now);
@@ -170,12 +187,42 @@ public class CmsBtPriceLogService extends BaseService {
     }
 
     private boolean compareAllPrice(CmsBtProductModel_Sku commonSku, BaseMongoMap<String, Object> platformSku, CmsBtPriceLogModel logModel) {
-        return commonSku.getClientMsrpPrice().equals(Double.valueOf(logModel.getClientMsrpPrice()))
-                && commonSku.getClientNetPrice().equals(Double.valueOf(logModel.getClientNetPrice()))
-                && commonSku.getClientRetailPrice().equals(Double.valueOf(logModel.getClientRetailPrice()))
-                && new Double(platformSku.getDoubleAttribute("priceMsrp")).equals(Double.valueOf(logModel.getMsrpPrice()))
-                && new Double(platformSku.getDoubleAttribute("priceRetail")).equals(Double.valueOf(logModel.getRetailPrice()))
-                && new Double(platformSku.getDoubleAttribute("priceSale")).equals(Double.valueOf(logModel.getSalePrice()));
+
+        Double clientMsrpPrice = 0d, clientNetPrice = 0d, clientRetailPrice = 0d,
+                msrpPrice = 0d, retailPrice = 0d, salePrice = 0d;
+
+        Double logClientMsrpPrice, logClientNetPrice, logClientRetailPrice,
+                logMsrpPrice, logRetailPrice, logSalePrice;
+
+        if (commonSku != null) {
+            clientMsrpPrice = tryGetPrice(commonSku.getClientMsrpPrice());
+            clientNetPrice = tryGetPrice(commonSku.getClientNetPrice());
+            clientRetailPrice = tryGetPrice(commonSku.getClientRetailPrice());
+        }
+
+        if (platformSku != null) {
+            msrpPrice = platformSku.getDoubleAttribute("priceMsrp");
+            retailPrice = platformSku.getDoubleAttribute("priceRetail");
+            salePrice = platformSku.getDoubleAttribute("priceSale");
+        }
+
+        logClientMsrpPrice = tryGetPrice(logModel.getClientMsrpPrice());
+        logClientNetPrice = tryGetPrice(logModel.getClientNetPrice());
+        logClientRetailPrice = tryGetPrice(logModel.getClientRetailPrice());
+        logMsrpPrice = tryGetPrice(logModel.getMsrpPrice());
+        logRetailPrice = tryGetPrice(logModel.getRetailPrice());
+        logSalePrice = tryGetPrice(logModel.getSalePrice());
+
+        return clientMsrpPrice.equals(logClientMsrpPrice)
+                && clientNetPrice.equals(logClientNetPrice)
+                && clientRetailPrice.equals(logClientRetailPrice)
+                && msrpPrice.equals(logMsrpPrice)
+                && retailPrice.equals(logRetailPrice)
+                && salePrice.equals(logSalePrice);
+    }
+
+    private Double tryGetPrice(Double fromPrice) {
+        return fromPrice == null ? 0d : fromPrice;
     }
 
     private CmsBtProductModel getProduct(String sku, String channelId) {

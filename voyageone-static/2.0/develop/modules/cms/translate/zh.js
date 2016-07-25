@@ -102,7 +102,7 @@ define(function () {
         "TXT_CART_LIST": "Cart一览（维护）",
         "TXT_CATEGORY": "类目",
         "TXT_PRODUCT_STATUS": "商品状态",
-        "TXT_FEED_STATUS" : "Feed 状态",
+        "TXT_FEED_STATUS": "Feed 状态",
         "TXT_PLATFORM_STATUS": "商品平台状态",
         "TXT_MSRP_PRICE": "官方售价",
         "TXT_CREATE_TIME": "创建时间",
@@ -112,7 +112,7 @@ define(function () {
         "TXT_SELECT_VALUE_1": "Category",
         "TXT_SELECT_VALUE_2": "Brand",
         "TXT_BRAND": "品牌",
-        "TXT_COLOR" : "颜色",
+        "TXT_COLOR": "颜色",
         "TXT_FUZZY_SEARCH": "模糊查询",
         "TXT_GROUP_LIST": "GROUP一览",
         "TXT_PRODUCT_LIST": "PRODUCT一览",
@@ -222,6 +222,7 @@ define(function () {
         "TXT_ATTRIBUTE_ID": "属性ID",
         "TXT_ATTRIBUTE_NAME": "属性名称",
         "TXT_ATTRIBUTE_TYPE": "属性类型",
+        "TXT_PRODUCT_STATUS_HISTORY": "商品操作历史",
         "TXT_PROMOTION_HISTORY": "活动履历",
         "TXT_PROMOTION_NAME": "活动名称",
         "TXT_PROMOTION_TIME": "活动时间",
@@ -236,7 +237,7 @@ define(function () {
         "TXT_PRODUCT_DETAIL": "产品详情",
         "TXT_PRICE": "价格",
         "TXT_PRICE_TYPE": "价格种类",
-        "TXT_PRICE_HISTORY": "价格履历",
+        "TXT_PRICE_HISTORY": "价格历史",
         "TXT_IS_FIX_TRANSLATED": "翻译完成?",
         "TXT_PRODUCT_CODE": "产品Code",
         "TXT_PROMOTION_STATUS": "活动状态",
@@ -406,7 +407,6 @@ define(function () {
         "TXT_BRAND_STORY_IMAGE": "品牌故事图",
         "TXT_SHIPPING_DESCRIPTION_IMAGE": "物流介绍图",
         "TXT_IMAGE_UPLOAD_NOTICE": "只支持jpg图片",
-        "TXT_CART_NAME": "店铺渠道名称",
 
         "TXT_CHANNEL_ID": "渠道ID",
         "TXT_CART_ID": "Cart ID",
@@ -511,7 +511,7 @@ define(function () {
         "TXT_IMAGE_COUNT": "图片数",
         "TXT_IMAGE_DETAIL": "图片详细",
         "TXT_IMAGE": "图片",
-        "TXT_PRODUCT_IMAGE":"产品图片",
+        "TXT_PRODUCT_IMAGE": "产品图片",
         "TXT_ORIGIN_URL": "原始Url",
         "TXT_PLATFORM_URL": "平台Url",
         "TXT_SEQUENCE": "顺序",
@@ -538,7 +538,7 @@ define(function () {
         "BTN_CLOSE": "关闭",
         "BTN_TODAY": "今日",
         "BTN_SAVE": "保存",
-        "BTN_SELECT":"选择",
+        "BTN_SELECT": "选择",
         "BTN_SEARCH": "检索",
         "BTN_ADD_TO_PROMOTION": "参加活动",
         "BTN_ADD_TO_JM_PROMOTION": "参加聚美专场活动",
@@ -576,7 +576,8 @@ define(function () {
         "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
         "BTN_CHOOSE_FILE": "选择文件",
         "BTN_IMPORT_FILE": "Import File",
-        "BTN_UPLOAD_FILE": "Upload File",
+        "BTN_UPLOAD_FILE": "上传",
+        "BTN_REUPLOAD_FILE": "重传",
         "BTN_CUSTOMIZE_COLUMNS": "自定义列设置",
         "BTN_GET_TASK": "获取任务",
         "BTN_COMPLETE": "完成",
@@ -631,7 +632,7 @@ define(function () {
         /**店铺分类*/
         "TXT_STORE_CATEGORY_NAME": "店铺",
         "MAX_SELLER_CAT_DEPTH": "最大层数",
-        "MAX_SELLER_CAT_CNT": "可设置最大标签数应小于",
+        "MAX_SELLER_CAT_CNT": "可设置最大标签数应小于等于",
         "TXT_STORE_CATEGORY_SELECT": "请选择一个店铺",
         "INVALID_OPERATION_IN_CURRENT_CART_PATH": "当前店铺路径下操作无效",
         "CATEGORY_EDIT": "分类类目编辑",
@@ -648,8 +649,9 @@ define(function () {
         "TXT_HSCODE_PRODUCT_NAME_UNIT": "税号/品名/单位",
         "TXT_RULE_OF_PRE": "优先规则",
         "TXT_GROUP_NAME_FEED_CAT_WITH_COLON": "商品名称/Feed类目/主类目",
-        "TXT_HS_CODE_SETTED_SEARCH":"个人设置税号成果搜索",
-        "TXT_CARRY_ON_THE_CURRENT_SETTING":"请继续完善税号设置",
+        "TXT_HS_CODE_SETTED_SEARCH": "个人设置税号成果搜索",
+        "TXT_CARRY_ON_THE_CURRENT_SETTING": "请继续完善税号设置",
+        "TXT_TRANSLATION_INPUT_TIP":"get不到啦，请至少给我产品Code或任务数量",
 
         /**高级检索*/
         "TXT_ADVANCE_SEARCH_NEW": "高级搜索",
@@ -661,7 +663,7 @@ define(function () {
         "TXT_MAIN_CATEGORY": "主类目",
         "TXT_LIST_ERROR": "错误列表",
         "TXT_ERROR": "错误",
-        "TXT_PROPERTY_STATUS": "Property status",
+        "TXT_PROPERTY_STATUS": "属性状态",
         "TXT_IMAGE_DOWNLOAD": "图片下载",
         "TXT_CUS_TAGS_SETTING": "设置自定义标签",
         "TXT_COMMON_EXCHANGE": "共通级变更",
@@ -676,10 +678,10 @@ define(function () {
         "TXT_7_DAYS": "7天",
         "TXT_30_DAYS": "30天",
         "TXT_ROUND_UP": "向上取整",
-        "TXT_ALL_PUT_ON|OFF": "全店铺上下架",
-        "TXT_PUT_ON/PUT_OFF": "上下架",
-        "TXT_PUT_ON": "上架",
-        "TXT_PUT_OFF": "下架",
+        "TXT_ALL_PUT_ON|OFF": "全店铺上下架 (在售/在库)",
+        "TXT_PUT_ON/PUT_OFF": "上下架 (在售/在库)",
+        "TXT_PUT_ON": "在售",
+        "TXT_PUT_OFF": "在库",
         "TXT_ALL_CHANNEL_APPROVAL": "全店铺商品审批",
         "TXT_PRODUCTS_APPROVAL": "商品审批",
         "TXT_PRODUCTS_PROPERTY_CHANGE": "商品属性变更",
@@ -721,6 +723,7 @@ define(function () {
         "TXT_NO_PRODUCT_CHOOSED": "未选择商品，请选择后再操作",
         "TXT_NO_OPPERATION": "没有设置上下架操作，请选择后重试",
         "TXT_CONFIRM_ALL_STORE_PUT_ON": "此操作将会导致全店铺商品上下架，确认无误",
+        "TXT_CONFIRM_NOW_STORE_PUT_ON": "此操作将会导致本店铺商品上下架，确认无误",
 
         /** 翻译页面相关 **/
         "TXT_TRANSLATION_STATUS": "商品翻译状态",
@@ -753,9 +756,27 @@ define(function () {
         "TXT_JOIN_JM_CODE_SKU_SEARCH": "Code/SKU",
 
         /**feed导出*/
-        "TXT_EXPORT_FILE_NAME":"导出文件名",
-        "TXT_EXPORT_REQUEST_TIME":"导出申请时间",
-        "TXT_EXPORT_CREATE_TIME":"Excel生成时间",
-        "TXT_EXPORT_REQUESTER":"导出申请者"
+        "TXT_EXPORT_FILE_NAME": "导出文件名",
+        "TXT_EXPORT_REQUEST_TIME": "导出申请时间",
+        "TXT_EXPORT_CREATE_TIME": "Excel生成时间",
+        "TXT_EXPORT_REQUESTER": "导出申请者",
+
+        "TXT_MATER_CATEGORY_WITH_COLON": "主类目:",
+        "TXT_ACTION_TIME": "操作时间",
+        "TXT_ACTION_USER": "操作者",
+        "TXT_ACTION_COMMENT": "说明",
+
+        /**工具管理-共通处理*/
+        "TXT_FEED_ALL_NUMBER": "Feed品牌总数",
+        "TXT_FEED_ALL_UNMAPPED_NUMBER": "未匹配Feed品牌总数",
+        "TXT_FEED_ALL_MAPPED_NUMBER": "已匹配Feed品牌总数",
+
+        /**店铺管理-平台品牌设置一览*/
+        "TXT_BRAND_MAPPING_LIST": "平台品牌设置一览",
+        "TXT_CART_NAME": "平台渠道名称",
+        "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配状态",
+        "TXT_MASTER_BRAND": "Master品牌",
+        "TXT_BRAND_CHANGEABLE":"[%s]品牌",
+        "TXT_COMPLETE_THE_PLATEFORM_BRAND":"平台品牌未选择"
     };
 });

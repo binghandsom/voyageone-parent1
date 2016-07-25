@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamImageWithParam;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueImageWithParam;
@@ -37,6 +38,10 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
 
         RuleExpression imageTemplateExpression = customModuleUserParamImageWithParam.getImageTemplate();
         List<RuleExpression> imageParamExpressions = customModuleUserParamImageWithParam.getImageParams();
+        // added by morse.lu 2016/07/13 start
+        RuleExpression useCmsBtImageTemplateExpression = customModuleUserParamImageWithParam.getUseCmsBtImageTemplate();
+        String useCmsBtImageTemplate = expressionParser.parse(useCmsBtImageTemplateExpression, shopBean, user, extParameter);
+        // added by morse.lu 2016/07/13 end
 
         String imageTemplate = expressionParser.parse(imageTemplateExpression, shopBean, user, extParameter);
         List<String> imageParams = new ArrayList<>();
@@ -75,7 +80,30 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
         }
 
         // 20160513 tom 图片服务器切换 START
-        String parseResult = String.format(imageTemplate, imageParams.toArray());
+        // modified by morse.lu 2016/07/13 start
+//        String parseResult = String.format(imageTemplate, imageParams.toArray());
+        String parseResult;
+        if (Boolean.parseBoolean(useCmsBtImageTemplate)) {
+            // 用图片管理模板
+            parseResult = sxProductService.getImageTemplate(sxData.getChannelId(),
+                                                            sxData.getCartId(),
+                                                            4, // 4：参数模版
+                                                            1, // PC端
+                                                            sxData.getMainProduct().getCommon().getFields().getBrand(),
+                                                            sxData.getMainProduct().getCommon().getFields().getProductType(),
+                                                            sxData.getMainProduct().getCommon().getFields().getSizeType(),
+                                                            imageParams.toArray(new String[imageParams.size()]));
+            if (StringUtils.isEmpty(parseResult)) {
+                $warn("参数图url未在图片管理模板表里设定!" +
+                        ",BrandName= " + sxData.getMainProduct().getCommon().getFields().getBrand() +
+                        ",ProductType= " + sxData.getMainProduct().getCommon().getFields().getProductType() +
+                        ",SizeType=" + sxData.getMainProduct().getCommon().getFields().getSizeType());
+                return "";
+            }
+        } else {
+            parseResult = String.format(imageTemplate, imageParams.toArray());
+        }
+        // modified by morse.lu 2016/07/13 end
 //        String parseResult = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, imageParams.get(0));
 //        String parseResult = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, imageParams.toArray(new String[imageParams.size()]));
         // 20160513 tom 图片服务器切换 END

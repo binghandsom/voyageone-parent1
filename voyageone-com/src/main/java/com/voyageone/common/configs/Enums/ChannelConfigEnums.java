@@ -568,6 +568,17 @@ public class ChannelConfigEnums {
         OverStock("024"),
 
         /**
+         * OverStock
+         */
+        FragranceNet("025"),
+
+
+        /**
+         * LightHouse
+         */
+        LightHouse("026"),
+
+        /**
          * TestChannel088
          */
         TestChannel088("088"),
@@ -596,14 +607,19 @@ public class ChannelConfigEnums {
          */
         USJGY("929"),
         /**
-         * VOYAGEONE
+         * TEST
          */
-        VOYAGEONE("997"),
+        TEST("996"),
 
         /**
-         * ThirdParty
+         * USJGT
          */
-        THIRD_PARTY("998");
+        USJGT("998"),
+
+        /**
+         * VOYAGEONE
+         */
+        VOYAGEONE("997");
 
         private String id;
 
@@ -653,6 +669,8 @@ public class ChannelConfigEnums {
                 case "022": return DFO;
                 case "023": return ShoeZoo;
                 case "024": return OverStock;
+                case "025": return FragranceNet;
+                case "026": return LightHouse;
                 case "088": return TestChannel088;
                 case "089": return TestChannel089;
                 case "090": return TestChannel090;
@@ -660,7 +678,8 @@ public class ChannelConfigEnums {
                 case "928": return USJGJ;
                 case "929": return USJGY;
                 case "997": return VOYAGEONE;
-                case "998": return THIRD_PARTY;
+                case "996": return TEST;
+                case "998": return USJGT;
                 default: return null;
             }
         }

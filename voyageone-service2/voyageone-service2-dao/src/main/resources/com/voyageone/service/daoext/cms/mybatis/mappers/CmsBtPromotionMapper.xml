@@ -152,7 +152,8 @@
             )
         where
         a.active = 1
-        and a.promotion_status = 0
+        and a.activity_end >= now()
+        and a.promotion_status = 1
         and c.active = 1
         and c.tag_status = 0
         and a.cart_id = #{cartId,jdbcType=INTEGER}

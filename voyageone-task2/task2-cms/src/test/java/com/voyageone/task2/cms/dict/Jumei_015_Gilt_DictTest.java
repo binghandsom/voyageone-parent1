@@ -168,7 +168,7 @@ public class Jumei_015_Gilt_DictTest {
 
             RuleExpression useOriUrl = null;
 
-            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl);
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
             ruleRoot.addRuleWord(new CustomWord(word));
         }
 
@@ -211,7 +211,7 @@ public class Jumei_015_Gilt_DictTest {
 
             RuleExpression useOriUrl = null;
 
-            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl);
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
             ruleRoot.addRuleWord(new CustomWord(word));
         }
 
@@ -246,7 +246,7 @@ public class Jumei_015_Gilt_DictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
         }
@@ -265,7 +265,7 @@ public class Jumei_015_Gilt_DictTest {
             RuleExpression useOriUrl = new RuleExpression();
             useOriUrl.addRuleWord(new TextWord("1"));
 
-            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
             ruleRoot.addRuleWord(new CustomWord(word));
         }
 
@@ -282,7 +282,7 @@ public class Jumei_015_Gilt_DictTest {
 
             RuleExpression useOriUrl = null;
 
-            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl);
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
             ruleRoot.addRuleWord(new CustomWord(word));
         }
 

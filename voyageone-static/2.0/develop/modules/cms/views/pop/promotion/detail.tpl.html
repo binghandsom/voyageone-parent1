@@ -12,7 +12,7 @@
                 <label for="promotionName" class="col-sm-3 control-label vo_reqfield" translate="TXT_PROMOTION_NAME"></label>
                 <div class="col-sm-7">
                     <input id="promotionName" name="promotionName" class="form-control"
-                           ng-model="promotion.promotionName" required title="Promotion Name">
+                           ng-model="editModel.promotionModel.promotionName" required title="Promotion Name" maxlength="50">
                 </div>
             </div>
             <div class="form-group">
@@ -24,7 +24,7 @@
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PLATFORM_TYPE"></label>
                 <div class="col-sm-7 m-t-xs">
                     <label ng-repeat="cart in cartList" class="c-radio" ng-if="cart.value != 27">
-                        <input type="radio" name="promotionCartId" class="form-control" ng-model="promotion.cartId" value="{{::cart.value}}" required>
+                        <input type="radio" name="promotionCartId" class="form-control" ng-model="editModel.promotionModel.cartId" value="{{::cart.value}}" required>
                         <span class="fa fa-check"></span><b>&nbsp;{{::cart.name}}</b>
                     </label>
                 </div>
@@ -39,10 +39,10 @@
                 <div class="col-sm-7 form-inline">
                     <div class="col-sm-5 input-group">
                         <input type="date" class="form-control"
-                               ng-model="promotion.prePeriodStart"
+                               ng-model="editModel.promotionModel.prePeriodStart"
                                uib-datepicker-popup
                                is-open="datePicker1"
-                               max-date="promotion.prePeriodEnd"
+                               max-date="editModel.promotionModel.prePeriodEnd"
                                date-model-format="yyyy-MM-dd">
                         <span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i
                                     class="glyphicon glyphicon-calendar"></i></button></span>
@@ -50,10 +50,10 @@
                     &nbsp;~&nbsp;
                     <div class="col-sm-5 input-group">
                         <input type="date" class="form-control"
-                               ng-model="promotion.prePeriodEnd"
+                               ng-model="editModel.promotionModel.prePeriodEnd"
                                uib-datepicker-popup
                                is-open="datePicker2"
-                               min-date="promotion.prePeriodStart"
+                               min-date="editModel.promotionModel.prePeriodStart"
                                date-model-format="yyyy-MM-dd">
                         <span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i
                                 class="glyphicon glyphicon-calendar"></i></button></span>
@@ -65,11 +65,11 @@
                 <div class="col-sm-7 form-inline">
                     <div class="col-sm-5 input-group">
                         <input type="date"
-                               ng-model="promotion.preSaleStart"
+                               ng-model="editModel.promotionModel.preSaleStart"
                                class="form-control"
                                uib-datepicker-popup
                                is-open="datePicker3"
-                               max-date="promotion.preSaleEnd"
+                               max-date="editModel.promotionModel.preSaleEnd"
                                date-model-format="yyyy-MM-dd">
 						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i
                                 class="glyphicon glyphicon-calendar"></i></button></span>
@@ -77,11 +77,11 @@
                     &nbsp;~&nbsp;
                     <div class="col-sm-5 input-group">
                         <input type="date"
-                               ng-model="promotion.preSaleEnd"
+                               ng-model="editModel.promotionModel.preSaleEnd"
                                class="form-control"
                                uib-datepicker-popup
                                is-open="datePicker4"
-                               min-date="promotion.preSaleStart"
+                               min-date="editModel.promotionModel.preSaleStart"
                                date-model-format="yyyy-MM-dd">
 						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i
                                 class="glyphicon glyphicon-calendar"></i></button></span>
@@ -93,10 +93,10 @@
                 <div class="col-sm-7 form-inline">
                     <div class="col-sm-5 input-group">
                         <input type="date" class="form-control" name="promotionTimeStart"
-                               ng-model="promotion.activityStart"
+                               ng-model="editModel.promotionModel.activityStart"
                                uib-datepicker-popup
                                is-open="datePicker5"
-                               max-date="promotion.activityEnd"
+                               max-date="editModel.promotionModel.activityEnd"
                                date-model-format="yyyy-MM-dd"
                                required>
 						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker5 = !datePicker5"><i
@@ -105,10 +105,10 @@
                     &nbsp;~&nbsp;
                     <div class="col-sm-5 input-group">
                         <input type="date" class="form-control" name="promotionTimeEnd"
-                               ng-model="promotion.activityEnd"
+                               ng-model="editModel.promotionModel.activityEnd"
                                uib-datepicker-popup
                                is-open="datePicker6"
-                               min-date="promotion.activityStart"
+                               min-date="editModel.promotionModel.activityStart"
                                date-model-format="yyyy-MM-dd"
                                required>
 						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker6 = !datePicker6"><i
@@ -121,7 +121,7 @@
                     <vo-message target="promotionForm.promotionTimeStart && promotionForm.promotionTimeEnd" class="vo-message-success"></vo-message>
                 </div>
             </div>
-            <div class="form-group" ng-show="promotion.cartId == 20 || promotion.cartId == 23">
+            <div class="form-group" ng-show="editModel.promotionModel.cartId == 20 || editModel.promotionModel.cartId == 23">
                 <div class="col-sm-3 control-label"><label class="" translate="TXT_IS_START_TE_JIA_BAO"></label></div>
                 <div class="col-sm-2">
                     <div class="onoffswitch">
@@ -133,7 +133,7 @@
                     </div>
                 </div>
                 <div class="col-sm-4">
-                    <input class="form-control" ng-if="tejiabao == true" ng-model="promotion.tejiabaoId" placeholder="{{'TXT_TE_JIA_BAO_ID' | translate}}">
+                    <input class="form-control" ng-if="tejiabao == true" ng-model="editModel.promotionModel.tejiabaoId" placeholder="{{'TXT_TE_JIA_BAO_ID' | translate}}">
                 </div><!-- onoff switch -->
             </div>
         </form>
@@ -148,12 +148,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="tag in promotion.tagList">
+                <tr ng-repeat="tag in editModel.tagList">
                     <td>
                         <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}" ng-required="true" maxlength="20" required>
                         <vo-message target="tagListForm['tagName' + $index]"></vo-message>
                     </td>
-                    <td class="mfb-xs text-center"><button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-disabled="tag.id != ''" ng-click="delTag(promotion.tagList,tag)"><i class="fa fa-trash-o"></i></button></td>
+                    <td class="mfb-xs text-center"><button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-disabled="tag.id != ''" ng-click="delTag(editModel.promotionModel.tagList,tag)"><i class="fa fa-trash-o"></i></button></td>
                 </tr>
                 </tbody>
             </table>

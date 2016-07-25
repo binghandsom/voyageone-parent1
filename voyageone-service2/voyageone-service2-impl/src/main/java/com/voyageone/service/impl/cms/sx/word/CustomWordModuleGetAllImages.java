@@ -51,6 +51,11 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
         CmsBtProductConstants.FieldImageType imageType = CmsBtProductConstants.FieldImageType.valueOf(imageTypeStr);
         String useOriUrlStr = expressionParser.parse(useOriUrlExpression, shopBean, user, extParameter);
 
+        // added by morse.lu 2016/07/18 start
+        RuleExpression useCmsBtImageTemplateExpression = customModuleUserParamGetAllImages.getUseCmsBtImageTemplate();
+        String useCmsBtImageTemplate = expressionParser.parse(useCmsBtImageTemplateExpression, shopBean, user, extParameter);
+        // added by morse.lu 2016/07/18 end
+
         //system param
         List<CmsBtProductModel> sxProducts = sxData.getProductList();
 
@@ -85,27 +90,50 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                 // 20160513 tom 图片服务器切换 START
 //                String completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
                 String completeImageUrl;
+                // added by morse.lu 2016/07/18 start
+                if (Boolean.parseBoolean(useCmsBtImageTemplate)) {
+                    // 用图片管理模板
+                    completeImageUrl = sxProductService.getImageTemplate(sxData.getChannelId(),
+                                                    sxData.getCartId(),
+                                                    3, // 3：详情细节模版
+                                                    1, // PC端
+                                                    sxData.getMainProduct().getCommon().getFields().getBrand(),
+                                                    sxData.getMainProduct().getCommon().getFields().getProductType(),
+                                                    sxData.getMainProduct().getCommon().getFields().getSizeType(),
+                                                    cmsBtProductModelFieldImage.getName());
+                    if (StringUtils.isEmpty(completeImageUrl)) {
+                        $warn("商品详情图url未在图片管理模板表里设定!" +
+                                ",BrandName= " + sxData.getMainProduct().getCommon().getFields().getBrand() +
+                                ",ProductType= " + sxData.getMainProduct().getCommon().getFields().getProductType() +
+                                ",SizeType=" + sxData.getMainProduct().getCommon().getFields().getSizeType());
+                        return "";
+                    }
+                } else
+                // added by morse.lu 2016/07/18 end
                 if ("1".equals(useOriUrlStr)) {
                     // 使用原图
                     // start
                     try {
-                        String url = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?req=imageprops", cmsBtProductModelFieldImage.getName());
-                        $info("[CustomWordModuleGetAllImages]取得图片大小url:" + url);
-                        String result = HttpUtils.get(url, null);
-                        result = result.substring(result.indexOf("image"));
-                        String[] args = result.split("image\\.");
-                        Map<String, String> responseMap = new HashMap<>();
-                        for (String param : args) {
-                            if (param.indexOf("=") > 0) {
-                                String[] keyVal = param.split("=");
-                                if (keyVal.length > 1) {
-                                    responseMap.put(keyVal[0], keyVal[1]);
-                                } else {
-                                    responseMap.put(keyVal[0], "");
-                                }
-                            }
-                        }
-                        completeImageUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&rgn=0,0,%s,%s", cmsBtProductModelFieldImage.getName(), responseMap.get("width"), responseMap.get("height"));
+                        // 20160717 tom 换一种方法 START
+//                        String url = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?req=imageprops", cmsBtProductModelFieldImage.getName());
+//                        $info("[CustomWordModuleGetAllImages]取得图片大小url:" + url);
+//                        String result = HttpUtils.get(url, null);
+//                        result = result.substring(result.indexOf("image"));
+//                        String[] args = result.split("image\\.");
+//                        Map<String, String> responseMap = new HashMap<>();
+//                        for (String param : args) {
+//                            if (param.indexOf("=") > 0) {
+//                                String[] keyVal = param.split("=");
+//                                if (keyVal.length > 1) {
+//                                    responseMap.put(keyVal[0], keyVal[1]);
+//                                } else {
+//                                    responseMap.put(keyVal[0], "");
+//                                }
+//                            }
+//                        }
+//                        completeImageUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&rgn=0,0,%s,%s", cmsBtProductModelFieldImage.getName(), responseMap.get("width"), responseMap.get("height"));
+                        completeImageUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100", cmsBtProductModelFieldImage.getName());
+                        // 20160717 tom 换一种方法 END
                         $info("[CustomWordModuleGetAllImages]取得原始图片url:" + completeImageUrl);
                     } catch (Exception e) {
                         throw new BusinessException("[CustomWordModuleGetAllImages]取得原始图片url失败!");
@@ -137,7 +165,15 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
             for (Map.Entry<String, String> entry : map.entrySet()) {
                 if (!StringUtils.isEmpty(entry.getValue())) {
                     parseResult = parseResult.replace(entry.getKey(), entry.getValue());
+                } else { // add by desmond 2016/07/13 start
+                    // 如果未能取得平台url(源图片去的失败或者上传到平台失败)时，删除原图片url
+                    if (htmlTemplate != null) {
+                        parseResult = parseResult.replace(String.format(htmlTemplate, entry.getKey()), "");
+                    } else {
+                        parseResult = parseResult.replace(entry.getKey(), "");
+                    }
                 }
+                // add by desmond 2016/07/13 end
             }
         }
 

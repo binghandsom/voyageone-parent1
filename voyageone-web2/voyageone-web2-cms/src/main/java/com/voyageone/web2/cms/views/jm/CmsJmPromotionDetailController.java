@@ -45,12 +45,12 @@ public class CmsJmPromotionDetailController extends CmsController {
     private CmsBtJmSkuService cmsBtJmSkuService;
     @Autowired
     private CmsBtJmPromotionSkuService cmsBtJmPromotionSkuService;
-    @Autowired
-    private CmsBtJmProductImagesService cmsBtJmProductImagesService;
-    @Autowired
-    private CmsBtJmMasterPlatService cmsBtJmMasterPlatService;
-    @Autowired
-    private CmsBtJmCategoryService cmsBtJmCategoryService;
+//    @Autowired
+//    private CmsBtJmProductImagesService cmsBtJmProductImagesService;
+//    @Autowired
+//    private CmsBtJmMasterPlatService cmsBtJmMasterPlatService;
+//    @Autowired
+//    private CmsBtJmCategoryService cmsBtJmCategoryService;
     @Autowired
     private CmsBtJmMasterBrandService cmsBtJmMasterBrandService;
     @Autowired
@@ -64,8 +64,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     //end 2
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.INIT)
      public AjaxResponse init(@RequestBody InitParameter parameter) {
-        InitResult result=new InitResult();
-         return success(service3.init(parameter));
+         return success(service3.init(parameter, getUser().getSelChannelId(), getLang()));
      }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
     public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
@@ -99,40 +98,40 @@ public class CmsJmPromotionDetailController extends CmsController {
 //        return success(result);
 //    }
 
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETE)
-    public AjaxResponse delete(@RequestBody int id) {
-        ProductIdListInfo deleteInfo = new ProductIdListInfo();
-        List<Integer> deleteId = new ArrayList<>();
-        deleteId.add(id);
-        deleteInfo.setProductIdList(deleteId);
-        serviceCmsBtJmPromotionProduct.deleteByProductIdList(deleteInfo);
-        CallResult result = new CallResult();
-        return success(result);
-    }
+//    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETE)
+//    public AjaxResponse delete(@RequestBody int id) {
+//        ProductIdListInfo deleteInfo = new ProductIdListInfo();
+//        List<Integer> deleteId = new ArrayList<>();
+//        deleteId.add(id);
+//        deleteInfo.setProductIdList(deleteId);
+//        serviceCmsBtJmPromotionProduct.deleteByProductIdList(deleteInfo);
+//        CallResult result = new CallResult();
+//        return success(result);
+//    }
 
-    //全部删除
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPPROMOTIONID)
-    public AjaxResponse deleteByPromotionId(@RequestBody int promotionId) {
-        serviceCmsBtJmPromotionProduct.deleteByPromotionId(promotionId);
-        CallResult result = new CallResult();
-        return success(result);
-    }
+//    //全部删除
+//    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPPROMOTIONID)
+//    public AjaxResponse deleteByPromotionId(@RequestBody int promotionId) {
+//        service3.deleteByPromotionId(promotionId);
+//        CallResult result = new CallResult();
+//        return success(result);
+//    }
 
-    //部分商品删除
-    ///cms/jmpromotion/detail/deleteByProductIdList
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPRODUCTIDLIST)
-    public AjaxResponse deleteByProductIdList(@RequestBody ProductIdListInfo parameter) {
-        serviceCmsBtJmPromotionProduct.deleteByProductIdList(parameter);
-        CallResult result = new CallResult();
-        return success(result);
-    }
+//    //部分商品删除
+//    ///cms/jmpromotion/detail/deleteByProductIdList
+//    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DELETEBYPRODUCTIDLIST)
+//    public AjaxResponse deleteByProductIdList(@RequestBody ProductIdListInfo parameter) {
+//        serviceCmsBtJmPromotionProduct.deleteByProductIdList(parameter);
+//        CallResult result = new CallResult();
+//        return success(result);
+//    }
 
 
     ///cms/jmpromotion/detail/updateDealEndTimeAll
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealEndTimeAll)
     //延迟Deal结束时间  全量
     public AjaxResponse updateDealEndTimeAll(@RequestBody ParameterUpdateDealEndTimeAll parameter) {
-        parameter.getDealEndTime().setTime(59);//聚美专场结束时间都以59秒结尾。
+        //parameter.getDealEndTime().setTime(59);//聚美专场结束时间都以59秒结尾。
         CallResult result = serviceCmsBtJmPromotionProduct.updateDealEndTimeAll(parameter);
         if (result.isResult()) {
             Map<String, Object> map = new HashMap<String, Object>();
@@ -142,30 +141,30 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
 
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PRODUCT_DETAIL)
-    // 获取产品详细信息
-    public AjaxResponse getProductDetail(@RequestBody Map<String, Object> map) {
-        Map<String, Object> result = new HashMap<String, Object>();
-        map.put("channelId", getUser().getSelChannelId());
-
-        Map<String, Object> imageParam = new HashMap<>();
-        imageParam.putAll(map);
-        imageParam.put("imageType", 1);
-        imageParam.put("imageIndex", 1);
-
-        result.put("productImage", cmsBtJmProductImagesService.selectOne(imageParam));
-        result.put("productInfo", cmsBtJmProductService.selectOne(map));
-        CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel = cmsBtJmPromotionProductService.selectOne(map);
-        result.put("productPromotionInfo", cmsBtJmPromotionProductModel);
-        List<CmsBtJmSkuModel> skuList = cmsBtJmSkuService.selectList(map);
-
-        Map<String, Object> promotionSkuParam = new HashMap<>();
-        // promotionSkuParam.put("cmsBtJmProductId", cmsBtJmPromotionProductModel.getCmsBtJmProductId());
-        List<CmsBtJmPromotionSkuModel> promotionSkuList = cmsBtJmPromotionSkuService.selectList(promotionSkuParam);
-        result.put("skuList", cmsBtJmSkuService.selectSkuList(skuList, promotionSkuList));
-
-        return success(result);
-    }
+//    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PRODUCT_DETAIL)
+//    // 获取产品详细信息
+//    public AjaxResponse getProductDetail(@RequestBody Map<String, Object> map) {
+//        Map<String, Object> result = new HashMap<String, Object>();
+//        map.put("channelId", getUser().getSelChannelId());
+//
+//        Map<String, Object> imageParam = new HashMap<>();
+//        imageParam.putAll(map);
+//        imageParam.put("imageType", 1);
+//        imageParam.put("imageIndex", 1);
+//
+//        result.put("productImage", cmsBtJmProductImagesService.selectOne(imageParam));
+//        result.put("productInfo", cmsBtJmProductService.selectOne(map));
+//        CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel = cmsBtJmPromotionProductService.selectOne(map);
+//        result.put("productPromotionInfo", cmsBtJmPromotionProductModel);
+//        List<CmsBtJmSkuModel> skuList = cmsBtJmSkuService.selectList(map);
+//
+//        Map<String, Object> promotionSkuParam = new HashMap<>();
+//        // promotionSkuParam.put("cmsBtJmProductId", cmsBtJmPromotionProductModel.getCmsBtJmProductId());
+//        List<CmsBtJmPromotionSkuModel> promotionSkuList = cmsBtJmPromotionSkuService.selectList(promotionSkuParam);
+//        result.put("skuList", cmsBtJmSkuService.selectSkuList(skuList, promotionSkuList));
+//
+//        return success(result);
+//    }
 
     /**
      * 更新产品信息
@@ -244,20 +243,20 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(cmsBtJmPromotionSkuService.delete(request.getId()));
     }
 
-    /**
-     * 获取产品详情页的master数据
-     *
-     * @return
-     */
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PRODUCT_MASTER_DATA)
-    public AjaxResponse getProductMasterData() {
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("categoryList", cmsBtJmCategoryService.selectAll());
-        result.put("brandList", cmsBtJmMasterBrandService.selectAll());
-        result.put("priceUnitList", cmsBtJmMasterPlatService.selectListByCode(CmsConstants.JmMasterPlatCode.PRICE_UNIT));
-        return success(result);
-    }
+//    /**
+//     * 获取产品详情页的master数据
+//     *
+//     * @return
+//     */
+//    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PRODUCT_MASTER_DATA)
+//    public AjaxResponse getProductMasterData() {
+//
+//        Map<String, Object> result = new HashMap<>();
+//        result.put("categoryList", cmsBtJmCategoryService.selectAll());
+//        result.put("brandList", cmsBtJmMasterBrandService.selectAll());
+//        result.put("priceUnitList", cmsBtJmMasterPlatService.selectListByCode(CmsConstants.JmMasterPlatCode.PRICE_UNIT));
+//        return success(result);
+//    }
 
 //    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateJM)
 //    public AjaxResponse updateJM(@RequestBody int promotionProductId) throws Exception {

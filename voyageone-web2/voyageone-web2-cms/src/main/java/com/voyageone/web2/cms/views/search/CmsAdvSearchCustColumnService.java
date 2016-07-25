@@ -73,20 +73,34 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
         String[] commList = commStr.split(",");
         StringBuilder commonPropsStr = new StringBuilder();
         if (commList.length > 0) {
-            List<Map<String, Object>> commonProps = commonPropService.getCustColumns();
+            List<Map<String, Object>> commonProps = commonPropService.getCustColumns(1);
             for (Map<String, Object> props : commonProps) {
                 String propId = (String) props.get("propId");
-                Map<String, String> atts = new HashMap<>(2);
-                atts.put("configCode", "common.fields." + propId);
-                atts.put("configValue1", (String) props.get("propName"));
-                atts.put("valType", (String) props.get("valType"));
-                custAttsQueryList.add(atts);
+                if ("comment".equals(propId)) {
+                    Map<String, String> atts = new HashMap<>(2);
+                    atts.put("configCode", "common.comment");
+                    atts.put("configValue1", (String) props.get("propName"));
+                    atts.put("valType", (String) props.get("valType"));
+                    custAttsQueryList.add(atts);
 
-                if (ArrayUtils.contains(commList, propId)) {
-                    commonProp2.add(props);
-                    commonPropsStr.append("common.fields.");
-                    commonPropsStr.append(propId);
-                    commonPropsStr.append(";");
+                    if (ArrayUtils.contains(commList, propId)) {
+                        commonProp2.add(props);
+                        commonPropsStr.append("common.comment");
+                        commonPropsStr.append(";");
+                    }
+                } else {
+                    Map<String, String> atts = new HashMap<>(2);
+                    atts.put("configCode", "common.fields." + propId);
+                    atts.put("configValue1", (String) props.get("propName"));
+                    atts.put("valType", (String) props.get("valType"));
+                    custAttsQueryList.add(atts);
+
+                    if (ArrayUtils.contains(commList, propId)) {
+                        commonProp2.add(props);
+                        commonPropsStr.append("common.fields.");
+                        commonPropsStr.append(propId);
+                        commonPropsStr.append(";");
+                    }
                 }
             }
         }
@@ -165,13 +179,17 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
         List<Map<String, Object>> commonProp2 = new ArrayList<>();
         StringBuilder commonPropsStr = new StringBuilder();
         if (param2 != null && param2.size() > 0) {
-            List<Map<String, Object>> commonProps = commonPropService.getCustColumns();
+            List<Map<String, Object>> commonProps = commonPropService.getCustColumns(1);
             for (Map<String, Object> props : commonProps) {
                 String propId = (String) props.get("propId");
                 if (param2.contains(propId)) {
                     commonProp2.add(props);
-                    commonPropsStr.append("common.fields.");
-                    commonPropsStr.append(propId);
+                    if ("comment".equals(propId)) {
+                        commonPropsStr.append("common.comment");
+                    } else {
+                        commonPropsStr.append("common.fields.");
+                        commonPropsStr.append(propId);
+                    }
                     commonPropsStr.append(";");
                 }
             }

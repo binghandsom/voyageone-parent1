@@ -62,7 +62,12 @@ public class CartEnums {
 		/**
 		 * 天猫MiniMall
 		 */
-		TMM("d"),
+		TMM("30"),
+
+		/**
+		 * USJOI测试
+		 */
+		JGT("98"),
 
 		/**
 		 * US匠心界
@@ -71,7 +76,11 @@ public class CartEnums {
 		/**
 		 * US悦境
 		 */
-		USJGY("929");
+		USJGY("929"),
+		/**
+		 * USJOI测试
+		 */
+		USJGT("998");
 
     	private String id;
 
@@ -105,6 +114,10 @@ public class CartEnums {
 					return JGY;
 				case "30":
 					return TMM;
+				case "928":
+					return USJGJ;
+				case "929":
+					return USJGY;
 				default:
 					return null;
 			}

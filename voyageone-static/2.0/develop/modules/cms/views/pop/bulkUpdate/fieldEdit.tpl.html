@@ -23,7 +23,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield">{{'TXT_PROPERTY_VALUE_WITH_COLON' | translate}}</label>
                 <div class="col-sm-7">
-                    <voption data="vm.propertyInfo.property"></voption>
+                    <s-field ng-if="vm.propertyInfo.property.id" field="vm.propertyInfo.property" show-name="false"></s-field>
                 </div>
             </div>
         </form>

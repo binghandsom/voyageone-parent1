@@ -3,13 +3,16 @@ package com.voyageone.web2.cms.views.search;
 import com.voyageone.base.dao.mongodb.JomgoAggregate;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.CommonUtil;
@@ -70,8 +73,10 @@ public class CmsAdvanceSearchService extends BaseAppService {
     private CmsBtProductDao cmsBtProductDao;
 
     // 查询产品信息时的缺省输出列
-    public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;platforms;" +
-            "common.skus.skuCode;common.fields.productNameEn;common.fields.brand;common.fields.code;common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
+    public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;platforms;lock;" +
+            "common.skus.skuCode;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
+            "common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.images5;common.fields.images6;common.fields.images7;common.fields.images8;common.fields.images9;" +
+            "common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
             "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;";
 
     /**
@@ -85,7 +90,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         masterData.put("productStatusList", TypeConfigEnums.MastType.productStatus.getList(language));
 
         // 获取publish status
-        masterData.put("platformStatusList", TypeConfigEnums.MastType.platFormStatus.getList(language));
+        masterData.put("platformStatusList", TypeConfigEnums.MastType.platformStatus.getList(language));
 
         // 获取自定义标签列表
         Map<String, Object> param = new HashMap<>(2);
@@ -103,20 +108,20 @@ public class CmsAdvanceSearchService extends BaseAppService {
         masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
 
         // 获取sort list
-        masterData.put("sortList", commonPropService.getSortColumns());
+        masterData.put("sortList", commonPropService.getCustColumns(3));
 
         // 获取category list
         masterData.put("categoryList", channelCategoryService.getAllCategoriesByChannelId(userInfo.getSelChannelId()));
 
         // 店铺(cart/平台)列表
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
-        // 按cart获取promotion list
+        // 按cart获取promotion list，只加载有效的活动(活动期内/未关闭/有标签)
         Map<String, List> promotionMap = new HashMap<>();
         param = new HashMap<>();
         for (TypeChannelBean cartBean : cartList) {
             if (CartEnums.Cart.JM.getId().equals(cartBean.getValue())) {
                 // 聚美促销活动预加载
-                promotionMap.put(CartEnums.Cart.JM.getId(), jmPromotionService.getJMActivePromotions(userInfo.getSelChannelId()));
+                promotionMap.put(CartEnums.Cart.JM.getId(), jmPromotionService.getJMActivePromotions(CartEnums.Cart.JM.getValue(), userInfo.getSelChannelId()));
             } else {
                 param.put("cartId", Integer.parseInt(cartBean.getValue()));
                 promotionMap.put(cartBean.getValue(), promotionService.getPromotions4AdvSearch(userInfo.getSelChannelId(), param));
@@ -142,6 +147,16 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
         // 获取店铺列表
         masterData.put("cartList", cartList);
+
+        // 是否自动最终售价同步指导价格
+        List<CmsChannelConfigBean> chCfgList = CmsChannelConfigs.getConfigBeans(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+        String autoApprovePrice = "0"; // 缺省不自动同步
+        if (chCfgList != null && chCfgList.size() > 0) {
+            if ("1".equals(chCfgList.get(0).getConfigValue1())) {
+                autoApprovePrice = "1"; // 自动同步
+            }
+        }
+        masterData.put("autoApprovePrice", autoApprovePrice);
 
         return masterData;
     }
@@ -378,7 +393,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
      * 取得自定义显示列设置
      */
     public List<Map<String, Object>> getCustColumns() {
-        return commonPropService.getCustColumns();
+        return commonPropService.getCustColumns(2);
     }
 
     /**
@@ -395,7 +410,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         if (isSelAll == null) {
             isSelAll = 0;
         }
-        List<Long> prodIdList = null;
+        List<Long> prodIdList;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             prodIdList = getProductIdList(channelId, cmsSession);

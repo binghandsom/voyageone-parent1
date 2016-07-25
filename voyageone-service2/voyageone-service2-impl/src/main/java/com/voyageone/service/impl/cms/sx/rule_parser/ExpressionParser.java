@@ -90,7 +90,7 @@ public class ExpressionParser extends VOAbsLoggable {
                         DictWord dictWordDefine = dictWordParser.parseToDefineDict(ruleWord);
                         if (dictWordDefine == null)
                         {
-                            $error("unknown dict word:" + ruleWord);
+                            $error("字典不存在:" + ruleWord);
                             return null;
                         }
 
@@ -119,7 +119,7 @@ public class ExpressionParser extends VOAbsLoggable {
                     // added by morse.lu 2016/06/27 start
                     case COMMON:
                         // 从product表的common下去取
-                        commonWordParser.parse(ruleWord);
+                        plainValue = commonWordParser.parse(ruleWord);
                     // added by morse.lu 2016/06/27 end
                 }
 

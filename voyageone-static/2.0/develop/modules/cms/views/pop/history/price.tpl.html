@@ -18,42 +18,13 @@
                     <select class="form-control" ng-model="ctrl.selected.cart" ng-change="ctrl.getData(0)" ng-options="i as i.label for i in ctrl.cartList"></select>
                 </label>
             </div>
-            <div class="form-group">
-                <label class="c-checkbox"><input class="form-control" type="checkbox" ng-model="ctrl.isOnlyShowMsrp"><span class="fa fa-check"></span>&nbsp;只查看MSRP和最终售价的历史</label>
-            </div>
             <div class="form-group pull-right">
-                <button class="btn btn-default" ng-click="ctrl.reset()">Reset</button>
-                <button class="btn btn-default" ng-click="ctrl.export()">Export</button>
+                <button class="btn btn-default" ng-click="ctrl.reset()" translate="BTN_REFRESH"></button>
+                <button class="btn btn-default" ng-click="ctrl.export()" translate="BTN_EXPORT"></button>
             </div>
         </div>
-        <div class="table-responsive" ng-switch="ctrl.isOnlyShowMsrp">
-            <table style="width: 950px;" class="table table-hover-new vo_table text-center" ng-switch-when="true">
-                <thead>
-                <tr>
-                    <th class="text-left" translate="TXT_SKU"></th>
-                    <th class="text-left" translate="TXT_PLATFORM_TYPE"></th>
-                    <th class="text-right" translate="TXT_MSRP_PRICE"></th>
-                    <th class="text-right" translate="TXT_RETAIL_PRICE"></th>
-                    <th class="text-right" translate="TXT_SALE_PRICE"></th>
-                    <th class="text-left" translate="TXT_COMMENT"></th>
-                    <th class="text-left" translate="TXT_UPDATE_TIME"></th>
-                    <th class="text-left" translate="TXT_UPDATE_BY"></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="item in ctrl.data">
-                    <td class="text-left">{{item.sku}}</td>
-                    <td class="text-left">{{::ctrl.getCartName(item.cartId)}}</td>
-                    <td class="text-right">{{item.msrpPrice}}</td>
-                    <td class="text-right">{{item.retailPrice}}</td>
-                    <td class="text-right">{{item.salePrice}}</td>
-                    <td class="text-left">{{item.comment}}</td>
-                    <td class="text-left">{{item.modified.substring(0, 19)}}</td>
-                    <td class="text-left">{{item.modifier}}</td>
-                </tr>
-                </tbody>
-            </table>
-            <table style="width: 1300px;" class="table table-hover-new vo_table text-center" ng-switch-when="false">
+        <div class="table-responsive">
+            <table style="width: 1300px;" class="table table-hover-new vo_table text-center">
                 <thead>
                 <tr>
                     <th class="text-left" translate="TXT_SKU"></th>

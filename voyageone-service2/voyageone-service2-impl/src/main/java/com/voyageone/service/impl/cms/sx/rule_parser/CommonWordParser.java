@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.sx.rule_parser;
 
 import com.voyageone.common.logger.VOAbsLoggable;
+import com.voyageone.ims.rule_expression.CommonWord;
 import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;
@@ -36,9 +37,9 @@ public class CommonWordParser extends VOAbsLoggable {
         }
         else
         {
-            MasterWord masterWord = (MasterWord) ruleWord;
-            String propName = masterWord.getValue();
-            Map<String, String> extra = masterWord.getExtra();
+            CommonWord commonWord = (CommonWord) ruleWord;
+            String propName = commonWord.getValue();
+            Map<String, String> extra = commonWord.getExtra();
             Object plainPropValueObj = null;
             if (evaluationContextStack.isEmpty()) {
                 plainPropValueObj = getPropValue(cmsBtProductModel.getCommon().getFields(), propName);

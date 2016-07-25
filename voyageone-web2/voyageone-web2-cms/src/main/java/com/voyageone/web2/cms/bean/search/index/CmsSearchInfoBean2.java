@@ -20,6 +20,7 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     // ** 共通搜索条件 **
     private String mCatId;
+    private String mCatPath;
     private String fCatId;
 
     private String mCatStatus;
@@ -48,8 +49,8 @@ public class CmsSearchInfoBean2 implements Serializable {
     private String publishTimeTo;
 
     private String priceType;
-    private BigDecimal priceStart;
-    private BigDecimal priceEnd;
+    private Double priceStart;
+    private Double priceEnd;
 
     private String pCatId;
     private int pCatStatus = 0;
@@ -69,8 +70,8 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     private String salesSortType = null;
     private String salesType = null;
-    private BigDecimal salesStart = null;
-    private BigDecimal salesEnd = null;
+    private Double salesStart = null;
+    private Double salesEnd = null;
 
     // ** 自定义搜索条件 **
     private String sortOneName;
@@ -175,19 +176,19 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.priceType = priceType;
     }
 
-    public BigDecimal getPriceStart() {
+    public Double getPriceStart() {
         return priceStart;
     }
 
-    public void setPriceStart(BigDecimal priceStart) {
+    public void setPriceStart(Double priceStart) {
         this.priceStart = priceStart;
     }
 
-    public BigDecimal getPriceEnd() {
+    public Double getPriceEnd() {
         return priceEnd;
     }
 
-    public void setPriceEnd(BigDecimal priceEnd) {
+    public void setPriceEnd(Double priceEnd) {
         this.priceEnd = priceEnd;
     }
 
@@ -423,19 +424,19 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.salesType = salesType;
     }
 
-    public BigDecimal getSalesStart() {
+    public Double getSalesStart() {
         return salesStart;
     }
 
-    public void setSalesStart(BigDecimal salesStart) {
+    public void setSalesStart(Double salesStart) {
         this.salesStart = salesStart;
     }
 
-    public BigDecimal getSalesEnd() {
+    public Double getSalesEnd() {
         return salesEnd;
     }
 
-    public void setSalesEnd(BigDecimal salesEnd) {
+    public void setSalesEnd(Double salesEnd) {
         this.salesEnd = salesEnd;
     }
 
@@ -469,6 +470,14 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     public void setmCatId(String mCatId) {
         this.mCatId = mCatId;
+    }
+
+    public String getmCatPath() {
+        return mCatPath;
+    }
+
+    public void setmCatPath(String mCatPath) {
+        this.mCatPath = mCatPath;
     }
 
     public String getfCatId() {

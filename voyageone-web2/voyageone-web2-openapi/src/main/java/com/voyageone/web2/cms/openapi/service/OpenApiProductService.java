@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.openapi.service;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductForOmsBean;
 import com.voyageone.service.bean.cms.product.ProductForWmsBean;
@@ -58,6 +59,7 @@ public class OpenApiProductService extends OpenApiCmsBaseService {
     public ProductForOmsGetResponse getOmsProductsInfo(ProductForOmsGetRequest request) {
         ProductForOmsGetResponse response = new ProductForOmsGetResponse();
 
+        $info(JacksonUtil.bean2Json(request));
         checkCommRequest(request);
         //ChannelId
         String channelId = request.getChannelId();

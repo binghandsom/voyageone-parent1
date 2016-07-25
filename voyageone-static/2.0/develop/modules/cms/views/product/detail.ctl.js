@@ -37,7 +37,8 @@ define([
                 checkFlag:null,
                 masterCategory:null,
                 lockStatus:null,
-                feedInfo:null
+                feedInfo:null,
+                autoApprovePrice:null
             };
         }
 
@@ -53,6 +54,10 @@ define([
                     });
                 });
 
+                self.menuService.getCmsConfig().then(function(resp){
+                    self.product.autoApprovePrice = resp.autoApprovePrice[0];
+                });
+
                 this.defaultCartId =  this.routeParams.cartId != null ? this.routeParams.cartId:0;
             },
             cartIdFilter:function(item){
@@ -64,7 +69,7 @@ define([
             lockProduct: function (domId) {
                 var self = this;
                 var message = self.product.lockStatus ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
-                this.confirm(message).result.then(function () {
+                this.confirm(message).then(function () {
                     var lock = self.product.lockStatus ? "1" : "0";
                     self.productDetailService.updateLock({
                         prodId: self.product.productId,

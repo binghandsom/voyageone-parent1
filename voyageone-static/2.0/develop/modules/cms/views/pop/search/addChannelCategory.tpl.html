@@ -26,11 +26,10 @@
                             <label class=" ">{{category.catName}}</label>
                         </div>
                         <div class="m-t-xs" ng-if="category.isParent == 0">
-                            <label class="">
-                                <input type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId]"
+                            <label>
+                                <input style="margin: 0" type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId]"
                                        ng-model="ctrl.orgChkStsMap[category.catId]" ng-click="ctrl.chkSave(category.catId,$event)">
-                                &nbsp;
-                                <label>{{category.catName}}</label>
+                                &nbsp;{{category.catName}}
                             </label>
                         </div>
                         <div class="" ng-if="category.isParent == 1" ng-include="'categoryContainer'"
@@ -41,8 +40,10 @@
                         <h5 style="color: red;line-height: 160px;"><i class="fa fa-warning"></i> {{'INVALID_OPERATION_IN_CURRENT_CART_PATH' | translate}}</h5>
                     </div>
                 </div>
-                <div class="col-sm-10 col-sm-offset-1 m-t-sm m-b-sm" ng-show="ctrl.checkedCountValid">
-                    <h5 style="color: red"><i class="fa fa-warning"></i> {{'MAX_SELLER_CAT_CNT' | translate}}{{ctrl.cnt}}</h5>
+                <div class="col-sm-10 col-sm-offset-1 m-t-sm m-b-sm" ng-if="ctrl.cnt">
+                    <h5 style="color: red">
+                        <i class="fa fa-warning"></i> {{'MAX_SELLER_CAT_CNT' | translate}}{{ctrl.cnt}}
+                    </h5>
                 </div>
             </div>
         </div>
@@ -52,6 +53,7 @@
         <button class="btn btn-vo ng-binding" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i>{{'BTN_SAVE' | translate}}</button>
     </div>
 </div>
+
 <script id="categoryContainer" type="text/ng-template">
     <div class="col-sm-12 m-l-md" ng-repeat="category in categoryContainer">
         <div class="m-t-xs" ng-if="category.isParent == 1">
@@ -59,15 +61,14 @@
             <label class=" ">{{category.catName}}</label>
         </div>
         <div class="m-t-xs" ng-if="category.isParent == 0">
-            <label class="">
-                <input type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId]"
+            <label>
+                <input style="margin: 0" type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId] = ctrl.orgChkStsMap[category.catId] ? true : false"
                        ng-model="ctrl.orgChkStsMap[category.catId]" ng-click="ctrl.chkSave(category.catId,$event)">
-                &nbsp;
-                <label>{{category.catName}}</label>
+                &nbsp;{{category.catName}}
             </label>
         </div>
         <div class="" ng-if="category.isParent == 1" ng-include="'categoryContainer'"
              ng-init="categoryContainer = category.children"></div>
     </div>
-</script><!-- .vo_modal -->
+</script>
 

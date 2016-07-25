@@ -62,7 +62,7 @@ define([
                 switch (property.type) {
                     case FieldTypes.complex:
                     case FieldTypes.multiComplex:
-                        self.alert('当前属性不是 Simple 属性').result.then(function () {
+                        self.alert('当前属性不是 Simple 属性').then(function () {
                             self.cancel();
                         });
                         return;

@@ -107,6 +107,10 @@ public class CmsConstants {
 
         // App端启用开关(用于控制所有平台的)
         String APP_SWITCH = "APP_SWITCH";
+
+        // 发货方式
+        String SHIPPING_TYPE = "SHIPPING_TYPE";
+
     }
 
     public interface DataAmount {

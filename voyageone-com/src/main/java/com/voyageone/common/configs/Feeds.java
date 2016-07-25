@@ -39,6 +39,21 @@ public class Feeds {
         logger.info("feed_config 读取数量: " + CacheHelper.getSize(KEY));
     }
 
+    static void put(FeedBean feedBean) {
+
+        Map<String, FeedBean> feedBeanMap = CacheHelper.getMapByKey(KEY);
+
+        if (feedBeanMap == null)
+            feedBeanMap = new HashMap<>();
+
+        feedBeanMap.put(
+                buildKey(feedBean.getOrder_channel_id(), feedBean.getCfg_name(), feedBean.getId()),
+                feedBean
+        );
+
+        CacheHelper.reFreshSSB(KEY, feedBeanMap);
+    }
+
     /**
      * build redis hash Key
      *

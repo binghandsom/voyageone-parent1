@@ -300,10 +300,12 @@ public class TargetAnalysisService extends BaseAnalysisService {
 
             // Secattributes属性值解析
             if (!StringUtil.isEmpty(vtmModelBean.getSecattributes())) {
-                List<String> keyValue = java.util.Arrays.asList(vtmModelBean.getSecattributes().split("[|]"));
+                List<String> keyValue = new ArrayList<>();
+                keyValue.addAll(java.util.Arrays.asList(vtmModelBean.getSecattributes().split("[|]")));
                 if (keyValue.size() % 2 != 0) {
-                    $error("sku:" + vtmModelBean.getSkus() + "Secattributes属性值错误");
-                    continue;
+                    keyValue.add("");
+//                    $error("sku:" + vtmModelBean.getSkus() + "Secattributes属性值错误");
+//                    continue;
                 }
                 for (int i = 0; i < keyValue.size(); i++) {
                     if (!StringUtil.isEmpty(keyValue.get(i))) {
@@ -322,7 +324,8 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 List<String> names = java.util.Arrays.asList(vtmModelBean.getAttributeNames().split("[|]"));
                 List<String> values = java.util.Arrays.asList(vtmModelBean.getAttributeValues().split("[|]"));
                 if (names.size() != values.size()) {
-                    $error("sku:" + vtmModelBean.getSkus() + "属性值错误");
+                    $error("code:" + vtmModelBean.getCode() + "属性值错误");
+                    issueLog.log("target feed导入 属性值错误","code:"+vtmModelBean.getCode(), ErrorType.BatchJob, SubSystem.CMS);
                     continue;
                 }
 
@@ -520,7 +523,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
 
     @Override
     protected boolean backupFeedFile(String channelId){
-        super.backupFeedFile(channelId);
+//        super.backupFeedFile(channelId);
         return backupFeedFile(channelId,FeedEnums.Name.file_id_import_sku);
     }
 }

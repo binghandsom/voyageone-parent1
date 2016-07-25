@@ -55,7 +55,7 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
         addSelectByExampleWithoutBLOBsElement(answer);
         addSelectByPrimaryKeyElement(answer);
 //        addInsertElement(answer);
-        addInsertSelectiveElement(answer);
+
         addCountByExampleElement(answer);
         addUpdateByExampleSelectiveElement(answer);
         addUpdateByExampleWithBLOBsElement(answer);
@@ -70,6 +70,8 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
         addSelectListElement(answer);
         //add by liang
         addSelectCountElement(answer);
+
+        addInsertSelectiveElement(answer);
 
         return answer;
     }

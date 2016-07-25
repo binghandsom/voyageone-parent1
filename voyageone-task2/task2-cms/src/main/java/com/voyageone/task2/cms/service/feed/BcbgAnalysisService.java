@@ -37,14 +37,18 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class BcbgAnalysisService extends BaseTaskService {
 
-    @Autowired
-    private BcbgSuperFeedDao bcbgSuperFeedDao;
+    private final BcbgSuperFeedDao bcbgSuperFeedDao;
+
+    private final Transformer transformer;
+
+    private final FeedToCmsService feedToCmsService;
 
     @Autowired
-    private Transformer transformer;
-
-    @Autowired
-    private FeedToCmsService feedToCmsService;
+    public BcbgAnalysisService(FeedToCmsService feedToCmsService, Transformer transformer, BcbgSuperFeedDao bcbgSuperFeedDao) {
+        this.feedToCmsService = feedToCmsService;
+        this.transformer = transformer;
+        this.bcbgSuperFeedDao = bcbgSuperFeedDao;
+    }
 
     /**
      * 获取子系统
@@ -83,8 +87,7 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         BcbgAnalysisContext context = new BcbgAnalysisContext();
 
-        for(SuperFeedBcbgBean sku: bcbgBeanList)
-            context.put(sku);
+        bcbgBeanList.forEach(context::put);
 
         List<CmsBtFeedInfoModel> codeList = context.getCodeList();
 
@@ -132,8 +135,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         clearLastData();
         // 计算 MD5
         if (bcbgBeans != null)
-            for (SuperFeedBcbgBean bean : bcbgBeans)
-                setMd5(bean);
+            bcbgBeans.forEach(this::setMd5);
         if (styleBeans != null)
             for (BcbgStyleBean bean : styleBeans)
                 setMd5(bean);
@@ -144,7 +146,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         transformer.new Context(channel, this).transform();
         $info("数据处理阶段结束");
 
-//         备份文件
+        // 备份文件
         new Backup().fromData(feedFile, styleFile);
     }
 
@@ -194,7 +196,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         }
 
         // 排序文件
-        List<File> feedFileList =  Arrays.asList(feedFiles).stream().sorted((f1, f2) -> f1.getName().compareTo(f2.getName())).collect(toList());
+        List<File> feedFileList =  Arrays.stream(feedFiles).sorted((f1, f2) -> f1.getName().compareTo(f2.getName())).collect(toList());
 
         // 取第一个作为目标文件,并从其中移除
         // 其他的等待后续

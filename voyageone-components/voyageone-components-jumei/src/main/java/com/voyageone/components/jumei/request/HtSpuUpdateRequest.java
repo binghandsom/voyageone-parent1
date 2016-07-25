@@ -112,7 +112,7 @@ public class HtSpuUpdateRequest implements BaseJMRequest {
     }
 
     @Override
-    public Map<String, Object> getParameter() throws IOException {
+    public Map<String, Object> getParameter() {
         Map<String, Object> params = new HashMap<>();
         params.put("jumei_spu_no", this.getJumei_spu_no());
 

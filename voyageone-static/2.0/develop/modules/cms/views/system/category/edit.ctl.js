@@ -24,7 +24,7 @@ define([
             })
         };
         $scope.delNode = function(parent,node){
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
                     var index;
                     index=_.indexOf(parent,node);

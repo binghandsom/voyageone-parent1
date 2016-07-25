@@ -7,9 +7,9 @@ import java.util.List;
  * Created by dell on 2016/7/5.
  */
 public enum EnumMasterSum implements IEnumDataAmountSum{
-    CMS_MASTER_NO_CATEGORY("CMS_MASTER_NO_CATEGORY", "{'common.fields.isMasterMain':1,'common.fields.categoryStatus':{$in:[null,'0']}}", "", "", "等待设置主类目数"),
-    CMS_MASTER_NO_HSCODE("CMS_MASTER_NO_HSCODE", "{'common.fields.isMasterMain':1,'common.fields.hsCodeStatus':{$in:[null,'0']}}", "", "", "等待设置税号数"),
-    CMS_MASTER_UNTRANSLATED("CMS_MASTER_UNTRANSLATED", "{'common.fields.isMasterMain':1,'common.fields.translateStatus':{$in:[null,'0']}}", "", "", "等待翻译数");
+    CMS_MASTER_NO_CATEGORY("CMS_MASTER_NO_CATEGORY", "{'common.fields.isMasterMain':1,'common.fields.categoryStatus':{$in:[null,'','0']}}", "", "", "等待设置主类目数"),
+    CMS_MASTER_NO_HSCODE("CMS_MASTER_NO_HSCODE", "{'common.fields.isMasterMain':1,'common.fields.hsCodeStatus':{$in:[null,'','0']}}", "", "", "等待设置税号数"),
+    CMS_MASTER_UNTRANSLATED("CMS_MASTER_UNTRANSLATED", "{'common.fields.isMasterMain':1,'common.fields.translateStatus':{$in:[null,'','0']}}", "", "", "等待翻译数");
     EnumMasterSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;
         this.strQuery = strQuery;

@@ -168,15 +168,15 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 if (searchValue.getSalesStart() != null) {
                     // 获取销量上限
                     if (searchValue.getSalesEnd() != null) {
-                        queryObject.addQuery("{'sales.code_sum_#.cartId_#':{$gte:#,$lte:#}}");
+                        queryObject.addQuery("{'sales.codeSum#.cartId#':{$gte:#,$lte:#}}");
                         queryObject.addParameters(searchValue.getSalesType(), cartId, searchValue.getSalesStart(), searchValue.getSalesEnd());
                     } else {
-                        queryObject.addQuery("{'sales.code_sum_#.cartId_#':{$gte:#}}");
+                        queryObject.addQuery("{'sales.codeSum#.cartId#':{$gte:#}}");
                         queryObject.addParameters(searchValue.getSalesType(), cartId, searchValue.getSalesStart());
                     }
                 } else {
                     if (searchValue.getSalesEnd() != null) {
-                        queryObject.addQuery("{'sales.code_sum_#.cartId_#':{$lte:#}}");
+                        queryObject.addQuery("{'sales.codeSum#.cartId#':{$lte:#}}");
                         queryObject.addParameters(searchValue.getSalesType(), cartId, searchValue.getSalesEnd());
                     }
                 }
@@ -199,9 +199,8 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         }
 
         // 获取 master category
-        if (StringUtils.isNotEmpty(searchValue.getmCatId())) {
-            queryObject.addQuery("{'common.catId':#}");
-            queryObject.addParameters(searchValue.getmCatId());
+        if (StringUtils.isNotEmpty(searchValue.getmCatPath())) {
+            queryObject.addQuery("{'common.catPath':{'$regex':'^" + searchValue.getmCatPath() + "'}}");
         }
 
         if (StringUtils.isNotEmpty(searchValue.getCreateTimeStart())) {
@@ -419,19 +418,31 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 
         // 获取排序字段1
         if (StringUtils.isNotEmpty(searchValue.getSortOneName()) && StringUtils.isNotEmpty(searchValue.getSortOneType())) {
-            result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
+            if ("comment".equals(searchValue.getSortOneName())) {
+                result.append(MongoUtils.splicingValue("common.comment", Integer.valueOf(searchValue.getSortOneType())));
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
+            }
             result.append(",");
         }
 
         // 获取排序字段2
         if (StringUtils.isNotEmpty(searchValue.getSortTwoName()) && StringUtils.isNotEmpty(searchValue.getSortTwoType())) {
-            result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortTwoType())));
+            if ("comment".equals(searchValue.getSortTwoName())) {
+                result.append(MongoUtils.splicingValue("common.comment", Integer.valueOf(searchValue.getSortTwoType())));
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortTwoType())));
+            }
             result.append(",");
         }
 
         // 获取排序字段3
         if (StringUtils.isNotEmpty(searchValue.getSortThreeName()) && StringUtils.isNotEmpty(searchValue.getSortThreeType())) {
-            result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeType())));
+            if ("comment".equals(searchValue.getSortThreeName())) {
+                result.append(MongoUtils.splicingValue("common.comment", Integer.valueOf(searchValue.getSortThreeType())));
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeType())));
+            }
             result.append(",");
         }
 
@@ -440,7 +451,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         if (cartId > 1) {
             // 获取按销量排序字段
             if (StringUtils.isNotEmpty(searchValue.getSalesType()) && StringUtils.isNotEmpty(searchValue.getSalesSortType())) {
-                result.append(MongoUtils.splicingValue("sales.code_sum_" + searchValue.getSalesType(), Integer.valueOf(searchValue.getSalesSortType())));
+                result.append(MongoUtils.splicingValue("sales.codeSum" + searchValue.getSalesType(), Integer.valueOf(searchValue.getSalesSortType())));
                 result.append(",");
             }
         }
@@ -458,12 +469,14 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         List<String> orgChaNameList = new ArrayList<>();
         List<List<Map<String, Object>>> prodIdList = new ArrayList<>();
         List<String> freeTagsList = new ArrayList<>();
+        List<List<CmsBtProductGroupModel>> grpPriceList = new ArrayList<>();
 
         if (hasImgFlg) {
-            rslt = new List[3];
+            rslt = new List[4];
             rslt[0] = chgFlgList;
             rslt[1] = imgList;
             rslt[2] = prodIdList;
+            rslt[3] = grpPriceList;
         } else {
             rslt = new List[3];
             rslt[0] = chgFlgList;
@@ -478,7 +491,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
         for (CmsBtProductBean groupObj : groupsList) {
             String prodCode = groupObj.getCommonNotNull().getFieldsNotNull().getCode();
             if (prodCode == null) {
-                $warn("高级检索 getGroupExtraInfo 无产品code OBJ=:" + groupObj.toString());
+                $warn("高级检索 getGroupExtraInfo 无产品code ObjId=:" + groupObj.get_id());
                 continue;
             }
             // 从group表合并platforms信息
@@ -600,6 +613,15 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
             imgList.add(images1Arr);
             prodIdList.add(groupProdIdList);
+
+            // 获取Group的价格区间
+            if (hasImgFlg) {
+                qrpQuy = new JomgoQuery();
+                qrpQuy.setQuery("{'mainProductCode':#,'cartId':{$nin:[null,'',0,1]}}");
+                qrpQuy.setParameters(prodCode);
+                grpList = productGroupService.getList(channelId, qrpQuy);
+                grpPriceList.add(grpList);
+            }
         }
         return rslt;
     }

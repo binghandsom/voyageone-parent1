@@ -32,7 +32,7 @@ define([
         };
         $scope.save = function (model) {
             var self = this;
-            self.confirm(self.$translate.instant('BEATING')).result
+            self.confirm(self.$translate.instant('BEATING'))
                 .then(function () {
                     self.service.update(model);
                 }, function () {//cancel
@@ -69,7 +69,7 @@ define([
         };
         $scope.delete = function (index, el) {
             var self = this;
-            self.confirm(self.$translate.instant('TXT_MSG_DO_DELETE') + el.full_name).result.then(function () {
+            self.confirm(self.$translate.instant('TXT_MSG_DO_DELETE') + el.full_name).then(function () {
                 el.active = 0; //删除 FIXME 是否需要改成对应的active
                 self.service.update(el).then(function () {
                     //self.tableSource.splice(index, 1);

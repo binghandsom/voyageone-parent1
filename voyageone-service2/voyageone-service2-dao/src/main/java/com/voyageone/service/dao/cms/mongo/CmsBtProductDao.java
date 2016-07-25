@@ -9,7 +9,6 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -46,6 +45,9 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return mongoTemplate.updateFirst(query, update, collectionName);
     }
 
+    /**
+     * 根据Id返回多条产品数据
+     */
     public List<CmsBtProductModel> selectProductByIds(List<Long> ids, String channelId) {
         if (ids == null || ids.size() == 0) {  // 对于list千万不要返回null
             return Collections.emptyList();
@@ -103,7 +105,12 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     @Override
     public WriteResult update(BaseMongoModel model) {
         throw new BusinessException("not suppert");
-        // return update(model);
+//         return super.update(model);
+    }
+
+    @Deprecated
+    public WriteResult updateByModel(BaseMongoModel model) {
+         return super.update(model);
     }
 
     /**
@@ -209,7 +216,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
                         break;
                     }
                 }
-               cat.setcName(Joiner.on(">").join(cNames));
+                cat.setcName(Joiner.on(">").join(cNames));
             }
         }
 
@@ -266,12 +273,12 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      * 移行数据使用,取得老的product数据
      * @return
      */
-    public List<OldCmsBtProductModel> selectOldProduct(String channelId, String code){
+    public List<OldCmsBtProductModel> selectOldProduct(String channelId, List<String> codes){
 
         JomgoQuery jomgoQuery = new JomgoQuery();
-        if (!StringUtils.isEmpty(code)) {
-            jomgoQuery.setQuery("{\"fields.code\" : #}");
-            jomgoQuery.setParameters(code);
+        if (codes.size() > 0) {
+            jomgoQuery.setQuery("{\"fields.code\" : { $in : #}}");
+            jomgoQuery.setParameters(codes);
         }
         return mongoTemplate.find(jomgoQuery, OldCmsBtProductModel.class, "cms_bt_product_c" + channelId);
     }

@@ -2,11 +2,15 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author james.li, 2015/11/26.
@@ -19,6 +23,9 @@ public class FeedToCmsServiceTest {
 
     @Autowired
     private FeedCategoryTreeService feedCategoryTreeService;
+
+    @Autowired
+    private  FeedToCmsService  feedToCmsService;
 
     @Test
     public void testGetFeedCategory() throws Exception {
@@ -117,5 +124,14 @@ public class FeedToCmsServiceTest {
         feedCategoryTreeService.addCategory("111","b-b-e","james");
         feedCategoryTreeService.addCategory("111","f-g-h","james");
         feedCategoryTreeService.addCategory("111","f-g-i","james");
+    }
+
+    @Test
+    public void testCheckProduct() throws Exception {
+        CmsBtFeedInfoModel cmsBtFeedInfoModel = new CmsBtFeedInfoModel();
+        List<String> imgs = new ArrayList<>();
+        imgs.add("aa");
+        cmsBtFeedInfoModel.setImage(imgs);
+        feedToCmsService.checkProduct(cmsBtFeedInfoModel);
     }
 }

@@ -17,8 +17,9 @@ import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
-import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductAddPlatformService;
+//import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
+//import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductAddPlatformService;
+import com.voyageone.service.impl.cms.jumei.JMShopBeanService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
@@ -56,7 +57,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
     @Autowired
     ProductService productService;
-    private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductAddPlatformService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
 
     public void updateJmByPromotionId(int promotionId) throws Exception {
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(promotionId);
@@ -65,7 +66,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = daoExtCmsBtJmPromotionProduct.selectJMCopyList(promotionId);
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
+                LOG.info(promotionId+" code:"+model.getProductCode() + "上新begin");
                 updateJm(modelCmsBtJmPromotion, model, shopBean);
+                LOG.info(promotionId+" code:"+model.getProductCode() + "上新end");
             }
         } catch (Exception ex) {
             LOG.error("addProductAndDealByPromotionId上新失败", ex);
@@ -200,9 +203,12 @@ public class JuMeiProductPlatform3Service extends BaseService {
                     HtDealGetDealByHashIDRequest getDealByHashIDRequest = new HtDealGetDealByHashIDRequest();
                     getDealByHashIDRequest.setJumei_hash_id(response.getSell_hash_id());
                     HtDealGetDealByHashIDResponse getDealByHashIDResponse = serviceJumeiHtDeal.getDealByHashID(shopBean, getDealByHashIDRequest);
-                    if (getDealByHashIDResponse.getEnd_time().getTime() > modelCmsBtJmPromotion.getActivityStart().getTime()) {//if true then 和本次活动重叠 Sell_hash_id作为本次活动的jumeiHashId
+                    long activityStart = DateTimeUtilBeijing.toLocalTime(modelCmsBtJmPromotion.getActivityStart());
+                    long jmEndTime=DateTimeUtilBeijing.toLocalTime(getDealByHashIDResponse.getEnd_time());
+                    if (jmEndTime >= activityStart) {//if true then 和本次活动重叠 Sell_hash_id作为本次活动的jumeiHashId
                         model.setJmHashId(response.getSell_hash_id());
-                        if (modelCmsBtJmPromotion.getActivityEnd().getTime() > getDealByHashIDResponse.getEnd_time().getTime()) {//if true then 本次活动时间大于deal的结束时间 延期
+                        long activeEnd = DateTimeUtilBeijing.toLocalTime(modelCmsBtJmPromotion.getActivityEnd());
+                        if (activeEnd > jmEndTime) {//if true then 本次活动时间大于deal的结束时间 延期
                             model.setDealEndTimeStatus(1);
                         }
                     }
@@ -278,15 +284,17 @@ public class JuMeiProductPlatform3Service extends BaseService {
             updateData.setDeal_price(skuPriceBean.getDealPrice());
             updateData.setMarket_price(skuPriceBean.getMarketPrice());
         }
-        request.setUpdate_data(list);
 
         try {
-
-            HtDealUpdateDealPriceBatchResponse response= serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
-            if(!response.is_Success())
-            {
-                model.setPriceStatus(3);
-                throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+            List<List<HtDeal_UpdateDealPriceBatch_UpdateData>> pageList = CommonUtil.splitList(list,10);
+            for(List<HtDeal_UpdateDealPriceBatch_UpdateData> page:pageList) {
+                request.setUpdate_data(page);
+                $info("jmHtDealUpdateDealPriceBatch:"+ model.getProductCode()+JacksonUtil.bean2Json(request.getUpdate_data()));
+                HtDealUpdateDealPriceBatchResponse response = serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
+                if (!response.is_Success()) {
+                    model.setPriceStatus(3);
+                    throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+                }
             }
         }
         catch (Exception ex)
@@ -315,19 +323,22 @@ public class JuMeiProductPlatform3Service extends BaseService {
             updateData = new HtDeal_UpdateDealStockBatch_UpdateData();
             list.add(updateData);
             updateData.setJumei_sku_no(skuPriceBean.getJmSkuNo());
-            Integer stock = skuLogicQtyMap.get(skuPriceBean.getSkuCode());
+            Integer stock = skuLogicQtyMap.get(skuPriceBean.getSkuCode());//获取库存
             if(stock!=null) {
                 updateData.setStock(stock);
             }
         }
-        request.setUpdate_data(list);
 
         try {
-            HtDealUpdateDealStockBatchResponse response= serviceJumeiHtDeal.updateDealStockBatch(shopBean, request);
-            if(!response.is_Success())
-            {
-                model.setStockStatus(3);
-                throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+            List<List<HtDeal_UpdateDealStockBatch_UpdateData>> pageList = CommonUtil.splitList(list,10);
+            for(List<HtDeal_UpdateDealStockBatch_UpdateData> page:pageList) {
+                request.setUpdate_data(page);
+                $info("jmHtDealUpdateDealStockBatch:"+ model.getProductCode()+JacksonUtil.bean2Json(request.getUpdate_data()));
+                HtDealUpdateDealStockBatchResponse response = serviceJumeiHtDeal.updateDealStockBatch(shopBean, request);
+                if (!response.is_Success()) {
+                    model.setStockStatus(3);
+                    throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+                }
             }
         }
         catch (Exception ex)

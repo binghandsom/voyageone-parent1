@@ -14,7 +14,8 @@ public interface CmsBtProductConstants {
 		MOBILE_CUSTOM_IMAGE("image5"),
 		CUSTOM_PRODUCT_IMAGE("image6"),
 		M_CUSTOM_PRODUCT_IMAGE("image7"),
-		HANG_TAG_IMAGE("image8");
+		HANG_TAG_IMAGE("image8"),
+		DURABILITY_TAG_IMAGE("image9");
 
 		// 成员变量
 		private String name;
@@ -49,31 +50,31 @@ public interface CmsBtProductConstants {
 	enum Platform_Field_COMM {
 	}
 
-	/**
-	 *  Platform_Field_JM
-	 */
-	enum Platform_Field_JM {
-		/* productNameCn */
-		productNameCn,
-		/* productNameEn */
-		productNameEn,
-		/* productLongName */
-		productLongName,
-		/* productMediumName */
-		productMediumName,
-		/* productShortName */
-		productShortName,
-		/* originCn */
-		originCn,
-		/* beforeDate */
-		beforeDate,
-		/* suitPeople */
-		suitPeople,
-		/* specialExplain */
-		specialExplain,
-		/* searchMetaTextCustom */
-		searchMetaTextCustom,
-	}
+//	/**
+//	 *  Platform_Field_JM
+//	 */
+//	enum Platform_Field_JM {
+//		/* productNameCn */
+//		productNameCn,
+//		/* productNameEn */
+//		productNameEn,
+//		/* productLongName */
+//		productLongName,
+//		/* productMediumName */
+//		productMediumName,
+//		/* productShortName */
+//		productShortName,
+//		/* originCn */
+//		originCn,
+//		/* beforeDate */
+//		beforeDate,
+//		/* suitPeople */
+//		suitPeople,
+//		/* specialExplain */
+//		specialExplain,
+//		/* searchMetaTextCustom */
+//		searchMetaTextCustom,
+//	}
 
 	/**
 	 *  Platform_SKU_COM
@@ -81,45 +82,49 @@ public interface CmsBtProductConstants {
 	enum Platform_SKU_COM {
 		/* skuCode(共通) */
 		skuCode,
-		/* 平台级别的指导售价(共通) */
-		priceRetail,
-		/* priceSale(共通) */
+        /* MSRP售价(中国建议零售价)(共通/分平台) */
+        priceMsrp,
+        /* 销售指导价(共通/分平台) */
+        priceRetail,
+		/* 各平台最终零售价(分平台) */
 		priceSale,
-		/* 价格变更状态（U/D/XU/XD）(共通) */
+		/* 指导售价变化状态（U99%/D99%）(分平台) */
 		priceChgFlg,
-		/* 用于表示该sku是否在该平台销售(默认都是true,画面上不提供编辑) (共通) */
+        /* 最终售价与指导售价的变化状态（1:等于指导价/2:比指导价低/3:比指导价高/4:向上击穿警告/5:向下击穿警告）(分平台) */
+        priceDiffFlg,
+		/* 用于表示该sku是否在该平台销售(默认都是true,画面上不提供编辑) (分平台) */
 		isSale,
-		/* size */
+		/* size(共通) */
 		size,
-		/* sizeSx */
-		sizeSx,
+		/* sizeSx(共通) */
+		sizeSx
 	}
 
-	/**
-	 *  Platform_SKU_JM
-	 */
-	enum Platform_SKU_JM {
-		/* skuCode(共通) */
-		skuCode,
-		/* 平台级别的指导售价(共通) */
-		priceRetail,
-		/* priceSale(共通) */
-		priceSale,
-		/* 价格变更状态（U/D/XU/XD）(共通) */
-		priceChgFlg,
-		/* 用于表示该sku是否在该平台销售(默认都是true,画面上不提供编辑) (共通) */
-		isSale,
-		/* jmSpuNo */
-		jmSpuNo,
-		/* jmSkuNo */
-		jmSkuNo,
-		/* property */
-		property,
-		/* attribute */
-		attribute,
-		/* size */
-		size,
-	}
+//	/**
+//	 *  Platform_SKU_JM
+//	 */
+//	enum Platform_SKU_JM {
+//		/* skuCode(共通) */
+//		skuCode,
+//		/* 平台级别的指导售价(共通) */
+//		priceRetail,
+//		/* priceSale(共通) */
+//		priceSale,
+//		/* 价格变更状态（U/D/XU/XD）(共通) */
+//		priceChgFlg,
+//		/* 用于表示该sku是否在该平台销售(默认都是true,画面上不提供编辑) (共通) */
+//		isSale,
+//		/* jmSpuNo */
+//		jmSpuNo,
+//		/* jmSkuNo */
+//		jmSkuNo,
+//		/* property */
+//		property,
+//		/* attribute */
+//		attribute,
+//		/* size */
+//		size,
+//	}
 
 
 }

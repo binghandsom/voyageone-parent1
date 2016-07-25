@@ -6,41 +6,19 @@
  * @Version: 2.0.0
  */
 
-require.config({
-    paths: {
-        'angular': 'libs/angular.js/1.5.6/angular',
-        "voyageone-angular-com": 'components/dist/voyageone.angular.com',
-        'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
-        'angular-ngStorage': 'libs/angular-ngStorage/ngStorage',
-        'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui'
-    },
-    shim: {
-        'angular-block-ui': ['angular'],
-        'angular-translate': ['angular'],
-        'voyageone-angular-com': ['angular'],
-        'angular-ngStorage': ['angular'],
-        'angular': {exports: 'angular'}
-    }
-});
-
-// Bootstrap App !!
-require([
-    'angular',
-    'angular-block-ui',
-    'angular-translate',
-    'angular-ngStorage',
-    'voyageone-angular-com'
-], function (angular) {
+define(['components/dist/voyageone.angular.com'], function () {
     angular.module('voyageone.cms.login', [
-        'pascalprecht.translate',
         'blockUI',
         'ngStorage',
         'voyageone.angular'
-    ]).controller('loginController', function ($scope, $ajax, $sessionStorage) {
+    ]).controller('loginController', function ($scope, $ajax, $localStorage, $sessionStorage) {
+
         $scope.username = '';
         $scope.password = '';
         $scope.isSavePwd = false;
         $scope.errorMessage = '';
+
+        $sessionStorage.$reset();
 
         $scope.login = function () {
             if (!$scope.username || !$scope.username.length) {
@@ -60,7 +38,7 @@ require([
                 // 2016-07-08 11:28:17
                 // 为了便于封装的缓存逻辑, 这里在登录成功后, 记录用户名, 用户在缓存时, 作为关键字
                 // 如果后续其他功能需要追加额外信息, 可以在此追加
-                $sessionStorage.user = {
+                $localStorage.user = {
                     name: $scope.username
                 };
                 // 成功后跳转

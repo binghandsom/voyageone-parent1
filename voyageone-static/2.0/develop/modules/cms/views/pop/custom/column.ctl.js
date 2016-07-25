@@ -29,6 +29,42 @@ define([
                 _.forEach($scope.cus.salesTypeList, function (data) {
                     data.isChk = _.contains(res.data.selSalesTypeList, data.value);
                 });
+                // 检查全选框
+                var chkSts = false;
+                if ($scope.cus.commonProps && $scope.cus.commonProps.length > 0) {
+                    for (keyIdx in $scope.cus.commonProps) {
+                        if (!$scope.cus.commonProps[keyIdx].isChk) {
+                            chkSts = true;
+                        }
+                    }
+                    $scope.cus.all_commonData = !chkSts;
+                } else {
+                    $scope.cus.all_commonData = false;
+                }
+
+                chkSts = false;
+                if ($scope.cus.customProps && $scope.cus.customProps.length > 0) {
+                    for (keyIdx in $scope.cus.customProps) {
+                        if (!$scope.cus.customProps[keyIdx].isChk) {
+                            chkSts = true;
+                        }
+                    }
+                    $scope.cus.all_customData = !chkSts;
+                } else {
+                    $scope.cus.all_customData = false;
+                }
+
+                chkSts = false;
+                if ($scope.cus.salesTypeList && $scope.cus.salesTypeList.length > 0) {
+                    for (keyIdx in $scope.cus.salesTypeList) {
+                        if (!$scope.cus.salesTypeList[keyIdx].isChk) {
+                            chkSts = true;
+                        }
+                    }
+                    $scope.cus.all_salesType = !chkSts;
+                } else {
+                    $scope.cus.all_salesType = false;
+                }
             })
         };
 

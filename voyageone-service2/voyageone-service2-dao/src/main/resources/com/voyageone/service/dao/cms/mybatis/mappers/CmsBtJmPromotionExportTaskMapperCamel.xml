@@ -14,87 +14,6 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel" useGeneratedKeys="true" keyProperty="id" >
-        insert into cms_bt_jm_promotion_export_task
-        <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="cmsBtJmPromotionId != null" >
-                `cms_bt_jm_promotion_id`,
-            </if>
-            <if test="fileName != null" >
-                `file_name`,
-            </if>
-            <if test="filePath != null" >
-                `file_path`,
-            </if>
-            <if test="errorMsg != null" >
-                `error_msg`,
-            </if>
-            <if test="successRows != null" >
-                `success_rows`,
-            </if>
-            <if test="errorCode != null" >
-                `error_code`,
-            </if>
-            <if test="beginTime != null" >
-                `begin_time`,
-            </if>
-            <if test="endTime != null" >
-                `end_time`,
-            </if>
-            <if test="creater != null" >
-                `creater`,
-            </if>
-            `created`,
-            <if test="isExport != null" >
-                `is_export`,
-            </if>
-            <if test="templateType != null" >
-                `template_type`,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="cmsBtJmPromotionId != null" >
-                #{cmsBtJmPromotionId,jdbcType=INTEGER},
-            </if>
-            <if test="fileName != null" >
-                #{fileName,jdbcType=VARCHAR},
-            </if>
-            <if test="filePath != null" >
-                #{filePath,jdbcType=VARCHAR},
-            </if>
-            <if test="errorMsg != null" >
-                #{errorMsg,jdbcType=VARCHAR},
-            </if>
-            <if test="successRows != null" >
-                #{successRows,jdbcType=INTEGER},
-            </if>
-            <if test="errorCode != null" >
-                #{errorCode,jdbcType=INTEGER},
-            </if>
-            <if test="beginTime != null" >
-                #{beginTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="endTime != null" >
-                #{endTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="creater != null" >
-                #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="created == null" >
-                now(),
-            </if>
-            <if test="created != null" >
-                #{created,jdbcType=TIMESTAMP},
-            </if>
-            <if test="isExport != null" >
-                #{isExport,jdbcType=BIT},
-            </if>
-            <if test="templateType != null" >
-                #{templateType,jdbcType=INTEGER},
-            </if>
-        </trim>
-    </insert>
-
     <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel" >
         update cms_bt_jm_promotion_export_task
         <set >
@@ -273,5 +192,86 @@
             </if>
         </where>
     </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_jm_promotion_export_task
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="cmsBtJmPromotionId != null" >
+                `cms_bt_jm_promotion_id`,
+            </if>
+            <if test="fileName != null" >
+                `file_name`,
+            </if>
+            <if test="filePath != null" >
+                `file_path`,
+            </if>
+            <if test="errorMsg != null" >
+                `error_msg`,
+            </if>
+            <if test="successRows != null" >
+                `success_rows`,
+            </if>
+            <if test="errorCode != null" >
+                `error_code`,
+            </if>
+            <if test="beginTime != null" >
+                `begin_time`,
+            </if>
+            <if test="endTime != null" >
+                `end_time`,
+            </if>
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `created`,
+            <if test="isExport != null" >
+                `is_export`,
+            </if>
+            <if test="templateType != null" >
+                `template_type`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="cmsBtJmPromotionId != null" >
+                #{cmsBtJmPromotionId,jdbcType=INTEGER},
+            </if>
+            <if test="fileName != null" >
+                #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="filePath != null" >
+                #{filePath,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMsg != null" >
+                #{errorMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="successRows != null" >
+                #{successRows,jdbcType=INTEGER},
+            </if>
+            <if test="errorCode != null" >
+                #{errorCode,jdbcType=INTEGER},
+            </if>
+            <if test="beginTime != null" >
+                #{beginTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null" >
+                #{endTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isExport != null" >
+                #{isExport,jdbcType=BIT},
+            </if>
+            <if test="templateType != null" >
+                #{templateType,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
 
 </mapper>

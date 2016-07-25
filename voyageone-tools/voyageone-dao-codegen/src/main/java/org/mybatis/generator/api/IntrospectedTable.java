@@ -510,7 +510,7 @@ public abstract class IntrospectedTable {
 //        setDeleteByPrimaryKeyStatementId("deleteByPrimaryKey"); //$NON-NLS-1$
         setDeleteByPrimaryKeyStatementId("delete"); //$NON-NLS-1$
 //        setInsertStatementId("insert"); //$NON-NLS-1$
-        setInsertSelectiveStatementId("insert"); //$NON-NLS-1$
+
         setSelectAllStatementId("selectAll"); //$NON-NLS-1$
         setSelectByExampleStatementId("selectByExample"); //$NON-NLS-1$
         setSelectByExampleWithBLOBsStatementId("selectByExampleWithBLOBs"); //$NON-NLS-1$
@@ -534,6 +534,8 @@ public abstract class IntrospectedTable {
         setSelectListStatementId("selectList"); //$NON-NLS-1$
         //add by liang
         setSelectCountStatementId("selectCount"); //$NON-NLS-1$
+
+        setInsertSelectiveStatementId("insert"); //$NON-NLS-1$
     }
 
     public String getBlobColumnListId() {
