@@ -26,6 +26,7 @@ import java.util.Date;
 @VOTransactional
 public class OrderDetailService extends BaseService {
 
+    public final static String STATUS_OPEN = "1";
     public final static String STATUS_SHIPPED = "3";
     public final static String STATUS_RECEIVED = "5";
     public final static String STATUS_CANCEL = "7";
@@ -293,7 +294,7 @@ public class OrderDetailService extends BaseService {
             put("channelId", channelId);
             put("barcode", barcode);
             put("consolidationOrderId", orderId);
-            put("status", 1);// Open
+            put("status", STATUS_OPEN);// Open
             put("containerizer", userName);
             put("shipmentId", shipmentId);
         }};
