@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.voyageone.common.util.DateTimeUtil;
 
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class CJacksonDateSerializer extends JsonSerializer<Date> {
             }
         } else {
             if (value != null) {
-                jgen.writeString(String.valueOf(value.getTime()));
+                DateSerializer.instance.serialize(value, jgen, provider);
             }
         }
     }

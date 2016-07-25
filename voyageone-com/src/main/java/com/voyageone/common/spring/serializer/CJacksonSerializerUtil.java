@@ -3,7 +3,7 @@ package com.voyageone.common.spring.serializer;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 
-public abstract class CJacksonSerializerUtil {
+abstract class CJacksonSerializerUtil {
 
     static boolean isCustom(JsonGenerator jgen) {
         Object outputTarget = jgen.getOutputTarget();
