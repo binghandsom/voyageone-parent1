@@ -13,9 +13,9 @@ define([
                 selectedStatus: 2
             };
             this.cartList = [
-                { cartId: 20, cartName: "聚美" },
-                { cartId: 22, cartName: "京东" },
-                { cartId: 23, cartName: "天猫" }
+                {cartId: 20, cartName: "聚美"},
+                {cartId: 22, cartName: "京东"},
+                {cartId: 23, cartName: "天猫"}
             ];
             this.brandMappingList = [
                 {
@@ -34,17 +34,18 @@ define([
                     brand: "ccc-1",
                     status: 1
                 }
-            ]
+            ];
+            this.platformPageOption = {curr: 1, total: 0, size: 10, fetch: this.search};
         }
 
         BrandMappingController.prototype = {
             init: function () {
             },
-            selectCart:function () {
+            selectCart: function () {
                 var self = this;
-                if (self.searchInfo.selectedCart == 20) self.brandName="聚美";
-                if (self.searchInfo.selectedCart == 22) self.brandName="京东";
-                if (self.searchInfo.selectedCart == 23) self.brandName="天猫";
+                if (self.searchInfo.selectedCart == 20) self.brandName = "聚美";
+                if (self.searchInfo.selectedCart == 22) self.brandName = "京东";
+                if (self.searchInfo.selectedCart == 23) self.brandName = "天猫";
             }
         };
         return BrandMappingController;
