@@ -29,16 +29,16 @@ public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
         return consolidationOrderTime;
     }
 
-    public long getConsolidationOrderTimestamp() {
-        return consolidationOrderTime.getTime();
-    }
-
-    public void setConsolidationOrderTimestamp(long consolidationOrderTimestamp) {
-        this.consolidationOrderTime = new Date(consolidationOrderTimestamp);
-    }
-
     public void setConsolidationOrderTime(Date consolidationOrderTime) {
         this.consolidationOrderTime = consolidationOrderTime;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public BigDecimal getTotalVoPrice() {
@@ -63,14 +63,6 @@ public class PlatformSubOrderInfoBean extends AbstractSubOrderInfoBean {
 
     public void setOrderInfoBeanList(List<SubOrderInfoBean> orderInfoBeanList) {
         this.orderInfoBeanList = orderInfoBeanList;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public boolean pushOrderInfoBean(SubOrderInfoBean orderInfoBean) {

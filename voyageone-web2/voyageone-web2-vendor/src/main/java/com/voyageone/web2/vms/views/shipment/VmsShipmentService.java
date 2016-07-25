@@ -1,22 +1,20 @@
 package com.voyageone.web2.vms.views.shipment;
 
+import com.github.miemiedev.mybatis.paginator.domain.Order;
+import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.common.util.BeanUtil;
 import com.voyageone.service.impl.vms.shipment.ShipmentService;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
-import com.voyageone.web2.vms.bean.shipment.ExpressCompany;
-import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
-import com.voyageone.web2.vms.bean.shipment.ShipmentStatus;
+import com.voyageone.web2.vms.bean.shipment.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.voyageone.web2.vms.VmsConstants.*;
@@ -70,11 +68,14 @@ public class VmsShipmentService {
     /**
      * 提交shipment修改
      *
-     * @param user               当前用户
-     * @param vmsBtShipmentModel 待修改shipment
+     * @param user         当前用户
+     * @param shipmentBean 待修改shipment
      * @return 修改影响条数
      */
-    public int submit(UserSessionBean user, VmsBtShipmentModel vmsBtShipmentModel) {
+    public int submit(UserSessionBean user, ShipmentBean shipmentBean) {
+
+        VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel();
+        BeanUtil.copy(shipmentBean, vmsBtShipmentModel);
 
         vmsBtShipmentModel.setChannelId(user.getSelChannelId());
         boolean correct = null != vmsBtShipmentModel.getStatus()
@@ -134,5 +135,31 @@ public class VmsShipmentService {
         }};
         shipmentService.insert(vmsBtShipmentModel);
         return null;
+    }
+
+    public ShipmentInfo search(UserSessionBean user, ShipmentSearchInfo shipmentSearchInfo) {
+
+        ShipmentInfo shipmentInfo = new ShipmentInfo();
+
+        Map<String, Object> searchParams = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannelId());
+            put("shipmentName", shipmentSearchInfo.getShipmentName());
+            put("trackingNo", shipmentSearchInfo.getTrackingNo());
+            put("status", shipmentSearchInfo.getStatus());
+            put("shippedDateFrom", shipmentSearchInfo.getShippedDateFrom());
+            put("shippedDateTo", shipmentSearchInfo.getShippedDateTo());
+        }};
+
+        shipmentInfo.setTotal(shipmentService.count(searchParams));
+
+        Map<String, Object> pagedSearchParams = MySqlPageHelper.build(searchParams)
+                .addSort("Id", Order.Direction.DESC)
+                .limit(shipmentSearchInfo.getSize())
+                .page(shipmentSearchInfo.getCurr())
+                .toMap();
+        shipmentInfo.setShipmentList(shipmentService.searchList(pagedSearchParams).stream()
+                .map(ShipmentBean::getInstance)
+                .collect(Collectors.toList()));
+        return shipmentInfo;
     }
 }

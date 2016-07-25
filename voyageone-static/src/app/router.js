@@ -34,8 +34,8 @@ define(function () {
             },
             {
                 "hash": "/shipment/shipment_info",
-                "templateUrl": "./views/shipment/index.html",
-                "controllerUrl": "./views/shipment/index.controller",
+                "templateUrl": "./views/shipment/shipment_info.html",
+                "controllerUrl": "./views/shipment/shipment_info.controller",
                 "controller": "ShipmentInfoController as ctrl"
             },
             {

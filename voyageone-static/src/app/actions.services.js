@@ -183,6 +183,10 @@ define(function (require) {
         shipmentScanPopupService: new CommonDataService('/vms/popup/scan', {
             init: "init",
             scanBarcode: "scanBarcode"
+        }),
+        shipmentInfoService: new CommonDataService('/vms/shipment/shipment_info', {
+            init: "init",
+            search: "search"
         })
     }
 });

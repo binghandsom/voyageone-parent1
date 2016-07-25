@@ -18,8 +18,8 @@ define([
             this.originalShipment = context.shipment;
             this.shipment = angular.copy(context.shipment);
             if (this.shipment) {
-                if (this.shipment.shippedDateTimestamp) {
-                    this.shipment.shippedDate = new Date(this.shipment.shippedDateTimestamp);
+                if (this.shipment.shippedDate) {
+                    this.shipment.shippedDate = new Date(this.shipment.shippedDate);
                 }
             } else {
                 this.shipment = {
@@ -57,15 +57,14 @@ define([
                 }
 
                 if (req.shippedDate) {
-                    req.shippedDateTimestamp = req.shippedDate.getTime();
-                    req.shippedDate = undefined;
+                    req.shippedDate = req.shippedDate.getTime();
                 }
                 self.shipmentPopupService.submit(req).then(function (data) {
                     self.shipment = data.currentShipment;
                     if (self.shipment) {
                         self.shipmentExisted = true;
-                        if (self.shipment.shippedDateTimestamp)
-                            self.shipment.shippedDate = new Date(self.shipment.shippedDateTimestamp);
+                        if (self.shipment.shippedDate)
+                            self.shipment.shippedDate = new Date(self.shipment.shippedDate);
                     }
                     self.notify.success("TXT_SUCCESS");
                     self.$uibModalInstance.close(self.shipment);

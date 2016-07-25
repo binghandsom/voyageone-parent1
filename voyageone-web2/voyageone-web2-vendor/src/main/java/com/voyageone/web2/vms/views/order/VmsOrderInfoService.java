@@ -600,7 +600,9 @@ public class VmsOrderInfoService extends BaseService {
                 .getId(), STATUS_VALUE.PRODUCT_STATUS.SHIPPED, shipmentBean.getShippedDate());
 
         // 更新shipment
-        int succeedShipmentCount = shipmentService.save(shipmentBean);
+        VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel();
+        BeanUtil.copy(shipmentBean, vmsBtShipmentModel);
+        int succeedShipmentCount = shipmentService.save(vmsBtShipmentModel);
 
         return new ShipmentEndCountBean() {{
             setCanceledSkuCount(canceledSkuCount);

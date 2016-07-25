@@ -54,7 +54,7 @@ define(function () {
         "TXT_SKU_NUMBER": "SKU Number",
         "TXT_STATUS": "Status",
         "TXT_TO": "To",
-        "TXT_TRACKING_NO": "Tracking No.",
+        "TXT_TRACKING_NO_": "Tracking No.",
         "TXT_UPLOAD_DATE": "Upload Date",
         "TXT_UPLOAD_USER": "Upload User",
         "TXT_SUCCESS": "Success",
@@ -65,6 +65,12 @@ define(function () {
         "TXT_COMPLETE": "Complete",
         "TXT_BARCODE": "Barcode",
         "TXT_NO_": "No.",
+        "TXT_ORDER_INFO": "Order Info",
+        "TXT_ORDER": "Order",
+        "TXT_SHIPMENT": "Shipment",
+        "TXT_SHIPMENT_INFO": "Shipment Info",
+        "TXT_ORDER_TOTAL": "Order Total",
+        "TXT_SKU_TOTAL": "SKU Total",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
