@@ -109,9 +109,15 @@
                 <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
                 <!------------------------------------------------以下为产品schema------------------------------------------------------->
                 <div class="container-fluid" id="product">
+
                     <ng-form name="schemaForm" novalidate>
-                        <div id="schemaContainer" class="col-sm-7"></div>
+
+                        <div id="schemaContainer" class="col-sm-7">
+                            <schema data="vm.productComm.schemaFields"></schema>
+                        </div>
+
                     </ng-form>
+
                     <!-------------------------------显示图片-------------------------------->
                     <div class="col-sm-3" style="width: 380px;" id="img-fix">
                         <div class="col no-padder bg-light vo_prodDetailPanel">

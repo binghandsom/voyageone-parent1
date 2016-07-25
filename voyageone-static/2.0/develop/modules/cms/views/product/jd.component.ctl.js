@@ -3,8 +3,9 @@
  * 京东 & 聚美 & 天猫国际 产品概述（schema）
  */
 define([
-    'cms'
-],function(cms) {
+    'cms',
+    'modules/cms/enums/Carts'
+],function(cms,carts) {
     cms.directive("jdSchema", function (productDetailService,platformMappingService,$translate,notify,confirm,$q,$compile,alert) {
         return {
             restrict: "E",
@@ -79,23 +80,7 @@ define([
 
                     });
 
-                    switch(+scope.cartInfo.value){
-                        case 23:
-                            scope.vm.productUrl = "http://detail.tmall.hk/hk/item.htm?id=";
-                            break;
-                        case 26:
-                            scope.vm.productUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=";
-                            break;
-                        case 27:
-                            scope.vm.productUrl = "http://item.jumeiglobal.com/";
-                            break;
-                        case 28:
-                            scope.vm.productUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=";
-                            break;
-                        case 29:
-                            scope.vm.productUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=";
-                            break;
-                    }
+                    scope.vm.productUrl = carts.valueOf(+scope.cartInfo.value).pUrl;
 
                 }
 
@@ -159,6 +144,9 @@ define([
                  *  切换主类目   cartInfo.value,vm.mastData.productCode
                  */
                 function openSwitchMainPop(openSwitchMain){
+                    if(scope.vm.mastData == null)
+                        return;
+
                     openSwitchMain({
                         cartId:scope.cartInfo.value,
                         productCode:scope.vm.mastData.productCode
@@ -172,6 +160,8 @@ define([
                  *  商品下线
                  */
                 function openOffLinePop(openProductOffLine,type){
+                    if(scope.vm.mastData == null)
+                        return;
 
                     if(scope.vm.status != "Approved"){
                         alert("该商品还未Approved！");
