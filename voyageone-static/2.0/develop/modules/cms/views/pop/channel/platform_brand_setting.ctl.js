@@ -5,9 +5,9 @@ define([
     'cms'
 ], function (cms) {
     cms.controller('PlatformBrandSettingController', (function () {
-        function PlatformBrandSettingController(context, alert, popups) {
+        function PlatformBrandSettingController(context, notify, popups) {
             this.platformData = context;
-            this.alert = alert;
+            this.notify = notify;
             this.popups = popups;
             this.platformPageOption = {curr: 1, total: 0, size: 10, fetch: this.search};
             this.platformList = [
@@ -17,7 +17,6 @@ define([
                 {id: '010', name: "耐克a"}, {id: '011', name: "阿迪达斯2"}, {id: '012', name: "阿迪达斯43"}
             ];
             this.selectedPlatformlist = [];
-            this.key = [];
         }
 
         PlatformBrandSettingController.prototype = {
@@ -25,19 +24,19 @@ define([
                 var self = this;
                 self.brand = self.platformData;
             },
-            byTagChildrenName: function (arr) {
-                var key = this.key;
-                return key ? arr.filter(function (item) {
-                    return item.catName.indexOf(key) > -1;
-                }) : arr;
-            },
             selected: function (item) {
-                console.log(item);
+                var self = this;
+                self.selectedPlatform = item.name;
             },
             submitSet: function () {
                 var self = this;
-                console.log(self.selectedPlatformlist);
-                self.popups.openPlatformMappingConfirm();
+                self.selectedPlatformlist.brand = self.brand;
+                self.selectedPlatformlist.selectedPlatform = self.selectedPlatform;
+                if (!self.selectedPlatformlist.selectedPlatform) {
+                    self.notify.warning('TXT_COMPLETE_THE_PLATEFORM_BRAND');
+                    return;
+                }
+                self.popups.openPlatformMappingConfirm(self.selectedPlatformlist);
 
             }
         };
