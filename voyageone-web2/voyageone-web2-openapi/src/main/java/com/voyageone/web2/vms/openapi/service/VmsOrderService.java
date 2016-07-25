@@ -364,6 +364,21 @@ public class VmsOrderService extends OpenApiCmsBaseService {
             model.setStatus(status);
             model.setModifier(getClassName());
             if (VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.ARRIVED.equals(status)) {
+                // 取得shipment原先的状态
+                Map<String, Object> param = new HashMap<>();
+                param.put("channelId", channelId);
+                param.put("shipmentId", shipmentId);
+                List<VmsBtShipmentModel> oldModels = shipmentService.select(param);
+                if (oldModels.size() > 0) {
+                    String oldStatus = oldModels.get(0).getStatus();
+                    // 状态为5：Received；6：Receive Error；以外的才能更新为4：ARRIVED
+                    if (VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.RECEIVED.equals(oldStatus)
+                            ||VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.RECEIVE_ERROR.equals(oldStatus)) {
+                        throw new ApiException("98", "previous status is not correct.channelId:" + channelId + ",shipmentId:" + shipmentId);
+                    }
+                } else {
+                    throw new ApiException("99", "channelId:" + channelId + ",shipmentId:" + shipmentId + " is not exist.");
+                }
                 model.setArrivedTime(new Date(operateTime));
                 model.setArriver(operator);
             } else if (VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.RECEIVED.equals(status)) {
@@ -382,7 +397,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
             }
             count = shipmentService.save(model);
         } else {
-            throw new ApiException("99", "This Status is not allowed to be update.");
+            throw new ApiException("97", "This Status is not allowed to be update.");
         }
 
         if (count > 0) {
@@ -437,6 +452,22 @@ public class VmsOrderService extends OpenApiCmsBaseService {
             shipmentId = model.getId();
         } else {
             shipmentId = models.get(0).getId();
+        }
+
+        // 取得物品原先的状态
+        Map<String, Object> param1 = new HashMap<>();
+        param1.put("channelId", channelId);
+        param1.put("reservationId", reservationId);
+        List<VmsBtOrderDetailModel> oldModels = orderDetailService.select(param1);
+        if (oldModels.size() > 0) {
+            String oldStatus = oldModels.get(0).getStatus();
+            // 状态为5：Received；6：Receive Error；以外的才能更新为3：SHIPPED
+            if (VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVED.equals(oldStatus)
+                    ||VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVE_ERROR.equals(oldStatus)) {
+                throw new ApiException("98", "previous status is not correct.channelId:" + channelId + ",reservationId:" + reservationId);
+            }
+        } else {
+            throw new ApiException("99", "channelId:" + channelId + ",reservationId:" + reservationId + " is not exist.");
         }
 
         // 更新物品的状态为3：shipped
