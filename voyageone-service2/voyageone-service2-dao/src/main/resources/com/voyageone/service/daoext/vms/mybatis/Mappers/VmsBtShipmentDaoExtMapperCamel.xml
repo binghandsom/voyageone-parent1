@@ -13,7 +13,7 @@
         <where>
             AND `channel_id` = #{channelId, jdbcType=VARCHAR}
             <if test="shipmentName != null">
-                AND `shipment_name` LIKE '%'#{shipmentName, jdbcType=VARCHAR}'%'
+                AND `shipment_name` LIKE "%"#{shipmentName, jdbcType=VARCHAR}"%"
             </if>
             <if test="trackingNo != null">
                 AND `tracking_no` = #{trackingNo, jdbcType=VARCHAR}
@@ -40,7 +40,7 @@
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="shipmentName != null">
-                and `shipment_name` = #{shipmentName,jdbcType=VARCHAR}
+                AND `shipment_name` LIKE "%"#{shipmentName, jdbcType=VARCHAR}"%"
             </if>
             <if test="shippedDate != null">
                 and `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP}
