@@ -12,34 +12,37 @@ define([
                 selectedCart: null,
                 selectedStatus: 2
             };
-            this.cartList = [
-                {cartId: 20, cartName: "聚美"},
-                {cartId: 22, cartName: "京东"},
-                {cartId: 23, cartName: "天猫"}
-            ];
-            this.brandMappingList = [
-                {
-                    id: "01",
-                    masterBrand: "aaa",
-                    brand: "aaa-1",
-                    status: 1
-                }, {
-                    id: "02",
-                    masterBrand: "bbb",
-                    brand: "",
-                    status: 0
-                }, {
-                    id: "03",
-                    masterBrand: "ccc",
-                    brand: "ccc-1",
-                    status: 1
-                }
-            ];
+            this.cartList = [];
+            this.brandMappingList = [];
             this.platformPageOption = {curr: 1, total: 0, size: 10, fetch: this.search};
         }
 
         BrandMappingController.prototype = {
             init: function () {
+                var self = this;
+                self.cartList = [
+                    {cartId: 20, cartName: "聚美"},
+                    {cartId: 22, cartName: "京东"},
+                    {cartId: 23, cartName: "天猫"}
+                ];
+                self.brandMappingList = [
+                    {
+                        id: "01",
+                        masterBrand: "aaa",
+                        brand: "aaa-1",
+                        status: 1
+                    }, {
+                        id: "02",
+                        masterBrand: "bbb",
+                        brand: "",
+                        status: 0
+                    }, {
+                        id: "03",
+                        masterBrand: "ccc",
+                        brand: "ccc-1",
+                        status: 1
+                    }
+                ];
             },
             selectCart: function () {
                 var self = this;
