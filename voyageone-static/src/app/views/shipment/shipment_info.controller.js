@@ -67,7 +67,6 @@ define([
                 self.pageInfo.total = data.shipmentInfo.total;
                 self.data = data.shipmentInfo.shipmentList;
             })
-
         };
 
         ShipmentInfoController.prototype.popNewShipment = function () {

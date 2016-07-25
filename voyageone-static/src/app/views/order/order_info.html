@@ -104,7 +104,7 @@
                         <td class="text-right v-middle" ng-click="item.collapse = !item.collapse"><i ng-class="{'fa fa-plus': item.collapse, 'fa fa-minus':!item.collapse}"></i>
                         </td>
                         <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderId}}</strong></td>
-                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</strong></td>
+                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderTime | date: 'yyyy-MM-dd HH:mm:ss'}}</strong></td>
                         <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
                         <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
                         <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{ctrl.getStatusName(item.status)}}</strong></td>
@@ -122,7 +122,7 @@
                     <tr ng-if="!item.collapse" ng-class="::item.subClassName" ng-repeat="detail in item.orderInfoBeanList" ng-repeat-end>
                         <td class="v-middle"></td>
                         <td class="v-middle"></td>
-                        <td class="v-middle">{{detail.consolidationOrderTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="v-middle">{{detail.consolidationOrderTime| date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="v-middle">{{detail.clientSku}}</td>
                         <td class="v-middle">
                             <span ng-if="detail.name.length <= 30">{{detail.name}}</span>
@@ -162,7 +162,7 @@
                     <tr ng-repeat="item in ctrl.data" ng-class="::item.className">
                         <!--<td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>-->
                         <td class="v-middle">{{item.consolidationOrderId}}</td>
-                        <td class="v-middle">{{item.consolidationOrderTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="v-middle">{{item.consolidationOrderTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="v-middle">{{item.clientSku}}</td>
                         <td class="v-middle">
                             <span ng-if="item.name.length <= 30">{{item.name}}</span>

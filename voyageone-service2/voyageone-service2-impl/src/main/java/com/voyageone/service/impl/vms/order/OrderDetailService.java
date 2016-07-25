@@ -310,13 +310,13 @@ public class OrderDetailService extends BaseService {
         return vmsBtOrderDetailDaoExt.cancelOrderShipmentStatus(params);
     }
 
-    public int updateOrderStatusWithShipmentId(String channelId, Integer shipmentId, String status, Date shippedDate) {
+    public int updateOrderStatusWithShipmentId(String channelId, Integer shipmentId, String status) {
 
         // 更新status
         Map<String, Object> params = new HashMap<String, Object>() {{
             put("channelId", channelId);
             put("wShipmentId", shipmentId); // 更新的where条件
-            put("shipmentTime", shippedDate);
+            put("shipmentTime", new Date());
             put("status", status);
         }};
         int updated = vmsBtOrderDetailDaoExt.updateOrderStatus(params);

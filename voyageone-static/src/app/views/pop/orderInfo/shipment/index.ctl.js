@@ -56,16 +56,12 @@ define([
                     return;
                 }
 
-                if (req.shippedDate) {
+                if (req.shippedDate)
                     req.shippedDate = req.shippedDate.getTime();
-                }
                 self.shipmentPopupService.submit(req).then(function (data) {
                     self.shipment = data.currentShipment;
-                    if (self.shipment) {
+                    if (self.shipment)
                         self.shipmentExisted = true;
-                        if (self.shipment.shippedDate)
-                            self.shipment.shippedDate = new Date(self.shipment.shippedDate);
-                    }
                     self.notify.success("TXT_SUCCESS");
                     self.$uibModalInstance.close(self.shipment);
                 });
@@ -76,6 +72,8 @@ define([
         NewShipmentController.prototype.end = function () {
             var self = this;
             var req = angular.copy(self.shipment);
+            if (req.shippedDate)
+                req.shippedDate = req.shippedDate.getTime();
             var tempShipment = {};
             // 先判断是否有其他人改了当前的shipment
             self.shipmentPopupService.get().then(function (data) {
@@ -85,34 +83,25 @@ define([
                     self.$uibModalInstance.close(tempShipment);
                     return;
                 }
-
-                if (req.shippedDate) {
-                    req.shippedDateTimestamp = req.shippedDate.getTime();
-                    req.shippedDate = undefined;
-                }
-
                 // 确认当前shipment下的所有订单是否扫描完整
                 self.shipmentPopupService.confirm(req).then(function (data) {
                     if (!data.invalidOrderList || data.invalidOrderList.length == 0) {
                         self.shipmentPopupService.end(req).then(function (data) {
                             self.shipment = data.currentShipment;
-                            if (self.shipment) {
+                            if (self.shipment)
                                 self.shipmentExisted = true;
-                                if (self.shipment.shippedDateTimestamp)
-                                    self.shipment.shippedDate = new Date(self.shipment.shippedDateTimestamp);
-                            }
                             self.notify.success("TXT_SUCCESS");
                             self.$uibModalInstance.close(self.shipment);
                         });
                     } else {
                         // 订单号
                         var orders = "";
-                        for (var index = 0; index < data.invalidOrderList.length; index ++) {
+                        for (var index = 0; index < data.invalidOrderList.length; index++) {
                             if (index < data.invalidOrderList.length - 1)
                                 orders = orders + data.invalidOrderList[index] + ", ";
                             else orders = orders + data.invalidOrderList[index];
                         }
-                        self.confirm(self.$translate.instant('TXT_SCANNED_ORDER_NOT_FINISHED').replace("%s",orders)).then(function () {
+                        self.confirm(self.$translate.instant('TXT_SCANNED_ORDER_NOT_FINISHED').replace("%s", orders)).then(function () {
                             self.shipmentPopupService.end(req).then(function (data) {
                                 self.shipment = data.currentShipment;
                                 if (self.shipment) {

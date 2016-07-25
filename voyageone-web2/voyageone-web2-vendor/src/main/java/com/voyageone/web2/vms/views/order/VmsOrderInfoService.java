@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -166,7 +167,7 @@ public class VmsOrderInfoService extends BaseService {
                 .collect(Collectors.toList());
 
         if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
-            throw new BusinessException("8000020");
+            throw new BusinessException("8000027");
 
         // 检测通过 进行状态变更
         return orderDetailService.updateReservationStatus(user.getSelChannelId(), item.getReservationId(),
@@ -358,7 +359,7 @@ public class VmsOrderInfoService extends BaseService {
                                 SubOrderInfoBean orderInfoBean = new SubOrderInfoBean();
                                 BeanUtil.copy(vmsBtOrderDetailModel, orderInfoBean);
                                 if (!STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
-                                    orderInfoBean.setRetailPrice(null);
+                                    orderInfoBean.setRetailPrice(BigDecimal.ZERO);
                                 return orderInfoBean;
                             })
                             .forEach(platformOrderInfoBean::pushOrderInfoBean);
@@ -391,7 +392,7 @@ public class VmsOrderInfoService extends BaseService {
 //                    orderInfoBean.setConsolidationOrderTime(vmsBtOrderDetailModel.getConsolidationOrderTime());
 //                    orderInfoBean.setClientPromotionPrice(vmsBtOrderDetailModel.getClientPromotionPrice());
                     if (!STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
-                        orderInfoBean.setRetailPrice(null);
+                        orderInfoBean.setRetailPrice(BigDecimal.ZERO);
                     return orderInfoBean;
                 })
                 .collect(Collectors.toList());
@@ -569,23 +570,29 @@ public class VmsOrderInfoService extends BaseService {
             put("channelId", user.getSelChannelId());
             put("shipmentId", shipmentBean.getId());
         }};
-        return orderDetailService.selectPlatformOrderIdList(params).parallelStream()
-                // 获取订单号下的所有sku信息
-                .flatMap(consolidationOrderId -> {
-                    Map<String, Object> orderParams = new HashMap<String, Object>() {{
-                        put("channelId", user.getSelChannelId());
-                        put("consolidationOrderId", consolidationOrderId);
-                    }};
-                    return orderDetailService.select(orderParams).stream();
-                })
-                // 过滤出状态不为package的sku信息
+        return orderDetailService.select(params).stream()
                 .filter(vmsBtOrderDetailModel -> !STATUS_VALUE.PRODUCT_STATUS.PACKAGE.equals(vmsBtOrderDetailModel
                         .getStatus()))
-                // 获取状态不为package的sku订单号
                 .map(VmsBtOrderDetailModel::getConsolidationOrderId)
-                // 去重
                 .distinct()
                 .collect(Collectors.toList());
+//        return orderDetailService.selectPlatformOrderIdList(params).parallelStream()
+//                // 获取订单号下的所有sku信息
+//                .flatMap(consolidationOrderId -> {
+//                    Map<String, Object> orderParams = new HashMap<String, Object>() {{
+//                        put("channelId", user.getSelChannelId());
+//                        put("consolidationOrderId", consolidationOrderId);
+//                    }};
+//                    return orderDetailService.select(orderParams).stream();
+//                })
+//                // 过滤出状态不为package的sku信息
+//                .filter(vmsBtOrderDetailModel -> !STATUS_VALUE.PRODUCT_STATUS.PACKAGE.equals(vmsBtOrderDetailModel
+//                        .getStatus()))
+//                // 获取状态不为package的sku订单号
+//                .map(VmsBtOrderDetailModel::getConsolidationOrderId)
+//                // 去重
+//                .distinct()
+//                .collect(Collectors.toList());
     }
 
     public ShipmentEndCountBean endShipment(UserSessionBean user, ShipmentBean shipmentBean) {
@@ -597,7 +604,7 @@ public class VmsOrderInfoService extends BaseService {
 
         // 更新shipment下的sku
         int succeedSkuCount = orderDetailService.updateOrderStatusWithShipmentId(user.getSelChannelId(), shipmentBean
-                .getId(), STATUS_VALUE.PRODUCT_STATUS.SHIPPED, shipmentBean.getShippedDate());
+                .getId(), STATUS_VALUE.PRODUCT_STATUS.SHIPPED);
 
         // 更新shipment
         VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel();

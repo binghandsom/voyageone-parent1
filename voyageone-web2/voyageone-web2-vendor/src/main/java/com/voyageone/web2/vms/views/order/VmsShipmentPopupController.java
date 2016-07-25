@@ -88,6 +88,7 @@ public class VmsShipmentPopupController extends BaseController {
     public AjaxResponse end(@RequestBody ShipmentBean shipmentBean) {
         Map<String, Object> result = new HashMap<>();
         result.put("success", vmsOrderInfoService.endShipment(this.getUser(), shipmentBean));
+        result.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));
         return success(result);
     }
 }
