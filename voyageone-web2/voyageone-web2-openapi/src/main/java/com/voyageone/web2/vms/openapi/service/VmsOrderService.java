@@ -57,6 +57,15 @@ public class VmsOrderService extends OpenApiCmsBaseService {
 
         if (itemList != null && itemList.size() > 0) {
             for (Map<String, Object> item : itemList) {
+                // channelId + reservationId如果已经存在那么久跳过
+                Map<String, Object> param = new HashMap<>();
+                param.put("channelId", (String) item.get("channelId"));
+                param.put("reservationId", (String) item.get("reservationId"));
+                List<VmsBtOrderDetailModel> models = orderDetailService.select(param);
+                if (models.size() > 0) {
+                    continue;
+                }
+
                 // 建立Model
                 VmsBtOrderDetailModel model = new VmsBtOrderDetailModel();
                 model.setReservationId((String) item.get("reservationId"));
@@ -129,11 +138,18 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                 List<VmsBtOrderDetailModel> models = orderDetailService.select(param);
                 // 只有状态为1：Open的物品才能被删除
                 if (models.size() > 0) {
+                    // 如果状态已经是7：Cancel的话，那么按成功处理
+                    if (VmsConstants.STATUS_VALUE.PRODUCT_STATUS.CANCEL.equals(models.get(0).getStatus())) {
+                        successReservationIdList.add(reservationId);
+                        continue;
+                    }
+                    // 如果状态已经是1：Open以外的话（非7:Cancel），那么按失败处理
                     if (!VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN.equals(models.get(0).getStatus())) {
                         failReservationIdList.add(reservationId);
                         continue;
                     }
                 } else {
+                    // 如果不存在，按失败处理
                     failReservationIdList.add(reservationId);
                     continue;
                 }
@@ -294,10 +310,10 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         String receiver = request.getReceiver();
 
         int count = 0;
-        // 更新为6：Receive with Error的情况
-        if(VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVE_WITH_ERROR.equals(status)) {
+        // 更新为6：Receive Error的情况
+        if(VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVE_ERROR.equals(status)) {
             count = orderDetailService.updateReservationStatus(channelId, reservationId,
-                    VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVE_WITH_ERROR, getClassName());
+                    VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVE_ERROR, getClassName());
         } else if (VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVED.equals(status)) {
             // 更新为5：Received的情况
             count = orderDetailService.updateReservationStatus(channelId, reservationId,
@@ -341,7 +357,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         int count = 0;
         if(VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.ARRIVED.equals(status)
                 || VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.RECEIVED.equals(status)
-                || VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.RECEIVE_WITH_ERROR.equals(status)) {
+                || VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.RECEIVE_ERROR.equals(status)) {
             VmsBtShipmentModel model = new VmsBtShipmentModel();
             model.setChannelId(channelId);
             model.setId(shipmentId);
@@ -354,7 +370,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                 model.setReceivedTime(new Date(operateTime));
                 model.setReceiver(operator);
             } else {
-                // 更新状态为ReceiveWithError的情况下，叠加Comment
+                // 更新状态为ReceiveError的情况下，叠加Comment
                 if (!StringUtils.isEmpty(comment)) {
                     VmsBtShipmentModel oldModel = shipmentService.select(shipmentId);
                     if (oldModel != null && !StringUtils.isEmpty(oldModel.getComment())) {

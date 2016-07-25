@@ -208,7 +208,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 feedFileModel.setFileName(fileName);
                 // 更新内容
                 feedFileModel.setErrorMsg(ex.getMessage());
-                feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_SYSTEM_ERROR);
+                feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_SYSTEM_ERROR);
                 feedFileModel.setModifier(getTaskName());
                 vmsBtFeedFileDaoExt.updateErrorInfo(feedFileModel);
             }
@@ -266,7 +266,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     feedFileModel.setFileName(feedFileName);
                     // 更新内容
                     feedFileModel.setErrorFileName(feedErrorFileName);
-                    feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_ERROR);
+                    feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_ERROR);
                     feedFileModel.setModifier(getTaskName());
                     vmsBtFeedFileDaoExt.updateErrorInfo(feedFileModel);
                     return;
@@ -376,7 +376,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     feedFileModel.setErrorFileName(feedErrorFileName);
                     feedFileModel.setUpdatedCodeNum(codeCnt);
                     feedFileModel.setUpdatedSkuNum(skuCnt);
-                    feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_ERROR);
+                    feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_ERROR);
                     feedFileModel.setModifier(getTaskName());
                     vmsBtFeedFileDaoExt.updateErrorInfo(feedFileModel);
                 } else {
@@ -1339,7 +1339,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     feedFileModel.setFileName(feedFile.getName());
                     // 更新内容
                     feedFileModel.setErrorFileName(feedErrorFileName);
-                    feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_WITH_ERROR);
+                    feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_ERROR);
                     feedFileModel.setModifier(getTaskName());
                     vmsBtFeedFileDaoExt.updateErrorInfo(feedFileModel);
 

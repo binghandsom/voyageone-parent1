@@ -23,8 +23,8 @@ public class VmsConstants {
         public final static String WAITING_IMPORT = "1";
         public final static String IMPORTING = "2";
         public final static String IMPORT_COMPLETED = "3";
-        public final static String IMPORT_WITH_ERROR = "4";
-        public final static String IMPORT_WITH_SYSTEM_ERROR = "5";
+        public final static String IMPORT_ERROR = "4";
+        public final static String IMPORT_SYSTEM_ERROR = "5";
     }
 
     /**
@@ -62,7 +62,7 @@ public class VmsConstants {
             String PACKAGE = "2";
             String SHIPPED = "3";
             String RECEIVED = "5";
-            String RECEIVE_WITH_ERROR = "6";
+            String RECEIVE_ERROR = "6";
             String CANCEL = "7";
         }
 
@@ -72,7 +72,7 @@ public class VmsConstants {
             String SHIPPED = "3";
             String ARRIVED = "4";
             String RECEIVED = "5";
-            String RECEIVE_WITH_ERROR = "6";
+            String RECEIVE_ERROR = "6";
         }
 
         // 操作级别
