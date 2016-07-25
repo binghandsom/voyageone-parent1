@@ -66,7 +66,7 @@ public class VmsBtOrderDetailModel extends BaseModel {
     protected String name;
 
     /**
-     * 1:Open；2：Package；3：Shipped；5：Received；6：Receive with Error；7：Cancel 
+     * 1:Open；2：Package；3：Shipped；5：Received；6：Receive Error；7：Cancel 
      */
     protected String status;
 

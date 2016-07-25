@@ -41,7 +41,7 @@ public class VmsBtFinancialReportModel extends BaseModel {
     /**
      * 财务报表文件路径
      */
-    protected String reportFilePath;
+    protected String reportFileName;
 
     /**
      * 0:未确认；1：已确认；
@@ -88,12 +88,12 @@ public class VmsBtFinancialReportModel extends BaseModel {
         this.totalPrice = totalPrice == null ? null : totalPrice.trim();
     }
 
-    public String getReportFilePath() {
-        return reportFilePath;
+    public String getReportFileName() {
+        return reportFileName;
     }
 
-    public void setReportFilePath(String reportFilePath) {
-        this.reportFilePath = reportFilePath == null ? null : reportFilePath.trim();
+    public void setReportFileName(String reportFileName) {
+        this.reportFileName = reportFileName == null ? null : reportFileName.trim();
     }
 
     public String getStatus() {

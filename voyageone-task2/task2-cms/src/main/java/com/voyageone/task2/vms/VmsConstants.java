@@ -26,6 +26,13 @@ public class VmsConstants {
 		public final static String ONLINE = "1";
 		public final static String FTP = "2";
 	}
+	/**
+	 * 财务报表状态
+	 */
+	public final static class FinancialReportStatus {
+		public final static String UNCONFIRMED = "0";
+		public final static String CONFIRMED = "1";
+	}
 
 	/**
 	 * ChannelConfig
