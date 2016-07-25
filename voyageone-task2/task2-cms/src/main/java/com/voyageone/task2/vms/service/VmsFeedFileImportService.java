@@ -1445,7 +1445,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             // 取得Feed文件检查结果路径
             String feedErrorFilePath = createErrorFilePath();
             // Feed文件检查结果文件名
-            String feedErrorFileName = "Feed_Check_Result_" + channel.getFull_name() + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
+            String feedErrorFileName = "Feed_Check_Result_" + channel.getOrder_channel_id() + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
             try (OutputStream outputStream = new FileOutputStream(feedErrorFilePath + feedErrorFileName)) {
                 // 先加一个头
                 byte[] headerInBytes = "row,column,message\n".getBytes();
@@ -1471,7 +1471,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             // 取得Feed文件检查结果路径
             String feedErrorFilePath = createErrorFilePath();
             // Feed文件检查结果文件名
-            String feedErrorFileName = "Feed_Check_Result_" + channel.getFull_name() + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
+            String feedErrorFileName = "Feed_Check_Result_" + channel.getOrder_channel_id() + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
             StringBuilder stringBuilder = new StringBuilder();
             try (OutputStream outputStream = new FileOutputStream(feedErrorFilePath + feedErrorFileName)) {
                 // 按rowNum排序

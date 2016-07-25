@@ -15,6 +15,200 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
+    <update id="update" parameterType="com.voyageone.service.model.vms.VmsBtFeedFileModel" >
+        update vms_bt_feed_file
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="clientFileName != null" >
+                `client_file_name` = #{clientFileName,jdbcType=VARCHAR},
+            </if>
+            <if test="fileName != null" >
+                `file_name` = #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="uploadType != null" >
+                `upload_type` = #{uploadType,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+                `status` = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="errorFileName != null" >
+                `error_file_name` = #{errorFileName,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMsg != null" >
+                `error_msg` = #{errorMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedCodeNum != null" >
+                `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER},
+            </if>
+            <if test="updatedSkuNum != null" >
+                `updated_sku_num` = #{updatedSkuNum,jdbcType=INTEGER},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from vms_bt_feed_file
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_feed_file
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="clientFileName != null" >
+                and `client_file_name` = #{clientFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="uploadType != null" >
+                and `upload_type` = #{uploadType,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="errorFileName != null" >
+                and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="updatedCodeNum != null" >
+                and `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER}
+            </if>
+            <if test="updatedSkuNum != null" >
+                and `updated_sku_num` = #{updatedSkuNum,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_feed_file
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="clientFileName != null" >
+                and `client_file_name` = #{clientFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="uploadType != null" >
+                and `upload_type` = #{uploadType,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="errorFileName != null" >
+                and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="updatedCodeNum != null" >
+                and `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER}
+            </if>
+            <if test="updatedSkuNum != null" >
+                and `updated_sku_num` = #{updatedSkuNum,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from vms_bt_feed_file
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="clientFileName != null" >
+                and `client_file_name` = #{clientFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="uploadType != null" >
+                and `upload_type` = #{uploadType,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="errorFileName != null" >
+                and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="updatedCodeNum != null" >
+                and `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER}
+            </if>
+            <if test="updatedSkuNum != null" >
+                and `updated_sku_num` = #{updatedSkuNum,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
     <insert id="insert" parameterType="com.voyageone.service.model.vms.VmsBtFeedFileModel" useGeneratedKeys="true" keyProperty="id" >
         insert into vms_bt_feed_file
         <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -108,199 +302,5 @@
             </if>
         </trim>
     </insert>
-
-    <update id="update" parameterType="com.voyageone.service.model.vms.VmsBtFeedFileModel" >
-        update vms_bt_feed_file
-        <set >
-            <if test="channelId != null" >
-                `channel_id` = #{channelId,jdbcType=VARCHAR},
-            </if>
-            <if test="clientFileName != null" >
-                `client_file_name` = #{clientFileName,jdbcType=VARCHAR},
-            </if>
-            <if test="fileName != null" >
-                `file_name` = #{fileName,jdbcType=VARCHAR},
-            </if>
-            <if test="uploadType != null" >
-                `upload_type` = #{uploadType,jdbcType=VARCHAR},
-            </if>
-            <if test="status != null" >
-                `status` = #{status,jdbcType=VARCHAR},
-            </if>
-            <if test="errorFileName != null" >
-                `error_file_name` = #{errorFileName,jdbcType=VARCHAR},
-            </if>
-            <if test="errorMsg != null" >
-                `error_msg` = #{errorMsg,jdbcType=VARCHAR},
-            </if>
-            <if test="updatedCodeNum != null" >
-                `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER},
-            </if>
-            <if test="updatedSkuNum != null" >
-                `updated_sku_num` = #{updatedSkuNum,jdbcType=INTEGER},
-            </if>
-            <if test="created != null" >
-                `created` = #{created,jdbcType=TIMESTAMP},
-            </if>
-            <if test="creater != null" >
-                `creater` = #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="modified != null" >
-                `modified` = #{modified,jdbcType=TIMESTAMP},
-            </if>
-            <if test="modified == null" >
-                `modified` = now(),
-            </if>
-            <if test="creater != null" >
-                `modifier` = #{creater,jdbcType=VARCHAR},
-            </if>
-        </set>
-        where `id` = #{id,jdbcType=INTEGER}
-    </update>
-
-    <delete id="delete" parameterType="java.lang.Integer" >
-        delete from vms_bt_feed_file
-        where `id` = #{id,jdbcType=INTEGER}
-    </delete>
-
-    <select id="selectOne" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from vms_bt_feed_file
-        <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="clientFileName != null" >
-                and `client_file_name` = #{clientFileName,jdbcType=VARCHAR}
-            </if>
-            <if test="fileName != null" >
-                and `file_name` = #{fileName,jdbcType=VARCHAR}
-            </if>
-            <if test="uploadType != null" >
-                and `upload_type` = #{uploadType,jdbcType=VARCHAR}
-            </if>
-            <if test="status != null" >
-                and `status` = #{status,jdbcType=VARCHAR}
-            </if>
-            <if test="errorFileName != null" >
-                and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
-            </if>
-            <if test="errorMsg != null" >
-                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
-            </if>
-            <if test="updatedCodeNum != null" >
-                and `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER}
-            </if>
-            <if test="updatedSkuNum != null" >
-                and `updated_sku_num` = #{updatedSkuNum,jdbcType=INTEGER}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-        limit 1
-    </select>
-
-    <select id="selectList" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from vms_bt_feed_file
-        <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="clientFileName != null" >
-                and `client_file_name` = #{clientFileName,jdbcType=VARCHAR}
-            </if>
-            <if test="fileName != null" >
-                and `file_name` = #{fileName,jdbcType=VARCHAR}
-            </if>
-            <if test="uploadType != null" >
-                and `upload_type` = #{uploadType,jdbcType=VARCHAR}
-            </if>
-            <if test="status != null" >
-                and `status` = #{status,jdbcType=VARCHAR}
-            </if>
-            <if test="errorFileName != null" >
-                and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
-            </if>
-            <if test="errorMsg != null" >
-                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
-            </if>
-            <if test="updatedCodeNum != null" >
-                and `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER}
-            </if>
-            <if test="updatedSkuNum != null" >
-                and `updated_sku_num` = #{updatedSkuNum,jdbcType=INTEGER}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
-
-    <select id="selectCount" resultType="java.lang.Integer" >
-        select count(*) from vms_bt_feed_file
-        <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="clientFileName != null" >
-                and `client_file_name` = #{clientFileName,jdbcType=VARCHAR}
-            </if>
-            <if test="fileName != null" >
-                and `file_name` = #{fileName,jdbcType=VARCHAR}
-            </if>
-            <if test="uploadType != null" >
-                and `upload_type` = #{uploadType,jdbcType=VARCHAR}
-            </if>
-            <if test="status != null" >
-                and `status` = #{status,jdbcType=VARCHAR}
-            </if>
-            <if test="errorFileName != null" >
-                and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
-            </if>
-            <if test="errorMsg != null" >
-                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
-            </if>
-            <if test="updatedCodeNum != null" >
-                and `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER}
-            </if>
-            <if test="updatedSkuNum != null" >
-                and `updated_sku_num` = #{updatedSkuNum,jdbcType=INTEGER}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
 
 </mapper>
