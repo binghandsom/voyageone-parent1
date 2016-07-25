@@ -10,6 +10,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
@@ -22,6 +23,7 @@ import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MD5;
@@ -309,6 +311,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // update by desmond 2016/07/05 end
 
             }
+
+            // 清除缓存（这样就能再画面上展示出最新的brand，productType，sizeType等初始化mapping信息）
+            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
 
             // jeff 2016/04 add start
             // 将新建的件数，更新的件数插到cms_bt_data_amount表
