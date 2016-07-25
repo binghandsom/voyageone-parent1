@@ -83,7 +83,10 @@
                         <td class="text-center">10</td>
                         <td class="text-center">100</td>
                         <td class="text-center">{{ctrl.getStatusName(item.status)}}</td>
-                        <td class="text-center">{{item.comment}}</td>
+                        <td class="v-middle">
+                            <span ng-if="item.comment.length <= 30">{{item.comment}}</span>
+                            <span ng-if="item.comment.length > 30" uib-tooltip="{{item.comment}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{item.comment | stringCutter:true:30:' ...'}}</span>
+                        </td>
                         <td class="text-center">
                             <button class="btn btn-xs btn-success" ng-click="ctrl.popNewShipment()"><i class="fa fa-pencil"></i></button>
                             <button class="btn btn-xs btn-success"><i class="fa fa-inbox"></i></button>
@@ -91,6 +94,9 @@
                     </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="col-sm-12 m-t-lg no-padding">
+                <vpagination config="ctrl.pageInfo" total="ctrl.pageInfo.total"></vpagination>
             </div>
         </div>
     </div>

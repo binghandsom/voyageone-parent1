@@ -118,7 +118,7 @@ public class VmsShipmentService {
      * @param shipmentBean 待保存shipment
      * @return 保存后的shipment
      */
-    public ShipmentBean create(UserSessionBean user, ShipmentBean shipmentBean) {
+    public int create(UserSessionBean user, ShipmentBean shipmentBean) {
 
         // 确认现在没有已存在的open shipment
         if (null != this.getCurrentShipment(user)) throw new BusinessException("8000022");
@@ -133,8 +133,8 @@ public class VmsShipmentService {
             setTrackingNo(shipmentBean.getTrackingNo());
             setStatus(shipmentBean.getStatus());
         }};
-        shipmentService.insert(vmsBtShipmentModel);
-        return null;
+        return shipmentService.insert(vmsBtShipmentModel);
+        // TODO: 16-7-25 创建后未返回 vantis
     }
 
     public ShipmentInfo search(UserSessionBean user, ShipmentSearchInfo shipmentSearchInfo) {
@@ -157,6 +157,7 @@ public class VmsShipmentService {
                 .limit(shipmentSearchInfo.getSize())
                 .page(shipmentSearchInfo.getCurr())
                 .toMap();
+        // TODO: 16-7-25 shipment下订单数量和sku数量的统计尚未添加 vantis
         shipmentInfo.setShipmentList(shipmentService.searchList(pagedSearchParams).stream()
                 .map(ShipmentBean::getInstance)
                 .collect(Collectors.toList()));

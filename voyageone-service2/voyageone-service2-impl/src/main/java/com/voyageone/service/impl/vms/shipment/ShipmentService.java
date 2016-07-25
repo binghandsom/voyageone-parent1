@@ -44,8 +44,8 @@ public class ShipmentService {
     }
 
 
-    public void insert(VmsBtShipmentModel vmsBtShipmentModel) {
-        vmsBtShipmentDao.insert(vmsBtShipmentModel);
+    public int insert(VmsBtShipmentModel vmsBtShipmentModel) {
+        return vmsBtShipmentDao.insert(vmsBtShipmentModel);
     }
 
     public int count(Map<String, Object> searchParams) {
