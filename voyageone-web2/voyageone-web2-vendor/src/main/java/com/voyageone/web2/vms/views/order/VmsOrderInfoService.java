@@ -251,7 +251,7 @@ public class VmsOrderInfoService extends BaseService {
         titleRowCell0.setCellStyle(titleRowCellStyle);
 
         Cell titleRowCell1 = titleRow.createCell(descriptionCellNumber);
-        titleRowCell1.setCellValue("Description");
+        titleRowCell1.setCellValue("Name");
         titleRowCell1.setCellStyle(titleRowCellStyle);
 
         Cell titleRowCell2 = titleRow.createCell(orderIdCellNumber);

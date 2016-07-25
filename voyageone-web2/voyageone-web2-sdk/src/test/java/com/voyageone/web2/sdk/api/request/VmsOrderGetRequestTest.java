@@ -147,10 +147,6 @@ public class VmsOrderGetRequestTest {
         VmsOrderStatusUpdateRequest request = new VmsOrderStatusUpdateRequest();
         request.setChannelId("088");
         request.setReservationId("101");
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
-        String str="2016-01-01 10:00:00";
-        Date date = sdf.parse(str);
-        request.setReceivedTime(date.getTime());
         request.setReceiver("djs");
         request.setStatus("5");
 

@@ -291,7 +291,6 @@ public class VmsOrderService extends OpenApiCmsBaseService {
 
         String reservationId = request.getReservationId();
         String status = request.getStatus();
-        Long receivedTime = request.getReceivedTime();
         String receiver = request.getReceiver();
 
         int count = 0;
@@ -302,7 +301,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         } else if (VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVED.equals(status)) {
             // 更新为5：Received的情况
             count = orderDetailService.updateReservationStatus(channelId, reservationId,
-                    VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVED, getClassName(), new Date(receivedTime), receiver);
+                    VmsConstants.STATUS_VALUE.PRODUCT_STATUS.RECEIVED, getClassName(), new Date(), receiver);
         } else {
             throw new ApiException("99", "This Status is not allowed to be update.");
         }

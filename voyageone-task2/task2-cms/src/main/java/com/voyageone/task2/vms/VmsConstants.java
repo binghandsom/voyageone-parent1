@@ -39,7 +39,22 @@ public class VmsConstants {
 		String FEED_CSV_SPLIT_SYMBOL = "FEED_CSV_SPLIT_SYMBOL";
 		// CSV文件编码
 		String FEED_CSV_ENCODE = "FEED_CSV_ENCODE";
+		// 每个月出财务报表的日期
+		String MAKE_FINANCIAL_REPORT_DAY = "MAKE_FINANCIAL_REPORT_DAY";
 
 
+	}
+
+	public interface STATUS_VALUE {
+
+		// 物品状态（vms系统用）
+		interface PRODUCT_STATUS {
+			String OPEN = "1";
+			String PACKAGE = "2";
+			String SHIPPED = "3";
+			String RECEIVED = "5";
+			String RECEIVE_WITH_ERROR = "6";
+			String CANCEL = "7";
+		}
 	}
 }

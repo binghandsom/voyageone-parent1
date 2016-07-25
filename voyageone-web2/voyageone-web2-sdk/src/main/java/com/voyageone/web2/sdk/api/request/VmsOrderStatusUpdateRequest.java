@@ -37,11 +37,6 @@ public class VmsOrderStatusUpdateRequest extends VoApiRequest<VmsOrderStatusUpda
 	private String status;
 
 	/**
-	 * receivedTime（status = 5：Received时 必须）
-	 */
-	private Long receivedTime;
-
-	/**
 	 * receiver（status = 5：Received时 必须）
 	 */
 	private String receiver;
@@ -75,14 +70,6 @@ public class VmsOrderStatusUpdateRequest extends VoApiRequest<VmsOrderStatusUpda
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public Long getReceivedTime() {
-		return receivedTime;
-	}
-
-	public void setReceivedTime(Long receivedTime) {
-		this.receivedTime = receivedTime;
 	}
 
 	public String getReceiver() {

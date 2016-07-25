@@ -74,7 +74,13 @@
                 and `canceler` = #{canceler,jdbcType=VARCHAR}
             </if>
             <if test="receivedTime != null">
-                and `received_time` = #{receivedTime,jdbcType=VARCHAR}
+                and `received_time` = #{receivedTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="receivedTimeFrom !=null">
+                and `received_time` >= #{receivedTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="receivedTimeTo != null">
+                and #{receivedTimeTo,jdbcType=TIMESTAMP} => `received_time`
             </if>
             <if test="receiver != null">
                 and `receiver` = #{receiver,jdbcType=VARCHAR}
@@ -409,7 +415,8 @@
 
     <select id="selectListByTime" parameterType="HashMap" resultType="HashMap">
         select
-        t1.channel_id,t1.reservation_id,t1.shipment_id,t1.shipment_time,t1.status,t2.express_company,t2.tracking_no
+        t1.channel_id,t1.reservation_id,t1.consolidation_order_id,t1.client_sku,t1.name,t1.received_time,t1.shipment_id,t1.shipment_time,t1.status,t1.client_promotion_price
+        t2.express_company,t2.tracking_no,t2.shipment_name
         from vms_bt_order_detail t1
         left join vms_bt_shipment t2
         on t1.shipment_id = t2.id
@@ -434,6 +441,12 @@
             </if>
             <if test="cancelTimeTo != null">
                 and #{cancelTimeTo,jdbcType=TIMESTAMP} >= t1.cancel_time
+            </if>
+            <if test="receivedTimeFrom !=null">
+                and `received_time` >= #{receivedTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="receivedTimeTo != null">
+                and #{receivedTimeTo,jdbcType=TIMESTAMP} > `received_time`
             </if>
         </where>
     </select>
