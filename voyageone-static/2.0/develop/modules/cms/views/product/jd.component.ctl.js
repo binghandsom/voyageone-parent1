@@ -163,8 +163,9 @@ define([
                     if(scope.vm.mastData == null)
                         return;
 
-                    if(scope.vm.status != "Approved"){
-                        alert("该商品还未Approved！");
+                    if(scope.vm.platform == null || scope.vm.platform.pNumIId == null || scope.vm.platform.pNumIId == ""){
+                        var _msg = type == "single" ? "【单Code下线】。" : "【全group下线】。";
+                        alert("商品未完成平台上新，无法操作" + _msg);
                         return;
                     }
 
