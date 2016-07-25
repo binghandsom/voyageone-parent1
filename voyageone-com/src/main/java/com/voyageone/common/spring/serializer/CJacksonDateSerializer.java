@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.voyageone.common.util.DateTimeUtil;
 
 import java.io.IOException;
@@ -20,14 +21,20 @@ public class CJacksonDateSerializer extends JsonSerializer<Date> {
     @Override
     public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
 
-        String result = null;
-        if (!DateTimeUtil.getCreatedDefaultDate().equals(value)) {
-            result = DateTimeUtil.format(value, null);
-        }
-        if (result == null) {
-            jgen.writeString("");
+        if (CJacksonSerializerUtil.isCustom(jgen)) {
+            String result = null;
+            if (!DateTimeUtil.getCreatedDefaultDate().equals(value)) {
+                result = DateTimeUtil.format(value, null);
+            }
+            if (result == null) {
+                jgen.writeString("");
+            } else {
+                jgen.writeString(result);
+            }
         } else {
-            jgen.writeString(result);
+            if (value != null) {
+                DateSerializer.instance.serialize(value, jgen, provider);
+            }
         }
     }
 }

@@ -1,15 +1,14 @@
 package com.voyageone.common.spring.serializer;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.StringUtils;
 
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * java日期对象经过Jackson库转换成JSON日期格式化自定义类
@@ -21,10 +20,14 @@ public class CJacksonTimestampDeserializer extends JsonDeserializer<Timestamp> {
 
     @Override
     public Timestamp deserialize(JsonParser parser, DeserializationContext context) throws IOException{
+        String fieldData = parser.getText();
+        if (StringUtils.isNumeric(fieldData)) {
+            return new Timestamp(Long.parseLong(fieldData));
+        }
+
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
         SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
         try {
-            String fieldData = parser.getText();
 
             //Timestamp
             if (fieldData == null || "".equals(fieldData)) {
