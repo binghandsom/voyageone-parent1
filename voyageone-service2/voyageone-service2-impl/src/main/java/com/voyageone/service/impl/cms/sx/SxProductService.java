@@ -1870,7 +1870,7 @@ public class SxProductService extends BaseService {
                             InputField inputField = (InputField) field;
                             String styleCode = sxData.getStyleCode();
                             if (StringUtils.isEmpty(styleCode)) {
-                                styleCode = generateStyleCode(sxData, field.getId());
+                                styleCode = generateStyleCode(sxData);
                             }
                             inputField.setValue(styleCode);
                             $debug("tmall style code[" + field.getId() + "]: " + field.getValue());
@@ -1891,7 +1891,7 @@ public class SxProductService extends BaseService {
                                     InputField field = (InputField) processField;
                                     String styleCode = sxData.getStyleCode();
                                     if (StringUtils.isEmpty(styleCode)) {
-                                        styleCode = generateStyleCode(sxData, field.getId());
+                                        styleCode = generateStyleCode(sxData);
                                     }
                                     field.setValue(styleCode);
                                     retMap.put(processField.getId(), field);
@@ -1963,7 +1963,7 @@ public class SxProductService extends BaseService {
                             // modified by morse.lu 2016/07/06 end
                             String styleCode = sxData.getStyleCode();
                             if (StringUtils.isEmpty(styleCode)) {
-                                styleCode = generateStyleCode(sxData, field.getId());
+                                styleCode = generateStyleCode(sxData);
                             }
                             field.setValue(styleCode);
                             retMap.put(processField.getId(), field);
@@ -2458,20 +2458,13 @@ public class SxProductService extends BaseService {
      * 1. 如果不是达尔文体系，那么使用model作为款号直接返回
      * 2. 如果是达尔文体系，暂时不做
      * @param sxData SxData
-     * @param propId 优先从platforms.fields.propId里取，取不到用model
      * @throws Exception
      */
-    public String generateStyleCode(SxData sxData, String propId) throws Exception {
+    public String generateStyleCode(SxData sxData) throws Exception {
         boolean isDarwin = sxData.isDarwin();
         if (!isDarwin) {
             // 不是达尔文
             String styleCode = sxData.getMainProduct().getCommon().getFields().getModel();
-            // added by morse.lu 2016/07/22 start
-            String propVal = sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields().getStringAttribute(propId);
-            if (!StringUtils.isEmpty(propVal)) {
-                styleCode = propVal;
-            }
-            // added by morse.lu 2016/07/22 end
             // test用 start
 //            styleCode = "test." + styleCode;
             // test用 end
