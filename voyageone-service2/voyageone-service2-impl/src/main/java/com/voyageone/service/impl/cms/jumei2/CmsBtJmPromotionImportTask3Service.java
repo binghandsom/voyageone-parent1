@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -24,6 +25,7 @@ import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -242,8 +244,13 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         $info("初始化开始");
         for (ProductImportBean product : listProductImport) {
             $info("into"+ product.getProductCode());
+            saveInfo=new ProductSaveInfo();
+            saveInfo.p_ProductInfo=productService.getProductByCode(modelPromotion.getChannelId(), product.getProductCode());
+            if(saveInfo.p_ProductInfo==null){  $info("不存在"+ product.getProductCode()); return; }
+            saveInfo.p_Platform_Cart=saveInfo.p_ProductInfo.getPlatform(CartEnums.Cart.JM);
+
             List<SkuImportBean> listProductSkuImport = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());//获取商品的sku
-            saveInfo = loadSaveInfo(model, listProductSkuImport, product, listProducctErrorMap, listSkuErrorMap, userName);
+            loadSaveInfo(saveInfo,model, listProductSkuImport, product, listProducctErrorMap, listSkuErrorMap, userName);
             loadCmsBtPromotionCodes(saveInfo, listProductSkuImport, product,modelPromotion, userName);
             if (saveInfo != null) {
                 listSaveInfo.add(saveInfo);
@@ -273,9 +280,9 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
         return  promotion;
     }
-    private ProductSaveInfo loadSaveInfo(CmsBtJmPromotionModel model, List<SkuImportBean> listProductSkuImport, ProductImportBean product, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName) throws IllegalAccessException {
-        ProductSaveInfo saveInfo = new ProductSaveInfo();
-      //  List<SkuImportBean> listProductSkuImport = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());//获取商品的sku
+    private void loadSaveInfo(ProductSaveInfo saveInfo,CmsBtJmPromotionModel model, List<SkuImportBean> listProductSkuImport, ProductImportBean product, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName) throws IllegalAccessException {
+        //ProductSaveInfo saveInfo = new ProductSaveInfo();
+        //  List<SkuImportBean> listProductSkuImport = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());//获取商品的sku
         saveInfo.jmProductModel = daoExtCmsBtJmPromotionProduct.selectByProductCode(product.getProductCode(), model.getChannelId(), model.getId());
         if (saveInfo.jmProductModel == null) {
             saveInfo.jmProductModel = new CmsBtJmPromotionProductModel();
@@ -302,19 +309,15 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.jmProductModel.setChannelId(model.getChannelId());
             saveInfo.jmProductModel.setSynchStatus(0);
             saveInfo.jmProductModel.setLimit(product.getLimit());
-        }
-        else
-        {
-            if(model.getPrePeriodStart().getTime()< DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()&&saveInfo.jmProductModel.getSynchStatus()==2)
-            {
+        } else {
+            if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime() && saveInfo.jmProductModel.getSynchStatus() == 2) {
                 product.setErrorMsg("该商品预热已开始,不能导入");
                 listProducctErrorMap.add(MapUtil.toMap(product));
-               for(SkuImportBean skuImport:listProductSkuImport)
-               {
-                   skuImport.setErrorMsg("预热已开始,不能导入");
-                   listSkuErrorMap.add(MapUtil.toMap(skuImport));
-               }
-                return null;
+                for (SkuImportBean skuImport : listProductSkuImport) {
+                    skuImport.setErrorMsg("预热已开始,不能导入");
+                    listSkuErrorMap.add(MapUtil.toMap(skuImport));
+                }
+                return;
             }
         }
         saveInfo.jmProductModel.setAppId(product.getAppId());
@@ -335,24 +338,29 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         loadSaveTag(product.getPromotionTag(), saveInfo, model);
 
         //初始化CmsBtJmPromotionSkuModel
-
         loadSaveSku(saveInfo, listProductSkuImport, userName);
-
+        saveInfo.jmProductModel.setMaxMsrpUsd(new BigDecimal(saveInfo.p_ProductInfo.getCommon().getFields().getPriceMsrpEd()));
+        saveInfo.jmProductModel.setMinMsrpUsd(new BigDecimal(saveInfo.p_ProductInfo.getCommon().getFields().getPriceMsrpSt()));
+        saveInfo.jmProductModel.setMaxMsrpRmb(new BigDecimal(saveInfo.p_Platform_Cart.getpPriceMsrpEd()));
+        saveInfo.jmProductModel.setMinMsrpRmb(new BigDecimal(saveInfo.p_Platform_Cart.getpPriceMsrpSt()));
+        saveInfo.jmProductModel.setMaxRetailPrice(new BigDecimal(saveInfo.p_Platform_Cart.getpPriceRetailEd()));
+        saveInfo.jmProductModel.setMinRetailPrice(new BigDecimal(saveInfo.p_Platform_Cart.getpPriceRetailSt()));
+        saveInfo.jmProductModel.setMaxSalePrice(new BigDecimal(saveInfo.p_Platform_Cart.getpPriceSaleEd()));
+        saveInfo.jmProductModel.setMinSalePrice(new BigDecimal(saveInfo.p_Platform_Cart.getpPriceSaleSt()));
         if (saveInfo.jmSkuList.size() > 0) {
             saveInfo.jmProductModel.setMarketPrice(saveInfo.jmSkuList.get(0).getMarketPrice());
             saveInfo.jmProductModel.setDealPrice(saveInfo.jmSkuList.get(0).getDealPrice());
             saveInfo.jmProductModel.setDiscount(saveInfo.jmSkuList.get(0).getDiscount());//折扣
             saveInfo.jmProductModel.setSkuCount(saveInfo.jmSkuList.size());
         }
-        saveInfo._importProduct=product;
-        return saveInfo;
+        saveInfo._importProduct = product;
     }
 
     private void loadCmsBtPromotionCodes(ProductSaveInfo saveInfo, List<SkuImportBean> listSkuImport, ProductImportBean product, CmsBtPromotionModel modelPromotion,String userName) {
 
         // 获取Product信息 mongo
         JomgoQuery query = new JomgoQuery();
-        CmsBtProductModel productInfo = productService.getProductByCode(modelPromotion.getChannelId(), product.getProductCode());
+        CmsBtProductModel productInfo = saveInfo.p_ProductInfo;// productService.getProductByCode(modelPromotion.getChannelId(), product.getProductCode());
         query.setQuery("{\"productCodes\":\"" + product.getProductCode() + "\",\"cartId\":" + CartEnums.Cart.JM.getValue() + "}");
         CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(modelPromotion.getChannelId(), query);
        if(productInfo==null) return;
@@ -457,7 +465,21 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     }
     private void loadSaveSku(ProductSaveInfo saveInfo, List<SkuImportBean> listImport,String userName) {
         CmsBtJmPromotionSkuModel skuModel = null;
+
+        List<BaseMongoMap<String, Object>> listSkuMongo = saveInfo.p_Platform_Cart.getSkus();
         for (SkuImportBean skuImportBean : listImport) {
+            BaseMongoMap<String, Object> mapSkuPlatform = getJMPlatformSkuMongo(listSkuMongo, skuImportBean.getSkuCode());
+            if (mapSkuPlatform == null) {
+                skuImportBean.setErrorMsg("skuCode:" + skuImportBean.getSkuCode() + "jmPlatform未上新");
+                saveInfo._listSkuImport.add(skuImportBean);
+                continue;
+            }
+            CmsBtProductModel_Sku cmsBtProductModel_sku = saveInfo.p_ProductInfo.getCommon().getSku(skuImportBean.getSkuCode());
+            if (cmsBtProductModel_sku == null) {
+                skuImportBean.setErrorMsg("skuCode:" + skuImportBean.getSkuCode() + " Common().getSku不存在");
+                saveInfo._listSkuImport.add(skuImportBean);
+                continue;
+            }
             if (saveInfo.jmProductModel.getId() != null && saveInfo.jmProductModel.getId() > 0) {
                 skuModel = daoExtCmsBtJmPromotionSku.selectBySkuCode(skuImportBean.getSkuCode(), saveInfo.jmProductModel.getId());
             }
@@ -487,6 +509,14 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                     saveInfo.jmProductModel.setUpdateStatus(1);//已变更
                 }
             }
+            Double priceMsrp = mapSkuPlatform.getDoubleAttribute("priceMsrp");
+            Double priceRetail = mapSkuPlatform.getDoubleAttribute("priceRetail");
+            Double priceSale = mapSkuPlatform.getDoubleAttribute("priceSale");
+            skuModel.setMsrpRmb(new BigDecimal(priceMsrp));
+            skuModel.setRetailPrice(new BigDecimal(priceRetail));
+            skuModel.setSalePrice(new BigDecimal(priceSale));
+            skuModel.setMsrpUsd(new BigDecimal(cmsBtProductModel_sku.getClientMsrpPrice()));
+
             skuModel.setDealPrice(new BigDecimal(skuImportBean.getDealPrice()));
             skuModel.setMarketPrice(new BigDecimal(skuImportBean.getMarketPrice()));
             skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));//折扣
@@ -495,9 +525,18 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.jmSkuList.add(skuModel);
             skuModel = null;
         }
-
     }
-
+   private BaseMongoMap<String, Object>  getJMPlatformSkuMongo(List<BaseMongoMap<String, Object>> list,String skuCode)
+   {
+       for(BaseMongoMap<String, Object> map:list)
+       {
+           if(skuCode.equalsIgnoreCase(map.getStringAttribute("skuCode")))
+           {
+               return  map;
+           }
+       }
+       return null;
+   }
     private List<SkuImportBean> getListSkuImportBeanByProductCode(List<SkuImportBean> listSkuImport, String productCode) {
         return listSkuImport.stream().filter(skuImportBean -> skuImportBean.getProductCode().equals(productCode)).collect(Collectors.toList());
 //        List<SkuImportBean> listResult = new ArrayList<>();
