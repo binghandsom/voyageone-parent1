@@ -139,8 +139,10 @@ public class FeedToCmsService extends BaseService {
                     product.setCreater(befproduct.getCreater());
                     product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
                     //feed增加状态属性(New(9), Waiting For Import(0),Finish Import(1),Error(2), Not Import(3))，9,3 ,0->不变, 2, 1->0
-                    if ((befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1 || befproduct.getUpdFlg() == 0) && insertLog) {
-                        product.setUpdFlg(0);
+                    if (befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1 || befproduct.getUpdFlg() == 0) {
+                        if(insertLog) {
+                            product.setUpdFlg(0);
+                        }
                     } else {
                         product.setUpdFlg(9);
                     }

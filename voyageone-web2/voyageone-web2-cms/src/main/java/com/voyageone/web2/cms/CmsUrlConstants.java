@@ -547,6 +547,8 @@ public interface CmsUrlConstants {
             String CHECK_CATEGORY = "checkCategory";
             String GetChangeMastProductInfo="getChangeMastProductInfo";
             String SetMastProduct="setMastProduct";
+            String Delisting="delisting";
+            String DelistinGroup="delistinGroup";
         }
 
         interface HISTORY {
@@ -558,7 +560,6 @@ public interface CmsUrlConstants {
         interface StatusHistory {
             String ROOT = "/cms/product/statushistory";
             String GetPage = "getPage";
-            String GetCount="getCount";
         }
     }
 

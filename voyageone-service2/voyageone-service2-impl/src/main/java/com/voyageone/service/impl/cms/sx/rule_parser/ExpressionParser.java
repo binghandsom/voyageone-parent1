@@ -119,7 +119,7 @@ public class ExpressionParser extends VOAbsLoggable {
                     // added by morse.lu 2016/06/27 start
                     case COMMON:
                         // 从product表的common下去取
-                        commonWordParser.parse(ruleWord);
+                        plainValue = commonWordParser.parse(ruleWord);
                     // added by morse.lu 2016/06/27 end
                 }
 

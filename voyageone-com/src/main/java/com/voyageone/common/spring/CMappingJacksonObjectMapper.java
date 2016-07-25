@@ -27,16 +27,16 @@ public class CMappingJacksonObjectMapper extends ObjectMapper {
         //long 自动按字符串序列化  js没有长整型
         //this.configure(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, true);
         //按方法get set 后名字大小写序列化
-//        this.setPropertyNamingStrategy(new CDefaultPropertyNamingStrategy());
+        //this.setPropertyNamingStrategy(new CDefaultPropertyNamingStrategy());
         //自定义显示日期格式
-        //  SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        //  this.setDateFormat(formatter);
+        //this.setDateFormat(formatter);
         this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        SimpleModule newModuleTimestamp = new SimpleModule("CJacksonTimestampSerializer", Version.unknownVersion());
-        //  newModule.addSerializer(Date.class, new CJacksonDateSerializer());
-        newModuleTimestamp.addDeserializer(Timestamp.class, new CJacksonTimestampDeserializer());
-        this.registerModule(newModuleTimestamp);
+        //SimpleModule newModuleTimestamp = new SimpleModule("CJacksonTimestampSerializer", Version.unknownVersion());
+        //newModule.addSerializer(Date.class, new CJacksonDateSerializer());
+        //newModuleTimestamp.addDeserializer(Timestamp.class, new CJacksonTimestampDeserializer());
+        //this.registerModule(newModuleTimestamp);
         SimpleModule newModule = new SimpleModule("CJacksonDateSerializer", Version.unknownVersion());
         newModule.addSerializer(Date.class, new CJacksonDateSerializer());
         newModule.addDeserializer(Date.class, new CJacksonDateDeserializer());

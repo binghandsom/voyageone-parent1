@@ -66,7 +66,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = daoExtCmsBtJmPromotionProduct.selectJMCopyList(promotionId);
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
+                LOG.info(promotionId+" code:"+model.getProductCode() + "上新begin");
                 updateJm(modelCmsBtJmPromotion, model, shopBean);
+                LOG.info(promotionId+" code:"+model.getProductCode() + "上新end");
             }
         } catch (Exception ex) {
             LOG.error("addProductAndDealByPromotionId上新失败", ex);
@@ -202,10 +204,11 @@ public class JuMeiProductPlatform3Service extends BaseService {
                     getDealByHashIDRequest.setJumei_hash_id(response.getSell_hash_id());
                     HtDealGetDealByHashIDResponse getDealByHashIDResponse = serviceJumeiHtDeal.getDealByHashID(shopBean, getDealByHashIDRequest);
                     long activityStart = DateTimeUtilBeijing.toLocalTime(modelCmsBtJmPromotion.getActivityStart());
-                    if (getDealByHashIDResponse.getEnd_time().getTime() >= activityStart) {//if true then 和本次活动重叠 Sell_hash_id作为本次活动的jumeiHashId
+                    long jmEndTime=DateTimeUtilBeijing.toLocalTime(getDealByHashIDResponse.getEnd_time());
+                    if (jmEndTime >= activityStart) {//if true then 和本次活动重叠 Sell_hash_id作为本次活动的jumeiHashId
                         model.setJmHashId(response.getSell_hash_id());
                         long activeEnd = DateTimeUtilBeijing.toLocalTime(modelCmsBtJmPromotion.getActivityEnd());
-                        if (activeEnd > getDealByHashIDResponse.getEnd_time().getTime()) {//if true then 本次活动时间大于deal的结束时间 延期
+                        if (activeEnd > jmEndTime) {//if true then 本次活动时间大于deal的结束时间 延期
                             model.setDealEndTimeStatus(1);
                         }
                     }

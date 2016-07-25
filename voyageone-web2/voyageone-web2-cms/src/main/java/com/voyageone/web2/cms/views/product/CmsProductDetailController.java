@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.product;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CustomPropBean;
+import com.voyageone.service.bean.cms.product.DelistingParameter;
 import com.voyageone.service.bean.cms.product.GetChangeMastProductInfoParameter;
 import com.voyageone.service.bean.cms.product.SetMastProductParameter;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -169,11 +170,26 @@ public class CmsProductDetailController extends CmsController {
         parameter.setChannelId(getUser().getSelChannelId());
         return success(productPropsEditService.getChangeMastProductInfo(parameter));
     }
+
     //设置主商品
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SetMastProduct)
     public AjaxResponse setMastProduct(@RequestBody SetMastProductParameter parameter) {
         parameter.setChannelId(getUser().getSelChannelId());
-        productPropsEditService.setMastProduct(parameter,getUser().getUserName());
+        productPropsEditService.setMastProduct(parameter, getUser().getUserName());
+        return success(null);
+    }
+    //单品下架
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.Delisting)
+    public AjaxResponse delisting(@RequestBody DelistingParameter parameter) {
+        parameter.setChannelId(getUser().getSelChannelId());
+        productPropsEditService.delisting(parameter, getUser().getUserName());
+        return success(null);
+    }
+    //group下架
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.DelistinGroup)
+    public AjaxResponse delistinGroup(@RequestBody DelistingParameter parameter) {
+        parameter.setChannelId(getUser().getSelChannelId());
+        productPropsEditService.delistinGroup(parameter, getUser().getUserName());
         return success(null);
     }
 }

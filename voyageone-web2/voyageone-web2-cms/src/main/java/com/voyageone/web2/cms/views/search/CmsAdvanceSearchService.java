@@ -73,8 +73,10 @@ public class CmsAdvanceSearchService extends BaseAppService {
     private CmsBtProductDao cmsBtProductDao;
 
     // 查询产品信息时的缺省输出列
-    public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;platforms;" +
-            "common.skus.skuCode;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
+    public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;platforms;lock;" +
+            "common.skus.skuCode;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
+            "common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.images5;common.fields.images6;common.fields.images7;common.fields.images8;common.fields.images9;" +
+            "common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
             "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;";
 
     /**
@@ -113,13 +115,13 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
         // 店铺(cart/平台)列表
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
-        // 按cart获取promotion list
+        // 按cart获取promotion list，只加载有效的活动(活动期内/未关闭/有标签)
         Map<String, List> promotionMap = new HashMap<>();
         param = new HashMap<>();
         for (TypeChannelBean cartBean : cartList) {
             if (CartEnums.Cart.JM.getId().equals(cartBean.getValue())) {
                 // 聚美促销活动预加载
-                promotionMap.put(CartEnums.Cart.JM.getId(), jmPromotionService.getJMActivePromotions(userInfo.getSelChannelId()));
+                promotionMap.put(CartEnums.Cart.JM.getId(), jmPromotionService.getJMActivePromotions(CartEnums.Cart.JM.getValue(), userInfo.getSelChannelId()));
             } else {
                 param.put("cartId", Integer.parseInt(cartBean.getValue()));
                 promotionMap.put(cartBean.getValue(), promotionService.getPromotions4AdvSearch(userInfo.getSelChannelId(), param));

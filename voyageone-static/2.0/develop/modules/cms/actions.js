@@ -104,7 +104,9 @@ define(function () {
                     "updateProductAtts":"updateProductAtts",
                     "checkCategory":"checkCategory",
                     getChangeMastProductInfo:"getChangeMastProductInfo",
-                    setMastProduct:"setMastProduct"
+                    setMastProduct:"setMastProduct",
+                    delisting:"delisting",
+                    delistinGroup:"delistinGroup"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -398,6 +400,10 @@ define(function () {
                     root: '/cms/price/log',
                     page: 'page',
                     export: 'export'
+                },
+                statusHistoryService: {
+                    root: "/cms/product/statushistory",
+                    getPage: "getPage"
                 },
                 "$addChannelCategoryService": {
                     "root": "/cms/pop/add_to_channel_category",

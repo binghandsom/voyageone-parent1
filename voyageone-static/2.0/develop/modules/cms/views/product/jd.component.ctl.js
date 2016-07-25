@@ -32,12 +32,15 @@ define([
                 initialize();
                 scope.jdCategoryMapping = jdCategoryMapping;
                 scope.openSellerCat = openSellerCat;
+                scope.openSwitchMainPop = openSwitchMainPop;
+                scope.openOffLinePop = openOffLinePop;
                 scope.saveProduct = saveProduct;
                 scope.validSchema = validSchema;
                 scope.selectAll = selectAll;
                 scope.pageAnchor = pageAnchor;
                 scope.allSkuSale = allSkuSale;
-                scope.limitNumber = limitNumber;
+                scope.focusError = focusError;
+
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -74,8 +77,6 @@ define([
                             scope.vm.skuTemp[mSku.skuCode] = mSku;
                         });
 
-                        constructSchema(scope,$compile);
-
                     });
 
                     switch(+scope.cartInfo.value){
@@ -96,39 +97,6 @@ define([
                             break;
                     }
 
-                }
-
-                var itemScope;
-                var productScope;
-
-                function constructSchema(parentScope, compile) {
-
-                    var _plateForm = parentScope.vm.platform;
-
-                    if(_plateForm.schemaFields){
-                        var _item = element.find('#itemContainer');
-                        var _product = element.find('#productContainer');
-
-                        if (itemScope)
-                            itemScope.$destroy();
-                        if (productScope)
-                            productScope.$destroy();
-
-                        _item.empty();
-                        _product.empty();
-
-                        _item.html('<schema data="data"></schema>');
-                        _product.html('<schema data="data"></schema>');
-
-                        itemScope = parentScope.$new();
-                        productScope = parentScope.$new();
-
-                        itemScope.data = _plateForm.schemaFields.item == null ? null : _plateForm.schemaFields.item;
-                        productScope.data = _plateForm.schemaFields.product == null ? null : _plateForm.schemaFields.product;
-
-                        compile(_item)(itemScope);
-                        compile(_product)(productScope);
-                    }
                 }
 
                 /**
@@ -166,8 +134,6 @@ define([
                                 scope.vm.platform.pStatus == 'WaitingPublish';
                                 scope.vm.status =  "Pending";
 
-                                //刷新schema
-                                constructSchema(scope,$compile);
                             });
                         });
                 }
@@ -186,6 +152,44 @@ define([
                             /**清空原来店铺类分类*/
                             scope.vm.sellerCats = [];
                             scope.vm.sellerCats = context.sellerCats;
+                    });
+                }
+
+                /**
+                 *  切换主类目   cartInfo.value,vm.mastData.productCode
+                 */
+                function openSwitchMainPop(openSwitchMain){
+                    openSwitchMain({
+                        cartId:scope.cartInfo.value,
+                        productCode:scope.vm.mastData.productCode
+                    }).then(function(){
+                        //刷新子页面
+                        getplatformData();
+                    });
+                }
+
+                /**
+                 *  商品下线
+                 */
+                function openOffLinePop(openProductOffLine,type){
+
+                    if(scope.vm.status != "Approved"){
+                        alert("该商品还未Approved！");
+                        return;
+                    }
+
+                    if(scope.vm.mastData.isMain && type != 'group'){
+                        alert("当前商品为主商品，无法单品下线。如果想下线整个商品，请点击【全group下线】按钮");
+                        return;
+                    }
+
+                    openProductOffLine({
+                        cartId:scope.cartInfo.value,
+                        productCode:scope.vm.mastData.productCode,
+                        type:type
+                    }).then(function(){
+                        //刷新子页面
+                        getplatformData();
                     });
                 }
 
@@ -297,6 +301,7 @@ define([
                 }
 
                 function validSchema(){
+
                     return scope.vm.platform == null || scope.vm.platform.schemaFields == null ? false : scope.schemaForm.$valid && scope.skuForm.$valid;
                 }
 
@@ -311,10 +316,12 @@ define([
                  * @param index div的index
                  * @param speed 导航速度 ms为单位
                  */
-                function pageAnchor(index,speed){
+                function pageAnchor(area,speed){
                     var offsetTop = 0;
-                    if(index != 1)
-                        offsetTop = ($("#"+scope.cartInfo.name+index).offset().top);
+                    if(area != 'master'){
+                        offsetTop = element.find("#"+area).offset().top;
+                    }
+
                     $("body").animate({ scrollTop:  offsetTop-100}, speed);
                 }
 
@@ -342,11 +349,13 @@ define([
                     });
                 }
 
-                function limitNumber(event,price){
-                    var patten = /[\d]/;
-                    console.log(price)
-                    if(!patten.test(event.key) || price > Math.pow(10,14))
-                        event.preventDefault();
+                /**错误聚焦*/
+                function focusError(){
+                   if(!validSchema()){
+                       var firstError = element.find("schema .ng-invalid:first");
+                       firstError.focus();
+                       firstError.addClass("focus-error");
+                   }
                 }
 
             }

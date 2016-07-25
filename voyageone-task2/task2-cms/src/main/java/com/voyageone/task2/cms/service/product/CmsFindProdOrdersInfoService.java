@@ -16,10 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 从订单历史记录表中统计出指定销量数据
@@ -60,7 +57,7 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
     }
 
-    protected void onStartup(List<TaskControlBean> taskControlList, Map<String, Set<String>> prodCodeChannelMap) throws Exception {
+    protected void onStartup(List<TaskControlBean> taskControlList, Map<String, Set<String>> prodCodeChannelMap, Map<String, Object> rsMap) throws Exception {
         $info("onStartup start");
         List<OrderChannelBean> list = channelService.getChannelListBy(null, null, -1, "1");
         if (list == null || list.isEmpty()) {
@@ -88,10 +85,26 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
         grpqryObj2.setQuery("{'cartId':0}");
         grpqryObj2.setProjection("{'groupId':1,'productCodes':1,'_id':1}");
         grpqryObj2.setLimit(PAGE_LIMIT);
+        long staTime = 0;
+        List<OrderChannelBean> list2 = new ArrayList<>();
 
         for (OrderChannelBean chnObj : list) {
+            staTime = System.currentTimeMillis();
             String channelId = chnObj.getOrder_channel_id();
             $info(String.format("onStartup excute msg channel_id:%s", channelId));
+            // 先判断该店铺的cms_bt_product_cxxx表是否存在
+            boolean exists = cmsBtProductDao.collectionExists(cmsBtProductDao.getCollectionName(channelId));
+            if (!exists) {
+                $warn("CmsCopyOrdersInfoService 本店铺对应的cms_bt_product_cxxx表不存在！ channelId=" + channelId);
+                continue;
+            }
+            // 判断该店铺的cms_bt_product_group_cxxx表是否存在
+            exists = cmsBtProductGroupDao.collectionExists(cmsBtProductGroupDao.getCollectionName(channelId));
+            if (!exists) {
+                $warn("CmsCopyOrdersInfoService 本店铺对应的cms_bt_product_group_cxxx表不存在！ channelId=" + channelId);
+                continue;
+            }
+
             //get prodCodeSet
             Set<String> prodCodeSet = prodCodeChannelMap.get(channelId);
             if ($isDebugEnabled()) {
@@ -177,8 +190,11 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
             runWithThreadPool(runnableList3, taskControlList);
             $info(String.format("sumAllCartGroupOrders end msg channel_id:%s", channelId));
 
+            chnObj.setModifier(Long.toString((System.currentTimeMillis() - staTime) / 1000));
+            list2.add(chnObj);
         } // end for channel list
 
+        rsMap.put("secPhase", list2);
         $info("onStartup end");
     }
 

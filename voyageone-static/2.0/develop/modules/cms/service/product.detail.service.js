@@ -31,6 +31,8 @@ define([
 		this.checkCategory = checkCategory;
 		this.getChangeMastProductInfo = getChangeMastProductInfo;
 		this.setMastProduct = setMastProduct;
+		this.delisting = delisting;
+		this.delistinGroup = delistinGroup;
 
 		/**
 		 * 获取页面产品信息
@@ -376,6 +378,38 @@ define([
 		function setMastProduct(req){
 			var defer = $q.defer();
 			$productDetailService.setMastProduct(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 产品下线
+		 * @param req {cartId:27,productCode:"CRBT0003SP-",comment:""}  平台id，产品code,备注
+		 * @returns {*}
+		 */
+		function delisting(req){
+			var defer = $q.defer();
+			$productDetailService.delisting(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 全group下线
+		 * @param req {cartId:27,productCode:"CRBT0003SP-",comment:""}  平台id，产品code，备注
+		 * @returns {*}
+		 */
+		function delistinGroup(req){
+			var defer = $q.defer();
+			$productDetailService.delistinGroup(req)
 				.then (function (res) {
 					defer.resolve(res);
 				},function(res){

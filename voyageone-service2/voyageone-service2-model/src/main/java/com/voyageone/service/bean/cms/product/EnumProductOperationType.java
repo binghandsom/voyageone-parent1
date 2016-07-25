@@ -5,7 +5,9 @@ package com.voyageone.service.bean.cms.product;
  */
 public enum  EnumProductOperationType {
     Add(0, "新增"),
-    ChangeMastProduct(1,"切换主商品");
+    ChangeMastProduct(1, "切换主商品"),
+    Delisting(2, "单品下架");
+
     private int id;
     private String name;
 
@@ -31,7 +33,7 @@ public enum  EnumProductOperationType {
     }
 
     public static EnumProductOperationType get(Object id) {
-        int value=Integer.parseInt(id.toString());
+        int value = Integer.parseInt(id.toString());
         EnumProductOperationType[] list = EnumProductOperationType.values();
         for (EnumProductOperationType operationType : list) {
             if (operationType.getId() == value) {
@@ -40,10 +42,10 @@ public enum  EnumProductOperationType {
         }
         return null;
     }
-    public static String getNameById(Object id)
-    {
-        EnumProductOperationType operationType=get(id);
-        if(operationType!=null) return operationType.getName();
+
+    public static String getNameById(Object id) {
+        EnumProductOperationType operationType = get(id);
+        if (operationType != null) return operationType.getName();
         return "";
     }
 }

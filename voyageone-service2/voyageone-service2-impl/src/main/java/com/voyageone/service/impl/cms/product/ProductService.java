@@ -14,12 +14,18 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.CartEnums.Cart;
+import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.jd.service.JdProductService;
+import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.*;
@@ -93,8 +99,16 @@ public class ProductService extends BaseService {
 
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
+
     @Autowired
     private SxProductService sxProductService;
+
+    @Autowired
+    private TbProductService tbProductService;
+
+    @Autowired
+    private JdProductService jdProductService;
+
 
     /**
      * 获取商品 根据ID获
@@ -687,12 +701,22 @@ public class ProductService extends BaseService {
 
         StringBuilder sbQuery = new StringBuilder();
 
-        if (!StringUtils.isEmpty(skuIncludes)) {
-            sbQuery.append(MongoUtils.splicingValue("platforms.P" + cartId + ".skus.skuCode", skuIncludes, "$regex"));
-            sbQuery.append(",");
-        } else if (skuList != null && !skuList.isEmpty()) {
-            sbQuery.append(MongoUtils.splicingValue("platforms.P" + cartId + ".skus.skuCode", skuList.toArray(new String[skuList.size()])));
-            sbQuery.append(",");
+        if("0".equalsIgnoreCase(cartId)){
+            if (!StringUtils.isEmpty(skuIncludes)) {
+                sbQuery.append(MongoUtils.splicingValue("common.skus.skuCode", skuIncludes, "$regex"));
+                sbQuery.append(",");
+            } else if (skuList != null && !skuList.isEmpty()) {
+                sbQuery.append(MongoUtils.splicingValue("common.skus.skuCode", skuList.toArray(new String[skuList.size()])));
+                sbQuery.append(",");
+            }
+        }else {
+            if (!StringUtils.isEmpty(skuIncludes)) {
+                sbQuery.append(MongoUtils.splicingValue("platforms.P" + cartId + ".skus.skuCode", skuIncludes, "$regex"));
+                sbQuery.append(",");
+            } else if (skuList != null && !skuList.isEmpty()) {
+                sbQuery.append(MongoUtils.splicingValue("platforms.P" + cartId + ".skus.skuCode", skuList.toArray(new String[skuList.size()])));
+                sbQuery.append(",");
+            }
         }
 
         // 设定name的模糊查询
@@ -716,13 +740,20 @@ public class ProductService extends BaseService {
 
         List<ProductForOmsBean> resultInfo = new ArrayList<>();
         for (CmsBtProductModel product : products) {
-            List<BaseMongoMap<String, Object>> skus;
-            if(!StringUtils.isEmpty(skuIncludes)){
-                skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
-                        .filter(sku->sku.getStringAttribute("skuCode").indexOf(skuIncludes) > -1).collect(Collectors.toList());
-            }else{
-                skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
-                        .filter(sku -> skuList.contains(sku.getStringAttribute("skuCode"))).collect(Collectors.toList());
+            List<BaseMongoMap<String, Object>> skus = new ArrayList<>();
+            if("0".equalsIgnoreCase(cartId)){
+                List<CmsBtProductModel_Sku> skus1 = product.getCommon().getSkus();
+                for(CmsBtProductModel_Sku s:skus1) {
+                    skus.add(s);
+                }
+            }else {
+                if (!StringUtils.isEmpty(skuIncludes)) {
+                    skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
+                            .filter(sku -> sku.getStringAttribute("skuCode").indexOf(skuIncludes) > -1).collect(Collectors.toList());
+                } else {
+                    skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
+                            .filter(sku -> skuList.contains(sku.getStringAttribute("skuCode"))).collect(Collectors.toList());
+                }
             }
             if(skus == null || skus.size() == 0) return resultInfo;
             skus.forEach(skuInfo -> {
@@ -733,7 +764,12 @@ public class ProductService extends BaseService {
                 bean.setSku(skuCode);
                 bean.setProduct(product.getCommon().getFields().getProductNameEn());
                 bean.setDescription(product.getCommon().getFields().getLongDesEn());
-                Double priceSale = skuInfo.getDoubleAttribute("priceSale");
+                Double priceSale;
+                if("0".equalsIgnoreCase(cartId)){
+                    priceSale = skuInfo.getDoubleAttribute("priceRetail");
+                }else{
+                    priceSale = skuInfo.getDoubleAttribute("priceSale");
+                }
                 bean.setPricePerUnit(String.valueOf(priceSale));
                 // TODO 目前无法取得库存值
                 Map<String, Object> param = new HashMap<>();
@@ -756,7 +792,7 @@ public class ProductService extends BaseService {
 
                 // TODO 目前写死,以后再想办法修改
                 String numIid = "";
-                CartEnums.Cart cartEnum = CartEnums.Cart.getValueByID(cartId);
+                Cart cartEnum = Cart.getValueByID(cartId);
                 if (cartEnum != null) {
                     switch (cartEnum) {
                         case TG:
@@ -1180,5 +1216,26 @@ public class ProductService extends BaseService {
         insertSxWorkLoad(channelId, getProductById(channelId, prodId), modifier);
         insertProductHistory(channelId, prodId);
         return modified;
+    }
+
+    public void delPlatfromProduct(String channelId, Integer cartId, String numIid){
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
+        Cart cartEnum = Cart.getValueByID(cartId.toString());
+        try {
+            switch (cartEnum) {
+                case TM:
+                case TG:
+                    tbProductService.delItem(shopBean, numIid);
+                    break;
+                case JD:
+                case JG:
+                case JGY:
+                case JGJ:
+                    jdProductService.delItem(shopBean,numIid);
+                    break;
+            }
+        }catch (Exception e){
+            throw new BusinessException("商品删除失败：" + e.getMessage());
+        }
     }
 }
