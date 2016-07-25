@@ -13,8 +13,10 @@ define([
                 selectedCart: null,
                 selectedStatus: 2
             };
+            this.queryParams = {};
             this.cartList = [];
             this.brandMappingList = [];
+            this.platformPageOption = {curr: 1, total: 0, size: 10, fetch: this.gotoBrandPage};
         }
 
         BrandMappingController.prototype = {
@@ -42,12 +44,31 @@ define([
             },
             searchBrands: function() {
             	var self = this;
-            	var post = {
+            	var params = self.queryParams = {
             		'cartId': self.searchInfo.selectedCart,
             		'mappingState': self.searchInfo.selectedStatus,
             		'brandName': self.searchInfo.selectedBrand
             	};
-            	self.brandMappingService.searchBrands(post).then(function(res) {
+            	self.brandMappingService.searchBrands(params).then(function(res) {
+            		self.platformPageOption.total = res.data.brandCount;
+            	});
+            	self.gotoBrandPage(1, self.platformPageOption.size);
+            },
+            gotoBrandPage: function(pageIndex, pageRowCount) {
+            	var self = this;
+            	var params = self.queryParams;
+            	params['offset'] = (pageIndex - 1) * pageRowCount;
+            	params['size'] = pageRowCount;
+            	self.brandMappingService.searchBrandsByPage(params).then(function(res) {
+            		self.brandMappingList = res.data.brandList;
+            	});
+            },
+            searchCustBrands: function() {
+            	var self = this;
+            	var params = {
+            		
+            	};
+            	self.brandMappingService.searchCustBrands(params).then(function(res) {
             		self.brandMappingList = res.data.brandList;
             	});
             }

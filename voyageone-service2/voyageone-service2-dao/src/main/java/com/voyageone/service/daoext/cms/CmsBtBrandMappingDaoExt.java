@@ -14,8 +14,13 @@ import com.voyageone.service.bean.cms.BrandBtMappingBean;
 public interface CmsBtBrandMappingDaoExt {
 
 	/**
-	 * 检索品牌映射关系
+	 * 检索品牌映射关系（合计）
 	 */
-	List<BrandBtMappingBean> searchBrands(Map<String, Object> params);
+	Long searchBrandsCount(Map<String, Object> params);
+	
+	/**
+	 * 检索品牌映射关系（分页）
+	 */
+	List<BrandBtMappingBean> searchBrandsByPage(Map<String, Object> params);
 
 }

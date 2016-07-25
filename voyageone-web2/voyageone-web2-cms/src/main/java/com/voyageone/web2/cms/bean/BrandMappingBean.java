@@ -3,12 +3,19 @@ package com.voyageone.web2.cms.bean;
 import java.io.Serializable;
 
 /**
- * 品牌的关系映射的属性集（平台品牌设置一览）
- * @author Wangtd
+ * Created by Wangtd on 7/25/16.
  */
 public class BrandMappingBean implements Serializable {
 
 	private static final long serialVersionUID = 6382536229319502841L;
+
+	//------------------ 页面分页用字段 --------------------
+	
+	/** 分页偏移量 */
+	private Integer offset;
+	
+	/** 分页大小 */
+	private Integer size;
 	
 	//------------------ 数据存储用字段 --------------------
 	
@@ -41,6 +48,22 @@ public class BrandMappingBean implements Serializable {
 		return channelId;
 	}
 	
+	public Integer getOffset() {
+		return offset;
+	}
+
+	public void setOffset(Integer offset) {
+		this.offset = offset;
+	}
+
+	public Integer getSize() {
+		return size;
+	}
+
+	public void setSize(Integer size) {
+		this.size = size;
+	}
+
 	public void setChannelId(String channelId) {
 		this.channelId = channelId;
 	}

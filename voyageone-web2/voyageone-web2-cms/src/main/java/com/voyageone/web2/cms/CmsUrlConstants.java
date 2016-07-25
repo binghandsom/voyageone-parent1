@@ -423,10 +423,18 @@ public interface CmsUrlConstants {
         interface BRAND {
         	/** 根路径 */
         	String ROOT = "/cms/mapping/brand";
+        	
         	/** 页面初始化 */
         	String INIT = "init";
+        	
         	/** 检索品牌映射关系 */
         	String SEARCH_BRANDS = "searchBrands";
+        	
+        	/** 检索品牌映射关系分页数据 */
+        	String SEARCH_BRANDS_BY_PAGE = "searchBrandsByPage";
+        	
+        	/** 检索客户的品牌 */
+        	String SEARCH_CUST_BRANDS = "searchCustBrands";
         }
     }
 
@@ -572,7 +580,6 @@ public interface CmsUrlConstants {
         interface StatusHistory {
             String ROOT = "/cms/product/statushistory";
             String GetPage = "getPage";
-            String GetCount="getCount";
         }
     }
 

@@ -160,7 +160,9 @@ define(function () {
                 'brandMappingService': {
                 	'root': '/cms/mapping/brand',
                 	'init': 'init',
-                	'searchBrands': 'searchBrands'
+                	'searchBrands': 'searchBrands',
+                	'searchBrandsByPage': 'searchBrandsByPage',
+                	'searchCustBrands': 'searchCustBrands'
                 }
             },
             "promotion": {
@@ -405,6 +407,10 @@ define(function () {
                     root: '/cms/price/log',
                     page: 'page',
                     export: 'export'
+                },
+                statusHistoryService: {
+                    root: "/cms/product/statushistory",
+                    getPage: "getPage"
                 },
                 "$addChannelCategoryService": {
                     "root": "/cms/pop/add_to_channel_category",

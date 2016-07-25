@@ -219,6 +219,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
                     });
                     updateMap.put("platforms.P23.fields." + s1, upValSku);
 //                } else if ("prop_13021751".equals(s1)) {
+                    // 不要回写,model是主字段,会影响别的逻辑,改上新逻辑,货号优先去platform.P23.prop_13021751里取，取不到，再用model
 //                    // 货号，回写进主商品common.fields.model
 //                    updateMap.put("common.fields.model", o);
                 } else {
@@ -284,7 +285,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
 
                 try {
                     // ★★★★★此更新方法已经被干掉了，需要的话，本地打开★★★★★
-                    cmsBtProductDao.update(model);
+                    cmsBtProductDao.updateByModel(model);
                 } catch (BusinessException ex) {
                     $warn("product表更新关闭!");
                 }

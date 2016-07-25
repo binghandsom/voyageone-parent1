@@ -24,18 +24,29 @@ public class BrandMappingService extends BaseAppService {
 	/**
 	 * 搜索品牌匹配数据
 	 */
-	public List<BrandBtMappingBean> searchBrands(BrandMappingBean brandMapping) {
-		Map<String, Object> otherParams = new HashMap<String, Object>();
-		otherParams.put("mappingState", brandMapping.getMappingState());
-		otherParams.put("brandName", brandMapping.getBrandName());
+	public List<BrandBtMappingBean> searchBrandsByPage(BrandMappingBean brandMapping) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("mappingState", brandMapping.getMappingState());
+		params.put("brandName", brandMapping.getBrandName());
+		params.put("offset", brandMapping.getOffset());
+		params.put("size", brandMapping.getSize());
 		// 查询品牌匹配关系
-		return brandBtMappingService.searchBrands(brandMapping.getChannelId(), brandMapping.getCartId(),
-				brandMapping.getLangId(), otherParams);
+		return brandBtMappingService.searchBrandsByPage(brandMapping.getChannelId(), brandMapping.getCartId(),
+				brandMapping.getLangId(), params);
 	}
 
 	public Object searchCustBrands(BrandMappingBean brandMapping) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public Long searchBrandsCount(BrandMappingBean brandMapping) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("mappingState", brandMapping.getMappingState());
+		params.put("brandName", brandMapping.getBrandName());
+		// 查询品牌匹配关系
+		return brandBtMappingService.searchBrandsCount(brandMapping.getChannelId(), brandMapping.getCartId(),
+				brandMapping.getLangId(), params);
 	}
 
 }

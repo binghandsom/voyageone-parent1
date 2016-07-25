@@ -22,12 +22,23 @@ public class BrandBtMappingService extends BaseService {
 	@Autowired
 	private CmsBtBrandMappingDaoExt cmsBtBrandMappingDaoExt;
 	
-	public List<BrandBtMappingBean> searchBrands(String channelId, int cartId, String langId,
+	public List<BrandBtMappingBean> searchBrandsByPage(String channelId, int cartId, String langId,
+			Map<String, Object> others) {
+		Map<String, Object> params = formatBrandsQueryParameter(channelId, cartId, langId, others);
+		return cmsBtBrandMappingDaoExt.searchBrandsByPage(params);
+	}
+
+	public Long searchBrandsCount(String channelId, Integer cartId, String langId, Map<String, Object> others) {
+		Map<String, Object> params = formatBrandsQueryParameter(channelId, cartId, langId, others);
+		return cmsBtBrandMappingDaoExt.searchBrandsCount(params);
+	}
+	
+	private Map<String, Object> formatBrandsQueryParameter(String channelId, int cartId, String langId,
 			Map<String, Object> others) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		// 必要参数设置
 		params.put("channelId", channelId);
-		params.put("cardId", cartId);
+		params.put("cartId", cartId);
 		params.put("langId", langId);
 		params.put("typeId", 41); // TODO 品牌类型ID为41，常量在哪里定义？
 		// 区分聚美品牌与其他品牌
@@ -41,7 +52,7 @@ public class BrandBtMappingService extends BaseService {
 			params.putAll(others);
 		}
 		
-		return cmsBtBrandMappingDaoExt.searchBrands(params);
+		return params;
 	}
 
 }

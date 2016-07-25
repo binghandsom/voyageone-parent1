@@ -3,7 +3,6 @@ package com.voyageone.web2.cms.views.mapping.brand;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,7 +53,27 @@ public class BrandMappingController extends CmsController {
 		brandMapping.setChannelId(userSession.getSelChannel().getId());
 		brandMapping.setLangId(getLang());
 		// 设置返回结果
-		result.put("brandList", brandMappingService.searchBrands(brandMapping));
+		result.put("brandCount", brandMappingService.searchBrandsCount(brandMapping));
+		
+		return success(result);
+	}
+	
+
+	/**
+	 * 搜索品牌匹配数据（分页）
+	 */
+	@RequestMapping(CmsUrlConstants.MAPPING.BRAND.SEARCH_BRANDS_BY_PAGE)
+	public AjaxResponse searchBrandsByPage(@RequestBody BrandMappingBean brandMapping) {
+		// 检查参数
+		Preconditions.checkNotNull(brandMapping);
+		Preconditions.checkNotNull(brandMapping.getCartId());
+		// 添加查询参数
+		Map<String, Object> result = new HashMap<String, Object>();
+		UserSessionBean userSession = getUser();
+		brandMapping.setChannelId(userSession.getSelChannel().getId());
+		brandMapping.setLangId(getLang());
+		// 设置返回结果
+		result.put("brandList", brandMappingService.searchBrandsByPage(brandMapping));
 		
 		return success(result);
 	}

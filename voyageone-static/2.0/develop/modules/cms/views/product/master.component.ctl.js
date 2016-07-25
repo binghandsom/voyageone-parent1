@@ -3,7 +3,8 @@
  * 京东 & 聚美 产品概述（schema）
  */
 define([
-    'cms'
+    'cms',
+    'modules/cms/directives/platFormStatus.directive'
 ],function(cms) {
     cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService, $compile) {
         return {
@@ -41,7 +42,6 @@ define([
                         scope.productInfo.translateStatus = _fields.translateStatus == null ? 0 : +_fields.translateStatus;
                         scope.productInfo.hsCodeStatus =  _fields.hsCodeStatus == null ? 0: +_fields.hsCodeStatus;
 
-                        constructSchema(scope, $compile);
 
                         /**图片显示*/
                         if ($rootScope.imageUrl == undefined) {
@@ -57,24 +57,6 @@ define([
                             alert("本商品不是平台主商品，如果您需要在天猫或者京东上新，您所修改的信息不会同步到平台上，图片除外。");
                         }
                     });
-                }
-
-                var schemaScope;
-
-                function constructSchema(parentScope, compile) {
-
-                    var element = $('#schemaContainer');
-
-                    if (schemaScope)
-                        schemaScope.$destroy();
-
-                    element.empty();
-
-                    element.append('<schema data="data"></schema>');
-                    schemaScope = parentScope.$new();
-                    schemaScope.data = parentScope.vm.productComm.schemaFields;
-
-                    compile(element)(schemaScope);
                 }
 
                 /**
@@ -127,11 +109,15 @@ define([
 
                         _.map(scope.vm.productComm.schemaFields, function(item){
                             if(item.id == imgType){
-                                item.complexValues = context[context.length -1].imageSchema[0].complexValues;
+                                item.complexValues.splice(0,item.complexValues.length);
+                                angular.forEach(context[context.length -1].imageSchema[0].complexValues,function(image){
+
+                                    item.complexValues.push(image);
+                                });
+
                             }
                         });
 
-                        constructSchema(scope, $compile);
                     });
                 }
 

@@ -85,7 +85,7 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
             // 取得该店铺的所有平台
             List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
             if (cartList == null || cartList.isEmpty()) {
-                $warn("CmsCopyOrdersInfoService 本店铺无平台数据！ channelId=" + channelId);
+                $error("CmsCopyOrdersInfoService 本店铺无平台数据！ channelId=" + channelId);
                 continue;
             }
             for (TypeChannelBean cartObj : cartList) {
@@ -95,6 +95,8 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                     rs = productDao.selectProductOrderCount(cartId, channelId, oIdx * PAGE_LIMIT, PAGE_LIMIT);
                     oIdx ++;
                     if (rs == null || rs.isEmpty()) {
+                        // 没有销量数据
+                        $warn("CmsCopyOrdersInfoService 本店铺无订单数据 cartId=%d, channelId=%s, 请求页数=%d", cartId, channelId, oIdx);
                         break;
                     }
 
@@ -108,7 +110,7 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                         CmsBtProductModel prodModel = cmsBtProductDao.selectOneWithQuery(prodQryObj, channelId);
                         if (prodModel != null) {
                             if (prodModel.getCommon() == null || prodModel.getCommon().getFields() == null) {
-                                $warn("CmsCopyOrdersInfoService 产品数据不正确 channelId=%s, sku=%s", channelId, skuCode);
+                                $error("CmsCopyOrdersInfoService 产品数据不正确 channelId=%s, sku=%s", channelId, skuCode);
                                 continue;
                             }
                             BasicDBObject queryObj = new BasicDBObject();
@@ -123,7 +125,7 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                             updateValue.put("modified", DateTimeUtil.getNow());
                             String productCode = StringUtils.trimToNull(prodModel.getCommon().getFields().getCode());
                             if (productCode == null) {
-                                $warn("CmsCopyOrdersInfoService 产品数据不正确 没有code channelId=%s, sku=%s", channelId, skuCode);
+                                $error("CmsCopyOrdersInfoService 产品数据不正确 没有code channelId=%s, sku=%s", channelId, skuCode);
                                 continue;
                             }
                             updateValue.put("prodCode", productCode);
@@ -138,13 +140,15 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                             }
                             prodCodeChannelMap.get(channelId).add(productCode);
                         } else {
-                            $warn(String.format("CmsCopyOrdersInfoService 产品不存在 channelId=%s, sku=%s", channelId, skuCode));
+                            $error(String.format("CmsCopyOrdersInfoService 产品不存在 channelId=%s, sku=%s", channelId, skuCode));
                         }
                     }
                     if (hasdata) {
                         BulkWriteResult rslt = bbulkOpe.execute();
                         $debug(String.format("copyOrdersInfo excute msg:%s", rslt.toString()));
                         $info(String.format("copyOrdersInfo excute rows:%s", oIdx * PAGE_LIMIT));
+                    } else {
+                        $warn("CmsCopyOrdersInfoService 本次查询无有效订单数据 cartId=%d, channelId=%s, 请求页数=%d", cartId, channelId, oIdx);
                     }
                 } while (rs.size() == PAGE_LIMIT);
             }

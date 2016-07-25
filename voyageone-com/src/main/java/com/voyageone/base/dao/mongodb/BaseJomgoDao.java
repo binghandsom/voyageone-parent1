@@ -157,6 +157,6 @@ public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
     }
 
     public boolean collectionExists(final String collectionName) {
-        return mongoTemplate.mongoTemplate.collectionExists(collectionName);
+        return mongoTemplate.collectionExists(collectionName);
     }
 }
