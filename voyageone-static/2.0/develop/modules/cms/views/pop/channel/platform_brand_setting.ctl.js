@@ -9,7 +9,6 @@ define([
             this.platformData = context;
             this.notify = notify;
             this.popups = popups;
-            this.platformPageOption = {curr: 1, total: 0, size: 10, fetch: this.search};
             this.platformList = [];
             this.selectedPlatformlist = [];
         }
