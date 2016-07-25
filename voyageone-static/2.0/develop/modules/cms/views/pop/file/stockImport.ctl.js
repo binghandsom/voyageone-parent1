@@ -73,7 +73,7 @@ define([
                     blockUI.start();
                 };
                 if (main.import_mode == "3") {
-                    confirm('TXT_MSG_IMPORT_DELETE_UPDATE_MSGBOX').result.then(uploadIt);
+                    confirm('TXT_MSG_IMPORT_DELETE_UPDATE_MSGBOX').then(uploadIt);
                 } else {
                     uploadIt();
                 }

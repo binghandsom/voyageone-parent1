@@ -52,7 +52,7 @@ define([
          * 删除尺码表操作
          */
         $scope.deleteRow = function(sizeChartId){
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).then(function () {
                 sizeChartService.delete({sizeChartId: sizeChartId}).then(function () {
                     notify.success ($translate.instant('TXT_MSG_DELETE_SUCCESS'));
                     search();

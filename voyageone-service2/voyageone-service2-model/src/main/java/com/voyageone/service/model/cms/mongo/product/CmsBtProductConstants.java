@@ -14,7 +14,8 @@ public interface CmsBtProductConstants {
 		MOBILE_CUSTOM_IMAGE("image5"),
 		CUSTOM_PRODUCT_IMAGE("image6"),
 		M_CUSTOM_PRODUCT_IMAGE("image7"),
-		HANG_TAG_IMAGE("image8");
+		HANG_TAG_IMAGE("image8"),
+		DURABILITY_TAG_IMAGE("image9");
 
 		// 成员变量
 		private String name;

@@ -133,7 +133,7 @@ public class CmsMenuController extends CmsController {
     public AjaxResponse getCmsConfig()
     {
         Map<String,Object> response = new HashMap<>();
-        response.put("autoApprovePrice",CmsChannelConfigs.getConfigBeans(getUser().getSelChannelId(), CmsConstants.ChannelConfig.FEED_SEARCH_SORT));
+        response.put("autoApprovePrice",CmsChannelConfigs.getConfigBeans(getUser().getSelChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE));
         return success(response);
     }
 }

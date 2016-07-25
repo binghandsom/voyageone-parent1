@@ -278,7 +278,7 @@ define([
             } else if (fileType == 3) {
                 msg = '即将导出SKU级的搜索结果，请确认。';
             }
-            confirm(msg).result
+            confirm(msg)
                 .then(function () {
                     $scope.vm.searchInfo.fileType = fileType;
                     searchAdvanceService2.exportFile($scope.vm.searchInfo);
@@ -399,7 +399,7 @@ define([
          * 类目变更
          */
         function bindCategory(selectedCat, selList) {
-            confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
+            confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY'))
                 .then(function () {
                     var productIds = [];
                     if (selList) {
@@ -612,7 +612,7 @@ define([
                     });
                 }
 
-                confirm("将对选定的产品添加自由标签" + tagBean.tagPathName).result
+                confirm("将对选定的产品添加自由标签" + tagBean.tagPathName)
                     .then(function () {
                         searchAdvanceService2.addFreeTag(tagBean.tagPath, productIds, $scope.vm._selall ? 1 : 0).then(function () {
                             notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
@@ -662,8 +662,7 @@ define([
                     alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                     return;
                 }
-                confirm("您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>" + $scope.vm.productPageOption.total + "</span></h3>")
-                    .result.then(function () {
+                confirm("您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>" + $scope.vm.productPageOption.total + "</span></h3>").then(function () {
                     callback(cartId, null, context);
                 });
             }
@@ -694,7 +693,7 @@ define([
             _chkProductSel(parseInt(cartId), __openApproval);
 
             function __openApproval(cartId, _selProdList) {
-                confirm($translate.instant('TXT_BULK_APPROVAL')).result
+                confirm($translate.instant('TXT_BULK_APPROVAL'))
                     .then(function () {
                         var productIds = [];
                         if (_selProdList && _selProdList.length) {

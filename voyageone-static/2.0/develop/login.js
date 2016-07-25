@@ -11,11 +11,14 @@ define(['components/dist/voyageone.angular.com'], function () {
         'blockUI',
         'ngStorage',
         'voyageone.angular'
-    ]).controller('loginController', function ($scope, $ajax, $localStorage) {
+    ]).controller('loginController', function ($scope, $ajax, $localStorage, $sessionStorage) {
+
         $scope.username = '';
         $scope.password = '';
         $scope.isSavePwd = false;
         $scope.errorMessage = '';
+
+        $sessionStorage.$reset();
 
         $scope.login = function () {
             if (!$scope.username || !$scope.username.length) {

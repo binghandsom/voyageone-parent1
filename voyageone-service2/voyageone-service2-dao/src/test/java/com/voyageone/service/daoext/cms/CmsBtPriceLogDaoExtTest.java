@@ -1,7 +1,6 @@
 package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
-import org.apache.avro.generic.GenericData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +51,12 @@ public class CmsBtPriceLogDaoExtTest {
         cmsBtPriceLogModel.setProductId(1);
         cmsBtPriceLogModel.setCode("1");
         cmsBtPriceLogModel.setSku("1");
-        cmsBtPriceLogModel.setSalePrice("555");
-        cmsBtPriceLogModel.setMsrpPrice("11111");
-        cmsBtPriceLogModel.setRetailPrice("2222");
-        cmsBtPriceLogModel.setClientMsrpPrice("333");
-        cmsBtPriceLogModel.setClientRetailPrice("44");
-        cmsBtPriceLogModel.setClientNetPrice("4444");
+        cmsBtPriceLogModel.setSalePrice(555d);
+        cmsBtPriceLogModel.setMsrpPrice(11111d);
+        cmsBtPriceLogModel.setRetailPrice(2222d);
+        cmsBtPriceLogModel.setClientMsrpPrice(333d);
+        cmsBtPriceLogModel.setClientRetailPrice(44d);
+        cmsBtPriceLogModel.setClientNetPrice(4444d);
         cmsBtPriceLogModel.setComment("5555555");
         cmsBtPriceLogModel.setCreated(new Date());
         cmsBtPriceLogModel.setCreater("testuser");

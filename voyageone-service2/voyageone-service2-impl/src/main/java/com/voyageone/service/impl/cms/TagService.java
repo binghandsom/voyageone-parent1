@@ -187,7 +187,14 @@ public class TagService extends BaseService {
             return cmsBtTagDaoExt.selectListByChannelIdAndTagType(params);
         } else if ("2".equals(tagType)) {
             // 查询Promotion标签
-            List<CmsBtTagBean> categoryList = cmsBtTagDaoExt.selectListByChannelIdAndTagType2(params);
+            List<CmsBtTagBean> categoryList = null;
+            Integer orgFlg = (Integer) params.get("orgFlg");
+            if (orgFlg != null && orgFlg == 1) {
+                // 从高级检索画面(查询条件)而来
+                categoryList = cmsBtTagDaoExt.selectListByChannelId4AdvSearch(params);
+            } else {
+                categoryList = cmsBtTagDaoExt.selectListByChannelIdAndTagType2(params);
+            }
             if (categoryList == null || categoryList.isEmpty()) {
                 return categoryList;
             }

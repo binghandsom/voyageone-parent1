@@ -102,7 +102,15 @@ define(function () {
                     "updateCommonProductInfo": "updateCommonProductInfo",
                     "updateLock":"updateLock",
                     "updateProductAtts":"updateProductAtts",
-                    "checkCategory":"checkCategory"
+                    "checkCategory":"checkCategory",
+                    getChangeMastProductInfo:"getChangeMastProductInfo",
+                    setMastProduct:"setMastProduct",
+                    delisting:"delisting",
+                    delistinGroup:"delistinGroup"
+                },
+                "productHistoryLogService": {
+                    "root": "/cms/product/history/",
+                    "getPutOnOffLogList": "getPutOnOffLogList"
                 }
             },
             "mapping": {
@@ -159,7 +167,13 @@ define(function () {
                     "insertPromotion": "insertPromotion",
                     "updatePromotion": "updatePromotion",
                     "delPromotion": "delPromotion",
-                    "exportPromotion": "exportPromotion"
+                    "exportPromotion": "exportPromotion",
+                    getPage: "getPage",
+                    getCount: "getCount",
+                    getEditModel: "getEditModel",
+                    saveEditModel: "saveEditModel",
+                    deleteByPromotionId: "deleteByPromotionId",
+                    setPromotionStatus:"setPromotionStatus"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",
@@ -386,6 +400,10 @@ define(function () {
                     root: '/cms/price/log',
                     page: 'page',
                     export: 'export'
+                },
+                statusHistoryService: {
+                    root: "/cms/product/statushistory",
+                    getPage: "getPage"
                 },
                 "$addChannelCategoryService": {
                     "root": "/cms/pop/add_to_channel_category",

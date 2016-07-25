@@ -82,7 +82,7 @@ define([
             },
             refresh: function (originUrl) {
                 var main = this;
-                main.confirm('TXT_MSG_DO_REFRESH_IMAGE').result.then(function () {
+                main.confirm('TXT_MSG_DO_REFRESH_IMAGE').then(function () {
                     main.imageGroupDetailService.refresh({
                         "imageGroupId" : main.imageGroupId,
                         "originUrl" : originUrl
@@ -106,7 +106,7 @@ define([
             },
             delete: function (originUrl) {
                 var main = this;
-                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
+                main.confirm('TXT_MSG_DO_DELETE').then(function () {
                     main.imageGroupDetailService.delete({
                         "imageGroupId" : main.imageGroupId,
                         "originUrl" : originUrl

@@ -22,7 +22,7 @@ define([
             } else {
                 msg = $translate.instant('TXT_CONFIRM_ALL_STORE_PUT_ON');
             }
-            confirm(msg).result.then(function () {
+            confirm(msg).then(function () {
                 $fieldEditService.setProductFields($scope.vm.property).then(function (res) {
                     if (res.data.ecd == null || res.data.ecd == undefined) {
                         alert($translate.instant('TXT_COMMIT_ERROR'));

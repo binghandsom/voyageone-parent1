@@ -17,7 +17,7 @@ public abstract class VOAbsLoggable {
 
     private static final String TEMPLATE = "Thread-%s\t| %s";
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * 获取打印的日志是否需要包含线程

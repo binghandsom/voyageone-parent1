@@ -33,7 +33,7 @@ define([
             })
         };
         $scope.del = function (data) {
-            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.name).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.name).then(function () {
                 var index = _.indexOf($scope.vm.modelList, data);
                 jmPromotionService.delete(data.id).then(function () {
                     $scope.vm.modelList.splice(index, 1);

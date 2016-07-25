@@ -3,7 +3,8 @@
  * 京东 & 聚美 产品概述（schema）
  */
 define([
-    'cms'
+    'cms',
+    'modules/cms/directives/platFormStatus.directive'
 ],function(cms) {
     cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService, $compile) {
         return {
@@ -14,19 +15,18 @@ define([
                 productInfo: "=productInfo",
                 cartInfo:"=cartInfo"
             },
-            link: function (scope) {
+            link: function (scope,element) {
                 scope.vm = {
                     mastData:null,
                     productComm:null,
                     categoryMark:null,
-                    tempImage : {"images1":[],"images2":[],"images3":[],"images4":[],"images5":[],"images6":[],"images7":[],"images8":[]}
+                    tempImage : {"images1":[],"images2":[],"images3":[],"images4":[],"images5":[],"images6":[],"images7":[],"images8":[],"images9":[]}
                 };
 
                 initialize();
                 scope.masterCategoryMapping = masterCategoryMapping;
                 scope.openProImageSetting = openProImageSetting;
                 scope.saveProduct = saveProduct;
-                scope.validSchema = validSchema;
                 scope.pageAnchor = pageAnchor;
                 /**
                  * 获取京东页面初始化数据
@@ -112,14 +112,26 @@ define([
                         productId:  scope.productInfo.productId,
                         imageType: imageType
                     }).then(function(context){
-                        //更新时间
-                        scope.vm.productComm.modified = context.modified;
-                        scope.vm.tempImage[context.imageType].push(context.base64);
+                        if(context == null)
+                            return;
+
+                        if(context.length == 0)
+                            return;
+
+                        scope.vm.productComm.modified = context[context.length -1].modified;
+
+                        var imgType = null;
+                        angular.forEach(context,function(item){
+                            imgType = item.imageType;
+                            scope.vm.tempImage[item.imageType].push(item.base64);
+                        });
+
                         _.map(scope.vm.productComm.schemaFields, function(item){
-                            if(item.id == context.imageType){
-                                item.complexValues = context.imageSchema[0].complexValues;
+                            if(item.id == imgType){
+                                item.complexValues = context[context.length -1].imageSchema[0].complexValues;
                             }
                         });
+
                         constructSchema(scope, $compile);
                     });
                 }
@@ -129,7 +141,9 @@ define([
                  */
                 function saveProduct(){
                     if (!validSchema()) {
-                        return alert("保存失败，请查看产品的属性是否填写正确！");
+                        alert("保存失败，请查看产品的属性是否填写正确！");
+                        focusError();
+                        return;
                     }
 
                     productDetailService.updateCommonProductInfo({prodId:scope.productInfo.productId,productComm:scope.vm.productComm}).then(function(resp){
@@ -156,11 +170,17 @@ define([
                  * @param index div的index
                  * @param speed 导航速度 ms为单位
                  */
-                function pageAnchor(index,speed){
+                function pageAnchor(area,speed){
                     var offsetTop = 0;
-                    if(index != 1)
-                        offsetTop = ($("#master"+index).offset().top);
+                    if(area != 'master')
+                        offsetTop = element.find("#"+area).offset().top;
                     $("body").animate({ scrollTop:  offsetTop-100}, speed);
+                }
+
+                function focusError(){
+                    var firstError = element.find("schema .ng-invalid:first");
+                    firstError.focus();
+                    firstError.addClass("focus-error");
                 }
 
             }

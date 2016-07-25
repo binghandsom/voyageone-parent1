@@ -14,6 +14,128 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtPlatformPropMappingCustomModel" >
+        update cms_mt_platform_prop_mapping_custom
+        <set >
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="platformPropId != null" >
+                `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR},
+            </if>
+            <if test="mappingType != null" >
+                `mapping_type` = #{mappingType,jdbcType=INTEGER},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_mt_platform_prop_mapping_custom
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_platform_prop_mapping_custom
+        <where >
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="platformPropId != null" >
+                and `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR}
+            </if>
+            <if test="mappingType != null" >
+                and `mapping_type` = #{mappingType,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_platform_prop_mapping_custom
+        <where >
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="platformPropId != null" >
+                and `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR}
+            </if>
+            <if test="mappingType != null" >
+                and `mapping_type` = #{mappingType,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_mt_platform_prop_mapping_custom
+        <where >
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="platformPropId != null" >
+                and `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR}
+            </if>
+            <if test="mappingType != null" >
+                and `mapping_type` = #{mappingType,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
     <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtPlatformPropMappingCustomModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_mt_platform_prop_mapping_custom
         <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -71,127 +193,5 @@
             </if>
         </trim>
     </insert>
-
-    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtPlatformPropMappingCustomModel" >
-        update cms_mt_platform_prop_mapping_custom
-        <set >
-            <if test="cartId != null" >
-                `cart_id` = #{cartId,jdbcType=INTEGER},
-            </if>
-            <if test="platformPropId != null" >
-                `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR},
-            </if>
-            <if test="mappingType != null" >
-                `mapping_type` = #{mappingType,jdbcType=INTEGER},
-            </if>
-            <if test="created != null" >
-                `created` = #{created,jdbcType=TIMESTAMP},
-            </if>
-            <if test="creater != null" >
-                `creater` = #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="modified != null" >
-                `modified` = #{modified,jdbcType=TIMESTAMP},
-            </if>
-            <if test="modified == null" >
-                `modified` = now(),
-            </if>
-            <if test="creater != null" >
-                `modifier` = #{creater,jdbcType=VARCHAR},
-            </if>
-        </set>
-        where `id` = #{id,jdbcType=INTEGER}
-    </update>
-
-    <delete id="delete" parameterType="java.lang.Integer" >
-        delete from cms_mt_platform_prop_mapping_custom
-        where `id` = #{id,jdbcType=INTEGER}
-    </delete>
-
-    <select id="selectOne" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from cms_mt_platform_prop_mapping_custom
-        <where >
-            <if test="cartId != null" >
-                and `cart_id` = #{cartId,jdbcType=INTEGER}
-            </if>
-            <if test="platformPropId != null" >
-                and `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR}
-            </if>
-            <if test="mappingType != null" >
-                and `mapping_type` = #{mappingType,jdbcType=INTEGER}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-        limit 1
-    </select>
-
-    <select id="selectList" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from cms_mt_platform_prop_mapping_custom
-        <where >
-            <if test="cartId != null" >
-                and `cart_id` = #{cartId,jdbcType=INTEGER}
-            </if>
-            <if test="platformPropId != null" >
-                and `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR}
-            </if>
-            <if test="mappingType != null" >
-                and `mapping_type` = #{mappingType,jdbcType=INTEGER}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
-
-    <select id="selectCount" resultType="java.lang.Integer" >
-        select count(*) from cms_mt_platform_prop_mapping_custom
-        <where >
-            <if test="cartId != null" >
-                and `cart_id` = #{cartId,jdbcType=INTEGER}
-            </if>
-            <if test="platformPropId != null" >
-                and `platform_prop_id` = #{platformPropId,jdbcType=VARCHAR}
-            </if>
-            <if test="mappingType != null" >
-                and `mapping_type` = #{mappingType,jdbcType=INTEGER}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
 
 </mapper>
