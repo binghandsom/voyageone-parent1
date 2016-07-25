@@ -80,8 +80,8 @@
                         <td class="text-left"><a href="#/shipment/shipment_info/shipment_detail">{{item.shipmentName}}</a></td>
                         <td class="text-center">{{item.shippedDate | date: 'yyyy-MM-dd'}}</td>
                         <td class="text-center">{{item.trackingNo}}</td>
-                        <td class="text-center">10</td>
-                        <td class="text-center">100</td>
+                        <td class="text-center">{{item.orderTotal}}</td>
+                        <td class="text-center">{{item.skuTotal}}</td>
                         <td class="text-center">{{ctrl.getStatusName(item.status)}}</td>
                         <td class="v-middle">
                             <span ng-if="item.comment.length <= 30">{{item.comment}}</span>

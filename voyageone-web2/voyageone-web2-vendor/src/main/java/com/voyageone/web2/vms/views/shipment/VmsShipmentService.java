@@ -6,6 +6,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.BeanUtil;
+import com.voyageone.service.impl.vms.order.OrderDetailService;
 import com.voyageone.service.impl.vms.shipment.ShipmentService;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -27,10 +28,12 @@ import static com.voyageone.web2.vms.VmsConstants.*;
 public class VmsShipmentService {
 
     private ShipmentService shipmentService;
+    private OrderDetailService orderDetailService;
 
     @Autowired
-    public VmsShipmentService(ShipmentService shipmentService) {
+    public VmsShipmentService(ShipmentService shipmentService, OrderDetailService orderDetailService) {
         this.shipmentService = shipmentService;
+        this.orderDetailService = orderDetailService;
     }
 
     /**
@@ -157,9 +160,15 @@ public class VmsShipmentService {
                 .limit(shipmentSearchInfo.getSize())
                 .page(shipmentSearchInfo.getCurr())
                 .toMap();
-        // TODO: 16-7-25 shipment下订单数量和sku数量的统计尚未添加 vantis
-        shipmentInfo.setShipmentList(shipmentService.searchList(pagedSearchParams).stream()
+        shipmentInfo.setShipmentList(shipmentService.searchList(pagedSearchParams).parallelStream()
                 .map(ShipmentBean::getInstance)
+                .map(shipmentBean -> {
+                    shipmentBean.setOrderTotal(orderDetailService.countOrderWithShipment(shipmentBean.getChannelId(),
+                            shipmentBean.getId()));
+                    shipmentBean.setSkuTotal(orderDetailService.countSkuWithShipment(shipmentBean.getChannelId(),
+                            shipmentBean.getId()));
+                    return shipmentBean;
+                })
                 .collect(Collectors.toList()));
         return shipmentInfo;
     }

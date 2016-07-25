@@ -29,4 +29,8 @@ public interface VmsBtOrderDetailDaoExt {
     int updateSkuShipmentStatus(Map<String, Object> sortedParams);
 
     int cancelOrderShipmentStatus(Map<String, Object> params);
+
+    int countOrder(Map<String, Object> params);
+
+    int countSku(Map<String, Object> params);
 }

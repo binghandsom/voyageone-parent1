@@ -451,6 +451,198 @@
         </where>
     </select>
 
+    <select id="countOrder" parameterType="HashMap" resultType="java.lang.Integer">
+        SELECT count(DISTINCT consolidation_order_id) FROM voyageone_vms.vms_bt_order_detail
+        <where>
+            <if test="reservationId != null">
+                and `reservation_id` = #{reservationId,jdbcType=VARCHAR}
+            </if>
+            <if test="channelId != null">
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="consolidationOrderId != null">
+                and `consolidation_order_id` = #{consolidationOrderId,jdbcType=VARCHAR}
+            </if>
+            <if test="consolidationOrderTime != null">
+                and `consolidation_order_time` = #{consolidationOrderTime,jdbcType=VARCHAR}
+            </if>
+            <if test="orderId != null">
+                and `order_id` = #{orderId,jdbcType=VARCHAR}
+            </if>
+            <if test="orderTime != null">
+                and `order_time` = #{orderTime,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null">
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="sku != null">
+                and `client_sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="barcode != null">
+                and `barcode` = #{barcode,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null">
+                and `name` = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null &amp;&amp; status != 0">
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="shipmentId != null">
+                and `shipment_id` = #{shipmentId,jdbcType=INTEGER}
+            </if>
+            <if test="shipmentTime != null">
+                and `shipment_time` = #{shipmentTime,jdbcType=VARCHAR}
+            </if>
+            <if test="containerizingTime != null">
+                and `containerizing_time` = #{containerizingTime,jdbcType=VARCHAR}
+            </if>
+            <if test="containerizer != null">
+                and `containerizer` = #{containerizer,jdbcType=VARCHAR}
+            </if>
+            <if test="cancelTime != null">
+                and `cancel_time` = #{cancelTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="canceler != null">
+                and `canceler` = #{canceler,jdbcType=VARCHAR}
+            </if>
+            <if test="receivedTime != null">
+                and `received_time` = #{receivedTime,jdbcType=VARCHAR}
+            </if>
+            <if test="receiver != null">
+                and `receiver` = #{receiver,jdbcType=VARCHAR}
+            </if>
+            <if test="clientMsrp != null">
+                and `client_msrp` = #{clientMsrp,jdbcType=DECIMAL}
+            </if>
+            <if test="clientNetPrice != null">
+                and `client_net_price` = #{clientNetPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="clientRetailPrice != null">
+                and `client_retail_price` = #{clientRetailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="clientPromotionPrice != null">
+                and `client_promotion_price` = #{clientPromotionPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="retailPrice != null">
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="created != null">
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null">
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null">
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null">
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="orderDateFrom !=null">
+                and `consolidation_order_time` >= #{orderDateFrom}
+            </if>
+            <if test="orderDateTo != null">
+                and #{orderDateTo} > `consolidation_order_time`
+            </if>
+        </where>
+    </select>
+
+    <select id="countSku" parameterType="HashMap" resultType="java.lang.Integer">
+        SELECT count(1) FROM voyageone_vms.vms_bt_order_detail
+        <where>
+            <if test="reservationId != null">
+                and `reservation_id` = #{reservationId,jdbcType=VARCHAR}
+            </if>
+            <if test="channelId != null">
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="consolidationOrderId != null">
+                and `consolidation_order_id` = #{consolidationOrderId,jdbcType=VARCHAR}
+            </if>
+            <if test="consolidationOrderTime != null">
+                and `consolidation_order_time` = #{consolidationOrderTime,jdbcType=VARCHAR}
+            </if>
+            <if test="orderId != null">
+                and `order_id` = #{orderId,jdbcType=VARCHAR}
+            </if>
+            <if test="orderTime != null">
+                and `order_time` = #{orderTime,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null">
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="sku != null">
+                and `client_sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="barcode != null">
+                and `barcode` = #{barcode,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null">
+                and `name` = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null &amp;&amp; status != 0">
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="shipmentId != null">
+                and `shipment_id` = #{shipmentId,jdbcType=INTEGER}
+            </if>
+            <if test="shipmentTime != null">
+                and `shipment_time` = #{shipmentTime,jdbcType=VARCHAR}
+            </if>
+            <if test="containerizingTime != null">
+                and `containerizing_time` = #{containerizingTime,jdbcType=VARCHAR}
+            </if>
+            <if test="containerizer != null">
+                and `containerizer` = #{containerizer,jdbcType=VARCHAR}
+            </if>
+            <if test="cancelTime != null">
+                and `cancel_time` = #{cancelTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="canceler != null">
+                and `canceler` = #{canceler,jdbcType=VARCHAR}
+            </if>
+            <if test="receivedTime != null">
+                and `received_time` = #{receivedTime,jdbcType=VARCHAR}
+            </if>
+            <if test="receiver != null">
+                and `receiver` = #{receiver,jdbcType=VARCHAR}
+            </if>
+            <if test="clientMsrp != null">
+                and `client_msrp` = #{clientMsrp,jdbcType=DECIMAL}
+            </if>
+            <if test="clientNetPrice != null">
+                and `client_net_price` = #{clientNetPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="clientRetailPrice != null">
+                and `client_retail_price` = #{clientRetailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="clientPromotionPrice != null">
+                and `client_promotion_price` = #{clientPromotionPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="retailPrice != null">
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="created != null">
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null">
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null">
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null">
+                and `modifier` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="orderDateFrom !=null">
+                and `consolidation_order_time` >= #{orderDateFrom}
+            </if>
+            <if test="orderDateTo != null">
+                and #{orderDateTo} > `consolidation_order_time`
+            </if>
+        </where>
+    </select>
+
     <!-- update -->
     <update id="updateOrderStatus" parameterType="HashMap">
         update vms_bt_order_detail set `status` = #{status, jdbcType=VARCHAR}

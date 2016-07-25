@@ -18,6 +18,8 @@ public class ShipmentBean {
     private String expressCompany;
     private String trackingNo;
     private String comment;
+    private int orderTotal;
+    private int skuTotal;
 
     /**
      * 1:Open；3：Shipped；4：Arrived；5：Received；6：Receive with Error
@@ -144,5 +146,21 @@ public class ShipmentBean {
 
     public void setReceiver(String receiver) {
         this.receiver = receiver;
+    }
+
+    public int getOrderTotal() {
+        return orderTotal;
+    }
+
+    public void setOrderTotal(int orderTotal) {
+        this.orderTotal = orderTotal;
+    }
+
+    public int getSkuTotal() {
+        return skuTotal;
+    }
+
+    public void setSkuTotal(int skuTotal) {
+        this.skuTotal = skuTotal;
     }
 }

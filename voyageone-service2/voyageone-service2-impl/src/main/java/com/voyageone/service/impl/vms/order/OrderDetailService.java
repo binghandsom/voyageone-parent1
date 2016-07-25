@@ -329,4 +329,20 @@ public class OrderDetailService extends BaseService {
 
         return updated;
     }
+
+    public int countOrderWithShipment(String channelId, Integer shipmentId) {
+        Map<String, Object> params = new HashMap<String, Object>() {{
+            put("channelId", channelId);
+            put("shipmentId", shipmentId);
+        }};
+        return vmsBtOrderDetailDaoExt.countOrder(params);
+    }
+
+    public int countSkuWithShipment(String channelId, Integer shipmentId) {
+        Map<String, Object> params = new HashMap<String, Object>() {{
+            put("channelId", channelId);
+            put("shipmentId", shipmentId);
+        }};
+        return vmsBtOrderDetailDaoExt.countSku(params);
+    }
 }
