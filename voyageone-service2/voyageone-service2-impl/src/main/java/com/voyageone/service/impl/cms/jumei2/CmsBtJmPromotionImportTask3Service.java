@@ -243,16 +243,23 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         ProductSaveInfo saveInfo = null;
         $info("初始化开始");
         for (ProductImportBean product : listProductImport) {
-            $info("into"+ product.getProductCode());
-            saveInfo=new ProductSaveInfo();
-            saveInfo.p_ProductInfo=productService.getProductByCode(modelPromotion.getChannelId(), product.getProductCode());
-            if(saveInfo.p_ProductInfo==null){  $info("不存在"+ product.getProductCode()); return; }
-            saveInfo.p_Platform_Cart=saveInfo.p_ProductInfo.getPlatform(CartEnums.Cart.JM);
+            $info("into" + product.getProductCode());
+            saveInfo = new ProductSaveInfo();
+            saveInfo.p_ProductInfo = productService.getProductByCode(modelPromotion.getChannelId(), product.getProductCode());
+            if (saveInfo.p_ProductInfo == null) {
+                product.setErrorMsg("不存在" + product.getProductCode());
+                listProducctErrorMap.add(MapUtil.toMap(product));
+                return;
+            }
+            saveInfo.p_Platform_Cart = saveInfo.p_ProductInfo.getPlatform(CartEnums.Cart.JM);
 
             List<SkuImportBean> listProductSkuImport = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());//获取商品的sku
-            loadSaveInfo(saveInfo,model, listProductSkuImport, product, listProducctErrorMap, listSkuErrorMap, userName);
-            loadCmsBtPromotionCodes(saveInfo, listProductSkuImport, product,modelPromotion, userName);
+            loadSaveInfo(saveInfo, model, listProductSkuImport, product, listProducctErrorMap, listSkuErrorMap, userName);
+            loadCmsBtPromotionCodes(saveInfo, listProductSkuImport, product, modelPromotion, userName);
             if (saveInfo != null) {
+                if (saveInfo._listSkuImport.size() > 0) {
+                    listProducctErrorMap.addAll(MapUtil.toMapList(saveInfo._listSkuImport));//初始化失败的sku
+                }
                 listSaveInfo.add(saveInfo);
             }
         }
