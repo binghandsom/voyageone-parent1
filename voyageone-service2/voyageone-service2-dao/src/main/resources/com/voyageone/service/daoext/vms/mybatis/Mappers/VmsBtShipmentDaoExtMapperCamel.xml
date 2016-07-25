@@ -1,53 +1,123 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.voyageone.service.daoext.vms.VmsBtShipmentDaoExt" >
-    <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtShipmentModel" />
-    <sql id="Base_Column_List" >
+<mapper namespace="com.voyageone.service.daoext.vms.VmsBtShipmentDaoExt">
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtShipmentModel"/>
+    <sql id="Base_Column_List">
         `id`, `channel_id`, `shipment_name`, `shipped_date`, `express_company`, `tracking_no`,
         `comment`, `status`, `arrived_time`, `arriver`, `received_time`, `receiver`, `created`,
         `creater`, `modified`, `modifier`
     </sql>
 
-    <update id="update" parameterType="com.voyageone.service.model.vms.VmsBtShipmentModel" >
+    <select id="count" resultType="java.lang.Integer" parameterType="HashMap">
+        SELECT count(1) FROM voyageone_vms.vms_bt_shipment
+        <where>
+            AND `channel_id` = #{channelId, jdbcType=VARCHAR}
+            <if test="shipmentName != null">
+                AND `shipment_name` LIKE '%'#{shipmentName, jdbcType=VARCHAR}'%'
+            </if>
+            <if test="trackingNo != null">
+                AND `tracking_no` = #{trackingNo, jdbcType=VARCHAR}
+            </if>
+            <if test="status != null">
+                AND `status` = #{status, jdbcType=VARCHAR}
+            </if>
+            <if test="shippedDateFrom != null">
+                AND `shipped_date` >= #{shippedDateFrom, jdbcType=TIMESTAMP}
+            </if>
+            <if test="shippedDateTo != null">
+                AND #{shippedDateTo, jdbcType=TIMESTAMP} > `shipped_date`
+            </if>
+        </where>
+    </select>
+
+    <select id="selectList" resultType="com.voyageone.service.model.vms.VmsBtShipmentModel"
+            parameterType="HashMap">
+        select
+        <include refid="Base_Column_List"/>
+        from vms_bt_shipment
+        <where>
+            <if test="channelId != null">
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="shipmentName != null">
+                and `shipment_name` = #{shipmentName,jdbcType=VARCHAR}
+            </if>
+            <if test="shippedDate != null">
+                and `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="expressCompany != null">
+                and `express_company` = #{expressCompany,jdbcType=VARCHAR}
+            </if>
+            <if test="trackingNo != null">
+                and `tracking_no` = #{trackingNo,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null">
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null">
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="arrivedTime != null">
+                and `arrived_time` = #{arrivedTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="arriver != null">
+                and `arriver` = #{arriver,jdbcType=VARCHAR}
+            </if>
+            <if test="receivedTime != null">
+                and `received_time` = #{receivedTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="receiver != null">
+                and `receiver` = #{receiver,jdbcType=VARCHAR}
+            </if>
+            <if test="shippedDateFrom != null">
+                AND `shipped_date` >= #{shippedDateFrom, jdbcType=TIMESTAMP}
+            </if>
+            <if test="shippedDateTo != null">
+                AND #{shippedDateTo, jdbcType=TIMESTAMP} > `shipped_date`
+            </if>
+        </where>
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.vms.VmsBtShipmentModel">
         update vms_bt_shipment
-        <set >
-            <if test="shipmentName != null" >
+        <set>
+            <if test="shipmentName != null">
                 `shipment_name` = #{shipmentName,jdbcType=VARCHAR},
             </if>
-            <if test="shippedDate != null" >
+            <if test="shippedDate != null">
                 `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP},
             </if>
-            <if test="expressCompany != null" >
+            <if test="expressCompany != null">
                 `express_company` = #{expressCompany,jdbcType=VARCHAR},
             </if>
-            <if test="trackingNo != null" >
+            <if test="trackingNo != null">
                 `tracking_no` = #{trackingNo,jdbcType=VARCHAR},
             </if>
-            <if test="comment != null" >
+            <if test="comment != null">
                 `comment` = #{comment,jdbcType=VARCHAR},
             </if>
-            <if test="status != null" >
+            <if test="status != null">
                 `status` = #{status,jdbcType=VARCHAR},
             </if>
-            <if test="arrivedTime != null" >
+            <if test="arrivedTime != null">
                 `arrived_time` = #{arrivedTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="arriver != null" >
+            <if test="arriver != null">
                 `arriver` = #{arriver,jdbcType=VARCHAR},
             </if>
-            <if test="receivedTime != null" >
+            <if test="receivedTime != null">
                 `received_time` = #{receivedTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="receiver != null" >
+            <if test="receiver != null">
                 `receiver` = #{receiver,jdbcType=VARCHAR},
             </if>
-            <if test="modified != null" >
+            <if test="modified != null">
                 `modified` = #{modified,jdbcType=TIMESTAMP},
             </if>
-            <if test="modified == null" >
+            <if test="modified == null">
                 `modified` = now(),
             </if>
-            <if test="modifier != null" >
+            <if test="modifier != null">
                 `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>

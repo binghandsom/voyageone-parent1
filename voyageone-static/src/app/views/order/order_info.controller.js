@@ -72,14 +72,13 @@ define([
                 return;
             } else if (self.orderDateFrom)
                 self.searchInfo.orderDateFrom = self.orderDateFrom;
-            else self.searchInfo.orderDateFrom = undefined;
+
             if (self.orderDateTo) {
                 var date = angular.copy(self.orderDateTo);
                 date.setDate(date.getDate() + 1);
                 self.searchInfo.orderDateTo = date;
-            } else {
-                self.searchInfo.orderDateTo = undefined;
             }
+
             self.searchInfo.curr = self.pageInfo.curr;
             self.searchInfo.size = self.pageInfo.size;
             self.orderInfoService.search(self.searchInfo).then(function (data) {
@@ -94,9 +93,9 @@ define([
                         }
                         else if (item.status == '1') {
                             if (self.channelConfigs.vendorOperateType == 'ORDER') {
-                                date = new Date(item.consolidationOrderTimestamp);
+                                date = new Date(item.consolidationOrderTime);
                             } else if (self.channelConfigs.vendorOperateType == 'SKU') {
-                                date = new Date(item.consolidationOrderTimestamp);
+                                date = new Date(item.consolidationOrderTime);
                             } else {
                                 self.alert('TXT_MISSING_REQUIRED_CHANNEL_CONFIG');
                             }
@@ -153,6 +152,7 @@ define([
                     break;
                 }
             }
+            // Receive with Error 太长了
             if (!currentStatus) return statusValue;
             return currentStatus.name;
         };
@@ -180,17 +180,18 @@ define([
 
         OrderInfoController.prototype.popAddToShipment = function (item) {
             var self = this;
-            self.ScanPopupInitialInfo = {
+            self.scanPopupInitialInfo = {
                 "shipment": self.currentShipment,
                 "consolidationOrderId": item.consolidationOrderId
             };
-            self.shipmentScanPopupService.init(self.ScanPopupInitialInfo).then(function (shipmentDetails) {
-                shipmentDetails.ScanPopupInitialInfo = self.ScanPopupInitialInfo;
+            self.shipmentScanPopupService.init(self.scanPopupInitialInfo).then(function (shipmentDetails) {
+                shipmentDetails.scanPopupInitialInfo = self.scanPopupInitialInfo;
                 self.popups.openAddShipment(shipmentDetails).then(function () {
                     self.init();
                 });
             });
         };
+
         return OrderInfoController;
     }()));
 });

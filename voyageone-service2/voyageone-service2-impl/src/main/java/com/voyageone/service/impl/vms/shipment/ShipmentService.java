@@ -44,7 +44,15 @@ public class ShipmentService {
     }
 
 
-    public void insert(VmsBtShipmentModel vmsBtShipmentModel) {
-        vmsBtShipmentDao.insert(vmsBtShipmentModel);
+    public int insert(VmsBtShipmentModel vmsBtShipmentModel) {
+        return vmsBtShipmentDao.insert(vmsBtShipmentModel);
+    }
+
+    public int count(Map<String, Object> searchParams) {
+        return vmsBtShipmentDaoExt.count(searchParams);
+    }
+
+    public List<VmsBtShipmentModel> searchList(Map<String, Object> pagedSearchParams) {
+        return vmsBtShipmentDaoExt.selectList(pagedSearchParams);
     }
 }

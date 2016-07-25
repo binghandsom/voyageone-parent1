@@ -41,14 +41,6 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
         this.consolidationOrderId = consolidationOrderId;
     }
 
-    public long getconsolidationOrderTimestamp() {
-        return consolidationOrderTime.getTime();
-    }
-
-    public void setconsolidationOrderTimestamp(long consolidationOrderTimestamp) {
-        this.consolidationOrderTime = new Date(consolidationOrderTimestamp);
-    }
-
     public Date getConsolidationOrderTime() {
         return consolidationOrderTime;
     }
@@ -87,16 +79,6 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
 
     public void setContainerizingTime(Date containerizingTime) {
         this.containerizingTime = containerizingTime;
-    }
-
-    public Long getContainerizingTimestamp() {
-        if (null == containerizingTime) return null;
-        return containerizingTime.getTime();
-    }
-
-    public void setContainerizingTimestamp(Long containerizingTimestamp) {
-        if (null != containerizingTimestamp)
-        this.containerizingTime = new Date(containerizingTimestamp);
     }
 
     public String getContainerizer() {

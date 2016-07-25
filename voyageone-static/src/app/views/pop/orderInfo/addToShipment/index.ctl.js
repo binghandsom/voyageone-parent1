@@ -7,7 +7,7 @@ define([
     vms.controller('AddToShipmentController', (function () {
         function AddToShipmentController(context, notify, shipmentScanPopupService, $uibModalInstance) {
             this.notify = notify;
-            this.shipmentDetails = context.ScanPopupInitialInfo;
+            this.shipmentDetails = context.scanPopupInitialInfo;
             this.scannedSkuList = context.scannedSkuList;
             this.shipmentScanPopupService = shipmentScanPopupService;
             this.$uibModalInstance = $uibModalInstance;

@@ -17,6 +17,14 @@ public interface VmsUrlConstants {
         }
     }
 
+    interface SHIPMENT {
+        interface SHIPMENT_INFO {
+            String ROOT = "/vms/shipment/shipment_info/";
+            String INIT = "init";
+            String SEARCH = "search";
+        }
+    }
+
     interface FEED {
         interface FEED_FILE_IMPORT {
             String ROOT = "/vms/feed/file_upload/";
@@ -30,6 +38,7 @@ public interface VmsUrlConstants {
             String SEARCH = "search";
             String DOWN_FEED_ERROR_FILE = "downloadFeedErrorFile";
         }
+
         interface FEED_SEARCH {
             String ROOT = "/vms/feed/feed_info_search/";
             String SEARCH = "search";

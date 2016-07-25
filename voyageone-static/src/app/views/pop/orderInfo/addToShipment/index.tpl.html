@@ -43,8 +43,11 @@
                         <td class="text-center">{{ctrl.scannedSkuList.length - $index}}</td>
                         <td class="text-center">{{item.barcode}}</td>
                         <td class="text-center">{{item.clientSku}}</td>
-                        <td class="text-left">{{item.name}}</td>
-                        <td class="text-center">{{item.containerizingTimestamp | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="v-middle">
+                            <span ng-if="item.name.length <= 30">{{item.name}}</span>
+                            <span ng-if="item.name.length > 30" uib-tooltip="{{item.name}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name | stringCutter:true:30:' ...'}}</span>
+                        </td>
+                        <td class="text-center">{{item.containerizingTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="text-center">{{item.containerizer}}</td>
                     </tr>
                     </tbody>

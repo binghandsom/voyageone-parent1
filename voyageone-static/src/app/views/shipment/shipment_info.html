@@ -1,0 +1,103 @@
+<div class="breadcrumbs" ng-init="ctrl.init()">
+    <div class="container">
+        <h4 class="pull-left" translate="TXT_SHIPMENT_INFO"></h4>
+        <ul class="pull-right breadcrumb">
+            <li><a href="#/home" translate="TXT_HOME"></a></li>
+            <li class="active disabled" translate="TXT_SHIPMENT"></li>
+            <li class="active selecte" translate="TXT_SHIPMENT_INFO"></li>
+        </ul>
+    </div>
+</div>
+<div class="container content">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h5 class="panel-title" translate="TXT_SEARCH"></h5>
+        </div>
+        <div class="panel-body">
+            <div class="form-inline">
+                <div class="form-group m-t-sm m-b-md m-l-md">
+                    <label class="control-label" translate="TXT_STATUS"></label>
+                    <select name="SHIPMENT_STATUS" id="select" class="form-control" ng-model="ctrl.searchInfo.status" ng-options="option.value as option.name for option in ctrl.shipmentStatusList">
+                        <option value="" translate="TXT_ALL"></option>
+                    </select>
+                </div>
+                <div class="form-group m-t-sm m-b-md">
+                    <label class="control-label" translate="TXT_SHIPMENT_NAME"></label>
+                    <input id="Shipment Name" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.shipmentName">
+                </div>
+                <div class="form-group m-t-sm m-b-md">
+                    <label class="control-label" translate="TXT_TRACKING_NO_"></label>
+                    <input id="Tracking No" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.trackingNo">
+                </div>
+                <div class="form-group m-t-sm m-b-md">
+                    <label class="control-label" TRANSLATE="TXT_SHIPPED_DATE"></label>
+                     <span class="input-group">
+                        <input type="date" class="form-control"
+                               ng-model="ctrl.shippedDateFrom"
+                               uib-datepicker-popup
+                               is-open="datepicker1"
+                               datepicker-options="{maxDate:ctrl.feedEndTime}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </span>
+                    <span>~</span>
+                     <span class="input-group">
+                        <input type="date" class="form-control"
+                               ng-model="ctrl.shippedDateTo"
+                               uib-datepicker-popup
+                               is-open="datepicker2"
+                               datepicker-options="{minDate:ctrl.feedStartTime}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </span>
+                </div>
+                <div class="form-group m-t-sm m-b-md pull-right">
+                    <button class="btn btn-primary btn-sm" ng-click="ctrl.search()" translate="BTN_SEARCH"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-vo">
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-fixed table-vo table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th class="td-3 text-left" translate="TXT_SHIPMENT_NAME"></th>
+                        <th class="td-3 text-center" translate="TXT_SHIPPED_DATE"></th>
+                        <th class="td-2 text-center" translate="TXT_TRACKING_NO_"></th>
+                        <th class="td-2 text-center" translate="TXT_ORDER_TOTAL"></th>
+                        <th class="td-2 text-center" translate="TXT_SKU_TOTAL"></th>
+                        <th class="td-2 text-center" translate="TXT_STATUS"></th>
+                        <th class="td-3 text-center" translate="TXT_COMMENTS"></th>
+                        <th class="td-1 text-center" translate="TXT_ACTION"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in ctrl.data">
+                        <td class="text-left"><a href="#/shipment/shipment_info/shipment_detail">{{item.shipmentName}}</a></td>
+                        <td class="text-center">{{item.shippedDate | date: 'yyyy-MM-dd'}}</td>
+                        <td class="text-center">{{item.trackingNo}}</td>
+                        <td class="text-center">{{item.orderTotal}}</td>
+                        <td class="text-center">{{item.skuTotal}}</td>
+                        <td class="text-center">{{ctrl.getStatusName(item.status)}}</td>
+                        <td class="v-middle">
+                            <span ng-if="item.comment.length <= 30">{{item.comment}}</span>
+                            <span ng-if="item.comment.length > 30" uib-tooltip="{{item.comment}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{item.comment | stringCutter:true:30:' ...'}}</span>
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-xs btn-success" ng-click="ctrl.popNewShipment()"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-xs btn-success"><i class="fa fa-inbox"></i></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-12 m-t-lg no-padding">
+                <vpagination config="ctrl.pageInfo" total="ctrl.pageInfo.total"></vpagination>
+            </div>
+        </div>
+    </div>
+</div>
