@@ -1,11 +1,12 @@
 package com.voyageone.components.jumei;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.jumei.reponse.*;
 import com.voyageone.components.jumei.request.*;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Map;
 
 @Service
@@ -21,7 +22,15 @@ public class JumeiHtDealService extends JmBase {
 
     public HtDealCopyDealResponse copyDeal(ShopBean shopBean, HtDealCopyDealRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
-        String reqResult = reqJmApi(shopBean, request.getUrl(), params);
+        String reqResult = "";
+        try {
+            reqResult = reqJmApi(shopBean, request.getUrl(), params);
+        } catch (BusinessException bex) {
+            if (bex.getInfo().length > 0)
+                reqResult = String.valueOf(bex.getInfo()[0]);
+            else
+                throw bex;
+        }
         logger.info("复制Deal(特卖)信息返回：" + reqResult);
         HtDealCopyDealResponse response = new HtDealCopyDealResponse();
         response.setBody(reqResult);
