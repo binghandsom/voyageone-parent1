@@ -28,6 +28,7 @@ define([
                 scope.openProImageSetting = openProImageSetting;
                 scope.saveProduct = saveProduct;
                 scope.pageAnchor = pageAnchor;
+
                 /**
                  * 获取京东页面初始化数据
                  */

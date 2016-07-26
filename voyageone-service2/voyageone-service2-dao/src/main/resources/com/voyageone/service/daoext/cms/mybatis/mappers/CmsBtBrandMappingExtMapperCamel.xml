@@ -22,14 +22,25 @@
 	</select>
 	
 	<!-- 检索品牌映射关系（分页） -->
-	<select id="searchBrandsByPage" resultType="com.voyageone.service.bean.cms.BrandBtMappingBean">
+	<select id="searchBrandsByPage" resultType="com.voyageone.service.bean.cms.CmsBtBrandMappingBean">
 		select cmvc.name as master_name, brand.brand_name
 		from synship.com_mt_value_channel cmvc
 			left join cms_mt_brands_mapping cmbm on cmbm.cms_brand = cmvc.name
 				and cmvc.channel_id = cmbm.channel_id and cmbm.cart_id = #{cartId}
 		<choose>
-			<when test="isJMPlatform">
-				left join (select jm_master_brand_id, name as brand_name from cms_bt_jm_master_brand) brand
+			<when test="isJmBrand">
+				left join (
+					select jm_master_brand_id
+					<choose>
+					<when test="langId == 'cn'">
+						,name as brand_name
+					</when>
+					<otherwise>
+						,en_name as brand_name
+					</otherwise>
+				</choose>
+					from cms_bt_jm_master_brand
+				) brand
 			 		on brand.jm_master_brand_id = cmbm.brand_id
 			</when>
 			<otherwise>
@@ -49,6 +60,65 @@
 			and cmbm.id is null
 		</if>
 		limit #{offset}, #{size}
+	</select>
+	
+	<!-- 检索Master品牌 -->
+	<select id="searchMasterBrands" resultType="com.voyageone.service.bean.cms.CmsBtBrandBean">
+		select brand_id, brand_name
+		from cms_mt_platform_brands
+		where channel_id = #{channelId} and cart_id = #{cartId}
+		<if test="brandName != null and brandName != ''">
+			and brand_name like lower(concat('%', lower(#{brandName}), '%'));
+		</if>
+	</select>
+	
+	<!-- 检索聚美品牌 -->
+	<select id="searchJmBrands" resultType="com.voyageone.service.bean.cms.CmsBtBrandBean">
+		select * from (
+			select jm_master_brand_id as brand_id
+			<choose>
+				<when test="langId == 'cn'">
+					,name as brand_name
+				</when>
+				<otherwise>
+					,en_name as brand_name
+				</otherwise>
+			</choose>
+			from cms_bt_jm_master_brand
+		) temp
+		<where>
+			<if test="brandName != null and brandName != ''">
+				temp.brand_name like lower(concat('%', lower(#{brandName}), '%'));
+			</if>
+		</where>
+	</select>
+	
+	<select id="searchMatchedBrands" resultType="com.voyageone.service.bean.cms.CmsBtBrandMappingBean">
+		select cmbm.cms_brand, brand.brand_name
+		from cms_mt_brands_mapping cmbm
+		<choose>
+			<when test="isJmBrand">
+				join (
+					select jm_master_brand_id
+					<choose>
+						<when test="langId == 'cn'">
+							,name as brand_name
+						</when>
+						<otherwise>
+							,en_name as brand_name
+						</otherwise>
+					</choose>
+					from cms_bt_jm_master_brand) brand
+				on brand.jm_master_brand_id = cmbm.brand_id
+			</when>
+			<otherwise>
+			join cms_mt_platform_brands brand on brand.channel_id = cmbm.channel_id
+				and brand.cart_id = cmbm.cart_id and brand.brand_id = cmbm.brand_id
+			</otherwise>
+		</choose>
+		where cmbm.channel_id = #{channelId}
+			and cmbm.cart_id = #{cartId}
+			and cmbm.brand_id = #{brandId};
 	</select>
 	
 </mapper>

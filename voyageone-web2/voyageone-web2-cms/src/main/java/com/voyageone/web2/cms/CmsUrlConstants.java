@@ -430,11 +430,14 @@ public interface CmsUrlConstants {
         	/** 检索品牌映射关系 */
         	String SEARCH_BRANDS = "searchBrands";
         	
-        	/** 检索品牌映射关系分页数据 */
-        	String SEARCH_BRANDS_BY_PAGE = "searchBrandsByPage";
-        	
         	/** 检索客户的品牌 */
         	String SEARCH_CUST_BRANDS = "searchCustBrands";
+        	
+        	/** 检索已匹配的品牌 */
+        	String SEARCH_MATCHED_BRANDS = "searchMatchedBrands";
+        	
+        	/** 添加新匹配的品牌 */
+        	String ADD_NEW_BRAND_MAPPING = "addNewBrandMapping";
         }
     }
 
@@ -522,6 +525,8 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/pop/image_setting/";
 
             String UPLOAD_IMAGE = "uploadImage";
+
+            String UPLOAD_IMAGES = "uploadImages";
         }
         interface ADD_TO_CHANNEL_CATEGORY {
             String ROOT = "/cms/pop/add_to_channel_category";
