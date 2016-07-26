@@ -107,13 +107,9 @@
     <!--jm2 begin-->
     <select id="selectPageByWhere" resultType="MapModel">
         SELECT a.deal_end_time_status,b.image1,b.product_Long_Name  AS productLongName,b.color_En as colorEn,a.deal_Price,b.attribute
-        ,b.retail_price,a.market_price,b.msrp_usd,b.msrp_rmb,b.sale_price,a.jm_hash_id AS jmHashId,a.sku_count AS skuCount
+        ,a.max_retail_price,a.max_msrp_usd,a.max_msrp_rmb,a.max_sale_price,a.min_retail_price,a.min_msrp_usd,a.min_msrp_rmb,a.min_sale_price,a.market_price,a.jm_hash_id AS jmHashId,a.sku_count AS skuCount
         ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag,a.product_code,b.comment,
-        (SELECT MAX(`deal_price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as maxDealPrice,
-        (SELECT min(`deal_price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as minDealPrice,
-        (SELECT MAX(`Market_Price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as maxMarketPrice,
-        (SELECT min(`Market_Price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as minMarketPrice,
-        (SELECT AVG (discount) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as discount
+        a.max_deal_price,a.min_deal_price,a.max_market_price,a.min_market_price,a.discount
         FROM `cms_bt_jm_promotion_product` AS a
         JOIN  `cms_bt_jm_product`  AS b ON a.`product_code`=b.`product_code` AND a.`channel_id`=b.`channel_id`
         <where>
@@ -184,26 +180,26 @@
             </if>
             <if test="priceType=='msrpRmb'">
                 <if test="beginPrice!=null">
-                    and   b.msrp_rmb>=#{beginPrice}
+                    and   a.max_msrp_rmb>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   b.msrp_rmb&lt;=#{endPrice}
+                    and   a.min_msrp_rmb&lt;=#{endPrice}
                 </if>
             </if>
             <if test="priceType=='retailPrice'">
                 <if test="beginPrice!=null">
-                    and    b.retail_price>=#{beginPrice}
+                    and    a.max_retail_price>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   b.retail_price&lt;=#{endPrice}
+                    and   a.min_retail_price&lt;=#{endPrice}
                 </if>
             </if>
             <if test="priceType=='salePrice'">
                 <if test="beginPrice!=null">
-                    and  b.sale_price>=#{beginPrice}
+                    and a.max_sale_price>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and  b.sale_price&lt;=#{endPrice}
+                    and  a.min_sale_price&lt;=#{endPrice}
                 </if>
             </if>
             <if test="priceType=='dealPrice'">
@@ -347,7 +343,6 @@
 
     <update id="batchUpdateDealPrice">
         UPDATE cms_bt_jm_promotion_product  AS a
-        JOIN `cms_bt_jm_product` AS b  ON a.`product_code`=b.product_code AND a.`channel_id`=b.`channel_id`
         SET a.deal_Price=${dealPrice},a.discount=${dealPrice}/a.market_price,a.update_status=(CASE WHEN a.`synch_status`=2 THEN 1 ELSE  0  END)
         WHERE    a.id IN
         <foreach item="item" index="i" collection="listPromotionProductId"
@@ -357,12 +352,33 @@
     </update>
     <update id="updateAvgPriceByPromotionProductId">
         UPDATE cms_bt_jm_promotion_product  AS a
-        JOIN (SELECT cms_bt_jm_promotion_product_id,AVG(market_price) AS market_price,AVG(deal_price) AS deal_price,AVG(`discount`)  AS discount FROM `cms_bt_jm_promotion_sku`
+        JOIN (SELECT cms_bt_jm_promotion_product_id,AVG(market_price) AS market_price,AVG(deal_price) AS deal_price,AVG(`discount`)  AS discount
+        ,max(market_price) AS max_market_price,max(deal_price) AS max_deal_price,min(market_price) AS min_market_price,min(deal_price) AS min_deal_price FROM `cms_bt_jm_promotion_sku`
         WHERE  cms_bt_jm_promotion_product_id=#{cmsBtJmPromotionProductId}) AS b  ON a.id=b.cms_bt_jm_promotion_product_id
         SET a.deal_Price=b.deal_price,a.market_price=b.market_price,a.discount=b.discount
+        ,a.max_deal_Price=b.max_deal_price,a.max_market_price=b.max_market_price
+        ,a.min_deal_Price=b.min_deal_price,a.min_market_price=b.min_market_price
         WHERE    a.id =#{cmsBtJmPromotionProductId}
     </update>
-
+    <update id="updateAvgPriceByListPromotionProductId">
+        UPDATE cms_bt_jm_promotion_product  AS a
+        JOIN (SELECT cms_bt_jm_promotion_product_id,AVG(market_price) AS market_price,AVG(deal_price) AS deal_price,AVG(`discount`)  AS discount
+        ,max(market_price) AS max_market_price,max(deal_price) AS max_deal_price,min(market_price) AS min_market_price,min(deal_price) AS min_deal_price FROM `cms_bt_jm_promotion_sku`
+        WHERE  cms_bt_jm_promotion_product_id in  <foreach item="item" index="i" collection="listPromotionProductId"
+                                                           open="(" separator="," close=")">
+                                                        #{item}
+                                                    </foreach>
+        group by cms_bt_jm_promotion_product_id
+        ) AS b  ON a.id=b.cms_bt_jm_promotion_product_id
+        SET a.deal_Price=b.deal_price,a.market_price=b.market_price,a.discount=b.discount
+        ,a.max_deal_Price=b.max_deal_price,a.max_market_price=b.max_market_price
+        ,a.min_deal_Price=b.min_deal_price,a.min_market_price=b.min_market_price
+        WHERE    a.id IN
+        <foreach item="item" index="i" collection="listPromotionProductId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
     <update id="batchSynchPrice">
         UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''
         WHERE    id in
