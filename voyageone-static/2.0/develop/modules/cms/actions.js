@@ -156,6 +156,13 @@ define(function () {
                     "setDict": "setDict",
                     "delDict": "delDict",
                     "addDict": "addDict"
+                },
+                'brandMappingService': {
+                	'root': '/cms/mapping/brand',
+                	'init': 'init',
+                	'searchBrands': 'searchBrands',
+                	'searchBrandsByPage': 'searchBrandsByPage',
+                	'searchCustBrands': 'searchCustBrands'
                 }
             },
             "promotion": {

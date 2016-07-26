@@ -3,7 +3,7 @@
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                     aria-hidden="true"><i class="fa fa-close"></i></span></button>
-            <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;聚美平台品牌选择</h5>
+            <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{ctrl.platformData.cartName}}平台品牌选择</h5>
         </div>
         <div class="modal-body wrapper">
             <div class="form-group">
@@ -11,13 +11,13 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">当前Master品牌</label>
                         <div class="col-sm-6">
-                            <input class="form-control" ng-model="ctrl.brand.masterBrand" readonly/>
+                            <input class="form-control" ng-model="ctrl.platformData.masterName" readonly/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-4 control-label">当前选择的平台品牌</label>
                         <div class="col-sm-6">
-                            <input class="form-control" ng-model="ctrl.selectedPlatform"/>
+                            <input class="form-control" ng-model="ctrl.selectedPlatform" readonly/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -35,13 +35,12 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <ul class="list-unstyled table-bordered col-sm-10 col-sm-offset-1">
+                        <ul class="list-unstyled table-bordered col-sm-10 col-sm-offset-1 scrollable scroll-y" style="max-height: 280px;">
                             <li class="btn-block" ng-repeat="list in ctrl.platformList| filter:search" ng-style="{'background-color': ctrl.selectedPlatform == list.name? '#dcf3f9': 'white'}">
-                                <a href="javascript:void(0)" ng-click="ctrl.selected(list)">{{list.name}}</a>
+                                <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">{{list.name}}</a>
                             </li>
                         </ul>
                     </div>
-                    <vpagination config="ctrl.platformPageOption"></vpagination>
                 </div>
             </div>
         </div>

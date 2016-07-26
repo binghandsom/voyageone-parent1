@@ -5,7 +5,8 @@
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `cms_bt_jm_promotion_id`, `cms_bt_jm_promotion_product_id`, `product_code`, 
         `sku_code`, `market_price`, `discount`, `deal_price`, `error_msg`, `synch_status`, 
-        `creater`, `created`, `modified`, `modifier`, `update_state`
+        `creater`, `created`, `modified`, `modifier`, `update_state`, `msrp_usd`, `msrp_rmb`, 
+        `retail_price`, `sale_price`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -66,6 +67,18 @@
             <if test="updateState != null" >
                 `update_state` = #{updateState,jdbcType=INTEGER},
             </if>
+            <if test="msrpUsd != null" >
+                `msrp_usd` = #{msrpUsd,jdbcType=DECIMAL},
+            </if>
+            <if test="msrpRmb != null" >
+                `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="retailPrice != null" >
+                `retail_price` = #{retailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="salePrice != null" >
+                `sale_price` = #{salePrice,jdbcType=DECIMAL},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -125,6 +138,18 @@
             <if test="updateState != null" >
                 and `update_state` = #{updateState,jdbcType=INTEGER}
             </if>
+            <if test="msrpUsd != null" >
+                and `msrp_usd` = #{msrpUsd,jdbcType=DECIMAL}
+            </if>
+            <if test="msrpRmb != null" >
+                and `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=DECIMAL}
+            </if>
         </where>
         limit 1
     </select>
@@ -179,6 +204,18 @@
             <if test="updateState != null" >
                 and `update_state` = #{updateState,jdbcType=INTEGER}
             </if>
+            <if test="msrpUsd != null" >
+                and `msrp_usd` = #{msrpUsd,jdbcType=DECIMAL}
+            </if>
+            <if test="msrpRmb != null" >
+                and `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=DECIMAL}
+            </if>
         </where>
     </select>
 
@@ -230,6 +267,18 @@
             <if test="updateState != null" >
                 and `update_state` = #{updateState,jdbcType=INTEGER}
             </if>
+            <if test="msrpUsd != null" >
+                and `msrp_usd` = #{msrpUsd,jdbcType=DECIMAL}
+            </if>
+            <if test="msrpRmb != null" >
+                and `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=DECIMAL}
+            </if>
         </where>
     </select>
 
@@ -279,6 +328,18 @@
             </if>
             <if test="updateState != null" >
                 `update_state`,
+            </if>
+            <if test="msrpUsd != null" >
+                `msrp_usd`,
+            </if>
+            <if test="msrpRmb != null" >
+                `msrp_rmb`,
+            </if>
+            <if test="retailPrice != null" >
+                `retail_price`,
+            </if>
+            <if test="salePrice != null" >
+                `sale_price`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -335,6 +396,18 @@
             </if>
             <if test="updateState != null" >
                 #{updateState,jdbcType=INTEGER},
+            </if>
+            <if test="msrpUsd != null" >
+                #{msrpUsd,jdbcType=DECIMAL},
+            </if>
+            <if test="msrpRmb != null" >
+                #{msrpRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="retailPrice != null" >
+                #{retailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="salePrice != null" >
+                #{salePrice,jdbcType=DECIMAL},
             </if>
         </trim>
     </insert>

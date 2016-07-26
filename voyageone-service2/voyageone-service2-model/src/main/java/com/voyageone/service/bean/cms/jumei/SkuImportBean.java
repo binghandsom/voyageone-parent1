@@ -8,8 +8,45 @@ public class SkuImportBean {
     String skuCode;
     double dealPrice;
     double  marketPrice;
+//    double msrpUsd; //海外官网价格;
+//    double msrpRmb; //中国官网价格
+//    double retailPrice; //中国指导价格
+//    double salePrice; //中国最终售价
     Double discount;
     String errorMsg;//错误消息
+//    public double getSalePrice() {
+//        return salePrice;
+//    }
+//
+//    public void setSalePrice(double salePrice) {
+//        this.salePrice = salePrice;
+//    }
+//
+//    public double getRetailPrice() {
+//        return retailPrice;
+//    }
+//
+//    public void setRetailPrice(double retailPrice) {
+//        this.retailPrice = retailPrice;
+//    }
+//
+//    public double getMsrpRmb() {
+//        return msrpRmb;
+//    }
+//
+//    public void setMsrpRmb(double msrpRmb) {
+//        this.msrpRmb = msrpRmb;
+//    }
+//
+//    public double getMsrpUsd() {
+//        return msrpUsd;
+//    }
+//
+//    public void setMsrpUsd(double msrpUsd) {
+//        this.msrpUsd = msrpUsd;
+//    }
+
+
     public String getProductCode() {
         return productCode;
     }
