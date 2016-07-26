@@ -110,7 +110,7 @@ public class CmsImageSettingService extends BaseAppService {
             FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProductModel.getCommon().getFields());
             response.put("imageName", imageName);
             response.put("imageSchema", cmsMtCommonFields);
-            response.put("base64", ImgUtils.encodeToString(file.getInputStream(), ""));
+//            response.put("base64", ImgUtils.encodeToString(file.getInputStream(), ""));
             return response;
 //        }
     }
