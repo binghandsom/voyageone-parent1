@@ -88,7 +88,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 CmsBtProductModel mainProduct = productService.getProductByCode(channelId, cmsBtProductGroup.getMainProductCode());
                 CmsBtProductModel_Platform_Cart mainPlatform = mainProduct.getPlatform(cartId);
                 if(mainPlatform == null || StringUtil.isEmpty(mainPlatform.getpCatId())){
-                    throw new BusinessException("该商品的主商品类目没有设置，请先设置主商品：" + mainProduct.getCommon().getFields().getCode());
+                    throw new BusinessException(CartEnums.Cart.getValueByID(cartId+"") + "该商品的主商品类目没有设置，请先设置主商品：" + mainProduct.getCommon().getFields().getCode());
                 }
                 platformCart.setpCatPath(mainPlatform.getpCatPath());
                 platformCart.setpCatId(mainPlatform.getpCatId());
