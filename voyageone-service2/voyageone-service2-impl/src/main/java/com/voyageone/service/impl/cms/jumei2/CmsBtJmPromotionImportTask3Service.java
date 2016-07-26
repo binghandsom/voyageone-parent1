@@ -303,8 +303,6 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 saveInfo.jmProductModel.setErrorMsg("");
             }
             saveInfo.jmProductModel.setPriceStatus(0);
-            saveInfo.jmProductModel.setDealPrice(new BigDecimal(0));
-            saveInfo.jmProductModel.setMarketPrice(new BigDecimal(0));
             saveInfo.jmProductModel.setDiscount(new BigDecimal(0));
             saveInfo.jmProductModel.setSkuCount(0);
             saveInfo.jmProductModel.setQuantity(0);
@@ -355,14 +353,31 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         saveInfo.jmProductModel.setMaxSalePrice(new BigDecimal(saveInfo.p_Platform_Cart.getpPriceSaleEd()));
         saveInfo.jmProductModel.setMinSalePrice(new BigDecimal(saveInfo.p_Platform_Cart.getpPriceSaleSt()));
         if (saveInfo.jmSkuList.size() > 0) {
-            saveInfo.jmProductModel.setMarketPrice(saveInfo.jmSkuList.get(0).getMarketPrice());
-            saveInfo.jmProductModel.setDealPrice(saveInfo.jmSkuList.get(0).getDealPrice());
+            saveInfo.jmProductModel.setMaxMarketPrice(getMaxMarketPrice(saveInfo.jmSkuList));
+            saveInfo.jmProductModel.setMinMarketPrice(getMinMarketPrice(saveInfo.jmSkuList));
+            saveInfo.jmProductModel.setMaxDealPrice(getMaxDealPrice(saveInfo.jmSkuList));
+            saveInfo.jmProductModel.setMinDealPrice(getMinDealPrice(saveInfo.jmSkuList));
             saveInfo.jmProductModel.setDiscount(saveInfo.jmSkuList.get(0).getDiscount());//折扣
             saveInfo.jmProductModel.setSkuCount(saveInfo.jmSkuList.size());
         }
         saveInfo._importProduct = product;
     }
-
+    public BigDecimal getMaxMarketPrice(List<CmsBtJmPromotionSkuModel> skuList)
+    {
+      return   skuList.stream().max((m1,m2)->{return m1.getMarketPrice().doubleValue()>m2.getMarketPrice().doubleValue()?1:-1;}).get().getMarketPrice();
+    }
+    public BigDecimal getMinMarketPrice(List<CmsBtJmPromotionSkuModel> skuList)
+    {
+        return   skuList.stream().min((m1,m2)->{return m1.getMarketPrice().doubleValue()>m2.getMarketPrice().doubleValue()?1:-1;}).get().getMarketPrice();
+    }
+    public BigDecimal getMaxDealPrice(List<CmsBtJmPromotionSkuModel> skuList)
+    {
+        return   skuList.stream().max((m1,m2)->{return m1.getDealPrice().doubleValue()>m2.getDealPrice().doubleValue()?1:-1;}).get().getDealPrice();
+    }
+    public BigDecimal getMinDealPrice(List<CmsBtJmPromotionSkuModel> skuList)
+    {
+        return   skuList.stream().min((m1,m2)->{return m1.getDealPrice().doubleValue()>m2.getDealPrice().doubleValue()?1:-1;}).get().getDealPrice();
+    }
     private void loadCmsBtPromotionCodes(ProductSaveInfo saveInfo, List<SkuImportBean> listSkuImport, ProductImportBean product, CmsBtPromotionModel modelPromotion,String userName) {
 
         // 获取Product信息 mongo
