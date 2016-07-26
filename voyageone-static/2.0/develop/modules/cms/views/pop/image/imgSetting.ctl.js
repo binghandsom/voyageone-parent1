@@ -29,7 +29,11 @@ define([
 			init:function(){
 				var self = this;
 				var upLoader = new this.FileUploader({
-					url: '/cms/pop/image_setting/uploadImage'
+					url: '/cms/pop/image_setting/uploadImages',
+					formData:[{
+						"productId": self.context.productId,
+						"imageType": self.context.imageType
+					}]
 				});
 
 				upLoader.onSuccessItem = function(fileItem, response) {
@@ -99,17 +103,20 @@ define([
 
 					self.blockUI.start("图片上传中。。。请耐心等待！");
 
-					var data = [{
+/*					var data = [{
 						"productId": self.context.productId,
 						"imageType": self.context.imageType
-					}];
+					}];*/
 
-					angular.forEach(self.uploader.queue , function(item,index){
+/*					angular.forEach(self.uploader.queue , function(item,index){
 						item._idx = index;
 						item.formData = data;
 						item.upload();
 
-					});
+					});*/
+
+					//uploadAll()
+					self.uploader.uploadAll();
 
 				}
 			}
