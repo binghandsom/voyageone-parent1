@@ -18,6 +18,8 @@
                             ng-options="yearMonth.value as yearMonth.name for yearMonth in ctrl.yearMonthList">
                         <option value="" translate="TXT_SELECT_NO_VALUE"></option>
                     </select>
+                </div>
+                <div class="pull-right">
                     <button class="btn btn-primary btn-sm">SEARCH</button>
                 </div>
             </div>
@@ -44,6 +46,17 @@
                         <td class="text-center"><button class="btn btn-success btn-xs" ng-click="ctrl.download(financialReport.report_file_name)"><i class="fa fa-cloud-download fa-lg"></i></button></td>
                         <td class="text-center"  ng-if="ctrl.canConfirm == true"><button class="btn btn-xs btn-info" ng-click="ctrl.confirm(financialReport.reportFileName)" translate="BTN_CONFIRM"></button></td>
                     </tr>
+                    <tr>
+                        <td>FR201605</td>
+                        <td class="text-center">20160501 ~ 20160531</td>
+                        <td class="text-center">$150000</td>
+                        <td class="text-center"><button class="btn btn-success btn-xs"><i class="fa fa-cloud-download fa-lg"></i></button></td>
+                    </tr>
+                    <tr>
+                        <td>FR201604</td>
+                        <td class="text-center">20160401 ~ 20160430</td>
+                        <td class="text-center">$200000</td>
+                        <td class="text-center"><button class="btn btn-success btn-xs"><i class="fa fa-cloud-download fa-lg"></i></button></td>
                     </tr>
                     </tbody>
                 </table>

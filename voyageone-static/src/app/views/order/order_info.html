@@ -9,21 +9,20 @@
     </div>
 </div>
 <div class="container content">
-    <div class="panel panel-default"><!-- search -->
-        <!--<div class="panel-heading">-->
-            <!--<h5 class="panel-title" translate="TXT_SEARCH"></h5>-->
-        <!--</div>-->
+    <div class="panel panel-default">
         <div class="panel-body">
             <div class="form-inline">
                 <div class="form-group">
                     <!-- ORDER_ID -->
-                    <input id="ORDER_ID" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.consolidationOrderId" placeholder="{{'TXT_ORDER_ID'|translate}}">
+                    <label class="control-label m-l-sm" translate="TXT_ORDER_ID"></label>
+                    <input id="ORDER_ID" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.consolidationOrderId">
                     <!-- SKU -->
-                    <input id="SKU" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.sku" placeholder="{{'TXT_SKU'|translate}}">
+                    <label class="control-label m-l-sm" translate="TXT_SKU"></label>
+                    <input id="SKU" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.sku">
                     <!-- Status -->
                     <label class="control-label m-l-sm" translate="TXT_STATUS"></label>
                     <select name="SKU_STATUS" id="select" class="form-control input-sm" ng-model="ctrl.searchInfo.status"
-                            ng-options="orderStatus.value as orderStatus.name for orderStatus in ctrl.searchOrderStatus">
+                            ng-options="orderStatus.value as orderStatus.name for orderStatus in ctrl.orderStatusList">
                         <option value="" translate="TXT_ALL"></option>
                     </select>
 
@@ -53,34 +52,28 @@
                             <button class="btn btn-default input-sm" ng-click="datepicker4=!datepicker4"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </span>
-
-                    <button ng-click="ctrl.pageInfo.curr=1;ctrl.search()" class="btn btn-primary btn-sm" translate="BTN_SEARCH"></button>
                 </div>
                 <div class="pull-right">
-                    <div class="dropdown" uib-dropdown>
-                        <a href class="dropdown-toggle clear" uib-dropdown-toggle>
-                            <button class="btn btn-primary btn-sm" translate="BTN_DOWNLOAD_PICKING_LIST"></button>
-                        </a>
-                        <ul class="dropdown-menu arrow_box">
-                            <li>
-                                <a href="javascript:void(0)" translate="TXT_ORDER_BY_SKU" ng-click="ctrl.downloadPickingList('client_sku')"></a>
-                            </li>
-                            <li>
-                                <a href="javascript:void(0)" translate="TXT_ORDER_BY_ORDER" ng-click="ctrl.downloadPickingList('order_id')"></a>
-                            </li>
-                        </ul>
-                    </div>
+                    <button ng-click="ctrl.pageInfo.curr=1;ctrl.search()" class="btn btn-primary btn-sm" translate="BTN_SEARCH"></button>
                 </div>
             </div>
         </div>
     </div>
     <div class="row margin-bottom-10">
         <div class="col-sm-6" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
-            <button ng-if="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('new')" translate="BTN_NEW_SHIPMENT"></button>
-            <button ng-if="ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('end')" translate="BTN_END_SHIPMENT"></button>
+            <button ng-if="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment('new')" translate="BTN_NEW_SHIPMENT"></button>
+            <button ng-if="ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment('end')" translate="BTN_END_SHIPMENT"></button>
             <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
-                <a ng-if="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
+                <a ng-if="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popNewShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
                 <label ng-if="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
+        </div>
+        <div class="col-sm-6" ng-if="!(ctrl.channelConfigs.vendorOperateType == 'ORDER')"></div>
+        <div class="col-sm-6 text-right form-inline">
+            <select id="select_order" class="form-control" ng-model="ctrl.downloadInfo.orderType">
+                <option value="client_sku" translate="TXT_ORDER_BY_SKU"></option>
+                <option value="order_id" translate="TXT_ORDER_BY_ORDER"></option>
+            </select>
+            <button class="btn btn-primary btn-sm" ng-click="ctrl.downloadPickingList()" translate="BTN_DOWNLOAD_PICKING_LIST"></button>
         </div>
     </div>
     <div class="panel panel-vo" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">

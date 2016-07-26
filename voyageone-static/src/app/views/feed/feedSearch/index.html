@@ -14,16 +14,21 @@
             <div class="form-inline">
                 <div class="form-group">
                     <!-- Parent SKU -->
-                    <input id="Parent SKU" type="text" class="form-control input-sm" ng-model="ctrl.parentSku" placeholder="{{'TXT_PARENT_SKU' | translate}}">
+                    <label class="control-label">{{'TXT_PARENT_SKU' | translate}}</label>
+                    <input id="Parent SKU" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.parentSku">
                     <!-- Brand -->
-                    <input id="Brand" type="text" class="form-control input-sm" ng-model="ctrl.name" placeholder="{{'TXT_NAME' | translate}}">
+                    <label class="control-label">{{'TXT_NAME' | translate}}</label>
+                    <input id="Brand" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.name">
                     <!-- Category -->
-                    <input id="Category" type="text" class="form-control input-sm" ng-model="ctrl.category" placeholder="{{'TXT_CATEGORY' | translate}}">
+                    <label class="control-label">{{'TXT_CATEGORY' | translate}}</label>
+                    <input id="Category" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.category">
                     <!-- Price -->
-                    <input id="startPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceStart" placeholder="priceStart">
+                    <label class="control-label">{{'TXT_PRICE' | translate}}</label>
+                    <input id="startPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceStart">
                     <span>~</span>
-                    <input id="endPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceEnd" placeholder="priceEnd">
-
+                    <input id="endPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceEnd">
+                </div>
+                <div class="pull-right">
                     <button class="btn btn-primary btn-sm" ng-click="ctrl.search()">{{'BTN_SEARCH' | translate}}</button>
                 </div>
             </div>
