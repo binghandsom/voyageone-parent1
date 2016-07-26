@@ -172,6 +172,12 @@ define(function (require) {
             downloadPickingList: "downloadPickingList"
         }),
 
+        financialReportService: new CommonDataService('/vms/feed/financial_report', {
+            init: "init",
+            search: "search",
+            confirm: "confirm"
+        }),
+
         shipmentPopupService: new CommonDataService('/vms/popup/shipment', {
             init: "init",
             get: "get",

@@ -41,6 +41,7 @@ define(function () {
         "TXT_PARENT_SKU": "Parent SKU",
         "TXT_PLEASE_INPUT_A_VALID_DATE": "Please input a valid date.",
         "TXT_PRICE": "Price",
+        "TXT_REPORT_ID": "Report ID",
         "TXT_SEARCH": "Search",
         "TXT_SELECT_EXPRESS_COMPANY": "Express Company",
         "TXT_SELECT_NO_VALUE": "Select...",
