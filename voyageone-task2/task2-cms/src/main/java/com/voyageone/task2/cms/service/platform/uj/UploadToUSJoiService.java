@@ -239,7 +239,6 @@ public class UploadToUSJoiService extends BaseTaskService {
             $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
             e.printStackTrace();
             issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
-            throw e;
         }
     }
 
