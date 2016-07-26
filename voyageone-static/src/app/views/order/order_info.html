@@ -61,10 +61,10 @@
     </div>
     <div class="row margin-bottom-10">
         <div class="col-sm-6" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
-            <button ng-if="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment('new')" translate="BTN_NEW_SHIPMENT"></button>
-            <button ng-if="ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popNewShipment('end')" translate="BTN_END_SHIPMENT"></button>
+            <button ng-if="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('new')" translate="BTN_NEW_SHIPMENT"></button>
+            <button ng-if="ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('end')" translate="BTN_END_SHIPMENT"></button>
             <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
-                <a ng-if="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popNewShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
+                <a ng-if="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
                 <label ng-if="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
         </div>
         <div class="col-sm-6" ng-if="!(ctrl.channelConfigs.vendorOperateType == 'ORDER')"></div>
