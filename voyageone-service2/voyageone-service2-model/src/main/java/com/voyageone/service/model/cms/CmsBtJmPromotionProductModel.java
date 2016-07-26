@@ -114,6 +114,46 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
      */
     protected Integer stockStatus;
 
+    /**
+     * 海外官网价格
+     */
+    protected BigDecimal maxMsrpUsd;
+
+    /**
+     * 中国官网价格
+     */
+    protected BigDecimal maxMsrpRmb;
+
+    /**
+     * 中国指导价格
+     */
+    protected BigDecimal maxRetailPrice;
+
+    /**
+     * 中国最终售价
+     */
+    protected BigDecimal maxSalePrice;
+
+    /**
+     * 海外官网价格
+     */
+    protected BigDecimal minMsrpUsd;
+
+    /**
+     * 中国官网价格
+     */
+    protected BigDecimal minMsrpRmb;
+
+    /**
+     * 中国指导价格
+     */
+    protected BigDecimal minRetailPrice;
+
+    /**
+     * 中国最终售价
+     */
+    protected BigDecimal minSalePrice;
+
     public String getChannelId() {
         return channelId;
     }
@@ -280,5 +320,69 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setStockStatus(Integer stockStatus) {
         this.stockStatus = stockStatus;
+    }
+
+    public BigDecimal getMaxMsrpUsd() {
+        return maxMsrpUsd;
+    }
+
+    public void setMaxMsrpUsd(BigDecimal maxMsrpUsd) {
+        this.maxMsrpUsd = maxMsrpUsd;
+    }
+
+    public BigDecimal getMaxMsrpRmb() {
+        return maxMsrpRmb;
+    }
+
+    public void setMaxMsrpRmb(BigDecimal maxMsrpRmb) {
+        this.maxMsrpRmb = maxMsrpRmb;
+    }
+
+    public BigDecimal getMaxRetailPrice() {
+        return maxRetailPrice;
+    }
+
+    public void setMaxRetailPrice(BigDecimal maxRetailPrice) {
+        this.maxRetailPrice = maxRetailPrice;
+    }
+
+    public BigDecimal getMaxSalePrice() {
+        return maxSalePrice;
+    }
+
+    public void setMaxSalePrice(BigDecimal maxSalePrice) {
+        this.maxSalePrice = maxSalePrice;
+    }
+
+    public BigDecimal getMinMsrpUsd() {
+        return minMsrpUsd;
+    }
+
+    public void setMinMsrpUsd(BigDecimal minMsrpUsd) {
+        this.minMsrpUsd = minMsrpUsd;
+    }
+
+    public BigDecimal getMinMsrpRmb() {
+        return minMsrpRmb;
+    }
+
+    public void setMinMsrpRmb(BigDecimal minMsrpRmb) {
+        this.minMsrpRmb = minMsrpRmb;
+    }
+
+    public BigDecimal getMinRetailPrice() {
+        return minRetailPrice;
+    }
+
+    public void setMinRetailPrice(BigDecimal minRetailPrice) {
+        this.minRetailPrice = minRetailPrice;
+    }
+
+    public BigDecimal getMinSalePrice() {
+        return minSalePrice;
+    }
+
+    public void setMinSalePrice(BigDecimal minSalePrice) {
+        this.minSalePrice = minSalePrice;
     }
 }
