@@ -7,6 +7,7 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.HttpScene7;
 import com.voyageone.common.util.ImgUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ftp.FtpComponentFactory;
@@ -76,14 +77,15 @@ public class CmsImageSettingService extends BaseAppService {
         // 获取图片名字
         String imageName = getImageName(cmsBtProductModel, imageType, user);
 
-        // FtpBean初期化
-        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
-
-        // ftp连接usernmae
-        String userName = ftpComponent.getFtpConnectBean().getUsername();
+//        // FtpBean初期化
+//        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
+//
+//        // ftp连接usernmae
+//        String userName = ftpComponent.getFtpConnectBean().getUsername();
 
         // 上传图片到Ftp
-        if (uploadFtp(ftpComponent, uploadPath, file.getInputStream(), imageName + imageExtend)) {
+        HttpScene7.uploadImageFile(uploadPath, imageName + imageExtend, file.getInputStream());
+//        if (uploadFtp(ftpComponent, uploadPath, file.getInputStream(), imageName + imageExtend)) {
 
             // 插入图片表
             CmsBtImagesModel newModel = new CmsBtImagesModel();
@@ -91,7 +93,7 @@ public class CmsImageSettingService extends BaseAppService {
             newModel.setOriginalUrl("本地图片上传:" + file.getOriginalFilename());
             newModel.setCode(cmsBtProductModel.getCommon().getFields().getCode());
             newModel.setUpdFlg(1);
-            newModel.setCreater(userName);
+            newModel.setCreater(user.getUserName());
             newModel.setImgName(imageName);
             imagesService.insert(newModel);
 
@@ -110,9 +112,7 @@ public class CmsImageSettingService extends BaseAppService {
             response.put("imageSchema", cmsMtCommonFields);
             response.put("base64", ImgUtils.encodeToString(file.getInputStream(), ""));
             return response;
-        }
-
-        return null;
+//        }
     }
 
     public Map<String, Object> uploadImages(Map<String, MultipartFile> files, Long productId, String imageType, UserSessionBean user, String imageExtend) throws Exception {
