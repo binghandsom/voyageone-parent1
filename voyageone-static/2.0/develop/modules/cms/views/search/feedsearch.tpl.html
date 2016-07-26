@@ -309,7 +309,12 @@
                             <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="min-width:2840px;table-layout: fixed;" ng-controller="popupCtrl">
                                 <thead>
                                 <tr><!--24-->
-                                    <th class="text-center mfb-x" style="width:66px;padding-left:0px">Select</th>
+                                    <th class="text-center mfb-x" style="width:66px;padding-left:0px">
+                                        <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+                                            <input type="checkbox" ng-click="selectAll(vm.feedSelList)" ng-checked="isAllSelected(vm.feedSelList)" ng-disabled="!vm.feedList.length || !vm.feedSelList.currPageRows.length">
+                                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                        </label>
+                                    </th>
                                     <th class="text-center mfb-x" translate="TXT_IMAGE"></th>
                                     <th class="text-left mfb-x" translate="TXT_CATEGORY"></th>
                                     <th class="text-center mfb-x" translate="TXT_PRODUCT_CODE"></th>
