@@ -384,6 +384,7 @@ public class CmsFieldEditService extends BaseAppService {
 
         BulkJomgoUpdateList prodBulkList = new BulkJomgoUpdateList(1000, cmsBtProductDao, userInfo.getSelChannelId());
         BulkJomgoUpdateList grpBulkList = new BulkJomgoUpdateList(1000, cmsBtProductGroupDao, userInfo.getSelChannelId());
+        List<String> newProdCodeList = new ArrayList<>();
         for (String code : productCodes) {
             // 获取产品的信息
             CmsBtProductModel productModel = productService.getProductByCode(userInfo.getSelChannelId(), code);
@@ -399,10 +400,15 @@ public class CmsFieldEditService extends BaseAppService {
             for (Integer cartIdVal : cartList) {
                 // 如果该产品以前就是approved,则不更新pStatus
                 String prodStatus = productModel.getPlatformNotNull(cartIdVal).getStatus();
-                if (CmsConstants.ProductStatus.Ready.name().equals(prodStatus)) {
+                TypeChannelBean cartType = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, userInfo.getSelChannelId(), cartIdVal.toString(), "en");
+                if ("3".equals(cartType.getCartType())) {
                     strList.add("'platforms.P" + cartIdVal + ".status':'Approved','platforms.P" + cartIdVal + ".pStatus':'WaitingPublish'");
-                } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
-                    strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
+                } else {
+                    if (CmsConstants.ProductStatus.Ready.name().equals(prodStatus)) {
+                        strList.add("'platforms.P" + cartIdVal + ".status':'Approved','platforms.P" + cartIdVal + ".pStatus':'WaitingPublish'");
+                    } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
+                        strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
+                    }
                 }
             }
 
@@ -410,6 +416,7 @@ public class CmsFieldEditService extends BaseAppService {
                 $debug("产品未更新 code=" + code);
                 continue;
             }
+            newProdCodeList.add(code);
             String updStr = "{$set:{";
             updStr += StringUtils.join(strList, ',');
             updStr += ",'modified':#,'modifier':#}}";
@@ -451,7 +458,7 @@ public class CmsFieldEditService extends BaseAppService {
         for (Integer cartIdVal : cartList) {
             $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
             long sta = System.currentTimeMillis();
-            sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartIdVal, userInfo.getUserName());
+            sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), newProdCodeList, cartIdVal, userInfo.getUserName());
             $debug("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
         }
 
