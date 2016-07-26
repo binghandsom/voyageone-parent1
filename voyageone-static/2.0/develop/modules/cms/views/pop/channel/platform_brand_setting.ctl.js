@@ -37,7 +37,8 @@ define([
                     'cmsBrand': self.platformData.masterName,
                     'selectedPlatform': self.selectedPlatform,
                     'cartId': self.platformData.cartId,
-                    'brandId': self.selectedBrandId
+                    'brandId': self.selectedBrandId,
+                    'cartName': self.platformData.cartName
                 };
                 if (!self.selectedPlatformlist.selectedPlatform) {
                     self.notify.warning('TXT_COMPLETE_THE_PLATEFORM_BRAND');
