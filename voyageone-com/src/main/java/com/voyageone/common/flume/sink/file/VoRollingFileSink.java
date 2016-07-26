@@ -164,6 +164,12 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
                         logFileBeanMap.put(projectFile, new LogFileBean(projectFile));
                         logFileBean = logFileBeanMap.get(projectFile);
                     }
+                    LogFileBean logFileBeanNow = new LogFileBean(projectFile);
+                    String fileNow = logFileBeanNow.currentFile.getAbsolutePath();
+                    if (!fileNow.equals(logFileBean.currentFile.getAbsolutePath())) {
+                        logFileBeanMap.put(projectFile, logFileBeanNow);
+                        logFileBean = logFileBeanMap.get(projectFile);
+                    }
 
                     sinkCounter.incrementEventDrainAttemptCount();
                     eventAttemptCounter++;
@@ -175,7 +181,7 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
 
                 String taskName = headerMap.get("taskName");
                 if (taskName != null && taskName.trim().length() > 0) {
-                    String taskLogFile = headerMap.get("splitDir") + taskName + ".log";
+                    String taskLogFile = headerMap.get("splitDir") + taskName + "/task-" + taskName + ".log";
 
                     if (!logFileBeanMap.containsKey(taskLogFile)) {
                         logFileBeanMap.put(taskLogFile, new LogFileBean(taskLogFile));
@@ -183,6 +189,12 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
                     LogFileBean logFileBean = logFileBeanMap.get(taskLogFile);
                     if (!logFileBean.currentFile.exists()) {
                         logFileBeanMap.put(taskLogFile, new LogFileBean(taskLogFile));
+                        logFileBean = logFileBeanMap.get(taskLogFile);
+                    }
+                    LogFileBean logFileBeanNow = new LogFileBean(taskLogFile);
+                    String fileNow = logFileBeanNow.currentFile.getAbsolutePath();
+                    if (!fileNow.equals(logFileBean.currentFile.getAbsolutePath())) {
+                        logFileBeanMap.put(taskLogFile, logFileBeanNow);
                         logFileBean = logFileBeanMap.get(taskLogFile);
                     }
 
