@@ -30,8 +30,9 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">平台品牌模糊搜索</label>
                         <div class="col-sm-9 form-inline">
-                            <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:80%" ng-model="name">
+                            <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:73.5%" ng-model="name">
                             <button type="submit" class="btn btn-vo btn-xxs" ng-click="search.name = name"><i class="fa fa-search"></i></button>
+                            <button type="submit" class="btn btn-success btn-xxs" ng-click="ctrl.refresh()" title="{{'TXT_REGET_PLATFORM_BRANDS'|translate}}"><i class="fa fa-refresh"></i></button>
                         </div>
                     </div>
                     <div class="form-group">
