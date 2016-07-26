@@ -12,18 +12,7 @@ define([
             property: context
         };
 
-        $scope.save = function () {
-            if ($scope.vm.property.putFlg == null || $scope.vm.property.putFlg == undefined) {
-                alert("没有选择上下架操作，请选择后再操作。");
-                return;
-            }
-            var optName = '';
-            if ($scope.vm.property.putFlg == 1) {
-
-            } else if ($scope.vm.property.putFlg == 0) {
-
-            }
-            var msg = '';
+        $scope.init = function () {
             if ($scope.vm.property.cartId && $scope.vm.property.cartId > 0) {
                 var cartObj = Carts.valueOf(parseInt($scope.vm.property.cartId));
                 var cartName = $scope.vm.property.cartId;
@@ -33,9 +22,28 @@ define([
                         cartName = $scope.vm.property.cartId;
                     }
                 }
-                msg = $translate.instant('TXT_CONFIRM_NOW_STORE_PUT_ON', {'cartName':cartName, 'optName':''});
+                $scope.vm.titleName = cartName;
             } else {
-                msg = $translate.instant('TXT_CONFIRM_ALL_STORE_PUT_ON');
+                $scope.vm.titleName = '全店铺';
+            }
+        };
+
+        $scope.save = function () {
+            if ($scope.vm.property.putFlg == null || $scope.vm.property.putFlg == undefined) {
+                alert("没有选择上下架操作，请选择后再操作。");
+                return;
+            }
+            var optName = '';
+            if ($scope.vm.property.putFlg == 1) {
+                optName = '上架';
+            } else if ($scope.vm.property.putFlg == 0) {
+                optName = '下架';
+            }
+            var msg = '';
+            if ($scope.vm.property.cartId && $scope.vm.property.cartId > 0) {
+                msg = $translate.instant('TXT_CONFIRM_NOW_STORE_PUT_ON', {'cartName': $scope.vm.titleName, 'optName': optName});
+            } else {
+                msg = $translate.instant('TXT_CONFIRM_ALL_STORE_PUT_ON', {'optName': optName});
             }
             confirm(msg).then(function () {
                 $fieldEditService.setProductFields($scope.vm.property).then(function (res) {
