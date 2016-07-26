@@ -165,6 +165,11 @@ public class TypeConfigEnums {
 		 * 赠品规则类型
 		 */
 		giftRuleType(35),
+		
+		/**
+		 * 品牌
+		 */
+		brand(41),
 
 		/**
 		 * 产品状态:cms2

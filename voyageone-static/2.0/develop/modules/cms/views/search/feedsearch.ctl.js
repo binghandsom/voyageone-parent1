@@ -183,7 +183,7 @@ define([
                         tempFeedSelect.clearSelectedList();
                     }
                     $scope.vm.searchInfo.isAll = false;
-                    search(1);
+                    search();
                 })
             });
         };
