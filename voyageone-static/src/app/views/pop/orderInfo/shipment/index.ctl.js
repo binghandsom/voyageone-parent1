@@ -16,6 +16,7 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.expressCompanies = [];
             this.originalShipment = context.shipment;
+            this.statusList = context.statusList;
             this.shipment = angular.copy(context.shipment);
             if (this.shipment) {
                 if (this.shipment.shippedDate) {

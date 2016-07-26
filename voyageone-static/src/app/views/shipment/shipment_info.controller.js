@@ -69,9 +69,22 @@ define([
             })
         };
 
-        ShipmentInfoController.prototype.popNewShipment = function () {
-            this.popups.openShipment();
+        ShipmentInfoController.prototype.popNewShipment = function (shipment) {
+            var self = this;
+            //1:Open；3：Shipped；4：Arrived；5：Recevied；6：Receive with Error
+            var pendingShipmentStatus = shipment.status;
+            var shipmentInfo = {
+                shipment: shipment,
+                type: "edit",
+                pendingShipmentStatus: pendingShipmentStatus,
+                statusList: this.shipmentStatusList
+            };
+
+            this.popups.openShipment(shipmentInfo).then(function (shipment) {
+                self.currentShipment = shipment;
+            });
         };
+
 
         ShipmentInfoController.prototype.getStatusName = function (statusValue) {
             var self = this;

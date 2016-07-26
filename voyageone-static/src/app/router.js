@@ -39,9 +39,9 @@ define(function () {
                 "controller": "ShipmentInfoController as ctrl"
             },
             {
-                "hash": "/shipment/shipment_info/shipment_detail",
-                "templateUrl": "./views/shipment/shipmentDetail.html",
-                "controllerUrl": "./views/shipment/shipmentDetail.controller",
+                "hash": "/shipment/shipment_info/shipment_detail/:shipmentId",
+                "templateUrl": "./views/shipment/shipment_detail.html",
+                "controllerUrl": "./views/shipment/shipment_detail.controller",
                 "controller": "ShipmentDetailController as ctrl"
             },
             {

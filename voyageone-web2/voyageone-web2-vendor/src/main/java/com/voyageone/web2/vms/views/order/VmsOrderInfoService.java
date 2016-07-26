@@ -385,12 +385,6 @@ public class VmsOrderInfoService extends BaseService {
                 .map(vmsBtOrderDetailModel -> {
                     SubOrderInfoBean orderInfoBean = new SubOrderInfoBean();
                     BeanUtil.copy(vmsBtOrderDetailModel, orderInfoBean);
-//                    orderInfoBean.setReservationId(vmsBtOrderDetailModel.getReservationId());
-//                    orderInfoBean.setConsolidationOrderId(vmsBtOrderDetailModel.getConsolidationOrderId());
-//                    orderInfoBean.setClientSku(vmsBtOrderDetailModel.getClientSku());
-//                    orderInfoBean.setName(vmsBtOrderDetailModel.getName());
-//                    orderInfoBean.setConsolidationOrderTime(vmsBtOrderDetailModel.getConsolidationOrderTime());
-//                    orderInfoBean.setClientPromotionPrice(vmsBtOrderDetailModel.getClientPromotionPrice());
                     if (!STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
                         orderInfoBean.setRetailPrice(BigDecimal.ZERO);
                     return orderInfoBean;
@@ -576,23 +570,6 @@ public class VmsOrderInfoService extends BaseService {
                 .map(VmsBtOrderDetailModel::getConsolidationOrderId)
                 .distinct()
                 .collect(Collectors.toList());
-//        return orderDetailService.selectPlatformOrderIdList(params).parallelStream()
-//                // 获取订单号下的所有sku信息
-//                .flatMap(consolidationOrderId -> {
-//                    Map<String, Object> orderParams = new HashMap<String, Object>() {{
-//                        put("channelId", user.getSelChannelId());
-//                        put("consolidationOrderId", consolidationOrderId);
-//                    }};
-//                    return orderDetailService.select(orderParams).stream();
-//                })
-//                // 过滤出状态不为package的sku信息
-//                .filter(vmsBtOrderDetailModel -> !STATUS_VALUE.PRODUCT_STATUS.PACKAGE.equals(vmsBtOrderDetailModel
-//                        .getStatus()))
-//                // 获取状态不为package的sku订单号
-//                .map(VmsBtOrderDetailModel::getConsolidationOrderId)
-//                // 去重
-//                .distinct()
-//                .collect(Collectors.toList());
     }
 
     public ShipmentEndCountBean endShipment(UserSessionBean user, ShipmentBean shipmentBean) {

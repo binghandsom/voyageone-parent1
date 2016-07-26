@@ -21,9 +21,7 @@
                             translate="TXT_STATUS"></strong></label>
                     <div class="col-md-8">
                         <select id="shipmentStatus" class="form-control" name="shipmentStatus"
-                                ng-model="ctrl.shipment.status" required disabled>
-                            <option value="1" translate="TXT_OPEN" selected></option>
-                            <option value="3" translate="TXT_SHIPPED" ng-if="ctrl.type != 'new'"></option>
+                                ng-model="ctrl.shipment.status" required disabled ng-options="option.value as option.name for option in ctrl.statusList">
                         </select>
                     </div>
                 </div>

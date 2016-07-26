@@ -71,6 +71,8 @@ define(function () {
         "TXT_SHIPMENT_INFO": "Shipment Info",
         "TXT_ORDER_TOTAL": "Order Total",
         "TXT_SKU_TOTAL": "SKU Total",
+        "TXT_SHIPMENT_DETAIL": "Shipment Detail",
+        "TXT_NO_SHIPMENT_SELECTED": "No Shipment selected.",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
@@ -86,6 +88,6 @@ define(function () {
         "BTN_SUBMIT": "SUBMIT",
         "BTN_CREATE": "CREATE",
         "BTN_CONFIRM": "CONFIRM",
-        "TXT_NEW_SHIPMENT":"New Shipment"
+        "BTN_BACK": "BACK",
     }
 });

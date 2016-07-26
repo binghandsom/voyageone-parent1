@@ -19,12 +19,12 @@ import static com.voyageone.web2.vms.VmsUrlConstants.SHIPMENT;
  */
 @RestController
 @RequestMapping(SHIPMENT.SHIPMENT_INFO.ROOT)
-public class VmsShipmentController extends BaseController {
+public class VmsShipmentInfoController extends BaseController {
 
     private VmsShipmentService vmsShipmentService;
 
     @Autowired
-    public VmsShipmentController(VmsShipmentService vmsShipmentService) {
+    public VmsShipmentInfoController(VmsShipmentService vmsShipmentService) {
         this.vmsShipmentService = vmsShipmentService;
     }
 

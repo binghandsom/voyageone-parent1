@@ -23,6 +23,9 @@ public interface VmsUrlConstants {
             String INIT = "init";
             String SEARCH = "search";
         }
+        interface ShipmentDetail {
+            String ROOT = "/vms/shipment/shipment_detail";
+        }
     }
 
     interface FEED {

@@ -11,7 +11,7 @@
 <div class="container content">
     <div class="panel panel-default">
         <div class="panel-body">
-            <div class="form-inline">
+            <div class="form-inline col-sm-12">
                 <div class="form-group">
                     <!-- Shipment Name -->
                     <input id="Shipment Name" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.shipmentName" placeholder="{{'TXT_SHIPMENT_NAME'|translate}}">
@@ -27,7 +27,7 @@
                                ng-model="ctrl.shippedDateFrom"
                                uib-datepicker-popup
                                is-open="datepicker1"
-                               datepicker-options="{maxDate:ctrl.feedEndTime}">
+                               datepicker-options="{maxDate:ctrl.shippedDateTo}">
                         <span class="input-group-btn">
                             <button class="btn btn-default input-sm" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -38,15 +38,15 @@
                                ng-model="ctrl.shippedDateTo"
                                uib-datepicker-popup
                                is-open="datepicker2"
-                               datepicker-options="{minDate:ctrl.feedStartTime}">
+                               datepicker-options="{minDate:ctrl.shippedDateFrom}">
                         <span class="input-group-btn">
                             <button class="btn btn-default input-sm" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </span>
-                    <button class="btn btn-primary input-sm" ng-click="ctrl.search()" translate="BTN_SEARCH"></button>
+                    <button class="btn btn-primary btn-sm" ng-click="ctrl.search()" translate="BTN_SEARCH"></button>
                 </div>
-                <div class="pull-right m-t-xs">
-                    <button class="btn-vo input-sm" translate="TXT_NEW_SHIPMENT"></button>
+                <div class="pull-right">
+                    <button class="btn btn-success btn-sm" translate="BTN_NEW_SHIPMENT"></button>
                 </div>
             </div>
         </div>
@@ -69,7 +69,7 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="item in ctrl.data">
-                        <td class="text-left"><a href="#/shipment/shipment_info/shipment_detail">{{item.shipmentName}}</a></td>
+                        <td class="text-left"><a ng-href="{{'#/shipment/shipment_info/shipment_detail/' + item.id}}">{{item.shipmentName}}</a></td>
                         <td class="text-center">{{item.shippedDate | date: 'yyyy-MM-dd'}}</td>
                         <td class="text-center">{{item.trackingNo}}</td>
                         <td class="text-center">{{item.orderTotal}}</td>
@@ -80,8 +80,8 @@
                             <span ng-if="item.comment.length > 30" uib-tooltip="{{item.comment}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{item.comment | stringCutter:true:30:' ...'}}</span>
                         </td>
                         <td class="text-center">
-                            <button class="btn btn-xs btn-success" title="edit" ng-click="ctrl.popNewShipment()"><i class="fa fa-pencil"></i></button>
-                            <button class="btn btn-xs btn-success" title="Container" ng-click="ctrl.goContainer()"><i class="fa fa-inbox"></i></button>
+                            <button class="btn btn-xs btn-success" title="edit" ng-click="ctrl.popNewShipment(item)"><i class="fa fa-pencil"></i></button>
+                            <a class="btn btn-xs btn-success" title="Container" ng-href="{{'#/shipment/shipment_info/shipment_detail/' + item.id}}"><i class="fa fa-inbox"></i></a>
                         </td>
                     </tr>
                     </tbody>

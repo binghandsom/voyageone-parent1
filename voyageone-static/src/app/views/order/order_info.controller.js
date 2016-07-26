@@ -41,7 +41,7 @@ define([
             this.channelConfigs = {
                 vendorOperateType: 'SKU'
             };
-            this.searchOrderStatus = [];
+            this.orderStatusList = [];
             this.data = [];
         }
 
@@ -51,8 +51,9 @@ define([
                 // 获取当前shipment
                 self.currentShipment = data.currentShipment;
                 // 获取可选的订单状态
-                self.searchOrderStatus = data.searchOrderStatus;
-
+                self.orderStatusList = data.orderStatusList;
+                //获取shipment状态
+                self.shipmentStatusList = data.shipmentStatusList;
                 // 记录用户的操作方式(sku/order)
                 self.channelConfigs = data.channelConfigs;
 
@@ -141,9 +142,9 @@ define([
 
         OrderInfoController.prototype.getStatusName = function (statusValue) {
             var self = this;
-            for (var i = 0; i < self.searchOrderStatus.length; i++) {
-                if (self.searchOrderStatus[i].value == statusValue) {
-                    var currentStatus = self.searchOrderStatus[i];
+            for (var i = 0; i < self.orderStatusList.length; i++) {
+                if (self.orderStatusList[i].value == statusValue) {
+                    var currentStatus = self.orderStatusList[i];
                     break;
                 }
             }
@@ -165,7 +166,7 @@ define([
                 shipment: self.currentShipment,
                 type: type,
                 pendingShipmentStatus: pendingShipmentStatus,
-                searchOrderStatus: this.searchOrderStatus
+                statusList: this.shipmentStatusList
             };
 
             this.popups.openShipment(shipmentInfo).then(function (shipment) {

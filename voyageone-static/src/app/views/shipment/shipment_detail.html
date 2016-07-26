@@ -1,10 +1,10 @@
 <div class="breadcrumbs">
     <div class="container">
-        <h4 class="pull-left">Shipment List detail</h4>
+        <h4 class="pull-left" translate="TXT_SHIPMENT_DETAIL"></h4>
         <ul class="pull-right breadcrumb">
-            <li><a href="#/home">Home</a></li>
-            <li><a href="javascript:void(0)">Shipment</a></li>
-            <li class="active selecte">Shipment List detail</li>
+            <li><a href="#/home" translate="TXT_HOME"></a></li>
+            <li class="active disabled" translate="TXT_SHIPMENT"></li>
+            <li class="active selecte" translate="TXT_SHIPMENT_DETAIL"></li>
         </ul>
     </div>
 </div>
@@ -14,11 +14,11 @@
             <div class="row">
                 <div class="form-group">
                     <div class="col-sm-4">
-                        <button class="btn btn-primary" ng-click="ctrl.back()"><i class="fa fa-mail-reply"></i>&nbsp;&nbsp;Back</button>
+                        <button class="btn btn-primary" ng-click="ctrl.back()"><i class="fa fa-mail-reply"></i>&nbsp;&nbsp;{{'BTN_BACK' | translate}}</button>
                     </div>
                     <div class="col-md-8">
                         <div class="form-group input-group">
-                            <input type="text" class="form-control" placeholder="PleaseScan Barcode">
+                            <input type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}">
                             <span class="input-group-btn"><button class="btn btn-info" type="button">Scan</button></span>
                         </div>
                     </div>

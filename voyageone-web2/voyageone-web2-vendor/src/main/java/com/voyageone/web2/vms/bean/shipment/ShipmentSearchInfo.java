@@ -1,6 +1,6 @@
 package com.voyageone.web2.vms.bean.shipment;
 
-import com.voyageone.web2.vms.VmsConstants;
+import com.voyageone.common.util.StringUtils;
 
 import java.util.Date;
 
@@ -18,6 +18,7 @@ public class ShipmentSearchInfo {
     private int curr = 1;
     private Date shippedDateFrom = null;
     private Date shippedDateTo = null;
+
     public String getStatus() {
         return status;
     }
@@ -31,7 +32,8 @@ public class ShipmentSearchInfo {
     }
 
     public void setShipmentName(String shipmentName) {
-        this.shipmentName = shipmentName;
+        if (!StringUtils.isEmpty(shipmentName))
+            this.shipmentName = shipmentName;
     }
 
     public String getTrackingNo() {
@@ -39,7 +41,8 @@ public class ShipmentSearchInfo {
     }
 
     public void setTrackingNo(String trackingNo) {
-        this.trackingNo = trackingNo;
+        if (!StringUtils.isEmpty(trackingNo))
+            this.trackingNo = trackingNo;
     }
 
     public int getSize() {
