@@ -60,7 +60,7 @@ define([
                 if (req.shippedDate)
                     req.shippedDate = req.shippedDate.getTime();
                 self.shipmentPopupService.submit(req).then(function (data) {
-                    self.shipment = data.shipment;
+                    self.shipment = data.currentShipment;
                     if (self.shipment)
                         self.shipmentExisted = true;
                     self.notify.success("TXT_SUCCESS");

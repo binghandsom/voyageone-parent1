@@ -37,11 +37,13 @@ define([
             var self = this;
             self.shipmentInfoService.init().then(function (data) {
                 self.shipmentStatusList = data.shipmentStatusList;
-                self.search();
+                var sessionSearchInfo = JSON.parse(sessionStorage.getItem('shipmentSearchInfo'));
+                if (sessionSearchInfo) self.searchInfo = sessionSearchInfo;
+                self.search(self.searchInfo.curr);
             });
         };
 
-        ShipmentInfoController.prototype.search = function () {
+        ShipmentInfoController.prototype.search = function (curr) {
             var self = this;
             if (self.shippedDateFrom)
                 self.searchInfo.shippedDateFrom = self.shippedDateFrom;
@@ -53,8 +55,9 @@ define([
             } else {
                 self.searchInfo.shippedDateTo = undefined;
             }
-            self.searchInfo.curr = self.pageInfo.curr;
+            self.searchInfo.curr = curr;
             self.searchInfo.size = self.pageInfo.size;
+            sessionStorage.setItem('shipmentSearchInfo', JSON.stringify(self.searchInfo));
             self.shipmentInfoService.search(self.searchInfo).then(function (data) {
                 self.pageInfo.total = data.shipmentInfo.total;
                 self.data = data.shipmentInfo.shipmentList;
