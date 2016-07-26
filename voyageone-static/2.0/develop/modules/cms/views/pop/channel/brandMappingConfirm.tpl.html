@@ -9,7 +9,7 @@
             <div class="form-group">
                 <div class="col-sm-12">
                     <div class="form-group">
-                        <label class="control-label">聚美平台品牌 ” {{ctrl.platformData.selectedPlatform}} ” 已与以下Master品牌完成匹配：</label>
+                        <label class="control-label">聚美平台品牌 ”{{ctrl.platformData.selectedPlatform}} ” 已与以下Master品牌完成匹配：</label>
                     </div>
                     <div class="form-group">
                         <table class="table table-hover-new vo_table tableWordBreak">
@@ -20,16 +20,16 @@
                             </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="mfb-xxt text-center">耐克</td>
-                                    <td class="mfb-xxt text-center">naike</td>
+                                <tr ng-repeat="list in ctrl.matchedBrandList">
+                                    <td class="mfb-xxt text-center">{{list.brandName}}</td>
+                                    <td class="mfb-xxt text-center">{{list.cmsBrand}}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="form-group">
                         <label class="control-label" >
-                            确定将Master品牌<span class="text-warnings m-r-sm">{{ctrl.platformData.masterName}}</span>与聚美平台品牌<span class="text-warnings m-r-sm">{{ctrl.platformData.selectedPlatform}}</span>匹配？
+                            确定将Master品牌<span class="text-warnings m-r-sm">{{ctrl.platformData.cmsBrand}}</span>与聚美平台品牌<span class="text-warnings m-r-sm">{{ctrl.platformData.selectedPlatform}}</span>匹配？
                         </label>
                     </div>
                 </div>

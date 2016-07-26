@@ -39,7 +39,6 @@ public interface CmsBtBrandMappingDaoExt {
 	/**
 	 * 检索已匹配的品牌映射关系
 	 */
-	List<CmsBtBrandMappingBean> searchMatchedBrands(@Param("channelId") String channelId, @Param("cartId") int cartId,
-			@Param("langId") String langId, @Param("brandId") String brandId);
+	List<CmsBtBrandMappingBean> searchMatchedBrands(Map<String, Object> params);
 
 }
