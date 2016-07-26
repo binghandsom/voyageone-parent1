@@ -319,6 +319,11 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
         if (sku_colorField.getType() == FieldTypeEnum.SINGLECHECK) {
             List<Option> colorOptions = ((SingleCheckField) sku_colorField).getOptions();
             if (colorValue == null) {
+                // added by morse.lu 2016/07/26 start
+                if (availableColorIndex >= colorOptions.size()) {
+                    throw new BusinessException(String.format("最多只能%d个code!请拆分group!", colorOptions.size()));
+                }
+                // added by morse.lu 2016/07/26 end
                 colorValue = colorOptions.get(availableColorIndex++).getValue();
                 buildSkuResult.getColorCmsPropductMap().put(colorValue, sxProduct);
                 buildSkuResult.getCmsPropductColorMap().put(sxProduct, colorValue);
@@ -345,6 +350,11 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
     private void buildSkuSize(ComplexValue skuFieldValue, CmsBtProductModel productModel, CmsBtProductModel_Sku cmsSkuProp) throws Exception {
         if (sku_sizeField.getType() == FieldTypeEnum.SINGLECHECK) {
             List<Option> sizeOptions = ((SingleCheckField)sku_sizeField).getOptions();
+            // added by morse.lu 2016/07/26 start
+            if (availableSizeIndex >= sizeOptions.size()) {
+                throw new BusinessException(String.format("最多只能%d个sku!请拆分group!", sizeOptions.size()));
+            }
+            // added by morse.lu 2016/07/26 end
             String sizeValue = sizeOptions.get(availableSizeIndex++).getValue();
             skuFieldValue.setSingleCheckFieldValue(sku_sizeField.getId(), new Value(sizeValue));
             buildSkuResult.getSizeCmsSkuPropMap().put(sizeValue, cmsSkuProp);
