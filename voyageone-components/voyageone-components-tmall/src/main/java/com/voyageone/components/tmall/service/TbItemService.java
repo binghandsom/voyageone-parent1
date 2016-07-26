@@ -1,12 +1,8 @@
 package com.voyageone.components.tmall.service;
 
 import com.taobao.api.ApiException;
-import com.taobao.api.request.ItemSkusGetRequest;
-import com.taobao.api.request.TmallItemSchemaUpdateRequest;
-import com.taobao.api.request.TmallItemUpdateSchemaGetRequest;
-import com.taobao.api.response.ItemSkusGetResponse;
-import com.taobao.api.response.TmallItemSchemaUpdateResponse;
-import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
+import com.taobao.api.request.*;
+import com.taobao.api.response.*;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
@@ -88,4 +84,42 @@ public class TbItemService extends TbBase {
         }
         return reqTaobaoApi(shopBean, req);
     }
+
+    /**
+     * 商品上架
+     *
+     * @throws ApiException
+     */
+    public boolean doWareUpdateListing(ShopBean shopBean, long numIid) throws ApiException {
+        logger.info("商品上架 " + numIid);
+        ItemUpdateListingRequest request = new ItemUpdateListingRequest ();
+        request.setNumIid(numIid);
+        request.setNum(1L);
+        ItemUpdateListingResponse response = reqTaobaoApi(shopBean, request);
+        Long rsNumIId = response.getItem().getNumIid();
+        if (rsNumIId == null || rsNumIId == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * 商品下架
+     *
+     * @throws ApiException
+     */
+    public boolean doWareUpdateDelisting(ShopBean shopBean, long numIid) throws ApiException {
+        logger.info("商品下架 " + numIid);
+        ItemUpdateDelistingRequest request = new ItemUpdateDelistingRequest();
+        request.setNumIid(numIid);
+        ItemUpdateDelistingResponse response = reqTaobaoApi(shopBean, request);
+        Long rsNumIId = response.getItem().getNumIid();
+        if (rsNumIId == null || rsNumIId == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
+
