@@ -153,7 +153,7 @@ define([
             return currentStatus.name;
         };
 
-        OrderInfoController.prototype.popNewShipment = function (type) {
+        OrderInfoController.prototype.popShipment = function (type) {
             var self = this;
             //1:Open；3：Shipped；4：Arrived；5：Recevied；6：Receive with Error
             var pendingShipmentStatus = "1";

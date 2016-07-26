@@ -1,6 +1,5 @@
 package com.voyageone.web2.vms.bean.shipment;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.voyageone.common.util.BeanUtil;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 
@@ -11,7 +10,7 @@ import java.util.Date;
  * Created by vantis on 2016/7/15.
  */
 public class ShipmentBean {
-    private Integer Id;
+    private Integer id;
     private String channelId;
     private String shipmentName;
     private Date shippedDate;
@@ -53,11 +52,11 @@ public class ShipmentBean {
     }
 
     public Integer getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Integer id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getChannelId() {

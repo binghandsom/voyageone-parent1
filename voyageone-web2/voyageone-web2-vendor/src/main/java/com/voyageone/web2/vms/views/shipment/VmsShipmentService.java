@@ -12,6 +12,7 @@ import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
 import com.voyageone.web2.vms.bean.shipment.*;
+import com.voyageone.web2.vms.views.common.ChannelConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +30,15 @@ public class VmsShipmentService {
 
     private ShipmentService shipmentService;
     private OrderDetailService orderDetailService;
+    private ChannelConfigService channelConfigService;
 
     @Autowired
-    public VmsShipmentService(ShipmentService shipmentService, OrderDetailService orderDetailService) {
+    public VmsShipmentService(ShipmentService shipmentService,
+                              OrderDetailService orderDetailService,
+                              ChannelConfigService channelConfigService) {
         this.shipmentService = shipmentService;
         this.orderDetailService = orderDetailService;
+        this.channelConfigService = channelConfigService;
     }
 
     /**
@@ -81,9 +86,8 @@ public class VmsShipmentService {
         BeanUtil.copy(shipmentBean, vmsBtShipmentModel);
 
         vmsBtShipmentModel.setChannelId(user.getSelChannelId());
-        boolean correct = null != vmsBtShipmentModel.getStatus()
-                && STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(vmsBtShipmentModel.getStatus());
-        correct = correct && (null != vmsBtShipmentModel.getShipmentName());
+        boolean correct = null != vmsBtShipmentModel.getStatus();
+        correct = correct && null != vmsBtShipmentModel.getShipmentName();
 
         if (correct && (!STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(vmsBtShipmentModel.getStatus()))) {
             correct = null != vmsBtShipmentModel.getExpressCompany();
@@ -123,8 +127,10 @@ public class VmsShipmentService {
      */
     public int create(UserSessionBean user, ShipmentBean shipmentBean) {
 
-        // 确认现在没有已存在的open shipment
-        if (null != this.getCurrentShipment(user)) throw new BusinessException("8000022");
+        // 对于ORDER级别的channel 要确认是否已有活动的shipment
+        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(
+                channelConfigService.getChannelConfigs(user).getVendorOperateType())
+                && null != this.getCurrentShipment(user)) throw new BusinessException("8000022");
 
         VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel() {{
             setChannelId(user.getSelChannelId());
@@ -171,5 +177,14 @@ public class VmsShipmentService {
                 })
                 .collect(Collectors.toList()));
         return shipmentInfo;
+    }
+
+    public ShipmentBean getShipment(UserSessionBean user, Integer shipmentId) {
+        VmsBtShipmentModel vmsBtShipmentModel = shipmentService.select(shipmentId);
+        if (null == vmsBtShipmentModel
+                || !shipmentId.equals(vmsBtShipmentModel.getId())
+                || !user.getSelChannelId().equals(vmsBtShipmentModel.getChannelId()))
+            throw new BusinessException("8000028"); // 无效的shipment编号
+        return ShipmentBean.getInstance(vmsBtShipmentModel);
     }
 }
