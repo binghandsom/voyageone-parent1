@@ -49,7 +49,13 @@ define([
                     return;
                 }
                 self.popups.openPlatformMappingConfirm(self.selectedPlatformlist).then(function (res) {
-                    if (res == true) self.$uibModalInstance.close();
+                    if (res == true) {
+                        self.brandMappingService.addNewBrandMapping({
+                            'cartId': self.platformData.cartId,
+                            'brandId': self.custBrandList.brandId
+                        });
+                        self.$uibModalInstance.close();
+                    }
                 });
 
             }

@@ -25,7 +25,6 @@ define([
                 var self = this;
                 self.brandMappingService.init().then(function (res) {
                     self.cartList = res.data.cartList;
-                    console.log(self.cartList);
                 });
             },
             clear: function () {
