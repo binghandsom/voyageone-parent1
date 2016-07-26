@@ -3,8 +3,9 @@
  */
 define([
     'angularAMD',
+    'modules/cms/enums/Carts',
     'modules/cms/controller/popup.ctl'
-], function (angularAMD) {
+], function (angularAMD, Carts) {
     angularAMD.controller('popPutOnOffCtl', function ($scope, $fieldEditService, $translate, $modalInstance, confirm, notify, alert, context) {
 
         $scope.vm = {
@@ -16,9 +17,23 @@ define([
                 alert("没有选择上下架操作，请选择后再操作。");
                 return;
             }
+            var optName = '';
+            if ($scope.vm.property.putFlg == 1) {
+
+            } else if ($scope.vm.property.putFlg == 0) {
+
+            }
             var msg = '';
             if ($scope.vm.property.cartId && $scope.vm.property.cartId > 0) {
-                msg = $translate.instant('TXT_CONFIRM_NOW_STORE_PUT_ON');
+                var cartObj = Carts.valueOf(parseInt($scope.vm.property.cartId));
+                var cartName = $scope.vm.property.cartId;
+                if (cartObj) {
+                    cartName = cartObj.desc;
+                    if (cartName == null || cartName == '' || cartName == undefined) {
+                        cartName = $scope.vm.property.cartId;
+                    }
+                }
+                msg = $translate.instant('TXT_CONFIRM_NOW_STORE_PUT_ON', {'cartName':cartName, 'optName':''});
             } else {
                 msg = $translate.instant('TXT_CONFIRM_ALL_STORE_PUT_ON');
             }
