@@ -58,20 +58,30 @@ public class CmsImageSettingController extends CmsController {
             throw new BusinessException("图片上传失败");
         }
 
-//        int cartId = (int) getCmsSession().getPlatformType().get("cartId");
-//        Map productInfo = productPropsEditService.getProductInfo(getUser().getSelChannelId(), productId, cartId, getLang());
-//        CmsProductInfoBean cmsProductInfoBean = (CmsProductInfoBean) productInfo.get("productInfo");
-
-//        List<CmsBtProductModel_Field_Image> images = cmsProductInfoBean.getProductImages().get(imageType);
-//        if(images.size() > 0){
-//            images.remove(images.size() - 1);
-//        }
-//        response.put("productInfo", productInfo.get("productInfo"));
-//        productInfo.remove("productInfo");
         input.close();
 
         // 返回用户信息
         return success(response);
     }
 
+    @RequestMapping(CmsUrlConstants.POP.IMAGE_SETTING.UPLOAD_IMAGES)
+    public AjaxResponse uploadImages(HttpServletRequest request, @RequestParam Long productId,@RequestParam String imageType) throws Exception {
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        MultipartFile file = multipartRequest.getFile("file");
+        // 获得输入流：
+
+        if (!imageExtends.contains(ImgUtils.getImageExtend(file.getOriginalFilename())))
+            throw new BusinessException("上传的图片后缀名不正确,请上传正确的图片, eg: jpg, JPG, png, PNG");
+
+        InputStream input = file.getInputStream();
+        Map<String,Object> response = cmsImageSettingService.uploadImage(file, productId, imageType, getUser(), ImgUtils.getImageExtend(file.getOriginalFilename()));
+        if(response == null){
+            throw new BusinessException("图片上传失败");
+        }
+
+        input.close();
+
+        // 返回用户信息
+        return success(response);
+    }
 }

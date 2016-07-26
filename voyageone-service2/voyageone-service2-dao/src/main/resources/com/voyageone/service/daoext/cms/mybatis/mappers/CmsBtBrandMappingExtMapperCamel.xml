@@ -67,7 +67,9 @@
 		select brand_id, brand_name
 		from cms_mt_platform_brands
 		where channel_id = #{channelId} and cart_id = #{cartId}
+		<if test="brandName != null and brandName != ''">
 			and brand_name like lower(concat('%', lower(#{brandName}), '%'));
+		</if>
 	</select>
 	
 	<!-- 检索聚美品牌 -->
@@ -82,10 +84,13 @@
 					,en_name as brand_name
 				</otherwise>
 			</choose>
-			name as brand_name
 			from cms_bt_jm_master_brand
 		) temp
-		where temp.brand_name like lower(concat('%', lower(#{brandName}), '%'));
+		<where>
+			<if test="brandName != null and brandName != ''">
+				temp.brand_name like lower(concat('%', lower(#{brandName}), '%'));
+			</if>
+		</where>
 	</select>
 	
 	<select id="searchMatchedBrands" resultType="com.voyageone.service.bean.cms.CmsBtBrandMappingBean">

@@ -525,6 +525,8 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/pop/image_setting/";
 
             String UPLOAD_IMAGE = "uploadImage";
+
+            String UPLOAD_IMAGES = "uploadImages";
         }
         interface ADD_TO_CHANNEL_CATEGORY {
             String ROOT = "/cms/pop/add_to_channel_category";
