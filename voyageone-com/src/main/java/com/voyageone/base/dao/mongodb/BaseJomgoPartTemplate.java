@@ -92,6 +92,10 @@ public class BaseJomgoPartTemplate {
         return jongo.getCollection(collectionName).getDBCollection();
     }
 
+    public boolean collectionExists(final String collectionName) {
+        return mongoTemplate.collectionExists(collectionName);
+    }
+
     public void dropCollection(String collectionName) {
         mongoTemplate.dropCollection(collectionName);
     }

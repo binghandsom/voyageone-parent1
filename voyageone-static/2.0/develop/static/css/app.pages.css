@@ -812,13 +812,18 @@ s-field textarea.s-html {
     color: #bfbebe;
 }
 
-.switch-main .fix-img{
+.switch-main .fix-div{
     position: relative;
+    width: 135px;
+    height: 135px;
+    margin: 15px auto;
+}
+
+.switch-main .img-zoom{
     width: auto;
     height: auto;
-    max-width: 125px;
-    max-height: 125px;
-    margin: 15px auto;
+    max-width: 115px;
+    max-height: 115px;
 }
 
 .switch-main .current{

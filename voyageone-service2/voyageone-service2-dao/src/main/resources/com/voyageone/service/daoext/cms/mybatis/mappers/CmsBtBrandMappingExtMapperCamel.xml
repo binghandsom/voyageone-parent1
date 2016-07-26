@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtBrandMappingDaoExt">
+
+	<!-- 检索品牌映射关系（合计） -->
+	<select id="searchBrandsCount" resultType="long">
+		select count(1)
+		from synship.com_mt_value_channel cmvc
+			left join cms_mt_brands_mapping cmbm on cmbm.cms_brand = cmvc.name
+				and cmvc.channel_id = cmbm.channel_id and cmbm.cart_id = #{cartId}
+		where cmvc.type_id = #{typeId} and cmvc.lang_id = #{langId}
+			and cmvc.channel_id = #{channelId}
+		<if test="brandName != null and brandName != ''">
+			and lower(cmvc.name) like concat('%', lower(#{brandName}),'%')
+		</if>
+		<if test="mappingState == 1">
+			and cmbm.id is not null
+		</if>
+		<if test="mappingState == 2">
+			and cmbm.id is null
+		</if>
+	</select>
+	
+	<!-- 检索品牌映射关系（分页） -->
+	<select id="searchBrandsByPage" resultType="com.voyageone.service.bean.cms.BrandBtMappingBean">
+		select cmvc.name as master_name, brand.brand_name
+		from synship.com_mt_value_channel cmvc
+			left join cms_mt_brands_mapping cmbm on cmbm.cms_brand = cmvc.name
+				and cmvc.channel_id = cmbm.channel_id and cmbm.cart_id = #{cartId}
+		<choose>
+			<when test="isJMPlatform">
+				left join (select jm_master_brand_id, name as brand_name from cms_bt_jm_master_brand) brand
+			 		on brand.jm_master_brand_id = cmbm.brand_id
+			</when>
+			<otherwise>
+				left join cms_mt_platform_brands brand on brand.channel_id = cmvc.channel_id
+					and brand.cart_id = cmbm.cart_id and brand.brand_id = cmbm.brand_id
+			</otherwise>
+		</choose>
+		where cmvc.type_id = #{typeId} and cmvc.lang_id = #{langId}
+			and cmvc.channel_id = #{channelId}
+		<if test="brandName != null and brandName != ''">
+			and lower(cmvc.name) like concat('%', lower(#{brandName}),'%')
+		</if>
+		<if test="mappingState == 1">
+			and cmbm.id is not null
+		</if>
+		<if test="mappingState == 2">
+			and cmbm.id is null
+		</if>
+		limit #{offset}, #{size}
+	</select>
+	
+</mapper>

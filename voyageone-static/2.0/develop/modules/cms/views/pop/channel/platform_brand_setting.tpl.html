@@ -17,11 +17,11 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">当前选择的平台品牌</label>
                         <div class="col-sm-6">
-                            <input class="form-control" ng-model="ctrl.selectedPlatform"/>
+                            <input class="form-control" ng-model="ctrl.selectedPlatform" readonly/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="text-warnings col-sm-offset-1 col-sm-9 control-label" >
+                        <div class="text-warnings col-sm-offset-1 col-sm-9 control-label">
                             <i class="icon fa fa-bell-o"></i>&nbsp;PS：品牌一经匹配，将无法修改，请慎重选择！如未找到满足您需求的平台品牌，请联络平台运营进行开通。
                         </div>
                     </div>
@@ -30,18 +30,17 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">平台品牌模糊搜索</label>
                         <div class="col-sm-9 form-inline">
-                            <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:80%"  ng-model="ctrl.key">
-                            <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search()"><i class="fa fa-search"></i></button>
+                            <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:80%" ng-model="name">
+                            <button type="submit" class="btn btn-vo btn-xxs" ng-click="search.name = name"><i class="fa fa-search"></i></button>
                         </div>
                     </div>
                     <div class="form-group">
-                        <ul class="list-unstyled table-bordered col-sm-10 col-sm-offset-1">
-                            <li class="btn-block" ng-repeat="list in ctrl.platformList">
-                                <a href=""  ng-click="ctrl.selected(item)">{{list.name}}</a>
+                        <ul class="list-unstyled table-bordered col-sm-10 col-sm-offset-1 scrollable scroll-y" style="max-height: 280px;">
+                            <li class="btn-block" ng-repeat="list in ctrl.platformList| filter:search" ng-style="{'background-color': ctrl.selectedPlatform == list.name? '#dcf3f9': 'white'}">
+                                <a href="javascript:void(0)" ng-click="ctrl.selected(list)">{{list.name}}</a>
                             </li>
                         </ul>
                     </div>
-                    <vpagination config="ctrl.platformPageOption"></vpagination>
                 </div>
             </div>
         </div>

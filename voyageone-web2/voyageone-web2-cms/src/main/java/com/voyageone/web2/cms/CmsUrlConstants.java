@@ -416,6 +416,26 @@ public interface CmsUrlConstants {
 
             String GET_DICT_LIST = "getDictList";
         }
+        
+        /**
+         * 品牌映射
+         */
+        interface BRAND {
+        	/** 根路径 */
+        	String ROOT = "/cms/mapping/brand";
+        	
+        	/** 页面初始化 */
+        	String INIT = "init";
+        	
+        	/** 检索品牌映射关系 */
+        	String SEARCH_BRANDS = "searchBrands";
+        	
+        	/** 检索品牌映射关系分页数据 */
+        	String SEARCH_BRANDS_BY_PAGE = "searchBrandsByPage";
+        	
+        	/** 检索客户的品牌 */
+        	String SEARCH_CUST_BRANDS = "searchCustBrands";
+        }
     }
 
     // 系统设置
