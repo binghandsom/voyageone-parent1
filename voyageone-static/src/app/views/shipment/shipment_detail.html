@@ -19,7 +19,7 @@
                     </div>
                     <div class="col-md-8">
                         <div class="form-group input-group">
-                            <input type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}" autofocus>
+                            <input type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}" ng-autofocus="true">
                             <span class="input-group-btn"><button class="btn btn-info" type="button" translate="BTN_SCAN"></button></span>
                         </div>
                     </div>
@@ -98,7 +98,7 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="item in ctrl.scannedSkuList">
-                        <td class="td-1 text-center">{{$index + 1}}</td>
+                        <td class="td-1 text-center">{{ctrl.scannedSkuList.length - $index}}</td>
                         <td class="td-2 text-center">{{item.barcode}}</td>
                         <td class="td-2 text-center">{{item.clientSku}}</td>
                         <td class="td-3 text-center">{{item.name}}</td>
