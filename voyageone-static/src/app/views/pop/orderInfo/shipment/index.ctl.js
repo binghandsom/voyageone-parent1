@@ -49,8 +49,8 @@ define([
             var req = angular.copy(self.shipment);
             var tempShipment = {};
             // 先判断是否有其他人改了当前的shipment
-            self.shipmentPopupService.get().then(function (data) {
-                tempShipment = data.currentShipment;
+            self.shipmentPopupService.getInfo(self.originalShipment.id).then(function (data) {
+                tempShipment = data.shipment;
                 if (!_.isEqual(self.originalShipment, tempShipment)) {
                     self.alert("TXT_SHIPMENT_HAVE_BEEN_EDITED");
                     self.$uibModalInstance.close(tempShipment);
@@ -60,7 +60,7 @@ define([
                 if (req.shippedDate)
                     req.shippedDate = req.shippedDate.getTime();
                 self.shipmentPopupService.submit(req).then(function (data) {
-                    self.shipment = data.currentShipment;
+                    self.shipment = data.shipment;
                     if (self.shipment)
                         self.shipmentExisted = true;
                     self.notify.success("TXT_SUCCESS");

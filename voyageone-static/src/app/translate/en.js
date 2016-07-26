@@ -89,5 +89,7 @@ define(function () {
         "BTN_CREATE": "CREATE",
         "BTN_CONFIRM": "CONFIRM",
         "BTN_BACK": "BACK",
+        "BTN_SHIPPED": "SHIPPED",
+        "BTN_SCAN": "SCAN"
     }
 });

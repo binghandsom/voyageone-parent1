@@ -46,7 +46,7 @@
                     <button class="btn btn-primary btn-sm" ng-click="ctrl.search()" translate="BTN_SEARCH"></button>
                 </div>
                 <div class="pull-right">
-                    <button class="btn btn-success btn-sm" translate="BTN_NEW_SHIPMENT"></button>
+                    <button class="btn btn-success btn-sm" ng-click="ctrl.popShipment({},'new')" translate="BTN_NEW_SHIPMENT"></button>
                 </div>
             </div>
         </div>
@@ -80,7 +80,7 @@
                             <span ng-if="item.comment.length > 30" uib-tooltip="{{item.comment}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{item.comment | stringCutter:true:30:' ...'}}</span>
                         </td>
                         <td class="text-center">
-                            <button class="btn btn-xs btn-success" title="edit" ng-click="ctrl.popNewShipment(item)"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-xs btn-success" title="edit" ng-click="ctrl.popShipment(item, 'edit')"><i class="fa fa-pencil"></i></button>
                             <a class="btn btn-xs btn-success" title="Container" ng-href="{{'#/shipment/shipment_info/shipment_detail/' + item.id}}"><i class="fa fa-inbox"></i></a>
                         </td>
                     </tr>

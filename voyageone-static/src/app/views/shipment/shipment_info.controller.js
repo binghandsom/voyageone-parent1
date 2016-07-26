@@ -22,20 +22,15 @@ define([
             this.searchInfo = {
                 curr: this.pageInfo.curr,
                 total: this.pageInfo.total,
-                size: this.pageInfo.size,
-                shippedDateFrom: "",
-                shippedDateTo: ""
+                size: this.pageInfo.size
             };
 
             this.oneDay = 24 * 60 * 60 * 1000;
             this.twoDay = 2 * this.oneDay;
             this.threeDay = 3 * this.oneDay;
             this.oneMonth = 30 * this.oneDay;
-
-            var now = new Date();
-            var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            this.shippedDateFrom = new Date(today.getTime() - 6 * this.oneMonth);
-            this.shippedDateTo = today;
+            this.searchInfo.shippedDateFrom = null;
+            this.searchInfo.shippedDateTo = null;
         }
 
         ShipmentInfoController.prototype.init = function () {
@@ -48,10 +43,7 @@ define([
 
         ShipmentInfoController.prototype.search = function () {
             var self = this;
-            if (self.shippedDateFrom === undefined || self.shippedDateTo === undefined) {
-                self.alert("TXT_PLEASE_INPUT_A_VALID_DATE");
-                return;
-            } else if (self.shippedDateFrom)
+            if (self.shippedDateFrom)
                 self.searchInfo.shippedDateFrom = self.shippedDateFrom;
             else self.searchInfo.shippedDateFrom = undefined;
             if (self.shippedDateTo) {
@@ -69,22 +61,30 @@ define([
             })
         };
 
-        ShipmentInfoController.prototype.popNewShipment = function (shipment) {
+        ShipmentInfoController.prototype.popShipment = function (shipment, type) {
             var self = this;
             //1:Open；3：Shipped；4：Arrived；5：Recevied；6：Receive with Error
-            var pendingShipmentStatus = shipment.status;
+            var pendingShipmentStatus = "1";
+            if (type == "edit") {
+                pendingShipmentStatus = shipment.status;
+            } else if (type == "end") {
+                pendingShipmentStatus = "3";
+            }
+            var popShipment = angular.copy(shipment);
+            popShipment.orderTotal = 0;
+            popShipment.skuTotal = 0;
+            delete popShipment.$$hashKey;
             var shipmentInfo = {
-                shipment: shipment,
-                type: "edit",
+                shipment: popShipment,
+                type: type,
                 pendingShipmentStatus: pendingShipmentStatus,
                 statusList: this.shipmentStatusList
             };
 
-            this.popups.openShipment(shipmentInfo).then(function (shipment) {
-                self.currentShipment = shipment;
+            this.popups.openShipment(shipmentInfo).then(function () {
+                self.search();
             });
         };
-
 
         ShipmentInfoController.prototype.getStatusName = function (statusValue) {
             var self = this;
@@ -94,13 +94,10 @@ define([
                     break;
                 }
             }
-            // Receive with Error 太长了
             if (!currentStatus) return statusValue;
             return currentStatus.name;
         };
-        ShipmentInfoController.prototype.goContainer=function(){
-            window.location.href = "#/shipment/shipment_info/shipment_detail";
-        };
+
         return ShipmentInfoController;
 
     }()));

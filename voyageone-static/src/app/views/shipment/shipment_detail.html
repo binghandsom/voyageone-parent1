@@ -1,9 +1,10 @@
-<div class="breadcrumbs">
+<div class="breadcrumbs" ng-init="ctrl.init()">
     <div class="container">
         <h4 class="pull-left" translate="TXT_SHIPMENT_DETAIL"></h4>
         <ul class="pull-right breadcrumb">
             <li><a href="#/home" translate="TXT_HOME"></a></li>
             <li class="active disabled" translate="TXT_SHIPMENT"></li>
+            <li><a href="#/shipment/shipment_info" translate="TXT_SHIPMENT_INFO"></a></li>
             <li class="active selecte" translate="TXT_SHIPMENT_DETAIL"></li>
         </ul>
     </div>
@@ -14,17 +15,17 @@
             <div class="row">
                 <div class="form-group">
                     <div class="col-sm-4">
-                        <button class="btn btn-primary" ng-click="ctrl.back()"><i class="fa fa-mail-reply"></i>&nbsp;&nbsp;{{'BTN_BACK' | translate}}</button>
+                        <a class="btn btn-primary" ng-href="#/shipment/shipment_info"><i class="fa fa-mail-reply"></i>&nbsp;&nbsp;{{'BTN_BACK' | translate}}</a>
                     </div>
                     <div class="col-md-8">
                         <div class="form-group input-group">
-                            <input type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}">
-                            <span class="input-group-btn"><button class="btn btn-info" type="button">Scan</button></span>
+                            <input type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}" autofocus>
+                            <span class="input-group-btn"><button class="btn btn-info" type="button" translate="BTN_SCAN"></button></span>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12">
-                    <table class="no-min-width table table-vo table-striped table-hover">
+                <form name="shipmentForm" class="col-sm-12">
+                    <table class="no-min-width table table-vo table-striped">
                         <thead>
                         <tr>
                             <th class="td-2 text-center">ShipmentName</th>
@@ -37,33 +38,43 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <td class="td-2 text-center">2016-06-17-SP-002</td>
-                            <td class="td-1 text-center">Open</td>
-                            <td class="td-2 text-center">
-                                <span class="input-group">
-                                    <input class="form-control" ng-model="ctrl.feedStartTime" uib-datepicker-popup
-                                           is-open="datepicker1" date-model-format="yyyy-MM-dd" placeholder="StartDate">
+                            <td class="td-2 text-center v-middle">{{ctrl.shipment.shipmentName}}</td>
+                            <td class="td-1 text-center v-middle">{{ctrl.getStatusName(ctrl.shipment.status)}}</td>
+                            <td class="td-2 text-center v-middle">
+                                <span ng-class="{'input-group':true, 'has-error': !shipmentForm.shippedDate.$valid}">
+                                    <input id="shippedDate" name="shippedDate" class="form-control"
+                                           ng-attr-title="{{'TXT_SHIPPED_DATE' | translate}}"
+                                           type="date"
+                                           ng-model="ctrl.shipment.shippedDate"
+                                           uib-datepicker-popup
+                                           is-open="datepicker1" ng-required="ctrl.shipment.status==3"
+                                           ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
                                     <span class="input-group-btn">
-                                    <button class="btn btn-default" ng-click="datepicker1=!datepicker1"><i
-                                            class="glyphicon glyphicon-calendar"></i></button>
-                                    </span>
+                                    <button class="btn btn-default" ng-click="datepicker1=!datepicker1" ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
+                                        <i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
                                 </span>
                             </td>
-                            <td class="td-2 text-left">
-                                <select name="SHIPMENT_STATUS" id="select" class="form-control">
-                                    <option value="">Select</option>
+                            <td class="td-2 text-left v-middle">
+                                <select name="shipmentStatus" id="select" ng-class="{'form-control':true, 'has-error': !shipmentForm.shipmentStatus.$valid}"
+                                        ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3"
+                                        ng-model="ctrl.shipment.expressCompany"
+                                        ng-options="option.value as option.name for option in ctrl.expressCompanies" ng-required="ctrl.shipment.status==3">
                                 </select>
                             </td>
-                            <td class="td-2 text-center">
-                                <input id="TrackingNo" type="text" class="form-control">
+                            <td ng-class="{'td-2 text-center v-middle': true, 'has-error':!shipmentForm.trackingNo.$valid}">
+                                <input name="trackingNo" type="text" class="form-control"
+                                       ng-model="ctrl.shipment.trackingNo"
+                                       ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3" ng-required="ctrl.shipment.status==3">
                             </td>
-                            <td class="td-1 text-center">
-                                <button class="btn btn-primary btn-sm">SHIPPED</button>
+                            <td class="td-1 text-center v-middle">
+                                <button class="btn btn-primary btn-sm" translate="BTN_SHIPPED"
+                                        ng-disabled="!shipmentForm.$valid || (ctrl.shipment.status != 1 && ctrl.shipment.status != 3)"></button>
                             </td>
                         </tr>
                         </tbody>
                     </table>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -82,22 +93,22 @@
                         <th class="td-3 text-center">Containerizing Time</th>
                         <th class="td-3 text-center">Containerizing User</th>
                         <th class="td-1 text-center">Status</th>
-                        <th class="td-1 text-center">Action</th>
+                        <!--<th class="td-1 text-center">Action</th>-->
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td class="td-1 text-center">1</td>
-                        <td class="td-2 text-center">12312321432</td>
-                        <td class="td-2 text-center">XRG000730RCY75</td>
-                        <td class="td-3 text-center">Adidas Busenitz</td>
-                        <td class="td-2 text-center">9999007001</td>
-                        <td class="td-2 text-center">2016-06-20 14:50:12</td>
-                        <td class="td-2 text-center">user001</td>
-                        <td class="td-1 text-center">Package</td>
-                        <td class="td-1 text-center">
-                            <button class="btn btn-xs btn-info"><i class="fa fa-print"></i></button>
-                        </td>
+                    <tr ng-repeat="item in ctrl.scannedSkuList">
+                        <td class="td-1 text-center">{{$index + 1}}</td>
+                        <td class="td-2 text-center">{{item.barcode}}</td>
+                        <td class="td-2 text-center">{{item.clientSku}}</td>
+                        <td class="td-3 text-center">{{item.name}}</td>
+                        <td class="td-2 text-center">{{item.consolidationOrderId}}</td>
+                        <td class="td-2 text-center">{{item.containerizingTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="td-2 text-center">{{item.containerizer}}</td>
+                        <td class="td-1 text-center">{{ctrl.getStatusName(item.status)}}</td>
+                        <!--<td class="td-1 text-center">-->
+                        <!--<button class="btn btn-xs btn-info"><i class="fa fa-print"></i></button>-->
+                        <!--</td>-->
                     </tr>
                     </tbody>
                 </table>

@@ -38,8 +38,8 @@
                                    is-open="datepicker1" ng-required="ctrl.shipment.status==3"
                                    ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
                             <span class="input-group-btn">
-                                <button class="btn btn-default" ng-click="datepicker1=!datepicker1"><i
-                                        class="glyphicon glyphicon-calendar"></i></button>
+                                <button class="btn btn-default" ng-click="datepicker1=!datepicker1" ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
+                                    <i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
                         </div>
                     </div>
