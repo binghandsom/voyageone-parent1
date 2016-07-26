@@ -458,7 +458,13 @@ angular.module("voyageone.angular.directives").directive("input", function () {
 
             element.on('keyup', function () {
 
-                var regex = new RegExp("^\\d+(\\.\\d{1," + scale + "})?$");
+                var regex;
+
+                if(scale != 0)
+                    regex = new RegExp("^\\d+(\\.\\d{1," + scale + "})?$");
+                else
+                    regex = new RegExp("^\\d+$");
+
 
                 if (regex.test(this.value))
                     return;
@@ -468,7 +474,9 @@ angular.module("voyageone.angular.directives").directive("input", function () {
 
             }).on("keypress",function(event){
 
-                if(this.value > _max){
+                var _value = angular.copy(this.value);
+
+                if(_value.toString().length >= _length){
                     event.preventDefault();
                 }
 
