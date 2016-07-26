@@ -85,28 +85,23 @@ public class VmsMakeFinancialReportService extends BaseTaskService {
      */
     public void makeFinancialReport(String channelId) throws ParseException, IOException {
 
-        // 取得系统日期
-        String date = DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_3);
+        // 取得系统日期 - 1个月
+        String date = DateTimeUtil.format(DateTimeUtil.addMonths(DateTimeUtil.getDate(), -1), DateTimeUtil.DATE_TIME_FORMAT_3);
 
         // 取得这个渠道出财务报表的日
-        String makeReportDay = "01";
-        VmsChannelConfigBean vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(channelId
-                , VmsConstants.ChannelConfig.MAKE_FINANCIAL_REPORT_DAY
-                ,VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
-        if (vmsChannelConfigBean != null) {
-            String day = vmsChannelConfigBean.getConfigValue1();
-            if (!StringUtils.isEmpty(day) && day.length() <= 2) {
-                if (day.length() == 1) {
-                    day = "0" + day;
-                }
-                makeReportDay = day;
-            }
-        }
-
-        // 系统日期的日 = 出财务报表的日，那么准备出财务报表
-        if (!makeReportDay.equals(date.substring(6,8))) {
-            return;
-        }
+//        String makeReportDay = "01";
+//        VmsChannelConfigBean vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(channelId
+//                , VmsConstants.ChannelConfig.MAKE_FINANCIAL_REPORT_DAY
+//                ,VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
+//        if (vmsChannelConfigBean != null) {
+//            String day = vmsChannelConfigBean.getConfigValue1();
+//            if (!StringUtils.isEmpty(day) && day.length() <= 2) {
+//                if (day.length() == 1) {
+//                    day = "0" + day;
+//                }
+//                makeReportDay = day;
+//            }
+//        }
 
         // 看看vms_bt_financial_report表里有没有出过这个月的财务报表
         Map<String, Object> param = new HashMap<>();
@@ -116,6 +111,8 @@ public class VmsMakeFinancialReportService extends BaseTaskService {
         if (models.size() > 0) {
             return;
         }
+
+        $info("财务报表生成开始，channelId" + channelId + ",年月：" + date.substring(0,6));
 
         // 取得这期财务报表的数据
         Map<String, Object> param1 = new HashMap<>();
@@ -130,6 +127,8 @@ public class VmsMakeFinancialReportService extends BaseTaskService {
 
         // 生成财务报表Excel
         makeFinancialReportExcel(channelId, strReceivedTimeFrom, reportDataList);
+
+        $info("财务报表生成完了，channelId" + channelId + ",年月：" + date.substring(0,6));
     }
 
     /**
@@ -154,10 +153,25 @@ public class VmsMakeFinancialReportService extends BaseTaskService {
 
         Font titleFont = sxssfWorkbook.createFont();
         titleFont.setBold(true);
-        titleFont.setFontHeightInPoints((short) 12);
+        titleFont.setFontHeightInPoints((short) 14);
 
 
         Sheet sheet = sxssfWorkbook.createSheet(reportDateFrom.substring(0, 6));
+        // 设置列宽
+        // ShipmentName
+        sheet.setColumnWidth(0, 7000);
+        // OrderID
+        sheet.setColumnWidth(1, 5000);
+        // ReceivedTime
+        sheet.setColumnWidth(2, 5500);
+        // TrackingNo
+        sheet.setColumnWidth(3, 5000);
+        // Sku
+        sheet.setColumnWidth(4, 6000);
+        // Name
+        sheet.setColumnWidth(5, 12000);
+        // VoyagoOnePrice
+        sheet.setColumnWidth(6, 4000);
 
         // 设置Header行格式
         CellStyle headerCellStyle1 = sxssfWorkbook.createCellStyle();
@@ -188,6 +202,59 @@ public class VmsMakeFinancialReportService extends BaseTaskService {
         titleRowCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         titleRowCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
         titleRowCellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+
+        // 统计合计
+        // 统计Order数量
+        Set<String> orderSet = new HashSet();
+        // 统计sku总价
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (int i = 0; i < reportDataList.size(); i++) {
+            // OrderID
+            String orderId = StringUtils.null2Space((String) reportDataList.get(i).get("consolidation_order_id"));
+            if (!StringUtils.isEmpty(orderId)) {
+                orderSet.add(orderId);
+            }
+            // VoyageOnePrice
+            BigDecimal price = (BigDecimal) reportDataList.get(i).get("client_promotion_price");
+            if (price != null) {
+                totalPrice = totalPrice.add(price);
+            }
+        }
+
+        /* 设置Header行 */
+        Row headerRow1 = sheet.createRow(0);
+        Cell headerTitleCell = headerRow1.createCell(0, Cell.CELL_TYPE_STRING);
+        headerTitleCell.setCellValue("Financial Report");
+        headerTitleCell.setCellStyle(headerCellStyle1);
+
+        Row headerRow2 = sheet.createRow(1);
+        // Company
+        Cell headerCompanyCell = headerRow2.createCell(0, Cell.CELL_TYPE_STRING);
+        headerCompanyCell.setCellValue("Company: " + channel.getFull_name());
+        headerCompanyCell.setCellStyle(headerCellStyle2);
+
+        //  Report Period
+        Cell headerReportPeriodCell = headerRow2.createCell(1, Cell.CELL_TYPE_STRING);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        Date reportDateFromDate = sdf.parse(reportDateFrom);
+        String reportDateTo = DateTimeUtil.format(DateTimeUtil.getMonthLastDay(reportDateFromDate), "yyyyMMdd");
+        headerReportPeriodCell.setCellValue("Report Period: " + reportDateFrom + " - " + reportDateTo);
+        headerReportPeriodCell.setCellStyle(headerCellStyle2);
+
+        // OrderTotal
+        Cell headerOrderTotalCell = headerRow2.createCell(3, Cell.CELL_TYPE_STRING);
+        headerOrderTotalCell.setCellValue("OrderTotal: " + orderSet.size());
+        headerOrderTotalCell.setCellStyle(headerCellStyle2);
+
+        // SkuTotal
+        Cell headerSkuTotalCell = headerRow2.createCell(4, Cell.CELL_TYPE_STRING);
+        headerSkuTotalCell.setCellValue("SkuTotal: " + reportDataList.size());
+        headerSkuTotalCell.setCellStyle(headerCellStyle2);
+
+        // PriceTotal
+        Cell headerPriceTotalCell = headerRow2.createCell(5, Cell.CELL_TYPE_STRING);
+        headerPriceTotalCell.setCellValue("PriceTotal: $" + totalPrice.setScale(2,   BigDecimal.ROUND_HALF_UP).toString());
+        headerPriceTotalCell.setCellStyle(headerCellStyle2);
 
         /* 设置标题行 */
         Row titleRow = sheet.createRow(3);
@@ -220,96 +287,62 @@ public class VmsMakeFinancialReportService extends BaseTaskService {
         titleVoyagoOnePriceCell.setCellValue("VoyagoOnePrice");
         titleVoyagoOnePriceCell.setCellStyle(titleRowCellStyle);
 
-        // 统计Order数量
-        Set<String> orderSet = new HashSet();
-
-        // 统计sku总价
-        BigDecimal totalPrice = new BigDecimal(0);
-
         /* 设置内容行 */
         for (int i = 0; i < reportDataList.size(); i++) {
 
             Row contentRow = sheet.createRow(i + 4);
 
             // ShipmentName
-            Cell contentShipmentNameCell = titleRow.createCell(0, Cell.CELL_TYPE_STRING);
-            contentShipmentNameCell.setCellValue((String) reportDataList.get(i).get("shipment_name"));
+            Cell contentShipmentNameCell = contentRow.createCell(0, Cell.CELL_TYPE_STRING);
+            contentShipmentNameCell.setCellValue(StringUtils.null2Space((String) reportDataList.get(i).get("shipment_name")));
             contentShipmentNameCell.setCellStyle(defaultRowCellStyle);
             // OrderID
-            String orderId = (String) reportDataList.get(i).get("consolidation_order_id");
-            Cell contentOrderIdCell = titleRow.createCell(1, Cell.CELL_TYPE_STRING);
+            String orderId = StringUtils.null2Space((String) reportDataList.get(i).get("consolidation_order_id"));
+            Cell contentOrderIdCell = contentRow.createCell(1, Cell.CELL_TYPE_STRING);
             contentOrderIdCell.setCellValue(orderId);
             contentOrderIdCell.setCellStyle(defaultRowCellStyle);
-            if (orderSet.contains(orderId)) {
-                orderSet.add(orderId);
-            }
             // ReceivedTime
-            Cell contentReceivedTimeCell = titleRow.createCell(2, Cell.CELL_TYPE_STRING);
-            contentReceivedTimeCell.setCellValue(DateTimeUtil.format((Date) reportDataList.get(i).get("received_time"), DateTimeUtil.DATE_TIME_FORMAT_1));
+            Cell contentReceivedTimeCell = contentRow.createCell(2, Cell.CELL_TYPE_STRING);
+            Date receivedTime = (Date) reportDataList.get(i).get("received_time");
+            if (receivedTime == null) {
+                contentReceivedTimeCell.setCellValue("");
+            } else {
+                contentReceivedTimeCell.setCellValue(DateTimeUtil.format(receivedTime, DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+            }
             contentReceivedTimeCell.setCellStyle(defaultRowCellStyle);
             // TrackingNo
-            Cell contentTrackingNoCell = titleRow.createCell(3, Cell.CELL_TYPE_STRING);
-            contentTrackingNoCell.setCellValue((String) reportDataList.get(i).get("tracking_no"));
+            Cell contentTrackingNoCell = contentRow.createCell(3, Cell.CELL_TYPE_STRING);
+            contentTrackingNoCell.setCellValue(StringUtils.null2Space((String) reportDataList.get(i).get("tracking_no")));
             contentTrackingNoCell.setCellStyle(defaultRowCellStyle);
             // Sku
-            Cell contentSkuCell = titleRow.createCell(4, Cell.CELL_TYPE_STRING);
-            contentSkuCell.setCellValue((String) reportDataList.get(i).get("client_sku"));
+            Cell contentSkuCell = contentRow.createCell(4, Cell.CELL_TYPE_STRING);
+            contentSkuCell.setCellValue(StringUtils.null2Space((String) reportDataList.get(i).get("client_sku")));
             contentSkuCell.setCellStyle(defaultRowCellStyle);
             // Name
-            Cell contentNameCell = titleRow.createCell(5, Cell.CELL_TYPE_STRING);
-            contentNameCell.setCellValue((String) reportDataList.get(i).get("name"));
+            Cell contentNameCell = contentRow.createCell(5, Cell.CELL_TYPE_STRING);
+            contentNameCell.setCellValue(StringUtils.null2Space((String) reportDataList.get(i).get("name")));
             contentNameCell.setCellStyle(defaultRowCellStyle);
             // VoyageOnePrice
-            Cell contentVoyageOnePriceCell = titleRow.createCell(6, Cell.CELL_TYPE_STRING);
-            contentVoyageOnePriceCell.setCellValue(((BigDecimal) reportDataList.get(i).get("client_promotion_price")).toString());
+            Cell contentVoyageOnePriceCell = contentRow.createCell(6, Cell.CELL_TYPE_STRING);
+            BigDecimal price = (BigDecimal) reportDataList.get(i).get("client_promotion_price");
+            if (price == null) {
+                contentVoyageOnePriceCell.setCellValue("");
+            } else {
+                contentVoyageOnePriceCell.setCellValue("$" + price.toString());
+            }
             contentVoyageOnePriceCell.setCellStyle(defaultRowCellStyle);
-
-            totalPrice.add((BigDecimal) reportDataList.get(i).get("client_promotion_price"));
         }
 
 
-        /* 设置Header行 */
-        Row headerRow1 = sheet.createRow(0);
-        Cell headerTitleCell = headerRow1.createCell(0, Cell.CELL_TYPE_STRING);
-        headerTitleCell.setCellValue("Financial Report");
-        headerTitleCell.setCellStyle(headerCellStyle1);
-
-        Row headerRow2 = sheet.createRow(1);
-        // Company
-        Cell headerCompanyCell = headerRow2.createCell(0, Cell.CELL_TYPE_STRING);
-        headerCompanyCell.setCellValue("Company:" + channel.getFull_name());
-        headerCompanyCell.setCellStyle(headerCellStyle2);
-
-        //  Report Period
-        Cell headerReportPeriodCell = headerRow2.createCell(2, Cell.CELL_TYPE_STRING);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        Date reportDateFromDate = sdf.parse(reportDateFrom);
-        String reportDateTo = DateTimeUtil.format(DateTimeUtil.getMonthLastDay(reportDateFromDate), "yyyyMMdd");
-        headerReportPeriodCell.setCellValue("Report Period：" + reportDateFrom + " - " + reportDateTo);
-        headerReportPeriodCell.setCellStyle(headerCellStyle2);
-
-        // OrderTotal
-        Cell headerOrderTotalCell = headerRow2.createCell(0, Cell.CELL_TYPE_STRING);
-        headerOrderTotalCell.setCellValue("OrderTotal:" + orderSet.size());
-        headerOrderTotalCell.setCellStyle(headerCellStyle2);
-
-        // SkuTotal
-        Cell headerSkuTotalCell = headerRow2.createCell(0, Cell.CELL_TYPE_STRING);
-        headerSkuTotalCell.setCellValue("SkuTotal:" + orderSet.size());
-        headerSkuTotalCell.setCellStyle(headerCellStyle2);
-
-        // PriceTotal
-        Cell headerPriceTotalCell = headerRow2.createCell(0, Cell.CELL_TYPE_STRING);
-        headerPriceTotalCell.setCellValue("PriceTotal:" + totalPrice.setScale(2,   BigDecimal.ROUND_HALF_UP).toString());
-        headerPriceTotalCell.setCellStyle(headerCellStyle2);
 
         //新建文件输出流
         // 生成财务报表路径
         String reportFilePath = com.voyageone.common.configs.Properties.readValue("vms.report");
+        reportFilePath += "/" + channelId + "/";
         // 创建文件目录
-        FileUtils.mkdirPath(reportFilePath + "/");
+        FileUtils.mkdirPath(reportFilePath);
         // 财务报表文件名
-        String feedErrorFileName = "Financial_Report_" + channelId + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".xlsx";
+        String feedErrorFileName = "Financial_Report_" + channelId + "_" + reportDateFrom.substring(0, 6) + ".xlsx";
         FileOutputStream out = new FileOutputStream(reportFilePath + feedErrorFileName);
 
         sxssfWorkbook.write(out);
