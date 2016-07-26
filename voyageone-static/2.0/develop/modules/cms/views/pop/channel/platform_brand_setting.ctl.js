@@ -23,6 +23,7 @@ define([
             selectedPlatformBrand: function (item) {
                 var self = this;
                 self.selectedPlatform = item.brandName;
+                self.selectedBrandId = item.brandId;
             },
             refresh: function () {
                 var self = this;
@@ -36,7 +37,7 @@ define([
                     'masterName': self.platformData.masterName,
                     'selectedPlatform': self.selectedPlatform,
                     'cartId': self.platformData.cartId,
-                    'brandId': self.custBrandList.brandId
+                    'brandId': self.selectedBrandId
                 };
                 if (!self.selectedPlatformlist.selectedPlatform) {
                     self.notify.warning('TXT_COMPLETE_THE_PLATEFORM_BRAND');
@@ -46,12 +47,11 @@ define([
                     if (res == true) {
                         self.brandMappingService.addNewBrandMapping({
                             'cartId': self.platformData.cartId,
-                            'brandId': self.custBrandList.brandId
+                            'brandId': self.selectedBrandId
                         });
                         self.$uibModalInstance.close();
                     }
                 });
-
             }
         };
         return PlatformBrandSettingController;
