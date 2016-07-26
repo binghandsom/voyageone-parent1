@@ -415,11 +415,14 @@ public class CmsFieldEditService extends BaseAppService {
             }
 
             List<String> strList = new ArrayList<>();
-            List<Integer> updCartList = new ArrayList<>();
             for (Integer cartIdVal : cartList) {
-                // 如果该产品以前就是approved,也要做处理(因为要考虑platformsStatus==WaitingPublish)
-                updCartList.add(cartIdVal);
-                strList.add("'platforms.P" + cartIdVal + ".status':'Approved','platforms.P" + cartIdVal + ".pStatus':'WaitingPublish'");
+                // 如果该产品以前就是approved,则不更新pStatus
+                String prodStatus = productModel.getPlatformNotNull(cartIdVal).getStatus();
+                if (CmsConstants.ProductStatus.Ready.name().equals(prodStatus)) {
+                    strList.add("'platforms.P" + cartIdVal + ".status':'Approved','platforms.P" + cartIdVal + ".pStatus':'WaitingPublish'");
+                } else if (CmsConstants.ProductStatus.Approved.name().equals(prodStatus)) {
+                    strList.add("'platforms.P" + cartIdVal + ".status':'Approved'");
+                }
             }
 
             if (strList.isEmpty()) {
@@ -444,7 +447,7 @@ public class CmsFieldEditService extends BaseAppService {
             // 更新group表的platformStatus
             JomgoUpdate grpUpdObj = new JomgoUpdate();
             grpUpdObj.setQuery("{'productCodes':#,'channelId':#,'cartId':{$in:#},'platformStatus':{$in:[null,'']}}");
-            grpUpdObj.setQueryParameters(code, userInfo.getSelChannelId(), updCartList);
+            grpUpdObj.setQueryParameters(code, userInfo.getSelChannelId(), cartList);
             grpUpdObj.setUpdate("{$set:{'platformStatus':'WaitingPublish','modified':#,'modifier':#}}");
             grpUpdObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
 
