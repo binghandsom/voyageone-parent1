@@ -8,14 +8,13 @@
           http://www.springframework.org/schema/task/spring-task.xsd">
     <task:scheduled-tasks scheduler="vendor-job-scheduler">
 
-        <!-- mq resume task 每5分钟运行一次 -->
-        <!--<task:scheduled ref="mqResumeJob" method="run" cron="0/5 * * * * ?"/>-->
-        <!--<task:scheduled ref="imageUploadService" method="run" cron="0/5 * * * * ?"/>-->
-
         <!-- vms batch add    -->
         <!-- 扫描Vendor通过ftp上传的Csv文件 1分钟运行一次 -->
-        <!--<task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0 0/1 * * * ?"/>-->
-        <task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0/1 * * * * ?"/>
+        <!--<task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0/1 * * * * ?"/>-->
+        <task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0 0/1 * * * ?"/>
+
+        <!-- 定期生成财务报表 每天零点触发一次-->
+        <task:scheduled ref="VmsMakeFinancialReportJob" method="run" cron="0 10 0 * * ?"/>
 
 
     </task:scheduled-tasks>
