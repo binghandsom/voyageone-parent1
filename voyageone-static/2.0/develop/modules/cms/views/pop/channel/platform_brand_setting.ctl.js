@@ -34,7 +34,7 @@ define([
             submitSet: function () {
                 var self = this;
                 self.selectedPlatformlist = {
-                    'masterName': self.platformData.masterName,
+                    'cmsBrand': self.platformData.masterName,
                     'selectedPlatform': self.selectedPlatform,
                     'cartId': self.platformData.cartId,
                     'brandId': self.selectedBrandId
@@ -46,6 +46,7 @@ define([
                 self.popups.openPlatformMappingConfirm(self.selectedPlatformlist).then(function (res) {
                     if (res == true) {
                         self.brandMappingService.addNewBrandMapping({
+                            'cmsBrand': self.platformData.masterName,
                             'cartId': self.platformData.cartId,
                             'brandId': self.selectedBrandId
                         });

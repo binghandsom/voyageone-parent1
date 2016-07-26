@@ -108,6 +108,7 @@ public class BrandMappingController extends CmsController {
 		Preconditions.checkNotNull(brandMapping);
 		Preconditions.checkNotNull(brandMapping.getCartId());
 		Preconditions.checkState(StringUtils.isNotBlank(brandMapping.getBrandId()));
+		Preconditions.checkState(StringUtils.isNotBlank(brandMapping.getCmsBrand()));
 		// 添加查询参数
 		UserSessionBean userSession = getUser();
 		brandMapping.setChannelId(userSession.getSelChannel().getId());
