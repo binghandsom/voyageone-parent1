@@ -10,47 +10,41 @@
 </div>
 <div class="container content" ng-init="ctrl.init()">
     <div class="panel panel-default">
-        <div class="panel-heading">
-            <h5 class="panel-title">{{'TXT_SEARCH' | translate}}</h5>
-        </div>
         <div class="panel-body">
             <div class="form-inline">
                 <div class="form-group">
-                    <label class=" control-label">{{'TXT_STATUS' | translate}}</label>
-                    <select name="status" id="select" ng-model="ctrl.status" class="form-control"
+                    <!-- clientFileName -->
+                    <input id="clientFileName" type="text" ng-model="ctrl.clientFileName" class="form-control input-sm m-r-sm" placeholder="{{'TXT_FILE_NAME' | translate}}">
+
+                    <label class="control-label">{{'TXT_STATUS' | translate}}</label>
+                    <select name="status" id="select" ng-model="ctrl.status" class="form-control input-sm"
                             ng-options="status.value as status.name for status in ctrl.statusList">
                         <option value="" translate="TXT_SELECT_NO_VALUE" />
                     </select>
-                </div>
-                <div class="form-group">
-                    <label class=" control-label">{{'TXT_FILE_NAME' | translate}}</label>
-                    <input id="clientFileName" type="text" ng-model="ctrl.clientFileName" class="form-control input-sm">
-                </div>
-                <div class="form-group">
+
                     <label class="control-label">{{'TXT_UPLOAD_DATE' | translate}}</label>
                     <span class="input-group">
-                        <input type="date" class="form-control"
+                        <input type="date" class="form-control input-sm"
                                uib-datepicker-popup
                                datepicker-options="{maxDate:ctrl.uploadDateEnd}"
                                ng-model="ctrl.uploadDateStart"
                                is-open="datepicker1">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                            <button class="btn btn-default btn-sm" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </span>
                     <span>~</span>
                     <span class="input-group">
-                        <input type="date" class="form-control"
+                        <input type="date" class="form-control input-sm"
                                uib-datepicker-popup
                                datepicker-options="{minDate:ctrl.uploadDateStart}"
                                ng-model="ctrl.uploadDateEnd"
                                is-open="datepicker2">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                            <button class="btn btn-default btn-sm" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </span>
-                </div>
-                <div class="form-group pull-right">
+
                     <button class="btn btn-primary btn-sm" ng-click="ctrl.search()">{{'BTN_SEARCH' | translate}}</button>
                 </div>
             </div>

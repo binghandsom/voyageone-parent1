@@ -85,7 +85,9 @@ define([
             if (!currentStatus) return statusValue;
             return currentStatus.name;
         };
-
+        ShipmentInfoController.prototype.goContainer=function(){
+            window.location.href = "#/shipment/shipment_info/shipment_detail";
+        };
         return ShipmentInfoController;
 
     }()));

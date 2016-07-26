@@ -85,6 +85,7 @@ define(function () {
         "BTN_CLOSE": "CLOSE",
         "BTN_SUBMIT": "SUBMIT",
         "BTN_CREATE": "CREATE",
-        "BTN_CONFIRM": "CONFIRM"
+        "BTN_CONFIRM": "CONFIRM",
+        "TXT_NEW_SHIPMENT":"New Shipment"
     }
 });

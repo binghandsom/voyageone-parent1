@@ -38,11 +38,6 @@ define([
                 orderDateFrom: "",
                 orderDateTo: ""
             };
-
-            this.downloadInfo = {
-                orderType: 'client_sku'
-            };
-
             this.channelConfigs = {
                 vendorOperateType: 'SKU'
             };
@@ -131,9 +126,9 @@ define([
             })
         };
 
-        OrderInfoController.prototype.downloadPickingList = function () {
+        OrderInfoController.prototype.downloadPickingList = function (type) {
             var self = this;
-            $.download.post('/vms/order/order_info/downloadPickingList', {"orderType": self.downloadInfo.orderType});
+            $.download.post('/vms/order/order_info/downloadPickingList', {"orderType": type});
         };
 
         OrderInfoController.prototype.toggleAll = function () {
