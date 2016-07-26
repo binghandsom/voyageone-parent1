@@ -14,10 +14,11 @@
             <div class="form-inline">
                 <div class="form-group">
                     <!-- clientFileName -->
-                    <input id="clientFileName" type="text" ng-model="ctrl.clientFileName" class="form-control input-sm m-r-sm" placeholder="{{'TXT_FILE_NAME' | translate}}">
+                    <label class="control-label">{{'TXT_FILE_NAME' | translate}}</label>
+                    <input id="clientFileName" type="text" ng-model="ctrl.clientFileName" class="form-control input-sm m-r-sm">
 
                     <label class="control-label">{{'TXT_STATUS' | translate}}</label>
-                    <select name="status" id="select" ng-model="ctrl.status" class="form-control input-sm"
+                    <select name="status" id="select" ng-model="ctrl.status" class="form-control input-sm m-r-sm"
                             ng-options="status.value as status.name for status in ctrl.statusList">
                         <option value="" translate="TXT_SELECT_NO_VALUE" />
                     </select>
@@ -44,7 +45,8 @@
                             <button class="btn btn-default btn-sm" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </span>
-
+                </div>
+                <div class="pull-right">
                     <button class="btn btn-primary btn-sm" ng-click="ctrl.search()">{{'BTN_SEARCH' | translate}}</button>
                 </div>
             </div>
