@@ -435,6 +435,9 @@ public interface CmsUrlConstants {
         	
         	/** 检索已匹配的品牌 */
         	String SEARCH_MATCHED_BRANDS = "searchMatchedBrands";
+        	
+        	/** 添加新匹配的品牌 */
+        	String ADD_NEW_BRAND_MAPPING = "addNewBrandMapping";
         }
     }
 

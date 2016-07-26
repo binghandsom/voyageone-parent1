@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.mapping.brand;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +12,10 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.bean.cms.CmsBtBrandBean;
 import com.voyageone.service.bean.cms.CmsBtBrandMappingBean;
 import com.voyageone.service.impl.cms.BrandBtMappingService;
+import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.BrandMappingBean;
+import com.voyageone.web2.core.bean.UserSessionBean;
 
 /**
  * Created by Wangtd on 7/25/16.
@@ -72,6 +75,26 @@ public class BrandMappingService extends BaseAppService {
 	public List<CmsBtBrandMappingBean> searchMatchedBrands(BrandMappingBean brandMapping) {
 		return brandBtMappingService.searchMatchedBrands(brandMapping.getChannelId(), brandMapping.getCartId(),
 				brandMapping.getLangId(), brandMapping.getBrandId());
+	}
+
+	/**
+	 * 更新匹配的品牌数据 
+	 */
+	public boolean addNewBrandMapping(BrandMappingBean brandMapping, UserSessionBean userSession) {
+		CmsMtBrandsMappingModel brandModel = new CmsMtBrandsMappingModel();
+		// 设置品牌映射中的各项参数
+		brandModel.setChannelId(brandMapping.getChannelId());
+		brandModel.setCartId(brandMapping.getCartId());
+		brandModel.setBrandId(brandMapping.getBrandId());
+		brandModel.setCmsBrand(brandMapping.getCmsBrand());
+		brandModel.setActive(true);
+		Date now = new Date();
+		brandModel.setCreated(now);
+		brandModel.setCreater(userSession.getUserName());
+		brandModel.setModified(now);
+		brandModel.setModifier(userSession.getUserName());
+		
+		return brandBtMappingService.addNewBrandMapping(brandModel);
 	}
 
 }

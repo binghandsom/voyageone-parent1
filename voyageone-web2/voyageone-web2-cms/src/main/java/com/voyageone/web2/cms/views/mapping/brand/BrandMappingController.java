@@ -97,5 +97,24 @@ public class BrandMappingController extends CmsController {
 		
 		return success(result);
 	}
+	
+	/**
+	 * 更新匹配的品牌数据 
+	 */
+	@RequestMapping(CmsUrlConstants.MAPPING.BRAND.ADD_NEW_BRAND_MAPPING)
+	public AjaxResponse addNewBrandMapping(@RequestBody BrandMappingBean brandMapping) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		// 检查参数
+		Preconditions.checkNotNull(brandMapping);
+		Preconditions.checkNotNull(brandMapping.getCartId());
+		Preconditions.checkState(StringUtils.isNotBlank(brandMapping.getBrandId()));
+		// 添加查询参数
+		UserSessionBean userSession = getUser();
+		brandMapping.setChannelId(userSession.getSelChannel().getId());
+		brandMapping.setLangId(getLang());
+		result.put("success", brandMappingService.addNewBrandMapping(brandMapping, userSession));
+		
+		return success(result);
+	}
 
 }
