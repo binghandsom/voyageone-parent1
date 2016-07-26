@@ -106,7 +106,7 @@ define([
                         var imgType = null;
                         angular.forEach(context,function(item){
                             imgType = item.imageType;
-                            scope.vm.tempImage[item.imageType].push(item.imageName);
+                            scope.vm.tempImage[item.imageType].push($rootScope.imageUrl.replace('%s', item.imageName));
                         });
 
                         _.map(scope.vm.productComm.schemaFields, function(item){

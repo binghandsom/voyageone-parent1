@@ -144,9 +144,8 @@
                                                               ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image1)"
                                                               ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image1) + ')'}">
                                                         </div>
-                                                        <div  ng-repeat="image in vm.tempImage.images1 | limitTo: 10"
-                                                              class="thumbnail">
-                                                            <img ng-click="vm.currentImage = $root.imageUrl.replace('%s', image)" ng-src="{{$root.imageUrl.replace('%s', image)}}">
+                                                        <div  ng-repeat="image in vm.tempImage.images1 | limitTo: 10" class="thumbnail">
+                                                            <img ng-click="vm.currentImage = image" ng-src="image">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -168,7 +167,7 @@
 
                                                         </div>
                                                         <div  ng-repeat="image in vm.tempImage.images6 | limitTo: 10" class="thumbnail">
-                                                            <img ng-click="vm.currentImage = $root.imageUrl.replace('%s', image)" ng-src="{{$root.imageUrl.replace('%s', image)}}">
+                                                            <img ng-click="vm.currentImage = image" ng-src="image">
                                                         </div>
                                                         <button ng-controller="popupCtrl"  ng-click="openProImageSetting('image6',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
@@ -190,9 +189,8 @@
                                                               ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image7)+ ')'}">
 
                                                         </div>
-                                                        <div  ng-repeat="image in vm.tempImage.images7 | limitTo: 10"
-                                                              class="thumbnail">
-                                                            <img ng-click="vm.currentImage = $root.imageUrl.replace('%s', image)" ng-src="{{$root.imageUrl.replace('%s', image)}}">
+                                                        <div  ng-repeat="image in vm.tempImage.images7 | limitTo: 10" class="thumbnail">
+                                                            <img ng-click="vm.currentImage = image" ng-src="image">
                                                         </div>
                                                         <button ng-controller="popupCtrl"  ng-click="openProImageSetting('image7',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
@@ -213,9 +211,8 @@
                                                               ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image2)"
                                                               ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image2)+ ')'}">
                                                         </div>
-                                                        <div  ng-repeat="image in vm.tempImage.images2 | limitTo: 10"
-                                                              class="thumbnail">
-                                                            <img ng-click="vm.currentImage = $root.imageUrl.replace('%s', image)" ng-src="{{$root.imageUrl.replace('%s', image)}}">
+                                                        <div  ng-repeat="image in vm.tempImage.images2 | limitTo: 10" class="thumbnail">
+                                                            <img ng-click="vm.currentImage = image" ng-src="image">
                                                         </div>
                                                         <button ng-controller="popupCtrl"  ng-click="openProImageSetting('image2',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
@@ -236,9 +233,8 @@
                                                               ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image3)"
                                                               ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image3)+ ')'}">
                                                         </div>
-                                                        <div  ng-repeat="image in vm.tempImage.images3 | limitTo: 10"
-                                                              class="thumbnail">
-                                                            <img ng-click="vm.currentImage = $root.imageUrl.replace('%s', image)" ng-src="{{$root.imageUrl.replace('%s', image)}}">
+                                                        <div  ng-repeat="image in vm.tempImage.images3 | limitTo: 10" class="thumbnail">
+                                                            <img ng-click="vm.currentImage = image" ng-src="image">
                                                         </div>
                                                         <button ng-controller="popupCtrl" ng-click="openProImageSetting('image3',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
@@ -259,9 +255,8 @@
                                                               ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image4)"
                                                               ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image4)+ ')'}">
                                                         </div>
-                                                        <div  ng-repeat="image in vm.tempImage.images4 | limitTo: 10"
-                                                              class="thumbnail">
-                                                            <img ng-click="vm.currentImage = $root.imageUrl.replace('%s', image)" ng-src="{{$root.imageUrl.replace('%s', image)}}">
+                                                        <div  ng-repeat="image in vm.tempImage.images4 | limitTo: 10" class="thumbnail">
+                                                            <img ng-click="vm.currentImage = image" ng-src="image">
                                                         </div>
                                                         <button ng-controller="popupCtrl" ng-click="openProImageSetting('image4',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
@@ -282,9 +277,8 @@
                                                               ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image5)"
                                                               ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image5)+ ')'}">
                                                         </div>
-                                                        <div  ng-repeat="image in vm.tempImage.images5 | limitTo: 10"
-                                                              class="thumbnail">
-                                                            <img ng-click="vm.currentImage = $root.imageUrl.replace('%s', image)" ng-src="{{$root.imageUrl.replace('%s', image)}}">
+                                                        <div  ng-repeat="image in vm.tempImage.images5 | limitTo: 10" class="thumbnail">
+                                                            <img ng-click="vm.currentImage = image" ng-src="image">
                                                         </div>
                                                         <button ng-controller="popupCtrl" ng-click="openProImageSetting('image5',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
@@ -305,9 +299,8 @@
                                                               ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image8)"
                                                               ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image8)+ ')'}">
                                                         </div>
-                                                        <div  ng-repeat="image in vm.tempImage.images8 | limitTo: 10"
-                                                              class="thumbnail">
-                                                            <img ng-click="vm.currentImage = $root.imageUrl.replace('%s', image)" ng-src="{{$root.imageUrl.replace('%s', image)}}">
+                                                        <div  ng-repeat="image in vm.tempImage.images8 | limitTo: 10" class="thumbnail">
+                                                            <img ng-click="vm.currentImage = image" ng-src="image">
                                                         </div>
                                                         <button ng-controller="popupCtrl" ng-click="openProImageSetting('image8',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
@@ -328,9 +321,8 @@
                                                               ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image9)"
                                                               ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image9)+ ')'}">
                                                         </div>
-                                                        <div  ng-repeat="image in vm.tempImage.images9 | limitTo: 10"
-                                                              class="thumbnail">
-                                                            <img ng-click="vm.currentImage = $root.imageUrl.replace('%s', image)" ng-src="{{$root.imageUrl.replace('%s', image)}}">
+                                                        <div  ng-repeat="image in vm.tempImage.images9 | limitTo: 10" class="thumbnail">
+                                                            <img ng-click="vm.currentImage = image" ng-src="image">
                                                         </div>
                                                         <button ng-controller="popupCtrl" ng-click="openProImageSetting('image9',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                     </div>
