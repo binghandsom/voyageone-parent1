@@ -5,7 +5,7 @@ import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 /**
  * Created by Wangtd on 7/25/16.
  */
-public class BrandBtMappingBean extends CmsMtBrandsMappingModel {
+public class CmsBtBrandMappingBean extends CmsMtBrandsMappingModel {
 	
 	/** 主品牌名称 */
 	private String masterName;
