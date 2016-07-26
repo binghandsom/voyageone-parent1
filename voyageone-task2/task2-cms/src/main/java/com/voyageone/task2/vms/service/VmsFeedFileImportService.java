@@ -566,22 +566,27 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
                         // 从Attribute属性里 找到唯一标识
                         Map<String, String> skuKeyMap = getSkuKey(skuTemp);
+                        String keyValue = skuKeyMap.get("Value");
+                        // 去掉key中的空格
+                        if (!StringUtils.isEmpty(keyValue)) {
+                            keyValue = keyValue.replaceAll(" ","");
+                        }
 
                         // 没有设定Sku唯一标识的情况下
-                        if (StringUtils.isEmpty(skuKeyMap.get("Value"))) {
+                        if (StringUtils.isEmpty(keyValue)) {
                             // %s(variation-theme) must be set in attribute.
                             addErrorMessage(errorList, "8000008", new Object[]{variationTheme}, skuTemp.getRow(), "attribute");
                             errorFlg = true;
                         }
 
                         // Sku唯一标识重复的情况下
-                        if (!StringUtils.isEmpty(skuKeyMap.get("Value"))) {
-                            if (skuKeys.contains(skuKeyMap.get("Value"))) {
+                        if (!StringUtils.isEmpty(keyValue)) {
+                            if (skuKeys.contains(keyValue)) {
                                 // %s must be a unique value in same parent-id.
                                 addErrorMessage(errorList, "8000010", new Object[]{variationTheme}, skuTemp.getRow(), "attribute-key-" + skuKeyMap.get("AttributeNum"));
                                 errorFlg = true;
                             } else {
-                                skuKeys.add(skuKeyMap.get("Value"));
+                                skuKeys.add(keyValue);
                             }
                         }
                     }
@@ -654,7 +659,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         skuModel.setBarcode(skuTemp.getProductId());
                         skuModel.setClientSku(skuTemp.getSku());
                         Map<String, String> skuKeyMap = getSkuKey(skuTemp);
-                        skuModel.setSku(feedInfo.getCode() + "-" + skuKeyMap.get("Value"));
+                        skuModel.setSku(feedInfo.getCode() + "-" + skuKeyMap.get("Value").replaceAll(" ", ""));
                         skuModel.setSize(skuKeyMap.get("Value"));
                         skuModel.setImage(Arrays.asList(images.split(",")));
                         skuModel.setQty(new Integer(skuTemp.getQuantity()));
