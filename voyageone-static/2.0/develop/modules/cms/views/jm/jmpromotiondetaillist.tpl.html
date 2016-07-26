@@ -306,10 +306,10 @@
                                     <td class="text-right">
                                         <div class="table_main">
                                             <ul>
-                                                <li>海外官网价格:{{model.msrpUsd|number}}</li>
-                                                <li>中国官网售价:{{model.msrpRmb|number}}</li>
-                                                <li>中国指导售价:{{model.retailPrice|number}}</li>
-                                                <li>中国最终售价:{{model.salePrice|number}}</li>
+                                                <li>海外官网价格:{{getMinMaxPrice(model.minMsrpUsd,model.maxMsrpUsd)}}</li>
+                                                <li>中国官网售价:{{getMinMaxPrice(model.minMsrpRmb,model.maxMsrpRmb)}}</li>
+                                                <li>中国指导售价:{{getMinMaxPrice(model.minRetailPrice,model.maxRetailPrice)}}</li>
+                                                <li>中国最终售价:{{getMinMaxPrice(model.minSalePrice,model.maxSalePrice)}}</li>
                                             </ul>
                                         </div>
                                     </td>
