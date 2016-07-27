@@ -595,6 +595,11 @@ public class VmsOrderInfoService extends BaseService {
     }
 
     public int scanBarcodeInSku(UserSessionBean user, ScanInfo scanInfo) {
+        // 确认shipment状态
+        VmsBtShipmentModel shipment = shipmentService.select(scanInfo.getShipment().getId());
+        if (!user.getSelChannelId().equals(shipment.getChannelId())) throw new BusinessException("8000030");
+        if (!STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(shipment.getStatus())) throw new BusinessException(("8000025"));
+
         return orderDetailService.scanInSku(user.getSelChannelId(), user.getUserName(),
                 scanInfo.getBarcode(), scanInfo.getShipment().getId());
     }

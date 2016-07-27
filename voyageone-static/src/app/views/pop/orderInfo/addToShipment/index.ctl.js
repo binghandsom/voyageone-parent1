@@ -11,8 +11,6 @@ define([
             this.scannedSkuList = context.scannedSkuList;
             this.shipmentScanPopupService = shipmentScanPopupService;
             this.$uibModalInstance = $uibModalInstance;
-            this.warningSound = new Audio('http://xunlei.sc.chinaz.com/files/download/sound1/201403/4252.wav');
-            this.warningSound.preload = 'auto';
         }
 
         AddToShipmentController.prototype.scan = function (barcode) {
@@ -26,7 +24,6 @@ define([
             self.shipmentScanPopupService.scanBarcode(req).then(function (data) {
                 if (data.success == 1) self.notify.success('TXT_SUCCESS');
                 else if (data.success == 0) {
-                    self.warningSound.play();
                     self.notify.warning('TXT_ITEM_NOT_FOUND');
                 }
                 self.scannedSkuList = data.scannedSkuList;
