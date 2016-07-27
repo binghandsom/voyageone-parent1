@@ -305,17 +305,18 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         }
         else
         {
-            if(model.getPrePeriodStart().getTime()< DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()&&saveInfo.jmProductModel.getSynchStatus()==2)
-            {
-                product.setErrorMsg("该商品预热已开始,不能导入");
-                listProducctErrorMap.add(MapUtil.toMap(product));
-               for(SkuImportBean skuImport:listProductSkuImport)
-               {
-                   skuImport.setErrorMsg("预热已开始,不能导入");
-                   listSkuErrorMap.add(MapUtil.toMap(skuImport));
-               }
-                return null;
-            }
+            // TODO: 2016/7/27    该商品预热已开始,不能导入  暂时放开  这check  需求待定
+//            if(model.getPrePeriodStart().getTime()< DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()&&saveInfo.jmProductModel.getSynchStatus()==2)
+//            {
+//                product.setErrorMsg("该商品预热已开始,不能导入");
+//                listProducctErrorMap.add(MapUtil.toMap(product));
+//               for(SkuImportBean skuImport:listProductSkuImport)
+//               {
+//                   skuImport.setErrorMsg("预热已开始,不能导入");
+//                   listSkuErrorMap.add(MapUtil.toMap(skuImport));
+//               }
+//                return null;
+//            }
         }
         saveInfo.jmProductModel.setAppId(product.getAppId());
         saveInfo.jmProductModel.setPcId(product.getPcId());
