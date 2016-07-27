@@ -26,11 +26,12 @@ public interface VmsBtOrderDetailDaoExt {
 
     List<Map<String, Object>> selectListByTime(Map<String, Object> orderSearchParams);
 
-    int updateSkuShipmentStatus(Map<String, Object> sortedParams);
+    int updateShipmentStatusInOrder(Map<String, Object> sortedParams);
 
     int cancelOrderShipmentStatus(Map<String, Object> params);
 
     int countOrder(Map<String, Object> params);
 
     int countSku(Map<String, Object> params);
+
 }

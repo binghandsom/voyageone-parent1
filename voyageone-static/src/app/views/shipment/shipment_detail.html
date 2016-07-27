@@ -19,12 +19,13 @@
                     </div>
                     <div class="col-md-8">
                         <div class="form-group input-group">
-                            <input type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}" ng-autofocus="true">
-                            <span class="input-group-btn"><button class="btn btn-info" type="button" translate="BTN_SCAN"></button></span>
+                            <input type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}"
+                                   ng-model="ctrl.barcode" enter-click="#scan" ng-autofocus="true">
+                            <span class="input-group-btn"><button id="scan" class="btn btn-info" type="button" ng-click="ctrl.scan()" translate="BTN_SCAN"></button></span>
                         </div>
                     </div>
                 </div>
-                <form name="shipmentForm" class="col-sm-12">
+                <form name="shipmentForm" class="col-sm-12" novalidate>
                     <table class="no-min-width table table-vo table-striped">
                         <thead>
                         <tr>
@@ -47,7 +48,7 @@
                                            type="date"
                                            ng-model="ctrl.shipment.shippedDate"
                                            uib-datepicker-popup
-                                           is-open="datepicker1" ng-required="ctrl.shipment.status==3"
+                                           is-open="datepicker1" required
                                            ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
                                     <span class="input-group-btn">
                                     <button class="btn btn-default" ng-click="datepicker1=!datepicker1" ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
@@ -55,21 +56,24 @@
                             </span>
                                 </span>
                             </td>
-                            <td class="td-2 text-left v-middle">
-                                <select name="shipmentStatus" id="select" ng-class="{'form-control':true, 'has-error': !shipmentForm.shipmentStatus.$valid}"
+                            <td ng-class="{'td-2 text-left v-middle':true, 'has-error': !shipmentForm.expressCompany.$valid}">
+                                <select name="expressCompany" id="select" class="form-control"
                                         ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3"
                                         ng-model="ctrl.shipment.expressCompany"
-                                        ng-options="option.value as option.name for option in ctrl.expressCompanies" ng-required="ctrl.shipment.status==3">
+                                        ng-options="option.value as option.name for option in ctrl.expressCompanies" required>
                                 </select>
                             </td>
                             <td ng-class="{'td-2 text-center v-middle': true, 'has-error':!shipmentForm.trackingNo.$valid}">
                                 <input name="trackingNo" type="text" class="form-control"
                                        ng-model="ctrl.shipment.trackingNo"
-                                       ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3" ng-required="ctrl.shipment.status==3">
+                                       ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3" required>
                             </td>
                             <td class="td-1 text-center v-middle">
                                 <button class="btn btn-primary btn-sm" translate="BTN_SHIPPED"
-                                        ng-disabled="!shipmentForm.$valid || (ctrl.shipment.status != 1 && ctrl.shipment.status != 3)"></button>
+                                        ng-click="ctrl.ship()"
+                                        ng-disabled="(!ctrl.scannedSkuList || ctrl.scannedSkuList.length == 0)
+                                         || !shipmentForm.$valid
+                                         || (ctrl.shipment.status != 1 && ctrl.shipment.status != 3)"></button>
                             </td>
                         </tr>
                         </tbody>

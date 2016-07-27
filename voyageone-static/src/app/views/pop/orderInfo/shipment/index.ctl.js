@@ -73,8 +73,6 @@ define([
         NewShipmentController.prototype.end = function () {
             var self = this;
             var req = angular.copy(self.shipment);
-            if (req.shippedDate)
-                req.shippedDate = req.shippedDate.getTime();
             var tempShipment = {};
             // 先判断是否有其他人改了当前的shipment
             self.shipmentPopupService.get().then(function (data) {

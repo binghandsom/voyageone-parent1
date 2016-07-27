@@ -1,10 +1,10 @@
 package com.voyageone.web2.vms.bean.shipment;
 
 /**
- * 快递公司
+ * 可选的shipment状态
  * Created by vantis on 16-7-14.
  */
-public class ExpressCompany {
+public class ShipmentStatusBean {
     private String name;
     private String value;
 

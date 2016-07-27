@@ -71,13 +71,15 @@ define([
             if (self.orderDateFrom === undefined || self.orderDateTo === undefined) {
                 self.alert("TXT_PLEASE_INPUT_A_VALID_DATE");
                 return;
-            } else if (self.orderDateFrom)
+            } else if (self.orderDateFrom) {
                 self.searchInfo.orderDateFrom = self.orderDateFrom;
-
+            } else self.searchInfo.orderDateFrom = undefined;
             if (self.orderDateTo) {
                 var date = angular.copy(self.orderDateTo);
                 date.setDate(date.getDate() + 1);
                 self.searchInfo.orderDateTo = date;
+            } else {
+                self.searchInfo.orderDateTo = undefined;
             }
 
             self.searchInfo.curr = self.pageInfo.curr;
