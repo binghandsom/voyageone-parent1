@@ -1,10 +1,10 @@
 <div class="breadcrumbs">
     <div class="container">
-        <h4 class="pull-left" translate="TXT_ORDER_INFO">Financial report</h4>
+        <h4 class="pull-left" translate="TXT_FINANCIAL_REPORT"></h4>
         <ul class="pull-right breadcrumb">
             <li><a href="#/home" translate="TXT_HOME"></a></li>
-            <li><a href="javascript:void(0)">Financial</a></li>
-            <li class="active selecte">Financial report</li>
+            <li><a href="javascript:void(0)" translate="TXT_FINANCIAL"></a></li>
+            <li class="active selecte"  translate="TXT_FINANCIAL_REPORT"></li>
         </ul>
     </div>
 </div>
@@ -13,15 +13,15 @@
         <div class="panel-body">
             <div class="form-inline">
                 <div class="form-group">
-                    <label class="control-label">Year-Month</label>
-                    <select name="Year-Month" id="select" ng-model="ctrl.yearMonthList" class="form-control input-sm"
-                            ng-options="yearMonth.value as yearMonth.name for yearMonth in ctrl.yearMonthList">
+                    <label class="control-label" translate="TXT_YEAR_MONTH">Year-Month</label>
+                    <select name="Year-Month" id="select" ng-model="ctrl.reportYearMonth" class="form-control input-sm"
+                            ng-options="reportYearMonth.value as reportYearMonth.name for reportYearMonth in ctrl.reportYearMonthList" ng-change="ctrl.search()">
                         <option value="" translate="TXT_SELECT_NO_VALUE"></option>
                     </select>
                 </div>
-                <div class="pull-right">
-                    <button class="btn btn-primary btn-sm">SEARCH</button>
-                </div>
+                <!--<div class="pull-right">-->
+                    <!--<button class="btn btn-primary btn-sm">SEARCH</button>-->
+                <!--</div>-->
             </div>
         </div>
     </div>
@@ -32,9 +32,9 @@
                     <thead>
                     <tr>
                         <th class="td-1" translate="TXT_REPORT_ID"></th>
-                        <th class="td-2 text-center">Report Period</th>
-                        <th class="td-2 text-center">Total Price</th>
-                        <th class="td-2 text-center">Download</th>
+                        <th class="td-2 text-center" translate="TXT_REPORT_PERIOD"></th>
+                        <th class="td-2 text-center" translate="TXT_TOTAL_PRICE"></th>
+                        <th class="td-2 text-center" translate="TXT_FINANCIAL_REPORT"></th>
                         <th class="td-2" translate="TXT_ACTION" ng-if="ctrl.canConfirm == true"></th>
                     </tr>
                     </thead>
@@ -45,18 +45,6 @@
                         <td class="text-center">${{financialReport.totalPrice}}</td>
                         <td class="text-center"><button class="btn btn-success btn-xs" ng-click="ctrl.download(financialReport.report_file_name)"><i class="fa fa-cloud-download fa-lg"></i></button></td>
                         <td class="text-center"  ng-if="ctrl.canConfirm == true"><button class="btn btn-xs btn-info" ng-click="ctrl.confirm(financialReport.reportFileName)" translate="BTN_CONFIRM"></button></td>
-                    </tr>
-                    <tr>
-                        <td>FR201605</td>
-                        <td class="text-center">20160501 ~ 20160531</td>
-                        <td class="text-center">$150000</td>
-                        <td class="text-center"><button class="btn btn-success btn-xs"><i class="fa fa-cloud-download fa-lg"></i></button></td>
-                    </tr>
-                    <tr>
-                        <td>FR201604</td>
-                        <td class="text-center">20160401 ~ 20160430</td>
-                        <td class="text-center">$200000</td>
-                        <td class="text-center"><button class="btn btn-success btn-xs"><i class="fa fa-cloud-download fa-lg"></i></button></td>
                     </tr>
                     </tbody>
                 </table>

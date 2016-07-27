@@ -18,6 +18,8 @@ define(function () {
         "TXT_FEED_INFO_SEARCH": "Feed Info Search",
         "TXT_FEED_INFO_UPLOAD": "Feed File Upload",
         "TXT_FILE_NAME": "File Name",
+        "TXT_FINANCIAL": "Financial",
+        "TXT_FINANCIAL_REPORT": "Financial report",
         "TXT_FROM": "From",
         "TXT_HOME": "Home",
         "TXT_IMAGE": "Image",
@@ -42,6 +44,7 @@ define(function () {
         "TXT_PLEASE_INPUT_A_VALID_DATE": "Please input a valid date.",
         "TXT_PRICE": "Price",
         "TXT_REPORT_ID": "Report ID",
+        "TXT_REPORT_PERIOD": "Report Period",
         "TXT_SEARCH": "Search",
         "TXT_SELECT_EXPRESS_COMPANY": "Express Company",
         "TXT_SELECT_NO_VALUE": "Select...",
@@ -55,6 +58,7 @@ define(function () {
         "TXT_SKU_NUMBER": "SKU Number",
         "TXT_STATUS": "Status",
         "TXT_TO": "To",
+        "TXT_TOTAL_PRICE": "Total Price",
         "TXT_TRACKING_NO_": "Tracking No.",
         "TXT_UPLOAD_DATE": "Upload Date",
         "TXT_UPLOAD_USER": "Upload User",
@@ -75,6 +79,7 @@ define(function () {
         "TXT_SKU_TOTAL": "SKU Total",
         "TXT_SHIPMENT_DETAIL": "Shipment Detail",
         "TXT_NO_SHIPMENT_SELECTED": "No Shipment selected.",
+        "TXT_YEAR_MONTH": "Year-Month",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
