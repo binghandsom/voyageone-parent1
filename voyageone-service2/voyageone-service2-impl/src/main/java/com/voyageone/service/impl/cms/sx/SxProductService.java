@@ -3234,7 +3234,8 @@ public class SxProductService extends BaseService {
      */
     public void insertSxWorkLoad(String channelId, List<String> codeList, Integer cartId, String modifier) {
         // 输入参数检查
-        if (StringUtils.isEmpty(channelId) || codeList == null || StringUtils.isEmpty(modifier)) {
+        if (StringUtils.isEmpty(channelId) || codeList == null || codeList.isEmpty() || StringUtils.isEmpty(modifier)) {
+            $warn("insertSxWorkLoad 缺少参数");
             return;
         }
 
