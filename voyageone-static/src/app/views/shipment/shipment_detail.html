@@ -19,8 +19,9 @@
                     </div>
                     <div class="col-md-8">
                         <div class="form-group input-group">
-                            <input type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}" ng-autofocus="true">
-                            <span class="input-group-btn"><button class="btn btn-info" type="button" translate="BTN_SCAN"></button></span>
+                            <input type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}"
+                                   ng-model="ctrl.barcode" enter-click="#scan" ng-autofocus="true">
+                            <span class="input-group-btn"><button id="scan" class="btn btn-info" type="button" ng-click="ctrl.scan()" translate="BTN_SCAN"></button></span>
                         </div>
                     </div>
                 </div>

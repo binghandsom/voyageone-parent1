@@ -60,6 +60,7 @@ define(function () {
         "TXT_UPLOAD_USER": "Upload User",
         "TXT_SUCCESS": "Success",
         "TXT_ITEM_NOT_FOUND": "Scanned item not found in this order.",
+        "TXT_ITEM_NOT_FOUND_SKU": "Scanned item not found in OPEN orders.",
         "TXT_VO_PRICE": "VoPrice",
         "TXT_SALE_PRICE": "SalePrice",
         "TXT_SCANNED_ORDER_NOT_FINISHED": "SKUs in the orders [%s] have not been scanned completely, do you want to continue with these orders ignored?",

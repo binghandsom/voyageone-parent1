@@ -655,8 +655,17 @@
         <if test="containerizerNull != null">
             , `containerizer` = null
         </if>
+        <if test="shipmentId != null">
+            , `shipment_id` = #{shipmentId,jdbcType=VARCHAR}
+        </if>
         <if test="shipmentTime != null">
             , `shipment_time` = #{shipmentTime,jdbcType=TIMESTAMP}
+        </if>
+        <if test="containerizer != null">
+            , `containerizing_time` = now()
+        </if>
+        <if test="containerizer != null">
+            , `containerizer` = #{containerizer, jdbcType=VARCHAR}
         </if>
         <if test="cancelTime != null">
             , `cancel_time` = #{cancelTime,jdbcType=TIMESTAMP}
@@ -685,6 +694,12 @@
             </when>
             <when test="wShipmentId != null">
                 `channel_id` = #{channelId, jdbcType=VARCHAR} and `shipment_id` = #{wShipmentId, jdbcType = INTEGER}
+
+            </when>
+            <when test="barcode != null">
+                `channel_id` = #{channelId, jdbcType=VARCHAR} AND `barcode` = #{barcode, jdbcType=VARCHAR}
+                ORDER BY consolidation_order_time ASC
+                LIMIT 1
             </when>
             <otherwise>
                 1 = 2
@@ -692,7 +707,7 @@
         </choose>
     </update>
 
-    <update id="updateSkuShipmentStatus" parameterType="HashMap">
+    <update id="updateShipmentStatusInOrder" parameterType="HashMap">
         UPDATE vms_bt_order_detail
         SET `shipment_id`         = #{shipmentId, jdbcType=INTEGER},
             `containerizer`       = #{containerizer, jdbcType=VARCHAR},

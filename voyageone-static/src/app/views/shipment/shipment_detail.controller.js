@@ -14,7 +14,9 @@ define([
             this.shipmentDetailService = shipmentDetailService;
 
             this.shipmentStatusList = [];
+            this.orderStatusList = [];
             this.expressCompanies = [];
+            this.barcode = "";
 
             this.pageInfo = {
                 curr: 1,
@@ -34,6 +36,7 @@ define([
             var self = this;
             self.shipmentDetailService.init(self.searchInfo).then(function (data) {
                 self.shipmentStatusList = data.shipmentStatusList;
+                self.orderStatusList = data.orderStatusList;
                 self.expressCompanies = data.expressCompanies;
                 self.shipment = data.shipment;
                 if (self.shipment && self.shipment.shippedDate) self.shipment.shippedDate = new Date(self.shipment.shippedDate);
@@ -47,14 +50,30 @@ define([
 
         ShipmentDetailController.prototype.getStatusName = function (statusValue) {
             var self = this;
-            for (var i = 0; i < self.shipmentStatusList.length; i++) {
-                if (self.shipmentStatusList[i].value == statusValue) {
-                    var currentStatus = self.shipmentStatusList[i];
+            for (var i = 0; i < self.orderStatusList.length; i++) {
+                if (self.orderStatusList[i].value == statusValue) {
+                    var currentStatus = self.orderStatusList[i];
                     break;
                 }
             }
             if (!currentStatus) return statusValue;
             return currentStatus.name;
+        };
+
+        ShipmentDetailController.prototype.scan = function () {
+            var self = this;
+            var req = {
+                shipment: self.shipment,
+                barcode: self.barcode
+            };
+            self.shipmentDetailService.scan(req).then(function (data) {
+                if (data.success == 1) self.notify.success('TXT_SUCCESS');
+                else if (data.success == 0) {
+                    self.notify.warning('TXT_ITEM_NOT_FOUND_SKU');
+                }
+                self.scannedSkuList = data.scannedSkuList;
+                self.barcode = "";
+            })
         };
 
         return ShipmentDetailController;

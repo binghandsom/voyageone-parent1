@@ -6,7 +6,7 @@ import java.util.List;
  * shipment的搜索结果
  * Created by vantis on 16-7-25.
  */
-public class ShipmentInfo {
+public class ShipmentInfoBean {
     private List<ShipmentBean> shipmentList;
     private int total;
 

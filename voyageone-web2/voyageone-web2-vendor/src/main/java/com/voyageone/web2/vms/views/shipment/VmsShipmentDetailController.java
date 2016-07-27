@@ -2,6 +2,7 @@ package com.voyageone.web2.vms.views.shipment;
 
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
+import com.voyageone.web2.vms.bean.order.ScanInfo;
 import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
 import com.voyageone.web2.vms.bean.shipment.ShipmentDetailSearchInfo;
 import com.voyageone.web2.vms.views.order.VmsOrderInfoService;
@@ -35,9 +36,18 @@ public class VmsShipmentDetailController extends BaseController {
         Map<String, Object> result = new HashMap<>();
         ShipmentBean shipment = vmsShipmentService.getShipment(this.getUser(), shipmentDetailSearchInfo.getShipmentId());
         result.put("shipment", shipment);
-        result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(), shipment, shipmentDetailSearchInfo));
+        result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(), shipment));
+        result.put("orderStatusList", vmsOrderInfoService.getAllOrderStatusesList());
         result.put("shipmentStatusList", vmsShipmentService.getAllStatus());
         result.put("expressCompanies", vmsShipmentService.getAllExpressCompanies());
+        return success(result);
+    }
+
+    @RequestMapping(SHIPMENT.ShipmentDetail.SCAN)
+    public AjaxResponse scan(@RequestBody ScanInfo scanInfo) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", vmsOrderInfoService.scanBarcodeInSku(this.getUser(), scanInfo));
+        result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(), scanInfo.getShipment()));
         return success(result);
     }
 }
