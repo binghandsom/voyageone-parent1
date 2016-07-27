@@ -77,6 +77,8 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
 
                     if (__cacheWith.length !== _cacheWith.length)
                         _cacheFlag = 0;
+                    else
+                        _cacheWith = __cacheWith;
                 }
             }
 
