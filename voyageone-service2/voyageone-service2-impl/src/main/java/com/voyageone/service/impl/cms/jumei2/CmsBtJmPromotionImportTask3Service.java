@@ -244,8 +244,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             $info("into"+ product.getProductCode());
             List<SkuImportBean> listProductSkuImport = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());//获取商品的sku
             saveInfo = loadSaveInfo(model, listProductSkuImport, product, listProducctErrorMap, listSkuErrorMap, userName);
-            loadCmsBtPromotionCodes(saveInfo, listProductSkuImport, product,modelPromotion, userName);
             if (saveInfo != null) {
+                loadCmsBtPromotionCodes(saveInfo, listProductSkuImport, product,modelPromotion, userName);
                 listSaveInfo.add(saveInfo);
             }
         }
