@@ -16,6 +16,7 @@ define([
             this.shipmentStatusList = [];
             this.orderStatusList = [];
             this.expressCompanies = [];
+            this.scannedSkuList = [];
             this.barcode = "";
 
             this.pageInfo = {
