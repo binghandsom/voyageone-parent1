@@ -4,6 +4,11 @@
 define([
     'vms'
 ], function (vms) {
+    function audioPlay(value) {
+        var audioEle = document.getElementById('warningAudio');
+        if (value == true) audioEle.play();
+    }
+
     vms.controller('AddToShipmentController', (function () {
         function AddToShipmentController(context, notify, shipmentScanPopupService, $uibModalInstance) {
             this.notify = notify;
@@ -24,6 +29,7 @@ define([
             self.shipmentScanPopupService.scanBarcode(req).then(function (data) {
                 if (data.success == 1) self.notify.success('TXT_SUCCESS');
                 else if (data.success == 0) {
+                    audioPlay(true);
                     self.notify.warning('TXT_ITEM_NOT_FOUND');
                 }
                 self.scannedSkuList = data.scannedSkuList;
