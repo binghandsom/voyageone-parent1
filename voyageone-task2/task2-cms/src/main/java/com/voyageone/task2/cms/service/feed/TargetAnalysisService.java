@@ -49,6 +49,8 @@ public class TargetAnalysisService extends BaseAnalysisService {
         return "CmsTargetAnalySisJob";
     }
 
+    private final List<String> SpecialCode = Arrays.asList(new String[]{"50854273", "14174648"});
+
     /**
      * JE产品信息插入
      *
@@ -372,6 +374,11 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 }
             }
 
+            if(SpecialCode.contains(cmsBtFeedInfoModel.getModel())){
+                cmsBtFeedInfoModel.setModel(cmsBtFeedInfoModel.getModel() + "-" + attribute.get("size").get(0));
+                cmsBtFeedInfoModel.setCode(cmsBtFeedInfoModel.getCode() + "-" + attribute.get("size").get(0));
+            }
+
 
             // productType
             cmsBtFeedInfoModel.setCategory(StringEscapeUtils.escapeHtml(cmsBtFeedInfoModel.getCategory()));
@@ -491,7 +498,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]) / 16.0);
                 return convertWeight.toString();
             }else if("lb".equalsIgnoreCase(temp[1])){
-                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]));
+                Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]));
                 return convertWeight.toString();
             }else{
                 throw new BusinessException("重量转换失败：" + weight);
