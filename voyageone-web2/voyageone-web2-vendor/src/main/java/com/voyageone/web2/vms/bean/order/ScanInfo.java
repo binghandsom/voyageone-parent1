@@ -6,7 +6,7 @@ import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
  * 扫码前台参数
  * Created by vantis on 16-7-19.
  */
-public class ScanPopupCheckBarcodeInfo {
+public class ScanInfo {
     private ShipmentBean shipment;
     private String consolidationOrderId;
     private String barcode;

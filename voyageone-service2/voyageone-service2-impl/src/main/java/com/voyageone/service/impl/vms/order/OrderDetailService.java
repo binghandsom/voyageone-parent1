@@ -9,7 +9,6 @@ import com.voyageone.service.daoext.vms.VmsBtOrderDetailDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.service.model.vms.VmsBtOrderLogModel;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +26,7 @@ import java.util.Date;
 public class OrderDetailService extends BaseService {
 
     public final static String STATUS_OPEN = "1";
+    public final static String STATUS_PACKAGED = "2";
     public final static String STATUS_SHIPPED = "3";
     public final static String STATUS_RECEIVED = "5";
     public final static String STATUS_CANCEL = "7";
@@ -288,7 +288,44 @@ public class OrderDetailService extends BaseService {
         return vmsBtOrderDetailDao.selectList(modifiedParams);
     }
 
-    public int scanIn(String channelId, String userName, String barcode, String orderId, int shipmentId) {
+    public int scanInSku(String channelId, String userName, String barcode, int shipmentId) {
+
+        // 查找该channel下 扫描barcode对应的SKU(状态必须为OPEN)
+        Map<String, Object> params = new HashMap<String, Object>() {{
+            put("channelId", channelId);
+            put("barcode", barcode);
+            put("status", STATUS_OPEN);
+        }};
+
+        int count = 0;
+
+        Map<String, Object> sortedParams = MySqlPageHelper.build(params)
+                .addSort("consolidation_order_id", Order.Direction.ASC)
+                .limit(1)
+                .toMap();
+        VmsBtOrderDetailModel vmsBtOrderDetailModel = vmsBtOrderDetailDao.selectOne(sortedParams);
+
+        // 若有 则更新状态 置入shipment信息
+        if (null != vmsBtOrderDetailModel) {
+            Map<String, Object> updateParams = new HashMap<String, Object>() {{
+                put("channelId", channelId);
+                put("reservationId", vmsBtOrderDetailModel.getReservationId());
+                put("containerizer", userName);
+                put("shipmentId", shipmentId);
+                put("status", STATUS_PACKAGED);
+            }};
+
+            count = vmsBtOrderDetailDaoExt.updateOrderStatus(updateParams);
+            if (count > 0) {
+                this.logOrderDetails(updateParams);
+            }
+        }
+
+        return count;
+    }
+
+
+    public int scanInOrder(String channelId, String userName, String barcode, String orderId, int shipmentId) {
 
         Map<String, Object> params = new HashMap<String, Object>() {{
             put("channelId", channelId);
@@ -299,7 +336,7 @@ public class OrderDetailService extends BaseService {
             put("shipmentId", shipmentId);
         }};
 
-        return vmsBtOrderDetailDaoExt.updateSkuShipmentStatus(params);
+        return vmsBtOrderDetailDaoExt.updateShipmentStatusInOrder(params);
     }
 
     public int removeSkuShipmentId(String channelId, Integer shipmentId) {

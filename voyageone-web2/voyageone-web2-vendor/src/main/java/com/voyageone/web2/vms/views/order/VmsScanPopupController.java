@@ -2,7 +2,7 @@ package com.voyageone.web2.vms.views.order;
 
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.vms.bean.order.ScanPopupCheckBarcodeInfo;
+import com.voyageone.web2.vms.bean.order.ScanInfo;
 import com.voyageone.web2.vms.bean.order.ScanPopupInitialInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,12 +39,12 @@ public class VmsScanPopupController extends BaseController {
     }
 
     @RequestMapping(POPUP.SCAN.SCAN_BARCODE)
-    public AjaxResponse checkBarcode(@RequestBody ScanPopupCheckBarcodeInfo scanPopupCheckBarcodeInfo) {
+    public AjaxResponse checkBarcode(@RequestBody ScanInfo scanInfo) {
         Map<String, Object> result = new HashMap<>();
-        result.put("success", vmsOrderInfoService.scanBarcodeInOrder(this.getUser(), scanPopupCheckBarcodeInfo));
+        result.put("success", vmsOrderInfoService.scanBarcodeInOrder(this.getUser(), scanInfo));
         result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(),
-                scanPopupCheckBarcodeInfo.getShipment(), scanPopupCheckBarcodeInfo.getConsolidationOrderId()));
-        result.put("finished", vmsOrderInfoService.orderScanFinished(this.getUser(), scanPopupCheckBarcodeInfo));
+                scanInfo.getShipment(), scanInfo.getConsolidationOrderId()));
+        result.put("finished", vmsOrderInfoService.orderScanFinished(this.getUser(), scanInfo));
 
         return success(result);
     }

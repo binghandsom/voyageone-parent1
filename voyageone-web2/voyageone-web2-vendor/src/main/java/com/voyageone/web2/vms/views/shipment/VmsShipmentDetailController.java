@@ -2,6 +2,7 @@ package com.voyageone.web2.vms.views.shipment;
 
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
+import com.voyageone.web2.vms.bean.order.ScanInfo;
 import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
 import com.voyageone.web2.vms.bean.shipment.ShipmentDetailSearchInfo;
 import com.voyageone.web2.vms.views.order.VmsOrderInfoService;
@@ -31,13 +32,36 @@ public class VmsShipmentDetailController extends BaseController {
     }
 
     @RequestMapping(SHIPMENT.ShipmentDetail.INIT)
-    public AjaxResponse init(@RequestBody ShipmentDetailSearchInfo shipmentDetailSearchInfo) {
+    public AjaxResponse init(@RequestBody Integer shipmentId) {
         Map<String, Object> result = new HashMap<>();
-        ShipmentBean shipment = vmsShipmentService.getShipment(this.getUser(), shipmentDetailSearchInfo.getShipmentId());
+        ShipmentBean shipment = vmsShipmentService.getShipment(this.getUser(), shipmentId);
         result.put("shipment", shipment);
-        result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(), shipment, shipmentDetailSearchInfo));
+        result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(), shipment));
+        result.put("orderStatusList", vmsOrderInfoService.getAllOrderStatusesList());
         result.put("shipmentStatusList", vmsShipmentService.getAllStatus());
         result.put("expressCompanies", vmsShipmentService.getAllExpressCompanies());
+        return success(result);
+    }
+
+    @RequestMapping(SHIPMENT.ShipmentDetail.SCAN)
+    public AjaxResponse scan(@RequestBody ScanInfo scanInfo) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", vmsOrderInfoService.scanBarcodeInSku(this.getUser(), scanInfo));
+        result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(), scanInfo.getShipment()));
+        return success(result);
+    }
+
+    @RequestMapping(SHIPMENT.ShipmentDetail.SHIP)
+    public AjaxResponse ship(@RequestBody ShipmentBean shipment) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", vmsShipmentService.endShipment(this.getUser(), shipment));
+        return success(result);
+    }
+
+    @RequestMapping(SHIPMENT.ShipmentDetail.GET_INFO)
+    public AjaxResponse getInfo(@RequestBody Integer shipmentId) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("shipment", vmsShipmentService.getShipment(this.getUser(), shipmentId));
         return success(result);
     }
 }

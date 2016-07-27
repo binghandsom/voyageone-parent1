@@ -4,9 +4,7 @@ import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Types;
-import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.TypeBean;
-import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.util.BeanUtil;
 import com.voyageone.common.util.MapUtil;
 import com.voyageone.service.impl.BaseService;
@@ -19,9 +17,7 @@ import com.voyageone.web2.vms.bean.SortParam;
 import com.voyageone.web2.vms.bean.VmsChannelSettings;
 import com.voyageone.web2.vms.bean.order.*;
 import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
-import com.voyageone.web2.vms.bean.shipment.ShipmentDetailSearchInfo;
 import com.voyageone.web2.vms.bean.shipment.ShipmentEndCountBean;
-import com.voyageone.web2.vms.bean.shipment.ShipmentSearchInfo;
 import com.voyageone.web2.vms.views.common.ChannelConfigService;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
@@ -465,20 +461,20 @@ public class VmsOrderInfoService extends BaseService {
     /**
      * 扫barcode 将对应的sku加入shipment
      *
-     * @param user                      当前用户
-     * @param scanPopupCheckBarcodeInfo 扫描参数
+     * @param user     当前用户
+     * @param scanInfo 扫描参数
      * @return 扫描影响的条数
      */
-    public int scanBarcodeInOrder(UserSessionBean user, ScanPopupCheckBarcodeInfo scanPopupCheckBarcodeInfo) {
+    public int scanBarcodeInOrder(UserSessionBean user, ScanInfo scanInfo) {
 
-        ShipmentBean shipment = scanPopupCheckBarcodeInfo.getShipment();
-        String barcode = scanPopupCheckBarcodeInfo.getBarcode();
-        String orderId = scanPopupCheckBarcodeInfo.getConsolidationOrderId();
+        ShipmentBean shipment = scanInfo.getShipment();
+        String barcode = scanInfo.getBarcode();
+        String orderId = scanInfo.getConsolidationOrderId();
 
         // 检查订单状态
         Map<String, Object> checkParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
-            put("consolidationOrderId", scanPopupCheckBarcodeInfo.getConsolidationOrderId());
+            put("consolidationOrderId", scanInfo.getConsolidationOrderId());
         }};
 
         long invalidCount = orderDetailService.select(checkParams).stream()
@@ -494,26 +490,26 @@ public class VmsOrderInfoService extends BaseService {
         VmsBtShipmentModel dbShipment = shipmentService.select(shipment.getId());
         if (!dbShipment.getStatus().equals(STATUS_VALUE.SHIPMENT_STATUS.OPEN)) throw new BusinessException("8000025");
 
-        return orderDetailService.scanIn(user.getSelChannelId(), user.getUserName(),
+        return orderDetailService.scanInOrder(user.getSelChannelId(), user.getUserName(),
                 barcode, orderId, shipment.getId());
     }
 
     /**
      * 确认当期订单是否完整扫描 同时相应更新sku状态
      *
-     * @param user                      当前用户
-     * @param scanPopupCheckBarcodeInfo 扫描参数
+     * @param user     当前用户
+     * @param scanInfo 扫描参数
      * @return 是否完整扫描
      */
-    public boolean orderScanFinished(UserSessionBean user, ScanPopupCheckBarcodeInfo scanPopupCheckBarcodeInfo) {
+    public boolean orderScanFinished(UserSessionBean user, ScanInfo scanInfo) {
 
-        ShipmentBean shipment = scanPopupCheckBarcodeInfo.getShipment();
-        String orderId = scanPopupCheckBarcodeInfo.getConsolidationOrderId();
+        ShipmentBean shipment = scanInfo.getShipment();
+        String orderId = scanInfo.getConsolidationOrderId();
 
         // 检查订单状态
         Map<String, Object> checkParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
-            put("consolidationOrderId", scanPopupCheckBarcodeInfo.getConsolidationOrderId());
+            put("consolidationOrderId", scanInfo.getConsolidationOrderId());
         }};
 
         // 检查当前订单是否全部扫描完毕
@@ -578,8 +574,7 @@ public class VmsOrderInfoService extends BaseService {
         }};
     }
 
-    public List<SubOrderInfoBean> getScannedSkuList(UserSessionBean user, ShipmentBean shipment,
-                                                    ShipmentDetailSearchInfo shipmentDetailSearchInfo) {
+    public List<SubOrderInfoBean> getScannedSkuList(UserSessionBean user, ShipmentBean shipment) {
         if (null == shipment) return new ArrayList<>();
         Map<String, Object> params = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
@@ -588,8 +583,6 @@ public class VmsOrderInfoService extends BaseService {
 
         Map<String, Object> pagedParams = MySqlPageHelper.build(params)
                 .addSort("containerizing_time", Order.Direction.DESC)
-                .limit(shipmentDetailSearchInfo.getSize())
-                .page(shipmentDetailSearchInfo.getCurr())
                 .toMap();
 
         return orderDetailService.selectOrderList(pagedParams).stream()
@@ -599,5 +592,15 @@ public class VmsOrderInfoService extends BaseService {
                     return subOrderInfoBean;
                 })
                 .collect(Collectors.toList());
+    }
+
+    public int scanBarcodeInSku(UserSessionBean user, ScanInfo scanInfo) {
+        // 确认shipment状态
+        VmsBtShipmentModel shipment = shipmentService.select(scanInfo.getShipment().getId());
+        if (!user.getSelChannelId().equals(shipment.getChannelId())) throw new BusinessException("8000030");
+        if (!STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(shipment.getStatus())) throw new BusinessException(("8000025"));
+
+        return orderDetailService.scanInSku(user.getSelChannelId(), user.getUserName(),
+                scanInfo.getBarcode(), scanInfo.getShipment().getId());
     }
 }

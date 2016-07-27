@@ -2,7 +2,7 @@ package com.voyageone.web2.vms.views.shipment;
 
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.JsonUtil;
-import com.voyageone.web2.vms.bean.shipment.ShipmentStatus;
+import com.voyageone.web2.vms.bean.shipment.ShipmentStatusBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,8 @@ public class ShipmentServiceTest extends VOAbsLoggable{
 
     @Test
     public void getAllStatus() throws Exception {
-        List<ShipmentStatus> shipmentStatuses = shipmentService.getAllStatus();
-        $info(JsonUtil.bean2Json(shipmentStatuses));
+        List<ShipmentStatusBean> shipmentStatuseBeen = shipmentService.getAllStatus();
+        $info(JsonUtil.bean2Json(shipmentStatuseBeen));
     }
 
 }

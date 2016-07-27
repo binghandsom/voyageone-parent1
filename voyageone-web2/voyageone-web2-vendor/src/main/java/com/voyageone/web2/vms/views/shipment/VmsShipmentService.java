@@ -46,11 +46,11 @@ public class VmsShipmentService {
      *
      * @return shipment与定义的属性列表
      */
-    public List<ShipmentStatus> getAllStatus() {
+    public List<ShipmentStatusBean> getAllStatus() {
         List<TypeBean> shipmentStatusList = Types.getTypeList(VmsConstants.TYPE_ID.SHIPMENT_STATUS);
         if (null == shipmentStatusList) return new ArrayList<>();
         return shipmentStatusList.stream()
-                .map(typeBean -> new ShipmentStatus() {{
+                .map(typeBean -> new ShipmentStatusBean() {{
                     setName(typeBean.getName());
                     setValue(typeBean.getValue());
                 }})
@@ -62,11 +62,11 @@ public class VmsShipmentService {
      *
      * @return 获取预定义的物流公司列表
      */
-    public List<ExpressCompany> getAllExpressCompanies() {
+    public List<ExpressCompanyBean> getAllExpressCompanies() {
         List<TypeBean> expressCompanyList = Types.getTypeList(VmsConstants.TYPE_ID.EXPRESS_COMPANY);
         if (null == expressCompanyList) return new ArrayList<>();
         return expressCompanyList.stream()
-                .map(expressCompany -> new ExpressCompany() {{
+                .map(expressCompany -> new ExpressCompanyBean() {{
                     setName(expressCompany.getName());
                     setValue(expressCompany.getValue());
                 }})
@@ -143,12 +143,11 @@ public class VmsShipmentService {
             setStatus(shipmentBean.getStatus());
         }};
         return shipmentService.insert(vmsBtShipmentModel);
-        // TODO: 16-7-25 创建后未返回 vantis
     }
 
-    public ShipmentInfo search(UserSessionBean user, ShipmentSearchInfo shipmentSearchInfo) {
+    public ShipmentInfoBean search(UserSessionBean user, ShipmentSearchInfo shipmentSearchInfo) {
 
-        ShipmentInfo shipmentInfo = new ShipmentInfo();
+        ShipmentInfoBean shipmentInfoBean = new ShipmentInfoBean();
 
         Map<String, Object> searchParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
@@ -159,14 +158,14 @@ public class VmsShipmentService {
             put("shippedDateTo", shipmentSearchInfo.getShippedDateTo());
         }};
 
-        shipmentInfo.setTotal(shipmentService.count(searchParams));
+        shipmentInfoBean.setTotal(shipmentService.count(searchParams));
 
         Map<String, Object> pagedSearchParams = MySqlPageHelper.build(searchParams)
                 .addSort("Id", Order.Direction.DESC)
                 .limit(shipmentSearchInfo.getSize())
                 .page(shipmentSearchInfo.getCurr())
                 .toMap();
-        shipmentInfo.setShipmentList(shipmentService.searchList(pagedSearchParams).parallelStream()
+        shipmentInfoBean.setShipmentList(shipmentService.searchList(pagedSearchParams).parallelStream()
                 .map(ShipmentBean::getInstance)
                 .map(shipmentBean -> {
                     shipmentBean.setOrderTotal(orderDetailService.countOrderWithShipment(shipmentBean.getChannelId(),
@@ -176,7 +175,7 @@ public class VmsShipmentService {
                     return shipmentBean;
                 })
                 .collect(Collectors.toList()));
-        return shipmentInfo;
+        return shipmentInfoBean;
     }
 
     public ShipmentBean getShipment(UserSessionBean user, Integer shipmentId) {
@@ -186,5 +185,16 @@ public class VmsShipmentService {
                 || !user.getSelChannelId().equals(vmsBtShipmentModel.getChannelId()))
             throw new BusinessException("8000028"); // 无效的shipment编号
         return ShipmentBean.getInstance(vmsBtShipmentModel);
+    }
+
+    public int endShipment(UserSessionBean user, ShipmentBean shipment) {
+        // 更新shipment
+        int success = this.submit(user, shipment);
+        // 更新shipment对应SKU信息
+        if (success > 0) {
+            orderDetailService.updateOrderStatusWithShipmentId(user.getSelChannelId(),
+                    shipment.getId(), shipment.getStatus());
+        }
+        return success;
     }
 }
