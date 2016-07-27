@@ -143,7 +143,6 @@ public class VmsShipmentService {
             setStatus(shipmentBean.getStatus());
         }};
         return shipmentService.insert(vmsBtShipmentModel);
-        // TODO: 16-7-25 创建后未返回 vantis
     }
 
     public ShipmentInfoBean search(UserSessionBean user, ShipmentSearchInfo shipmentSearchInfo) {
@@ -186,5 +185,16 @@ public class VmsShipmentService {
                 || !user.getSelChannelId().equals(vmsBtShipmentModel.getChannelId()))
             throw new BusinessException("8000028"); // 无效的shipment编号
         return ShipmentBean.getInstance(vmsBtShipmentModel);
+    }
+
+    public int endShipment(UserSessionBean user, ShipmentBean shipment) {
+        // 更新shipment
+        int success = this.submit(user, shipment);
+        // 更新shipment对应SKU信息
+        if (success > 0) {
+            orderDetailService.updateOrderStatusWithShipmentId(user.getSelChannelId(),
+                    shipment.getId(), shipment.getStatus());
+        }
+        return success;
     }
 }

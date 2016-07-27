@@ -19,24 +19,11 @@ define([
                 this.expressCompanies = [];
                 this.scannedSkuList = [];
                 this.barcode = "";
-
-                this.pageInfo = {
-                    curr: 1,
-                    total: 0,
-                    size: 10,
-                    fetch: this.search.bind(this)
-                };
-                this.searchInfo = {
-                    curr: this.pageInfo.curr,
-                    total: this.pageInfo.total,
-                    size: this.pageInfo.size,
-                    shipmentId: this.shipmentId
-                };
             }
 
             ShipmentDetailController.prototype.init = function () {
                 var self = this;
-                self.shipmentDetailService.init(self.searchInfo).then(function (data) {
+                self.shipmentDetailService.init(self.shipmentId).then(function (data) {
                     self.shipmentStatusList = data.shipmentStatusList;
                     self.orderStatusList = data.orderStatusList;
                     self.expressCompanies = data.expressCompanies;
@@ -45,10 +32,6 @@ define([
                     if (self.shipment && self.shipment.shippedDate) self.shipment.shippedDate = new Date(self.shipment.shippedDate);
                     self.scannedSkuList = data.scannedSkuList;
                 })
-            };
-
-            ShipmentDetailController.prototype.search = function () {
-
             };
 
             ShipmentDetailController.prototype.getStatusName = function (statusValue) {
@@ -86,18 +69,17 @@ define([
                 var tempShipment = {};
                 // 先判断是否有其他人改了当前的shipment
                 self.shipmentDetailService.getInfo(self.shipment.id).then(function (data) {
-                    tempShipment = data.currentShipment;
+                    tempShipment = data.shipment;
                     if (!_.isEqual(self.originalShipment, tempShipment)) {
                         self.alert("TXT_SHIPMENT_HAVE_BEEN_EDITED");
                         return;
                     }
 
-                    self.shipmentDetailService.end(req).then(function (data) {
-                        self.shipment = data.currentShipment;
-                        if (self.shipment)
-                            self.shipmentExisted = true;
-                        self.notify.success("TXT_SUCCESS");
-                        self.$uibModalInstance.close(self.shipment);
+                    self.shipmentDetailService.ship(req).then(function (data) {
+                        if (data.success > 0) {
+                            self.notify.success("TXT_SUCCESS");
+                            window.location.href="#/shipment/shipment_info";
+                        }
                     });
                 });
             };

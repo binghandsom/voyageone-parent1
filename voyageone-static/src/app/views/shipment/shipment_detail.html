@@ -70,7 +70,8 @@
                             </td>
                             <td class="td-1 text-center v-middle">
                                 <button class="btn btn-primary btn-sm" translate="BTN_SHIPPED"
-                                        ng-disabled="(!ctrl.scanndSkuList || ctrl.scannedSkuList.length == 0)
+                                        ng-click="ctrl.ship()"
+                                        ng-disabled="(!ctrl.scannedSkuList || ctrl.scannedSkuList.length == 0)
                                          || !shipmentForm.$valid
                                          || (ctrl.shipment.status != 1 && ctrl.shipment.status != 3)"></button>
                             </td>
