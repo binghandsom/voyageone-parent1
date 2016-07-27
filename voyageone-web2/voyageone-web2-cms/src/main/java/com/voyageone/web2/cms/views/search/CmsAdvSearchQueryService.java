@@ -88,15 +88,20 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 }
             }
 
-            // 获取price start
-            if (StringUtils.isNotEmpty(searchValue.getPriceType()) && searchValue.getPriceStart() != null) {
-                queryObject.addQuery("{'platforms.P#.skus.#':{$gte:#}}");
-                queryObject.addParameters(cartId, searchValue.getPriceType(), searchValue.getPriceStart());
-            }
-            // 获取price end
-            if (StringUtils.isNotEmpty(searchValue.getPriceType()) && searchValue.getPriceEnd() != null) {
-                queryObject.addQuery("{'platforms.P#.skus.#':{$lte:#}}");
-                queryObject.addParameters(cartId, searchValue.getPriceType(), searchValue.getPriceEnd());
+            // 获取price start/end
+            if (StringUtils.isNotEmpty(searchValue.getPriceType())) {
+                if (searchValue.getPriceStart() != null) {
+                    if (searchValue.getPriceEnd() != null) {
+                        queryObject.addQuery("{'platforms.P#.skus.#':{$gte:#,$lte:#}}");
+                        queryObject.addParameters(cartId, searchValue.getPriceType(), searchValue.getPriceStart(), searchValue.getPriceEnd());
+                    } else {
+                        queryObject.addQuery("{'platforms.P#.skus.#':{$gte:#}}");
+                        queryObject.addParameters(cartId, searchValue.getPriceType(), searchValue.getPriceStart());
+                    }
+                } else {
+                    queryObject.addQuery("{'platforms.P#.skus.#':{$lte:#}}");
+                    queryObject.addParameters(cartId, searchValue.getPriceType(), searchValue.getPriceEnd());
+                }
             }
 
             // 获取platform category
