@@ -5,6 +5,10 @@ define([
     'vms'
 ], function (vms) {
     vms.controller('ShipmentDetailController', (function () {
+        function audioPlay(value) {
+            var audioEle = document.getElementById('warningAudio');
+            if (value == true) audioEle.play();
+        }
 
         function ShipmentDetailController($routeParams, notify, alert, confirm, shipmentDetailService) {
             this.shipmentId = $routeParams['shipmentId'];
@@ -57,6 +61,7 @@ define([
             self.shipmentDetailService.scan(req).then(function (data) {
                 if (data.success == 1) self.notify.success('TXT_SUCCESS');
                 else if (data.success == 0) {
+                    audioPlay(true);
                     self.notify.warning('TXT_ITEM_NOT_FOUND_SKU');
                 }
                 self.scannedSkuList = data.scannedSkuList;
