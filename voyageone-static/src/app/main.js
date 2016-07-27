@@ -62,7 +62,8 @@ require.config({
             'angular-file-upload',
             'vo-libs',
             'filestyle',
-            'angular-chart'
+            'angular-chart',
+            'jquery'
         ]
     },
     deps: ['vms']
