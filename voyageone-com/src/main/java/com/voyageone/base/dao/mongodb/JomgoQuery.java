@@ -210,10 +210,18 @@ public class JomgoQuery extends BaseCondition {
     @Override
     public String toString() {
         StringBuilder rs = new StringBuilder();
+        String queryStr = getQuery();
+        if (queryStr != null && queryStr.length() > 0) {
+            VOBsonQueryFactory queryFactory = new VOBsonQueryFactory();
+            Object[] params = getParameters();
+            if (params == null) {
+                params = new Object[0];
+            }
+            Query query = queryFactory.createQuery(queryStr, params);
+            queryStr = query.toDBObject().toString();
+        }
         rs.append("JomgoQuery =: { query:=");
-        rs.append(getQuery());
-        rs.append("; parameters:=");
-        rs.append(Arrays.toString(parameters));
+        rs.append(queryStr);
         rs.append("; projection:=");
         rs.append(projection);
         rs.append("; sort:=");

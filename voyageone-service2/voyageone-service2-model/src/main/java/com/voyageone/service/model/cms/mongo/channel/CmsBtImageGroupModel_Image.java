@@ -1,7 +1,5 @@
 package com.voyageone.service.model.cms.mongo.channel;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
-
 /**
  * {@link CmsBtImageGroupModel_Image} 的图片管理Model
  * @author jeff.duan, 16/5/5
@@ -12,7 +10,7 @@ public class CmsBtImageGroupModel_Image {
 
     private String originUrl;
     private String platformUrl;
-    private Long platformImageId;
+    private String platformImageId;
     private Integer status;
     private String errorMsg;
     private String statusName;
@@ -33,11 +31,11 @@ public class CmsBtImageGroupModel_Image {
         this.platformUrl = platformUrl;
     }
 
-    public Long getPlatformImageId() {
+    public String getPlatformImageId() {
         return platformImageId;
     }
 
-    public void setPlatformImageId(Long platformImageId) {
+    public void setPlatformImageId(String platformImageId) {
         this.platformImageId = platformImageId;
     }
 

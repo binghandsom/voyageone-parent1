@@ -1,5 +1,8 @@
 package com.voyageone.base.dao.mongodb;
 
+import com.voyageone.base.dao.mongodb.support.VOBsonQueryFactory;
+import org.jongo.query.Query;
+
 /**
  * JomgoAggregate Aggregate Object
  *
@@ -28,5 +31,20 @@ public class JomgoAggregate {
 
     public Object[] getParameters() {
         return parameters;
+    }
+
+    @Override
+    public String toString() {
+        if (pipelineOperator != null && pipelineOperator.length() > 0) {
+            VOBsonQueryFactory queryFactory = new VOBsonQueryFactory();
+            Object[] params = getParameters();
+            if (params == null) {
+                params = new Object[0];
+            }
+            Query query = queryFactory.createQuery(pipelineOperator, params);
+            return query.toDBObject().toString();
+        } else {
+            return "";
+        }
     }
 }

@@ -372,6 +372,9 @@ public class CmsAdvanceSearchService extends BaseAppService {
         if (searchValue.getGroupPageSize() > 0) {
             aggrList.add(new JomgoAggregate("{ $limit:" + searchValue.getGroupPageSize() + "}"));
         }
+        if ($isDebugEnabled()) {
+            $debug(String.format("高级检索 获取当前查询的group id列表 ChannelId=%s, %s", userInfo.getSelChannelId(), aggrList.toString()));
+        }
 
         List<Map<String, Object>> rs = productService.aggregateToMap(userInfo.getSelChannelId(), aggrList);
         if (rs == null || rs.isEmpty()) {
