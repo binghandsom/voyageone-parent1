@@ -38,6 +38,9 @@ define([
                         scope.vm.productComm = resp.data.productComm;
 
                         var _fields = scope.vm.productComm.fields;
+
+                        scope.productInfo.masterField = _fields;
+
                         /**通知子页面税号状态和翻译状态*/
                         scope.productInfo.checkFlag = new Date().getTime();
                         scope.productInfo.translateStatus = _fields.translateStatus == null ? 0 : +_fields.translateStatus;
@@ -48,7 +51,8 @@ define([
                         if ($rootScope.imageUrl == undefined) {
                             $rootScope.imageUrl = '';
                         }
-                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productComm.fields.images1[0].image1);
+
+                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
                         scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;

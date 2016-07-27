@@ -573,7 +573,7 @@ s-field textarea.s-html {
     min-width: 125px;
 }
 
-.ng-invalid .focus-error{
+schema .ng-invalid.focus-error{
     transition: box-shadow 2s;
     box-shadow: 0 1px 8px 0 #f05050 ! important;
 }
