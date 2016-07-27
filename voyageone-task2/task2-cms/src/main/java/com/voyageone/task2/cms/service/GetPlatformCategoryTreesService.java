@@ -5,6 +5,7 @@ import com.taobao.api.ApiException;
 import com.taobao.api.domain.Brand;
 import com.taobao.api.domain.ItemCat;
 import com.taobao.api.domain.SellerAuthorize;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -43,9 +44,6 @@ public class GetPlatformCategoryTreesService extends BaseTaskService {
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
 
-    @Resource(name = "availableChannelList")
-    List availableChannelList;
-
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -59,43 +57,80 @@ public class GetPlatformCategoryTreesService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        // 获取天猫系所有店铺
-        List<ShopBean> shopList = Shops.getShopListByPlatform(PlatFormEnums.PlatForm.TM);
+        // cart列表
+        List<Integer> cartList = new ArrayList<>();
+        cartList.add(CartEnums.Cart.TM.getValue());
+        cartList.add(CartEnums.Cart.TG.getValue());
 
-        for (Iterator<ShopBean> it = shopList.iterator(); it.hasNext(); ) {
-            ShopBean shop = it.next();
-            if (StringUtils.isEmpty(shop.getAppKey()) || StringUtils.isEmpty(shop.getAppSecret())) {
-                $info("Cart " + shop.getCart_id() + " " + shop.getCart_name() + " 对应的app key 和 app secret key 不存在，不做处理！！！");
-                it.remove();
-            }
-
-        }
         // 获取该任务可以运行的销售渠道
+        int idxChannel = 1;
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
-
-        // 循环所有店铺
-        for (ShopBean shop : shopList) {
-            if (availableChannelList != null && availableChannelList.size() > 0) {
-                if (availableChannelList.contains(shop.getOrder_channel_id())) {
-                    // 判断该Shop是否需要运行任务
-                    boolean isRun = orderChannelIdList.contains(shop.getOrder_channel_id());
-
-                    if (isRun) {
-                        // 第三方平台类目信息取得（天猫系）
-                        doSetPlatformCategoryTm(shop);
+        if (orderChannelIdList != null && orderChannelIdList.size() > 0) {
+            for (String channelId : orderChannelIdList) {
+                int idxCart = 1;
+                for (Integer cartId : cartList) {
+                    ShopBean shopBean = Shops.getShop(channelId, cartId);
+                    if (shopBean == null ||
+                            StringUtils.isEmpty(shopBean.getApp_url()) ||
+                            StringUtils.isEmpty(shopBean.getAppKey()) ||
+                            StringUtils.isEmpty(shopBean.getAppSecret()) ||
+                            StringUtils.isEmpty(shopBean.getSessionKey())
+                            ) {
+                        $info(String.format("店铺信息不存在, 无需获取平台tree, channelId:[%s], cartId:[%s]", channelId, cartId));
+                        continue;
                     }
-                }
-            } else {
-                // 判断该Shop是否需要运行任务
-                boolean isRun = orderChannelIdList.contains(shop.getOrder_channel_id());
 
-                if (isRun) {
-                    // 第三方平台类目信息取得（天猫系）
-                    doSetPlatformCategoryTm(shop);
+                    // 调用主逻辑(channel, cart, 特殊处理类目的信息一览)
+                    doSetPlatformCategoryTm(shopBean);
+
+                    String logInfo = String.format("获取天猫类目tree[完成度]-> channel:[%s], cart:[%s]",
+                            idxChannel + "/" + orderChannelIdList.size(),
+                            idxCart + "/" + cartList.size());
+                    $info(logInfo);
+
+                    idxCart++;
                 }
+                idxChannel++;
             }
-
         }
+
+//        // 获取天猫系所有店铺
+//        List<ShopBean> shopList = Shops.getShopListByPlatform(PlatFormEnums.PlatForm.TM);
+//
+//        for (Iterator<ShopBean> it = shopList.iterator(); it.hasNext(); ) {
+//            ShopBean shop = it.next();
+//            if (StringUtils.isEmpty(shop.getAppKey()) || StringUtils.isEmpty(shop.getAppSecret())) {
+//                $info("Cart " + shop.getCart_id() + " " + shop.getCart_name() + " 对应的app key 和 app secret key 不存在，不做处理！！！");
+//                it.remove();
+//            }
+//
+//        }
+//        // 获取该任务可以运行的销售渠道
+//        List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
+//
+//        // 循环所有店铺
+//        for (ShopBean shop : shopList) {
+//            if (availableChannelList != null && availableChannelList.size() > 0) {
+//                if (availableChannelList.contains(shop.getOrder_channel_id())) {
+//                    // 判断该Shop是否需要运行任务
+//                    boolean isRun = orderChannelIdList.contains(shop.getOrder_channel_id());
+//
+//                    if (isRun) {
+//                        // 第三方平台类目信息取得（天猫系）
+//                        doSetPlatformCategoryTm(shop);
+//                    }
+//                }
+//            } else {
+//                // 判断该Shop是否需要运行任务
+//                boolean isRun = orderChannelIdList.contains(shop.getOrder_channel_id());
+//
+//                if (isRun) {
+//                    // 第三方平台类目信息取得（天猫系）
+//                    doSetPlatformCategoryTm(shop);
+//                }
+//            }
+//
+//        }
 
 
         //正常结束
