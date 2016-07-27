@@ -375,8 +375,8 @@ public class TargetAnalysisService extends BaseAnalysisService {
             }
 
             if(SpecialCode.contains(cmsBtFeedInfoModel.getModel())){
-                cmsBtFeedInfoModel.setModel(cmsBtFeedInfoModel.getModel() + "-" + attribute.get("size").get(0));
-                cmsBtFeedInfoModel.setCode(cmsBtFeedInfoModel.getCode() + "-" + attribute.get("size").get(0));
+                cmsBtFeedInfoModel.setModel(cmsBtFeedInfoModel.getModel() + "-" + attribute.get("size").get(0).toLowerCase().replaceAll(" ",""));
+                cmsBtFeedInfoModel.setCode(cmsBtFeedInfoModel.getCode() + "-" + attribute.get("size").get(0).toLowerCase().replaceAll(" ",""));
             }
 
 
