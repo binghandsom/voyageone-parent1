@@ -9,8 +9,8 @@ define([
         function FinancialReportController(financialReportService) {
             this.financialReportService = financialReportService;
             this.financialReportList = [];
-            this.yearMonthList = [];
-            this.yearMonth = "";
+            this.reportYearMonthList = [];
+            this.reportYearMonth = "";
             this.canConfirm = false;
         }
 
@@ -18,14 +18,14 @@ define([
             init: function () {
                 var main = this;
                 main.financialReportService.init().then(function (res) {
-                    main.financialReportList = res.financialReportList;
+                    main.reportYearMonthList = res.reportYearMonthList;
                     main.search();
                 })
             },
             search: function () {
                 var main = this;
                 main.financialReportService.search({
-                    "yearMonth": main.yearMonth
+                    "reportYearMonth": main.reportYearMonth
                 }).then(function (res) {
                     main.financialReportList = res.financialReportList;
                     main.canConfirm = res.canConfirm;
@@ -43,7 +43,7 @@ define([
 
             download: function (reportFileName) {
                 var main = this;
-                $.download.post('/vms/feed/financial_report/downloadFinancialReport', {"reportFileName": reportFileName}, this.afterDownload, main);
+                $.download.post('/vms/report/financial_report/downloadFinancialReport', {"reportFileName": reportFileName}, this.afterDownload, main);
             },
 
             afterDownload:function (responseContent, param, context) {

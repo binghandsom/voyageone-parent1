@@ -172,7 +172,7 @@ define(function (require) {
             downloadPickingList: "downloadPickingList"
         }),
 
-        financialReportService: new CommonDataService('/vms/feed/financial_report', {
+        financialReportService: new CommonDataService('/vms/report/financial_report', {
             init: "init",
             search: "search",
             confirm: "confirm"

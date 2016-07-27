@@ -49,6 +49,16 @@ public interface VmsUrlConstants {
         }
     }
 
+    interface REPORT {
+        interface FINANCIAL_REPORT {
+            String ROOT = "/vms/report/financial_report";
+            String INIT = "init";
+            String SEARCH = "search";
+            String CONFIRM = "confirm";
+            String DOWNLOAD_FINANCIAL_REPORT = "downloadFinancialReport";
+        }
+    }
+
     interface POPUP {
         interface SHIPMENT {
             String ROOT = "/vms/popup/shipment";

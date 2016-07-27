@@ -1,5 +1,6 @@
 package com.voyageone.web2.core.views.menu;
 
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.bean.com.UserConfigBean;
 import com.voyageone.web2.base.BaseController;
@@ -82,7 +83,7 @@ public class MenuController extends BaseController {
                 if (!getUser().getSelChannel().getId().equals(channel.getCfg_val1())) {
                     Map<String, String> channelMapInfo = new HashMap<>();
                     channelMapInfo.put("id", channel.getCfg_val1());
-                    channelMapInfo.put("name", ChannelConfigEnums.Channel.valueOfId(channel.getCfg_val1()).getFullName());
+                    channelMapInfo.put("name", Channels.getChannel(channel.getCfg_val1()).getFull_name());
                     channels.add(channelMapInfo);
                 }
             }
