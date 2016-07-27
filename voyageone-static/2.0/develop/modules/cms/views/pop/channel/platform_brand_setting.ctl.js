@@ -22,27 +22,23 @@ define([
             },
             selectedPlatformBrand: function (item) {
                 var self = this;
-                self.selectedPlatform = item.name;
+                self.selectedPlatform = item.brandName;
+                self.selectedBrandId = item.brandId;
             },
             refresh: function () {
                 var self = this;
                 self.brandMappingService.searchCustBrands({'cartId': self.platformData.cartId}).then(function (res) {
                     self.custBrandList = res.data.custBrandList;
                 });
-                self.platformList = [
-                    {id: '01', name: "Vans"}, {id: '02', name: "耐克"}, {id: '03', name: "阿迪达斯"},
-                    {id: '04', name: "NewBalance"}, {id: '05', name: "Skechers"}, {id: '06', name: "Vansss"},
-                    {id: '07', name: "NewBalance3"}, {id: '08', name: "Skechers22"}, {id: '09', name: "NewBalance444"},
-                    {id: '010', name: "耐克a"}, {id: '011', name: "阿迪达斯2"}, {id: '012', name: "阿迪达斯43"}
-                ];
             },
             submitSet: function () {
                 var self = this;
                 self.selectedPlatformlist = {
-                    'masterName': self.platformData.masterName,
+                    'cmsBrand': self.platformData.masterName,
                     'selectedPlatform': self.selectedPlatform,
                     'cartId': self.platformData.cartId,
-                    'brandId': self.custBrandList.brandId
+                    'brandId': self.selectedBrandId,
+                    'cartName': self.platformData.cartName
                 };
                 if (!self.selectedPlatformlist.selectedPlatform) {
                     self.notify.warning('TXT_COMPLETE_THE_PLATEFORM_BRAND');
@@ -51,13 +47,13 @@ define([
                 self.popups.openPlatformMappingConfirm(self.selectedPlatformlist).then(function (res) {
                     if (res == true) {
                         self.brandMappingService.addNewBrandMapping({
+                            'cmsBrand': self.platformData.masterName,
                             'cartId': self.platformData.cartId,
-                            'brandId': self.custBrandList.brandId
+                            'brandId': self.selectedBrandId
                         });
                         self.$uibModalInstance.close();
                     }
                 });
-
             }
         };
         return PlatformBrandSettingController;

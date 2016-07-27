@@ -164,21 +164,33 @@ public class CmsJmPromotionService extends BaseService {
      * @return List
      */
     private List<SkuImportBean> buildSkusFrom(CmsBtProductModel model, Double discount, Integer priceType) {
-        final Integer priceTypeCopy = priceType == 2 ? priceType : 1;
+        final Integer priceTypeCopy = priceType;
 
         return model.getPlatform(CartEnums.Cart.JM).getSkus().stream().map(oldSku -> {
 
             Double priceMsrp = oldSku.getDoubleAttribute("priceMsrp");
             Double priceSale = oldSku.getDoubleAttribute("priceSale");
-
+            Double priceRetail = oldSku.getDoubleAttribute("priceRetail");
             SkuImportBean bean = new SkuImportBean();
             bean.setProductCode(model.getCommon().getFields().getCode());
             bean.setSkuCode(oldSku.getStringAttribute("skuCode"));
             bean.setMarketPrice(priceMsrp);
-            Double finalPrice;
+            double finalPrice=0;
             if (discount != null) {
                 final Double discountCopy = discount > 1 || discount < 0 ? 1 : discount;
-                finalPrice = Math.ceil(priceTypeCopy == 1 ? (priceMsrp * discountCopy) : (priceSale * discountCopy));
+                if(priceTypeCopy==1)//MSRP价格
+                {
+                    finalPrice= priceMsrp * discountCopy;
+                }
+                else if(priceTypeCopy==2)//销售价
+                {
+                    finalPrice=priceSale * discountCopy;
+                }
+                else if(priceTypeCopy==3)//指导价格
+                {
+                    finalPrice=priceRetail * discountCopy;
+                }
+                finalPrice = Math.ceil(finalPrice);
             } else {
                 finalPrice = priceSale;
             }

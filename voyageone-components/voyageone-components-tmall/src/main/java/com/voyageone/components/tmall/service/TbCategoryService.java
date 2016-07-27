@@ -63,6 +63,12 @@ public class TbCategoryService extends TbBase {
 
         if (response.getErrorCode() == null) {
             List<ItemCat> itemCatList = response.getItemCats();
+            // 20160724 tom bug修正 START
+            if (itemCatList == null) {
+                // 如果返回为空, 那么久说明没有子类目 ( 下面的递归之前已经有过判断, 但是一级类目下面没有子类目的场合, 会有null的可能性 )
+                return itemCatListResult;
+            }
+            // 20160724 tom bug修正 END
             // 设置返回值
             for (ItemCat itemCat : itemCatList) {
 

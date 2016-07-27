@@ -108,7 +108,6 @@ define([
 						item._idx = index;
 						item.formData = data;
 						item.upload();
-
 					});
 
 				}

@@ -54,7 +54,19 @@ public class BrandBtMappingService extends BaseService {
 	
 	public List<CmsBtBrandMappingBean> searchMatchedBrands(String channelId, Integer cartId, String langId,
 			String brandId) {
-		return cmsBtBrandMappingDaoExt.searchMatchedBrands(channelId, cartId, langId, brandId);
+		Map<String, Object> params = new HashMap<String, Object>();
+		// 必要参数设置
+		params.put("channelId", channelId);
+		params.put("cartId", cartId);
+		params.put("langId", langId);
+		params.put("brandId", brandId);
+		// 区分聚美品牌与其他品牌
+		if (CartEnums.Cart.JM.getId().equals(String.valueOf(cartId))) {
+			params.put("isJmBrand", true);
+		} else {
+			params.put("isJmBrand", false);
+		}
+		return cmsBtBrandMappingDaoExt.searchMatchedBrands(params);
 	}
 	
 	private Map<String, Object> formatBrandsQueryParameter(String channelId, int cartId, String langId,
