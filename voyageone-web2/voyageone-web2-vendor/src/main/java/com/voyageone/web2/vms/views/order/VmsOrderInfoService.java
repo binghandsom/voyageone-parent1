@@ -18,7 +18,7 @@ import com.voyageone.web2.vms.bean.VmsChannelSettings;
 import com.voyageone.web2.vms.bean.order.*;
 import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
 import com.voyageone.web2.vms.bean.shipment.ShipmentEndCountBean;
-import com.voyageone.web2.vms.views.common.ChannelConfigService;
+import com.voyageone.web2.vms.views.common.VmsChannelConfigService;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -45,15 +45,15 @@ public class VmsOrderInfoService extends BaseService {
 
     private OrderDetailService orderDetailService;
     private ShipmentService shipmentService;
-    private ChannelConfigService channelConfigService;
+    private VmsChannelConfigService vmsChannelConfigService;
 
     @Autowired
     public VmsOrderInfoService(OrderDetailService orderDetailService,
                                ShipmentService shipmentService,
-                               ChannelConfigService channelConfigService) {
+                               VmsChannelConfigService vmsChannelConfigService) {
         this.orderDetailService = orderDetailService;
         this.shipmentService = shipmentService;
-        this.channelConfigService = channelConfigService;
+        this.vmsChannelConfigService = vmsChannelConfigService;
     }
 
     /**
@@ -288,7 +288,7 @@ public class VmsOrderInfoService extends BaseService {
         /*
          * 根据渠道配置设置
          */
-        switch (channelConfigService.getChannelConfigs(user).getVendorOperateType()) {
+        switch (vmsChannelConfigService.getChannelConfigs(user).getVendorOperateType()) {
 
             // sku级的订单获取
             case STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU: {
@@ -314,7 +314,7 @@ public class VmsOrderInfoService extends BaseService {
             orderSearchParamsWithLimitAndSort) {
 
         // 读取用户配置
-        VmsChannelSettings channelConfigs = channelConfigService.getChannelConfigs(user);
+        VmsChannelSettings channelConfigs = vmsChannelConfigService.getChannelConfigs(user);
 
         return orderDetailService.selectPlatformOrderIdList(orderSearchParamsWithLimitAndSort).parallelStream()
                 .map(consolidationOrderId -> {
@@ -356,7 +356,7 @@ public class VmsOrderInfoService extends BaseService {
      */
     private List<AbstractSubOrderInfoBean> getSkuOrderInfoBean(UserSessionBean user,
                                                                Map<String, Object> orderSearchParamsWithLimitAndSort) {
-        VmsChannelSettings channelConfigs = channelConfigService.getChannelConfigs(user);
+        VmsChannelSettings channelConfigs = vmsChannelConfigService.getChannelConfigs(user);
 
         List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = orderDetailService.selectOrderList
                 (orderSearchParamsWithLimitAndSort);
@@ -408,12 +408,12 @@ public class VmsOrderInfoService extends BaseService {
      * @return 订单总数
      */
     private long getTotalOrderNum(UserSessionBean user, OrderSearchInfo orderSearchInfo, SortParam sortParam) {
-        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(channelConfigService.getChannelConfigs(user).getVendorOperateType())) {
+        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(vmsChannelConfigService.getChannelConfigs(user).getVendorOperateType())) {
             // 平台订单
             Map<String, Object> orderSearchParamsWithLimitAndSort =
                     organizeOrderSearchParams(user, orderSearchInfo, sortParam);
             return orderDetailService.getTotalOrderNum(orderSearchParamsWithLimitAndSort);
-        } else if (STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU.equals(channelConfigService.getChannelConfigs(user).getVendorOperateType())) {
+        } else if (STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU.equals(vmsChannelConfigService.getChannelConfigs(user).getVendorOperateType())) {
             // 大订单sku
             Map<String, Object> skuSearchParamsWithLimitAndSort =
                     organizeOrderSearchParams(user, orderSearchInfo, sortParam);

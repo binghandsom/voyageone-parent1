@@ -5,6 +5,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.vms.bean.order.ScanInfo;
 import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
 import com.voyageone.web2.vms.bean.shipment.ShipmentDetailSearchInfo;
+import com.voyageone.web2.vms.views.common.VmsChannelConfigService;
 import com.voyageone.web2.vms.views.order.VmsOrderInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +25,14 @@ public class VmsShipmentDetailController extends BaseController {
 
     private VmsShipmentService vmsShipmentService;
     private VmsOrderInfoService vmsOrderInfoService;
+    private VmsChannelConfigService vmsChannelConfigService;
 
     @Autowired
-    public VmsShipmentDetailController(VmsShipmentService vmsShipmentService, VmsOrderInfoService vmsOrderInfoService) {
+    public VmsShipmentDetailController(VmsShipmentService vmsShipmentService, VmsOrderInfoService
+            vmsOrderInfoService, VmsChannelConfigService vmsChannelConfigService) {
         this.vmsShipmentService = vmsShipmentService;
         this.vmsOrderInfoService = vmsOrderInfoService;
+        this.vmsChannelConfigService = vmsChannelConfigService;
     }
 
     @RequestMapping(SHIPMENT.ShipmentDetail.INIT)
@@ -40,6 +44,7 @@ public class VmsShipmentDetailController extends BaseController {
         result.put("orderStatusList", vmsOrderInfoService.getAllOrderStatusesList());
         result.put("shipmentStatusList", vmsShipmentService.getAllStatus());
         result.put("expressCompanies", vmsShipmentService.getAllExpressCompanies());
+        result.put("channelConfigs", vmsChannelConfigService.getChannelConfigs(this.getUser()));
         return success(result);
     }
 

@@ -12,7 +12,7 @@ import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
 import com.voyageone.web2.vms.bean.shipment.*;
-import com.voyageone.web2.vms.views.common.ChannelConfigService;
+import com.voyageone.web2.vms.views.common.VmsChannelConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,15 +30,15 @@ public class VmsShipmentService {
 
     private ShipmentService shipmentService;
     private OrderDetailService orderDetailService;
-    private ChannelConfigService channelConfigService;
+    private VmsChannelConfigService vmsChannelConfigService;
 
     @Autowired
     public VmsShipmentService(ShipmentService shipmentService,
                               OrderDetailService orderDetailService,
-                              ChannelConfigService channelConfigService) {
+                              VmsChannelConfigService vmsChannelConfigService) {
         this.shipmentService = shipmentService;
         this.orderDetailService = orderDetailService;
-        this.channelConfigService = channelConfigService;
+        this.vmsChannelConfigService = vmsChannelConfigService;
     }
 
     /**
@@ -129,7 +129,7 @@ public class VmsShipmentService {
 
         // 对于ORDER级别的channel 要确认是否已有活动的shipment
         if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(
-                channelConfigService.getChannelConfigs(user).getVendorOperateType())
+                vmsChannelConfigService.getChannelConfigs(user).getVendorOperateType())
                 && null != this.getCurrentShipment(user)) throw new BusinessException("8000022");
 
         VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel() {{

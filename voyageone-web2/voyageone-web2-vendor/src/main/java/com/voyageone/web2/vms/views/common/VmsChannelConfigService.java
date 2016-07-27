@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
  * Created by vantis on 16-7-26.
  */
 @Service
-public class ChannelConfigService {
+public class VmsChannelConfigService {
 
     /**
      * 读取channel相应配置

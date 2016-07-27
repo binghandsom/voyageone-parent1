@@ -6,7 +6,7 @@ import com.voyageone.web2.vms.bean.order.DownloadInfo;
 import com.voyageone.web2.vms.bean.order.OrderSearchInfo;
 import com.voyageone.web2.vms.bean.order.PlatformSubOrderInfoBean;
 import com.voyageone.web2.vms.bean.order.SubOrderInfoBean;
-import com.voyageone.web2.vms.views.common.ChannelConfigService;
+import com.voyageone.web2.vms.views.common.VmsChannelConfigService;
 import com.voyageone.web2.vms.views.shipment.VmsShipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,22 +31,22 @@ public class VmsOrderInfoController extends BaseController {
 
     private VmsOrderInfoService vmsOrderInfoService;
     private VmsShipmentService shipmentService;
-    private ChannelConfigService channelConfigService;
+    private VmsChannelConfigService vmsChannelConfigService;
 
     @Autowired
     public VmsOrderInfoController(VmsOrderInfoService vmsOrderInfoService,
                                   VmsShipmentService shipmentService,
-                                  ChannelConfigService channelConfigService) {
+                                  VmsChannelConfigService vmsChannelConfigService) {
         this.vmsOrderInfoService = vmsOrderInfoService;
         this.shipmentService = shipmentService;
-        this.channelConfigService = channelConfigService;
+        this.vmsChannelConfigService = vmsChannelConfigService;
     }
 
     // 页面初始化部分
     @RequestMapping(ORDER.ORDER_INFO.INIT)
     public AjaxResponse init() {
         Map<String, Object> initialInfo = new HashMap<>();
-        initialInfo.put("channelConfigs", channelConfigService.getChannelConfigs(this.getUser()));
+        initialInfo.put("channelConfigs", vmsChannelConfigService.getChannelConfigs(this.getUser()));
         initialInfo.put("orderStatusList", vmsOrderInfoService.getAllOrderStatusesList());
         initialInfo.put("shipmentStatusList", shipmentService.getAllStatus());
         initialInfo.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));

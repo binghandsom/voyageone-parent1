@@ -18,12 +18,14 @@ define([
             this.orderStatusList = [];
             this.expressCompanies = [];
             this.scannedSkuList = [];
+            this.channelConfigs = {};
             this.barcode = "";
         }
 
         ShipmentDetailController.prototype.init = function () {
             var self = this;
             self.shipmentDetailService.init(self.shipmentId).then(function (data) {
+                self.channelConfigs = data.channelConfigs;
                 self.shipmentStatusList = data.shipmentStatusList;
                 self.orderStatusList = data.orderStatusList;
                 self.expressCompanies = data.expressCompanies;

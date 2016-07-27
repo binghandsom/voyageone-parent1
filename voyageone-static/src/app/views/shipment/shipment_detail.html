@@ -35,7 +35,7 @@
                             <th class="td-2 v-middle" translate="TXT_SHIPPED_DATE"></th>
                             <th class="td-2 v-middle" translate="TXT_EXPRESS_COMPANY"></th>
                             <th class="td-2 v-middle" translate="TXT_TRACKING_NO_"></th>
-                            <th class="td-1 text-center" translate="TXT_ACTION"></th>
+                            <th class="td-1 text-center" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU'" translate="TXT_ACTION"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -49,27 +49,30 @@
                                            type="date"
                                            ng-model="ctrl.shipment.shippedDate"
                                            uib-datepicker-popup
-                                           is-open="datepicker1" required
-                                           ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
+                                           is-open="datepicker1" ng-required="{{ctrl.channelConfigs.vendorOperateType == 'SKU'}}"
+                                           ng-disabled="(ctrl.shipment.status != 1 && ctrl.shipment.status != 3) || ctrl.channelConfigs.vendorOperateType != 'SKU'">
                                     <span class="input-group-btn">
-                                    <button class="btn btn-default" ng-click="datepicker1=!datepicker1" ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
+                                    <button class="btn btn-default" ng-click="datepicker1=!datepicker1"
+                                            ng-disabled="(ctrl.shipment.status != 1 && ctrl.shipment.status != 3) || ctrl.channelConfigs.vendorOperateType != 'SKU'">
                                         <i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
                                 </span>
                             </td>
                             <td ng-class="{'td-2 text-left v-middle':true, 'has-error': !shipmentForm.expressCompany.$valid}">
                                 <select name="expressCompany" id="select" class="form-control"
-                                        ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3"
+                                        ng-disabled="(ctrl.shipment.status != 1 && ctrl.shipment.status != 3) || ctrl.channelConfigs.vendorOperateType != 'SKU'"
                                         ng-model="ctrl.shipment.expressCompany"
-                                        ng-options="option.value as option.name for option in ctrl.expressCompanies" required>
+                                        ng-options="option.value as option.name for option in ctrl.expressCompanies"
+                                        ng-required="{{ctrl.channelConfigs.vendorOperateType == 'SKU'}}">
                                 </select>
                             </td>
                             <td ng-class="{'td-2 text-center v-middle': true, 'has-error':!shipmentForm.trackingNo.$valid}">
                                 <input name="trackingNo" type="text" class="form-control"
                                        ng-model="ctrl.shipment.trackingNo"
-                                       ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3" required>
+                                       ng-disabled="(ctrl.shipment.status != 1 && ctrl.shipment.status != 3) || ctrl.channelConfigs.vendorOperateType != 'SKU'"
+                                       ng-required="{{ctrl.channelConfigs.vendorOperateType == 'SKU'}}">
                             </td>
-                            <td class="td-1 text-center v-middle">
+                            <td class="td-1 text-center v-middle" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU'">
                                 <button class="btn btn-primary btn-sm" translate="BTN_SHIPPED"
                                         ng-click="ctrl.ship()"
                                         ng-disabled="(!ctrl.scannedSkuList || ctrl.scannedSkuList.length == 0)
