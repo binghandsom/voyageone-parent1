@@ -61,7 +61,9 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
         // platform 品牌名
         if (StringUtil.isEmpty(platformCart.getpBrandId()) || StringUtil.isEmpty(platformCart.getpBrandName())) {
-            if(cartId != CartEnums.Cart.USJGJ.getValue() && cartId != CartEnums.Cart.USJGY.getValue()) {
+            if(cartId != CartEnums.Cart.USJGJ.getValue()
+                    && cartId != CartEnums.Cart.USJGY.getValue()
+                    && cartId != CartEnums.Cart.USJGT.getValue()) {
                 Map<String, Object> parm = new HashMap<>();
                 parm.put("channelId", channelId);
                 parm.put("cartId", cartId);
@@ -77,14 +79,16 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             }
         }
 
-        if(cartId != CartEnums.Cart.USJGJ.getValue() && cartId != CartEnums.Cart.USJGY.getValue()) {
+        if(cartId != CartEnums.Cart.USJGJ.getValue()
+                && cartId != CartEnums.Cart.USJGY.getValue()
+                && cartId != CartEnums.Cart.USJGT.getValue()) {
             // 非主商品的平台类目跟这个主商品走
             if(platformCart.getpIsMain() != 1 && cartId != CartEnums.Cart.JM.getValue()){
                 CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(),cartId);
                 CmsBtProductModel mainProduct = productService.getProductByCode(channelId, cmsBtProductGroup.getMainProductCode());
                 CmsBtProductModel_Platform_Cart mainPlatform = mainProduct.getPlatform(cartId);
                 if(mainPlatform == null || StringUtil.isEmpty(mainPlatform.getpCatId())){
-                    throw new BusinessException("该商品的主商品类目没有设置，请先设置主商品：" + mainProduct.getCommon().getFields().getCode());
+                    throw new BusinessException(CartEnums.Cart.getValueByID(cartId+"") + "该商品的主商品类目没有设置，请先设置主商品：" + mainProduct.getCommon().getFields().getCode());
                 }
                 platformCart.setpCatPath(mainPlatform.getpCatPath());
                 platformCart.setpCatId(mainPlatform.getpCatId());

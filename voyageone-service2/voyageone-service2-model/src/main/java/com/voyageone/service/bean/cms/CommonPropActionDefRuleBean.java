@@ -19,14 +19,14 @@ import java.util.Map;
  */
 public class CommonPropActionDefRuleBean {
 
-    private final String IS_REQUIRED = "required";
-    private final String IS_DISPLAY = "isDisplay";
-    private final String DATASOURCE = "dataSource";
-    private final String READONLY = "readOnlyRule";
-    private final String OPTIONS = "options";
-    private final String TEXT = "text";
-    private final String VALUE = "value";
-    private final String VALUE_TYPE = "valueTypeRule";
+    private static final String IS_REQUIRED = "required";
+    private static final String IS_DISPLAY = "isDisplay";
+    private static final String DATASOURCE = "dataSource";
+    private static final String READONLY = "readOnlyRule";
+    private static final String OPTIONS = "options";
+    private static final String TEXT = "text";
+    private static final String VALUE = "value";
+    private static final String VALUE_TYPE = "valueTypeRule";
 
     private Map<String, Object> rulMap;
 
@@ -39,83 +39,84 @@ public class CommonPropActionDefRuleBean {
     }
 
 
-    private Map getActionMap(String actionRules){
+    private Map getActionMap(String actionRules) {
         return JsonUtil.jsonToMap(actionRules);
     }
 
 
     /**
      * 添加共通属性到主数据
-     * @param field
+     *
+     * @param field Field
      */
-    public void setFieldComProperties(Field field){
-        if (this.rulMap != null){
+    public void setFieldComProperties(Field field) {
+        if (this.rulMap != null) {
 
             List<Rule> rules = field.getRules();
 
-            if (this.rulMap.get(this.IS_REQUIRED) != null){
+            if (this.rulMap.get(IS_REQUIRED) != null) {
 
 
                 boolean isRequire = false;
 
-                for (Rule r:rules){
-                    if ("requiredRule".equals(r.getName()) && "true".equals(r.getValue())){
+                for (Rule r : rules) {
+                    if ("requiredRule".equals(r.getName()) && "true".equals(r.getValue())) {
                         isRequire = true;
                         break;
                     }
                 }
 
-                if (!isRequire){
+                if (!isRequire) {
                     field.setFieldRequired();
                 }
 
             }
 
-            if (this.rulMap.get(this.DATASOURCE) != null){
-                field.setDataSource(this.rulMap.get(this.DATASOURCE).toString());
+            if (this.rulMap.get(DATASOURCE) != null) {
+                field.setDataSource(this.rulMap.get(DATASOURCE).toString());
             }
 
-            if(this.rulMap.get(this.IS_DISPLAY) != null){
-                if (new Boolean(this.rulMap.get(this.IS_DISPLAY).toString())){
+            if (this.rulMap.get(IS_DISPLAY) != null) {
+                if (Boolean.parseBoolean(this.rulMap.get(IS_DISPLAY).toString())) {
                     field.setIsDisplay(1);
-                }else {
+                } else {
                     field.setIsDisplay(0);
                 }
 
             }
 
-            if(this.rulMap.get(this.READONLY) != null){
+            if (this.rulMap.get(READONLY) != null) {
 
                 boolean isReadOnly = false;
 
-                for (Rule r:rules){
-                    if ("readOnlyRule".equals(r.getName()) && "true".equals(r.getValue())){
+                for (Rule r : rules) {
+                    if ("readOnlyRule".equals(r.getName()) && "true".equals(r.getValue())) {
                         isReadOnly = true;
                         break;
                     }
                 }
 
-                if (!isReadOnly){
+                if (!isReadOnly) {
                     ReadOnlyRule rule = new ReadOnlyRule("true");
                     field.add(rule);
                 }
             }
-            if(this.rulMap.get(this.VALUE_TYPE) != null){
-                ValueTypeRule rule = new ValueTypeRule(this.rulMap.get(this.VALUE_TYPE).toString());
+            if (this.rulMap.get(VALUE_TYPE) != null) {
+                ValueTypeRule rule = new ValueTypeRule(this.rulMap.get(VALUE_TYPE).toString());
                 field.add(rule);
             }
-            if (rulMap.get(this.OPTIONS) != null && field instanceof OptionsField){
+            if (rulMap.get(OPTIONS) != null && field instanceof OptionsField) {
 
-                OptionsField optField = (OptionsField)field;
+                OptionsField optField = (OptionsField) field;
 
-                List<Map> opts = (List<Map>)rulMap.get(this.OPTIONS);
+                List<Map> opts = (List<Map>) rulMap.get(OPTIONS);
 
                 List<Option> options = new ArrayList<>();
 
-                for (Map opMap:opts){
+                for (Map opMap : opts) {
                     Option option = new Option();
-                    option.setDisplayName(opMap.get(this.TEXT).toString());
-                    option.setValue(opMap.get(this.VALUE).toString());
+                    option.setDisplayName(opMap.get(TEXT).toString());
+                    option.setValue(opMap.get(VALUE).toString());
                     options.add(option);
 
                 }
@@ -130,19 +131,16 @@ public class CommonPropActionDefRuleBean {
 
     /**
      * 创建共通属性层次关系
-     * @param defModels
-     * @return
      */
     public static List<CommonPropActionDefBean> buildComPropHierarchical(List<CommonPropActionDefBean> defModels) {
 
         List<CommonPropActionDefBean> assistDefModels = new ArrayList<>(defModels);
 
 
-        for (int i = 0; i < defModels.size(); i++) {
-            CommonPropActionDefBean defModelItem = defModels.get(i);
-            ActionType actionType = ActionType.valueOf(Integer.valueOf(defModelItem.getActionType()));
+        for (CommonPropActionDefBean defModelItem : defModels) {
+            ActionType actionType = ActionType.valueOf(defModelItem.getActionType());
             List<CommonPropActionDefBean> sunDefModels = new ArrayList<>();
-            for (Iterator<CommonPropActionDefBean> assIterator = assistDefModels.iterator(); assIterator.hasNext();) {
+            for (Iterator<CommonPropActionDefBean> assIterator = assistDefModels.iterator(); assIterator.hasNext(); ) {
 
                 CommonPropActionDefBean subPlatformCatItem = assIterator.next();
                 if (ActionType.ADD.equals(actionType) && defModelItem.getPropId().equals(subPlatformCatItem.getParentPropId())) {

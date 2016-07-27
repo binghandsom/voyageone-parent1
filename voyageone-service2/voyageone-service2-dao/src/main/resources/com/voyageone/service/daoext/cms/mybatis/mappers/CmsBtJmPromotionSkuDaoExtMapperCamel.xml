@@ -49,7 +49,6 @@
     </select>
     <update id="batchUpdateDealPrice">
         UPDATE cms_bt_jm_promotion_sku  AS a
-        JOIN `cms_bt_jm_sku` AS b ON a.`channel_id`=b.`channel_id` AND a.`product_code`=b.`product_code` AND a.`sku_code`=b.sku_code
         SET a.deal_Price=${dealPrice},a.`discount`=a.deal_Price/a.`market_price`
         WHERE   a.cms_bt_jm_promotion_product_id IN
         <foreach item="item" index="i" collection="listPromotionProductId"
@@ -87,7 +86,7 @@
         WHERE b.`synch_status`=0 and b.cms_bt_jm_promotion_id=#{promotionId}
     </delete>
 <select id="selectViewListByPromotionProductId" resultType="MapModel">
-    SELECT a.`jm_sku_no`,a.`upc`,a.`format`,a.`cms_size`,a.`sku_code`,a.`msrp_usd`,a.`msrp_rmb`,a.`sale_price`,b.`market_price`,b.`deal_price`,b.`id`
+    SELECT a.`jm_sku_no`,a.`upc`,a.`format`,a.`cms_size`,a.`sku_code`,b.`msrp_usd`,b.`msrp_rmb`,b.`sale_price`,b.`market_price`,b.`deal_price`,b.`id`
  FROM `cms_bt_jm_sku` AS a
  JOIN `cms_bt_jm_promotion_sku` AS b ON a.`channel_id`=b.`channel_id` AND a.`sku_code`=b.`sku_code`
  where b.cms_bt_jm_promotion_product_id=#{promotionProductId}

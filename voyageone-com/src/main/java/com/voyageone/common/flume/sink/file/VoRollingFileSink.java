@@ -93,9 +93,9 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
         * Resist the urge to actually perform rotation in a separate thread!
         */
 
-        long oneDay = 24 * 60 * 60 * 1000;
+        long oneDay = 24 * 60 * 60;
 
-        long initDelay  = getTimeMillis("00:00:01") - System.currentTimeMillis();
+        long initDelay  = System.currentTimeMillis() - getTimeMillis("00:00:01");
         rollService.scheduleAtFixedRate((Runnable) () -> {
             logger.debug("Marking time to rotate file {}", directory.getAbsolutePath());
             if (logFileBeanMap != null) {
@@ -153,7 +153,8 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
             int eventAttemptCounter = 0;
             Event event = channel.take();
             if (event != null) {
-                String projectFile = event.getHeaders().get("projectFile");
+                Map<String, String> headerMap = event.getHeaders();
+                String projectFile = headerMap.get("projectFile");
                 if (projectFile != null && !"".equals(projectFile.trim())) {
                     if (!logFileBeanMap.containsKey(projectFile)) {
                         logFileBeanMap.put(projectFile, new LogFileBean(projectFile));
@@ -161,7 +162,13 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
                     LogFileBean logFileBean = logFileBeanMap.get(projectFile);
                     if (!logFileBean.currentFile.exists()) {
                         logFileBeanMap.put(projectFile, new LogFileBean(projectFile));
-                        logFileBeanMap.get(projectFile);
+                        logFileBean = logFileBeanMap.get(projectFile);
+                    }
+                    LogFileBean logFileBeanNow = new LogFileBean(projectFile);
+                    String fileNow = logFileBeanNow.currentFile.getAbsolutePath();
+                    if (!fileNow.equals(logFileBean.currentFile.getAbsolutePath())) {
+                        logFileBeanMap.put(projectFile, logFileBeanNow);
+                        logFileBean = logFileBeanMap.get(projectFile);
                     }
 
                     sinkCounter.incrementEventDrainAttemptCount();
@@ -171,6 +178,34 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
                     logFileBean.serializer.flush();
                     logFileBean.outputStream.flush();
                 }
+
+                String taskName = headerMap.get("taskName");
+                if (taskName != null && taskName.trim().length() > 0) {
+                    String taskLogFile = headerMap.get("splitDir") + taskName + "/task-" + taskName + ".log";
+
+                    if (!logFileBeanMap.containsKey(taskLogFile)) {
+                        logFileBeanMap.put(taskLogFile, new LogFileBean(taskLogFile));
+                    }
+                    LogFileBean logFileBean = logFileBeanMap.get(taskLogFile);
+                    if (!logFileBean.currentFile.exists()) {
+                        logFileBeanMap.put(taskLogFile, new LogFileBean(taskLogFile));
+                        logFileBean = logFileBeanMap.get(taskLogFile);
+                    }
+                    LogFileBean logFileBeanNow = new LogFileBean(taskLogFile);
+                    String fileNow = logFileBeanNow.currentFile.getAbsolutePath();
+                    if (!fileNow.equals(logFileBean.currentFile.getAbsolutePath())) {
+                        logFileBeanMap.put(taskLogFile, logFileBeanNow);
+                        logFileBean = logFileBeanMap.get(taskLogFile);
+                    }
+
+                    sinkCounter.incrementEventDrainAttemptCount();
+                    eventAttemptCounter++;
+                    logFileBean.serializer.write(event);
+
+                    logFileBean.serializer.flush();
+                    logFileBean.outputStream.flush();
+                }
+
             } else {
                 // No events found, request back-off semantics from runner
                 result = Status.BACKOFF;

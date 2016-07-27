@@ -12,12 +12,17 @@ public class CustomModuleUserParamImageWithParam extends CustomModuleUserParam {
     //user param
     private RuleExpression imageTemplate;
     private List<RuleExpression> imageParams;
+    // addedby morse.lu 2016/07/13 start
+    // 如果有值并且为true，则图片url不使用imageTemplate，而使用图片模板cms_bt_image_template表取出的url
+    private RuleExpression useCmsBtImageTemplate;
+    // addedby morse.lu 2016/07/13 end
 
     public CustomModuleUserParamImageWithParam() {}
 
-    public CustomModuleUserParamImageWithParam(RuleExpression imageTemplate, List<RuleExpression> imageParams) {
+    public CustomModuleUserParamImageWithParam(RuleExpression imageTemplate, List<RuleExpression> imageParams, RuleExpression useCmsBtImageTemplate) {
         this.imageTemplate = imageTemplate;
         this.imageParams = imageParams;
+        this.useCmsBtImageTemplate = useCmsBtImageTemplate;
     }
 
     public List<RuleExpression> getImageParams() {
@@ -34,5 +39,13 @@ public class CustomModuleUserParamImageWithParam extends CustomModuleUserParam {
 
     public void setImageTemplate(RuleExpression imageTemplate) {
         this.imageTemplate = imageTemplate;
+    }
+
+    public RuleExpression getUseCmsBtImageTemplate() {
+        return useCmsBtImageTemplate;
+    }
+
+    public void setUseCmsBtImageTemplate(RuleExpression useCmsBtImageTemplate) {
+        this.useCmsBtImageTemplate = useCmsBtImageTemplate;
     }
 }

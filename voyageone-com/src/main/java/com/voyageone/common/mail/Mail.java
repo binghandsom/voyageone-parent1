@@ -117,7 +117,7 @@ public final class Mail {
     public static void send(String receiver, String subject, String content, List<String> fileAffix, boolean priority) throws MessagingException {
         MailInfo mail = new MailInfo(receiver);
 
-        mail.setSubject(Constants.MAIL.SUBJECT_PREFIX + subject + DateTimeUtil.getNow());
+        mail.setSubject(Constants.MAIL.SUBJECT_PREFIX + subject + " " + DateTimeUtil.getNow());
         mail.setContent(content);
         mail.setPriority(priority);
         mail.setFileAffix(fileAffix);

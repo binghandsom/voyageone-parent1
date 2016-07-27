@@ -21,6 +21,7 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.tagTypeSelectValue = context.tagTypeSel;
             this.cartId = context.cartId;
+            this.orgFlg = context.orgFlg; // orgFlg==1:表示从高级检索的检索条件而来；其它场合不设值
             this.tagTree = null;
             this.id = "";
             this.parentTagId = "";
@@ -40,7 +41,8 @@ define([
                 var self = this;
                 self.channelTagService.init({
                     tagTypeSelectValue: self.tagTypeSelectValue,
-                    'cartId': self.cartId
+                    'cartId': self.cartId,
+                    'orgFlg': self.orgFlg
                 }).then(function (res) {
                     self.source = self.tagTree = res.data.tagTree;
                     self.tagTypeList = res.data.tagTypeList[3];

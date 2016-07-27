@@ -31,19 +31,19 @@ public class CmsChannelTagService extends BaseAppService {
     private TagService tagService;
 
     /**
-     * 取得标签管理初始化数据
+     * 取得标签管理初始化数据（注意：高级检索画面(查询条件)使用时，查询的是最近90天的所有活动，包括已结束的）
      * @param param
      * @param lang
      * @return result
      */
-    public Map<String, Object> getInitTagInfo(Map param,String lang){
+    public Map<String, Object> getInitTagInfo(Map param, String lang) {
         Map<String, Object> result = new HashMap<>();
         List<CmsBtTagBean> tagsList = getTagInfoByChannelId(param);
         //取得所有的标签类型
-        result.put("tagTree",tagsList);
+        result.put("tagTree", tagsList);
 
         List<TypeBean>  types = Types.getTypeList(74, lang);
-        if(types != null) {
+        if (types != null) {
             //标签类型
             result.put("tagTypeList", types.stream().filter(w->w.getValue().equals("4")).collect(Collectors.toList()));
         }

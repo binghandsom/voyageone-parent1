@@ -1,0 +1,72 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;商品操作历史</h5>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <div class="col-sm-12">
+                <div class="col-sm-5">
+                    <label class="col-sm-4 control-label">{{"TXT_PRODUCT_CODE_WITH_COLON"|translate}}&nbsp;</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" ng-model="vm.context.code" readonly>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <label class="col-sm-4 control-label">店铺渠道名称&nbsp;</label>
+                    <div class="col-sm-7" ng-if="vm.context.cartId!=0">
+                        <select class="form-control" disabled>
+                            <option value="1">{{vm.cartName}}</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-7" ng-if="vm.context.cartId==0">
+                        <select class="form-control" ng-model="vm.cartId"
+                                ng-options="cartObj.cartId as cartObj.cartName for cartObj in vm.context.cartList">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-2 text-right">
+                    <button class="btn btn-default" ng-click="refreshData()" translate="BTN_REFRESH"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal">
+            <div class="box">
+                <div class="box-body" if-no-rows="vm.logList.length">
+                    <table class="table table-hover-new vo_table text-center">
+                        <thead>
+                        <tr>
+                            <th class="text-center" translate="TXT_ACTION_TIME"></th>
+                            <th class="text-center" translate="TXT_ACTION_USER"></th>
+                            <th class="text-center" translate="TXT_CART_NAME"></th>
+                            <th class="text-center">操作指令</th>
+                            <th class="text-center">原始商品平台状态</th>
+                            <th class="text-center">处理时间</th>
+                            <th class="text-center">操作结果</th>
+                            <th class="text-center">原因</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="logItem in vm.logList">
+                            <td class="text-center">{{logItem.created}}</td>
+                            <td class="text-center">{{logItem.creater}}</td>
+                            <td class="text-center">{{logItem.cartName}}</td>
+                            <td class="text-center">{{logItem.activeStatus}}</td>
+                            <td class="text-center">{{logItem.platformStatus}}</td>
+                            <td class="text-center">{{logItem.modified}}</td>
+                            <td class="text-center">{{logItem.result}}</td>
+                            <td class="text-center">{{logItem.comment}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="container-fluid">
+                    <vpagination config="vm.pageOption"></vpagination>
+                </div>
+            </div>
+        </form>
+    </div>
+</div><!-- .vo_modal -->

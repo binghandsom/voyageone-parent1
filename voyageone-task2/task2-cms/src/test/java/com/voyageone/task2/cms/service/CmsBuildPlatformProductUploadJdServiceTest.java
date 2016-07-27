@@ -1,5 +1,8 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,5 +33,20 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
         tcb.setTask_comment("京东国际悦境店上新允许运行的渠道");
         taskControlList.add(tcb);
         uploadJdService.onStartup(taskControlList);
+    }
+
+    @Test
+    public void testUploadProduct() throws Exception {
+
+        CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
+        workload.setId(762584);
+        workload.setChannelId("929");
+        workload.setCartId(29);
+        workload.setGroupId(Long.parseLong("887632"));
+        workload.setPublishStatus(0);
+
+        ShopBean shopProp = Shops.getShop("929", "29");
+
+        uploadJdService.uploadProduct(workload, shopProp);
     }
 }

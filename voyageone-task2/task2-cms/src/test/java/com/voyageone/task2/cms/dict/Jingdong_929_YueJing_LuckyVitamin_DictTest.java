@@ -159,7 +159,7 @@ public class Jingdong_929_YueJing_LuckyVitamin_DictTest {
                 RuleExpression useOriUrl = new RuleExpression();
                 useOriUrl.addRuleWord(new TextWord("1")); // 使用原图
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 
@@ -182,7 +182,7 @@ public class Jingdong_929_YueJing_LuckyVitamin_DictTest {
                 RuleExpression imageType = new RuleExpression();
                 imageType.addRuleWord(new TextWord(C_商品图片));
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 

@@ -87,7 +87,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         result.setIsBegin(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
         result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
         int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
-        result.setIsUpdateJM(!(hour >= 10 && hour <= 11));//是否可以更新聚美
+        result.setIsUpdateJM(!(hour == 10));//是否可以更新聚美  10到11点一小时之内不允许更新聚美平台
         // 获取brand list
         result.setBrandList(TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, language));
         return result;
@@ -142,21 +142,20 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         {
             if (parameter.getPriceType() == 0)//团购价 deal_price
             {
-                price = "b.msrp_rmb*" + Double.toString(parameter.getDiscount());//中国官网价格
+                price = "a.msrp_rmb*" + Double.toString(parameter.getDiscount());//中国官网价格
             } else if (parameter.getPriceType() == 1) //市场价 market_price
             {
-                price = "b.retail_price*" + Double.toString(parameter.getDiscount());//中国指导价格
+                price = "a.retail_price*" + Double.toString(parameter.getDiscount());//中国指导价格
             } else if (parameter.getPriceType() == 2) {
-                price = "b.sale_price*" + Double.toString(parameter.getDiscount());//中国最终售价
+                price = "a.sale_price*" + Double.toString(parameter.getDiscount());//中国最终售价
             }
         }
-        if(StringUtils.isEmpty(price))
-        {
+        if (StringUtils.isEmpty(price)) {
             result.setResult(false);
             result.setMsg("修改价格失败!");
-            return  result;
+            return result;
         }
-         price="CEIL("+price+")";//向上取整
+        price = "CEIL(" + price + ")";//向上取整
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getJmPromotionId());
         if (modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
             result.setResult(false);
@@ -170,11 +169,8 @@ private CmsBtPromotionDao daoCmsBtPromotion;
             result.setMsg(String.format("skuCode:%s更新后的团购价大于市场价,不能更新!", modelCmsBtJmPromotionSku.getSkuCode()));
             return result;
         }
-
-        daoExt.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);
-
-        daoExtCmsBtJmPromotionSku.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);
-
+        daoExtCmsBtJmPromotionSku.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);//更新sku价格
+        daoExt.updateAvgPriceByListPromotionProductId(parameter.getListPromotionProductId());//更新平均值 最大值 最小值
         return result;
     }
 
