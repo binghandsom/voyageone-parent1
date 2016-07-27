@@ -6,7 +6,7 @@
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-sm-4">Product Code: <span>{{::ctrl.code}}</span></div>
+            <div class="col-sm-4">{{"TXT_PRODUCT_CODE_WITH_COLON"|translate}} <span>{{::ctrl.code}}</span></div>
             <div class="col-sm-4 text-center form-inline">
                 <label>店铺渠道
                     <select class="form-control" ng-model="ctrl.selectedCart" ng-change="ctrl.getPage(ctrl.paging.curr = 1)" ng-options="cart as cart.label for cart in ctrl.cartList">

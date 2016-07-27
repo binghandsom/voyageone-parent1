@@ -38,6 +38,9 @@ define([
                         scope.vm.productComm = resp.data.productComm;
 
                         var _fields = scope.vm.productComm.fields;
+
+                        scope.productInfo.masterField = _fields;
+
                         /**通知子页面税号状态和翻译状态*/
                         scope.productInfo.checkFlag = new Date().getTime();
                         scope.productInfo.translateStatus = _fields.translateStatus == null ? 0 : +_fields.translateStatus;
@@ -48,7 +51,8 @@ define([
                         if ($rootScope.imageUrl == undefined) {
                             $rootScope.imageUrl = '';
                         }
-                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productComm.fields.images1[0].image1);
+
+                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
                         scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
@@ -94,6 +98,7 @@ define([
                         productId:  scope.productInfo.productId,
                         imageType: imageType
                     }).then(function(context){
+
                         if(context == null)
                             return;
 
@@ -105,14 +110,13 @@ define([
                         var imgType = null;
                         angular.forEach(context,function(item){
                             imgType = item.imageType;
-                            scope.vm.tempImage[item.imageType].push(item.base64);
+                            scope.vm.tempImage[item.imageType].push($rootScope.imageUrl.replace('%s', item.imageName));
                         });
 
                         _.map(scope.vm.productComm.schemaFields, function(item){
                             if(item.id == imgType){
                                 item.complexValues.splice(0,item.complexValues.length);
                                 angular.forEach(context[context.length -1].imageSchema[0].complexValues,function(image){
-
                                     item.complexValues.push(image);
                                 });
 

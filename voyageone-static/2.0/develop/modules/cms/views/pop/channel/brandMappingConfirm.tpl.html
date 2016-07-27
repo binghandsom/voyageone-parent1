@@ -1,5 +1,5 @@
 <div class="vo_modal" ng-init="ctrl.init()">
-    <form role="form" class="form-horizontal" ng-submit="save()">
+    <form role="form" class="form-horizontal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                     aria-hidden="true"><i class="fa fa-close"></i></span></button>
@@ -8,36 +8,31 @@
         <div class="modal-body wrapper">
             <div class="form-group">
                 <div class="col-sm-12">
-                    <div class="form-group">
-                        <label class="control-label">聚美平台品牌 ” {{ctrl.platformData.selectedPlatform}} ” 已与以下Master品牌完成匹配：</label>
+                    <div class="form-group" ng-if="ctrl.matchedBrandList.length">
+                        <span class="control-label">{{ctrl.platformData.cartName}}平台品牌 ”{{ctrl.platformData.selectedPlatform}} ” 已与以下Master品牌完成匹配：</span>
                     </div>
-                    <div class="form-group">
-                        <table class="table table-hover-new vo_table tableWordBreak">
-                            <thead>
-                            <tr>
-                                <th class="mfb-xxt text-center text-nowrap">品牌</th>
-                                <th class="mfb-xxt text-center text-nowrap" translate="TXT_MASTER_BRAND"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="mfb-xxt text-center">耐克</td>
-                                    <td class="mfb-xxt text-center">naike</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="form-group" ng-if="ctrl.matchedBrandList.length" style="border-bottom: 1px solid #000">
+                        <dt class="col-sm-6 text-center">{{ctrl.platformData.cartName}}平台品牌</dt>
+                        <dt class="col-sm-6 text-center" translate="TXT_MASTER_BRAND"></dt>
                     </div>
-                    <div class="form-group">
-                        <label class="control-label" >
-                            确定将Master品牌<span class="text-warnings m-r-sm">{{ctrl.platformData.brand.masterBrand}}</span>与聚美平台品牌<span class="text-warnings m-r-sm">{{ctrl.platformData.selectedPlatform}}</span>匹配？
-                        </label>
+                    <div class="form-group scroll-y" ng-if="ctrl.matchedBrandList.length" style="max-height: 200px;">
+                        <dd ng-repeat="list in ctrl.matchedBrandList">
+                            <span class="col-sm-6 text-center">{{list.brandName}}</span>
+                            <span class="col-sm-6 text-center">{{list.cmsBrand}}</span>
+                        </dd>
+                    </div>
+                    <div class="form-group m-t-sm" ng-style="{'border-top': ctrl.matchedBrandList.length ? '1px solid #000': 'none'}">
+                        <span class="control-label" >
+                            确定将Master品牌<span class="text-warnings m-r-sm">{{ctrl.platformData.cmsBrand}}</span>与{{ctrl.platformData.cartName}}平台品牌
+                            <span class="text-warnings m-r-sm">{{ctrl.platformData.selectedPlatform}}</span>匹配 ？
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_CLOSE' | translate}} </button>
-            <button type="submit" class="btn btn-vo" ng-click="ctrl.submitSet()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_OK'|translate}} </button>
+            <button type="submit" class="btn btn-vo" ng-click="ctrl.confirm()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_OK'|translate}} </button>
         </div>
     </form>
 </div>

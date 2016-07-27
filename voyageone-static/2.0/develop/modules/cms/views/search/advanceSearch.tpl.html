@@ -468,13 +468,13 @@
                                             <label class="col-sm-3 control-label" ng-if="$index == 0" translate="TXT_CUST_QUERY_ATTR"></label>
                                             <label class="col-sm-3 control-label" ng-if="$index != 0"></label>
                                             <div class="col-sm-3">
-                                                <select class="form-control" ng-model="curSelAtts" ng-change="setSelValue(option, curSelAtts)"
+                                                <select class="form-control" ng-model="curSelAtts" ng-change="setSelValue(option, curSelAtts)" title="{{curSelAtts.configValue1}}"
                                                         ng-options="custAtts as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
                                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-2">
-                                                <select class="form-control" ng-model="option.inputOpts" ng-change="setSelValue(option,null,2)"
+                                            <div class="col-sm-3">
+                                                <select class="form-control" ng-model="option.inputOpts" ng-change="setSelValue(option,null,2)" title="{{option.inputOpts}}"
                                                         ng-options="optsObj.value as optsObj.name for optsObj in option._inputOptsList">
                                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                 </select>
@@ -686,7 +686,8 @@
                                             <input type="checkbox" ng-click="selectAll(vm.productSelList)"
                                                    ng-checked="isAllSelected(vm.productSelList)"
                                                    ng-disabled="!vm.productList.length">
-                                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
+                                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                        </label>
                                     </td>
                                     <td class="text-left" translate="TXT_BRAND" style="display:inline-block;width:150px;padding-left:8px"></td>
                                     <td class="text-center" translate="TXT_INVENTORY" style="display:inline-block;width:85px;padding-left:8px"></td>

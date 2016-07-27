@@ -9,10 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.service.bean.cms.CmsBtBrandBean;
 import com.voyageone.service.bean.cms.CmsBtBrandMappingBean;
+import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.daoext.cms.CmsBtBrandMappingDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 
 /**
  * Created by Wangtd on 7/25/16.
@@ -21,7 +24,14 @@ import com.voyageone.service.impl.BaseService;
 public class BrandBtMappingService extends BaseService {
 	
 	@Autowired
+	private CmsMtBrandsMappingDao cmsMtBrandsMappingDao;
+	
+	@Autowired
 	private CmsBtBrandMappingDaoExt cmsBtBrandMappingDaoExt;
+	
+	public boolean addNewBrandMapping(CmsMtBrandsMappingModel brandModel) {
+		return cmsMtBrandsMappingDao.insert(brandModel) > 0;
+	}
 	
 	public List<CmsBtBrandBean> searchMasterBrands(String channelId, int cartId, String brandName) {
 		return cmsBtBrandMappingDaoExt.searchMasterBrands(channelId, cartId, brandName);
@@ -44,7 +54,19 @@ public class BrandBtMappingService extends BaseService {
 	
 	public List<CmsBtBrandMappingBean> searchMatchedBrands(String channelId, Integer cartId, String langId,
 			String brandId) {
-		return cmsBtBrandMappingDaoExt.searchMatchedBrands(channelId, cartId, langId, brandId);
+		Map<String, Object> params = new HashMap<String, Object>();
+		// 必要参数设置
+		params.put("channelId", channelId);
+		params.put("cartId", cartId);
+		params.put("langId", langId);
+		params.put("brandId", brandId);
+		// 区分聚美品牌与其他品牌
+		if (CartEnums.Cart.JM.getId().equals(String.valueOf(cartId))) {
+			params.put("isJmBrand", true);
+		} else {
+			params.put("isJmBrand", false);
+		}
+		return cmsBtBrandMappingDaoExt.searchMatchedBrands(params);
 	}
 	
 	private Map<String, Object> formatBrandsQueryParameter(String channelId, int cartId, String langId,
@@ -54,7 +76,7 @@ public class BrandBtMappingService extends BaseService {
 		params.put("channelId", channelId);
 		params.put("cartId", cartId);
 		params.put("langId", langId);
-		params.put("typeId", 41); // TODO 品牌类型ID为41，常量在哪里定义？
+		params.put("typeId", TypeConfigEnums.MastType.brand.getId());
 		// 区分聚美品牌与其他品牌
 		if (CartEnums.Cart.JM.getId().equals(String.valueOf(cartId))) {
 			params.put("isJmBrand", true);

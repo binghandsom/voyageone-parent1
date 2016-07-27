@@ -185,6 +185,7 @@
                                             <th class="mfb-xxt text-center">等待上新数</th>
                                             <th class="mfb-xxs text-center">上新成功数</th>
                                             <th class="mfb-xxt text-center">上新失败数</th>
+                                            <th class="mfb-xxt text-center">品牌未匹配数</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -197,6 +198,8 @@
                                             <td class="mfb-xxt text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_WAITING_PUBLISH.cartId,productStatus:{'Approved':true},platformStatus:{'WaitingPublish':true}})">{{m.CMS_PLATFORM_WAITING_PUBLISH.amountVal}}</a></td>
                                             <td class="mfb-xxt text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_PUBLISH_SUCCESS.cartId,productStatus:{'Approved':true},platformStatus:{'InStock':true,'OnSale':true}})">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</a></td>
                                             <td class="mfb-xxt text-center"><a ng-click="goSearchPage(150,{cartId:m.CMS_PLATFORM_PUBLISH_FAILD.cartId,hasErrorFlg:true})"><label class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</label></a></td>
+                                            <td class="mfb-xxt text-center"><label class="label label-danger">{{m.CMS_BrandNoMatchCount.amountVal}}</label></td>
+
                                         </tr>
                                         </tbody>
                                     </table>
