@@ -197,7 +197,8 @@ define(function (require) {
         }),
         shipmentDetailService: new CommonDataService('/vms/shipment/shipment_detail', {
             init: "init",
-            scan: "scan"
+            scan: "scan",
+            getInfo: "get_info"
         })
     }
 });
