@@ -354,7 +354,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
     /**
      * 返回当前页的group列表，这里是分页查询<br>
      * 这里不是直接去检索group表，而是根据CmsBtProductModel中的mainProductCode过滤而来
-     * 注意要过滤重复code
+     * 注意要过滤重复code，另外由于$group不会排序，必须在$group中输出排序项后再使用$sort排序
      */
     public List<String> getGroupCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         List<JomgoAggregate> aggrList = new ArrayList<>();
