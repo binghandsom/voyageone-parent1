@@ -89,12 +89,37 @@
                 {
                    if(sellJmPromotiona.getActivityStart()>jmPromotion.getActivityEnd())//在售专场开始时间>当前专场结束时间
                    {
-                      errorMsg=" “该商品已加入专场【*********】，并上传成功。介于其有效期为【*********】（年月日 时分秒）至【*********】（年月日 时分秒），晚于当前专场，该商品已无法在当前专场进行售卖，请替换商品"+"聚美Response";
+                      errorMsg=" “该商品已加入专场【sellJmPromotion.getName()】，并上传成功。介于其有效期为sellJmPromotion.getActivityStart()】（年月日 时分秒）至【sellJmPromotion.getActivityEnd()】（年月日 时分秒），晚于当前专场，该商品已无法在当前专场进行售卖，请替换商品"+"聚美Response";
                    }
                 }
             }
-   2.8
 
+   2.8     if(jmPromotion.promotionType!=2&&jmPromotion.promotionType!=1)//非大促 非满减专场
+            {
+                if(sellJmPromotion.promotionType!=1)//在售专场为非满减专场
+                {
+                   if(jmPromotion.getActivityEnd()-sellJmPromotiona.getActivityEnd()>=4天)//，【sell_hash_id】的结束时间早于当前专场结束时间4天或以上 时
+                   {
+                      errorMsg="该商品已加入专场【sellJmPromotion.getName()】，并上传成功。请于【sellJmPromotion.getActivityEnd()】（年月日 时分秒）之后，再进行上传"+"聚美Response";
+                   }
+                }
+            }
+   2.9  if(jmPromotion.promotionType!=2&&jmPromotion.promotionType!=1)//非大促 非满减专场
+                   {
+                       if(sellJmPromotion.promotionType!=1)//在售专场为非满减专场
+                       {
+                          if(jmPromotion.getActivityEnd()-sellJmPromotiona.getActivityEnd()<=3天)//，【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
+                          {
+                                     2.9.1 新HashID替换MongoDB中，该商品的Origin HashID
+                                    jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
+                                                   if(sellJmPromotiona.getActivityEnd()<jmPromotion.getActivityEnd())//【sell_hash_id】的结束时间小于当前专场结束时间的场合
+                                                   {
+                                                      调用延迟Deal结束时间API
+                                                   }
+                             errorMsg="该商品已加入专场【sellJmPromotion.getName()】，并上传成功。请于【sellJmPromotion.getActivityEnd()】（年月日 时分秒）之后，再进行上传"+"聚美Response";
+                          }
+                       }
+                   }
 1.复制Deal(特卖)信息[htDeal/copyDeal]调用前Check，
     （1）当前专场为满减专场的场合，该商品已加入其他未过期专场,并且，上传成功时，
          状态为“上传失败”。
