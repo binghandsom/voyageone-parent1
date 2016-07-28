@@ -142,11 +142,12 @@ public class VoLog4jAppender extends AppenderSkeleton {
     public synchronized void append(LoggingEvent event) throws FlumeException {
         event.getMDCCopy();
         String taskName = (String) event.getMDC("taskName");
-        threadPool.execute(new LogAppThread(event, taskName));
+        String subSystem = (String) event.getMDC("subSystem");
+        threadPool.execute(new LogAppThread(event, subSystem, taskName));
     }
 
     // liang change append
-    public synchronized void appendEvent(LoggingEvent event, String taskName) throws FlumeException {
+    public synchronized void appendEvent(LoggingEvent event, String subSystem, String taskName) throws FlumeException {
         //If rpcClient is null, it means either this appender object was never
         //setup by setting hostname and port and then calling activateOptions
         //or this appender object was closed by calling close(), so we throw an
@@ -210,6 +211,7 @@ public class VoLog4jAppender extends AppenderSkeleton {
             flumeEvent.getHeaders().put("projectFile", projectFile);
             if (taskName != null && taskName.trim().length() > 0) {
                 flumeEvent.getHeaders().put("taskName", taskName);
+                flumeEvent.getHeaders().put("subSystem", subSystem);
                 flumeEvent.getHeaders().put("splitDir", this.splitDir);
             }
         }
@@ -410,20 +412,22 @@ public class VoLog4jAppender extends AppenderSkeleton {
 
     private class LogAppThread implements Runnable {
         private LoggingEvent event;
+        private String subSystem;
         private String taskName;
 
         public LogAppThread(LoggingEvent event) {
             this.event = event;
         }
 
-        public LogAppThread(LoggingEvent event, String taskName) {
+        public LogAppThread(LoggingEvent event, String subSystem, String taskName) {
             this.event = event;
+            this.subSystem = subSystem;
             this.taskName = taskName;
         }
 
         @Override
         public void run() {
-            appendEvent(event, taskName);
+            appendEvent(event, subSystem, taskName);
         }
     }
 }

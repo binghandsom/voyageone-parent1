@@ -1,0 +1,100 @@
+7.批量删除
+         7.1 if(活动预热已开始)   todo 未实现
+                {
+                    errorMsg="活动预热已开始,不能删除";
+                }
+         7.2
+                只能删除未上传的商品 cms_bt_jm_promotion_product.synch_status!=2
+         7.3  活动预热已开始的场合：
+               功能关闭
+
+8.批量上传：
+         8.1 // todo 上个版本已实现   新版本要删除
+              if（cms_bt_jm_promotion_product.synch_status！=2）//未上传
+              { cms_bt_jm_promotion_product.synch_status=1 }   //设置为待上传
+
+              if(cms_bt_jm_promotion_product.synch_status==2&&预热未开始)//已上传&&预热未开始
+              { cms_bt_jm_promotion_product.price_status=1}              //设置为价格待更新
+         8.2 提示 // todo 未实现
+                      if(预热未开始)
+                      {alert("聚美平台无任何删除功能，专场内一旦有商品完成上传，该商品禁止删除，该专场禁止删除。点击确认继续操作");}
+                      if(预热已开始)
+                      {alert("聚美专场已开始预热，任何变更都有极大可能性引起客诉，点击确认继续操作");}
+         8.3.//8.1的改进版    todo 未实现
+                if（cms_bt_jm_promotion_product.synch_status！=2）//未上传
+                  { cms_bt_jm_promotion_product.synch_status=1 }   //设置为待上传
+
+                 if(cms_bt_jm_promotion_product.synch_status==2)//已上传            todo 和8.1的区别  这里删掉了预热未开始的判断
+                     { cms_bt_jm_promotion_product.price_status=1}//设置为价格待更新
+
+9.批量同步价格 //  批量同步价格  1. if未上传  then price_status=1   2.if已上传&预热未开始  then price_status=1
+         9.1 // todo 上个版本已实现   新版本要删除
+              if(cms_bt_jm_promotion_product.synch_status！=2）//未上传
+              { cms_bt_jm_promotion_product.price_status=1 }   //设置为价格待更新
+
+              if(cms_bt_jm_promotion_product.synch_status==2&&预热未开始)//已上传&&预热未开始
+              { cms_bt_jm_promotion_product.price_status=1}              //设置为价格待更新
+         9.2 提示 // todo 未实现
+                      if(预热未开始)
+                      {alert("聚美平台无任何删除功能，专场内一旦有商品完成上传，该商品禁止删除，该专场禁止删除。点击确认继续操作！");}
+                      if(预热已开始)
+                      {alert("聚美专场已开始预热，价格变更将有极大可能性引起客诉。点击确认继续操作！");}
+         9.3   .//9.1的改进版    todo 未实现
+               if(cms_bt_jm_promotion_product.synch_status！=2）//未上传
+                { cms_bt_jm_promotion_product.price_status=1 }   //设置为价格待更新
+
+               if(cms_bt_jm_promotion_product.synch_status==2)//已上传              todo 和9.1的区别  这里删掉了预热未开始的判断
+                { cms_bt_jm_promotion_product.price_status=1}  //设置为价格待更新
+10.批量变更价格
+         10.1 if(预热已开始)
+               {errorMsg="预热已开始,不能修改价格";}
+               if(更新后的团购价>市场价)
+               {errorMsg="更新后的团购价大于市场价,不能更新";}
+
+
+
+7.批量删除：
+   (1)活动预热未开始的场合：
+       批量删除前Check：
+       存在已有专场用聚美HashID的商品，则只删除勾选范围内“未上传”的商品，非“未上传”状态商品或，不改变商品状态，写入错误信息。
+      “该商品已调用过聚美上传API，聚美平台静止相关操作纪录的删除。为保证数据一致性，该商品无法删除。”
+       聚美专场内不存在已有专场用聚美HashID的商品，则全部删除。
+   (2)活动预热已开始的场合：
+       功能关闭
+
+8.批量上传：
+   (1)活动预热未开始的场合：
+点击后，操作前警告信息：
+聚美平台无任何删除功能，专场内一旦有商品完成上传，该商品禁止删除，该专场禁止删除。
+点击确认继续操作。
+
+   (2)活动预热已开始的场合：
+点击后，操作前警告信息：
+聚美专场已开始预热，任何变更都有极大可能性引起客诉，点击确认继续操作。
+
+       右边Process：专场上传
+
+9.批量同步价格：
+   (1)活动预热未开始的场合：
+点击后，操作前警告信息：
+聚美平台无任何删除功能，专场内一旦有商品完成上传，该商品禁止删除，该专场禁止删除。
+点击确认继续操作。
+   (2)活动预热已开始的场合：
+点击后，操作前警告信息：
+聚美专场已开始预热，价格变更将有极大可能性引起客诉。
+点击确认继续操作。
+
+       右边Process：专场价格同步
+
+10.批量变更价格：
+   (1)活动预热未开始的场合：
+       批量变更价格中Check：
+       变更结果出现 市场价 < =团购价 的场合，错误信息 “市场价必须大于团购价，请确认数据正确性。”
+       变更成功，则 “已上传商品变更标签”为“有变更”。
+   (2)活动预热已开始的场合：
+       勾选范围内所有无活动用聚美Hash ID的商品可变更团购价。
+       批量变更价格中Check：
+       变更结果出现 市场价 < =团购价 的场合，错误信息 “市场价必须大于团购价，请确认数据正确性。”
+       勾选范围内有活动用聚美Hash ID的商品可变更团购价，追加错误信息，“专场已上线，变更价格一旦同步至平台将引起客诉。”
+       批量变更价格中Check：
+       变更结果出现 市场价 < =团购价 的场合，错误信息 “市场价必须大于团购价，请确认数据正确性。”

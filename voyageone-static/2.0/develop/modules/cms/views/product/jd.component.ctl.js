@@ -27,7 +27,8 @@ define([
                     resultFlag:0,
                     sellerCats:[],
                     productUrl:"",
-                    preStatus:null
+                    preStatus:null,
+                    noMaterMsg:null
                 };
 
                 initialize();
@@ -79,6 +80,8 @@ define([
                             scope.vm.skuTemp[mSku.skuCode] = mSku;
                         });
 
+                    },function(resp){
+                        scope.vm.noMaterMsg = resp.message.indexOf("Server Exception") >=0 ? null : resp.message;
                     });
 
                     scope.vm.productUrl = carts.valueOf(+scope.cartInfo.value).pUrl;
