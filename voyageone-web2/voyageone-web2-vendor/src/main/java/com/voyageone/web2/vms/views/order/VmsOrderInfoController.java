@@ -2,10 +2,10 @@ package com.voyageone.web2.vms.views.order;
 
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.vms.bean.order.DownloadInfo;
-import com.voyageone.web2.vms.bean.order.OrderSearchInfo;
-import com.voyageone.web2.vms.bean.order.PlatformSubOrderInfoBean;
-import com.voyageone.web2.vms.bean.order.SubOrderInfoBean;
+import com.voyageone.web2.vms.bean.order.DownloadInfoBean;
+import com.voyageone.web2.vms.bean.order.OrderSearchInfoBean;
+import com.voyageone.service.bean.vms.order.PlatformSubOrderInfoBean;
+import com.voyageone.service.bean.vms.order.SubOrderInfoBean;
 import com.voyageone.web2.vms.views.common.VmsChannelConfigService;
 import com.voyageone.web2.vms.views.shipment.VmsShipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,10 +54,10 @@ public class VmsOrderInfoController extends BaseController {
     }
 
     @RequestMapping(ORDER.ORDER_INFO.SEARCH)
-    public AjaxResponse search(@RequestBody OrderSearchInfo orderSearchInfo) {
+    public AjaxResponse search(@RequestBody OrderSearchInfoBean orderSearchInfoBean) {
         Map<String, Object> orderInfo = new HashMap<>();
         Date date = new Date();
-        orderInfo.put("orderInfo", vmsOrderInfoService.getOrderInfo(this.getUser(), orderSearchInfo));
+        orderInfo.put("orderInfo", vmsOrderInfoService.getOrderInfo(this.getUser(), orderSearchInfoBean));
         $debug("this action takes totally " + String.valueOf(new Date().getTime() - date.getTime()) + " milliseconds.");
         return success(orderInfo);
     }
@@ -81,9 +81,9 @@ public class VmsOrderInfoController extends BaseController {
     @RequestMapping(ORDER.ORDER_INFO.DOWNLOAD_PICKING_LIST)
     public ResponseEntity<byte[]> downloadPickingList(@RequestParam Map<String, Object> downloadParams) throws
             IOException {
-        DownloadInfo downloadInfo = new DownloadInfo();
-        downloadInfo.setOrderType(downloadParams.get("orderType").toString());
+        DownloadInfoBean downloadInfoBean = new DownloadInfoBean();
+        downloadInfoBean.setOrderType(downloadParams.get("orderType").toString());
         return genResponseEntityFromBytes(PICKING_LIST + new Date().getTime() + XLSX,
-                vmsOrderInfoService.getExcelBytes(this.getUser(), downloadInfo));
+                vmsOrderInfoService.getExcelBytes(this.getUser(), downloadInfoBean));
     }
 }

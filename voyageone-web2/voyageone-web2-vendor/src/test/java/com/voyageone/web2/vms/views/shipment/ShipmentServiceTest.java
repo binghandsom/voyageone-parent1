@@ -2,7 +2,7 @@ package com.voyageone.web2.vms.views.shipment;
 
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.JsonUtil;
-import com.voyageone.web2.vms.bean.shipment.ShipmentStatusBean;
+import com.voyageone.service.bean.vms.shipment.ShipmentStatusBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

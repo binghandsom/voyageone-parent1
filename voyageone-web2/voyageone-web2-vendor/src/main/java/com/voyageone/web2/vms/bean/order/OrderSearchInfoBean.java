@@ -12,7 +12,7 @@ import static com.voyageone.web2.vms.VmsConstants.DEFAULT_PAGE_SIZE;
  * 订单检索条件
  * Created by vantis on 16-7-7.
  */
-public class OrderSearchInfo {
+public class OrderSearchInfoBean {
     private String status = VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN;
     private String consolidationOrderId;
     private String sku;

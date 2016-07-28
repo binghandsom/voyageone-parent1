@@ -1,4 +1,4 @@
-package com.voyageone.web2.vms.bean.shipment;
+package com.voyageone.service.bean.vms.shipment;
 
 import com.voyageone.common.util.BeanUtil;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;

@@ -6,6 +6,10 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.BeanUtil;
+import com.voyageone.service.bean.vms.shipment.ExpressCompanyBean;
+import com.voyageone.service.bean.vms.shipment.ShipmentBean;
+import com.voyageone.service.bean.vms.shipment.ShipmentInfoBean;
+import com.voyageone.service.bean.vms.shipment.ShipmentStatusBean;
 import com.voyageone.service.impl.vms.order.OrderDetailService;
 import com.voyageone.service.impl.vms.shipment.ShipmentService;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
@@ -145,25 +149,25 @@ public class VmsShipmentService {
         return shipmentService.insert(vmsBtShipmentModel);
     }
 
-    public ShipmentInfoBean search(UserSessionBean user, ShipmentSearchInfo shipmentSearchInfo) {
+    public ShipmentInfoBean search(UserSessionBean user, ShipmentSearchInfoBean shipmentSearchInfoBean) {
 
         ShipmentInfoBean shipmentInfoBean = new ShipmentInfoBean();
 
         Map<String, Object> searchParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
-            put("shipmentName", shipmentSearchInfo.getShipmentName());
-            put("trackingNo", shipmentSearchInfo.getTrackingNo());
-            put("status", shipmentSearchInfo.getStatus());
-            put("shippedDateFrom", shipmentSearchInfo.getShippedDateFrom());
-            put("shippedDateTo", shipmentSearchInfo.getShippedDateTo());
+            put("shipmentName", shipmentSearchInfoBean.getShipmentName());
+            put("trackingNo", shipmentSearchInfoBean.getTrackingNo());
+            put("status", shipmentSearchInfoBean.getStatus());
+            put("shippedDateFrom", shipmentSearchInfoBean.getShippedDateFrom());
+            put("shippedDateTo", shipmentSearchInfoBean.getShippedDateTo());
         }};
 
         shipmentInfoBean.setTotal(shipmentService.count(searchParams));
 
         Map<String, Object> pagedSearchParams = MySqlPageHelper.build(searchParams)
                 .addSort("Id", Order.Direction.DESC)
-                .limit(shipmentSearchInfo.getSize())
-                .page(shipmentSearchInfo.getCurr())
+                .limit(shipmentSearchInfoBean.getSize())
+                .page(shipmentSearchInfoBean.getCurr())
                 .toMap();
         shipmentInfoBean.setShipmentList(shipmentService.searchList(pagedSearchParams).parallelStream()
                 .map(ShipmentBean::getInstance)
@@ -193,7 +197,7 @@ public class VmsShipmentService {
         // 更新shipment对应SKU信息
         if (success > 0) {
             orderDetailService.updateOrderStatusWithShipmentId(user.getSelChannelId(),
-                    shipment.getId(), shipment.getStatus());
+                    shipment.getId(), shipment.getStatus(), new Date(), user.getUserName());
         }
         return success;
     }

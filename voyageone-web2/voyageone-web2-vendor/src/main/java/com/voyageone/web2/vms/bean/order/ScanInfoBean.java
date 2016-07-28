@@ -1,12 +1,12 @@
 package com.voyageone.web2.vms.bean.order;
 
-import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
+import com.voyageone.service.bean.vms.shipment.ShipmentBean;
 
 /**
  * 扫码前台参数
  * Created by vantis on 16-7-19.
  */
-public class ScanInfo {
+public class ScanInfoBean {
     private ShipmentBean shipment;
     private String consolidationOrderId;
     private String barcode;

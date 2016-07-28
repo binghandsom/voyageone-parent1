@@ -15,10 +15,10 @@
                 <div class="form-group">
                     <!-- ORDER_ID -->
                     <label class="control-label m-l-sm" translate="TXT_ORDER_ID"></label>
-                    <input id="ORDER_ID" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.consolidationOrderId">
+                    <input id="ORDER_ID" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.consolidationOrderId" enter-click="#searchButton">
                     <!-- SKU -->
                     <label class="control-label m-l-sm" translate="TXT_SKU"></label>
-                    <input id="SKU" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.sku">
+                    <input id="SKU" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.sku" enter-click="#searchButton">
                     <!-- Status -->
                     <label class="control-label m-l-sm" translate="TXT_STATUS"></label>
                     <select name="SKU_STATUS" id="select" class="form-control input-sm" ng-model="ctrl.searchInfo.status"
@@ -54,7 +54,7 @@
                     </span>
                 </div>
                 <div class="pull-right">
-                    <button ng-click="ctrl.pageInfo.curr=1;ctrl.search()" class="btn btn-primary btn-sm" translate="BTN_SEARCH"></button>
+                    <button id="searchButton" ng-click="ctrl.pageInfo.curr=1;ctrl.search()" class="btn btn-primary btn-sm" translate="BTN_SEARCH"></button>
                 </div>
             </div>
         </div>
@@ -119,8 +119,8 @@
                         <td class="v-middle">{{detail.consolidationOrderTime| date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="v-middle">{{detail.clientSku}}</td>
                         <td class="v-middle">
-                            <span ng-if="detail.name.length <= 30">{{detail.name}}</span>
-                            <span ng-if="detail.name.length > 30" uib-tooltip="{{detail.name}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{detail.name | stringCutter:true:30:' ...'}}</span>
+                            <span ng-if="detail.name.length <= 25">{{detail.name}}</span>
+                            <span ng-if="detail.name.length > 25" uib-tooltip="{{detail.name}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{detail.name | stringCutter:true:25:' ...'}}</span>
                         </td>
                         <td class="v-middle">{{ctrl.getStatusName(detail.status)}}</td>
                         <td class="v-middle">${{detail.voPrice}}</td>
@@ -159,8 +159,8 @@
                         <td class="v-middle">{{item.consolidationOrderTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="v-middle">{{item.clientSku}}</td>
                         <td class="v-middle">
-                            <span ng-if="item.name.length <= 30">{{item.name}}</span>
-                            <span ng-if="item.name.length > 30" uib-tooltip="{{item.name}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name | stringCutter:true:30:' ...'}}</span>
+                            <span ng-if="item.name.length <= 25">{{item.name}}</span>
+                            <span ng-if="item.name.length > 25" uib-tooltip="{{item.name}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name | stringCutter:true:25:' ...'}}</span>
                         </td>
                         <td class="v-middle">{{ctrl.getStatusName(item.status)}}</td>
                         <td class="v-middle">${{item.voPrice}}</td>

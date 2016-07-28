@@ -11,7 +11,7 @@ define([
         }
 
         function successAudio(value) {
-            var audioEle = document.getElementById('warningAudio');
+            var audioEle = document.getElementById('successAudio');
             if (value == true) audioEle.play();
         }
 
@@ -65,11 +65,17 @@ define([
             };
             self.shipmentDetailService.scan(req).then(function (data) {
                 if (data.success == 1) {
-                    successAudio(true);
+                    try {
+                        successAudio(true);
+                    } catch (exception) {
+                    }
                     self.notify.success('TXT_SUCCESS');
                 }
                 else if (data.success == 0) {
-                    warningAudio(true);
+                    try {
+                        warningAudio(true);
+                    } catch (exception) {
+                    }
                     self.notify.warning('TXT_ITEM_NOT_FOUND_SKU');
                 }
                 self.scannedSkuList = data.scannedSkuList;

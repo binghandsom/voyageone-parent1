@@ -2,7 +2,7 @@ package com.voyageone.web2.vms.views.order;
 
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
+import com.voyageone.service.bean.vms.shipment.ShipmentBean;
 import com.voyageone.web2.vms.views.shipment.VmsShipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

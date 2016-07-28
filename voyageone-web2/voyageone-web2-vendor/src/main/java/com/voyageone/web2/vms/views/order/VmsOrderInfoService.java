@@ -7,17 +7,18 @@ import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.BeanUtil;
 import com.voyageone.common.util.MapUtil;
+import com.voyageone.service.bean.vms.order.*;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.vms.order.OrderDetailService;
 import com.voyageone.service.impl.vms.shipment.ShipmentService;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.vms.bean.SortParam;
-import com.voyageone.web2.vms.bean.VmsChannelSettings;
+import com.voyageone.web2.vms.bean.SortParamBean;
+import com.voyageone.web2.vms.bean.VmsChannelSettingBean;
 import com.voyageone.web2.vms.bean.order.*;
-import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
-import com.voyageone.web2.vms.bean.shipment.ShipmentEndCountBean;
+import com.voyageone.service.bean.vms.shipment.ShipmentBean;
+import com.voyageone.service.bean.vms.shipment.ShipmentEndCountBean;
 import com.voyageone.web2.vms.views.common.VmsChannelConfigService;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
@@ -84,15 +85,15 @@ public class VmsOrderInfoService extends BaseService {
      * @param user 当前用户
      * @return Order信息内容
      */
-    public OrderInfoBean getOrderInfo(UserSessionBean user, OrderSearchInfo orderSearchInfo) {
-        SortParam sortParam = new SortParam();
-        sortParam.setColumnName(CONSOLIDATION_ORDER_TIME);
-        sortParam.setDirection((null != orderSearchInfo.getStatus()
-                && orderSearchInfo.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN) ?
+    public OrderInfoBean getOrderInfo(UserSessionBean user, OrderSearchInfoBean orderSearchInfoBean) {
+        SortParamBean sortParamBean = new SortParamBean();
+        sortParamBean.setColumnName(CONSOLIDATION_ORDER_TIME);
+        sortParamBean.setDirection((null != orderSearchInfoBean.getStatus()
+                && orderSearchInfoBean.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN) ?
                 Order.Direction.ASC : Order.Direction.DESC));
         OrderInfoBean orderInfoBean = new OrderInfoBean();
-        orderInfoBean.setTotal(this.getTotalOrderNum(user, orderSearchInfo, sortParam));
-        orderInfoBean.setOrderList(this.getOrders(user, orderSearchInfo, sortParam));
+        orderInfoBean.setTotal(this.getTotalOrderNum(user, orderSearchInfoBean, sortParamBean));
+        orderInfoBean.setOrderList(this.getOrders(user, orderSearchInfoBean, sortParamBean));
         return orderInfoBean;
     }
 
@@ -157,11 +158,11 @@ public class VmsOrderInfoService extends BaseService {
      * 生成下载Excel拣货单
      *
      * @param user         当前用户
-     * @param downloadInfo 下载信息(排序信息)
+     * @param downloadInfoBean 下载信息(排序信息)
      * @return 拣货单Excel
      * @throws IOException
      */
-    public byte[] getExcelBytes(UserSessionBean user, DownloadInfo downloadInfo) throws IOException {
+    public byte[] getExcelBytes(UserSessionBean user, DownloadInfoBean downloadInfoBean) throws IOException {
 
         // 搜索条件
         Map<String, Object> selectParams = new HashMap<String, Object>() {{
@@ -171,7 +172,7 @@ public class VmsOrderInfoService extends BaseService {
 
         $debug("Getting pickingList data...");
         Map<String, Object> sortedSelectParams = MySqlPageHelper.build(selectParams)
-                .addSort(downloadInfo.getOrderType(), Order.Direction.ASC)
+                .addSort(downloadInfoBean.getOrderType(), Order.Direction.ASC)
                 .toMap();
 
         // 获取订单信息
@@ -221,7 +222,7 @@ public class VmsOrderInfoService extends BaseService {
         int orderIdCellNumber = 2;
 
         // 设置内容
-        if (PICKING_LIST_ORDER_TYPE.ORDER.equals(downloadInfo.getOrderType())) {
+        if (PICKING_LIST_ORDER_TYPE.ORDER.equals(downloadInfoBean.getOrderType())) {
             skuCellNumber = 2;
             orderIdCellNumber = 0;
         }
@@ -276,15 +277,15 @@ public class VmsOrderInfoService extends BaseService {
      * 根据条件搜索订单
      *
      * @param user            当前用户
-     * @param orderSearchInfo 搜索条件
+     * @param orderSearchInfoBean 搜索条件
      * @return 订单列表
      */
-    public List<AbstractSubOrderInfoBean> getOrders(UserSessionBean user, OrderSearchInfo orderSearchInfo, SortParam
-            sortParam) {
+    public List<AbstractSubOrderInfoBean> getOrders(UserSessionBean user, OrderSearchInfoBean orderSearchInfoBean, SortParamBean
+            sortParamBean) {
 
         List<AbstractSubOrderInfoBean> orderList = new ArrayList<>();
-        Map<String, Object> orderSearchParamsWithLimitAndSort = this.organizeOrderSearchParams(user, orderSearchInfo,
-                sortParam);
+        Map<String, Object> orderSearchParamsWithLimitAndSort = this.organizeOrderSearchParams(user, orderSearchInfoBean,
+                sortParamBean);
         /*
          * 根据渠道配置设置
          */
@@ -314,7 +315,7 @@ public class VmsOrderInfoService extends BaseService {
             orderSearchParamsWithLimitAndSort) {
 
         // 读取用户配置
-        VmsChannelSettings channelConfigs = vmsChannelConfigService.getChannelConfigs(user);
+        VmsChannelSettingBean channelConfigs = vmsChannelConfigService.getChannelConfigs(user);
 
         return orderDetailService.selectPlatformOrderIdList(orderSearchParamsWithLimitAndSort).parallelStream()
                 .map(consolidationOrderId -> {
@@ -356,7 +357,7 @@ public class VmsOrderInfoService extends BaseService {
      */
     private List<AbstractSubOrderInfoBean> getSkuOrderInfoBean(UserSessionBean user,
                                                                Map<String, Object> orderSearchParamsWithLimitAndSort) {
-        VmsChannelSettings channelConfigs = vmsChannelConfigService.getChannelConfigs(user);
+        VmsChannelSettingBean channelConfigs = vmsChannelConfigService.getChannelConfigs(user);
 
         List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = orderDetailService.selectOrderList
                 (orderSearchParamsWithLimitAndSort);
@@ -375,14 +376,14 @@ public class VmsOrderInfoService extends BaseService {
      * 根据输入条件组出对应的搜索Map
      *
      * @param user            当前用户
-     * @param orderSearchInfo 搜索条件
+     * @param orderSearchInfoBean 搜索条件
      * @return 搜索条件Map
      */
-    private Map<String, Object> organizeOrderSearchParams(UserSessionBean user, OrderSearchInfo orderSearchInfo,
-                                                          SortParam sortParam) {
+    private Map<String, Object> organizeOrderSearchParams(UserSessionBean user, OrderSearchInfoBean orderSearchInfoBean,
+                                                          SortParamBean sortParamBean) {
         Map<String, Object> orderSearchParams;
         try {
-            orderSearchParams = MapUtil.toMap(orderSearchInfo);
+            orderSearchParams = MapUtil.toMap(orderSearchInfoBean);
         } catch (IllegalAccessException e) {
             throw new BusinessException("WRONG SEARCH PARAMETERS.", e);
         }
@@ -391,9 +392,9 @@ public class VmsOrderInfoService extends BaseService {
 
         // limit sort条件
         Map<String, Object> orderSearchParamsWithLimitAndSort = MySqlPageHelper.build(orderSearchParams)
-                .addSort(sortParam.getColumnName(), sortParam.getDirection())
-                .limit(orderSearchInfo.getSize())
-                .page(orderSearchInfo.getCurr())
+                .addSort(sortParamBean.getColumnName(), sortParamBean.getDirection())
+                .limit(orderSearchInfoBean.getSize())
+                .page(orderSearchInfoBean.getCurr())
                 .toMap();
 
         $debug(orderSearchParamsWithLimitAndSort.toString());
@@ -404,19 +405,19 @@ public class VmsOrderInfoService extends BaseService {
      * 获取条件下的订单总数
      *
      * @param user            当前用户
-     * @param orderSearchInfo 搜索条件
+     * @param orderSearchInfoBean 搜索条件
      * @return 订单总数
      */
-    private long getTotalOrderNum(UserSessionBean user, OrderSearchInfo orderSearchInfo, SortParam sortParam) {
+    private long getTotalOrderNum(UserSessionBean user, OrderSearchInfoBean orderSearchInfoBean, SortParamBean sortParamBean) {
         if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(vmsChannelConfigService.getChannelConfigs(user).getVendorOperateType())) {
             // 平台订单
             Map<String, Object> orderSearchParamsWithLimitAndSort =
-                    organizeOrderSearchParams(user, orderSearchInfo, sortParam);
+                    organizeOrderSearchParams(user, orderSearchInfoBean, sortParamBean);
             return orderDetailService.getTotalOrderNum(orderSearchParamsWithLimitAndSort);
         } else if (STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU.equals(vmsChannelConfigService.getChannelConfigs(user).getVendorOperateType())) {
             // 大订单sku
             Map<String, Object> skuSearchParamsWithLimitAndSort =
-                    organizeOrderSearchParams(user, orderSearchInfo, sortParam);
+                    organizeOrderSearchParams(user, orderSearchInfoBean, sortParamBean);
             return orderDetailService.getTotalSkuNum(skuSearchParamsWithLimitAndSort);
         } else return 0;
     }
@@ -462,19 +463,19 @@ public class VmsOrderInfoService extends BaseService {
      * 扫barcode 将对应的sku加入shipment
      *
      * @param user     当前用户
-     * @param scanInfo 扫描参数
+     * @param scanInfoBean 扫描参数
      * @return 扫描影响的条数
      */
-    public int scanBarcodeInOrder(UserSessionBean user, ScanInfo scanInfo) {
+    public int scanBarcodeInOrder(UserSessionBean user, ScanInfoBean scanInfoBean) {
 
-        ShipmentBean shipment = scanInfo.getShipment();
-        String barcode = scanInfo.getBarcode();
-        String orderId = scanInfo.getConsolidationOrderId();
+        ShipmentBean shipment = scanInfoBean.getShipment();
+        String barcode = scanInfoBean.getBarcode();
+        String orderId = scanInfoBean.getConsolidationOrderId();
 
         // 检查订单状态
         Map<String, Object> checkParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
-            put("consolidationOrderId", scanInfo.getConsolidationOrderId());
+            put("consolidationOrderId", scanInfoBean.getConsolidationOrderId());
         }};
 
         long invalidCount = orderDetailService.select(checkParams).stream()
@@ -498,18 +499,18 @@ public class VmsOrderInfoService extends BaseService {
      * 确认当期订单是否完整扫描 同时相应更新sku状态
      *
      * @param user     当前用户
-     * @param scanInfo 扫描参数
+     * @param scanInfoBean 扫描参数
      * @return 是否完整扫描
      */
-    public boolean orderScanFinished(UserSessionBean user, ScanInfo scanInfo) {
+    public boolean orderScanFinished(UserSessionBean user, ScanInfoBean scanInfoBean) {
 
-        ShipmentBean shipment = scanInfo.getShipment();
-        String orderId = scanInfo.getConsolidationOrderId();
+        ShipmentBean shipment = scanInfoBean.getShipment();
+        String orderId = scanInfoBean.getConsolidationOrderId();
 
         // 检查订单状态
         Map<String, Object> checkParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
-            put("consolidationOrderId", scanInfo.getConsolidationOrderId());
+            put("consolidationOrderId", scanInfoBean.getConsolidationOrderId());
         }};
 
         // 检查当前订单是否全部扫描完毕
@@ -560,7 +561,7 @@ public class VmsOrderInfoService extends BaseService {
 
         // 更新shipment下的sku
         int succeedSkuCount = orderDetailService.updateOrderStatusWithShipmentId(user.getSelChannelId(), shipmentBean
-                .getId(), STATUS_VALUE.PRODUCT_STATUS.SHIPPED);
+                .getId(), STATUS_VALUE.PRODUCT_STATUS.SHIPPED, new Date(), user.getUserName());
 
         // 更新shipment
         VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel();
@@ -594,13 +595,13 @@ public class VmsOrderInfoService extends BaseService {
                 .collect(Collectors.toList());
     }
 
-    public int scanBarcodeInSku(UserSessionBean user, ScanInfo scanInfo) {
+    public int scanBarcodeInSku(UserSessionBean user, ScanInfoBean scanInfoBean) {
         // 确认shipment状态
-        VmsBtShipmentModel shipment = shipmentService.select(scanInfo.getShipment().getId());
+        VmsBtShipmentModel shipment = shipmentService.select(scanInfoBean.getShipment().getId());
         if (!user.getSelChannelId().equals(shipment.getChannelId())) throw new BusinessException("8000030");
         if (!STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(shipment.getStatus())) throw new BusinessException(("8000025"));
 
         return orderDetailService.scanInSku(user.getSelChannelId(), user.getUserName(),
-                scanInfo.getBarcode(), scanInfo.getShipment().getId());
+                scanInfoBean.getBarcode(), scanInfoBean.getShipment().getId());
     }
 }

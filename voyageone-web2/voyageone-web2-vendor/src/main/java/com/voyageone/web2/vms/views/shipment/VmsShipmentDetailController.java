@@ -2,9 +2,8 @@ package com.voyageone.web2.vms.views.shipment;
 
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.vms.bean.order.ScanInfo;
-import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
-import com.voyageone.web2.vms.bean.shipment.ShipmentDetailSearchInfo;
+import com.voyageone.web2.vms.bean.order.ScanInfoBean;
+import com.voyageone.service.bean.vms.shipment.ShipmentBean;
 import com.voyageone.web2.vms.views.common.VmsChannelConfigService;
 import com.voyageone.web2.vms.views.order.VmsOrderInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +48,10 @@ public class VmsShipmentDetailController extends BaseController {
     }
 
     @RequestMapping(SHIPMENT.ShipmentDetail.SCAN)
-    public AjaxResponse scan(@RequestBody ScanInfo scanInfo) {
+    public AjaxResponse scan(@RequestBody ScanInfoBean scanInfoBean) {
         Map<String, Object> result = new HashMap<>();
-        result.put("success", vmsOrderInfoService.scanBarcodeInSku(this.getUser(), scanInfo));
-        result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(), scanInfo.getShipment()));
+        result.put("success", vmsOrderInfoService.scanBarcodeInSku(this.getUser(), scanInfoBean));
+        result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(), scanInfoBean.getShipment()));
         return success(result);
     }
 
