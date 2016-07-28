@@ -51,7 +51,7 @@ public class VmsFinancialReportController extends BaseController {
      */
     @RequestMapping(VmsUrlConstants.REPORT.FINANCIAL_REPORT.SEARCH)
     public AjaxResponse search(@RequestBody Map<String, Object> param){
-        Map<String, Object>  result = vmsFinancialReportService.search(param, this.getUser().getSelChannelId());
+        Map<String, Object>  result = vmsFinancialReportService.search(param, this.getUser(), this.getLang());
         return success(result);
     }
 

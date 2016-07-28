@@ -59,18 +59,18 @@
                     <thead>
                     <tr>
                         <th class="v-middle td-3" translate="TXT_FILE_NAME"></th>
-                        <th class="v-middle td-2 text-center" translate="TXT_UPLOAD_DATE"></th>
-                        <th class="v-middle td-2 text-center" translate="TXT_UPLOAD_USER"></th>
-                        <th class="v-middle td-3 text-center" translate="TXT_STATUS"></th>
+                        <th class="v-middle td-2" translate="TXT_UPLOAD_DATE"></th>
+                        <th class="v-middle td-2" translate="TXT_UPLOAD_USER"></th>
+                        <th class="v-middle td-3" translate="TXT_STATUS"></th>
                         <th class="v-middle td-2 text-center" translate="TXT_EXPORT_ERROR_FILE"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="feedImportResult in ctrl.feedImportResultList">
                         <td class="v-middle">{{feedImportResult.client_file_name}}</td>
-                        <td class="v-middle text-center">{{feedImportResult.created | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                        <td class="v-middle text-center">{{feedImportResult.creater}}</td>
-                        <td class="v-middle text-center">{{feedImportResult.statusName}}</td>
+                        <td class="v-middle">{{feedImportResult.created | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="v-middle">{{feedImportResult.creater}}</td>
+                        <td class="v-middle">{{feedImportResult.statusName}}</td>
                         <td class="v-middle text-center"><button class="btn btn-success btn-xs" ng-show="feedImportResult.status == '4'" ng-click="ctrl.download(feedImportResult.error_file_name)"><i class="fa fa-cloud-download fa-lg" ng-show="feedImportResult.status == '4'"></i></button></td>
                     </tr>
                     </tbody>

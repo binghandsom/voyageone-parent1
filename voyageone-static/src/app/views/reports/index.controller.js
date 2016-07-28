@@ -11,7 +11,7 @@ define([
             this.financialReportList = [];
             this.reportYearMonthList = [];
             this.reportYearMonth = "";
-            this.canConfirm = false;
+            this.canConfirmReport = false;
         }
 
         FinancialReportController.prototype = {
@@ -28,7 +28,7 @@ define([
                     "reportYearMonth": main.reportYearMonth
                 }).then(function (res) {
                     main.financialReportList = res.financialReportList;
-                    main.canConfirm = res.canConfirm;
+                    main.canConfirmReport = res.canConfirmReport;
                 })
             },
 
