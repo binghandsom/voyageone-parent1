@@ -36,6 +36,14 @@ public class VmsConstants {
     }
 
     /**
+     * 财务报表状态
+     */
+    public final static class FinancialReportStatus {
+        public final static String UNCONFIRMED = "0";
+        public final static String CONFIRMED = "1";
+    }
+
+    /**
      * com_mt_type中对应配置的ID
      */
     public interface TYPE_ID {

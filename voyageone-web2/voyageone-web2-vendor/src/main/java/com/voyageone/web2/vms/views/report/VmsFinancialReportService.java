@@ -12,11 +12,9 @@ import com.voyageone.service.impl.vms.report.FinancialReportService;
 import com.voyageone.service.model.vms.VmsBtFinancialReportModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.beanutils.BeanUtils;
+import com.voyageone.web2.vms.VmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 
@@ -68,7 +66,7 @@ public class VmsFinancialReportService extends BaseAppService {
         boolean canConfirmReport = false;
 
         List<UserConfigBean>  confirmReportConfigList = user.getUserConfig().get("vms_confirm_report");
-        if (confirmReportConfigList.size() > 0 ) {
+        if (confirmReportConfigList != null && confirmReportConfigList.size() > 0 ) {
             if (confirmReportConfigList.get(0).getCfg_val1().equals("1")) {
                 canConfirmReport = true;
             }
@@ -78,6 +76,10 @@ public class VmsFinancialReportService extends BaseAppService {
         sqlParam.put("channelId", user.getSelChannelId());
         if (!StringUtils.isEmpty((String) param.get("reportYearMonth"))) {
             sqlParam.put("reportYearMonth", (String) param.get("reportYearMonth"));
+        }
+        // 客户登录只能看到承认过的财务报表
+        if (!canConfirmReport) {
+            sqlParam.put("status", VmsConstants.FinancialReportStatus.CONFIRMED);
         }
 
         Map<String, Object> newMap = MySqlPageHelper.build(sqlParam).addSort("report_year_month", Order.Direction.DESC).toMap();
@@ -112,5 +114,17 @@ public class VmsFinancialReportService extends BaseAppService {
         }
 
         return financialReportList;
+    }
+
+    /**
+     * 检索
+     *
+     * @param param 客户端参数
+     * @param user UserSessionBean
+     * @return 检索结果
+     */
+    public void confirm(Map<String, Object> param, UserSessionBean user) {
+        financialReportService.updateFinancialReportStatus(user.getSelChannelId(), (Integer) param.get("id"),
+                VmsConstants.FinancialReportStatus.CONFIRMED, user.getUserName());
     }
 }

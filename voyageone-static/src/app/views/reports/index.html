@@ -44,9 +44,9 @@
                         <td>FR{{financialReport.reportYearMonth}}</td>
                         <td>{{financialReport.reportStartDate}} ~ {{financialReport.reportEndDate}}</td>
                         <td class="text-center">${{financialReport.totalPrice}}</td>
-                        <td class="text-center"><button class="btn btn-success btn-xs" ng-click="ctrl.download(financialReport.report_file_name)"><i class="fa fa-cloud-download fa-lg"></i></button></td>
+                        <td class="text-center"><button class="btn btn-success btn-xs" ng-click="ctrl.download(financialReport.reportFileName)"><i class="fa fa-cloud-download fa-lg"></i></button></td>
                         <td  ng-if="ctrl.canConfirmReport == true">{{financialReport.statusName}}</td>
-                        <td  ng-if="ctrl.canConfirmReport == true && financialReport.status == '0'"><button class="btn btn-xs btn-info" ng-click="ctrl.confirm(financialReport.reportFileName)" translate="BTN_CONFIRM"></button></td>
+                        <td  ng-if="ctrl.canConfirmReport == true"><button class="btn btn-xs btn-info" ng-click="ctrl.confirmReport(financialReport.id)" ng-if="financialReport.status == '0'" translate="BTN_CONFIRM"></button>&nbsp;</td>
                     </tr>
                     </tbody>
                 </table>

@@ -9,6 +9,7 @@ define(function () {
         "TXT_CONFIRM": "Confirm",
         "TXT_CONFIRM_TO_CANCEL_ORDER": "Do you confirm to cancel this order?",
         "TXT_CONFIRM_TO_CANCEL_SKU": "Do you confirm to cancel this SKU?",
+        "TXT_CONFIRM_FINANCIAL_REPORT": "Do you want to confirm this financial report?",
         "TXT_CURRENT_SHIPMENT": "Current Shipment",
         "TXT_DESCRIPTION": "Description",
         "TXT_EXPORT_ERROR_FILE": "Export Error File",

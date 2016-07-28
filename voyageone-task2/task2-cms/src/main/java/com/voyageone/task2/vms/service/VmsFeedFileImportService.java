@@ -599,8 +599,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             if (!errorFlg) {
                 feedInfo = new CmsBtFeedInfoModel();
                 feedInfo.setChannelId(channel.getOrder_channel_id());
-                feedInfo.setCode(sku);
-                feedInfo.setModel(sku);
+                feedInfo.setCode(channel.getOrder_channel_id() + "-" + sku);
+                feedInfo.setModel(channel.getOrder_channel_id() + "-" + sku);
                 feedInfo.setCategory(category);
                 feedInfo.setCatId(MD5.getMD5(category));
                 feedInfo.setName(title);
@@ -636,7 +636,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     CmsBtFeedInfoModel_Sku skuModel = new CmsBtFeedInfoModel_Sku();
                     skuModel.setBarcode(codeModel.getProductId());
                     skuModel.setClientSku(codeModel.getSku());
-                    skuModel.setSku(codeModel.getSku());
+                    skuModel.setSku(channel.getOrder_channel_id() + "-" + codeModel.getSku());
                     skuModel.setSize("One Size");
                     skuModel.setImage(Arrays.asList(images.split(",")));
                     skuModel.setQty(new Integer(codeModel.getQuantity()));
@@ -659,7 +659,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         skuModel.setBarcode(skuTemp.getProductId());
                         skuModel.setClientSku(skuTemp.getSku());
                         Map<String, String> skuKeyMap = getSkuKey(skuTemp);
-                        skuModel.setSku(feedInfo.getCode() + "-" + skuKeyMap.get("Value").replaceAll(" ", ""));
+                        skuModel.setSku(channel.getOrder_channel_id() + "-" + codeModel.getSku() + "-" + skuKeyMap.get("Value").replaceAll(" ", ""));
                         skuModel.setSize(skuKeyMap.get("Value"));
                         skuModel.setImage(Arrays.asList(images.split(",")));
                         skuModel.setQty(new Integer(skuTemp.getQuantity()));
