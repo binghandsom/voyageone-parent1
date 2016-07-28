@@ -7,7 +7,6 @@ define([
             this.alert = alert;
             this.notify = notify;
             this.blockUI = blockUI;
-            // this.uploadItem = null;
             this.FileUploader = FileUploader;
             this.uploader = new FileUploader({
                 url: "/vms/feed/file_upload/uploadFeedFile"
@@ -33,8 +32,7 @@ define([
                     };
                     uploadItem.onError = function (res) {
                         main.blockUI.stop();
-                        main.uploader = new FileUploader({url: "/vms/feed/file_upload/uploadFeedFile"});
-                        main.alert('TXT_MSG_UPLOAD_FAIL');
+                        main.alert('TXT_FAIL_TO_UPLOAD_FILE');
                     };
                     uploadItem.formData = [];
                     uploadItem.upload();
