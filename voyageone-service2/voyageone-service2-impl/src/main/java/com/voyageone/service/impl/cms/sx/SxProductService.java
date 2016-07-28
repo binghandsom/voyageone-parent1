@@ -2406,6 +2406,10 @@ public class SxProductService extends BaseService {
                         Field valueField = deepCloneField(subfields.get(index - 1));
                         if (valueField.getType() == FieldTypeEnum.INPUT) {
                             String url = resolveDict(imageProp.getBaseDictName() + index, expressionParser, shopBean, user, null);
+                            if (StringUtils.isEmpty(url)) {
+                                // 如果代码未设定，那么直接用field.name去取着试试看
+                                url = resolveDict(valueField.getName(), expressionParser, shopBean, user, null);
+                            }
                             complexValue.put(valueField);
                             ((InputField) valueField).setValue(url);
                         } else {
