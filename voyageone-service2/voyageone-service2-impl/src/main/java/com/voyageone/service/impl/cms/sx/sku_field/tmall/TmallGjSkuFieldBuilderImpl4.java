@@ -95,11 +95,18 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
         Map<String, CmsBtProductModel> colorCmsPropductMap;
         Map<String, CmsBtProductModel_Sku> sizeCmsSkuPropMap;
         Map<CmsBtProductModel, String> cmsPropductColorMap;
+        // added by morse.lu 2016/07/08 start
+        // Map<原size, 对应的平台的size的option>
+        Map<String, String> sizeMap;
+        // added by morse.lu 2016/07/08 end
 
         public BuildSkuResult() {
             colorCmsPropductMap = new HashMap<>();
             cmsPropductColorMap = new HashMap<>();
             sizeCmsSkuPropMap = new HashMap<>();
+            // added by morse.lu 2016/07/08 start
+            sizeMap = new HashMap<>();
+            // added by morse.lu 2016/07/08 end
         }
 
         public Map<CmsBtProductModel, String> getCmsPropductColorMap() {
@@ -117,6 +124,12 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
         public Map<String, CmsBtProductModel_Sku> getSizeCmsSkuPropMap() {
             return sizeCmsSkuPropMap;
         }
+
+        // added by morse.lu 2016/07/08 start
+        public Map<String, String> getSizeMap() {
+            return sizeMap;
+        }
+        // added by morse.lu 2016/07/08 end
     }
 
     @Override
@@ -349,6 +362,15 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
 //    private void buildSkuSize(ComplexValue skuFieldValue, ExpressionParser expressionParser, CmsBtProductModel_Sku cmsSkuProp, MappingBean sizeMapping, ShopBean shopBean, String user) throws Exception {
     private void buildSkuSize(ComplexValue skuFieldValue, CmsBtProductModel productModel, CmsBtProductModel_Sku cmsSkuProp) throws Exception {
         if (sku_sizeField.getType() == FieldTypeEnum.SINGLECHECK) {
+            // added by morse.lu 2016/07/08 start
+            String sizeSx = cmsSkuProp.getSizeSx();
+            String size = buildSkuResult.getSizeMap().get(sizeSx);
+            if (!StringUtils.isEmpty(size)) {
+                // 有相同的size,用平台的size的同一个option
+                skuFieldValue.setSingleCheckFieldValue(sku_sizeField.getId(), new Value(size));
+                return;
+            }
+            // added by morse.lu 2016/07/08 end
             List<Option> sizeOptions = ((SingleCheckField)sku_sizeField).getOptions();
             // added by morse.lu 2016/07/26 start
             if (availableSizeIndex >= sizeOptions.size()) {
@@ -358,6 +380,9 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
             String sizeValue = sizeOptions.get(availableSizeIndex++).getValue();
             skuFieldValue.setSingleCheckFieldValue(sku_sizeField.getId(), new Value(sizeValue));
             buildSkuResult.getSizeCmsSkuPropMap().put(sizeValue, cmsSkuProp);
+            // added by morse.lu 2016/07/08 start
+            buildSkuResult.getSizeMap().put(sizeSx, sizeValue);
+            // added by morse.lu 2016/07/08 end
         } else {
             // modified by morse.lu 2016/07/04 start
             // 不用Mapping了
@@ -368,11 +393,18 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
 //            String skuSize = expressionParser.parse(skuSizeExpression, shopBean, user, null);
             String skuSize = getSkuValue(productModel, sku_sizeField.getId(), cmsSkuProp.getSkuCode());
             // modified by morse.lu 2016/07/04 end
-            if (skuSize == null) {
-                throw new BusinessException("sku size(" + sku_sizeField.getId() + ") can't be null");
+            // modified by morse.lu 2016/07/27 start
+            if (StringUtils.isEmpty(skuSize)) {
+                // 没填的话用sizeSx
+//                throw new BusinessException("sku size(" + sku_sizeField.getId() + ") can't be null");
+                skuSize = cmsSkuProp.getSizeSx();
+                // modified by morse.lu 2016/07/27 end
             }
             skuFieldValue.setInputFieldValue(sku_sizeField.getId(), skuSize);
             buildSkuResult.getSizeCmsSkuPropMap().put(skuSize, cmsSkuProp);
+            // added by morse.lu 2016/07/08 start
+            buildSkuResult.getSizeMap().put(skuSize, skuSize);
+            // added by morse.lu 2016/07/08 end
         }
     }
 
@@ -612,24 +644,39 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
             if (propId != null && propId.equals(skuExtend_sizeField.getId())) {
                 customSizeNameIdMap.put(propValue, sizeId);
             }
-            allCustomSizePropMap.put(sizeId, eachCustomSizePropMap);
+//            allCustomSizePropMap.put(sizeId, eachCustomSizePropMap);
         }
 
         List<ComplexValue> complexValues = new ArrayList<>();
         List<String> skipProps = new ArrayList<>();
-        for (Map.Entry<String, CmsBtProductModel_Sku> entry : buildSkuResult.getSizeCmsSkuPropMap().entrySet())
+        // modified by morse.lu 2016/07/08 start
+        // 尺码扩展不再根据sku数量来填坑了,如果size相同，只会填一个坑
+//        for (Map.Entry<String, CmsBtProductModel_Sku> entry : buildSkuResult.getSizeCmsSkuPropMap().entrySet())
+        for (Map.Entry<String, String> entry : buildSkuResult.getSizeMap().entrySet())
+        // modified by morse.lu 2016/07/08 end
         {
+
+
             // deleted by morse.lu 2016/07/04 start
             // 不Mapping了,不用了吧,虽然留着也不影响,但是set的对象不对,应该是common下的skus + 各平台下面的skus
 //            expressionParser.setSkuPropContext(entry.getValue());
             // deleted by morse.lu 2016/07/04 end
             ComplexValue complexValue = new ComplexValue();
 
+            // modified by morse.lu 2016/07/08 start
+            // 尺码扩展不再根据sku数量来填坑了,如果size相同，只会填一个坑
+//            if (skuExtend_sizeField.getType() == FieldTypeEnum.SINGLECHECK) {
+//                complexValue.setSingleCheckFieldValue(skuExtend_sizeField.getId(), new Value(entry.getKey()));
+//            } else {
+//                complexValue.setInputFieldValue(skuExtend_sizeField.getId(), entry.getKey());
+//            }
             if (skuExtend_sizeField.getType() == FieldTypeEnum.SINGLECHECK) {
-                complexValue.setSingleCheckFieldValue(skuExtend_sizeField.getId(), new Value(entry.getKey()));
+                complexValue.setSingleCheckFieldValue(skuExtend_sizeField.getId(), new Value(entry.getValue()));
             } else {
-                complexValue.setInputFieldValue(skuExtend_sizeField.getId(), entry.getKey());
+                complexValue.setInputFieldValue(skuExtend_sizeField.getId(), entry.getValue());
             }
+            // modified by morse.lu 2016/07/08 end
+
             skipProps.add(skuExtend_sizeField.getId());
             //TODO 从CUSTOM_SIZE表中读尺寸
             String skuSize = entry.getKey();
