@@ -560,6 +560,12 @@ s-field textarea.s-html {
     border-left: 1px solid #ADCAE2;
 }
 
+.product-shema-detail .no-master{
+    font-size: 15px;
+    font-weight: bold;
+    color: #d60032;
+}
+
 .product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex button {
     margin-top: 23px;
     align-self: auto;
