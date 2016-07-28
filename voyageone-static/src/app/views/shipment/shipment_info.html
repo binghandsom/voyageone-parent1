@@ -14,9 +14,9 @@
             <div class="form-inline col-sm-12">
                 <div class="form-group">
                     <input id="Shipment Name" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.shipmentName"
-                           ng-attr-placeholder="{{'TXT_SHIPMENT_NAME'|translate}}">
+                           ng-attr-placeholder="{{'TXT_SHIPMENT_NAME'|translate}}" enter-click="#searchButton">
                     <input id="Tracking No" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.searchInfo.trackingNo"
-                           ng-attr-placeholder="{{'TXT_TRACKING_NO_'|translate}}">
+                           ng-attr-placeholder="{{'TXT_TRACKING_NO_'|translate}}" enter-click="#searchButton">
                     <label class="control-label" translate="TXT_STATUS"></label>
                     <select name="SHIPMENT_STATUS" id="select" class="form-control input-sm" ng-model="ctrl.searchInfo.status"
                             ng-options="option.value as option.name for option in ctrl.shipmentStatusList">
@@ -38,7 +38,7 @@
                             <button class="btn btn-default input-sm" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </span>
-                    <button class="btn btn-primary btn-sm" ng-click="ctrl.search()" translate="BTN_SEARCH"></button>
+                    <button id="searchButton" class="btn btn-primary btn-sm" ng-click="ctrl.search()" translate="BTN_SEARCH"></button>
                 </div>
                 <div class="pull-right">
                     <button class="btn btn-success btn-sm" ng-click="ctrl.popShipment({},'new')" translate="BTN_NEW_SHIPMENT"></button>

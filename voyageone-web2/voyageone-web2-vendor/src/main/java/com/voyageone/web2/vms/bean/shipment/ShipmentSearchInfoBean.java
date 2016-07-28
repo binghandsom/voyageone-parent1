@@ -10,7 +10,7 @@ import static com.voyageone.web2.vms.VmsConstants.DEFAULT_PAGE_SIZE;
  * shipmen搜索条件
  * Created by vantis on 16-7-25.
  */
-public class ShipmentSearchInfo {
+public class ShipmentSearchInfoBean {
     private String status;
     private String shipmentName;
     private String trackingNo;

@@ -5,7 +5,7 @@ import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
-import com.voyageone.web2.vms.bean.VmsChannelSettings;
+import com.voyageone.web2.vms.bean.VmsChannelSettingBean;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,7 +21,7 @@ public class VmsChannelConfigService {
      * @param user 当前用户
      * @return 当前用户所选择channel的配置
      */
-    public VmsChannelSettings getChannelConfigs(UserSessionBean user) {
+    public VmsChannelSettingBean getChannelConfigs(UserSessionBean user) {
 
         VmsChannelConfigBean vendorOperateType = VmsChannelConfigs.getConfigBean(user.getSelChannelId(),
                 VmsConstants.ChannelConfig.VENDOR_OPERATE_TYPE, VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
@@ -32,10 +32,10 @@ public class VmsChannelConfigService {
         // Missing required configures for this channel, please contact with the system administrator for help.
         if (null == vendorOperateType) throw new BusinessException("8000019");
 
-        VmsChannelSettings vmsChannelSettings = new VmsChannelSettings();
-        vmsChannelSettings.setVendorOperateType(vendorOperateType.getConfigValue1());
+        VmsChannelSettingBean vmsChannelSettingBean = new VmsChannelSettingBean();
+        vmsChannelSettingBean.setVendorOperateType(vendorOperateType.getConfigValue1());
         if (null != salePriceShow)
-            vmsChannelSettings.setSalePriceShow(salePriceShow.getConfigValue1());
-        return vmsChannelSettings;
+            vmsChannelSettingBean.setSalePriceShow(salePriceShow.getConfigValue1());
+        return vmsChannelSettingBean;
     }
 }

@@ -15,21 +15,21 @@
                 <div class="form-group">
                     <!-- Parent SKU -->
                     <label class="control-label" translate="TXT_PARENT_SKU"></label>
-                    <input id="Parent SKU" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.parentSku">
+                    <input id="Parent SKU" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.parentSku" enter-click="#searchButton">
                     <!-- Brand -->
                     <label class="control-label" translate="TXT_NAME"></label>
-                    <input id="Brand" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.name">
+                    <input id="Brand" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.name" enter-click="#searchButton">
                     <!-- Category -->
                     <label class="control-label" translate="TXT_CATEGORY"></label>
-                    <input id="Category" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.category">
+                    <input id="Category" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.category" enter-click="#searchButton">
                     <!-- Price -->
                     <label class="control-label" translate="TXT_PRICE"></label>
-                    <input id="startPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceStart">
+                    <input id="startPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceStart" enter-click="#searchButton">
                     <span>~</span>
-                    <input id="endPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceEnd">
+                    <input id="endPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceEnd" enter-click="#searchButton">
                 </div>
                 <div class="pull-right">
-                    <button class="btn btn-primary btn-sm" ng-click="ctrl.search()" translate="BTN_SEARCH"></button>
+                    <button id="searchButton" class="btn btn-primary btn-sm" ng-click="ctrl.search()" translate="BTN_SEARCH"></button>
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-package com.voyageone.web2.vms.bean.order;
+package com.voyageone.service.bean.vms.order;
 
 import java.util.List;
 

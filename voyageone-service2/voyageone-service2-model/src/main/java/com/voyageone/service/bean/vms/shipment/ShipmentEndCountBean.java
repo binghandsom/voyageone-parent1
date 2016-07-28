@@ -1,4 +1,4 @@
-package com.voyageone.web2.vms.bean.shipment;
+package com.voyageone.service.bean.vms.shipment;
 
 /**
  * shipment关闭发货的统计内容

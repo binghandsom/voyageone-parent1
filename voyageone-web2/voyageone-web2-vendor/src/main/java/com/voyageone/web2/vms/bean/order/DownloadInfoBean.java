@@ -4,7 +4,7 @@ package com.voyageone.web2.vms.bean.order;
  * 下载拣货单的配置
  * Created by vantis on 16-7-12.
  */
-public class DownloadInfo {
+public class DownloadInfoBean {
     private String orderType;
 
     public String getOrderType() {

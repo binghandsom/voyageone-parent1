@@ -113,8 +113,8 @@ public class OrderDetailService extends BaseService {
      * @param channelId            channelId
      * @param consolidationOrderId 订单号
      * @param status               待更新状态
-     * @param operateTime 操作时间
-     * @param operator 操作着
+     * @param operateTime          操作时间
+     * @param operator             操作着
      * @return 更新涉及条数
      */
     @VOTransactional
@@ -170,8 +170,8 @@ public class OrderDetailService extends BaseService {
      * @param channelId     channelId
      * @param reservationId 物品id
      * @param status        待更新状态
-     * @param operateTime 操作时间
-     * @param operator 操作着
+     * @param operateTime   操作时间
+     * @param operator      操作着
      * @return 更新涉及条数
      */
     @VOTransactional
@@ -347,7 +347,8 @@ public class OrderDetailService extends BaseService {
         return vmsBtOrderDetailDaoExt.cancelOrderShipmentStatus(params);
     }
 
-    public int updateOrderStatusWithShipmentId(String channelId, Integer shipmentId, String status) {
+    public int updateOrderStatusWithShipmentId(String channelId, Integer shipmentId, String status, Date operateTime,
+                                               String operator) {
 
         // 更新status
         Map<String, Object> params = new HashMap<String, Object>() {{
@@ -355,7 +356,21 @@ public class OrderDetailService extends BaseService {
             put("wShipmentId", shipmentId); // 更新的where条件
             put("shipmentTime", new Date());
             put("status", status);
+
+            if (STATUS_CANCEL.equals(status)) {
+                put("containerizingTimeNull", "1");
+                put("containerizerNull", "1");
+                put("shipmentIdNull", "1");
+                put("cancelTime", operateTime);
+                put("canceler", operator);
+            } else if (STATUS_SHIPPED.equals(status)) {
+                put("shipmentTime", operateTime);
+            } else if (STATUS_RECEIVED.equals(status)) {
+                put("receivedTime", operateTime);
+                put("receiver", operator);
+            }
         }};
+
         int updated = vmsBtOrderDetailDaoExt.updateOrderStatus(params);
 
         // 记录订单变更状态

@@ -2,7 +2,7 @@ package com.voyageone.web2.vms.views.shipment;
 
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.vms.bean.shipment.ShipmentSearchInfo;
+import com.voyageone.web2.vms.bean.shipment.ShipmentSearchInfoBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,10 +36,10 @@ public class VmsShipmentInfoController extends BaseController {
     }
 
     @RequestMapping(SHIPMENT.SHIPMENT_INFO.SEARCH)
-    public AjaxResponse search(@RequestBody ShipmentSearchInfo shipmentSearchInfo) {
+    public AjaxResponse search(@RequestBody ShipmentSearchInfoBean shipmentSearchInfoBean) {
         Map<String, Object> result = new HashMap<>();
         Date date = new Date();
-        result.put("shipmentInfo", vmsShipmentService.search(this.getUser(), shipmentSearchInfo));
+        result.put("shipmentInfo", vmsShipmentService.search(this.getUser(), shipmentSearchInfoBean));
         $debug("this action takes totally " + String.valueOf(new Date().getTime() - date.getTime()) + " milliseconds.");
         return success(result);
     }

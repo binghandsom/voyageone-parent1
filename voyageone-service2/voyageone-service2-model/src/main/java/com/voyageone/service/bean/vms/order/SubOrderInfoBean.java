@@ -1,4 +1,4 @@
-package com.voyageone.web2.vms.bean.order;
+package com.voyageone.service.bean.vms.order;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

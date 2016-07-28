@@ -65,7 +65,10 @@ define([
             };
             self.shipmentDetailService.scan(req).then(function (data) {
                 if (data.success == 1) {
-                    successAudio(true);
+                    try {
+                        successAudio(true);
+                    } catch (exception) {
+                    }
                     self.notify.success('TXT_SUCCESS');
                 }
                 else if (data.success == 0) {

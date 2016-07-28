@@ -1,12 +1,12 @@
 package com.voyageone.web2.vms.bean.order;
 
-import com.voyageone.web2.vms.bean.shipment.ShipmentBean;
+import com.voyageone.service.bean.vms.shipment.ShipmentBean;
 
 /**
  * 订单级扫码界面初始化条件
  * Created by vantis on 16-7-19.
  */
-public class ScanPopupInitialInfo {
+public class ScanPopupInitialInfoBean {
     private ShipmentBean shipment;
     private String consolidationOrderId;
 

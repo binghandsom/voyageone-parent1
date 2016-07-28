@@ -6,7 +6,7 @@ import com.github.miemiedev.mybatis.paginator.domain.Order;
  * 排序结构
  * Created by vantis on 16-7-13.
  */
-public class SortParam {
+public class SortParamBean {
 
     private String columnName;
     private Order.Direction direction;
