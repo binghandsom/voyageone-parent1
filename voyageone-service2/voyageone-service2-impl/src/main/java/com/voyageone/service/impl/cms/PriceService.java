@@ -69,7 +69,7 @@ public class PriceService extends BaseService {
     public CmsBtProductModel setRetailPrice(CmsBtProductModel product, Integer cartId) {
         Double exchangeRate = getExchangeRate("USD");
         String channelId = product.getChannelId();
-        ChannelCartParams channelCartParams = new ChannelCartParams(cartId, channelId).invoke();
+        ChannelCartParams channelCartParams = new ChannelCartParams(cartId, channelId);
         ProductParams productParams = new ProductParams(product, cartId, channelCartParams.getShippingType());
         return setPlatformRetailPrice(product, cartId, exchangeRate, channelCartParams, productParams);
     }
@@ -90,7 +90,7 @@ public class PriceService extends BaseService {
             //为了减少数据库访问次数,尽量提前读取exchangeRate和相关参数
             String channelId = product.getChannelId();
             Double exchangeRate = getExchangeRate("USD");
-            ChannelCartParams channelCartParams = new ChannelCartParams(cartId, channelId).invoke();
+            ChannelCartParams channelCartParams = new ChannelCartParams(cartId, channelId);
 
             ProductParams productParams = new ProductParams(product, cartId, channelCartParams.getShippingType());
 
@@ -126,7 +126,7 @@ public class PriceService extends BaseService {
 
             Integer cartId = cartType.getCartId();
 
-            ChannelCartParams channelCartParams = new ChannelCartParams(cartId, channelId).invoke();
+            ChannelCartParams channelCartParams = new ChannelCartParams(cartId, channelId);
 
             ProductParams productParams = new ProductParams(product, cartId, channelCartParams.getShippingType());
 
@@ -165,7 +165,7 @@ public class PriceService extends BaseService {
 
             Double retailPrice = getRetailPrice(clientNetPrice, shippingFee, exchangeRate, voCommission, pfCommission, returnRate, taxRate, otherFee);
 
-            BaseMongoMap<String, Object> platformSku = platformSkus.stream().filter(w -> commonSku.getSkuCode().equals(w.getStringAttribute("skuCode"))).findFirst().get();
+            BaseMongoMap<String, Object> platformSku = platformSkus.stream().filter(w -> commonSku.getSkuCode().equals(w.getStringAttribute("skuCode"))).findFirst().orElse(null);
 
             if (platformSku != null) {
                 platformSku.setAttribute("priceRetail", retailPrice);
@@ -227,7 +227,7 @@ public class PriceService extends BaseService {
 
         CmsMtFeeShippingModel shippingModel = cmsMtFeeShippingDao.selectOne(queryMap);
 
-        if (shippingModel.getFeeType() == BY_WEIGHT) {
+        if (BY_WEIGHT.equals(shippingModel.getFeeType())) {
             int firstWeight = shippingModel.getFirstWeight();
             double firstWeightFee = shippingModel.getFirstWeightFee();
             int additionalWeight = shippingModel.getAdditionalWeight();
