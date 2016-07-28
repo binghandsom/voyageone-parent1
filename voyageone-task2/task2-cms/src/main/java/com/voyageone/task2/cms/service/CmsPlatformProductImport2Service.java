@@ -229,12 +229,19 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
             });
             // added by morse.lu 2016/07/18 start
             String catId = (String) fieldMap.get("cat_id"); // 类目ID
-            updateMap.put("platforms.P23.pCatId", catId);
-            CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, 23);
-            if (cmsMtPlatformCategorySchemaModel != null) {
-                updateMap.put("platforms.P23.pCatPath", cmsMtPlatformCategorySchemaModel.getCatFullPath());
-            } else {
-                updateMap.put("platforms.P23.pCatPath", "");
+            if (!StringUtils.isEmpty(catId)) {
+                // 取到了再回写
+                updateMap.put("platforms.P23.pCatId", catId);
+                CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, 23);
+                if (cmsMtPlatformCategorySchemaModel != null) {
+                    updateMap.put("platforms.P23.pCatPath", cmsMtPlatformCategorySchemaModel.getCatFullPath());
+                } else {
+                    updateMap.put("platforms.P23.pCatPath", "");
+                }
+            } else{
+                // 产品id错了，取不到产品信息
+                $warn(String.format("PlatformPid[%s] numIid=[%s] 天猫上不存在!group表PlatformPid已经清除,product表的平台类目pCatId需要重新选择填写!", cmsBtProductGroup.getPlatformPid(), cmsBtProductGroup.getNumIId()));
+                cmsBtProductGroup.setPlatformPid("");
             }
 
             if (!hasPublishSku[0] || hasPublishSku[1]) {
@@ -259,38 +266,38 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
 
         cmsBtProductDao.bulkUpdateWithMap(cmsBtProductGroup.getChannelId(), bulkList, getTaskName(), "$set");
 
-        {
-            // price 回写进common.skus.size和platforms.P23.skus下的priceMsrp或priceSale
-            // size 先不回写
-            // 该group下的所有code
-            List<String> productCodeList = cmsBtProductGroup.getProductCodes();
-            String[] codeArr = new String[productCodeList.size()];
-            codeArr = productCodeList.toArray(codeArr);
-            List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}", channelId);
-
-            String pricePropName = getPricePropName(channelId);
-
-            List<Map<String, Object>> listSkus = (List) fieldMap.get("sku");
-            // Map<skuCode, Map<String, Object>>
-            Map<String, Map<String, Object>> mapSkus = listSkus.stream().collect(Collectors.toMap((p) -> (String) p.get("sku_outerId"), (p) -> p));
-
-            productModelList.forEach(model-> {
-                model.getPlatform(23).getSkus().forEach(sku -> {
-                    String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
-                    if (mapSkus.get(skuCode) != null) {
-                        String price = (String) mapSkus.get(skuCode).get("sku_price");
-                        sku.setStringAttribute(pricePropName, price);
-                    }
-                });
-
-                try {
-                    // ★★★★★此更新方法已经被干掉了，需要的话，本地打开★★★★★
-                    cmsBtProductDao.updateByModel(model);
-                } catch (BusinessException ex) {
-                    $warn("product表更新关闭!");
-                }
-            });
-        }
+//        {
+//            // price 回写进common.skus.size和platforms.P23.skus下的priceMsrp或priceSale
+//            // size 先不回写
+//            // 该group下的所有code
+//            List<String> productCodeList = cmsBtProductGroup.getProductCodes();
+//            String[] codeArr = new String[productCodeList.size()];
+//            codeArr = productCodeList.toArray(codeArr);
+//            List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}", channelId);
+//
+//            String pricePropName = getPricePropName(channelId);
+//
+//            List<Map<String, Object>> listSkus = (List) fieldMap.get("sku");
+//            // Map<skuCode, Map<String, Object>>
+//            Map<String, Map<String, Object>> mapSkus = listSkus.stream().collect(Collectors.toMap((p) -> (String) p.get("sku_outerId"), (p) -> p));
+//
+//            productModelList.forEach(model-> {
+//                model.getPlatform(23).getSkus().forEach(sku -> {
+//                    String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+//                    if (mapSkus.get(skuCode) != null) {
+//                        String price = (String) mapSkus.get(skuCode).get("sku_price");
+//                        sku.setStringAttribute(pricePropName, price);
+//                    }
+//                });
+//
+//                try {
+//                    // ★★★★★此更新方法已经被干掉了，需要的话，本地打开★★★★★
+//                    cmsBtProductDao.updateByModel(model);
+//                } catch (BusinessException ex) {
+//                    $warn("product表更新关闭!");
+//                }
+//            });
+//        }
 
         // added by morse.lu 2016/07/18 start
         String item_status = (String) fieldMap.get("item_status"); // 商品状态
