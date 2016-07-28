@@ -8,7 +8,10 @@ define(function () {
             this.$window = $window;
             var main = this;
             menuService.getVendorMenuHeaderInfo().then(function (res) {
-                main.menus = res.menuInfo;
+                main.menus = res.menuInfo.map(function (menu) {
+                    menu.open = false;
+                    return menu;
+                })
             })
         }
 
@@ -17,7 +20,7 @@ define(function () {
                 sessionStorage.clear();
                 this.$window.location = url;
             }
-        }
+        };
 
         return MenuController;
     }()));
