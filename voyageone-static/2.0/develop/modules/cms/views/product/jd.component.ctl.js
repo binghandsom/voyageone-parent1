@@ -41,6 +41,7 @@ define([
                 scope.pageAnchor = pageAnchor;
                 scope.allSkuSale = allSkuSale;
                 scope.focusError = focusError;
+                scope.choseBrand = choseBrand;
 
                 /**
                  * 获取京东页面初始化数据
@@ -164,8 +165,7 @@ define([
                         return;
 
                     if(scope.vm.platform == null || scope.vm.platform.pNumIId == null || scope.vm.platform.pNumIId == ""){
-                        var _msg = type == "single" ? "【单Code下线】。" : "【全group下线】。";
-                        alert("商品未完成平台上新，无法操作" + _msg);
+                        alert("商品未完成平台上新，无法操作平台下线。");
                         return;
                     }
 
@@ -182,6 +182,23 @@ define([
                         //刷新子页面
                         getplatformData();
                     });
+                }
+
+                /**
+                 *  商品品牌选择
+                 */
+                function choseBrand(openPlatformMappingSetting){
+
+                    var mainBrand = scope.productInfo.masterField.brand;
+
+                    openPlatformMappingSetting({
+                        cartId: scope.cartInfo.value,
+                        cartName: scope.cartInfo.name,
+                        masterName: mainBrand
+                    }).then(function(context){
+                        scope.vm.platform.pBrandName = context.selectedPlatform;
+                    });
+
                 }
 
                 /**

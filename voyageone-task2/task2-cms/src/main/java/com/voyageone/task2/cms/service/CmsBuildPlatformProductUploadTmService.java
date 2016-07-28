@@ -252,7 +252,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
 //            platformCategoryId = cmsMtPlatformMappingModel.getPlatformCategoryId();
             platformCategoryId = sxData.getMainProduct().getPlatform(cartId).getpCatId();
             // 取得平台类目schema信息
-            cmsMtPlatformCategorySchemaModel = platformCategoryService.getPlatformCatSchema(platformCategoryId, cartId);
+            cmsMtPlatformCategorySchemaModel = platformCategoryService.getPlatformCatSchemaTm(platformCategoryId, channelId, cartId);
             if (cmsMtPlatformCategorySchemaModel == null) {
                 String errMsg = String.format("获取平台类目schema信息失败！[PlatformCategoryId:%s] [CartId:%s]", platformCategoryId, cartId);
                 $error(errMsg);

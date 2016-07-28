@@ -27,13 +27,11 @@ define([
             this.confirm = confirm;
             this.defaultCartId = 0;
             this.platformTypes = null;
-            this.cartData = {};
             this.product = {
                 productId : $routeParams.productId,
-                productDetails:null,
+                masterField:null,
                 translateStatus: 0,
                 hsCodeStatus: 0,
-                cartData:this.cartData,
                 checkFlag:null,
                 masterCategory:null,
                 lockStatus:null,
@@ -49,9 +47,6 @@ define([
                 var self = this;
                 self.menuService.getPlatformType().then(function(resp){
                     self.platformTypes = resp;
-                    self.platformTypes.forEach(function(element){
-                        self.cartData["_"+element.value] = element;
-                    });
                 });
 
                 self.menuService.getCmsConfig().then(function(resp){
@@ -70,7 +65,9 @@ define([
                 var self = this;
                 var message = self.product.lockStatus ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
                 this.confirm(message).then(function () {
+
                     var lock = self.product.lockStatus ? "1" : "0";
+
                     self.productDetailService.updateLock({
                         prodId: self.product.productId,
                         lock: lock
@@ -78,6 +75,7 @@ define([
                         var notice = self.product.lockStatus ? "商品已锁定" : "商品已接触锁定";
                         $("#".concat(domId)).notify(notice, {className: "success", position: "right"});
                     });
+
                 }, function () {
                     self.product.lockStatus = false;
                 });
