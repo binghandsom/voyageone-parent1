@@ -29,7 +29,7 @@ define([
                 }
                 self.scannedSkuList = data.scannedSkuList;
                 if (data.finished) {
-                    self.notify.success('TXT_COMPLETE');
+                    self.notify.success('TXT_COMPLETED');
                     self.$uibModalInstance.close(data.finished);
                 }
             })

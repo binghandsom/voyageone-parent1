@@ -1,7 +1,7 @@
 <div class="modal-content modal-blue" ng-init="ctrl.init()">
     <div class="modal-header">
         <h4 class="modal-title" id="editShipmentTitle">
-            <i class="fa fa-tasks"></i>Shipment Info<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i>
+            <i class="fa fa-tasks"></i>{{'TXT_SHIPMENT_INFO' | translate}}<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i>
         </h4>
     </div>
     <div class="modal-body">
@@ -11,8 +11,8 @@
                     <label for="shipmentName" class="col-md-3 col-md-offset-1 control-label"><strong
                             translate="TXT_NAME"></strong></label>
                     <div class="col-md-8">
-                        <input id="shipmentName" type="text" class="form-control" ng-model="ctrl.shipment.shipmentName"
-                               name="shipmentName" required
+                        <input id="shipmentName" name="shipmentName" type="text" class="form-control"
+                               ng-model="ctrl.shipment.shipmentName" required
                                ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
                     </div>
                 </div>

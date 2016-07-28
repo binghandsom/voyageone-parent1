@@ -41,6 +41,8 @@ public class Interceptor extends VOAbsLoggable implements HandlerInterceptor {
 
         $info(request.getServletPath() + " is start.");
 
+//        $debug(this.getRequestBody(request));
+
         // vms系统没有channel选择画面所以channelInterceptor不需要
         if (request.getServletPath().startsWith("/vms")) {
             return loginInterceptor.preHandle(request)
@@ -79,5 +81,18 @@ public class Interceptor extends VOAbsLoggable implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         // 暂时 Do nothing
+    }
+
+    private String getRequestBody(HttpServletRequest request) {
+        if (null != request && request.getContentLength() > 0) {
+            byte[] requestBody = new byte[request.getContentLength()];
+            try {
+                request.getInputStream().read(requestBody, 0, request.getContentLength());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return new String(requestBody);
+        }
+        return "";
     }
 }
