@@ -1,8 +1,11 @@
 package com.voyageone.service.impl.cms.product;
 
+import com.voyageone.common.Constants;
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.CmsBtProductStatusHistoryDao;
@@ -16,6 +19,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author sunpeitao
@@ -36,17 +42,25 @@ public class ProductStatusHistoryService extends BaseService {
     }
 
     public List<MapModel> getPage(PageQueryParameters parameters) {
-        List<MapModel> list = daoExt.selectPage(parameters.getSqlMapParameter());
-        list.forEach(this::loadMap);
-        return list;
-    }
 
-    private void loadMap(MapModel map) {
-        CartEnums.Cart cartEnum = CartEnums.Cart.getValueByID(map.get("cartId").toString());
-        if (cartEnum != null) {
-            map.put("cartName", cartEnum.name());
-        }
-        map.put("operationTypeName", EnumProductOperationType.getNameById(map.get("operationType")));
+        List<MapModel> list = daoExt.selectPage(parameters.getSqlMapParameter());
+
+        List<TypeBean> typeBeanList = TypeConfigEnums.MastType.productStatus.getList(Constants.LANGUAGE.CN);
+
+        Map<String, String> typeMap = typeBeanList.stream().collect(toMap(TypeBean::getValue, TypeBean::getName));
+
+        list.forEach(mapModel -> {
+
+            String status = String.valueOf(mapModel.get("status"));
+
+            String statusCn = typeMap.get(status);
+
+            mapModel.put("statusCn", statusCn);
+
+            mapModel.put("operationTypeName", EnumProductOperationType.getNameById(mapModel.get("operationType")));
+        });
+
+        return list;
     }
 
     public long getCount(PageQueryParameters parameters) {

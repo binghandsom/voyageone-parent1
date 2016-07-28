@@ -7,7 +7,6 @@
                 只能删除未上传的商品 cms_bt_jm_promotion_product.synch_status!=2
          7.3  活动预热已开始的场合：
                功能关闭
-
 8.批量上传：
          8.1 // todo 上个版本已实现   新版本要删除
               if（cms_bt_jm_promotion_product.synch_status！=2）//未上传
@@ -24,7 +23,7 @@
                 if（cms_bt_jm_promotion_product.synch_status！=2）//未上传
                   { cms_bt_jm_promotion_product.synch_status=1 }   //设置为待上传
 
-                 if(cms_bt_jm_promotion_product.synch_status==2)//已上传            todo 和8.1的区别  这里删掉了预热未开始的判断
+                 if(cms_bt_jm_promotion_product.synch_status==2)//已上传   todo 和8.1的区别  这里删掉了预热未开始的判断
                      { cms_bt_jm_promotion_product.price_status=1}//设置为价格待更新
 
 9.批量同步价格 //  批量同步价格  1. if未上传  then price_status=1   2.if已上传&预热未开始  then price_status=1
@@ -43,16 +42,30 @@
                if(cms_bt_jm_promotion_product.synch_status！=2）//未上传
                 { cms_bt_jm_promotion_product.price_status=1 }   //设置为价格待更新
 
-               if(cms_bt_jm_promotion_product.synch_status==2)//已上传              todo 和9.1的区别  这里删掉了预热未开始的判断
+               if(cms_bt_jm_promotion_product.synch_status==2)//已上传     todo 和9.1的区别  这里删掉了预热未开始的判断
                 { cms_bt_jm_promotion_product.price_status=1}  //设置为价格待更新
 10.批量变更价格
-         10.1 if(预热已开始)
+         10.1 // todo 上个版本已实现   新版本要改进
+               if(预热已开始)
                {errorMsg="预热已开始,不能修改价格";}
                if(更新后的团购价>市场价)
                {errorMsg="更新后的团购价大于市场价,不能更新";}
-
-
-
+         10.2 //todo  10.1的改进版
+                if(预热已开始&&synch_status==2)//包含已上新的商品 提示
+                {
+                  alert("专场已上线，变更价格一旦同步至平台将引起客诉,是否更新?");
+                }
+                if(更新后的deal_price>market_price)
+                {
+                   errorMsg="市场价必须大于团购价，请确认数据正确性！";
+                }
+                else
+                 {
+                    if(synch_status==2)//已上传商品标记为 “有变更”
+                    {
+                        update_status=1      //有变更
+                    }
+                 }
 7.批量删除：
    (1)活动预热未开始的场合：
        批量删除前Check：

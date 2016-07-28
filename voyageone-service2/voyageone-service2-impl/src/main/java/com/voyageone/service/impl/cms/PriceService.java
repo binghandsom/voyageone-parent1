@@ -51,18 +51,21 @@ public class PriceService extends BaseService {
     public static final String HSCODE_TYPE_10_DIGIT = "10_DIGIT";
     public static final String HSCODE_TYPE = "HSCODE_TYPE";
 
-    @Autowired
-    CmsMtFeeShippingDao cmsMtFeeShippingDao;
+    private final CmsMtFeeShippingDao cmsMtFeeShippingDao;
+
+    private final CmsMtFeeExchangeDao cmsMtFeeExchangeDao;
+
+    private final CmsMtFeeCommissionDao cmsMtFeeCommissionDao;
+
+    private final CmsMtFeeTaxDao cmsMtFeeTaxDao;
 
     @Autowired
-    CmsMtFeeExchangeDao cmsMtFeeExchangeDao;
-
-    @Autowired
-    CmsMtFeeCommissionDao cmsMtFeeCommissionDao;
-
-    @Autowired
-    CmsMtFeeTaxDao cmsMtFeeTaxDao;
-
+    public PriceService(CmsMtFeeTaxDao cmsMtFeeTaxDao, CmsMtFeeExchangeDao cmsMtFeeExchangeDao, CmsMtFeeShippingDao cmsMtFeeShippingDao, CmsMtFeeCommissionDao cmsMtFeeCommissionDao) {
+        this.cmsMtFeeTaxDao = cmsMtFeeTaxDao;
+        this.cmsMtFeeExchangeDao = cmsMtFeeExchangeDao;
+        this.cmsMtFeeShippingDao = cmsMtFeeShippingDao;
+        this.cmsMtFeeCommissionDao = cmsMtFeeCommissionDao;
+    }
 
     public CmsBtProductModel setRetailPrice(CmsBtProductModel product, Integer cartId) {
         Double exchangeRate = getExchangeRate("USD");
@@ -72,13 +75,8 @@ public class PriceService extends BaseService {
         return setRetailPrice(product, cartId, exchangeRate, channelCartParams, productParams);
     }
 
-
     /**
      * 计算product中各个sku的retailPrice
-     *
-     * @param product
-     * @param cartId
-     * @return
      */
     private CmsBtProductModel setRetailPrice(CmsBtProductModel product, Integer cartId, Double exchangeRate, ChannelCartParams channelCartParams, ProductParams productParams) {
 
@@ -116,11 +114,7 @@ public class PriceService extends BaseService {
 
     /**
      * 批量计算product中各个sku的retailPrice,全部cart
-     *
-     * @param productList
-     * @return
      */
-
     public List<CmsBtProductModel> setRetailPrice(List<CmsBtProductModel> productList) {
         //为了减少数据库访问次数,尽量提前读取exchangeRate
         Double exchangeRate = getExchangeRate("USD");
@@ -132,9 +126,6 @@ public class PriceService extends BaseService {
 
     /**
      * 计算product中各个sku的retailPrice,全部cart
-     *
-     * @param product
-     * @return
      */
     public CmsBtProductModel setRetailPrice(CmsBtProductModel product) {
         Double exchangeRate = getExchangeRate("USD");
@@ -143,9 +134,6 @@ public class PriceService extends BaseService {
 
     /**
      * 计算product中各个sku的retailPrice,全部cart
-     *
-     * @param product
-     * @return
      */
     private CmsBtProductModel setRetailPrice(CmsBtProductModel product, Double exchangeRate) {
 
@@ -166,10 +154,6 @@ public class PriceService extends BaseService {
 
     /**
      * 批量计算product中各个sku的retailPrice
-     *
-     * @param productList
-     * @param cartId
-     * @return
      */
     public List<CmsBtProductModel> setRetailPrice(List<CmsBtProductModel> productList, Integer cartId) {
         for (CmsBtProductModel product : productList) {
@@ -186,21 +170,9 @@ public class PriceService extends BaseService {
         return productList;
     }
 
-
     /**
      * 计算retailPrice
-     *
-     * @param clientNetPrice
-     * @param shippingFee
-     * @param exchangeRate
-     * @param voCommission
-     * @param pfCommission
-     * @param returnRate
-     * @param taxRate
-     * @param otherFee
-     * @return
      */
-
     private Double getRetailPrice(Double clientNetPrice, Double shippingFee, Double exchangeRate,
                                   Double voCommission, Double pfCommission, Double returnRate, Double taxRate, Double otherFee) {
         List<String> msgs = new ArrayList<>();
@@ -242,13 +214,8 @@ public class PriceService extends BaseService {
         }
     }
 
-
     /**
      * 取运费
-     *
-     * @param shippingType
-     * @param weight
-     * @return
      */
     private Double getShippingFee(String shippingType, double weight) {
         Map<String, Object> queryMap = new HashMap<>();
@@ -272,12 +239,8 @@ public class PriceService extends BaseService {
         }
     }
 
-
     /**
      * 取汇率
-     *
-     * @param currencyType
-     * @return
      */
     private Double getExchangeRate(String currencyType) {
         Map<String, Object> queryMap = new HashMap<>();
@@ -289,7 +252,6 @@ public class PriceService extends BaseService {
         CmsMtFeeExchangeModel cmsMtFeeExchangeModel = cmsMtFeeExchangeDao.selectOne(map);
         return cmsMtFeeExchangeModel.getExchangeRate();
     }
-
 
     private class ChannelCartParams {
         private Integer cartId;
@@ -466,7 +428,6 @@ public class PriceService extends BaseService {
             return null;
         }
     }
-
 
     private class ProductParams {
         private CmsBtProductModel product;
