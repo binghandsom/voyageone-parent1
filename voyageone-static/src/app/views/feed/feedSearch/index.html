@@ -44,7 +44,7 @@
                         <th class="v-middle td-1 text-left" translate="TXT_PARENT_SKU"></th>
                         <th class="v-middle td-3 text-left" translate="TXT_NAME"></th>
                         <th class="v-middle td-3 text-left" translate="TXT_CATEGORY"></th>
-                        <th class="v-middle td-1 text-center" translate="TXT_PRICE"></th>
+                        <th class="v-middle td-1 text-left" translate="TXT_PRICE"></th>
                         <th class="v-middle td-1 text-center" translate="TXT_SKU_NUMBER"></th>
                     </tr>
                     </thead>
@@ -54,7 +54,7 @@
                         <td class="v-middle text-left">{{feedInfo.code}}</td>
                         <td class="v-middle text-left">{{feedInfo.name}}</td>
                         <td class="v-middle text-left">{{feedInfo.category}}</td>
-                        <td class="v-middle text-center">{{feedInfo.skus[0].priceClientRetail | currency:'$':2}}</td>
+                        <td class="v-middle text-left">{{feedInfo.skus[0].priceClientRetail | currency:'$':2}}</td>
                         <td class="v-middle text-center">{{feedInfo.skus.length}}</td>
                     </tr>
                     </tbody>

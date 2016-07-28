@@ -6,12 +6,14 @@ define([
 ], function (vms) {
     vms.controller('FinancialReportController', (function () {
 
-        function FinancialReportController(financialReportService) {
+        function FinancialReportController(financialReportService, alert, confirm) {
+            this.alert = alert;
+            this.confirm = confirm;
             this.financialReportService = financialReportService;
             this.financialReportList = [];
             this.reportYearMonthList = [];
             this.reportYearMonth = "";
-            this.canConfirm = false;
+            this.canConfirmReport = false;
         }
 
         FinancialReportController.prototype = {
@@ -28,16 +30,18 @@ define([
                     "reportYearMonth": main.reportYearMonth
                 }).then(function (res) {
                     main.financialReportList = res.financialReportList;
-                    main.canConfirm = res.canConfirm;
+                    main.canConfirmReport = res.canConfirmReport;
                 })
             },
 
-            confirm: function (id) {
+            confirmReport: function (id) {
                 var main = this;
-                main.financialReportService.confirm({
-                    "id": id
-                }).then(function (res) {
-                    main.search();
+                main.confirm('TXT_CONFIRM_FINANCIAL_REPORT').then(function () {
+                    main.financialReportService.confirm({
+                        "id": id
+                    }).then(function (res) {
+                        main.search();
+                    })
                 })
             },
 

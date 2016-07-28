@@ -51,8 +51,20 @@ public class VmsFinancialReportController extends BaseController {
      */
     @RequestMapping(VmsUrlConstants.REPORT.FINANCIAL_REPORT.SEARCH)
     public AjaxResponse search(@RequestBody Map<String, Object> param){
-        Map<String, Object>  result = vmsFinancialReportService.search(param, this.getUser().getSelChannelId());
+        Map<String, Object>  result = vmsFinancialReportService.search(param, this.getUser(), this.getLang());
         return success(result);
+    }
+
+    /**
+     *  承认财务报表
+     *
+     * @param param 客户端参数
+     * @return 结果
+     */
+    @RequestMapping(VmsUrlConstants.REPORT.FINANCIAL_REPORT.CONFIRM)
+    public AjaxResponse confirm(@RequestBody Map<String, Object> param){
+        vmsFinancialReportService.confirm(param, this.getUser());
+        return success(null);
     }
 
     /**
@@ -61,13 +73,13 @@ public class VmsFinancialReportController extends BaseController {
      * @return 财务报表文件
      */
     @RequestMapping(VmsUrlConstants.REPORT.FINANCIAL_REPORT.DOWNLOAD_FINANCIAL_REPORT)
-    public ResponseEntity downloadFeedErrorFile(@RequestParam String financialReportName) throws IOException {
+    public ResponseEntity downloadFinancialReport(@RequestParam String reportFileName) throws IOException {
         // 财务报表文件路径
         String reportFilePath = com.voyageone.common.configs.Properties.readValue("vms.report");
         reportFilePath += "/" + getUser().getSelChannelId() + "/";
 
-        try(FileInputStream file = new FileInputStream(reportFilePath + financialReportName)) {
-            return genResponseEntityFromStream(financialReportName, file);
+        try(FileInputStream file = new FileInputStream(reportFilePath + reportFileName)) {
+            return genResponseEntityFromStream(reportFileName, file);
         } catch (FileNotFoundException ex) {
             // Lost FinancialReportFile.
             throw new BusinessException("8000029");
