@@ -36,6 +36,7 @@ public abstract class BaseTaskJob extends VOAbsIssueLoggable {
 
         String taskCheck = getTaskName();
         MDC.put("taskName", taskCheck);
+        MDC.put("subSystem", getSubSystem().name().toLowerCase());
 
         if (running) {
             $info(taskCheck + "正在运行，忽略");
@@ -52,6 +53,7 @@ public abstract class BaseTaskJob extends VOAbsIssueLoggable {
 
         running = false;
         MDC.remove("taskName");
+        MDC.remove("subSystem");
     }
 
     @Autowired

@@ -60,6 +60,7 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
     @RabbitHandler
     protected void onMessage(byte[] message, @Headers Map<String, Object> headers) throws Exception {
         MDC.put("taskName", getTaskName());
+        MDC.put("subSystem", getSubSystem().name().toLowerCase());
         SimpleAmqpHeaderMapper headerMapper = new SimpleAmqpHeaderMapper();
         MessageHeaders messageHeaders = new MessageHeaders(headers);
         MessageProperties messageProperties = new MessageProperties();
@@ -67,6 +68,7 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
 
         onMessage(new Message(message, messageProperties));
         MDC.remove("taskName");
+        MDC.remove("subSystem");
     }
 
     // 先获取配置
