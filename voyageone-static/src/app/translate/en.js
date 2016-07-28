@@ -80,6 +80,13 @@ define(function () {
         "TXT_SHIPMENT_DETAIL": "Shipment Detail",
         "TXT_NO_SHIPMENT_SELECTED": "No Shipment selected.",
         "TXT_YEAR_MONTH": "Year-Month",
+        "TXT_SKU_LIST": "SKU List",
+        "TXT_CONTAINERIZING_TIME": "Containerizing Time",
+        "TXT_CONTAINERIZING_USER": "Containerizing User",
+        "TXT_COMPLETED": "Completed",
+        "TXT_WELCOME": "Welcome",
+        "TXT_INVENTORY": "Inventory",
+        "TXT_INVENTORY_UPLOAD": "Inventory Upload",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
