@@ -71,9 +71,9 @@
                         <td class="text-center">{{item.skuTotal}}</td>
                         <td class="text-center">{{ctrl.getStatusName(item.status)}}</td>
                         <td class="v-middle">
-                            <span ng-if="item.comment.length <= 30">{{item.comment}}</span>
-                            <span ng-if="item.comment.length > 30" uib-tooltip="{{item.comment}}" tooltip-trigger="mouseenter" tooltip-placement="top">
-                                {{item.comment | stringCutter:true:30:' ...'}}
+                            <span ng-if="item.comment.length <= 25">{{item.comment}}</span>
+                            <span ng-if="item.comment.length > 25" uib-tooltip="{{item.comment}}" tooltip-trigger="mouseenter" tooltip-placement="top">
+                                {{item.comment | stringCutter:true:25:' ...'}}
                             </span>
                         </td>
                         <td class="text-center">
