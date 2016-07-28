@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
@@ -250,8 +251,10 @@ public class PriceService extends BaseService {
         Map<String, Object> queryMap = new HashMap<>();
         queryMap.put("currencyType", currencyType);
 
-        String sortString = "modified DESC";
-        Map<String, Object> map = MySqlPageHelper.build(queryMap).sort(sortString).toMap();
+        Map<String, Object> map = MySqlPageHelper
+                .build(queryMap)
+                .addSort("modified", Order.Direction.DESC)
+                .toMap();
 
         CmsMtFeeExchangeModel cmsMtFeeExchangeModel = cmsMtFeeExchangeDao.selectOne(map);
         return cmsMtFeeExchangeModel.getExchangeRate();
