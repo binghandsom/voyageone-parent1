@@ -229,12 +229,19 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
             });
             // added by morse.lu 2016/07/18 start
             String catId = (String) fieldMap.get("cat_id"); // 类目ID
-            updateMap.put("platforms.P23.pCatId", catId);
-            CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, 23);
-            if (cmsMtPlatformCategorySchemaModel != null) {
-                updateMap.put("platforms.P23.pCatPath", cmsMtPlatformCategorySchemaModel.getCatFullPath());
-            } else {
-                updateMap.put("platforms.P23.pCatPath", "");
+            if (!StringUtils.isEmpty(catId)) {
+                // 取到了再回写
+                updateMap.put("platforms.P23.pCatId", catId);
+                CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, 23);
+                if (cmsMtPlatformCategorySchemaModel != null) {
+                    updateMap.put("platforms.P23.pCatPath", cmsMtPlatformCategorySchemaModel.getCatFullPath());
+                } else {
+                    updateMap.put("platforms.P23.pCatPath", "");
+                }
+            } else{
+                // 产品id错了，取不到产品信息
+                $warn(String.format("PlatformPid[%s] numIid=[%s] 天猫上不存在!group表PlatformPid已经清除,product表的平台类目pCatId需要重新选择填写!", cmsBtProductGroup.getPlatformPid(), cmsBtProductGroup.getNumIId()));
+                cmsBtProductGroup.setPlatformPid("");
             }
 
             if (!hasPublishSku[0] || hasPublishSku[1]) {
