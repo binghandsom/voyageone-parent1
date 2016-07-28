@@ -12,12 +12,14 @@ import com.voyageone.base.dao.mysql.BaseModel;
 /**
  * 
  */
-public class CmsMtPlatformProductIdListModel extends BaseModel {
+public class CmsMtPlatformCategoryExtendInfoModel extends BaseModel {
     protected String channelId;
 
     protected Integer cartId;
 
     protected String categoryId;
+
+    protected String platformBrandId;
 
     protected String platformProductId;
 
@@ -47,6 +49,14 @@ public class CmsMtPlatformProductIdListModel extends BaseModel {
 
     public void setCategoryId(String categoryId) {
         this.categoryId = categoryId == null ? null : categoryId.trim();
+    }
+
+    public String getPlatformBrandId() {
+        return platformBrandId;
+    }
+
+    public void setPlatformBrandId(String platformBrandId) {
+        this.platformBrandId = platformBrandId == null ? null : platformBrandId.trim();
     }
 
     public String getPlatformProductId() {

@@ -45,13 +45,16 @@ define([
                     return;
                 }
                 self.popups.openPlatformMappingConfirm(self.selectedPlatformlist).then(function (res) {
+
                     if (res == true) {
                         self.brandMappingService.addNewBrandMapping({
                             'cmsBrand': self.platformData.masterName,
                             'cartId': self.platformData.cartId,
                             'brandId': self.selectedBrandId
                         });
-                        self.$uibModalInstance.close();
+
+                        self.$uibModalInstance.close(self.selectedPlatformlist);
+
                     }
                 });
             }
