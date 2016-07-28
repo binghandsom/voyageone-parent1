@@ -19,6 +19,7 @@ package com.voyageone.common.flume.sink.file;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.voyageone.common.util.StringUtils;
 import org.apache.flume.*;
 import org.apache.flume.conf.Configurable;
 import org.apache.flume.instrumentation.SinkCounter;
@@ -95,7 +96,7 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
 
         long oneDay = 24 * 60 * 60;
 
-        long initDelay  = System.currentTimeMillis() - getTimeMillis("00:00:01");
+        long initDelay = System.currentTimeMillis() - getTimeMillis("00:00:01");
         rollService.scheduleAtFixedRate((Runnable) () -> {
             logger.debug("Marking time to rotate file {}", directory.getAbsolutePath());
             if (logFileBeanMap != null) {
@@ -181,7 +182,15 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
 
                 String taskName = headerMap.get("taskName");
                 if (taskName != null && taskName.trim().length() > 0) {
-                    String taskLogFile = headerMap.get("splitDir") + taskName + "/task-" + taskName + ".log";
+                    String subSystem = StringUtils.null2Space(headerMap.get("subSystem"));
+                    StringBuilder logFileSb = new StringBuilder(100);
+                    logFileSb.append(headerMap.get("splitDir"));
+                    logFileSb.append(subSystem);
+                    logFileSb.append('/');
+                    logFileSb.append(taskName);
+                    logFileSb.append('/');
+                    logFileSb.append("task-" + taskName + ".log");
+                    String taskLogFile = logFileSb.toString();
 
                     if (!logFileBeanMap.containsKey(taskLogFile)) {
                         logFileBeanMap.put(taskLogFile, new LogFileBean(taskLogFile));
@@ -273,7 +282,6 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
     }
 
 
-
     /**
      * 获取指定时间对应的毫秒数
      * @param time "HH:mm:ss"
@@ -306,7 +314,7 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
 
             currentFile = pathController.getCurrentFile(projectFile);
             if (!currentFile.getParentFile().exists()) {
-                currentFile.getParentFile().mkdir();
+                currentFile.getParentFile().mkdirs();
             }
             outputStream = new BufferedOutputStream(new FileOutputStream(currentFile, true));
 
