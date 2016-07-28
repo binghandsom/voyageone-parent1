@@ -36,6 +36,7 @@ public class SkuFieldBuilderService extends BaseService {
         tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl3.class);
         tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl4.class);
         tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl5.class);
+        tmallGjSkuFieldBuilderClazzs.add(TmallGjSkuFieldBuilderImpl6.class);
         skuFieldBuilderClazzsMap.put(CartEnums.Cart.TG.getId(), tmallGjSkuFieldBuilderClazzs);
     }
 
