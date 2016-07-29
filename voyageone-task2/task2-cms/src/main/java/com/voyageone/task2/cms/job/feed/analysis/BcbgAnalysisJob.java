@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * BCBG Feed 数据分析导入 CMS 的定时任务
  * Created by Jonas on 10/23/15.
  */
-@Component("BcbgAnalysisJob")
+@Component("Cms2BcbgAnalysisJob")
 public class BcbgAnalysisJob extends BaseTaskJob {
 
     @Autowired
