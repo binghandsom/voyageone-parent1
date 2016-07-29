@@ -37,6 +37,10 @@ public class BcbgAnalysisServiceTest {
         FeedsHelper.put(ChannelConfigEnums.Channel.BCBG, FeedEnums.Name.feed_ftp_filename, filepaths);
         FeedsHelper.put(ChannelConfigEnums.Channel.BCBG, FeedEnums.Name.feed_backup_dir, backupDir);
 
-        bcbgAnalysisService.onStartup(new ArrayList<>());
+        try {
+            bcbgAnalysisService.onStartup(new ArrayList<>());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
