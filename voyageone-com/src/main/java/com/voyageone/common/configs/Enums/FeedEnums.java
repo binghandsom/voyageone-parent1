@@ -144,6 +144,10 @@ public class FeedEnums {
         priceWithoutDuty,
         blackList,
         quantity,
-        material
+        material,
+        usage_en,
+        weight_org,
+        weight_org_unit,
+        weight_calc
     }
 }
