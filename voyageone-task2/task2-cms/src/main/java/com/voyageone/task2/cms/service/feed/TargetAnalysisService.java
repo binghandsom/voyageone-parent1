@@ -49,7 +49,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
         return "CmsTargetAnalySisJob";
     }
 
-    private final List<String> SpecialCode = Arrays.asList(new String[]{"50854273", "14174648"});
+    private final List<String> SpecialCode = Arrays.asList(new String[]{"50854273", "14174648","50293996","50293972","50293981"});
 
     /**
      * JE产品信息插入
