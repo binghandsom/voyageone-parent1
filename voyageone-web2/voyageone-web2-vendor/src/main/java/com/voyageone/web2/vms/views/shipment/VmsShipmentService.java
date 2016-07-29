@@ -6,6 +6,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.BeanUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.vms.shipment.*;
 import com.voyageone.service.impl.vms.order.OrderDetailService;
 import com.voyageone.service.impl.vms.shipment.ShipmentService;
@@ -153,7 +154,7 @@ public class VmsShipmentService {
 
         Map<String, Object> searchParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
-            put("shipmentName", shipmentSearchInfoBean.getShipmentName());
+            put("shipmentName", modifyLikeStringForSQL(shipmentSearchInfoBean.getShipmentName()));
             put("trackingNo", shipmentSearchInfoBean.getTrackingNo());
             put("status", shipmentSearchInfoBean.getStatus());
             put("shippedDateFrom", shipmentSearchInfoBean.getShippedDateFrom());
@@ -253,5 +254,13 @@ public class VmsShipmentService {
                 .count();
 
         return packagedSKUNum == 0;
+    }
+
+    private String modifyLikeStringForSQL(String param) {
+        if (null == param) return null;
+        else return param
+                .replace("\\", "\\\\")
+                .replace("%", "\\%")
+                .replace("_", "\\_");
     }
 }
