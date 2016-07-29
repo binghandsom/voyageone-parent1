@@ -39,6 +39,12 @@ public class ShipmentService {
         return vmsBtShipmentDao.selectList(shipmentSelectParams);
     }
 
+    /**
+     * 连同空值共同保存
+     *
+     * @param vmsBtShipmentModel 完整DB Model
+     * @return 影响条数
+     */
     public int save(VmsBtShipmentModel vmsBtShipmentModel) {
         return vmsBtShipmentDaoExt.update(vmsBtShipmentModel);
     }

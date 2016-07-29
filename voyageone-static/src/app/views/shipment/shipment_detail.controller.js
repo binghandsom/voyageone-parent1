@@ -85,22 +85,24 @@ define([
 
         ShipmentDetailController.prototype.ship = function () {
             var self = this;
-            var req = angular.copy(self.shipment);
-            req.status = 3;//shipped 应使用
-            var tempShipment = {};
-            // 先判断是否有其他人改了当前的shipment
-            self.shipmentDetailService.getInfo(self.shipment.id).then(function (data) {
-                tempShipment = data.shipment;
-                if (!_.isEqual(self.originalShipment, tempShipment)) {
-                    self.alert("TXT_SHIPMENT_HAVE_BEEN_EDITED");
-                    return;
-                }
-
-                self.shipmentDetailService.ship(req).then(function (data) {
-                    if (data.success > 0) {
-                        self.notify.success("TXT_SUCCESS");
-                        window.location.href = "#/shipment/shipment_info";
+            self.confirm('TXT_CONFIRM_SHIPPED').then(function () {
+                var req = angular.copy(self.shipment);
+                req.status = 3;//shipped 应使用
+                var tempShipment = {};
+                // 先判断是否有其他人改了当前的shipment
+                self.shipmentDetailService.getInfo(self.shipment.id).then(function (data) {
+                    tempShipment = data.shipment;
+                    if (!_.isEqual(self.originalShipment, tempShipment)) {
+                        self.alert("TXT_SHIPMENT_HAVE_BEEN_EDITED");
+                        return;
                     }
+
+                    self.shipmentDetailService.ship(req).then(function (data) {
+                        if (data.result.succeedSkuCount > 0) {
+                            self.notify.success("TXT_SUCCESS");
+                            window.location.href = "#/shipment/shipment_info";
+                        }
+                    });
                 });
             });
         };

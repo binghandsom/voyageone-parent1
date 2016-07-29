@@ -1,8 +1,9 @@
-package com.voyageone.web2.vms.views.order;
+package com.voyageone.web2.vms.views.pop.shipment;
 
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.service.bean.vms.shipment.ShipmentBean;
+import com.voyageone.web2.vms.views.order.VmsOrderInfoService;
 import com.voyageone.web2.vms.views.shipment.VmsShipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -92,7 +93,7 @@ public class VmsShipmentPopupController extends BaseController {
     @RequestMapping(POPUP.SHIPMENT.END)
     public AjaxResponse end(@RequestBody ShipmentBean shipmentBean) {
         Map<String, Object> result = new HashMap<>();
-        result.put("success", vmsOrderInfoService.endShipment(this.getUser(), shipmentBean));
+        result.put("result", vmsShipmentService.endShipment(this.getUser(), shipmentBean));
         result.put("currentShipment", vmsShipmentService.getCurrentShipment(this.getUser()));
         return success(result);
     }

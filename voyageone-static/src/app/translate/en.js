@@ -91,6 +91,7 @@ define(function () {
         "TXT_WELCOME": "Welcome",
         "TXT_INVENTORY": "Inventory",
         "TXT_INVENTORY_UPLOAD": "Inventory Upload",
+        "TXT_CONFIRM_SHIPPED": "Confirm shipped?",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",

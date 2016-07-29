@@ -544,7 +544,8 @@ public class VmsOrderInfoService extends BaseService {
             put("channelId", user.getSelChannelId());
             put("shipmentId", shipmentBean.getId());
         }};
-        return orderDetailService.select(params).stream()
+        List<VmsBtOrderDetailModel> skusInshipment = orderDetailService.select(params);
+        return skusInshipment.stream()
                 .filter(vmsBtOrderDetailModel -> !STATUS_VALUE.PRODUCT_STATUS.PACKAGE.equals(vmsBtOrderDetailModel
                         .getStatus()))
                 .map(VmsBtOrderDetailModel::getConsolidationOrderId)
@@ -552,28 +553,7 @@ public class VmsOrderInfoService extends BaseService {
                 .collect(Collectors.toList());
     }
 
-    public ShipmentEndCountBean endShipment(UserSessionBean user, ShipmentBean shipmentBean) {
 
-        shipmentBean.setChannelId(user.getSelChannelId());
-
-        // 去除当前shipment中没有完整扫描的订单
-        int canceledSkuCount = orderDetailService.removeSkuShipmentId(user.getSelChannelId(), shipmentBean.getId());
-
-        // 更新shipment下的sku
-        int succeedSkuCount = orderDetailService.updateOrderStatusWithShipmentId(user.getSelChannelId(), shipmentBean
-                .getId(), STATUS_VALUE.PRODUCT_STATUS.SHIPPED, new Date(), user.getUserName());
-
-        // 更新shipment
-        VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel();
-        BeanUtil.copy(shipmentBean, vmsBtShipmentModel);
-        int succeedShipmentCount = shipmentService.save(vmsBtShipmentModel);
-
-        return new ShipmentEndCountBean() {{
-            setCanceledSkuCount(canceledSkuCount);
-            setSucceedSkuCount(succeedSkuCount);
-            setSucceedShipmentCount(succeedShipmentCount);
-        }};
-    }
 
     public List<SubOrderInfoBean> getScannedSkuList(UserSessionBean user, ShipmentBean shipment) {
         if (null == shipment) return new ArrayList<>();
@@ -604,4 +584,5 @@ public class VmsOrderInfoService extends BaseService {
         return orderDetailService.scanInSku(user.getSelChannelId(), user.getUserName(),
                 scanInfoBean.getBarcode(), scanInfoBean.getShipment().getId());
     }
+
 }

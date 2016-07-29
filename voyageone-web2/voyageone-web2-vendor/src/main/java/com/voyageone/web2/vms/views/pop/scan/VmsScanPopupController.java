@@ -1,9 +1,10 @@
-package com.voyageone.web2.vms.views.order;
+package com.voyageone.web2.vms.views.pop.scan;
 
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.vms.bean.order.ScanInfoBean;
 import com.voyageone.web2.vms.bean.order.ScanPopupInitialInfoBean;
+import com.voyageone.web2.vms.views.order.VmsOrderInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -154,14 +154,14 @@ public class OrderDetailService extends BaseService {
     /**
      * 更新订单状态
      *
-     * @param channelId            channelId
-     * @param consolidationOrderId 订单号
-     * @param status               待更新状态
+     * @param channelId     channelId
+     * @param reservationId reservation ID
+     * @param status        待更新状态
      * @return 更新涉及条数
      */
     @VOTransactional
-    public int updateReservationStatus(String channelId, String consolidationOrderId, String status, String modifier) {
-        return updateReservationStatus(channelId, consolidationOrderId, status, modifier, new Date(), modifier);
+    public int updateReservationStatus(String channelId, String reservationId, String status, String modifier) {
+        return updateReservationStatus(channelId, reservationId, status, modifier, new Date(), modifier);
     }
 
     /**
@@ -300,7 +300,7 @@ public class OrderDetailService extends BaseService {
         int count = 0;
 
         Map<String, Object> sortedParams = MySqlPageHelper.build(params)
-                .addSort("consolidation_order_id", Order.Direction.ASC)
+                .addSort("consolidation_order_time", Order.Direction.ASC)
                 .limit(1)
                 .toMap();
         VmsBtOrderDetailModel vmsBtOrderDetailModel = vmsBtOrderDetailDao.selectOne(sortedParams);
@@ -319,6 +319,8 @@ public class OrderDetailService extends BaseService {
             if (count > 0) {
                 this.logOrderDetails(updateParams);
             }
+//            count = this.updateReservationStatus(channelId, vmsBtOrderDetailModel.getReservationId(),
+//                    STATUS_PACKAGED, userName);
         }
 
         return count;

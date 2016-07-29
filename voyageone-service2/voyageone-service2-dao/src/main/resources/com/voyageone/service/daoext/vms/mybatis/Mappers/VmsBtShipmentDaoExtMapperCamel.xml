@@ -84,18 +84,10 @@
             <if test="shipmentName != null">
                 `shipment_name` = #{shipmentName,jdbcType=VARCHAR},
             </if>
-            <if test="shippedDate != null">
                 `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP},
-            </if>
-            <if test="expressCompany != null">
                 `express_company` = #{expressCompany,jdbcType=VARCHAR},
-            </if>
-            <if test="trackingNo != null">
                 `tracking_no` = #{trackingNo,jdbcType=VARCHAR},
-            </if>
-            <if test="comment != null">
-                `comment` = #{comment,jdbcType=LONGVARCHAR},
-            </if>
+                `comment` = #{comment,jdbcType=VARCHAR},
             <if test="status != null">
                 `status` = #{status,jdbcType=VARCHAR},
             </if>
@@ -111,15 +103,8 @@
             <if test="receiver != null">
                 `receiver` = #{receiver,jdbcType=VARCHAR},
             </if>
-            <if test="modified != null">
-                `modified` = #{modified,jdbcType=TIMESTAMP},
-            </if>
-            <if test="modified == null">
                 `modified` = now(),
-            </if>
-            <if test="modifier != null">
                 `modifier` = #{modifier,jdbcType=VARCHAR},
-            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER} and `channel_id` = #{channelId, jdbcType=VARCHAR}
     </update>

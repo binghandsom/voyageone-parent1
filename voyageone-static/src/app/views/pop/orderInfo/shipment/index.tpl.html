@@ -12,7 +12,7 @@
                             translate="TXT_NAME"></strong></label>
                     <div class="col-md-8">
                         <input id="shipmentName" name="shipmentName" type="text" class="form-control"
-                               ng-model="ctrl.shipment.shipmentName" required
+                               ng-model="ctrl.shipment.shipmentName" required maxlength="30"
                                ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
                     </div>
                 </div>
@@ -26,8 +26,8 @@
                     </div>
                 </div>
                 <div ng-class="{'form-group':true, 'has-error': !shipmentForm.shippedDate.$valid}">
-                    <label for="shippedDate" class="col-md-3 col-md-offset-1 control-label"><strong
-                            translate="TXT_SHIPPED_DATE"></strong></label>
+                    <label for="shippedDate" class="col-md-3 col-md-offset-1 control-label">
+                        <strong translate="TXT_SHIPPED_DATE"></strong></label>
                     <div class="col-md-8">
                         <div class="input-group">
                             <input id="shippedDate" name="shippedDate" class="form-control"
@@ -58,12 +58,12 @@
                     </div>
                 </div>
                 <div ng-class="{'form-group':true, 'has-error': (ctrl.shipment.status == 3 && !ctrl.shipment.trackingNo) || !shipmentForm.trackingNo.$valid}">
-                    <label for="trackingNo" class="col-md-3 col-md-offset-1 control-label"><strong
-                            translate="TXT_TRACKING_NO_"></strong></label>
+                    <label for="trackingNo" class="col-md-3 col-md-offset-1 control-label">
+                        <strong translate="TXT_TRACKING_NO_"></strong></label>
                     <div class="col-md-8">
                         <input id="trackingNo" type="text" class="form-control required"
                                ng-model="ctrl.shipment.trackingNo" name="trackingNo"
-                               ng-required="ctrl.shipment.status==3"
+                               ng-required="ctrl.shipment.status==3" maxlength="30"
                                ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                     <label for="comments" class="col-md-3 col-md-offset-1 control-label"><strong
                             translate="TXT_COMMENTS"></strong></label>
                     <div class="col-md-8">
-                        <textarea id="comments" class="form-control" ng-model="ctrl.shipment.comment"></textarea>
+                        <textarea id="comments" class="form-control" ng-model="ctrl.shipment.comment" maxlength="1000"></textarea>
                     </div>
                 </div>
             </form>

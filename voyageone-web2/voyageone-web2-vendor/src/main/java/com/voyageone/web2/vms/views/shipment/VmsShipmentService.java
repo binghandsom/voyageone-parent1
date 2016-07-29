@@ -6,12 +6,10 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.BeanUtil;
-import com.voyageone.service.bean.vms.shipment.ExpressCompanyBean;
-import com.voyageone.service.bean.vms.shipment.ShipmentBean;
-import com.voyageone.service.bean.vms.shipment.ShipmentInfoBean;
-import com.voyageone.service.bean.vms.shipment.ShipmentStatusBean;
+import com.voyageone.service.bean.vms.shipment.*;
 import com.voyageone.service.impl.vms.order.OrderDetailService;
 import com.voyageone.service.impl.vms.shipment.ShipmentService;
+import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
@@ -191,14 +189,69 @@ public class VmsShipmentService {
         return ShipmentBean.getInstance(vmsBtShipmentModel);
     }
 
-    public int endShipment(UserSessionBean user, ShipmentBean shipment) {
-        // 更新shipment
-        int success = this.submit(user, shipment);
-        // 更新shipment对应SKU信息
-        if (success > 0) {
-            orderDetailService.updateOrderStatusWithShipmentId(user.getSelChannelId(),
-                    shipment.getId(), shipment.getStatus(), new Date(), user.getUserName());
+//    public int endShipment(UserSessionBean user, ShipmentBean shipment) {
+//        // 检查shipment下是否有扫描的SKU
+//        if (this.shipmentIsEmpty(user, shipment)) throw new BusinessException("");
+//
+//
+//    }
+
+    public ShipmentEndCountBean endShipment(UserSessionBean user, ShipmentBean shipmentBean) {
+        // 检查shipment下是否有扫描的SKU
+        if (this.shipmentIsEmpty(user, shipmentBean)) throw new BusinessException("8000032");
+
+        // order级别的关闭
+        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(vmsChannelConfigService.getChannelConfigs(user)
+                .getVendorOperateType())) {
+            shipmentBean.setChannelId(user.getSelChannelId());
+
+            // 去除当前shipment中没有完整扫描的订单
+            int canceledSkuCount = orderDetailService.removeSkuShipmentId(user.getSelChannelId(), shipmentBean.getId());
+
+            // 更新shipment下的sku
+            int succeedSkuCount = orderDetailService.updateOrderStatusWithShipmentId(user.getSelChannelId(), shipmentBean
+                    .getId(), STATUS_VALUE.PRODUCT_STATUS.SHIPPED, new Date(), user.getUserName());
+
+            // 更新shipment
+            VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel();
+            BeanUtil.copy(shipmentBean, vmsBtShipmentModel);
+            vmsBtShipmentModel.setModifier(user.getUserName());
+            int succeedShipmentCount = shipmentService.save(vmsBtShipmentModel);
+
+            return new ShipmentEndCountBean() {{
+                setCanceledSkuCount(canceledSkuCount);
+                setSucceedSkuCount(succeedSkuCount);
+                setSucceedShipmentCount(succeedShipmentCount);
+            }};
+
+            // SKU级别的关闭
+        } else {
+            // 更新shipment
+            int success = this.submit(user, shipmentBean);
+            // 更新shipment对应SKU信息
+            if (success > 0) {
+                orderDetailService.updateOrderStatusWithShipmentId(user.getSelChannelId(),
+                        shipmentBean.getId(), shipmentBean.getStatus(), new Date(), user.getUserName());
+            }
+            return new ShipmentEndCountBean() {{
+                setSucceedSkuCount(success);
+            }};
         }
-        return success;
+    }
+
+    private boolean shipmentIsEmpty(UserSessionBean user, ShipmentBean shipmentBean) {
+
+        // 获取当前shipment中的订单号
+        Map<String, Object> params = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannelId());
+            put("shipmentId", shipmentBean.getId());
+        }};
+        List<VmsBtOrderDetailModel> skusInshipment = orderDetailService.select(params);
+        long packagedSKUNum = skusInshipment.stream()
+                .filter(vmsBtOrderDetailModel ->
+                        STATUS_VALUE.PRODUCT_STATUS.PACKAGE.equals(vmsBtOrderDetailModel.getStatus()))
+                .count();
+
+        return packagedSKUNum == 0;
     }
 }

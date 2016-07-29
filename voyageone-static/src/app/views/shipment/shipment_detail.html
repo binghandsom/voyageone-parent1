@@ -21,14 +21,14 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="row">
-                <div class="form-group">
+                <div class="form-group" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU'">
                     <div class="col-sm-4">
                         <a class="btn btn-primary" ng-href="#/shipment/shipment_info"><i class="fa fa-mail-reply"></i>&nbsp;&nbsp;{{'BTN_BACK' | translate}}</a>
                     </div>
                     <div class="col-md-8">
-                        <div class="form-group input-group">
+                        <div class="form-group input-group" >
                             <input type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}"
-                                   ng-model="ctrl.barcode" enter-click="#scan" ng-autofocus="true">
+                                   ng-model="ctrl.barcode" enter-click="#scan" ng-autofocus="true" ng-disabled="ctrl.shipment.status != 1">
                             <span class="input-group-btn">
                                 <button id="scan" class="btn btn-info" type="button" ng-click="ctrl.scan()" translate="BTN_SCAN" ng-disabled="ctrl.shipment.status != 1 || !ctrl.barcode"></button>
                             </span>
@@ -44,12 +44,12 @@
                             <th class="td-2 v-middle" translate="TXT_SHIPPED_DATE"></th>
                             <th class="td-2 v-middle" translate="TXT_EXPRESS_COMPANY"></th>
                             <th class="td-2 v-middle" translate="TXT_TRACKING_NO_"></th>
-                            <th class="td-1 text-center" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU'" translate="TXT_ACTION"></th>
+                            <th class="td-1 text-center" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU' && ctrl.shipment.status == 1" translate="TXT_ACTION"></th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
-                            <td class="td-2 v-middle">{{ctrl.shipment.shipmentName}}</td>
+                            <td class="td-2 v-middle word-wrap">{{ctrl.shipment.shipmentName}}</td>
                             <td class="td-1 v-middle">{{ctrl.getStatusName(ctrl.shipment.status)}}</td>
                             <td class="td-2 v-middle">
                                 <span ng-class="{'input-group':true, 'has-error': !shipmentForm.shippedDate.$valid}">
@@ -59,17 +59,17 @@
                                            ng-model="ctrl.shipment.shippedDate"
                                            uib-datepicker-popup
                                            is-open="datepicker1" ng-required="ctrl.channelConfigs.vendorOperateType == 'SKU'"
-                                           ng-disabled="(ctrl.shipment.status != 1 && ctrl.shipment.status != 3) || ctrl.channelConfigs.vendorOperateType != 'SKU'">
+                                           ng-disabled="ctrl.shipment.status != 1 || ctrl.channelConfigs.vendorOperateType != 'SKU'">
                                     <span class="input-group-btn">
                                     <button class="btn btn-default" ng-click="datepicker1=!datepicker1"
-                                            ng-disabled="(ctrl.shipment.status != 1 && ctrl.shipment.status != 3) || ctrl.channelConfigs.vendorOperateType != 'SKU'">
+                                            ng-disabled="ctrl.shipment.status != 1 || ctrl.channelConfigs.vendorOperateType != 'SKU'">
                                         <i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
                                 </span>
                             </td>
                             <td ng-class="{'td-2 text-left v-middle':true, 'has-error': !shipmentForm.expressCompany.$valid}">
                                 <select name="expressCompany" id="select" class="form-control"
-                                        ng-disabled="(ctrl.shipment.status != 1 && ctrl.shipment.status != 3) || ctrl.channelConfigs.vendorOperateType != 'SKU'"
+                                        ng-disabled="ctrl.shipment.status != 1 || ctrl.channelConfigs.vendorOperateType != 'SKU'"
                                         ng-model="ctrl.shipment.expressCompany"
                                         ng-options="option.value as option.name for option in ctrl.expressCompanies"
                                         ng-required="ctrl.channelConfigs.vendorOperateType == 'SKU'">
@@ -78,15 +78,13 @@
                             <td ng-class="{'td-2 text-center v-middle': true, 'has-error':!shipmentForm.trackingNo.$valid}">
                                 <input name="trackingNo" type="text" class="form-control"
                                        ng-model="ctrl.shipment.trackingNo"
-                                       ng-disabled="(ctrl.shipment.status != 1 && ctrl.shipment.status != 3) || ctrl.channelConfigs.vendorOperateType != 'SKU'"
+                                       ng-disabled="ctrl.shipment.status != 1 || ctrl.channelConfigs.vendorOperateType != 'SKU'"
                                        ng-required="ctrl.channelConfigs.vendorOperateType == 'SKU'">
                             </td>
-                            <td class="td-1 text-center v-middle" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU'">
+                            <td class="td-1 text-center v-middle" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU' && ctrl.shipment.status == 1">
                                 <button class="btn btn-primary btn-sm" translate="BTN_SHIPPED"
                                         ng-click="ctrl.ship()"
-                                        ng-disabled="(!ctrl.scannedSkuList || ctrl.scannedSkuList.length == 0)
-                                         || !shipmentForm.$valid
-                                         || (ctrl.shipment.status != 1 && ctrl.shipment.status != 3)"></button>
+                                        ng-disabled="(!ctrl.scannedSkuList || ctrl.scannedSkuList.length == 0) || !shipmentForm.$valid || ctrl.shipment.status != 1"></button>
                             </td>
                         </tr>
                         </tbody>
@@ -95,7 +93,10 @@
             </div>
         </div>
     </div>
-    <div class="headline" style="margin-bottom: 12px;"><h2>Item list</h2></div>
+    <div class="headline" style="margin-bottom: 12px;">
+        <h2 TRANSLATE="TXT_SKU_LIST"></h2>
+        <a ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'" class="btn btn-primary pull-right" ng-href="#/shipment/shipment_info"><i class="fa fa-mail-reply"></i>&nbsp;&nbsp;{{'BTN_BACK' | translate}}</a>
+    </div>
     <div class="panel panel-vo">
         <div class="panel-body">
             <div class="table-responsive" if-no-rows="ctrl.scannedSkuList">
@@ -118,7 +119,12 @@
                         <td class="td-1 v-middle">{{ctrl.scannedSkuList.length - $index}}</td>
                         <td class="td-2 v-middle">{{item.barcode}}</td>
                         <td class="td-2 v-middle">{{item.clientSku}}</td>
-                        <td class="td-3 v-middle">{{item.name}}</td>
+                        <td class="td-3 v-middle">
+                            <span class="v-middle" ng-if="item.name.length <= 25">{{item.name}}</span>
+                            <span class="v-middle" ng-if="item.name.length > 25" uib-tooltip="{{item.name}}" tooltip-trigger="mouseenter" tooltip-placement="top">
+                                {{item.name | stringCutter:true:25:' ...'}}
+                            </span>
+                        </td>
                         <td class="td-2 v-middle">{{item.consolidationOrderId}}</td>
                         <td class="td-2 v-middle">{{item.containerizingTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="td-2 v-middle">{{item.containerizer}}</td>
