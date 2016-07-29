@@ -231,6 +231,7 @@ public class UploadToUSJoiService extends BaseTaskService {
             CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.getProductGroupByGroupId(sxWorkLoadBean.getChannelId(),sxWorkLoadBean.getGroupId());
             cmsBtProductGroupModel.setPlatformActive(CmsConstants.PlatformActive.ToOnSale);
             cmsBtProductGroupModel.setOnSaleTime(DateTimeUtil.getNowTimeStamp());
+            cmsBtProductGroupModel.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
             productGroupService.updateGroupsPlatformStatus(cmsBtProductGroupModel);
             $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
         } catch (Exception e) {
@@ -239,7 +240,6 @@ public class UploadToUSJoiService extends BaseTaskService {
             $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
             e.printStackTrace();
             issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
-            throw e;
         }
     }
 
