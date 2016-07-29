@@ -91,6 +91,7 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
             for (TypeChannelBean cartObj : cartList) {
                 // 对指定店铺的每个平台进行处理
                 int cartId = NumberUtils.toInt(cartObj.getValue());
+                oIdx = 0;
                 do {
                     rs = productDao.selectProductOrderCount(cartId, channelId, oIdx * PAGE_LIMIT, PAGE_LIMIT);
                     oIdx ++;
