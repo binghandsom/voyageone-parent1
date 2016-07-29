@@ -887,3 +887,6 @@ select::-ms-expand {
 .v-bottom {
   vertical-align: bottom !important;
 }
+.word-wrap {
+  word-wrap: break-word;
+}
