@@ -653,6 +653,7 @@ public class ChannelConfigEnums {
                 case "024": return OverStock;
                 case "025": return FragranceNet;
                 case "026": return LightHouse;
+                case "027": return Yogademocracy;
                 case "928": return USJGJ;
                 case "929": return USJGY;
                 case "997": return VOYAGEONE;
