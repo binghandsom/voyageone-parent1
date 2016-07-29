@@ -1,4 +1,4 @@
-7.批量删除
+2.7.批量删除
          7.1 if(活动预热已开始)   todo 未实现
                 {
                     errorMsg="活动预热已开始,不能删除";
@@ -7,7 +7,7 @@
                 只能删除未上传的商品 cms_bt_jm_promotion_product.synch_status!=2
          7.3  活动预热已开始的场合：
                功能关闭
-8.批量上传：
+2.8.批量上传：
          8.1 // todo 上个版本已实现   新版本要删除
               if（cms_bt_jm_promotion_product.synch_status！=2）//未上传
               { cms_bt_jm_promotion_product.synch_status=1 }   //设置为待上传
@@ -26,7 +26,7 @@
                  if(cms_bt_jm_promotion_product.synch_status==2)//已上传   todo 和8.1的区别  这里删掉了预热未开始的判断
                      { cms_bt_jm_promotion_product.price_status=1}//设置为价格待更新
 
-9.批量同步价格 //  批量同步价格  1. if未上传  then price_status=1   2.if已上传&预热未开始  then price_status=1
+2.9.批量同步价格 //  批量同步价格  1. if未上传  then price_status=1   2.if已上传&预热未开始  then price_status=1
          9.1 // todo 上个版本已实现   新版本要删除
               if(cms_bt_jm_promotion_product.synch_status！=2）//未上传
               { cms_bt_jm_promotion_product.price_status=1 }   //设置为价格待更新
@@ -44,7 +44,7 @@
 
                if(cms_bt_jm_promotion_product.synch_status==2)//已上传     todo 和9.1的区别  这里删掉了预热未开始的判断
                 { cms_bt_jm_promotion_product.price_status=1}  //设置为价格待更新
-10.批量变更价格
+2.10.批量变更价格
          10.1 // todo 上个版本已实现   新版本要改进
                if(预热已开始)
                {errorMsg="预热已开始,不能修改价格";}
