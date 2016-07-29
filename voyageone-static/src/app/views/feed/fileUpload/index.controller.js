@@ -28,7 +28,7 @@ define([
                             main.alert(res.message);
                             return;
                         }
-                        main.notify.success('TXT_MSG_UPLOAD_SUCCESS');
+                        main.notify.success('TXT_UPLOAD_FEED_FILE_SUCCESS');
                     };
                     uploadItem.onError = function (res) {
                         main.blockUI.stop();

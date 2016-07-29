@@ -52,7 +52,7 @@
                 and `tracking_no` = #{trackingNo,jdbcType=VARCHAR}
             </if>
             <if test="comment != null">
-                and `comment` = #{comment,jdbcType=VARCHAR}
+                and `comment` = #{comment,jdbcType=LONGVARCHAR}
             </if>
             <if test="status != null">
                 and `status` = #{status,jdbcType=VARCHAR}
@@ -94,7 +94,7 @@
                 `tracking_no` = #{trackingNo,jdbcType=VARCHAR},
             </if>
             <if test="comment != null">
-                `comment` = #{comment,jdbcType=VARCHAR},
+                `comment` = #{comment,jdbcType=LONGVARCHAR},
             </if>
             <if test="status != null">
                 `status` = #{status,jdbcType=VARCHAR},

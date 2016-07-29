@@ -442,7 +442,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         if (models.size() == 0) {
             VmsBtShipmentModel model = new VmsBtShipmentModel();
             model.setChannelId(channelId);
-            model.setShipmentName("Shipment_" + DateTimeUtil.getNow("yyyyMM-dd_HHmmss"));
+            model.setShipmentName("Shipment_" + DateTimeUtil.getNow("yyyyMMdd_HHmmss"));
             model.setShippedDate(new Date(shippedTime));
             model.setExpressCompany(expressCompany);
             model.setTrackingNo(trackingNo);

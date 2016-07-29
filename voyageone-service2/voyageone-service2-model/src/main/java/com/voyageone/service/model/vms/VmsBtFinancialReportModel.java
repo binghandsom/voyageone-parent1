@@ -44,7 +44,7 @@ public class VmsBtFinancialReportModel extends BaseModel {
     protected String reportFileName;
 
     /**
-     * 0:未确认；1：已确认；
+     * 0:unconfirmed；1：confirmed；
      */
     protected String status;
 
