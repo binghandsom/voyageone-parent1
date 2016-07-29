@@ -62,6 +62,7 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
         }
 
         long oIdx = 0;
+        long qtySum = 0;
         List<Map> rs;
         DBCollection coll = cmsMtProdSalesHisDao.getDBCollection();
         Map<String, Set<String>> prodCodeChannelMap = new HashMap<>();
@@ -71,9 +72,11 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
         JomgoQuery prodQryObj = new JomgoQuery();
         prodQryObj.setQuery("{'common.skus.skuCode':#}");
         prodQryObj.setProjection("{'common.fields.code':1,'_id':0}");
+        List<OrderChannelBean> list2 = new ArrayList<>();
 
         for (OrderChannelBean chnObj : list) {
             // 对每个店铺进行处理
+            qtySum = 0;
             String channelId = chnObj.getOrder_channel_id();
             // 先判断该店铺的cms_bt_product_cxxx表是否存在
             boolean exists = cmsBtProductDao.collectionExists(cmsBtProductDao.getCollectionName(channelId));
@@ -135,6 +138,7 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                             hasdata = true;
                             bbulkOpe.find(queryObj).upsert().update(updateObj);
 
+                            qtySum += (Long) orderObj.get("qty");
                             // add prodCode 添加code和channelId到缓存
                             if (!prodCodeChannelMap.containsKey(channelId)) {
                                 prodCodeChannelMap.put(channelId, new HashSet<>());
@@ -153,10 +157,14 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                     }
                 } while (rs.size() == PAGE_LIMIT);
             }
+
+            chnObj.setModifier(Long.toString(qtySum));
+            list2.add(chnObj);
         }
 
         $info("copyOrdersInfo end");
         rsMap.put("fstPhase", (System.currentTimeMillis() - staTime) / 1000);
+        rsMap.put("fstPhaseRs", list2);
         return prodCodeChannelMap;
     }
 

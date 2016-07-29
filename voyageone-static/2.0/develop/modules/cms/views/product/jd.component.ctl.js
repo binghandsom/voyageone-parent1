@@ -145,18 +145,17 @@ define([
                 }
 
                 /**
-                 *  切换主类目   cartInfo.value,vm.mastData.productCode
+                 *  切换主商品  cartInfo.value,vm.mastData.productCode
                  */
                 function openSwitchMainPop(openSwitchMain){
-                    if(scope.vm.mastData == null)
-                        return;
 
                     openSwitchMain({
-                        cartId:scope.cartInfo.value,
-                        productCode:scope.vm.mastData.productCode
+                        cartId : scope.cartInfo.value,
+                        productCode : scope.productInfo.masterField.code
                     }).then(function(){
                         //刷新子页面
                         getplatformData();
+                        scope.vm.noMaterMsg = null;
                     });
                 }
 
