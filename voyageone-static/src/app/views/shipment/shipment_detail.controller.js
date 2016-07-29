@@ -33,6 +33,10 @@ define([
 
         ShipmentDetailController.prototype.init = function () {
             var self = this;
+            if (isNaN(self.shipmentId)) {
+                self.alert('TXT_SHIPMENT_NOT_FOUND');
+                return;
+            }
             self.shipmentDetailService.init(self.shipmentId).then(function (data) {
                 self.channelConfigs = data.channelConfigs;
                 self.shipmentStatusList = data.shipmentStatusList;
