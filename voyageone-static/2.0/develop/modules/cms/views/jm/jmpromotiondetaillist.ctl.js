@@ -489,7 +489,12 @@ define([
 
             return m.maxMarketPrice + "~" + m.minMarketPrice;
         };
+        $scope.getMinMaxPrice = function (minPrice,maxPrice) {
+            if (maxPrice== minPrice)
+                return maxPrice;
 
+            return minPrice + "~" +maxPrice;
+        };
         $scope.changeSelectTag=function(m) {
             var productTagList = [];
             for (var i = 0; i < m.tagNameList.length; i++) {

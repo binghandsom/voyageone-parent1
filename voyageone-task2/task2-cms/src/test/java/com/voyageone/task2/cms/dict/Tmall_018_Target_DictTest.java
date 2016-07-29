@@ -436,8 +436,8 @@ public class Tmall_018_Target_DictTest {
 //                <option displayName="商品推荐" value="520277"/>
 //                </options>
 //            </field>
-//            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"true\",\"hot_recommanded_id\":\"520277\"},";
-            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"false\"},";
+            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"true\",\"hot_recommanded_id\":\"626083\"},";
+//            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"false\"},";
             TextWord word = new TextWord(kv);
             ruleRoot.addRuleWord(word);
         }

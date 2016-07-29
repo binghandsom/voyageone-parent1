@@ -24,6 +24,11 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
         return selectOneWithQuery(query, channelId);
     }
 
+    public CmsBtFeedInfoModel selectProductBySku(String channelId, String sku) {
+        String query = "{\"skus.sku\":\"" + sku + "\"}";
+        return selectOneWithQuery(query, channelId);
+    }
+
     /**
      * updateFeedInfoUpdFlg
      */

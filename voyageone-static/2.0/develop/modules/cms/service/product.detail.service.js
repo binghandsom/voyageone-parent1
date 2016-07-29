@@ -224,6 +224,8 @@ define([
 			$productDetailService.getProductPlatform(req)
 				.then (function (res) {
 					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
 				});
 
 			return defer.promise;

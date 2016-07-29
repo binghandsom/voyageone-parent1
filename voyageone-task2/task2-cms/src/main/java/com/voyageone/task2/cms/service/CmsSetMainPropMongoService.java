@@ -265,6 +265,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                customPropService.doInit(channelId);
                 // --------------------------------------------------------------------------------------------
             }
+
+            // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
+            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
+
             // jeff 2016/05 add start
             // 取得所有主类目
             // update desmond 2016/07/04 start
@@ -1230,17 +1234,35 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 商品翻译状态, 翻译者, 翻译时间, 商品编辑状态, 价格审批flg, lock商品: 暂时都不用设置
 
 //            SELECT * from Synship.com_mt_value_channel where type_id in (57,58);
+            // 从cms_mt_channel_config表从取得产品分类是否从feed导入flg,默认为0：不从feed导入运营手动添加
+            String productTypeFromFeedFlg = "0";    // 0：不从feed导入运营手动添加产品分类
+            CmsChannelConfigBean productTypeChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(this.channel.getOrder_channel_id(),
+                    CmsConstants.ChannelConfig.PRODUCT_TYPE_FROM_FEED_FLG);
+            if (productTypeChannelConfigBean != null && "1".equals(productTypeChannelConfigBean.getConfigValue1())) {
+                productTypeFromFeedFlg = "1";       // 1:从feed导入产品分类
+            }
+
+            // 从cms_mt_channel_config表从取得适用人群是否从feed导入flg,默认为0：不从feed导入运营手动添加
+            String sizeTypeFromFeedFlg = "0";       // 0：不从feed导入运营手动添加适用人群
+            CmsChannelConfigBean sizeTypeChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(this.channel.getOrder_channel_id(),
+                    CmsConstants.ChannelConfig.SIZE_TYPE_FROM_FEED_FLG);
+            if (sizeTypeChannelConfigBean != null && "1".equals(sizeTypeChannelConfigBean.getConfigValue1())) {
+                sizeTypeFromFeedFlg = "1";          // 1:从feed导入适用人群
+            }
+
             String feedProductType = "";
             String feedSizeType = "";
             switch (feed.getChannelId()) {
                 case "010":
                     // 产品分类
-                    if (newFlg || StringUtils.isEmpty(productCommonField.getProductType()) || "1".equals(feed.getIsFeedReImport())) {
+                    if (("1".equals(productTypeFromFeedFlg)) &&
+                            (newFlg || StringUtils.isEmpty(productCommonField.getProductType()) || "1".equals(feed.getIsFeedReImport()))) {
                         feedProductType = feed.getAttribute().get("ItemClassification").get(0);
                         productCommonField.setProductType(feedProductType);
                     }
                     // 适用人群
-                    if (newFlg || StringUtils.isEmpty(productCommonField.getSizeType()) || "1".equals(feed.getIsFeedReImport())) {
+                    if (("1".equals(sizeTypeFromFeedFlg)) &&
+                            (newFlg || StringUtils.isEmpty(productCommonField.getSizeType()) || "1".equals(feed.getIsFeedReImport()))) {
                         switch (feed.getSizeType()) {
                             case "Women's":
                                 feedSizeType = "women";
@@ -1256,12 +1278,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     break;
                 default:
                     // 产品分类
-                    if (newFlg || StringUtils.isEmpty(productCommonField.getProductType()) || "1".equals(feed.getIsFeedReImport())) {
+                    if (("1".equals(productTypeFromFeedFlg)) &&
+                            (newFlg || StringUtils.isEmpty(productCommonField.getProductType()) || "1".equals(feed.getIsFeedReImport()))) {
                         feedProductType = feed.getProductType();
                         productCommonField.setProductType(feedProductType);
                     }
                     // 适用人群
-                    if (newFlg || StringUtils.isEmpty(productCommonField.getSizeType()) || "1".equals(feed.getIsFeedReImport())) {
+                    if (("1".equals(sizeTypeFromFeedFlg)) &&
+                            (newFlg || StringUtils.isEmpty(productCommonField.getSizeType()) || "1".equals(feed.getIsFeedReImport()))) {
                         feedSizeType = feed.getSizeType();
                         productCommonField.setSizeType(feedSizeType);
                     }
@@ -1270,12 +1294,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // add by desmond 2016/07/22 start
             // feed->master导入时，将一些项目(如：sizeType,productType)的初始化中英文mapping信息插入到Synship.com_mt_value_channel表中
-            if (!StringUtils.isEmpty(feedProductType)) {
+            // 从cms_mt_channel_config表从取得的产品分类是否从feed导入flg=1的时候，才插入产品分类mapping信息
+            if ("1".equals(productTypeFromFeedFlg) && !StringUtils.isEmpty(feedProductType)) {
                 // 插入产品分类初始中英文mapping信息
                 insertComMtValueChannelMappingInfo(57, feed.getChannelId(), feedProductType, feedProductType);
             }
 
-            if (!StringUtils.isEmpty(feedSizeType)) {
+            // 从cms_mt_channel_config表从取得的适用人群是否从feed导入flg=1的时候，才插入产品分类mapping信息
+            if ("1".equals(sizeTypeFromFeedFlg) && !StringUtils.isEmpty(feedSizeType)) {
                 // 插入适用人群初始中英文mapping信息
                 insertComMtValueChannelMappingInfo(58, feed.getChannelId(), feedSizeType, feedSizeType);
             }

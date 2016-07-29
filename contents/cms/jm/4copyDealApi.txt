@@ -1,0 +1,193 @@
+4.1.htDeal/copyDeal  调用前Check
+
+         4.1.1   if(cms_bt_jm_promotion.promotionType==1)//满减专场
+                {
+                        /*1.1其它未过期专场 有时间重叠  查询sql
+                            #{nowDate}:当前系统时间转北京时间     #{activityEnd}:当前活动的结束时间
+                            SELECT a.* FROM `cms_bt_jm_promotion_product` AS a JOIN cms_bt_jm_promotion AS b ON a.cms_bt_jm_promotion_id=b.id
+                            WHERE a.synch_status=2 AND a.channel_id=#{channelId} and   a.product_code=#{productCode}
+                                  AND  #{nowDate} &lt;=a.`activity_end`  and   #{activityEnd}>=a.`activity_start`
+                                  AND a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}
+                                   LIMIT 1
+                        */
+
+                   if(其它未过期专场有时间重叠&&synchStatus==2)
+                   {errorMsg="该商品已加入其它未过期专场，无法上传"; }
+                }
+
+         4.1.2    if(cms_bt_jm_promotion.promotionType!=1)//非满减专场
+                {
+                           /*1.1其它未过期专场 有时间重叠  查询sql
+                            #{nowDate}值为:当前系统时间转北京时间     #{activityEnd}值为:当前活动的结束时间
+                            SELECT a.* FROM `cms_bt_jm_promotion_product` AS a JOIN cms_bt_jm_promotion AS b ON a.cms_bt_jm_promotion_id=b.id
+                            WHERE  b.promotionType=1 and a.synch_status=2 AND a.channel_id=#{channelId} and   a.product_code=#{productCode}
+                                  AND  #{nowDate} &lt;=a.`activity_end`  and   #{activityEnd}>=a.`activity_start`
+                                  AND a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}
+                                   LIMIT 1
+                             */
+
+                       if(其它未过期满减专场有时间重叠&&synchStatus==2)
+                       {errorMsg="该商品已加入其它未过期满减专场，无法上传"; }
+                }
+
+
+4.2.htDeal/copyDeal 调用后Check
+  4.2.1
+
+  4.2.2 再售失败，未返回【sell_hash_id】
+
+
+
+     再售失败，返回【sell_hash_id】的场合
+     var sellJmPromotion= 通过sell_hash_id查找在售专场          todo 找不到怎么办？
+     var jmPromotion=当前专场
+     var jmPromotionProduct=当前专场商品
+  4.2.3
+       if(jmPromotion.promotionType==1)//满减专场
+       {
+         errorMsg="“该商品已加入专场【sellJmPromotion.getName()】，并上传成功。满减专场不可与其它专场共用商品，请于专场【sellJmPromotion.getName()】结束后，再进行上传。”+"聚美Response";
+       }
+  4.2.4
+           if(jmPromotion.promotionType!=1)//非满减专场
+           {
+               if(sellJmPromotion.promotionType==1)//在售专场为满减专场
+               {
+                 errorMsg="“该商品已加入满减专场【sellJmPromotion.getName()】，并上传成功。满减专场不可与其它专场共用商品，请于专场【sellJmPromotion.getName()】结束后，再进行上传。”+"聚美Response";
+               }
+           }
+  4.2.5
+           if(jmPromotion.promotionType==2)//大促非满减专场
+          {
+              if(sellJmPromotion.promotionType!=1)//在售专场为非满减专场
+              {
+                 if(sellJmPromotiona.getActivityStart()==jmPromotion.getActivityStart())//开始时间相等
+                 {
+                    jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
+                    if(sellJmPromotiona.getActivityEnd()<jmPromotion.getActivityEnd())//【sell_hash_id】的结束时间小于当前专场结束时间的场合
+                    {
+                       调用延迟Deal结束时间API
+                    }
+                    errorMsg="该商品已加入专场【sellJmPromotion.getName()】，并上传成功。介于开始时间相同，当前大促专场引用了同一HashID，并进行了延期。如需变更价格，请重新点击【重刷】/【批量同步价格】。操作将影响关联专场，请慎重";
+                 }
+              }
+          }
+  4.2.6
+         if(jmPromotion.promotionType==2)//大促非满减专场
+          {
+              if(sellJmPromotion.promotionType!=1)//在售专场为非满减专场   todo 2.6需求没有这个判断 是否要加上
+              {
+                 if(sellJmPromotiona.getActivityStart()!=jmPromotion.getActivityStart())//开始时间不相等
+                 {
+                    errorMsg="该商品已加入专场【sellJmPromotion.getName()】，并上传成功。聚美平台监控大促开场，严禁大促专场商品出现时间异常。介于开始时间不相同，该商品已无法在当前大促专场进行售卖，请替换商品."+"聚美Response";
+                 }
+              }
+          }
+    
+  4.2.7     if(jmPromotion.promotionType!=2&&jmPromotion.promotionType!=1)//非大促 非满减专场
+                {
+                    if(sellJmPromotion.promotionType!=1)//在售专场为非满减专场
+                    {
+                       if(sellJmPromotiona.getActivityStart()>jmPromotion.getActivityEnd())//在售专场开始时间>当前专场结束时间
+                       {
+                          errorMsg=" “该商品已加入专场【sellJmPromotion.getName()】，并上传成功。介于其有效期为sellJmPromotion.getActivityStart()】（年月日 时分秒）至【sellJmPromotion.getActivityEnd()】（年月日 时分秒），晚于当前专场，该商品已无法在当前专场进行售卖，请替换商品"+"聚美Response";
+                       }
+                    }
+                }
+    
+  4.2.8     if(jmPromotion.promotionType!=2&&jmPromotion.promotionType!=1)//非大促 非满减专场
+                {
+                    if(sellJmPromotion.promotionType!=1)//在售专场为非满减专场
+                    {
+                       if(jmPromotion.getActivityEnd()-sellJmPromotiona.getActivityEnd()>=4天)//，【sell_hash_id】的结束时间早于当前专场结束时间4天或以上 时
+                       {
+                          errorMsg="该商品已加入专场【sellJmPromotion.getName()】，并上传成功。请于【sellJmPromotion.getActivityEnd()】（年月日 时分秒）之后，再进行上传"+"聚美Response";
+                       }
+                    }
+                }
+  4.2.9  if(jmPromotion.promotionType!=2&&jmPromotion.promotionType!=1)//非大促 非满减专场
+               {
+                   if(sellJmPromotion.promotionType!=1)//在售专场为非满减专场
+                   {
+                      if(jmPromotion.getActivityEnd()-sellJmPromotiona.getActivityEnd()<=3天)//，【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
+                      {
+                                 2.9.1 新HashID替换MongoDB中，该商品的Origin HashID
+                                jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
+                                   if(sellJmPromotiona.getActivityEnd()<jmPromotion.getActivityEnd())//在售专场的结束时间小于当前专场结束时间
+                                   {
+                                      调用延迟Deal结束时间API
+                                   }
+                         errorMsg="该商品已加入专场【sellJmPromotion.getName()】，并上传成功。请于【sellJmPromotion.getActivityEnd()】（年月日 时分秒）之后，再进行上传"+"聚美Response";
+                      }
+                   }
+               }
+1.复制Deal(特卖)信息[htDeal/copyDeal]调用前Check，
+    （1）当前专场为满减专场的场合，该商品已加入其他未过期专场,并且，上传成功时，
+         状态为“上传失败”。
+         写入专场错误信息。
+             “该商品已加入其它未过期专场，无法上传。”
+    （2）当前专场非满减专场的场合，该商品已加入其他未过期满减专场,并且，上传成功时，
+         状态为“上传失败”。
+         写入专场错误信息。
+             “该商品已加入其它未过期满减专场，无法上传。”
+
+2.复制Deal(特卖)信息[htDeal/copyDeal]调用后Check，
+    （1）再售成功
+    新HashID替换MongoDB中，该商品的Origin HashID
+         状态为“上传成功”。
+         调用批量同步deal库存【htDeal/updateDealStockBatch】
+               同步库存失败。
+               同步库存FLG为否。
+               状态为“上传失败”。
+              写入专场错误信息。
+                      “库存同步失败，请重新点击【重刷】/【批量上传】。”
+                       +聚美Response
+
+         调用批量更新deal价格【htDeal/updateDealPriceBatch】，
+               同步价格FLG为否。
+               修改类API调用后Check。
+
+    （2）再售失败，未返回【sell_hash_id】的场合，
+         重新调用 复制Deal(特卖)信息[htDeal/copyDeal]（注意不要出现死循环，最多3次。）
+         如重复调用期间，正常再售，参照（1）
+         如重复调用期间，返回【sell_hash_id】，参照（3）（4）（5）（6）（7）（8）（9）
+         如重复调用3次后，未返回【sell_hash_id】
+             状态为“上传失败”。
+             写入专场错误信息。
+                 “请登录聚美后台，检查商品相关【产品库】与【Deal】信息，如发现“待审核”、“审核通过”、“取消送审”字样，请将相关 聚美产品ID，聚美产品品牌，聚美HashID申报给聚美运营，进行人工审核并发布。”
+                 +聚美Response
+    （3）再售失败，返回【sell_hash_id】的场合，当前专场为满减专场时，
+         状态为“上传失败”。
+         写入专场错误信息。
+             “该商品已加入专场【*********】，并上传成功。满减专场不可与其它专场共用商品，请于专场【*********】结束后，再进行上传。”
+             +聚美Response
+    （4）再售失败，返回【sell_hash_id】的场合，当前专场非满减专场，并且，【sell_hash_id】已存在于其它满减专场时，
+         状态为“上传失败”。
+         写入专场错误信息。
+             “该商品已加入满减专场【*********】，并上传成功。满减专场不可与其它专场共用商品，请于专场【*********】结束后，再进行上传。”
+             +聚美Response
+    （5）再售失败，返回【sell_hash_id】的场合，当前专场为大促非满减专场，并且，【sell_hash_id】不存在于其它满减专场，并且，【sell_hash_id】的开始时间等于当前专场开始时间 时，
+          状态为“上传失败”，
+         【sell_hash_id】直接写入聚美专场用HashID；【sell_hash_id】的结束时间小于当前专场结束时间的场合，调用延迟Deal结束时间API。
+         写入专场错误信息。
+             “该商品已加入专场【*********】，并上传成功。介于开始时间相同，当前大促专场引用了同一HashID，并进行了延期。如需变更价格，请重新点击【重刷】/【批量同步价格】。操作将影响关联专场，请慎重。”
+    （6）再售失败，返回【sell_hash_id】的场合，当前专场为为大促非满减专场，并且，【sell_hash_id】的开始时间不等于当前专场开始时间 时，
+         状态为“上传失败”。
+         写入专场错误信息。
+             “该商品已加入专场【*********】，并上传成功。聚美平台监控大促开场，严禁大促专场商品出现时间异常。介于开始时间不相同，该商品已无法在当前大促专场进行售卖，请替换商品。”
+             +聚美Response
+    （7）再售失败，返回【sell_hash_id】的场合，当前专场非大促非满减专场，并且，【sell_hash_id】不存在于其它满减专场，并且，【sell_hash_id】的开始时间晚于当前专场结束时间 时，
+         状态为“上传失败”。
+         写入专场错误信息。
+             “该商品已加入专场【*********】，并上传成功。介于其有效期为【*********】（年月日 时分秒）至【*********】（年月日 时分秒），晚于当前专场，该商品已无法在当前专场进行售卖，请替换商品。”
+             +聚美Response
+    （8）再售失败，返回【sell_hash_id】的场合，当前专场非大促非满减专场，并且，【sell_hash_id】不存在于其它满减专场，并且，【sell_hash_id】的结束时间早于当前专场结束时间4天或以上 时，
+         状态为“上传失败”。
+         写入专场错误信息。
+             “该商品已加入专场【*********】，并上传成功。请于【*********】（年月日 时分秒）之后，再进行上传。”
+             +聚美Response
+    （9）再售失败，返回【sell_hash_id】的场合，当前专场非大促非满减专场，并且，【sell_hash_id】不存在于其它满减专场，并且，【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
+         状态为“上传失败”，
+         新HashID替换MongoDB中，该商品的Origin HashID
+         【sell_hash_id】直接写入聚美专场用HashID；【sell_hash_id】的结束时间小于当前专场结束时间的场合，调用延迟Deal结束时间API。
+         写入专场错误信息。
+             “该商品已加入专场【*********】，并上传成功。当前专场引用了同一HashID，并进行了延期。该商品无预热。如需变更价格，请重新点击【重刷】/【批量同步价格】。操作将影响关联专场，请慎重。”

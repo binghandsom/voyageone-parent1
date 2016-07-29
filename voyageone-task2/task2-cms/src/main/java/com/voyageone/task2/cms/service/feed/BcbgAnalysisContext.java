@@ -77,6 +77,7 @@ class BcbgAnalysisContext {
         setAttribute(attributes, WLADG, bcbgBean.getWLADG());
         setAttribute(attributes, WHERL, bcbgBean.getWHERL());
         setAttribute(attributes, MEAN_EAN11, bcbgBean.getMEAN_EAN11());
+        setAttribute(attributes, SIZE_FIT, bcbgBean.getStyleBean().getSizeFit());
     }
 
     private void setAttribute(Map<String, List<String>> attributes, String attribute, String value) {

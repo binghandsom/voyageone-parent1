@@ -126,6 +126,12 @@
         <!-- 自动维护Mongodb索引（每天执行一次） -->
         <task:scheduled ref="CmsMongoOptimizeIndexJob" method="run" cron="0 0 3 * * ?"/>
 
+        <!-- overstock 价格变更监听 -->
+        <task:scheduled ref="CmsOverstockPriceEventJob" method="run" cron="9 0/3 0 * * *"/>
+
+        <!-- BCBG Feed 导入 cms2 (每三分钟的第40秒执行) -->
+        <task:scheduled ref="Cms2BcbgAnalysisJob" method="run" cron="40 0/3 * * * *"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

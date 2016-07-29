@@ -192,7 +192,7 @@
                             <div class="form-horizontal form-inline">
                                 <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
                                 <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
-                            </div><!-- .form-inline -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -209,8 +209,6 @@
                 </button>
                 <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
                     <li><a href="" ng-click="addExport(0)">按上新模板</a></li>
-                    <!--<li><a href="" ng-click="addExport(1)">按价格修改模板</a></li>-->
-                    <!--<li><a href="" ng-click="addExport(2)">按专场模板</a></li>-->
                 </ul>
             </div>
             <div class="btn-group dropdown" uib-dropdown="">
@@ -232,8 +230,6 @@
                     <li><a href="" ng-click="batchDeleteProduct()">批量清空</a></li>
                     <li><a href="" ng-click="batchCopyDeal()" ng-if="!vm.isEnd && vm.isUpdateJM">批量上传</a></li>
                     <li><a href="" ng-click="batchSynchPrice()" ng-if="!vm.isEnd && vm.isUpdateJM">批量同步价格</a></li>
-                    <!--<li><a href="" ng-click="openDealExtension(modelUpdateDealEndTime)">批量Deal延期</a></li>-->
-                    <!--<li><a href="">批量变更属性</a></li>-->
                     <li><a href="" ng-click="openPriceModifyWin()" ng-if="!vm.isEnd && vm.isUpdateJM">批量变更价格</a></li>
                 </ul>
             </div>
@@ -294,7 +290,7 @@
                                                 ng-options="m.tagName as m.tagName for m in vm.tagList">
                                         </select>
                                     </td>
-                                    <!--<td class="text-left">{{model.promotionTag}}</td>-->
+
                                     <td class="text-left">
                                         <div class="table_main">
                                             <ul>
@@ -306,15 +302,15 @@
                                     <td class="text-right">
                                         <div class="table_main">
                                             <ul>
-                                                <li>海外官网价格:{{model.msrpUsd|number}}</li>
-                                                <li>中国官网售价:{{model.msrpRmb|number}}</li>
-                                                <li>中国指导售价:{{model.retailPrice|number}}</li>
-                                                <li>中国最终售价:{{model.salePrice|number}}</li>
+                                                <li>海外官网价格:{{getMinMaxPrice(model.minMsrpUsd,model.maxMsrpUsd)}}</li>
+                                                <li>中国官网售价:{{getMinMaxPrice(model.minMsrpRmb,model.maxMsrpRmb)}}</li>
+                                                <li>中国指导售价:{{getMinMaxPrice(model.minRetailPrice,model.maxRetailPrice)}}</li>
+                                                <li>中国最终售价:{{getMinMaxPrice(model.minSalePrice,model.maxSalePrice)}}</li>
                                             </ul>
                                         </div>
                                     </td>
                                     <td class="text-right">
-                                        <div class="table_main">
+                                        <div class="table_main" style="width: 100px;">
                                         <ul>
                                             <li>市场价:{{getMarketPrice(model)}}</li>
                                             <li>团购价:{{getDealPrice(model)}}</li>
@@ -344,8 +340,6 @@
                                         <button title="编辑" class="btn btn-success btn-xs"
                                                 ng-click="openProductDetailWin({promotionProductId:model.id})">
                                             <i class="fa fa-pencil"></i></button>
-                                        <!--<button title="保存" ng-disabled="!model.isSave" class="btn btn-vo btn-xs" ng-click="updateDealPrice(model);"><i-->
-                                                <!--class="glyphicon glyphicon-floppy-disk"></i></button>-->
                                         <button title="删除" class="btn btn-danger btn-xs" ng-click="del(model)"><i class="fa fa-trash-o"></i></button>
                                     </td>
                                 </tr>
@@ -392,7 +386,6 @@
                                         </ul>
                                     </div>
                                 </a>
-                                <!--<textarea class="form-control no-resize ng-pristine ng-untouched ng-valid ng-not-empty" rows="3">{{model.errorMsg}}</textarea>-->
                             </td>
                             <td class="text-left"><a ng-click="downloadImportErrorExcel(model.id);">{{model.failuresFileName}}</a></td>
                             <td class="text-center">
@@ -437,7 +430,6 @@
                                         </ul>
                                     </div>
                                 </a>
-                                <!--<textarea class="form-control no-resize ng-pristine ng-untouched ng-valid ng-not-empty" rows="3">{{model.errorMsg}}</textarea>-->
                             </td>
                             <td class="text-center">
                                 <button title="下载" ng-disabled="!model.isExport" ng-click="downloadExportExcel(model.id);"
@@ -451,4 +443,4 @@
         </tabset>
     </div>
 </div>
-</div><!-- end .wrapper-md -->
+</div>

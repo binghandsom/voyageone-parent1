@@ -42,7 +42,7 @@
                                             </a>
                                         </li>
                                     </ul>
-                                </div>
+                                </div>&nbsp;&nbsp;
                                 <div ng-if="cartInfo.value!=27" class="btn-group" uib-dropdown ng-controller="popupCtrl">
                                     <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
                                         &nbsp;平台操作&nbsp;<span class="caret"></span>
@@ -94,6 +94,9 @@
                                         </span>
                                     </li>
                                 </ul>
+                                <div class="text-warnings no-master" style="padding-left:0px;" ng-if="vm.noMaterMsg">
+                                    <i class="icon fa fa-bell-o"></i>&nbsp;{{vm.noMaterMsg}} , 否则该产品信息无法显示！！！<br>
+                                </div>
                                 <div class="text-warnings" style="padding-left:0px" ng-if="vm.mastData.isMain != true">
                                     <i class="icon fa fa-bell-o"></i>&nbsp;此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面。<br>
                                 </div>
@@ -154,10 +157,10 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl" ng-click="jdCategoryMapping(popupNewCategory)" ng-disabled = "vm.status == 'Approved' || vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
+                                <button class="col-md-2 btn btn-default" ng-controller="popupCtrl" ng-click="jdCategoryMapping(popupNewCategory)" ng-disabled = "vm.status == 'Approved' || vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                                 </button>
                                 <div class="col-md-8">
-                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched"  ng-model="vm.platform.pCatPath" disabled>
+                                    <input class="form-control"  ng-model="vm.platform.pCatPath" disabled>
                                     <div class="text-warnings" style="padding-left:0px">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;切换平台类目将影响整个Group中的所有商品，请慎重！
                                     </div>
@@ -195,9 +198,9 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_CODE_WITH_COLON"|translate}}</strong></label>
+                                <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_CODE"|translate}}</strong></label>
                                 <div class="col-md-8">
-                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.mastData.productCode" disabled>
+                                    <input class="form-control" required="" style="" ng-model="vm.mastData.productCode" disabled>
                                     <div class="text-warnings" style="padding-left:0px" ng-if="cartInfo.value != 27">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;如果此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面
                                     </div>
@@ -206,13 +209,15 @@
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_NAME"|translate}}</strong></label>
                                 <div class="col-md-8">
-                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.mastData.productName" disabled>
+                                    <input class="form-control" ng-model="vm.mastData.productName" disabled>
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <label class="col-md-2 control-label"><strong>{{"TXT_BRAND" | translate}}</strong></label>
+                                <!--<label class="col-md-2 control-label"><strong>{{"TXT_BRAND" | translate}}</strong></label>-->
+                                <button class="col-md-2 btn btn-default" ng-controller="popupCtrl" ng-click="choseBrand(openPlatformMappingSetting)"><span>{{cartInfo.name}}&nbsp;{{"TXT_BRAND" | translate}}</span>
+                                </button>
                                 <div class="col-md-8">
-                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.platform.pBrandName" disabled>
+                                    <input class="form-control" ng-model="vm.platform.pBrandName" disabled>
                                     <div class="text-warnings" style="padding-left:0px">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;如没有显示品牌，请先确认是否在{{cartInfo.name}}后台申请过相应品牌，然后联系IT处理
                                     </div>
@@ -307,7 +312,7 @@
                                         <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].size}}</td>
                                         <td class="text-center v-middle">
                                             <label class="col-sm-3 control-label vo_reqfield"></label>
-                                            <input class="form-control ng-number" type="number" ng-model="entity.priceMsrp" required>
+                                            <input class="form-control ng-number" type="number" ng-model="entity.priceMsrp" scale="15,2" required>
                                         </td>
                                         <td class="text-center v-middle">{{entity.priceRetail}}</td>
                                         <td class="text-center v-middle"><input class="form-control" type="text" ng-model="entity.sizeNick" style="width: 100px;margin: 0px auto;"></td>
@@ -320,7 +325,7 @@
                                         </td>
                                         <td class="text-center v-middle">
                                             <label class="col-sm-3 control-label vo_reqfield"></label>
-                                            <input class="form-control ng-number" type="number" ng-model="entity.priceSale" ng-disabled="productInfo.autoApprovePrice.configValue1 == '1'"  scale="2" required></td>
+                                            <input class="form-control ng-number" type="number" ng-model="entity.priceSale" ng-disabled="productInfo.autoApprovePrice.configValue1 == '1'"  scale="15,2" required></td>
                                         <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].barcode}}</td>
                                     </tr>
                                 </tbody>

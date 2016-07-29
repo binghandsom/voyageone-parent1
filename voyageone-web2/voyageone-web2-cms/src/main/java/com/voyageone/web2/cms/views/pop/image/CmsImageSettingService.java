@@ -7,6 +7,7 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.HttpScene7;
 import com.voyageone.common.util.ImgUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ftp.FtpComponentFactory;
@@ -76,14 +77,15 @@ public class CmsImageSettingService extends BaseAppService {
         // 获取图片名字
         String imageName = getImageName(cmsBtProductModel, imageType, user);
 
-        // FtpBean初期化
-        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
-
-        // ftp连接usernmae
-        String userName = ftpComponent.getFtpConnectBean().getUsername();
+//        // FtpBean初期化
+//        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
+//
+//        // ftp连接usernmae
+//        String userName = ftpComponent.getFtpConnectBean().getUsername();
 
         // 上传图片到Ftp
-        if (uploadFtp(ftpComponent, uploadPath, file.getInputStream(), imageName + imageExtend)) {
+        HttpScene7.uploadImageFile(uploadPath, imageName + imageExtend, file.getInputStream());
+//        if (uploadFtp(ftpComponent, uploadPath, file.getInputStream(), imageName + imageExtend)) {
 
             // 插入图片表
             CmsBtImagesModel newModel = new CmsBtImagesModel();
@@ -91,7 +93,7 @@ public class CmsImageSettingService extends BaseAppService {
             newModel.setOriginalUrl("本地图片上传:" + file.getOriginalFilename());
             newModel.setCode(cmsBtProductModel.getCommon().getFields().getCode());
             newModel.setUpdFlg(1);
-            newModel.setCreater(userName);
+            newModel.setCreater(user.getUserName());
             newModel.setImgName(imageName);
             imagesService.insert(newModel);
 
@@ -104,36 +106,69 @@ public class CmsImageSettingService extends BaseAppService {
             response = productService.updateProductCommon(user.getSelChannelId(), productId, cmsBtProductModel.getCommon(), user.getUserName(), false);
 
             List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
-            cmsMtCommonFields = cmsMtCommonFields.stream().filter(field -> field.getId().equalsIgnoreCase(imageType.replace("image","images"))).collect(Collectors.toList());
+            cmsMtCommonFields = cmsMtCommonFields.stream().filter(field -> field.getId().equalsIgnoreCase(imageType.replace("image", "images"))).collect(Collectors.toList());
             FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProductModel.getCommon().getFields());
             response.put("imageName", imageName);
-            response.put("imageSchema",cmsMtCommonFields);
-            response.put("base64", ImgUtils.encodeToString(file.getInputStream(), ""));
+            response.put("imageSchema", cmsMtCommonFields);
+//            response.put("base64", ImgUtils.encodeToString(file.getInputStream(), ""));
+            return response;
+//        }
+    }
+
+    public Map<String, Object> uploadImages(Map<String, MultipartFile> files, Long productId, String imageType, UserSessionBean user, String imageExtend) throws Exception {
+
+        Map<String, Object> response = new HashMap<>();
+
+        String orderChannelId = user.getSelChannelId();
+
+        //FTP服务器保存目录设定
+        String uploadPath = ChannelConfigs.getVal1(user.getSelChannelId(), ChannelConfigEnums.Name.scene7_image_folder);
+        if (StringUtils.isEmpty(uploadPath)) {
+            String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表", orderChannelId);
+            $error(orderChannelId);
+            throw new BusinessException(err);
+        }
+
+        CmsBtProductModel cmsBtProductModel = productService.getProductById(user.getSelChannelId(), productId);
+
+        Map<String, MultipartFile> images = new HashMap<>();
+        for (String key : files.keySet()) {
+            String imageName = getImageName(cmsBtProductModel, imageType, user) + imageExtend;
+            images.put(imageName, files.get(key));
+        }
+        // FtpBean初期化
+        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
+
+        // ftp连接usernmae
+        String userName = ftpComponent.getFtpConnectBean().getUsername();
+
+        // 上传图片到Ftp
+        if (uploadFtp(ftpComponent, uploadPath, images)) {
+
+            images.forEach((s, multipartFile) -> {
+                // 插入图片表
+                CmsBtImagesModel newModel = new CmsBtImagesModel();
+                newModel.setChannelId(orderChannelId);
+                newModel.setOriginalUrl("本地图片上传:" + multipartFile.getOriginalFilename());
+                newModel.setCode(cmsBtProductModel.getCommon().getFields().getCode());
+                newModel.setUpdFlg(1);
+                newModel.setCreater(userName);
+                newModel.setImgName(s);
+                imagesService.insert(newModel);
+
+            });
+
+            // 更新产品数据
+            response = productService.updateProductCommon(user.getSelChannelId(), productId, cmsBtProductModel.getCommon(), user.getUserName(), false);
+
+            List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
+            cmsMtCommonFields = cmsMtCommonFields.stream().filter(field -> field.getId().equalsIgnoreCase(imageType.replace("image", "images"))).collect(Collectors.toList());
+            FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProductModel.getCommon().getFields());
+            response.put("imageSchema", cmsMtCommonFields);
             return response;
         }
 
         return null;
-    }
-
-    // 根据imagetype计算出新上传的图片名
-    private String getImageName(CmsBtProductModel cmsBtProductModel, String imageType, UserSessionBean user) {
-
-        String URL_FORMAT = "[~@.' '#$%&*_'':/‘’^\\()]";
-        Pattern special_symbol = Pattern.compile(URL_FORMAT);
-
-        CmsBtProductConstants.FieldImageType fieldImageType = CmsBtProductConstants.FieldImageType.getFieldImageTypeByName(imageType);
-        List<CmsBtProductModel_Field_Image> images = cmsBtProductModel.getCommon().getFields().getImages(fieldImageType);
-
-        images = images.stream().filter(cmsBtProductModel_field_image -> cmsBtProductModel_field_image.size() > 0).filter(cmsBtProductModel_field_image1 -> !StringUtils.isEmpty(cmsBtProductModel_field_image1.getName())).collect(Collectors.toList());
-
-        String imageName = String.format("%s-%s-%s-%s", user.getSelChannelId(),DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"), special_symbol.matcher(cmsBtProductModel.getCommon().getFields().getCode()).replaceAll(Constants.EmptyString),  imageType.substring(imageType.length() - 1));
-
-        images.add(new CmsBtProductModel_Field_Image(imageType, imageName));
-
-        cmsBtProductModel.getCommon().getFields().setImages(fieldImageType, images);
-
-        return imageName;
-
     }
 
     private boolean uploadFtp(BaseFtpComponent ftpComponent, String uploadPath, InputStream imageStream, String imageName) throws IOException {
@@ -147,6 +182,55 @@ public class CmsImageSettingService extends BaseAppService {
             FtpFileBean ftpFileBean = new FtpFileBean(imageStream, uploadPath, imageName);
             ftpComponent.uploadFile(ftpFileBean);
 
+        } catch (Exception ex) {
+            $error(ex.getMessage(), ex);
+            isSuccess = false;
+        } finally {
+            //断开连接
+            ftpComponent.closeConnect();
+        }
+
+        return isSuccess;
+    }
+
+    // 根据imagetype计算出新上传的图片名
+    private String getImageName(CmsBtProductModel cmsBtProductModel, String imageType, UserSessionBean user) {
+
+        String URL_FORMAT = "[~@.' '#$%&*_'':/‘’^\\()]";
+        Pattern special_symbol = Pattern.compile(URL_FORMAT);
+
+        CmsBtProductConstants.FieldImageType fieldImageType = CmsBtProductConstants.FieldImageType.getFieldImageTypeByName(imageType);
+        List<CmsBtProductModel_Field_Image> images = cmsBtProductModel.getCommon().getFields().getImages(fieldImageType);
+
+        images = images.stream().filter(cmsBtProductModel_field_image -> cmsBtProductModel_field_image.size() > 0).filter(cmsBtProductModel_field_image1 -> !StringUtils.isEmpty(cmsBtProductModel_field_image1.getName())).collect(Collectors.toList());
+
+        String imageName = String.format("%s-%s-%s-%s", user.getSelChannelId(), DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"), special_symbol.matcher(cmsBtProductModel.getCommon().getFields().getCode()).replaceAll(Constants.EmptyString), imageType.substring(imageType.length() - 1));
+
+        images.add(new CmsBtProductModel_Field_Image(imageType, imageName));
+
+        cmsBtProductModel.getCommon().getFields().setImages(fieldImageType, images);
+
+        return imageName;
+
+    }
+
+    private boolean uploadFtp(BaseFtpComponent ftpComponent, String uploadPath, Map<String, MultipartFile> images) throws IOException {
+        boolean isSuccess = true;
+
+        try {
+            //建立连接
+            ftpComponent.openConnect();
+            ftpComponent.enterLocalPassiveMode();
+
+            images.forEach((s, multipartFile) -> {
+                FtpFileBean ftpFileBean = null;
+                try {
+                    ftpFileBean = new FtpFileBean(multipartFile.getInputStream(), uploadPath, s);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                ftpComponent.uploadFile(ftpFileBean);
+            });
         } catch (Exception ex) {
             $error(ex.getMessage(), ex);
             isSuccess = false;
