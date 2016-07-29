@@ -15,7 +15,11 @@
             <div class="form-group m-r-lg">
                 <label>
                     <span>Platform&nbsp;</span>
-                    <select class="form-control" ng-model="ctrl.selected.cart" ng-change="ctrl.getData(0)" ng-options="i as i.label for i in ctrl.cartList"></select>
+                    <select class="form-control" ng-model="ctrl.selected.cart"
+                                                 ng-change="ctrl.getData(0)"
+                                                 ng-options="i as i.label for i in ctrl.cartList"
+                                                 ng-disabled = "ctrl.isPlatForm"
+                    ></select>
                 </label>
             </div>
             <div class="form-group pull-right">

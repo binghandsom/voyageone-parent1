@@ -49,10 +49,12 @@ define([
 
                 if (!selected.cart)
                     selected.cart = cartList[1];
-                else
+                else{
+                    self.isPlatForm = true;
                     selected.cart = _.find(cartList, function (cart) {
                         return cart.value === selected.cart;
                     });
+                }
 
                 self.cartList = cartList;
             }).then(function () {
