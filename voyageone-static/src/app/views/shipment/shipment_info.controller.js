@@ -66,7 +66,7 @@ define([
 
         ShipmentInfoController.prototype.popShipment = function (shipment, type) {
             var self = this;
-            //1:Open；3：Shipped；4：Arrived；5：Recevied；6：Receive with Error
+            //1:Open；3：Shipped；4：Arrived；5：Received；6：Receive Error
             var pendingShipmentStatus = "1";
             if (type == "edit") {
                 pendingShipmentStatus = shipment.status;
