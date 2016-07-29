@@ -284,7 +284,7 @@ public class VmsMakeFinancialReportService extends BaseTaskService {
         titleNameCell.setCellStyle(titleRowCellStyle);
         // VoyagoOnePrice
         Cell titleVoyagoOnePriceCell = titleRow.createCell(6, Cell.CELL_TYPE_STRING);
-        titleVoyagoOnePriceCell.setCellValue("VoyagoOnePrice");
+        titleVoyagoOnePriceCell.setCellValue("VoyageOnePrice");
         titleVoyagoOnePriceCell.setCellStyle(titleRowCellStyle);
 
         /* 设置内容行 */
