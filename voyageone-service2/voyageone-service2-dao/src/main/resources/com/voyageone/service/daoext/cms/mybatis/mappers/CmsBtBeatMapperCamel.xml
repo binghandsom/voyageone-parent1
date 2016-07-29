@@ -207,6 +207,8 @@
             product_code,
             syn_flag,
             message,
+            image_status,
+            image_task_id,
             b.created,
             b.creater,
             b.modified,
