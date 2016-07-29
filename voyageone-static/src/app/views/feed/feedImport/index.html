@@ -67,7 +67,7 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="feedImportResult in ctrl.feedImportResultList">
-                        <td class="v-middle">{{feedImportResult.client_file_name}}</td>
+                        <td class="v-middle" style="word-wrap: break-word">{{feedImportResult.client_file_name}}</td>
                         <td class="v-middle">{{feedImportResult.created | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="v-middle">{{feedImportResult.creater}}</td>
                         <td class="v-middle">{{feedImportResult.statusName}}</td>
