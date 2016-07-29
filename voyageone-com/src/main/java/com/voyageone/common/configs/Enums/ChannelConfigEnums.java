@@ -578,6 +578,12 @@ public class ChannelConfigEnums {
          */
         LightHouse("026"),
 
+
+        /**
+         * Yogademocracy
+         */
+        Yogademocracy("027"),
+
         /**
          * US匠心界
          */
