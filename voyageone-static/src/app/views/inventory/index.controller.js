@@ -1,19 +1,19 @@
 define([
     'vms'
 ], function (vms) {
-    vms.controller('InventoryUploadController', (function () {
+    vms.controller('InventoryFileUploadController', (function () {
 
-        function InventoryUploadController($scope, alert, notify, blockUI, FileUploader) {
+        function InventoryFileUploadController($scope, alert, notify, blockUI, FileUploader) {
             this.alert = alert;
             this.notify = notify;
             this.blockUI = blockUI;
             this.FileUploader = FileUploader;
             this.uploader = new FileUploader({
-                url: "/vms/inventory/inventory_upload/uploadInventoryFile"
+                url: "/vms/inventory/inventory_file_upload/uploadInventoryFile"
             });
         }
 
-        InventoryUploadController.prototype = {
+        InventoryFileUploadController.prototype = {
             upload: function () {
                 var main = this;
                 var uploadQueue = this.uploader.queue;
@@ -43,7 +43,7 @@ define([
 
             download: function () {
                 var main = this;
-                $.download.post('/vms/inventory/inventory_upload/downSampleInventoryFile', {}, this.afterDownload, main);
+                $.download.post('/vms/inventory/inventory_file_upload/downSampleInventoryFile', {}, this.afterDownload, main);
             },
 
             afterDownload:function (responseContent, param, context) {
@@ -54,7 +54,7 @@ define([
             }
 
         };
-        return InventoryUploadController;
+        return InventoryFileUploadController;
 
     }()));
 });
