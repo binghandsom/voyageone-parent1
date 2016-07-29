@@ -71,6 +71,9 @@ public class CmsProductHistoryLogService extends BaseAppService {
             logModel.setActiveStatus(Types.getTypeName(TypeConfigEnums.MastType.platformActicve.getId(), lang, logModel.getActiveStatus()));
             logModel.setPlatformStatus(Types.getTypeName(TypeConfigEnums.MastType.platformStatus.getId(), lang, logModel.getPlatformStatus()));
             String msg = Types.getTypeName(TypeConfigEnums.MastType.putOnOffStatus.getId(), lang, logModel.getResult());
+            if (msg == null) {
+                msg = "";
+            }
             String failTxt = StringUtils.trimToNull(logModel.getFailedComment());
             if (failTxt != null) {
                 msg = msg + "（" + failTxt + "）";
