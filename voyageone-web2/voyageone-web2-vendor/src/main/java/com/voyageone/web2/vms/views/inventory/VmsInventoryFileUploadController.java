@@ -25,7 +25,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(
-        value = VmsUrlConstants.INVENTORY.INVENTORY_UPLOAD.ROOT,
+        value = VmsUrlConstants.INVENTORY.INVENTORY_FILE_UPLOAD.ROOT,
         method = RequestMethod.POST
 )
 public class VmsInventoryFileUploadController extends BaseController {
@@ -39,7 +39,7 @@ public class VmsInventoryFileUploadController extends BaseController {
      *
      * @return Inventory文件模板
      */
-    @RequestMapping(VmsUrlConstants.INVENTORY.INVENTORY_UPLOAD.DOWNLOAD_SAMPLE_INVENTORY_FILE)
+    @RequestMapping(VmsUrlConstants.INVENTORY.INVENTORY_FILE_UPLOAD.DOWNLOAD_SAMPLE_INVENTORY_FILE)
     public ResponseEntity downSampleInventoryFile() throws IOException {
         // Feed文件模板的路径
         String sampleFilePath = com.voyageone.common.configs.Properties.readValue("vms.inventory.sample.file");
@@ -60,7 +60,7 @@ public class VmsInventoryFileUploadController extends BaseController {
      * @param file 导入文件
      * @return 结果
      */
-    @RequestMapping(VmsUrlConstants.INVENTORY.INVENTORY_UPLOAD.UPLOAD_INVENTORY_FILE)
+    @RequestMapping(VmsUrlConstants.INVENTORY.INVENTORY_FILE_UPLOAD.UPLOAD_INVENTORY_FILE)
     public AjaxResponse uploadInventoryFile(@RequestParam Map<String, Object> param, @RequestParam MultipartFile file) {
         vmsInventoryFileUploadService.saveInventoryFile(getUser().getSelChannelId(), getUser().getUserName(), file);
         return success(null);

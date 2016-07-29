@@ -53,8 +53,8 @@ public interface VmsUrlConstants {
     }
 
     interface INVENTORY {
-        interface INVENTORY_UPLOAD {
-            String ROOT = "/vms/inventory/inventory_upload";
+        interface INVENTORY_FILE_UPLOAD {
+            String ROOT = "/vms/inventory/inventory_file_upload";
             String DOWNLOAD_SAMPLE_INVENTORY_FILE = "downSampleInventoryFile";
             String UPLOAD_INVENTORY_FILE = "uploadInventoryFile";
         }

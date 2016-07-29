@@ -45,10 +45,10 @@ define(function () {
                 "controller": "ShipmentDetailController as ctrl"
             },
             {
-                "hash": "/inventory/inventory_upload",
+                "hash": "/inventory/inventory_file_upload",
                 "templateUrl": "./views/inventory/index.html",
                 "controllerUrl": "./views/inventory/index.controller",
-                "controller": "InventoryUploadController as ctrl"
+                "controller": "InventoryFileUploadController as ctrl"
             },
             {
                 "hash": "/reports/financial_report",
