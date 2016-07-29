@@ -63,7 +63,7 @@ public class BcbgAnalysisService extends BaseTaskService {
      */
     @Override
     public String getTaskName() {
-        return "BcbgAnalysis";
+        return "Cms2BcbgAnalysisJob";
     }
 
     /**

@@ -73,8 +73,18 @@ public class CmsImportOrdersHisInfoService extends BaseTaskService {
         StringBuilder mailTxt = new StringBuilder();
         mailTxt.append("<p>[").append(DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATE_FORMAT)).append("]销量统计状况报告</p>");
         mailTxt.append("<p>第一阶段，从oms系统导入订单信息，共耗时").append(statusMap.get("fstPhase")).append("秒</p>");
+        List<OrderChannelBean> list = (List<OrderChannelBean>) statusMap.get("fstPhaseRs");
+        if (list != null && list.size() > 0) {
+            mailTxt.append("<style>td { background-color: white; min-width: 100px; padding: 0px 10px; }</style>");
+            mailTxt.append("<table border=\"0\" cellspacing=\"1\" style=\"background-color:black\"><tbody><tr><td align=\"center\">店铺</td><td align=\"center\">销量*</td></tr>");
+            for (OrderChannelBean chnObj : list) {
+                mailTxt.append("<tr><td>").append(chnObj.getFull_name()).append("</td><td align=\"right\">").append(chnObj.getModifier()).append("</td></tr>");
+            }
+            mailTxt.append("</tbody></table>注*：这里是最近90天全平台总销量<br><br>");
+        }
+
         mailTxt.append("<p>第二阶段，根据订单信息统计销量数据：</p>");
-        List<OrderChannelBean> list = (List<OrderChannelBean>) statusMap.get("secPhase");
+        list = (List<OrderChannelBean>) statusMap.get("secPhase");
         if (list == null || list.isEmpty()) {
             mailTxt.append("所有店铺都没有销量数据");
         } else {
