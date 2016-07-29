@@ -49,7 +49,7 @@ define([
                 ttt.taskBeatService.addCheck(param).then(function (res) {
                     var otherBeats = res.data;
                     if (otherBeats.length)
-                        return ttt.confirm('TXT_MSG_CODE_IN_OTHER').result;
+                        return ttt.confirm('TXT_MSG_CODE_IN_OTHER');
                     return true;
                 }).then(function (goon) {
                     if (!goon) return;

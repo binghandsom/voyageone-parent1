@@ -68,12 +68,18 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
 
                 if (!_.isArray(_cacheWith))
                     _cacheWith = null;
-                else
-                    _cacheWith = _cacheWith.map(function (cacheKeyName) {
+                else {
+                    var __cacheWith = _cacheWith.map(function (cacheKeyName) {
                         return cacheKey[cacheKeyName];
                     }).filter(function (cacheKeyValue) {
                         return !!cacheKeyValue;
                     });
+
+                    if (__cacheWith.length !== _cacheWith.length)
+                        _cacheFlag = 0;
+                    else
+                        _cacheWith = __cacheWith;
+                }
             }
 
             if (!_url) {

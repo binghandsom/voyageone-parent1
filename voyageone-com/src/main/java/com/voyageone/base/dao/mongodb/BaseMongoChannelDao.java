@@ -19,7 +19,7 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
 
     public static final String SPLIT_PART = "c";
 
-    protected String getCollectionName(String channelId) {
+    public String getCollectionName(String channelId) {
         return mongoTemplate.getCollectionName(this.collectionName, channelId, SPLIT_PART);
     }
 

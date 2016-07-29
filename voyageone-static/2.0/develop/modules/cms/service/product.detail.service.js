@@ -29,6 +29,10 @@ define([
 		this.updateLock = updateLock;
 		this.updateProductAtts = updateProductAtts;
 		this.checkCategory = checkCategory;
+		this.getChangeMastProductInfo = getChangeMastProductInfo;
+		this.setMastProduct = setMastProduct;
+		this.delisting = delisting;
+		this.delistinGroup = delistinGroup;
 
 		/**
 		 * 获取页面产品信息
@@ -220,6 +224,8 @@ define([
 			$productDetailService.getProductPlatform(req)
 				.then (function (res) {
 					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
 				});
 
 			return defer.promise;
@@ -349,6 +355,71 @@ define([
 				});
 			return defer.promise;
 		}
+
+		/**
+		 * 获取主商品信息
+		 * @param req {cartId:27,productCode:"CRBT0003SP-"} 平台id，产品code
+         * @returns {*}
+         */
+		function getChangeMastProductInfo(req){
+			var defer = $q.defer();
+			$productDetailService.getChangeMastProductInfo(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 设置主商品
+		 * @param req {cartId:27,productCode:"CRBT0003SP-"}  平台id，产品code
+         * @returns {*}
+         */
+		function setMastProduct(req){
+			var defer = $q.defer();
+			$productDetailService.setMastProduct(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 产品下线
+		 * @param req {cartId:27,productCode:"CRBT0003SP-",comment:""}  平台id，产品code,备注
+		 * @returns {*}
+		 */
+		function delisting(req){
+			var defer = $q.defer();
+			$productDetailService.delisting(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 全group下线
+		 * @param req {cartId:27,productCode:"CRBT0003SP-",comment:""}  平台id，产品code，备注
+		 * @returns {*}
+		 */
+		function delistinGroup(req){
+			var defer = $q.defer();
+			$productDetailService.delistinGroup(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
 	}
 
 

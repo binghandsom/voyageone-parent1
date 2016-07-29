@@ -578,6 +578,12 @@ public class ChannelConfigEnums {
          */
         LightHouse("026"),
 
+
+        /**
+         * Yogademocracy
+         */
+        Yogademocracy("027"),
+
         /**
          * US匠心界
          */
@@ -588,14 +594,19 @@ public class ChannelConfigEnums {
          */
         USJGY("929"),
         /**
-         * VOYAGEONE
+         * TEST
          */
-        VOYAGEONE("997"),
+        TEST("996"),
 
         /**
-         * ThirdParty
+         * USJGT
          */
-        THIRD_PARTY("998");
+        USJGT("998"),
+
+        /**
+         * VOYAGEONE
+         */
+        VOYAGEONE("997");
 
         private String id;
 
@@ -650,7 +661,8 @@ public class ChannelConfigEnums {
                 case "928": return USJGJ;
                 case "929": return USJGY;
                 case "997": return VOYAGEONE;
-                case "998": return THIRD_PARTY;
+                case "996": return TEST;
+                case "998": return USJGT;
                 default: return null;
             }
         }

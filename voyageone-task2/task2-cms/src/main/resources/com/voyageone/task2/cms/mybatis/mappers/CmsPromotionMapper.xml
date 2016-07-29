@@ -40,7 +40,7 @@
                     WHERE
                         channel_id = #{channelId,jdbcType=VARCHAR}
                     AND active = 1
-                    AND promotion_status = 0
+                    AND promotion_status = 1
                     AND cart_id = #{cartId,jdbcType=VARCHAR}
                     AND tejiabao_id != 0
                 ) b

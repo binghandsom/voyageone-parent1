@@ -45,6 +45,9 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return mongoTemplate.updateFirst(query, update, collectionName);
     }
 
+    /**
+     * 根据Id返回多条产品数据
+     */
     public List<CmsBtProductModel> selectProductByIds(List<Long> ids, String channelId) {
         if (ids == null || ids.size() == 0) {  // 对于list千万不要返回null
             return Collections.emptyList();
@@ -102,7 +105,12 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     @Override
     public WriteResult update(BaseMongoModel model) {
         throw new BusinessException("not suppert");
-        // return update(model);
+//         return super.update(model);
+    }
+
+    @Deprecated
+    public WriteResult updateByModel(BaseMongoModel model) {
+         return super.update(model);
     }
 
     /**

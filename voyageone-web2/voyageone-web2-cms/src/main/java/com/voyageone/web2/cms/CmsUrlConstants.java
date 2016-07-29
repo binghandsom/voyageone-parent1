@@ -138,6 +138,12 @@ public interface CmsUrlConstants {
                 String ROOT = "/cms/promotion/index";
                 String INIT = "init";
                 String InitByPromotionId="initByPromotionId";
+                String GetPage="getPage";
+                String GetCount="getCount";
+                String GetEditModel="getEditModel";
+                String SaveEditModel="saveEditModel";
+                String DeleteByPromotionId="deleteByPromotionId";
+                String SetPromotionStatus="setPromotionStatus";
                 String GET_PROMOTION_LIST = "getPromotionList";
 
                 String INSERT_PROMOTION = "insertPromotion";
@@ -410,6 +416,29 @@ public interface CmsUrlConstants {
 
             String GET_DICT_LIST = "getDictList";
         }
+        
+        /**
+         * 品牌映射
+         */
+        interface BRAND {
+        	/** 根路径 */
+        	String ROOT = "/cms/mapping/brand";
+        	
+        	/** 页面初始化 */
+        	String INIT = "init";
+        	
+        	/** 检索品牌映射关系 */
+        	String SEARCH_BRANDS = "searchBrands";
+        	
+        	/** 检索客户的品牌 */
+        	String SEARCH_CUST_BRANDS = "searchCustBrands";
+        	
+        	/** 检索已匹配的品牌 */
+        	String SEARCH_MATCHED_BRANDS = "searchMatchedBrands";
+        	
+        	/** 添加新匹配的品牌 */
+        	String ADD_NEW_BRAND_MAPPING = "addNewBrandMapping";
+        }
     }
 
     // 系统设置
@@ -496,6 +525,8 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/pop/image_setting/";
 
             String UPLOAD_IMAGE = "uploadImage";
+
+            String UPLOAD_IMAGES = "uploadImages";
         }
         interface ADD_TO_CHANNEL_CATEGORY {
             String ROOT = "/cms/pop/add_to_channel_category";
@@ -508,7 +539,6 @@ public interface CmsUrlConstants {
     interface PRODUCT{
 
         interface DETAIL {
-
             String ROOT = "/cms/product/detail";
 
             String GET_PRODUCT_INFO = "getProductInfo";
@@ -540,10 +570,24 @@ public interface CmsUrlConstants {
             String UPDATE_FEED_ATTS = "updateProductAtts";
 
             String CHECK_CATEGORY = "checkCategory";
-
+            String GetChangeMastProductInfo="getChangeMastProductInfo";
+            String SetMastProduct="setMastProduct";
+            String Delisting="delisting";
+            String DelistinGroup="delistinGroup";
         }
 
+        interface HISTORY {
+            String ROOT = "/cms/product/history";
+            String GET_PUTONOFF_LOG_LIST = "getPutOnOffLogList";
+
+
+        }
+        interface StatusHistory {
+            String ROOT = "/cms/product/statushistory";
+            String GetPage = "getPage";
+        }
     }
+
 
     // 商品编辑
     interface GROUP{

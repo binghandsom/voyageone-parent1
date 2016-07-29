@@ -40,16 +40,6 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
      */
     protected Integer limit;
 
-    /**
-     * 市场价格 大于等于团购价
-     */
-    protected BigDecimal marketPrice;
-
-    /**
-     * 团购价格 至少大于15元
-     */
-    protected BigDecimal dealPrice;
-
     protected Long appId;
 
     protected Long pcId;
@@ -110,9 +100,73 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
     protected Integer dealEndTimeStatus;
 
     /**
-     * 库存同步状态
+     * 库存同步状态 0:库存未同步 1:待同步  2：库存已同步 3：同步失败
      */
     protected Integer stockStatus;
+
+    /**
+     * 海外官网价格
+     */
+    protected BigDecimal maxMsrpUsd;
+
+    /**
+     * 中国官网价格
+     */
+    protected BigDecimal maxMsrpRmb;
+
+    /**
+     * 中国指导价格
+     */
+    protected BigDecimal maxRetailPrice;
+
+    /**
+     * 中国最终售价
+     */
+    protected BigDecimal maxSalePrice;
+
+    /**
+     * 海外官网价格
+     */
+    protected BigDecimal minMsrpUsd;
+
+    /**
+     * 中国官网价格
+     */
+    protected BigDecimal minMsrpRmb;
+
+    /**
+     * 中国指导价格
+     */
+    protected BigDecimal minRetailPrice;
+
+    /**
+     * 中国最终售价
+     */
+    protected BigDecimal minSalePrice;
+
+    protected BigDecimal maxMarketPrice;
+
+    /**
+     * 市场价格 大于等于团购价
+     */
+    protected BigDecimal minMarketPrice;
+
+    protected BigDecimal maxDealPrice;
+
+    /**
+     * 团购价格 至少大于15元
+     */
+    protected BigDecimal minDealPrice;
+
+    /**
+     * 团购价格 至少大于15元
+     */
+    protected BigDecimal dealPrice;
+
+    /**
+     * 市场价格 大于等于团购价
+     */
+    protected BigDecimal marketPrice;
 
     public String getChannelId() {
         return channelId;
@@ -152,22 +206,6 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setLimit(Integer limit) {
         this.limit = limit;
-    }
-
-    public BigDecimal getMarketPrice() {
-        return marketPrice;
-    }
-
-    public void setMarketPrice(BigDecimal marketPrice) {
-        this.marketPrice = marketPrice;
-    }
-
-    public BigDecimal getDealPrice() {
-        return dealPrice;
-    }
-
-    public void setDealPrice(BigDecimal dealPrice) {
-        this.dealPrice = dealPrice;
     }
 
     public Long getAppId() {
@@ -280,5 +318,117 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setStockStatus(Integer stockStatus) {
         this.stockStatus = stockStatus;
+    }
+
+    public BigDecimal getMaxMsrpUsd() {
+        return maxMsrpUsd;
+    }
+
+    public void setMaxMsrpUsd(BigDecimal maxMsrpUsd) {
+        this.maxMsrpUsd = maxMsrpUsd;
+    }
+
+    public BigDecimal getMaxMsrpRmb() {
+        return maxMsrpRmb;
+    }
+
+    public void setMaxMsrpRmb(BigDecimal maxMsrpRmb) {
+        this.maxMsrpRmb = maxMsrpRmb;
+    }
+
+    public BigDecimal getMaxRetailPrice() {
+        return maxRetailPrice;
+    }
+
+    public void setMaxRetailPrice(BigDecimal maxRetailPrice) {
+        this.maxRetailPrice = maxRetailPrice;
+    }
+
+    public BigDecimal getMaxSalePrice() {
+        return maxSalePrice;
+    }
+
+    public void setMaxSalePrice(BigDecimal maxSalePrice) {
+        this.maxSalePrice = maxSalePrice;
+    }
+
+    public BigDecimal getMinMsrpUsd() {
+        return minMsrpUsd;
+    }
+
+    public void setMinMsrpUsd(BigDecimal minMsrpUsd) {
+        this.minMsrpUsd = minMsrpUsd;
+    }
+
+    public BigDecimal getMinMsrpRmb() {
+        return minMsrpRmb;
+    }
+
+    public void setMinMsrpRmb(BigDecimal minMsrpRmb) {
+        this.minMsrpRmb = minMsrpRmb;
+    }
+
+    public BigDecimal getMinRetailPrice() {
+        return minRetailPrice;
+    }
+
+    public void setMinRetailPrice(BigDecimal minRetailPrice) {
+        this.minRetailPrice = minRetailPrice;
+    }
+
+    public BigDecimal getMinSalePrice() {
+        return minSalePrice;
+    }
+
+    public void setMinSalePrice(BigDecimal minSalePrice) {
+        this.minSalePrice = minSalePrice;
+    }
+
+    public BigDecimal getMaxMarketPrice() {
+        return maxMarketPrice;
+    }
+
+    public void setMaxMarketPrice(BigDecimal maxMarketPrice) {
+        this.maxMarketPrice = maxMarketPrice;
+    }
+
+    public BigDecimal getMinMarketPrice() {
+        return minMarketPrice;
+    }
+
+    public void setMinMarketPrice(BigDecimal minMarketPrice) {
+        this.minMarketPrice = minMarketPrice;
+    }
+
+    public BigDecimal getMaxDealPrice() {
+        return maxDealPrice;
+    }
+
+    public void setMaxDealPrice(BigDecimal maxDealPrice) {
+        this.maxDealPrice = maxDealPrice;
+    }
+
+    public BigDecimal getMinDealPrice() {
+        return minDealPrice;
+    }
+
+    public void setMinDealPrice(BigDecimal minDealPrice) {
+        this.minDealPrice = minDealPrice;
+    }
+
+    public BigDecimal getDealPrice() {
+        return dealPrice;
+    }
+
+    public void setDealPrice(BigDecimal dealPrice) {
+        this.dealPrice = dealPrice;
+    }
+
+    public BigDecimal getMarketPrice() {
+        return marketPrice;
+    }
+
+    public void setMarketPrice(BigDecimal marketPrice) {
+        this.marketPrice = marketPrice;
     }
 }

@@ -80,6 +80,35 @@ public class SkuTemplateConstants {
     public final static int EXTENDSIZE_CUSTOM_SIZE_2 = 66;
     public final static int EXTENDSIZE_CUSTOM_SIZE_3 = 67;
     public final static int EXTENDSIZE_CUSTOM_SIZE_4 = 68;
+    public final static int EXTENDSIZE_TUNWEI = 73;
+    public final static int EXTENDSIZE_TUNWEI_RANGE = 74;
+    public final static int EXTENDSIZE_QUNCHANG = 75;
+    public final static int EXTENDSIZE_QUNCHANG_RANGE = 76;
+    public final static int EXTENDSIZE_QUNBAICHANG = 77;
+    public final static int EXTENDSIZE_QUNBAICHANG_RANGE = 78;
+    public final static int EXTENDSIZE_KUCHANG = 79;
+    public final static int EXTENDSIZE_KUCHANG_RANGE = 80;
+    public final static int EXTENDSIZE_TUIWEI = 81;
+    public final static int EXTENDSIZE_TUIWEI_RANGE = 82;
+    public final static int EXTENDSIZE_XIWEI = 83;
+    public final static int EXTENDSIZE_XIWEI_RANGE = 84;
+    public final static int EXTENDSIZE_XIAOJIAOWEI = 85;
+    public final static int EXTENDSIZE_XIAOJIAOWEI_RANGE = 86;
+    public final static int EXTENDSIZE_LASHENYAOWEI = 87;
+    public final static int EXTENDSIZE_LASHENYAOWEI_RANGE = 88;
+    public final static int EXTENDSIZE_ZUOWEI = 89;
+    public final static int EXTENDSIZE_ZUOWEI_RANGE = 90;
+    public final static int EXTENDSIZE_LASHENZUOWEI = 91;
+    public final static int EXTENDSIZE_LASHENZUOWEI_RANGE = 92;
+    public final static int EXTENDSIZE_JIAOKOU = 93;
+    public final static int EXTENDSIZE_JIAOKOU_RANGE = 94;
+    public final static int EXTENDSIZE_QIANLANG = 95;
+    public final static int EXTENDSIZE_QIANLANG_RANGE = 96;
+    public final static int EXTENDSIZE_HOULANG = 97;
+    public final static int EXTENDSIZE_HOULANG_RANGE = 98;
+    public final static int EXTENDSIZE_HENGDANG = 99;
+    public final static int EXTENDSIZE_HENGDANG_RANGE = 100;
+    public final static int EXTENDSIZE_JIAOCHANG = 101;
 
     // 既没有颜色也没有尺码
     public final static int SKU_MASTER = 69;

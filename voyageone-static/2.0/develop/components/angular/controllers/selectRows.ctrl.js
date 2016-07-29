@@ -23,10 +23,12 @@ angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", fun
             objectList.selFlag[object[id]] = objectList.selAllFlag;
             if (objectList.hasOwnProperty("selList")) {
                 var tempList = _.pluck(objectList.selList, id);
-                if (objectList.selAllFlag && tempList.indexOf(object[id]) < 0) {
-                    objectList.selList.push(object);
-                } else if (!objectList.selAllFlag && tempList.indexOf(object[id]) > -1) {
-                    objectList.selList.splice(tempList.indexOf(object[id]), 1);
+                if (tempList) {
+                    if (objectList.selAllFlag && tempList.indexOf(object[id]) < 0) {
+                        objectList.selList.push(object);
+                    } else if (!objectList.selAllFlag && tempList.indexOf(object[id]) > -1) {
+                        objectList.selList.splice(tempList.indexOf(object[id]), 1);
+                    }
                 }
             }
         });
@@ -45,7 +47,7 @@ angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", fun
             angular.forEach(objectList.currPageRows, function (object) {
                 var tempList = _.pluck(objectList.selList, id);
                 if (_.isEqual(object[id], currentId)) {
-                    if (tempList.indexOf(object[id]) > -1) {
+                    if (tempList && tempList.indexOf(object[id]) > -1) {
                         objectList.selList.splice(tempList.indexOf(object[id]), 1);
                     } else {
                         objectList.selList.push(object);
@@ -54,9 +56,9 @@ angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", fun
             });
         }
         objectList.selAllFlag = true;
-        tempList = _.pluck(objectList.selList, id);
+        var tempList = _.pluck(objectList.selList, id);
         angular.forEach(objectList.currPageRows, function (object) {
-            if (tempList.indexOf(object[id]) == -1) {
+            if (tempList && tempList.indexOf(object[id]) == -1) {
                 objectList.selAllFlag = false;
             }
         });
@@ -75,7 +77,7 @@ angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", fun
             objectList.selAllFlag = true;
             var tempList = _.pluck(objectList.selList, id);
             angular.forEach(objectList.currPageRows, function (object) {
-                if (tempList.indexOf(object[id]) == -1) {
+                if (tempList && tempList.indexOf(object[id]) == -1) {
                     objectList.selAllFlag = false;
                 }
             });

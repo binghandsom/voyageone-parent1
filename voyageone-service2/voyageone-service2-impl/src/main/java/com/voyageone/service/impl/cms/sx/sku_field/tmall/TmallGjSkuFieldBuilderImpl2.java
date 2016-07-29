@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.sx.sku_field.tmall;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
@@ -154,6 +155,11 @@ public class TmallGjSkuFieldBuilderImpl2 extends AbstractSkuFieldBuilder {
     private void buildSkuSize(ComplexValue skuFieldValue, CmsBtProductModel productModel, CmsBtProductModel_Sku cmsSkuProp) throws Exception {
         if (sku_sizeField.getType() == FieldTypeEnum.SINGLECHECK) {
             List<Option> sizeOptions = ((SingleCheckField)sku_sizeField).getOptions();
+            // added by morse.lu 2016/07/26 start
+            if (availableSizeIndex >= sizeOptions.size()) {
+                throw new BusinessException(String.format("最多只能%d个sku!请拆分group!", sizeOptions.size()));
+            }
+            // added by morse.lu 2016/07/26 end
             String sizeValue = sizeOptions.get(availableSizeIndex++).getValue();
             skuFieldValue.setSingleCheckFieldValue(sku_sizeField.getId(), new Value(sizeValue));
             buildSkuResult.getSizeCmsSkuPropMap().put(sizeValue, cmsSkuProp);

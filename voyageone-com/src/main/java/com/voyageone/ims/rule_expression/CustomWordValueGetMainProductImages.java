@@ -12,8 +12,8 @@ public class CustomWordValueGetMainProductImages extends CustomWordValue{
 
     public CustomWordValueGetMainProductImages() {}
 
-    public CustomWordValueGetMainProductImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageIndex, RuleExpression imageType, RuleExpression paddingExpression, RuleExpression useOriUrl) {
-        this.userParam = new CustomModuleUserParamGetMainPrductImages(htmlTemplate, imageTemplate, imageIndex, imageType, paddingExpression, useOriUrl);
+    public CustomWordValueGetMainProductImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageIndex, RuleExpression imageType, RuleExpression paddingExpression, RuleExpression paddingIsUrl, RuleExpression useOriUrl) {
+        this.userParam = new CustomModuleUserParamGetMainPrductImages(htmlTemplate, imageTemplate, imageIndex, imageType, paddingExpression, paddingIsUrl, useOriUrl);
     }
 
     public CustomModuleUserParamGetMainPrductImages getUserParam() {

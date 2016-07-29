@@ -39,24 +39,20 @@ define([
             $scope.modelUpdateDealEndTime.isBatch = true;
 
         };
-
         $scope.clear = function () {
             $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.parentId};
             $scope.searchInfo.brand = null;
             $scope.searchInfo.selectedChanged = null;
         };
-
         $scope.search = function () {
             var data = getSearchInfo();
 
-            goPage(1, 10);
-
+            goPage(1, 10)
             jmPromotionDetailService.getPromotionProductInfoCountByWhere(data).then(function (res) {
                 $scope.dataPageOption.total = res.data;
             }, function (res) {
             });
         };
-
         function getSearchInfo() {
             loadSearchInfo();
             var data = angular.copy($scope.searchInfo);
@@ -86,8 +82,7 @@ define([
                 }
             }
             return productIdList;
-        };
-
+        }
         $scope.jmNewByProductIdListInfo = function () {
             var productIdList = [];
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
@@ -96,7 +91,7 @@ define([
                 }
             }
             var parameter = {promotionId: $scope.vm.promotionId, productIdList: productIdList};
-            confirm($translate.instant('TXT_Do_You_Want_To_Selected')).result.then(function () {
+            confirm($translate.instant('TXT_Do_You_Want_To_Selected')).then(function () {
                 jmPromotionDetailService.jmNewByProductIdListInfo(parameter).then(function () {
                     for (var i = $scope.vm.modelList.length - 1; i >= 0; i--) {
                         if ($scope.vm.modelList[i].isChecked) {
@@ -108,9 +103,8 @@ define([
                 })
             });
         };
-
         $scope.jmNewUpdateAll = function () {
-            confirm($translate.instant('TXT_Do_You_Want_To_Update_ All')).result.then(function () {
+            confirm($translate.instant('TXT_Do_You_Want_To_Update_ All')).then(function () {
                 jmPromotionDetailService.jmNewUpdateAll($scope.vm.promotionId).then(function () {
                     for (var i = $scope.vm.modelList.length - 1; i >= 0; i--) {
 
@@ -131,7 +125,7 @@ define([
                 }
             }
             var parameter = {promotionId: $scope.vm.promotionId, productIdList: productIdList};
-            confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE')).then(function () {
                 jmPromotionDetailService.deleteByProductIdList(parameter).then(function () {
                     for (var i = $scope.vm.modelList.length - 1; i >= 0; i--) {
                         if ($scope.vm.modelList[i].isChecked) {
@@ -141,19 +135,17 @@ define([
                 }, function (res) {
                 })
             });
-        };
-
+        }
         $scope.deleteByPromotionId = function () {
-            confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE')).then(function () {
                 jmPromotionDetailService.deleteByPromotionId($scope.vm.promotionId).then(function () {
                     $scope.vm.modelList = [];
                 }, function (res) {
                 })
             })
-        };
-
+        }
         $scope.del = function (data) {
-            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.productLongName).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.productLongName).then(function () {
                 var index = _.indexOf($scope.vm.modelList, data);
                 if (data.synchStatus == 2) {
                     alert("该商品已上传，禁止删除!");
@@ -171,10 +163,13 @@ define([
                     else {
                         alert($translate.instant('TXT_FAIL'));
                     }
-                }, function () {
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
                 });
-
+                //jmPromotionDetailService.delete(data.id).then(function () {
+                //    $scope.vm.modelList.splice(index, 1);
+                //}, function (res) {
+                //})
             })
         };
 
@@ -184,43 +179,38 @@ define([
             }, function (res) {
             })
         };
-
         $scope.searchImport = function () {
             cmsBtJmPromotionImportTaskService.getByPromotionId($routeParams.parentId).then(function (res) {
                 $scope.vm.cmsBtJmPromotionImportTaskList = res.data;
             }, function (res) {
             })
-        };
-
+        }
         $scope.searchExport = function () {
             cmsBtJmPromotionExportTaskService.getByPromotionId($routeParams.parentId).then(function (res) {
                 $scope.vm.cmsBtJmPromotionExportTaskList = res.data;
             }, function (res) {
             })
-        };
-
+        }
         $scope.addExport = function (templateType) {
             var model = {templateType: templateType, cmsBtJmPromotionId: $scope.vm.promotionId};
-            cmsBtJmPromotionExportTaskService.addExport(model).then(function () {
+            cmsBtJmPromotionExportTaskService.addExport(model).then(function (res) {
                 $scope.searchExport();
             }, function (res) {
 
             });
-        };
-
+        }
         $scope.downloadImportExcel = function (id) {
             ///cms/CmsBtJmPromotionExportTask/index/downloadExcel
             ExportExcel("/cms/CmsBtJmPromotionImportTask/index/downloadExcel", angular.toJson({id: id}));
-        };
-
+        }
         $scope.downloadImportErrorExcel = function (id) {
             ExportExcel("/cms/CmsBtJmPromotionImportTask/index/downloadImportErrorExcel", angular.toJson({id: id}));
-        };
-
+        }
         $scope.downloadExportExcel = function (id) {
             ///cms/CmsBtJmPromotionExportTask/index/downloadExcel
             ExportExcel("/cms/CmsBtJmPromotionExportTask/index/downloadExcel", angular.toJson({id: id}));
-        };
+        }
+
 
         function ExportExcel(action, source)//导出excel方法
         {
@@ -235,13 +225,12 @@ define([
             IsExcelElement.value = 1;
             Form.action = action;
             Form.submit();
-        }
-
+        };
         function loadSearchInfo() {
             $scope.searchInfo.synchStatusList = [];
             $scope.searchInfo.errorStatus=undefined;
             if ($scope.searchInfo.synchStatus0) {
-                $scope.searchInfo.synchStatusList.push(0);
+                $scope.searchInfo.synchStatusList.push(0)
                 $scope.searchInfo.synchStatusList.push(1)
             }
             if ($scope.searchInfo.synchStatus2) {
@@ -251,7 +240,6 @@ define([
                 $scope.searchInfo.errorStatus=3;
             }
         }
-
         $scope.getStatus = function (model) {
             //0:未更新 2:上新成功 3:上传异常
 
@@ -272,8 +260,7 @@ define([
                 return "未更新";
             }
             return "更新完成";
-        };
-
+        }
         $scope.getSelectedPromotionProductIdList = function () {
             var listPromotionProductId = [];
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
@@ -282,8 +269,7 @@ define([
                 }
             }
             return listPromotionProductId;
-        };
-
+        }
         $scope.getSelectedProductCodeList = function () {
             var listPromotionProductCode = [];
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
@@ -292,10 +278,9 @@ define([
                 }
             }
             return listPromotionProductCode;
-        };
-
+        }
         $scope.updateJM = function (promotionProductId) {
-            confirm("您确定要重新上传商品吗?").result.then(function () {
+            confirm("您确定要重新上传商品吗?").then(function () {
                 var listPromotionProductId = [promotionProductId];
                 var parameter = {};
                 parameter.promotionId = $scope.vm.promotionId;
@@ -308,19 +293,18 @@ define([
                     else {
                         alert($translate.instant('TXT_FAIL'));
                     }
-                }, function () {
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
                 });
             });
         };
-
         $scope.batchSynchPrice = function () {
             var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
             if (listPromotionProductId.length == 0) {
                 alert("请选择同步价格的商品!");
                 return;
             }
-            confirm("您确定要重新上传商品吗?").result.then(function () {
+            confirm("您确定要重新上传商品吗?").then(function () {
                 var parameter = {};
                 parameter.promotionId = $scope.vm.promotionId;
                 parameter.listPromotionProductId = listPromotionProductId;
@@ -332,14 +316,13 @@ define([
                     else {
                         alert($translate.instant('TXT_FAIL'));
                     }
-                }, function () {
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
                 });
             });
         };
-
         $scope.synchAllPrice = function () {
-            confirm("您确定要重新上传商品吗?").result.then(function () {
+            confirm("您确定要重新上传商品吗?").then(function () {
                 jmPromotionDetailService.synchAllPrice($scope.vm.promotionId).then(function (res) {
                     if (res.data.result) {
                         $scope.search();
@@ -348,19 +331,18 @@ define([
                     else {
                         alert(res.data.msg);
                     }
-                }, function () {
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
                 });
             });
-        };
-
+        }
         $scope.batchCopyDeal = function () {
             var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
             if (listPromotionProductId.length == 0) {
                 alert("请选择上传的商品!");
                 return;
             }
-            confirm("选中的商品是否全部上传?").result.then(function () {
+            confirm("选中的商品是否全部上传?").then(function () {
                 var parameter = {};
                 parameter.promotionId = $scope.vm.promotionId;
                 parameter.listPromotionProductId = listPromotionProductId;
@@ -372,14 +354,13 @@ define([
                     else {
                         alert($translate.instant('TXT_FAIL'));
                     }
-                }, function () {
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
                 });
             });
-        };
-
+        }
         $scope.copyDealAll = function () {
-            confirm("是否全部上传?").result.then(function () {
+            confirm("是否全部上传?").then(function () {
 
                 jmPromotionDetailService.copyDealAll($scope.vm.promotionId).then(function (res) {
                     if (res.data.result) {
@@ -389,11 +370,11 @@ define([
                     else {
                         alert(res.data.msg);
                     }
-                }, function () {
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
                 });
             });
-        };
+        }
 
         $scope.batchDeleteProduct = function () {
             //已再售的不删除
@@ -413,7 +394,7 @@ define([
                     return;
                 }
             }
-            confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE')).then(function () {
                 jmPromotionDetailService.batchDeleteProduct(parameter).then(function (res) {
                     if (res.data.result) {
                         $scope.search();
@@ -422,21 +403,20 @@ define([
                     else {
                         alert($translate.instant('TXT_FAIL'));
                     }
-                }, function () {
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
                 });
             });
-        };
+        }
 
-        $scope.deleteAllProduct = function () {
-            //已再售的不删除
+        $scope.deleteAllProduct = function () {//已再售的不删除
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
                 if ($scope.vm.modelList[i].synchStatus == 2) {
                     alert("该专场内存在商品已完成上传，禁止删除!");
                     return;
                 }
             }
-            confirm($translate.instant('TXT_MSG_DO_DELETE')).result.then(function () {
+            confirm($translate.instant('TXT_MSG_DO_DELETE')).then(function () {
                 jmPromotionDetailService.deleteAllProduct($scope.vm.promotionId).then(function (res) {
                     if (res.data.result) {
                         $scope.search();
@@ -445,12 +425,11 @@ define([
                     else {
                         alert(res.data.msg);
                     }
-                }, function () {
+                }, function (res) {
                     alert($translate.instant('TXT_FAIL'));
                 });
             });
-        };
-
+        }
         $scope.selectAll = function ($event) {
             var checkbox = $event.target;
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
@@ -466,19 +445,16 @@ define([
                 return;
             }
             popups.openPriceModify({search: $scope.search,jmPromotionId:$scope.vm.promotionId ,listPromotionProductId: listPromotionProductId})
-        };
-
+        }
         $scope.openProductDetailWin = function (object) {
 
             popups.openJmProductDetail(object).then(function () {
                 $scope.search();
             });
-        };
-
+        }
         $scope.openJmPromotionProductImportWin = function () {
             popups.openJmPromotionProductImport($scope.parentModel, $scope.selectImport);
-        };
-
+        }
         $scope.openJmPromotionDetailWin = function () {
             var parameter={ id : $routeParams.parentId};
             parameter.isBegin= $scope.vm.isBegin;//活动是否开始
@@ -487,14 +463,12 @@ define([
                 $scope.parentModel = context;
             });
 
-        };
-
+        }
         $scope.openDealExtensionWin = function () {
             popups.openDealExtension($scope.parentModel).then(function () {
                 $scope.search();
-            });
-        };
-
+            });;
+        }
 
         $scope.getErrorMsg = function (errorMsg) {
             if (!errorMsg) {
@@ -505,18 +479,22 @@ define([
 
         $scope.getDealPrice = function (m) {
             if (m.maxDealPrice == m.minDealPrice)
-                return $filter('number')(m.maxDealPrice);
+                return m.maxDealPrice;
 
-            return $filter('number')(m.maxDealPrice) + "~" + $filter('number')(m.minDealPrice);
+            return m.maxDealPrice + "~" + m.minDealPrice;
         };
-
         $scope.getMarketPrice = function (m) {
             if (m.maxMarketPrice == m.minMarketPrice)
-                return $filter('number')(m.maxMarketPrice);
+                return m.maxMarketPrice;
 
-            return $filter('number')(m.maxMarketPrice) + "~" + $filter('number')(m.minMarketPrice);
+            return m.maxMarketPrice + "~" + m.minMarketPrice;
         };
+        $scope.getMinMaxPrice = function (minPrice,maxPrice) {
+            if (maxPrice== minPrice)
+                return maxPrice;
 
+            return minPrice + "~" +maxPrice;
+        };
         $scope.changeSelectTag=function(m) {
             var productTagList = [];
             for (var i = 0; i < m.tagNameList.length; i++) {
@@ -530,13 +508,13 @@ define([
             parameter.tagList = productTagList;
             parameter.id = m.id;
             jmPromotionDetailService.updatePromotionProductTag(parameter).then(function (res) {
-                //alert($translate.instant('TXT_SUCCESS'));
-            }, function () {
+                //   alert($translate.instant('TXT_SUCCESS'));
+            }, function (res) {
                 alert($translate.instant('TXT_FAIL'));
             });
-
-        };
-
+            //$scope.vm.tagList.
+            // alert(m.tagNameList.toString());
+        }
         /**
          * popup弹出选择聚美平台数据类目
          * @param popupNewCategory
@@ -559,6 +537,6 @@ define([
         }
     }
 
-    detailController.$inject = ['$scope', 'popups', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', '$routeParams', 'alert', '$translate', 'confirm', 'platformMappingService','$filter'];
+    detailController.$inject = ['$scope', 'popups', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', '$routeParams', 'alert', '$translate', 'confirm', 'platformMappingService'];
     return detailController;
 });

@@ -13,50 +13,6 @@
         where `seq` = #{seq,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtPlatformPropSkuModel" >
-        insert into cms_mt_platform_prop_sku
-        <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="seq != null" >
-                `seq`,
-            </if>
-            <if test="cartId != null" >
-                `cart_id`,
-            </if>
-            <if test="propId != null" >
-                `prop_id`,
-            </if>
-            <if test="skuType != null" >
-                `sku_type`,
-            </if>
-            <if test="template != null" >
-                `template`,
-            </if>
-            <if test="remarks != null" >
-                `remarks`,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="seq != null" >
-                #{seq,jdbcType=INTEGER},
-            </if>
-            <if test="cartId != null" >
-                #{cartId,jdbcType=INTEGER},
-            </if>
-            <if test="propId != null" >
-                #{propId,jdbcType=VARCHAR},
-            </if>
-            <if test="skuType != null" >
-                #{skuType,jdbcType=INTEGER},
-            </if>
-            <if test="template != null" >
-                #{template,jdbcType=INTEGER},
-            </if>
-            <if test="remarks != null" >
-                #{remarks,jdbcType=VARCHAR},
-            </if>
-        </trim>
-    </insert>
-
     <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtPlatformPropSkuModel" >
         update cms_mt_platform_prop_sku
         <set >
@@ -151,5 +107,49 @@
             </if>
         </where>
     </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtPlatformPropSkuModel" >
+        insert into cms_mt_platform_prop_sku
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="seq != null" >
+                `seq`,
+            </if>
+            <if test="cartId != null" >
+                `cart_id`,
+            </if>
+            <if test="propId != null" >
+                `prop_id`,
+            </if>
+            <if test="skuType != null" >
+                `sku_type`,
+            </if>
+            <if test="template != null" >
+                `template`,
+            </if>
+            <if test="remarks != null" >
+                `remarks`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="seq != null" >
+                #{seq,jdbcType=INTEGER},
+            </if>
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="propId != null" >
+                #{propId,jdbcType=VARCHAR},
+            </if>
+            <if test="skuType != null" >
+                #{skuType,jdbcType=INTEGER},
+            </if>
+            <if test="template != null" >
+                #{template,jdbcType=INTEGER},
+            </if>
+            <if test="remarks != null" >
+                #{remarks,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
 
 </mapper>

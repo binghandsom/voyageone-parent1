@@ -63,6 +63,26 @@ public class CmsBtJmPromotionSkuModel extends BaseModel {
      */
     protected Integer updateState;
 
+    /**
+     * 海外官网价格
+     */
+    protected BigDecimal msrpUsd;
+
+    /**
+     * 中国官网价格
+     */
+    protected BigDecimal msrpRmb;
+
+    /**
+     * 中国指导价格
+     */
+    protected BigDecimal retailPrice;
+
+    /**
+     * 中国最终售价
+     */
+    protected BigDecimal salePrice;
+
     public String getChannelId() {
         return channelId;
     }
@@ -149,5 +169,37 @@ public class CmsBtJmPromotionSkuModel extends BaseModel {
 
     public void setUpdateState(Integer updateState) {
         this.updateState = updateState;
+    }
+
+    public BigDecimal getMsrpUsd() {
+        return msrpUsd;
+    }
+
+    public void setMsrpUsd(BigDecimal msrpUsd) {
+        this.msrpUsd = msrpUsd;
+    }
+
+    public BigDecimal getMsrpRmb() {
+        return msrpRmb;
+    }
+
+    public void setMsrpRmb(BigDecimal msrpRmb) {
+        this.msrpRmb = msrpRmb;
+    }
+
+    public BigDecimal getRetailPrice() {
+        return retailPrice;
+    }
+
+    public void setRetailPrice(BigDecimal retailPrice) {
+        this.retailPrice = retailPrice;
+    }
+
+    public BigDecimal getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
     }
 }

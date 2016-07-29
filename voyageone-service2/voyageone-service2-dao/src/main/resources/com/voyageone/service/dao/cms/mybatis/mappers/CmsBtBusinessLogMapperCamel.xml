@@ -15,6 +15,284 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtBusinessLogModel" >
+        update cms_bt_business_log
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="catId != null" >
+                `cat_id` = #{catId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="groupId != null" >
+                `group_id` = #{groupId,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="groupName != null" >
+                `group_name` = #{groupName,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null" >
+                `product_id` = #{productId,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="productName != null" >
+                `product_name` = #{productName,jdbcType=VARCHAR},
+            </if>
+            <if test="promotionId != null" >
+                `promotion_id` = #{promotionId,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="promotionName != null" >
+                `promotion_name` = #{promotionName,jdbcType=VARCHAR},
+            </if>
+            <if test="model != null" >
+                `model` = #{model,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null" >
+                `code` = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="sku != null" >
+                `sku` = #{sku,jdbcType=VARCHAR},
+            </if>
+            <if test="errorTypeId != null" >
+                `error_type_id` = #{errorTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="errorCode != null" >
+                `error_code` = #{errorCode,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMsg != null" >
+                `error_msg` = #{errorMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+                `status` = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_business_log
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_business_log
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="catId != null" >
+                and `cat_id` = #{catId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="groupId != null" >
+                and `group_id` = #{groupId,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="groupName != null" >
+                and `group_name` = #{groupName,jdbcType=VARCHAR}
+            </if>
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="productName != null" >
+                and `product_name` = #{productName,jdbcType=VARCHAR}
+            </if>
+            <if test="promotionId != null" >
+                and `promotion_id` = #{promotionId,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="promotionName != null" >
+                and `promotion_name` = #{promotionName,jdbcType=VARCHAR}
+            </if>
+            <if test="model != null" >
+                and `model` = #{model,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="errorTypeId != null" >
+                and `error_type_id` = #{errorTypeId,jdbcType=INTEGER}
+            </if>
+            <if test="errorCode != null" >
+                and `error_code` = #{errorCode,jdbcType=VARCHAR}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_business_log
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="catId != null" >
+                and `cat_id` = #{catId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="groupId != null" >
+                and `group_id` = #{groupId,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="groupName != null" >
+                and `group_name` = #{groupName,jdbcType=VARCHAR}
+            </if>
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="productName != null" >
+                and `product_name` = #{productName,jdbcType=VARCHAR}
+            </if>
+            <if test="promotionId != null" >
+                and `promotion_id` = #{promotionId,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="promotionName != null" >
+                and `promotion_name` = #{promotionName,jdbcType=VARCHAR}
+            </if>
+            <if test="model != null" >
+                and `model` = #{model,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="errorTypeId != null" >
+                and `error_type_id` = #{errorTypeId,jdbcType=INTEGER}
+            </if>
+            <if test="errorCode != null" >
+                and `error_code` = #{errorCode,jdbcType=VARCHAR}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_business_log
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="catId != null" >
+                and `cat_id` = #{catId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="groupId != null" >
+                and `group_id` = #{groupId,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="groupName != null" >
+                and `group_name` = #{groupName,jdbcType=VARCHAR}
+            </if>
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="productName != null" >
+                and `product_name` = #{productName,jdbcType=VARCHAR}
+            </if>
+            <if test="promotionId != null" >
+                and `promotion_id` = #{promotionId,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="promotionName != null" >
+                and `promotion_name` = #{promotionName,jdbcType=VARCHAR}
+            </if>
+            <if test="model != null" >
+                and `model` = #{model,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="errorTypeId != null" >
+                and `error_type_id` = #{errorTypeId,jdbcType=INTEGER}
+            </if>
+            <if test="errorCode != null" >
+                and `error_code` = #{errorCode,jdbcType=VARCHAR}
+            </if>
+            <if test="errorMsg != null" >
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
     <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtBusinessLogModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_bt_business_log
         <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -150,283 +428,5 @@
             </if>
         </trim>
     </insert>
-
-    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtBusinessLogModel" >
-        update cms_bt_business_log
-        <set >
-            <if test="channelId != null" >
-                `channel_id` = #{channelId,jdbcType=VARCHAR},
-            </if>
-            <if test="catId != null" >
-                `cat_id` = #{catId,jdbcType=VARCHAR},
-            </if>
-            <if test="cartId != null" >
-                `cart_id` = #{cartId,jdbcType=INTEGER},
-            </if>
-            <if test="groupId != null" >
-                `group_id` = #{groupId,jdbcType=LONGVARCHAR},
-            </if>
-            <if test="groupName != null" >
-                `group_name` = #{groupName,jdbcType=VARCHAR},
-            </if>
-            <if test="productId != null" >
-                `product_id` = #{productId,jdbcType=LONGVARCHAR},
-            </if>
-            <if test="productName != null" >
-                `product_name` = #{productName,jdbcType=VARCHAR},
-            </if>
-            <if test="promotionId != null" >
-                `promotion_id` = #{promotionId,jdbcType=LONGVARCHAR},
-            </if>
-            <if test="promotionName != null" >
-                `promotion_name` = #{promotionName,jdbcType=VARCHAR},
-            </if>
-            <if test="model != null" >
-                `model` = #{model,jdbcType=VARCHAR},
-            </if>
-            <if test="code != null" >
-                `code` = #{code,jdbcType=VARCHAR},
-            </if>
-            <if test="sku != null" >
-                `sku` = #{sku,jdbcType=VARCHAR},
-            </if>
-            <if test="errorTypeId != null" >
-                `error_type_id` = #{errorTypeId,jdbcType=INTEGER},
-            </if>
-            <if test="errorCode != null" >
-                `error_code` = #{errorCode,jdbcType=VARCHAR},
-            </if>
-            <if test="errorMsg != null" >
-                `error_msg` = #{errorMsg,jdbcType=VARCHAR},
-            </if>
-            <if test="status != null" >
-                `status` = #{status,jdbcType=INTEGER},
-            </if>
-            <if test="created != null" >
-                `created` = #{created,jdbcType=TIMESTAMP},
-            </if>
-            <if test="creater != null" >
-                `creater` = #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="modified != null" >
-                `modified` = #{modified,jdbcType=TIMESTAMP},
-            </if>
-            <if test="modified == null" >
-                `modified` = now(),
-            </if>
-            <if test="creater != null" >
-                `modifier` = #{creater,jdbcType=VARCHAR},
-            </if>
-        </set>
-        where `id` = #{id,jdbcType=INTEGER}
-    </update>
-
-    <delete id="delete" parameterType="java.lang.Integer" >
-        delete from cms_bt_business_log
-        where `id` = #{id,jdbcType=INTEGER}
-    </delete>
-
-    <select id="selectOne" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from cms_bt_business_log
-        <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="catId != null" >
-                and `cat_id` = #{catId,jdbcType=VARCHAR}
-            </if>
-            <if test="cartId != null" >
-                and `cart_id` = #{cartId,jdbcType=INTEGER}
-            </if>
-            <if test="groupId != null" >
-                and `group_id` = #{groupId,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="groupName != null" >
-                and `group_name` = #{groupName,jdbcType=VARCHAR}
-            </if>
-            <if test="productId != null" >
-                and `product_id` = #{productId,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="productName != null" >
-                and `product_name` = #{productName,jdbcType=VARCHAR}
-            </if>
-            <if test="promotionId != null" >
-                and `promotion_id` = #{promotionId,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="promotionName != null" >
-                and `promotion_name` = #{promotionName,jdbcType=VARCHAR}
-            </if>
-            <if test="model != null" >
-                and `model` = #{model,jdbcType=VARCHAR}
-            </if>
-            <if test="code != null" >
-                and `code` = #{code,jdbcType=VARCHAR}
-            </if>
-            <if test="sku != null" >
-                and `sku` = #{sku,jdbcType=VARCHAR}
-            </if>
-            <if test="errorTypeId != null" >
-                and `error_type_id` = #{errorTypeId,jdbcType=INTEGER}
-            </if>
-            <if test="errorCode != null" >
-                and `error_code` = #{errorCode,jdbcType=VARCHAR}
-            </if>
-            <if test="errorMsg != null" >
-                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
-            </if>
-            <if test="status != null" >
-                and `status` = #{status,jdbcType=INTEGER}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-        limit 1
-    </select>
-
-    <select id="selectList" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from cms_bt_business_log
-        <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="catId != null" >
-                and `cat_id` = #{catId,jdbcType=VARCHAR}
-            </if>
-            <if test="cartId != null" >
-                and `cart_id` = #{cartId,jdbcType=INTEGER}
-            </if>
-            <if test="groupId != null" >
-                and `group_id` = #{groupId,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="groupName != null" >
-                and `group_name` = #{groupName,jdbcType=VARCHAR}
-            </if>
-            <if test="productId != null" >
-                and `product_id` = #{productId,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="productName != null" >
-                and `product_name` = #{productName,jdbcType=VARCHAR}
-            </if>
-            <if test="promotionId != null" >
-                and `promotion_id` = #{promotionId,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="promotionName != null" >
-                and `promotion_name` = #{promotionName,jdbcType=VARCHAR}
-            </if>
-            <if test="model != null" >
-                and `model` = #{model,jdbcType=VARCHAR}
-            </if>
-            <if test="code != null" >
-                and `code` = #{code,jdbcType=VARCHAR}
-            </if>
-            <if test="sku != null" >
-                and `sku` = #{sku,jdbcType=VARCHAR}
-            </if>
-            <if test="errorTypeId != null" >
-                and `error_type_id` = #{errorTypeId,jdbcType=INTEGER}
-            </if>
-            <if test="errorCode != null" >
-                and `error_code` = #{errorCode,jdbcType=VARCHAR}
-            </if>
-            <if test="errorMsg != null" >
-                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
-            </if>
-            <if test="status != null" >
-                and `status` = #{status,jdbcType=INTEGER}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
-
-    <select id="selectCount" resultType="java.lang.Integer" >
-        select count(*) from cms_bt_business_log
-        <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="catId != null" >
-                and `cat_id` = #{catId,jdbcType=VARCHAR}
-            </if>
-            <if test="cartId != null" >
-                and `cart_id` = #{cartId,jdbcType=INTEGER}
-            </if>
-            <if test="groupId != null" >
-                and `group_id` = #{groupId,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="groupName != null" >
-                and `group_name` = #{groupName,jdbcType=VARCHAR}
-            </if>
-            <if test="productId != null" >
-                and `product_id` = #{productId,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="productName != null" >
-                and `product_name` = #{productName,jdbcType=VARCHAR}
-            </if>
-            <if test="promotionId != null" >
-                and `promotion_id` = #{promotionId,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="promotionName != null" >
-                and `promotion_name` = #{promotionName,jdbcType=VARCHAR}
-            </if>
-            <if test="model != null" >
-                and `model` = #{model,jdbcType=VARCHAR}
-            </if>
-            <if test="code != null" >
-                and `code` = #{code,jdbcType=VARCHAR}
-            </if>
-            <if test="sku != null" >
-                and `sku` = #{sku,jdbcType=VARCHAR}
-            </if>
-            <if test="errorTypeId != null" >
-                and `error_type_id` = #{errorTypeId,jdbcType=INTEGER}
-            </if>
-            <if test="errorCode != null" >
-                and `error_code` = #{errorCode,jdbcType=VARCHAR}
-            </if>
-            <if test="errorMsg != null" >
-                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
-            </if>
-            <if test="status != null" >
-                and `status` = #{status,jdbcType=INTEGER}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
 
 </mapper>

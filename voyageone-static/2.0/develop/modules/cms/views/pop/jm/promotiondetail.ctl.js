@@ -33,6 +33,8 @@ define([
                 $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
             });
 
+            $scope.vm.currentTime = new Date();
+
         };
         $scope.addTag = function () {
             if ($scope.editModel.tagList) {
@@ -47,7 +49,7 @@ define([
             return tagList||[];
         }
         $scope.delTag = function (tag) {
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
                   tag.active=0;
                 });
@@ -83,7 +85,9 @@ define([
             _upEntity.model.activityStart = formatToStr(_upEntity.model.activityStart);
             _upEntity.model.activityEnd = formatToStr(_upEntity.model.activityEnd);
             _upEntity.model.prePeriodStart = formatToStr(_upEntity.model.prePeriodStart);
-            _upEntity.model.prePeriodEnd = formatToStr(_upEntity.model.prePeriodEnd);
+            _upEntity.model.prePeriodEnd =_upEntity.model.activityEnd; //formatToStr(_upEntity.model.prePeriodEnd);
+            _upEntity.model.comment = _upEntity.model.comment || ""; //formatToStr(_upEntity.model.prePeriodEnd);
+
             jmPromotionService.saveModel(_upEntity).then(function () {
                 context =$scope.editModel.model;
                 $scope.$close();

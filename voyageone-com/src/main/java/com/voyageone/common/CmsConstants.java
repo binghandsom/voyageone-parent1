@@ -107,6 +107,16 @@ public class CmsConstants {
 
         // App端启用开关(用于控制所有平台的)
         String APP_SWITCH = "APP_SWITCH";
+
+        // 发货方式
+        String SHIPPING_TYPE = "SHIPPING_TYPE";
+
+        // 产品分类是否从feed导入(1：从feed导入，0：不从feed导入运营手动添加)
+        String PRODUCT_TYPE_FROM_FEED_FLG = "PRODUCT_TYPE_FROM_FEED_FLG";
+
+        // 适用人群是否从feed导入(1：从feed导入，0：不从feed导入运营手动添加)
+        String SIZE_TYPE_FROM_FEED_FLG = "SIZE_TYPE_FROM_FEED_FLG";
+
     }
 
     public interface DataAmount {

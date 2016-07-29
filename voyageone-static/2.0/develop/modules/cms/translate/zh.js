@@ -222,6 +222,7 @@ define(function () {
         "TXT_ATTRIBUTE_ID": "属性ID",
         "TXT_ATTRIBUTE_NAME": "属性名称",
         "TXT_ATTRIBUTE_TYPE": "属性类型",
+        "TXT_PRODUCT_STATUS_HISTORY": "商品操作历史",
         "TXT_PROMOTION_HISTORY": "活动履历",
         "TXT_PROMOTION_NAME": "活动名称",
         "TXT_PROMOTION_TIME": "活动时间",
@@ -406,7 +407,6 @@ define(function () {
         "TXT_BRAND_STORY_IMAGE": "品牌故事图",
         "TXT_SHIPPING_DESCRIPTION_IMAGE": "物流介绍图",
         "TXT_IMAGE_UPLOAD_NOTICE": "只支持jpg图片",
-        "TXT_CART_NAME": "店铺渠道名称",
 
         "TXT_CHANNEL_ID": "渠道ID",
         "TXT_CART_ID": "Cart ID",
@@ -576,7 +576,8 @@ define(function () {
         "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
         "BTN_CHOOSE_FILE": "选择文件",
         "BTN_IMPORT_FILE": "Import File",
-        "BTN_UPLOAD_FILE": "Upload File",
+        "BTN_UPLOAD_FILE": "上传",
+        "BTN_REUPLOAD_FILE": "重传",
         "BTN_CUSTOMIZE_COLUMNS": "自定义列设置",
         "BTN_GET_TASK": "获取任务",
         "BTN_COMPLETE": "完成",
@@ -721,8 +722,8 @@ define(function () {
         "TXT_COMMIT_ERROR": "提交请求时出现错误",
         "TXT_NO_PRODUCT_CHOOSED": "未选择商品，请选择后再操作",
         "TXT_NO_OPPERATION": "没有设置上下架操作，请选择后重试",
-        "TXT_CONFIRM_ALL_STORE_PUT_ON": "此操作将会导致全店铺商品上下架，确认无误",
-        "TXT_CONFIRM_NOW_STORE_PUT_ON": "此操作将会导致本店铺商品上下架，确认无误",
+        "TXT_CONFIRM_ALL_STORE_PUT_ON": "您确认要进行全平台的[{{optName}}]操作吗？",
+        "TXT_CONFIRM_NOW_STORE_PUT_ON": "您确认要进行[{{cartName}}]的[{{optName}}]操作吗？",
 
         /** 翻译页面相关 **/
         "TXT_TRANSLATION_STATUS": "商品翻译状态",
@@ -760,7 +761,22 @@ define(function () {
         "TXT_EXPORT_CREATE_TIME": "Excel生成时间",
         "TXT_EXPORT_REQUESTER": "导出申请者",
 
+        "TXT_MATER_CATEGORY_WITH_COLON": "主类目:",
+        "TXT_ACTION_TIME": "操作时间",
+        "TXT_ACTION_USER": "操作者",
+        "TXT_ACTION_COMMENT": "说明",
 
-        "TXT_MATER_CATEGORY_WITH_COLON": "主类目:"
+        /**工具管理-共通处理*/
+        "TXT_FEED_ALL_NUMBER": "Feed品牌总数",
+        "TXT_FEED_ALL_UNMAPPED_NUMBER": "未匹配Feed品牌总数",
+        "TXT_FEED_ALL_MAPPED_NUMBER": "已匹配Feed品牌总数",
+
+        /**店铺管理-平台品牌设置一览*/
+        "TXT_BRAND_MAPPING_LIST": "平台品牌设置一览",
+        "TXT_CART_NAME": "平台渠道名称",
+        "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配状态",
+        "TXT_MASTER_BRAND": "Master品牌",
+        "TXT_REGET_PLATFORM_BRANDS":"重新获取平台品牌",
+        "TXT_COMPLETE_THE_PLATEFORM_BRAND":"平台品牌未选择"
     };
 });

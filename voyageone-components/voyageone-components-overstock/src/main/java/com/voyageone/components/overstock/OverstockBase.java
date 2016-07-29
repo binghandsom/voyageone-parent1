@@ -47,13 +47,13 @@ public abstract class OverstockBase extends ComponentBase {
      * @return key
      */
     private String getV(String key) {
-//        if (key.equals("api_url")) return "https://mpc-sandbox.test.overstock.com/api/v1";
-        if ("api_url".equals(key)) return "https://mpc-sandbox.overstock.com/api/v1";
-        if ("api_username".equals(key)) return "voyageone";
-//        if (key.equals("api_password")) return "&zbrbqroxxl1Vtj";
-        if ("api_password".equals(key)) return "password";
-        if ("api_channelkey".equals(key)) return "VOYAGEONE";
-        return ThirdPartyConfigs.getVal1("018", key);
+////        if (key.equals("api_url")) return "https://mpc-sandbox.test.overstock.com/api/v1";
+//        if (key.equals("api_url")) return "https://mpc-sandbox.overstock.com/api/v1";
+//        if (key.equals("api_username")) return "voyageone";
+////        if (key.equals("api_password")) return "&zbrbqroxxl1Vtj";
+//        if (key.equals("api_password")) return "password";
+//        if (key.equals("api_channelkey")) return "VOYAGEONE";
+        return ThirdPartyConfigs.getVal1("024", key);
     }
 
     /**

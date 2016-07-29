@@ -83,7 +83,7 @@ define([
         };
 
         $scope.delPromotionModel = function(group){
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
                     var data = [];
                     data.push(group);
@@ -96,7 +96,7 @@ define([
         };
 
         $scope.delPromotionCode = function(code){
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
                     var parameter = [];
                     parameter.push(code);
@@ -111,7 +111,7 @@ define([
         $scope.delSelPromotion = function(){
             if($scope.vm.tabIndex == 0){
                 if($scope.vm.groupSelList.selList.length>0){
-                    confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+                    confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                         .then(function () {
                             var parameter = [];
                             _.forEach($scope.vm.groupSelList.selList, function (object) {
@@ -128,7 +128,7 @@ define([
                 }
             } else if($scope.vm.tabIndex == 1){
                 if($scope.vm.codeSelList.selList.length>0) {
-                    confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+                    confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                         .then(function () {
                             var parameter = [];
                             _.forEach($scope.vm.codeSelList.selList, function (object) {

@@ -74,7 +74,7 @@
 
         <!-- voyageone.web2 version -->
         <voyageone.web2.core.version>2.0.0-SNAPSHOT</voyageone.web2.core.version>
-        <voyageone.web2.cms.version>2.2.0-SNAPSHOT</voyageone.web2.cms.version>
+        <voyageone.web2.cms.version>2.3.0-SNAPSHOT</voyageone.web2.cms.version>
         <voyageone.web2.openapi.version>2.0.0-SNAPSHOT</voyageone.web2.openapi.version>
         <!-- voyageone.web2.sdk version -->
         <voyageone.web2.sdk.version>2.0.0-SNAPSHOT</voyageone.web2.sdk.version>
@@ -101,7 +101,7 @@
         <voyageone.components.yimei.version>0.0.1-SNAPSHOT</voyageone.components.yimei.version>
         <voyageone.components.liquifire.version>0.0.1-SNAPSHOT</voyageone.components.liquifire.version>
         <voyageone.components.uscdn.version>0.0.1-SNAPSHOT</voyageone.components.uscdn.version>
-        <voyageone.components.imagecreate.version>0.0.1-SNAPSHOT</voyageone.components.imagecreate.version>
+        <!--<voyageone.components.imagecreate.version>0.0.1-SNAPSHOT</voyageone.components.imagecreate.version>-->
         <voyageone.components.ftp.version>0.0.1-SNAPSHOT</voyageone.components.ftp.version>
         <voyageone.components.overstock.version>0.0.1-SNAPSHOT</voyageone.components.overstock.version>
     </properties>
@@ -520,6 +520,11 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
+                <version>4.4.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpmime</artifactId>
                 <version>4.4.1</version>
             </dependency>
             <dependency>
