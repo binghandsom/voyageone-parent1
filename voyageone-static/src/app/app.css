@@ -889,4 +889,5 @@ select::-ms-expand {
 }
 .word-wrap {
   word-wrap: break-word;
+  word-break: break-all;
 }
