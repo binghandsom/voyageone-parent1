@@ -612,14 +612,13 @@ public class SxProductService extends BaseService {
             // 即使scene7上URL对应的图片不存在也不要报异常，直接返回空字符串
             String errMsg = "通过scene7上聚美图片URL取得对应的图片流失败 [picUrl:" + picUrl + "]";
             $error(errMsg);
-            throw new BusinessException(errMsg);
-        } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException ignored) {
                 }
             }
+            throw new BusinessException(errMsg);
         }
 
         try {
