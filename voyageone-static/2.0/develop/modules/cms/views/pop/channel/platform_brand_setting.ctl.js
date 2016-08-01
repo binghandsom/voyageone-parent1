@@ -33,7 +33,7 @@ define([
                 var self = this;
                 self.brandMappingService.getSynchronizedTime({'cartId': self.platformData.cartId}).then(function (res) {
                     self.synchTime = res.data.synchTime;
-                    self.confirm('最近一次“平台品牌获取”启动时间：' + self.synchTime).then(function () {
+                    self.confirm('最近一次“平台品牌获取”启动时间：<br>'+ self.synchTime).then(function () {
                         self.brandMappingService.synchronizePlatformBrands({'cartId': self.platformData.cartId}).then(function (res) {
                             if (res.data.success == false) self.alert(res.data.message);
                             self.init();
