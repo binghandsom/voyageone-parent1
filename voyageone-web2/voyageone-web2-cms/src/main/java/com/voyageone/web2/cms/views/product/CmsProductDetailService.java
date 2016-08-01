@@ -36,6 +36,7 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
@@ -54,10 +55,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -88,6 +86,9 @@ public class CmsProductDetailService extends BaseAppService {
     private CategoryTreeAllService categoryTreeAllService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
+
+    @Autowired
+    private SxProductService sxProductService;
 
     @Autowired
     private ImsBtProductDao imsBtProductDao;
@@ -1235,6 +1236,7 @@ public class CmsProductDetailService extends BaseAppService {
        // platForm.setpStatus(CmsConstants.PlatformStatus.);
         platForm.remove("pStatus");
         productService.updateProductPlatform(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
+        sxProductService.insertSxWorkLoad(parameter.getChannelId(), new ArrayList<String>(Arrays.asList(parameter.getProductCode())), parameter.getCartId(), modifier);
         String comment=parameter.getComment();
         productStatusHistoryService.insert(parameter.getChannelId(),cmsBtProductModel.getCommon().getFields().getCode(),platForm.getStatus(),parameter.getCartId(), EnumProductOperationType.Delisting,comment,modifier);
 
