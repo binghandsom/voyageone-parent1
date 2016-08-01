@@ -34,6 +34,7 @@ import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
@@ -85,6 +86,8 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
 
+    @Autowired
+    private PlatformCategoryService platformCategoryService;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -232,7 +235,8 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
             if (!StringUtils.isEmpty(catId)) {
                 // 取到了再回写
                 updateMap.put("platforms.P23.pCatId", catId);
-                CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, 23);
+//                CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(catId, 23);
+                CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = platformCategoryService.getPlatformCatSchemaTm(catId, channelId, 23);
                 if (cmsMtPlatformCategorySchemaModel != null) {
                     updateMap.put("platforms.P23.pCatPath", cmsMtPlatformCategorySchemaModel.getCatFullPath());
                 } else {
