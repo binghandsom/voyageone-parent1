@@ -633,7 +633,21 @@ public class CmsProductDetailService extends BaseAppService {
             feedInfoService.updateFeedInfo(channelId, paraMap, valueMap);
 
         }
-        return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
+
+        Map<String, Object> result = productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
+
+        CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
+        if (commonModel.getFields().getHsCodePrivate() != null && !commonModel.getFields().getHsCodePrivate().equalsIgnoreCase(oldProduct.getCommon().getFields().getHsCodePrivate())) {
+            priceService.setRetailPrice(newProduct);
+            newProduct.getPlatforms().forEach((s, platform) -> {
+                if(platform.getCartId() != 0){
+                    productService.updateProductPlatform(channelId,prodId,platform,modifier,false);
+                }
+            });
+        }
+
+
+        return result;
     }
 
     private void changeMastCategory(CmsBtProductModel_Common commonModel, CmsBtProductModel oldProduct, String modifier) {
