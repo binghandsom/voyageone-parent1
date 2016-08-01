@@ -38,17 +38,16 @@ import java.util.*;
 @Service
 public class PriceService extends BaseService {
 
-    public static final String COMMISSION_TYPE_VO = "VO";
-    public static final String COMMISSION_TYPE_PF = "PF";
-    public static final String COMMISSION_TYPE_RT = "RT";
+    private static final String COMMISSION_TYPE_VO = "VO";
+    private static final String COMMISSION_TYPE_PF = "PF";
+    private static final String COMMISSION_TYPE_RT = "RT";
 
     private static final Byte BY_WEIGHT = 0;
     private static final Byte BY_PC = 1;
-    private static int JM_CART = 27;
 
-    public static final String HSCODE_TYPE_8_DIGIT = "8_DIGIT";
-    public static final String HSCODE_TYPE_10_DIGIT = "10_DIGIT";
-    public static final String HSCODE_TYPE = "HSCODE_TYPE";
+    private static final String HSCODE_TYPE_8_DIGIT = "8_DIGIT";
+    private static final String HSCODE_TYPE_10_DIGIT = "10_DIGIT";
+    private static final String HSCODE_TYPE = "HSCODE_TYPE";
 
     private final CmsMtFeeShippingDao cmsMtFeeShippingDao;
 
@@ -228,7 +227,9 @@ public class PriceService extends BaseService {
 
         CmsMtFeeShippingModel shippingModel = cmsMtFeeShippingDao.selectOne(queryMap);
 
-        if (BY_WEIGHT.equals(shippingModel.getFeeType())) {
+        Byte feeType = shippingModel.getFeeType();
+
+        if (BY_WEIGHT.equals(feeType)) {
             int firstWeight = shippingModel.getFirstWeight();
             double firstWeightFee = shippingModel.getFirstWeightFee();
             int additionalWeight = shippingModel.getAdditionalWeight();
@@ -239,8 +240,10 @@ public class PriceService extends BaseService {
             } else {
                 return firstWeightFee + Math.ceil((weight - firstWeight) / additionalWeight) * additionalWeightFee;
             }
-        } else {
+        } else if (BY_PC.equals(feeType)) {
             return shippingModel.getPcFee();
+        } else {
+            throw new BusinessException("无法匹配 feeType: " + feeType);
         }
     }
 
@@ -316,7 +319,7 @@ public class PriceService extends BaseService {
          * 取退货率
          *
          * @param platformId 平台(非 cart, 如 taobao / tmall / tmall global 同属 ali 系)
-         * @param cartId 平台
+         * @param cartId     平台
          * @return 退货率
          */
         private Double getReturn(String channelId, Integer platformId, Integer cartId) {
@@ -378,9 +381,9 @@ public class PriceService extends BaseService {
         /**
          * 取VO佣金比例
          *
-         * @param channelId 渠道
+         * @param channelId  渠道
          * @param platformId 平台(非 cart, 如 taobao / tmall / tmall global 同属 ali 系)
-         * @param cartId 平台
+         * @param cartId     平台
          * @return 佣金比例
          */
         private Double getVoyageOneCommission(String channelId, Integer platformId, Integer cartId) {
@@ -471,21 +474,30 @@ public class PriceService extends BaseService {
 
         private void caleTaxRateAndCommission() {
 
+            final int JM_CART = 27;
+
             String channelId = product.getChannelId();
 
             String hsCodeType = Codes.getCodeName(HSCODE_TYPE, shippingType);
 
-            String hsCode;
+            if (StringUtils.isEmpty(hsCodeType))
+                throw new BusinessException(String.format("没有为 shippingType [ %s ] 配置 HSCODE_TYPE [ %s ]", shippingType, HSCODE_TYPE));
 
-            if (HSCODE_TYPE_8_DIGIT.equals(hsCodeType)) {
-                hsCode = product.getCommon().getFields().getHsCodePrivate();
-            } else {
-                hsCode = product.getCommon().getFields().getHsCodeCross();
+            String hsCode = null;
+
+            switch (hsCodeType) {
+                case HSCODE_TYPE_8_DIGIT:
+                    hsCode = product.getCommon().getFields().getHsCodePrivate();
+                    break;
+                case HSCODE_TYPE_10_DIGIT:
+                    hsCode = product.getCommon().getFields().getHsCodeCross();
+                    break;
             }
 
-            if (!StringUtils.isNullOrBlank2(hsCode)) {
-                hsCode = hsCode.split(",")[0];
-            }
+            if (StringUtils.isEmpty(hsCode))
+                throw new BusinessException(String.format("获取的税号为空: hsCodeType: %s, product: %s", hsCodeType, product.getCommon().getFields().getCode()));
+
+            hsCode = hsCode.split(",")[0];
 
             // 计算税率
             taxRate = getTaxRate(shippingType, hsCode);
