@@ -5,6 +5,12 @@ package com.voyageone.web2.vms;
  * Created by vantis on 16-7-6.
  */
 public interface VmsUrlConstants {
+    interface HOME {
+        interface HOME_INFO {
+            String ROOT = "/vms/home/home_info/";
+            String INIT = "init";
+        }
+    }
 
     interface ORDER {
         interface ORDER_INFO {

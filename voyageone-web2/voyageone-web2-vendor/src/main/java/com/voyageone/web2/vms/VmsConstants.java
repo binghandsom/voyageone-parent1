@@ -1,5 +1,7 @@
 package com.voyageone.web2.vms;
 
+import com.voyageone.service.dao.vms.VmsBtDataAmountDao;
+
 public class VmsConstants {
 
     // 逗号
@@ -41,6 +43,15 @@ public class VmsConstants {
     public final static class FinancialReportStatus {
         public final static String UNCONFIRMED = "0";
         public final static String CONFIRMED = "1";
+    }
+
+    /**
+     * 数据统计名称
+     */
+    public final static class DataAmount {
+        public final static String NEW_ORDER_COUNT = "NEW_ORDER_COUNT";
+        public final static String NEW_SKU_COUNT = "NEW_SKU_COUNT";
+        public final static String RECEIVE_ERROR_SHIPMENT_COUNT = "RECEIVE_ERROR_SHIPMENT_COUNT";
     }
 
     /**
