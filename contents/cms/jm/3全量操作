@@ -31,11 +31,11 @@
                 // `price_status`    0:未更新  1:待更新  2：已经更新  3：更新失败
                    if(cms_bt_jm_promotion_product.synch_status==2)//已在售
                    {
-                     cms_bt_jm_promotion_product.price_status=1  //价格待更新
+                     cms_bt_jm_promotion_product.price_status=1  //设置为 价格待更新
                    }
                    else
                    {
-                     cms_bt_jm_promotion_product.synch_status=1 //待上传
+                     cms_bt_jm_promotion_product.synch_status=1 //设置为 待上传
                    }
                 }
 3.5.全量同步价格 已实现
