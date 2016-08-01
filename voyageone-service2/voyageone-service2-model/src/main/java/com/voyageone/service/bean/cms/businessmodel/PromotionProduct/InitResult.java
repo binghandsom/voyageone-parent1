@@ -17,7 +17,7 @@ public class InitResult {
     boolean isBegin;//活动是否开始
     boolean isEnd;//活动是否结束
     boolean isUpdateJM;//9：00 12：00 是否更新聚美
-    boolean isBefore5DaysBeforePreBegin;//是否是预热开始前5天之前
+    //boolean isBefore5DaysBeforePreBegin;//是否是预热开始前5天之前
 
     public boolean isBegin() {
         return isBegin;
@@ -43,13 +43,13 @@ public class InitResult {
         isUpdateJM = updateJM;
     }
 
-    public boolean getIsBefore5DaysBeforePreBegin() {
-        return isBefore5DaysBeforePreBegin;
-    }
+//    public boolean getIsBefore5DaysBeforePreBegin() {
+//        return isBefore5DaysBeforePreBegin;
+//    }
 
-    public void setIsBefore5DaysBeforePreBegin(boolean isBefore5DaysBeforePreBegin) {
-        isBefore5DaysBeforePreBegin = isBefore5DaysBeforePreBegin;
-    }
+//    public void setIsBefore5DaysBeforePreBegin(boolean isBefore5DaysBeforePreBegin) {
+//        isBefore5DaysBeforePreBegin = isBefore5DaysBeforePreBegin;
+//    }
 
     List<TypeChannelBean> brandList = new ArrayList<>();
 
