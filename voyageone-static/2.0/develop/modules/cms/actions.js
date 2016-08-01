@@ -163,7 +163,9 @@ define(function () {
                     'searchBrands': 'searchBrands',
                     'searchCustBrands': 'searchCustBrands',
                     'searchMatchedBrands': 'searchMatchedBrands',
-                    'addNewBrandMapping': 'addNewBrandMapping'
+                    'addNewBrandMapping': 'addOrUpdateBrandMapping',
+                    'getSynchronizedTime': 'getSynchronizedTime',
+                    'synchronizePlatformBrands': 'synchronizePlatformBrands'
                 }
             },
             "promotion": {

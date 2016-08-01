@@ -1,3 +1,5 @@
+请先看字段说明 7说明
+
   6.更新聚美Job
         //6.0API调用前beforeCheck
        api_beforeCheck()
@@ -12,7 +14,7 @@
          CmsBtJmPromotionProductModel model=当前上新的商品;
          if (model.getSynchStatus() != 2) {// 6.1.再售
 
-                if (StringUtil.isEmpty(model.getJmHashId())) { // JmHashId不为空
+                if (StringUtil.isEmpty(model.getJmHashId())) { // JmHashId为空
                    //6.1.1再售接口前check   copyDeal_beforeCheck(4.1)
                    //6.1.2调用再售接口  copyDeal
                    //6.1.3再售接口后check   copyDeal_afterCheck(4.2)
@@ -31,7 +33,7 @@
        }
        void updateJMDeal( CmsBtJmPromotionProductModel model)
        {
-            if (model.getPriceStatus() == 1) //6.2.1 更新价格
+            if (model.getPriceStatus() == 1) //6.2.1 更新价
            {
                updateDeal(model, shopBean);//更新deal   商品属性 价格
            }

@@ -438,6 +438,15 @@ public interface CmsUrlConstants {
         	
         	/** 添加新匹配的品牌 */
         	String ADD_NEW_BRAND_MAPPING = "addNewBrandMapping";
+
+        	/** 添加或更新匹配的品牌数据  */
+			String ADD_OR_UPDATE_BRAND_MAPPING = "addOrUpdateBrandMapping";
+
+			/** 同步平台品牌数据 */
+			String SYNCHRONIZE_PLATFORM_BRANDS = "synchronizePlatformBrands";
+
+			/** 取得平台品牌数据同步时间 */
+			String GET_SYNCHRONIZE_TIME = "getSynchronizedTime";
         }
     }
 
