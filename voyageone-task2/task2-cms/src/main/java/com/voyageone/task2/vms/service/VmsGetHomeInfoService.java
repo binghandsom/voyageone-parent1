@@ -79,17 +79,9 @@ public class VmsGetHomeInfoService extends BaseTaskService {
         Calendar cal = Calendar.getInstance();
         Date now = cal.getTime();
 
-        // 当天的零点
-        cal.set(Calendar.HOUR, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        Date start = cal.getTime();
-
         Map<String, Object> param = new HashMap<String, Object>() {{
             put("channelId", channelId);
             put("status", VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN);
-            put("orderDateFrom", start);
             put("orderDateTo", now);
         }};
         int countOrder = vmsBtOrderDetailDaoExt.countOrder(param);
@@ -103,7 +95,7 @@ public class VmsGetHomeInfoService extends BaseTaskService {
         Map<String, Object> param1 = new HashMap<String, Object>() {{
             put("channelId", channelId);
             put("status", VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.RECEIVE_ERROR);
-            put("shippedDateFrom", DateTimeUtil.addDays(start, -9));
+            put("shippedDateFrom", DateTimeUtil.addDays(now, -10));
             put("shippedDateTo", now);
         }};
 
