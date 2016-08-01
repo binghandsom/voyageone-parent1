@@ -28,9 +28,9 @@ public class CmsMtPlatformBrandService {
 	public void saveList(List<CmsMtPlatformBrandsModel> brandModels) {
 		for (CmsMtPlatformBrandsModel brandModel : brandModels) {
             if (brandModel.getId() == null || brandModel.getId() <= 0) {
-            	cmsMtPlatformBrandsDao.update(brandModel);
-            } else {
             	cmsMtPlatformBrandsDao.insert(brandModel);
+            } else {
+            	cmsMtPlatformBrandsDao.update(brandModel);
             }
         }
 	}
