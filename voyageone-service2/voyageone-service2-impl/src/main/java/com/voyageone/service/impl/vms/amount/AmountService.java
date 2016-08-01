@@ -17,7 +17,7 @@ import java.util.Map;
  * @version 1.0.0
  */
 @Service
-public class DataAmountService extends BaseService {
+public class AmountService extends BaseService {
 
     @Autowired
     private VmsBtDataAmountDao vmsBtDataAmountDao;

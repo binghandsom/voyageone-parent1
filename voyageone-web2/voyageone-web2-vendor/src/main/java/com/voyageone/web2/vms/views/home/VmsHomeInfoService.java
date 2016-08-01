@@ -6,7 +6,7 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.vms.VmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.voyageone.service.impl.vms.amount.DataAmountService;
+import com.voyageone.service.impl.vms.amount.AmountService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class VmsHomeInfoService extends BaseAppService {
 
     @Autowired
-    private DataAmountService DataAmountService;
+    private AmountService DataAmountService;
 
     /**
      * 初始化（取得Home页面显示的数据）
