@@ -19,7 +19,7 @@
                       AND a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}
                        LIMIT 1
                 */
-               if(其它满减专场有时间重叠&&synchStatus==2)//
+               if(其它满减专场有时间重叠&&synchStatus==2)//   满减专场时间重叠&&已经上新
                {errorMsg="该商品已于相关时间段内，在其它满减专场中完成上传，为避免财务结算问题，请放弃导入"; }
             }
 
@@ -32,7 +32,7 @@
                           AND a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}
                          order by activityStart desc   LIMIT 1
                     */
-               if(其他专场有时间重叠&&synchStatus==2&&与当前专场的开始时间不一致)
+               if(其他专场有时间重叠&&synchStatus==2&&与当前专场的开始时间不一致)  时间重叠&&已经上新&&开始时间不相等
                 {errorMsg="该商品已在该大促时间范围内的其它未过期聚美专场中，完成上传，且开始时间与大促开始时间不一致。无法加入当前大促专场。聚美会监控大促专场的营销数据，禁止商品在活动启动前偷跑，大促商品必须有预热。请放弃导入"; }
            }
     1.1.6 todo
