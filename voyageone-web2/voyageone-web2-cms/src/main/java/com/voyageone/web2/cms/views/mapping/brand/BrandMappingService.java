@@ -167,7 +167,7 @@ public class BrandMappingService extends BaseAppService {
 				shop.setSessionKey("7e059a48c30c67d2693be14275c2d3be");
 				shop.setAppSecret("0f9e3437ca010f63f2c4f3a216b7f4bc9698f071");
 				brands = jumeiBrandService.getBrands(shop);
-			} else if (CartEnums.Cart.TM.getId().equals(cartId)) {
+			} else if (CartEnums.Cart.TG.getId().equals(cartId)) {
 				// 天猫品牌
 				shop.setApp_url("http://gw.api.taobao.com/router/rest");
 				shop.setAppKey("21008948");
@@ -224,7 +224,7 @@ public class BrandMappingService extends BaseAppService {
 		} else {
 			Date now = new Date();
 			List<CmsMtPlatformBrandsModel> brandModels = new ArrayList<CmsMtPlatformBrandsModel>();
-			if (CartEnums.Cart.TM.getId().equals(cartId)) {
+			if (CartEnums.Cart.TG.getId().equals(cartId)) {
 				// 天猫品牌
 				for (int i = 0; i < brands.size(); i++) {
 					Brand brand = (Brand) brands.get(i);
