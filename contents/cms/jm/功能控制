@@ -1,0 +1,71 @@
+        long preStartLocalTime = DateTimeUtilBeijing.toLocalTime(result.getModelPromotion().getPrePeriodStart());//北京时间转本地时区时间戳
+        long activityEndTime = DateTimeUtilBeijing.toLocalTime(result.getModelPromotion().getActivityEnd());//北京时间转本地时区时间戳
+        int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
+
+Control:
+1.聚美专场预热前5天以上的场合：  todo 新加  不让更新聚美 (DateTimeUtil.addDays(new Date(),5).getTime()>preStartLocalTime  和6共用一个状态
+导入：开启
+按上传模板导出：开启
+全量删除：开启
+全量上传：关闭
+全量同步价格：关闭
+全量延长时间：关闭
+批量删除：开启
+批量上传：关闭
+批量同步价格：关闭
+批量变更价格：开启
+
+2.聚美专场预热前5天或5天以内的场合：// 可以更新jm    todo  新加 和6有冲突    2条件可以更新jm    6条件不可更新    结果是||还是&&  和6共用一个状态
+导入：开启
+按上传模板导出：开启
+全量删除：开启
+全量上传：开启
+全量同步价格：开启
+全量延长时间：开启
+批量删除：开启
+批量上传：开启
+批量同步价格：开启
+批量变更价格：开启
+
+3.聚美专场已预热的场合： todo   已有 preStartLocalTime < new Date().getTime()
+导入：开启
+按上传模板导出：开启
+全量删除：关闭
+全量上传：关闭
+全量同步价格：关闭
+全量延长时间：开启
+批量删除：开启
+批量上传：开启
+批量同步价格：开启
+批量变更价格：开启
+
+4.聚美专场已过期的场合： todo   已有 activityEndTime < new Date().getTime()
+导入：关闭
+按上传模板导出：开启
+全量删除：关闭
+全量上传：关闭
+全量同步价格：关闭
+全量延长时间：开启
+批量删除：开启
+批量上传：关闭
+批量同步价格：关闭
+批量变更价格：关闭
+
+5.检索结果：
+   顺序遵循：todo 目前只是按Code升序
+   （1）库存（降序）
+   （2）款号（升序）
+   （3）Code（升序）
+   （4）尺码（升序）
+
+6.每天10:00-11:00  todo   已有    hour == 10  不让更新聚美
+导入：开启
+按上传模板导出：开启
+全量删除：开启
+全量上传：关闭
+全量同步价格：关闭
+全量延长时间：关闭
+批量删除：开启
+批量上传：关闭
+批量同步价格：关闭
+批量变更价格：开启

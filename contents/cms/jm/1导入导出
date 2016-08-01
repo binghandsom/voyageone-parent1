@@ -10,6 +10,7 @@
 
     1.1.3   if(cms_bt_product.lock) { errorMsg="商品被Lock，如确实需要加入活动，请先解锁";}
 
+    1.1.4.0 活动日期有重叠导入  todo 上个版本已实现     新版本删除
     1.1.4   if(cms_bt_jm_promotion.promotionType==1)//满减专场
             {
                 /*1.4.1其它满减专场有时间重叠  查询sql
@@ -22,7 +23,6 @@
                if(其它满减专场有时间重叠&&synchStatus==2)//   满减专场时间重叠&&已经上新
                {errorMsg="该商品已于相关时间段内，在其它满减专场中完成上传，为避免财务结算问题，请放弃导入"; }
             }
-
     1.1.5  if(cms_bt_jm_promotion.promotionType==2)//大促专场
            {
                   /*1.5.1其它专场有时间重叠  查询sql   存在多个专场时间重叠取最新的
