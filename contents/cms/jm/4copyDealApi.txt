@@ -110,9 +110,12 @@
                    {
                       if(jmPromotion.getActivityEnd()-sellJmPromotiona.getActivityEnd()<=3天)//，【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
                       {
-                                  新HashID替换MongoDB中，该商品的Origin HashID 参考步骤6.0.3
-                                jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
-                                   if(sellJmPromotiona.getActivityEnd()<jmPromotion.getActivityEnd())//在售专场的结束时间小于当前专场结束时间
+                                 4.2.9.1 jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
+
+                                 4.2.9.2 新HashID替换MongoDB中，该商品的Origin HashID 参考步骤6.0.3
+
+                                 4.2.9.2 //在售专场的结束时间小于当前专场结束时间
+                                   if(sellJmPromotiona.getActivityEnd()<jmPromotion.getActivityEnd())
                                    {
                                       调用延迟Deal结束时间API
                                    }
