@@ -5,7 +5,7 @@ define([
     'cms'
 ], function (cms) {
     cms.controller('PlatformBrandSettingController', (function () {
-        function PlatformBrandSettingController(context, notify, popups, brandMappingService, $uibModalInstance) {
+        function PlatformBrandSettingController(context, notify, popups, brandMappingService, $uibModalInstance, confirm, alert) {
             this.platformData = context;
             this.notify = notify;
             this.popups = popups;
@@ -13,12 +13,16 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.platformList = [];
             this.selectedPlatformlist = [];
+            this.confirm = confirm;
+            this.alert = alert;
         }
 
         PlatformBrandSettingController.prototype = {
             init: function () {
                 var self = this;
-                self.refresh();
+                self.brandMappingService.searchCustBrands({'cartId': self.platformData.cartId}).then(function (res) {
+                    self.custBrandList = res.data.custBrandList;
+                });
             },
             selectedPlatformBrand: function (item) {
                 var self = this;
@@ -27,8 +31,14 @@ define([
             },
             refresh: function () {
                 var self = this;
-                self.brandMappingService.searchCustBrands({'cartId': self.platformData.cartId}).then(function (res) {
-                    self.custBrandList = res.data.custBrandList;
+                self.brandMappingService.getSynchronizedTime({'cartId': self.platformData.cartId}).then(function (res) {
+                    self.synchTime = res.data.synchTime;
+                    self.confirm('最近一次“平台品牌获取”启动时间：' + self.synchTime).then(function () {
+                        self.brandMappingService.synchronizePlatformBrands({'cartId': self.platformData.cartId}).then(function (res) {
+                            if (res.data.success == false) self.alert(res.data.message);
+                            self.init();
+                        })
+                    });
                 });
             },
             submitSet: function () {
