@@ -10,12 +10,12 @@
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
         select 
         <include refid="Base_Column_List" />
-        from cms_mt_platform_product_id_list
+        from cms_mt_platform_category_extend_info
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
     <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtPlatformCategoryExtendInfoModel" >
-        update cms_mt_platform_product_id_list
+        update cms_mt_platform_category_extend_info
         <set >
             <if test="channelId != null" >
                 `channel_id` = #{channelId,jdbcType=VARCHAR},
@@ -58,14 +58,14 @@
     </update>
 
     <delete id="delete" parameterType="java.lang.Integer" >
-        delete from cms_mt_platform_product_id_list
+        delete from cms_mt_platform_category_extend_info
         where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
     <select id="selectOne" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
-        from cms_mt_platform_product_id_list
+        from cms_mt_platform_category_extend_info
         <where >
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
@@ -107,7 +107,7 @@
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
-        from cms_mt_platform_product_id_list
+        from cms_mt_platform_category_extend_info
         <where >
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
@@ -146,7 +146,7 @@
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" >
-        select count(*) from cms_mt_platform_product_id_list
+        select count(*) from cms_mt_platform_category_extend_info
         <where >
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
@@ -185,7 +185,7 @@
     </select>
 
     <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtPlatformCategoryExtendInfoModel" useGeneratedKeys="true" keyProperty="id" >
-        insert into cms_mt_platform_product_id_list
+        insert into cms_mt_platform_category_extend_info
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
                 `channel_id`,
