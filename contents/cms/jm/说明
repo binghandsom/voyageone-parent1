@@ -7,6 +7,9 @@
 1.cms_bt_jm_promotion_product
 
     synch_status          更新聚美平台的状态:0:未上传 1:待上传 2:上传成功    3:上传异常
+
     price_status          价格状态           0:未更新 1:待更新 2:已更新      3:更新失败
+
     stock_status          库存同步状态       0:未同步          2:已同步      3:同步失败
+
     deal_end_time_status  延期状态:          0:未延期 1:待延期 2:已延期      3:延期失败

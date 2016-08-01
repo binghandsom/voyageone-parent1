@@ -465,7 +465,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
     }
 
     /**
-     * 获取排序列一览
+     * 获取排序列一览（group查询时专用）
      */
     public Map<String, List<String>> getSortColumn(CmsSearchInfoBean2 searchValue, CmsSessionBean cmsSessionBean) {
         List<String> groupOutList = new ArrayList<>();
