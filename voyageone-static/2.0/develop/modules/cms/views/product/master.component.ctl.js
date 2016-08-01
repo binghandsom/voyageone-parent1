@@ -20,7 +20,8 @@ define([
                     mastData:null,
                     productComm:null,
                     categoryMark:null,
-                    tempImage : {"images1":[],"images2":[],"images3":[],"images4":[],"images5":[],"images6":[],"images7":[],"images8":[],"images9":[]}
+                    tempImage : {"images1":[],"images2":[],"images3":[],"images4":[],"images5":[],"images6":[],"images7":[],"images8":[],"images9":[]},
+                    hsCodeOrigin: null
                 };
 
                 initialize();
@@ -56,6 +57,13 @@ define([
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
                         scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
+
+                        //暂存税号个人
+                        scope.vm.hsCodeOrigin = _.find(scope.vm.productComm.schemaFields,function(field){
+                            return field.id === "hsCodePrivate";
+                        });
+
+                        console.log("hsCodeOrigin",scope.vm.hsCodeOrigin);
 
                         /**主商品提示*/
                         if(!scope.vm.mastData.isMain){
@@ -157,7 +165,7 @@ define([
 
                 /**
                  * 右侧导航栏
-                 * @param index div的index
+                 * @param area 区域
                  * @param speed 导航速度 ms为单位
                  */
                 function pageAnchor(area,speed){
