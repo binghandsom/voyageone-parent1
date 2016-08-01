@@ -108,7 +108,7 @@
                {
                    if(sellJmPromotion.promotionType!=1)//在售专场为非满减专场
                    {
-                      if(jmPromotion.getActivityEnd()-sellJmPromotiona.getActivityEnd()<=3天)//，【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
+                      if(jmPromotion.getActivityEnd()-sellJmPromotiona.getActivityEnd()<4天)//，【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
                       {
                                  4.2.9.1 jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
 
