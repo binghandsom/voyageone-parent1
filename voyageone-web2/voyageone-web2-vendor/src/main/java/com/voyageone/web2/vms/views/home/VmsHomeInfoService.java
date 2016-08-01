@@ -30,6 +30,10 @@ public class VmsHomeInfoService extends BaseAppService {
      */
     public Map<String, Object> init(String channelId) {
         Map<String, Object> result = new HashMap<>();
+        result.put("countOrder", "0");
+        result.put("countSku", "0");
+        result.put("countReceiveErrorShipment", "0");
+
         List<VmsBtDataAmountModel> models =  DataAmountService.getDataAmountInfo(channelId);
 
         for (VmsBtDataAmountModel model : models) {
