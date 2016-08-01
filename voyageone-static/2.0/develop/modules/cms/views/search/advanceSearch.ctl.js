@@ -359,19 +359,15 @@ define([
             _chkProductSel(null, _openBulkUpdate, {'isSelAll': $scope.vm._selall ? 1 : 0, "cartId": parseInt(cartId)});
 
             function _openBulkUpdate(cartId, selList, context) {
+                var selCnt = 0;
+                if (!$scope.vm._selall) {
+                    var selList = getSelProductList();
+                    selCnt = selList.length;
+                } else {
+                    selCnt = $scope.vm.productPageOption.total;
+                }
+                context.selCnt = selCnt;
                 openFieldEdit(selList, context).then(function (res) {
-                    if (res.data.ecd == null || res.data.ecd == undefined) {
-                        alert("提交请求时出现错误");
-                        return;
-                    }
-                    if (res.data.ecd == 1) {
-                        alert("未选择商品，请选择后再操作。");
-                        return;
-                    }
-                    if (res.data.ecd == 2) {
-                        alert("未设置变更项目，请设置后再操作。");
-                        return;
-                    }
                     $scope.search();
                 })
             }

@@ -597,7 +597,7 @@ define([
             var params = null;
             if (context && context.isSelAll) {
                 // 全选
-                params = {"productIds": productIds, 'isSelAll': 1, "cartId": context.cartId};
+                params = {"productIds": productIds, 'isSelAll': 1, "cartId": context.cartId, 'selCnt': context.selCnt};
             } else {
                 if (selList && selList.length) {
                     _.forEach(selList, function (object) {
@@ -605,7 +605,7 @@ define([
                     });
                 }
                 if (context) {
-                    params = {"productIds": productIds, "cartId": context.cartId};
+                    params = {"productIds": productIds, "cartId": context.cartId, 'selCnt': context.selCnt};
                 } else {
                     params = {"productIds": productIds, "cartId": null};
                 }
