@@ -10,10 +10,10 @@
 
     *1.1.2   if(dealPrice>=marketPrice){ errorMsg="市场价必须大于团购价";}
 
-    1.1.3   if(cms_bt_product.lock) { errorMsg="商品被Lock，如确实需要加入活动，请先解锁";}  ／／todo 不需要
+    1.1.3   if(cms_bt_product.lock) { errorMsg="商品被Lock，如确实需要加入活动，请先解锁";}  //todo 不需要  调用接口钱统一check
 
     1.1.4.0 活动日期有重叠  不允许导入  todo 上个版本已实现     新版本删除
-    1.1.4.1   if(cms_bt_jm_promotion.promotionGiftType==2)//满减专场
+    1.1.4.1 if(cms_bt_jm_promotion.promotionGiftType==2)//满减专场
             {
                 /*1.4.1其它满减专场有时间重叠  查询sql
                 SELECT a.* FROM `cms_bt_jm_promotion_product` AS a JOIN cms_bt_jm_promotion AS b ON a.cms_bt_jm_promotion_id=b.id

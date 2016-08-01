@@ -1,7 +1,7 @@
 关键字段说明
 1.cms_bt_jm_promotion
-    promotionType           活动类型 1：日常专场 2:导购团 3：大促 4：长期场馆
-    promotionGiftType     促销类型 1:直降 2:满减 3:优惠卷
+    promotionType           活动类型     1：日常专场 2:导购团 3：大促 4：长期场馆
+    promotionGiftType       促销类型    1:直降 2:满减 3:优惠卷
     status        1:已有商品上传
 1.cms_bt_jm_promotion_product
     `activity_start`      活动开始
@@ -19,3 +19,5 @@
     stock_status          库存同步状态       0:未同步          2:已同步      3:同步失败
 
     deal_end_time_status  延期状态:          0:未延期 1:待延期 2:已延期      3:延期失败
+
+    update_status        变更状态                     1:有变更  2：已经变更
