@@ -1,5 +1,8 @@
 package com.voyageone.task2.vms;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class VmsConstants {
 
 	// 逗号
@@ -26,12 +29,22 @@ public class VmsConstants {
 		public final static String ONLINE = "1";
 		public final static String FTP = "2";
 	}
+
 	/**
 	 * 财务报表状态
 	 */
 	public final static class FinancialReportStatus {
 		public final static String UNCONFIRMED = "0";
 		public final static String CONFIRMED = "1";
+	}
+
+	/**
+	 * 数据统计名称
+	 */
+	public final static class DataAmount {
+		public final static String NEW_ORDER_COUNT = "NEW_ORDER_COUNT";
+		public final static String NEW_SKU_COUNT = "NEW_SKU_COUNT";
+		public final static String RECEIVE_ERROR_SHIPMENT_COUNT = "RECEIVE_ERROR_SHIPMENT_COUNT";
 	}
 
 	/**
@@ -62,6 +75,15 @@ public class VmsConstants {
 			String RECEIVED = "5";
 			String RECEIVE_ERROR = "6";
 			String CANCEL = "7";
+		}
+
+		// shipment状态
+		interface SHIPMENT_STATUS {
+			String OPEN = "1";
+			String SHIPPED = "3";
+			String ARRIVED = "4";
+			String RECEIVED = "5";
+			String RECEIVE_ERROR = "6";
 		}
 	}
 }

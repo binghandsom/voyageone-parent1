@@ -500,10 +500,15 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
             // weight
             String weight = codeModel.getWeight();
-            // 如果这行是Code,那么weight是必须的
-            if (StringUtils.isEmpty(weight)) {
-                // weight is Required.
-                addErrorMessage(errorList, "8000002", new Object[]{columnMap.get(WEIGHT)}, codeModel.getRow(), columnMap.get(WEIGHT));
+            // 如果以lbs结尾那么去掉最后的lbs
+            if (!StringUtils.isEmpty(weight) && weight.lastIndexOf("lbs") > 0) {
+                weight = weight.substring(0, weight.lastIndexOf("lbs"));
+                weight = weight.trim();
+            }
+            // 如果这行是Code,那么weight是必须是大于0的数字
+            if (StringUtils.isEmpty(weight) || !StringUtils.isNumeric(weight) || Float.valueOf(weight) <= 0) {
+                // weight must be a Number more than 0.
+                addErrorMessage(errorList, "8000005", new Object[]{columnMap.get(WEIGHT)}, codeModel.getRow(), columnMap.get(WEIGHT));
                 errorFlg = true;
             }
 

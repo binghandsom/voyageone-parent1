@@ -155,7 +155,9 @@ define(function (require) {
             },
             setChannel: 'setChannel'
         }),
-
+        homeInfoService: new CommonDataService('/vms/home/home_info', {
+            init: "init"
+        }),
         feedImportResultService: new CommonDataService('/vms/feed/feed_import_result', {
             init: "init",
             search: "search"
