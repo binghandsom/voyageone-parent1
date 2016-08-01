@@ -7,4 +7,10 @@
     <select id="selectByJmMasterBrandId"  resultMap="ResultMap">
         delete from  cms_bt_jm_master_brand  where jm_master_brand_id=#{jmMasterBrandId}
     </select>
+    
+    <!-- 删除全部的品牌数据 -->
+    <delete id="deleteAll">
+    	delete from cms_bt_jm_master_brand
+    </delete>
+    
 </mapper>
