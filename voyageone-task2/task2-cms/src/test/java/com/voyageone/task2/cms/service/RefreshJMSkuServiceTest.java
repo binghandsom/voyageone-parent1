@@ -13,6 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -86,6 +87,44 @@ public class RefreshJMSkuServiceTest {
             System.out.println("------------------------------------------------");
             System.out.println("本轮完成数:" + finished.size());
         }
+
+
+    }
+
+    @Test
+    public void testGetErrorSkuCode() throws Exception {
+
+        String fileName = "D://11.txt";
+
+        File file = new File(fileName);
+
+        List<String> done =  new ArrayList<>();
+
+        ShopBean shop = Shops.getShop("023", 27);
+
+        String queryStr = "{'platforms.P27.pNumIId': {'$ne': ''}}";
+
+        List<CmsBtProductModel> list = cmsBtProductDao.select(queryStr, "023");
+
+        list = list.stream().filter(w -> !StringUtils.isNullOrBlank2(w.getPlatform(27).getpNumIId())).collect(Collectors.toList());
+
+        System.out.println("共计:" + list.size());
+
+        list.parallelStream().forEach(model -> {
+                try {
+                    List<String> codes = refreshJMSkuService.getErrorSkuCode(shop, model);
+                    if(codes != null && codes.size() !=0)
+                    {
+                        done.addAll(codes);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+
+        FileUtils.writeLines(file, done);
+
 
 
     }
