@@ -159,9 +159,9 @@ public class CmsFieldEditService extends BaseAppService {
             // 记录商品修改历史
             String msg = "";
             if ("productType".equals(prop_id)) {
-                msg = "高级检索 批量更新产品分类";
+                msg = "高级检索 批量更新：产品分类--" + stsCode;
             } else if ("sizeType".equals(prop_id)) {
-                msg = "高级检索 批量更新适用人群";
+                msg = "高级检索 批量更新：适用人群--" + stsCode;
             }
             // 店铺(cart/平台)列表
             List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
@@ -169,8 +169,8 @@ public class CmsFieldEditService extends BaseAppService {
                 productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, NumberUtils.toInt(cartObj.getValue()), EnumProductOperationType.BatchUpdate, msg, userInfo.getUserName());
             }
             return rsMap;
-        }
-        if ("translateStatus".equals(prop_id)) {
+
+        } else if ("translateStatus".equals(prop_id)) {
             // 翻译状态更新
             String stsCode = null;
             Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
@@ -203,11 +203,38 @@ public class CmsFieldEditService extends BaseAppService {
             // 店铺(cart/平台)列表
             List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
             for (TypeChannelBean cartObj : cartTypeList) {
-                productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, NumberUtils.toInt(cartObj.getValue()), EnumProductOperationType.BatchUpdate, "高级检索 批量更新翻译状态", userInfo.getUserName());
+                productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, NumberUtils.toInt(cartObj.getValue()), EnumProductOperationType.BatchUpdate, "高级检索 批量更新：翻译状态--" + stsCode, userInfo.getUserName());
             }
 
             rsMap.put("ecd", 0);
             return rsMap;
+
+        } else if ("voRate".equals(prop_id)) {
+            // 修改VO扣点值
+            Number voRate = (Number) prop.get("value");
+
+            JomgoUpdate updObj = new JomgoUpdate();
+            updObj.setQuery("{'common.fields.code':{$in:#}}");
+            updObj.setQueryParameters(productCodes);
+            if (voRate == null) {
+                updObj.setUpdate("{$set:{'common.fields.commissionRate':null}}");
+            } else {
+                updObj.setUpdate("{$set:{'common.fields.commissionRate':#}}");
+                updObj.setUpdateParameters(voRate.doubleValue());
+            }
+            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
+            $debug("VO扣点值批量更新结果 " + rs.toString());
+
+            // 调用批处理程序 记录价格变更履历/记录商品修改历史/同步价格范围/插入上新程序
+            Map<String, Object> logParams = new HashMap<>(3);
+            logParams.put("channelId", userInfo.getSelChannelId());
+            logParams.put("creater", userInfo.getUserName());
+            logParams.put("codeList", productCodes);
+            logParams.put("voRate", voRate);
+            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
+
+        } else {
+            $warn("CmsFieldEditService.setProductFields 错误的选择项 params=" + params.toString());
         }
 
         rsMap.put("ecd", 0);

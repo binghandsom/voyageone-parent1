@@ -49,9 +49,45 @@ define([
                         return;
                     }
                     var msg = '是否确认批量修改[翻译状态]？<br>本次操作对象商品数：' + $scope.vm.selCnt + '<br>选择确定，处理将会继续。 选择取消，处理停止';
-                    confirm(msg).then(function(){
+                    confirm(msg).then(function () {
                         _openBulkUpdate();
                     });
+                } else if ($scope.vm.propertyInfo.property.id == 'voRate') {
+                    if ($scope.fieldForm.$error && $scope.fieldForm.$error.number) {
+                        // 有验证错误
+                        return;
+                    }
+                    var inValue = '';
+                    if ($scope.vm.propertyInfo.property.value != undefined && $scope.vm.propertyInfo.property.value != null) {
+                        inValue = $scope.vm.propertyInfo.property.value.toString();
+                    }
+
+                    var msg2 = '是否确认批量修改[Vo扣点]？<br>本次操作对象商品数：' + $scope.vm.selCnt + '<br>修改Vo扣点会造成商品的中国指导价发生变化<br>选择确定，处理将会继续。 选择取消，处理停止';
+                    if (inValue == '') {
+                        var msg = '是否清空VO扣点值，使用系统缺省值？<br>选择确定，处理将会继续。 选择取消，处理停止';
+                        confirm(msg).then(function(){
+                            confirm(msg2).then(function () {
+                                _openBulkUpdate();
+                            });
+                        });
+                        return;
+                    } else {
+                        if ($scope.vm.propertyInfo.property.value >= 100) {
+                            alert('请输入正确的数值，不能大于100');
+                            return;
+                        }
+                        if ($scope.vm.propertyInfo.property.value > 20) {
+                            confirm('扣点值超过警告值(20%)，请确认是否没有问题？').then(function(){
+                                confirm(msg2).then(function () {
+                                    _openBulkUpdate();
+                                });
+                            });
+                            return;
+                        }
+                        confirm(msg2).then(function () {
+                            _openBulkUpdate();
+                        });
+                    }
                 } else {
                     _openBulkUpdate();
                 }
