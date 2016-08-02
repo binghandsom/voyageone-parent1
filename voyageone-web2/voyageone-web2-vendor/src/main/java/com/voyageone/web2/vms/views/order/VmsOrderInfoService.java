@@ -571,11 +571,18 @@ public class VmsOrderInfoService extends BaseService {
             put("shipmentId", shipment.getId());
         }};
 
-        Map<String, Object> pagedParams = MySqlPageHelper.build(params)
-                .addSort("containerizing_time", Order.Direction.DESC)
-                .toMap();
+        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU.equals(vmsChannelConfigService.getChannelConfigs(user)
+                .getVendorOperateType()))
+            params = MySqlPageHelper.build(params)
+                    .addSort("containerizing_time", Order.Direction.DESC)
+                    .toMap();
+        else
+            params = MySqlPageHelper.build(params)
+                    .addSort("consolidation_order_id", Order.Direction.ASC)
+                    .addSort("containerizing_time", Order.Direction.ASC)
+                    .toMap();
 
-        return orderDetailService.selectOrderList(pagedParams).stream()
+        return orderDetailService.selectOrderList(params).stream()
                 .map(vmsBtOrderDetailModel -> {
                     SubOrderInfoBean subOrderInfoBean = new SubOrderInfoBean();
                     BeanUtil.copy(vmsBtOrderDetailModel, subOrderInfoBean);

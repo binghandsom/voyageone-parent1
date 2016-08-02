@@ -29,6 +29,8 @@ define([
             this.scannedSkuList = [];
             this.channelConfigs = {};
             this.barcode = "";
+
+            this.classTest = false;
         }
 
         ShipmentDetailController.prototype.init = function () {
@@ -46,6 +48,23 @@ define([
                 self.originalShipment = angular.copy(data.shipment);
                 if (self.shipment && self.shipment.shippedDate) self.shipment.shippedDate = new Date(self.shipment.shippedDate);
                 self.scannedSkuList = data.scannedSkuList;
+
+                var classTestTemp = true;
+                var className = 'bg-sub-default';
+                for (var index = 0; index < self.scannedSkuList.length; index ++) {
+                    if (index == 0) self.scannedSkuList[index].className = className;
+                    else if (self.scannedSkuList[index].consolidationOrderId == self.scannedSkuList[index - 1].consolidationOrderId)
+                        self.scannedSkuList[index].className = self.scannedSkuList[index - 1].className;
+                    else {
+                        classTestTemp = !classTestTemp;
+                        if (classTestTemp) {
+                            className = 'bg-sub-default';
+                        } else {
+                            className = '';
+                        }
+                        self.scannedSkuList[index].className = className;
+                    }
+                }
             })
         };
 
