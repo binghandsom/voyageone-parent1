@@ -60,21 +60,25 @@ public class BeatJobService extends BaseTaskService {
      */
     private static int lastErrorTarget = 0;
 
+    @Autowired
+    public BeatJobService(CmsBeatInfoService beatInfoService, TbItemService tbItemService, TbPictureService tbPictureService, ImageCategoryService imageCategoryService) {
+        this.beatInfoService = beatInfoService;
+        this.tbItemService = tbItemService;
+        this.tbPictureService = tbPictureService;
+        this.imageCategoryService = imageCategoryService;
+    }
+
     static int getLastErrorTarget() {
         return lastErrorTarget;
     }
 
-    @Autowired
-    private CmsBeatInfoService beatInfoService;
+    private final CmsBeatInfoService beatInfoService;
 
-    @Autowired
-    private TbItemService tbItemService;
+    private final TbItemService tbItemService;
 
-    @Autowired
-    private ImageCategoryService imageCategoryService;
+    private final ImageCategoryService imageCategoryService;
 
-    @Autowired
-    private TbPictureService tbPictureService;
+    private final TbPictureService tbPictureService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -342,6 +346,7 @@ public class BeatJobService extends BaseTaskService {
                 return url.openStream();
             } catch (Exception e) {
                 beatInfoBean.setImageStatus(ImageStatus.Error);
+                $debug("取图失败, 发生异常", e);
                 throw new BreakBeatJobException("取图失败, 发生异常", e);
             }
         }
@@ -410,7 +415,7 @@ public class BeatJobService extends BaseTaskService {
                         images.put(2, getTaobaoImageUrl(beatInfoBean.getPromotion_code().getImage_url_2()));
                     else {
                         // 如果不为空, 则还原和刷图有区别, 还原需要清空
-                        // 就是如果第二张图为空, 那么刷披露图, 就复制第一张图就可以了, 不需要再折腾了
+                        // 如果第二张图为空, 那么刷披露图, 就复制第一张图就可以了, 不需要再折腾了
                         // 如果是要还原, 那么这个商品本身是没有第二张图的, 也就是要清空。所以设置为空字符
                         images.put(2, beatInfoBean.getSynFlagEnum().equals(BeatFlag.REVERT) ? "" : images.get(1));
                     }
@@ -451,7 +456,6 @@ public class BeatJobService extends BaseTaskService {
         private String getTaobaoImageUrl(String image_url_key) throws IOException, ApiException {
 
             String templateUrl;
-            String imageName;
             boolean withPrice;
             CmsMtImageCategoryModel categoryModel;
 
@@ -481,7 +485,12 @@ public class BeatJobService extends BaseTaskService {
 
             CmsBtPromotionCodesBean code = beatInfoBean.getPromotion_code();
 
-            String imageName, image_url_key = code.getImage_url_3();
+            String image_url_key = code.getImage_url_3();
+
+            // 如果没有指定竖图
+            // 那么使用第一张图作为竖图
+            if (StringUtils.isEmpty(image_url_key))
+                image_url_key = code.getImage_url_1();
 
             switch (beatInfoBean.getSynFlagEnum()) {
                 case BEATING:
