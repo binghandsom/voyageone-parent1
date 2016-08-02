@@ -16,12 +16,11 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.bean.InventoryForCmsBean;
 import com.voyageone.task2.cms.dao.InventoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -50,6 +49,9 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
         return true;
     }
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
     // mongoDB 每次批量执行的数
     public static final int BULK_COUNT = 500;
 
@@ -62,15 +64,17 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
     @Override
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        // 获取允许运行的渠道
-        List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
-        $info("channel_id=" + TaskControlEnums.Name.order_channel_id);
+        // 获取允许运行的渠道
+
+        Set<String> colList = mongoTemplate.getCollectionNames();
+        List<String> orderChannelIdList = colList.stream().filter(s -> s.indexOf("cms_bt_product_c") != -1 && s.length() == 19).map(s1 -> s1.substring(16)).collect(Collectors.toList());
+
         $info("orderChannelIdList=" + orderChannelIdList.size());
 
         // 根据订单渠道运行
         for (final String orderChannelID : orderChannelIdList) {
-
+            if (Integer.parseInt(orderChannelID) > 900) continue;
             try {
                 $info("channel_id=" + orderChannelID);
 

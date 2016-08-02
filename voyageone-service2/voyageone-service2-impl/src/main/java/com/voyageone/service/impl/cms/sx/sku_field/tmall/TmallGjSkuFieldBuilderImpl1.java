@@ -188,6 +188,10 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
 //            RuleExpression skuColorExpression = ((SimpleMappingBean)colorMapping).getExpression();
 //            String skuColor = expressionParser.parse(skuColorExpression, shopBean, user, null);
             String skuColor = getSkuValue(productModel, sku_colorField.getId(), cmsSkuProp.getSkuCode());
+            if (StringUtils.isEmpty(skuColor)) {
+                // 没填的话用code
+                skuColor = productModel.getCommon().getFields().getCode();
+            }
             // modified by morse.lu 2016/07/04 end
             skuFieldValue.setInputFieldValue(sku_colorField.getId(), skuColor);
             buildSkuResult.getColorCmsSkuPropMap().put(skuColor, cmsSkuProp);

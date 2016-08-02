@@ -19,4 +19,6 @@ public interface CmsBtJmPromotionDaoExt {
     List<MapModel> selectActivesOfChannel(Map<String, Object> map);
 
     List<CmsBtJmPromotionModel> selectEndList(Date nowDate);
+
+    List<MapModel> selectMaxJmHashId(String channelId);
 }
