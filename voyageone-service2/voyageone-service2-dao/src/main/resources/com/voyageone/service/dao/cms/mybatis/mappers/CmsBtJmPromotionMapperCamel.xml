@@ -6,7 +6,8 @@
         `id`, `channel_id`, `name`, `activity_pc_id`, `activity_app_id`, `cms_bt_jm_master_brand_Id`, 
         `brand`, `category`, `activity_start`, `activity_end`, `pre_period_start`, `pre_period_end`, 
         `created`, `creater`, `modified`, `modifier`, `active`, `comment`, `ref_tag_id`, 
-        `status`, `recovery_status`, `promotion_type`, `promotion_gift_type`
+        `status`, `recovery_status`, `promotion_type`, `is_promotion_down`, `is_promotion_full_minus`, 
+        `promotion_full_amount`, `promotion_minus_amount`, `is_promotion_give_coupons`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -85,8 +86,20 @@
             <if test="promotionType != null" >
                 `promotion_type` = #{promotionType,jdbcType=INTEGER},
             </if>
-            <if test="promotionGiftType != null" >
-                `promotion_gift_type` = #{promotionGiftType,jdbcType=INTEGER},
+            <if test="isPromotionDown != null" >
+                `is_promotion_down` = #{isPromotionDown,jdbcType=BIT},
+            </if>
+            <if test="isPromotionFullMinus != null" >
+                `is_promotion_full_minus` = #{isPromotionFullMinus,jdbcType=BIT},
+            </if>
+            <if test="promotionFullAmount != null" >
+                `promotion_full_amount` = #{promotionFullAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="promotionMinusAmount != null" >
+                `promotion_minus_amount` = #{promotionMinusAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="isPromotionGiveCoupons != null" >
+                `is_promotion_give_coupons` = #{isPromotionGiveCoupons,jdbcType=BIT},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -165,8 +178,20 @@
             <if test="promotionType != null" >
                 and `promotion_type` = #{promotionType,jdbcType=INTEGER}
             </if>
-            <if test="promotionGiftType != null" >
-                and `promotion_gift_type` = #{promotionGiftType,jdbcType=INTEGER}
+            <if test="isPromotionDown != null" >
+                and `is_promotion_down` = #{isPromotionDown,jdbcType=BIT}
+            </if>
+            <if test="isPromotionFullMinus != null" >
+                and `is_promotion_full_minus` = #{isPromotionFullMinus,jdbcType=BIT}
+            </if>
+            <if test="promotionFullAmount != null" >
+                and `promotion_full_amount` = #{promotionFullAmount,jdbcType=DECIMAL}
+            </if>
+            <if test="promotionMinusAmount != null" >
+                and `promotion_minus_amount` = #{promotionMinusAmount,jdbcType=DECIMAL}
+            </if>
+            <if test="isPromotionGiveCoupons != null" >
+                and `is_promotion_give_coupons` = #{isPromotionGiveCoupons,jdbcType=BIT}
             </if>
         </where>
         limit 1
@@ -240,8 +265,20 @@
             <if test="promotionType != null" >
                 and `promotion_type` = #{promotionType,jdbcType=INTEGER}
             </if>
-            <if test="promotionGiftType != null" >
-                and `promotion_gift_type` = #{promotionGiftType,jdbcType=INTEGER}
+            <if test="isPromotionDown != null" >
+                and `is_promotion_down` = #{isPromotionDown,jdbcType=BIT}
+            </if>
+            <if test="isPromotionFullMinus != null" >
+                and `is_promotion_full_minus` = #{isPromotionFullMinus,jdbcType=BIT}
+            </if>
+            <if test="promotionFullAmount != null" >
+                and `promotion_full_amount` = #{promotionFullAmount,jdbcType=DECIMAL}
+            </if>
+            <if test="promotionMinusAmount != null" >
+                and `promotion_minus_amount` = #{promotionMinusAmount,jdbcType=DECIMAL}
+            </if>
+            <if test="isPromotionGiveCoupons != null" >
+                and `is_promotion_give_coupons` = #{isPromotionGiveCoupons,jdbcType=BIT}
             </if>
         </where>
     </select>
@@ -312,8 +349,20 @@
             <if test="promotionType != null" >
                 and `promotion_type` = #{promotionType,jdbcType=INTEGER}
             </if>
-            <if test="promotionGiftType != null" >
-                and `promotion_gift_type` = #{promotionGiftType,jdbcType=INTEGER}
+            <if test="isPromotionDown != null" >
+                and `is_promotion_down` = #{isPromotionDown,jdbcType=BIT}
+            </if>
+            <if test="isPromotionFullMinus != null" >
+                and `is_promotion_full_minus` = #{isPromotionFullMinus,jdbcType=BIT}
+            </if>
+            <if test="promotionFullAmount != null" >
+                and `promotion_full_amount` = #{promotionFullAmount,jdbcType=DECIMAL}
+            </if>
+            <if test="promotionMinusAmount != null" >
+                and `promotion_minus_amount` = #{promotionMinusAmount,jdbcType=DECIMAL}
+            </if>
+            <if test="isPromotionGiveCoupons != null" >
+                and `is_promotion_give_coupons` = #{isPromotionGiveCoupons,jdbcType=BIT}
             </if>
         </where>
     </select>
@@ -383,8 +432,20 @@
             <if test="promotionType != null" >
                 `promotion_type`,
             </if>
-            <if test="promotionGiftType != null" >
-                `promotion_gift_type`,
+            <if test="isPromotionDown != null" >
+                `is_promotion_down`,
+            </if>
+            <if test="isPromotionFullMinus != null" >
+                `is_promotion_full_minus`,
+            </if>
+            <if test="promotionFullAmount != null" >
+                `promotion_full_amount`,
+            </if>
+            <if test="promotionMinusAmount != null" >
+                `promotion_minus_amount`,
+            </if>
+            <if test="isPromotionGiveCoupons != null" >
+                `is_promotion_give_coupons`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -460,8 +521,20 @@
             <if test="promotionType != null" >
                 #{promotionType,jdbcType=INTEGER},
             </if>
-            <if test="promotionGiftType != null" >
-                #{promotionGiftType,jdbcType=INTEGER},
+            <if test="isPromotionDown != null" >
+                #{isPromotionDown,jdbcType=BIT},
+            </if>
+            <if test="isPromotionFullMinus != null" >
+                #{isPromotionFullMinus,jdbcType=BIT},
+            </if>
+            <if test="promotionFullAmount != null" >
+                #{promotionFullAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="promotionMinusAmount != null" >
+                #{promotionMinusAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="isPromotionGiveCoupons != null" >
+                #{isPromotionGiveCoupons,jdbcType=BIT},
             </if>
         </trim>
     </insert>

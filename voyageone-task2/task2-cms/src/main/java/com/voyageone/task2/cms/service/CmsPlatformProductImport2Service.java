@@ -86,9 +86,6 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
     @Autowired
     private PlatformCategoryService platformCategoryService;
 
-    @Autowired
-    private PlatformCategoryService platformCategoryService;
-
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
 
