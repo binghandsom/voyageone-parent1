@@ -170,8 +170,9 @@ define([
 
                 /**
                  * 调用保存接口
+                 * @param freshSub boolean 标识是否要刷新平台子页面
                  * */
-                function callSaveProduct(isRresh){
+                function callSaveProduct(freshSub){
 
                     productDetailService.updateCommonProductInfo({prodId:scope.productInfo.productId,productComm:scope.vm.productComm}).then(function(resp){
                         scope.vm.productComm.modified = resp.data.modified;
@@ -183,7 +184,7 @@ define([
                         if(!scope.vm.categoryMark)
                             scope.productInfo.masterCategory = new Date().getTime();
 
-                        if(isRresh)
+                        if(freshSub)
                             scope.productInfo.masterCategory = new Date().getTime();
 
                         notify.success("更 新 成 功 ");
