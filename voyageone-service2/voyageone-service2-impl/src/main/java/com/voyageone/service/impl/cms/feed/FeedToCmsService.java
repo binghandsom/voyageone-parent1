@@ -155,6 +155,7 @@ public class FeedToCmsService extends BaseService {
                 Integer qty = 0;
                 for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
                     if (sku.getQty() != null) qty += sku.getQty();
+                    weightConvert(sku);
                 }
                 product.setQty(qty);
 
@@ -338,5 +339,24 @@ public class FeedToCmsService extends BaseService {
             }
         });
 
+    }
+
+
+    private void weightConvert(CmsBtFeedInfoModel_Sku skuModel ){
+        try {
+            if (!StringUtil.isEmpty(skuModel.getWeightOrg()) && !StringUtil.isEmpty(skuModel.getWeightOrgUnit())) {
+                String unit = skuModel.getWeightOrgUnit().trim();
+                String weightOrg = skuModel.getWeightOrgUnit().trim();
+                if ("oz".equalsIgnoreCase(unit)) {
+                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 16.0);
+                    skuModel.setWeightCalc(convertWeight.toString());
+                } else if ("lb".equalsIgnoreCase(unit)) {
+                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg));
+                    skuModel.setWeightCalc(convertWeight.toString());
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

@@ -7,7 +7,7 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJomgoUpdateList;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
@@ -234,7 +234,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                 }
                 updRsFlg = false;
                 try {
-                    if (CartEnums.Cart.TG.getValue() == cartId) {
+                    if (shopProp.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
                         // 天猫国际上下架
                         if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
                             // 上架
@@ -243,7 +243,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                             // 下架
                             updRsFlg = tbItemService.doWareUpdateDelisting(shopProp, numIId);
                         }
-                    } else if (CartEnums.Cart.JG.getValue() == cartId) {
+                    } else if (shopProp.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
                         // 京东国际上下架
                         if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
                             // 上架

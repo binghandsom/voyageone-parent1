@@ -6,6 +6,7 @@ import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.CmsBtProductStatusHistoryDao;
@@ -50,6 +51,12 @@ public class ProductStatusHistoryService extends BaseService {
         list.forEach(mapModel -> {
 
             String status = String.valueOf(mapModel.get("status"));
+
+            Date modified = (Date) mapModel.get("modified");
+
+            modified = DateTimeUtilBeijing.toBeiJingDate(modified);
+
+            mapModel.put("modified", modified);
 
             String statusCn = typeMap.get(status);
 
