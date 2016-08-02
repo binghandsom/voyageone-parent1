@@ -541,7 +541,7 @@ public class VmsOrderInfoService extends BaseService {
     }
 
     /**
-     * 确认订单信息
+     * 确认shipment中的订单信息
      *
      * @param user         当前用户
      * @param shipmentBean 当前shipment
@@ -563,7 +563,13 @@ public class VmsOrderInfoService extends BaseService {
                 .collect(Collectors.toList());
     }
 
-
+    /**
+     * 获取已扫描过的SKU信息
+     *
+     * @param user     当前用户
+     * @param shipment 当前shipment
+     * @return 已扫描过的SKU列表
+     */
     public List<SubOrderInfoBean> getScannedSkuList(UserSessionBean user, ShipmentBean shipment) {
         if (null == shipment) return new ArrayList<>();
         Map<String, Object> params = new HashMap<String, Object>() {{
@@ -591,6 +597,13 @@ public class VmsOrderInfoService extends BaseService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * sku级别扫描barcode
+     *
+     * @param user         当前用户
+     * @param scanInfoBean 扫描信息
+     * @return 扫码影响结果
+     */
     public int scanBarcodeInSku(UserSessionBean user, ScanInfoBean scanInfoBean) {
         // 确认shipment状态
         VmsBtShipmentModel shipment = shipmentService.select(scanInfoBean.getShipment().getId());

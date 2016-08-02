@@ -7,7 +7,7 @@ import java.util.Date;
 import static com.voyageone.web2.vms.VmsConstants.DEFAULT_PAGE_SIZE;
 
 /**
- * shipmen搜索条件
+ * shipment搜索条件
  * Created by vantis on 16-7-25.
  */
 public class ShipmentSearchInfoBean {

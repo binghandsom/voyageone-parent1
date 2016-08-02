@@ -72,7 +72,6 @@ public class VmsOrderInfoController extends BaseController {
     @RequestMapping(ORDER.ORDER_INFO.CANCEL_SKU)
     public AjaxResponse cancelSku(@RequestBody SubOrderInfoBean item) {
         Map<String, Object> result = new HashMap<>();
-        // TODO: 16-7-11 对于取消订单前的状态检查尚未考虑完善 vantis
         result.put("success", vmsOrderInfoService.cancelSku(this.getUser(), item));
 
         return success(result);

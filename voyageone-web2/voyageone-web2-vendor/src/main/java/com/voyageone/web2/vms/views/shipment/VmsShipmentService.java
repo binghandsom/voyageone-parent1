@@ -148,6 +148,13 @@ public class VmsShipmentService {
         return shipmentService.insert(vmsBtShipmentModel);
     }
 
+    /**
+     * 根据条件检索shipment
+     *
+     * @param user                   当前用户
+     * @param shipmentSearchInfoBean shipment搜索条件
+     * @return 搜索结果
+     */
     public ShipmentInfoBean search(UserSessionBean user, ShipmentSearchInfoBean shipmentSearchInfoBean) {
 
         ShipmentInfoBean shipmentInfoBean = new ShipmentInfoBean();
@@ -181,6 +188,13 @@ public class VmsShipmentService {
         return shipmentInfoBean;
     }
 
+    /**
+     * 获取对应Id的shipment
+     *
+     * @param user       当前用户
+     * @param shipmentId shipmentId
+     * @return shipment
+     */
     public ShipmentBean getShipment(UserSessionBean user, Integer shipmentId) {
         VmsBtShipmentModel vmsBtShipmentModel = shipmentService.select(shipmentId);
         if (null == vmsBtShipmentModel
@@ -190,13 +204,13 @@ public class VmsShipmentService {
         return ShipmentBean.getInstance(vmsBtShipmentModel);
     }
 
-//    public int endShipment(UserSessionBean user, ShipmentBean shipment) {
-//        // 检查shipment下是否有扫描的SKU
-//        if (this.shipmentIsEmpty(user, shipment)) throw new BusinessException("");
-//
-//
-//    }
-
+    /**
+     * 关闭shipment进行发货
+     *
+     * @param user         当前用户
+     * @param shipmentBean 待关闭shipment
+     * @return 影响结果
+     */
     public ShipmentEndCountBean endShipment(UserSessionBean user, ShipmentBean shipmentBean) {
         // 检查shipment下是否有扫描的SKU
         if (this.shipmentIsEmpty(user, shipmentBean)) throw new BusinessException("8000032");
