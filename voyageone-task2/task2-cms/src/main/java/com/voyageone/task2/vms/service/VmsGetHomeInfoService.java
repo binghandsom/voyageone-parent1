@@ -74,42 +74,32 @@ public class VmsGetHomeInfoService extends BaseTaskService {
 
         $info("取得Home页面显示信息开始，channelId" + channelId);
 
-        // 取得"Today's New Order"件数
-        // 现在时点
-        Calendar cal = Calendar.getInstance();
-        Date now = cal.getTime();
-
-        // 当天的零点
-        cal.set(Calendar.HOUR, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        Date start = cal.getTime();
-
+        // 取得"New Order"件数
         Map<String, Object> param = new HashMap<String, Object>() {{
             put("channelId", channelId);
             put("status", VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN);
-            put("orderDateFrom", start);
-            put("orderDateTo", now);
         }};
         int countOrder = vmsBtOrderDetailDaoExt.countOrder(param);
         int countSku = vmsBtOrderDetailDaoExt.countSku(param);
 
-        // 更新"Today's New Order"件数
+        // 更新"New Order"件数
         updateDataAmount(channelId, VmsConstants.DataAmount.NEW_ORDER_COUNT, String.valueOf(countOrder), "Today's New Order");
         updateDataAmount(channelId, VmsConstants.DataAmount.NEW_SKU_COUNT, String.valueOf(countSku), "Today's New Sku");
 
-        // 取得"Receive with Error"件数（最近10天）
+        // 取得"Receive Error"件数（最近10天）
+        // 现在时点
+        Calendar cal = Calendar.getInstance();
+        Date now = cal.getTime();
         Map<String, Object> param1 = new HashMap<String, Object>() {{
             put("channelId", channelId);
             put("status", VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.RECEIVE_ERROR);
-            put("shippedDateFrom", DateTimeUtil.addDays(start, -9));
+            put("shippedDateFrom", DateTimeUtil.addDays(now, -10));
             put("shippedDateTo", now);
         }};
 
         int countReceiveErrorShipment = vmsBtShipmentDaoExt.count(param1);
 
-        // 更新"Receive with Error"件数（最近10天）
+        // 更新"Receive Error"件数（最近10天）
         updateDataAmount(channelId, VmsConstants.DataAmount.RECEIVE_ERROR_SHIPMENT_COUNT, String.valueOf(countReceiveErrorShipment), "Receive Error Shipment");
 
         $info("取得Home页面显示信息完了，channelId" + channelId);
@@ -133,12 +123,13 @@ public class VmsGetHomeInfoService extends BaseTaskService {
             VmsBtDataAmountModel model = models.get(0);
             model.setAmountVal(amountValue);
             model.setModifier(getTaskName());
+            model.setModified(null);
             vmsBtDataAmountDao.update(model);
         } else {
             // 新建的情况
             VmsBtDataAmountModel model = new VmsBtDataAmountModel();
             model.setChannelId(channelId);
-            model.setAmountName(amountValue);
+            model.setAmountName(amountName);
             model.setAmountVal(amountValue);
             model.setComment(comment);
             model.setCreater(getTaskName());

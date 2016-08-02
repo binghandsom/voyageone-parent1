@@ -87,7 +87,7 @@
                 `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP},
                 `express_company` = #{expressCompany,jdbcType=VARCHAR},
                 `tracking_no` = #{trackingNo,jdbcType=VARCHAR},
-                `comment` = #{comment,jdbcType=VARCHAR},
+                `comment` = #{comment,jdbcType=LONGVARCHAR},
             <if test="status != null">
                 `status` = #{status,jdbcType=VARCHAR},
             </if>

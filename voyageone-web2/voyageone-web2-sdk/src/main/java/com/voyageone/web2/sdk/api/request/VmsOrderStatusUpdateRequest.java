@@ -32,7 +32,7 @@ public class VmsOrderStatusUpdateRequest extends VoApiRequest<VmsOrderStatusUpda
 	private String reservationId;
 
 	/**
-	 * status（5：Received；6：Receive with Error）（必须）
+	 * status（5：Received；6：Receive Error）（必须）
 	 */
 	private String status;
 
