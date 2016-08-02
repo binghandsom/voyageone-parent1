@@ -1327,7 +1327,7 @@ public class CmsProductDetailService extends BaseAppService {
             }
         });
         cmsBtProductModel.getCommon().getFields().setHsCodePrivate(hsCode);
-        priceService.setRetailPrice(cmsBtProductModel);
+//        priceService.setRetailPrice(cmsBtProductModel);
         cmsBtProductModel.getPlatforms().forEach((s, platform) -> {
             if (platform.getCartId() != 0) {
                 prices.get(platform.getCartId()).get(platform.getSkus().get(0).getStringAttribute("skuCode")).add(platform.getSkus().get(0).getDoubleAttribute("priceRetail"));
