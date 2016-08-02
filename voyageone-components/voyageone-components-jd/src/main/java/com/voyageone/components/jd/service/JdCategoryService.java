@@ -1,21 +1,26 @@
 package com.voyageone.components.jd.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import com.jd.open.api.sdk.domain.category.AttValue;
 import com.jd.open.api.sdk.domain.category.Category;
 import com.jd.open.api.sdk.request.category.CategoryAttributeSearchRequest;
 import com.jd.open.api.sdk.request.category.CategoryAttributeValueSearchRequest;
 import com.jd.open.api.sdk.request.category.CategorySearchRequest;
+import com.jd.open.api.sdk.request.list.PopVenderCenerVenderBrandQueryRequest;
 import com.jd.open.api.sdk.response.category.CategoryAttributeSearchResponse;
 import com.jd.open.api.sdk.response.category.CategoryAttributeValueSearchResponse;
 import com.jd.open.api.sdk.response.category.CategorySearchResponse;
+import com.jd.open.api.sdk.response.list.PopVenderCenerVenderBrandQueryResponse;
+import com.jd.open.api.sdk.response.list.VenderBrandPubInfo;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.jd.JdBase;
 import com.voyageone.components.jd.JdConstants;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 京东类目类 api 调用服务
@@ -142,4 +147,35 @@ public class JdCategoryService extends JdBase {
 
         return jdCategoryAttrValueList;
     }
+    
+    /**
+     * 取得京东商家品牌信息
+     * @param shop 店铺信息
+     * @param brandName 品牌名称
+     * @return List<VenderBrandPubInfo> 品牌信息列表
+     */
+    public List<VenderBrandPubInfo> getCategoryBrandInfo(ShopBean shop, String brandName) {
+    	List<VenderBrandPubInfo> jdVenderBrandPubInfo = Collections.emptyList();
+    	// API请求
+    	PopVenderCenerVenderBrandQueryRequest request = new PopVenderCenerVenderBrandQueryRequest();
+    	// 设置品牌名称（可模糊查询）
+    	request.setName(brandName);
+    	
+    	try {
+    		// 调用京东商家品牌信息API
+    		PopVenderCenerVenderBrandQueryResponse response = reqApi(shop, request);
+    		// 京东返回正常的场合
+    		if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())
+    				&& response.getBrandList() != null) {
+    			// 品牌信息存在
+    			jdVenderBrandPubInfo = response.getBrandList();
+    		}
+    	} catch (Exception e) {
+			logger.error("调用京东API获取品牌信息失败 [channel_id={}, cart_id={}, brand_name={}]", new Object[]{shop.getOrder_channel_id(), shop.getCart_id(), brandName});
+			throw new BusinessException(shop.getShop_name() + "取得京东商家品牌信息失败 " + e.getMessage());
+		}
+    	
+    	return jdVenderBrandPubInfo;
+    }
+    
 }

@@ -230,7 +230,7 @@
             <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
 
-        <table tableName="cms_mt_platform_product_id_list" delimitAllColumns="true" enableCountByExample="false"
+        <table tableName="cms_mt_platform_category_extend_info" delimitAllColumns="true" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="JDBC"/>

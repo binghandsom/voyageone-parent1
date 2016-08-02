@@ -108,7 +108,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         } catch (Exception ex) {
             ex.printStackTrace();
             long requestId=FactoryIdWorker.nextId();
-            $error("CmsBtJmPromotionImportTask3Service.importFile"+requestId,"导入失败");
+            $error("CmsBtJmPromotionImportTask3Service.importFile"+requestId,"导入失败",ex);
             modelCmsBtJmPromotionImportTask.setErrorCode(1);
             modelCmsBtJmPromotionImportTask.setErrorMsg("导出失败请联系管理员！requestId:"+requestId);
             if (ex.getStackTrace().length > 0) {
@@ -192,44 +192,56 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         //product
         List<ProductImportBean> listErroProduct = new ArrayList<>();
         for (ProductImportBean product : listProductModel) {
-            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getId(), model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd());
-            if (modelPromotionProduct != null) { //活动日期重叠
-                product.setErrorMsg("活动日期有重叠,JMPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品");//取一个活动id
-                listErroProduct.add(product);
-            } else if (daoExtCmsBtJmProduct.existsCode(product.getProductCode(), model.getChannelId()) != Boolean.TRUE) {
-                product.setErrorMsg("code:" + product.getProductCode() + "从未上新或不存在");
-                listErroProduct.add(product);
-            }
-        }
-        if (isImport) {
-            listProductModel.removeAll(listErroProduct);//移除不能导入的 product
-        }
-        listProducctErrorMap.addAll(MapUtil.toMapList(listErroProduct));//返回  导出
-
-        //sku
-        String errorSkuMsg = "";
-        List<SkuImportBean> listErroSku = new ArrayList<>();
-        for (SkuImportBean sku : listSkuModel) {
-
-            if (daoExtCmsBtJmSkuDao.existsCode(sku.getSkuCode(), sku.getProductCode(), model.getChannelId()) != Boolean.TRUE) {
-                sku.setErrorMsg("skuCode:" + sku.getSkuCode() + "从未上新或不存在");
-                if (isImport) {
-                    listErroSku.add(sku);
+            if (model.getPromotionType() == 1)//满减专场
+            {
+                CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectFullMinusDateRepeat(model.getId(), model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+                if (modelPromotionProduct != null) { //活动日期重叠
+                    product.setErrorMsg("该商品已于相关时间段内，在其它满减专场中完成上传，为避免财务结算问题，请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品");//取一个活动id
+                    listErroProduct.add(product);
                 }
-            } else if (sku.getDealPrice() >= sku.getMarketPrice()) {
-                sku.setErrorMsg("skuCode:" + sku.getSkuCode() + "请重新确认价格，市场价必须大于团购价！");
-                if (isImport) {
-                    listErroSku.add(sku);
+                if (model.getPromotionType() == 2)//大促专场
+                {
+
+                }
+//            if (modelPromotionProduct != null) { //活动日期重叠
+//                product.setErrorMsg("活动日期有重叠,JMPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品");//取一个活动id
+//                listErroProduct.add(product);
+//            } else
+                if (daoExtCmsBtJmProduct.existsCode(product.getProductCode(), model.getChannelId()) != Boolean.TRUE) {
+                    product.setErrorMsg("code:" + product.getProductCode() + "从未上新或不存在");
+                    listErroProduct.add(product);
                 }
             }
-            if (!com.voyageone.common.util.StringUtils.isEmpty(sku.getErrorMsg())) {
-                errorSkuMsg += sku.getErrorMsg();
+            if (isImport) {
+                listProductModel.removeAll(listErroProduct);//移除不能导入的 product
             }
+            listProducctErrorMap.addAll(MapUtil.toMapList(listErroProduct));//返回  导出
+
+            //sku
+            String errorSkuMsg = "";
+            List<SkuImportBean> listErroSku = new ArrayList<>();
+            for (SkuImportBean sku : listSkuModel) {
+
+                if (daoExtCmsBtJmSkuDao.existsCode(sku.getSkuCode(), sku.getProductCode(), model.getChannelId()) != Boolean.TRUE) {
+                    sku.setErrorMsg("skuCode:" + sku.getSkuCode() + "从未上新或不存在");
+                    if (isImport) {
+                        listErroSku.add(sku);
+                    }
+                } else if (sku.getDealPrice() >= sku.getMarketPrice()) {
+                    sku.setErrorMsg("skuCode:" + sku.getSkuCode() + "请重新确认价格，市场价必须大于团购价！");
+                    if (isImport) {
+                        listErroSku.add(sku);
+                    }
+                }
+                if (!com.voyageone.common.util.StringUtils.isEmpty(sku.getErrorMsg())) {
+                    errorSkuMsg += sku.getErrorMsg();
+                }
+            }
+            if (isImport) {
+                listSkuModel.removeAll(listErroSku);
+            }
+            listSkuErrorMap.addAll(MapUtil.toMapList(listErroSku));//返回  导出
         }
-        if (isImport) {
-            listSkuModel.removeAll(listErroSku);
-        }
-        listSkuErrorMap.addAll(MapUtil.toMapList(listErroSku));//返回  导出
     }
 
     //save
@@ -608,20 +620,20 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 
     public List<ExcelColumn> getProductImportColumn() {
         List<ExcelColumn> list = new ArrayList<>();
-        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_product", "商品代码"));
-        list.add(new ExcelColumn("appId", "cms_bt_jm_promotion_product", "APP端模块ID"));
-        list.add(new ExcelColumn("pcId", "cms_bt_jm_promotion_product", "PC端模块ID"));
-        list.add(new ExcelColumn("limit", "cms_bt_jm_promotion_product", "Deal每人限购"));
-        list.add(new ExcelColumn("promotionTag", "cms_bt_jm_promotion_product", "专场标签（以|分隔）"));
+        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_product", "商品代码",true));
+        list.add(new ExcelColumn("appId", "cms_bt_jm_promotion_product", "APP端模块ID",true));
+        list.add(new ExcelColumn("pcId", "cms_bt_jm_promotion_product", "PC端模块ID",true));
+        list.add(new ExcelColumn("limit", "cms_bt_jm_promotion_product", "Deal每人限购",true));
+        list.add(new ExcelColumn("promotionTag", "cms_bt_jm_promotion_product", "专场标签（以|分隔）",true));
         return list;
     }
 
     public List<ExcelColumn> getSkuImportColumn() {
         List<ExcelColumn> list = new ArrayList<>();
-        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_sku", "商品代码"));
-        list.add(new ExcelColumn("skuCode", "cms_bt_jm_promotion_sku", "APP端模块ID"));
-        list.add(new ExcelColumn("dealPrice", "cms_bt_jm_promotion_sku", "PC端模块ID"));
-        list.add(new ExcelColumn("marketPrice", "cms_bt_jm_promotion_sku", "Deal每人限购"));
+        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_sku", "商品代码",true));
+        list.add(new ExcelColumn("skuCode", "cms_bt_jm_promotion_sku", "规格代码",true));
+        list.add(new ExcelColumn("dealPrice", "cms_bt_jm_promotion_sku", "团购价",true));
+        list.add(new ExcelColumn("marketPrice", "cms_bt_jm_promotion_sku", "市场价",true));
         return list;
     }
 
