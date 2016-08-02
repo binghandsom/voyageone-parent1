@@ -39,11 +39,8 @@
                       if(预热已开始)
                       {alert("聚美专场已开始预热，价格变更将有极大可能性引起客诉。点击确认继续操作！");}
          9.3   .//9.1的改进版    todo 未实现
-               if(cms_bt_jm_promotion_product.synch_status！=2）//未上传
-                { cms_bt_jm_promotion_product.price_status=1 }   //设置为价格待更新
+                cms_bt_jm_promotion_product.price_status=1  //设置为价格待更新 todo 和9.1的区别  这里删掉了预热未开始的判断
 
-               if(cms_bt_jm_promotion_product.synch_status==2)//已上传     todo 和9.1的区别  这里删掉了预热未开始的判断
-                { cms_bt_jm_promotion_product.price_status=1}  //设置为价格待更新
 2.10.批量变更价格
          10.1 // todo 上个版本已实现   新版本要改进
                if(预热已开始)
