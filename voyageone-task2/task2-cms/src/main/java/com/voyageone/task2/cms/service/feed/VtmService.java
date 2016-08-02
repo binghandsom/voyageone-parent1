@@ -88,8 +88,7 @@ public class VtmService extends BaseTaskService {
             // 2             本次导入error的数据
             // 3             本次导入完全导入成功的数据
 
-            backupFeedFile(LUCKY_VITAMIN.getId(), FeedEnums.Name.file_id_import_upc);
-            backupFeedFile(LUCKY_VITAMIN.getId(), FeedEnums.Name.file_id_import_category);
+            backupFeedFile(LUCKY_VITAMIN.getId(), FeedEnums.Name.file_id);
         }
     }
 
@@ -130,14 +129,6 @@ public class VtmService extends BaseTaskService {
         int count = 0;
         String sku = "first";
 
-        List<String> listImportUPC = getListImportUPC(FeedEnums.Name.file_id_import_upc);
-        List<String> listImportCategory = getListImportUPC(FeedEnums.Name.file_id_import_category);
-
-        if (listImportUPC.size() == 0 && listImportCategory.size() == 0) {
-//            logger.error("UPC设定的Excel文件不正确");
-//            logIssue("cms 数据导入处理", "UPC设定的Excel文件不正确. ");
-            return 0;
-        }
         $info("维他命产品信息清表开始");
         superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.table_id));
         $info("维他命产品信息清表结束");
@@ -265,10 +256,6 @@ public class VtmService extends BaseTaskService {
                 if (isErrData(superfeedvtmbean)) {
                     continue;
                 }
-                if(!listImportUPC.contains(superfeedvtmbean.getUPC()) && !listImportUPC.contains(superfeedvtmbean.getSKU()) && !categoryContains(listImportCategory,superfeedvtmbean.getMerchantPrimaryCategory()))
-                {
-                    continue;
-                }
                 superfeed.add(superfeedvtmbean);
                 sku = sku + " read over, next. ";
 
@@ -283,7 +270,10 @@ public class VtmService extends BaseTaskService {
             }
 //            reader.close();
             $info("维他命产品文件读入完成");
-        } catch (Exception ex) {
+        }catch (FileNotFoundException e){
+            $info("维他命产品文件不存在");
+        }
+        catch (Exception ex) {
 //            $info("维他命产品文件读入失败. SKU=" + sku);
 //            logger.error(ex.getMessage());
 //            logIssue("cms 数据导入处理", "维他命产品文件读入失败. SKU=" + sku + " " + ex.getMessage());
