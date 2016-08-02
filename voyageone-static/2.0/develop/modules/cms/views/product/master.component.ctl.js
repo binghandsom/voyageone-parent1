@@ -59,11 +59,9 @@ define([
                         scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
 
                         //暂存税号个人
-                        scope.vm.hsCodeOrigin = _.find(scope.vm.productComm.schemaFields,function(field){
+                        scope.vm.hsCodeOrigin = angular.copy(_.find(scope.vm.productComm.schemaFields,function(field){
                             return field.id === "hsCodePrivate";
-                        });
-
-                        console.log("hsCodeOrigin",scope.vm.hsCodeOrigin);
+                        }));
 
                         /**主商品提示*/
                         if(!scope.vm.mastData.isMain){
@@ -135,14 +133,45 @@ define([
                 }
 
                 /**
-                 * 更新操作
+                 * 更新操作    prodId:'5924',hsCode:'08010000,吊坠,个'
                  */
-                function saveProduct(){
+                function saveProduct(openHsCodeChange){
                     if (!validSchema()) {
                         alert("保存失败，请查看产品的属性是否填写正确！");
                         focusError();
                         return;
                     }
+
+                    //税号判断
+                    var hsCode = _.find(scope.vm.productComm.schemaFields,function(field){
+                        return field.id === "hsCodePrivate";
+                    });
+
+                    if(!angular.equals(hsCode,scope.vm.hsCodeOrigin)){
+
+                        var _prehsCode = angular.copy(scope.vm.hsCodeOrigin.value.value);
+
+                        openHsCodeChange({
+                            prodId:scope.productInfo.productId,
+                            hsCodeOld:_prehsCode,
+                            hsCodeNew:hsCode.value.value
+                        }).then(function(context){
+                            if(context === 'confirm'){
+                                callSaveProduct();
+                            }else{
+                                hsCode.value.value = _prehsCode;
+                            }
+                        });
+                    }else{
+                        callSaveProduct();
+                    }
+
+                }
+
+                /**
+                 * 调用保存接口
+                 * */
+                function callSaveProduct(){
 
                     productDetailService.updateCommonProductInfo({prodId:scope.productInfo.productId,productComm:scope.vm.productComm}).then(function(resp){
                         scope.vm.productComm.modified = resp.data.modified;
@@ -157,7 +186,9 @@ define([
                     },function(){
                         alert("更新失败","错误提示");
                     });
+
                 }
+
 
                 function validSchema(){
                     return scope.vm.productComm == null || scope.vm.productComm.schemaFields == null ? false : scope.schemaForm.$valid;
