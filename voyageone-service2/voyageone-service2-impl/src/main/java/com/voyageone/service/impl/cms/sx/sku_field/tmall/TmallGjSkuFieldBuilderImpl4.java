@@ -605,7 +605,15 @@ public class TmallGjSkuFieldBuilderImpl4 extends AbstractSkuFieldBuilder {
 //            }
             if (colorExtend_aliasnameField != null) {
                 // 别名,用产品code
-                complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), sxProduct.getCommon().getFields().getCode());
+                // modified by morse.lu 2016/08/02 start
+                // 如果code长度大于60，那么用color
+//                complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), sxProduct.getCommon().getFields().getCode());
+                String alias = sxProduct.getCommon().getFields().getCode();
+                if (alias.length() > 60) {
+                    alias = sxProduct.getCommon().getFields().getColor();
+                }
+                complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), alias);
+                // modified by morse.lu 2016/08/02 end
             }
             if (colorExtend_basecolorField != null) {
                 // 原先也没做,这版也暂时不做
