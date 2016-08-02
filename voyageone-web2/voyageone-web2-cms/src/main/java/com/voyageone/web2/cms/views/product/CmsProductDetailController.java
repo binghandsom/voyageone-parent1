@@ -192,4 +192,13 @@ public class CmsProductDetailController extends CmsController {
         productPropsEditService.delistinGroup(parameter, getUser().getUserName());
         return success(null);
     }
+    //税号变更
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.HsCodeChg)
+    public AjaxResponse hsCodeChg(@RequestBody Map<String,Object> parameter){
+
+        String channelId = getUser().getSelChannelId();
+        Long prodId = Long.parseLong(String.valueOf(parameter.get("prodId")));
+        String hsCode = String.valueOf(parameter.get("hsCode"));
+        return success(productPropsEditService.hsCodeChg(channelId,prodId,hsCode));
+    }
 }

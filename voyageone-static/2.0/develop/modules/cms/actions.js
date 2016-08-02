@@ -103,10 +103,11 @@ define(function () {
                     "updateLock": "updateLock",
                     "updateProductAtts": "updateProductAtts",
                     "checkCategory": "checkCategory",
-                    getChangeMastProductInfo: "getChangeMastProductInfo",
-                    setMastProduct: "setMastProduct",
-                    delisting: "delisting",
-                    delistinGroup: "delistinGroup"
+                    "getChangeMastProductInfo": "getChangeMastProductInfo",
+                    "setMastProduct": "setMastProduct",
+                    "delisting": "delisting",
+                    "delistinGroup": "delistinGroup",
+                    "hsCodeChg":"hsCodeChg"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -163,7 +164,9 @@ define(function () {
                     'searchBrands': 'searchBrands',
                     'searchCustBrands': 'searchCustBrands',
                     'searchMatchedBrands': 'searchMatchedBrands',
-                    'addNewBrandMapping': 'addNewBrandMapping'
+                    'addNewBrandMapping': 'addOrUpdateBrandMapping',
+                    'getSynchronizedTime': 'getSynchronizedTime',
+                    'synchronizePlatformBrands': 'synchronizePlatformBrands'
                 }
             },
             "promotion": {

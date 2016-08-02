@@ -84,7 +84,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
     private TbItemService tbItemService;
 
     @Autowired
-    private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
+    private PlatformCategoryService platformCategoryService;
 
     @Autowired
     private PlatformCategoryService platformCategoryService;

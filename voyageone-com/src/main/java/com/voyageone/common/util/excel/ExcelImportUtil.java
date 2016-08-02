@@ -73,7 +73,7 @@ public class ExcelImportUtil {
         for (ExcelColumn column : listEnumColumn) {
             if (mapExcelColumn.containsKey(column.getCamelColumnName())) {
                 if (!mapFiled.containsKey(column.getCamelColumnName())) {
-                    throw new Exception(model.getClass().getName() + "不存在字段" + column.getCamelColumnName());
+                    throw new Exception("文件导入格式不对"+ column.getCamelColumnName()+"列不存在,请检查");
                 }
                 Field field = mapFiled.get(column.getCamelColumnName());
                 String content = getString(row.getCell(mapExcelColumn.get(column.getCamelColumnName())));

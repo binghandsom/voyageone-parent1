@@ -496,6 +496,11 @@ define([
                 "controllerUrl": "modules/cms/views/pop/product/productOffLine.ctl",
                 "controller": 'ProductOffLineController as ctrl',
                 "size": 'lg'
+            },
+            "hsCodeChange": {
+                "templateUrl": "views/pop/product/hsCodeChange.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/hsCodeChange.ctl",
+                "controller": 'HsCodeChangeController as ctrl'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -1198,6 +1203,11 @@ define([
                 code: code
             });
         };
+
+        //税号改变 hsCodeChange
+        $scope.openHsCodeChange = function openHsCodeChange(context){
+            return openModal(popActions.product.hsCodeChange,context);
+        }
 
     }).factory('popups', function ($controller, $rootScope) {
 

@@ -36,6 +36,7 @@
                                     </a>
                                 </li>
                             </ul>
+
                         </div>
                     </div>
                     <div class="row">
@@ -103,7 +104,9 @@
                                         <li>
                                         </li>
                                     </ul>
-                                    <button type="button" class="btn btn-nav btn-nav-pop" ng-click="saveProduct()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存</button>
+                                    <button type="button" class="btn btn-nav btn-nav-pop" ng-click="saveProduct(openHsCodeChange)" ng-controller="popupCtrl">
+                                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存
+                                    </button>
                                 </nav>
                             </div>
                         </div>

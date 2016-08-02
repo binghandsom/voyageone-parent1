@@ -38,6 +38,7 @@ public interface CmsBtJmPromotionProductDaoExt {
     List<MapModel> selectPageByWhere(Map<String, Object> map);//add
 
     int selectCountByWhere(Map<String, Object> ma);//add
+    CmsBtJmPromotionProductModel selectFullMinusDateRepeat(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId, @Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
 
     CmsBtJmPromotionProductModel selectDateRepeatByCode(@Param("cmsBtJmPromotionId") int cmsBtJmPromotionId, @Param("channelId") String channelId, @Param("productCode") String productCode, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
 

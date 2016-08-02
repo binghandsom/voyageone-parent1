@@ -583,6 +583,7 @@ public interface CmsUrlConstants {
             String SetMastProduct="setMastProduct";
             String Delisting="delisting";
             String DelistinGroup="delistinGroup";
+            String HsCodeChg="hsCodeChg";
         }
 
         interface HISTORY {

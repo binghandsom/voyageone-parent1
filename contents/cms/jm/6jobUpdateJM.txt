@@ -1,3 +1,5 @@
+请先看字段说明 7说明
+
   6.更新聚美Job
         //6.0API调用前beforeCheck
        api_beforeCheck()
