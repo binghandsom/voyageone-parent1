@@ -1135,26 +1135,38 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 20160630 tom 防止code超长 END
             sbPropertyAlias.append(Separtor_Xor);           // "^"
 
-            for (BaseMongoMap<String, Object> objSku : skuList) {
-                // sku属性(1000021641:1523005913^1000021641:1523005771|1000021641:1523005913^1000021641:1523005772)
-                // 颜色1^尺码1|颜色1^尺码2|颜色2^尺码1|颜色2^尺码2(这里的尺码1是指从平台上取下来的，存在cms_mt_platform_skus表中的平台尺码值1)
-                sbSkuProperties.append(productColorMap.get(objProduct.getCommon().getFields().getCode()));
-                sbSkuProperties.append(Separtor_Xor);        // "^"
-                sbSkuProperties.append(skuSizeMap.get(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name())));
-                sbSkuProperties.append(Separtor_Vertical);   // "|"
+            CmsBtProductModel_Platform_Cart platformCart = objProduct.getPlatform(sxData.getCartId());
+            if (platformCart == null || ListUtils.isNull(platformCart.getSkus())) continue;
+            List<BaseMongoMap<String, Object>> platformSkuList = platformCart.getSkus();
+            for (BaseMongoMap<String, Object> pSku : platformSkuList) {
+                String pSkuCode = pSku.getStringAttribute("skuCode");
+                // 在skuList中找到对应sku信息，然后设置需要的属性
+                for (BaseMongoMap<String, Object> objSku : skuList) {
+                    // 如果没有找到对应skuCode，则继续循环
+                    if (!pSkuCode.equals(objSku.getStringAttribute("skuCode"))) {
+                        continue;
+                    }
 
-                // sku价格(100.0|150.0|100.0|100.0)
-                Double skuPrice = getSkuPrice(objSku, shop.getOrder_channel_id(), shop.getCart_id(), PriceType_jdprice);
-                sbSkuPrice.append(String.valueOf(skuPrice));
-                sbSkuPrice.append(Separtor_Vertical);        // "|"
+                    // sku属性(1000021641:1523005913^1000021641:1523005771|1000021641:1523005913^1000021641:1523005772)
+                    // 颜色1^尺码1|颜色1^尺码2|颜色2^尺码1|颜色2^尺码2(这里的尺码1是指从平台上取下来的，存在cms_mt_platform_skus表中的平台尺码值1)
+                    sbSkuProperties.append(productColorMap.get(objProduct.getCommon().getFields().getCode()));
+                    sbSkuProperties.append(Separtor_Xor);        // "^"
+                    sbSkuProperties.append(skuSizeMap.get(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name())));
+                    sbSkuProperties.append(Separtor_Vertical);   // "|"
 
-                // sku 库存(100.0|150.0|100.0|100.0)
-                sbSkuStocks.append(skuLogicQtyMap.get(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name())));
-                sbSkuStocks.append(Separtor_Vertical);   // "|"
+                    // sku价格(100.0|150.0|100.0|100.0)
+                    Double skuPrice = getSkuPrice(objSku, shop.getOrder_channel_id(), shop.getCart_id(), PriceType_jdprice);
+                    sbSkuPrice.append(String.valueOf(skuPrice));
+                    sbSkuPrice.append(Separtor_Vertical);        // "|"
 
-                // SKU外部ID(200001-001-41|200001-001-42)
-                sbSkuOuterId.append(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-                sbSkuOuterId.append(Separtor_Vertical);   // "|"
+                    // sku 库存(100.0|150.0|100.0|100.0)
+                    sbSkuStocks.append(skuLogicQtyMap.get(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name())));
+                    sbSkuStocks.append(Separtor_Vertical);   // "|"
+
+                    // SKU外部ID(200001-001-41|200001-001-42)
+                    sbSkuOuterId.append(objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                    sbSkuOuterId.append(Separtor_Vertical);   // "|"
+                }
             }
         }
 
