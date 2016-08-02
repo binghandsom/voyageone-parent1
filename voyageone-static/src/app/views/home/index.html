@@ -12,20 +12,20 @@
             <div class="col-sm-6">
                 <div class="panel panel-default home_data hover-effect media-body">
                     <div class="panel-heading home_data-head">
-                        <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;Today's New Order<span class="text-right">Update everyday</span></h3>
+                        <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;New Order<span class="text-right">Update every hour</span></h3>
                     </div>
                     <div class="panel-body">
                         <ul class="stat-boxes">
-                            <li>
+                            <li ng-click="ctrl.gotoOrderInfo()">
                                 <div class="right data-priority-2" >
-                                    <strong>10</strong>
+                                    <strong>{{ctrl.countOrder}}</strong>
                                     New Order Number
                                 </div>
                             </li>
-                            <li>
+                            <li ng-click="ctrl.gotoOrderInfo()">
                                 <div class="right data-priority-2" >
-                                    <strong>10</strong>
-                                    Sku Number
+                                    <strong>{{ctrl.countSku}}</strong>
+                                    New Sku Number
                                 </div>
                             </li>
                         </ul>
@@ -35,13 +35,13 @@
             <div class="col-sm-6">
                 <div class="panel panel-default home_data hover-effect media-body">
                     <div class="panel-heading home_data-head">
-                        <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;Receive with Error<span class="text-right">Last 10 days</span></h3>
+                        <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;Receive Error Shipment<span class="text-right">Last 10 days</span></h3>
                     </div>
                     <div class="panel-body">
                         <ul class="stat-boxes">
-                            <li>
+                            <li ng-click="ctrl.gotoShipmentInfo()">
                                 <div class="right data-priority-2" >
-                                    <strong>10</strong>
+                                    <strong>{{ctrl.countReceiveErrorShipment}}</strong>
                                     Shipment Number
                                 </div>
                             </li>
