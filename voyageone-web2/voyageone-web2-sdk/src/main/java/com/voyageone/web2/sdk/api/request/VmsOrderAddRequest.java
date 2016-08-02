@@ -25,7 +25,7 @@ public class VmsOrderAddRequest extends VoApiRequest<VmsOrderAddResponse> {
 
 
 	/**
-	 * 返回物品列表
+	 * 物品列表
 	 * Map包含以下内容
 	 * "channelId", String型
 	 * "reservationId", String型
