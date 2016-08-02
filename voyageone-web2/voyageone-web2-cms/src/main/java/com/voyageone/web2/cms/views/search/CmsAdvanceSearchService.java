@@ -96,7 +96,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         Map<String, Object> param = new HashMap<>(2);
         param.put("channelId", userInfo.getSelChannelId());
         param.put("tagTypeSelectValue", "4");
-        masterData.put("freetagList", cmsChannelTagService.getTagInfoList(param));
+        masterData.put("freetagList", cmsChannelTagService.getTagInfoByChannelId(param));
 
         // 获取price type
         masterData.put("priceTypeList", TypeConfigEnums.MastType.priceType.getList(language));

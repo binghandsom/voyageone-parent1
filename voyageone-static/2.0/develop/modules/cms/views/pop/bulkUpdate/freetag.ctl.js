@@ -31,6 +31,10 @@ define([
             this.key = [];
             this.selected = [];
             this.taglist = {selList: []};
+            this.orgChkStsMap = {};
+            this.orgDispMap = {};
+            this._orgChkStsMap = {};
+            this._orgDispMap = {};
         }
 
         popFreeTagCtl.prototype = {
@@ -50,6 +54,15 @@ define([
                 }
                 self.channelTagService.init(params).then(function (res) {
                     self.source = self.tagTree = res.data.tagTree;
+                    if (self.orgFlg == 2) {
+                        // 当是高级检索，设置自由标签时，有初始勾选值
+                        self.orgChkStsMap = res.data.orgChkStsMap;
+                        self.orgDispMap = res.data.orgDispMap;
+                        self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
+                        self._orgDispMap = angular.copy(res.data.orgDispMap);
+
+
+                    }
                     self.search(0);
                 });
             },
