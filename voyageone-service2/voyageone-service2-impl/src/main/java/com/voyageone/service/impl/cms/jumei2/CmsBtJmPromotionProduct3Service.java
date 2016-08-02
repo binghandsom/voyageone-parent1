@@ -186,8 +186,8 @@ private CmsBtPromotionDao daoCmsBtPromotion;
 
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
 
-        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime();
-        daoExt.batchSynchPrice(parameter.getListPromotionProductId(), isPreStart);
+//        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime();
+        daoExt.batchSynchPrice(parameter.getListPromotionProductId(), false);
     }
 
     //全量同步价格
