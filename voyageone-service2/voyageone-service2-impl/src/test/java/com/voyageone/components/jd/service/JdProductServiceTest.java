@@ -29,6 +29,6 @@ public class JdProductServiceTest {
         shopBean.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
         shopBean.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
         shopBean.setSessionKey("7d7cb9f2-8011-4004-9cad-1f046966a06b");
-        jdProductService.delItem(shopBean,"1955022612");
+        jdProductService.delItem(shopBean,"1955123581");
     }
 }
