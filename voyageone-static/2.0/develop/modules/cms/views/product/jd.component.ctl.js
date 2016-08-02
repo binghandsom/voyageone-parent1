@@ -94,6 +94,12 @@ define([
                  * @param popupNewCategory popup实例
                  */
                 function jdCategoryMapping(popupNewCategory) {
+
+                    if(scope.vm.status == 'Approved'){
+                        alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
+                        return;
+                    }
+
                     platformMappingService.getPlatformCategories({cartId: scope.cartInfo.value})
                         .then(function (res) {
                             return $q(function(resolve, reject) {
@@ -166,7 +172,7 @@ define([
                     if(scope.vm.mastData == null)
                         return;
 
-                    if(scope.vm.platform == null || scope.vm.platform.pNumIId == null || scope.vm.platform.pNumIId == ""){
+                    if(scope.vm.status != 'Approved'){
                         alert("商品未完成平台上新，无法操作平台下线。");
                         return;
                     }
