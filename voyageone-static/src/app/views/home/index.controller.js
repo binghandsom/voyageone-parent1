@@ -26,6 +26,9 @@ define([
                 };
                 window.sessionStorage.setItem('shipmentSearchInfo', JSON.stringify(searchInfo));
                 window.location.href = "#/shipment/shipment_info";
+            },
+            gotoOrderInfo: function () {
+                window.location.href = "#/order/order_info";
             }
         };
 
