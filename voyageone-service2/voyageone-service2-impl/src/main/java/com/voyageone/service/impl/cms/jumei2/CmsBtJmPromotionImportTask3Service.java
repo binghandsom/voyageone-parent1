@@ -5,14 +5,12 @@ import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.idsnowflake.FactoryIdWorker;
-import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.BigDecimalUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.MapUtil;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelImportUtil;
 import com.voyageone.service.bean.cms.CallResult;
-import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
-import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.bean.cms.jumei.ProductSaveInfo;
 import com.voyageone.service.bean.cms.jumei.SkuImportBean;
@@ -39,7 +37,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -94,7 +91,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         modelCmsBtJmPromotionImportTask.setBeginTime(new Date());
         try {
             cmsBtJmPromotionImportTaskDao.update(modelCmsBtJmPromotionImportTask);
-           CallResult result= importExcel(modelCmsBtJmPromotionImportTask, importPath);
+            CallResult result= importExcel(modelCmsBtJmPromotionImportTask, importPath);
             if(!result.isResult())
             {
                 modelCmsBtJmPromotionImportTask.setErrorMsg(result.getMsg());
@@ -134,7 +131,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             result.setResult(false);
             result.setMsg("导入文件格式不对");
             return  result;
-           // throw new Exception("导入文件格式不对");
+            // throw new Exception("导入文件格式不对");
         }
         //读取product
         Sheet productSheet = book.getSheet("Product");
@@ -142,7 +139,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             result.setResult(false);
             result.setMsg("导入模板不对,请检查");
             return  result;
-           // throw new Exception("导入模板不对,请检查");
+            // throw new Exception("导入模板不对,请检查");
         }
         List<ProductImportBean> listProductImport = new ArrayList<>();//导入的集合
         List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合  导出错误文件
@@ -372,7 +369,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     }
     public BigDecimal getMaxMarketPrice(List<CmsBtJmPromotionSkuModel> skuList)
     {
-      return   skuList.stream().max((m1,m2)->{return m1.getMarketPrice().doubleValue()>m2.getMarketPrice().doubleValue()?1:-1;}).get().getMarketPrice();
+        return   skuList.stream().max((m1,m2)->{return m1.getMarketPrice().doubleValue()>m2.getMarketPrice().doubleValue()?1:-1;}).get().getMarketPrice();
     }
     public BigDecimal getMinMarketPrice(List<CmsBtJmPromotionSkuModel> skuList)
     {
@@ -393,7 +390,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         CmsBtProductModel productInfo = saveInfo.p_ProductInfo;// productService.getProductByCode(modelPromotion.getChannelId(), product.getProductCode());
         query.setQuery("{\"productCodes\":\"" + product.getProductCode() + "\",\"cartId\":" + CartEnums.Cart.JM.getValue() + "}");
         CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(modelPromotion.getChannelId(), query);
-       if(productInfo==null) return;
+        if(productInfo==null) return;
         //1.CmsBtPromotionCodesModel
         CmsBtPromotionCodesModel modelCodes = getByCmsBtPromotionCodesModel(product.getProductCode(), modelPromotion.getId(), modelPromotion.getChannelId());
         if (modelCodes == null) {
@@ -556,17 +553,17 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             skuModel = null;
         }
     }
-   private BaseMongoMap<String, Object>  getJMPlatformSkuMongo(List<BaseMongoMap<String, Object>> list,String skuCode)
-   {
-       for(BaseMongoMap<String, Object> map:list)
-       {
-           if(skuCode.equalsIgnoreCase(map.getStringAttribute("skuCode")))
-           {
-               return  map;
-           }
-       }
-       return null;
-   }
+    private BaseMongoMap<String, Object>  getJMPlatformSkuMongo(List<BaseMongoMap<String, Object>> list,String skuCode)
+    {
+        for(BaseMongoMap<String, Object> map:list)
+        {
+            if(skuCode.equalsIgnoreCase(map.getStringAttribute("skuCode")))
+            {
+                return  map;
+            }
+        }
+        return null;
+    }
     private List<SkuImportBean> getListSkuImportBeanByProductCode(List<SkuImportBean> listSkuImport, String productCode) {
         return listSkuImport.stream().filter(skuImportBean -> skuImportBean.getProductCode().equals(productCode)).collect(Collectors.toList());
 //        List<SkuImportBean> listResult = new ArrayList<>();

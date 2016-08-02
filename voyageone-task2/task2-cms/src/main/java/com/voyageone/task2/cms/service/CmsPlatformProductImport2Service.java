@@ -1,14 +1,9 @@
 package com.voyageone.task2.cms.service;
 
-import com.taobao.api.ApiException;
 import com.taobao.api.domain.SellerCat;
-import com.taobao.top.schema.exception.TopSchemaException;
-import com.taobao.top.schema.field.*;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
@@ -16,39 +11,23 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
-import com.voyageone.common.masterdate.schema.field.ComplexField;
-import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.InputField;
-import com.voyageone.common.masterdate.schema.field.MultiCheckField;
-import com.voyageone.common.masterdate.schema.field.MultiComplexField;
-import com.voyageone.common.masterdate.schema.field.MultiInputField;
-import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseMQCmsService;
-import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.base.Enums.TaskControlEnums;
-import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.base.util.TaskControlUtils;
-import com.voyageone.task2.cms.bean.TmpOldCmsDataBean;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,9 +61,6 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
 
     @Autowired
     private TbItemService tbItemService;
-
-    @Autowired
-    private PlatformCategoryService platformCategoryService;
 
     @Autowired
     private PlatformCategoryService platformCategoryService;
