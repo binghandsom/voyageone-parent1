@@ -1,7 +1,5 @@
 package com.voyageone.web2.vms;
 
-import com.voyageone.service.dao.vms.VmsBtDataAmountDao;
-
 public class VmsConstants {
 
     // 逗号

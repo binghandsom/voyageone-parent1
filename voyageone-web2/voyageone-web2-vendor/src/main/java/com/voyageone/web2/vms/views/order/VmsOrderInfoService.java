@@ -157,7 +157,7 @@ public class VmsOrderInfoService extends BaseService {
     /**
      * 生成下载Excel拣货单
      *
-     * @param user         当前用户
+     * @param user             当前用户
      * @param downloadInfoBean 下载信息(排序信息)
      * @return 拣货单Excel
      * @throws IOException
@@ -276,7 +276,7 @@ public class VmsOrderInfoService extends BaseService {
     /**
      * 根据条件搜索订单
      *
-     * @param user            当前用户
+     * @param user                当前用户
      * @param orderSearchInfoBean 搜索条件
      * @return 订单列表
      */
@@ -375,7 +375,7 @@ public class VmsOrderInfoService extends BaseService {
     /**
      * 根据输入条件组出对应的搜索Map
      *
-     * @param user            当前用户
+     * @param user                当前用户
      * @param orderSearchInfoBean 搜索条件
      * @return 搜索条件Map
      */
@@ -404,7 +404,7 @@ public class VmsOrderInfoService extends BaseService {
     /**
      * 获取条件下的订单总数
      *
-     * @param user            当前用户
+     * @param user                当前用户
      * @param orderSearchInfoBean 搜索条件
      * @return 订单总数
      */
@@ -433,7 +433,7 @@ public class VmsOrderInfoService extends BaseService {
     public List<SubOrderInfoBean> getScannedSkuList(UserSessionBean user, ShipmentBean shipment,
                                                     String orderId) {
 
-        // 查找对应OrderId中 是否有已经扫描的SKU不在此shipment下
+        // 查找对应OrderId中 是否有不可正常扫描的SKU
         Map<String, Object> checkParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
             put("consolidationOrderId", orderId);
@@ -441,14 +441,20 @@ public class VmsOrderInfoService extends BaseService {
 
         List<VmsBtOrderDetailModel> orderDetailList = orderDetailService.select(checkParams);
 
-        long invalidSkuCount = orderDetailList.stream()
+        // 已被其他人扫描
+        long scannedToAnotherShipmentCount = orderDetailList.stream()
                 .filter(vmsBtOrderDetailModel ->
                         null != vmsBtOrderDetailModel.getShipmentId()
                                 && !shipment.getId().equals(vmsBtOrderDetailModel.getShipmentId()))
                 .count();
+        if (scannedToAnotherShipmentCount > 0) throw new BusinessException("8000023");
 
-        //
-        if (invalidSkuCount > 0) throw new BusinessException("8000023");
+        // 已被取消
+        long cancelledCount = orderDetailList.stream()
+                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS
+                        .OPEN))
+                .count();
+        if (cancelledCount > 0) throw new BusinessException("8000024");
 
         return orderDetailService.getScannedSku(user.getSelChannelId(), shipment.getId(), orderId).stream()
                 .map(vmsBtOrderDetailModel -> {
@@ -462,7 +468,7 @@ public class VmsOrderInfoService extends BaseService {
     /**
      * 扫barcode 将对应的sku加入shipment
      *
-     * @param user     当前用户
+     * @param user         当前用户
      * @param scanInfoBean 扫描参数
      * @return 扫描影响的条数
      */
@@ -478,14 +484,18 @@ public class VmsOrderInfoService extends BaseService {
             put("consolidationOrderId", scanInfoBean.getConsolidationOrderId());
         }};
 
-        long invalidCount = orderDetailService.select(checkParams).stream()
+        List<VmsBtOrderDetailModel> skuList = orderDetailService.select(checkParams);
+        long invalidCount = skuList.stream()
                 .filter(vmsBtOrderDetailModel -> (null != vmsBtOrderDetailModel.getShipmentId()
-                        && !vmsBtOrderDetailModel.getShipmentId().equals(shipment.getId()))
-
-                        || (!vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN)))
+                        && !vmsBtOrderDetailModel.getShipmentId().equals(shipment.getId())))
                 .count();
+        if (invalidCount > 0) throw new BusinessException("8000023");
 
-        if (invalidCount > 0) throw new BusinessException("8000024");
+        long statusChangedCount = skuList.stream()
+                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS
+                        .OPEN))
+                .count();
+        if (statusChangedCount > 0) throw new BusinessException("8000024");
 
         // 检查shipment状态
         VmsBtShipmentModel dbShipment = shipmentService.select(shipment.getId());
@@ -498,7 +508,7 @@ public class VmsOrderInfoService extends BaseService {
     /**
      * 确认当期订单是否完整扫描 同时相应更新sku状态
      *
-     * @param user     当前用户
+     * @param user         当前用户
      * @param scanInfoBean 扫描参数
      * @return 是否完整扫描
      */
@@ -552,7 +562,6 @@ public class VmsOrderInfoService extends BaseService {
                 .distinct()
                 .collect(Collectors.toList());
     }
-
 
 
     public List<SubOrderInfoBean> getScannedSkuList(UserSessionBean user, ShipmentBean shipment) {
