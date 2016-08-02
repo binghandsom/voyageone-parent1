@@ -2,11 +2,12 @@ package com.voyageone.task2.cms.service.platform;
 
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.JomgoAggregate;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJomgoUpdateList;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
@@ -17,8 +18,6 @@ import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.MongoSequenceService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
-import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtPlatformActiveLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -30,6 +29,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,10 +50,6 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private ProductGroupService productGroupService;
     @Autowired
     private TbItemService tbItemService;
     @Autowired
@@ -81,64 +77,46 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         }
 
         long batchNo = sequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID);
-        // 先记录上下架操作历史
+        // 先记录上下架操作历史（必须以group为单位，不能用已选中的商品，会重复）
         for (Integer cartId : cartIdList) {
-            // 取得产品信息
-            for (String prodCode : codeList) {
-                JomgoQuery queryObj = new JomgoQuery();
-                queryObj.setQuery("{'common.fields.code':#}");
-                queryObj.setParameters(prodCode);
-                queryObj.setProjectionExt("platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode", "lock");
-                CmsBtProductModel prodObj = productService.getProductByCondition(channelId, queryObj);
-                if (prodObj == null) {
-                    $error("CmsPlatformActiceLogService 产品不存在(或没有platforms数据) cartId=%d, channelId=%s, code=%s", cartId, channelId, prodCode);
+            JomgoQuery queryObj = new JomgoQuery();
+            // 取得group信息
+            queryObj.setQuery("{'productCodes':{$in:#},'cartId':#}");
+            queryObj.setParameters(codeList, cartId);
+            queryObj.setProjectionExt("mainProductCode", "productCodes", "groupId", "numIId");
+            List<CmsBtProductGroupModel> grpObjList = cmsBtProductGroupDao.select(queryObj, channelId);
+            if (grpObjList == null || grpObjList.isEmpty()) {
+                $error("CmsPlatformActiceLogService 产品对应的group不存在 cartId=%d, channelId=%s, codes=%s", cartId, channelId, codeList.toString());
+                continue;
+            }
+
+            for (CmsBtProductGroupModel grpObj : grpObjList) {
+                List<String> pCodeArr = grpObj.getProductCodes();
+                if (pCodeArr == null || pCodeArr.isEmpty()) {
+                    $error("CmsPlatformActiceLogService cartId=%d, channelId=%s, grpInfo=%s", cartId, channelId, grpObj.toString());
                     continue;
                 }
-
-                // 检查数据完整性
-                String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
-                if (mainCode == null) {
-                    $error("CmsPlatformActiceLogService 产品数据错误(没有MainProductCode数据) cartId=%d, channelId=%s, code=%s", cartId, channelId, prodCode);
-                }
-
-                // 取得group信息
-                queryObj = new JomgoQuery();
-                queryObj.setQuery("{'productCodes':#,'cartId':#}");
-                queryObj.setParameters(prodCode, cartId);
-                queryObj.setProjectionExt("mainProductCode", "groupId", "numIId");
-                CmsBtProductGroupModel grpObj = productGroupService.getProductGroupByQuery(channelId, queryObj);
-                if (grpObj == null) {
-                    $error("CmsPlatformActiceLogService 产品对应的group不存在 cartId=%d, channelId=%s, code=%s", cartId, channelId, prodCode);
-                }
-                if (mainCode != null && grpObj != null && !mainCode.equals(grpObj.getMainProductCode())) {
-                    $error("CmsPlatformActiceLogService 产品数据错误(不一致的MainProductCode) cartId=%d, channelId=%s, code=%s", cartId, channelId, prodCode);
-                }
-
-                CmsBtPlatformActiveLogModel model = new CmsBtPlatformActiveLogModel();
-                model.setBatchNo(batchNo);
-                model.setCartId(cartId);
-                model.setChannelId(channelId);
-                model.setProdCode(prodCode);
-                model.setActiveStatus(activeStatus);
-                CmsConstants.PlatformStatus pStatus = prodObj.getPlatformNotNull(cartId).getpStatus();
-                if (pStatus != null) {
-                    model.setPlatformStatus(pStatus.name());
-                }
-
-                model.setComment((String) messageMap.get("comment"));
-                if (grpObj != null) {
+                for (String pCode : pCodeArr) {
+                    CmsBtPlatformActiveLogModel model = new CmsBtPlatformActiveLogModel();
+                    model.setBatchNo(batchNo);
+                    model.setCartId(cartId);
+                    model.setChannelId(channelId);
+                    model.setActiveStatus(activeStatus);
+                    model.setPlatformStatus(getPlatformStatus(pCode, channelId, cartId));
+                    model.setComment((String) messageMap.get("comment"));
                     model.setGroupId(grpObj.getGroupId());
                     model.setMainProdCode(grpObj.getMainProductCode());
+                    model.setProdCode(pCode);
                     model.setNumIId(grpObj.getNumIId());
-                }
-                model.setResult("0");
-                model.setCreater(userName);
-                model.setCreated(DateTimeUtil.getNow());
-                model.setModified("");
-                model.setModifier("");
+                    model.setResult("0");
+                    model.setCreater(userName);
+                    model.setCreated(DateTimeUtil.getNow());
+                    model.setModified("");
+                    model.setModifier("");
 
-                WriteResult rs = platformActiveLogDao.insert(model);
-                $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s platformActiveLog保存结果=%s", cartId, channelId, prodCode, rs.toString());
+                    WriteResult rs = platformActiveLogDao.insert(model);
+                    $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s platformActiveLog保存结果=%s", cartId, channelId, pCode, rs.toString());
+                }
             }
         }
 
@@ -166,56 +144,51 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             }
 
             // 先处理numIId不存在/商品lock/状态异常的情况
-            queryObj.setQuery("{'common.fields.code':{$in:#}}");
-            queryObj.setParameters(codeList);
-            queryObj.setProjectionExt("common.fields.code", "lock", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode");
-            List<CmsBtProductModel> prodObjList = productService.getList(channelId, queryObj);
-            if (prodObjList.isEmpty()) {
-                $warn("CmsPlatformActiceLogService 找不到商品code cartId=%d", cartId);
+            queryObj.setQuery("{'cartId':#,'batchNo':#,'result':'0'}");
+            queryObj.setParameters(cartId, batchNo);
+            queryObj.setProjectionExt("prodCode", "mainProdCode", "numIId");
+            List<CmsBtPlatformActiveLogModel> actLogList = platformActiveLogDao.select(queryObj, channelId);
+            if (actLogList.isEmpty()) {
+                $warn("CmsPlatformActiceLogService 找不到商品上下架历史 cartId=%d，batchNo=%d", cartId, batchNo);
                 continue;
             }
-            for (CmsBtProductModel prodObj : prodObjList) {
-                String prodCode = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
-                String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
-                long numIId = NumberUtils.toLong(prodObj.getPlatformNotNull(cartId).getpNumIId());
+            for (CmsBtPlatformActiveLogModel actLogObj : actLogList) {
                 String failedComment = null;
-                if (numIId == 0) {
-                    $warn("CmsPlatformActiceLogService numIId错误 channelId=%s, code=%s", channelId, prodCode);
+                String prodCode = actLogObj.getProdCode();
+                if (StringUtils.isEmpty(actLogObj.getNumIId())) {
+                    $warn("CmsPlatformActiceLogService numIId(group)错误 channelId=%s, code=%s", channelId, prodCode);
                     failedComment = "NumIId为空";
-                } else if ("1".equals(StringUtils.trimToNull(prodObj.getLock()))) {
-                    $warn("CmsPlatformActiceLogService 商品lock channelId=%s, code=%s", channelId, prodCode);
-                    failedComment = "商品已锁定";
-                } else if (!CmsConstants.ProductStatus.Approved.name().equals(StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getStatus()))) {
-                    $warn("CmsPlatformActiceLogService 商品未审批 channelId=%s, code=%s", channelId, prodCode);
-                    failedComment = "商品未审批";
-                } else if (!CmsConstants.PlatformStatus.OnSale.equals(prodObj.getPlatformNotNull(cartId).getpStatus()) && !CmsConstants.PlatformStatus.InStock.equals(prodObj.getPlatformNotNull(cartId).getpStatus())) {
-                    $warn("CmsPlatformActiceLogService 商品还未上下架 channelId=%s, code=%s", channelId, prodCode);
-                    failedComment = "商品平台状态不是\"在售\"或\"在库\"";
-                } else if (mainCode == null) {
-                    $warn("CmsPlatformActiceLogService 产品数据错误(没有MainProductCode数据) channelId=%s, code=%s", channelId, prodCode);
+                } else if (StringUtils.isEmpty(actLogObj.getMainProdCode())) {
+                    $warn("CmsPlatformActiceLogService 产品(group)数据错误(没有MainProductCode数据) channelId=%s, code=%s", channelId, prodCode);
                     failedComment = "未设置主商品";
                 } else {
-                    // 检查主商品
+                    // 取得商品信息
                     queryObj.setQuery("{'common.fields.code':#}");
-                    queryObj.setParameters(mainCode);
-                    queryObj.setProjectionExt("lock", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".pStatus");
-                    CmsBtProductModel newProdObj = productService.getProductByCondition(channelId, queryObj);
-                    if (newProdObj == null) {
-                        $warn("CmsPlatformActiceLogService 找不到主商品 channelId=%s, code=%s", channelId, mainCode);
-                        failedComment = "主商品不存在";
+                    queryObj.setParameters(actLogObj.getProdCode());
+                    queryObj.setProjectionExt("lock", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode");
+                    CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
+                    if (prodObj == null) {
+                        $warn("CmsPlatformActiceLogService 找不到商品code cartId=%d", cartId);
+                        failedComment = "商品不存在";
                     } else {
-                        if (NumberUtils.toLong(newProdObj.getPlatformNotNull(cartId).getpNumIId()) == 0) {
-                            $warn("CmsPlatformActiceLogService 主商品numIId错误 channelId=%s, code=%s", channelId, mainCode);
-                            failedComment = "主商品NumIId为空";
-                        } else if ("1".equals(StringUtils.trimToNull(newProdObj.getLock()))) {
-                            $warn("CmsPlatformActiceLogService 主商品已锁定 channelId=%s, code=%s", channelId, mainCode);
-                            failedComment = "主商品已锁定";
-                        } else if (!CmsConstants.ProductStatus.Approved.name().equals(StringUtils.trimToNull(newProdObj.getPlatformNotNull(cartId).getStatus()))) {
-                            $warn("CmsPlatformActiceLogService 主商品未审批 channelId=%s, code=%s", channelId, mainCode);
-                            failedComment = "主商品未审批";
-                        } else if (!CmsConstants.PlatformStatus.OnSale.equals(newProdObj.getPlatformNotNull(cartId).getpStatus()) && !CmsConstants.PlatformStatus.InStock.equals(newProdObj.getPlatformNotNull(cartId).getpStatus())) {
-                            $warn("CmsPlatformActiceLogService 主商品还未上下架 channelId=%s, code=%s", channelId, mainCode);
-                            failedComment = "主商品平台状态不是\"在售\"或\"在库\"";
+                        String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
+                        long numIId = NumberUtils.toLong(prodObj.getPlatformNotNull(cartId).getpNumIId());
+
+                        if (numIId == 0) {
+                            $warn("CmsPlatformActiceLogService numIId错误 channelId=%s, code=%s", channelId, prodCode);
+                            failedComment = "NumIId为空";
+                        } else if (mainCode == null) {
+                            $warn("CmsPlatformActiceLogService 产品数据错误(没有MainProductCode数据) channelId=%s, code=%s", channelId, prodCode);
+                            failedComment = "未设置主商品";
+                        } else if ("1".equals(StringUtils.trimToNull(prodObj.getLock()))) {
+                            $warn("CmsPlatformActiceLogService 商品lock channelId=%s, code=%s", channelId, prodCode);
+                            failedComment = "商品已锁定";
+                        } else if (!CmsConstants.ProductStatus.Approved.name().equals(StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getStatus()))) {
+                            $warn("CmsPlatformActiceLogService 商品未审批 channelId=%s, code=%s", channelId, prodCode);
+                            failedComment = "商品未审批";
+                        } else if (!CmsConstants.PlatformStatus.OnSale.equals(prodObj.getPlatformNotNull(cartId).getpStatus()) && !CmsConstants.PlatformStatus.InStock.equals(prodObj.getPlatformNotNull(cartId).getpStatus())) {
+                            $warn("CmsPlatformActiceLogService 商品还未上下架 channelId=%s, code=%s", channelId, prodCode);
+                            failedComment = "商品平台状态不是\"在售\"或\"在库\"";
                         }
                     }
                 }
@@ -237,32 +210,31 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                 $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, batchNo=%d platformActiveLog更新结果=%s", cartId, channelId, batchNo, rs.toString());
             }
 
-            // 查找主商品code
-            queryObj.setQuery("{'common.fields.code':{$in:#}}");
-            queryObj.setParameters(codeList);
-            queryObj.setProjectionExt("common.fields.code", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode");
-            prodObjList = productService.getList(channelId, queryObj);
-            if (prodObjList.isEmpty()) {
-                $warn("CmsPlatformActiceLogService 找不到商品code cartId=%d", cartId);
-                continue;
-            }
-            // 过滤出主商品code
-            List<String> prodCodeList = prodObjList.stream().map(prodObj -> prodObj.getPlatformNotNull(cartId).getMainProductCode()).filter(prodCode -> prodCode != null && prodCode.length() > 0).collect(toList());
-            queryObj.setQuery("{'common.fields.code':{$in:#},'lock':{$in:[null,'','0']}}");
-            queryObj.setParameters(prodCodeList);
-            queryObj.setProjectionExt("common.fields.code", "platforms.P" + cartId + ".pNumIId");
-            prodObjList = productService.getList(channelId, queryObj);
-            if (prodObjList.isEmpty()) {
-                $warn("CmsPlatformActiceLogService 找不到商品code cartId=%d", cartId);
+            // 经过上面处理剩下的商品就是可以上下架的商品
+            List<JomgoAggregate> aggrList = new ArrayList<>();
+            // 查询条件
+            aggrList.add(new JomgoAggregate("{ $match: {'cartId':#,'batchNo':#,'result':'0'} }", cartId, batchNo));
+            // 分组
+            String gp1 = "{ $group : { _id : '$numIId','pcdList':{$addToSet:'$prodCode'} } }";
+            aggrList.add(new JomgoAggregate(gp1));
+
+            List<Map<String, Object>> prs = platformActiveLogDao.aggregateToMap(channelId, aggrList);
+            if (prs == null || prs.isEmpty()) {
+                $error("CmsPlatformActiceLogService 产品不存在 cartId=%d, channelId=%s", cartId, channelId);
                 continue;
             }
 
-            for (CmsBtProductModel prodObj : prodObjList) {
-                String prodCode = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
-                long numIId = NumberUtils.toLong(prodObj.getPlatformNotNull(cartId).getpNumIId());
+            // 然后对可以上下架的商品调用API并记录结果
+            for (Map<String, Object> prodObj : prs) {
+                long numIId = NumberUtils.toLong((String) prodObj.get("_id"));
+                List<String> pcdList = (List<String>) prodObj.get("pcdList");
+                if (numIId == 0 || pcdList == null || pcdList.isEmpty() ) {
+                    $error("CmsPlatformActiceLogService 数据错误 cartId=%d, channelId=%s data=%s", cartId, channelId, prodObj.toString());
+                    continue;
+                }
                 updRsFlg = false;
                 try {
-                    if (CartEnums.Cart.TG.getValue() == cartId) {
+                    if (shopProp.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
                         // 天猫国际上下架
                         if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
                             // 上架
@@ -271,7 +243,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                             // 下架
                             updRsFlg = tbItemService.doWareUpdateDelisting(shopProp, numIId);
                         }
-                    } else if (CartEnums.Cart.JG.getValue() == cartId) {
+                    } else if (shopProp.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
                         // 京东国际上下架
                         if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
                             // 上架
@@ -291,44 +263,48 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     updRsFlg = false;
                 }
 
-                // 保存结果
-                JomgoUpdate updObj = new JomgoUpdate();
-                updObj.setQuery("{'cartId':#,'mainProdCode':#,'batchNo':#}");
-                updObj.setQueryParameters(cartId, prodCode, batchNo);
-                if (updRsFlg) {
-                    updObj.setUpdate("{$set:{'result':#,'modified':#,'modifier':#}}");
-                    updObj.setUpdateParameters("1", DateTimeUtil.getNowTimeStamp(), userName);
-                } else {
-                    updObj.setUpdate("{$set:{'result':#,'failedComment':#,'modified':#,'modifier':#}}");
-                    updObj.setUpdateParameters("2", "调用API失败", DateTimeUtil.getNowTimeStamp(), userName);
+                // 保存调用结果
+                for (String prodCode : pcdList) {
+                    JomgoUpdate updObj = new JomgoUpdate();
+                    updObj.setQuery("{'cartId':#,'prodCode':#,'batchNo':#}");
+                    updObj.setQueryParameters(cartId, prodCode, batchNo);
+                    if (updRsFlg) {
+                        updObj.setUpdate("{$set:{'result':#,'modified':#,'modifier':#}}");
+                        updObj.setUpdateParameters("1", DateTimeUtil.getNowTimeStamp(), userName);
+                    } else {
+                        updObj.setUpdate("{$set:{'result':#,'failedComment':#,'modified':#,'modifier':#}}");
+                        updObj.setUpdateParameters("2", "调用API失败", DateTimeUtil.getNowTimeStamp(), userName);
+                    }
+                    rs = bulkList.addBulkJomgo(updObj);
+                    if (rs != null) {
+                        $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s, batchNo=%d platformActiveLog更新结果=%s", cartId, channelId, prodCode, batchNo, rs.toString());
+                    }
                 }
-                rs = bulkList.addBulkJomgo(updObj);
-                if (rs != null) {
-                    $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s, batchNo=%d platformActiveLog更新结果=%s", cartId, channelId, prodCode, batchNo, rs.toString());
-                }
-
                 if (!updRsFlg) {
                     continue;
                 }
                 // 在group表和product表更新相关状态
                 JomgoUpdate updObj2 = new JomgoUpdate();
-                updObj2.setQuery("{'cartId':#,'mainProductCode':#}");
-                updObj2.setQueryParameters(cartId, prodCode);
+                updObj2.setQuery("{'cartId':#,'numIId':#}");
+                updObj2.setQueryParameters(cartId, numIId);
                 updObj2.setUpdate("{$set:{'platformStatus':#,'modified':#,'modifier':#}}");
                 updObj2.setUpdateParameters(platformStatus, DateTimeUtil.getNowTimeStamp(), userName);
                 rs = bulkList2.addBulkJomgo(updObj2);
                 if (rs != null) {
-                    $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s cmsBtProductGroup更新结果=%s", cartId, channelId, prodCode, rs.toString());
+                    $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, numIId=%d cmsBtProductGroup更新结果=%s", cartId, channelId, numIId, rs.toString());
                 }
 
-                JomgoUpdate updObj3 = new JomgoUpdate();
-                updObj3.setQuery("{'platforms.P#.mainProductCode':#}");
-                updObj3.setQueryParameters(cartId, prodCode);
-                updObj3.setUpdate("{$set:{'platforms.P#.pStatus':#,'modified':#,'modifier':#}}");
-                updObj3.setUpdateParameters(cartId, platformStatus, DateTimeUtil.getNowTimeStamp(), userName);
-                rs = bulkList3.addBulkJomgo(updObj3);
-                if (rs != null) {
-                    $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s cmsBtProduct更新结果=%s", cartId, channelId, prodCode, batchNo, rs.toString());
+                // 更新product表时,要检查该group下商品的有效（numIId不存在/商品lock/状态异常）
+                for (String prodCode : pcdList) {
+                    JomgoUpdate updObj3 = new JomgoUpdate();
+                    updObj3.setQuery("{'common.fields.code':#}");
+                    updObj3.setQueryParameters(prodCode);
+                    updObj3.setUpdate("{$set:{'platforms.P#.pStatus':#,'modified':#,'modifier':#}}");
+                    updObj3.setUpdateParameters(cartId, platformStatus, DateTimeUtil.getNowTimeStamp(), userName);
+                    rs = bulkList3.addBulkJomgo(updObj3);
+                    if (rs != null) {
+                        $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s cmsBtProduct更新结果=%s", cartId, channelId, prodCode, rs.toString());
+                    }
                 }
             }
 
@@ -347,4 +323,21 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         }
     }
 
+    // 取得商品对应的平台状态
+    private String getPlatformStatus(String prodCode, String channelId, int cartId) {
+        JomgoQuery queryObj = new JomgoQuery();
+        queryObj.setQuery("{'common.fields.code':#}");
+        queryObj.setParameters(prodCode);
+        queryObj.setProjectionExt("platforms.P" + cartId + ".pStatus");
+        CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
+        if (prodObj == null) {
+            $warn("CmsPlatformActiceLogService 找不到商品 channelId=%s，code=%s", channelId, prodCode);
+            return null;
+        }
+        CmsConstants.PlatformStatus pStatus = prodObj.getPlatformNotNull(cartId).getpStatus();
+        if (pStatus != null) {
+            return pStatus.name();
+        }
+        return null;
+    }
 }

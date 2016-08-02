@@ -91,4 +91,20 @@ public class BrandBtMappingService extends BaseService {
 		return params;
 	}
 
+	public boolean addOrUpdateBrandMapping(CmsMtBrandsMappingModel brandModel) {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("channelId", brandModel.getChannelId());
+		paramMap.put("cartId", brandModel.getCartId());
+		paramMap.put("cmsBrand", brandModel.getCmsBrand());
+		CmsMtBrandsMappingModel brandMapping = cmsMtBrandsMappingDao.selectOne(paramMap);
+		// 添加或更新品牌映射
+		if (brandMapping == null) {
+			// 找不到记录就添加品牌映射
+			return cmsMtBrandsMappingDao.insert(brandModel) > 0;
+		} else {
+			// 找到记录就更新品牌映射
+			return cmsMtBrandsMappingDao.update(brandModel) > 0;
+		}
+	}
+
 }

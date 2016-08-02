@@ -1,3 +1,5 @@
+请先看字段说明 7说明
+
 3.3.全量删除
   3.3.1 全量删除前Check
         3.3.1.1 if(活动预热已开始)   todo 未实现
@@ -8,7 +10,8 @@
                   SELECT * FROM `cms_bt_jm_promotion_product`
                   WHERE   `cms_bt_jm_promotion_id`='#{cmsBtJmPromotionId}' AND `synch_status`=2  LIMIT 1
                   */
-        3.3.1.2  if(存在已经上传商品)
+        3.3.1.2 已实现
+              if(存在已经上传商品)//存在已经上传的商品,不能删除
                {
                 errorMsg="存在已经上传的商品,不能删除";
                }
@@ -19,8 +22,8 @@
         3.3.2  活动预热已开始的场合：  已实现
            功能关闭
 
-3.4.全量上传：
-             3.4.1 if(活动预热已开始)
+3.4.全量上传：已实现
+             3.4.1 if(活动预热已开始)// 活动预热已开始,不能全量上传
                 {
                     errorMsg="活动预热已开始,不能全量上传";
                 }
@@ -30,14 +33,14 @@
                 // `price_status`    0:未更新  1:待更新  2：已经更新  3：更新失败
                    if(cms_bt_jm_promotion_product.synch_status==2)//已在售
                    {
-                     cms_bt_jm_promotion_product.price_status=1  //价格待更新
+                     cms_bt_jm_promotion_product.price_status=1  //设置为 价格待更新
                    }
                    else
                    {
-                     cms_bt_jm_promotion_product.synch_status=1 //待上传
+                     cms_bt_jm_promotion_product.synch_status=1 //设置为 待上传
                    }
                 }
-3.5.全量同步价格
+3.5.全量同步价格 已实现
                 3.5.1 if(活动预热已开始)
                    {
                      errorMsg="活动预热已开始,不能全量同步价格";
@@ -50,8 +53,13 @@
  3.6.全量延期
              // todo  old 上个版本已实现   新版本要删除
            3.6.1 if(该专场商品已在其它聚美专场上传，且未过期)
+                   {
+                         errorMsg="专场延期失败";
+                   }
+           3.6.1
+               if(cms_bt_jm_promotion.promotionGiftType==2) 该专场为 满减专场的场合
                {
-                     errorMsg="专场延期失败";
+                     errorMsg="满减专场不允许延期"；
                }
 
 3.全量删除：
