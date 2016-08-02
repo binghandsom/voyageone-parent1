@@ -174,6 +174,8 @@ public interface CmsUrlConstants {
                 String DEL_PROMOTION_MODEL = "delPromotionModel";
 
                 String DEL_PROMOTION_CODE = "delPromotionCode";
+
+                String TMALL_JUHUASUAN_EXPORT = "tmallJuhuasuanExport";
             }
         }
 
