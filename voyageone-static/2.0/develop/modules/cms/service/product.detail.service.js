@@ -33,6 +33,7 @@ define([
 		this.setMastProduct = setMastProduct;
 		this.delisting = delisting;
 		this.delistinGroup = delistinGroup;
+		this.hsCodeChg = hsCodeChg;
 
 		/**
 		 * 获取页面产品信息
@@ -419,6 +420,23 @@ define([
 				});
 			return defer.promise;
 		}
+
+		/**
+		 * 税号改变
+		 * @param req {prodId,hsCode}  产品id，新的税号code
+		 * @returns {*}
+		 */
+		function hsCodeChg(req){
+			var defer = $q.defer();
+			$productDetailService.hsCodeChg(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
 
 	}
 

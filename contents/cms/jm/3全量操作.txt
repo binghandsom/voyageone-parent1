@@ -57,7 +57,7 @@
                          errorMsg="专场延期失败";
                    }
            3.6.1
-               if(cms_bt_jm_promotion.promotionGiftType==2) 该专场为 满减专场的场合
+               if(cms_bt_jm_promotion.is_promotion_full_minus) 该专场为 满减专场的场合
                {
                      errorMsg="满减专场不允许延期"；
                }
