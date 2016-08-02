@@ -157,7 +157,7 @@ define([
                             hsCodeNew:hsCode.value.value
                         }).then(function(context){
                             if(context === 'confirm'){
-                                callSaveProduct();
+                                callSaveProduct(true);
                             }else{
                                 hsCode.value.value = _prehsCode;
                             }
@@ -171,7 +171,7 @@ define([
                 /**
                  * 调用保存接口
                  * */
-                function callSaveProduct(){
+                function callSaveProduct(isRresh){
 
                     productDetailService.updateCommonProductInfo({prodId:scope.productInfo.productId,productComm:scope.vm.productComm}).then(function(resp){
                         scope.vm.productComm.modified = resp.data.modified;
@@ -182,6 +182,10 @@ define([
                         scope.productInfo.checkFlag = new Date().getTime();
                         if(!scope.vm.categoryMark)
                             scope.productInfo.masterCategory = new Date().getTime();
+
+                        if(isRresh)
+                            scope.productInfo.masterCategory = new Date().getTime();
+
                         notify.success("更 新 成 功 ");
                     },function(){
                         alert("更新失败","错误提示");
