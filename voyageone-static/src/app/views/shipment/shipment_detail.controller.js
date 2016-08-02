@@ -5,14 +5,14 @@ define([
     'vms'
 ], function (vms) {
     vms.controller('ShipmentDetailController', (function () {
-        function warningAudio(value) {
-            var audioEle = document.getElementById('warningAudio');
-            if (value == true) audioEle.play();
-        }
-
-        function successAudio(value) {
-            var audioEle = document.getElementById('successAudio');
-            if (value == true) audioEle.play();
+        function audioPlay(value) {
+            if (value == true) {
+                var audioEleSuccess = document.getElementById('successAudio');
+                audioEleSuccess.play();
+            } else {
+                var audioEleWarning = document.getElementById('warningAudio');
+                audioEleWarning.play();
+            }
         }
 
         function ShipmentDetailController($routeParams, notify, alert, confirm, shipmentDetailService) {
@@ -70,14 +70,14 @@ define([
             self.shipmentDetailService.scan(req).then(function (data) {
                 if (data.success == 1) {
                     try {
-                        successAudio(true);
+                        audioPlay(true);
                     } catch (exception) {
                     }
                     self.notify.success('TXT_SUCCESS');
                 }
                 else if (data.success == 0) {
                     try {
-                        warningAudio(true);
+                        audioPlay(false);
                     } catch (exception) {
                     }
                     self.notify.warning('TXT_ITEM_NOT_FOUND_SKU');

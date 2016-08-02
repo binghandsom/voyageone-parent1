@@ -41,10 +41,10 @@
                         <tr>
                             <th class="td-2 v-middle" translate="TXT_SHIPMENT_NAME"></th>
                             <th class="td-1 v-middle" translate="TXT_STATUS"></th>
-                            <th class="td-2 v-middle" translate="TXT_SHIPPED_DATE"></th>
+                            <th class="td-1-5 v-middle" translate="TXT_SHIPPED_DATE"></th>
                             <th class="td-2 v-middle" translate="TXT_EXPRESS_COMPANY"></th>
                             <th class="td-2 v-middle" translate="TXT_TRACKING_NO_"></th>
-                            <th class="td-1 text-center" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU' && ctrl.shipment.status == 1" translate="TXT_ACTION"></th>
+                            <th class="td-1-5 text-center" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU' && ctrl.shipment.status == 1" translate="TXT_ACTION"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -104,31 +104,31 @@
                     <thead>
                     <tr>
                         <th class="td-1 v-middle" translate="TXT_NO_"></th>
-                        <th class="td-2 v-middle" translate="TXT_BARCODE"></th>
+                        <th class="td-1-5 v-middle" translate="TXT_BARCODE"></th>
                         <th class="td-2 v-middle" translate="TXT_SKU"></th>
                         <th class="td-3 v-middle" translate="TXT_NAME"></th>
                         <th class="td-2 v-middle" translate="TXT_ORDER_ID"></th>
                         <th class="td-3 v-middle" translate="TXT_CONTAINERIZING_TIME"></th>
-                        <th class="td-3 v-middle" translate="TXT_CONTAINERIZING_USER"></th>
-                        <th class="td-1 v-middle" translate="TXT_STATUS"></th>
+                        <th class="td-2 v-middle" translate="TXT_CONTAINERIZING_USER"></th>
+                        <th class="td-1-5 v-middle" translate="TXT_STATUS"></th>
                         <!--<th class="td-1 text-center">Action</th>-->
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="item in ctrl.scannedSkuList">
-                        <td class="td-1 v-middle">{{ctrl.scannedSkuList.length - $index}}</td>
-                        <td class="td-2 v-middle">{{item.barcode}}</td>
-                        <td class="td-2 v-middle">{{item.clientSku}}</td>
-                        <td class="td-3 v-middle">
+                        <td class="v-middle">{{ctrl.scannedSkuList.length - $index}}</td>
+                        <td class="v-middle">{{item.barcode}}</td>
+                        <td class="v-middle">{{item.clientSku}}</td>
+                        <td class="v-middle">
                             <span class="v-middle" ng-if="item.name.length <= 25">{{item.name}}</span>
                             <span class="v-middle" ng-if="item.name.length > 25" uib-tooltip="{{item.name}}" tooltip-trigger="mouseenter" tooltip-placement="top">
                                 {{item.name | stringCutter:true:25:' ...'}}
                             </span>
                         </td>
-                        <td class="td-2 v-middle">{{item.consolidationOrderId}}</td>
-                        <td class="td-2 v-middle">{{item.containerizingTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                        <td class="td-2 v-middle">{{item.containerizer}}</td>
-                        <td class="td-1 v-middle">{{ctrl.getStatusName(item.status)}}</td>
+                        <td class="v-middle">{{item.consolidationOrderId}}</td>
+                        <td class="v-middle">{{item.containerizingTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="v-middle">{{item.containerizer}}</td>
+                        <td class="v-middle">{{ctrl.getStatusName(item.status)}}</td>
                         <!--<td class="td-1 text-center">-->
                         <!--<button class="btn btn-xs btn-info"><i class="fa fa-print"></i></button>-->
                         <!--</td>-->

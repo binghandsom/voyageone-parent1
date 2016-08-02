@@ -5,14 +5,14 @@ define([
     'vms'
 ], function (vms) {
     vms.controller('AddToShipmentController', (function () {
-        function warningAudio(value) {
-            var audioEle = document.getElementById('warningAudio');
-            if (value == true) audioEle.play();
-        }
-
-        function successAudio(value) {
-            var audioEle = document.getElementById('successAudio');
-            if (value == true) audioEle.play();
+        function audioPlay(value) {
+            if (value == true) {
+                var audioEleSuccess = document.getElementById('successAudio');
+                audioEleSuccess.play();
+            } else {
+                var audioEleWarning = document.getElementById('warningAudio');
+                audioEleWarning.play();
+            }
         }
 
         function AddToShipmentController(context, notify, shipmentScanPopupService, $uibModalInstance) {
@@ -32,10 +32,13 @@ define([
             };
             self.barcode = null;
             self.shipmentScanPopupService.scanBarcode(req).then(function (data) {
-                if (data.success == 1) self.notify.success('TXT_SUCCESS');
+                if (data.success == 1) {
+                    audioPlay(true);
+                    self.notify.success('TXT_SUCCESS');
+                }
                 else if (data.success == 0) {
                     try {
-                        successAudio(true);
+                        audioPlay(false);
                     } catch (exception) {
                     }
                     self.notify.warning('TXT_ITEM_NOT_FOUND');
