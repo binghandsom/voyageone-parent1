@@ -1,25 +1,30 @@
+请先看字段说明 7说明
 2.7.批量删除
-         7.1 if(活动预热已开始)   todo 未实现
+         2.7.1 if(活动预热已开始)   todo 未实现
                 {
                     errorMsg="活动预热已开始,不能删除";
                 }
-         7.2
-                只能删除未上传的商品 cms_bt_jm_promotion_product.synch_status!=2
-         7.3  活动预热已开始的场合：
+         2.7.2   ／／todo 上传失败的不允许删
+                只能删除未上传的商品   
+                if(cms_bt_jm_promotion_product.synch_status==2)//已经上传的商品  写入错误信息 todo 未实现
+                {
+                    errorMsg="该商品已调用过聚美上传API，聚美平台静止相关操作纪录的删除。为保证数据一致性，该商品无法删除。";
+                }
+         2.7.3  活动预热已开始的场合：
                功能关闭
 2.8.批量上传：
-         8.1 // todo 上个版本已实现   新版本要删除
+         2.8.1 // todo 上个版本已实现   新版本要删除
               if（cms_bt_jm_promotion_product.synch_status！=2）//未上传
               { cms_bt_jm_promotion_product.synch_status=1 }   //设置为待上传
 
               if(cms_bt_jm_promotion_product.synch_status==2&&预热未开始)//已上传&&预热未开始
               { cms_bt_jm_promotion_product.price_status=1}              //设置为价格待更新
-         8.2 提示 // todo 未实现
+         2.8.2 提示 // todo 未实现
                       if(预热未开始)
                       {alert("聚美平台无任何删除功能，专场内一旦有商品完成上传，该商品禁止删除，该专场禁止删除。点击确认继续操作");}
                       if(预热已开始)
                       {alert("聚美专场已开始预热，任何变更都有极大可能性引起客诉，点击确认继续操作");}
-         8.3.//8.1的改进版    todo 未实现
+         2.8.3.//8.1的改进版    todo 未实现
                 if（cms_bt_jm_promotion_product.synch_status！=2）//未上传
                   { cms_bt_jm_promotion_product.synch_status=1 }   //设置为待上传
 
@@ -50,7 +55,7 @@
          10.2 //todo  10.1的改进版
                 if(预热已开始&&synch_status==2)//包含已上新的商品 提示
                 {
-                  alert("专场已上线，变更价格一旦同步至平台将引起客诉,是否更新?");
+                  alert("专场已上线，变更价格一旦同步至平台将引起客诉，点击确认继续操作。”);
                 }
                 if(更新后的deal_price>market_price)
                 {

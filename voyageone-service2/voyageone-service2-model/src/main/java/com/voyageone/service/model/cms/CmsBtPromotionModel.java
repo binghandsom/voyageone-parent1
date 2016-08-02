@@ -18,7 +18,7 @@ public class CmsBtPromotionModel extends BaseModel {
     protected Integer cartId;
 
     /**
-     * 0:Open 1:Close
+     * 1:Open 0:Close
      */
     protected Integer promotionStatus;
 

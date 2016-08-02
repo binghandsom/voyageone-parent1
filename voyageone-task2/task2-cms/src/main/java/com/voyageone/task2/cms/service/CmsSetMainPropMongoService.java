@@ -268,6 +268,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
             CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
+            // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
+            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
 
             // jeff 2016/05 add start
             // 取得所有主类目
@@ -1296,13 +1298,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // feed->master导入时，将一些项目(如：sizeType,productType)的初始化中英文mapping信息插入到Synship.com_mt_value_channel表中
             // 从cms_mt_channel_config表从取得的产品分类是否从feed导入flg=1的时候，才插入产品分类mapping信息
             if ("1".equals(productTypeFromFeedFlg) && !StringUtils.isEmpty(feedProductType)) {
-                // 插入产品分类初始中英文mapping信息
+                // 插入产品分类初始中英文mapping信息到Synship.com_mt_value_channel表中
                 insertComMtValueChannelMappingInfo(57, feed.getChannelId(), feedProductType, feedProductType);
             }
 
             // 从cms_mt_channel_config表从取得的适用人群是否从feed导入flg=1的时候，才插入产品分类mapping信息
             if ("1".equals(sizeTypeFromFeedFlg) && !StringUtils.isEmpty(feedSizeType)) {
-                // 插入适用人群初始中英文mapping信息
+                // 插入适用人群初始中英文mapping信息到Synship.com_mt_value_channel表中
                 insertComMtValueChannelMappingInfo(58, feed.getChannelId(), feedSizeType, feedSizeType);
             }
             // add by desmond 2016/07/22 end
@@ -1340,8 +1342,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             if (newFlg || productCommonField.getAppSwitch() == null || "1".equals(feed.getIsFeedReImport())) {
                 // 从cms_mt_channel_config取得APP端启用开关的值（0或者1）
                 CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBeanNoCode(feed.getChannelId(), CmsConstants.ChannelConfig.APP_SWITCH);
-                if (sxPriceConfig != null && !StringUtils.isEmpty(sxPriceConfig.getConfigValue1())) {
-                    productCommonField.setAppSwitch(Integer.parseInt(sxPriceConfig.getConfigValue1()));
+                if (sxPriceConfig != null && !StringUtils.isEmpty(sxPriceConfig.getConfigValue1()) && "1".equals(sxPriceConfig.getConfigValue1())) {
+                    // APP端启用开关的值配置成1的场合，设为APP端启用开1
+                    productCommonField.setAppSwitch(1);
                 } else {
                     productCommonField.setAppSwitch(0);
                 }
@@ -2895,15 +2898,19 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 查看配置表, 看看是否要自动审批价格
             CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channelId
                     , CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
-            boolean blnAutoApproveFlg;
-            if (autoApprovePrice == null || autoApprovePrice.getConfigValue1() == null || "0".equals(autoApprovePrice.getConfigValue1())) {
-                // 没有配置过, 或者 配置为空, 或者 配置了0 的场合
-                // 认为不自动审批价格 (注意: 即使不自动审批, 但如果价格击穿了, 仍然自动更新salePrice)
-                blnAutoApproveFlg = false;
-            } else {
-                // 其他的场合, 自动审批价格
+            boolean blnAutoApproveFlg = false;
+            if (autoApprovePrice != null && autoApprovePrice.getConfigValue1() != null && "1".equals(autoApprovePrice.getConfigValue1())) {
+                // 自动审批价格配置成1的场合，自动审批价格
                 blnAutoApproveFlg = true;
             }
+//            if (autoApprovePrice == null || autoApprovePrice.getConfigValue1() == null || "0".equals(autoApprovePrice.getConfigValue1())) {
+//                // 没有配置过, 或者 配置为空, 或者 配置了0 的场合
+//                // 认为不自动审批价格 (注意: 即使不自动审批, 但如果价格击穿了, 仍然自动更新salePrice)
+//                blnAutoApproveFlg = false;
+//            } else {
+//                // 其他的场合, 自动审批价格
+//                blnAutoApproveFlg = true;
+//            }
 
             // delete desmond 2016/07/01 start
 //            ProductPriceBean model = new ProductPriceBean();

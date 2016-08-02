@@ -121,14 +121,14 @@ public class BcbgAnalysisService extends BaseTaskService {
             BcbgFeedFile bcbgFeedFile = BcbgFeedFile.read(feedFile);
             bcbgBeans = bcbgFeedFile.getMATERIALS();
 
-            $info("已读取文件.获得 Feed %s 个", bcbgBeans.size());
+            $info("已读取文件[ %s ].获得 Feed %s 个", feedFile.getName(), bcbgBeans.size());
         }
 
         if (styleFile != null) {
             FileReader styleFileReader = new FileReader(styleFile);
             styleBeans = new Gson().fromJson(styleFileReader, BcbgStyleBean[].class);
 
-            $info("已读取文件.获得 Style %s 个", styleBeans.length);
+            $info("已读取文件[ %s ].获得 Style %s 个", styleFile.getName(), styleBeans.length);
         }
 
         // 清空老数据

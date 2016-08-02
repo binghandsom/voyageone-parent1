@@ -322,6 +322,13 @@
         </where>
     </select>
 
+    <select id="selectFullMinusDateRepeat">
+        SELECT a.* FROM `cms_bt_jm_promotion_product` AS a JOIN cms_bt_jm_promotion AS b ON a.cms_bt_jm_promotion_id=b.id
+              WHERE b.promotionType=1 AND a.synch_status=2 AND a.channel_id=#{channelId} and   a.product_code=#{productCode}
+                      AND  #{activityStart} &lt;=a.`activity_end`  and   #{activityEnd}>=a.`activity_start`
+                      AND a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}
+                       LIMIT 1
+    </select>
     <select id="selectDateRepeatByCode" resultMap="ResultMap">
         SELECT * FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activityStart} &lt;=`activity_end`  and   #{activityEnd}>=`activity_start` and cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   limit 1
     </select>
