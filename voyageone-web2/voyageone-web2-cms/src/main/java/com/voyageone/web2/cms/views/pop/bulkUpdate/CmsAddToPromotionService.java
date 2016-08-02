@@ -148,7 +148,7 @@ public class CmsAddToPromotionService extends BaseAppService {
         }
 
         // 给产品数据添加活动标签
-        productTagService.addProdTag(channelId, tagInfo.getTagPath(), productIds, "tags", modifier);
+        productTagService.addProdTag(channelId, tagInfo.getTagPath(), productIds, modifier);
         productIds.forEach(item -> {
             PromotionDetailAddBean request = new PromotionDetailAddBean();
             request.setModifier(modifier);

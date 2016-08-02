@@ -70,7 +70,6 @@ define([
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
         $scope.getCat = getCat;
-        $scope.addFreeTag = addFreeTag;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         $scope.openApproval = openApproval;
         $scope.platformCategoryMapping = platformCategoryMapping;
@@ -597,7 +596,7 @@ define([
         /**
          * 添加产品到指定自由标签
          */
-        function addFreeTag(tagBean) {
+        $scope.addFreeTag = function (openFreeTag) {
             _chkProductSel(null, _addFreeTag);
 
             function _addFreeTag(cartId, selList) {
@@ -607,16 +606,21 @@ define([
                         productIds.push(object.id);
                     });
                 }
+                openFreeTag({'orgFlg':2,'tagTypeSel':'4','cartId':$scope.vm.searchInfo.cartId,'productIds':productIds,'selAllFlg':$scope.vm._selall ? 1 : 0}).then(function (res) {
+                    // 设置自由标签
+                    var freeTags = _.chain(res.selectdTagList).map(function (key, value) { return key.tagPath; }).value();
+                    var freeTagsTxt = _.chain(res.selectdTagList).map(function (key, value) { return key.tagPathName; }).value();
+                    confirm("将对选定的产品设置自由标签:<br>" + freeTagsTxt.join('; '))
+                        .then(function () {
+                            searchAdvanceService2.addFreeTag(freeTags, productIds, $scope.vm._selall ? 1 : 0).then(function () {
+                                notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
+                                searchAdvanceService2.clearSelList();
+                                getGroupList();
+                                getProductList();
+                            })
+                        });
+                });
 
-                confirm("将对选定的产品添加自由标签" + tagBean.tagPathName)
-                    .then(function () {
-                        searchAdvanceService2.addFreeTag(tagBean.tagPath, productIds, $scope.vm._selall ? 1 : 0).then(function () {
-                            notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
-                            searchAdvanceService2.clearSelList();
-                            getGroupList();
-                            getProductList();
-                        })
-                    });
             }
         }
 
@@ -879,11 +883,13 @@ define([
         function openTagManagement(openFreeTag, isPromoTag) {
             openFreeTag.then(function (res) {
                 if (isPromoTag) {
+                    // 查询活动标签
                     $scope.vm._promotionTags = res.selectdTagList;
                     $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function (key, value) {
                         return key.tagPath;
                     }).value();
                 } else {
+                    // 查询自由标签
                     $scope.vm._freeTags = res.selectdTagList;
                     $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function (key, value) {
                         return key.tagPath;

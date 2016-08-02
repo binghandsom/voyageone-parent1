@@ -47,6 +47,14 @@ public class CmsChannelTagService extends BaseAppService {
             //标签类型
             result.put("tagTypeList", types.stream().filter(w->w.getValue().equals("4")).collect(Collectors.toList()));
         }
+
+        Integer orgFlg = (Integer) param.get("orgFlg");
+        if (orgFlg != null && orgFlg == 2) {
+            // 高级检索，设置自由标签的场合，需要检索一边说选择商品的自由标签设值，返回到前端
+
+
+
+        }
         //返回数据类型
         return result;
     }
