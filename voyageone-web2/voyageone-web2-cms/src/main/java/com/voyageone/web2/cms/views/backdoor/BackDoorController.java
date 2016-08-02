@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.backdoor;
 
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
@@ -16,6 +17,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.impl.cms.CategoryTreeAllService;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
@@ -29,6 +31,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.util.MapModel;
 import com.voyageone.web2.cms.CmsController;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +80,8 @@ public class BackDoorController extends CmsController {
     private ProductSkuService productSkuSerivice;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
+    @Autowired
+    private CmsBtJmPromotionDaoExt cmsBtJmPromotionDaoExt;
 
 
     /**
@@ -1070,6 +1075,155 @@ public class BackDoorController extends CmsController {
     }
 
 
+    }
+
+    @RequestMapping(value = "changeProductTypeToLow", method = RequestMethod.GET)
+    public Object changeProductTypeToLow(@RequestParam("channelId") String channelId) {
+        List<String> code = new ArrayList<>();
+
+        List<CmsBtProductModel> products = cmsBtProductDao.selectAll(channelId);
+
+        products.parallelStream().forEach(productInfo -> {
+            List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+
+            cartList.forEach(channelBean -> {
+                String cartId = channelBean.getValue();
+
+                CmsBtProductModel_Platform_Cart platformInfo = productInfo.getPlatformNotNull(Integer.valueOf(cartId));
+
+                JomgoQuery query = new JomgoQuery();
+                query.setQuery("{\"mainProductCode\": #, \"cartId\": #}");
+                query.setParameters(platformInfo.getMainProductCode(), platformInfo.getCartId());
+                CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(channelId, query);
+                if (groupModel == null) {
+                    code.add("group不存在:" + platformInfo.getMainProductCode() + "--" + platformInfo.getCartId());
+
+                }
+
+                if (!StringUtils.isEmpty(platformInfo.getpNumIId()) && groupModel != null && StringUtils.isEmpty(groupModel.getNumIId())) {
+
+                    groupModel.setNumIId(platformInfo.getpNumIId());
+                    groupModel.setPlatformPid(platformInfo.getpProductId());
+                    groupModel.setPlatformStatus(platformInfo.getpStatus());
+                    groupModel.setPublishTime(platformInfo.getpPublishTime());
+
+                    productGroupService.update(groupModel);
+                    code.add(groupModel.getGroupId().toString() + ":" + platformInfo.getpNumIId());
+                }
+
+            });
+        });
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>feed 信息列表</h2>");
+        builder.append("<ul>");
+        code.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("<ul>");
+        code.forEach(groupCheckMessage -> builder.append(",").append(groupCheckMessage));
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
+
+    }
+
+    /**
+     * 根据channelId和cartId,设置已经Approved商品所有的cart
+     * @param channelId
+     * @param cartId
+     * @return
+     */
+    @RequestMapping(value = "changeProductIsSale", method = RequestMethod.GET)
+    public Object changeProductIsSale(@RequestParam("channelId") String channelId, @RequestParam("cartId") String cartId) {
+
+        List<String> code = new ArrayList<>();
+
+        JomgoQuery query = new JomgoQuery();
+        query.setQuery("{\"platforms.P27.status\": \"Approved\", \"platforms.P27.skus.isSale\": {$exists: false}}");
+        List<CmsBtProductModel> products = cmsBtProductDao.select(query, channelId);
+
+        products.parallelStream().forEach(product -> {
+
+            product.getPlatform(Integer.valueOf(cartId)).getSkus().forEach(sku ->
+                    sku.setAttribute("isSale", true)
+            );
+
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("prodId", product.getProdId());
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+            HashMap<String, Object> updateMap = new HashMap<>();
+//                platformModel.setModified(DateTimeUtil.getNowTimeStamp());
+            updateMap.put("platforms.P" + cartId, product.getPlatform(Integer.valueOf(cartId)));
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "updateProductPlatformIsSale", "$set");
+
+            code.add(product.getCommon().getFields().getCode());
+        });
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>feed 信息列表</h2>");
+        builder.append("<ul>");
+        code.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("<ul>");
+        code.forEach(groupCheckMessage -> builder.append(",").append(groupCheckMessage));
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
+    }
+
+
+    /**
+     * 根据channelId和cartId,设置已经Approved商品所有的cart
+     *
+     * @param channelId
+     * @return
+     */
+    @RequestMapping(value = "updateProductJMHashId", method = RequestMethod.GET)
+    public Object updateProductJMHashId(@RequestParam("channelId") String channelId) {
+
+        List<String> codes = new ArrayList<>();
+
+        List<MapModel> promotionCodes = cmsBtJmPromotionDaoExt.selectMaxJmHashId(channelId);
+
+        promotionCodes.forEach(promtionCode -> {
+            String code = promtionCode.get("productCode").toString();
+            String jmHashId = promtionCode.get("jmHashId").toString();
+
+            JomgoUpdate updateQuery = new JomgoUpdate();
+            updateQuery.setQuery("{\"common.fields.code\": #}");
+            updateQuery.setQueryParameters(code);
+
+            updateQuery.setUpdate("{$set:{\"platforms.P27.pNumIId\": #}}");
+            updateQuery.setUpdateParameters(jmHashId);
+
+            cmsBtProductDao.updateFirst(updateQuery, channelId);
+
+
+            JomgoUpdate updateGroupQuery = new JomgoUpdate();
+            updateGroupQuery.setQuery("{\"cartId\": 27, \"productCodes\": #}");
+            updateGroupQuery.setQueryParameters(code);
+
+            updateGroupQuery.setUpdate("{$set:{\"numIId\": #}}");
+            updateGroupQuery.setUpdateParameters(jmHashId);
+
+            cmsBtProductGroupDao.updateFirst(updateGroupQuery, channelId);
+            codes.add(code + "=======" + jmHashId);
+        });
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>feed 信息列表</h2>");
+        builder.append("<ul>");
+        codes.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
     }
 
 }
