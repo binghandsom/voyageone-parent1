@@ -16,6 +16,9 @@
         <!-- 定期生成财务报表 每天零点十分触发一次-->
         <task:scheduled ref="VmsMakeFinancialReportJob" method="run" cron="0 10 0 * * ?"/>
 
+        <!-- 取得Home页统计数据 每小时触发一次-->
+        <task:scheduled ref="VmsGetHomeInfoJob" method="run" cron="0 0 0/1 * * ?"/>
+
 
     </task:scheduled-tasks>
 

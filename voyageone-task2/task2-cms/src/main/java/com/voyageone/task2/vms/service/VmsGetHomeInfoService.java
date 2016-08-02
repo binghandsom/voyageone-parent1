@@ -75,14 +75,9 @@ public class VmsGetHomeInfoService extends BaseTaskService {
         $info("取得Home页面显示信息开始，channelId" + channelId);
 
         // 取得"New Order"件数
-        // 现在时点
-        Calendar cal = Calendar.getInstance();
-        Date now = cal.getTime();
-
         Map<String, Object> param = new HashMap<String, Object>() {{
             put("channelId", channelId);
             put("status", VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN);
-            put("orderDateTo", now);
         }};
         int countOrder = vmsBtOrderDetailDaoExt.countOrder(param);
         int countSku = vmsBtOrderDetailDaoExt.countSku(param);
@@ -92,6 +87,9 @@ public class VmsGetHomeInfoService extends BaseTaskService {
         updateDataAmount(channelId, VmsConstants.DataAmount.NEW_SKU_COUNT, String.valueOf(countSku), "Today's New Sku");
 
         // 取得"Receive Error"件数（最近10天）
+        // 现在时点
+        Calendar cal = Calendar.getInstance();
+        Date now = cal.getTime();
         Map<String, Object> param1 = new HashMap<String, Object>() {{
             put("channelId", channelId);
             put("status", VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.RECEIVE_ERROR);
