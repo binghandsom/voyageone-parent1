@@ -18,23 +18,23 @@ public enum IllegalValueTypes {
     /**
      * 要求给定的值不能为 null
      */
-    IS_NULL("1000008", "[Assertion failed] - the object argument must be null"),
+    IS_NULL("1000008", "[Assertion failed] - the object value must be null"),
     /**
      * 要求给定的值必须为 null
      */
-    NOT_NULL("1000009", "[Assertion failed] - this argument is required; it must not be null"),
+    NOT_NULL("1000009", "[Assertion failed] - this value is required; it must not be null"),
     /**
      * 要求文本中必须有内容(包括空格, 即有空格也算有内容)
      */
-    HAS_LENGTH("1000010", "[Assertion failed] - this String argument must have length; it must not be null or empty"),
+    HAS_LENGTH("1000010", "[Assertion failed] - this String value must have length; it must not be null or empty"),
     /**
      * 要求文本中必须有实际内容(即全是空格则认为无内容)
      */
-    HAS_TEXT("1000011", "[Assertion failed] - this String argument must have text; it must not be null, empty, or blank"),
+    HAS_TEXT("1000011", "[Assertion failed] - this String value must have text; it must not be null, empty, or blank"),
     /**
      * 要求文本必须不包含指定字符串
      */
-    DOES_NOT_CONTAIN("1000012", "[Assertion failed] - this String argument must not contain the substring [ %s ]"),
+    DOES_NOT_CONTAIN("1000012", "[Assertion failed] - this String value must not contain the substring [ %s ]"),
     /**
      * 要求数组必须不是空数组, 必须有元素
      */
