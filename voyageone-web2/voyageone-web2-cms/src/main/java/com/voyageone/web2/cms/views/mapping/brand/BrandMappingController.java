@@ -21,7 +21,9 @@ import com.voyageone.web2.cms.bean.BrandMappingBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 
 /**
- * Created by Wangtd on 7/25/16.
+ * 品牌映射访问控制
+ * @author Wangtd 2016/07/25
+ * @since 2.3.0
  */
 @RestController
 @RequestMapping(value = CmsUrlConstants.MAPPING.BRAND.ROOT, method = RequestMethod.POST)
