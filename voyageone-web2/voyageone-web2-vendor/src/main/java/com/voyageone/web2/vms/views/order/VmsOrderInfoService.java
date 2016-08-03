@@ -484,6 +484,7 @@ public class VmsOrderInfoService extends BaseService {
             put("consolidationOrderId", scanInfoBean.getConsolidationOrderId());
         }};
 
+        // 不属于该shipment(即已扫入其他shipment)
         List<VmsBtOrderDetailModel> skuList = orderDetailService.select(checkParams);
         long invalidCount = skuList.stream()
                 .filter(vmsBtOrderDetailModel -> (null != vmsBtOrderDetailModel.getShipmentId()
@@ -491,13 +492,31 @@ public class VmsOrderInfoService extends BaseService {
                 .count();
         if (invalidCount > 0) throw new BusinessException("8000023");
 
-        long statusChangedCount = skuList.stream()
+        // 检查状态不正常的(非OPEN)
+        List<VmsBtOrderDetailModel> invalidStatusList = skuList.stream()
                 .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS
                         .OPEN))
-                .count();
-        if (statusChangedCount > 0) throw new BusinessException("8000024");
+                .collect(Collectors.toList());
+        if (invalidStatusList.size() > 0) {
 
-        // 检查shipment状态
+            // 已被取消
+            long cancelledCount = invalidStatusList.stream()
+                    .filter(vmsBtOrderDetailModel -> vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS
+                            .CANCEL))
+                    .count();
+
+            // 已经完整扫描
+            long packagedCount = invalidStatusList.stream()
+                    .filter(vmsBtOrderDetailModel -> vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS
+                            .PACKAGE))
+                    .count();
+
+            if (cancelledCount > 0) throw new BusinessException("8000024");
+            if (packagedCount > 0) throw new BusinessException("8000034");
+            // 理论上应该只有以上两种情况 最后加一个抛出确保今后状态加了之类的不会出错=。=
+            throw new BusinessException("8000035");
+        }
+
         VmsBtShipmentModel dbShipment = shipmentService.select(shipment.getId());
         if (!dbShipment.getStatus().equals(STATUS_VALUE.SHIPMENT_STATUS.OPEN)) throw new BusinessException("8000025");
 
