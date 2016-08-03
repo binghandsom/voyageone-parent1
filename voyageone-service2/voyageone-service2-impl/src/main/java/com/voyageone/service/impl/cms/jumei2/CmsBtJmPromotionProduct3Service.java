@@ -245,6 +245,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         //2.7.2.2  已经上传的商品  写入错误信息
         daoExt.updateSynch2ErrorMsg(parameter.getListPromotionProductId(), "该商品已调用过聚美上传API，聚美平台静止相关操作纪录的删除。为保证数据一致性，该商品无法删除");
 
+        //2.7.3 删除 CmsBtPromotionCodes  CmsBtPromotionSkus
         CmsBtPromotionModel modelCmsBtPromotion = getCmsBtPromotionModel(parameter.getPromotionId());
         if (modelCmsBtPromotion != null) {
             List<CmsBtJmPromotionProductModel> listNotSych = daoExt.selectNotSynchListByPromotionProductIds(parameter.getListPromotionProductId());
