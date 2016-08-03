@@ -66,7 +66,9 @@ define([
                     'cartName': self.brandName,
                     'masterName': item.masterName
                 };
-                self.popups.openPlatformMappingSetting(self.mappingDetail)
+                self.popups.openPlatformMappingSetting(self.mappingDetail).then(function () {
+                    self.searchBrands();
+                })
             }
         };
 
