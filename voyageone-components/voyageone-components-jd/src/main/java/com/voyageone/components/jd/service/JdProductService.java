@@ -21,8 +21,8 @@ public class JdProductService extends JdBase {
         request.setWareId(numId);
         request.setTradeNo(DateTimeUtil.getNowTimeStamp());
         WareDeleteResponse response = reqApi(config,request);
-        if ("0".equalsIgnoreCase(response.getCode())) {
-            throw new BusinessException("京东删除商品失败 京东错误码：" + response.getCode());
+        if (!"0".equalsIgnoreCase(response.getCode())) {
+            throw new BusinessException("京东删除商品失败" + response.getMsg() + "  京东错误码：" + response.getCode());
         }
         return true;
     }

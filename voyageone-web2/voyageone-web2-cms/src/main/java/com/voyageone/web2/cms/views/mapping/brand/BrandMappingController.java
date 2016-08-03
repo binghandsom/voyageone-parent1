@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -114,6 +115,69 @@ public class BrandMappingController extends CmsController {
 		brandMapping.setChannelId(userSession.getSelChannel().getId());
 		brandMapping.setLangId(getLang());
 		result.put("success", brandMappingService.addNewBrandMapping(brandMapping, userSession));
+		
+		return success(result);
+	}
+	
+	/**
+	 * 添加或更新匹配的品牌数据 
+	 */
+	@RequestMapping(CmsUrlConstants.MAPPING.BRAND.ADD_OR_UPDATE_BRAND_MAPPING)
+	public AjaxResponse addOrUpdateBrandMapping(@RequestBody BrandMappingBean brandMapping) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		// 检查参数
+		Preconditions.checkNotNull(brandMapping);
+		Preconditions.checkNotNull(brandMapping.getCartId());
+		Preconditions.checkState(StringUtils.isNotBlank(brandMapping.getBrandId()));
+		Preconditions.checkState(StringUtils.isNotBlank(brandMapping.getCmsBrand()));
+		// 添加查询参数
+		UserSessionBean userSession = getUser();
+		brandMapping.setChannelId(userSession.getSelChannel().getId());
+		brandMapping.setLangId(getLang());
+		result.put("success", brandMappingService.addOrUpdateBrandMapping(brandMapping, userSession));
+		
+		return success(result);
+	}
+	
+	/**
+	 * 同步平台品牌数据
+	 */
+	@RequestMapping(CmsUrlConstants.MAPPING.BRAND.SYNCHRONIZE_PLATFORM_BRANDS)
+	public AjaxResponse synchronizePlatformBrands(@RequestBody BrandMappingBean brandMapping) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("success", false);
+		// 检查参数
+		Preconditions.checkNotNull(brandMapping);
+		Preconditions.checkNotNull(brandMapping.getCartId());
+		// 添加查询参数
+		UserSessionBean userSession = getUser();
+		brandMapping.setChannelId(userSession.getSelChannel().getId());
+		brandMapping.setLangId(getLang());
+		try {
+			brandMappingService.synchronizePlatformBrands(brandMapping, userSession);
+			result.put("success", true);
+		} catch (BusinessException e) {
+			logger.error(e.getMessage(), e);
+			result.put("message", e.getMessage());
+		}
+		
+		return success(result);
+	}
+	
+	/**
+	 * 取得平台品牌数据同步时间
+	 */
+	@RequestMapping(CmsUrlConstants.MAPPING.BRAND.GET_SYNCHRONIZE_TIME)
+	public AjaxResponse getSynchronizedTime(@RequestBody BrandMappingBean brandMapping) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		// 检查参数
+		Preconditions.checkNotNull(brandMapping);
+		Preconditions.checkNotNull(brandMapping.getCartId());
+		// 添加查询参数
+		UserSessionBean userSession = getUser();
+		brandMapping.setChannelId(userSession.getSelChannel().getId());
+		
+		result.put("synchTime", brandMappingService.getSynchronizedTime(brandMapping));
 		
 		return success(result);
 	}

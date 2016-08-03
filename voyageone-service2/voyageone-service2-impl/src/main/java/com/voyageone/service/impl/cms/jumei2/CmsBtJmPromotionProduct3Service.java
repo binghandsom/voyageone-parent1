@@ -88,6 +88,11 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
         int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
         result.setIsUpdateJM(!(hour == 10));//是否可以更新聚美  10到11点一小时之内不允许更新聚美平台
+        boolean isBefore5DaysBeforePreBegin = DateTimeUtil.addDays(new Date(), 5).getTime() > preStartLocalTime;//是否是预热开始前5天之前  预热开始前5天之前不让更新聚美
+        if(isBefore5DaysBeforePreBegin)// 预热开始前5天之前不让更新聚美
+        {
+           result.setIsUpdateJM(false);
+        }
         // 获取brand list
         result.setBrandList(TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, language));
         return result;
@@ -181,8 +186,8 @@ private CmsBtPromotionDao daoCmsBtPromotion;
 
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
 
-        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime();
-        daoExt.batchSynchPrice(parameter.getListPromotionProductId(), isPreStart);
+//        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime();
+        daoExt.batchSynchPrice(parameter.getListPromotionProductId(), false);
     }
 
     //全量同步价格

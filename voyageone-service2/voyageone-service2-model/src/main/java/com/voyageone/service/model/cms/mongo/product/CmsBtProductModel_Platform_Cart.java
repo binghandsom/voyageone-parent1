@@ -235,6 +235,17 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public BaseMongoMap<String, Object> getFields() {
         return getAttribute(FIELDS);
     }
+    /**
+     * 返回非空BaseMongoMap对象
+     */
+    public BaseMongoMap getFieldsNotNull()  {
+        BaseMongoMap obj = getAttribute(FIELDS);
+        if (obj == null) {
+            return new BaseMongoMap();
+        }
+        return obj;
+    }
+
     public void setFields(BaseMongoMap<String, Object> fields) {
         setAttribute(FIELDS, fields);
     }

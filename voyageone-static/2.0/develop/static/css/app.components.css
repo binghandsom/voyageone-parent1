@@ -327,7 +327,7 @@ vpagination {
 }
 
 vpagination input[type="text"] {
-    width: 20px;
+    width: 50px;
     line-height: 20px;
 }
 

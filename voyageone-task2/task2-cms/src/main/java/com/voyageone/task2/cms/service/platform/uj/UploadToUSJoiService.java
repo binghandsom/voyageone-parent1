@@ -146,10 +146,12 @@ public class UploadToUSJoiService extends BaseTaskService {
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
 
                 } else {
+                    boolean commonEditFlg = false;
                     for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
                         CmsBtProductModel_Sku oldSku = pr.getCommon().getSku(sku.getSkuCode());
                         if (oldSku == null) {
                             pr.getCommon().getSkus().add(sku);
+                            commonEditFlg = true;
                         } else {
                             if (oldSku.getPriceMsrp().compareTo(sku.getPriceMsrp()) != 0
                                     || oldSku.getPriceRetail().compareTo(sku.getPriceRetail()) != 0) {
@@ -158,8 +160,12 @@ public class UploadToUSJoiService extends BaseTaskService {
                                 oldSku.setClientRetailPrice(sku.getClientRetailPrice());
                                 oldSku.setPriceMsrp(sku.getPriceMsrp());
                                 oldSku.setPriceRetail(sku.getPriceRetail());
+                                commonEditFlg = true;
                             }
                         }
+                    }
+                    if(commonEditFlg){
+                        productService.updateProductCommon(usJoiChannelId, pr.getProdId(), pr.getCommon(),getTaskName(),false);
                     }
 
                     final CmsBtProductModel finalProductModel1 = productModel;

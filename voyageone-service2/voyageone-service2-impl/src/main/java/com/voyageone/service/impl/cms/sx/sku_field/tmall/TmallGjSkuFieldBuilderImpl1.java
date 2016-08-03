@@ -188,6 +188,10 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
 //            RuleExpression skuColorExpression = ((SimpleMappingBean)colorMapping).getExpression();
 //            String skuColor = expressionParser.parse(skuColorExpression, shopBean, user, null);
             String skuColor = getSkuValue(productModel, sku_colorField.getId(), cmsSkuProp.getSkuCode());
+            if (StringUtils.isEmpty(skuColor)) {
+                // 没填的话用code
+                skuColor = productModel.getCommon().getFields().getCode();
+            }
             // modified by morse.lu 2016/07/04 end
             skuFieldValue.setInputFieldValue(sku_colorField.getId(), skuColor);
             buildSkuResult.getColorCmsSkuPropMap().put(skuColor, cmsSkuProp);
@@ -414,9 +418,22 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                 // 别名
                 // 一个产品多个sku时，暂定别名用skuCode，以外的场合还是用产品code
                 if (hasSomeSku) {
-                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), cmsSkuProp.getSkuCode());
+                    // modified by morse.lu 2016/08/02 start
+                    // color + size
+//                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), cmsSkuProp.getSkuCode());
+                    String alias = sxProductBean.getCommon().getFields().getColor() + "_" + cmsSkuProp.getSizeSx();
+                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), alias);
+                    // modified by morse.lu 2016/08/02 end
                 } else {
-                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), sxProductBean.getCommon().getFields().getCode());
+                    // modified by morse.lu 2016/08/02 start
+                    // 如果code长度大于60，那么用color
+//                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), sxProductBean.getCommon().getFields().getCode());
+                    String alias = sxProductBean.getCommon().getFields().getCode();
+                    if (alias.length() > 60) {
+                        alias = sxProductBean.getCommon().getFields().getColor();
+                    }
+                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), alias);
+                    // modified by morse.lu 2016/08/02 end
                 }
             }
             if (colorExtend_basecolorField != null) {
