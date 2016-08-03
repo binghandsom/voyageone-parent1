@@ -1,0 +1,62 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;提示信息</h5>
+    </div>
+
+    <div class="modal-body">
+        <div class="container-fluid wrapper">
+            <div class="row">
+                <label class="col-md-3 control-label"><strong>修改前税号：</strong></label>
+                <span class="col-md-3 control-label">{{ctrl.context.hsCodeOld}}</span>
+                <label class="col-md-3 control-label"><strong>修改后税号：</strong></label>
+                <span class="col-md-3 control-label">{{ctrl.context.hsCodeNew}}</span>
+            </div>
+        </div>
+
+        <div>
+            <div class="text-center">
+                <span class="control-label"><strong class="text-md">sku具体的变化情况</strong></span>
+            </div>
+            <br>
+            <uib-tabset class="tab-container vo_nav-tabs">
+                <uib-tab ng-repeat="cartPrice in ctrl.vm.result" ng-init="">
+                    <tab-heading>{{cartPrice.cartInfo.desc}}</tab-heading>
+                    <div class="panel">
+                        <table class="table table-bordered badge-white">
+                            <colgroup>
+                                <col class="col-xs-3">
+                                <col class="col-xs-2">
+                                <col class="col-xs-2">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th class="text-center">sku</th>
+                                <th class="text-right">修改前价格</th>
+                                <th class="text-right">修改后价格</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="text-center">{{cartPrice.skuCode}}</td>
+                                <td class="text-right">{{cartPrice.prideOld}}</td>
+                                <td class="text-right">{{cartPrice.priceNew}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </uib-tab>
+
+            </uib-tabset>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ctrl.update('restore')"><i class="fa fa-undo"></i> 恢复税号</button>
+        <button class="btn btn-vo" ng-click="ctrl.update('confirm')" ><i class="glyphicon glyphicon-floppy-disk"></i> 确定</button>
+    </div>
+
+</div>

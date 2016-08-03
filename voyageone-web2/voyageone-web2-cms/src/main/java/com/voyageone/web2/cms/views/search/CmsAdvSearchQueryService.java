@@ -624,7 +624,11 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                         List<String> tagPathStrList = new ArrayList<>();
                         tagList.forEach(tag -> tagPathStrList.add(tag.getTagPathName()));
                         freeTagsList.add(StringUtils.join(tagPathStrList, "<br>"));
+                    } else {
+                        freeTagsList.add("");
                     }
+                } else {
+                    freeTagsList.add("");
                 }
 
 //                // 查询商品在各平台状态

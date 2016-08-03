@@ -21,16 +21,20 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.tagTypeSelectValue = context.tagTypeSel;
             this.cartId = context.cartId;
-            this.orgFlg = context.orgFlg; // orgFlg==1:表示从高级检索的检索条件而来；其它场合不设值
+            this.orgFlg = context.orgFlg; // orgFlg==1:表示从高级检索的检索条件而来；orgFlg==2:表示从高级检索的设置自由标签而来；其它场合不设值
+            this.productIds = context.productIds;
+            this.selAllFlg = context.selAllFlg;
             this.tagTree = null;
             this.id = "";
             this.parentTagId = "";
-            this.tagTypeList = [];
-
             this.tree = [];
             this.key = [];
             this.selected = [];
             this.taglist = {selList: []};
+            this.orgChkStsMap = {};
+            this.orgDispMap = {};
+            this._orgChkStsMap = {};
+            this._orgDispMap = {};
         }
 
         popFreeTagCtl.prototype = {
@@ -39,13 +43,27 @@ define([
              */
             init: function () {
                 var self = this;
-                self.channelTagService.init({
+                var params = {
                     tagTypeSelectValue: self.tagTypeSelectValue,
                     'cartId': self.cartId,
                     'orgFlg': self.orgFlg
-                }).then(function (res) {
+                };
+                if (self.orgFlg == 2) {
+                    params.productIds = self.productIds;
+                    params.isSelAll = self.selAllFlg;
+                }
+                self.channelTagService.init(params).then(function (res) {
                     self.source = self.tagTree = res.data.tagTree;
-                    self.tagTypeList = res.data.tagTypeList[3];
+                    if (self.orgFlg == 2) {
+                        // 当是高级检索，设置自由标签时，有初始勾选值
+                        self.orgChkStsMap = res.data.orgChkStsMap; // checkbox勾选状态
+                        self.orgDispMap = res.data.orgDispMap;     // checkbox半选状态
+                        self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
+                        self._orgDispMap = angular.copy(res.data.orgDispMap);
+
+                        // TODO--设置初始值(勾选)
+
+                    }
                     self.search(0);
                 });
             },
@@ -85,7 +103,7 @@ define([
             },
 
             /**
-             * 点击保存
+             * 点击保存(TODO--需要判断是否有改动,没有则不保存)
              */
             save: function () {
                 var self = this;
@@ -105,7 +123,7 @@ define([
                     };
                     selectdTagList.push(self.list);
                 });
-                self.context = {"selectdTagList": selectdTagList};
+                self.context = {"selectdTagList": selectdTagList, 'orgFlg': self.orgFlg};
                 self.$uibModalInstance.close(self.context);
             }
         };

@@ -2,7 +2,7 @@
 
 4.1.htDeal/copyDeal  调用前Check
 
-         4.1.1   if(cms_bt_jm_promotion.promotionGiftType==2)//满减专场
+         4.1.1   if(cms_bt_jm_promotion.is_promotion_full_minus)//满减专场
                 {
                         /*1.1其它未过期专场 有时间重叠  查询sql
                             #{nowDate}:当前系统时间转北京时间     #{activityEnd}:当前活动的结束时间
@@ -15,7 +15,7 @@
                    if(其它未过期专场有时间重叠&&synchStatus==2)
                    {errorMsg="该商品已加入其它未过期专场，无法上传"; }
                 }
-         4.1.2    if(cms_bt_jm_promotion.promotionGiftType!=2)//非满减专场
+         4.1.2    if(!cms_bt_jm_promotion.is_promotion_full_minus)//非满减专场
                 {
                            /*1.1其它未过期专场 有时间重叠  查询sql
                             #{nowDate}值为:当前系统时间转北京时间     #{activityEnd}值为:当前活动的结束时间
@@ -30,7 +30,7 @@
                        {errorMsg="该商品已加入其它未过期满减专场，无法上传"; }
                 }
          4.1.3  大促专场  和导入check一样
-               if(cms_bt_jm_promotion.promotionType==3)//大促专场
+               if(cms_bt_jm_promotion.promotionType==2)//大促专场
                {
                       /*1.5.1其它专场有时间重叠  查询sql   存在多个专场时间重叠取最新的
                         SELECT a.* FROM `cms_bt_jm_promotion_product` AS a JOIN cms_bt_jm_promotion AS b ON a.cms_bt_jm_promotion_id=b.id
@@ -52,25 +52,28 @@
                 errorMsg=“请登录聚美后台，检查商品相关【产品库】与【Deal】信息，如发现“待审核”、“审核通过”、“取消送审”字样，请将相关 聚美产品ID，聚美产品品牌，聚美HashID申报给聚美运营，进行人工审核并发布。”+聚美Response
 
 
-    todo 以下为返回再售失败，返回【sell_hash_id】的场合  todo   sell_hash_id 通过接口获取deal的开始时间和结束时间   
-     var sellJmPromotion= 通过sell_hash_id查找在售专场          todo 找不到怎么办？
+    todo 以下为返回再售失败，返回【sell_hash_id】的场合  todo   sell_hash_id 通过接口获取deal的开始时间和结束时间
+     var sellDeal=通过接口获取deal;
+     var sellJmPromotion= 通过sell_hash_id查找在售专场          用sellDeal的开始时间和结束时间
      var jmPromotion=当前专场
      var jmPromotionProduct=当前专场商品
+
+   4  5  7  8  9     通过sell_hash_id查找不到在售专场 的  check逻辑
   4.2.3
-       if(jmPromotion.promotionGiftType==2)//当前专场为 满减专场
+       if(jmPromotion.is_promotion_full_minus)//当前专场为 满减专场
        {
          errorMsg="“该商品已加入专场【sellJmPromotion.getName()】，并上传成功。满减专场不可与其它专场共用商品，请于专场【sellJmPromotion.getName()】结束后，再进行上传。”+"聚美Response";
        }
   4.2.4
-           if(jmPromotion.promotionGiftType!=2)//当前专场为 非满减专场
+           if(!jmPromotion.is_promotion_full_minus)//当前专场为 非满减专场
            {
-               if(sellJmPromotion.promotionGiftType==2)//在售专场为 满减专场
+               if(sellJmPromotion.is_promotion_full_minus)//在售专场为 满减专场
                {
                  errorMsg="“该商品已加入满减专场【sellJmPromotion.getName()】，并上传成功。满减专场不可与其它专场共用商品，请于专场【sellJmPromotion.getName()】结束后，再进行上传。”+"聚美Response";
                }
            }
   4.2.5
-          if(jmPromotion.promotionType==3&&jmPromotion.promotionGiftType!=2)//当前专场为 大促非满减专场
+          if(jmPromotion.promotionType==2&&!jmPromotion.is_promotion_full_minus)//当前专场为 大促非满减专场
           {
               if(sellJmPromotion.promotionGiftType!=2)//在售专场为 非满减专场
               {
@@ -86,7 +89,7 @@
               }
           }
   4.2.6
-         if(jmPromotion.promotionType==3&&jmPromotion.promotionGiftType!=2)//当前专场为  大促非满减专场
+         if(jmPromotion.promotionType==2&&!jmPromotion.is_promotion_full_minus)//当前专场为  大促非满减专场
           {
               
                  if(sellJmPromotiona.getActivityStart()!=jmPromotion.getActivityStart())//开始时间不相等
@@ -95,9 +98,9 @@
                  }
           }
     
-  4.2.7   if(jmPromotion.promotionType!=3&&jmPromotion.promotionGiftType!=2)//当前专场为  非大促 非满减专场
+  4.2.7   if(jmPromotion.promotionType!=2&&!jmPromotion.is_promotion_full_minus)//当前专场为  非大促 非满减专场
                 {
-                    if(sellJmPromotion.promotionGiftType!=2)//在售专场为 非满减专场
+                    if(!sellJmPromotion.is_promotion_full_minus)//在售专场为 非满减专场
                     {
                        if(sellJmPromotiona.getActivityStart()>jmPromotion.getActivityEnd())//在售专场开始时间>当前专场结束时间
                        {
@@ -106,7 +109,7 @@
                     }
                 }
     
-  4.2.8   if(jmPromotion.promotionType!=3&&jmPromotion.promotionGiftType!=2)//当前专场为  非大促 非满减专场
+  4.2.8    if(jmPromotion.promotionType!=2&&!jmPromotion.is_promotion_full_minus)//当前专场为  非大促 非满减专场
                 {
                     if(sellJmPromotion.promotionGiftType!=2)//在售专场为非满减专场
                     {
@@ -116,9 +119,9 @@
                        }
                     }
                 }
-  4.2.9   if(jmPromotion.promotionType!=3&&jmPromotion.promotionGiftType!=2)//当前专场为  非大促 非满减专场
+  4.2.9   if(jmPromotion.promotionType!=2&&!jmPromotion.is_promotion_full_minus)//当前专场为  非大促 非满减专场
                {
-                   if(sellJmPromotion.promotionGiftType!=2)//在售专场为非满减专场
+                   if(!sellJmPromotion.is_promotion_full_minus)//在售专场为非满减专场
                    {
                       if(jmPromotion.getActivityEnd()-sellJmPromotiona.getActivityEnd()<4天)//，【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
                       {

@@ -665,7 +665,7 @@ define(function () {
         "TXT_ERROR": "错误",
         "TXT_PROPERTY_STATUS": "属性状态",
         "TXT_IMAGE_DOWNLOAD": "图片下载",
-        "TXT_CUS_TAGS_SETTING": "设置自定义标签",
+        "TXT_CUS_TAGS_SETTING": "设置自由标签",
         "TXT_COMMON_EXCHANGE": "共通级变更",
         "TXT_CHANGE_FOR_TG_PLATFORM": "天猫国际平台级变更",
         "TXT_CHANGE_FOR_JD_PLATFORM": "京东国际平台级变更",

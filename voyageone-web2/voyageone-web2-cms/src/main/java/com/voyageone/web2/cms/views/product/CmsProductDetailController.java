@@ -192,7 +192,7 @@ public class CmsProductDetailController extends CmsController {
         productPropsEditService.delistinGroup(parameter, getUser().getUserName());
         return success(null);
     }
-    //group下架
+    //税号变更
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.HsCodeChg)
     public AjaxResponse hsCodeChg(@RequestBody Map<String,Object> parameter){
 

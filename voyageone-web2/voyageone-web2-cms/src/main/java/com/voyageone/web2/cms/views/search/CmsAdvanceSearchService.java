@@ -96,7 +96,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         Map<String, Object> param = new HashMap<>(2);
         param.put("channelId", userInfo.getSelChannelId());
         param.put("tagTypeSelectValue", "4");
-        masterData.put("freetagList", cmsChannelTagService.getTagInfoList(param));
+        masterData.put("freetagList", cmsChannelTagService.getTagInfoByChannelId(param));
 
         // 获取price type
         masterData.put("priceTypeList", TypeConfigEnums.MastType.priceType.getList(language));
@@ -414,11 +414,11 @@ public class CmsAdvanceSearchService extends BaseAppService {
     }
 
     /**
-     * 向产品添加tag，同时添加该tag的所有上级tag
+     * 设置产品free tag，同时添加该tag的所有上级tag
      */
-    public void addProdTag(String channelId, Map<String, Object> params, String tagsKey, String modifier, CmsSessionBean cmsSession) {
-        String tagPath = StringUtils.trimToNull((String) params.get("tagPath"));
-        if (tagPath == null) {
+    public void setProdFreeTag(String channelId, Map<String, Object> params, String modifier, CmsSessionBean cmsSession) {
+        List<String> tagPathList = (List<String>) params.get("tagPathList");
+        if (tagPathList == null || tagPathList.isEmpty()) {
             $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未选择标签");
             throw new BusinessException("缺少参数，未选择标签!");
         }
@@ -442,6 +442,6 @@ public class CmsAdvanceSearchService extends BaseAppService {
                 throw new BusinessException("缺少参数，未选择商品!");
             }
         }
-        productTagService.addProdTag(channelId, tagPath, prodIdList, tagsKey, modifier);
+        productTagService.setProdFreeTag(channelId, tagPathList, prodIdList, modifier);
     }
 }

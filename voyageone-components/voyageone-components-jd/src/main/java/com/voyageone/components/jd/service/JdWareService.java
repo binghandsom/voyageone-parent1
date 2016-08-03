@@ -282,7 +282,12 @@ public class JdWareService extends JdBase {
                     retModified = response.getModified();
                 } else {
                     // 京东返回失败的场合
-                    throw new BusinessException(response.getZhDesc());
+                    // 11000012:参数包含非法字符
+                    String errMsg = response.getZhDesc();
+                    if ("11000012".equals(response.getCode())) {
+                        errMsg = response.getZhDesc() + " " + "可能是因为尺寸或颜色中包含特殊字符，比如逗号等";
+                    }
+                    throw new BusinessException(errMsg);
                 }
             } else {
                 // response = null（https://api.jd.com/routerjson）不能访问的可能原因是服务器禁掉了https端口
