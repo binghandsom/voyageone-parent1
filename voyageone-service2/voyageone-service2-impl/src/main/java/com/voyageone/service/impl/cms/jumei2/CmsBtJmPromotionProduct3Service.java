@@ -167,7 +167,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
             return result;
         }
         daoExtCmsBtJmPromotionSku.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);//更新sku价格
-        daoExt.updateAvgPriceByListPromotionProductId(parameter.getListPromotionProductId());//更新平均值 最大值 最小值  更新为已经变更
+        daoExt.updateAvgPriceByListPromotionProductId(parameter.getListPromotionProductId());//更新平均值 最大值 最小值    已上新的更新为已经变更
         return result;
     }
 
