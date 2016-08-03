@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -24,10 +25,7 @@ import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by dell on 2016/3/18.
@@ -88,7 +86,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
         int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
         result.setIsUpdateJM(!(hour == 10));//是否可以更新聚美  10到11点一小时之内不允许更新聚美平台
-        boolean isBefore5DaysBeforePreBegin = DateTimeUtil.addDays(new Date(), 5).getTime() > preStartLocalTime;//是否是预热开始前5天之前  预热开始前5天之前不让更新聚美
+        boolean isBefore5DaysBeforePreBegin = DateTimeUtil.addDays(new Date(), 5).getTime() < preStartLocalTime;//是否是预热开始前5天之前  预热开始前5天之前不让更新聚美
         if(isBefore5DaysBeforePreBegin)// 预热开始前5天之前不让更新聚美
         {
            result.setIsUpdateJM(false);
@@ -231,20 +229,40 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         return result;
     }
 
-    //批量删除 product  已经再售的不删
+    //批量删除  product  已经再售的不删
     @VOTransactional
     public void batchDeleteProduct(BatchDeleteProductParameter parameter) {
-        //先删除sku 再删除product
+        CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(parameter.getPromotionId());
+
+        // 2.7.1
+        if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
+            throw new BusinessException("预热已经开始,不能批量删除!");
+        }
+        //2.7.2.1 只删除未上传的商品  先删除sku 再删除product
         daoExtCmsBtJmPromotionSku.batchDeleteSku(parameter.getListPromotionProductId());
         daoExt.batchDeleteProduct(parameter.getListPromotionProductId());
+
+        //2.7.2.2  已经上传的商品  写入错误信息
+        daoExt.updateSynch2ErrorMsg(parameter.getListPromotionProductId(), "该商品已调用过聚美上传API，聚美平台静止相关操作纪录的删除。为保证数据一致性，该商品无法删除");
+
         CmsBtPromotionModel modelCmsBtPromotion = getCmsBtPromotionModel(parameter.getPromotionId());
         if (modelCmsBtPromotion != null) {
+            List<CmsBtJmPromotionProductModel> listNotSych = daoExt.selectNotSynchListByPromotionProductIds(parameter.getListPromotionProductId());
+            List<String> listNotSychCode = getListNotSychCode(listNotSych);//获取未上传的code
             Map<String, Object> map = new HashMap<>();
-            map.put("listProductCode", parameter.getListProductCode());
+            map.put("listProductCode", listNotSychCode);
             map.put("promotionId", modelCmsBtPromotion.getId());
             daoExtCamelCmsBtPromotionCodes.deleteByPromotionCodeList(map);
             daoExtCamelCmsBtPromotionSkus.deleteByPromotionCodeList(map);
         }
+    }
+    public List<String> getListNotSychCode(List<CmsBtJmPromotionProductModel> listNotSych)
+    {
+        List<String> codeList=new ArrayList<>();
+        listNotSych.stream().forEach((o)->{
+            codeList.add(o.getProductCode());
+        });
+        return codeList;
     }
     @VOTransactional //删除全部product  已经再售的不删
     public void deleteAllProduct(int jmPromotionId) {
