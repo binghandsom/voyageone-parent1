@@ -212,6 +212,11 @@ public class VmsShipmentService {
      * @return 影响结果
      */
     public ShipmentEndCountBean endShipment(UserSessionBean user, ShipmentBean shipmentBean) {
+        VmsBtShipmentModel dbShipment = this.shipmentService.select(shipmentBean.getId());
+        // 检查channelId
+        if (!user.getSelChannelId().equals(dbShipment.getChannelId())) throw new BusinessException("8000030");
+        // 检查shipment状态是否为OPEN
+        if (!STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(dbShipment.getStatus())) throw new BusinessException("8000025");
         // 检查shipment下是否有扫描的SKU
         if (this.shipmentIsEmpty(user, shipmentBean)) throw new BusinessException("8000032");
 
@@ -261,8 +266,8 @@ public class VmsShipmentService {
             put("channelId", user.getSelChannelId());
             put("shipmentId", shipmentBean.getId());
         }};
-        List<VmsBtOrderDetailModel> skusInshipment = orderDetailService.select(params);
-        long packagedSKUNum = skusInshipment.stream()
+        List<VmsBtOrderDetailModel> skuListInShipment = orderDetailService.select(params);
+        long packagedSKUNum = skuListInShipment.stream()
                 .filter(vmsBtOrderDetailModel ->
                         STATUS_VALUE.PRODUCT_STATUS.PACKAGE.equals(vmsBtOrderDetailModel.getStatus()))
                 .count();
