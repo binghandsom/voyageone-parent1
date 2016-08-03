@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * 获取商品在平台的实际上下架状态
  * Created by jason.jiang on 2016/08/03
  */
-@Component("CmsImportOrdersHisInfoJob")
+@Component("CmsGetPlatformStatusJob")
 public class CmsGetPlatformStatusJob extends BaseTaskJob {
 	@Autowired
 	private CmsGetPlatformStatusService cmsGetPlatformStatusService;
