@@ -393,9 +393,6 @@
                  open="(" separator="," close=")">
             #{item}
         </foreach>
-        <if test="isPreStart==true">
-          and   synch_status!=2
-        </if>
     </update>
     <update id="synchAllPrice">
         UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''

@@ -53,7 +53,7 @@ public interface CmsBtJmPromotionProductDaoExt {
     int batchUpdateDealPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("dealPrice") String dealPrice);
 
     //1. if未上传  then price_status=1   2.if已上传&预热未开始  then price_status=1
-    int batchSynchPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("isPreStart") boolean isPreStart);
+    int batchSynchPrice(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
     int synchAllPrice(int promotionId);
 
