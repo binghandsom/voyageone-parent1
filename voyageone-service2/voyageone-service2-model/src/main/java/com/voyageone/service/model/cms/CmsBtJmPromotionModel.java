@@ -79,6 +79,16 @@ public class CmsBtJmPromotionModel extends BaseModel {
      */
     protected Integer recoveryStatus;
 
+    /**
+     * 活动类型 1：满减专场 2：大促专场
+     */
+    protected Integer promotionType;
+
+    /**
+     * 促销礼品类型 1:直降 2:满减 3:优惠卷
+     */
+    protected Integer promotionGiftType;
+
     public String getChannelId() {
         return channelId;
     }
@@ -205,5 +215,21 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     public void setRecoveryStatus(Integer recoveryStatus) {
         this.recoveryStatus = recoveryStatus;
+    }
+
+    public Integer getPromotionType() {
+        return promotionType;
+    }
+
+    public void setPromotionType(Integer promotionType) {
+        this.promotionType = promotionType;
+    }
+
+    public Integer getPromotionGiftType() {
+        return promotionGiftType;
+    }
+
+    public void setPromotionGiftType(Integer promotionGiftType) {
+        this.promotionGiftType = promotionGiftType;
     }
 }
