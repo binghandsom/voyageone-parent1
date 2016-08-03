@@ -78,7 +78,7 @@ public class VmsFeedFileScanService extends BaseTaskService {
                 param1.put("channelId", orderChannelID);
                 param1.put("status", VmsConstants.FeedFileStatus.WAITING_IMPORT);
                 // Order 条件
-                String sortString = "created desc";
+                String sortString = "created asc";
                 Map<String, Object> newMap = MySqlPageHelper.build(param1).sort(sortString).toMap();
                 List<VmsBtFeedFileModel> waitingImportingFeedFileList = vmsBtFeedFileDao.selectList(newMap);
                 if (waitingImportingFeedFileList.size() > 0) {
