@@ -65,10 +65,10 @@
                     <table class="table table-hover-new vo_table tableWordBreak" ng-controller="popupCtrl">
                         <thead>
                             <tr>
-                                <th class="mfb-xxt text-center text-nowrap" translate="TXT_MASTER_BRAND"></th>
-                                <th class="mfb-xxt text-center text-nowrap" ng-if="ctrl.searchInfo.selectedCart == null">品牌</th>
-                                <th class="mfb-xxt text-center text-nowrap" ng-if="ctrl.searchInfo.selectedCart != null">{{ctrl.brandName}}品牌</th>
-                                <th class="mfb-xt3 text-center text-nowrap" translate="TXT_ACTION"></th>
+                                <th class="mfb-xxt text-left" translate="TXT_MASTER_BRAND"></th>
+                                <th class="mfb-xxt text-left" ng-if="ctrl.searchInfo.selectedCart == null">品牌</th>
+                                <th class="mfb-xxt text-left" ng-if="ctrl.searchInfo.selectedCart != null">{{ctrl.brandName}}品牌</th>
+                                <th class="mfb-xt3 text-center" translate="TXT_ACTION"></th>
                             </tr>
                         </thead>
                         <tbody ng-if="ctrl.brandMappingList.length == 0">
@@ -80,11 +80,11 @@
                         </tbody>
                         <tbody ng-if="ctrl.brandMappingList.length > 0 && ctrl.searchInfo.selectedCart != null">
                             <tr ng-repeat="list in ctrl.brandMappingList">
-                                <td class="mfb-xxt text-center">{{list.masterName}}</td>
-                                <td class="mfb-xxt text-center">{{list.brandName}}</td>
+                                <td class="mfb-xxt text-left">{{list.masterName}}</td>
+                                <td class="mfb-xxt text-left">{{list.brandName}}</td>
                                 <td class="mfb-xt3 text-center" ng-if="list.brandName!=null">已匹配</td>
                                 <td class="mfb-xt3 text-center" ng-if="list.brandName==null">
-                                    <a href="javascript:void(0)" ng-click="ctrl.popPlatformMappingSetting(list)">匹配</a>
+                                    <button class="btn btn-success btn-xs" ng-click="ctrl.popPlatformMappingSetting(list)">匹配</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -92,7 +92,7 @@
                 </div>
             </div>
             <div class="col-sm-12">
-                <vpagination config="ctrl.platformPageOption"></vpagination>
+                <vpagination config="ctrl.platformPageOption" ng-if="ctrl.brandMappingList.length > 0"></vpagination>
             </div>
         </div>
 
