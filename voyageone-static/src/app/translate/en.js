@@ -93,6 +93,7 @@ define(function () {
         "TXT_INVENTORY_UPLOAD": "Inventory Upload",
         "TXT_CONFIRM_SHIPPED": "Confirm shipped?",
         "TXT_SHIPMENT_NOT_FOUND": "Shipment not found.",
+        "TXT_ERROR": "Error",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",

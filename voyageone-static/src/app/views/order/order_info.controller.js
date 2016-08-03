@@ -128,7 +128,10 @@ define([
         OrderInfoController.prototype.cancelSku = function (item) {
             var self = this;
             self.confirm('TXT_CONFIRM_TO_CANCEL_SKU').then(function () {
-                self.orderInfoService.cancelSku(item).then(function () {
+                self.orderInfoService.cancelSku(item).then(function (data) {
+                    if (data.success > 0)
+                        self.notify.success('TXT_SUCCESS');
+                    else self.notify.danger('TXT_ERROR');
                     self.search();
                 })
             })
