@@ -202,16 +202,18 @@ private CmsBtPromotionDao daoCmsBtPromotion;
     }
 
     @VOTransactional
+    //批量上传
     //批量再售 1. if未上传  then synch_status=1  2.if已上传&预热未开始  then price_status=1
     public void batchCopyDeal(BatchCopyDealParameter parameter) {
         if (parameter.getListPromotionProductId().isEmpty()) return;
-
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
-        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime();
-        daoExt.batchCopyDeal(parameter.getListPromotionProductId());////1. if未上传  then synch_status=1
-        if (!isPreStart) {// 2.if已上传&预热未开始  then price_status=1
-            daoExt.batchCopyDealUpdatePrice(parameter.getListPromotionProductId());
-        }
+
+        //2.8.3
+        //更新为待上传   1. if未上传  then synch_status=1
+        daoExt.batchCopyDeal(parameter.getListPromotionProductId());
+        //更新为价格待更新  2. if已上传  then update_status=1
+         daoExt.batchCopyDealUpdatePrice(parameter.getListPromotionProductId());
+
     }
 
     //全部再售    //1. if未上传  then synch_status=1   2.if已上传  then price_status=1
