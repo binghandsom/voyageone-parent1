@@ -207,6 +207,7 @@ public class PriceService extends BaseService {
         String errorMsg = Joiner.on(";").join(msgs);
         if (!StringUtils.isNullOrBlank2(errorMsg)) {
             errorMsg += "!";
+            $warn("PriceService.getRetailPrice " + errorMsg);
             throw new BusinessException("", errorMsg);
         }
 
@@ -215,6 +216,7 @@ public class PriceService extends BaseService {
             return Math.ceil(retailPrice);
         } else {
             errorMsg = String.format("非法的价格参数[voCommission:%s], [platformCommission:%s], [returnRate:%s], [taxRate:%s]", voCommission, pfCommission, returnRate, taxRate);
+            $warn("PriceService.getRetailPrice " + errorMsg);
             throw new BusinessException("", errorMsg);
         }
     }
@@ -302,11 +304,10 @@ public class PriceService extends BaseService {
             CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE, String.valueOf(cartId));
 
             if (cmsChannelConfigBean == null) {
-                cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE);
+                $error("PriceService.ChannelCartParams.caleReturnRateAndOtherFeeAndCommission 没有配置channel_config SHIPPING_TYPE  channelId=%s, cartId=%d", channelId, cartId);
+            } else {
+                shippingType = cmsChannelConfigBean.getConfigValue1();
             }
-
-            shippingType = cmsChannelConfigBean.getConfigValue1();
-
             returnRate = getReturn(channelId, platformId, cartId);
             otherFee = getOtherFee(channelId);
             defaultVoCommission = getVoyageOneCommission(channelId, platformId, cartId);

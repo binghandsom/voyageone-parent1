@@ -1,17 +1,20 @@
 package com.voyageone.service.impl.cms.product;
 
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.CmsBtProductStatusHistoryDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtProductStatusHistoryDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtProductStatusHistoryModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,16 +33,12 @@ import static java.util.stream.Collectors.toMap;
  */
 @Service
 public class ProductStatusHistoryService extends BaseService {
-
-    private final CmsBtProductStatusHistoryDao dao;
-
-    private final CmsBtProductStatusHistoryDaoExt daoExt;
-
     @Autowired
-    public ProductStatusHistoryService(CmsBtProductStatusHistoryDaoExt daoExt, CmsBtProductStatusHistoryDao dao) {
-        this.daoExt = daoExt;
-        this.dao = dao;
-    }
+    private CmsBtProductStatusHistoryDao dao;
+    @Autowired
+    private CmsBtProductStatusHistoryDaoExt daoExt;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     public List<MapModel> getPage(PageQueryParameters parameters) {
 
@@ -52,6 +51,12 @@ public class ProductStatusHistoryService extends BaseService {
         list.forEach(mapModel -> {
 
             String status = String.valueOf(mapModel.get("status"));
+
+            Date modified = (Date) mapModel.get("modified");
+
+            modified = DateTimeUtilBeijing.toBeiJingDate(modified);
+
+            mapModel.put("modified", modified);
 
             String statusCn = typeMap.get(status);
 
@@ -68,11 +73,35 @@ public class ProductStatusHistoryService extends BaseService {
     }
 
     @VOTransactional
-    void insertList(String channelId, List<String> codes, String status, int cartId, EnumProductOperationType enumProductOperationType, String comment, String modifier) {
+    public void insertList(String channelId, List<String> codes, String status, int cartId, EnumProductOperationType enumProductOperationType, String comment, String modifier) {
         List<CmsBtProductStatusHistoryModel> list = new ArrayList<>();
         CmsBtProductStatusHistoryModel productStatusHistory;
         for (String code : codes) {
             productStatusHistory = get(channelId, code, status, cartId, enumProductOperationType, comment, modifier);
+            list.add(productStatusHistory);
+        }
+        List<List<CmsBtProductStatusHistoryModel>> pageList = ListUtils.getPageList(list, 100);//分隔数据源 每页100
+        pageList.forEach(daoExt::insertList);
+    }
+
+    @VOTransactional
+    public void insertList(String channelId, List<String> codes, int cartId, EnumProductOperationType operationType, String comment, String modifier) {
+        List<CmsBtProductStatusHistoryModel> list = new ArrayList<>();
+        CmsBtProductStatusHistoryModel productStatusHistory;
+
+        JomgoQuery query = new JomgoQuery();
+        for (String code : codes) {
+            // 先取得商品状态
+            query.setQuery("{'common.fields.code':#}");
+            query.setParameters(code);
+            query.setProjection("{'platforms.P" + cartId + ".status':1}");
+            CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery(query, channelId);
+            if (prodObj == null) {
+                $warn("ProductStatusHistoryService.insertList 指定的商品不存在 code=%s, channelId=%s", code, channelId);
+                continue;
+            }
+
+            productStatusHistory = get(channelId, code, prodObj.getPlatformNotNull(cartId).getStatus(), cartId, operationType, comment, modifier);
             list.add(productStatusHistory);
         }
         List<List<CmsBtProductStatusHistoryModel>> pageList = ListUtils.getPageList(list, 100);//分隔数据源 每页100

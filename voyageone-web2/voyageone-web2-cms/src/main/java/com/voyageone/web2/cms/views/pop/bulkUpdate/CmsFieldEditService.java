@@ -21,14 +21,12 @@ import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
-import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
-import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
@@ -79,6 +77,8 @@ public class CmsFieldEditService extends BaseAppService {
     private SxProductService sxProductService;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
     @Autowired
     private MqSender sender;
 
@@ -132,15 +132,15 @@ public class CmsFieldEditService extends BaseAppService {
         }
 
         Map<String, Object> prop = (Map<String, Object>) params.get("property");
-        String prop_id = prop.get("id").toString();
-        if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id)) {
+        String prop_id = StringUtils.trimToEmpty((String) prop.get("id"));
+        if ("productType".equals(prop_id) || "sizeType".equals(prop_id)) {
             // 税号更新
-            String hsCode = null;
+            String stsCode = null;
             Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
             if (valObj != null) {
-                hsCode = (String) valObj.get("value");
+                stsCode = (String) valObj.get("value");
             }
-            if (hsCode == null || hsCode.isEmpty()) {
+            if (stsCode == null || stsCode.isEmpty()) {
                 $warn("没有设置变更项目 params=" + params.toString());
                 rsMap.put("ecd", 2);
                 return rsMap;
@@ -149,13 +149,92 @@ public class CmsFieldEditService extends BaseAppService {
             JomgoUpdate updObj = new JomgoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
             updObj.setQueryParameters(productCodes);
-            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}");
-            updObj.setUpdateParameters(hsCode, userInfo.getUserName(), DateTimeUtil.getNow());
+            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#}}");
+            updObj.setUpdateParameters(stsCode);
 
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
             $debug("批量更新结果 " + rs.toString());
             rsMap.put("ecd", 0);
+
+            // 记录商品修改历史
+            String msg = "";
+            if ("productType".equals(prop_id)) {
+                msg = "高级检索 批量更新：产品分类--" + stsCode;
+            } else if ("sizeType".equals(prop_id)) {
+                msg = "高级检索 批量更新：适用人群--" + stsCode;
+            }
+            // 店铺(cart/平台)列表
+            List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+            for (TypeChannelBean cartObj : cartTypeList) {
+                productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, NumberUtils.toInt(cartObj.getValue()), EnumProductOperationType.BatchUpdate, msg, userInfo.getUserName());
+            }
             return rsMap;
+
+        } else if ("translateStatus".equals(prop_id)) {
+            // 翻译状态更新
+            String stsCode = null;
+            Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
+            if (valObj != null) {
+                stsCode = (String) valObj.get("value");
+            }
+            if (stsCode == null || stsCode.isEmpty()) {
+                $warn("没有设置变更项目 params=" + params.toString());
+                rsMap.put("ecd", 2);
+                return rsMap;
+            }
+
+            JomgoUpdate updObj = new JomgoUpdate();
+            updObj.setQuery("{'common.fields.code':{$in:#}}");
+            updObj.setQueryParameters(productCodes);
+            if ("0".equals(stsCode)) {
+                updObj.setUpdate("{$set:{'common.fields.translateStatus':'0','common.fields.translator':'','common.fields.translateTime':''}}");
+            } else if ("1".equals(stsCode)) {
+                updObj.setUpdate("{$set:{'common.fields.translateStatus':'1','common.fields.translator':#,'common.fields.translateTime':#}}");
+                updObj.setUpdateParameters(userInfo.getUserName(), DateTimeUtil.getNow());
+            } else {
+                $warn("设置了错误的变更项目值 params=" + params.toString());
+                rsMap.put("ecd", 2);
+                return rsMap;
+            }
+            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
+            $debug("翻译状态批量更新结果 " + rs.toString());
+
+            // 记录商品修改历史
+            // 店铺(cart/平台)列表
+            List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+            for (TypeChannelBean cartObj : cartTypeList) {
+                productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, NumberUtils.toInt(cartObj.getValue()), EnumProductOperationType.BatchUpdate, "高级检索 批量更新：翻译状态--" + stsCode, userInfo.getUserName());
+            }
+
+            rsMap.put("ecd", 0);
+            return rsMap;
+
+        } else if ("voRate".equals(prop_id)) {
+            // 修改VO扣点值
+            Number voRate = (Number) prop.get("value");
+
+            JomgoUpdate updObj = new JomgoUpdate();
+            updObj.setQuery("{'common.fields.code':{$in:#}}");
+            updObj.setQueryParameters(productCodes);
+            if (voRate == null) {
+                updObj.setUpdate("{$set:{'common.fields.commissionRate':null}}");
+            } else {
+                updObj.setUpdate("{$set:{'common.fields.commissionRate':#}}");
+                updObj.setUpdateParameters(voRate.doubleValue());
+            }
+            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
+            $debug("VO扣点值批量更新结果 " + rs.toString());
+
+            // 调用批处理程序 记录价格变更履历/记录商品修改历史/同步价格范围/插入上新程序
+            Map<String, Object> logParams = new HashMap<>(3);
+            logParams.put("channelId", userInfo.getSelChannelId());
+            logParams.put("creater", userInfo.getUserName());
+            logParams.put("codeList", productCodes);
+            logParams.put("voRate", voRate);
+            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
+
+        } else {
+            $warn("CmsFieldEditService.setProductFields 错误的选择项 params=" + params.toString());
         }
 
         rsMap.put("ecd", 0);
@@ -479,12 +558,21 @@ public class CmsFieldEditService extends BaseAppService {
             $debug(String.format("商品审批(group表) channelId=%s 结果=%s", userInfo.getSelChannelId(), rs.toString()));
         }
 
-        // 插入上新程序
+        String msg = "";
+        if (cartId == null || cartId == 0) {
+            msg = "高级检索 商品审批(全平台)";
+        } else {
+            msg = "高级检索 商品审批";
+        }
         for (Integer cartIdVal : cartList) {
+            // 插入上新程序
             $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
             long sta = System.currentTimeMillis();
             sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), newProdCodeList, cartIdVal, userInfo.getUserName());
             $debug("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+
+            // 记录商品修改历史
+            productStatusHistoryService.insertList(userInfo.getSelChannelId(), newProdCodeList, cartIdVal, EnumProductOperationType.ProductApproved, msg, userInfo.getUserName());
         }
 
         rsMap.put("ecd", 0);

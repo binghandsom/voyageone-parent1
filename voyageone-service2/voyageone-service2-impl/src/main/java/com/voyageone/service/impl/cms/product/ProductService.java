@@ -1219,6 +1219,7 @@ public class ProductService extends BaseService {
     }
 
     public void delPlatfromProduct(String channelId, Integer cartId, String numIid){
+        if(StringUtil.isEmpty(numIid)) return;
         ShopBean shopBean = Shops.getShop(channelId, cartId);
         Cart cartEnum = Cart.getValueByID(cartId.toString());
         try {

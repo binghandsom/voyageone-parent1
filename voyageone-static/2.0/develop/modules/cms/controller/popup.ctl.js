@@ -496,6 +496,11 @@ define([
                 "controllerUrl": "modules/cms/views/pop/product/productOffLine.ctl",
                 "controller": 'ProductOffLineController as ctrl',
                 "size": 'lg'
+            },
+            "hsCodeChange": {
+                "templateUrl": "views/pop/product/hsCodeChange.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/hsCodeChange.ctl",
+                "controller": 'HsCodeChangeController as ctrl'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -592,7 +597,7 @@ define([
             var params = null;
             if (context && context.isSelAll) {
                 // 全选
-                params = {"productIds": productIds, 'isSelAll': 1, "cartId": context.cartId};
+                params = {"productIds": productIds, 'isSelAll': 1, "cartId": context.cartId, 'selCnt': context.selCnt};
             } else {
                 if (selList && selList.length) {
                     _.forEach(selList, function (object) {
@@ -600,7 +605,7 @@ define([
                     });
                 }
                 if (context) {
-                    params = {"productIds": productIds, "cartId": context.cartId};
+                    params = {"productIds": productIds, "cartId": context.cartId, 'selCnt': context.selCnt};
                 } else {
                     params = {"productIds": productIds, "cartId": null};
                 }
@@ -1198,6 +1203,11 @@ define([
                 code: code
             });
         };
+
+        //税号改变 hsCodeChange
+        $scope.openHsCodeChange = function openHsCodeChange(context){
+            return openModal(popActions.product.hsCodeChange,context);
+        }
 
     }).factory('popups', function ($controller, $rootScope) {
 

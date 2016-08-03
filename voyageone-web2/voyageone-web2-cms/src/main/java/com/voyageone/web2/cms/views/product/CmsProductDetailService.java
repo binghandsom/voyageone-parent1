@@ -33,6 +33,7 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
@@ -82,6 +83,9 @@ public class CmsProductDetailService extends BaseAppService {
     private CategoryTreeAllService categoryTreeAllService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
+
+    @Autowired
+    private SxProductService sxProductService;
 
     @Autowired
     private ImsBtProductDao imsBtProductDao;
@@ -633,7 +637,21 @@ public class CmsProductDetailService extends BaseAppService {
             feedInfoService.updateFeedInfo(channelId, paraMap, valueMap);
 
         }
-        return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
+
+        Map<String, Object> result = productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
+
+        CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
+        if (commonModel.getFields().getHsCodePrivate() != null && !commonModel.getFields().getHsCodePrivate().equalsIgnoreCase(oldProduct.getCommon().getFields().getHsCodePrivate())) {
+            priceService.setRetailPrice(newProduct);
+            newProduct.getPlatforms().forEach((s, platform) -> {
+                if(platform.getCartId() != 0){
+                    productService.updateProductPlatform(channelId,prodId,platform,modifier,false);
+                }
+            });
+        }
+
+
+        return result;
     }
 
     private void changeMastCategory(CmsBtProductModel_Common commonModel, CmsBtProductModel oldProduct, String modifier) {
@@ -1232,8 +1250,9 @@ public class CmsProductDetailService extends BaseAppService {
         // platForm.setpStatus(CmsConstants.PlatformStatus.);
         platForm.remove("pStatus");
         productService.updateProductPlatform(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
-        String comment = parameter.getComment();
-        productStatusHistoryService.insert(parameter.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), parameter.getCartId(), EnumProductOperationType.Delisting, comment, modifier);
+        sxProductService.insertSxWorkLoad(parameter.getChannelId(), new ArrayList<String>(Arrays.asList(parameter.getProductCode())), parameter.getCartId(), modifier);
+        String comment=parameter.getComment();
+        productStatusHistoryService.insert(parameter.getChannelId(),cmsBtProductModel.getCommon().getFields().getCode(),platForm.getStatus(),parameter.getCartId(), EnumProductOperationType.Delisting,comment,modifier);
 
         //2.1.3	Voyageone_ims. ims_bt_product(mysql) 根据 channel cartId 和code找到对应的记录 把 numIId字段设为0
         ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(parameter.getChannelId(), parameter.getCartId(), parameter.getProductCode());
@@ -1313,7 +1332,7 @@ public class CmsProductDetailService extends BaseAppService {
             }
         });
         cmsBtProductModel.getCommon().getFields().setHsCodePrivate(hsCode);
-        priceService.setRetailPrice(cmsBtProductModel);
+//        priceService.setRetailPrice(cmsBtProductModel);
         cmsBtProductModel.getPlatforms().forEach((s, platform) -> {
             if (platform.getCartId() != 0) {
                 prices.get(platform.getCartId()).get(platform.getSkus().get(0).getStringAttribute("skuCode")).add(platform.getSkus().get(0).getDoubleAttribute("priceRetail"));
