@@ -71,6 +71,12 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 queryObject.addParameters(cartId, searchValue.getProductStatus());
             }
 
+            // 获取实际平台状态
+            if (searchValue.getpRealStatus() != null && searchValue.getpRealStatus().size() > 0) {
+                queryObject.addQuery("{'platforms.P#.pReallyStatus':{$in:#}}");
+                queryObject.addParameters(cartId, searchValue.getpRealStatus());
+            }
+
             // 获取publishTime End
             if (StringUtils.isNotEmpty(searchValue.getPublishTimeStart())) {
                 if (StringUtils.isNotEmpty(searchValue.getPublishTimeTo())) {
@@ -139,9 +145,17 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
 
             // 查询产品上新错误
-            if (searchValue.getHasErrorFlg() == 1) {
-                queryObject.addQuery("{'platforms.P#.pPublishError':'Error'}");
-                queryObject.addParameters(cartId);
+            if (searchValue.getHasErrorFlg() > 0) {
+                if (searchValue.getHasErrorFlg() == 1) {
+                    queryObject.addQuery("{'platforms.P#.pPublishError':{$in:[null,'']}}");
+                    queryObject.addParameters(cartId);
+                } else if (searchValue.getHasErrorFlg() == 2) {
+                    queryObject.addQuery("{'platforms.P#.pPublishError':'Error'}");
+                    queryObject.addParameters(cartId);
+                } else if (searchValue.getHasErrorFlg() == 3) {
+                    queryObject.addQuery("{$or:[{'platforms.P#.pReallyStatus':'OnSale','platforms.P#.pStatus':{$ne:'OnSale'}},{'platforms.P#.pReallyStatus':'InStock','platforms.P#.pStatus':{$ne:'InStock'}}]}");
+                    queryObject.addParameters(cartId, cartId, cartId, cartId);
+                }
             }
 
             // 查询价格变动
