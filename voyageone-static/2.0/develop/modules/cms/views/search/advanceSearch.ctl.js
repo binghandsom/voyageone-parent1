@@ -603,7 +603,7 @@ define([
                 var productIds = [];
                 if (selList && selList.length) {
                     _.forEach(selList, function (object) {
-                        productIds.push(object.id);
+                        productIds.push(object.code);
                     });
                 }
                 openFreeTag({'orgFlg':2,'tagTypeSel':'4','cartId':$scope.vm.searchInfo.cartId,'productIds':productIds,'selAllFlg':$scope.vm._selall ? 1 : 0}).then(function (res) {

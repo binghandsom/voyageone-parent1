@@ -3,7 +3,9 @@ package com.voyageone.service.bean.cms;
 import com.voyageone.base.dao.mysql.BaseModel;
 
 /**
- * Created by Wangtd on 7/26/16.
+ * 品牌属性
+ * @author Wangtd 2016/07/26
+ * @since 2.3.0
  */
 public class CmsBtBrandBean extends BaseModel {
 	

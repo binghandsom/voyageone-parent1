@@ -67,20 +67,20 @@ public class CmsChannelTagService extends BaseAppService {
             if (isSelAll == null) {
                 isSelAll = 0;
             }
-            List<Long> productIds = null;
+            List<String> prodCodes = null;
             if (isSelAll == 1) {
                 // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-                productIds = advanceSearchService.getProductIdList((String) param.get("channelId"), sessionBean);
+                prodCodes = advanceSearchService.getProductCodeList((String) param.get("channelId"), sessionBean);
             } else {
-                productIds = CommonUtil.changeListType((ArrayList<Integer>) param.get("productIds"));
+                prodCodes = (List<String>) param.get("productIds");
             }
-            if (productIds == null || productIds.isEmpty()) {
+            if (prodCodes == null || prodCodes.isEmpty()) {
                 $warn("没有code条件 params=" + param.toString());
             } else {
                 // 检索商品的自由标签设值
                 JomgoQuery queryObj = new JomgoQuery();
-                queryObj.setQuery("{'prodId':{$in:#}}");
-                queryObj.setParameters(productIds);
+                queryObj.setQuery("{'common.fields.code':{$in:#}}");
+                queryObj.setParameters(prodCodes);
                 queryObj.setProjectionExt("prodId", "common.fields.code", "freeTags");
                 List<CmsBtProductModel> prodList = productService.getList((String) param.get("channelId"), queryObj);
                 if (prodList == null || prodList.isEmpty()) {

@@ -49,10 +49,14 @@ public class RefreshJMSkuService extends BaseTaskService {
     public List<String> getErrorSkuCode(ShopBean shop, CmsBtProductModel product) throws Exception {
         List<String> result = new ArrayList<>();
 
+        Long productId = product.getProdId();
+
         $info("product:%s", product.getProdId());
 
         String jmProductId = product.getPlatform(27).getpProductId();
         $info("jmProductId:%s", jmProductId);
+
+
         String hashId = product.getPlatform(27).getpNumIId();
         $info("hashId:%s", hashId);
         if (StringUtils.isNullOrBlank2(hashId)) {
@@ -63,18 +67,22 @@ public class RefreshJMSkuService extends BaseTaskService {
 
         Thread.sleep(1000);
         List<JmGetProductInfo_Spus> spus = jmGetProductInfoRes.getSpus();
-        List<BaseMongoMap<String, Object>> localSkus = product.getPlatform(27).getSkus();
 
         for (JmGetProductInfo_Spus spu : spus) {
             $info("spu.getSpu_no():%s", spu.getSpu_no());
             $info("spu.getUpc_code():%s", spu.getUpc_code());
 
+            String jmSpuNo = spu.getSpu_no();
+
             List<JmGetProductInfo_Spus_Sku> skus = spu.getSku_list();
             for (JmGetProductInfo_Spus_Sku sku : skus) {
                 String skuCode = sku.getBusinessman_code();
+                String jmSkuNo = sku.getSku_no();
                 if (skuCode.startsWith("ERROR_")) {
                     $info("skuCode:%s",skuCode);
-                    result.add(skuCode);
+
+                    String line  = productId + "," + jmProductId + "," + jmSpuNo + "," + jmSkuNo + ","+skuCode;
+                    result.add(line);
                 }
             }
 
