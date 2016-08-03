@@ -233,10 +233,10 @@
                                             <label class="col-sm-3 control-label">实际平台状态</label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-checkbox">
-                                                    <input type="checkbox" value="OnSale" style="margin: 0" ng-model="vm.searchInfo.pRealStatus['OnSale']"><span class="fa fa-check"></span> 在售
+                                                    <input type="checkbox" value="OnSale" style="margin: 0" ng-model="vm.searchInfo.pRealStatus['OnSale']"><span class="fa fa-check"></span> 已上架
                                                 </label>
                                                 <label class="checkbox-inline c-checkbox">
-                                                    <input type="checkbox" value="InStock" style="margin: 0" ng-model="vm.searchInfo.pRealStatus['InStock']"><span class="fa fa-check"></span> 在库
+                                                    <input type="checkbox" value="InStock" style="margin: 0" ng-model="vm.searchInfo.pRealStatus['InStock']"><span class="fa fa-check"></span> 未上架
                                                 </label>
                                             </div>
                                         </div>
@@ -687,18 +687,11 @@
                                             </label>
                                             <span class="label m-l-sm" ng-if="productInfo.carts">
                                                 <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;font-size:12px" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}" title="{{cartsObj.publishError? 'Error':cartsObj.statusTxt}}">
-                                                    <span ng-if="cartsObj._purl&&cartsObj._pname&&cartsObj.statusTxt=='InStock'"><a ng-href="{{cartsObj._purl}}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pname}}:在库</a></span>
-                                                    <span ng-if="cartsObj._purl&&cartsObj._pname&&cartsObj.statusTxt=='OnSale'"><a ng-href="{{cartsObj._purl}}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pname}}:在售</a></span>
-                                                    <span ng-if="cartsObj._purl&&cartsObj._pname&&!(cartsObj.statusTxt=='OnSale'|| cartsObj.statusTxt=='InStock')"><a ng-href="{{cartsObj._purl}}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pname}}</a></span>
-                                                    <span ng-if="!cartsObj._purl&&cartsObj._pname&&cartsObj.statusTxt=='InStock'">{{cartsObj._pname}}:在库</span>
-                                                    <span ng-if="!cartsObj._purl&&cartsObj._pname&&cartsObj.statusTxt=='OnSale'">{{cartsObj._pname}}:在售</span>
-                                                    <span ng-if="!cartsObj._purl&&cartsObj._pname&&!(cartsObj.statusTxt=='OnSale'|| cartsObj.statusTxt=='InStock')">{{cartsObj._pname}}</span>
+                                                    <span ng-if="cartsObj._purl"><a ng-href="{{cartsObj._purl}}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pTxt}}</a></span>
+                                                    <span ng-if="!cartsObj._purl">{{cartsObj._pTxt}}</span>
                                                 </span>
                                             </span>
-                                            <span class="label label-danger m-t-xs m-r-sm m-l-sm" style="font-size:12px"
-                                                  ng-if="productInfo.common.fields.isMasterMain == 1">&nbsp;M&nbsp;</span>
-                                            <span class="label label-success m-t-xs m-r-sm"
-                                                  ng-if="vm.masterData.isminimall == 1">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>
+                                            <span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall == 1">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>
                                             <span class="m-r-sm" ng-if="!!productInfo.groupBean.numIId&&!!vm.productUrl">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
                                                 <a ng-href="{{vm.productUrl}}{{productInfo.groupBean.numIId}}" target="_blank" ng-bind="productInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId!=27"></a>
                                                 <a ng-href="{{vm.productUrl}}{{productInfo.groupBean.numIId}}.html" target="_blank" ng-bind="productInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId == 27"></a>
