@@ -44,8 +44,9 @@ define([
                 }
                 self.searchBrands();
             },
-            searchBrands: function () {
+            searchBrands: function (page) {
                 var self = this;
+                page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
                 var params = {
                     'cartId': self.searchInfo.selectedCart,
                     'mappingState': self.searchInfo.selectedStatus,
