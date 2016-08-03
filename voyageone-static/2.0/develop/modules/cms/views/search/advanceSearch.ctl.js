@@ -70,7 +70,6 @@ define([
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
         $scope.getCat = getCat;
-        $scope.addFreeTag = addFreeTag;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         $scope.openApproval = openApproval;
         $scope.platformCategoryMapping = platformCategoryMapping;
@@ -359,19 +358,15 @@ define([
             _chkProductSel(null, _openBulkUpdate, {'isSelAll': $scope.vm._selall ? 1 : 0, "cartId": parseInt(cartId)});
 
             function _openBulkUpdate(cartId, selList, context) {
+                var selCnt = 0;
+                if (!$scope.vm._selall) {
+                    var selList = getSelProductList();
+                    selCnt = selList.length;
+                } else {
+                    selCnt = $scope.vm.productPageOption.total;
+                }
+                context.selCnt = selCnt;
                 openFieldEdit(selList, context).then(function (res) {
-                    if (res.data.ecd == null || res.data.ecd == undefined) {
-                        alert("提交请求时出现错误");
-                        return;
-                    }
-                    if (res.data.ecd == 1) {
-                        alert("未选择商品，请选择后再操作。");
-                        return;
-                    }
-                    if (res.data.ecd == 2) {
-                        alert("未设置变更项目，请设置后再操作。");
-                        return;
-                    }
                     $scope.search();
                 })
             }
@@ -601,26 +596,31 @@ define([
         /**
          * 添加产品到指定自由标签
          */
-        function addFreeTag(tagBean) {
+        $scope.addFreeTag = function (openFreeTag) {
             _chkProductSel(null, _addFreeTag);
 
             function _addFreeTag(cartId, selList) {
                 var productIds = [];
                 if (selList && selList.length) {
                     _.forEach(selList, function (object) {
-                        productIds.push(object.id);
+                        productIds.push(object.code);
                     });
                 }
+                openFreeTag({'orgFlg':2,'tagTypeSel':'4','cartId':$scope.vm.searchInfo.cartId,'productIds':productIds,'selAllFlg':$scope.vm._selall ? 1 : 0}).then(function (res) {
+                    // 设置自由标签
+                    var freeTags = _.chain(res.selectdTagList).map(function (key, value) { return key.tagPath; }).value();
+                    var freeTagsTxt = _.chain(res.selectdTagList).map(function (key, value) { return key.tagPathName; }).value();
+                    confirm("将对选定的产品设置自由标签:<br>" + freeTagsTxt.join('; '))
+                        .then(function () {
+                            searchAdvanceService2.addFreeTag(freeTags, productIds, $scope.vm._selall ? 1 : 0).then(function () {
+                                notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
+                                searchAdvanceService2.clearSelList();
+                                getGroupList();
+                                getProductList();
+                            })
+                        });
+                });
 
-                confirm("将对选定的产品添加自由标签" + tagBean.tagPathName)
-                    .then(function () {
-                        searchAdvanceService2.addFreeTag(tagBean.tagPath, productIds, $scope.vm._selall ? 1 : 0).then(function () {
-                            notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
-                            searchAdvanceService2.clearSelList();
-                            getGroupList();
-                            getProductList();
-                        })
-                    });
             }
         }
 
@@ -883,11 +883,13 @@ define([
         function openTagManagement(openFreeTag, isPromoTag) {
             openFreeTag.then(function (res) {
                 if (isPromoTag) {
+                    // 查询活动标签
                     $scope.vm._promotionTags = res.selectdTagList;
                     $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function (key, value) {
                         return key.tagPath;
                     }).value();
                 } else {
+                    // 查询自由标签
                     $scope.vm._freeTags = res.selectdTagList;
                     $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function (key, value) {
                         return key.tagPath;

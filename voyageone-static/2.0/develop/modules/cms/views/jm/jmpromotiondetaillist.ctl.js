@@ -336,27 +336,39 @@ define([
                 });
             });
         }
+        //批量上传
         $scope.batchCopyDeal = function () {
             var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
             if (listPromotionProductId.length == 0) {
                 alert("请选择上传的商品!");
                 return;
             }
-            confirm("选中的商品是否全部上传?").then(function () {
-                var parameter = {};
-                parameter.promotionId = $scope.vm.promotionId;
-                parameter.listPromotionProductId = listPromotionProductId;
-                jmPromotionDetailService.batchCopyDeal(parameter).then(function (res) {
-                    if (res.data.result) {
-                        $scope.search();
-                        alert($translate.instant('请稍后几分钟刷新页面，查看最新上传结果'));
-                    }
-                    else {
-                        alert($translate.instant('TXT_FAIL'));
-                    }
-                }, function (res) {
-                    alert($translate.instant('TXT_FAIL'));
+            //2.8.2
+            var isUpdate = false;
+            if ($scope.vm.isBegin) {
+                confirm("聚美平台无任何删除功能，专场内一旦有商品完成上传，该商品禁止删除，该专场禁止删除。点击确认继续操作.").then(function () {
+                    isUpdate = true;
                 });
+            }
+            else if ($scope.vm.isBegin) {
+                confirm("聚美专场已开始预热，任何变更都有极大可能性引起客诉，点击确认继续操作.").then(function () {
+                    isUpdate = true;
+                });
+            }
+            if (!isUpdate) return;
+            var parameter = {};
+            parameter.promotionId = $scope.vm.promotionId;
+            parameter.listPromotionProductId = listPromotionProductId;
+            jmPromotionDetailService.batchCopyDeal(parameter).then(function (res) {
+                if (res.data.result) {
+                    $scope.search();
+                    alert($translate.instant('请稍后几分钟刷新页面，查看最新上传结果'));
+                }
+                else {
+                    alert($translate.instant('TXT_FAIL'));
+                }
+            }, function (res) {
+                alert($translate.instant('TXT_FAIL'));
             });
         }
         $scope.copyDealAll = function () {

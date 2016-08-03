@@ -96,7 +96,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         Map<String, Object> param = new HashMap<>(2);
         param.put("channelId", userInfo.getSelChannelId());
         param.put("tagTypeSelectValue", "4");
-        masterData.put("freetagList", cmsChannelTagService.getTagInfoList(param));
+        masterData.put("freetagList", cmsChannelTagService.getTagInfoByChannelId(param));
 
         // 获取price type
         masterData.put("priceTypeList", TypeConfigEnums.MastType.priceType.getList(language));
@@ -414,11 +414,11 @@ public class CmsAdvanceSearchService extends BaseAppService {
     }
 
     /**
-     * 向产品添加tag，同时添加该tag的所有上级tag
+     * 设置产品free tag，同时添加该tag的所有上级tag
      */
-    public void addProdTag(String channelId, Map<String, Object> params, String tagsKey, String modifier, CmsSessionBean cmsSession) {
-        String tagPath = StringUtils.trimToNull((String) params.get("tagPath"));
-        if (tagPath == null) {
+    public void setProdFreeTag(String channelId, Map<String, Object> params, String modifier, CmsSessionBean cmsSession) {
+        List<String> tagPathList = (List<String>) params.get("tagPathList");
+        if (tagPathList == null || tagPathList.isEmpty()) {
             $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未选择标签");
             throw new BusinessException("缺少参数，未选择标签!");
         }
@@ -427,21 +427,21 @@ public class CmsAdvanceSearchService extends BaseAppService {
         if (isSelAll == null) {
             isSelAll = 0;
         }
-        List<Long> prodIdList;
+        List<String> prodCodeList;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            prodIdList = getProductIdList(channelId, cmsSession);
-            if (prodIdList == null || prodIdList.isEmpty()) {
+            prodCodeList = getProductCodeList(channelId, cmsSession);
+            if (prodCodeList == null || prodCodeList.isEmpty()) {
                 $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未查询到商品");
                 throw new BusinessException("缺少参数，未选择商品!");
             }
         } else {
-            prodIdList = CommonUtil.changeListType((List<Integer>) params.get("prodIdList"));
-            if (prodIdList == null || prodIdList.isEmpty()) {
+            prodCodeList = (List<String>) params.get("prodIdList");
+            if (prodCodeList == null || prodCodeList.isEmpty()) {
                 $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未选择商品");
                 throw new BusinessException("缺少参数，未选择商品!");
             }
         }
-        productTagService.addProdTag(channelId, tagPath, prodIdList, tagsKey, modifier);
+        productTagService.setProdFreeTag(channelId, tagPathList, prodCodeList, modifier);
     }
 }

@@ -58,7 +58,7 @@ public class CmsBtPriceLogService extends BaseService {
     }
 
     /**
-     * 高级搜索专用日志记录方法, 中国最终售价设置专用, 只更新了sku的中国最终售价
+     * 高级搜索专用日志记录方法
      * <p>
      * 日志记录后, 会调用 MQ 发送价格同步请求
      * create by jiangjusheng
@@ -72,8 +72,6 @@ public class CmsBtPriceLogService extends BaseService {
 
         // 向Mq发送消息同步sku,code,group价格范围
         for (CmsBtPriceLogModel newLog : paramList) {
-            newLog.setRetailPrice(null);
-            newLog.setMsrpPrice(null);
             sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(newLog)));
         }
         return rs;

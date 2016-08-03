@@ -601,15 +601,11 @@
                         <!--<i class="fa fa-download"></i>&nbsp;{{'TXT_IMAGE_DOWNLOAD' | translate}}-->
                         <!--</button>-->
                         &nbsp;
-                        <div class="btn-group" uib-dropdown>
-                            <button type="button" class="btn btn-pop btn-default" ng-disabled="vm.masterData.freetagList.length == 0" uib-dropdown-toggle>
-                                <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CUS_TAGS_SETTING' | translate}}&nbsp;<span class="caret"></span>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-pop btn-default" ng-disabled="vm.masterData.freetagList.length == 0"
+                                    ng-click="$parent.addFreeTag(openFreeTag)">
+                                <i class="fa fa-cog"></i>&nbsp;{{'TXT_CUS_TAGS_SETTING' | translate}}
                             </button>
-                            <ul uib-dropdown-menu ng-if="vm.masterData.freetagList.length">
-                                <li ng-repeat="tagBean in vm.masterData.freetagList">
-                                    <a href ng-click="addFreeTag(tagBean)">{{tagBean.tagPathName}}</a>
-                                </li>
-                            </ul>
                         </div>
                         &nbsp;
                         <div class="btn-group" uib-dropdown>
