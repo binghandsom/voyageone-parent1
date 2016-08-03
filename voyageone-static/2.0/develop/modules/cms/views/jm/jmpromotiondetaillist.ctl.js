@@ -270,6 +270,15 @@ define([
             }
             return listPromotionProductId;
         }
+        $scope.getSelectedPromotionProductList = function () {
+            var listPromotionProduct = [];
+            for (var i = 0; i < $scope.vm.modelList.length; i++) {
+                if ($scope.vm.modelList[i].isChecked) {
+                    listPromotionProduct.push($scope.vm.modelList[i].id);
+                }
+            }
+            return listPromotionProduct;
+        }
         $scope.getSelectedProductCodeList = function () {
             var listPromotionProductCode = [];
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
@@ -461,13 +470,14 @@ define([
                 //}
             }
         };
+        //批量修改价格
         $scope.openPriceModifyWin = function () {
-            var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
-            if (listPromotionProductId.length == 0) {
+            var listPromotionProduct = $scope.getSelectedPromotionProductList();
+            if (listPromotionProduct.length == 0) {
                 alert("请选择修改价格的商品!");
                 return;
             }
-            popups.openPriceModify({search: $scope.search,jmPromotionId:$scope.vm.promotionId ,listPromotionProductId: listPromotionProductId})
+            popups.openPriceModify({search: $scope.search,jmPromotionId:$scope.vm.promotionId ,isBegin: $scope.vm.isBegin,listPromotionProduct: listPromotionProduct})
         }
         $scope.openProductDetailWin = function (object) {
 

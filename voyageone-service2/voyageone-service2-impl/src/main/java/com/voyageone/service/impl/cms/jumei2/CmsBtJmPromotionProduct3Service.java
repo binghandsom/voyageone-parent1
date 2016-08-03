@@ -127,7 +127,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
         return  promotion;
     }
-    //批量更新价格
+    //批量修改价格
     @VOTransactional
     public CallResult batchUpdateDealPrice(BatchUpdatePriceParameterBean parameter) {
         CallResult result = new CallResult();
@@ -159,12 +159,6 @@ private CmsBtPromotionDao daoCmsBtPromotion;
             return result;
         }
         price = "CEIL(" + price + ")";//向上取整
-        CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getJmPromotionId());
-        if (modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
-            result.setResult(false);
-            result.setMsg("预热已经开始,不能修改价格!");
-            return result;
-        }
 
         CmsBtJmPromotionSkuModel modelCmsBtJmPromotionSku = daoExtCmsBtJmPromotionSku.selectNotUpdateDealPrice(parameter.getListPromotionProductId(), price);
         if (modelCmsBtJmPromotionSku != null) {
@@ -173,16 +167,14 @@ private CmsBtPromotionDao daoCmsBtPromotion;
             return result;
         }
         daoExtCmsBtJmPromotionSku.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);//更新sku价格
-        daoExt.updateAvgPriceByListPromotionProductId(parameter.getListPromotionProductId());//更新平均值 最大值 最小值
+        daoExt.updateAvgPriceByListPromotionProductId(parameter.getListPromotionProductId());//更新平均值 最大值 最小值  更新为已经变更
         return result;
     }
 
-    //批量同步价格  1. if未上传  then price_status=1   2.if已上传&预热未开始  then price_status=1
+    //批量同步价格  1. then price_status=1
     public void batchSynchPrice(BatchSynchPriceParameter parameter) {
 
         if (parameter.getListPromotionProductId().isEmpty()) return;
-
-        CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
         daoExt.batchSynchPrice(parameter.getListPromotionProductId());
     }
 
