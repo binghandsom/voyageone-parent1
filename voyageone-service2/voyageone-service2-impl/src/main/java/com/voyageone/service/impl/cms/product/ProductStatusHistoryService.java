@@ -16,6 +16,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtProductStatusHistoryModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.util.MapModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -90,18 +91,27 @@ public class ProductStatusHistoryService extends BaseService {
         CmsBtProductStatusHistoryModel productStatusHistory;
 
         JomgoQuery query = new JomgoQuery();
+        CmsBtProductModel prodObj = null;
+        String prodSts = null;
         for (String code : codes) {
             // 先取得商品状态
-            query.setQuery("{'common.fields.code':#}");
-            query.setParameters(code);
-            query.setProjection("{'platforms.P" + cartId + ".status':1}");
-            CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery(query, channelId);
-            if (prodObj == null) {
-                $warn("ProductStatusHistoryService.insertList 指定的商品不存在 code=%s, channelId=%s", code, channelId);
-                continue;
+            if (cartId > 0) {
+                // 必须指定平台才保存商品状态
+                query.setQuery("{'common.fields.code':#}");
+                query.setParameters(code);
+                query.setProjection("{'platforms.P" + cartId + ".status':1}");
+                prodObj = cmsBtProductDao.selectOneWithQuery(query, channelId);
+                if (prodObj == null) {
+                    $warn("ProductStatusHistoryService.insertList 指定的商品不存在 code=%s, channelId=%s", code, channelId);
+                    continue;
+                }
+                prodSts = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getStatus());
+            }
+            if (prodSts == null) {
+                prodSts = "0";
             }
 
-            productStatusHistory = get(channelId, code, prodObj.getPlatformNotNull(cartId).getStatus(), cartId, operationType, comment, modifier);
+            productStatusHistory = get(channelId, code, prodSts, cartId, operationType, comment, modifier);
             list.add(productStatusHistory);
         }
         List<List<CmsBtProductStatusHistoryModel>> pageList = ListUtils.getPageList(list, 100);//分隔数据源 每页100

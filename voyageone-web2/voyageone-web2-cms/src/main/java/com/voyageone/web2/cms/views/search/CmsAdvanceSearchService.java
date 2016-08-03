@@ -427,21 +427,21 @@ public class CmsAdvanceSearchService extends BaseAppService {
         if (isSelAll == null) {
             isSelAll = 0;
         }
-        List<Long> prodIdList;
+        List<String> prodCodeList;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
-            prodIdList = getProductIdList(channelId, cmsSession);
-            if (prodIdList == null || prodIdList.isEmpty()) {
+            prodCodeList = getProductCodeList(channelId, cmsSession);
+            if (prodCodeList == null || prodCodeList.isEmpty()) {
                 $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未查询到商品");
                 throw new BusinessException("缺少参数，未选择商品!");
             }
         } else {
-            prodIdList = CommonUtil.changeListType((List<Integer>) params.get("prodIdList"));
-            if (prodIdList == null || prodIdList.isEmpty()) {
+            prodCodeList = (List<String>) params.get("prodIdList");
+            if (prodCodeList == null || prodCodeList.isEmpty()) {
                 $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未选择商品");
                 throw new BusinessException("缺少参数，未选择商品!");
             }
         }
-        productTagService.setProdFreeTag(channelId, tagPathList, prodIdList, modifier);
+        productTagService.setProdFreeTag(channelId, tagPathList, prodCodeList, modifier);
     }
 }
