@@ -17,7 +17,7 @@ public class VmsShipmentStatusUpdateRequest extends VoApiRequest<VmsOrderStatusU
 
 	@Override
 	public String getApiURLPath() {
-		return "/vms/order/updateShipmentStatus";
+		return "/rest/vms/order/updateShipmentStatus";
 	}
 
 	/**

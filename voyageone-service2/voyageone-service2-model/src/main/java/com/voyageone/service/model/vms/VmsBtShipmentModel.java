@@ -45,7 +45,7 @@ public class VmsBtShipmentModel extends BaseModel {
     protected String comment;
 
     /**
-     * 1:Open；3：Shipped；4：Arrived；5：Received；6：Receive with Error
+     * 1:Open；3：Shipped；4：Arrived；5：Received；6：Receive Error
      */
     protected String status;
 

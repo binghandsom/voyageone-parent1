@@ -84,6 +84,16 @@ public class FeedToCmsService extends BaseService {
      */
     @VOTransactional
     public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> products, String modifier) {
+        return updateProduct(channelId, products, modifier, true);
+    }
+
+    /**
+     * 更新code信息如果不code不存在会新建
+     *
+     * @param products 产品列表
+     */
+    @VOTransactional
+    public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> products, String modifier, boolean mergeAttribute) {
         List<String> existCategory = new ArrayList<>();
         List<CmsBtFeedInfoModel> failProduct = new ArrayList<>();
         List<CmsBtFeedInfoModel> succeedProduct = new ArrayList<>();
@@ -137,7 +147,9 @@ public class FeedToCmsService extends BaseService {
                     }
                     product.setCreated(befproduct.getCreated());
                     product.setCreater(befproduct.getCreater());
-                    product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
+                    if (mergeAttribute) {
+                        product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
+                    }
                     //feed增加状态属性(New(9), Waiting For Import(0),Finish Import(1),Error(2), Not Import(3))，9,3 ,0->不变, 2, 1->0
                     if (befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1 || befproduct.getUpdFlg() == 0) {
                         if(insertLog) {
@@ -194,7 +206,7 @@ public class FeedToCmsService extends BaseService {
 
         // 更新类目中属性
         for (Map.Entry<String, Map<String, List<String>>> entry : attributeMtDatas.entrySet()) {
-            updateFeedCategoryAttribute(channelId, entry.getValue(), entry.getKey());
+            updateFeedCategoryAttribute(channelId, entry.getValue(), entry.getKey(), mergeAttribute);
         }
 
         //0:brand 1:sizeType 2:productType
@@ -293,8 +305,9 @@ public class FeedToCmsService extends BaseService {
      * @param channelId 渠道
      * @param attribute 属性
      * @param category  类目
+     * @param mergeAttribute 是否要merge旧属性
      */
-    private void updateFeedCategoryAttribute(String channelId, Map<String, List<String>> attribute, String category) {
+    private void updateFeedCategoryAttribute(String channelId, Map<String, List<String>> attribute, String category, boolean mergeAttribute) {
 
         String catId = MD5.getMD5(category);
         CmsMtFeedAttributesModel cmsBtFeedCategoryAttribute = feedCategoryAttributeService.getCategoryAttributeByCatId(channelId, catId);
@@ -306,18 +319,20 @@ public class FeedToCmsService extends BaseService {
             cmsBtFeedCategoryAttribute.setAttribute(new HashMap<>());
         }
 
+        // 是否要merge旧属性
+        if (mergeAttribute) {
+            Map<String, List<String>> oldAtt = cmsBtFeedCategoryAttribute.getAttribute();
 
-        Map<String, List<String>> oldAtt = cmsBtFeedCategoryAttribute.getAttribute();
-
-        for (Map.Entry<String, List<String>> entry1 : attribute.entrySet()) {
-            String key = entry1.getKey();
-            if (oldAtt.containsKey(key)) {
-                oldAtt.put(key, Stream.concat(entry1.getValue().stream(), oldAtt.get(key).stream())
-                        .map(String::trim)
-                        .distinct()
-                        .collect(toList()));
-            } else {
-                oldAtt.put(key, entry1.getValue());
+            for (Map.Entry<String, List<String>> entry1 : attribute.entrySet()) {
+                String key = entry1.getKey();
+                if (oldAtt.containsKey(key)) {
+                    oldAtt.put(key, Stream.concat(entry1.getValue().stream(), oldAtt.get(key).stream())
+                            .map(String::trim)
+                            .distinct()
+                            .collect(toList()));
+                } else {
+                    oldAtt.put(key, entry1.getValue());
+                }
             }
         }
         feedCategoryAttributeService.updateAttributes(cmsBtFeedCategoryAttribute);

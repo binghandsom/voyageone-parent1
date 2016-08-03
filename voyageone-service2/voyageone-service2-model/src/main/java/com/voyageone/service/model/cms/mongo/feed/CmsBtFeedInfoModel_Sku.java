@@ -19,8 +19,9 @@ public class CmsBtFeedInfoModel_Sku {
     private Integer qty;
     private String relationshipType;
     private String variationTheme;
-
-
+    private String weightOrg;
+    private String weightOrgUnit;
+    private String weightCalc;
     public Double getPriceCurrent() {
         return priceCurrent;
     }
@@ -106,7 +107,6 @@ public class CmsBtFeedInfoModel_Sku {
 
     public void setImage(List<String> image) { this.image = image; }
 
-
     public String getRelationshipType() {
         return relationshipType;
     }
@@ -127,4 +127,29 @@ public class CmsBtFeedInfoModel_Sku {
     public boolean equals(Object obj) {
          return  this.sku.equalsIgnoreCase(((CmsBtFeedInfoModel_Sku)obj).getSku());
     }
+
+    public String getWeightOrg() {
+        return weightOrg;
+    }
+
+    public void setWeightOrg(String weightOrg) {
+        this.weightOrg = weightOrg;
+    }
+
+    public String getWeightOrgUnit() {
+        return weightOrgUnit;
+    }
+
+    public void setWeightOrgUnit(String weightOrgUnit) {
+        this.weightOrgUnit = weightOrgUnit;
+    }
+
+    public String getWeightCalc() {
+        return weightCalc;
+    }
+
+    public void setWeightCalc(String weightCalc) {
+        this.weightCalc = weightCalc;
+    }
+
 }

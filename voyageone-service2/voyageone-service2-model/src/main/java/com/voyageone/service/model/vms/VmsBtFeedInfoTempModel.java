@@ -35,6 +35,8 @@ public class VmsBtFeedInfoTempModel extends BaseModel {
 
     protected String quantity;
 
+    protected String weight;
+
     protected String images;
 
     protected String description;
@@ -44,8 +46,6 @@ public class VmsBtFeedInfoTempModel extends BaseModel {
     protected String productOrigin;
 
     protected String category;
-
-    protected String weight;
 
     protected String brand;
 
@@ -225,6 +225,14 @@ public class VmsBtFeedInfoTempModel extends BaseModel {
         this.quantity = quantity == null ? null : quantity.trim();
     }
 
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight == null ? null : weight.trim();
+    }
+
     public String getImages() {
         return images;
     }
@@ -263,14 +271,6 @@ public class VmsBtFeedInfoTempModel extends BaseModel {
 
     public void setCategory(String category) {
         this.category = category == null ? null : category.trim();
-    }
-
-    public String getWeight() {
-        return weight;
-    }
-
-    public void setWeight(String weight) {
-        this.weight = weight == null ? null : weight.trim();
     }
 
     public String getBrand() {
