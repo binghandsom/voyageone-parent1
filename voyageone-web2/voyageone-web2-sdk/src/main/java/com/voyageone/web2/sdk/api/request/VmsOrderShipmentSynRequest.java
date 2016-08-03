@@ -18,7 +18,7 @@ public class VmsOrderShipmentSynRequest extends VoApiRequest<VmsOrderShipmentSyn
 
 	@Override
 	public String getApiURLPath() {
-		return "/vms/order/synOrderShipment";
+		return "/rest/vms/order/synOrderShipment";
 	}
 
 	/**

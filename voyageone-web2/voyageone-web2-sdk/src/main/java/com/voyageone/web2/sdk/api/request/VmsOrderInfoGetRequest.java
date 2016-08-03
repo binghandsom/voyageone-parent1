@@ -20,7 +20,7 @@ public class VmsOrderInfoGetRequest extends VoApiRequest<VmsOrderInfoGetResponse
 
 	@Override
 	public String getApiURLPath() {
-		return "/vms/order/getOrderInfo";
+		return "/rest/vms/order/getOrderInfo";
 	}
 
 	/**
