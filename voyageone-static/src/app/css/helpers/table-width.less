@@ -5,13 +5,17 @@
 }
 
 .calc-table-width(@index) {
+  @subIndex: @index - 1;
   .td-@{index} {
     width: percentage((@index / 12));
+  }
+
+  .td-@{subIndex}-5 {
+    width: percentage(((@subIndex + 0.5) / 12));
   }
 }
 
 .loop-table-width(12);
-
 
 .no-min-width{
   min-width:0;
