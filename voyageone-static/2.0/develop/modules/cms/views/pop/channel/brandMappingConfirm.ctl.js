@@ -15,10 +15,10 @@ define([
         BrandMappingConfirmController.prototype = {
             init: function () {
                 var self = this;
-                self.brandMappingService.searchMatchedBrands({ 'cartId': self.platformData.cartId, 'brandId': self.platformData.brandId
-                }).then(function(res){
-                	self.matchedBrandList=res.data.matchedBrandList;
-                    console.log(res);
+                self.brandMappingService.searchMatchedBrands({
+                    'cartId': self.platformData.cartId, 'brandId': self.platformData.brandId
+                }).then(function (res) {
+                    self.matchedBrandList = res.data.matchedBrandList;
                 });
             },
             confirm: function () {

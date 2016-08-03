@@ -118,8 +118,8 @@ define([
                 "controller": 'newCategoryCtl as ctrl'
             },
             "platformBrandSetting": {
-                "templateUrl": "views/pop/channel/platform_brand_setting.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/channel/platform_brand_setting.ctl",
+                "templateUrl": "views/pop/channel/platformBrandSetting.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/channel/platformBrandSetting.ctl",
                 "controller": 'PlatformBrandSettingController as ctrl',
                 "backdrop": 'static',
                 "size": 'lg'

@@ -56,11 +56,12 @@ define([
                     self.source = self.tagTree = res.data.tagTree;
                     if (self.orgFlg == 2) {
                         // 当是高级检索，设置自由标签时，有初始勾选值
-                        self.orgChkStsMap = res.data.orgChkStsMap;
-                        self.orgDispMap = res.data.orgDispMap;
+                        self.orgChkStsMap = res.data.orgChkStsMap; // checkbox勾选状态
+                        self.orgDispMap = res.data.orgDispMap;     // checkbox半选状态
                         self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
                         self._orgDispMap = angular.copy(res.data.orgDispMap);
 
+                        // TODO--设置初始值(勾选)
 
                     }
                     self.search(0);
@@ -102,7 +103,7 @@ define([
             },
 
             /**
-             * 点击保存
+             * 点击保存(TODO--需要判断是否有改动,没有则不保存)
              */
             save: function () {
                 var self = this;
