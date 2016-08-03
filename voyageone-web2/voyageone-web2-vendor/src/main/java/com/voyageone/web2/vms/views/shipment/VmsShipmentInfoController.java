@@ -27,7 +27,8 @@ public class VmsShipmentInfoController extends BaseController {
     private VmsChannelConfigService vmsChannelConfigService;
 
     @Autowired
-    public VmsShipmentInfoController(VmsShipmentService vmsShipmentService, VmsChannelConfigService vmsChannelConfigService) {
+    public VmsShipmentInfoController(VmsShipmentService vmsShipmentService,
+                                     VmsChannelConfigService vmsChannelConfigService) {
         this.vmsShipmentService = vmsShipmentService;
         this.vmsChannelConfigService = vmsChannelConfigService;
     }

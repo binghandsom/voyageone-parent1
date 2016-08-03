@@ -4,7 +4,7 @@
         <ul class="pull-right breadcrumb">
             <li><a href="#/home" translate="TXT_HOME"></a></li>
             <li class="active disabled" translate="TXT_ORDER"></li>
-            <li class="active selecte" translate="TXT_ORDER_INFO"></li>
+            <li class="active selected" translate="TXT_ORDER_INFO"></li>
         </ul>
     </div>
 </div>
@@ -13,13 +13,10 @@
         <div class="panel-body">
             <div class="form-inline">
                 <div class="form-group">
-                    <!-- ORDER_ID -->
                     <label class="control-label m-l-sm" translate="TXT_ORDER_ID"></label>
                     <input id="ORDER_ID" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.consolidationOrderId" enter-click="#searchButton">
-                    <!-- SKU -->
                     <label class="control-label m-l-sm" translate="TXT_SKU"></label>
                     <input id="SKU" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.sku" enter-click="#searchButton">
-                    <!-- Status -->
                     <label class="control-label m-l-sm" translate="TXT_STATUS"></label>
                     <select name="SKU_STATUS" id="select" class="form-control input-sm" ng-model="ctrl.searchInfo.status"
                             ng-options="orderStatus.value as orderStatus.name for orderStatus in ctrl.orderStatusList">
@@ -143,8 +140,8 @@
                     <tr>
                         <!--<th class="text-right" style="width: 30px" ng-click="ctrl.toggleAll()" ng-bind="ctrl.collapse ? '+' : '-'"></th>-->
                         <th class="td-1-5" translate="TXT_ORDER_ID"></th>
-                        <th class="td-2" translate="TXT_ORDER_DATE"></th>
-                        <th class="td-1" translate="TXT_SKU"></th>
+                        <th class="td-1-5" translate="TXT_ORDER_DATE"></th>
+                        <th class="td-1-5" translate="TXT_SKU"></th>
                         <th class="td-3" translate="TXT_NAME"></th>
                         <th class="td-1" translate="TXT_STATUS"></th>
                         <th class="td-1" translate="TXT_VO_PRICE"></th>
@@ -159,8 +156,10 @@
                         <td class="v-middle">{{item.consolidationOrderTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="v-middle">{{item.clientSku}}</td>
                         <td class="v-middle">
-                            <span class="v-middle" ng-if="item.name.length <= 25">{{item.name}}</span>
-                            <span class="v-middle" ng-if="item.name.length > 25" uib-tooltip="{{item.name}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name | stringCutter:true:25:' ...'}}</span>
+                            <span class="v-middle" ng-if="item.name.length <= 30">{{item.name}}</span>
+                            <span class="v-middle" ng-if="item.name.length > 30" uib-tooltip="{{item.name}}"
+                                  tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name |
+                                stringCutter:true:30:' ...'}}</span>
                         </td>
                         <td class="v-middle">{{ctrl.getStatusName(item.status)}}</td>
                         <td class="v-middle">${{item.voPrice}}</td>
