@@ -195,7 +195,9 @@ define(function () {
                     "teJiaBaoInit": "teJiaBaoInit",
                     "updatePromotionProduct": "updatePromotionProduct",
                     "delPromotionModel": "delPromotionModel",
-                    "delPromotionCode": "delPromotionCode"
+                    "delPromotionCode": "delPromotionCode",
+                    "tmallJuhuasuanExport":"tmallJuhuasuanExport",
+                    "tmallPromotionExport":"tmallPromotionExport",
                 }
             },
             "jmpromotion": {
