@@ -5,15 +5,19 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
+import com.voyageone.service.bean.cms.CmsBtTagBean;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +36,8 @@ public class ProductTagService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtTagDaoExt cmsBtTagDaoExt;
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
 
     /**
      * 向产品添加tag，同时添加该tag的所有上级tag
@@ -78,8 +84,8 @@ public class ProductTagService extends BaseService {
     /**
      * 设置产品free tag，同时添加该tag的所有上级tag
      */
-    public void setProdFreeTag(String channelId, List<String> tagPathList, List<Long> prodIdList, String modifier) {
-        if (tagPathList == null || tagPathList.isEmpty() || prodIdList == null || prodIdList.isEmpty()) {
+    public void setProdFreeTag(String channelId, List<String> tagPathList, List<String> prodCodeList, String modifier) {
+        if (tagPathList == null || tagPathList.isEmpty() || prodCodeList == null || prodCodeList.isEmpty()) {
             $warn("ProductTagService：setProdFreeTag 缺少参数");
             throw new BusinessException("缺少参数!");
         }
@@ -104,14 +110,19 @@ public class ProductTagService extends BaseService {
         pathList = pathList.stream().distinct().collect(Collectors.toList());
 
         JomgoUpdate updObj = new JomgoUpdate();
-        updObj.setQuery("{'prodId':{$in:#}}");
-        updObj.setQueryParameters(prodIdList);
+        updObj.setQuery("{'common.fields.code':{$in:#}}");
+        updObj.setQueryParameters(prodCodeList);
         updObj.setUpdate("{$set:{'freeTags':#}}");
         updObj.setUpdateParameters(pathList);
 
         // 批量更新product表
         WriteResult result = cmsBtProductDao.updateMulti(updObj, channelId);
         $debug(String.format("ProductTagService：setProdFreeTag 操作结果-> " + result.toString()));
+
+        List<CmsBtTagBean> tagBeanList = cmsBtTagDaoExt.selectTagPathNameByTagPath(channelId, tagPathList);
+        pathList = tagBeanList.stream().map(tagBean -> tagBean.getTagPathName()).collect(Collectors.toList());
+        String msg = "高级检索 批量设置自由标签 " + StringUtils.join(pathList, "; ");
+        productStatusHistoryService.insertList(channelId, prodCodeList, -1, EnumProductOperationType.BatchSetFreeTag, msg, modifier);
     }
 
     /**
