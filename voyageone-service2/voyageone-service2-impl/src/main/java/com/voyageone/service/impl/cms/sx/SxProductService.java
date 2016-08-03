@@ -15,7 +15,6 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.rule.Rule;
-import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.*;
@@ -34,7 +33,10 @@ import com.voyageone.service.dao.cms.CmsBtWorkloadHistoryDao;
 import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
-import com.voyageone.service.dao.cms.mongo.*;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
@@ -854,6 +856,8 @@ public class SxProductService extends BaseService {
                     List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatform(cartId).getSkus();
                     List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
                     List<String> listSkuCode = new ArrayList<>();
+                    // 分平台下面的skuCode未在共通sku(common.skus)下找到对应sku的code列表
+                    List<String> notFoundSkuCodes = new ArrayList<>();
                     if (productPlatformSku != null) {
                         productPlatformSku.forEach(sku -> {
                             if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
@@ -862,13 +866,32 @@ public class SxProductService extends BaseService {
                                 // 外面skus的共通属性 + 从各个平台下面的skus(platform.skus)那里取得的属性
                                 // 以防万一，如果各个平台下面的skus，有和外面skus共通属性一样的属性，那么是去取各个平台下面的skus属性，即把外面的值覆盖
                                 BaseMongoMap<String, Object> mapSku = mapProductModelSku.get(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-                                mapSku.putAll(sku); // 外面skus是共通属性 + 从各个平台下面的skus
-                                skus.add(mapSku);
-                                // modified by morse.lu 2016/06/15 end
-                                listSkuCode.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                // update by desmond 2016/08/03 start
+                                if (mapSku != null && mapSku.size() > 0) {
+                                    mapSku.putAll(sku); // 外面skus是共通属性 + 从各个平台下面的skus
+                                    skus.add(mapSku);
+                                    // modified by morse.lu 2016/06/15 end
+                                    listSkuCode.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                } else {
+                                    // 各个平台下面的skuCode没有在共通skus里面找到对应的sku的时候
+                                    notFoundSkuCodes.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                }
+                                // update by desmond 2016/08/03 end
                             }
                         });
                     }
+                    // add by desmond 2016/08/03 start
+                    // 如果分平台下面的skuCode没找到对应的共通skuCode则报错
+                    if (ListUtils.notNull(notFoundSkuCodes)) {
+                        String strNotFoundSkus = notFoundSkuCodes.stream().collect(Collectors.joining(","));
+                        // 该商品对应的feed信息不存在时，暂时的做法就是跳过当前记录， 这个group就不上了
+                        String errorMsg = "取得上新数据(SxData)失败! 分平台sku件数与共通sku件数不一致，有些分平台skuCode没有找到" +
+                                "对应的共通sku (ProductCode:"+ productModel.getCommon().getFields().getCode() + " 未找到的分平台skuCode:" + strNotFoundSkus + ")";
+                        $error(errorMsg);
+                        sxData.setErrorMessage(errorMsg);
+                        break;
+                    }
+                    // add by desmond 2016/08/03 end
 
                     if (!skus.isEmpty()) {
 //                        productModel.getPlatform(cartId).setSkus(skus); // 只留下允许在该平台上上架的sku，且属性为：外面skus的共通属性 + 从各个平台下面的skus的属性

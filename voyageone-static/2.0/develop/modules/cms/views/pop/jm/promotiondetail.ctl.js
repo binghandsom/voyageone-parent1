@@ -33,7 +33,9 @@ define([
                 $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
             });
 
+            /** 默认值设置 */
             $scope.vm.currentTime = new Date();
+            $scope.editModel.model.promotionType = "0";
 
         };
         $scope.addTag = function () {

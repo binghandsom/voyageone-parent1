@@ -123,12 +123,15 @@ public class CmsPromotionDetailController extends CmsController {
     }
 
     @RequestMapping(PROMOTION.LIST.DETAIL.TMALL_JUHUASUAN_EXPORT)
-    public ResponseEntity<byte[]> doExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer promotionId, @RequestParam String promotionName)
+    public ResponseEntity<byte[]> doTMallJuHuaSuanExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer promotionId, @RequestParam String promotionName)
             throws Exception {
-
-//        byte[] data = cmsPromotionService.getCodeExcelFile(promotionId, getUser().getSelChannelId());
-//        return genResponseEntityFromBytes(String.format("%s(%s).xlsx", promotionName, DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss"), ".xlsx"), data);
-        return null;
+        byte[] data = cmsPromotionDetailService.getTMallJuHuaSuanExport(promotionId, getUser().getSelChannelId());
+        return genResponseEntityFromBytes(String.format("%s(聚划算)-%s.xls", promotionName, DateTimeUtil.getLocalTime(getUserTimeZone(), "MMddHHmmss"), ".xlsx"), data);
     }
-
+    @RequestMapping(PROMOTION.LIST.DETAIL.TMALL_PROMOTION_EXPORT)
+    public ResponseEntity<byte[]> doTMallPromotionExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer promotionId, @RequestParam String promotionName)
+            throws Exception {
+        byte[] data = cmsPromotionDetailService.getTMallPromotionExport(promotionId, getUser().getSelChannelId());
+        return genResponseEntityFromBytes(String.format("%s(官方活动(A类))-%s.xls", promotionName, DateTimeUtil.getLocalTime(getUserTimeZone(), "MMddHHmmss"), ".xlsx"), data);
+    }
 }

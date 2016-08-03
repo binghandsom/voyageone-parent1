@@ -234,7 +234,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                 }
                 updRsFlg = false;
                 try {
-                    if (shopProp.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+                    if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())) {
                         // 天猫国际上下架
                         if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
                             // 上架
@@ -243,7 +243,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                             // 下架
                             updRsFlg = tbItemService.doWareUpdateDelisting(shopProp, numIId);
                         }
-                    } else if (shopProp.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+                    } else if (PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
                         // 京东国际上下架
                         if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
                             // 上架

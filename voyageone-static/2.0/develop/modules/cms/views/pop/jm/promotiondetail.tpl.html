@@ -6,6 +6,7 @@
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal" name="promotionForm">
+
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PROMOTION_NAME"></label>
                 <div class="col-sm-8">
@@ -13,11 +14,44 @@
                     <input type="hidden"  ng-model="model.id" >
                 </div>
             </div>
+
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
                     <vo-message target="promotionForm.promotionName"></vo-message>
                 </div>
             </div>
+
+            <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield">活动类型</label>
+                <div class="col-sm-8">
+                    <label class="checkbox-inline c-radio">
+                        <input type="radio" name="promotionType"  value="0" ng-model="editModel.model.promotionType" required>
+                        <span class="fa fa-check"></span> 日常专场
+                    </label>
+
+                    <label class="checkbox-inline c-radio">
+                        <input type="radio" name="promotionType"  value="1" ng-model="editModel.model.promotionType" required>
+                        <span class="fa fa-check"></span> 导购团
+                    </label>
+
+                    <label class="checkbox-inline c-radio">
+                        <input type="radio" name="promotionType"  value="2" ng-model="editModel.model.promotionType" required>
+                        <span class="fa fa-check"></span> 大促
+                    </label>
+
+                    <label class="checkbox-inline c-radio">
+                        <input type="radio" name="promotionType"  value="3" ng-model="editModel.model.promotionType" required>
+                        <span class="fa fa-check"></span> 长期场馆
+                    </label>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="col-sm-7 col-sm-offset-3">
+                    <vo-message target="promotionForm.promotionType"></vo-message>
+                </div>
+            </div>
+
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield">专场主品牌</label>
                 <div class="col-sm-8" >
@@ -26,7 +60,6 @@
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                     </select>
                 </div>
-
             </div>
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
@@ -94,7 +127,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <div class="row form-group">
@@ -102,6 +134,40 @@
                     <vo-message target="promotionForm.prePeriodStart" class="vo-message-success"></vo-message>
                 </div>
             </div>
+
+            <div class="row form-group">
+                <label class="col-sm-3 control-label">专场优惠</label>
+                <div class="col-sm-8">
+                    <div class="row wrapper-xs">
+                        <label class="checkbox-inline c-checkbox col-md-2">
+                            <input type="checkbox" ng-model="editModel.model.isPromotionDown"><span class="fa fa-check"></span>&nbsp;直降
+                        </label>
+                    </div>
+                    <div class="row wrapper-xs">
+                        <label class="checkbox-inline c-checkbox col-md-2">
+                            <input type="checkbox" ng-model="editModel.model.isPromotionFullMinus"><span class="fa fa-check"></span>&nbsp;满减
+                        </label>
+                    </div>
+                    <div class="row m-l-md">
+                        <div class="col-md-6">
+                            <div class="col-md-1 m-t-xs"><strong class="text-base">满</strong></div>
+                            <div class="col-md-3">
+                                <input type="number" class="form-control" ng-model="editModel.model.promotionFullAmount" ng-disabled="!editModel.model.isPromotionFullMinus" scale="15,2">
+                            </div>
+                            <div class="col-md-1 m-t-xs"><strong class="text-base">减</strong></div>
+                            <div class="col-md-3">
+                                <input type="number" class="form-control" ng-model="editModel.model.promotionMinusAmount" ng-disabled="!editModel.model.isPromotionFullMinus" scale="15,2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row wrapper-xs">
+                        <label class="checkbox-inline c-checkbox col-md-4">
+                            <input type="checkbox" ng-model="editModel.model.isPromotionGiveCoupons"><span class="fa fa-check"></span>&nbsp;优惠券（聚美承担）
+                        </label>
+                    </div>
+                </div>
+            </div>
+
             <div class="row form-group">
                 <div class="col-sm-1"></div>
                 <div class="col-sm-5 m-l-md">

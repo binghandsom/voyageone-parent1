@@ -148,11 +148,7 @@ define([
             var searchInfo = angular.copy (data);
             searchInfo.productStatus = _returnKey (searchInfo.productStatus);
             searchInfo.platformStatus = _returnKey(searchInfo.platformStatus);
-            if (searchInfo.hasErrorFlg) {
-                searchInfo.hasErrorFlg = 1;
-            } else {
-                searchInfo.hasErrorFlg = 0;
-            }
+            searchInfo.pRealStatus = _returnKey(searchInfo.pRealStatus);
             if (searchInfo.shopCatStatus) {
                 searchInfo.shopCatStatus = 1;
             } else {

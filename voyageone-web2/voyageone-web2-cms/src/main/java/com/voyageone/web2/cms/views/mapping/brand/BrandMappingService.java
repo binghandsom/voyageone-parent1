@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.jd.open.api.sdk.response.list.VenderBrandPubInfo;
 import com.taobao.api.domain.Brand;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.jd.service.JdCategoryService;
@@ -33,7 +34,9 @@ import com.voyageone.web2.cms.bean.BrandMappingBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 
 /**
- * Created by Wangtd on 7/25/16.
+ * 品牌映射服务
+ * @author Wangtd 2016/07/25
+ * @since 2.3.0
  */
 @Service
 public class BrandMappingService extends BaseAppService {
@@ -160,26 +163,15 @@ public class BrandMappingService extends BaseAppService {
 		try {
 			List<?> brands = null;
 			// 取得各品牌的最新数据
+			shop = Shops.getShop(channelId, cartId);
 			if (CartEnums.Cart.JM.getId().equals(cartId)) {
 				// 聚美品牌
-				shop.setApp_url("http://openapi.ext.jumei.com/");
-				shop.setAppKey("131");
-				shop.setSessionKey("7e059a48c30c67d2693be14275c2d3be");
-				shop.setAppSecret("0f9e3437ca010f63f2c4f3a216b7f4bc9698f071");
 				brands = jumeiBrandService.getBrands(shop);
 			} else if (CartEnums.Cart.TG.getId().equals(cartId)) {
 				// 天猫品牌
-				shop.setApp_url("http://gw.api.taobao.com/router/rest");
-				shop.setAppKey("21008948");
-				shop.setAppSecret("0a16bd08019790b269322e000e52a19f");
-				shop.setSessionKey("6201b033f0bdf6896ca8b52f9b679698ea4f6e3c4047b352183719539");
 				brands = tbCategoryService.getSellerCategoriesAuthorize(shop).getBrands();
 			} else if (CartEnums.Cart.JD.getId().equals(cartId)) {
 				// 京东品牌
-				shop.setApp_url(null);
-				shop.setAppKey(null);
-				shop.setAppSecret(null);
-				shop.setSessionKey(null);
 				brands = jdCategoryService.getCategoryBrandInfo(shop, "");
 			} else {
 				throw new BusinessException("不支持[channelId=" + channelId + ", cartId=" + cartId + "]的平台品牌同步功能");
