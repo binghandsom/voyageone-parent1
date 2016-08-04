@@ -4,14 +4,18 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.cms.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
@@ -25,10 +29,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 当产品的vo扣点变更时的处理，计算指导价，记录价格变更履历/记录商品修改历史/同步价格范围/插入上新程序
@@ -47,6 +48,8 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
     private PriceService priceService;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
+    @Autowired
+    private ProductSkuService productSkuService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
     @Autowired
@@ -75,6 +78,13 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
         JomgoQuery queryObj = new JomgoQuery();
         JomgoUpdate updObj = new JomgoUpdate();
 
+        // 阀值
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
+        double breakThreshold = 0;
+        if (cmsChannelConfigBean != null) {
+            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D;
+        }
+
         List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
         for (TypeChannelBean cartObj : cartTypeList) {
             int cartId = NumberUtils.toInt(cartObj.getValue());
@@ -92,9 +102,31 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
                     $warn("CmsProductVoRateUpdateService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
                     continue;
                 }
+                // 先暂存旧的指导价
+                Map<String, Double> skuRetailPriceMap = new HashMap<>();
+                for (BaseMongoMap<String, Object> skuObj : skuList) {
+                    skuRetailPriceMap.put(skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceRetail"));
+                }
 
                 // 计算指导价
                 prodObj = priceService.setRetailPrice(prodObj, cartId);
+                // 必须同时更新指导售价变化状态和最终售价变化状态
+                for (BaseMongoMap<String, Object> skuObj : skuList) {
+                    String skuCode = skuObj.getStringAttribute("skuCode");
+                    Double newRetailPrice = skuObj.getDoubleAttribute("priceRetail");
+                    // 更新最终售价变化状态
+                    String diffFlg = productSkuService.getPriceDiffFlg(breakThreshold, skuObj.getDoubleAttribute("priceSale"), newRetailPrice);
+                    skuObj.put("priceDiffFlg", diffFlg);
+                    // 更新指导售价变化状态
+                    Double oldRetailPrice = skuRetailPriceMap.get(skuCode);
+                    String priceChgFlg = "";
+                    if (oldRetailPrice < newRetailPrice) {
+                        priceChgFlg = "U" + (newRetailPrice - oldRetailPrice);
+                    } else if (newRetailPrice < oldRetailPrice) {
+                        priceChgFlg = "D" + (oldRetailPrice - newRetailPrice);
+                    }
+                    skuObj.put("priceChgFlg", priceChgFlg);
+                }
 
                 // 保存计算结果
                 updObj.setQuery("{'common.fields.code':#}");
