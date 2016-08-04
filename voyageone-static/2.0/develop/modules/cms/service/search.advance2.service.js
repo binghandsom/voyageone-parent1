@@ -472,7 +472,8 @@ define([
                 // 设置在各平台上的建议售价
                 productInfo.priceMsrp = _setPriceSale(productInfo.platforms, searchParam, 'pPriceMsrpSt', 'pPriceMsrpEd');
                 // 设置指导售价
-                productInfo.priceDetail = _setPriceDetail(productInfo.platforms, productInfo.carts);
+                productInfo.priceRetail = _setPriceSale(productInfo.platforms, searchParam, 'pPriceRetailSt', 'pPriceRetailEd');
+                productInfo._retailPriceCol = _setRetailPriceCol(productInfo.platforms, searchParam);
                 // 设置在各平台上的最终售价
                 productInfo.priceSale = _setPriceSale(productInfo.platforms, searchParam, 'pPriceSaleSt', 'pPriceSaleEd');
 
@@ -557,43 +558,101 @@ define([
             if (object == null || object == undefined) {
                 return [];
             }
-            if (object) {
-                var fstLine = [];
-                var result = [];
-                var fstCode = 0;
-                if (searchParam && searchParam.cartId) {
-                    fstCode = searchParam.cartId;
+
+            var fstLine = [];
+            var result = [];
+            var fstCode = 0;
+            if (searchParam && searchParam.cartId) {
+                fstCode = searchParam.cartId;
+            }
+            _.forEach(object, function (data) {
+                if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
+                    return;
                 }
-                _.forEach(object, function (data) {
-                    if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
-                        return;
+                var priceItem = '';
+                var cartInfo = Carts.valueOf(data.cartId);
+                if (cartInfo == null || cartInfo == undefined) {
+                    priceItem += data.cartId;
+                } else {
+                    priceItem += cartInfo.name;
+                }
+                priceItem += ': ';
+                // 合计sku价格的上下限
+                if (data[stakey] == data[endKey]) {
+                    priceItem += $filter('number')(data[stakey], 2);
+                } else {
+                    priceItem += $filter('number')(data[stakey], 2);
+                    priceItem += " ~ ";
+                    priceItem += $filter('number')(data[endKey], 2);
+                }
+
+                // 当是中国指导价时，要有价格变化提示
+                if (stakey == 'pPriceRetailSt' && data.skus) {
+                    for (idx in data.skus) {
+                        if (data.skus[idx].priceChgFlg && (data.skus[idx].priceChgFlg.indexOf('U') == 0 || data.skus[idx].priceChgFlg.indexOf('D') == 0)) {
+                            priceItem += '<label class="text-u-red font-bold">&nbsp;!</label>'
+                            break;
+                        }
                     }
-                    var priceItem = '';
-                    var cartInfo = Carts.valueOf(data.cartId);
-                    if (cartInfo == null || cartInfo == undefined) {
-                        priceItem += data.cartId;
-                    } else {
-                        priceItem += cartInfo.name;
-                    }
-                    priceItem += ': ';
-                    // 合计sku价格的上下限
-                    if (data[stakey] == data[endKey]) {
-                        priceItem += $filter('number')(data[stakey], 2);
-                    } else {
-                        priceItem += $filter('number')(data[stakey], 2);
-                        priceItem += " ~ ";
-                        priceItem += $filter('number')(data[endKey], 2);
-                    }
-                    if (fstCode == data.cartId) {
-                        fstLine.push(priceItem);
-                    } else {
-                        result.push(priceItem);
-                    }
-                });
-                fstLine = fstLine.concat(result);
+                }
+
+                if (fstCode == data.cartId) {
+                    fstLine.push(priceItem);
+                } else {
+                    result.push(priceItem);
+                }
+            });
+            fstLine = fstLine.concat(result);
+            return fstLine;
+        }
+
+        function _setRetailPriceCol(object, searchParam) {
+            var fstLine = {'pVal':'', 'pFlg':false};
+            if (object == null || object == undefined) {
                 return fstLine;
             }
-            return [];
+
+            var fstCode = 0;
+            if (searchParam && searchParam.cartId) {
+                fstCode = searchParam.cartId;
+            }
+            _.forEach(object, function (data) {
+                if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
+                    return;
+                }
+                if (fstCode != data.cartId) {
+                    return;
+                }
+                var priceItem = '';
+                var cartInfo = Carts.valueOf(data.cartId);
+                if (cartInfo == null || cartInfo == undefined) {
+                    priceItem += data.cartId;
+                } else {
+                    priceItem += cartInfo.name;
+                }
+                priceItem += ': ';
+                // 合计sku价格的上下限 'pPriceRetailSt', 'pPriceRetailEd'
+                if (data['pPriceRetailSt'] == data['pPriceRetailEd']) {
+                    priceItem += $filter('number')(data['pPriceRetailSt'], 2);
+                } else {
+                    priceItem += $filter('number')(data['pPriceRetailSt'], 2);
+                    priceItem += " ~ ";
+                    priceItem += $filter('number')(data['pPriceRetailEd'], 2);
+                }
+                fstLine.pVal = priceItem;
+
+                // 当是中国指导价时，要有价格变化提示
+                if (data.skus) {
+                    for (idx in data.skus) {
+                        if (data.skus[idx].priceChgFlg && (data.skus[idx].priceChgFlg.indexOf('U') == 0 || data.skus[idx].priceChgFlg.indexOf('D') == 0)) {
+                            fstLine.pFlg = true;
+                            break;
+                        }
+                    }
+                }
+            });
+
+            return fstLine;
         }
 
         /**

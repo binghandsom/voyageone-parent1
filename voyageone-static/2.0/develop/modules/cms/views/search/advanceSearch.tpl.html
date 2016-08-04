@@ -229,7 +229,7 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="form-group" ng-if="vm._cart_display">
+                                        <div class="form-group" ng-if="vm._cart_display&&vm.searchInfo.cartId!=27">
                                             <label class="col-sm-3 control-label">实际平台状态</label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-checkbox">
@@ -737,7 +737,12 @@
                                             </button>
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:150px;">
-                                            {{productInfo.priceDetail}}<label ng-if="productInfo._prodChgInfo == 1" style="color:#a8ffd5;font-size: 16px;font-weight:bolder">&nbsp;!</label>
+                                            <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceRetail.length>0"
+                                                    popover-html="showInfo({{productInfo.priceRetail}})"
+                                                    popover-title="{{'TXT_PRICE' | translate}}" type="button"
+                                                    popover-placement="left" class="btn btn-default btn-xs">
+                                                {{productInfo._retailPriceCol.pVal}}<label ng-if="productInfo._retailPriceCol.pFlg" class="text-u-red font-bold" style="margin-bottom:0px">&nbsp;!</label>
+                                            </button>
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:170px;">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceSale.length>0"
