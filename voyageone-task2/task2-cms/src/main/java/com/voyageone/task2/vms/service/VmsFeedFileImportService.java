@@ -322,15 +322,16 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                             vmsBtFeedInfoTempDaoExt.updateStatus(updateSkuModel);
                         }
                     }
-                    $info("point-mongo-start" + ",channel：" + channel.getFull_name());
+
                     // 插入MongoDb表
                     if (feedInfoModelList.size() > 0) {
+                        $info("point-mongo-start" + ",channel：" + channel.getFull_name());
                         Map<String, List<CmsBtFeedInfoModel>> response = feedToCmsService.updateProduct(channel.getOrder_channel_id(), feedInfoModelList, getTaskName(), false);
                         List<CmsBtFeedInfoModel> succeed = response.get("succeed");
                         codeCnt += succeed.size();
                         skuCnt += succeed.stream().mapToInt((model) -> model.getSkus().size()).summaryStatistics().getSum();
+                        $info("point-mongo-end" + ",channel：" + channel.getFull_name());
                     }
-                    $info("point-mongo-end" + ",channel：" + channel.getFull_name());
                     i++;
                 }
                 $info("插入MongoDb表,成功Code数: " + codeCnt + ", Sku数:" + skuCnt + ",channel：" + channel.getFull_name());
