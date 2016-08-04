@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.jm;
 
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
@@ -11,10 +12,7 @@ import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionSku3Service;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
-import com.voyageone.service.model.cms.CmsBtJmProductModel;
-import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
-import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
-import com.voyageone.service.model.cms.CmsBtJmSkuModel;
+import com.voyageone.service.model.cms.*;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -309,8 +307,8 @@ public class CmsJmPromotionDetailController extends CmsController {
         CallResult result = new CallResult();
         return success(result);
     }
-
-    //全部再售
+    //全量删除
+    //全量再售
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.CopyDealAll)
     public AjaxResponse copyDealAll(@RequestBody int promotionId) {
         CallResult result = service3.copyDealAll(promotionId);
@@ -330,19 +328,12 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
 
+     //全量删除
     //删除全部product  已经再售的不删
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DeleteAllProduct)
     public AjaxResponse deleteAllProduct(@RequestBody int promotionId) {
         CallResult result = new CallResult();
-        if(service3.existsCopyDealByPromotionId(promotionId))
-        {
-            result.setResult(false);
-            result.setMsg("该专场内存在商品已完成上传，禁止删除!");
-        }
-        else {
-            service3.deleteAllProduct(promotionId);
-        }
-
+        result= service3.deleteAllProduct(promotionId);
         return success(result);
     }
 

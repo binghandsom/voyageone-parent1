@@ -206,6 +206,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
 
     }
 
+    //全量上传
     //全部再售    //1. if未上传  then synch_status=1   2.if已上传  then price_status=1
     @VOTransactional
     public CallResult copyDealAll(int promotionId) {
@@ -216,7 +217,9 @@ private CmsBtPromotionDao daoCmsBtPromotion;
             result.setResult(false);
             return result;
         }
+        //if 已上传  then 设置为 价格待更新
         daoExt.copyDealAll_UpdatePriceStatus(promotionId);
+        //if 未上传 then 设置为 待上传
         daoExt.copyDealAll_UpdateSynchStatus(promotionId);
         return result;
     }
@@ -257,8 +260,21 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         });
         return codeList;
     }
+    // 全量删除
     @VOTransactional //删除全部product  已经再售的不删
-    public void deleteAllProduct(int jmPromotionId) {
+    public CallResult deleteAllProduct(int jmPromotionId) {
+        CallResult result = new CallResult();
+        CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(jmPromotionId);
+        if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
+            result.setMsg("活动预热已开始,不能删除!");
+            result.setResult(false);
+            return result;
+        }
+
+        if (this.existsCopyDealByPromotionId(jmPromotionId)) {
+            result.setResult(false);
+            result.setMsg("该专场内存在商品已完成上传，禁止删除!");
+        }
         //先删除sku 再删除product
         daoExtCmsBtJmPromotionSku.deleteAllSku(jmPromotionId);
         daoExt.deleteAllProduct(jmPromotionId);
@@ -268,6 +284,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
             daoExtCamelCmsBtPromotionGroups.deleteByPromotionId(modelCmsBtPromotion.getId());
             daoExtCamelCmsBtPromotionSkus.deleteByPromotionId(modelCmsBtPromotion.getId());
         }
+        return result;
     }
 
     public boolean existsCopyDealByPromotionId(int promotionId) {
