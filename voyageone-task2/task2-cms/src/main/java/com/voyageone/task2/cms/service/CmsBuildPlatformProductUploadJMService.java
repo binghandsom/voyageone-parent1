@@ -664,6 +664,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     sxData.setErrorMessage(e.getMessage());
                 }
             }
+            // 上新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
+            productGroupService.updateUploadErrorStatus(sxData.getPlatform(), sxData.getErrorMessage());
+
             sxProductService.insertBusinessLog(sxData, getTaskName());
             //保存workload
             saveWorkload(work, WORK_LOAD_FAIL);

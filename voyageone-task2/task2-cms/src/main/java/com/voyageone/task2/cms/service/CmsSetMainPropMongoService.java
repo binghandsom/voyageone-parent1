@@ -2500,9 +2500,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param formula     String   计算公式
          * @param channelId   String   渠道id
          * @param feedCategory String  feed类目(有些店铺的价格计算公式时基于类目的)
+         * @param priceRoundUpFlg String 价格是否向上取整flg(1:向上取整 0:不向上取整)
          * @return 计算后价格
          */
-        private Double calculatePriceByFormula(CmsBtFeedInfoModel_Sku feedSkuInfo, String formula, String channelId, String feedCategory) {
+        private Double calculatePriceByFormula(CmsBtFeedInfoModel_Sku feedSkuInfo, String formula, String channelId,
+                                               String feedCategory, String priceRoundUpFlg) {
 
             String originalFomula = formula;
             Double priceClientMsrp = feedSkuInfo.getPriceClientMsrp();
@@ -2548,10 +2550,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // update by desmond 2016/07/12 start
 //                // 四舍五入取整
 //                BigDecimal valueBigDecimal = new BigDecimal(String.valueOf(valueDouble)).setScale(0, BigDecimal.ROUND_HALF_UP);
-                // 向上取整(3.01->4.00)
-                BigDecimal valueBigDecimal = new BigDecimal(String.valueOf(valueDouble)).setScale(0, BigDecimal.ROUND_UP);
+
+                double value = valueDouble;
+                if ("1".equals(priceRoundUpFlg)) {
+                    // 向上取整(3.01->4.00)
+                    value = new BigDecimal(String.valueOf(valueDouble)).setScale(0, BigDecimal.ROUND_UP).doubleValue();
+                }
                 // update by desmond 2016/07/12 end
-                return valueBigDecimal.doubleValue();
+                return value;
 
             } catch (Exception ex) {
                 // 价格计算公式出错时抛出异常，中止feed导入
@@ -3085,8 +3091,17 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // delete desmond 2016/07/01 end
 
                 if (commonSku != null) {
-                    commonSku.setPriceMsrp(calculatePriceByFormula(sku, priceMsrpCalcFormula, channelId, feed.getCategory()));
-                    commonSku.setPriceRetail(calculatePriceByFormula(sku, priceRetailCalcFormula, channelId, feed.getCategory()));
+                    // add by desmond 2016/08/04 start
+                    // 从cms_mt_channel_config表从取得该channel的价格是否要向上取整flg
+                    String priceRoundUpFlg = "1";  // 默认为向上取整
+                    CmsChannelConfigBean sizeTypeChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(this.channel.getOrder_channel_id(),
+                            CmsConstants.ChannelConfig.PRICE_ROUND_UP_FLG);
+                    if (sizeTypeChannelConfigBean != null && "0".equals(sizeTypeChannelConfigBean.getConfigValue1())) {
+                        priceRoundUpFlg = "0";          // 0:不向上取整
+                    }
+                    // add by desmond 2016/08/04 start
+                    commonSku.setPriceMsrp(calculatePriceByFormula(sku, priceMsrpCalcFormula, channelId, feed.getCategory(), priceRoundUpFlg));
+                    commonSku.setPriceRetail(calculatePriceByFormula(sku, priceRetailCalcFormula, channelId, feed.getCategory(), priceRoundUpFlg));
                     commonSku.setClientMsrpPrice(sku.getPriceClientMsrp());
                     commonSku.setClientRetailPrice(sku.getPriceClientRetail());
                     commonSku.setClientNetPrice(sku.getPriceNet());
