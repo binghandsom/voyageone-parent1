@@ -36,7 +36,8 @@ public class VmsFeedSearchService extends BaseAppService {
     public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, UserSessionBean userInfo) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(feedInfoService.getSearchQueryForVendor(searchValue));
-        queryObject.setProjection(searchItems);
+        // 当数据很多时，加上指定字段反而影响性能
+        // queryObject.setProjection(searchItems);
         queryObject.setSort(sortItems);
         int pageNum = (Integer) searchValue.get("curr");
         int pageSize = (Integer) searchValue.get("size");

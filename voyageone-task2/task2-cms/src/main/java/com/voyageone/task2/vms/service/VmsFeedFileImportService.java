@@ -49,12 +49,12 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
     public static final int PRICE = 6;
     public static final int MSRP = 7;
     public static final int QUANTITY = 8;
-    public static final int IMAGES = 9;
-    public static final int DESCRIPTION = 10;
-    public static final int SHORT_DESCRIPTION = 11;
-    public static final int PRODUCT_ORIGIN = 12;
-    public static final int CATEGORY = 13;
-    public static final int WEIGHT = 14;
+    public static final int WEIGHT = 9;
+    public static final int IMAGES = 10;
+    public static final int DESCRIPTION = 11;
+    public static final int SHORT_DESCRIPTION = 12;
+    public static final int PRODUCT_ORIGIN = 13;
+    public static final int CATEGORY = 14;
     public static final int BRAND = 15;
     public static final int MATERIALS = 16;
     public static final int VENDOR_PRODUCT_URL = 17;
@@ -106,8 +106,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         {
             add("oz");
             add("lbs");
-            add("g");
             add("kg");
+            add("g");
         }
     };
 
@@ -662,7 +662,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         skuModel.setQty(new Integer(skuTemp.getQuantity()));
                         skuModel.setRelationshipType(skuTemp.getRelationshipType());
                         skuModel.setVariationTheme(skuTemp.getVariationTheme());
-                        setFeedWeight(skuModel, feedInfo, codeModel.getWeight());
+                        setFeedWeight(skuModel, feedInfo, skuTemp.getWeight());
                         if (!StringUtils.isEmpty(skuTemp.getMsrp())) {
                             skuModel.setPriceClientMsrp(new BigDecimal(skuTemp.getMsrp()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                         } else {
@@ -1433,7 +1433,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             errorList.add(errorMap);
 
             // 如果errorList超过了一定的数量那么先输出一部分
-            if (errorList.size() == 10) {
+            if (errorList.size() == 10000) {
                 createErrorFile(errorList, 0);
                 errorList.clear();
             }
@@ -1596,15 +1596,19 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 }
             }
 
+            if (StringUtils.isEmpty(weightOrg)) {
+                weightOrg = weight;
+            }
+
             // 按lbs的单位进行转换
             if ("oz".equals(weightOrgUnit.toLowerCase())) {
-                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(16)).setScale(3, BigDecimal.ROUND_HALF_UP).toString();
+                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(16), 3, BigDecimal.ROUND_HALF_UP).toString();
             } else if ("g".equals(weightOrgUnit.toLowerCase())) {
-                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(453.59237)).setScale(3, BigDecimal.ROUND_HALF_UP).toString();
+                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(453.59237), 3, BigDecimal.ROUND_HALF_UP).toString();
             } else if ("kg".equals(weightOrgUnit.toLowerCase())) {
-                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(0.4535924)).setScale(3, BigDecimal.ROUND_HALF_UP).toString();
+                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(0.4535924), 3, BigDecimal.ROUND_HALF_UP).toString();
             } else {
-                weightCalc = weightOrgUnit;
+                weightCalc = weightOrg;
             }
 
             skuInfo.setWeightOrg(weightOrg);

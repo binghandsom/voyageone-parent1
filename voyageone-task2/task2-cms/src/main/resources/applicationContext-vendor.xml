@@ -10,8 +10,8 @@
 
         <!-- vms batch add    -->
         <!-- 扫描Vendor通过ftp上传的Csv文件 五分钟运行一次 -->
-        <task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0/1 * * * * ?"/>
-        <!--<task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0 0/5 * * * ?"/>-->
+        <!--<task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0/1 * * * * ?"/>-->
+        <task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0 0/5 * * * ?"/>
 
         <!-- 定期生成财务报表 每天零点十分触发一次-->
         <task:scheduled ref="VmsMakeFinancialReportJob" method="run" cron="0 10 0 * * ?"/>
