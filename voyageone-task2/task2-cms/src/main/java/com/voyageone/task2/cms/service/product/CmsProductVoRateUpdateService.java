@@ -169,18 +169,18 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
                 int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(logModelList);
                 $debug("CmsProductVoRateUpdateService修改商品价格 记入价格变更履历结束 结果=" + cnt);
             }
-
-            // 记录商品修改历史
-            $debug("CmsProductVoRateUpdateService 开始记入价格变更履历");
-            long sta = System.currentTimeMillis();
-            productStatusHistoryService.insertList(channelId, codeList, cartId, EnumProductOperationType.BatchUpdate, msg, creater);
-            $debug("CmsProductVoRateUpdateService 记入价格变更履历结束 耗时" + (System.currentTimeMillis() - sta));
-
-            // 插入上新程序
-            $debug("CmsProductVoRateUpdateService 开始记入SxWorkLoad表");
-            sta = System.currentTimeMillis();
-            sxProductService.insertSxWorkLoad(channelId, codeList, cartId, creater);
-            $debug("CmsProductVoRateUpdateService 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
         }
+
+        // 记录商品修改历史
+        $debug("CmsProductVoRateUpdateService 开始记入价格变更履历");
+        long sta = System.currentTimeMillis();
+        productStatusHistoryService.insertList(channelId, codeList, -1, EnumProductOperationType.BatchUpdate, msg, creater);
+        $debug("CmsProductVoRateUpdateService 记入价格变更履历结束 耗时" + (System.currentTimeMillis() - sta));
+
+        // 插入上新程序
+        $debug("CmsProductVoRateUpdateService 开始记入SxWorkLoad表");
+        sta = System.currentTimeMillis();
+        sxProductService.insertSxWorkLoad(channelId, codeList, null, creater);
+        $debug("CmsProductVoRateUpdateService 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
     }
 }
