@@ -780,6 +780,7 @@ public class CmsFieldEditService extends BaseAppService {
                         return rsMap;
                     }
                 }
+                // 要更新最终售价变化状态
                 String diffFlg = productSkuService.getPriceDiffFlg(breakThreshold, rs, result);
                 if ("2".equals(diffFlg) || "5".equals(diffFlg)) {
                     $info(String.format("setProductSalePrice: 输入的最终售价低于指导价，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));

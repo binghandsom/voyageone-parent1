@@ -92,7 +92,7 @@ public class CmsChannelTagService extends BaseAppService {
                     Map<String, Boolean> orgDispMap = new HashMap<>();
 
                     for (CmsBtTagBean tagBean : tagsList) {
-                        if (tagBean.getChildren() == null) {
+                        if (tagBean.getChildren() == null || tagBean.getChildren().size() == 0) {
                             // 是子节点，遍历商品列表，查看是否勾选
                             int selCnt = 0;
                             for (CmsBtProductModel prodObj : prodList) {
