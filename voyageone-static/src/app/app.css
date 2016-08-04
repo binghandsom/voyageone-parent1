@@ -257,7 +257,6 @@ input::-webkit-clear-button {
 }
 .table {
   margin-bottom: 0;
-  min-width: 1000px;
 }
 .table thead th {
   font-size: 14px;
@@ -270,6 +269,13 @@ input::-webkit-clear-button {
   color: lightcoral;
   margin-top: 0;
   padding-top: 16px;
+}
+.nav-tabs > li > a {
+  color: #6f6f6f;
+}
+.nav-tabs > li.active > a {
+  font-weight: bold;
+  color: #000;
 }
 .dropdown-toggle-arr:after {
   font-family: FontAwesome;
