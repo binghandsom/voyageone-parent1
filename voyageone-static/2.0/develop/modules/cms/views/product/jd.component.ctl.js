@@ -73,7 +73,8 @@ define([
                             scope.vm.checkFlag.category = scope.vm.platform.pCatPath == null ? 0 : 1;
                             scope.vm.platform.pStatus = scope.vm.platform.pStatus == null ? "WaitingPublish" : scope.vm.platform.pStatus;
                             scope.vm.sellerCats = scope.vm.platform.sellerCats == null?[]:scope.vm.platform.sellerCats;
-                            scope.vm.platform.pStatus = scope.vm.platform.pPublishError != null && scope.vm.platform.pPublishError != "" ? "Failed":scope.vm.platform.pStatus;
+                            scope.vm.platform.pStatus = scope.vm.platform.pPublishMessage != null && scope.vm.platform.pPublishMessage != "" ? "Failed":scope.vm.platform.pStatus;
+
                         }
 
                         _.each(scope.vm.mastData.skus,function(mSku){
