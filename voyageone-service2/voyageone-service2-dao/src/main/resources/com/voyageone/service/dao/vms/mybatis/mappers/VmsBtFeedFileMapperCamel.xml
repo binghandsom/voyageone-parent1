@@ -37,7 +37,7 @@
                 `error_file_name` = #{errorFileName,jdbcType=VARCHAR},
             </if>
             <if test="errorMsg != null" >
-                `error_msg` = #{errorMsg,jdbcType=VARCHAR},
+                `error_msg` = #{errorMsg,jdbcType=LONGVARCHAR},
             </if>
             <if test="updatedCodeNum != null" >
                 `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER},
@@ -93,7 +93,7 @@
                 and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
             </if>
             <if test="errorMsg != null" >
-                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+                and `error_msg` = #{errorMsg,jdbcType=LONGVARCHAR}
             </if>
             <if test="updatedCodeNum != null" >
                 and `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER}
@@ -141,7 +141,7 @@
                 and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
             </if>
             <if test="errorMsg != null" >
-                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+                and `error_msg` = #{errorMsg,jdbcType=LONGVARCHAR}
             </if>
             <if test="updatedCodeNum != null" >
                 and `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER}
@@ -186,7 +186,7 @@
                 and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
             </if>
             <if test="errorMsg != null" >
-                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+                and `error_msg` = #{errorMsg,jdbcType=LONGVARCHAR}
             </if>
             <if test="updatedCodeNum != null" >
                 and `updated_code_num` = #{updatedCodeNum,jdbcType=INTEGER}
@@ -271,7 +271,7 @@
                 #{errorFileName,jdbcType=VARCHAR},
             </if>
             <if test="errorMsg != null" >
-                #{errorMsg,jdbcType=VARCHAR},
+                #{errorMsg,jdbcType=LONGVARCHAR},
             </if>
             <if test="updatedCodeNum != null" >
                 #{updatedCodeNum,jdbcType=INTEGER},

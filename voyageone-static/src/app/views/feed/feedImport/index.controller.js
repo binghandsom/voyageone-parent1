@@ -37,10 +37,10 @@ define([
                 }
                 var uploadDateStart1 = "";
                 var uploadDateEnd1 = "";
-                if (this.uploadDateStart != "") {
+                if (this.uploadDateStart != "" && this.uploadDateStart != null) {
                     uploadDateStart1 = new Date(this.uploadDateStart).getTime();
                 }
-                if (this.uploadDateEnd != "") {
+                if (this.uploadDateEnd != "" && this.uploadDateEnd != null) {
                     uploadDateEnd1 =  new Date(this.uploadDateEnd);
                     uploadDateEnd1.setDate(uploadDateEnd1.getDate() + 1);
                     uploadDateEnd1 = uploadDateEnd1.getTime();

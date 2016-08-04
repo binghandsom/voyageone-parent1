@@ -24,11 +24,11 @@ public class VmsGetHomeInfoServiceTest {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("088");
+        taskControlBean.setCfg_val1("090");
         taskControlList.add(taskControlBean);
         TaskControlBean taskControlBean1 = new TaskControlBean();
         taskControlBean1.setCfg_name("order_channel_id");
-        taskControlBean1.setCfg_val1("089");
+        taskControlBean1.setCfg_val1("091");
         taskControlList.add(taskControlBean1);
         vmsGetHomeInfoService.onStartup(taskControlList);
     }
