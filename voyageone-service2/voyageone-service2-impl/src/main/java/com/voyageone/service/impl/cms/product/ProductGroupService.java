@@ -192,6 +192,11 @@ public class ProductGroupService extends BaseService {
      */
     public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model) {
 
+        if (model == null) {
+            $error("回写上新成功状态信息时失败! [GroupModel=null]");
+            return model;
+        }
+
         // 更新cms_bt_product_groups表
         this.update(model);
 
@@ -250,12 +255,17 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
-     * 上新失败时更新该model对应的所有产品的pPublishError的值
+     * 上新失败时更新该model对应的所有产品的pPublishError和pPublishMessage的值
      * @param model CmsBtProductGroupModel model中包含的productCodes,是这次平台上新处理的codes
      * @param errMsg String sxData中的上新错误消息
      * @return boolean 更新结果状态
      */
     public boolean updateUploadErrorStatus(CmsBtProductGroupModel model, String errMsg) {
+
+        if (model == null) {
+            $error("回写上新错误信息时失败! [GroupModel=null]");
+            return false;
+        }
 
         // 如果传入的groups包含code列表,则同时更新code的状态
         if (!model.getProductCodes().isEmpty()) {
