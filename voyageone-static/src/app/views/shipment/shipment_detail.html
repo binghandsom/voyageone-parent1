@@ -54,7 +54,8 @@
                                 <td class="td-1 v-middle">{{ctrl.getStatusName(ctrl.shipment.status)}}</td>
                                 <td class="td-2 v-middle">
                                     <form name="shipmentForm"  novalidate>
-                                        <span ng-class="{'input-group':true, 'has-error': !shipmentForm.shippedDate.$valid}">
+                                        <span
+                                                ng-class="{'input-group':true, 'has-error': ctrl.channelConfigs.vendorOperateType == 'SKU' && !shipmentForm.shippedDate.$valid}">
                                             <input name="shippedDate" class="form-control"
                                                    ng-attr-title="{{'TXT_SHIPPED_DATE' | translate}}"
                                                    type="date"
@@ -69,7 +70,7 @@
                                         </span>
                                     </form>
                                 </td>
-                                <td ng-class="{'td-2 text-left v-middle':true, 'has-error': !ctrl.shipment.expressCompany}">
+                                <td ng-class="{'td-2 text-left v-middle':true, 'has-error': ctrl.channelConfigs.vendorOperateType == 'SKU' && !ctrl.shipment.expressCompany}">
                                     <select name="expressCompany" id="select" class="form-control"
                                             ng-disabled="ctrl.shipment.status != 1 || ctrl.channelConfigs.vendorOperateType != 'SKU'"
                                             ng-model="ctrl.shipment.expressCompany"
@@ -77,7 +78,8 @@
                                             ng-required="ctrl.channelConfigs.vendorOperateType == 'SKU'">
                                     </select>
                                 </td>
-                                <td ng-class="{'td-2 text-center v-middle': true, 'has-error':!ctrl.shipment.trackingNo}">
+                                <td
+                                        ng-class="{'td-2 text-center v-middle': true, 'has-error': ctrl.channelConfigs.vendorOperateType == 'SKU' && !ctrl.shipment.trackingNo}">
                                     <input name="trackingNo" type="text" class="form-control"
                                            ng-model="ctrl.shipment.trackingNo"
                                            ng-disabled="ctrl.shipment.status != 1 || ctrl.channelConfigs.vendorOperateType != 'SKU'"

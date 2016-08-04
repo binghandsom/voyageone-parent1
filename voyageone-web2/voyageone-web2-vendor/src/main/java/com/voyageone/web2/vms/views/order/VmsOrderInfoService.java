@@ -513,8 +513,7 @@ public class VmsOrderInfoService extends BaseService {
 
             if (cancelledCount > 0) throw new BusinessException("8000024");
             if (packagedCount > 0) throw new BusinessException("8000034");
-            // 理论上应该只有以上两种情况 最后加一个抛出确保今后状态加了之类的不会出错=。=
-            throw new BusinessException("8000035");
+
         }
 
         VmsBtShipmentModel dbShipment = shipmentService.select(shipment.getId());
