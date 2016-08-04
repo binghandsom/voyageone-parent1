@@ -6,6 +6,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.HttpScene7;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ftp.FtpComponentFactory;
@@ -184,7 +185,18 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                         continue;
                     }
 
+
                     String fileName = imagesModel.getImgName() + ".jpg";
+
+                    // 直接通过http的方式上传到s7 start
+                    $info("thread-" + threadNo + ":" + imageUrl + "http上传开始");
+                    try {
+                        HttpScene7.uploadImageFile(uploadPath, fileName, inputStream,false);
+                    }catch (Exception e){
+
+                    }
+                    // 直接通过http的方式上传到s7 end
+
                     $info("thread-" + threadNo + ":" + imageUrl + "ftp上传开始");
                     FtpFileBean ftpFileBean = new FtpFileBean(inputStream, uploadPath, fileName);
                     ftpComponent.uploadFile(ftpFileBean);
