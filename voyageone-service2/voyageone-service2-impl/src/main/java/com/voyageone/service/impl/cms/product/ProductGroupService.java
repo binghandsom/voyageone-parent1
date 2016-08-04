@@ -8,7 +8,6 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
@@ -228,6 +227,8 @@ public class ProductGroupService extends BaseService {
                 // 设置pPublishError：如果上新成功则更新成功则清空，如果上新失败，设置固定值"Error"
                 // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "");
+                // 设置pPublishMessage(产品平台详情页显示用的错误信息)清空
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishMessage", "");
 
                 // 设定批量更新条件和值
                 if (!bulkUpdateMap.isEmpty()) {
@@ -250,10 +251,11 @@ public class ProductGroupService extends BaseService {
 
     /**
      * 上新失败时更新该model对应的所有产品的pPublishError的值
-     * @param model (model中包含的productCodes,是这次平台上新处理的codes)
+     * @param model CmsBtProductGroupModel model中包含的productCodes,是这次平台上新处理的codes
+     * @param errMsg String sxData中的上新错误消息
      * @return boolean 更新结果状态
      */
-    public boolean updateUploadErrorStatus(CmsBtProductGroupModel model) {
+    public boolean updateUploadErrorStatus(CmsBtProductGroupModel model, String errMsg) {
 
         // 如果传入的groups包含code列表,则同时更新code的状态
         if (!model.getProductCodes().isEmpty()) {
@@ -270,6 +272,8 @@ public class ProductGroupService extends BaseService {
                 // 设置pPublishError：如果上新失败，设置固定值"Error"
                 // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "Error");
+                // 设置pPublishMessage(产品平台详情页显示用的错误信息)
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishMessage", errMsg);
 
                 // 设定批量更新条件和值
                 if (!bulkUpdateMap.isEmpty()) {

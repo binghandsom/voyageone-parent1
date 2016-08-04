@@ -3275,9 +3275,9 @@ public class SxProductService extends BaseService {
 
         // 取得变更前的product group表数据
         CmsBtProductGroupModel beforeProductGroup = productGroupService.getProductGroupByGroupId(sxData.getChannelId(),
-                sxData.getPlatform().getGroupId());
+                sxData.getGroupId());
         if (beforeProductGroup == null) {
-            $error("回写上新结果状态之前，没找到更新前的产品group表数据 [ProductCode:%s] [GroupId:%s]",
+            $error("回写上新结果状态失败！没找到更新前的产品group表数据 [ProductCode:%s] [GroupId:%s]",
                     sxData.getChannelId(), sxData.getPlatform().getGroupId());
             return;
         }
@@ -3326,17 +3326,17 @@ public class SxProductService extends BaseService {
 
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
             this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.okNum,
-                    workload.getModifier());
+                    StringUtils.isEmpty(workload.getModifier()) ? modifier : workload.getModifier());
         } else {
             // 上新失败后回写product表pPublishError的值("Error")
-            productGroupService.updateUploadErrorStatus(sxData.getPlatform());
+            productGroupService.updateUploadErrorStatus(sxData.getPlatform(), sxData.getErrorMessage());
 
             // 出错的时候将错误信息回写到cms_bt_business_log表
             this.insertBusinessLog(sxData, modifier);
 
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
             this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.errorNum,
-                    workload.getModifier());
+                    StringUtils.isEmpty(workload.getModifier()) ? modifier : workload.getModifier());
         }
     }
 
