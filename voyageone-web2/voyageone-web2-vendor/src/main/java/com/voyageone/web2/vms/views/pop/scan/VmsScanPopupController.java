@@ -35,6 +35,8 @@ public class VmsScanPopupController extends BaseController {
         Map<String, Object> result = new HashMap<>();
         result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(),
                 scanPopupInitialInfoBean.getShipment(), scanPopupInitialInfoBean.getConsolidationOrderId()));
+        result.put("waitingSkuList", vmsOrderInfoService.getWaitingSkuList(this.getUser(), scanPopupInitialInfoBean
+                .getShipment(), scanPopupInitialInfoBean.getConsolidationOrderId()));
         return success(result);
     }
 
@@ -44,6 +46,8 @@ public class VmsScanPopupController extends BaseController {
         result.put("success", vmsOrderInfoService.scanBarcodeInOrder(this.getUser(), scanInfoBean));
         result.put("scannedSkuList", vmsOrderInfoService.getScannedSkuList(this.getUser(),
                 scanInfoBean.getShipment(), scanInfoBean.getConsolidationOrderId()));
+        result.put("waitingSkuList", vmsOrderInfoService.getWaitingSkuList(this.getUser(), scanInfoBean
+                .getShipment(), scanInfoBean.getConsolidationOrderId()));
         result.put("finished", vmsOrderInfoService.orderScanFinished(this.getUser(), scanInfoBean));
         return success(result);
     }

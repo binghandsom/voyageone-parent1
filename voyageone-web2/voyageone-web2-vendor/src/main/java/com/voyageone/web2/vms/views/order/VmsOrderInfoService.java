@@ -633,4 +633,32 @@ public class VmsOrderInfoService extends BaseService {
                 scanInfoBean.getBarcode(), scanInfoBean.getShipment().getId());
     }
 
+    /**
+     * 获取尚未扫描的SKU列表
+     *
+     * @param user     当前用户
+     * @param shipment 当前shipment
+     * @param orderId  当前orderId
+     * @return 尚未扫描的SKU列表
+     */
+    public List<SubOrderInfoBean> getWaitingSkuList(UserSessionBean user, ShipmentBean shipment,
+                                                    String orderId) {
+
+        // 查找订单内容
+        Map<String, Object> checkParams = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannelId());
+            put("consolidationOrderId", orderId);
+        }};
+
+        List<VmsBtOrderDetailModel> orderDetailList = orderDetailService.select(checkParams);
+
+        return orderDetailList.stream()
+                .filter(vmsBtOrderDetailModel -> null == vmsBtOrderDetailModel.getShipmentId())
+                .map(vmsBtOrderDetailModel -> {
+                    SubOrderInfoBean subOrderInfoBean = new SubOrderInfoBean();
+                    BeanUtil.copy(vmsBtOrderDetailModel, subOrderInfoBean);
+                    return subOrderInfoBean;
+                })
+                .collect(Collectors.toList());
+    }
 }

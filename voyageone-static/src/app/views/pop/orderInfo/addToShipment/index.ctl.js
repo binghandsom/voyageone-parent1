@@ -19,6 +19,7 @@ define([
             this.notify = notify;
             this.shipmentDetails = context.scanPopupInitialInfo;
             this.scannedSkuList = context.scannedSkuList;
+            this.waitingSkuList = context.waitingSkuList;
             this.shipmentScanPopupService = shipmentScanPopupService;
             this.$uibModalInstance = $uibModalInstance;
         }
@@ -44,6 +45,7 @@ define([
                     self.notify.warning('TXT_ITEM_NOT_FOUND');
                 }
                 self.scannedSkuList = data.scannedSkuList;
+                self.waitingSkuList = data.waitingSkuList;
                 if (data.finished) {
                     self.notify.success('TXT_COMPLETED');
                     self.$uibModalInstance.close(data.finished);

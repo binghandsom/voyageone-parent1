@@ -94,6 +94,8 @@ define(function () {
         "TXT_CONFIRM_SHIPPED": "Confirm shipped?",
         "TXT_SHIPMENT_NOT_FOUND": "Shipment not found.",
         "TXT_ERROR": "Error",
+        "TXT_SCANNED": "Scanned",
+        "TXT_WAITING": "Waiting",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
