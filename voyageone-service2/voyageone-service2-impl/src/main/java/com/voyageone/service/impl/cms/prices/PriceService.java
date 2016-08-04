@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms;
+package com.voyageone.service.impl.cms.prices;
 
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.google.common.base.Joiner;
@@ -42,28 +42,21 @@ public class PriceService extends BaseService {
     private static final String COMMISSION_TYPE_PF = "PF";
     private static final String COMMISSION_TYPE_RT = "RT";
 
-    private static final Byte BY_WEIGHT = 0;
-    private static final Byte BY_PC = 1;
+
 
     private static final String HSCODE_TYPE_8_DIGIT = "8_DIGIT";
     private static final String HSCODE_TYPE_10_DIGIT = "10_DIGIT";
     private static final String HSCODE_TYPE = "HSCODE_TYPE";
 
-    private final CmsMtFeeShippingDao cmsMtFeeShippingDao;
-
-    private final CmsMtFeeExchangeDao cmsMtFeeExchangeDao;
 
     private final CmsMtFeeCommissionDao cmsMtFeeCommissionDao;
 
     private final CmsMtFeeTaxDao cmsMtFeeTaxDao;
 
-    @Autowired
-    public PriceService(CmsMtFeeTaxDao cmsMtFeeTaxDao, CmsMtFeeExchangeDao cmsMtFeeExchangeDao,
-                        CmsMtFeeShippingDao cmsMtFeeShippingDao, CmsMtFeeCommissionDao cmsMtFeeCommissionDao) {
-        this.cmsMtFeeTaxDao = cmsMtFeeTaxDao;
-        this.cmsMtFeeExchangeDao = cmsMtFeeExchangeDao;
-        this.cmsMtFeeShippingDao = cmsMtFeeShippingDao;
+    public PriceService(CmsMtFeeCommissionDao cmsMtFeeCommissionDao, CmsMtFeeTaxDao cmsMtFeeTaxDao) {
+
         this.cmsMtFeeCommissionDao = cmsMtFeeCommissionDao;
+        this.cmsMtFeeTaxDao = cmsMtFeeTaxDao;
     }
 
     public CmsBtProductModel setRetailPrice(CmsBtProductModel product, Integer cartId) {
@@ -174,6 +167,16 @@ public class PriceService extends BaseService {
         return product;
     }
 
+
+
+
+
+
+
+
+
+
+
     /**
      * 计算retailPrice
      */
@@ -218,50 +221,9 @@ public class PriceService extends BaseService {
         }
     }
 
-    /**
-     * 取运费
-     */
-    private Double getShippingFee(String shippingType, double weight) {
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("shippingType", shippingType);
 
-        CmsMtFeeShippingModel shippingModel = cmsMtFeeShippingDao.selectOne(queryMap);
 
-        Byte feeType = shippingModel.getFeeType();
 
-        if (BY_WEIGHT.equals(feeType)) {
-            int firstWeight = shippingModel.getFirstWeight();
-            double firstWeightFee = shippingModel.getFirstWeightFee();
-            int additionalWeight = shippingModel.getAdditionalWeight();
-            double additionalWeightFee = shippingModel.getAdditionalWeightFee();
-
-            if (weight <= firstWeight) {
-                return firstWeightFee;
-            } else {
-                return firstWeightFee + Math.ceil((weight - firstWeight) / additionalWeight) * additionalWeightFee;
-            }
-        } else if (BY_PC.equals(feeType)) {
-            return shippingModel.getPcFee();
-        } else {
-            throw new BusinessException("无法匹配 feeType: " + feeType);
-        }
-    }
-
-    /**
-     * 取汇率
-     */
-    private Double getExchangeRate(String currencyType) {
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("currencyType", currencyType);
-
-        Map<String, Object> map = MySqlPageHelper
-                .build(queryMap)
-                .addSort("modified", Order.Direction.DESC)
-                .toMap();
-
-        CmsMtFeeExchangeModel cmsMtFeeExchangeModel = cmsMtFeeExchangeDao.selectOne(map);
-        return cmsMtFeeExchangeModel.getExchangeRate();
-    }
 
     /**
      * 用于计算并获取渠道在相应平台的退货率、其他费用、公司佣金比例的帮助类
@@ -513,27 +475,7 @@ public class PriceService extends BaseService {
             platformCommission = getPlatformCommission(channelId, platformId, cartId, catId);
         }
 
-        /**
-         * 取关税税率
-         *
-         * @param shippingType 发货方式
-         * @param hsCode       税号
-         * @return 关税税率
-         */
-        private Double getTaxRate(String shippingType, String hsCode) {
 
-            Map<String, Object> queryMap = new HashMap<>();
-            queryMap.put("shippingType", shippingType);
-            queryMap.put("hsCode", hsCode);
-
-            CmsMtFeeTaxModel cmsMtFeeTaxModel = cmsMtFeeTaxDao.selectOne(queryMap);
-
-            if (cmsMtFeeTaxModel != null) {
-                return cmsMtFeeTaxModel.getVaTaxRate() + cmsMtFeeTaxModel.getConsumptionTaxRate();
-            }
-
-            return null;
-        }
 
         /**
          * 取平台佣金比例
