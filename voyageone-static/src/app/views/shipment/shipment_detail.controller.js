@@ -103,7 +103,7 @@ define([
                 }
                 self.scannedSkuList = data.scannedSkuList;
                 self.barcode = "";
-            })
+            });
             angular.element(document.getElementsByName('barcodeInputBar')).focus();
         };
 
