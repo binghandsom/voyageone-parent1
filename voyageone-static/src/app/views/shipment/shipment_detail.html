@@ -27,7 +27,8 @@
                     </div>
                     <div class="col-md-8">
                         <div class="form-group input-group" >
-                            <input type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}"
+                            <input name="barcodeInputBar" type="text" class="form-control"
+                                   ng-attr-placeholder="{{'TXT_BARCODE' | translate}}"
                                    ng-model="ctrl.barcode" enter-click="#scan" ng-autofocus="true" ng-disabled="ctrl.shipment.status != 1">
                             <span class="input-group-btn">
                                 <button id="scan" class="btn btn-info" type="button" ng-click="ctrl.scan()" translate="BTN_SCAN" ng-disabled="ctrl.shipment.status != 1 || !ctrl.barcode"></button>

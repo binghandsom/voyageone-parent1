@@ -50,7 +50,8 @@ define([
                     self.notify.success('TXT_COMPLETED');
                     self.$uibModalInstance.close(data.finished);
                 }
-            })
+            });
+            angular.element(document.getElementsByName('barcodeInputBar')).focus();
         };
 
         AddToShipmentController.prototype.focusOnScanBar = function () {
