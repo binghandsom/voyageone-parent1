@@ -124,7 +124,7 @@ public class CmsJmPromotionDetailController extends CmsController {
 //        return success(result);
 //    }
 
-
+     //全量延期
     ///cms/jmpromotion/detail/updateDealEndTimeAll
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealEndTimeAll)
     //延迟Deal结束时间  全量
