@@ -338,7 +338,7 @@ public class BeatJobService extends BaseTaskService {
             try {
                 String imageUrl;
                 if (withPrice)
-                    imageUrl = templateUrl.replace("{key}", imageName).replace("{price}", new DecimalFormat("#").format(promotionPrice));
+                    imageUrl = templateUrl.replace("{key}", imageName).replace("{price}", new DecimalFormat("#.##").format(promotionPrice));
                 else
                     imageUrl = templateUrl.replace("{key}", imageName);
 
