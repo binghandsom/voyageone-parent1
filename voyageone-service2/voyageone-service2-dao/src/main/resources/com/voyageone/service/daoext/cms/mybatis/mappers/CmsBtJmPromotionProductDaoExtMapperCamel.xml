@@ -322,7 +322,7 @@
         </where>
     </select>
 
-    <select id="selectFullMinusDateRepeat">
+    <select id="selectFullMinusDateRepeat"  resultMap="ResultMap">
         SELECT a.* FROM `cms_bt_jm_promotion_product` AS a JOIN cms_bt_jm_promotion AS b ON a.cms_bt_jm_promotion_id=b.id
               WHERE b.promotion_type=1 AND a.synch_status=2 AND a.channel_id=#{channelId} and   a.product_code=#{productCode}
                       AND  #{activityStart} &lt;=a.`activity_end`  and   #{activityEnd}>=a.`activity_start`
