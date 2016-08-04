@@ -78,8 +78,7 @@
                                             ng-required="ctrl.channelConfigs.vendorOperateType == 'SKU'">
                                     </select>
                                 </td>
-                                <td
-                                        ng-class="{'td-2 text-center v-middle': true, 'has-error': ctrl.channelConfigs.vendorOperateType == 'SKU' && !ctrl.shipment.trackingNo}">
+                                <td ng-class="{'td-2 text-center v-middle': true, 'has-error': ctrl.channelConfigs.vendorOperateType == 'SKU' && !ctrl.shipment.trackingNo}">
                                     <input name="trackingNo" type="text" class="form-control"
                                            ng-model="ctrl.shipment.trackingNo"
                                            ng-disabled="ctrl.shipment.status != 1 || ctrl.channelConfigs.vendorOperateType != 'SKU'"
