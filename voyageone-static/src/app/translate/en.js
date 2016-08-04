@@ -21,7 +21,7 @@ define(function () {
         "TXT_FEED_INFO_UPLOAD": "Feed File Upload",
         "TXT_FILE_NAME": "File Name",
         "TXT_FINANCIAL": "Financial",
-        "TXT_FINANCIAL_REPORT": "Financial report",
+        "TXT_FINANCIAL_REPORT": "Financial Report",
         "TXT_FROM": "From",
         "TXT_HOME": "Home",
         "TXT_IMAGE": "Image",
