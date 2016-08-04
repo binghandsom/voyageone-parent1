@@ -324,7 +324,7 @@
 
     <select id="selectFullMinusDateRepeat">
         SELECT a.* FROM `cms_bt_jm_promotion_product` AS a JOIN cms_bt_jm_promotion AS b ON a.cms_bt_jm_promotion_id=b.id
-              WHERE b.promotionType=1 AND a.synch_status=2 AND a.channel_id=#{channelId} and   a.product_code=#{productCode}
+              WHERE b.promotion_type=1 AND a.synch_status=2 AND a.channel_id=#{channelId} and   a.product_code=#{productCode}
                       AND  #{activityStart} &lt;=a.`activity_end`  and   #{activityEnd}>=a.`activity_start`
                       AND a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}
                        LIMIT 1
