@@ -52,6 +52,11 @@ define([
                 }
             })
         };
+
+        AddToShipmentController.prototype.focusOnScanBar = function () {
+            angular.element(document.getElementsByName('barcodeInputBar')).focus();
+        };
+
         return AddToShipmentController;
     })());
 });
