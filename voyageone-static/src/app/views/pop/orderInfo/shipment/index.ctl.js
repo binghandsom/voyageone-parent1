@@ -67,11 +67,6 @@ define([
                 }
 
                 self.shipmentPopupService.submit(req).then(function (data) {
-                    self.shipment = angular.copy(data.currentShipment);
-                    if (self.shipment)
-                        self.shipmentExisted = true;
-                    if (self.shipment.shippedDate)
-                        self.shipment.shippedDate = new Date(self.shipment.shippedDate);
                     self.notify.success("TXT_SUCCESS");
                     self.$uibModalInstance.close(data.currentShipment);
                 });
