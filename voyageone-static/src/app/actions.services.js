@@ -187,7 +187,8 @@ define(function (require) {
             create: "create",
             submit: "submit",
             confirm: "confirm",
-            end: "end"
+            end: "end",
+            countOrder: "count_order"
         }),
         shipmentScanPopupService: new CommonDataService('/vms/popup/scan', {
             init: "init",

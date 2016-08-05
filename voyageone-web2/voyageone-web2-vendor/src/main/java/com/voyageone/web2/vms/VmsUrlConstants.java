@@ -86,6 +86,7 @@ public interface VmsUrlConstants {
             String CONFIRM = "confirm";
             String END = "end";
             String GET_INFO = "get_info";
+            String COUNT_ORDER = "count_order";
         }
 
         interface SCAN {
