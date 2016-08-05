@@ -182,6 +182,11 @@ define([
                     return;
                 }
 
+                if(selFlagArr.length == 0){
+                    self.alert("未选中任何标签！");
+                    return;
+                }
+
                 if(selCounts != 0 && selCounts != orgDispArr.length){
                     self.alert("存在冲突标签请确认！");
                     return;
