@@ -671,6 +671,7 @@ public class VmsOrderInfoService extends BaseService {
      * @return 统计订单数
      */
     public Long countScannedOrder(UserSessionBean user, Integer shipmentId) {
+        if (null == shipmentId || shipmentId == 0) return 0L;
         Map<String, Object> searchParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannelId());
             put("shipmentId", shipmentId);

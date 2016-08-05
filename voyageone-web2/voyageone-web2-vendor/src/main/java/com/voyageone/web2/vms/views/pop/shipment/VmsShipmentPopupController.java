@@ -34,12 +34,19 @@ public class VmsShipmentPopupController extends BaseController {
     }
 
     @RequestMapping(POPUP.SHIPMENT.INIT)
-    public AjaxResponse init(@RequestBody Integer shipmentId) {
+    public AjaxResponse init() {
         Map<String, Object> result = new HashMap<>();
         result.put("shipmentStatusList", vmsShipmentService.getAllStatus());
         result.put("expressCompanies", vmsShipmentService.getAllExpressCompanies());
+        return success(result);
+    }
+
+    @RequestMapping(POPUP.SHIPMENT.COUNT_ORDER)
+    public AjaxResponse countOrder(@RequestBody Integer shipmentId) {
+        Map<String, Object> result = new HashMap<>();
         result.put("orderCount", vmsOrderInfoService.countScannedOrder(this.getUser(), shipmentId));
         return success(result);
+
     }
 
     @RequestMapping(POPUP.SHIPMENT.GET)

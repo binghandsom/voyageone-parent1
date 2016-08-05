@@ -32,13 +32,17 @@ define([
 
         NewShipmentController.prototype.init = function () {
             var self = this;
-            self.shipmentPopupService.init(self.shipment.id).then(function (data) {
+
+            if (self.type == 'end') {
+                self.shipmentPopupService.countOrder(self.shipment.id).then(function (data) {
+                    if (data.orderCount == 0) {
+                        self.alert('TXT_NOTHING_TO_SHIP');
+                        self.$uibModalInstance.close(self.originalShipment);
+                    }
+                });
+            }
+            self.shipmentPopupService.init().then(function (data) {
                 self.expressCompanies = data.expressCompanies;
-                self.orderCount = data.orderCount;
-                if (self.type == 'end' && self.orderCount == 0) {
-                    self.alert('TXT_NOTHING_TO_SHIP');
-                    self.$uibModalInstance.close(self.shipment);
-                }
             })
         };
 
@@ -62,16 +66,15 @@ define([
                     return;
                 }
 
-                if (req.shippedDate)
-                    req.shippedDate = req.shippedDate.getTime();
                 self.shipmentPopupService.submit(req).then(function (data) {
-                    self.shipment = data.currentShipment;
+                    self.shipment = angular.copy(data.currentShipment);
                     if (self.shipment)
                         self.shipmentExisted = true;
+                    if (self.shipment.shippedDate)
+                        self.shipment.shippedDate = new Date(self.shipment.shippedDate);
                     self.notify.success("TXT_SUCCESS");
-                    self.$uibModalInstance.close(self.shipment);
+                    self.$uibModalInstance.close(data.currentShipment);
                 });
-
             });
         };
 
