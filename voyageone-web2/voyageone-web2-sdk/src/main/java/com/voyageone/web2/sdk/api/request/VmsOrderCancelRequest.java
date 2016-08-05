@@ -19,7 +19,7 @@ public class VmsOrderCancelRequest extends VoApiRequest<VmsOrderCancelResponse> 
 
 	@Override
 	public String getApiURLPath() {
-		return "/rest/vms/order/cancelOrder";
+		return "/vms/order/cancelOrder";
 	}
 
 	/**

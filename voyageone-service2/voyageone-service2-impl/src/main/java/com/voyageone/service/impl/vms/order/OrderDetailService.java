@@ -311,7 +311,7 @@ public class OrderDetailService extends BaseService {
                 put("channelId", channelId);
                 put("reservationId", vmsBtOrderDetailModel.getReservationId());
                 put("containerizer", userName);
-                put("shipmentId", shipmentId);
+                put("shipmentId", new Integer(shipmentId));
                 put("status", STATUS_PACKAGED);
             }};
 
@@ -382,6 +382,40 @@ public class OrderDetailService extends BaseService {
         }
 
         return updated;
+    }
+
+    /**
+     * 更新订单状态为Shipped(外部接口更新成Shipment用)
+     *
+     * @param channelId     channelId
+     * @param reservationId 物品id
+     * @param operateTime   操作时间
+     * @param operator      操作着
+     * @return 更新涉及条数
+     */
+    @VOTransactional
+    public int updateReservationStatusToShipped(String channelId, String reservationId, Integer shipment_id, String modifier, Date operateTime, String operator) {
+
+        Map<String, Object> changeStatusParams = new HashMap<String, Object>() {{
+            // 更新条件
+            put("channelId", channelId);
+            put("reservationId", reservationId);
+            // 更新内容
+            put("status", STATUS_SHIPPED);
+            put("modifier", modifier);
+            put("shipmentId", shipment_id);
+            put("shipmentTime", operateTime);
+        }};
+
+        int count = vmsBtOrderDetailDaoExt.updateOrderStatus(changeStatusParams);
+
+        // 记录订单变更状态
+        if (count > 0) {
+            this.logOrderDetails(changeStatusParams);
+
+        }
+
+        return count;
     }
 
     public int countOrderWithShipment(String channelId, Integer shipmentId) {
