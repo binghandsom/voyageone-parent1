@@ -4,18 +4,14 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.cms.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
@@ -29,7 +25,10 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 当产品的vo扣点变更时的处理，计算指导价，记录价格变更履历/记录商品修改历史/同步价格范围/插入上新程序
@@ -48,8 +47,6 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
     private PriceService priceService;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
-    @Autowired
-    private ProductSkuService productSkuService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
     @Autowired
@@ -78,20 +75,13 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
         JomgoQuery queryObj = new JomgoQuery();
         JomgoUpdate updObj = new JomgoUpdate();
 
-        // 阀值
-        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
-        double breakThreshold = 0;
-        if (cmsChannelConfigBean != null) {
-            breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D;
-        }
-
         List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
         for (TypeChannelBean cartObj : cartTypeList) {
             int cartId = NumberUtils.toInt(cartObj.getValue());
             for (String prodCode : codeList) {
                 queryObj.setQuery("{'common.fields.code':#,'platforms.P#':{$exists:true}}");
                 queryObj.setParameters(prodCode, cartId);
-                queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId, "common.fields", "common.skus");
+                queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId + ".skus", "common.fields", "common.skus");
                 CmsBtProductModel prodObj = productService.getProductByCondition(channelId, queryObj);
                 if (prodObj == null) {
                     $warn("CmsProductVoRateUpdateService 产品不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
@@ -102,31 +92,9 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
                     $warn("CmsProductVoRateUpdateService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId);
                     continue;
                 }
-                // 先暂存旧的指导价
-                Map<String, Double> skuRetailPriceMap = new HashMap<>();
-                for (BaseMongoMap<String, Object> skuObj : skuList) {
-                    skuRetailPriceMap.put(skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceRetail"));
-                }
 
                 // 计算指导价
                 prodObj = priceService.setRetailPrice(prodObj, cartId);
-                // 必须同时更新指导售价变化状态和最终售价变化状态
-                for (BaseMongoMap<String, Object> skuObj : skuList) {
-                    String skuCode = skuObj.getStringAttribute("skuCode");
-                    Double newRetailPrice = skuObj.getDoubleAttribute("priceRetail");
-                    // 更新最终售价变化状态
-                    String diffFlg = productSkuService.getPriceDiffFlg(breakThreshold, skuObj.getDoubleAttribute("priceSale"), newRetailPrice);
-                    skuObj.put("priceDiffFlg", diffFlg);
-                    // 更新指导售价变化状态
-                    Double oldRetailPrice = skuRetailPriceMap.get(skuCode);
-                    String priceChgFlg = "";
-                    if (oldRetailPrice < newRetailPrice) {
-                        priceChgFlg = "U" + (newRetailPrice - oldRetailPrice);
-                    } else if (newRetailPrice < oldRetailPrice) {
-                        priceChgFlg = "D" + (oldRetailPrice - newRetailPrice);
-                    }
-                    skuObj.put("priceChgFlg", priceChgFlg);
-                }
 
                 // 保存计算结果
                 updObj.setQuery("{'common.fields.code':#}");
@@ -169,18 +137,18 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
                 int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(logModelList);
                 $debug("CmsProductVoRateUpdateService修改商品价格 记入价格变更履历结束 结果=" + cnt);
             }
-
-            // 记录商品修改历史
-            $debug("CmsProductVoRateUpdateService 开始记入价格变更履历");
-            long sta = System.currentTimeMillis();
-            productStatusHistoryService.insertList(channelId, codeList, cartId, EnumProductOperationType.BatchUpdate, msg, creater);
-            $debug("CmsProductVoRateUpdateService 记入价格变更履历结束 耗时" + (System.currentTimeMillis() - sta));
-
-            // 插入上新程序
-            $debug("CmsProductVoRateUpdateService 开始记入SxWorkLoad表");
-            sta = System.currentTimeMillis();
-            sxProductService.insertSxWorkLoad(channelId, codeList, cartId, creater);
-            $debug("CmsProductVoRateUpdateService 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
         }
+
+        // 记录商品修改历史
+        $debug("CmsProductVoRateUpdateService 开始记入价格变更履历");
+        long sta = System.currentTimeMillis();
+        productStatusHistoryService.insertList(channelId, codeList, -1, EnumProductOperationType.BatchUpdate, msg, creater);
+        $debug("CmsProductVoRateUpdateService 记入价格变更履历结束 耗时" + (System.currentTimeMillis() - sta));
+
+        // 插入上新程序
+        $debug("CmsProductVoRateUpdateService 开始记入SxWorkLoad表");
+        sta = System.currentTimeMillis();
+        sxProductService.insertSxWorkLoad(channelId, codeList, null, creater);
+        $debug("CmsProductVoRateUpdateService 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
     }
 }

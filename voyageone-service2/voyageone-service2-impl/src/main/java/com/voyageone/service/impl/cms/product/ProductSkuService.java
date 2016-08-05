@@ -254,38 +254,19 @@ public class ProductSkuService extends BaseService {
      * @param sku sku数据
      * @return 判断结果
      */
-    public String getPriceDiffFlg(String channelId, BaseMongoMap<String, Object> sku){
-
+    public String getPriceDiffFlg(String channelId, BaseMongoMap<String, Object> sku) {
         // 阀值
-        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId
-                , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
-
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
         Double breakThreshold = 0.00;
         if (cmsChannelConfigBean != null) {
             breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D ;
         }
 
-        String diffFlg = "1";
-        if (sku.getDoubleAttribute("priceSale") < sku.getDoubleAttribute("priceRetail")) {
-            Double priceRetail = sku.getDoubleAttribute("priceRetail") * (1.0-breakThreshold);
-            if (priceRetail > sku.getDoubleAttribute("priceSale")) {
-                diffFlg = "5";
-            } else {
-                diffFlg = "2";
-            }
-        } else if (sku.getDoubleAttribute("priceSale") > sku.getDoubleAttribute("priceRetail")) {
-            Double priceRetail = sku.getDoubleAttribute("priceRetail") * (breakThreshold+1.0);
-            if (priceRetail >= sku.getDoubleAttribute("priceSale")) {
-                diffFlg = "3";
-            } else {
-                diffFlg = "4";
-            }
-        }
-        return diffFlg;
+        return getPriceDiffFlg(breakThreshold, sku.getDoubleAttribute("priceSale"), sku.getDoubleAttribute("priceRetail"));
     }
 
     /**
-     * sku共同属性PriceDiffFlg计算方法
+     * sku共同属性PriceDiffFlg计算方法(没有设置阀值时，则不与阀值比较)
      * @param breakThreshold 价格计算阀值
      * @param priceSale 中国最终售价
      * @param priceRetail 中国指导售价
@@ -294,13 +275,13 @@ public class ProductSkuService extends BaseService {
     public String getPriceDiffFlg(double breakThreshold, double priceSale, double priceRetail) {
         String diffFlg = "1";
         if (priceSale < priceRetail) {
-            if (priceSale < priceRetail * (1 - breakThreshold)) {
-                diffFlg = "5";
-            } else {
+            if (priceRetail * (1 - breakThreshold) <= priceSale || breakThreshold == 0) {
                 diffFlg = "2";
+            } else {
+                diffFlg = "5";
             }
         } else if (priceSale > priceRetail) {
-            if (priceSale <= priceRetail * (breakThreshold + 1)) {
+            if (priceSale <= priceRetail * (breakThreshold + 1) || breakThreshold == 0) {
                 diffFlg = "3";
             } else {
                 diffFlg = "4";

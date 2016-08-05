@@ -11,6 +11,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -163,11 +164,7 @@ public class CmsFieldEditService extends BaseAppService {
             } else if ("sizeType".equals(prop_id)) {
                 msg = "高级检索 批量更新：适用人群--" + stsCode;
             }
-            // 店铺(cart/平台)列表
-            List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
-            for (TypeChannelBean cartObj : cartTypeList) {
-                productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, NumberUtils.toInt(cartObj.getValue()), EnumProductOperationType.BatchUpdate, msg, userInfo.getUserName());
-            }
+            productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, -1, EnumProductOperationType.BatchUpdate, msg, userInfo.getUserName());
             return rsMap;
 
         } else if ("translateStatus".equals(prop_id)) {
@@ -200,11 +197,8 @@ public class CmsFieldEditService extends BaseAppService {
             $debug("翻译状态批量更新结果 " + rs.toString());
 
             // 记录商品修改历史
-            // 店铺(cart/平台)列表
-            List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
-            for (TypeChannelBean cartObj : cartTypeList) {
-                productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, NumberUtils.toInt(cartObj.getValue()), EnumProductOperationType.BatchUpdate, "高级检索 批量更新：翻译状态--" + stsCode, userInfo.getUserName());
-            }
+            stsCode = Types.getTypeName(TypeConfigEnums.MastType.translationStatus.getId(), "cn", stsCode);
+            productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, -1, EnumProductOperationType.BatchUpdate, "高级检索 批量更新：翻译状态--" + stsCode, userInfo.getUserName());
 
             rsMap.put("ecd", 0);
             return rsMap;

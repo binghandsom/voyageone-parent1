@@ -379,6 +379,14 @@ define([
 
                 productInfo.carts = [];
                 if (productInfo.platforms) {
+                    var ptms = [];
+                    _.forEach(productInfo.platforms, function (data) {
+                        ptms.push(data);
+                    });
+                    productInfo.platforms = ptms.sort(function (a, b) {
+                        return a.cartId > b.cartId;
+                    });
+
                     _.forEach(productInfo.platforms, function (data) {
                         if (data.cartId == undefined || data.cartId == '' || data.cartId == null) {
                             return;
@@ -456,11 +464,6 @@ define([
 
                         productInfo.carts.push(cartItem);
                     });
-                    if (productInfo.carts.length > 1) {
-                        productInfo.carts = productInfo.carts.sort(function (a, b) {
-                            return a.cartId > b.cartId;
-                        });
-                    }
                 }
 
                 // 初始化数据选中需要的数组
@@ -578,12 +581,14 @@ define([
                 }
                 priceItem += ': ';
                 // 合计sku价格的上下限
-                if (data[stakey] == data[endKey]) {
-                    priceItem += $filter('number')(data[stakey], 2);
-                } else {
-                    priceItem += $filter('number')(data[stakey], 2);
-                    priceItem += " ~ ";
-                    priceItem += $filter('number')(data[endKey], 2);
+                if (data[stakey] != null && data[stakey] != undefined && data[endKey] != null && data[endKey] != undefined ) {
+                    if (data[stakey] == data[endKey]) {
+                        priceItem += $filter('number')(data[stakey], 2);
+                    } else {
+                        priceItem += $filter('number')(data[stakey], 2);
+                        priceItem += " ~ ";
+                        priceItem += $filter('number')(data[endKey], 2);
+                    }
                 }
 
                 // 当是中国指导价时，要有价格变化提示
@@ -616,13 +621,15 @@ define([
             if (searchParam && searchParam.cartId) {
                 fstCode = searchParam.cartId;
             }
-            _.forEach(object, function (data) {
+            for (idx in object) {
+                var data = object[idx];
                 if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
-                    return;
+                    continue;
                 }
-                if (fstCode != data.cartId) {
-                    return;
+                if (fstCode != 0 && fstCode != data.cartId) {
+                    continue;
                 }
+
                 var priceItem = '';
                 var cartInfo = Carts.valueOf(data.cartId);
                 if (cartInfo == null || cartInfo == undefined) {
@@ -632,12 +639,14 @@ define([
                 }
                 priceItem += ': ';
                 // 合计sku价格的上下限 'pPriceRetailSt', 'pPriceRetailEd'
-                if (data['pPriceRetailSt'] == data['pPriceRetailEd']) {
-                    priceItem += $filter('number')(data['pPriceRetailSt'], 2);
-                } else {
-                    priceItem += $filter('number')(data['pPriceRetailSt'], 2);
-                    priceItem += " ~ ";
-                    priceItem += $filter('number')(data['pPriceRetailEd'], 2);
+                if (data['pPriceRetailSt'] != null && data['pPriceRetailSt'] != undefined && data['pPriceRetailEd'] != null && data['pPriceRetailEd'] != undefined ) {
+                    if (data['pPriceRetailSt'] == data['pPriceRetailEd']) {
+                        priceItem += $filter('number')(data['pPriceRetailSt'], 2);
+                    } else {
+                        priceItem += $filter('number')(data['pPriceRetailSt'], 2);
+                        priceItem += " ~ ";
+                        priceItem += $filter('number')(data['pPriceRetailEd'], 2);
+                    }
                 }
                 fstLine.pVal = priceItem;
 
@@ -650,7 +659,11 @@ define([
                         }
                     }
                 }
-            });
+                if (fstCode == 0) {
+                    // 未选择平台
+                    break;
+                }
+            }
 
             return fstLine;
         }

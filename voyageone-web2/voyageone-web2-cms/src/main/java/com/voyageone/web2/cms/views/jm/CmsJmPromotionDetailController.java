@@ -124,13 +124,13 @@ public class CmsJmPromotionDetailController extends CmsController {
 //        return success(result);
 //    }
 
-
+     //全量延期
     ///cms/jmpromotion/detail/updateDealEndTimeAll
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealEndTimeAll)
     //延迟Deal结束时间  全量
     public AjaxResponse updateDealEndTimeAll(@RequestBody ParameterUpdateDealEndTimeAll parameter) {
         //parameter.getDealEndTime().setTime(59);//聚美专场结束时间都以59秒结尾。
-        CallResult result = serviceCmsBtJmPromotionProduct.updateDealEndTimeAll(parameter);
+        CallResult result = service3.updateDealEndTimeAll(parameter);
         if (result.isResult()) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("id", parameter.getPromotionId());

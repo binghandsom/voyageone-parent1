@@ -286,7 +286,21 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         }
         return result;
     }
+    public CallResult updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
+        CallResult result = new CallResult();
+        CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
 
+        if (modelCmsBtJmPromotion.getIsPromotionFullMinus())//该专场为 满减专场的场合
+        {
+            result.setMsg("该专场为满减专场,不允许延期");
+            result.setResult(false);
+            return result;
+        }
+        modelCmsBtJmPromotion.setActivityEnd(parameter.getDealEndTime());
+        daoCmsBtJmPromotion.update(modelCmsBtJmPromotion);
+        daoExt.updateDealEndTimeAll(parameter);//商品改变延期状态
+        return result;
+    }
     public boolean existsCopyDealByPromotionId(int promotionId) {
         Map<String, Object> map = new HashMap<>();
         map.put("cmsBtJmPromotionId", promotionId);
