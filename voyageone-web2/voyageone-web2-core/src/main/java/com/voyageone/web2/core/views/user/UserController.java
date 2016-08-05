@@ -68,7 +68,7 @@ public class UserController extends BaseController {
         List<UserConfigBean> userConfigBeanList = userSessionBean.getUserConfig().get("channel_id");
 
         // 设置channel_id
-        if (userConfigBeanList.size() > 0) {
+        if (userConfigBeanList != null && userConfigBeanList.size() > 0) {
             userService.setSelectChannel(userSessionBean, userConfigBeanList.get(0).getCfg_val1(), "99", "vms");
         } else {
             throw new BusinessException("Invalid  User.");
