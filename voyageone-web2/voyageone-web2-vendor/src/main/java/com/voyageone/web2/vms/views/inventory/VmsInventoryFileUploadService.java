@@ -53,6 +53,7 @@ public class VmsInventoryFileUploadService extends BaseAppService {
             FileUtils.copyInputStreamToFile(inputStream, new File(inventoryFilePath  + fileName));
 
         } catch (Exception ex) {
+            $error(ex);
             // Failed to upload file.
             throw new BusinessException("8000016");
         }

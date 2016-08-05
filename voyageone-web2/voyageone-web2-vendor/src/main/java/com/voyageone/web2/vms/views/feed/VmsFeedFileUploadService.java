@@ -57,6 +57,7 @@ public class VmsFeedFileUploadService extends BaseAppService {
         } catch (BusinessException ex) {
             throw ex;
         } catch (Exception ex) {
+            $error(ex);
             // Failed to upload file.
             throw new BusinessException("8000016");
         }
