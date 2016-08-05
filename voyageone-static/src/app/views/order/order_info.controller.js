@@ -85,11 +85,11 @@ define([
             self.searchInfo.curr = self.pageInfo.curr;
             self.searchInfo.size = self.pageInfo.size;
             self.orderInfoService.search(self.searchInfo).then(function (data) {
-                self.collapse = false;
                 self.pageInfo.total = data.orderInfo.total;
                 self.data = data.orderInfo.orderList.map(function (item) {
                         item.className = 'bg-default';
                         item.subClassName = 'bg-sub-default';
+                        item.collapse = self.collapse;
                         var date = new Date();
                         if (item.status == '7') {
                             item.className = 'bg-gainsboro';
