@@ -685,6 +685,8 @@ public class ChannelConfigEnums {
                 case "089": return TestChannel089;
                 case "090": return TestChannel090;
                 case "091": return TestChannel091;
+                case "092": return TestChannel092;
+                case "093": return TestChannel093;
                 case "928": return USJGJ;
                 case "929": return USJGY;
                 case "997": return VOYAGEONE;
