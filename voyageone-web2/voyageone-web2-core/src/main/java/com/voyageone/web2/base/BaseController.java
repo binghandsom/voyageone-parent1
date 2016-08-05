@@ -31,7 +31,6 @@ public abstract class BaseController extends BaseAppComponent {
      * 从字符串生成下载内容
      */
     protected ResponseEntity<byte[]> genResponseEntityFromString(String downloadFileName, String content) {
-
         return genResponseEntityFromBytes(downloadFileName, content.getBytes());
     }
 
@@ -42,9 +41,8 @@ public abstract class BaseController extends BaseAppComponent {
         try {
             return genResponseEntityFromStream(downloadFileName, new FileInputStream(srcFile));
         } catch (FileNotFoundException e) {
-            $warn("File Not Found for " + srcFile);
+            $error("genResponseEntityFromFile File Not Found for " + srcFile, e);
         }
-
         return null;
     }
 
@@ -55,9 +53,8 @@ public abstract class BaseController extends BaseAppComponent {
         try {
             return genResponseEntityFromBytes(downloadFileName, IOUtils.toByteArray(inputStream));
         } catch (IOException e) {
-            $warn("IOException", e);
+            $error("genResponseEntityFromStream IOException", e);
         }
-
         return null;
     }
 
@@ -65,7 +62,6 @@ public abstract class BaseController extends BaseAppComponent {
      * 生成下载内容
      */
     protected ResponseEntity<byte[]> genResponseEntityFromBytes(String downloadFileName, byte[] bytes) {
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 //        try {
@@ -76,7 +72,7 @@ public abstract class BaseController extends BaseAppComponent {
         try {
             headers.setContentDispositionFormData("attachment", new String(downloadFileName.getBytes("gb2312"),"iso8859-1"));
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            $error("genResponseEntityFromBytes UnsupportedEncoding", e);
         }
         return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
     }
