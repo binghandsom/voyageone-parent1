@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.prices;
 
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
+import com.voyageone.common.asserts.Assert;
 import com.voyageone.service.dao.cms.CmsMtFeeExchangeDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtFeeExchangeModel;
@@ -30,17 +31,23 @@ public class CmsMtFeeExchangeService extends BaseService {
     }
 
     /**
-     * 取汇率
+     * 获取货币相应的最新汇率
+     *
+     * @return 汇率
      */
     private Double getExchangeRate(String currencyType) {
+
+        Assert.notNull(currencyType).elseThrowDefaultWithTitle("currencyType");
 
         Map<String, Object> map = MySqlPageHelper
                 .build("currencyType", currencyType)
                 .addSort("modified", Order.Direction.DESC)
                 .toMap();
 
-        CmsMtFeeExchangeModel cmsMtFeeExchangeModel = cmsMtFeeExchangeDao.selectOne(map);
+        CmsMtFeeExchangeModel feeExchangeModel = cmsMtFeeExchangeDao.selectOne(map);
 
-        return cmsMtFeeExchangeModel.getExchangeRate();
+        Assert.notNull(feeExchangeModel).elseThrowDefaultWithTitle("feeExchangeModel (CmsMtFeeExchangeService.getExchangeRate)");
+
+        return feeExchangeModel.getExchangeRate();
     }
 }

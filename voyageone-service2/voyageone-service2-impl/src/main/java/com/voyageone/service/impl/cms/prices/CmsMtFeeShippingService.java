@@ -14,6 +14,10 @@ import java.util.Map;
 /**
  * 运费相关操作
  * Created by jonas on 8/2/16.
+ *
+ * @author jonas
+ * @version 2.4.0
+ * @since 2.4.0
  */
 @Service
 public class CmsMtFeeShippingService extends BaseService {
