@@ -80,7 +80,7 @@
                 </uib-tab>
                 <div class="col-sm-6 col-sm-offset-4 input-group m-t-sm">
                     <input name="barcodeInputBar" type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}" ng-model="ctrl.barcode"
-                           enter-click="#scanBarcodeButton" autofocus>
+                           enter-click="#scanBarcodeButton">
                     <span class="input-group-btn">
                         <button id="scanBarcodeButton" class="btn btn-info" type="button" ng-click="ctrl.scan(ctrl.barcode)" translate="BTN_SCAN" ng-disabled="!ctrl.barcode"></button>
                     </span>
