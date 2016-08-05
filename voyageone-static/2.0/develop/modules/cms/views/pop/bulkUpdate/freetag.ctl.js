@@ -183,7 +183,7 @@ define([
                 }
 
                 if(selFlagArr.length == 0){
-                    self.alert("未选中任何标签！");
+                    self.alert("存在冲突标签请确认！");
                     return;
                 }
 
@@ -213,8 +213,8 @@ define([
                     if(self.selOrgDispList.indexOf(path) < 0){
                         self.selOrgDispList.push(path);
                     }
+                    self.orgDispMap[path] = false;
                 }
-                console.log(self.selOrgDispList);
             }
         };
 
