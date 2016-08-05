@@ -68,6 +68,7 @@ define([
 
         OrderInfoController.prototype.search = function () {
             var self = this;
+            self.collapse = false;
             if (self.orderDateFrom === undefined || self.orderDateTo === undefined) {
                 self.alert("TXT_PLEASE_INPUT_A_VALID_DATE");
                 return;
