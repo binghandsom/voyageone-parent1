@@ -38,7 +38,7 @@ public class VmsFinancialReportController extends BaseController {
     @RequestMapping(VmsUrlConstants.REPORT.FINANCIAL_REPORT.INIT)
     public AjaxResponse init(){
         // 初始化（取得检索条件信息)
-        Map<String, Object> result  = vmsFinancialReportService.init();
+        Map<String, Object> result  = vmsFinancialReportService.init(this.getUser());
         //返回数据的类型
         return success(result);
     }

@@ -596,8 +596,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             if (!errorFlg) {
                 feedInfo = new CmsBtFeedInfoModel();
                 feedInfo.setChannelId(channel.getOrder_channel_id());
-                feedInfo.setCode(channel.getOrder_channel_id() + "-" + sku);
-                feedInfo.setModel(channel.getOrder_channel_id() + "-" + sku);
+                feedInfo.setCode(sku);
+                feedInfo.setModel(sku);
                 feedInfo.setCategory(category);
                 feedInfo.setCatId(MD5.getMD5(category));
                 feedInfo.setName(title);

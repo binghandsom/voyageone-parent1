@@ -31,20 +31,48 @@ public class VmsFinancialReportService extends BaseAppService {
     private FinancialReportService financialReportService;
 
     /**
-     * 取得检索条件信息
+     * 取得检索条件信息     *
      *
+     * @param user UserSessionBean
      * @return 检索条件信息
      */
-    public Map<String, Object> init () {
+    public Map<String, Object> init (UserSessionBean user) {
 
         Map<String, Object> result = new HashMap<>();
 
+        // 是否有权限承认财务报表
+        boolean canConfirmReport = false;
+
+        List<UserConfigBean>  confirmReportConfigList = user.getUserConfig().get("vms_confirm_report");
+        if (confirmReportConfigList != null && confirmReportConfigList.size() > 0 ) {
+            if (confirmReportConfigList.get(0).getCfg_val1().equals("1")) {
+                canConfirmReport = true;
+            }
+        }
+
         List<Map<String, Object>> reportYearMonthList = new ArrayList<>();
 
-        for (int i = 1; i <= 12; i++) {
-            // 取得系统日期 - i个月
-            String date = DateTimeUtil.format(DateTimeUtil.addMonths(DateTimeUtil.getDate(), -i), "yyyy-MM");
-            reportYearMonthList.add(new HashMap<String, Object>() {{ put("name", date);put("value", date.substring(0,4) + date.substring(5,7));}});
+
+        Map<String, Object> sqlParam = new HashMap<>();
+        sqlParam.put("channelId", user.getSelChannelId());
+        // 客户登录只能看到承认过的财务报表
+        if (!canConfirmReport) {
+            sqlParam.put("status", VmsConstants.FinancialReportStatus.CONFIRMED);
+        }
+        Map<String, Object> newMap = MySqlPageHelper.build(sqlParam).addSort("report_year_month", Order.Direction.DESC).toMap();
+
+        // 根据条件取得检索结果
+        List<VmsBtFinancialReportModel> financialReportList = financialReportService.getFinancialReportList(newMap);
+
+        for (int i = 0; i <= 11; i++) {
+            // 取得前12个年月
+            if (i < financialReportList.size()) {
+                String yearMonth = financialReportList.get(i).getReportYearMonth();
+                reportYearMonthList.add(new HashMap<String, Object>() {{
+                    put("name", yearMonth.substring(0, 4) + "-" + yearMonth.substring(4, 6));
+                    put("value", yearMonth.substring(0, 4) + yearMonth.substring(4, 6));
+                }});
+            }
         }
 
         result.put("reportYearMonthList", reportYearMonthList);
