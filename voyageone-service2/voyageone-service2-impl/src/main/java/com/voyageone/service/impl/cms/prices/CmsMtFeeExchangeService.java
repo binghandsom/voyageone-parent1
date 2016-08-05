@@ -23,6 +23,8 @@ import java.util.Map;
 @Service
 public class CmsMtFeeExchangeService extends BaseService {
 
+    private final static String USD = "USD";
+
     private final CmsMtFeeExchangeDao cmsMtFeeExchangeDao;
 
     @Autowired
@@ -31,11 +33,20 @@ public class CmsMtFeeExchangeService extends BaseService {
     }
 
     /**
+     * 获取配置中的美元汇率
+     *
+     * @return 汇率, 如 6.7
+     */
+    public Double getExchangeRateForUsd() {
+        return getExchangeRate(USD);
+    }
+
+    /**
      * 获取货币相应的最新汇率
      *
-     * @return 汇率
+     * @return 汇率, 如 6.7
      */
-    private Double getExchangeRate(String currencyType) {
+    public Double getExchangeRate(String currencyType) {
 
         Assert.notNull(currencyType).elseThrowDefaultWithTitle("currencyType");
 

@@ -1,24 +1,14 @@
 package com.voyageone.service.impl.cms.prices;
 
-import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.CmsMtFeeCommissionDao;
-import com.voyageone.service.dao.cms.CmsMtFeeExchangeDao;
-import com.voyageone.service.dao.cms.CmsMtFeeShippingDao;
-import com.voyageone.service.dao.cms.CmsMtFeeTaxDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsMtFeeCommissionModel;
-import com.voyageone.service.model.cms.CmsMtFeeExchangeModel;
-import com.voyageone.service.model.cms.CmsMtFeeShippingModel;
-import com.voyageone.service.model.cms.CmsMtFeeTaxModel;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -27,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Created by Ethan Shi on 2016/7/13.
@@ -38,513 +30,270 @@ import java.util.*;
 @Service
 public class PriceService extends BaseService {
 
-    private static final String COMMISSION_TYPE_VO = "VO";
-    private static final String COMMISSION_TYPE_PF = "PF";
-    private static final String COMMISSION_TYPE_RT = "RT";
-
-
-
     private static final String HSCODE_TYPE_8_DIGIT = "8_DIGIT";
     private static final String HSCODE_TYPE_10_DIGIT = "10_DIGIT";
+
     private static final String HSCODE_TYPE = "HSCODE_TYPE";
 
+    private final CmsMtFeeCommissionService feeCommissionService;
 
-    private final CmsMtFeeCommissionDao cmsMtFeeCommissionDao;
+    private final CmsMtFeeExchangeService feeExchangeService;
 
-    private final CmsMtFeeTaxDao cmsMtFeeTaxDao;
+    private final CmsMtFeeTaxService feeTaxService;
 
-    public PriceService(CmsMtFeeCommissionDao cmsMtFeeCommissionDao, CmsMtFeeTaxDao cmsMtFeeTaxDao) {
+    private final CmsMtFeeShippingService feeShippingService;
 
-        this.cmsMtFeeCommissionDao = cmsMtFeeCommissionDao;
-        this.cmsMtFeeTaxDao = cmsMtFeeTaxDao;
-    }
-
-    public CmsBtProductModel setRetailPrice(CmsBtProductModel product, Integer cartId) {
-        Double exchangeRate = getExchangeRate("USD");
-        String channelId = product.getChannelId();
-        ChannelCartParams channelCartParams = new ChannelCartParams(cartId, channelId);
-        ProductParams productParams = new ProductParams(product, cartId, channelCartParams.getShippingType());
-        return setPlatformRetailPrice(product, cartId, exchangeRate, channelCartParams, productParams);
+    @Autowired
+    public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService, CmsMtFeeCommissionService feeCommissionService, CmsMtFeeExchangeService feeExchangeService) {
+        this.feeShippingService = feeShippingService;
+        this.feeTaxService = feeTaxService;
+        this.feeCommissionService = feeCommissionService;
+        this.feeExchangeService = feeExchangeService;
     }
 
     /**
-     * 计算product中各个sku的retailPrice,全部cart
+     * 计算product中各个sku的retailPrice, 全部cart
      */
     public CmsBtProductModel setRetailPrice(CmsBtProductModel product) {
-        Double exchangeRate = getExchangeRate("USD");
-        return setEveryPlatformRetailPriceWithExchange(product, exchangeRate);
-    }
 
-    /**
-     * 批量计算product中各个sku的retailPrice
-     */
-    public List<CmsBtProductModel> setRetailPriceList(List<CmsBtProductModel> productList, Integer cartId) {
-        for (CmsBtProductModel product : productList) {
-            //为了减少数据库访问次数,尽量提前读取exchangeRate和相关参数
-            String channelId = product.getChannelId();
-            Double exchangeRate = getExchangeRate("USD");
-            ChannelCartParams channelCartParams = new ChannelCartParams(cartId, channelId);
+        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> cartEntry: product.getPlatforms().entrySet()) {
 
-            ProductParams productParams = new ProductParams(product, cartId, channelCartParams.getShippingType());
+            CmsBtProductModel_Platform_Cart cart = cartEntry.getValue();
 
-            setPlatformRetailPrice(product, cartId, exchangeRate, channelCartParams, productParams);
+            Integer cartId = cart.getCartId();
+
+            if (cartId < CmsConstants.ACTIVE_CARTID_MIN)
+                continue;
+
+            setRetailPrice(product, cartId);
         }
 
-        return productList;
+        return product;
     }
 
-    /**
-     * 批量计算product中各个sku的retailPrice,全部cart
-     */
-    public List<CmsBtProductModel> setRetailPriceList(List<CmsBtProductModel> productList) {
-        //为了减少数据库访问次数,尽量提前读取exchangeRate
-        Double exchangeRate = getExchangeRate("USD");
-        for (CmsBtProductModel product : productList) {
-            setEveryPlatformRetailPriceWithExchange(product, exchangeRate);
-        }
-        return productList;
-    }
 
-    /**
-     * 计算product中各个sku的retailPrice,全部cart
-     */
-    private CmsBtProductModel setEveryPlatformRetailPriceWithExchange(CmsBtProductModel product, Double exchangeRate) {
+    public CmsBtProductModel setRetailPrice(CmsBtProductModel product, Integer cartId) {
+
+        // 公式参数: 其他费用
+        final Double otherFee = 0.0d;
+
+        final int JM_CART = 27;
+
+        CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
+
+        // JM平台是按照品牌收取佣金
+        // 所以这里要根据店铺来选择类目参数, 使用品牌还是类目
+        String catId = cartId == JM_CART ? cart.getpBrandId() : cart.getpCatId();
+
+        // 公式参数: 汇率
+        Double exchangeRate = feeExchangeService.getExchangeRateForUsd();
 
         String channelId = product.getChannelId();
 
-        for (CartType cartType : CartType.values()) {
+        Integer platformId = CartType.getPlatformIdById(cartId);
 
-            if (cartType.getPlatformId().equals(0))
-                continue;
+        String code = product.getCommon().getFields().getCode();
 
-            Integer cartId = cartType.getCartId();
+        //ShippingType存在cms_mt_channel_config里
+        CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE, String.valueOf(cartId));
 
-            ChannelCartParams channelCartParams = new ChannelCartParams(cartId, channelId);
-
-            ProductParams productParams = new ProductParams(product, cartId, channelCartParams.getShippingType());
-
-            setPlatformRetailPrice(product, cartId, exchangeRate, channelCartParams, productParams);
+        if (channelConfigBean == null) {
+            channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE);
         }
 
-        return product;
-    }
+        // 发货方式
+        String shippingType = channelConfigBean.getConfigValue1();
 
-    /**
-     * 计算product中各个sku的retailPrice
-     */
-    private CmsBtProductModel setPlatformRetailPrice(CmsBtProductModel product, Integer cartId, Double exchangeRate,
-                                                     ChannelCartParams channelCartParams, ProductParams productParams) {
+        CmsMtFeeCommissionService.CommissionQueryBuilder commissionQueryBuilder = feeCommissionService.new CommissionQueryBuilder()
+                .withChannel(channelId)
+                .withPlatform(platformId)
+                .withCart(cartId)
+                .withCategory(catId);
 
-        String shippingType = channelCartParams.getShippingType();
-        Double defaultVoCommission = channelCartParams.getDefaultVoCommission();
-        Double returnRate = channelCartParams.getReturnRate();
-        Double otherFee = channelCartParams.getOtherFee();
+        // 公式参数: 退货率
+        Double returnRate = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_RETURN);
 
-        Double pfCommission = productParams.getPlatformCommission();
-        Double taxRate = productParams.getTaxRate();
+        // 公式参数: 公司佣金比例
+        Double defaultVoCommission = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_VOYAGE_ONE);
 
+        // 公式参数: 平台佣金比例
+        Double platformCommission =commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_PLATFORM);
 
-        //产品级VO佣金比例
-        Double productCommission = product.getCommon().getFields().getCommissionRate();
-        Double voCommission = productCommission > 0 ? productCommission : defaultVoCommission;
+        String hsCodeType = Codes.getCodeName(HSCODE_TYPE, shippingType);
 
-        CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
+        if (StringUtils.isEmpty(shippingType))
+            throw new BusinessException("税号类型为空");
+
+        String hsCode = null;
+
+        switch (hsCodeType) {
+            case HSCODE_TYPE_8_DIGIT:
+                hsCode = product.getCommon().getFields().getHsCodePrivate();
+                break;
+            case HSCODE_TYPE_10_DIGIT:
+                hsCode = product.getCommon().getFields().getHsCodeCross();
+                break;
+        }
+
+        if (StringUtils.isEmpty(hsCode))
+            throw new BusinessException(String.format("获取的税号为空: hsCodeType: %s, product: %s", hsCodeType, code));
+
+        // 税号
+        hsCode = hsCode.split(",")[0];
+
+        // 公式参数: 税率
+        Double taxRate = feeTaxService.getTaxRate(shippingType, hsCode);
+
+        // 进入计算阶段
+        PriceCalculator priceCalculator = new PriceCalculator()
+                .setTaxRate(taxRate)
+                .setPfCommission(platformCommission)
+                .setReturnRate(returnRate)
+                .setVoCommission(defaultVoCommission)
+                .setExchangeRate(exchangeRate)
+                .setOtherFee(otherFee);
+
         List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
         List<BaseMongoMap<String, Object>> platformSkus = cart.getSkus();
-        for (CmsBtProductModel_Sku commonSku : commonSkus) {
+
+        Map<String, CmsBtProductModel_Sku> commonSkuMap = commonSkus.stream().collect(toMap(CmsBtProductModel_Sku::getSkuCode, sku -> sku));
+
+        // 对 sku 进行匹配
+        // 获取重量进行运费计算
+        for (BaseMongoMap<String, Object> platformSku: platformSkus) {
+
+            String skuCode = platformSku.getStringAttribute("skuCode");
+
+            if (!commonSkuMap.containsKey(skuCode))
+                continue;
+
+            CmsBtProductModel_Sku commonSku = commonSkuMap.get(skuCode);
+
+            if (commonSku == null)
+                continue;
+
             Double clientNetPrice = commonSku.getClientNetPrice();
+            Double clientMsrp = commonSku.getClientMsrpPrice();
             Double weight = commonSku.getWeight();
-            Double shippingFee = getShippingFee(shippingType, weight);
 
-            Double retailPrice = getRetailPrice(clientNetPrice, shippingFee, exchangeRate, voCommission, pfCommission, returnRate, taxRate, otherFee);
+            // 公式参数: 获取运费
+            Double shippingFee = feeShippingService.getShippingFee(shippingType, weight);
 
-            BaseMongoMap<String, Object> platformSku = platformSkus.stream().filter(w -> commonSku.getSkuCode().equals(w.getStringAttribute("skuCode"))).findFirst().orElse(null);
+            // 最终价格计算
 
-            if (platformSku != null) {
-                platformSku.setAttribute("priceRetail", retailPrice);
-            }
+            Double priceMsrp = priceCalculator.setShippingFee(shippingFee).calculate(clientMsrp);
+            Double retailPrice = priceCalculator.setShippingFee(shippingFee).calculate(clientNetPrice);
+
+
+
+
+
+
+
+
+
+            if (priceMsrp == null)
+                platformSku.setAttribute("priceMsrp", -1d);
+
+            platformSku.setAttribute("priceMsrp", priceMsrp);
+
+            if (retailPrice == null)
+                platformSku.setAttribute("priceRetail", -1d);
+
+            platformSku.setAttribute("priceRetail", retailPrice);
         }
+
         return product;
     }
 
+    private class PriceCalculator {
 
+        private Double shippingFee;
 
+        private Double exchangeRate;
 
+        private Double voCommission;
 
+        private Double pfCommission;
 
-
-
-
-
-
-    /**
-     * 计算retailPrice
-     */
-    private Double getRetailPrice(Double clientNetPrice, Double shippingFee, Double exchangeRate,
-                                  Double voCommission, Double pfCommission, Double returnRate, Double taxRate, Double otherFee) {
-        List<String> msgs = new ArrayList<>();
-
-        if (shippingFee == null || shippingFee == 0) {
-            msgs.add("读取shippingFee出错");
-        }
-        if (exchangeRate == null || exchangeRate == 0) {
-            msgs.add("读取exchangeRate出错");
-        }
-        if (voCommission == null || voCommission == 0) {
-            msgs.add("读取voCommission出错");
-        }
-        if (pfCommission == null || pfCommission == 0) {
-            msgs.add("读取pfCommission出错");
-        }
-        if (returnRate == null || returnRate == 0) {
-            msgs.add("读取returnRate出错");
-        }
-        if (taxRate == null || taxRate == 0) {
-            msgs.add("读取taxRate出错");
-        }
-        if (otherFee == null) {
-            msgs.add("读取otherFee出错");
-        }
-
-        String errorMsg = Joiner.on(";").join(msgs);
-        if (!StringUtils.isNullOrBlank2(errorMsg)) {
-            errorMsg += "!";
-            throw new BusinessException("", errorMsg);
-        }
-
-        if ((100 - voCommission - pfCommission - returnRate - taxRate) > 0) {
-            Double retailPrice = ((clientNetPrice + shippingFee + otherFee) * exchangeRate * 100) / (100 - voCommission - pfCommission - returnRate - taxRate);
-            return Math.ceil(retailPrice);
-        } else {
-            errorMsg = String.format("非法的价格参数[voCommission:%s], [platformCommission:%s], [returnRate:%s], [taxRate:%s]", voCommission, pfCommission, returnRate, taxRate);
-            throw new BusinessException("", errorMsg);
-        }
-    }
-
-
-
-
-
-    /**
-     * 用于计算并获取渠道在相应平台的退货率、其他费用、公司佣金比例的帮助类
-     */
-    private class ChannelCartParams {
-
-        private Integer cartId;
-        private String channelId;
-        private String shippingType;
         private Double returnRate;
-        private Double otherFee;
-        private Double defaultVoCommission;
 
-        ChannelCartParams(Integer cartId, String channelId) {
-            this.cartId = cartId;
-            this.channelId = channelId;
-
-            caleReturnRateAndOtherFeeAndCommission();
-        }
-
-        String getShippingType() {
-            return shippingType;
-        }
-
-        Double getReturnRate() {
-            return returnRate;
-        }
-
-        Double getOtherFee() {
-            return otherFee;
-        }
-
-        Double getDefaultVoCommission() {
-            return defaultVoCommission;
-        }
-
-        void caleReturnRateAndOtherFeeAndCommission() {
-
-            Integer platformId = CartType.getPlatformIdById(cartId);
-            //ShippingType存在cms_mt_channel_config里
-            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE, String.valueOf(cartId));
-
-            if (cmsChannelConfigBean == null) {
-                cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE);
-            }
-
-            shippingType = cmsChannelConfigBean.getConfigValue1();
-
-            returnRate = getReturn(channelId, platformId, cartId);
-            otherFee = getOtherFee(channelId);
-            defaultVoCommission = getVoyageOneCommission(channelId, platformId, cartId);
-        }
-
-        /**
-         * 取退货率
-         *
-         * @param platformId 平台(非 cart, 如 taobao / tmall / tmall global 同属 ali 系)
-         * @param cartId     平台
-         * @return 退货率
-         */
-        private Double getReturn(String channelId, Integer platformId, Integer cartId) {
-
-            //店铺级
-            Map<String, Object> queryMap = new HashMap<>();
-            queryMap.put("commissionType", COMMISSION_TYPE_RT);
-            queryMap.put("channelId", channelId);
-            queryMap.put("platformId", platformId);
-            queryMap.put("cartId", cartId);
-
-
-            CmsMtFeeCommissionModel cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
-
-            if (cmsMtFeeCommissionModel != null) {
-                return cmsMtFeeCommissionModel.getCommissonRate();
-            }
-
-            //渠道平台级
-            queryMap.clear();
-            queryMap.put("commissionType", COMMISSION_TYPE_RT);
-            queryMap.put("channelId", channelId);
-            queryMap.put("platformId", platformId);
-
-            cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
-
-            if (cmsMtFeeCommissionModel != null) {
-                return cmsMtFeeCommissionModel.getCommissonRate();
-            }
-
-            //渠道级默认值
-            queryMap.clear();
-            queryMap.put("channelId", channelId);
-            queryMap.put("commissionType", COMMISSION_TYPE_RT);
-
-
-            //系统级默认值
-            queryMap.clear();
-            queryMap.put("commissionType", COMMISSION_TYPE_RT);
-
-            cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
-
-            if (cmsMtFeeCommissionModel != null) {
-                return cmsMtFeeCommissionModel.getCommissonRate();
-            }
-
-            return null;
-        }
-
-        /**
-         * 取其他费用
-         */
-        private Double getOtherFee(String channelId) {
-            // 这里暂时不会有其他费用
-            // 所以默认直接返回 0, 暂时不实现具体内容
-            return 0.0;
-        }
-
-        /**
-         * 取VO佣金比例
-         *
-         * @param channelId  渠道
-         * @param platformId 平台(非 cart, 如 taobao / tmall / tmall global 同属 ali 系)
-         * @param cartId     平台
-         * @return 佣金比例
-         */
-        private Double getVoyageOneCommission(String channelId, Integer platformId, Integer cartId) {
-
-            //店铺级
-            Map<String, Object> queryMap = new HashMap<>();
-            queryMap.put("commissionType", COMMISSION_TYPE_VO);
-            queryMap.put("channelId", channelId);
-            queryMap.put("platformId", platformId);
-            queryMap.put("cartId", cartId);
-
-            CmsMtFeeCommissionModel cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
-
-            if (cmsMtFeeCommissionModel != null) {
-                return cmsMtFeeCommissionModel.getCommissonRate();
-            }
-
-            //渠道平台级
-            queryMap.clear();
-            queryMap.put("commissionType", COMMISSION_TYPE_VO);
-            queryMap.put("channelId", channelId);
-            queryMap.put("platformId", platformId);
-            cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
-
-            if (cmsMtFeeCommissionModel != null) {
-                return cmsMtFeeCommissionModel.getCommissonRate();
-            }
-
-            //渠道级默认值
-            queryMap.clear();
-            queryMap.put("commissionType", COMMISSION_TYPE_VO);
-            queryMap.put("channelId", channelId);
-            cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
-
-            if (cmsMtFeeCommissionModel != null) {
-                return cmsMtFeeCommissionModel.getCommissonRate();
-            }
-
-            //渠道级默认值
-            queryMap.clear();
-            queryMap.put("commissionType", COMMISSION_TYPE_VO);
-            queryMap.put("platformId", platformId);
-            cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
-
-            if (cmsMtFeeCommissionModel != null) {
-                return cmsMtFeeCommissionModel.getCommissonRate();
-            }
-
-            //系统级默认值
-            queryMap.clear();
-            queryMap.put("commissionType", COMMISSION_TYPE_VO);
-            cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
-            if (cmsMtFeeCommissionModel != null) {
-                return cmsMtFeeCommissionModel.getCommissonRate();
-            }
-
-            return null;
-        }
-    }
-
-    /**
-     * 用于计算并获取商品在相应平台的关税税率、平台佣金比例的帮助类
-     */
-    private class ProductParams {
-
-        private CmsBtProductModel product;
-        private Integer cartId;
-        private String shippingType;
         private Double taxRate;
-        private Double platformCommission;
 
-        ProductParams(CmsBtProductModel product, Integer cartId, String shippingType) {
+        private Double otherFee;
 
-            this.product = product;
-            this.cartId = cartId;
-            this.shippingType = shippingType;
+        private boolean valid = true;
 
-            caleTaxRateAndCommission();
+        private List<String> messageList = new ArrayList<>();
+
+        private void checkValid(Double inputFee, String title) {
+
+            if (inputFee != null && inputFee > 0)
+                return;
+
+            messageList.add(title + "读取错误");
+            valid = false;
         }
 
-        Double getTaxRate() {
-            return taxRate;
+        private PriceCalculator setShippingFee(Double shippingFee) {
+            checkValid(shippingFee, "运费");
+            this.shippingFee = shippingFee;
+            return this;
         }
 
-        Double getPlatformCommission() {
-            return platformCommission;
+        private PriceCalculator setExchangeRate(Double exchangeRate) {
+            checkValid(shippingFee, "汇率");
+            this.exchangeRate = exchangeRate;
+            return this;
         }
 
-        private void caleTaxRateAndCommission() {
-
-            final int JM_CART = 27;
-
-            String channelId = product.getChannelId();
-
-            String hsCodeType = Codes.getCodeName(HSCODE_TYPE, shippingType);
-
-            if (StringUtils.isEmpty(hsCodeType))
-                throw new BusinessException(String.format("没有为 shippingType [ %s ] 配置 HSCODE_TYPE [ %s ]", shippingType, HSCODE_TYPE));
-
-            String hsCode = null;
-
-            switch (hsCodeType) {
-                case HSCODE_TYPE_8_DIGIT:
-                    hsCode = product.getCommon().getFields().getHsCodePrivate();
-                    break;
-                case HSCODE_TYPE_10_DIGIT:
-                    hsCode = product.getCommon().getFields().getHsCodeCross();
-                    break;
-            }
-
-            if (StringUtils.isEmpty(hsCode))
-                throw new BusinessException(String.format("获取的税号为空: hsCodeType: %s, product: %s", hsCodeType, product.getCommon().getFields().getCode()));
-
-            hsCode = hsCode.split(",")[0];
-
-            // 计算税率
-            taxRate = getTaxRate(shippingType, hsCode);
-
-            CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
-
-            //JM平台是按照品牌收取佣金
-            String catId = cartId == JM_CART ? cart.getpBrandId() : cart.getpCatId();
-
-            Integer platformId = CartType.getPlatformIdById(cartId);
-
-            // 计算平台佣金比例
-            platformCommission = getPlatformCommission(channelId, platformId, cartId, catId);
+        private PriceCalculator setVoCommission(Double voCommission) {
+            checkValid(shippingFee, "公司佣金比例");
+            this.voCommission = voCommission;
+            return this;
         }
 
+        private PriceCalculator setPfCommission(Double pfCommission) {
+            checkValid(shippingFee, "平台佣金比例");
+            this.pfCommission = pfCommission;
+            return this;
+        }
 
+        private PriceCalculator setReturnRate(Double returnRate) {
+            checkValid(shippingFee, "退货率");
+            this.returnRate = returnRate;
+            return this;
+        }
 
-        /**
-         * 取平台佣金比例
-         *
-         * @param channelId  渠道
-         * @param platformId 平台(非 cart, 如 taobao / tmall / tmall global 同属 ali 系)
-         * @param cartId     平台
-         * @param catId      类目 ID
-         * @return 可能为空的佣金比例
-         */
-        private Double getPlatformCommission(String channelId, Integer platformId, Integer cartId, String catId) {
+        private PriceCalculator setTaxRate(Double taxRate) {
+            checkValid(shippingFee, "运费");
+            this.taxRate = taxRate;
+            return this;
+        }
 
-            //店铺分类级
-            Map<String, Object> queryMap = new HashMap<>();
-            queryMap.put("commissionType", COMMISSION_TYPE_PF);
-            queryMap.put("channelId", channelId);
-            queryMap.put("platformId", platformId);
-            queryMap.put("cartId", cartId);
-            queryMap.put("catId", catId);
+        private PriceCalculator setOtherFee(Double otherFee) {
+            checkValid(shippingFee, "其他费用");
+            this.otherFee = otherFee;
+            return this;
+        }
 
-            CmsMtFeeCommissionModel cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
+        private String getErrorMessage() {
+            return StringUtils.join(messageList, ";");
+        }
 
-            if (cmsMtFeeCommissionModel != null) {
-                return cmsMtFeeCommissionModel.getCommissonRate();
+        private Double calculate(Double inputPrice) {
+
+            if (!valid)
+                return null;
+
+            if ((100 - voCommission - pfCommission - returnRate - taxRate) > 0) {
+                Double retailPrice = ((inputPrice + shippingFee + otherFee) * exchangeRate * 100) / (100 - voCommission - pfCommission - returnRate - taxRate);
+                return Math.ceil(retailPrice);
             }
 
-            //平台分类级
-            queryMap.clear();
-            queryMap.put("commissionType", COMMISSION_TYPE_PF);
-            queryMap.put("platformId", platformId);
-            queryMap.put("catId", catId);
+            messageList.add(String.format("非法的价格参数[voCommission:%s], [platformCommission:%s], [returnRate:%s], [taxRate:%s]", voCommission, pfCommission, returnRate, taxRate));
 
-            cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
-
-            if (cmsMtFeeCommissionModel != null) {
-                return cmsMtFeeCommissionModel.getCommissonRate();
-            }
-
-            //店铺级默认,不分分类
-            queryMap.clear();
-            queryMap.put("commissionType", COMMISSION_TYPE_PF);
-            queryMap.put("channelId", channelId);
-            queryMap.put("platformId", platformId);
-            queryMap.put("cartId", cartId);
-
-            cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
-
-            if (cmsMtFeeCommissionModel != null) {
-                return cmsMtFeeCommissionModel.getCommissonRate();
-            }
-
-            //平台级默认,不分分类
-            queryMap.clear();
-            queryMap.put("commissionType", COMMISSION_TYPE_PF);
-            queryMap.put("platformId", platformId);
-
-            cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
-            if (cmsMtFeeCommissionModel != null) {
-                return cmsMtFeeCommissionModel.getCommissonRate();
-            }
-
-            //系统级默认,不分分类
-            queryMap.clear();
-            queryMap.put("commissionType", COMMISSION_TYPE_PF);
-            cmsMtFeeCommissionModel = cmsMtFeeCommissionDao.selectOne(queryMap);
-
-            if (cmsMtFeeCommissionModel != null) {
-                return cmsMtFeeCommissionModel.getCommissonRate();
-            }
+            valid = false;
 
             return null;
         }

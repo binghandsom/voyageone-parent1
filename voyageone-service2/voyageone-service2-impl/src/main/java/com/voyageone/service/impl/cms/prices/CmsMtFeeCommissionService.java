@@ -24,15 +24,15 @@ import java.util.Map;
 @Service
 public class CmsMtFeeCommissionService extends BaseService {
 
-    public static final String COMMISSION_TYPE_VO = "VO";
-    public static final String COMMISSION_TYPE_PF = "PF";
-    public static final String COMMISSION_TYPE_RT = "RT";
+    public static final String COMMISSION_TYPE_VOYAGE_ONE = "VO";
+    public static final String COMMISSION_TYPE_PLATFORM = "PF";
+    public static final String COMMISSION_TYPE_RETURN = "RT";
 
     private static final List<String> COMMISSION_TYPE_LIST = new ArrayList<String>() {
         {
-            add(COMMISSION_TYPE_VO);
-            add(COMMISSION_TYPE_PF);
-            add(COMMISSION_TYPE_RT);
+            add(COMMISSION_TYPE_VOYAGE_ONE);
+            add(COMMISSION_TYPE_PLATFORM);
+            add(COMMISSION_TYPE_RETURN);
         }
     };
 
@@ -65,17 +65,17 @@ public class CmsMtFeeCommissionService extends BaseService {
     /**
      * 基于参数构造器, 逐级查询佣金比例
      *
-     * @param feeCommissionQueryBuilder 包含参数的参数构造器
+     * @param commissionQueryBuilder 包含参数的参数构造器
      * @return 佣金数据模型
      */
-    public CmsMtFeeCommissionModel getCommission(FeeCommissionQueryBuilder feeCommissionQueryBuilder) {
+    private CmsMtFeeCommissionModel getCommission(CommissionQueryBuilder commissionQueryBuilder) {
 
         // 判断佣金类型, 如果佣金类型不对, 则必然查不出数据, 所以直接返回
-        if (!COMMISSION_TYPE_LIST.contains(feeCommissionQueryBuilder.getCommissionType()))
+        if (!COMMISSION_TYPE_LIST.contains(commissionQueryBuilder.getCommissionType()))
             return null;
 
         // 先进行第一次匹配尝试
-        Map<String, Object> queryMap = feeCommissionQueryBuilder.getQueryMap();
+        Map<String, Object> queryMap = commissionQueryBuilder.getQueryMap();
 
         while (queryMap != null) {
 
@@ -86,7 +86,7 @@ public class CmsMtFeeCommissionService extends BaseService {
                 return feeCommissionModel;
 
             // 否则获取更低优先级的条件
-            queryMap = feeCommissionQueryBuilder.getLowerPriorityQueryMap();
+            queryMap = commissionQueryBuilder.getLowerPriorityQueryMap();
         }
 
         return null;
@@ -103,7 +103,7 @@ public class CmsMtFeeCommissionService extends BaseService {
      * <p>
      * 首次直接使用 {@code getLowerPriorityQueryMap()} 时, 相当于是从顶级优先级的下一次开始, 也是允许的
      */
-    public class FeeCommissionQueryBuilder {
+    public class CommissionQueryBuilder {
 
         private Map<String, Object> queryMap = new HashMap<>();
 
@@ -111,34 +111,65 @@ public class CmsMtFeeCommissionService extends BaseService {
 
         private int lastLevel = -1;
 
-        public FeeCommissionQueryBuilder(String commissionType) {
-            queryMap.put(FIELD_COMMISSION_TYPE, commissionType);
-        }
-
-        public FeeCommissionQueryBuilder inChannel(String channelId) {
+        public CommissionQueryBuilder withChannel(String channelId) {
             queryMap.put(FIELD_CHANNELID, channelId);
             return this;
         }
 
-        public FeeCommissionQueryBuilder inPlatform(Integer platformId) {
+        public CommissionQueryBuilder withPlatform(Integer platformId) {
             queryMap.put(FIELD_PLATFORMID, platformId);
             return this;
         }
 
-        public FeeCommissionQueryBuilder inCart(Integer cartId) {
+        public CommissionQueryBuilder withCart(Integer cartId) {
             queryMap.put(FIELD_CARTID, cartId);
             return this;
         }
 
-        public FeeCommissionQueryBuilder withCategory(String categoryId) {
+        public CommissionQueryBuilder withCategory(String categoryId) {
             queryMap.put(FIELD_CATID, categoryId);
             return this;
         }
 
-        String getCommissionType() {
+        public CommissionQueryBuilder resetPriority() {
+            this.currentLevel = 0;
+            return this;
+        }
+
+        public Double getCommission(String commissionType) {
+
+            setCommissionType(commissionType);
+
+            CmsMtFeeCommissionModel commission = CmsMtFeeCommissionService.this.getCommission(this);
+
+            if (commission == null)
+                return null;
+
+            return commission.getCommissonRate();
+        }
+
+        private String getCommissionType() {
             if (!queryMap.containsKey(FIELD_COMMISSION_TYPE))
                 return null;
             return (String) queryMap.get(FIELD_COMMISSION_TYPE);
+        }
+
+        private void setCommissionType(String commissionType) {
+
+            if (StringUtils.isEmpty(commissionType))
+                return;
+
+            String lastType = getCommissionType();
+
+            if (commissionType.equals(lastType))
+                return;
+
+            // 切换当前类型, 说明要重新查询其他类型的佣金比例了
+            // 所以需要重置优先级
+            // 让查询重新查找
+            this.currentLevel = 0;
+
+            queryMap.put(FIELD_COMMISSION_TYPE, commissionType);
         }
 
         /**
@@ -146,7 +177,7 @@ public class CmsMtFeeCommissionService extends BaseService {
          *
          * @return 查询参数字典
          */
-        Map<String, Object> getLowerPriorityQueryMap() {
+        private Map<String, Object> getLowerPriorityQueryMap() {
 
             // 移动优先级
             this.currentLevel++;
@@ -171,7 +202,7 @@ public class CmsMtFeeCommissionService extends BaseService {
          *
          * @return 查询参数字典
          */
-        Map<String, Object> getQueryMap() {
+        private Map<String, Object> getQueryMap() {
 
             // 尝试计算当前优先级
             // 并获取优先级内容

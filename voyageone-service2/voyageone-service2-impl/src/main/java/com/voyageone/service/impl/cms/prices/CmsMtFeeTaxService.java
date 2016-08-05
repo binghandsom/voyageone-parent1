@@ -36,7 +36,7 @@ public class CmsMtFeeTaxService extends BaseService {
      * @param hsCode       税号
      * @return 关税税率
      */
-    private Double getTaxRate(String shippingType, String hsCode) {
+    public Double getTaxRate(String shippingType, String hsCode) {
 
         Assert.notNull(shippingType).elseThrowDefaultWithTitle("shippingType (CmsMtFeeTaxService.getTaxRate)");
         Assert.notNull(hsCode).elseThrowDefaultWithTitle("hsCode (CmsMtFeeTaxService.getTaxRate)");
