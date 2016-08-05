@@ -203,7 +203,8 @@ define([
                     openPlatformMappingSetting({
                         cartId: scope.cartInfo.value,
                         cartName: scope.cartInfo.name,
-                        masterName: mainBrand
+                        masterName: mainBrand,
+                        pBrandId:scope.vm.platform.pBrandId
                     }).then(function(context){
                         scope.vm.platform.pBrandName = context.selectedPlatform;
                     });
