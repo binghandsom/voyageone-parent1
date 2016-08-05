@@ -587,6 +587,7 @@ public class ChannelConfigEnums {
          * TestChannel089
          */
         TestChannel089("089"),
+
         /**
          * TestChannel090
          */
@@ -596,6 +597,15 @@ public class ChannelConfigEnums {
          * TestChannel091
          */
         TestChannel091("091"),
+        /**
+         * TestChannel092
+         */
+        TestChannel092("092"),
+
+        /**
+         * TestChannel093
+         */
+        TestChannel093("093"),
 
         /**
          * US匠心界
