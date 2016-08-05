@@ -68,7 +68,6 @@ define([
 
         OrderInfoController.prototype.search = function () {
             var self = this;
-            self.collapse = false;
             if (self.orderDateFrom === undefined || self.orderDateTo === undefined) {
                 self.alert("TXT_PLEASE_INPUT_A_VALID_DATE");
                 return;
@@ -86,6 +85,7 @@ define([
             self.searchInfo.curr = self.pageInfo.curr;
             self.searchInfo.size = self.pageInfo.size;
             self.orderInfoService.search(self.searchInfo).then(function (data) {
+                self.collapse = false;
                 self.pageInfo.total = data.orderInfo.total;
                 self.data = data.orderInfo.orderList.map(function (item) {
                         item.className = 'bg-default';
