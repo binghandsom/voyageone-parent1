@@ -43,7 +43,7 @@ define([
                     self.$uibModalInstance.close(data.finished);
                 }
             });
-            angular.element(document.getElementsByName('barcodeInputBar')).focus();
+            self.focusOnScanBar();
         };
 
         AddToShipmentController.prototype.focusOnScanBar = function () {

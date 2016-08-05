@@ -15,14 +15,14 @@
                 <div class="form-group">
                     <!-- clientFileName -->
                     <label class="control-label" translate="TXT_FILE_NAME"></label>
-                    <input id="clientFileName" type="text" ng-model="ctrl.clientFileName" class="form-control input-sm m-r-sm">
+                    <input id="clientFileName" type="text" ng-model="ctrl.clientFileName"
+                           class="form-control input-sm m-r-sm" enter-click="#feedSearchButton">
 
                     <label class="control-label" translate="TXT_STATUS"></label>
                     <select name="status" id="select" ng-model="ctrl.status" class="form-control input-sm m-r-sm"
                             ng-options="status.value as status.name for status in ctrl.statusList">
-                        <option value="" translate="TXT_ALL" />
+                        <option value="" translate="TXT_ALL"></option>
                     </select>
-
                     <label class="control-label" translate="TXT_UPLOAD_DATE"></label>
                     <span class="input-group">
                         <input type="date" class="form-control input-sm"
@@ -47,7 +47,8 @@
                     </span>
                 </div>
                 <div class="pull-right">
-                    <button class="btn btn-primary btn-sm" ng-click="ctrl.search()" translate="BTN_SEARCH"></button>
+                    <button id="feedSearchButton" class="btn btn-primary btn-sm" ng-click="ctrl.search()"
+                            translate="BTN_SEARCH"></button>
                 </div>
             </div>
         </div>
