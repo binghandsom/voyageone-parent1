@@ -58,7 +58,6 @@
                         <thead>
                         <tr>
                             <th class="text-center" translate="TXT_NO_"></th>
-                            <th class="text-left" translate="TXT_BARCODE"></th>
                             <th class="text-left" translate="TXT_SKU"></th>
                             <th class="text-left" translate="TXT_NAME"></th>
                         </tr>
@@ -66,7 +65,6 @@
                         <tbody>
                         <tr ng-repeat="item in ctrl.waitingSkuList">
                             <td class="text-center">{{$index + 1}}</td>
-                            <td class="text-left">{{item.barcode}}</td>
                             <td class="text-left">{{item.clientSku}}</td>
                             <td class="text-left v-middle">
                                 <span ng-if="item.name.length <= 100">{{item.name}}</span>
