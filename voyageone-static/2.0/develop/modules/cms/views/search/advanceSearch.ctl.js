@@ -656,6 +656,7 @@ define([
             } else {
                 cartId = parseInt(cartId);
             }
+
             var selList = null;
             if (!$scope.vm._selall) {
                 selList = getSelProductList();
