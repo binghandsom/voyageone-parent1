@@ -951,35 +951,37 @@ public class SxProductService extends BaseService {
         Map<String, String> sizeMap = getSizeMap(channelId, sxData.getMainProduct().getCommon().getFields().getBrand(),
                 sxData.getMainProduct().getCommon().getFields().getProductType(), sxData.getMainProduct().getCommon().getFields().getSizeType());
 
-        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 START
-        Map<String, String> mapSizeNick = new HashMap<>();
-        for (BaseMongoMap<String, Object> sku : skuList) {
-            mapSizeNick.put(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), sku.getStringAttribute("sizeNick"));
-        }
-        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 END
-
-        // 防止同一个group里, 不同的product的sku的size使用了不同的sizeNick
-        Map<String, String> sizeSxMap = new HashMap<>();
-        // 优先mainProduct里的sizeNick
-        for (CmsBtProductModel_Sku sku : sxData.getMainProduct().getCommon().getSkus()) {
-            String sizeNick = mapSizeNick.get(sku.getSkuCode());
-            if (!StringUtils.isEmpty(sizeNick)) {
-                sizeSxMap.put(sku.getSize(), sizeNick);
-            }
-        }
-        // 然后把productList里的也一样的做一遍
-        for (CmsBtProductModel productModel : productModelList) {
-            // 遍历每个product里的sku
-            for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
-                // 已经设置过的size就不用再设置了
-                if (!sizeSxMap.containsKey(sku.getSize())) {
-                    String sizeNick = mapSizeNick.get(sku.getSkuCode());
-                    if (!StringUtils.isEmpty(sizeNick)) {
-                        sizeSxMap.put(sku.getSize(), sizeNick);
-                    }
-                }
-            }
-        }
+        // 20160805 这段有问题, 不要了 tom START
+//        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 START
+//        Map<String, String> mapSizeNick = new HashMap<>();
+//        for (BaseMongoMap<String, Object> sku : skuList) {
+//            mapSizeNick.put(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), sku.getStringAttribute("sizeNick"));
+//        }
+//        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 END
+//
+//        // 防止同一个group里, 不同的product的sku的size使用了不同的sizeNick
+//        Map<String, String> sizeSxMap = new HashMap<>();
+//        // 优先mainProduct里的sizeNick
+//        for (CmsBtProductModel_Sku sku : sxData.getMainProduct().getCommon().getSkus()) {
+//            String sizeNick = mapSizeNick.get(sku.getSkuCode());
+//            if (!StringUtils.isEmpty(sizeNick)) {
+//                sizeSxMap.put(sku.getSize(), sizeNick);
+//            }
+//        }
+//        // 然后把productList里的也一样的做一遍
+//        for (CmsBtProductModel productModel : productModelList) {
+//            // 遍历每个product里的sku
+//            for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
+//                // 已经设置过的size就不用再设置了
+//                if (!sizeSxMap.containsKey(sku.getSize())) {
+//                    String sizeNick = mapSizeNick.get(sku.getSkuCode());
+//                    if (!StringUtils.isEmpty(sizeNick)) {
+//                        sizeSxMap.put(sku.getSize(), sizeNick);
+//                    }
+//                }
+//            }
+//        }
+        // 20160805 这段有问题, 不要了 tom END
 
         // 处理一下skuList的所有sizeSx尺码
         // modified by morse.lu 2016/07/08 start
@@ -1000,11 +1002,14 @@ public class SxProductService extends BaseService {
 //                sizeSxMap.put(sku.getSize(), sku.getSizeSx());
 //			}
 //		}
+
+        Map<String, String> sizeSxMap = new HashMap<>();
         for (BaseMongoMap<String, Object> sku : skuList) {
             String size = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name());
-            if (sizeSxMap.containsKey(size)) {
+            String sizeNick = sku.getStringAttribute("sizeNick");
+            if (!StringUtils.isEmpty(sizeNick)) {
                 // 直接用Nick
-                sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), sizeSxMap.get(size));
+                sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), sizeNick);
 			} else {
                 // 用size的尺码, 并转换
                 if (sizeMap.containsKey(size)) {
@@ -1012,18 +1017,21 @@ public class SxProductService extends BaseService {
                 } else {
                     sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), size);
                 }
-                sizeSxMap.put(size, sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
+//                sizeSxMap.put(size, sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
 			}
+            sizeSxMap.put(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
         }
         // modified by morse.lu 2016/07/08 end
 
         // 把整理好的skuList里的sizeSx, 回写到mainProduct里的sizeSx 和 productList里的sizeSx里
         for (CmsBtProductModel_Sku sku : sxData.getMainProduct().getCommon().getSkus()) {
-            sku.setSizeSx(sizeSxMap.get(sku.getSize()));
+//            sku.setSizeSx(sizeSxMap.get(sku.getSize()));
+            sku.setSizeSx(sizeSxMap.get(sku.getSkuCode()));
         }
         for (CmsBtProductModel productModel : productModelList) {
             for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
-                sku.setSizeSx(sizeSxMap.get(sku.getSize()));
+//                sku.setSizeSx(sizeSxMap.get(sku.getSize()));
+                sku.setSizeSx(sizeSxMap.get(sku.getSkuCode()));
             }
         }
 
@@ -3275,9 +3283,9 @@ public class SxProductService extends BaseService {
 
         // 取得变更前的product group表数据
         CmsBtProductGroupModel beforeProductGroup = productGroupService.getProductGroupByGroupId(sxData.getChannelId(),
-                sxData.getPlatform().getGroupId());
+                sxData.getGroupId());
         if (beforeProductGroup == null) {
-            $error("回写上新结果状态之前，没找到更新前的产品group表数据 [ProductCode:%s] [GroupId:%s]",
+            $error("回写上新结果状态失败！没找到更新前的产品group表数据 [ProductCode:%s] [GroupId:%s]",
                     sxData.getChannelId(), sxData.getPlatform().getGroupId());
             return;
         }
@@ -3326,17 +3334,17 @@ public class SxProductService extends BaseService {
 
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
             this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.okNum,
-                    workload.getModifier());
+                    StringUtils.isEmpty(workload.getModifier()) ? modifier : workload.getModifier());
         } else {
             // 上新失败后回写product表pPublishError的值("Error")
-            productGroupService.updateUploadErrorStatus(sxData.getPlatform());
+            productGroupService.updateUploadErrorStatus(sxData.getPlatform(), sxData.getErrorMessage());
 
             // 出错的时候将错误信息回写到cms_bt_business_log表
             this.insertBusinessLog(sxData, modifier);
 
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
             this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.errorNum,
-                    workload.getModifier());
+                    StringUtils.isEmpty(workload.getModifier()) ? modifier : workload.getModifier());
         }
     }
 

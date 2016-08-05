@@ -254,34 +254,15 @@ public class ProductSkuService extends BaseService {
      * @param sku sku数据
      * @return 判断结果
      */
-    public String getPriceDiffFlg(String channelId, BaseMongoMap<String, Object> sku){
-
+    public String getPriceDiffFlg(String channelId, BaseMongoMap<String, Object> sku) {
         // 阀值
-        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId
-                , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
-
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId , CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
         Double breakThreshold = 0.00;
         if (cmsChannelConfigBean != null) {
             breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D ;
         }
 
-        String diffFlg = "1";
-        if (sku.getDoubleAttribute("priceSale") < sku.getDoubleAttribute("priceRetail")) {
-            Double priceRetail = sku.getDoubleAttribute("priceRetail") * (1.0-breakThreshold);
-            if (priceRetail > sku.getDoubleAttribute("priceSale")) {
-                diffFlg = "5";
-            } else {
-                diffFlg = "2";
-            }
-        } else if (sku.getDoubleAttribute("priceSale") > sku.getDoubleAttribute("priceRetail")) {
-            Double priceRetail = sku.getDoubleAttribute("priceRetail") * (breakThreshold+1.0);
-            if (priceRetail >= sku.getDoubleAttribute("priceSale")) {
-                diffFlg = "3";
-            } else {
-                diffFlg = "4";
-            }
-        }
-        return diffFlg;
+        return getPriceDiffFlg(breakThreshold, sku.getDoubleAttribute("priceSale"), sku.getDoubleAttribute("priceRetail"));
     }
 
     /**

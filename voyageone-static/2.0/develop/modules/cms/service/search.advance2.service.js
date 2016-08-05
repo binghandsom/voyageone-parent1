@@ -581,12 +581,14 @@ define([
                 }
                 priceItem += ': ';
                 // 合计sku价格的上下限
-                if (data[stakey] == data[endKey]) {
-                    priceItem += $filter('number')(data[stakey], 2);
-                } else {
-                    priceItem += $filter('number')(data[stakey], 2);
-                    priceItem += " ~ ";
-                    priceItem += $filter('number')(data[endKey], 2);
+                if (data[stakey] != null && data[stakey] != undefined && data[endKey] != null && data[endKey] != undefined ) {
+                    if (data[stakey] == data[endKey]) {
+                        priceItem += $filter('number')(data[stakey], 2);
+                    } else {
+                        priceItem += $filter('number')(data[stakey], 2);
+                        priceItem += " ~ ";
+                        priceItem += $filter('number')(data[endKey], 2);
+                    }
                 }
 
                 // 当是中国指导价时，要有价格变化提示
@@ -637,12 +639,14 @@ define([
                 }
                 priceItem += ': ';
                 // 合计sku价格的上下限 'pPriceRetailSt', 'pPriceRetailEd'
-                if (data['pPriceRetailSt'] == data['pPriceRetailEd']) {
-                    priceItem += $filter('number')(data['pPriceRetailSt'], 2);
-                } else {
-                    priceItem += $filter('number')(data['pPriceRetailSt'], 2);
-                    priceItem += " ~ ";
-                    priceItem += $filter('number')(data['pPriceRetailEd'], 2);
+                if (data['pPriceRetailSt'] != null && data['pPriceRetailSt'] != undefined && data['pPriceRetailEd'] != null && data['pPriceRetailEd'] != undefined ) {
+                    if (data['pPriceRetailSt'] == data['pPriceRetailEd']) {
+                        priceItem += $filter('number')(data['pPriceRetailSt'], 2);
+                    } else {
+                        priceItem += $filter('number')(data['pPriceRetailSt'], 2);
+                        priceItem += " ~ ";
+                        priceItem += $filter('number')(data['pPriceRetailEd'], 2);
+                    }
                 }
                 fstLine.pVal = priceItem;
 

@@ -62,13 +62,10 @@ define([
                         inValue = $scope.vm.propertyInfo.property.value.toString();
                     }
 
-                    var msg2 = '是否确认批量修改[Vo扣点]？<br>本次操作对象商品数：' + $scope.vm.selCnt + '<br>修改Vo扣点会造成商品的中国指导价发生变化<br>选择确定，处理将会继续。 选择取消，处理停止';
                     if (inValue == '') {
-                        var msg = '是否清空VO扣点值，使用系统缺省值？<br>选择确定，处理将会继续。 选择取消，处理停止';
+                        var msg = '是否确认清空VO扣点值，使用系统缺省值？<br>本次操作对象商品数：' + $scope.vm.selCnt + '<br>修改Vo扣点会造成商品的中国指导价发生变化<br>选择确定，处理将会继续。 选择取消，处理停止';
                         confirm(msg).then(function(){
-                            confirm(msg2).then(function () {
-                                _openBulkUpdate();
-                            });
+                            _openBulkUpdate();
                         });
                         return;
                     } else {
@@ -76,9 +73,10 @@ define([
                             alert('请输入正确的数值，不能大于100');
                             return;
                         }
+                        var msg2 = '是否确认批量修改[Vo扣点]？<br>本次操作对象商品数：' + $scope.vm.selCnt + '<br>修改Vo扣点会造成商品的中国指导价发生变化<br>选择确定，处理将会继续。 选择取消，处理停止';
                         if ($scope.vm.propertyInfo.property.value > 20) {
-                            confirm('扣点值超过警告值(20%)，请确认是否没有问题？').then(function(){
-                                confirm(msg2).then(function () {
+                            confirm(msg2).then(function(){
+                                confirm('扣点值超过警告值(20%)，请确认是否没有问题？').then(function () {
                                     _openBulkUpdate();
                                 });
                             });

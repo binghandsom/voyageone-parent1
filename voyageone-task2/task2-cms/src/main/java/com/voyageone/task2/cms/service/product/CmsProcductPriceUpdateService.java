@@ -24,8 +24,8 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
- * 当产品sku的价格变更时，同步至code的group价格范围, 目前同步中国建议售价、中国指导价和中国最终售价
- * 参数 channelId, prodId/prodCode, cartId, skuCode, priceMsrp, priceRetail, priceSale，具体设值参照 CmsBtPriceLogModel
+ * 当产品sku的价格变更时，同步至code和group的价格范围, 目前同步中国建议售价、中国指导价和中国最终售价
+ * 参数 channelId, prodId, cartId，具体设值参照 CmsBtPriceLogModel
  * 实施方法，不比较输入值和现有值的大小，直接重新计算价格区间
  * @author jiangjusheng on 2016/07/11
  * @version 2.0.0
@@ -44,7 +44,7 @@ public class CmsProcductPriceUpdateService extends BaseMQCmsService {
         $info("CmsProcductPriceUpdateService start");
         $info("参数" + JacksonUtil.bean2Json(messageMap));
         String channelId = StringUtils.trimToNull((String) messageMap.get("channelId"));
-        if (channelId == null || messageMap.get("productId") == null || messageMap.get("cartId") == null || StringUtils.isEmpty((String) messageMap.get("sku"))) {
+        if (channelId == null || messageMap.get("productId") == null || messageMap.get("cartId") == null) {
             $error("CmsProcductPriceUpdateService 缺少参数");
             return;
         }

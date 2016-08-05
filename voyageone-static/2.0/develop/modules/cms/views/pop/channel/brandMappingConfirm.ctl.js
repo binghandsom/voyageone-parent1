@@ -23,8 +23,11 @@ define([
             },
             confirm: function () {
                 var self = this;
-                self.result = true;
-                self.$uibModalInstance.close(self.result);
+                var confirmResult={
+                    result : true,
+                    brandId : self.platformData.brandId
+                };
+                self.$uibModalInstance.close(confirmResult);
             }
         };
         return BrandMappingConfirmController;
