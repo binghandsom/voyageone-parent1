@@ -537,8 +537,6 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 新增或者更新商品结束时，根据状态回写product表（成功1 失败2）
             if (retStatus) {
                 // 新增或更新商品成功时
-//                // 回写ims_bt_product表(numIId)
-//                sxProductService.updateImsBtProduct(sxData, getTaskName());
 
                 // 设置京东运费模板和关联板式
                 // 设置京东运费模板
@@ -1434,8 +1432,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      */
     private boolean uploadJdProductUpdatePics(ShopBean shopProp, long wareId, SxData sxData,
                                            Map<String, Object> productColorMap) {
-        boolean retUploadUpdatePics = true;
+
         List<CmsBtProductModel> productList = sxData.getProductList();
+        List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
 
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
@@ -1487,108 +1486,147 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             }
         }
 
+        // 根据商品Id，销售属性值Id增加5张产品图片
+        // SKU图片上传是否成功(只要有一张上传成功则认为成功)
+        boolean uploadAllPicsResult = false;
+        String productPicErr = "";
+
         // 2.循环颜色（产品）列表更新图片
         // 每个颜色先上传一张，再删除一张，最后删除多余的更新前图片
         for (CmsBtProductModel product:productList) {
+            String productCode = product.getCommon().getFields().getCode();
+            if (StringUtils.isEmpty(productCode)) continue;
             // 颜色值id取得
             // 新增或更新商品的时候，从产品和颜色值Mapping关系表中取得该产品对应的颜色值
-            String colorId = "";
-            if (!StringUtil.isEmpty(productColorMap.get(product.getCommon().getFields().getCode()).toString())) {
-                String[] colorIdArray = productColorMap.get(product.getCommon().getFields().getCode()).toString().split(Separtor_Colon);
-                if (colorIdArray.length >= 2) {
-                    // 产品颜色值Mapping关系表里面取得的颜色值为"1000021641:1523005913",取得后面的颜色值"1523005913"
-                    colorId = colorIdArray[1];
-                }
-            }
-
-            // 主图不上传
-            if (ColorId_MinPic.equals(colorId)) {
-                continue;
-            }
-
-            // 根据商品Id，销售属性值Id增加5张产品图片
-            // SKU图片上传是否成功(只要5张图片有一张上传成功则认为成功)
-            boolean uploadProductPicResult = false;
-            // 取得图片URL参数
-            String[] extParameter = {product.getCommon().getFields().getCode()};   // 产品code
-            // 京东平台上该颜色对应的更新前图片张数
-            int intOldImageCnt = 0;
-            if (!ListUtils.isNull(jdColorIndexesMap.get(colorId))) {
-                intOldImageCnt = jdColorIndexesMap.get(colorId).size();
-            }
-            // 要更新的产品图片张数
-//            int intNewImageCnt = product.getCommon().getFields().getImages1().size();
-            // 京东平台上该颜色已经删除的图片件数
-            int delImageCnt = 0;
-
-            String productPicErr = "";
-            // 循环取得5张图片的url并分别上传到京东
-            for (String picName : productPicNameList) {
-                String picUrl = "";
-                try {
-                    // 取得图片URL(TODO 这里的解析字典不能知道现在到底是哪个颜色产品的图片，目前每个商品都只有一个product，暂时没问题)
-                    picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), extParameter);
-                    if (StringUtils.isEmpty(picUrl)) continue;
-                    // 如果之前没有一张图片上传成功则本次上传对象图片设置为主图，如果之前已经有图片上传成功，则本次设为非主图
-                    boolean skuPicResult = jdWareService.addWarePropimg(shopProp, String.valueOf(wareId), colorId, picUrl, picName, !uploadProductPicResult);
-
-                    // 5张图片只有曾经有一张上传成功就认为SKU图片上传成功
-                    uploadProductPicResult = uploadProductPicResult || skuPicResult;
-                } catch (Exception ex) {
-                    // 如果5张图片里面有一张上传成功的时候
-                    if (uploadProductPicResult) {
-                        $info("京东根据商品Id销售属性值Id上传产品主图成功，上传非主图图片失败！[WareId:%s] [ColorId:%s] [PicName:%s] [PicUrl:%s]", wareId, colorId, picName, picUrl);
-                    } else {
-                        $info("京东根据商品Id销售属性值Id上传产品主图失败！[WareId:%s] [ColorId:%s] [PicName:%s] [PicUrl:%s]", wareId, colorId, picName, picUrl);
+//            String colorId = "";
+            List<String> colorIds = new ArrayList<>();
+            if (productColorMap.containsKey(productCode)) {
+                if (!StringUtil.isEmpty(String.valueOf(productColorMap.get(productCode)))) {
+                    String[] colorIdArray = productColorMap.get(product.getCommon().getFields().getCode()).toString().split(Separtor_Colon);
+                    if (colorIdArray.length >= 2) {
+                        // 产品颜色值Mapping关系表里面取得的颜色值为"1000021641:1523005913",取得后面的颜色值"1523005913"
+                        colorIds.add(colorIdArray[1]);
                     }
-                    $error(ex);
-                    productPicErr = ex.getMessage();
-                    // 即使5张图片中的某张上传出错，也继续循环上传后面的图片
                 }
-
-                // 删除第一张图片(及时上传失败，也要删除老的图片，如果报必须大于3张/1张的错误，只能让运营把图片改好)
-                if (delImageCnt < intOldImageCnt) {
-                    try {
-                        // 调用API【删除商品图片】批量删除该商品该颜色的第一张图片
-                        boolean delPicResult = jdWareService.deleteImagesByWareId(shopProp, wareId, colorId, "1");
-                        // 京东平台上该颜色已经删除的图片件数
-                        if (delPicResult) delImageCnt++;
-                    } catch (Exception ex) {
-                        // 如果报"图片张数必须多余N张"的异常，则继续上传下一张图片，否则抛出异常
-                        if (ex.getMessage().contains("图片张数必须多于")) {
+            } else {
+                // 如果类目只有颜色没有尺寸的时候，每种尺寸都作为一种颜色（没有颜色只有尺寸的时候不上传图片，因为图片用的颜色id）
+                CmsBtProductModel_Platform_Cart platformCart = product.getPlatform(sxData.getCartId());
+                if (platformCart == null || ListUtils.isNull(platformCart.getSkus())) continue;
+                List<BaseMongoMap<String, Object>> platformSkuList = platformCart.getSkus();
+                for (BaseMongoMap<String, Object> pSku : platformSkuList) {
+                    String pSkuCode = pSku.getStringAttribute("skuCode");
+                    for (BaseMongoMap<String, Object> objSku : skuList) {
+                        // 如果没有找到对应skuCode，则继续循环
+                        if (!pSkuCode.equals(objSku.getStringAttribute("skuCode"))) {
                             continue;
-                        } else {
-                            throw new BusinessException(ex.getMessage());
+                        }
+
+                        // productColorMap或productSizeMap中的key为productCode_sizeSx
+                        String colorKey = product.getCommon().getFields().getCode() + "_" +
+                                objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
+                        // 从产品颜色map中取得一个颜色id
+                        if (productColorMap.containsKey(colorKey)) {
+                            String[] colorIdArray = productColorMap.get(colorKey).toString().split(Separtor_Colon);
+                            if (colorIdArray.length >= 2) {
+                                // 产品颜色值Mapping关系表里面取得的颜色值为"1000021641:1523005913",取得后面的颜色值"1523005913"
+                                colorIds.add(colorIdArray[1]);
+                            }
                         }
                     }
                 }
             }
 
-            // 删除剩余的图片
-            for (int i = delImageCnt; delImageCnt < intOldImageCnt; i++) {
-                // 调用删除图片API（指定删除第一张）
-                // 如果报"图片张数必须多余N张"的异常，则写到log表里，让运营在CMS里面添加图片
-                jdWareService.deleteImagesByWareId(shopProp, wareId, colorId, "1");
+            // 如果没有取得颜色id，则不上传图片
+            if (ListUtils.isNull(colorIds)) {
+                continue;
             }
 
-            // 该产品5张图片全部上传失败的时候
-            if (!uploadProductPicResult) {
-                $error("更新商品时该颜色图片全部上传失败！[WareId:%s] [ProductCode:%s]", wareId, product.getCommon().getFields().getCode());
-                sxData.setErrorMessage(shopProp.getShop_name() + " 更新商品时该颜色图片全部上传失败 [WareId:" + wareId + "] [ErrMsg:" + productPicErr + "]");
-            } else {
-                $info("更新商品时该颜色图片至少有1张上传成功！[WareId:%s] [ProductCode:%s]", wareId, product.getCommon().getFields().getCode());
-            }
+            // 如果一个产品有多个颜色id循环设置图片（如果类目只有颜色没有尺寸时，会把每种尺寸都作为一种颜色）
+            for (String colorId : colorIds) {
+                // 主图不上传
+                if (ColorId_MinPic.equals(colorId)) {
+                    continue;
+                }
 
-            // 图片上传返回状态判断(该商品下所有产品的图片均上传成功时，才返回成功，否则返回失败)
-            retUploadUpdatePics = retUploadUpdatePics && uploadProductPicResult;
+                // 根据商品Id，销售属性值Id增加5张产品图片
+                // SKU图片上传是否成功(只要5张图片有一张上传成功则认为成功,会被当成主图，后面上传的图片就是非主图)
+                boolean uploadCurrentColorPicResult = false;
+                // 取得图片URL参数
+                String[] extParameter = {productCode};   // 产品code
+                // 京东平台上该颜色对应的更新前图片张数
+                int intOldImageCnt = 0;
+                if (!ListUtils.isNull(jdColorIndexesMap.get(colorId))) {
+                    intOldImageCnt = jdColorIndexesMap.get(colorId).size();
+                }
+                // 要更新的产品图片张数
+//            int intNewImageCnt = product.getCommon().getFields().getImages1().size();
+                // 京东平台上该颜色已经删除的图片件数
+                int delImageCnt = 0;
 
-            // 只要有一个产品（颜色）的5张图片都上传失败，则认为失败，退出循环，后面会删除该商品
-            if (!retUploadUpdatePics) {
-                break;
+                // 循环取得5张图片的url并分别上传到京东
+                for (String picName : productPicNameList) {
+                    String picUrl = "";
+                    try {
+                        // 取得图片URL(这里的解析字典不能知道现在到底是哪个颜色产品的图片，目前每个商品都只有一个product，暂时没问题)
+                        picUrl = sxProductService.resolveDict(picName, expressionParser, shopProp, getTaskName(), extParameter);
+                        if (StringUtils.isEmpty(picUrl)) continue;
+                        // 如果之前没有一张图片上传成功则本次上传对象图片设置为主图，如果之前已经有图片上传成功，则本次设为非主图
+                        boolean skuPicResult = jdWareService.addWarePropimg(shopProp, String.valueOf(wareId), colorId, picUrl, picName, !uploadCurrentColorPicResult);
+
+                        // 5张图片只有曾经有一张上传成功就认为SKU图片上传成功，并被当成主图，后面的图片设为非主图
+                        uploadCurrentColorPicResult = uploadCurrentColorPicResult || skuPicResult;
+                    } catch (Exception ex) {
+                        $info("京东根据商品Id销售属性值Id上传产品颜色图片失败！[WareId:%s] [ColorId:%s] [PicName:%s] [PicUrl:%s]", wareId, colorId, picName, picUrl);
+                        productPicErr = ex.getMessage();
+                        // 即使5张图片中的某张上传出错，也继续循环上传后面的图片
+                    }
+
+                    // 删除第一张图片(及时上传失败，也要删除老的图片，如果报必须大于5张/3张/1张(每个类目要求图片张数不一样)的错误，只能让运营把图片改好)
+                    if (delImageCnt < intOldImageCnt) {
+                        try {
+                            // 调用API【删除商品图片】批量删除该商品该颜色的第一张图片
+                            boolean delPicResult = jdWareService.deleteImagesByWareId(shopProp, wareId, colorId, "1");
+                            // 京东平台上该颜色已经删除的图片件数
+                            if (delPicResult) delImageCnt++;
+                        } catch (Exception ex) {
+                            // 如果报"图片张数必须多余N张"的异常，则继续上传下一张图片，否则抛出异常
+                            if (ex.getMessage().contains("图片张数必须多于")) {
+                                continue;
+                            } else {
+                                throw new BusinessException(ex.getMessage());
+                            }
+                        }
+                    }
+                }
+
+                // 删除剩余的图片
+                for (int i = delImageCnt; delImageCnt < intOldImageCnt; i++) {
+                    // 调用删除图片API（指定删除第一张）
+                    // 如果报"图片张数必须多余N张"的异常，则写到log表里，让运营在CMS里面添加图片
+                    try {
+                        jdWareService.deleteImagesByWareId(shopProp, wareId, colorId, "1");
+                    } catch (Exception ex) {
+                        String errMsg = String.format("调用京东API上传商品颜色图片失败 [ErrorMsg:%s] [WareId:%s] " +
+                                "[ProductCode:%s] [ColorId:]", ex.getMessage(), wareId, productCode, colorId);
+                        $error(errMsg);
+                        throw new BusinessException(errMsg);
+                    }
+                }
+
+                // 图片上传返回状态判断
+                uploadAllPicsResult = uploadAllPicsResult || uploadCurrentColorPicResult;
+
+                $info("商品颜色图片上传成功！[WareId:%s] [ProductCode:%s] [ColorId:%s]", wareId, product.getCommon().getFields().getCode(), colorId);
             }
         }
 
-        return retUploadUpdatePics;
+        // 该产品颜色图片全部上传失败的时候
+        if (!uploadAllPicsResult) {
+            $error("商品所有颜色图片全部上传失败！[WareId:%s]", wareId);
+            sxData.setErrorMessage(shopProp.getShop_name() + " 商品所有颜色图片全部上传失败 [WareId:" + wareId + "] [ErrMsg:" + productPicErr + "]");
+        }
+
+        return uploadAllPicsResult;
     }
 
     /**

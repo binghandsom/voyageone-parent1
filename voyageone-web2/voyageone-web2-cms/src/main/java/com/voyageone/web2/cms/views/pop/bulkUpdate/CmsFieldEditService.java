@@ -11,6 +11,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -196,6 +197,7 @@ public class CmsFieldEditService extends BaseAppService {
             $debug("翻译状态批量更新结果 " + rs.toString());
 
             // 记录商品修改历史
+            stsCode = Types.getTypeName(TypeConfigEnums.MastType.translationStatus.getId(), "cn", stsCode);
             productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, -1, EnumProductOperationType.BatchUpdate, "高级检索 批量更新：翻译状态--" + stsCode, userInfo.getUserName());
 
             rsMap.put("ecd", 0);
