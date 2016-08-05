@@ -538,6 +538,7 @@ define(function () {
         "BTN_CLOSE": "关闭",
         "BTN_TODAY": "今日",
         "BTN_SAVE": "保存",
+        "BTN_SCRATCH": "暂存",
         "BTN_SELECT": "选择",
         "BTN_SEARCH": "检索",
         "BTN_ADD_TO_PROMOTION": "参加活动",
