@@ -110,7 +110,7 @@ define([
                     if (res.data.ecd == 0) {
                         if (res.data.unProcList != undefined && res.data.unProcList > 0) {
                             // 有未处理的商品
-                            alert('批量更新最终售价已完成，但是有一些商品因不符合验证规则而没有处理，<br>请点击[确定]下载未处理的商品code一览。').then($scope.exportFile);
+                            alert('批量更新最终售价已完成，但是有一些商品因不符合验证规则而没有处理，<br>请点击[确定]<label class="text-u-red font-bold">下载</label>未处理的商品code一览。').then($scope.exportFile);
                         }
                     }
 
