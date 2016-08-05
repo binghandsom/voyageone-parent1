@@ -33,6 +33,7 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
@@ -82,6 +83,9 @@ public class CmsProductDetailService extends BaseAppService {
     private CategoryTreeAllService categoryTreeAllService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
+
+    @Autowired
+    private SxProductService sxProductService;
 
     @Autowired
     private ImsBtProductDao imsBtProductDao;
@@ -1246,8 +1250,9 @@ public class CmsProductDetailService extends BaseAppService {
         // platForm.setpStatus(CmsConstants.PlatformStatus.);
         platForm.remove("pStatus");
         productService.updateProductPlatform(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
-        String comment = parameter.getComment();
-        productStatusHistoryService.insert(parameter.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), parameter.getCartId(), EnumProductOperationType.Delisting, comment, modifier);
+        sxProductService.insertSxWorkLoad(parameter.getChannelId(), new ArrayList<String>(Arrays.asList(parameter.getProductCode())), parameter.getCartId(), modifier);
+        String comment=parameter.getComment();
+        productStatusHistoryService.insert(parameter.getChannelId(),cmsBtProductModel.getCommon().getFields().getCode(),platForm.getStatus(),parameter.getCartId(), EnumProductOperationType.Delisting,comment,modifier);
 
         //2.1.3	Voyageone_ims. ims_bt_product(mysql) 根据 channel cartId 和code找到对应的记录 把 numIId字段设为0
         ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(parameter.getChannelId(), parameter.getCartId(), parameter.getProductCode());

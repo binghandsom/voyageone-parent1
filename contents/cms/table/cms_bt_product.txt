@@ -94,6 +94,7 @@
     * pProductId
     * pNumIId
     * pStatus
+    * pReallyStatus ->产品在平台上的真实状态,edward,20160802
     * pPublishError  ->表示平台上新是否失败，用于高级检索
     * pPublishMessage  ->表示平台上新失败, 显示错误信息
     * pBrandId      ->平台品牌Id
@@ -138,6 +139,7 @@
 	* pProductId
 	* pNumIId
 	* pStatus
+    * pReallyStatus ->产品在平台上的真实状态,edward,20160802
 	* pBrandId
 	* pBrandName
 	* pPublishTime
