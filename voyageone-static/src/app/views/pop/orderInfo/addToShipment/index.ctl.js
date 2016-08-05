@@ -13,6 +13,7 @@ define([
             this.waitingSkuList = context.waitingSkuList;
             this.shipmentScanPopupService = shipmentScanPopupService;
             this.$uibModalInstance = $uibModalInstance;
+            setTimeout("angular.element(document.getElementsByName('barcodeInputBar')).focus()", 500)
         }
 
         AddToShipmentController.prototype.scan = function (barcode) {
