@@ -656,7 +656,7 @@
             , `containerizer` = null
         </if>
         <if test="shipmentId != null">
-            , `shipment_id` = #{shipmentId,jdbcType=VARCHAR}
+            , `shipment_id` = #{shipmentId,jdbcType=INTEGER}
         </if>
         <if test="shipmentTime != null">
             , `shipment_time` = #{shipmentTime,jdbcType=TIMESTAMP}

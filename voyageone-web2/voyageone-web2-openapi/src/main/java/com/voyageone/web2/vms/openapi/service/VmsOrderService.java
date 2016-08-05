@@ -483,8 +483,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         }
 
         // 更新物品的状态为3：shipped
-        int count = orderDetailService.updateReservationStatus(channelId, reservationId,
-                VmsConstants.STATUS_VALUE.PRODUCT_STATUS.SHIPPED, getClassName(), new Date(shippedTime), null);
+        int count = orderDetailService.updateReservationStatusToShipped(channelId, reservationId, shipmentId, getClassName(), new Date(shippedTime), null);
 
         if (count > 0) {
             response.setShipmentId(shipmentId);
