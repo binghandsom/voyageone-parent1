@@ -289,7 +289,6 @@ private CmsBtPromotionDao daoCmsBtPromotion;
     public CallResult updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
         CallResult result = new CallResult();
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
-
         if (modelCmsBtJmPromotion.getIsPromotionFullMinus())//该专场为 满减专场的场合
         {
             result.setMsg("该专场为满减专场,不允许延期");
@@ -307,7 +306,6 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         map.put("synchStatus", 2);
         return dao.selectOne(map) != null;
     }
-
     //商品预览
     public ProductViewBean getProductView(int promotionProductId) {
         ProductViewBean productViewBean = new ProductViewBean();
@@ -319,7 +317,6 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         productViewBean.setSkuList(mapModelList);
         return productViewBean;
     }
-
     //更新PromotionProduct 目前只更新 limit
     public int updatePromotionProduct(UpdatePromotionProductParameter parameter, String userName) {
         CmsBtJmPromotionProductModel model = dao.select(parameter.getId());
