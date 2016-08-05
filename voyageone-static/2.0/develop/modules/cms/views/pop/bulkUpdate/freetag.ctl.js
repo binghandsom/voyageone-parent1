@@ -16,10 +16,31 @@ define([
         }, {});
     }
 
+    /**@description 判断选中的值是否改变
+     * @param orgChkStsMap 全选的collection  id是全路径要分割
+     * @param selectedMap   选中的collection
+     */
+    function canSave(orgChkStsMap,selectedMap){
+        var orgArr,selectedArr;
+
+        orgArr = _.pluck(_.map(orgChkStsMap,function(value,key){
+            return {id: _.max(key.split("-")),value:value};
+        }).filter(function(item){
+            return item.value;
+        }),"id");
+
+        selectedArr = _.map(selectedMap,function(item){
+            return item.selectedId;
+        });
+
+        return angular.equals(orgArr,selectedArr);
+    }
+
     cms.controller('popFreeTagCtl', (function () {
-        function popFreeTagCtl(context, channelTagService, $uibModalInstance) {
+        function popFreeTagCtl(context, channelTagService, $uibModalInstance,alert) {
             this.channelTagService = channelTagService;
             this.$uibModalInstance = $uibModalInstance;
+            this.alert = alert;
             this.tagTypeSelectValue = context.tagTypeSel;
             this.cartId = context.cartId;
             this.orgFlg = context.orgFlg; // orgFlg==1:表示从高级检索的检索条件而来；orgFlg==2:表示从高级检索的设置自由标签而来；其它场合不设值
@@ -144,7 +165,15 @@ define([
                     }
                 });
 
+
+                /**判断是否改变*/
+                if(canSave(self.orgChkStsMap,selFlagArr)){
+                    self.alert("未改变任何标签！");
+                    return;
+                }
+
                 if(selCounts != 0 && selCounts != orgDispArr.length){
+                    self.alert("存在冲突标签请确认！");
                     return;
                 }
 
