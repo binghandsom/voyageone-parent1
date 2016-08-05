@@ -11,6 +11,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -28,6 +29,7 @@ import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
@@ -81,6 +83,8 @@ public class CmsFieldEditService extends BaseAppService {
     private ProductStatusHistoryService productStatusHistoryService;
     @Autowired
     private MqSender sender;
+    @Autowired
+    private CommCacheService commCacheService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -196,6 +200,7 @@ public class CmsFieldEditService extends BaseAppService {
             $debug("翻译状态批量更新结果 " + rs.toString());
 
             // 记录商品修改历史
+            stsCode = Types.getTypeName(TypeConfigEnums.MastType.translationStatus.getId(), "cn", stsCode);
             productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, -1, EnumProductOperationType.BatchUpdate, "高级检索 批量更新：翻译状态--" + stsCode, userInfo.getUserName());
 
             rsMap.put("ecd", 0);
@@ -682,9 +687,11 @@ public class CmsFieldEditService extends BaseAppService {
 
         List<CmsBtPriceLogModel> priceLogList = new ArrayList<CmsBtPriceLogModel>();
         String skuCode = null;
-        List<String> skuCodeList = new ArrayList<>();
         BulkJomgoUpdateList bulkList = new BulkJomgoUpdateList(1000, cmsBtProductDao, userInfo.getSelChannelId());
         boolean hasUpdFlg = false;
+        List<String> prodPriceEqList = new ArrayList<>();
+        List<String> prodPriceUpList = new ArrayList<>();
+        List<String> prodPriceDownList = new ArrayList<>();
 
         List<CmsBtProductModel> prodObjList = productService.getList(userInfo.getSelChannelId(), qryObj);
         $debug("批量修改商品价格 开始批量处理");
@@ -740,10 +747,13 @@ public class CmsFieldEditService extends BaseAppService {
                     rsMap.put("skuCode", skuCode);
                     return rsMap;
                 }
-                if (rs.equals(skuObj.getDoubleAttribute("priceSale"))) {
+                // 修改前的最终售价
+                double befPriceSale = skuObj.getDoubleAttribute("priceSale");
+                if (rs == befPriceSale) {
                     // 修改前后价格相同
                     $info(String.format("setProductSalePrice: 修改前后价格相同 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    hasUpdFlg = true;
+                    hasUpdFlg = false;
+                    prodPriceEqList.add(prodCode + ", " + skuCode + ", " + befPriceSale);
                     continue;
                 }
 
@@ -776,9 +786,11 @@ public class CmsFieldEditService extends BaseAppService {
                 String diffFlg = productSkuService.getPriceDiffFlg(breakThreshold, rs, result);
                 if ("2".equals(diffFlg) || "5".equals(diffFlg)) {
                     $info(String.format("setProductSalePrice: 输入的最终售价低于指导价，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+                    prodPriceDownList.add(prodCode + ", " + skuCode + ", " + befPriceSale + ", " + rs);
                     continue;
                 } else if ("4".equals(diffFlg)) {
                     $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+                    prodPriceUpList.add(prodCode + ", " + skuCode + ", " + befPriceSale + ", " + rs);
                     continue;
                     // 超过阈值时不更新，(下面注释掉的代码暂时保留，将来可能会有用)
 //                    if (notChkPriceFlg == 1) {
@@ -794,7 +806,7 @@ public class CmsFieldEditService extends BaseAppService {
 //                        return rsMap;
 //                    }
                 }
-                skuCodeList.add(skuCode);
+                hasUpdFlg = true;
                 skuObj.setAttribute("priceSale", rs);
                 skuObj.setAttribute("priceDiffFlg", diffFlg);
 
@@ -855,6 +867,17 @@ public class CmsFieldEditService extends BaseAppService {
         sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartId, userInfo.getUserName());
         $debug("批量修改商品价格 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
+        // 如果有未处理的商品，则放入缓存
+        if (prodPriceEqList.size() > 0) {
+            commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "1", prodPriceEqList);
+        }
+        if (prodPriceUpList.size() > 0) {
+            commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2", prodPriceUpList);
+        }
+        if (prodPriceDownList.size() > 0) {
+            commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "3", prodPriceDownList);
+        }
+        rsMap.put("unProcList", prodPriceEqList.size() + prodPriceUpList.size() + prodPriceDownList.size());
         rsMap.put("ecd", 0);
         return rsMap;
     }
@@ -889,5 +912,50 @@ public class CmsFieldEditService extends BaseAppService {
                 return rs.setScale(2, BigDecimal.ROUND_CEILING).doubleValue();
             }
         }
+    }
+
+    /**
+     * 获取数据文件内容
+     */
+    public String getCodeFile(UserSessionBean userInfo) {
+        // 取回缓存
+        List<String> prodPriceEqList = commCacheService.getCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "1");
+        List<String> prodPriceUpList = commCacheService.getCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2");
+        List<String> prodPriceDownList = commCacheService.getCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "3");
+        // 删除缓存
+        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "1");
+        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2");
+        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "3");
+
+        StringBuilder rs = new StringBuilder();
+        if (prodPriceEqList != null && prodPriceEqList.size() > 0) {
+            rs.append("=====以下是修改前后最终售价格相同的商品code/sku一览==========");
+            rs.append(System.lineSeparator());
+            rs.append("  商品code,  sku code, 修改前售价");
+            rs.append(System.lineSeparator());
+            prodPriceEqList.forEach(item -> { rs.append(item); rs.append(System.lineSeparator()); });
+            rs.append(System.lineSeparator());
+        }
+        if (prodPriceUpList != null && prodPriceUpList.size() > 0) {
+            rs.append("=====以下是修改后最终售价低于指导价的商品code/sku一览==========");
+            rs.append(System.lineSeparator());
+            rs.append("  商品code,  sku code, 修改前售价, 修改后售价");
+            rs.append(System.lineSeparator());
+            prodPriceUpList.forEach(item -> { rs.append(item); rs.append(System.lineSeparator()); });
+            rs.append(System.lineSeparator());
+        }
+        if (prodPriceDownList != null && prodPriceDownList.size() > 0) {
+            rs.append("=====以下是修改后最终售价格大于阈值的商品code/sku一览==========");
+            rs.append(System.lineSeparator());
+            rs.append("  商品code,  sku code, 修改前售价, 修改后售价");
+            rs.append(System.lineSeparator());
+            prodPriceDownList.forEach(item -> { rs.append(item); rs.append(System.lineSeparator()); });
+        }
+
+        if (rs.length() == 0) {
+            $warn("缓存中没有数据啊！");
+            return null;
+        }
+        return rs.toString();
     }
 }

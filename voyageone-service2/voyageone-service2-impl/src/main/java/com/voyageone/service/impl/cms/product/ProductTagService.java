@@ -85,29 +85,31 @@ public class ProductTagService extends BaseService {
      * 设置产品free tag，同时添加该tag的所有上级tag
      */
     public void setProdFreeTag(String channelId, List<String> tagPathList, List<String> prodCodeList, String modifier) {
-        if (tagPathList == null || tagPathList.isEmpty() || prodCodeList == null || prodCodeList.isEmpty()) {
+        if (prodCodeList == null || prodCodeList.isEmpty()) {
             $warn("ProductTagService：setProdFreeTag 缺少参数");
             throw new BusinessException("缺少参数!");
         }
 
         // 根据选择项目生成free tag列表
         List<String> pathList = new ArrayList<>();
-        int arrSize = 0;
-        for (String tagPath : tagPathList) {
-            // 生成级联tag path列表
-            String[] pathArr = org.apache.commons.lang3.StringUtils.split(tagPath, '-');
-            arrSize = pathArr.length;
-            for (int j = 0; j < arrSize; j ++) {
-                StringBuilder curTagPath = new StringBuilder("-");
-                for (int i = 0; i <= j ; i ++) {
-                    curTagPath.append(pathArr[i]);
-                    curTagPath.append("-");
+        if (tagPathList != null) {
+            int arrSize = 0;
+            for (String tagPath : tagPathList) {
+                // 生成级联tag path列表
+                String[] pathArr = org.apache.commons.lang3.StringUtils.split(tagPath, '-');
+                arrSize = pathArr.length;
+                for (int j = 0; j < arrSize; j ++) {
+                    StringBuilder curTagPath = new StringBuilder("-");
+                    for (int i = 0; i <= j ; i ++) {
+                        curTagPath.append(pathArr[i]);
+                        curTagPath.append("-");
+                    }
+                    pathList.add(curTagPath.toString());
                 }
-                pathList.add(curTagPath.toString());
             }
+            // 过滤重复项目
+            pathList = pathList.stream().distinct().collect(Collectors.toList());
         }
-        // 过滤重复项目
-        pathList = pathList.stream().distinct().collect(Collectors.toList());
 
         JomgoUpdate updObj = new JomgoUpdate();
         updObj.setQuery("{'common.fields.code':{$in:#}}");

@@ -419,8 +419,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
     public void setProdFreeTag(String channelId, Map<String, Object> params, String modifier, CmsSessionBean cmsSession) {
         List<String> tagPathList = (List<String>) params.get("tagPathList");
         if (tagPathList == null || tagPathList.isEmpty()) {
-            $warn("CmsAdvanceSearchService：addProdTag 缺少参数 未选择标签");
-            throw new BusinessException("缺少参数，未选择标签!");
+            $info("CmsAdvanceSearchService：setProdFreeTag 未选择标签,将清空所有自由标签");
         }
 
         Integer isSelAll = (Integer) params.get("isSelAll");
