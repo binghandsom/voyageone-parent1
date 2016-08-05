@@ -513,9 +513,11 @@ public class VmsOrderInfoService extends BaseService {
 
             if (cancelledCount > 0) throw new BusinessException("8000024");
             if (packagedCount > 0) throw new BusinessException("8000034");
-
+            // 理论上应该只有以上两种情况 最后加一个抛出确保今后状态加了之类的不会出错=。=
+            throw new BusinessException("8000035");
         }
 
+        // 状态不为OPEN
         VmsBtShipmentModel dbShipment = shipmentService.select(shipment.getId());
         if (!dbShipment.getStatus().equals(STATUS_VALUE.SHIPMENT_STATUS.OPEN)) throw new BusinessException("8000025");
 
@@ -659,5 +661,25 @@ public class VmsOrderInfoService extends BaseService {
                     return subOrderInfoBean;
                 })
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 统计已经扫描好的订单数
+     *
+     * @param user 当前用户
+     * @param shipmentId 当前shipment的ID
+     * @return 统计订单数
+     */
+    public Long countScannedOrder(UserSessionBean user, Integer shipmentId) {
+        Map<String, Object> searchParams = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannelId());
+            put("shipmentId", shipmentId);
+        }};
+        return orderDetailService.select(searchParams).stream()
+                .filter(vmsBtOrderDetailModel -> STATUS_VALUE.PRODUCT_STATUS.PACKAGE.equals(vmsBtOrderDetailModel
+                        .getStatus()))
+                .map(VmsBtOrderDetailModel::getConsolidationOrderId)
+                .distinct()
+                .count();
     }
 }

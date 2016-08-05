@@ -32,8 +32,13 @@ define([
 
         NewShipmentController.prototype.init = function () {
             var self = this;
-            self.shipmentPopupService.init().then(function (data) {
+            self.shipmentPopupService.init(self.shipment.id).then(function (data) {
                 self.expressCompanies = data.expressCompanies;
+                self.orderCount = data.orderCount;
+                if (self.type == 'end' && self.orderCount == 0) {
+                    self.alert('TXT_NOTHING_TO_SHIP');
+                    self.$uibModalInstance.close(self.shipment);
+                }
             })
         };
 

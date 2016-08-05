@@ -96,6 +96,7 @@ define(function () {
         "TXT_ERROR": "Error",
         "TXT_SCANNED": "Scanned",
         "TXT_WAITING": "Waiting",
+        "TXT_NOTHING_TO_SHIP": "End shipment failure, shipment can not be empty.",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
