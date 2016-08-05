@@ -6,7 +6,7 @@
         `id`, `channel_id`, `name`, `activity_pc_id`, `activity_app_id`, `cms_bt_jm_master_brand_Id`, 
         `brand`, `category`, `activity_start`, `activity_end`, `pre_period_start`, `pre_period_end`, 
         `created`, `creater`, `modified`, `modifier`, `active`, `comment`, `ref_tag_id`, 
-        `status`, `recovery_status`, `promotion_type`, `promotion_gift_type`
+        `status`, `recovery_status`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >

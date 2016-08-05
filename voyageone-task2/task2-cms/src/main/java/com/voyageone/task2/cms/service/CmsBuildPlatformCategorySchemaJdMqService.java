@@ -289,6 +289,9 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
         addSingleCheckField(productFieldsList, "productIsCanVat", "是否限制开增值税发票",
                 isCanVatOptionTrue.getValue(), false, isCanVatOptionList);
 
+        // 货号
+        addInputField(productFieldsList, "productModel", "货号", "", false, "50", "一般不需要填, 自动会用model上新的, 如果上新出错提示货号过长的时候, 可以在这里设置.");
+
         // 根据京东平台上新时用到一些平台相关的输入项目转换成XML文件
         String schemaCommonXmlContent = null;
         if (productFieldsList.size() > 0) {
