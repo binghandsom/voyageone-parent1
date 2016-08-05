@@ -33,7 +33,16 @@ define([
             return item.selectedId;
         });
 
-        return angular.equals(orgArr,selectedArr);
+        return compareArr(orgArr,selectedArr);
+    }
+
+    /**比较字符串数组是否值相等*/
+    function compareArr(arr1,arr2){
+        return _.every(arr1,function(element1){
+            return _.some(arr2,function(element2){
+                return element2 == element1;
+            });
+        });
     }
 
     cms.controller('popFreeTagCtl', (function () {
@@ -53,6 +62,7 @@ define([
             this.key = [];
             this.selected = [];
             this.taglist = {selList: []};
+            this.selOrgDispList = [];
             this.orgChkStsMap = {};
             this.orgDispMap = {};
             this._orgChkStsMap = {};
@@ -167,7 +177,7 @@ define([
 
 
                 /**判断是否改变*/
-                if(canSave(self.orgChkStsMap,selFlagArr)){
+                if(canSave(self.orgChkStsMap,selFlagArr) && self.selOrgDispList.length == 0){
                     self.alert("未改变任何标签！");
                     return;
                 }
@@ -190,6 +200,16 @@ define([
 
                 self.context = {"selectdTagList": selectdTagList, 'orgFlg': self.orgFlg};
                 self.$uibModalInstance.close(self.context);
+            },
+
+            selOrgDisp:function(path){
+                var self = this;
+                if(self.orgDispMap[path]){
+                    if(self.selOrgDispList.indexOf(path) < 0){
+                        self.selOrgDispList.push(path);
+                    }
+                }
+                console.log(self.selOrgDispList);
             }
         };
 
