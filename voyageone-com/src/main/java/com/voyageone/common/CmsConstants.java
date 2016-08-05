@@ -117,6 +117,8 @@ public class CmsConstants {
         // 适用人群是否从feed导入(1：从feed导入，0：不从feed导入运营手动添加)
         String SIZE_TYPE_FROM_FEED_FLG = "SIZE_TYPE_FROM_FEED_FLG";
 
+        // 价格是否向上取整(1：向上取整，0：不向上取整)
+        String PRICE_ROUND_UP_FLG = "PRICE_ROUND_UP_FLG";
     }
 
     public interface DataAmount {
