@@ -89,6 +89,7 @@ define([
                 self.data = data.orderInfo.orderList.map(function (item) {
                         item.className = 'bg-default';
                         item.subClassName = 'bg-sub-default';
+                        item.collapse = self.collapse;
                         var date = new Date();
                         if (item.status == '7') {
                             item.className = 'bg-gainsboro';
