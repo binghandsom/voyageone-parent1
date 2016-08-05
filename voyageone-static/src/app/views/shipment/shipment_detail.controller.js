@@ -5,15 +5,6 @@ define([
     'vms'
 ], function (vms) {
     vms.controller('ShipmentDetailController', (function () {
-        function audioPlay(value) {
-            if (value == true) {
-                var audioEleSuccess = document.getElementById('successAudio');
-                audioEleSuccess.play();
-            } else {
-                var audioEleWarning = document.getElementById('warningAudio');
-                audioEleWarning.play();
-            }
-        }
 
         function ShipmentDetailController($routeParams, notify, alert, confirm, shipmentDetailService) {
             this.shipmentId = $routeParams['shipmentId'];
@@ -89,14 +80,14 @@ define([
             self.shipmentDetailService.scan(req).then(function (data) {
                 if (data.success == 1) {
                     try {
-                        audioPlay(true);
+                        self.audioPlay(true);
                     } catch (exception) {
                     }
                     self.notify.success('TXT_SUCCESS');
                 }
                 else if (data.success == 0) {
                     try {
-                        audioPlay(false);
+                        self.audioPlay(false);
                     } catch (exception) {
                     }
                     self.notify.warning('TXT_ITEM_NOT_FOUND_SKU');
@@ -129,6 +120,16 @@ define([
                     });
                 });
             });
+        };
+
+        ShipmentDetailController.prototype.audioPlay = function (value) {
+            if (value == true) {
+                var audioEleSuccess = document.getElementById('successAudio');
+                audioEleSuccess.play();
+            } else {
+                var audioEleWarning = document.getElementById('warningAudio');
+                audioEleWarning.play();
+            }
         };
 
         return ShipmentDetailController;

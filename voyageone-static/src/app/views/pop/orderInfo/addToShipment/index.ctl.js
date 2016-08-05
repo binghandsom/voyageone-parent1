@@ -5,15 +5,6 @@ define([
     'vms'
 ], function (vms) {
     vms.controller('AddToShipmentController', (function () {
-        function audioPlay(value) {
-            if (value == true) {
-                var audioEleSuccess = document.getElementById('successAudio');
-                audioEleSuccess.play();
-            } else {
-                var audioEleWarning = document.getElementById('warningAudio');
-                audioEleWarning.play();
-            }
-        }
 
         function AddToShipmentController(context, notify, shipmentScanPopupService, $uibModalInstance) {
             this.notify = notify;
@@ -35,12 +26,12 @@ define([
             self.barcode = null;
             self.shipmentScanPopupService.scanBarcode(req).then(function (data) {
                 if (data.success == 1) {
-                    audioPlay(true);
+                    self.audioPlay(true);
                     self.notify.success('TXT_SUCCESS');
                 }
                 else if (data.success == 0) {
                     try {
-                        audioPlay(false);
+                        self.audioPlay(false);
                     } catch (exception) {
                     }
                     self.notify.warning('TXT_ITEM_NOT_FOUND');
@@ -57,6 +48,16 @@ define([
 
         AddToShipmentController.prototype.focusOnScanBar = function () {
             angular.element(document.getElementsByName('barcodeInputBar')).focus();
+        };
+
+        AddToShipmentController.prototype.audioPlay = function (value) {
+            if (value == true) {
+                var audioEleSuccess = document.getElementById('successAudio');
+                audioEleSuccess.play();
+            } else {
+                var audioEleWarning = document.getElementById('warningAudio');
+                audioEleWarning.play();
+            }
         };
 
         return AddToShipmentController;
