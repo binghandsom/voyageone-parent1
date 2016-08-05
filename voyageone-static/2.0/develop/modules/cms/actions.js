@@ -403,7 +403,8 @@ define(function () {
                 "$fieldEditService": {
                     "root": "/cms/pop/field_edit",
                     "getPopOptions": "getPopOptions",
-                    "setProductFields": "setProductFields"
+                    "setProductFields": "setProductFields",
+                    "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",

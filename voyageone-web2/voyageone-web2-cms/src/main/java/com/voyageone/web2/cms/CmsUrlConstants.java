@@ -500,12 +500,10 @@ public interface CmsUrlConstants {
     interface POP {
 
         interface FIELD_EDIT {
-
             String ROOT = "/cms/pop/field_edit/";
-
             String GET_POP_OPTIONS = "getPopOptions";
-
             String SET_PRODUCT_FIELDS = "setProductFields";
+            String DLD_PRODUCT_PROCESALE = "dldUnProcCode4PriceSale";
         }
 
         interface ADD_TO_PROMOTION {
