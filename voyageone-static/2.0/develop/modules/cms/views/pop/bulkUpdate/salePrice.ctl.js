@@ -5,7 +5,7 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    angularAMD.controller('popSalePriceCtl', function ($scope, $fieldEditService, $translate, $modalInstance, $filter, confirm, notify, alert, context) {
+    angularAMD.controller('popSalePriceCtl', function ($scope, $fieldEditService, $translate, $modalInstance, $filter, confirm, notify, alert, context, cActions) {
 
         $scope.vm = {
             property: context.property,
@@ -106,11 +106,33 @@ define([
                         alert("商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]的最终售价计算结果为负数，请重新输入。");
                         return;
                     }
+
+                    if (res.data.ecd == 0) {
+                        if (res.data.unProcList != undefined && res.data.unProcList > 0) {
+                            // 有未处理的商品
+                            alert('批量更新最终售价已完成，但是有一些商品因不符合验证规则而没有处理，<br>请点击[确定]<label class="text-u-red font-bold">下载</label>未处理的商品code一览。').then($scope.exportFile);
+                        }
+                    }
+
                     $modalInstance.close();
                     notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 });
             }
         };
+
+        $scope.exportFile = function() {
+            function _exportFileCallback (res) {
+                var obj = JSON.parse(res);
+                if (obj.code == '4001') {
+                    alert("创建文件时出错。");
+                    return;
+                }
+                if (obj.code == '4000') {
+                    alert("创建文件时出错。");
+                }
+            }
+            $.download.post(cActions.cms.pop.$fieldEditService.root + '/' + cActions.cms.pop.$fieldEditService.dldUnProcCode4PriceSale, {}, _exportFileCallback);
+        }
 
         // 选择表达式时的画面检查
         $scope.chkOptionType = function () {

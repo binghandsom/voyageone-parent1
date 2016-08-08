@@ -322,6 +322,13 @@
         </where>
     </select>
 
+    <select id="selectFullMinusDateRepeat"  resultMap="ResultMap">
+        SELECT a.* FROM `cms_bt_jm_promotion_product` AS a JOIN cms_bt_jm_promotion AS b ON a.cms_bt_jm_promotion_id=b.id
+              WHERE b.promotion_type=1 AND a.synch_status=2 AND a.channel_id=#{channelId} and   a.product_code=#{productCode}
+                      AND  #{activityStart} &lt;=a.`activity_end`  and   #{activityEnd}>=a.`activity_start`
+                      AND a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}
+                       LIMIT 1
+    </select>
     <select id="selectDateRepeatByCode" resultMap="ResultMap">
         SELECT * FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activityStart} &lt;=`activity_end`  and   #{activityEnd}>=`activity_start` and cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   limit 1
     </select>
@@ -373,6 +380,7 @@
         SET a.deal_Price=b.deal_price,a.market_price=b.market_price,a.discount=b.discount
         ,a.max_deal_Price=b.max_deal_price,a.max_market_price=b.max_market_price
         ,a.min_deal_Price=b.min_deal_price,a.min_market_price=b.min_market_price
+        ,a.price_status=(case WHEN a.synch_status==2 then 1 else a.price_status end )
         WHERE    a.id IN
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
@@ -386,9 +394,6 @@
                  open="(" separator="," close=")">
             #{item}
         </foreach>
-        <if test="isPreStart==true">
-          and   synch_status!=2
-        </if>
     </update>
     <update id="synchAllPrice">
         UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''
@@ -455,5 +460,22 @@
         SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`
 WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
     </select>
+    <select id="selectNotSynchListByPromotionProductIds">
+        SELECT * from  cms_bt_jm_promotion_product
+        WHERE synch_status!=2 and   id in
+        <foreach item="item" index="i" collection="listPromotionProductId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <update id="updateSynch2ErrorMsg">
+        update cms_bt_jm_promotion_product
+        set  error_msg=#{errorMsg}
+        WHERE synch_status==2 and   id in
+        <foreach item="item" index="i" collection="listPromotionProductId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
     <!--jm2 end-->
 </mapper>

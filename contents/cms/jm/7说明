@@ -1,0 +1,32 @@
+关键字段说明
+1.cms_bt_jm_promotion
+         promotion_type  '活动类型 0:日常专场 1:导购团 2:大促 3长期场馆';
+         is_promotion_down  '是否直降';
+         is_promotion_full_minus  '是否满减';
+         promotion_full_amount  '满减活动-满金额';
+         promotion_minus_amount  '满减活动-减金额';
+         is_promotion_give_coupons  '是否赠送优惠卷';
+         status        1:已有商品上传
+
+1.cms_bt_jm_promotion_product
+    `activity_start`      活动开始
+
+    `activity_end`        活动结束
+
+    `pre_period_start`    预热结束
+
+    `pre_period_end`      预热结束
+
+     synch_status          更新聚美平台的状态:0:未上传 1:待上传 2:上传成功    3:上传异常
+
+     price_status          价格状态           0:未更新 1:待更新 2:已更新      3:更新失败
+
+     stock_status          库存同步状态       0:未同步          2:已同步      3:同步失败
+
+     deal_end_time_status  延期状态:          0:未延期 1:待延期 2:已延期      3:延期失败
+
+     update_status        变更状态                     1:有变更  2：已经变更
+
+
+     todo  预热开始  专场类型  预热时间 活动时间  促销方式 不允许修改
+           汇总专场内相关品牌
