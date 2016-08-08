@@ -188,9 +188,14 @@ public class ProductGroupService extends BaseService {
     /**
      * 上新成功时更新该model对应的所有和上新有关的状态信息
      * @param model (model中包含的productCodes,是这次平台上新处理的codes)
+     * @param listSxCode 上新了的code
      * @return CmsBtProductGroupModel
      */
-    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model) {
+    // modified by morse.lu 2016/08/08 start
+    // 一个group下可能有些code不上新，就不要回写了
+//    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model) {
+    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model, List<String> listSxCode) {
+        // modified by morse.lu 2016/08/08 end
 
         if (model == null) {
             $error("回写上新成功状态信息时失败! [GroupModel=null]");
@@ -208,7 +213,11 @@ public class ProductGroupService extends BaseService {
 
             // 批量更新产品的平台状态.
             List<BulkUpdateModel> bulkList = new ArrayList<>();
-            for (String code : model.getProductCodes()) {
+            // modified by morse.lu 2016/08/08 start
+            // 一个group下可能有些code不上新，就不要回写了
+//            for (String code : model.getProductCodes()) {
+            for (String code : listSxCode) {
+                // modified by morse.lu 2016/08/08 end
                 // 设置批量更新条件
                 HashMap<String, Object> bulkQueryMap = new HashMap<>();
                 bulkQueryMap.put("common.fields.code", code);
