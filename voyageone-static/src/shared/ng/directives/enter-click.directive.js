@@ -3,6 +3,7 @@
  * @User: Jonas
  * @Version: 0.2.0
  */
+//FIXME: 2016/08/08 在IE11下 间歇性地不加载此directive 暂未查出是为何 vantis
 angular.module("vo.directives").directive("enterClick", function () {
     return {
         restrict: "A",
