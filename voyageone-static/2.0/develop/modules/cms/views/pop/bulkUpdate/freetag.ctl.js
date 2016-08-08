@@ -208,7 +208,7 @@ define([
                 self.$uibModalInstance.close(self.context);
             },
 
-            selOrgDisp:function(id,path){
+            selOrgDisp:function(id,path,event){
                 var self = this;
 
                 /**设置checkbox选中*/
@@ -221,6 +221,9 @@ define([
                     }
                     self.orgDispMap[path] = false;
                 }
+
+                /**防止事件冒泡*/
+                event.stopPropagation();
             }
         };
 
