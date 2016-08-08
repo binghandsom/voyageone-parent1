@@ -84,7 +84,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
        parameter.cmsBtJmPromotionModel = modelCmsBtJmPromotion;
        parameter.shopBean = shopBean;
        parameter.cmsBtProductModel = productService.getProductByCode(model.getChannelId(), model.getProductCode());//todo cmsBtProductModel null处理11
+       if(parameter.cmsBtProductModel==null){throw new  BusinessException("CmsBtProduct商品信息不存在.");}
        parameter.platform=parameter.cmsBtProductModel.getPlatform(CartEnums.Cart.JM);//todo  platform null处理11
+       if(parameter.platform==null){throw new  BusinessException("CmsBtProduct商品聚美信息不存在.");}
        return parameter;
    }
     public void updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean) throws Exception {
