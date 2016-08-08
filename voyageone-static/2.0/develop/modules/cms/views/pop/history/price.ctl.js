@@ -15,7 +15,7 @@ define([
 
             skuList.unshift(defaultSku);
             if (!selected.sku)
-                selected.sku = defaultSku;
+                selected.sku = skuList[1];
             else
                 selected.sku = _.find(skuList, function (sku) {
                     return sku.value === selected.sku;

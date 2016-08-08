@@ -82,6 +82,8 @@ public interface CmsBtProductConstants {
 	enum Platform_SKU_COM {
 		/* skuCode(共通) */
 		skuCode,
+		/* 条形码 */
+		barcode,
         /* MSRP售价(中国建议零售价)(共通/分平台) */
         priceMsrp,
         /* 销售指导价(共通/分平台) */
