@@ -8,6 +8,7 @@ import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -16,6 +17,8 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
@@ -43,12 +46,15 @@ public class PriceService extends BaseService {
 
     private final CmsMtFeeShippingService feeShippingService;
 
+    private final ProductSkuService productSkuService;
+
     @Autowired
-    public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService, CmsMtFeeCommissionService feeCommissionService, CmsMtFeeExchangeService feeExchangeService) {
+    public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService, CmsMtFeeCommissionService feeCommissionService, CmsMtFeeExchangeService feeExchangeService, ProductSkuService productSkuService) {
         this.feeShippingService = feeShippingService;
         this.feeTaxService = feeTaxService;
         this.feeCommissionService = feeCommissionService;
         this.feeExchangeService = feeExchangeService;
+        this.productSkuService = productSkuService;
     }
 
     /**
@@ -103,6 +109,34 @@ public class PriceService extends BaseService {
             channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE);
         }
 
+        // 计算是否向上取整
+
+        boolean isRoundUp = true;
+
+        CmsChannelConfigBean configBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.PRICE_ROUND_UP_FLG);
+
+        if (configBean != null && "0".equals(configBean.getConfigValue1())) {
+            isRoundUp = false;
+        }
+
+        // 计算是否自动同步最终售价
+
+        boolean isAutoApprovePrice = false;
+
+        CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+
+        if (autoApprovePrice != null && autoApprovePrice.getConfigValue1() != null && "1".equals(autoApprovePrice.getConfigValue1()))
+            isAutoApprovePrice = true;
+
+        // 计算是否计算 MSRP
+
+        boolean isAutoSyncPriceMsrp = false;
+
+        CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP);
+
+        if (autoSyncPriceMsrp != null && "1".equals(autoSyncPriceMsrp.getConfigValue1()))
+            isAutoSyncPriceMsrp = true;
+
         // 发货方式
         String shippingType = channelConfigBean.getConfigValue1();
 
@@ -148,6 +182,7 @@ public class PriceService extends BaseService {
 
         // 进入计算阶段
         PriceCalculator priceCalculator = new PriceCalculator()
+                .setRoundUp(isRoundUp)
                 .setTaxRate(taxRate)
                 .setPfCommission(platformCommission)
                 .setReturnRate(returnRate)
@@ -181,35 +216,104 @@ public class PriceService extends BaseService {
             // 公式参数: 获取运费
             Double shippingFee = feeShippingService.getShippingFee(shippingType, weight);
 
-            // 最终价格计算
+            // !! 最终价格计算 !!
 
-            Double priceMsrp = priceCalculator.setShippingFee(shippingFee).calculate(clientMsrp);
+            // 计算新的指导价
             Double retailPrice = priceCalculator.setShippingFee(shippingFee).calculate(clientNetPrice);
 
-            setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceMsrp, priceMsrp);
-            setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail, retailPrice);
+            if (retailPrice > 0) {
+                // 指导价合法
+                // 则, 需要进行指导价波动计算
+                // 如果打开了同步开关, 则需要同步设置最终售价
 
-            if (!priceCalculator.isValid())
+                // 获取上一次指导价
+                Double lastRetailPrice = getProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail);
+                // 获取价格波动字符串
+                String priceFluctuation = getPriceFluctuation(retailPrice, lastRetailPrice);
+                // 保存价格波动
+                platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), priceFluctuation);
+
+                if (isAutoApprovePrice)
+                    setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceSale, retailPrice);
+
+                // 保存击穿标识
+                String priceDiffFlg = productSkuService.getPriceDiffFlg(channelId, platformSku);
+                platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceDiffFlg.name(), priceDiffFlg);
+
+                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail, retailPrice);
+            } else {
+                // 如果计算值不合法, 保存 -1 阻止上新
+                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail, -1D);
+            }
+
+            Double originPriceMsrp = priceCalculator.calculate(clientMsrp);
+
+            if (originPriceMsrp > 0) {
+
+                if (isAutoSyncPriceMsrp)
+                    setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceMsrp, originPriceMsrp);
+
+                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.originalPriceMsrp, originPriceMsrp);
+            } else {
+                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.originalPriceMsrp, 0D);
+            }
+
+            // 最终检查计算器
+            // 如果中间有错误, 就获取统一的错误信息, 进行记录
+            if (!priceCalculator.isValid()) {
                 // TODO
                 priceCalculator.getErrorMessage();
+            }
         }
 
         return product;
     }
 
-    private boolean isAutoSyncPriceMsrp() {
-        
+    /**
+     * 计算新指导价波动
+     * <p>
+     * 结果使用波动字符串表示: <br/>
+     * - 上涨前缀使用 U, 下降前缀使用 D. 波动程度使用百分比. 老价格为 0, 则波动 100%, 为 U100%<br/>
+     * - 在新老价格相同, 或老价格为 null 时, 标记波动值为 "" 空字符串
+     *
+     * @param retailPrice     新指导价
+     * @param lastRetailPrice 上一次的指导价
+     * @return 波动字符串
+     */
+    private String getPriceFluctuation(Double retailPrice, Double lastRetailPrice) {
+
+        // 老价格为空, 表示新建, 则不需要设置波动
+        // 新老价格相同也同样
+        if (lastRetailPrice == null || lastRetailPrice.equals(retailPrice))
+            return "";
+
+        Long range;
+
+        if (lastRetailPrice < retailPrice) {
+            if (lastRetailPrice.equals(0D))
+                return "U100%";
+            else {
+                range = Math.round(((retailPrice - lastRetailPrice) / lastRetailPrice) * 100d);
+                return "U" + range + "%";
+            }
+        } else {
+            range = Math.round(((lastRetailPrice - retailPrice) / lastRetailPrice) * 100d);
+            return "D" + range + "%";
+        }
     }
 
-    /**
-     * 为商品赋值价格, 当价格值非法时, 赋值 -1, 强制阻断上新
-     *
-     * @param platformSku 商品的某 SKU 部分
-     * @param commonField 商品价格字段
-     * @param priceValue  具体价格
-     */
+    private Double getProductPrice(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField) {
+
+        Object value = platformSku.get(commonField.name());
+
+        if (value == null)
+            return null;
+
+        return platformSku.getDoubleAttribute(commonField.name());
+    }
+
     private void setProductPrice(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField, Double priceValue) {
-        platformSku.put(commonField.name(), (priceValue == null || priceValue < 1) ? -1d, priceValue);
+        platformSku.put(commonField.name(), priceValue);
     }
 
     /**
@@ -237,11 +341,17 @@ public class PriceService extends BaseService {
 
         private boolean valid = true;
 
+        private boolean roundUp = false;
+
         private List<String> messageList = new ArrayList<>();
 
         private void checkValid(Double inputFee, String title) {
 
             if (inputFee != null && inputFee > 0)
+                return;
+
+            // 如果是已经存在的错误信息, 就不需要再加了
+            if (messageList.contains(title))
                 return;
 
             messageList.add(title + "读取错误");
@@ -290,6 +400,11 @@ public class PriceService extends BaseService {
             return this;
         }
 
+        private PriceCalculator setRoundUp(boolean roundUp) {
+            this.roundUp = roundUp;
+            return this;
+        }
+
         private String getErrorMessage() {
             return StringUtils.join(messageList, ";");
         }
@@ -298,21 +413,40 @@ public class PriceService extends BaseService {
             return this.valid;
         }
 
+        /**
+         * 基于原始价格计算新价格
+         *
+         * @param inputPrice 原始价格
+         * @return 新价格, 如果计算结果不合法 (0/null), 返回 -1
+         */
         private Double calculate(Double inputPrice) {
 
             if (!valid)
-                return null;
+                return -1d;
 
-            if ((100 - voCommission - pfCommission - returnRate - taxRate) > 0) {
-                Double retailPrice = ((inputPrice + shippingFee + otherFee) * exchangeRate * 100) / (100 - voCommission - pfCommission - returnRate - taxRate);
-                return Math.ceil(retailPrice);
+            // 计算公式分母
+            double denominator = 100d - voCommission - pfCommission - returnRate - taxRate;
+
+            // 如果分母不合法。。。
+            if (denominator == 0) {
+                messageList.add(String.format("非法的价格参数[voCommission:%s], [platformCommission:%s], [returnRate:%s], [taxRate:%s]", voCommission, pfCommission, returnRate, taxRate));
+                valid = false;
+                return -1D;
             }
 
-            messageList.add(String.format("非法的价格参数[voCommission:%s], [platformCommission:%s], [returnRate:%s], [taxRate:%s]", voCommission, pfCommission, returnRate, taxRate));
+            Double price = ((inputPrice + shippingFee + otherFee) * exchangeRate * 100d) / denominator;
 
-            valid = false;
+            if (roundUp) {
+                // 需要向上取整
+                price = Math.ceil(price);
+            } else {
+                // 不需要, 就保留两位, 四舍五入
+                price = new BigDecimal(price).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            }
 
-            return null;
+            // 根据最终计算价格
+            // 选择该返回啥
+            return price > 0 ? price : -1D;
         }
     }
 }
