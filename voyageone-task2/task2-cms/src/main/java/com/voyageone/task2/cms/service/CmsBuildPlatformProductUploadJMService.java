@@ -9,6 +9,7 @@ import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.StringUtils;
@@ -65,9 +66,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     public static final int WORK_LOAD_SUCCESS = 1;
     private static final int CART_ID = CartEnums.Cart.JM.getValue();
 
-    private static final String DUPLICATE_PRODUCT_NAME = "109902";
+//    private static final String DUPLICATE_PRODUCT_NAME = "109902";
+    // 产品名称(name)在聚美已存在
     private static final String DUPLICATE_PRODUCT_DRAFT_NAME = "103087";
+    // 商品自带条码（UPC_CODE）存在相同 值或UPC_CODE在聚美已存在
     private static final String DUPLICATE_SPU_BARCODE = "105106";
+    // 在聚美已存在的商家编码(businessman_num)
     private static final String DUPLICATE_SKU_BUSINESSMAN_NUM = "102063";
     private static final String INVALID_PRODUCT_STATUS = "产品状态不是待审核";
     private static final Pattern special_symbol= Pattern.compile("[~@'\\[\\]\\s\".:#$%&_''‘’^]");
@@ -233,7 +237,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 //填充cmsBtJmSkuModelList
                 cmsBtJmSkuModelList = fillCmsBtJmSkuModelList(cmsBtJmSkuModelList, product);
 
-
                 //填充JmProductBean
                 JmProductBean bean = fillJmProductBean(product, expressionParser, shop, skuLogicQtyMap);
 
@@ -241,7 +244,34 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 htProductAddRequest.setJmProduct(bean);
                 HtProductAddResponse htProductAddResponse = jumeiHtProductService.addProductAndDeal(shop, htProductAddRequest);
 
+                // 因为聚美API的不稳定性，商品聚美上新成功后会可能存在返回的response获取不到jm的hashId，以及spuno，
+                // 如果返回的response无hashId，或者无spuno，再重新调用聚美获取商品的API拿一次聚美商品信息，做后续处理。
+                // 保证上新成功，聚美的hashId和spuno能够正常回写。
+                boolean jmApiErrorNoHashId = false;
                 if (htProductAddResponse != null && htProductAddResponse.getIs_Success()) {
+                    // 上新成功时，看聚美平台返回的response里面hashId，spuno等是否为空
+                    if (StringUtil.isEmpty(htProductAddResponse.getJm_hash_id())) {
+                        // jmHashId为空时
+                        $info("新增聚美商品成功！但返回的response获取不到jm的hashId,后面会重新调用一次聚美获取商品的API取得" +
+                                "商品信息 [ProductId:%s], [ChannelId:%s], [CartId:%s]", product.getProdId(), channelId, CART_ID);
+                        jmApiErrorNoHashId = true;
+                    } else {
+                        // spuno为空时
+                        List<HtProductAddResponse_Spu> spus = htProductAddResponse.getSpus();
+                        for (CmsBtJmSkuModel jmsku : cmsBtJmSkuModelList) {
+                            HtProductAddResponse_Spu spu = spus.stream().filter(w -> w.getPartner_sku_no().equals(jmsku.getSkuCode())).findFirst().get();
+                            // 只要有一个spuno为空时，就需要重新取得一下聚美商品信息
+                            if (StringUtils.isEmpty(spu.getJumei_spu_no())) {
+                                $info("新增聚美商品成功！但返回的response获取不到jm的spuno或skuno,后面会重新调用一次聚美获取商品的API取得" +
+                                        "商品信息 [ProductId:%s], [ChannelId:%s], [CartId:%s]", product.getProdId(), channelId, CART_ID);
+                                jmApiErrorNoHashId = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (htProductAddResponse != null && htProductAddResponse.getIs_Success() && !jmApiErrorNoHashId) {
                     $info("新增产品成功！[ProductId:%s], [ChannelId:%s], [CartId:%s]", product.getProdId(), channelId, CART_ID);
                     // 新增产品成功
                     String jmProductId = htProductAddResponse.getJumei_Product_Id();
@@ -290,13 +320,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     }
 
                 }
-                //如果JM中已经有该商品了，则读取商品信息，补全本地库的内容
-                else if(htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_NAME) ||
+                //如果上新成功之后没取到jmHashId,spuno,skuno，或者JM中已经有该商品了，则调用一次聚美获取商品的API取得商品信息，补全本地库的内容
+                else if(jmApiErrorNoHashId ||
+//                        htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_NAME) ||
                         htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_DRAFT_NAME)||
                         htProductAddResponse.getBody().contains(INVALID_PRODUCT_STATUS))
                 {
-                    needRetry = true;
+                    // 上新成功但没取到jmHashId等值得时候，不需要重新上新
+                    if (!jmApiErrorNoHashId) {
+                        needRetry = true;
+                    }
 
+                    // 调用聚美API根据商品名称获取商品详情(/v1/htProduct/getProductByIdOrName)
                     JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductByName(shop, bean.getName() );
                     if(jmGetProductInfoRes != null)
                     {
@@ -1031,9 +1066,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         String channelId =  product.getChannelId();
         CmsBtProductModel_Field fields =  product.getCommon().getFields();
         String productCode = fields.getCode();
-        String brandName = fields.getBrand();
-        String productType = fields.getProductType();
-        String sizeType = fields.getSizeType();
 
         if(list == null)
         {
