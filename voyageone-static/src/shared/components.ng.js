@@ -3,7 +3,7 @@ define(function (require) {
   require('/shared/ng/controllers/selectRows.ctrl.js');
   require('/shared/ng/controllers/showPopover.ctrl.js');
   require('/shared/ng/directives/autoFocus.directive.js');
-  require('/shared/ng/directives/enterClick.directive.js');
+  require('/shared/ng/directives/enter-click.directive.js');
   require('/shared/ng/directives/filestyle.directive.js');
   require('/shared/ng/directives/first-hidden.directive.js');
   require('/shared/ng/directives/goTop.directive.js');

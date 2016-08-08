@@ -17,6 +17,7 @@ define([
         }
 
         AddToShipmentController.prototype.scan = function (barcode) {
+            if (!barcode) return;
             var self = this;
             var req = {
                 "barcode": barcode,
