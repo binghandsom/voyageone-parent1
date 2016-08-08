@@ -76,6 +76,9 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -168,33 +171,70 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         // 允许运行的订单渠道取得
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
-        // 线程
-        List<Runnable> threads = new ArrayList<>();
-
+        // 默认线程池最大线程数
+        int threadPoolCnt = 3;
+        // 保存每个channel最终导入结果(成功失败件数信息)
+        Map<String, String> resultMap = new HashMap<>();
+        // 创建线程池
+        ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
         // 根据渠道运行
         for (final String orderChannelID : orderChannelIdList) {
-
-            threads.add(new Runnable() {
-                @Override
-                public void run() {
-                    // 获取是否跳过mapping check
-                    String skip_mapping_check = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
-                    boolean bln_skip_mapping_check = true;
-                    if (StringUtils.isEmpty(skip_mapping_check) || "0".equals(skip_mapping_check)) {
-                        bln_skip_mapping_check = false;
-                    }
-                    // jeff 2016/04 change start
-                    // 获取前一次的价格强制击穿时间
-                    String priceBreakTime = TaskControlUtils.getEndTime(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
-                    // 主逻辑
-                    // new setMainProp(orderChannelID, bln_skip_mapping_check).doRun();
-                    new setMainProp(orderChannelID, bln_skip_mapping_check, priceBreakTime).doRun();
-                    // jeff 2016/04 change end
-                }
-            });
+            // 获取是否跳过mapping check
+            String skip_mapping_check = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
+            boolean bln_skip_mapping_check = true;
+            if (StringUtils.isEmpty(skip_mapping_check) || "0".equals(skip_mapping_check)) {
+                bln_skip_mapping_check = false;
+            }
+            // 获取前一次的价格强制击穿时间
+            String priceBreakTime = TaskControlUtils.getEndTime(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
+            // 主逻辑
+            setMainProp mainProp = new setMainProp(orderChannelID, bln_skip_mapping_check, priceBreakTime);
+            // 启动多线程
+            executor.execute(() -> mainProp.doRun(resultMap));
+        }
+        // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
+        // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
+        executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
+        try {
+            // 阻塞，直到线程池里所有任务结束
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
         }
 
-        runWithThreadPool(threads, taskControlList);
+        $info("=================feed->master导入  最终结果====================");
+        resultMap.entrySet().stream()
+                            .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
+                            .forEach(p ->  $info(p.getValue()));
+        $info("=================feed->master导入  主线程结束====================");
+
+        // 线程
+//        List<Runnable> threads = new ArrayList<>();
+
+//        // 根据渠道运行
+//        for (final String orderChannelID : orderChannelIdList) {
+//
+//            threads.add(new Runnable() {
+//                @Override
+//                public void run() {
+//                    // 获取是否跳过mapping check
+//                    String skip_mapping_check = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
+//                    boolean bln_skip_mapping_check = true;
+//                    if (StringUtils.isEmpty(skip_mapping_check) || "0".equals(skip_mapping_check)) {
+//                        bln_skip_mapping_check = false;
+//                    }
+//                    // jeff 2016/04 change start
+//                    // 获取前一次的价格强制击穿时间
+//                    String priceBreakTime = TaskControlUtils.getEndTime(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
+//                    // 主逻辑
+//                    // new setMainProp(orderChannelID, bln_skip_mapping_check).doRun();
+//                    new setMainProp(orderChannelID, bln_skip_mapping_check, priceBreakTime).doRun();
+//                    // jeff 2016/04 change end
+//                }
+//            });
+//        }
+//
+//        runWithThreadPool(threads, taskControlList);
     }
 
     /**
@@ -229,7 +269,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             this.priceBreakTime = priceBreakTime;
         }
 
-        public void doRun() {
+        public void doRun(Map<String, String> resultMap) {
             $info(channel.getFull_name() + "产品导入主数据开始");
 
             String channelId = this.channel.getOrder_channel_id();
@@ -365,8 +405,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //            insertDataAmount();         // delete desmond 2016/07/04 以后不用更新这个表了
             // jeff 2016/04 add end
             // add by desmond 2016/07/05 start
-            $info(channel.getFull_name() + "产品导入结果 [总件数:" + feedList.size()
-                    + " 新增成功:" + insertCnt + " 更新成功:" + updateCnt + " 失败:" + errCnt + "]");
+            //            $info(channel.getFull_name() + "产品导入结果 [总件数:" + feedList.size()
+//                    + " 新增成功:" + insertCnt + " 更新成功:" + updateCnt + " 失败:" + errCnt + "]");
+            String resultInfo = channelId + " " + channel.getFull_name() + "产品导入结果 [总件数:" + feedList.size()
+                    + " 新增成功:" + insertCnt + " 更新成功:" + updateCnt + " 失败:" + errCnt + "]";
+            $info(resultInfo);
+            // 将该channel的feed->master导入信息加入map，供channel导入线程全部完成一起显示
+            resultMap.put(channelId, resultInfo);
             // add by desmond 2016/07/05 end
             $info(channel.getFull_name() + "产品导入主数据结束");
 

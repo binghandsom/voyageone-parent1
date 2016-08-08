@@ -64,25 +64,31 @@
         <task:scheduled ref="ShoeCityAnalysisJob" method="run" cron="0 10 0/1 * * ?"/>
 
         <!-- BHFO feed 导入 cms2 -->
-        <task:scheduled ref="CmsBhfoAnalySisJob" method="run" cron="0 30 0/1 * * ?"/>
+        <task:scheduled ref="CmsBhfoAnalySisJob" method="run" cron="0 15 0/1 * * ?"/>
 
         <!-- SummerGuru feed 导入 cms2 -->
-        <task:scheduled ref="CmsSummerGuruAnalySisJob" method="run" cron="0 50 0/1 * * ?"/>
+        <task:scheduled ref="CmsSummerGuruAnalySisJob" method="run" cron="0 20 0/1 * * ?"/>
 
         <!-- ShoeZoo feed 导入 cms2 -->
-        <task:scheduled ref="CmsShoeZooAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
+        <task:scheduled ref="CmsShoeZooAnalysisJob" method="run" cron="0 25 0/1 * * ?"/>
 
         <!-- OverStock feed 导入 cms2 -->
-        <task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
+        <task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="0 0 9 * * ?"/>
+
+        <!-- OverStock price 导入 cms2 -->
+        <task:scheduled ref="OverStockPriceAnalysisJob" method="run" cron="13 0/2 * * * ?"/>
 
         <!-- LightHouse 导入 cms2 -->
-        <task:scheduled ref="CmsLightHouseAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
+        <task:scheduled ref="CmsLightHouseAnalysisJob" method="run" cron="0 35 0/1 * * ?"/>
 
         <!-- FragranceNet feed 导入 cms2 -->
-        <task:scheduled ref="CmsFragranceNetAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
+        <task:scheduled ref="CmsFragranceNetAnalysisJob" method="run" cron="0 40 0/1 * * ?"/>
 
         <!-- YogaDemocracy feed 导入 cms2 -->
         <task:scheduled ref="CmsYogaDemocracyAnalysisJob" method="run" cron="0 0/13 * * * ?"/>
+
+        <!-- ShoeMetro feed 导入 cms2 -->
+        <task:scheduled ref="CmsShoeMetroAnalysisJob" method="run" cron="0 0/13 * * * ?"/>
 
         <!-- EdcSkincare feed 导入 cms2 -->
         <task:scheduled ref="CmsEdcSkincareAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
@@ -91,7 +97,7 @@
         <task:scheduled ref="CmsTargetAnalySisJob" method="run" cron="15 0/5 * * * ?"/>
 
         <!-- 维他命 feed 导入 cms2 -->
-        <task:scheduled ref="CmsVtmJob" method="run" cron="10 0/1 * * * ?"/>
+        <task:scheduled ref="CmsVtmJob" method="run" cron="10 * 16 * * ?"/>
 
         <!-- Gilt feed 导入 cms2 -->
         <task:scheduled ref="Cms2GiltAnalysisJob" method="run" cron="40 0/1 * * * ?"/>

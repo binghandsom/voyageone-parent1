@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -105,7 +106,6 @@ public class UploadToUSJoiService extends BaseTaskService {
             } else {
                 $info("有" + productModels.size() + "个产品要复制");
             }
-
 
             for (CmsBtProductModel productModel : productModels) {
                 productModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel),CmsBtProductModel.class);
@@ -295,7 +295,10 @@ public class UploadToUSJoiService extends BaseTaskService {
             cmsBtProductGroupModel.setPlatformActive(CmsConstants.PlatformActive.ToOnSale);
             cmsBtProductGroupModel.setOnSaleTime(DateTimeUtil.getNowTimeStamp());
             cmsBtProductGroupModel.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
-            productGroupService.updateGroupsPlatformStatus(cmsBtProductGroupModel);
+
+            // 上新对象产品Code列表
+            List<String> listSxCode = productModels.stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
+            productGroupService.updateGroupsPlatformStatus(cmsBtProductGroupModel, listSxCode);
             $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
         } catch (Exception e) {
             sxWorkLoadBean.setPublishStatus(2);

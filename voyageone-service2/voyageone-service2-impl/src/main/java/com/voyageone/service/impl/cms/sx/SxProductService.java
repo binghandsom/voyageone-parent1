@@ -278,7 +278,7 @@ public class SxProductService extends BaseService {
         sxData.getPlatform().setModifier(modifier);
 
         // 更新ProductGroup表(更新该model对应的所有(包括product表)和上新有关的状态信息)
-        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList()));
     }
 
     /**
@@ -3320,8 +3320,10 @@ public class SxProductService extends BaseService {
                 sxData.getPlatform().setOnSaleTime(DateTimeUtil.getNowTimeStamp());
             }
 
+            // 上新对象产品Code列表
+            List<String> listSxCode = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
             // 一般店铺上新成功后回写productGroup及product表的状态
-            productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+            productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
 
             // 如果是天猫，京东平台的场合，回写ims_bt_product表(numIId)
             if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())
