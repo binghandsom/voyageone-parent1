@@ -1,5 +1,9 @@
 /**
  * Created by sofia on 6/7/2016.
+ *
+ * updated by piao wenjie
+ * @description 添加了自由标签的默认选中和新增的逻辑判断
+ * @date 2016-8-5
  */
 
 define([
@@ -66,7 +70,6 @@ define([
             this.orgChkStsMap = {};
             this.orgDispMap = {};
             this._orgChkStsMap = {};
-            this._orgDispMap = {};
         }
 
         popFreeTagCtl.prototype = {
@@ -87,12 +90,14 @@ define([
                 self.channelTagService.init(params).then(function (res) {
                     self.source = self.tagTree = res.data.tagTree;
 
+                    /**当是高级检索，设置自由标签时，有初始勾选值*/
                     if (self.orgFlg == 2) {
-                        // 当是高级检索，设置自由标签时，有初始勾选值
-                        self.orgChkStsMap = res.data.orgChkStsMap; // checkbox勾选状态
-                        self.orgDispMap = res.data.orgDispMap;     // checkbox半选状态
+
+                        /**checkbox勾选状态*/
+                        self.orgChkStsMap = res.data.orgChkStsMap;
+                        /**checkbox半选状态*/
+                        self.orgDispMap = res.data.orgDispMap;
                         self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
-                        self._orgDispMap = angular.copy(res.data.orgDispMap);
 
                     }
                     self.search(0);
@@ -143,8 +148,6 @@ define([
                     }
 
                 }
-
-
             },
 
             /**
@@ -177,7 +180,7 @@ define([
 
 
                 /**判断是否改变*/
-                if(canSave(self.orgChkStsMap,selFlagArr) && self.selOrgDispList.length == 0){
+                if(canSave(self._orgChkStsMap,selFlagArr) && self.selOrgDispList.length == 0){
                     self.alert("未改变任何标签！");
                     return;
                 }
@@ -207,14 +210,22 @@ define([
                 self.$uibModalInstance.close(self.context);
             },
 
-            selOrgDisp:function(path){
+            selOrgDisp:function(id,path,event){
                 var self = this;
+
+                /**设置checkbox选中*/
+                self.orgChkStsMap[path] = self.taglist.selFlag[id];
+
+                /**记录点击的半角*/
                 if(self.orgDispMap[path]){
                     if(self.selOrgDispList.indexOf(path) < 0){
                         self.selOrgDispList.push(path);
                     }
                     self.orgDispMap[path] = false;
                 }
+
+                /**防止事件冒泡*/
+                event.stopPropagation();
             }
         };
 

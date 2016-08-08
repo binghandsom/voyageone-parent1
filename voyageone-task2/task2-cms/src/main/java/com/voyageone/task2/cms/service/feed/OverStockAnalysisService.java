@@ -153,8 +153,8 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                         superFeedverStockBean.setMappriceAmount(String.valueOf(variationType.getMapPrice().getAmount()));
                                     }
                                     if (variationType.getMsrpPrice() == null) {
-                                        superFeedverStockBean.setMsrppriceAmount("");
-                                        superFeedverStockBean.setMsrppriceCurrency("");
+                                        superFeedverStockBean.setMsrppriceAmount(String.valueOf(variationType.getSellingPrice().getAmount()));
+                                        superFeedverStockBean.setMsrppriceCurrency(String.valueOf(variationType.getSellingPrice().getCurrency()));
                                     } else {
                                         superFeedverStockBean.setMsrppriceAmount(getValue(String.valueOf(variationType.getMsrpPrice().getAmount())));
                                         superFeedverStockBean.setMsrppriceCurrency(getValue(String.valueOf(variationType.getMsrpPrice().getCurrency())));
@@ -385,7 +385,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         for (SuperFeedOverStockBean superfeed : superfeedlist) {
 
             if (overStockFeedDao.insertSelective(superfeed) <= 0) {
-                $info("ShoeZoo产品信息插入失败sku = " + superfeed.getSku());
+                $info("OverStock产品信息插入失败sku = " + superfeed.getSku());
             }
         }
         return true;
