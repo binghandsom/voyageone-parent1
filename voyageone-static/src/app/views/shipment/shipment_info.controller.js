@@ -39,7 +39,13 @@ define([
                 self.shipmentStatusList = data.shipmentStatusList;
                 self.channelConfigs = data.channelConfigs;
                 var sessionSearchInfo = JSON.parse(sessionStorage.getItem('shipmentSearchInfo'));
-                if (sessionSearchInfo) self.searchInfo = sessionSearchInfo;
+                if (sessionSearchInfo) {
+                    self.searchInfo = sessionSearchInfo;
+                    if (sessionSearchInfo.shippedDateFrom)
+                        self.shippedDateFrom = new Date(sessionSearchInfo.shippedDateFrom);
+                    if (sessionSearchInfo.shippedDateTo)
+                        self.shippedDateTo = new Date(sessionSearchInfo.shippedDateTo);
+                }
                 self.search(self.searchInfo.curr);
             });
         };
@@ -103,7 +109,7 @@ define([
         };
 
         ShipmentInfoController.prototype.configTitle = function (title, model) {
-            if(model) return title;
+            if (model) return title;
             return '';
         };
 

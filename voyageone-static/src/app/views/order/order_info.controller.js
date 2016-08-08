@@ -121,6 +121,7 @@ define([
             var self = this;
             self.confirm('TXT_CONFIRM_TO_CANCEL_ORDER').then(function () {
                 self.orderInfoService.cancelOrder(item).then(function () {
+                    self.notify.success('TXT_CANCELLED');
                     self.search()
                 })
             })
@@ -131,7 +132,7 @@ define([
             self.confirm('TXT_CONFIRM_TO_CANCEL_SKU').then(function () {
                 self.orderInfoService.cancelSku(item).then(function (data) {
                     if (data.success > 0)
-                        self.notify.success('TXT_SUCCESS');
+                        self.notify.success('TXT_CANCELLED');
                     else self.notify.danger('TXT_ERROR');
                     self.search();
                 })
