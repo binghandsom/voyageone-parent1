@@ -10,10 +10,10 @@ define([
                 return {value: skuObj.skuCode, label: skuObj.skuCode};
             });
             var selected = context.selected;
-            //var defaultSku = {value: '', label: 'Select...'};
+            var defaultSku = {value: '', label: 'Select...'};
             var serviceActions = cActions.cms.pop.priceLogService;
 
-            //skuList.unshift(defaultSku);
+            skuList.unshift(defaultSku);
             if (!selected.sku)
                 selected.sku = skuList[0];
             else
