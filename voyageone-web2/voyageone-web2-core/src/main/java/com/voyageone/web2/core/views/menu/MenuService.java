@@ -124,16 +124,16 @@ public class MenuService extends BaseAppService {
         List<Map<String, String>> feedMenuItems = new ArrayList<>();
         // Feed->Feed File Upload
         Map<String, String> feedFileUpload = new HashMap<>();
-        feedFileUpload.put("name", "Feed File Upload");
-        feedFileUpload.put("url", "#/feed/feed_file_upload");
+        feedFileUpload.put("name", "Product Feed Upload");
+        feedFileUpload.put("url", "#/feed/product_feed_upload");
         // Feed->Feed Import Result
         Map<String, String> feedImportResult = new HashMap<>();
-        feedImportResult.put("name", "Feed Import Result");
-        feedImportResult.put("url", "#/feed/feed_import_result");
+        feedImportResult.put("name", "Product Feed Import Status");
+        feedImportResult.put("url", "#/feed/product_feed_import_status");
         // Feed->Feed Info Search
         Map<String, String> feedInfoSearch = new HashMap<>();
-        feedInfoSearch.put("name", "Feed Info Search");
-        feedInfoSearch.put("url", "#/feed/feed_info_search");
+        feedInfoSearch.put("name", "Product Feed Search");
+        feedInfoSearch.put("url", "#/feed/product_feed_search");
         feedMenuItems.add(feedFileUpload);
         feedMenuItems.add(feedImportResult);
         feedMenuItems.add(feedInfoSearch);
@@ -168,8 +168,8 @@ public class MenuService extends BaseAppService {
         List<Map<String, String>> inventoryMenuItems = new ArrayList<>();
         // Inventory->Inventory Upload
         Map<String, String> inventoryFileUpload = new HashMap<>();
-        inventoryFileUpload.put("name", "Inventory File Upload");
-        inventoryFileUpload.put("url", "#/inventory/inventory_file_upload");
+        inventoryFileUpload.put("name", "Inventory Feed Upload");
+        inventoryFileUpload.put("url", "#/inventory/inventory_feed_upload");
         inventoryMenuItems.add(inventoryFileUpload);
         inventoryMenu.put("items", inventoryMenuItems);
 

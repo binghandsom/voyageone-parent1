@@ -86,6 +86,7 @@ public class FeedFileService extends BaseService {
         try {
             FileUtils.copyInputStreamToFile(inputStream, new File(feedFilePath  + fileName));
         } catch (IOException e) {
+            $error(e);
             // Failed to upload file.
             throw new BusinessException("8000016");
         }
