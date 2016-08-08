@@ -53,7 +53,7 @@
                         </tbody>
                     </table>
                 </uib-tab>
-                <uib-tab heading="{{'TXT_WAITING'| translate }}" ng-click="ctrl.focusOnScanBar()">
+                <uib-tab heading="{{'TXT_PENDING'| translate }}" ng-click="ctrl.focusOnScanBar()">
                     <table class="table table-striped table-hover" style="min-width: 0px">
                         <thead>
                         <tr>
@@ -69,8 +69,9 @@
                             <td class="text-left v-middle">
                                 <span ng-if="item.name.length <= 100">{{item.name}}</span>
                                 <span ng-if="item.name.length > 100" uib-tooltip="{{item.name}}"
-                                      tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name |
-                                    stringCutter:true:100:' ...'}}</span>
+                                      tooltip-trigger="mouseenter" tooltip-placement="top">
+                                    {{item.name | stringCutter:true:100:' ...'}}
+                                </span>
                             </td>
                         </tr>
                         </tbody>

@@ -78,8 +78,11 @@
                             </span>
                         </td>
                         <td class="text-center v-middle">
-                            <button class="btn btn-xs btn-success" ng-click="ctrl.popShipment(item, 'edit')"><i class="fa fa-pencil"></i></button>
-                            <a class="btn btn-xs btn-success" ng-href="{{'#/shipment/shipment_info/shipment_detail/' + item.id}}"><i class="fa fa-inbox"></i></a>
+                            <button class="btn btn-xs btn-success" ng-attr-title="{{'TXT_EDIT' | translate}}"
+                                    ng-click="ctrl.popShipment(item, 'edit')"><i
+                                    class="fa fa-pencil"></i></button>
+                            <a class="btn btn-xs btn-success" ng-attr-title="{{'TXT_DETAIL' | translate}}"
+                               ng-href="{{'#/shipment/shipment_info/shipment_detail/' + item.id}}"><i class="fa fa-inbox"></i></a>
                         </td>
                     </tr>
                     </tbody>

@@ -70,7 +70,8 @@
                                                    ng-required="ctrl.channelConfigs.vendorOperateType == 'SKU'"
                                                    ng-disabled="ctrl.shipment.status != 1 || ctrl.channelConfigs.vendorOperateType != 'SKU'">
                                             <span class="input-group-btn">
-                                                <button class="btn btn-default" ng-click="datepicker1=!datepicker1"
+                                                <button class="btn btn-default"
+                                                        ng-click="datepicker1=!datepicker1"
                                                         ng-disabled="ctrl.shipment.status != 1 || ctrl.channelConfigs.vendorOperateType != 'SKU'">
                                                 <i class="glyphicon glyphicon-calendar"></i></button>
                                             </span>
@@ -143,9 +144,6 @@
                         <td class="v-middle">{{item.containerizingTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="v-middle">{{item.containerizer}}</td>
                         <td class="v-middle">{{ctrl.getStatusName(item.status)}}</td>
-                        <!--<td class="td-1 text-center">-->
-                        <!--<button class="btn btn-xs btn-info"><i class="fa fa-print"></i></button>-->
-                        <!--</td>-->
                     </tr>
                     </tbody>
                 </table>
