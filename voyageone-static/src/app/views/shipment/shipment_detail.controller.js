@@ -132,6 +132,14 @@ define([
             }
         };
 
+        ShipmentDetailController.prototype.scanKeyUp = function (event) {
+            var self = this;
+            if (self.shipment.status != 1 || !self.barcode) return;
+            if (event.keyCode == 13) {
+                self.scan();
+            }
+        };
+
         return ShipmentDetailController;
     })());
 });

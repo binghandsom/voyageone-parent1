@@ -61,6 +61,14 @@ define([
             }
         };
 
+        AddToShipmentController.prototype.scanKeyUp = function (event) {
+            var self = this;
+            if (event.keyCode == 13) {
+                self.scan(self.barcode);
+            }
+
+        };
+
         return AddToShipmentController;
     })());
 });
