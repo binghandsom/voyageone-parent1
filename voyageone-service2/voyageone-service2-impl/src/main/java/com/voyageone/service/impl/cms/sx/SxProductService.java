@@ -278,7 +278,7 @@ public class SxProductService extends BaseService {
         sxData.getPlatform().setModifier(modifier);
 
         // 更新ProductGroup表(更新该model对应的所有(包括product表)和上新有关的状态信息)
-        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList()));
     }
 
     /**
