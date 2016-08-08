@@ -56,15 +56,18 @@ define([
                 self.searchInfo.shippedDateFrom = self.shippedDateFrom;
             else self.searchInfo.shippedDateFrom = undefined;
             if (self.shippedDateTo) {
+                self.searchInfo.shippedDateTo = self.shippedDateTo;
+            } else self.searchInfo.shippedDateTo = undefined;
+            self.searchInfo.curr = curr;
+            self.searchInfo.size = self.pageInfo.size;
+            sessionStorage.setItem('shipmentSearchInfo', JSON.stringify(self.searchInfo));
+            if (self.shippedDateTo) {
                 var date = angular.copy(self.shippedDateTo);
                 date.setDate(date.getDate() + 1);
                 self.searchInfo.shippedDateTo = date;
             } else {
                 self.searchInfo.shippedDateTo = undefined;
             }
-            self.searchInfo.curr = curr;
-            self.searchInfo.size = self.pageInfo.size;
-            sessionStorage.setItem('shipmentSearchInfo', JSON.stringify(self.searchInfo));
             self.shipmentInfoService.search(self.searchInfo).then(function (data) {
                 self.pageInfo.total = data.shipmentInfo.total;
                 self.data = data.shipmentInfo.shipmentList;
