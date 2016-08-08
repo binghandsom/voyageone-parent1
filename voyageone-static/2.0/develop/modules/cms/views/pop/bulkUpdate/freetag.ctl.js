@@ -1,5 +1,9 @@
 /**
  * Created by sofia on 6/7/2016.
+ *
+ * updated by piao wenjie
+ * @description 添加了自由标签的默认选中和新增的逻辑判断
+ * @date 2016-8-5
  */
 
 define([
@@ -144,8 +148,6 @@ define([
                     }
 
                 }
-
-
             },
 
             /**
@@ -208,7 +210,7 @@ define([
                 self.$uibModalInstance.close(self.context);
             },
 
-            selOrgDisp:function(id,path){
+            selOrgDisp:function(id,path,event){
                 var self = this;
 
                 /**设置checkbox选中*/
@@ -221,6 +223,9 @@ define([
                     }
                     self.orgDispMap[path] = false;
                 }
+
+                /**防止事件冒泡*/
+                event.stopPropagation();
             }
         };
 
