@@ -13,7 +13,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
  * 
  */
 public class CmsZzFeedOverstockPriceModel extends BaseModel {
-    protected String sku;
+    protected String skuCode;
 
     protected String costPrice;
 
@@ -21,12 +21,12 @@ public class CmsZzFeedOverstockPriceModel extends BaseModel {
 
     protected Integer updFlg;
 
-    public String getSku() {
-        return sku;
+    public String getSkuCode() {
+        return skuCode;
     }
 
-    public void setSku(String sku) {
-        this.sku = sku == null ? null : sku.trim();
+    public void setSkuCode(String skuCode) {
+        this.skuCode = skuCode == null ? null : skuCode.trim();
     }
 
     public String getCostPrice() {
