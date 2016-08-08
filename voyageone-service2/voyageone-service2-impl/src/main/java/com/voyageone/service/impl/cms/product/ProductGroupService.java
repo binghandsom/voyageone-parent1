@@ -216,6 +216,11 @@ public class ProductGroupService extends BaseService {
             // modified by morse.lu 2016/08/08 start
             // 一个group下可能有些code不上新，就不要回写了
 //            for (String code : model.getProductCodes()) {
+            if (ListUtils.isNull(listSxCode)) {
+                $error("回写上新成功状态信息时失败!上新对象产品Code列表为空 [listSxCode=null]");
+                return model;
+            }
+
             for (String code : listSxCode) {
                 // modified by morse.lu 2016/08/08 end
                 // 设置批量更新条件
