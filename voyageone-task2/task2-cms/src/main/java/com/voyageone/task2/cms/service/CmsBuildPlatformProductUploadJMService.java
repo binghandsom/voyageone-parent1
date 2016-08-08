@@ -205,6 +205,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 throw new BusinessException(errorMsg);
             }
 
+            // 上新对象产品Code列表
+            List<String> listSxCode = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
+
             //读店铺信息
             ShopBean shop = Shops.getShop(channelId, CART_ID);
             if (shop == null) {
@@ -311,7 +314,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     sxData.getPlatform().setModifier(getTaskName());
                     sxData.getPlatform().setNumIId(jmHashId);
                     sxData.getPlatform().setPlatformPid(jmProductId);
-                    productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+                    productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
                     if(jmHashId.endsWith("p0"))
                     {
                         String errorMsg = String.format("聚美Hash_Id格式错误![ProductId:%s], [ChannelId:%s], [CartId:%s]:", product.getProdId(), channelId, CART_ID);
@@ -392,7 +395,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         sxData.getPlatform().setNumIId(originHashId);
                         sxData.getPlatform().setPlatformPid(jmProductId);
 
-                        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+                        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
 
                     }
                     else
@@ -657,7 +660,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
                 sxData.getPlatform().setModifier(getTaskName());
 
-                productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+                productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
             }
 
             //保存workload
