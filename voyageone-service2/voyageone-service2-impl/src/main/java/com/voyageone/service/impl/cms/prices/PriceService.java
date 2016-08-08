@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.prices;
 
-import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -10,6 +9,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.enums.CartType;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -56,12 +56,14 @@ public class PriceService extends BaseService {
      */
     public CmsBtProductModel setRetailPrice(CmsBtProductModel product) {
 
-        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> cartEntry: product.getPlatforms().entrySet()) {
+        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> cartEntry : product.getPlatforms().entrySet()) {
 
             CmsBtProductModel_Platform_Cart cart = cartEntry.getValue();
 
             Integer cartId = cart.getCartId();
 
+            // 对特定平台进行跳过
+            // 不需要为这些平台计算价格
             if (cartId < CmsConstants.ACTIVE_CARTID_MIN)
                 continue;
 
@@ -117,11 +119,11 @@ public class PriceService extends BaseService {
         Double defaultVoCommission = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_VOYAGE_ONE);
 
         // 公式参数: 平台佣金比例
-        Double platformCommission =commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_PLATFORM);
+        Double platformCommission = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_PLATFORM);
 
         String hsCodeType = Codes.getCodeName(HSCODE_TYPE, shippingType);
 
-        if (StringUtils.isEmpty(shippingType))
+        if (StringUtils.isEmpty(hsCodeType))
             throw new BusinessException("税号类型为空");
 
         String hsCode = null;
@@ -136,7 +138,7 @@ public class PriceService extends BaseService {
         }
 
         if (StringUtils.isEmpty(hsCode))
-            throw new BusinessException(String.format("获取的税号为空: hsCodeType: %s, product: %s", hsCodeType, code));
+            throw new BusinessException(String.format("税号为空: hsCodeType: %s, product: %s", hsCodeType, code));
 
         // 税号
         hsCode = hsCode.split(",")[0];
@@ -160,7 +162,7 @@ public class PriceService extends BaseService {
 
         // 对 sku 进行匹配
         // 获取重量进行运费计算
-        for (BaseMongoMap<String, Object> platformSku: platformSkus) {
+        for (BaseMongoMap<String, Object> platformSku : platformSkus) {
 
             String skuCode = platformSku.getStringAttribute("skuCode");
 
@@ -184,28 +186,39 @@ public class PriceService extends BaseService {
             Double priceMsrp = priceCalculator.setShippingFee(shippingFee).calculate(clientMsrp);
             Double retailPrice = priceCalculator.setShippingFee(shippingFee).calculate(clientNetPrice);
 
+            setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceMsrp, priceMsrp);
+            setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail, retailPrice);
 
-
-
-
-
-
-
-
-            if (priceMsrp == null)
-                platformSku.setAttribute("priceMsrp", -1d);
-
-            platformSku.setAttribute("priceMsrp", priceMsrp);
-
-            if (retailPrice == null)
-                platformSku.setAttribute("priceRetail", -1d);
-
-            platformSku.setAttribute("priceRetail", retailPrice);
+            if (!priceCalculator.isValid())
+                // TODO
+                priceCalculator.getErrorMessage();
         }
 
         return product;
     }
 
+    private boolean isAutoSyncPriceMsrp() {
+        
+    }
+
+    /**
+     * 为商品赋值价格, 当价格值非法时, 赋值 -1, 强制阻断上新
+     *
+     * @param platformSku 商品的某 SKU 部分
+     * @param commonField 商品价格字段
+     * @param priceValue  具体价格
+     */
+    private void setProductPrice(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField, Double priceValue) {
+        platformSku.put(commonField.name(), (priceValue == null || priceValue < 1) ? -1d, priceValue);
+    }
+
+    /**
+     * 价格计算器, 在同一款商品进行价格计算时, 可以用来保持部分参数. 同时包含对参数和价格、计算部分的校验
+     * <p>
+     * 如果 {@code isValid()} 为 {@code false}, 可以通过 {@code getErrorMessage()} 获取合并后的错误信息
+     * <p>
+     * 真正触发计算并获取结果, 需要调用 {@code calculate()}
+     */
     private class PriceCalculator {
 
         private Double shippingFee;
@@ -279,6 +292,10 @@ public class PriceService extends BaseService {
 
         private String getErrorMessage() {
             return StringUtils.join(messageList, ";");
+        }
+
+        private boolean isValid() {
+            return this.valid;
         }
 
         private Double calculate(Double inputPrice) {
