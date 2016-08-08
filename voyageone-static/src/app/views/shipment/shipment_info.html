@@ -13,9 +13,12 @@
         <div class="panel-body">
             <div class="form-inline col-sm-12">
                 <div class="form-group">
-                    <input id="Shipment Name" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.shipmentName"
+                    <input id="Shipment Name" type="text" class="form-control input-sm"
+                           ng-attr-title="{{ctrl.configTitle('TXT_SHIPMENT_NAME', ctrl.searchInfo.shipmentName) | translate}}"
+                           ng-model="ctrl.searchInfo.shipmentName"
                            ng-attr-placeholder="{{'TXT_SHIPMENT_NAME'|translate}}" enter-click="#searchButton">
                     <input id="Tracking No" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.searchInfo.trackingNo"
+                           ng-attr-title="{{ctrl.configTitle('TXT_TRACKING_NO_', ctrl.searchInfo.trackingNo) | translate}}"
                            ng-attr-placeholder="{{'TXT_TRACKING_NO_'|translate}}" enter-click="#searchButton">
                     <label class="control-label" translate="TXT_STATUS"></label>
                     <select name="SHIPMENT_STATUS" id="select" class="form-control input-sm" ng-model="ctrl.searchInfo.status"

@@ -102,6 +102,11 @@ define([
             return currentStatus.name;
         };
 
+        ShipmentInfoController.prototype.configTitle = function (title, model) {
+            if(model) return title;
+            return '';
+        };
+
         return ShipmentInfoController;
 
     }()));
