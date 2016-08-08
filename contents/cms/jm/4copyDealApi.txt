@@ -1,7 +1,5 @@
 请先看字段说明 7说明
-
 4.1.htDeal/copyDeal  调用前Check
-
          4.1.1   if(cms_bt_jm_promotion.is_promotion_full_minus)//满减专场
                 {
                         /*1.1其它未过期专场 有时间重叠  查询sql
