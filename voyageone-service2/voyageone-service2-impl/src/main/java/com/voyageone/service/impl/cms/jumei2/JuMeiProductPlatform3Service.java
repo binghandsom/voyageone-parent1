@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
@@ -11,6 +12,7 @@ import com.voyageone.components.jumei.reponse.*;
 import com.voyageone.components.jumei.request.*;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.jumei.SkuPriceBean;
+import com.voyageone.service.bean.cms.jumei.UpdateJmParameter;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
@@ -66,9 +68,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = daoExtCmsBtJmPromotionProduct.selectJMCopyList(promotionId);
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
-                LOG.info(promotionId+" code:"+model.getProductCode() + "上新begin");
-                updateJm(modelCmsBtJmPromotion, model, shopBean);
-                LOG.info(promotionId+" code:"+model.getProductCode() + "上新end");
+                LOG.info(promotionId + " code:" + model.getProductCode() + "上新begin");
+                UpdateJmParameter parameter = getUpdateJmParameter(modelCmsBtJmPromotion, model, shopBean);
+                updateJm(parameter);
+                LOG.info(promotionId + " code:" + model.getProductCode() + "上新end");
             }
         } catch (Exception ex) {
             LOG.error("addProductAndDealByPromotionId上新失败", ex);
@@ -76,52 +79,65 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
         LOG.info(promotionId + " 聚美上新end");
     }
-    public CallResult updateJm( CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
+   protected  UpdateJmParameter getUpdateJmParameter(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel model, ShopBean shopBean) {
+       UpdateJmParameter parameter = new UpdateJmParameter();
+       parameter.cmsBtJmPromotionProductModel = model;
+       parameter.cmsBtJmPromotionModel = modelCmsBtJmPromotion;
+       parameter.shopBean = shopBean;
+       parameter.cmsBtProductModel = productService.getProductByCode(model.getChannelId(), model.getProductCode());//todo cmsBtProductModel null处理11
+       parameter.platform=parameter.cmsBtProductModel.getPlatform(CartEnums.Cart.JM);//todo  platform null处理11
+       return parameter;
+   }
+    //所有api调用前check
+    public CallResult api_beforeCheck(UpdateJmParameter parameter) {
+        CallResult result = new CallResult();
+        String errorMsg = "";
+        // 6.0.1
+        if ("1".equalsIgnoreCase(parameter.cmsBtProductModel.getLock()))//1:lock, 0:unLock
+        {
+            errorMsg = "商品被Lock，如确实需要上传商品，请先解锁";
+        }
+        //6.0.2
+        else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() >= parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
+            errorMsg = "市场价必须大于团购价";
+        }
+        if (!StringUtils.isEmpty(errorMsg)) {
+            result.setMsg(errorMsg);
+            result.setResult(false);
+        }
+        return result;
+    }
+
+    public CallResult updateJm(UpdateJmParameter parameter) throws Exception {
         CallResult result = new CallResult();
         try {
-            if (model.getSynchStatus() != 2) {
-                //获取在售商品的model
-                CmsBtJmPromotionProductModel onSaleModel = daoExtCmsBtJmPromotionProduct.selectOnSaleByCode(model.getChannelId(), model.getProductCode(), DateTimeUtilBeijing.getCurrentBeiJingDate());
-                if (onSaleModel != null) {
-                    model.setErrorMsg("存在在售商品JmHashId:" + onSaleModel.getJmHashId() + "已在其它聚美专场，且未过期。该商品上传失败不能上传");
-                    daoCmsBtJmPromotionProduct.update(model);
-                    return result;
-                }
+            if (parameter.cmsBtJmPromotionProductModel.getSynchStatus() != 2) {
                 // 再售
-                if (StringUtil.isEmpty(model.getJmHashId())) {
-                    copyDeal(modelCmsBtJmPromotion, model, shopBean);
-                } else {
-                    model.setStockStatus(1);//库存设置待更新
-                    model.setSynchStatus(2);//有jmHashId 已上传
-                }
-                updateDealStock(model, shopBean);//更新库存
-                //更新deal   商品属性 价格
-                updateDeal(model, shopBean);
-                if (model.getDealEndTimeStatus() == 1) {
-                    updateDealEndTime(modelCmsBtJmPromotion, model, shopBean);//deal延期
-                }
+                if (StringUtil.isEmpty(parameter.cmsBtJmPromotionProductModel.getJmHashId())) {
+                    //6.1.1再售接口前check   copyDeal_beforeCheck(4.1)
+                    //6.1.2调用再售接口  copyDeal
+                    copyDeal(parameter);
+                    //6.1.3再售接口后check   copyDeal_afterCheck(4.2)
 
+                } else {
+                    parameter.cmsBtJmPromotionProductModel.setStockStatus(1);//库存设置待更新
+                    parameter.cmsBtJmPromotionProductModel.setSynchStatus(2);//有jmHashId 已上传
+                }
+                parameter.platform.setpNumIId(parameter.cmsBtJmPromotionProductModel.getJmHashId());  //todo  逻辑待定最新jmHashId(取该商品的最新jmHashId,这样最靠谱)
+                parameter.cmsBtJmPromotionProductModel.setPriceStatus(1);
+                updateJMDeal(parameter);
             } else {
-                if (model.getPriceStatus() == 1) //更新价格
-                {
-                    updateDeal(model, shopBean);//更新deal   商品属性 价格
-                }
-                if (model.getDealEndTimeStatus() == 1) {
-                    updateDealEndTime(modelCmsBtJmPromotion, model, shopBean);//deal延期
-                }
-                if (model.getStockStatus() != 2) {
-                    updateDealStock(model, shopBean);//更新库存
-                }
+                updateJMDeal(parameter);
             }
         } catch (Exception ex) {
-            model.setErrorMsg(ex.getMessage());
+            parameter.cmsBtJmPromotionProductModel.setErrorMsg(ex.getMessage());
             // model.setUpdateState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
             LOG.error("JuMeiProductPlatform3Service.addProductAndDealByPromotionId", ex);
             try {
-                if (model.getErrorMsg().length() > 600) {
-                    model.setErrorMsg(model.getErrorMsg().substring(0, 600));
+                if (parameter.cmsBtJmPromotionProductModel.getErrorMsg().length() > 600) {
+                    parameter.cmsBtJmPromotionProductModel.setErrorMsg(parameter.cmsBtJmPromotionProductModel.getErrorMsg().substring(0, 600));
                 }
-                daoCmsBtJmPromotionProduct.update(model);
+                daoCmsBtJmPromotionProduct.update(parameter.cmsBtJmPromotionProductModel);
             } catch (Exception cex) {
                 LOG.error("JuMeiProductPlatform3Service.addProductAndDealByPromotionId", cex);
             }
@@ -130,8 +146,64 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
         return result;
     }
+    void updateJMDeal( UpdateJmParameter parameter) throws Exception {
+        if (parameter.cmsBtJmPromotionProductModel.getPriceStatus() == 1) //更新价格
+        {
+            updateDeal(parameter);//更新deal   商品属性 价格
+        }
+        if (parameter.cmsBtJmPromotionProductModel.getDealEndTimeStatus() == 1) {
+            updateDealEndTime(parameter);//deal延期
+        }
+        if (parameter.cmsBtJmPromotionProductModel.getStockStatus() != 2) {
+            updateDealStock(parameter);//更新库存
+        }
 
-    private void updateDealEndTime(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
+    }
+    //再售前check
+    public  CallResult copyDeal_beforeCheck(UpdateJmParameter parameter) {
+        CallResult result = new CallResult();
+        CmsBtJmPromotionProductModel model = parameter.cmsBtJmPromotionProductModel;
+        String errorMsg = "";
+        if (parameter.cmsBtJmPromotionModel.getIsPromotionFullMinus())//满减专场
+        {
+            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+            if (modelPromotionProduct != null) { //活动日期重叠
+                errorMsg = "该商品已于相关时间段内，在其它专场中完成上传，为避免财务结算问题，请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品";//取一个活动id
+            }
+        } else { //非满减专场 非大促
+            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectFullMinusDateRepeat(model.getId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+            if (modelPromotionProduct != null) { //活动日期重叠
+                errorMsg = "该商品已在该大促时间范围内的其它未过期聚美专场中，完成上传，且开始时间与大促开始时间不一致。无法加入当前大促专场。聚美会监控大促专场的营销数据，禁止商品在活动启动前偷跑，大促商品必须有预热。请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品";//取一个活动id
+
+            }
+        }
+        if (StringUtils.isEmpty(errorMsg) && parameter.cmsBtJmPromotionModel.getPromotionType() == 2)//大促专场
+        {
+            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+            if (modelPromotionProduct != null && modelPromotionProduct.getActivityStart() != model.getActivityStart()) { //活动日期重叠 开始时间不相等
+                errorMsg = "该商品已于相关时间段内，在其它专场中完成上传，为避免财务结算问题，请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品";//取一个活动id
+
+            }
+        }
+        if(!StringUtils.isEmpty(errorMsg))
+        {
+            result.setResult(false);
+            result.setMsg(errorMsg);
+        }
+        return result;
+    }
+    //再售后check
+    public  CallResult copyDeal_afterCheck(UpdateJmParameter parameter,  HtDealCopyDealResponse response)
+    {
+        CallResult result=new CallResult();
+
+        return  result;
+    }
+    //
+    private void updateDealEndTime(UpdateJmParameter parameter) throws Exception {
+        CmsBtJmPromotionModel modelCmsBtJmPromotion=parameter.cmsBtJmPromotionModel;
+        CmsBtJmPromotionProductModel model=parameter.cmsBtJmPromotionProductModel;
+        ShopBean shopBean=parameter.shopBean;
         if (modelCmsBtJmPromotion.getActivityEnd().getTime() > model.getActivityEnd().getTime()) {
             jmHtDealUpdateDealEndTime(modelCmsBtJmPromotion, model, shopBean);
             model.setDealEndTimeStatus(2);
@@ -141,7 +213,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
     }
 
-    private void updateDeal(CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
+    private void updateDeal(UpdateJmParameter parameter) throws Exception {
+        CmsBtJmPromotionProductModel model=parameter.cmsBtJmPromotionProductModel;
+        ShopBean shopBean=parameter.shopBean;
         List<SkuPriceBean> listSkuPrice = daoExtCmsBtJmPromotionSku.selectJmSkuPriceInfoListByPromotionProductId(model.getId());
         jmHtDealUpdateDealPriceBatch(model, shopBean, listSkuPrice);//更新deal价格
         String jmSkuNoList = getjmSkuNo(listSkuPrice);
@@ -153,7 +227,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
         model.setErrorMsg("");
         daoCmsBtJmPromotionProduct.update(model);
     }
-    private void updateDealStock(CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
+    private void updateDealStock(UpdateJmParameter parameter) throws Exception {
+        CmsBtJmPromotionProductModel model=parameter.cmsBtJmPromotionProductModel;
+        ShopBean shopBean=parameter.shopBean;
         List<SkuPriceBean> listSkuPrice = daoExtCmsBtJmPromotionSku.selectJmSkuPriceInfoListByPromotionProductId(model.getId());
         jmHtDealUpdateDealStockBatch(model, shopBean, listSkuPrice);//更新deal信息   limit   jmSkuNo
         model.setStockStatus(2);
@@ -161,7 +237,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
         daoCmsBtJmPromotionProduct.update(model);
     }
     //再售
-    private void copyDeal(CmsBtJmPromotionModel modelCmsBtJmPromotion, CmsBtJmPromotionProductModel model, ShopBean shopBean) throws Exception {
+    private void copyDeal( UpdateJmParameter parameter) throws Exception {
+        CmsBtJmPromotionModel modelCmsBtJmPromotion = parameter.cmsBtJmPromotionModel;
+        CmsBtJmPromotionProductModel model = parameter.cmsBtJmPromotionProductModel;
+        ShopBean shopBean = parameter.shopBean;
         CmsBtJmProductModel modelJmProduct = daoExtCmsBtJmProduct.selectByProductCodeChannelId(model.getProductCode(), model.getChannelId());
         jmHtDealCopy(modelCmsBtJmPromotion, model, shopBean, modelJmProduct.getOriginJmHashId());//再售
         model.setActivityStart(modelCmsBtJmPromotion.getActivityStart());

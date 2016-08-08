@@ -179,6 +179,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     public void check(CmsBtJmPromotionModel model, List<ProductImportBean> listProductModel, List<SkuImportBean> listSkuModel, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,boolean isImport) throws IllegalAccessException {
         //product
         List<ProductImportBean> listErroProduct = new ArrayList<>();
+
         for (ProductImportBean product : listProductModel) {
             if (model.getIsPromotionFullMinus())//满减专场
             {
@@ -186,31 +187,35 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 if (modelPromotionProduct != null) { //活动日期重叠
                     product.setErrorMsg("该商品已于相关时间段内，在其它专场中完成上传，为避免财务结算问题，请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品");//取一个活动id
                     listErroProduct.add(product);
-                }
-            } else if (model.getPromotionType() == 2)//大促专场
-            {
-                CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getId(), model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd());
-                if (modelPromotionProduct != null && modelPromotionProduct.getActivityStart() != model.getActivityStart()) { //活动日期重叠 开始时间不相等
-                    product.setErrorMsg("该商品已于相关时间段内，在其它专场中完成上传，为避免财务结算问题，请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品");//取一个活动id
-                    listErroProduct.add(product);
+                    continue;
                 }
             } else {
                 CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectFullMinusDateRepeat(model.getId(), model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd());
                 if (modelPromotionProduct != null) { //活动日期重叠
                     product.setErrorMsg("该商品已在该大促时间范围内的其它未过期聚美专场中，完成上传，且开始时间与大促开始时间不一致。无法加入当前大促专场。聚美会监控大促专场的营销数据，禁止商品在活动启动前偷跑，大促商品必须有预热。请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品");//取一个活动id
                     listErroProduct.add(product);
+                    continue;
+                }
+            }
+            if (com.voyageone.common.util.StringUtils.isEmpty("") && model.getPromotionType() == 2)//大促专场
+            {
+                CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getId(), model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+                if (modelPromotionProduct != null && modelPromotionProduct.getActivityStart() != model.getActivityStart()) { //活动日期重叠 开始时间不相等
+                    product.setErrorMsg("该商品已于相关时间段内，在其它专场中完成上传，为避免财务结算问题，请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品");//取一个活动id
+                    listErroProduct.add(product);
+                    continue;
                 }
             }
             if (daoExtCmsBtJmProduct.existsCode(product.getProductCode(), model.getChannelId()) != Boolean.TRUE) {
                 product.setErrorMsg("code:" + product.getProductCode() + "从未上新或不存在");
                 listErroProduct.add(product);
+                continue;
             }
         }
         if (isImport) {
             listProductModel.removeAll(listErroProduct);//移除不能导入的 product
         }
         listProducctErrorMap.addAll(MapUtil.toMapList(listErroProduct));//返回  导出
-
         //sku
         String errorSkuMsg = "";
         List<SkuImportBean> listErroSku = new ArrayList<>();

@@ -9,7 +9,9 @@
             <div class="form-group m-r-lg">
                 <label>
                     <span>SKU&nbsp;</span>
-                    <select class="form-control" ng-model="ctrl.selected.sku" ng-change="ctrl.getData(0)" ng-options="i as i.label for i in ctrl.skuList"></select>
+                    <select class="form-control" ng-model="ctrl.selected.sku" ng-change="ctrl.getData(0)" ng-options="i as i.label for i in ctrl.skuList">
+                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                    </select>
                 </label>
             </div>
             <div class="form-group m-r-lg">
