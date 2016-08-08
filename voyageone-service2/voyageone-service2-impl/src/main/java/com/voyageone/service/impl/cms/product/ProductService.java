@@ -870,8 +870,11 @@ public class ProductService extends BaseService {
     public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier) {
         return updateProductPlatform(channelId, prodId, platformModel, modifier, false);
     }
-
     public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk) {
+        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk,"页面编辑");
+    }
+
+    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk, String comment) {
         CmsBtProductModel oldProduct = getProductById(channelId, prodId);
         if (isModifiedChk) {
             CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = oldProduct.getPlatform(platformModel.getCartId());
@@ -911,7 +914,7 @@ public class ProductService extends BaseService {
 
         List<String> skus = new ArrayList<>();
         platformModel.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
-        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, platformModel.getCartId(), modifier, "页面编辑");
+        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, platformModel.getCartId(), modifier, comment);
 
         return platformModel.getModified();
     }
