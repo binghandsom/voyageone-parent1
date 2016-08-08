@@ -6,11 +6,15 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.daoext.cms.CmsZzFeedOverstockPriceDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsZzFeedOverstockPriceModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Common;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -42,6 +46,9 @@ public class OverStockPriceAnalysisService extends BaseTaskService {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private FeedInfoService feedInfoService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -149,6 +156,19 @@ public class OverStockPriceAnalysisService extends BaseTaskService {
             });
             cmsZzFeedOverstockPriceModel.setUpdFlg(1);
             cmsZzFeedOverstockPriceDaoExt.update(cmsZzFeedOverstockPriceModel);
+        }
+
+        CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductBySku(OverStock.getId(), cmsZzFeedOverstockPriceModel.getSkuCode());
+        if(cmsBtFeedInfoModel != null){
+            for (CmsBtFeedInfoModel_Sku sku : cmsBtFeedInfoModel.getSkus()) {
+                if (sku.getSku().equalsIgnoreCase(cmsZzFeedOverstockPriceModel.getSkuCode())) {
+                    sku.setPriceNet(Double.parseDouble(cmsZzFeedOverstockPriceModel.getCostPrice()));
+                    cmsBtFeedInfoModel.setModifier(getTaskName());
+                    cmsBtFeedInfoModel.setModified(DateTimeUtil.getNowTimeStamp());
+                    feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);
+                    break;
+                }
+            }
         }
     }
 
