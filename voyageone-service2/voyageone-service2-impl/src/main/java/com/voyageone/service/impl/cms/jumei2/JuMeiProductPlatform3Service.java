@@ -88,37 +88,18 @@ public class JuMeiProductPlatform3Service extends BaseService {
        parameter.platform=parameter.cmsBtProductModel.getPlatform(CartEnums.Cart.JM);//todo  platform null处理11
        return parameter;
    }
-    //所有api调用前check
-    public CallResult api_beforeCheck(UpdateJmParameter parameter) {
-        CallResult result = new CallResult();
-        String errorMsg = "";
-        // 6.0.1
-        if ("1".equalsIgnoreCase(parameter.cmsBtProductModel.getLock()))//1:lock, 0:unLock
-        {
-            errorMsg = "商品被Lock，如确实需要上传商品，请先解锁";
-        }
-        //6.0.2
-        else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() >= parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
-            errorMsg = "市场价必须大于团购价";
-        }
-        if (!StringUtils.isEmpty(errorMsg)) {
-            result.setMsg(errorMsg);
-            result.setResult(false);
-        }
-        return result;
-    }
 
-    public CallResult updateJm(UpdateJmParameter parameter) throws Exception {
-        CallResult result = new CallResult();
+    public void updateJm(UpdateJmParameter parameter) throws Exception {
         try {
+             api_beforeCheck(parameter);//api调用前check
             if (parameter.cmsBtJmPromotionProductModel.getSynchStatus() != 2) {
                 // 再售
                 if (StringUtil.isEmpty(parameter.cmsBtJmPromotionProductModel.getJmHashId())) {
                     //6.1.1再售接口前check   copyDeal_beforeCheck(4.1)
+                    copyDeal_beforeCheck(parameter);
                     //6.1.2调用再售接口  copyDeal
                     copyDeal(parameter);
-                    //6.1.3再售接口后check   copyDeal_afterCheck(4.2)
-
+                    //6.1.3再售接口后check   在方法copyDeal内部调用copyDeal_afterCheck(4.2)
                 } else {
                     parameter.cmsBtJmPromotionProductModel.setStockStatus(1);//库存设置待更新
                     parameter.cmsBtJmPromotionProductModel.setSynchStatus(2);//有jmHashId 已上传
@@ -141,10 +122,24 @@ public class JuMeiProductPlatform3Service extends BaseService {
             } catch (Exception cex) {
                 LOG.error("JuMeiProductPlatform3Service.addProductAndDealByPromotionId", cex);
             }
-            result.setResult(false);
-            result.setMsg(ex.getMessage());
         }
-        return result;
+    }
+    //所有api调用前check
+    public void api_beforeCheck(UpdateJmParameter parameter) {
+
+        String errorMsg = "";
+        // 6.0.1
+        if ("1".equalsIgnoreCase(parameter.cmsBtProductModel.getLock()))//1:lock, 0:unLock
+        {
+            errorMsg = "商品被Lock，如确实需要上传商品，请先解锁";
+        }
+        //6.0.2
+        else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() >= parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
+            errorMsg = "市场价必须大于团购价";
+        }
+        if(!StringUtils.isEmpty(errorMsg)) {
+            throw new BusinessException(errorMsg);
+        }
     }
     void updateJMDeal( UpdateJmParameter parameter) throws Exception {
         if (parameter.cmsBtJmPromotionProductModel.getPriceStatus() == 1) //更新价格
@@ -160,8 +155,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
 
     }
     //再售前check
-    public  CallResult copyDeal_beforeCheck(UpdateJmParameter parameter) {
-        CallResult result = new CallResult();
+    public  void copyDeal_beforeCheck(UpdateJmParameter parameter) {
         CmsBtJmPromotionProductModel model = parameter.cmsBtJmPromotionProductModel;
         String errorMsg = "";
         if (parameter.cmsBtJmPromotionModel.getIsPromotionFullMinus())//满减专场
@@ -187,10 +181,8 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
         if(!StringUtils.isEmpty(errorMsg))
         {
-            result.setResult(false);
-            result.setMsg(errorMsg);
+          throw  new BusinessException(errorMsg);
         }
-        return result;
     }
 
     public CmsBtJmPromotionModel getCmsBtJmPromotionModelBySellHashId(String SellHashId) {
@@ -273,40 +265,23 @@ public class JuMeiProductPlatform3Service extends BaseService {
         request.setEnd_time(parameter.cmsBtJmPromotionModel.getActivityEnd());
         request.setJumei_hash_id(originJmHashId);//原始jmHashId
         try {
-            HtDealCopyDealResponse response = serviceJumeiHtDeal.copyDeal(parameter.shopBean,request);
+            HtDealCopyDealResponse response = serviceJumeiHtDeal.copyDeal(parameter.shopBean, request);
             if (response.is_Success()) {
-               parameter.cmsBtJmPromotionProductModel.setJmHashId(response.getJumei_hash_id());
+                parameter.cmsBtJmPromotionProductModel.setJmHashId(response.getJumei_hash_id());
             } else {
-                if (!StringUtils.isEmpty(response.getJumei_hash_id())) {
-                    parameter.cmsBtJmPromotionProductModel.setJmHashId(response.getJumei_hash_id());
-                } else if (!StringUtils.isEmpty(response.getSell_hash_id())) {
-                    HtDealGetDealByHashIDRequest getDealByHashIDRequest = new HtDealGetDealByHashIDRequest();
-                    getDealByHashIDRequest.setJumei_hash_id(response.getSell_hash_id());
-                    HtDealGetDealByHashIDResponse getDealByHashIDResponse = serviceJumeiHtDeal.getDealByHashID(parameter.shopBean, getDealByHashIDRequest);
-                    long activityStart = DateTimeUtilBeijing.toLocalTime(parameter.cmsBtJmPromotionModel.getActivityStart());
-                    long jmEndTime=DateTimeUtilBeijing.toLocalTime(getDealByHashIDResponse.getEnd_time());
-                    if (jmEndTime >= activityStart) {//if true then 和本次活动重叠 Sell_hash_id作为本次活动的jumeiHashId
-                        parameter.cmsBtJmPromotionProductModel.setJmHashId(response.getSell_hash_id());
-                        long activeEnd = DateTimeUtilBeijing.toLocalTime(parameter.cmsBtJmPromotionModel.getActivityEnd());
-                        if (activeEnd > jmEndTime) {//if true then 本次活动时间大于deal的结束时间 延期
-                            parameter.cmsBtJmPromotionProductModel.setDealEndTimeStatus(1);
-                        }
-                    }
-                }
-                parameter.cmsBtJmPromotionProductModel.setSynchStatus(3);
-                throw new BusinessException("productCode:" +  parameter.cmsBtJmPromotionProductModel.getProductCode() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+                //再售后check
+                String errorMsg = copyDeal_afteErrorCheck(parameter, response);
+                throw new BusinessException(errorMsg + response.getBody());
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             parameter.cmsBtJmPromotionProductModel.setSynchStatus(3);
             parameter.cmsBtJmPromotionProductModel.setPriceStatus(0);
             parameter.cmsBtJmPromotionProductModel.setDealEndTimeStatus(0);
-            throw  ex;
+            throw ex;
         }
     }
     //再售后check
-    public  String copyDeal_afterCheck(UpdateJmParameter parameter,HtDealCopyDealResponse response) throws Exception {
+    public  String copyDeal_afteErrorCheck(UpdateJmParameter parameter,HtDealCopyDealResponse response) throws Exception {
 
         CmsBtJmPromotionModel jmPromotion = parameter.cmsBtJmPromotionModel;
         CmsBtJmPromotionProductModel jmPromotionProduct = parameter.cmsBtJmPromotionProductModel;
