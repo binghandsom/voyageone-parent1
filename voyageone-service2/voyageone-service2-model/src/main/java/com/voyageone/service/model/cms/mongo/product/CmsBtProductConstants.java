@@ -84,6 +84,8 @@ public interface CmsBtProductConstants {
 		skuCode,
         /* MSRP售价(中国建议零售价)(共通/分平台) */
         priceMsrp,
+		/* 品牌方MSRP售价(中国建议零售价)(共通/分平台) */
+		originalPriceMsrp,
         /* 销售指导价(共通/分平台) */
         priceRetail,
 		/* 各平台最终零售价(分平台) */

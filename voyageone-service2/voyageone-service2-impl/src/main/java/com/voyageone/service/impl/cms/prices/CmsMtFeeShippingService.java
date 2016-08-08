@@ -36,7 +36,7 @@ public class CmsMtFeeShippingService extends BaseService {
      * 根据发货方式计算商品运费
      *
      * @param shippingType 发货方式, 按发货方式判断计重还是计件
-     * @param weight       商品重量, 当计重时, 需要参与计算
+     * @param weight       商品重量, 当计重时, 需要参与计算, 单位 lb
      */
     public Double getShippingFee(String shippingType, double weight) {
 

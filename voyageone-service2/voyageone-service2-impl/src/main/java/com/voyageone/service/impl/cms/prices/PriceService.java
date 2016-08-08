@@ -1,7 +1,6 @@
 package com.voyageone.service.impl.cms.prices;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Codes;
@@ -19,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -49,7 +50,9 @@ public class PriceService extends BaseService {
     private final ProductSkuService productSkuService;
 
     @Autowired
-    public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService, CmsMtFeeCommissionService feeCommissionService, CmsMtFeeExchangeService feeExchangeService, ProductSkuService productSkuService) {
+    public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService,
+                        CmsMtFeeCommissionService feeCommissionService, CmsMtFeeExchangeService feeExchangeService,
+                        ProductSkuService productSkuService) {
         this.feeShippingService = feeShippingService;
         this.feeTaxService = feeTaxService;
         this.feeCommissionService = feeCommissionService;
@@ -58,9 +61,47 @@ public class PriceService extends BaseService {
     }
 
     /**
-     * 计算product中各个sku的retailPrice, 全部cart
+     * 计算 product 中所有平台的所有 sku 的 retailPrice 和 originPriceMsrp, 当打开部分配置时, 会同步 price sale 和 msrp
+     * <p>
+     * 计算所需的商品模型必须提供以下内容
+     * <pre class="code">
+     * {
+     *   channelId: String,
+     *   common: {
+     *     fields: {
+     *       commissionRate: Double,
+     *       hsCodePrivate: String,
+     *       hsCodeCross: String,
+     *       code: String
+     *     },
+     *     skus: [
+     *       {
+     *         clientNetPrice: Double,
+     *         clientMsrpPrice: Double,
+     *         weight: Double,
+     *         skuCode: String
+     *       }
+     *     ]
+     *   },
+     *   platforms: {
+     *     P*: {
+     *       pBrandId: String,
+     *       pCateId: String,
+     *       skus: [
+     *         {
+     *           skuCode: String
+     *         }
+     *       ]
+     *     }
+     *   }
+     * }
+     * </pre>
+     *
+     * @param product 包含计算所需参数的商品模型
+     * @return 包含计算后价格的商品模型
+     * @throws PriceCalculateException 当价格计算公式中, 参数无法正确获取时, 或计算结果不合法时, 抛出该错误
      */
-    public CmsBtProductModel setRetailPrice(CmsBtProductModel product) {
+    public CmsBtProductModel setRetailPrice(CmsBtProductModel product) throws PriceCalculateException {
 
         for (Map.Entry<String, CmsBtProductModel_Platform_Cart> cartEntry : product.getPlatforms().entrySet()) {
 
@@ -79,8 +120,49 @@ public class PriceService extends BaseService {
         return product;
     }
 
-
-    public CmsBtProductModel setRetailPrice(CmsBtProductModel product, Integer cartId) {
+    /**
+     * 计算 product 中 cart 下的各个 sku 的 retailPrice 和 originPriceMsrp, 当打开部分配置时, 会同步 price sale 和 msrp
+     * <p>
+     * 计算所需的商品模型必须提供以下内容
+     * <pre class="code">
+     * {
+     *   channelId: String,
+     *   common: {
+     *     fields: {
+     *       commissionRate: Double,
+     *       hsCodePrivate: String,
+     *       hsCodeCross: String,
+     *       code: String
+     *     },
+     *     skus: [
+     *       {
+     *         clientNetPrice: Double,
+     *         clientMsrpPrice: Double,
+     *         weight: Double,
+     *         skuCode: String
+     *       }
+     *     ]
+     *   },
+     *   platforms: {
+     *     P*: {
+     *       pBrandId: String,
+     *       pCateId: String,
+     *       skus: [
+     *         {
+     *           skuCode: String
+     *         }
+     *       ]
+     *     }
+     *   }
+     * }
+     * </pre>
+     *
+     * @param product 包含计算所需参数的商品模型
+     * @param cartId  平台 ID
+     * @return 包含计算后价格的商品模型
+     * @throws PriceCalculateException 当价格计算公式中, 参数无法正确获取时, 或计算结果不合法时, 抛出该错误
+     */
+    public CmsBtProductModel setRetailPrice(CmsBtProductModel product, Integer cartId) throws PriceCalculateException {
 
         // 公式参数: 其他费用
         final Double otherFee = 0.0d;
@@ -101,13 +183,6 @@ public class PriceService extends BaseService {
         Integer platformId = CartType.getPlatformIdById(cartId);
 
         String code = product.getCommon().getFields().getCode();
-
-        //ShippingType存在cms_mt_channel_config里
-        CmsChannelConfigBean channelConfigBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE, String.valueOf(cartId));
-
-        if (channelConfigBean == null) {
-            channelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE);
-        }
 
         // 计算是否向上取整
 
@@ -137,8 +212,19 @@ public class PriceService extends BaseService {
         if (autoSyncPriceMsrp != null && "1".equals(autoSyncPriceMsrp.getConfigValue1()))
             isAutoSyncPriceMsrp = true;
 
-        // 发货方式
-        String shippingType = channelConfigBean.getConfigValue1();
+        // 计算发货方式
+
+        //ShippingType存在cms_mt_channel_config里
+        CmsChannelConfigBean shippingTypeConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE, String.valueOf(cartId));
+
+        if (shippingTypeConfig == null) {
+            shippingTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE);
+        }
+
+        String shippingType;
+
+        if (shippingTypeConfig == null || StringUtils.isEmpty(shippingType = shippingTypeConfig.getConfigValue1()))
+            throw new PriceCalculateException("没有找到渠道 %s (%s) 可用的发货方式", channelId, cartId);
 
         CmsMtFeeCommissionService.CommissionQueryBuilder commissionQueryBuilder = feeCommissionService.new CommissionQueryBuilder()
                 .withChannel(channelId)
@@ -150,7 +236,10 @@ public class PriceService extends BaseService {
         Double returnRate = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_RETURN);
 
         // 公式参数: 公司佣金比例
-        Double defaultVoCommission = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_VOYAGE_ONE);
+        Double voyageOneCommission = product.getCommon().getFields().getCommissionRate();
+
+        if (voyageOneCommission == null || voyageOneCommission <= 0)
+            voyageOneCommission = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_VOYAGE_ONE);
 
         // 公式参数: 平台佣金比例
         Double platformCommission = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_PLATFORM);
@@ -158,7 +247,7 @@ public class PriceService extends BaseService {
         String hsCodeType = Codes.getCodeName(HSCODE_TYPE, shippingType);
 
         if (StringUtils.isEmpty(hsCodeType))
-            throw new BusinessException("税号类型为空");
+            throw new PriceCalculateException("%s 发货方式的税号类型没有配置", shippingType);
 
         String hsCode = null;
 
@@ -172,7 +261,7 @@ public class PriceService extends BaseService {
         }
 
         if (StringUtils.isEmpty(hsCode))
-            throw new BusinessException(String.format("税号为空: hsCodeType: %s, product: %s", hsCodeType, code));
+            throw new PriceCalculateException("税号为空: 税号类型: %s, 商品 Code: %s", hsCodeType, code);
 
         // 税号
         hsCode = hsCode.split(",")[0];
@@ -186,9 +275,14 @@ public class PriceService extends BaseService {
                 .setTaxRate(taxRate)
                 .setPfCommission(platformCommission)
                 .setReturnRate(returnRate)
-                .setVoCommission(defaultVoCommission)
+                .setVoCommission(voyageOneCommission)
                 .setExchangeRate(exchangeRate)
                 .setOtherFee(otherFee);
+
+        // 对设置到价格计算器上的参数
+        // 在计算之前做一次检查
+        if (!priceCalculator.isValid())
+            throw new PriceCalculateException("创建价格计算器失败. " + priceCalculator.getErrorMessage());
 
         List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
         List<BaseMongoMap<String, Object>> platformSkus = cart.getSkus();
@@ -213,57 +307,62 @@ public class PriceService extends BaseService {
             Double clientMsrp = commonSku.getClientMsrpPrice();
             Double weight = commonSku.getWeight();
 
+            if (weight == null || weight < 1) {
+
+                String weightString = shippingTypeConfig.getConfigValue2();
+
+                if (StringUtils.isEmpty(weightString) || !StringUtils.isNumeric(weightString) || (weight = Double.valueOf(weightString)) <= 0)
+                    throw new PriceCalculateException("没有为渠道 %s (%s) 的(SKU) %s 找到可用的商品重量", channelId, cartId, skuCode);
+            }
+
             // 公式参数: 获取运费
             Double shippingFee = feeShippingService.getShippingFee(shippingType, weight);
 
             // !! 最终价格计算 !!
 
-            // 计算新的指导价
-            Double retailPrice = priceCalculator.setShippingFee(shippingFee).calculate(clientNetPrice);
+            // 计算指导价 Start
+            Double retailPrice = priceCalculator
+                    .setShippingFee(shippingFee)
+                    .calculate(clientNetPrice);
 
-            if (retailPrice > 0) {
-                // 指导价合法
-                // 则, 需要进行指导价波动计算
-                // 如果打开了同步开关, 则需要同步设置最终售价
+            if (retailPrice < 1)
+                throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的指导价不合法: %s");
 
-                // 获取上一次指导价
-                Double lastRetailPrice = getProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail);
-                // 获取价格波动字符串
-                String priceFluctuation = getPriceFluctuation(retailPrice, lastRetailPrice);
-                // 保存价格波动
-                platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), priceFluctuation);
+            // 指导价合法
+            // 则, 需要进行指导价波动计算
+            // 如果打开了同步开关, 则需要同步设置最终售价
 
-                if (isAutoApprovePrice)
-                    setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceSale, retailPrice);
+            // 获取上一次指导价
+            Double lastRetailPrice = getProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail);
+            // 获取价格波动字符串
+            String priceFluctuation = getPriceFluctuation(retailPrice, lastRetailPrice);
+            // 保存价格波动
+            platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), priceFluctuation);
 
-                // 保存击穿标识
-                String priceDiffFlg = productSkuService.getPriceDiffFlg(channelId, platformSku);
-                platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceDiffFlg.name(), priceDiffFlg);
+            if (isAutoApprovePrice)
+                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceSale, retailPrice);
 
-                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail, retailPrice);
-            } else {
-                // 如果计算值不合法, 保存 -1 阻止上新
-                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail, -1D);
-            }
+            // 保存击穿标识
+            String priceDiffFlg = productSkuService.getPriceDiffFlg(channelId, platformSku);
+            platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceDiffFlg.name(), priceDiffFlg);
+
+            setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail, retailPrice);
+
+            // 计算指导价 End
+
+            // 计算 MSRP Start
 
             Double originPriceMsrp = priceCalculator.calculate(clientMsrp);
 
-            if (originPriceMsrp > 0) {
+            if (originPriceMsrp < 1)
+                throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的 MSRP 不合法: %s");
 
-                if (isAutoSyncPriceMsrp)
-                    setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceMsrp, originPriceMsrp);
+            if (isAutoSyncPriceMsrp)
+                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceMsrp, originPriceMsrp);
 
-                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.originalPriceMsrp, originPriceMsrp);
-            } else {
-                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.originalPriceMsrp, 0D);
-            }
+            setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.originalPriceMsrp, originPriceMsrp);
 
-            // 最终检查计算器
-            // 如果中间有错误, 就获取统一的错误信息, 进行记录
-            if (!priceCalculator.isValid()) {
-                // TODO
-                priceCalculator.getErrorMessage();
-            }
+            // 计算 MSRP End
         }
 
         return product;
@@ -406,7 +505,7 @@ public class PriceService extends BaseService {
         }
 
         private String getErrorMessage() {
-            return StringUtils.join(messageList, ";");
+            return StringUtils.join(messageList, ", ");
         }
 
         private boolean isValid() {
@@ -417,22 +516,21 @@ public class PriceService extends BaseService {
          * 基于原始价格计算新价格
          *
          * @param inputPrice 原始价格
-         * @return 新价格, 如果计算结果不合法 (0/null), 返回 -1
+         * @return 新价格
+         * @throws PriceCalculateException 在计算前, 尝试计算公式的分母, 如果分母为 0 则报错
          */
-        private Double calculate(Double inputPrice) {
+        private Double calculate(Double inputPrice) throws PriceCalculateException {
 
             if (!valid)
-                return -1d;
+                return -1D;
 
             // 计算公式分母
             double denominator = 100d - voCommission - pfCommission - returnRate - taxRate;
 
             // 如果分母不合法。。。
-            if (denominator == 0) {
-                messageList.add(String.format("非法的价格参数[voCommission:%s], [platformCommission:%s], [returnRate:%s], [taxRate:%s]", voCommission, pfCommission, returnRate, taxRate));
-                valid = false;
-                return -1D;
-            }
+            if (denominator == 0)
+                throw new PriceCalculateException("根据这些参数 [VoyageOne Commission:%s], [Platform Commission:%s], [Return Rate:%s], [Tax Rate:%s] 计算出公式的分母为 0"
+                        , voCommission, pfCommission, returnRate, taxRate, denominator);
 
             Double price = ((inputPrice + shippingFee + otherFee) * exchangeRate * 100d) / denominator;
 
@@ -444,9 +542,7 @@ public class PriceService extends BaseService {
                 price = new BigDecimal(price).setScale(2, RoundingMode.HALF_UP).doubleValue();
             }
 
-            // 根据最终计算价格
-            // 选择该返回啥
-            return price > 0 ? price : -1D;
+            return price;
         }
     }
 }
