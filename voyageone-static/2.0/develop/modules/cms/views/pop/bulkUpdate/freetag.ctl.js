@@ -66,7 +66,6 @@ define([
             this.orgChkStsMap = {};
             this.orgDispMap = {};
             this._orgChkStsMap = {};
-            this._orgDispMap = {};
         }
 
         popFreeTagCtl.prototype = {
@@ -87,12 +86,14 @@ define([
                 self.channelTagService.init(params).then(function (res) {
                     self.source = self.tagTree = res.data.tagTree;
 
+                    /**当是高级检索，设置自由标签时，有初始勾选值*/
                     if (self.orgFlg == 2) {
-                        // 当是高级检索，设置自由标签时，有初始勾选值
-                        self.orgChkStsMap = res.data.orgChkStsMap; // checkbox勾选状态
-                        self.orgDispMap = res.data.orgDispMap;     // checkbox半选状态
+
+                        /**checkbox勾选状态*/
+                        self.orgChkStsMap = res.data.orgChkStsMap;
+                        /**checkbox半选状态*/
+                        self.orgDispMap = res.data.orgDispMap;
                         self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
-                        self._orgDispMap = angular.copy(res.data.orgDispMap);
 
                     }
                     self.search(0);
@@ -177,7 +178,7 @@ define([
 
 
                 /**判断是否改变*/
-                if(canSave(self.orgChkStsMap,selFlagArr) && self.selOrgDispList.length == 0){
+                if(canSave(self._orgChkStsMap,selFlagArr) && self.selOrgDispList.length == 0){
                     self.alert("未改变任何标签！");
                     return;
                 }
@@ -207,8 +208,13 @@ define([
                 self.$uibModalInstance.close(self.context);
             },
 
-            selOrgDisp:function(path){
+            selOrgDisp:function(id,path){
                 var self = this;
+
+                /**设置checkbox选中*/
+                self.orgChkStsMap[path] = self.taglist.selFlag[id];
+
+                /**记录点击的半角*/
                 if(self.orgDispMap[path]){
                     if(self.selOrgDispList.indexOf(path) < 0){
                         self.selOrgDispList.push(path);
