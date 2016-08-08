@@ -346,11 +346,11 @@ public class FeedToCmsService extends BaseService {
         try {
             if (!StringUtil.isEmpty(skuModel.getWeightOrg()) && !StringUtil.isEmpty(skuModel.getWeightOrgUnit())) {
                 String unit = skuModel.getWeightOrgUnit().trim();
-                String weightOrg = skuModel.getWeightOrgUnit().trim();
-                if ("oz".equalsIgnoreCase(unit)) {
+                String weightOrg = skuModel.getWeightOrg().trim();
+                if (unit.indexOf("oz") > -1) {
                     Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 16.0);
                     skuModel.setWeightCalc(convertWeight.toString());
-                } else if ("lb".equalsIgnoreCase(unit)) {
+                } else if (unit.indexOf("lb") > -1) {
                     Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg));
                     skuModel.setWeightCalc(convertWeight.toString());
                 }

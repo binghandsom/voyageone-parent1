@@ -84,6 +84,9 @@
         <!-- YogaDemocracy feed 导入 cms2 -->
         <task:scheduled ref="CmsYogaDemocracyAnalysisJob" method="run" cron="0 0/13 * * * ?"/>
 
+        <!-- ShoeMetro feed 导入 cms2 -->
+        <task:scheduled ref="CmsShoeMetroAnalysisJob" method="run" cron="0 0/13 * * * ?"/>
+
         <!-- EdcSkincare feed 导入 cms2 -->
         <task:scheduled ref="CmsEdcSkincareAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
 
