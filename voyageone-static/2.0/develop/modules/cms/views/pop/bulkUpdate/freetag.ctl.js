@@ -1,5 +1,9 @@
 /**
  * Created by sofia on 6/7/2016.
+ *
+ * updated by piao wenjie
+ * @description 添加了自由标签的默认选中和新增的逻辑判断
+ * @date 2016-8-5
  */
 
 define([
@@ -144,8 +148,6 @@ define([
                     }
 
                 }
-
-
             },
 
             /**
