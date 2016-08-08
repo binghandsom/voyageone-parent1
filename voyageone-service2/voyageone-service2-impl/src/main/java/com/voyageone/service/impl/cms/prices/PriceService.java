@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.prices;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.asserts.Assert;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -169,7 +170,11 @@ public class PriceService extends BaseService {
 
         final int JM_CART = 27;
 
+        Assert.notNull(cartId).elseThrowDefaultWithTitle("cartId");
+
         CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
+
+        Assert.notNull(cart).elseThrowDefaultWithTitle("cart (%s)", cartId);
 
         // JM平台是按照品牌收取佣金
         // 所以这里要根据店铺来选择类目参数, 使用品牌还是类目
