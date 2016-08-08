@@ -113,8 +113,8 @@ public class FeedInfoService extends BaseService {
 
         // 获取价格
         // 获取查询的价格区间下限
-        double priceSta = -1;
-        double priceEnd = -1;
+        Double priceSta = null;
+        Double priceEnd =  null;
        if(searchValue.get("priceStart") != null){
             if (StringUtils.isNumeric(String.valueOf(searchValue.get("priceStart")))) {
                 priceSta = Double.parseDouble(String.valueOf(searchValue.get("priceStart")));
@@ -127,13 +127,13 @@ public class FeedInfoService extends BaseService {
             }
         }
 
-        if (priceSta > -1 || priceEnd > -1) {
+        if (priceSta != null || priceEnd != null) {
             result.append("{\"skus.priceClientRetail\":{");
-            if (priceSta > -1) {
+            if (priceSta != null) {
                 result.append(MongoUtils.splicingValue("$gte", priceSta));
             }
-            if (priceEnd > -1) {
-                if (priceSta > -1) {
+            if (priceEnd != null) {
+                if (priceSta != null) {
                     result.append(",");
                 }
                 result.append(MongoUtils.splicingValue("$lte", priceEnd));
