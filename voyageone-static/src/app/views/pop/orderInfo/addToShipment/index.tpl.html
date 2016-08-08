@@ -30,25 +30,25 @@
                         <thead>
                         <tr>
                             <th class="text-center" translate="TXT_NO_"></th>
-                            <th class="text-center" translate="TXT_BARCODE"></th>
-                            <th class="text-center" translate="TXT_SKU"></th>
+                            <th class="text-left" translate="TXT_BARCODE"></th>
+                            <th class="text-left" translate="TXT_SKU"></th>
                             <th class="text-left" translate="TXT_NAME"></th>
-                            <th class="text-center" translate="TXT_CONTAINERIZING_TIME"></th>
-                            <th class="text-center" translate="TXT_CONTAINERIZING_USER"></th>
+                            <th class="text-left" translate="TXT_CONTAINERIZING_TIME"></th>
+                            <th class="text-left" translate="TXT_CONTAINERIZING_USER"></th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr ng-repeat="item in ctrl.scannedSkuList">
                             <td class="text-center">{{ctrl.scannedSkuList.length - $index}}</td>
-                            <td class="text-center">{{item.barcode}}</td>
-                            <td class="text-center">{{item.clientSku}}</td>
-                            <td class="v-middle">
+                            <td class="text-left">{{item.barcode}}</td>
+                            <td class="text-left">{{item.clientSku}}</td>
+                            <td class="text-left v-middle">
                                 <span ng-if="item.name.length <= 30">{{item.name}}</span>
                                 <span ng-if="item.name.length > 30" uib-tooltip="{{item.name}}"
                                       tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name | stringCutter:true:30:' ...'}}</span>
                             </td>
-                            <td class="text-center">{{item.containerizingTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                            <td class="text-center">{{item.containerizer}}</td>
+                            <td class="text-left">{{item.containerizingTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                            <td class="text-left">{{item.containerizer}}</td>
                         </tr>
                         </tbody>
                     </table>

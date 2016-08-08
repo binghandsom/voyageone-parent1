@@ -94,7 +94,7 @@ define(function () {
         "TXT_CONFIRM_SHIPPED": "Confirm shipped?",
         "TXT_SHIPMENT_NOT_FOUND": "Shipment not found.",
         "TXT_ERROR": "Error",
-        "TXT_SCANNED": "Succeed",
+        "TXT_SCANNED": "Scanned",
         "TXT_PENDING": "Pending",
         "TXT_NOTHING_TO_SHIP": "End shipment failure, shipment can not be empty.",
         "TXT_FULFILLMENT_STATUS": "Fulfillment Status",

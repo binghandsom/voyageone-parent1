@@ -57,7 +57,7 @@
                         <th class="td-2 v-middle" translate="TXT_TRACKING_NO_"></th>
                         <th class="td-2 text-center v-middle" translate="TXT_ORDER_TOTAL"></th>
                         <th class="td-2 text-center v-middle" translate="TXT_SKU_TOTAL"></th>
-                        <th class="td-2 text-center v-middle" translate="TXT_STATUS"></th>
+                        <th class="td-2 text-left v-middle" translate="TXT_STATUS"></th>
                         <th class="td-4 v-middle" translate="TXT_COMMENTS"></th>
                         <th class="td-1 text-center v-middle" translate="TXT_ACTION"></th>
                     </tr>
@@ -69,7 +69,7 @@
                         <td class="v-middle word-wrap">{{item.trackingNo || '-'}}</td>
                         <td class="text-center v-middle">{{item.orderTotal}}</td>
                         <td class="text-center v-middle">{{item.skuTotal}}</td>
-                        <td class="text-center v-middle">{{ctrl.getStatusName(item.status)}}</td>
+                        <td class="text-left v-middle">{{ctrl.getStatusName(item.status)}}</td>
                         <td class="v-middle">
                             <span class="v-middle" ng-if="item.comment.length <= 30">{{item.comment}}</span>
                             <span class="v-middle" ng-if="item.comment.length > 30" uib-tooltip="{{item.comment}}"
