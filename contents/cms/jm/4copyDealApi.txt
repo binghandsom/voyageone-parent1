@@ -49,7 +49,6 @@
        不重复调用。
                 errorMsg=“请登录聚美后台，检查商品相关【产品库】与【Deal】信息，如发现“待审核”、“审核通过”、“取消送审”字样，请将相关 聚美产品ID，聚美产品品牌，聚美HashID申报给聚美运营，进行人工审核并发布。”+聚美Response
 
-
     todo 以下为返回再售失败，返回【sell_hash_id】的场合  todo   sell_hash_id 通过接口获取deal的开始时间和结束时间
      var sellDeal=通过接口获取deal;
      var sellJmPromotion= 通过sell_hash_id查找在售专场          用sellDeal的开始时间和结束时间
