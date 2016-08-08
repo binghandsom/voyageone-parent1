@@ -15,19 +15,19 @@ define(function () {
                 "controller": "OrderInfoController as ctrl"
             },
             {
-                "hash": "/feed/feed_file_upload",
+                "hash": "/feed/product_feed_upload",
                 "templateUrl": "./views/feed/fileUpload/index.html",
                 "controllerUrl": "./views/feed/fileUpload/index.controller",
                 "controller": "FeedFileUploadController as ctrl"
             },
             {
-                "hash": "/feed/feed_import_result",
+                "hash": "/feed/product_feed_import_status",
                 "templateUrl": "./views/feed/feedImport/index.html",
                 "controllerUrl": "./views/feed/feedImport/index.controller",
                 "controller": "FeedImportResultController as ctrl"
             },
             {
-                "hash": "/feed/feed_info_search",
+                "hash": "/feed/product_feed_search",
                 "templateUrl": "./views/feed/feedSearch/index.html",
                 "controllerUrl": "./views/feed/feedSearch/index.controller",
                 "controller": "FeedInfoSearchController as ctrl"
@@ -45,7 +45,7 @@ define(function () {
                 "controller": "ShipmentDetailController as ctrl"
             },
             {
-                "hash": "/inventory/inventory_file_upload",
+                "hash": "/inventory/inventory_feed_upload",
                 "templateUrl": "./views/inventory/index.html",
                 "controllerUrl": "./views/inventory/index.controller",
                 "controller": "InventoryFileUploadController as ctrl"
