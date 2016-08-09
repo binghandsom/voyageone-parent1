@@ -21,6 +21,22 @@
         <module>voyageone-tools</module>
     </modules>
 
+    <repositories>
+
+        <repository>
+            <id>nexus</id>
+            <name>Team Nexus Repository</name>
+            <url>http://10.0.0.59:8081/nexus/content/groups/public</url>
+        </repository>
+
+        <repository>
+            <id>local nexus repo</id>
+            <name>local office site</name>
+            <url>http://maven.oschina.net/content/groups/public/</url>
+        </repository>
+
+    </repositories>
+
     <distributionManagement>
         <repository>
             <id>releases</id>

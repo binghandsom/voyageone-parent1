@@ -162,7 +162,10 @@ define([
                 /**因为半角中的id为全路径，要分割到最后一个，也就是数字为最大的*/
                 var orgDispArr = _.map(self.orgDispMap,function(value,key){
                     return {id: _.max(key.split("-")), tagPath: value};
+                }).filter(function(item){
+                    return item.tagPath;
                 });
+
                 var selFlagArr = _.map(self.taglist.selFlag, function (value, key) {
                     return {selectedId: key, selected: value};
                 }).filter(function (item) {
