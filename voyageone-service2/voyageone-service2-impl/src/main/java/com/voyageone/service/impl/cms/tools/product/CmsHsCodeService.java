@@ -31,7 +31,7 @@ public class CmsHsCodeService extends BaseService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
     //获取任务数量Id
-    private static int hsCodeTaskCntTypeId = 82;
+    private static int hsCodeTaskCntTypeId = 88;
     //获取任务数量名称
     private static String hsCodeTaskCntTypeName = "GetTheN0umberOfTasks";
     /**
