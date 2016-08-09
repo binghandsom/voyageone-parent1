@@ -86,7 +86,7 @@ import java.util.stream.Collectors;
  * feed->master导入服务
  *
  * @author tom on 2016/2/18.
- * @version 2.2.0
+ * @version 2.4.0
  * @since 2.0.0
  */
 @Service
@@ -287,14 +287,17 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             queryObject.setLimit(500);
             List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
 
-            if (feedList.size() > 0) {
+            if (ListUtils.notNull(feedList)) {
+                // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
+                CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
+                // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
+                CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+
                 // --------------------------------------------------------------------------------------------
                 // 品牌mapping作成
-                List<TypeChannelBean> typeChannelBeanList;
-//                typeChannelBeanList = TypeChannels.getTypeList("brand", channelId);
-                typeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, channelId);
+                List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, channelId);
 
-                if (typeChannelBeanList != null) {
+                if (ListUtils.notNull(typeChannelBeanList)) {
                     for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
                         if (
                                 !StringUtils.isEmpty(typeChannelBean.getAdd_name1())
@@ -308,10 +311,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
 
                 // 产品分类mapping作成
-                List<TypeChannelBean> productTypeChannelBeanList;
-                productTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId);
+                List<TypeChannelBean> productTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId);
 
-                if (productTypeChannelBeanList != null) {
+                if (ListUtils.notNull(productTypeChannelBeanList)) {
                     for (TypeChannelBean typeChannelBean : productTypeChannelBeanList) {
                         if (
                                 !StringUtils.isEmpty(typeChannelBean.getValue())
@@ -325,10 +327,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
 
                 // 适用人群mapping作成
-                List<TypeChannelBean> sizeTypeChannelBeanList;
-                sizeTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId);
+                List<TypeChannelBean> sizeTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId);
 
-                if (sizeTypeChannelBeanList != null) {
+                if (ListUtils.notNull(sizeTypeChannelBeanList)) {
                     for (TypeChannelBean typeChannelBean : sizeTypeChannelBeanList) {
                         if (
                                 !StringUtils.isEmpty(typeChannelBean.getValue())
@@ -344,62 +345,58 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                // 自定义属性 - 初始化
 //                customPropService.doInit(channelId);
                 // --------------------------------------------------------------------------------------------
-            }
+//            }
 
-            // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
-            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
-            // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
-            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
-
-            // jeff 2016/05 add start
-            // 取得所有主类目
-            // update desmond 2016/07/04 start
+                // jeff 2016/05 add start
+                // 取得所有主类目
+                // update desmond 2016/07/04 start
 //            List<CmsMtCategoryTreeModel> categoryTreeList = categoryTreeService.getMasterCategory();
-            List<CmsMtCategoryTreeAllModel> categoryTreeAllList = categoryTreeAllService.getMasterCategory();
-            // update desmond 2016/07/04 end
-            // jeff 2016/05 add end
+                List<CmsMtCategoryTreeAllModel> categoryTreeAllList = categoryTreeAllService.getMasterCategory();
+                // update desmond 2016/07/04 end
+                // jeff 2016/05 add end
 
-            // 遍历所有数据
-            for (CmsBtFeedInfoModel feed : feedList) {
-                // 将商品从feed导入主数据
-                // 注意: 保存单条数据到主数据的时候, 由于要生成group数据, group数据的生成需要检索数据库进行一系列判断
-                //       所以单个渠道的数据, 最好不要使用多线程, 如果以后一定要加多线程的话, 注意要自己写带锁的代码.
-                // update by desmond 2016/07/05 start
-                // 增加try catch捕捉feed导入时出现的异常并新增失败时回写处理等,feed导入共通处理里面出错时改为抛出异常
-                try {
-                    feed.setFullAttribute();
-                    doSaveProductMainProp(feed, channelId, categoryTreeAllList);
-                } catch (Exception e) {
+                // 遍历所有数据
+                for (CmsBtFeedInfoModel feed : feedList) {
+                    // 将商品从feed导入主数据
+                    // 注意: 保存单条数据到主数据的时候, 由于要生成group数据, group数据的生成需要检索数据库进行一系列判断
+                    //       所以单个渠道的数据, 最好不要使用多线程, 如果以后一定要加多线程的话, 注意要自己写带锁的代码.
+                    // update by desmond 2016/07/05 start
+                    // 增加try catch捕捉feed导入时出现的异常并新增失败时回写处理等,feed导入共通处理里面出错时改为抛出异常
+                    try {
+                        feed.setFullAttribute();
+                        doSaveProductMainProp(feed, channelId, categoryTreeAllList);
+                    } catch (Exception e) {
 //                    e.printStackTrace();
-                    errCnt++;
-                    String errMsg = "feed->master导入:异常终止:";
-                    if(StringUtils.isNullOrBlank2(e.getMessage())) {
-                        errMsg = errMsg + " [ErrMsg=" + e.getStackTrace()[0].toString() + "]";
-                        $error(errMsg);
-                    } else {
-                        errMsg = e.getMessage();
-                    }
-                    // 回写详细错误信息表(cms_bt_business_log)
-                    insertBusinessLog(feed.getChannelId(), "", feed.getModel(), feed.getCode(), "", errMsg, getTaskName());
+                        errCnt++;
+                        String errMsg = "feed->master导入:异常终止:";
+                        if (StringUtils.isNullOrBlank2(e.getMessage())) {
+                            errMsg = errMsg + " [ErrMsg=" + e.getStackTrace()[0].toString() + "]";
+                            $error(errMsg);
+                        } else {
+                            errMsg = e.getMessage();
+                        }
+                        // 回写详细错误信息表(cms_bt_business_log)
+                        insertBusinessLog(feed.getChannelId(), "", feed.getModel(), feed.getCode(), "", errMsg, getTaskName());
 
-                    // 回写feedInfo表
-                    feed.setUpdFlg(2);  // 2:feed->master导入失败
-                    feed.setUpdMessage(errMsg);
-                    feed.setModifier(getTaskName());
-                    feedInfoService.updateFeedInfo(feed);
+                        // 回写feedInfo表
+                        feed.setUpdFlg(2);  // 2:feed->master导入失败
+                        feed.setUpdMessage(errMsg);
+                        feed.setModifier(getTaskName());
+                        feedInfoService.updateFeedInfo(feed);
 
 //                    // 价格公式错误时，后面所有的feed都不能导入了
 //                    if (errMsg.contains("价格计算公式错误")) {
 //                        // 跳出循环，后面的feed导入不做了
 //                        break;
 //                    }
+                    }
+                    // update by desmond 2016/07/05 end
+
                 }
-                // update by desmond 2016/07/05 end
 
+                // 清除缓存（这样就能再画面上展示出最新的brand，productType，sizeType等初始化mapping信息）
+                CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
             }
-
-            // 清除缓存（这样就能再画面上展示出最新的brand，productType，sizeType等初始化mapping信息）
-            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
 
             // jeff 2016/04 add start
             // 将新建的件数，更新的件数插到cms_bt_data_amount表
@@ -1573,10 +1570,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             platforms.put("P0", platformP0);
             // add desmond 2016/07/04 end
 
-            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许Approve的cartId
+            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许approve这个sku到平台上去售卖渠道cartId
             List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
-            if (typeChannelBeanListApprove == null) {
-                String errMsg = String.format("feed->master导入:新增:com_mt_value_channel表中没有当前Channel允许的Cart信息 [ChannelId=%s A en]", feed.getChannelId());
+            if (ListUtils.isNull(typeChannelBeanListApprove)) {
+                String errMsg = String.format("feed->master导入:新增:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息 [ChannelId=%s A en]", feed.getChannelId());
                 $error(errMsg);
                 throw new BusinessException(errMsg);
 //                return null;
@@ -2108,8 +2105,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许Approve的cartId
             List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
-            if (typeChannelBeanListApprove == null) {
-                String errMsg = String.format("feed->master导入:更新:com_mt_value_channel表中没有当前Channel允许的Cart信息 [ChannelId=%s A en]", feed.getChannelId());
+            if (ListUtils.isNull(typeChannelBeanListApprove)) {
+                String errMsg = String.format("feed->master导入:更新:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息 [ChannelId=%s A en]", feed.getChannelId());
                 $error(errMsg);
                 throw new BusinessException(errMsg);
 //                return null;
@@ -2388,10 +2385,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             boolean result = true;
 
-            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个需要显示cart
+            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个需要展示的cart
             List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
-            if (typeChannelBeanList == null) {
-                String errMsg = String.format("feed->master导入:生成productGroup信息失败:com_mt_value_channel表中没有当前Channel需要显示的Cart信息 [ChannelId=%s D en]", feed.getChannelId());
+            if (ListUtils.isNull(typeChannelBeanList)) {
+                String errMsg = String.format("feed->master导入:生成productGroup信息失败:在com_mt_value_channel表中没有找到当前Channel需要展示的Cart信息 [ChannelId=%s D en]", feed.getChannelId());
                 $error(errMsg);
                 throw new BusinessException(errMsg);
 //                return result;
@@ -3016,8 +3013,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 cmsProduct = priceService.setRetailPrice(cmsProduct);
             } catch (Exception ex) {
                 String errMsg = String.format("feed->master导入:异常终止:调用共通函数计算产品价格时出错 [ChannelId=%s] [FeedCode=%s] " +
-                                "[ProductCode=%s] [ErrMsg=", channelId, feed.getCode(),
-                        cmsProduct.getCommon().getFields().getCode());
+                                " [ErrMsg=", channelId, feed.getCode());
                 if(StringUtils.isNullOrBlank2(ex.getMessage())) {
                     errMsg = errMsg + ex.getStackTrace()[0].toString() + "]";
                 } else {
