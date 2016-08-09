@@ -3024,7 +3024,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         }
 
         /**
-         * doSetPrice 调用共通函数设置product各平台的sku的价格（common.sku价格没人使用，不设置）
+         * doSetPrice 调用共通函数设置product各平台的sku的价格
          *
          * @param channelId  channel id
          * @param feed       feed信息
@@ -3036,11 +3036,40 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //        private CmsBtProductModel doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
         private CmsBtProductModel doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
 
-            // 计算指导价
+            List<CmsBtProductModel_Sku> commonSkuList = cmsProduct.getCommon().getSkus();
+
+            // 设置common.skus里面的价格
+            for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
+                CmsBtProductModel_Sku commonSku = null;
+                if (ListUtils.notNull(commonSkuList)) {
+                    for (CmsBtProductModel_Sku commonSkuTemp : commonSkuList) {
+                        if (sku.getSku().equals(commonSkuTemp.getSkuCode())) {
+                            commonSku = commonSkuTemp;
+                            break;
+                        }
+                    }
+                }
+
+                if (commonSku != null) {
+                    // 美金专柜价
+                    commonSku.setClientMsrpPrice(sku.getPriceClientMsrp());
+                    // 美金指导价
+                    commonSku.setClientRetailPrice(sku.getPriceClientRetail());
+                    // 美金成本价(=priceClientCost)
+                    commonSku.setClientNetPrice(sku.getPriceNet());
+                    // 人民币专柜价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
+                    commonSku.setPriceMsrp(sku.getPriceMsrp());
+                    // 人民币指导价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
+                    commonSku.setPriceRetail(sku.getPriceCurrent());
+                }
+
+            }
+
+            // 设置platform.PXX.skus里面的价格
             try {
                 cmsProduct = priceService.setRetailPrice(cmsProduct);
             } catch (Exception ex) {
-                String errMsg = String.format("feed->master导入:异常终止:调用共通函数计算产品价格时出错 [ChannelId=%s] [FeedCode=%s] " +
+                String errMsg = String.format("feed->master导入:产品新增或更新成功后设置价格失败:调用共通函数计算产品价格时出错 [ChannelId=%s] [FeedCode=%s] " +
                                 " [ErrMsg=", channelId, feed.getCode());
                 if(StringUtils.isNullOrBlank2(ex.getMessage())) {
                     errMsg = errMsg + ex.getStackTrace()[0].toString() + "]";
