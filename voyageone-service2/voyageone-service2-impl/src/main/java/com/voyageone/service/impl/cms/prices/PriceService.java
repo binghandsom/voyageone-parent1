@@ -29,12 +29,15 @@ import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstant
 import static java.util.stream.Collectors.toMap;
 
 /**
+ * 为商品提供价格的统一计算入口
+ * <p>
  * Created by Ethan Shi on 2016/7/13.
  *
+ * @author jonas
  * @author Ethan Shi
+ * @version 2.4.0
  * @since 2.3.0
  */
-
 @Service
 public class PriceService extends BaseService {
 
@@ -59,6 +62,13 @@ public class PriceService extends BaseService {
         this.productSkuService = productSkuService;
     }
 
+    /**
+     * 为商品计算并保存价格
+     *
+     * @param product 需要计算价格的商品
+     * @throws IllegalPriceConfigException 计算价格前, 依赖的配置读取错误
+     * @throws PriceCalculateException     计算价格时, 计算过程错误或结果错误
+     */
     public void setPrice(CmsBtProductModel product) throws IllegalPriceConfigException, PriceCalculateException {
 
         Assert.notNull(product).elseThrowDefaultWithTitle("product");
@@ -80,6 +90,14 @@ public class PriceService extends BaseService {
         }
     }
 
+    /**
+     * 为商品在指定平台计算并保存价格
+     *
+     * @param product 需要计算价格的商品
+     * @param cartId  平台
+     * @throws IllegalPriceConfigException 计算价格前, 依赖的配置读取错误
+     * @throws PriceCalculateException     计算价格时, 计算过程错误或结果错误
+     */
     public void setPrice(CmsBtProductModel product, Integer cartId) throws IllegalPriceConfigException, PriceCalculateException {
 
         Assert.notNull(product).elseThrowDefaultWithTitle("product");
@@ -107,29 +125,39 @@ public class PriceService extends BaseService {
         }
     }
 
+    /**
+     * 使用固定公式计算价格, 并保存到商品模型上
+     *
+     * @param product 目标商品, 必须提供渠道、商品的 COMMON 信息等
+     * @param cartId  目标平台, 如 23、27 等
+     * @throws IllegalPriceConfigException 获取价格公式错误
+     * @throws PriceCalculateException     价格计算错误
+     */
     private void setPriceByFormula(CmsBtProductModel product, Integer cartId) throws IllegalPriceConfigException, PriceCalculateException {
 
+        // 获取双价格公式
         String msrpFormula = getCalculateFormula(product, PRICE_MSRP_CALC_FORMULA);
-
         String retailFormula = getCalculateFormula(product, PRICE_RETAIL_CALC_FORMULA);
 
-        CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
-
-        List<BaseMongoMap<String, Object>> skus = cart.getSkus();
-
+        // 获取商品的 COMMON SKU 信息
+        // 并转换为 MAP, 便于查找
         CmsBtProductModel_Common common = product.getCommon();
-
         List<CmsBtProductModel_Sku> skusInCommon = common.getSkus();
-
         Map<String, CmsBtProductModel_Sku> commonSkuMap = skusInCommon.stream().collect(toMap(CmsBtProductModel_Sku::getSkuCode, sku -> sku));
 
         String channelId = product.getChannelId();
 
+        // 获取价格处理的部分配置
         boolean roundUp = isRoundUp(channelId);
-
         boolean isAutoApprovePrice = isAutoApprovePrice(channelId);
-
         boolean isAutoSyncPriceMsrp = isAutoSyncPriceMsrp(channelId);
+
+        // 去平台 SKU 信息
+        // 遍历计算并保存价格
+
+        CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
+
+        List<BaseMongoMap<String, Object>> skus = cart.getSkus();
 
         for (BaseMongoMap<String, Object> sku : skus) {
 
@@ -159,44 +187,40 @@ public class PriceService extends BaseService {
      * 计算 product 中 cart 下的各个 sku 的 retailPrice 和 originPriceMsrp, 当打开部分配置时, 会同步 price sale 和 msrp
      * <p>
      * 计算所需的商品模型必须提供以下内容
-     * <pre class="code">
-     * {
-     * channelId: String,
-     * common: {
-     * fields: {
-     * commissionRate: Double,
-     * hsCodePrivate: String,
-     * hsCodeCross: String,
-     * code: String
-     * },
-     * skus: [
-     * {
-     * clientNetPrice: Double,
-     * clientMsrpPrice: Double,
-     * weight: Double,
-     * skuCode: String
-     * }
-     * ]
-     * },
-     * platforms: {
-     * P*: {
-     * pBrandId: String,
-     * pCateId: String,
-     * skus: [
-     * {
-     * skuCode: String
-     * }
-     * ]
-     * }
-     * }
-     * }
-     * </pre>
+     * <ul>
+     * <li>channelId</li>
+     * <li>common
+     * <ul>
+     * <li>fields
+     * <ul>
+     * <li>commissionRate</li>
+     * <li>hsCodePrivate</li>
+     * <li>code</li>
+     * </ul></li>
+     * <li>skus
+     * <ul>
+     * <li>clientNetPrice</li>
+     * <li>clientMsrpPrice</li>
+     * <li>weight</li>
+     * <li>skuCode</li>
+     * </ul></li>
+     * </ul></li>
+     * <li>platforms
+     * <ul>
+     * <li>pBrandId</li>
+     * <li>pCateId</li>
+     * <li>skus
+     * <ul>
+     * <li>skuCode</li>
+     * </ul></li>
+     * </ul></li>
+     * </ul>
      *
      * @param product 包含计算所需参数的商品模型
      * @param cartId  平台 ID
      * @throws PriceCalculateException 当价格计算公式中, 参数无法正确获取时, 或计算结果不合法时, 抛出该错误
      */
-    private void setPriceBySystem(CmsBtProductModel product, Integer cartId) throws PriceCalculateException {
+    private void setPriceBySystem(CmsBtProductModel product, Integer cartId) throws PriceCalculateException, IllegalPriceConfigException {
 
         // 公式参数: 其他费用
         final Double otherFee = 0.0d;
@@ -273,8 +297,8 @@ public class PriceService extends BaseService {
             // 就标记价格为异常价格
 
             cart.getSkus().forEach(sku -> {
-                setProductPrice(sku, priceRetail, -1D);
-                setProductPrice(sku, originalPriceMsrp, 0D);
+                sku.put(priceRetail.name(), -1D);
+                sku.put(originalPriceMsrp.name(), 0D);
                 resetPriceIfInvalid(sku, priceMsrp, -1D);
                 resetPriceIfInvalid(sku, priceSale, 0D);
             });
@@ -298,7 +322,7 @@ public class PriceService extends BaseService {
         // 对设置到价格计算器上的参数
         // 在计算之前做一次检查
         if (!systemPriceCalculator.isValid())
-            throw new PriceCalculateException("创建价格计算器失败. " + systemPriceCalculator.getErrorMessage());
+            throw new IllegalPriceConfigException("创建价格计算器失败. " + systemPriceCalculator.getErrorMessage());
 
         List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
         List<BaseMongoMap<String, Object>> platformSkus = cart.getSkus();
@@ -389,6 +413,15 @@ public class PriceService extends BaseService {
         }
     }
 
+    /**
+     * 辅助方法: 获取商品价格
+     * <p>
+     * 先尝试获取无类型值, 判断是否为 null, 再获取具体的数字
+     *
+     * @param platformSku 平台 sku 模型
+     * @param commonField 价格字段名
+     * @return 有可能为 null 的价格数字
+     */
     private Double getProductPrice(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField) {
 
         Object value = platformSku.get(commonField.name());
@@ -399,17 +432,31 @@ public class PriceService extends BaseService {
         return platformSku.getDoubleAttribute(commonField.name());
     }
 
-    private void setProductPrice(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField, Double priceValue) {
-        platformSku.put(commonField.name(), priceValue);
-    }
-
+    /**
+     * 辅助方法: 获取商品的指定价格, 如果价格的值不合法, 就使用 {@code priceValue} 指定的值替换
+     *
+     * @param platformSku 平台 sku 模型
+     * @param commonField 价格字段名
+     * @param priceValue  商品原价格非法时使用的指定值
+     */
     private void resetPriceIfInvalid(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField, Double priceValue) {
         Double _priceValue = getProductPrice(platformSku, commonField);
         if (_priceValue == null || _priceValue < 1)
-            setProductPrice(platformSku, commonField, priceValue);
+            platformSku.put(commonField.name(), priceValue);
     }
 
-    private void setProductRetailPrice(BaseMongoMap<String, Object> skuInPlatform, Double retailPrice, boolean isAutoApprovePrice, String channelId) throws PriceCalculateException {
+    /**
+     * 为商品设置 {@code retailPrice} 提供的指导价,
+     * 如果 {@code isAutoApprovePrice} 为 {@code true},
+     * 就同时设置到 {@code skuInPlatform} 的 {@code priceSale} 属性上。同时为商品这次的价格变动,
+     * 更新波动标识 {@code priceChgFlg} 和击穿标识 {@code priceDiffFlg}
+     *
+     * @param skuInPlatform      商品的平台 sku 模型
+     * @param retailPrice        计算出的人民币指导价
+     * @param isAutoApprovePrice 是否同步设置最终售价
+     * @param channelId          这次计算商品所在渠道
+     */
+    private void setProductRetailPrice(BaseMongoMap<String, Object> skuInPlatform, Double retailPrice, boolean isAutoApprovePrice, String channelId) {
 
         // 指导价合法
         // 则, 需要进行指导价波动计算
@@ -420,24 +467,32 @@ public class PriceService extends BaseService {
         // 获取价格波动字符串
         String priceFluctuation = getPriceFluctuation(retailPrice, lastRetailPrice);
         // 保存价格波动
-        skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), priceFluctuation);
+        skuInPlatform.put(priceChgFlg.name(), priceFluctuation);
 
         if (isAutoApprovePrice)
-            setProductPrice(skuInPlatform, priceSale, retailPrice);
+            skuInPlatform.put(priceSale.name(), retailPrice);
 
         // 保存击穿标识
-        String priceDiffFlg = productSkuService.getPriceDiffFlg(channelId, skuInPlatform);
-        skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceDiffFlg.name(), priceDiffFlg);
+        String priceDiffFlgValue = productSkuService.getPriceDiffFlg(channelId, skuInPlatform);
+        skuInPlatform.put(priceDiffFlg.name(), priceDiffFlgValue);
 
-        setProductPrice(skuInPlatform, priceRetail, retailPrice);
+        skuInPlatform.put(priceRetail.name(), retailPrice);
     }
 
-    private void setProductMsrp(BaseMongoMap<String, Object> skuInPlatform, Double originPriceMsrp, boolean isAutoSyncPriceMsrp) throws PriceCalculateException {
+    /**
+     * 为商品设置 {@code originPriceMsrp} 提供的人民币建议零售价, 如果 {@code isAutoSyncPriceMsrp} 为 {@code true},
+     * 就同步设置价格到 {@code priceMsrp} 属性
+     *
+     * @param skuInPlatform       商品的平台 sku 模型
+     * @param originPriceMsrp     根据客户建议零售价计算的人民币建议零售价
+     * @param isAutoSyncPriceMsrp 是否同步设置人民币建议零售价
+     */
+    private void setProductMsrp(BaseMongoMap<String, Object> skuInPlatform, Double originPriceMsrp, boolean isAutoSyncPriceMsrp) {
 
         if (isAutoSyncPriceMsrp)
-            setProductPrice(skuInPlatform, priceMsrp, originPriceMsrp);
+            skuInPlatform.put(priceMsrp.name(), originPriceMsrp);
 
-        setProductPrice(skuInPlatform, originalPriceMsrp, originPriceMsrp);
+        skuInPlatform.put(originalPriceMsrp.name(), originPriceMsrp);
     }
 
     private boolean isAutoSyncPriceMsrp(String channelId) {
@@ -480,7 +535,7 @@ public class PriceService extends BaseService {
      * @param product    目标商品
      * @param formulaKey 目标价格计算公式的配置键
      * @return 价格计算公式
-     * @exception IllegalPriceConfigException 无法获取公式配置
+     * @throws IllegalPriceConfigException 无法获取公式配置
      */
     private String getCalculateFormula(CmsBtProductModel product, String formulaKey) throws IllegalPriceConfigException {
 
@@ -532,7 +587,7 @@ public class PriceService extends BaseService {
     /**
      * 对输入数字取整或四舍五入
      *
-     * @param input 输入的数字
+     * @param input   输入的数字
      * @param roundUp true 时就向上取整, 否则对数字四舍五入
      * @return 取证或四舍五入后的结果
      */
