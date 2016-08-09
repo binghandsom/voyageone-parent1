@@ -49,8 +49,8 @@ define(function () {
                     "getCategoryInfo": session('getCategoryInfo', [KEY.CHANNEL]),
                     "getPlatformType": session('getPlatformType', [KEY.USERNAME, KEY.CHANNEL]),
                     "setPlatformType": "setPlatformType",
-                    "getHomeSumData":"getHomeSumData",
-                    "getCmsConfig":session('getCmsConfig',[KEY.CHANNEL])
+                    "getHomeSumData": "getHomeSumData",
+                    "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL])
                 }
             },
             "search": {
@@ -72,8 +72,8 @@ define(function () {
                     "search": "search",
                     "updateFeedStatus": "updateFeedStatus",
                     "doExport": "export",
-                    "exportSearch":"exportSearch",
-                    "download":"download"
+                    "exportSearch": "exportSearch",
+                    "download": "download"
                 }
             },
             "group": {
@@ -100,9 +100,19 @@ define(function () {
                     "updateProductFeed": "updateProductFeed",
                     "getCommonProductInfo": "getCommonProductInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
-                    "updateLock":"updateLock",
-                    "updateProductAtts":"updateProductAtts",
-                    "checkCategory":"checkCategory"
+                    "updateLock": "updateLock",
+                    "updateProductAtts": "updateProductAtts",
+                    "checkCategory": "checkCategory",
+                    "getChangeMastProductInfo": "getChangeMastProductInfo",
+                    "setMastProduct": "setMastProduct",
+                    "delisting": "delisting",
+                    "delistinGroup": "delistinGroup",
+                    "hsCodeChg":"hsCodeChg",
+                    "copyProperty":"copyProperty"
+                },
+                "productHistoryLogService": {
+                    "root": "/cms/product/history/",
+                    "getPutOnOffLogList": "getPutOnOffLogList"
                 }
             },
             "mapping": {
@@ -148,6 +158,16 @@ define(function () {
                     "setDict": "setDict",
                     "delDict": "delDict",
                     "addDict": "addDict"
+                },
+                'brandMappingService': {
+                    'root': '/cms/mapping/brand',
+                    'init': 'init',
+                    'searchBrands': 'searchBrands',
+                    'searchCustBrands': 'searchCustBrands',
+                    'searchMatchedBrands': 'searchMatchedBrands',
+                    'addNewBrandMapping': 'addOrUpdateBrandMapping',
+                    'getSynchronizedTime': 'getSynchronizedTime',
+                    'synchronizePlatformBrands': 'synchronizePlatformBrands'
                 }
             },
             "promotion": {
@@ -159,7 +179,13 @@ define(function () {
                     "insertPromotion": "insertPromotion",
                     "updatePromotion": "updatePromotion",
                     "delPromotion": "delPromotion",
-                    "exportPromotion": "exportPromotion"
+                    "exportPromotion": "exportPromotion",
+                    getPage: "getPage",
+                    getCount: "getCount",
+                    getEditModel: "getEditModel",
+                    saveEditModel: "saveEditModel",
+                    deleteByPromotionId: "deleteByPromotionId",
+                    setPromotionStatus: "setPromotionStatus"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",
@@ -170,7 +196,9 @@ define(function () {
                     "teJiaBaoInit": "teJiaBaoInit",
                     "updatePromotionProduct": "updatePromotionProduct",
                     "delPromotionModel": "delPromotionModel",
-                    "delPromotionCode": "delPromotionCode"
+                    "delPromotionCode": "delPromotionCode",
+                    "tmallJuhuasuanExport":"tmallJuhuasuanExport",
+                    "tmallPromotionExport":"tmallPromotionExport",
                 }
             },
             "jmpromotion": {
@@ -217,8 +245,8 @@ define(function () {
                     "deleteAllProduct": "deleteAllProduct",
                     "getProductView": "getProductView",
                     "updateDealPrice": "updateDealPrice",
-                    updatePromotionProduct:"updatePromotionProduct",
-                    updatePromotionProductTag:"updatePromotionProductTag"
+                    updatePromotionProduct: "updatePromotionProduct",
+                    updatePromotionProductTag: "updatePromotionProductTag"
                 },
                 "cmsBtJmPromotionImportTask": {
                     "cmsBtJmPromotionImportTaskService": {
@@ -376,7 +404,8 @@ define(function () {
                 "$fieldEditService": {
                     "root": "/cms/pop/field_edit",
                     "getPopOptions": "getPopOptions",
-                    "setProductFields": "setProductFields"
+                    "setProductFields": "setProductFields",
+                    "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",
@@ -386,6 +415,10 @@ define(function () {
                     root: '/cms/price/log',
                     page: 'page',
                     export: 'export'
+                },
+                statusHistoryService: {
+                    root: "/cms/product/statushistory",
+                    getPage: "getPage"
                 },
                 "$addChannelCategoryService": {
                     "root": "/cms/pop/add_to_channel_category",

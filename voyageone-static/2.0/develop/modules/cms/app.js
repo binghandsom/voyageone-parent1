@@ -49,22 +49,22 @@ define([
             }
         })
 
-        // router config.
-        // translate config.
-        .config(function ($routeProvider, $translateProvider, cLanguageType) {
-
+        .config(function ($routeProvider, $translateProvider, cLanguageType, $uibModalProvider) {
+            // 加载所有的语言配置
             _.each(cLanguageType, function (type) {
                 $translateProvider.translations(type.name, type.value);
             });
-
+            // 加载所有的路由配置
             _.each(routes, function (module) {
                 return $routeProvider.when(module.hash, angularAMD.route(module));
             });
+            // 默认设置所有的弹出模态框的背景不能关闭模态框
+            $uibModalProvider.options.backdrop = 'static';
         })
 
         .run(function ($vresources, $localStorage) {
             // 从会话中取出登录和选择渠道存储的数据
-            var userInfo = $localStorage.user;
+            var userInfo = $localStorage.user || {};
             // 传入 register 作为额外的缓存关键字
             $vresources.register(null, actions, {
                 username: userInfo.name,
@@ -95,7 +95,7 @@ define([
         // config
         $scope.app = {
             name: 'VoyageOne',
-            version: 'Version 2.2.0',
+            version: 'Version 2.4.0',
             copyRight: 'Copyright © 2016 VoyageOne. All Rights Reserved.',
             // for chart colors
             color: {
@@ -163,6 +163,7 @@ define([
         this.logout = logout;
         this.getCategoryInfo = getCategoryInfo;
         this.getPlatformType = getPlatformType;
+        this.getCmsConfig = getCmsConfig;
 
         /**
          * get the system info.
@@ -278,6 +279,13 @@ define([
                 "cTypeId": cType.add_name2,
                 "cartId": parseInt(cType.value)
             }).then(function (res) {
+                return res.data;
+            });
+        }
+
+        /**cms配置信息，基于session缓存*/
+        function getCmsConfig(){
+            return $menuService.getCmsConfig().then(function(res){
                 return res.data;
             });
         }

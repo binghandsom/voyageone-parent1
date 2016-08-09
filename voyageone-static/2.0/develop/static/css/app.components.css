@@ -327,7 +327,7 @@ vpagination {
 }
 
 vpagination input[type="text"] {
-    width: 20px;
+    width: 50px;
     line-height: 20px;
 }
 
@@ -344,3 +344,20 @@ vpagination button.btn-default {
     margin-bottom: 5px;
 }
 /* v-pagination end */
+
+/* dialogs.factory start */
+.vo-dialogs .modal-header .modal-title {
+    font-size: 18px;
+}
+.vo-dialogs .modal-body {
+    font-size: 18px;
+    padding: 30px 23px;
+}
+.vo-dialogs .modal-footer .btn {
+    font-size: 16px;
+}
+.modal-backdrop.in {
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+}
+/* dialogs.factory end */

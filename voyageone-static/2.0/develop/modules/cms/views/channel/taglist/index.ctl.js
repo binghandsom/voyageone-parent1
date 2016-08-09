@@ -114,7 +114,7 @@ define([
         $scope.delTag = function(tag) {
             $scope.vm.id = tag.id;
             $scope.vm.parentTagId = tag.parentTagId;
-            confirm('TXT_MSG_DO_DELETE').result.then(function () {
+            confirm('TXT_MSG_DO_DELETE').then(function () {
                 channelTagService.del($scope.vm).then(function (res) {
                     $scope.source = $scope.vm.tagTree = res.data.tagTree;
                     $scope.search(0);

@@ -70,7 +70,6 @@ define([
         $scope.openJMActivity = openJMActivity;
         $scope.openBulkUpdate = openBulkUpdate;
         $scope.getCat = getCat;
-        $scope.addFreeTag = addFreeTag;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         $scope.openApproval = openApproval;
         $scope.platformCategoryMapping = platformCategoryMapping;
@@ -278,7 +277,7 @@ define([
             } else if (fileType == 3) {
                 msg = '即将导出SKU级的搜索结果，请确认。';
             }
-            confirm(msg).result
+            confirm(msg)
                 .then(function () {
                     $scope.vm.searchInfo.fileType = fileType;
                     searchAdvanceService2.exportFile($scope.vm.searchInfo);
@@ -359,19 +358,15 @@ define([
             _chkProductSel(null, _openBulkUpdate, {'isSelAll': $scope.vm._selall ? 1 : 0, "cartId": parseInt(cartId)});
 
             function _openBulkUpdate(cartId, selList, context) {
+                var selCnt = 0;
+                if (!$scope.vm._selall) {
+                    var selList = getSelProductList();
+                    selCnt = selList.length;
+                } else {
+                    selCnt = $scope.vm.productPageOption.total;
+                }
+                context.selCnt = selCnt;
                 openFieldEdit(selList, context).then(function (res) {
-                    if (res.data.ecd == null || res.data.ecd == undefined) {
-                        alert("提交请求时出现错误");
-                        return;
-                    }
-                    if (res.data.ecd == 1) {
-                        alert("未选择商品，请选择后再操作。");
-                        return;
-                    }
-                    if (res.data.ecd == 2) {
-                        alert("未设置变更项目，请设置后再操作。");
-                        return;
-                    }
                     $scope.search();
                 })
             }
@@ -399,7 +394,7 @@ define([
          * 类目变更
          */
         function bindCategory(selectedCat, selList) {
-            confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
+            confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY'))
                 .then(function () {
                     var productIds = [];
                     if (selList) {
@@ -539,6 +534,7 @@ define([
             // 清空平台相关查询条件
             $scope.vm.searchInfo.productStatus = null;
             $scope.vm.searchInfo.platformStatus = null;
+            $scope.vm.searchInfo.pRealStatus = null;
             $scope.vm.searchInfo.hasErrorFlg = null;
             $scope.vm.searchInfo.promotionTagType = 1;
             $scope.vm.searchInfo.promotionTags = null;
@@ -579,6 +575,12 @@ define([
                 // 如果是minimall店铺或者是聚美平台，则不显示店铺内分类
                 $scope.vm._mmmcart_display = 0;
             }
+            if (cartObj.value == 27) {
+                // 如果是聚美平台
+                $scope.vm._errFlgList = [ {'id':'1', 'txt':'错误管理内无错误记录'}, {'id':'2', 'txt':'错误管理内有错误记录'} ];
+            } else {
+                $scope.vm._errFlgList = [ {'id':'1', 'txt':'错误管理内无错误记录'}, {'id':'2', 'txt':'错误管理内有错误记录'}, {'id':'3', 'txt':'商品平台状态与实际相异'} ];
+            }
             sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false})
                 .then(function (resp) {
                     $scope.vm.masterData.catList = resp.data.catTree;
@@ -601,26 +603,31 @@ define([
         /**
          * 添加产品到指定自由标签
          */
-        function addFreeTag(tagBean) {
+        $scope.addFreeTag = function (openFreeTag) {
             _chkProductSel(null, _addFreeTag);
 
             function _addFreeTag(cartId, selList) {
                 var productIds = [];
                 if (selList && selList.length) {
                     _.forEach(selList, function (object) {
-                        productIds.push(object.id);
+                        productIds.push(object.code);
                     });
                 }
+                openFreeTag({'orgFlg':2,'tagTypeSel':'4','cartId':$scope.vm.searchInfo.cartId,'productIds':productIds,'selAllFlg':$scope.vm._selall ? 1 : 0}).then(function (res) {
+                    // 设置自由标签
+                    var freeTags = _.chain(res.selectdTagList).map(function (key, value) { return key.tagPath; }).value();
+                    var freeTagsTxt = _.chain(res.selectdTagList).map(function (key, value) { return key.tagPathName; }).value();
+                    confirm("将对选定的产品设置自由标签:<br>" + freeTagsTxt.join('; '))
+                        .then(function () {
+                            searchAdvanceService2.addFreeTag(freeTags, productIds, $scope.vm._selall ? 1 : 0).then(function () {
+                                notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
+                                searchAdvanceService2.clearSelList();
+                                getGroupList();
+                                getProductList();
+                            })
+                        });
+                });
 
-                confirm("将对选定的产品添加自由标签" + tagBean.tagPathName).result
-                    .then(function () {
-                        searchAdvanceService2.addFreeTag(tagBean.tagPath, productIds, $scope.vm._selall ? 1 : 0).then(function () {
-                            notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
-                            searchAdvanceService2.clearSelList();
-                            getGroupList();
-                            getProductList();
-                        })
-                    });
             }
         }
 
@@ -649,6 +656,7 @@ define([
             } else {
                 cartId = parseInt(cartId);
             }
+
             var selList = null;
             if (!$scope.vm._selall) {
                 selList = getSelProductList();
@@ -662,8 +670,7 @@ define([
                     alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                     return;
                 }
-                confirm("您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>" + $scope.vm.productPageOption.total + "</span></h3>")
-                    .result.then(function () {
+                confirm("您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>" + $scope.vm.productPageOption.total + "</span></h3>").then(function () {
                     callback(cartId, null, context);
                 });
             }
@@ -694,7 +701,7 @@ define([
             _chkProductSel(parseInt(cartId), __openApproval);
 
             function __openApproval(cartId, _selProdList) {
-                confirm($translate.instant('TXT_BULK_APPROVAL')).result
+                confirm($translate.instant('TXT_BULK_APPROVAL'))
                     .then(function () {
                         var productIds = [];
                         if (_selProdList && _selProdList.length) {
@@ -884,11 +891,13 @@ define([
         function openTagManagement(openFreeTag, isPromoTag) {
             openFreeTag.then(function (res) {
                 if (isPromoTag) {
+                    // 查询活动标签
                     $scope.vm._promotionTags = res.selectdTagList;
                     $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function (key, value) {
                         return key.tagPath;
                     }).value();
                 } else {
+                    // 查询自由标签
                     $scope.vm._freeTags = res.selectdTagList;
                     $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function (key, value) {
                         return key.tagPath;

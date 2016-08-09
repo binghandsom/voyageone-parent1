@@ -3,9 +3,10 @@
  * 京东 & 聚美 产品概述（schema）
  */
 define([
-    'cms'
+    'cms',
+    'modules/cms/directives/platFormStatus.directive'
 ],function(cms) {
-    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService, $compile) {
+    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService) {
         return {
             restrict: "E",
             templateUrl : "views/product/master.component.tpl.html",
@@ -14,20 +15,21 @@ define([
                 productInfo: "=productInfo",
                 cartInfo:"=cartInfo"
             },
-            link: function (scope) {
+            link: function (scope,element) {
                 scope.vm = {
                     mastData:null,
                     productComm:null,
                     categoryMark:null,
-                    tempImage : {"images1":[],"images2":[],"images3":[],"images4":[],"images5":[],"images6":[],"images7":[],"images8":[]}
+                    tempImage : {"images1":[],"images2":[],"images3":[],"images4":[],"images5":[],"images6":[],"images7":[],"images8":[],"images9":[]},
+                    hsCodeOrigin: null
                 };
 
                 initialize();
                 scope.masterCategoryMapping = masterCategoryMapping;
                 scope.openProImageSetting = openProImageSetting;
                 scope.saveProduct = saveProduct;
-                scope.validSchema = validSchema;
                 scope.pageAnchor = pageAnchor;
+
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -37,45 +39,35 @@ define([
                         scope.vm.productComm = resp.data.productComm;
 
                         var _fields = scope.vm.productComm.fields;
+
+                        scope.productInfo.masterField = _fields;
+
                         /**通知子页面税号状态和翻译状态*/
                         scope.productInfo.checkFlag = new Date().getTime();
                         scope.productInfo.translateStatus = _fields.translateStatus == null ? 0 : +_fields.translateStatus;
                         scope.productInfo.hsCodeStatus =  _fields.hsCodeStatus == null ? 0: +_fields.hsCodeStatus;
 
-                        constructSchema(scope, $compile);
 
                         /**图片显示*/
                         if ($rootScope.imageUrl == undefined) {
                             $rootScope.imageUrl = '';
                         }
-                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productComm.fields.images1[0].image1);
+
+                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
                         scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
+
+                        //暂存税号个人
+                        scope.vm.hsCodeOrigin = angular.copy(_.find(scope.vm.productComm.schemaFields,function(field){
+                            return field.id === "hsCodePrivate";
+                        }));
 
                         /**主商品提示*/
                         if(!scope.vm.mastData.isMain){
                             alert("本商品不是平台主商品，如果您需要在天猫或者京东上新，您所修改的信息不会同步到平台上，图片除外。");
                         }
                     });
-                }
-
-                var schemaScope;
-
-                function constructSchema(parentScope, compile) {
-
-                    var element = $('#schemaContainer');
-
-                    if (schemaScope)
-                        schemaScope.$destroy();
-
-                    element.empty();
-
-                    element.append('<schema data="data"></schema>');
-                    schemaScope = parentScope.$new();
-                    schemaScope.data = parentScope.vm.productComm.schemaFields;
-
-                    compile(element)(schemaScope);
                 }
 
                 /**
@@ -112,25 +104,77 @@ define([
                         productId:  scope.productInfo.productId,
                         imageType: imageType
                     }).then(function(context){
-                        //更新时间
-                        scope.vm.productComm.modified = context.modified;
-                        scope.vm.tempImage[context.imageType].push(context.base64);
+
+                        if(context == null)
+                            return;
+
+                        if(context.length == 0)
+                            return;
+
+                        scope.vm.productComm.modified = context[context.length -1].modified;
+
+                        var imgType = null;
+                        angular.forEach(context,function(item){
+                            imgType = item.imageType;
+                            scope.vm.tempImage[item.imageType].push($rootScope.imageUrl.replace('%s', item.imageName));
+                        });
+
                         _.map(scope.vm.productComm.schemaFields, function(item){
-                            if(item.id == context.imageType){
-                                item.complexValues = context.imageSchema[0].complexValues;
+                            if(item.id == imgType){
+                                item.complexValues.splice(0,item.complexValues.length);
+                                angular.forEach(context[context.length -1].imageSchema[0].complexValues,function(image){
+                                    item.complexValues.push(image);
+                                });
+
                             }
                         });
-                        constructSchema(scope, $compile);
+
                     });
                 }
 
                 /**
-                 * 更新操作
+                 * 更新操作    prodId:'5924',hsCode:'08010000,吊坠,个'
                  */
-                function saveProduct(){
+                function saveProduct(openHsCodeChange){
                     if (!validSchema()) {
-                        return alert("保存失败，请查看产品的属性是否填写正确！");
+                        alert("保存失败，请查看产品的属性是否填写正确！");
+                        focusError();
+                        return;
                     }
+
+                    //税号判断
+                    var hsCode = _.find(scope.vm.productComm.schemaFields,function(field){
+                        return field.id === "hsCodePrivate";
+                    });
+
+                    if(!angular.equals(hsCode,scope.vm.hsCodeOrigin)){
+
+                        var _prehsCode = angular.copy(scope.vm.hsCodeOrigin.value.value);
+
+                        openHsCodeChange({
+                            prodId:scope.productInfo.productId,
+                            hsCodeOld:_prehsCode,
+                            hsCodeNew:hsCode.value.value
+                        }).then(function(context){
+                            if(context === 'confirm'){
+                                callSaveProduct(true);
+                            }else{
+                                if(context === 'error')
+                                    alert("价格计算失败，请联系IT人员，税号还原为变更前。");
+                                hsCode.value.value = _prehsCode;
+                            }
+                        });
+                    }else{
+                        callSaveProduct();
+                    }
+
+                }
+
+                /**
+                 * 调用保存接口
+                 * @param freshSub boolean 标识是否要刷新平台子页面
+                 * */
+                function callSaveProduct(freshSub){
 
                     productDetailService.updateCommonProductInfo({prodId:scope.productInfo.productId,productComm:scope.vm.productComm}).then(function(resp){
                         scope.vm.productComm.modified = resp.data.modified;
@@ -141,11 +185,17 @@ define([
                         scope.productInfo.checkFlag = new Date().getTime();
                         if(!scope.vm.categoryMark)
                             scope.productInfo.masterCategory = new Date().getTime();
+
+                        if(freshSub)
+                            scope.productInfo.masterCategory = new Date().getTime();
+
                         notify.success("更 新 成 功 ");
                     },function(){
                         alert("更新失败","错误提示");
                     });
+
                 }
+
 
                 function validSchema(){
                     return scope.vm.productComm == null || scope.vm.productComm.schemaFields == null ? false : scope.schemaForm.$valid;
@@ -153,14 +203,20 @@ define([
 
                 /**
                  * 右侧导航栏
-                 * @param index div的index
+                 * @param area 区域
                  * @param speed 导航速度 ms为单位
                  */
-                function pageAnchor(index,speed){
+                function pageAnchor(area,speed){
                     var offsetTop = 0;
-                    if(index != 1)
-                        offsetTop = ($("#master"+index).offset().top);
+                    if(area != 'master')
+                        offsetTop = element.find("#"+area).offset().top;
                     $("body").animate({ scrollTop:  offsetTop-100}, speed);
+                }
+
+                function focusError(){
+                    var firstError = element.find("schema .ng-invalid:first");
+                    firstError.focus();
+                    firstError.addClass("focus-error");
                 }
 
             }

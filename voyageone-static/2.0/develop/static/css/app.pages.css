@@ -254,7 +254,9 @@ s-field textarea.s-html {
     color: #333;
 }
 
-.category_drag_list_dp li .indexSelected {
+.category_drag_list_dp li .indexSelected,
+.category_drag_list_dp .indexSelected
+{
     float: left;
     display: block;
     position: relative;
@@ -560,6 +562,12 @@ s-field textarea.s-html {
     border-left: 1px solid #ADCAE2;
 }
 
+.product-shema-detail .no-master{
+    font-size: 15px;
+    font-weight: bold;
+    color: #d60032;
+}
+
 .product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex button {
     margin-top: 23px;
     align-self: auto;
@@ -571,6 +579,11 @@ s-field textarea.s-html {
 
 .tm-sku-detail schema-field {
     min-width: 125px;
+}
+
+schema .ng-invalid.focus-error{
+    transition: box-shadow 2s;
+    box-shadow: 0 1px 8px 0 #f05050 ! important;
 }
 
 /*uib-tab样式*/
@@ -741,3 +754,99 @@ s-field textarea.s-html {
 }
 
 /* 属性翻译页面的定制样式 End */
+
+/**图片上传样式*/
+.img-upload .drop-zone{
+    border-style: dashed;
+    background: #d9eff7;
+}
+
+.img-upload input[type='text']{
+    display: none;
+}
+
+.img-upload .img-thumbnail {
+    padding: 4px;
+    line-height: 1.42857143;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    -webkit-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+    display: inline-block;
+    max-width: 100%;
+    height: auto;
+}
+
+.img-upload .error-msg{
+    max-width: 100%;
+    word-break: break-all;
+    max-height: 50px;
+    overflow-y: scroll;
+    border: 2px solid #e26666;
+}
+
+.img-upload .fix-img{
+    position: relative;
+    max-width: 125px;
+    max-height: 125px;
+    width: auto;
+    height: auto;
+}
+
+.img-upload .fix-progress{
+    width: 125px;
+    margin: 0px auto;
+}
+
+/**切换主商品样式*/
+
+.switch-main span a {
+    color: #e67e22;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.switch-main .middle{
+    margin: 20px 20px;
+    padding: 10px 10px;
+    border: 1px solid #e67e22;
+    max-height: 365px;
+    overflow-y: scroll;
+}
+
+.switch-main .gray{
+    color: #bfbebe;
+}
+
+.switch-main .fix-div{
+    position: relative;
+    width: 135px;
+    height: 135px;
+    margin: 15px auto;
+}
+
+.switch-main .img-zoom{
+    width: auto;
+    height: auto;
+    max-width: 115px;
+    max-height: 115px;
+}
+
+.switch-main .current{
+    border: 2px solid #006cca;
+    box-shadow: 0 1px 8px 0 #006cca;
+    opacity: 0.4;
+}
+
+.switch-main .status{
+    position: absolute;
+}
+
+.switch-main .product-info {
+    text-align: center;
+    margin: 0px auto;
+    width: 95%;
+}
+

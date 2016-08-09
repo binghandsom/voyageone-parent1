@@ -5,7 +5,7 @@
 var fs = require('fs');
 var glob = require('glob');
 
-glob('../admin/components/angular/*/*.js', function (err, files) {
+glob('../develop/components/angular/*/*.js', function (err, files) {
 
     if (err) {
         console.error(err);

@@ -20,7 +20,7 @@ var build = vars.build;
 var tasks = vars.tasks;
 
 var searchMin = [
-    'admin',
+    'develop',
     'publish/release/' + vars.versions.publish
 ];
 
@@ -67,19 +67,18 @@ gulp.task(tasks.publish.modules, function () {
 
     // build login.app and channel.app
     gulp.src(publish.loginAndChannel.js)
-        .pipe(requireMin(searchMin))
         .pipe(ngAnnotate())
         .pipe(uglify())
         .pipe(rename({suffix: ".min"}))
         .pipe(gulp.dest(publish.release.loginAndChannel));
 
     gulp.src(publish.loginAndChannel.html)
-        .pipe(replace(/data-main=["'](.+?)["']/g, 'data-main="$1.min"'))
-        .pipe(replace('libs/require.js/2.1.21/require.js', 'libs/require.js/2.1.21/require.min.js'))
+        .pipe(replace(/require\(\['(\w+?)'\]\)/g, 'require(["$1.min"])'))
+        .pipe(replace(/<script src="(libs\/.+?)js"><\/script>/g, '<script src="$1min.js"></script>'))
         .pipe(minifyHtml({empty: true}))
         .pipe(gulp.dest(publish.release.loginAndChannel));
 
-    gulp.src([publish.modules.js, '!admin/modules/**/*.doc.js'])
+    gulp.src(publish.modules.js)
         .pipe(requireMin(searchMin))
         .pipe(ngAnnotate())
         .pipe(uglify())

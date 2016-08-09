@@ -30,7 +30,7 @@ define([
                 // 先确认该产品是否已存在同级别的promotion tag
                 $addToPromotionService.checkPromotionTags($scope.vm.promotionInfo).then(function (res) {
                     if (res.data.hasTags) {
-                        confirm("下列商品已存在同级别的promotion tag，请确认是否覆盖现有tag?<br><br>商品CODE：" + res.data.prodCodeListStr).result.then(function () {
+                        confirm("下列商品已存在同级别的promotion tag，请确认是否覆盖现有tag?<br><br>商品CODE：" + res.data.prodCodeListStr).then(function () {
                             $addToPromotionService.addToPromotion($scope.vm.promotionInfo).then(
                                 function () {
                                     notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
