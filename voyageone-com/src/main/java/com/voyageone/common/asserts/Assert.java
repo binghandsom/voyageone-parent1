@@ -214,7 +214,7 @@ public final class Assert {
         // 否则, 检查是否提供了变量的抬头
         // 如果提供了, 就替换到信息中, 否则消除掉替换标记
         // 最后格式化输出
-        if (matcher.matches()) {
+        if (matcher.find()) {
             if (StringUtils.isEmpty(variableTitle))
                 message = matcher.replaceFirst("$1");
             else
