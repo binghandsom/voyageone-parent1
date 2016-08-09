@@ -187,14 +187,16 @@ define([
                     return;
                 }
 
-                if(selFlagArr.length == 0 || orgDispArr.length > 0){
+                if(selCounts != 0 && selCounts != orgDispArr.length){
                     self.alert("存在冲突标签请确认！");
                     return;
                 }
 
-                if(selCounts != 0 && selCounts != orgDispArr.length){
-                    self.alert("存在冲突标签请确认！");
-                    return;
+                if(orgDispArr.length > 0){
+                    if(selFlagArr.length != 0){
+                        self.alert("存在冲突标签请确认！");
+                        return;
+                    }
                 }
 
                 selFlagArr.forEach(function (item) {
