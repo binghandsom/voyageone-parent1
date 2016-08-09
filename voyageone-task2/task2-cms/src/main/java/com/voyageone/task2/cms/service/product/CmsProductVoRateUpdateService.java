@@ -94,7 +94,12 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
                 }
 
                 // 计算指导价
-                prodObj = priceService.setRetailPrice(prodObj, cartId);
+                try {
+                    prodObj = priceService.setRetailPrice(prodObj, cartId);
+                } catch (Exception exp) {
+                    $error(String.format("CmsProductVoRateUpdateService 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId), exp);
+                    continue;
+                }
 
                 // 保存计算结果
                 updObj.setQuery("{'common.fields.code':#}");
