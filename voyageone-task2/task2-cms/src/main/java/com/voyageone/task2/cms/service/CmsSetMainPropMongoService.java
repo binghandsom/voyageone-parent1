@@ -38,6 +38,7 @@ import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
@@ -3096,7 +3097,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 设置platform.PXX.skus里面的价格
             try {
-                cmsProduct = priceService.setRetailPrice(cmsProduct);
+                priceService.setPrice(cmsProduct);
+            } catch (IllegalPriceConfigException illegalPriceConfigException) {
+                // TODO 配置错误, 停止渠道级别的价格计算
             } catch (PriceCalculateException pe) {
                 // 如果是整个channel相关的共通异常，则后面的feed导入不用做了
                 if (StringUtils.isNullOrBlank2(pe.getMessage())) {

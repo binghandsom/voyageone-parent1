@@ -648,10 +648,9 @@ public class CmsProductDetailService extends BaseAppService {
             try {
                 priceService.setPrice(newProduct);
             } catch (PriceCalculateException e) {
-                // 当捕获计算错误时, 可以继续 code 级别的计算
                 throw new BusinessException("价格计算错误" + e.getMessage());
             } catch (IllegalPriceConfigException e) {
-                // TODO 当捕获配置错误异常时, 需要停止 code 级别的计算
+                // TODO 当捕获配置错误异常时, 需要停止渠道级别的计算
                 e.printStackTrace();
             }
             newProduct.getPlatforms().forEach((s, platform) -> {
