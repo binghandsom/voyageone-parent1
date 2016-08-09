@@ -64,12 +64,12 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
             return;
         }
 
-        Number voRate = (Number) messageMap.get("voRate");
+        String voRate = (String) messageMap.get("voRate");
         String msg = null;
         if (voRate == null) {
             msg = "高价检索 批量更新VO扣点 清空";
         } else {
-            msg = "高价检索 批量更新VO扣点 " + voRate.doubleValue();
+            msg = "高价检索 批量更新VO扣点 " + voRate;
         }
 
         JomgoQuery queryObj = new JomgoQuery();
