@@ -99,6 +99,22 @@ public class CmsConstants {
         // Feed导入Master时，在Product更新的情况下，是否更新Feed节点下面的数据
         String FEED_UPDATE_FLG = "FEED_UPDATE_FLG";
 
+        /**
+         * 调用价格计算时, 指定渠道使用什么方式计算价格
+         * <p>
+         * 使用体系 {@code PRICE_CALCULATOR_SYSTEM} 计算, 还是固定 {@code PRICE_CALCULATOR_FORMULA} 计算
+         */
+        String PRICE_CALCULATOR = "PRICE_CALCULATOR";
+
+        /**
+         * {@code PRICE_CALCULATOR} 使用的配置项, 指示计算商品价格时, 使用体系计算价格
+         */
+        String PRICE_CALCULATOR_SYSTEM = "SYSTEM";
+
+        /**
+         * {@code PRICE_CALCULATOR} 使用的配置项, 指示计算商品价格时, 使用配置表中配置的固定公式计算价格
+         */
+        String PRICE_CALCULATOR_FORMULA = "FORMULA";
 
         // 价格相关
         String PRICE = "PRICE";
