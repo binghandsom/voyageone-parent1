@@ -568,7 +568,7 @@ public class PriceService extends BaseService {
      * @return 计算后的价格
      * @throws PriceCalculateException sku 中不包含公式所需的参数
      */
-    private Double calculateByFormula(String formula, CmsBtProductModel_Sku sku, boolean roundUp) throws PriceCalculateException {
+    private Double calculateByFormula(String formula, CmsBtProductModel_Sku sku, boolean roundUp) throws IllegalPriceConfigException {
 
         ExpressionParser parser = new SpelExpressionParser();
 
@@ -580,7 +580,7 @@ public class PriceService extends BaseService {
             Double price = expression.getValue(context, Double.class);
             return roundDouble(price, roundUp);
         } catch (SpelEvaluationException sp) {
-            throw new PriceCalculateException("使用固定公式计算时出现错误", sp);
+            throw new IllegalPriceConfigException("使用固定公式计算时出现错误", sp);
         }
     }
 
