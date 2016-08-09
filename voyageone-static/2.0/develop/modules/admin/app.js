@@ -2,13 +2,13 @@ define([
     'angularAMD',
     'angular',
     'underscore',
-    'modules/core/routes',
-    'modules/core/actions',
-    'modules/core/translate/en',
-    'modules/core/translate/zh'
+    'modules/admin/routes',
+    'modules/admin/actions',
+    'modules/admin/translate/en',
+    'modules/admin/translate/zh'
 ], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate) {
 
-    var mainApp = angular.module('voyageone.core', [
+    var mainApp = angular.module('voyageone.admin', [
         'ngRoute',
         'ngAnimate',
         'ngCookies',
@@ -39,9 +39,6 @@ define([
         .constant('cCommonRoutes', {
             "login": {
                 "url": "/login.html"
-            },
-            "channel": {
-                "url": "/channel.html"
             },
             "application": {
                 "modules": "/modules/",

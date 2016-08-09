@@ -332,6 +332,7 @@ define([
         function selectMenu(menu) {
             menuService.setMenu(menu.menuTitle).then(function (application) {
                 $window.location = cCommonRoutes.application.modules + application + cCommonRoutes.application.url;
+                vm.userInfo.application = menu.menuTitle;
             });
         }
 

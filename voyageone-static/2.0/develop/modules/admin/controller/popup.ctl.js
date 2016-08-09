@@ -4,16 +4,16 @@
  */
 
 define([
-    'cms',
+    'admin',
     'underscore',
-    'modules/cms/enums/MappingTypes'
-], function (cms, _, MappingTypes) {
+    'modules/admin/enums/MappingTypes'
+], function (admin, _, MappingTypes) {
 
-    cms.constant('popActions', {
+    admin.constant('popActions', {
         "authority": {
             "new": {
                 "templateUrl": "views/pop/authority/new.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/authority/new.ctl",
+                "controllerUrl": "modules/admin/views/pop/authority/new.ctl",
                 "controller": 'popAuthorityNewCtl'
             }
         }

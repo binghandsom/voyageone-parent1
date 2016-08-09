@@ -28,7 +28,7 @@ require.config({
         'underscore': 'libs/underscore.js/1.8.3/underscore',
         'filestyle': 'libs/bootstrap-filestyle/1.2.1/bootstrap-filestyle',
         'notify': 'libs/notify/0.4.0/notify',
-        'cms': 'modules/cms/app',
+        'admin': 'modules/admin/app',
         'chosen': 'libs/chosen/1.4.2/chosen.jquery',
         'angular-chosen': 'libs/angular-chosen/1.2.0/angular-chosen',
         'md5': 'libs/angular-md5/0.1.8/angular-md5',
@@ -57,7 +57,7 @@ require.config({
         'angular-ui-utils': ['angular'],
         'angular-drag':['angular'],
         'md5': ['angular'],
-        'core': [
+        'admin': [
             'underscore',
             'voyageone-angular-com',
             'voyageone-com',
@@ -78,5 +78,5 @@ require.config({
             'angular-drag'
         ]
     },
-    deps: ['core']
+    deps: ['admin']
 });
