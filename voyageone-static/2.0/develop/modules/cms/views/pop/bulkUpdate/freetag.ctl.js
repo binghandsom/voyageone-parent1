@@ -92,13 +92,13 @@ define([
 
                     /**当是高级检索，设置自由标签时，有初始勾选值*/
                     if (self.orgFlg == 2) {
-
+                        // 返回值：orgChkStsMap和orgDispMap是互斥的,即一个tag不可能在两个Map中同时出现
                         /**checkbox勾选状态*/
                         self.orgChkStsMap = res.data.orgChkStsMap;
+                        self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
                         /**checkbox半选状态*/
                         self.orgDispMap = res.data.orgDispMap;
-                        self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
-
+                        self._orgDispMap = angular.copy(res.data.orgDispMap);
                     }
                     self.search(0);
                 });
@@ -151,7 +151,7 @@ define([
             },
 
             /**
-             * 点击保存(TODO--需要判断是否有改动,没有则不保存)
+             * 点击保存(需要判断是否有改动,没有则不保存)
              */
             save: function () {
                 var self = this;
@@ -182,21 +182,39 @@ define([
                 });
 
                 /**判断是否改变*/
-                if(canSave(self._orgChkStsMap,selFlagArr) && self.selOrgDispList.length == 0){
-                    self.alert("未改变任何标签！");
-                    return;
-                }
-
-                if(selCounts != 0 && selCounts != orgDispArr.length){
-                    self.alert("存在冲突标签请确认！");
-                    return;
-                }
-
-                if(orgDispArr.length > 0){
-                    if(selFlagArr.length != 0){
-                        self.alert("存在冲突标签请确认！");
-                        return;
+                var dispFlg = false;
+                var isChgFlg = false;
+                // _orgDispMap和orgDispMap相同，而且_orgChkStsMap和orgChkStsMap相同(若orgChkStsMap中的项目比_orgChkStsMap的多，原先的项目值相同，多出来的项目值都是false，则也认为相同)
+                dispFlg = compareArr(self._orgDispMap, self.orgDispMap);
+                if (dispFlg) {
+                    // 遍历所有checkbox，检查其状态是否已与原始值不同
+                    for (var key in self.orgChkStsMap) {
+                        if (self.orgChkStsMap[key] == true && self._orgChkStsMap[key] == undefined) {
+                            isChgFlg = true;
+                            break;
+                        }
+                        if (self.orgChkStsMap[key] != self._orgChkStsMap[key]) {
+                            isChgFlg = true;
+                            break;
+                        }
                     }
+                }
+                if (dispFlg && !isChgFlg) {
+                    self.alert("未改变任何标签，无需保存！");
+                    return;
+                }
+
+                // 检查是否还有半选的情况
+                dispFlg = false;
+                for (var key in self.orgDispMap) {
+                    if (self.orgDispMap[key] == true) {
+                        dispFlg = true;
+                        break;
+                    }
+                }
+                if (dispFlg) {
+                    self.alert("存在冲突标签，请确认标签勾选状态！");
+                    return;
                 }
 
                 selFlagArr.forEach(function (item) {
@@ -214,14 +232,16 @@ define([
                 self.$uibModalInstance.close(self.context);
             },
 
+            // 点击tag的checkbox时的操作
             selOrgDisp:function(id,path,event){
                 var self = this;
 
-                /**设置checkbox选中*/
+                /**设置checkbox的选择状态*/
                 self.orgChkStsMap[path] = self.taglist.selFlag[id];
 
-                /**记录点击的半角*/
+                /**记录checkbox的半选状态*/
                 if(self.orgDispMap[path]){
+                    // 如果初始是半选状态
                     if(self.selOrgDispList.indexOf(path) < 0){
                         self.selOrgDispList.push(path);
                     }
