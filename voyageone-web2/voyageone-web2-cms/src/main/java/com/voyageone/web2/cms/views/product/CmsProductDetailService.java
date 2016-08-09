@@ -30,6 +30,8 @@ import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.cms.prices.PriceCalculateException;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
@@ -642,7 +644,11 @@ public class CmsProductDetailService extends BaseAppService {
 
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
         if (commonModel.getFields().getHsCodePrivate() != null && !commonModel.getFields().getHsCodePrivate().equalsIgnoreCase(oldProduct.getCommon().getFields().getHsCodePrivate())) {
-            priceService.setRetailPrice(newProduct);
+            try {
+                priceService.setRetailPrice(newProduct);
+            } catch (PriceCalculateException e) {
+                throw new BusinessException("价格计算错误" + e.getMessage());
+            }
             newProduct.getPlatforms().forEach((s, platform) -> {
                 if(platform.getCartId() != 0){
                     productService.updateProductPlatform(channelId,prodId,platform,modifier,false);
@@ -1331,7 +1337,11 @@ public class CmsProductDetailService extends BaseAppService {
             }
         });
         cmsBtProductModel.getCommon().getFields().setHsCodePrivate(hsCode);
-        priceService.setRetailPrice(cmsBtProductModel);
+        try {
+            priceService.setRetailPrice(cmsBtProductModel);
+        } catch (PriceCalculateException e) {
+            throw new BusinessException("价格计算错误" + e.getMessage());
+        }
         cmsBtProductModel.getPlatforms().forEach((s, platform) -> {
             if (platform.getCartId() != 0) {
                 prices.get(platform.getCartId()).get(platform.getSkus().get(0).getStringAttribute("skuCode")).add(platform.getSkus().get(0).getDoubleAttribute("priceRetail"));
