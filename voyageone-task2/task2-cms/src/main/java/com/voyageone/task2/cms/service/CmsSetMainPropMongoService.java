@@ -3038,7 +3038,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 计算指导价
             try {
-                cmsProduct = priceService.setRetailPrice(cmsProduct);
+                priceService.setPrice(cmsProduct);
             } catch (Exception ex) {
                 String errMsg = String.format("feed->master导入:异常终止:调用共通函数计算产品价格时出错 [ChannelId=%s] [FeedCode=%s] " +
                                 " [ErrMsg=", channelId, feed.getCode());
