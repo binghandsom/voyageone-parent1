@@ -11,6 +11,7 @@ define([
             this.uploader = new FileUploader({
                 url: "/vms/inventory/inventory_file_upload/uploadInventoryFile"
             });
+            this.uploader.removeAfterUpload = true;
         }
 
         InventoryFileUploadController.prototype = {
