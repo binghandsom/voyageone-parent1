@@ -586,6 +586,7 @@ public interface CmsUrlConstants {
             String Delisting="delisting";
             String DelistinGroup="delistinGroup";
             String HsCodeChg="hsCodeChg";
+            String CopyProperty = "copyProperty";
         }
 
         interface HISTORY {
