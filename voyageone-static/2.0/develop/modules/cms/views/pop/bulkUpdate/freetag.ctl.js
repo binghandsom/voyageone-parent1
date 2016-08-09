@@ -42,7 +42,7 @@ define([
 
     /**比较字符串数组是否值相等*/
     function compareArr(arr1,arr2){
-        return _.every(arr1,function(element1){
+        return arr1.length === arr2.length && _.every(arr1,function(element1){
             return _.some(arr2,function(element2){
                 return element2 == element1;
             });
