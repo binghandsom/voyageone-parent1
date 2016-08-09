@@ -8,14 +8,13 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
@@ -133,16 +132,34 @@ public class CmsAdvanceSearchService extends BaseAppService {
         masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));
 
         //标签type
-        masterData.put("tagTypeList", Types.getTypeList(74, language));
+        masterData.put("tagTypeList", Types.getTypeList(TypeConfigEnums.MastType.tagType.getId(), language));
 
         // 设置按销量排序的选择列表
         masterData.put("salesTypeList", advSearchQueryService.getSalesTypeList(userInfo.getSelChannelId(), language, null));
 
-        // 判断是否是minimall用户
-        boolean isMiniMall = userInfo.getSelChannelId().equals(ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        // 判断是否是minimall/usjoi用户
+        boolean isMiniMall = Channels.isUsJoi(userInfo.getSelChannelId());
         masterData.put("isminimall", isMiniMall ? 1 : 0);
         if (isMiniMall) {
-            masterData.put("channelList", Channels.getUsJoiChannelList());
+            List<TypeChannelBean> typeChannelBeenList = TypeChannels.getTypeChannelBeansByTypeValueLang(Constants.comMtTypeChannel.SKU_CARTS_53, userInfo.getSelChannelId(), "cn");
+            if (typeChannelBeenList == null || typeChannelBeenList.isEmpty()) {
+                $warn("高级检索:getMasterData 未取得供应商列表(Synship.com_mt_value_channel表中未配置) channelid=" + userInfo.getSelChannelId());
+            } else {
+                List<OrderChannelBean> channelBeanList = new ArrayList<>();
+                for (TypeChannelBean typeBean : typeChannelBeenList) {
+                    OrderChannelBean channelBean = Channels.getChannel(typeBean.getChannel_id());
+                    if (channelBean != null) {
+                        channelBeanList.add(channelBean);
+                    } else {
+                        $warn("高级检索:getMasterData 取得供应商列表 channel不存在 channelid=" + typeBean.getChannel_id());
+                    }
+                }
+                if (channelBeanList.isEmpty()) {
+                    $warn("高级检索:getMasterData 取得供应商列表 channel不存在 " + channelBeanList.toString());
+                } else {
+                    masterData.put("channelList", channelBeanList);
+                }
+            }
         }
 
         // 获取店铺列表

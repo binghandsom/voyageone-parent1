@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.CommonUtil;
@@ -54,7 +55,7 @@ public class CmsChannelTagService extends BaseAppService {
         //取得所有的标签类型
         result.put("tagTree", categoryList);
 
-        List<TypeBean>  types = Types.getTypeList(74, lang);
+        List<TypeBean>  types = Types.getTypeList(TypeConfigEnums.MastType.tagType.getId(), lang);
         if (types != null) {
             //标签类型
             result.put("tagTypeList", types.stream().filter(w->w.getValue().equals("4")).collect(Collectors.toList()));
