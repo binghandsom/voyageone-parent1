@@ -14,12 +14,16 @@
             <h2 translate="TXT_CHOOSE_FILE"></h2>
         </div>
         <div class="form-group">
-            <div class="col-sm-12 input-group">
+            <div class="col-sm-12 input-group" ng-if="!ctrl.uploader.isUploading">
                 <input type="file" id="file" file-style data-icon="false" data-button-text="BROWSER"
                        data-buttonName="btn btn-success" nv-file-select="" uploader="ctrl.uploader" accept=".csv">
                 <span class="input-group-btn">
                     <button class="btn btn-success" ng-click="ctrl.upload()" translate="BTN_UPLOAD"></button>
                 </span>
+            </div>
+            <div class="progress" style="height: 34px;" ng-if="ctrl.uploader.isUploading">
+                <div class="progress-bar progress-bar-success" role="progressbar"
+                     ng-attr-style="{{'width: ' + ctrl.uploader.progress + '%; min-width: 1em;'}}"></div>
             </div>
         </div>
 
