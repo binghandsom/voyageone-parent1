@@ -13,7 +13,7 @@ function exists(path) {
 }
 
 module.exports = function (dirs) {
-    
+
     return through.obj(function (file, enc, cb) {
 
         var content = String(file.contents);
@@ -31,8 +31,8 @@ module.exports = function (dirs) {
         });
 
         file.contents = new Buffer(content);
-        
+
         return cb(null, file);
-        
+
     });
 };

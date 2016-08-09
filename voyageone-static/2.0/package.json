@@ -1,7 +1,7 @@
 {
   "name": "voyageone_cms",
   "version": "2.0.0",
-  "description": "VoyageOne Front Project v2",
+  "description": "VoyageOne Admin Management System Front Project",
   "scripts": {
     "build-dev-pkg": "node node_scripts/npm-build-dev-package.js",
     "build-css-pkg": "node node_scripts/npm-build-css-package.js",
@@ -32,6 +32,7 @@
     "gulp-util": "",
     "through2": "",
     "morgan":"",
+    "less": "^2.7.1",
     "http-proxy-middleware":"",
     "browser-sync":""
   }

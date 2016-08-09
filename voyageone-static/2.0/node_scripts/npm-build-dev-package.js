@@ -1,20 +1,14 @@
 var fs = require('fs');
 var glob = require('glob');
 
-var common = require('./vars').build.common;
-var angularPackage = common.angular.dist + '/' + common.angular.concat;
-
-var commonFiles = common.native.src;
-var commonPackage = common.native.dist + '/' + common.native.concat;
-
-glob('develop/components/angular/*/*.js', function (err, files) {
+glob('admin/shared/ng/*/*.js', function (err, files) {
     if (err) {
         console.error(err);
         return;
     }
 
     if (!files || !files.length) {
-        console.warn('cant find any files !!! -> ' + src);
+        console.warn('cant find any files !!!');
         return;
     }
 
@@ -22,25 +16,25 @@ glob('develop/components/angular/*/*.js', function (err, files) {
 
     code += 'define(function (require) {\n';
 
-    code += '  require(\'components/angular/angular.modules\');\n';
+    code += '  require(\'/shared/ng/modules.js\');\n';
 
-    files.map(file => file.replace('develop/', '').replace('.js', '')).forEach(file => {
+    files.map(file => file.replace('admin/', '/')).forEach(file => {
         code += '  require(\'' + file + '\');\n';
     });
-    
+
     code += '});';
 
-    fs.writeFile(angularPackage, code);
+    fs.writeFile('admin/shared/components.ng.js', code);
 });
 
-glob(commonFiles, function (err, files) {
+glob('admin/shared/js/*/*.js', function (err, files) {
     if (err) {
         console.error(err);
         return;
     }
 
     if (!files || !files.length) {
-        console.warn('cant find any files !!! -> ' + src);
+        console.warn('cant find any files !!!');
         return;
     }
 
@@ -48,11 +42,11 @@ glob(commonFiles, function (err, files) {
 
     code += 'define(function (require) {\n';
 
-    files.map(file => file.replace('develop/', '').replace('.js', '')).forEach(file => {
+    files.map(file => file.replace('admin/', '/')).forEach(file => {
         code += '  require(\'' + file + '\');\n';
     });
-    
+
     code += '});';
 
-    fs.writeFile(commonPackage, code);
+    fs.writeFile('admin/shared/components.js', code);
 });

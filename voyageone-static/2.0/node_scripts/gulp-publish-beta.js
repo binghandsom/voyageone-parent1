@@ -2,12 +2,10 @@ var fs = require('fs');
 var gulp = require('gulp');
 var debug = require('gulp-debug');
 var ngAnnotate = require('gulp-ng-annotate');
-var minifyHtml = require('gulp-minify-html');
 var uglify = require('gulp-uglify');
 var replace = require('gulp-replace');
 var rename = require('gulp-rename');
 var concat = require('gulp-concat');
-var ngHtml2Js = require('gulp-ng-html2js');
 var header = require('gulp-header');
 var footer = require('gulp-footer');
 var glob = require('glob');
@@ -49,7 +47,7 @@ gulp.task(tasks.beta.statics, function () {
 gulp.task(tasks.beta.angular, function () {
 
     gulp.src([
-            "develop/components/angular/angular.modules.js",
+            "admin/components/angular/angular.modules.js",
             build.common.angular.src
         ])
         .pipe(debug())
@@ -120,9 +118,9 @@ gulp.task(tasks.beta.modules, function () {
 });
 
 gulp.task(tasks.beta.all, [
-    tasks.beta.statics, 
-    tasks.beta.angular, 
-    tasks.beta.com, 
-    tasks.beta.libs, 
+    tasks.beta.statics,
+    tasks.beta.angular,
+    tasks.beta.com,
+    tasks.beta.libs,
     tasks.beta.modules
 ]);

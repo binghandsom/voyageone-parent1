@@ -1,0 +1,89 @@
+<div class="modal-content modal-blue" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <h4 class="modal-title" id="editShipmentTitle">
+            <i class="fa fa-tasks"></i>{{'TXT_SHIPMENT_INFO' | translate}}<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i>
+        </h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <form class="col-md-10 form-horizontal" name="shipmentForm" novalidate>
+                <div ng-class="{'form-group':true, 'has-error': !shipmentForm.shipmentName.$valid}">
+                    <label for="shipmentName" class="col-md-3 col-md-offset-1 control-label"><strong
+                            translate="TXT_NAME"></strong></label>
+                    <div class="col-md-8">
+                        <input id="shipmentName" name="shipmentName" type="text" class="form-control"
+                               ng-model="ctrl.shipment.shipmentName" required maxlength="30"
+                               ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
+                    </div>
+                </div>
+                <div ng-class="{'form-group':true, 'has-error': !shipmentForm.shipmentStatus.$valid}">
+                    <label for="shipmentStatus" class="col-md-3 col-md-offset-1 control-label"><strong
+                            translate="TXT_STATUS"></strong></label>
+                    <div class="col-md-8">
+                        <select id="shipmentStatus" class="form-control" name="shipmentStatus"
+                                ng-model="ctrl.shipment.status" required disabled ng-options="option.value as option.name for option in ctrl.statusList">
+                        </select>
+                    </div>
+                </div>
+                <div ng-class="{'form-group':true, 'has-error': !shipmentForm.shippedDate.$valid}">
+                    <label for="shippedDate" class="col-md-3 col-md-offset-1 control-label">
+                        <strong translate="TXT_SHIPPED_DATE"></strong></label>
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <input id="shippedDate" name="shippedDate" class="form-control"
+                                   ng-attr-title="{{'TXT_SHIPPED_DATE' | translate}}"
+                                   type="date"
+                                   ng-model="ctrl.shipment.shippedDate"
+                                   uib-datepicker-popup
+                                   is-open="datepicker1" ng-required="ctrl.shipment.status==3"
+                                   ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" ng-click="datepicker1=!datepicker1" ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
+                                    <i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div ng-class="{'form-group':true, 'has-error': (ctrl.shipment.status == 3 && !ctrl.shipment.expressCompany) || !shipmentForm.expressCompany.$valid}">
+                    <label for="expressCompany" class="col-md-3 col-md-offset-1 control-label"><strong
+                            translate="TXT_EXPRESS_COMPANY"></strong></label>
+                    <div class="col-md-8">
+                        <select id="expressCompany" name="expressCompany"
+                                class="col-md-8 form-control"
+                                ng-options="option.value as option.name for option in ctrl.expressCompanies"
+                                ng-required="ctrl.shipment.status==3" ng-model="ctrl.shipment.expressCompany"
+                                ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
+                            <option value="" translate="TXT_SELECT_EXPRESS_COMPANY" disabled selected></option>
+                        </select>
+                    </div>
+                </div>
+                <div ng-class="{'form-group':true, 'has-error': (ctrl.shipment.status == 3 && !ctrl.shipment.trackingNo) || !shipmentForm.trackingNo.$valid}">
+                    <label for="trackingNo" class="col-md-3 col-md-offset-1 control-label">
+                        <strong translate="TXT_TRACKING_NO_"></strong></label>
+                    <div class="col-md-8">
+                        <input id="trackingNo" type="text" class="form-control required"
+                               ng-model="ctrl.shipment.trackingNo" name="trackingNo"
+                               ng-required="ctrl.shipment.status==3" maxlength="30"
+                               ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="comments" class="col-md-3 col-md-offset-1 control-label"><strong
+                            translate="TXT_COMMENTS"></strong></label>
+                    <div class="col-md-8">
+                        <textarea id="comments" class="form-control" ng-model="ctrl.shipment.comment" maxlength="1000"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" ng-if="ctrl.type == 'new'" class="btn btn-primary btn-sm" ng-click="ctrl.create()"
+                ng-disabled="!shipmentForm.$valid" translate="BTN_CREATE"></button>
+        <button type="button" ng-if="ctrl.type == 'edit'" class="btn btn-primary btn-sm" ng-click="ctrl.submit()"
+                ng-disabled="!shipmentForm.$valid" translate="BTN_SUBMIT"></button>
+        <button type="button" ng-if="ctrl.type == 'end'" class="btn btn-primary btn-sm" ng-click="ctrl.end()"
+                ng-disabled="!shipmentForm.$valid" translate="BTN_CONFIRM"></button>
+        <button type="button" class="btn btn-default btn-sm" ng-click="$dismiss()" translate="BTN_CLOSE"></button>
+    </div>
+</div>
