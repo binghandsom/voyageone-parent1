@@ -141,6 +141,7 @@ define([
 
         OrderInfoController.prototype.downloadPickingList = function () {
             var self = this;
+            // todo 这里没有做session验证 需要加回调
             $.download.post('/vms/order/order_info/downloadPickingList', {"orderType": self.downloadInfo.orderType});
         };
 
