@@ -644,7 +644,11 @@ public class CmsProductDetailService extends BaseAppService {
 
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
         if (commonModel.getFields().getHsCodePrivate() != null && !commonModel.getFields().getHsCodePrivate().equalsIgnoreCase(oldProduct.getCommon().getFields().getHsCodePrivate())) {
-            priceService.setRetailPrice(newProduct);
+            try {
+                priceService.setRetailPrice(newProduct);
+            } catch (PriceCalculateException e) {
+                throw new BusinessException("价格计算错误" + e.getMessage());
+            }
             newProduct.getPlatforms().forEach((s, platform) -> {
                 if(platform.getCartId() != 0){
                     productService.updateProductPlatform(channelId,prodId,platform,modifier,false);
