@@ -209,7 +209,6 @@ define([
 
                 }
 
-
                 function validSchema(){
                     return scope.vm.productComm == null || scope.vm.productComm.schemaFields == null ? false : scope.schemaForm.$valid;
                 }
