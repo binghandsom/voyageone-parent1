@@ -182,21 +182,39 @@ define([
                 });
 
                 /**判断是否改变*/
-                if(canSave(self._orgChkStsMap,selFlagArr) && self.selOrgDispList.length == 0){
-                    self.alert("未改变任何标签！");
-                    return;
-                }
-
-                if(selCounts != 0 && selCounts != orgDispArr.length){
-                    self.alert("存在冲突标签请确认！");
-                    return;
-                }
-
-                if(orgDispArr.length > 0){
-                    if(selFlagArr.length != 0){
-                        self.alert("存在冲突标签请确认！");
-                        return;
+                var dispFlg = false;
+                var isChgFlg = false;
+                // _orgDispMap和orgDispMap相同，而且_orgChkStsMap和orgChkStsMap相同(若orgChkStsMap中的项目比_orgChkStsMap的多，多出来的项目值都是false，则也认为相同)
+                dispFlg = compareArr(self._orgDispMap, self.orgDispMap);
+                if (dispFlg) {
+                    // 遍历所有checkbox，检查其状态是否已与原始值不同
+                    for (var key in self.orgChkStsMap) {
+                        if (self.orgChkStsMap[key] == true && self._orgChkStsMap[key] == undefined) {
+                            isChgFlg = true;
+                            break;
+                        }
+                        if (self.orgChkStsMap[key] != self._orgChkStsMap[key]) {
+                            isChgFlg = true;
+                            break;
+                        }
                     }
+                }
+                if (dispFlg && !isChgFlg) {
+                    self.alert("未改变任何标签，无需保存！");
+                    return;
+                }
+
+                // 检查是否还有半选的情况
+                dispFlg = false;
+                for (var key in self.orgDispMap) {
+                    if (self.orgDispMap[key] == true) {
+                        dispFlg = true;
+                        break;
+                    }
+                }
+                if (dispFlg) {
+                    self.alert("存在冲突标签，请确认标签勾选状态！");
+                    return;
                 }
 
                 selFlagArr.forEach(function (item) {
