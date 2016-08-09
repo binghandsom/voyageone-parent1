@@ -209,11 +209,10 @@ public class ShoeMetroAnalysisService extends BaseAnalysisService {
                     int index = Weight.indexOf(matcher.group());
                     if (index != -1) {
                         String weightOrg = Weight.substring(0, index);
-                        String weightOrgUnit = Weight.substring(index, Weight.length());
                         sku.setWeightOrg(weightOrg);
-                        sku.setWeightOrgUnit(weightOrgUnit);
                     }
                 }
+                sku.setWeightOrgUnit("lb");
             }
             cmsBtFeedInfoModel.setSkus(skus);
             if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
