@@ -201,4 +201,13 @@ public class CmsProductDetailController extends CmsController {
         String hsCode = String.valueOf(parameter.get("hsCode"));
         return success(productPropsEditService.hsCodeChg(channelId,prodId,hsCode));
     }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CopyCommonProperty)
+    public AjaxResponse copyProperty (@RequestBody Map params){
+
+        Map<String, Object> result = new HashMap<>();
+        Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
+        result.put("platform", productPropsEditService.copyPropertyFromMainProduct(getUser().getSelChannelId(), prodId));
+        return success(result);
+    }
 }

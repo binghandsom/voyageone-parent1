@@ -212,6 +212,11 @@ public class TypeConfigEnums {
 		procLockStatus(52),
 
 		/**
+		 * 平台状态:cms2
+		 */
+		skuCarts(53),
+
+		/**
 		 * 错误类别:cms2
 		 */
 		errorType(55),
@@ -232,9 +237,9 @@ public class TypeConfigEnums {
 		translateTask(66),
 
 		/**
-		 * 是否为默认主商品
+		 * 标签类型
 		 */
-		isMasterMain(80),
+		tagType(74),
 
 		/**
 		 * 主类目设置状态
@@ -245,6 +250,11 @@ public class TypeConfigEnums {
 		 * 税号设置状态
 		 */
 		hsCodeStatus(77),
+
+		/**
+		 * 是否为默认主商品
+		 */
+		isMasterMain(80),
 
 		/**
 		 * 商品上下架操作结果

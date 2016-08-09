@@ -112,6 +112,17 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="form-group" ng-if="vm.masterData.isminimall == 1">
+                                                <label class="col-sm-3 control-label">供应商</label>
+                                                <div class="col-sm-8 form-inline" style="padding-left:0px">
+                                                    <div class="col-sm-5">
+                                                        <select class="form-control" style="margin-left:4px;width:150px" ng-model="vm.searchInfo.orgChaId"
+                                                                ng-options="orgChaInfo.order_channel_id as orgChaInfo.full_name for orgChaInfo in vm.masterData.channelList">
+                                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
@@ -691,7 +702,7 @@
                                                     <span ng-if="!cartsObj._purl">{{cartsObj._pTxt}}</span>
                                                 </span>
                                             </span>
-                                            <span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall == 1">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>
+                                            <span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall==1&&productInfo._prodOrgChaName">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>
                                             <span class="m-r-sm" ng-if="!!productInfo.groupBean.numIId&&!!vm.productUrl">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
                                                 <a ng-href="{{vm.productUrl}}{{productInfo.groupBean.numIId}}" target="_blank" ng-bind="productInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId!=27"></a>
                                                 <a ng-href="{{vm.productUrl}}{{productInfo.groupBean.numIId}}.html" target="_blank" ng-bind="productInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId == 27"></a>

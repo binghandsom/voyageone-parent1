@@ -22,10 +22,12 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.ChannelService;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,12 +61,25 @@ public class CmsGetPlatformStatusService extends BaseTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+        // 取得参数值(指定平台和渠道的情况下),目前只用于测试
+        String channelIdStr = null;
+        String cartIdStr = null;
+        if (taskControlList != null && taskControlList.size() > 0) {
+            for (TaskControlBean ctrlBean : taskControlList) {
+                if ("channel_id".equals(ctrlBean.getCfg_name())) {
+                    channelIdStr = StringUtils.trimToNull(ctrlBean.getCfg_val1());
+                } else if ("cart_id".equals(ctrlBean.getCfg_name())) {
+                    cartIdStr = StringUtils.trimToNull(ctrlBean.getCfg_val1());
+                }
+            }
+        }
         // 取得所有店铺
-        List<OrderChannelBean> list = channelService.getChannelListBy(null, null, -1, "1");
+        List<OrderChannelBean> list = channelService.getChannelListBy(channelIdStr, null, -1, "1");
         if (list == null || list.isEmpty()) {
             $error("CmsGetPlatformStatusService 无店铺(channel)数据！");
             return;
         }
+        List<TypeChannelBean> cartList = null;
         long pageNo = 0;
 
         for (OrderChannelBean chnObj : list) {
@@ -78,11 +93,27 @@ public class CmsGetPlatformStatusService extends BaseTaskService {
             }
 
             // 取得该店铺的所有平台
-            List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+            cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
             if (cartList == null || cartList.isEmpty()) {
                 $error("CmsGetPlatformStatusService 本店铺无平台数据！ channelId=" + channelId);
                 continue;
             }
+            if (cartIdStr != null) {
+                // 指定平台时，过滤其他平台
+                List<TypeChannelBean> newcartList = new ArrayList<>();
+                for (TypeChannelBean cartObj : cartList) {
+                    if (cartIdStr.equals(cartObj.getValue())) {
+                        newcartList.add(cartObj);
+                        break;
+                    }
+                }
+                if (newcartList.isEmpty()) {
+                    $error("CmsGetPlatformStatusService 本店铺无平台数据！ channelId=%s, cartId=%s", channelId, cartIdStr);
+                    continue;
+                }
+                cartList = newcartList;
+            }
+
             for (TypeChannelBean cartObj : cartList) {
                 // 对指定店铺的每个平台进行处理
                 int cartId = NumberUtils.toInt(cartObj.getValue());
