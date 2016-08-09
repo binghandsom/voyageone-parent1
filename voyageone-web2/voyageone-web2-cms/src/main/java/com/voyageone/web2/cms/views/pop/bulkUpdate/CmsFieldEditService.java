@@ -49,6 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -222,8 +223,10 @@ public class CmsFieldEditService extends BaseAppService {
                     voRateVal = ((Integer) voRate).toString();
                     updObj.setUpdateParameters(voRate.doubleValue());
                 } else {
-                    voRateVal = new java.text.DecimalFormat("#.00").format(voRate.doubleValue());
-                    updObj.setUpdateParameters(Double.parseDouble(voRateVal));
+                    BigDecimal val = new BigDecimal(voRate.toString());
+                    double f1 = val.setScale(2, RoundingMode.HALF_UP).doubleValue();
+                    voRateVal = Double.toString(f1);
+                    updObj.setUpdateParameters(f1);
                 }
             }
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
