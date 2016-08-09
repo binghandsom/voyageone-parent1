@@ -42,7 +42,7 @@ define([
 
     /**比较字符串数组是否值相等*/
     function compareArr(arr1,arr2){
-        return _.every(arr1,function(element1){
+        return arr1.length === arr2.length && _.every(arr1,function(element1){
             return _.some(arr2,function(element2){
                 return element2 == element1;
             });
@@ -162,7 +162,10 @@ define([
                 /**因为半角中的id为全路径，要分割到最后一个，也就是数字为最大的*/
                 var orgDispArr = _.map(self.orgDispMap,function(value,key){
                     return {id: _.max(key.split("-")), tagPath: value};
+                }).filter(function(item){
+                    return item.tagPath;
                 });
+
                 var selFlagArr = _.map(self.taglist.selFlag, function (value, key) {
                     return {selectedId: key, selected: value};
                 }).filter(function (item) {
@@ -178,21 +181,22 @@ define([
                     }
                 });
 
-
                 /**判断是否改变*/
                 if(canSave(self._orgChkStsMap,selFlagArr) && self.selOrgDispList.length == 0){
                     self.alert("未改变任何标签！");
                     return;
                 }
 
-                if(selFlagArr.length == 0){
+                if(selCounts != 0 && selCounts != orgDispArr.length){
                     self.alert("存在冲突标签请确认！");
                     return;
                 }
 
-                if(selCounts != 0 && selCounts != orgDispArr.length){
-                    self.alert("存在冲突标签请确认！");
-                    return;
+                if(orgDispArr.length > 0){
+                    if(selFlagArr.length != 0){
+                        self.alert("存在冲突标签请确认！");
+                        return;
+                    }
                 }
 
                 selFlagArr.forEach(function (item) {

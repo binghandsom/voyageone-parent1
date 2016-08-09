@@ -6,7 +6,7 @@ define([
     'cms',
     'modules/cms/directives/platFormStatus.directive'
 ],function(cms) {
-    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService, $compile) {
+    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService) {
         return {
             restrict: "E",
             templateUrl : "views/product/master.component.tpl.html",
@@ -159,6 +159,8 @@ define([
                             if(context === 'confirm'){
                                 callSaveProduct(true);
                             }else{
+                                if(context === 'error')
+                                    alert("价格计算失败，请联系IT人员，税号还原为变更前。");
                                 hsCode.value.value = _prehsCode;
                             }
                         });

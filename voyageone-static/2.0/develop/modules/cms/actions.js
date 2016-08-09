@@ -107,7 +107,8 @@ define(function () {
                     "setMastProduct": "setMastProduct",
                     "delisting": "delisting",
                     "delistinGroup": "delistinGroup",
-                    "hsCodeChg":"hsCodeChg"
+                    "hsCodeChg":"hsCodeChg",
+                    "copyProperty":"copyProperty"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",

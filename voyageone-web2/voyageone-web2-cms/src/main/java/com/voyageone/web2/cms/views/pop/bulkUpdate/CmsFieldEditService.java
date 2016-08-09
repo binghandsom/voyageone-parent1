@@ -49,6 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -213,11 +214,20 @@ public class CmsFieldEditService extends BaseAppService {
             JomgoUpdate updObj = new JomgoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
             updObj.setQueryParameters(productCodes);
+            String voRateVal = null;
             if (voRate == null) {
                 updObj.setUpdate("{$set:{'common.fields.commissionRate':null}}");
             } else {
                 updObj.setUpdate("{$set:{'common.fields.commissionRate':#}}");
-                updObj.setUpdateParameters(voRate.doubleValue());
+                if (voRate instanceof Integer) {
+                    voRateVal = ((Integer) voRate).toString();
+                    updObj.setUpdateParameters(voRate.doubleValue());
+                } else {
+                    BigDecimal val = new BigDecimal(voRate.toString());
+                    double f1 = val.setScale(2, RoundingMode.HALF_UP).doubleValue();
+                    voRateVal = Double.toString(f1);
+                    updObj.setUpdateParameters(f1);
+                }
             }
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
             $debug("VO扣点值批量更新结果 " + rs.toString());
@@ -227,7 +237,7 @@ public class CmsFieldEditService extends BaseAppService {
             logParams.put("channelId", userInfo.getSelChannelId());
             logParams.put("creater", userInfo.getUserName());
             logParams.put("codeList", productCodes);
-            logParams.put("voRate", voRate);
+            logParams.put("voRate", voRateVal);
             sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
 
         } else {
