@@ -3,6 +3,7 @@ package com.voyageone.base.dao.mysql.paginator;
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import com.voyageone.base.dao.mysql.paginator.domain.MySqlOrder;
+import com.voyageone.common.util.MapUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ public class MySqlPageHelper {
     public static PageBoundsMap build() {
         return new PageBoundsMap(null);
     }
+
     /**
      * 加入检索条件
      *
@@ -35,6 +37,18 @@ public class MySqlPageHelper {
      */
     public static PageBoundsMap build(Map<String, Object> queryParam) {
         return new PageBoundsMap(queryParam);
+    }
+
+    /**
+     * 基于给定的参数构建分页或排序语句
+     * @param queryParams k, v 顺序排列的数组，k 为字符串，即参数名，v 为值
+     * @return PageBoundsMap
+     */
+    public static PageBoundsMap build(Object... queryParams) {
+
+        Map<String, Object> queryParamMap = MapUtil.toMap(queryParams);
+
+        return new PageBoundsMap(queryParamMap);
     }
 
     public static class PageBoundsMap {
@@ -65,7 +79,8 @@ public class MySqlPageHelper {
 
         /**
          * 添加排序条件
-         * @param property 排序子段
+         *
+         * @param property  排序子段
          * @param direction 排序方向
          */
         public PageBoundsMap addSort(String property, Order.Direction direction) {
