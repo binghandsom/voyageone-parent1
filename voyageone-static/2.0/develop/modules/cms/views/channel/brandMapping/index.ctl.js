@@ -29,7 +29,7 @@ define([
             },
             clear: function () {
                 var self = this;
-                self.searchInfo.selectedCart = null;
+                //self.searchInfo.selectedCart = null;
                 self.searchInfo.selectedStatus = '2';
                 self.searchInfo.selectedBrand = '';
             },
