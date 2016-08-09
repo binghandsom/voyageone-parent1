@@ -20,6 +20,9 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -172,10 +175,13 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                         successImageUrlList.add(imagesModel);
                         continue;
                     }
-
+                    InputStream stream;
+                    InputStreamCacher  cacher;
                     try {
                         $info("thread-" + threadNo + ":" + imageUrl + "流取得开始");
                         inputStream = HttpUtils.getInputStream(imageUrl);
+                        cacher = new InputStreamCacher(inputStream);
+                        stream = cacher.getInputStream();
                     } catch (Exception ex) {
                         // 图片url错误
                         $error(ex.getMessage(), ex);
@@ -190,15 +196,17 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
                     // 直接通过http的方式上传到s7 start
                     $info("thread-" + threadNo + ":" + imageUrl + "http上传开始");
+
                     try {
-                        HttpScene7.uploadImageFile(uploadPath, fileName, inputStream,false);
+                        HttpScene7.uploadImageFile(uploadPath, fileName, stream,false);
                     }catch (Exception e){
 
                     }
                     // 直接通过http的方式上传到s7 end
-
+                    //读取stream
+                    stream = cacher.getInputStream();
                     $info("thread-" + threadNo + ":" + imageUrl + "ftp上传开始");
-                    FtpFileBean ftpFileBean = new FtpFileBean(inputStream, uploadPath, fileName);
+                    FtpFileBean ftpFileBean = new FtpFileBean(stream, uploadPath, fileName);
                     ftpComponent.uploadFile(ftpFileBean);
                     $info("thread-" + threadNo + ":" + imageUrl + "ftp上传结束");
                     successImageUrlList.add(imagesModel);
@@ -216,6 +224,33 @@ public class CmsImagePostScene7Service extends BaseTaskService {
         }
 
         return isSuccess;
+    }
+
+    public class InputStreamCacher {
+        /**
+         * 将InputStream中的字节保存到ByteArrayOutputStream中。
+         */
+        private ByteArrayOutputStream byteArrayOutputStream = null;
+
+        public InputStreamCacher(InputStream inputStream) {
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int len;
+            try {
+                while ((len = inputStream.read(buffer)) > -1 ) {
+                    byteArrayOutputStream.write(buffer, 0, len);
+                }
+                byteArrayOutputStream.flush();
+                inputStream.close();
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+
+        public InputStream getInputStream() {
+
+            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        }
     }
 }
 
