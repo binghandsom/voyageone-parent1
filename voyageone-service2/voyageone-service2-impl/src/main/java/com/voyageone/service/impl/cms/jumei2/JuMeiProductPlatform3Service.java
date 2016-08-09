@@ -69,8 +69,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
                 LOG.info(promotionId + " code:" + model.getProductCode() + "上新begin");
-                UpdateJmParameter parameter = getUpdateJmParameter(modelCmsBtJmPromotion, model, shopBean);
-                updateJm(parameter);
+                updateJm(modelCmsBtJmPromotion, model, shopBean);
                 LOG.info(promotionId + " code:" + model.getProductCode() + "上新end");
             }
         } catch (Exception ex) {
@@ -85,13 +84,15 @@ public class JuMeiProductPlatform3Service extends BaseService {
        parameter.cmsBtJmPromotionModel = modelCmsBtJmPromotion;
        parameter.shopBean = shopBean;
        parameter.cmsBtProductModel = productService.getProductByCode(model.getChannelId(), model.getProductCode());//todo cmsBtProductModel null处理11
+       if(parameter.cmsBtProductModel==null){throw new  BusinessException("CmsBtProduct商品信息不存在.");}
        parameter.platform=parameter.cmsBtProductModel.getPlatform(CartEnums.Cart.JM);//todo  platform null处理11
+       if(parameter.platform==null){throw new  BusinessException("CmsBtProduct商品聚美信息不存在.");}
        return parameter;
    }
-
-    public void updateJm(UpdateJmParameter parameter) throws Exception {
+    public void updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean) throws Exception {
         try {
-             api_beforeCheck(parameter);//api调用前check
+            UpdateJmParameter parameter = getUpdateJmParameter(modelCmsBtJmPromotion, cmsBtJmPromotionProductModel, shopBean);
+            api_beforeCheck(parameter);//api调用前check
             if (parameter.cmsBtJmPromotionProductModel.getSynchStatus() != 2) {
                 // 再售
                 if (StringUtil.isEmpty(parameter.cmsBtJmPromotionProductModel.getJmHashId())) {
@@ -104,25 +105,33 @@ public class JuMeiProductPlatform3Service extends BaseService {
                     parameter.cmsBtJmPromotionProductModel.setStockStatus(1);//库存设置待更新
                     parameter.cmsBtJmPromotionProductModel.setSynchStatus(2);//有jmHashId 已上传
                 }
-                parameter.platform.setpNumIId(parameter.cmsBtJmPromotionProductModel.getJmHashId());  //todo  逻辑待定最新jmHashId(取该商品的最新jmHashId,这样最靠谱)
+                setOriginJmHashId(parameter);
                 parameter.cmsBtJmPromotionProductModel.setPriceStatus(1);
+                // 更新jm价格 限购limit 库存 延期
                 updateJMDeal(parameter);
             } else {
+                // 更新jm价格 限购limit 库存 延期
                 updateJMDeal(parameter);
             }
         } catch (Exception ex) {
-            parameter.cmsBtJmPromotionProductModel.setErrorMsg(ex.getMessage());
+            cmsBtJmPromotionProductModel.setErrorMsg(ex.getMessage());
             // model.setUpdateState(EnumJuMeiUpdateState.Error.getId());//同步更新失败
             LOG.error("JuMeiProductPlatform3Service.addProductAndDealByPromotionId", ex);
             try {
-                if (parameter.cmsBtJmPromotionProductModel.getErrorMsg().length() > 600) {
-                    parameter.cmsBtJmPromotionProductModel.setErrorMsg(parameter.cmsBtJmPromotionProductModel.getErrorMsg().substring(0, 600));
+                if (cmsBtJmPromotionProductModel.getErrorMsg().length() > 600) {
+                    cmsBtJmPromotionProductModel.setErrorMsg(cmsBtJmPromotionProductModel.getErrorMsg().substring(0, 600));
                 }
-                daoCmsBtJmPromotionProduct.update(parameter.cmsBtJmPromotionProductModel);
+                daoCmsBtJmPromotionProduct.update(cmsBtJmPromotionProductModel);
             } catch (Exception cex) {
                 LOG.error("JuMeiProductPlatform3Service.addProductAndDealByPromotionId", cex);
             }
         }
+    }
+    public  void  setOriginJmHashId( UpdateJmParameter parameter)
+    {
+        //todo  逻辑待定最新jmHashId(取该商品的最新jmHashId,这样最靠谱)
+        parameter.platform.setpNumIId(parameter.cmsBtJmPromotionProductModel.getJmHashId());
+        productService.updateProductPlatform(parameter.cmsBtProductModel.getChannelId(), parameter.cmsBtProductModel.getProdId(), parameter.platform, parameter.cmsBtJmPromotionProductModel.getModifier());
     }
     //所有api调用前check
     public void api_beforeCheck(UpdateJmParameter parameter) {
@@ -271,6 +280,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
             } else {
                 //再售后check
                 String errorMsg = copyDeal_afteErrorCheck(parameter, response);
+                if(!StringUtils.isEmpty(parameter.cmsBtJmPromotionProductModel.getJmHashId()))
+                {
+                    setOriginJmHashId(parameter);
+                }
                 throw new BusinessException(errorMsg + response.getBody());
             }
         } catch (Exception ex) {
