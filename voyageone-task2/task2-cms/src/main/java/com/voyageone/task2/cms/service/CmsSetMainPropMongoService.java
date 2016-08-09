@@ -1573,10 +1573,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             platforms.put("P0", platformP0);
             // add desmond 2016/07/04 end
 
-            // 获取当前channel, 有多少个platform
+            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许Approve的cartId
             List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
             if (typeChannelBeanListApprove == null) {
-                return null;
+                String errMsg = String.format("feed->master导入:新增:com_mt_value_channel表中没有当前Channel允许的Cart信息 [ChannelId=%s A en]", feed.getChannelId());
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+//                return null;
             }
             // delete desmond 2016/07/01 start
 //            List<Integer> skuCarts = new ArrayList<>();
@@ -2103,7 +2106,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
             // add desmond 2016/07/04 end
 
-            // 从synship.com_mt_value_channel获取当前channel, 有多少个允许Approve的cartId()
+            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许Approve的cartId
             List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
             if (typeChannelBeanListApprove == null) {
                 String errMsg = String.format("feed->master导入:更新:com_mt_value_channel表中没有当前Channel允许的Cart信息 [ChannelId=%s A en]", feed.getChannelId());
@@ -2385,7 +2388,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             boolean result = true;
 
-            // 获取当前channel, 有多少个platform
+            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个需要显示cart
             List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
             if (typeChannelBeanList == null) {
                 String errMsg = String.format("feed->master导入:生成productGroup信息失败:com_mt_value_channel表中没有当前Channel需要显示的Cart信息 [ChannelId=%s D en]", feed.getChannelId());
