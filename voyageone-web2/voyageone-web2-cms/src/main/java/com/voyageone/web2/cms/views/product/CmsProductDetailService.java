@@ -1320,7 +1320,6 @@ public class CmsProductDetailService extends BaseAppService {
     public Map<Integer, Map<String, List<Double>>> hsCodeChg(String channelId, Long prodId, String hsCode) {
 
         CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);
-        String oldHscode = cmsBtProductModel.getCommon().getFields().getHsCodePrivate();
         Map<Integer, Map<String, List<Double>>> prices = new HashMap<>();
         cmsBtProductModel.getPlatforms().forEach((s, platform) -> {
             if (platform.getCartId() != 0) {
@@ -1332,7 +1331,7 @@ public class CmsProductDetailService extends BaseAppService {
             }
         });
         cmsBtProductModel.getCommon().getFields().setHsCodePrivate(hsCode);
-//        priceService.setRetailPrice(cmsBtProductModel);
+        priceService.setRetailPrice(cmsBtProductModel);
         cmsBtProductModel.getPlatforms().forEach((s, platform) -> {
             if (platform.getCartId() != 0) {
                 prices.get(platform.getCartId()).get(platform.getSkus().get(0).getStringAttribute("skuCode")).add(platform.getSkus().get(0).getDoubleAttribute("priceRetail"));

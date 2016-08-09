@@ -64,12 +64,12 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
             return;
         }
 
-        Number voRate = (Number) messageMap.get("voRate");
+        String voRate = (String) messageMap.get("voRate");
         String msg = null;
         if (voRate == null) {
             msg = "高价检索 批量更新VO扣点 清空";
         } else {
-            msg = "高价检索 批量更新VO扣点 " + voRate.doubleValue();
+            msg = "高价检索 批量更新VO扣点 " + voRate;
         }
 
         JomgoQuery queryObj = new JomgoQuery();
@@ -94,7 +94,12 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
                 }
 
                 // 计算指导价
-                prodObj = priceService.setRetailPrice(prodObj, cartId);
+                try {
+                    prodObj = priceService.setRetailPrice(prodObj, cartId);
+                } catch (Exception exp) {
+                    $error(String.format("CmsProductVoRateUpdateService 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d", channelId, prodCode, cartId), exp);
+                    continue;
+                }
 
                 // 保存计算结果
                 updObj.setQuery("{'common.fields.code':#}");
