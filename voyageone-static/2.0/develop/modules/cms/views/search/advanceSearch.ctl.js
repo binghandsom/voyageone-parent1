@@ -615,9 +615,15 @@ define([
                 }
                 openFreeTag({'orgFlg':2,'tagTypeSel':'4','cartId':$scope.vm.searchInfo.cartId,'productIds':productIds,'selAllFlg':$scope.vm._selall ? 1 : 0}).then(function (res) {
                     // 设置自由标签
+                    var msg = '';
+                    if (res.selectdTagList && res.selectdTagList.length > 0) {
+                        var freeTagsTxt = _.chain(res.selectdTagList).map(function (key, value) { return key.tagPathName; }).value();
+                        msg = "将对选定的产品设置自由标签:<br>" + freeTagsTxt.join('; ');
+                    } else {
+                        msg = "将对选定的产品清空自由标签";
+                    }
                     var freeTags = _.chain(res.selectdTagList).map(function (key, value) { return key.tagPath; }).value();
-                    var freeTagsTxt = _.chain(res.selectdTagList).map(function (key, value) { return key.tagPathName; }).value();
-                    confirm("将对选定的产品设置自由标签:<br>" + freeTagsTxt.join('; '))
+                    confirm(msg)
                         .then(function () {
                             searchAdvanceService2.addFreeTag(freeTags, productIds, $scope.vm._selall ? 1 : 0).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));

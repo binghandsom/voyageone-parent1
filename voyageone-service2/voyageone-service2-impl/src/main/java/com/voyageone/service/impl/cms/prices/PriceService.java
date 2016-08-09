@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM.*;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -187,8 +188,6 @@ public class PriceService extends BaseService {
 
         Integer platformId = CartType.getPlatformIdById(cartId);
 
-        String code = product.getCommon().getFields().getCode();
-
         // 计算是否向上取整
 
         boolean isRoundUp = true;
@@ -249,6 +248,8 @@ public class PriceService extends BaseService {
         // 公式参数: 平台佣金比例
         Double platformCommission = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_PLATFORM);
 
+        // 计算税号
+
         String hsCodeType = Codes.getCodeName(HSCODE_TYPE, shippingType);
 
         if (StringUtils.isEmpty(hsCodeType))
@@ -265,11 +266,27 @@ public class PriceService extends BaseService {
                 break;
         }
 
-        if (StringUtils.isEmpty(hsCode))
-            throw new PriceCalculateException("税号为空: 税号类型: %s, 商品 Code: %s", hsCodeType, code);
+        if (!StringUtils.isEmpty(hsCode)) {
 
-        // 税号
-        hsCode = hsCode.split(",")[0];
+            String[] strings = hsCode.split(",");
+
+            hsCode = strings[0];
+        }
+
+        if (StringUtils.isEmpty(hsCode)) {
+
+            // 最终计算税号依然不能正确获取
+            // 就标记价格为异常价格
+
+            cart.getSkus().forEach(sku -> {
+                setProductPrice(sku, priceRetail, -1D);
+                setProductPrice(sku, originalPriceMsrp, 0D);
+                resetPriceIfInvalid(sku, priceMsrp, -1D);
+                resetPriceIfInvalid(sku, priceSale, 0D);
+            });
+
+            return product;
+        }
 
         // 公式参数: 税率
         Double taxRate = feeTaxService.getTaxRate(shippingType, hsCode);
@@ -310,6 +327,10 @@ public class PriceService extends BaseService {
 
             Double clientNetPrice = commonSku.getClientNetPrice();
             Double clientMsrp = commonSku.getClientMsrpPrice();
+
+            Assert.notNull(clientNetPrice).elseThrowDefaultWithTitle("clientNetPrice");
+            Assert.notNull(clientMsrp).elseThrowDefaultWithTitle("clientMsrp");
+
             Double weight = commonSku.getWeight();
 
             if (weight == null || weight < 1) {
@@ -338,20 +359,20 @@ public class PriceService extends BaseService {
             // 如果打开了同步开关, 则需要同步设置最终售价
 
             // 获取上一次指导价
-            Double lastRetailPrice = getProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail);
+            Double lastRetailPrice = getProductPrice(platformSku, priceRetail);
             // 获取价格波动字符串
             String priceFluctuation = getPriceFluctuation(retailPrice, lastRetailPrice);
             // 保存价格波动
             platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), priceFluctuation);
 
             if (isAutoApprovePrice)
-                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceSale, retailPrice);
+                setProductPrice(platformSku, priceSale, retailPrice);
 
             // 保存击穿标识
             String priceDiffFlg = productSkuService.getPriceDiffFlg(channelId, platformSku);
             platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceDiffFlg.name(), priceDiffFlg);
 
-            setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail, retailPrice);
+            setProductPrice(platformSku, priceRetail, retailPrice);
 
             // 计算指导价 End
 
@@ -363,9 +384,9 @@ public class PriceService extends BaseService {
                 throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的 MSRP 不合法: %s");
 
             if (isAutoSyncPriceMsrp)
-                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceMsrp, originPriceMsrp);
+                setProductPrice(platformSku, priceMsrp, originPriceMsrp);
 
-            setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.originalPriceMsrp, originPriceMsrp);
+            setProductPrice(platformSku, originalPriceMsrp, originPriceMsrp);
 
             // 计算 MSRP End
         }
@@ -420,6 +441,12 @@ public class PriceService extends BaseService {
         platformSku.put(commonField.name(), priceValue);
     }
 
+    private void resetPriceIfInvalid(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField, Double priceValue) {
+        Double _priceValue = getProductPrice(platformSku, commonField);
+        if (_priceValue == null || _priceValue < 1)
+            setProductPrice(platformSku, commonField, priceValue);
+    }
+
     /**
      * 价格计算器, 在同一款商品进行价格计算时, 可以用来保持部分参数. 同时包含对参数和价格、计算部分的校验
      * <p>
@@ -451,7 +478,7 @@ public class PriceService extends BaseService {
 
         private void checkValid(Double inputFee, String title) {
 
-            if (inputFee != null && inputFee > 0)
+            if (inputFee != null)
                 return;
 
             // 如果是已经存在的错误信息, 就不需要再加了
@@ -463,44 +490,37 @@ public class PriceService extends BaseService {
         }
 
         private PriceCalculator setShippingFee(Double shippingFee) {
-            checkValid(shippingFee, "运费");
-            this.shippingFee = shippingFee;
+            checkValid(this.shippingFee = shippingFee, "运费");
             return this;
         }
 
         private PriceCalculator setExchangeRate(Double exchangeRate) {
-            checkValid(shippingFee, "汇率");
-            this.exchangeRate = exchangeRate;
+            checkValid(this.exchangeRate = exchangeRate, "汇率");
             return this;
         }
 
         private PriceCalculator setVoCommission(Double voCommission) {
-            checkValid(shippingFee, "公司佣金比例");
-            this.voCommission = voCommission;
+            checkValid(this.voCommission = voCommission, "公司佣金比例");
             return this;
         }
 
         private PriceCalculator setPfCommission(Double pfCommission) {
-            checkValid(shippingFee, "平台佣金比例");
-            this.pfCommission = pfCommission;
+            checkValid(this.pfCommission = pfCommission, "平台佣金比例");
             return this;
         }
 
         private PriceCalculator setReturnRate(Double returnRate) {
-            checkValid(shippingFee, "退货率");
-            this.returnRate = returnRate;
+            checkValid(this.returnRate = returnRate, "退货率");
             return this;
         }
 
         private PriceCalculator setTaxRate(Double taxRate) {
-            checkValid(shippingFee, "运费");
-            this.taxRate = taxRate;
+            checkValid(this.taxRate = taxRate, "运费");
             return this;
         }
 
         private PriceCalculator setOtherFee(Double otherFee) {
-            checkValid(shippingFee, "其他费用");
-            this.otherFee = otherFee;
+            checkValid(this.otherFee = otherFee, "其他费用");
             return this;
         }
 
