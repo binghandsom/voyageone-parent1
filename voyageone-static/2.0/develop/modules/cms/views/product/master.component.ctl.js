@@ -6,7 +6,7 @@ define([
     'cms',
     'modules/cms/directives/platFormStatus.directive'
 ],function(cms) {
-    cms.directive("masterSchema", function (productDetailService,notify,$rootScope,alert,systemCategoryService) {
+    cms.directive("masterSchema", function (productDetailService,$rootScope,systemCategoryService,alert,notify,confirm) {
         return {
             restrict: "E",
             templateUrl : "views/product/master.component.tpl.html",
@@ -29,6 +29,7 @@ define([
                 scope.openProImageSetting = openProImageSetting;
                 scope.saveProduct = saveProduct;
                 scope.pageAnchor = pageAnchor;
+                scope.copyCommonProperty = copyCommonProperty;
 
                 /**
                  * 获取京东页面初始化数据
@@ -133,6 +134,18 @@ define([
                 }
 
                 /**
+                 * 复制主数据filed
+                 * */
+                function copyCommonProperty(){
+
+                    confirm("您确定要复制主商品数据吗？").then(function(){
+                        productDetailService.copyCommonProperty({prodId:scope.productInfo.productId}).then(function(res){
+                            scope.vm.productComm = res.data.platform;
+                        });
+                    });
+                }
+
+                /**
                  * 更新操作    prodId:'5924',hsCode:'08010000,吊坠,个'
                  */
                 function saveProduct(openHsCodeChange){
@@ -195,7 +208,6 @@ define([
                     });
 
                 }
-
 
                 function validSchema(){
                     return scope.vm.productComm == null || scope.vm.productComm.schemaFields == null ? false : scope.schemaForm.$valid;

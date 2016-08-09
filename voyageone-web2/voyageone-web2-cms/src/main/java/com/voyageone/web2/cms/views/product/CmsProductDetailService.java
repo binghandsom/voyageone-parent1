@@ -1367,7 +1367,7 @@ public class CmsProductDetailService extends BaseAppService {
         }
 
         mainCommon.getFields().forEach((s, o) -> {
-            if (!common.getFields().containsKey(s)) {
+            if (common.getFields().containsKey(s)) {
                 if (!StringUtils.isEmpty(common.getFields().get(s).toString())) {
                     // 天猫的场合 属性ID是 sku darwin_sku不复制
                     common.getFields().put(s, o);

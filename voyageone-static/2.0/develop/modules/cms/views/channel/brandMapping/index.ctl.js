@@ -29,7 +29,7 @@ define([
             },
             clear: function () {
                 var self = this;
-                self.searchInfo.selectedCart = null;
+                //self.searchInfo.selectedCart = null;
                 self.searchInfo.selectedStatus = '2';
                 self.searchInfo.selectedBrand = '';
             },
@@ -72,8 +72,9 @@ define([
                             'cmsBrand': self.mappingDetail.masterName,
                             'cartId': self.searchInfo.selectedCart,
                             'brandId': res.brandId
+                        }).then(function () {
+                            self.searchBrands();
                         });
-                        self.searchBrands();
                     };
                 })
             }

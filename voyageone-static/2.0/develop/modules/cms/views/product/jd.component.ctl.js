@@ -213,7 +213,7 @@ define([
                 }
 
                 /**
-                 * 复制主数据filed到平台编辑页    copyProperty
+                 * 复制主数据filed到平台编辑页
                  * */
                 function copyMainProduct(){
                     var template = _.template("您确定要复制Master数据到<%=cartName%>吗？");
