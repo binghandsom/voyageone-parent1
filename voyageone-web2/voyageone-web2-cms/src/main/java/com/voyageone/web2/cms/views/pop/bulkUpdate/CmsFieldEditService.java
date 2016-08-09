@@ -213,11 +213,18 @@ public class CmsFieldEditService extends BaseAppService {
             JomgoUpdate updObj = new JomgoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
             updObj.setQueryParameters(productCodes);
+            String voRateVal = null;
             if (voRate == null) {
                 updObj.setUpdate("{$set:{'common.fields.commissionRate':null}}");
             } else {
                 updObj.setUpdate("{$set:{'common.fields.commissionRate':#}}");
-                updObj.setUpdateParameters(voRate.doubleValue());
+                if (voRate instanceof Integer) {
+                    voRateVal = ((Integer) voRate).toString();
+                    updObj.setUpdateParameters(voRate.doubleValue());
+                } else {
+                    voRateVal = new java.text.DecimalFormat("#.00").format(voRate.doubleValue());
+                    updObj.setUpdateParameters(Double.parseDouble(voRateVal));
+                }
             }
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
             $debug("VO扣点值批量更新结果 " + rs.toString());
@@ -227,7 +234,7 @@ public class CmsFieldEditService extends BaseAppService {
             logParams.put("channelId", userInfo.getSelChannelId());
             logParams.put("creater", userInfo.getUserName());
             logParams.put("codeList", productCodes);
-            logParams.put("voRate", voRate);
+            logParams.put("voRate", voRateVal);
             sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
 
         } else {
