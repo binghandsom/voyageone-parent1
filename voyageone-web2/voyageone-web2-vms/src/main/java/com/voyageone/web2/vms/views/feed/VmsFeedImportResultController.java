@@ -7,7 +7,6 @@ import com.voyageone.web2.vms.VmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,7 +28,6 @@ public class VmsFeedImportResultController extends BaseController {
 
     @Autowired
     private VmsFeedImportResultService vmsFeedImportResultService;
-
 
     /**
      * 初始化

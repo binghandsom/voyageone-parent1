@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.voyageone.web2.vms.VmsConstants.TYPE_ID.IMPORT_FEED_FILE_STATUS;
+
 
 /**
  * VmsFeedImportResultService
@@ -38,7 +40,7 @@ public class VmsFeedImportResultService extends BaseAppService {
        Map<String, Object> result = new HashMap<>();
 
         // 状态
-        result.put("statusList", Types.getTypeList(83, (String)param.get("lang")));
+        result.put("statusList", Types.getTypeList(IMPORT_FEED_FILE_STATUS, (String)param.get("lang")));
 
         return result;
     }
@@ -65,7 +67,11 @@ public class VmsFeedImportResultService extends BaseAppService {
             param.put("uploadDateEnd", new Date(Long.parseLong(uploadDateEnd)));
         }
 
-       Map<String, Object> newMap = MySqlPageHelper.build(param).page(curr).limit(size).addSort("created", Order.Direction.DESC).toMap();
+        Map<String, Object> newMap = MySqlPageHelper.build(param)
+                .page(curr)
+                .limit(size)
+                .addSort("created", Order.Direction.DESC)
+                .toMap();
 
         // 根据条件取得检索结果
         List<Map<String, Object>> feedImportResultList = feedFileService.getFeedFileList(newMap);
@@ -89,7 +95,7 @@ public class VmsFeedImportResultService extends BaseAppService {
 
         for (Map<String, Object> feedImportResult : feedImportResultList) {
             // Status
-            feedImportResult.put("statusName", Types.getTypeName(83, lang,  (String)feedImportResult.get("status")));
+            feedImportResult.put("statusName", Types.getTypeName(IMPORT_FEED_FILE_STATUS, lang, (String)feedImportResult.get("status")));
         }
     }
 }

@@ -51,8 +51,8 @@ public class VmsFeedFileUploadService extends BaseAppService {
             feedFileService.saveOnlineFile(channelId, newFileName, inputStream);
 
             // 往vms_bt_feed_file表插入数据
-            feedFileService.insertFeedFileInfo(channelId, file.getOriginalFilename(), newFileName, VmsConstants.FeedFileUploadType.ONLINE,
-                    VmsConstants.FeedFileStatus.WAITING_IMPORT, userName);
+            feedFileService.insertFeedFileInfo(channelId, file.getOriginalFilename(), newFileName,
+                    VmsConstants.FeedFileUploadType.ONLINE, VmsConstants.FeedFileStatus.WAITING_IMPORT, userName);
 
         } catch (BusinessException ex) {
             throw ex;
@@ -79,7 +79,7 @@ public class VmsFeedFileUploadService extends BaseAppService {
             throw new BusinessException("8000013", new Object[]{"feed"});
         }
 
-        // 取得ftp测 Feed文件上传路径
+        // 取得ftp侧 Feed文件上传路径
         String feedFileFtpPath = com.voyageone.common.configs.Properties.readValue("vms.feed.ftp.upload");
         feedFileFtpPath +=  "/" + channelId + "/feed/";
 

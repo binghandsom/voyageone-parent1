@@ -259,6 +259,13 @@ public class VmsShipmentService {
         }
     }
 
+    /**
+     * 判断shipment是否为空
+     *
+     * @param user         当前用户
+     * @param shipmentBean 当前shipment
+     * @return 当前shipment是否为空
+     */
     private boolean shipmentIsEmpty(UserSessionBean user, ShipmentBean shipmentBean) {
 
         // 获取当前shipment中的订单号
@@ -275,6 +282,11 @@ public class VmsShipmentService {
         return packagedSKUNum == 0;
     }
 
+    /**
+     * 防止特殊字符对DB操作的影响
+     * @param param 待修改内容
+     * @return 修改好的内容=。=
+     */
     private String modifyLikeStringForSQL(String param) {
         if (null == param) return null;
         else return param

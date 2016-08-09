@@ -15,28 +15,28 @@ define([
 
         FeedFileUploadController.prototype = {
             upload: function () {
-                var main = this;
-                var uploadQueue = this.uploader.queue;
+                var self = this;
+                var uploadQueue = self.uploader.queue;
                 var uploadItem = uploadQueue[uploadQueue.length - 1];
                 if (!uploadItem || document.all.file.value == '') {
                     return this.alert('TXT_MSG_NO_UPLOAD');
                 }
                 var uploadIt = function () {
                         uploadItem.onSuccess = function (res) {
-                        main.blockUI.stop();
+                        self.blockUI.stop();
                         if (res.message) {
-                            main.alert(res.message);
+                            self.alert(res.message);
                             return;
                         }
-                        main.notify.success('TXT_UPLOAD_FEED_FILE_SUCCESS');
+                        self.notify.success('TXT_UPLOAD_FEED_FILE_SUCCESS');
                     };
                     uploadItem.onError = function (res) {
-                        main.blockUI.stop();
-                        main.alert('TXT_FAIL_TO_UPLOAD_FILE');
+                        self.blockUI.stop();
+                        self.alert('TXT_FAIL_TO_UPLOAD_FILE');
                     };
                     uploadItem.formData = [];
                     uploadItem.upload();
-                    main.blockUI.start();
+                    self.blockUI.start();
                 };
                 uploadIt();
             },

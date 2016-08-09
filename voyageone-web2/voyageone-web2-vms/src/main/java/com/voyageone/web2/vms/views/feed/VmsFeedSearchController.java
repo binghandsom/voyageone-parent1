@@ -37,7 +37,7 @@ public class VmsFeedSearchController extends BaseController {
      */
     @RequestMapping(VmsUrlConstants.FEED.FEED_SEARCH.SEARCH)
     public AjaxResponse search(@RequestBody Map params) {
-        Map<String, Object> resultBean = new HashMap<String, Object>();
+        Map<String, Object> resultBean = new HashMap<>();
         UserSessionBean userInfo = getUser();
 
         // 获取feed列表
