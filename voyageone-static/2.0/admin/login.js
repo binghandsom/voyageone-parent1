@@ -30,23 +30,24 @@ require([
         $scope.username = '';
         $scope.password = '';
 
+
         $scope.login = function () {
             $scope.dirty = true;
-
-            if ($scope.loginForm.$invalid)
-                return;
-
-        $ajax.post('/core/access/user/vendorLogin', {
-            username: $scope.username,
-            password: $scope.password,
-            timezone: -(new Date().getTimezoneOffset() / 60)
-        }).then(function(){
             location.href = '/app/app.html';
-        }, function(res) {
-            $scope.message = res.message || ('Login Fail(' + (res.code || '?') + ')');
-        });
-    };
-});
+
+            // if ($scope.loginForm.$invalid)
+            //     return;
+            // $ajax.post('/core/access/user/vendorLogin', {
+            //     username: $scope.username,
+            //     password: $scope.password,
+            //     timezone: -(new Date().getTimezoneOffset() / 60)
+            // }).then(function () {
+            //     location.href = '/app/app.html';
+            // }, function (res) {
+            //     $scope.message = res.message || ('Login Fail(' + (res.code || '?') + ')');
+            // });
+        };
+    });
 
     angular.bootstrap(document, ['vo.cms.login']);
 });
