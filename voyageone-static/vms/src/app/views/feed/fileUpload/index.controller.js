@@ -11,6 +11,7 @@ define([
             this.uploader = new FileUploader({
                 url: "/vms/feed/file_upload/uploadFeedFile"
             });
+            this.uploader.removeAfterUpload = true;
         }
 
         FeedFileUploadController.prototype = {
