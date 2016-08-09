@@ -2,9 +2,6 @@ package com.voyageone.base.exception;
 
 import com.voyageone.common.util.StringUtils;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
-
 /**
  * 业务逻辑异常
  * <p>
@@ -84,8 +81,13 @@ public class BusinessException extends RuntimeException {
 
         String code = getCode();
 
-        if (!StringUtils.isEmpty(code))
-            message += "(" + code + ")";
+        if (!StringUtils.isEmpty(code)) {
+
+            if (StringUtils.isEmpty(message))
+                message = code;
+            else if (!code.equals(message))
+                message += "(" + code + ")";
+        }
 
         Throwable cause = getCause();
 

@@ -92,13 +92,13 @@ define([
 
                     /**当是高级检索，设置自由标签时，有初始勾选值*/
                     if (self.orgFlg == 2) {
-
+                        // 返回值：orgChkStsMap和orgDispMap是互斥的,即一个tag不可能在两个Map中同时出现
                         /**checkbox勾选状态*/
                         self.orgChkStsMap = res.data.orgChkStsMap;
+                        self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
                         /**checkbox半选状态*/
                         self.orgDispMap = res.data.orgDispMap;
-                        self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
-
+                        self._orgDispMap = angular.copy(res.data.orgDispMap);
                     }
                     self.search(0);
                 });
@@ -151,7 +151,7 @@ define([
             },
 
             /**
-             * 点击保存(TODO--需要判断是否有改动,没有则不保存)
+             * 点击保存(需要判断是否有改动,没有则不保存)
              */
             save: function () {
                 var self = this;
@@ -214,14 +214,16 @@ define([
                 self.$uibModalInstance.close(self.context);
             },
 
+            // 点击tag的checkbox时的操作
             selOrgDisp:function(id,path,event){
                 var self = this;
 
-                /**设置checkbox选中*/
+                /**设置checkbox的选择状态*/
                 self.orgChkStsMap[path] = self.taglist.selFlag[id];
 
-                /**记录点击的半角*/
+                /**记录checkbox的半选状态*/
                 if(self.orgDispMap[path]){
+                    // 如果初始是半选状态
                     if(self.selOrgDispList.indexOf(path) < 0){
                         self.selOrgDispList.push(path);
                     }
