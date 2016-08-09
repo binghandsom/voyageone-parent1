@@ -2106,7 +2106,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 从synship.com_mt_value_channel获取当前channel, 有多少个允许Approve的cartId()
             List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
             if (typeChannelBeanListApprove == null) {
-                String errMsg = String.format("feed->master导入:更新:从com_mt_value_channel没有渠道当前Channel允许的Cart信息 [ChannelId=%s A en]", feed.getChannelId());
+                String errMsg = String.format("feed->master导入:更新:com_mt_value_channel表中没有当前Channel允许的Cart信息 [ChannelId=%s A en]", feed.getChannelId());
                 $error(errMsg);
                 throw new BusinessException(errMsg);
 //                return null;
@@ -2388,7 +2388,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 获取当前channel, 有多少个platform
             List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
             if (typeChannelBeanList == null) {
-                String errMsg = String.format("feed->master导入:生成productGroup信息失败:从com_mt_value_channel没有渠道当前Channel允许的Cart信息 [ChannelId=%s A en]", feed.getChannelId());
+                String errMsg = String.format("feed->master导入:生成productGroup信息失败:com_mt_value_channel表中没有当前Channel需要显示的Cart信息 [ChannelId=%s D en]", feed.getChannelId());
                 $error(errMsg);
                 throw new BusinessException(errMsg);
 //                return result;
