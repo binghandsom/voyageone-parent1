@@ -1368,13 +1368,21 @@ public class CmsProductDetailService extends BaseAppService {
 
         mainCommon.getFields().forEach((s, o) -> {
             if (!common.getFields().containsKey(s)) {
-                if (!StringUtils.isEmpty(common.get(s).toString())) {
+                if (!StringUtils.isEmpty(common.getFields().get(s).toString())) {
                     // 天猫的场合 属性ID是 sku darwin_sku不复制
                     common.getFields().put(s, o);
                 }
             }
         });
-
+        if("1".equalsIgnoreCase(mainCommon.getFields().getHsCodeStatus())){
+            common.getFields().setHsCodeStatus("1");
+        }
+        if("1".equalsIgnoreCase(mainCommon.getFields().getTranslateStatus())){
+            common.getFields().setTranslateStatus("1");
+        }
+        if("1".equalsIgnoreCase(mainCommon.getFields().getCategoryStatus())){
+            common.getFields().setCategoryStatus("1");
+        }
         List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
         FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, common);
         common.put("schemaFields", cmsMtCommonFields);
