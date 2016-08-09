@@ -32,6 +32,7 @@ define([
                 //self.searchInfo.selectedCart = null;
                 self.searchInfo.selectedStatus = '2';
                 self.searchInfo.selectedBrand = '';
+                self.searchBrands();
             },
             selectCart: function () {
                 var self = this;
