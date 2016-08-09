@@ -1349,4 +1349,36 @@ public class CmsProductDetailService extends BaseAppService {
         });
         return prices;
     }
+
+    public Map<String, Object> copyPropertyFromMainProduct(String channelId, Long prodId) {
+        CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);
+        CmsBtProductModel_Common common = cmsBtProductModel.getCommon();
+
+        CmsBtProductModel mainProduct = productService.getProductByCode(channelId, cmsBtProductModel.getPlatform(0).getMainProductCode());
+        CmsBtProductModel_Common mainCommon = mainProduct.getCommon();
+
+
+        if(StringUtil.isEmpty(common.getCatId())){
+            common.setCatId(mainCommon.getCatId());
+        }
+
+        if(StringUtil.isEmpty(common.getCatPath())) {
+            common.setCatPath(mainCommon.getCatPath());
+        }
+
+        mainCommon.getFields().forEach((s, o) -> {
+            if (!common.getFields().containsKey(s)) {
+                if (!StringUtils.isEmpty(common.get(s).toString())) {
+                    // 天猫的场合 属性ID是 sku darwin_sku不复制
+                    common.getFields().put(s, o);
+                }
+            }
+        });
+
+        List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
+        FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, common);
+        common.put("schemaFields", cmsMtCommonFields);
+
+        return common;
+    }
 }
