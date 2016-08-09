@@ -184,7 +184,7 @@ define([
                 /**判断是否改变*/
                 var dispFlg = false;
                 var isChgFlg = false;
-                // _orgDispMap和orgDispMap相同，而且_orgChkStsMap和orgChkStsMap相同(若orgChkStsMap中的项目比_orgChkStsMap的多，多出来的项目值都是false，则也认为相同)
+                // _orgDispMap和orgDispMap相同，而且_orgChkStsMap和orgChkStsMap相同(若orgChkStsMap中的项目比_orgChkStsMap的多，原先的项目值相同，多出来的项目值都是false，则也认为相同)
                 dispFlg = compareArr(self._orgDispMap, self.orgDispMap);
                 if (dispFlg) {
                     // 遍历所有checkbox，检查其状态是否已与原始值不同
