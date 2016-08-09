@@ -163,6 +163,8 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
             InputStream inputStream;
             String imageUrl = null;
+            InputStream stream;
+            InputStreamCacher  cacher = null;
             try {
                 //建立连接
                 ftpComponent.openConnect();
@@ -175,8 +177,6 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                         successImageUrlList.add(imagesModel);
                         continue;
                     }
-                    InputStream stream;
-                    InputStreamCacher  cacher;
                     try {
                         $info("thread-" + threadNo + ":" + imageUrl + "流取得开始");
                         inputStream = HttpUtils.getInputStream(imageUrl);
@@ -220,6 +220,9 @@ public class CmsImagePostScene7Service extends BaseTaskService {
             } finally {
                 //断开连接
                 ftpComponent.closeConnect();
+                if(cacher != null){
+                    cacher.close();
+                }
             }
         }
 
@@ -250,6 +253,13 @@ public class CmsImagePostScene7Service extends BaseTaskService {
         public InputStream getInputStream() {
 
             return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        }
+        public void close(){
+            try {
+                byteArrayOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
