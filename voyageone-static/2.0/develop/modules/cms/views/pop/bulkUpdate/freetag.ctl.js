@@ -181,14 +181,13 @@ define([
                     }
                 });
 
-
                 /**判断是否改变*/
                 if(canSave(self._orgChkStsMap,selFlagArr) && self.selOrgDispList.length == 0){
                     self.alert("未改变任何标签！");
                     return;
                 }
 
-                if(selFlagArr.length == 0){
+                if(selFlagArr.length == 0 || orgDispArr.length > 0){
                     self.alert("存在冲突标签请确认！");
                     return;
                 }
