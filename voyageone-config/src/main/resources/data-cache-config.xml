@@ -54,27 +54,27 @@
     <!--</aop:config>-->
 
 
-    <bean id="categoryTreeAllServiceKeyGenerator" class="com.voyageone.service.impl.cms.CategoryTreeAllServiceKeyGenerator"/>
+    <!--<bean id="categoryTreeAllServiceKeyGenerator" class="com.voyageone.service.impl.cms.CategoryTreeAllServiceKeyGenerator"/>-->
 
-    <cache:advice id="cachingCategoryTreeAllService" cache-manager="cacheManager" key-generator="categoryTreeAllServiceKeyGenerator">
-        <cache:caching cache="DATA_KEY_cachingCategoryTreeAllService">
-            <cache:cacheable method="getCategoriesByChannelId"/>
-            <!--<cache:cache-evict method="update"/>-->
-        </cache:caching>
-    </cache:advice>
+    <!--<cache:advice id="cachingCategoryTreeAllService" cache-manager="cacheManager" key-generator="categoryTreeAllServiceKeyGenerator">-->
+        <!--<cache:caching cache="DATA_KEY_cachingCategoryTreeAllService">-->
+            <!--<cache:cacheable method="getCategoriesByChannelId"/>-->
+            <!--&lt;!&ndash;<cache:cache-evict method="update"/>&ndash;&gt;-->
+        <!--</cache:caching>-->
+    <!--</cache:advice>-->
 
-    <cache:advice id="cachingRetailPriceConfig" cache-manager="cacheManager" key-generator="voDaoCacheKeyGenerator">
-        <cache:caching cache="DATA_KEY_cachingRetailPriceConfig">
-            <cache:cacheable method="selectOne"/>
-        </cache:caching>
-    </cache:advice>
+    <!--<cache:advice id="cachingRetailPriceConfig" cache-manager="cacheManager" key-generator="voDaoCacheKeyGenerator">-->
+        <!--<cache:caching cache="DATA_KEY_cachingRetailPriceConfig">-->
+            <!--<cache:cacheable method="selectOne"/>-->
+        <!--</cache:caching>-->
+    <!--</cache:advice>-->
 
-    <aop:config>
-        <aop:advisor advice-ref="cachingCategoryTreeAllService" pointcut="execution(* com.voyageone.service.impl.cms.CategoryTreeAllService.*(..))"/>
-        <aop:advisor advice-ref="cachingRetailPriceConfig" pointcut="execution(* com.voyageone.service.dao.cms.CmsMtFeeCommissionDao.*(..))"/>
-        <aop:advisor advice-ref="cachingRetailPriceConfig" pointcut="execution(* com.voyageone.service.dao.cms.CmsMtFeeExchangeDao.*(..))"/>
-        <aop:advisor advice-ref="cachingRetailPriceConfig" pointcut="execution(* com.voyageone.service.dao.cms.CmsMtFeeShippingDao.*(..))"/>
-        <aop:advisor advice-ref="cachingRetailPriceConfig" pointcut="execution(* com.voyageone.service.dao.cms.CmsMtFeeTaxDao.*(..))"/>
-    </aop:config>
+    <!--<aop:config>-->
+        <!--<aop:advisor advice-ref="cachingCategoryTreeAllService" pointcut="execution(* com.voyageone.service.impl.cms.CategoryTreeAllService.*(..))"/>-->
+        <!--<aop:advisor advice-ref="cachingRetailPriceConfig" pointcut="execution(* com.voyageone.service.dao.cms.CmsMtFeeCommissionDao.*(..))"/>-->
+        <!--<aop:advisor advice-ref="cachingRetailPriceConfig" pointcut="execution(* com.voyageone.service.dao.cms.CmsMtFeeExchangeDao.*(..))"/>-->
+        <!--<aop:advisor advice-ref="cachingRetailPriceConfig" pointcut="execution(* com.voyageone.service.dao.cms.CmsMtFeeShippingDao.*(..))"/>-->
+        <!--<aop:advisor advice-ref="cachingRetailPriceConfig" pointcut="execution(* com.voyageone.service.dao.cms.CmsMtFeeTaxDao.*(..))"/>-->
+    <!--</aop:config>-->
 
 </beans>

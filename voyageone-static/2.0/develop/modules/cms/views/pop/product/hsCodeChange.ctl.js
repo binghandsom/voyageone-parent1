@@ -32,6 +32,9 @@ define([
                         self.vm.result.push(_hsObject);
                     });
 
+                },function(){
+                    /**错误处理*/
+                    self.uibModalInstance.close("error");
                 });
             },
             update:function(mark){

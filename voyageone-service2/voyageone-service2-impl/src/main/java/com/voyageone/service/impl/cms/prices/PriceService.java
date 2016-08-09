@@ -187,8 +187,6 @@ public class PriceService extends BaseService {
 
         Integer platformId = CartType.getPlatformIdById(cartId);
 
-        String code = product.getCommon().getFields().getCode();
-
         // 计算是否向上取整
 
         boolean isRoundUp = true;
@@ -249,6 +247,8 @@ public class PriceService extends BaseService {
         // 公式参数: 平台佣金比例
         Double platformCommission = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_PLATFORM);
 
+        // 计算税号
+
         String hsCodeType = Codes.getCodeName(HSCODE_TYPE, shippingType);
 
         if (StringUtils.isEmpty(hsCodeType))
@@ -265,11 +265,25 @@ public class PriceService extends BaseService {
                 break;
         }
 
-        if (StringUtils.isEmpty(hsCode))
-            throw new PriceCalculateException("税号为空: 税号类型: %s, 商品 Code: %s", hsCodeType, code);
+        if (!StringUtils.isEmpty(hsCode)) {
 
-        // 税号
-        hsCode = hsCode.split(",")[0];
+            String[] strings = hsCode.split(",");
+
+            hsCode = strings[0];
+        }
+
+        if (StringUtils.isEmpty(hsCode)) {
+
+            // 最终计算税号依然不能正确获取
+            // 就标记价格为异常价格
+
+            cart.getSkus().forEach(sku -> {
+                setProductPrice(sku, CmsBtProductConstants.Platform_SKU_COM.priceRetail, -1D);
+                setProductPrice(sku, CmsBtProductConstants.Platform_SKU_COM.originalPriceMsrp, 0D);
+            });
+
+            return product;
+        }
 
         // 公式参数: 税率
         Double taxRate = feeTaxService.getTaxRate(shippingType, hsCode);
@@ -451,7 +465,7 @@ public class PriceService extends BaseService {
 
         private void checkValid(Double inputFee, String title) {
 
-            if (inputFee != null && inputFee > 0)
+            if (inputFee != null)
                 return;
 
             // 如果是已经存在的错误信息, 就不需要再加了
@@ -463,44 +477,37 @@ public class PriceService extends BaseService {
         }
 
         private PriceCalculator setShippingFee(Double shippingFee) {
-            checkValid(shippingFee, "运费");
-            this.shippingFee = shippingFee;
+            checkValid(this.shippingFee = shippingFee, "运费");
             return this;
         }
 
         private PriceCalculator setExchangeRate(Double exchangeRate) {
-            checkValid(shippingFee, "汇率");
-            this.exchangeRate = exchangeRate;
+            checkValid(this.exchangeRate = exchangeRate, "汇率");
             return this;
         }
 
         private PriceCalculator setVoCommission(Double voCommission) {
-            checkValid(shippingFee, "公司佣金比例");
-            this.voCommission = voCommission;
+            checkValid(this.voCommission = voCommission, "公司佣金比例");
             return this;
         }
 
         private PriceCalculator setPfCommission(Double pfCommission) {
-            checkValid(shippingFee, "平台佣金比例");
-            this.pfCommission = pfCommission;
+            checkValid(this.pfCommission = pfCommission, "平台佣金比例");
             return this;
         }
 
         private PriceCalculator setReturnRate(Double returnRate) {
-            checkValid(shippingFee, "退货率");
-            this.returnRate = returnRate;
+            checkValid(this.returnRate = returnRate, "退货率");
             return this;
         }
 
         private PriceCalculator setTaxRate(Double taxRate) {
-            checkValid(shippingFee, "运费");
-            this.taxRate = taxRate;
+            checkValid(this.taxRate = taxRate, "运费");
             return this;
         }
 
         private PriceCalculator setOtherFee(Double otherFee) {
-            checkValid(shippingFee, "其他费用");
-            this.otherFee = otherFee;
+            checkValid(this.otherFee = otherFee, "其他费用");
             return this;
         }
 
