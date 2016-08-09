@@ -1,5 +1,9 @@
 /**
  * Created by sofia on 6/7/2016.
+ *
+ * updated by piao wenjie
+ * @description 添加了自由标签的默认选中和新增的逻辑判断
+ * @date 2016-8-5
  */
 
 define([
@@ -33,7 +37,16 @@ define([
             return item.selectedId;
         });
 
-        return angular.equals(orgArr,selectedArr);
+        return compareArr(orgArr,selectedArr);
+    }
+
+    /**比较字符串数组是否值相等*/
+    function compareArr(arr1,arr2){
+        return arr1.length === arr2.length && _.every(arr1,function(element1){
+            return _.some(arr2,function(element2){
+                return element2 == element1;
+            });
+        });
     }
 
     cms.controller('popFreeTagCtl', (function () {
@@ -53,10 +66,10 @@ define([
             this.key = [];
             this.selected = [];
             this.taglist = {selList: []};
+            this.selOrgDispList = [];
             this.orgChkStsMap = {};
             this.orgDispMap = {};
             this._orgChkStsMap = {};
-            this._orgDispMap = {};
         }
 
         popFreeTagCtl.prototype = {
@@ -77,12 +90,14 @@ define([
                 self.channelTagService.init(params).then(function (res) {
                     self.source = self.tagTree = res.data.tagTree;
 
+                    /**当是高级检索，设置自由标签时，有初始勾选值*/
                     if (self.orgFlg == 2) {
-                        // 当是高级检索，设置自由标签时，有初始勾选值
-                        self.orgChkStsMap = res.data.orgChkStsMap; // checkbox勾选状态
-                        self.orgDispMap = res.data.orgDispMap;     // checkbox半选状态
+
+                        /**checkbox勾选状态*/
+                        self.orgChkStsMap = res.data.orgChkStsMap;
+                        /**checkbox半选状态*/
+                        self.orgDispMap = res.data.orgDispMap;
                         self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
-                        self._orgDispMap = angular.copy(res.data.orgDispMap);
 
                     }
                     self.search(0);
@@ -133,8 +148,6 @@ define([
                     }
 
                 }
-
-
             },
 
             /**
@@ -149,7 +162,10 @@ define([
                 /**因为半角中的id为全路径，要分割到最后一个，也就是数字为最大的*/
                 var orgDispArr = _.map(self.orgDispMap,function(value,key){
                     return {id: _.max(key.split("-")), tagPath: value};
+                }).filter(function(item){
+                    return item.tagPath;
                 });
+
                 var selFlagArr = _.map(self.taglist.selFlag, function (value, key) {
                     return {selectedId: key, selected: value};
                 }).filter(function (item) {
@@ -165,9 +181,8 @@ define([
                     }
                 });
 
-
                 /**判断是否改变*/
-                if(canSave(self.orgChkStsMap,selFlagArr)){
+                if(canSave(self._orgChkStsMap,selFlagArr) && self.selOrgDispList.length == 0){
                     self.alert("未改变任何标签！");
                     return;
                 }
@@ -175,6 +190,13 @@ define([
                 if(selCounts != 0 && selCounts != orgDispArr.length){
                     self.alert("存在冲突标签请确认！");
                     return;
+                }
+
+                if(orgDispArr.length > 0){
+                    if(selFlagArr.length != 0){
+                        self.alert("存在冲突标签请确认！");
+                        return;
+                    }
                 }
 
                 selFlagArr.forEach(function (item) {
@@ -190,6 +212,24 @@ define([
 
                 self.context = {"selectdTagList": selectdTagList, 'orgFlg': self.orgFlg};
                 self.$uibModalInstance.close(self.context);
+            },
+
+            selOrgDisp:function(id,path,event){
+                var self = this;
+
+                /**设置checkbox选中*/
+                self.orgChkStsMap[path] = self.taglist.selFlag[id];
+
+                /**记录点击的半角*/
+                if(self.orgDispMap[path]){
+                    if(self.selOrgDispList.indexOf(path) < 0){
+                        self.selOrgDispList.push(path);
+                    }
+                    self.orgDispMap[path] = false;
+                }
+
+                /**防止事件冒泡*/
+                event.stopPropagation();
             }
         };
 

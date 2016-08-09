@@ -49,6 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -213,11 +214,20 @@ public class CmsFieldEditService extends BaseAppService {
             JomgoUpdate updObj = new JomgoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
             updObj.setQueryParameters(productCodes);
+            String voRateVal = null;
             if (voRate == null) {
                 updObj.setUpdate("{$set:{'common.fields.commissionRate':null}}");
             } else {
                 updObj.setUpdate("{$set:{'common.fields.commissionRate':#}}");
-                updObj.setUpdateParameters(voRate.doubleValue());
+                if (voRate instanceof Integer) {
+                    voRateVal = ((Integer) voRate).toString();
+                    updObj.setUpdateParameters(voRate.doubleValue());
+                } else {
+                    BigDecimal val = new BigDecimal(voRate.toString());
+                    double f1 = val.setScale(2, RoundingMode.HALF_UP).doubleValue();
+                    voRateVal = Double.toString(f1);
+                    updObj.setUpdateParameters(f1);
+                }
             }
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
             $debug("VO扣点值批量更新结果 " + rs.toString());
@@ -227,7 +237,7 @@ public class CmsFieldEditService extends BaseAppService {
             logParams.put("channelId", userInfo.getSelChannelId());
             logParams.put("creater", userInfo.getUserName());
             logParams.put("codeList", productCodes);
-            logParams.put("voRate", voRate);
+            logParams.put("voRate", voRateVal);
             sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
 
         } else {
@@ -689,7 +699,6 @@ public class CmsFieldEditService extends BaseAppService {
         String skuCode = null;
         BulkJomgoUpdateList bulkList = new BulkJomgoUpdateList(1000, cmsBtProductDao, userInfo.getSelChannelId());
         boolean hasUpdFlg = false;
-        List<String> prodPriceEqList = new ArrayList<>();
         List<String> prodPriceUpList = new ArrayList<>();
         List<String> prodPriceDownList = new ArrayList<>();
 
@@ -753,7 +762,6 @@ public class CmsFieldEditService extends BaseAppService {
                     // 修改前后价格相同
                     $info(String.format("setProductSalePrice: 修改前后价格相同 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                     hasUpdFlg = false;
-                    prodPriceEqList.add(prodCode + ", " + skuCode + ", " + befPriceSale);
                     continue;
                 }
 
@@ -786,11 +794,11 @@ public class CmsFieldEditService extends BaseAppService {
                 String diffFlg = productSkuService.getPriceDiffFlg(breakThreshold, rs, result);
                 if ("2".equals(diffFlg) || "5".equals(diffFlg)) {
                     $info(String.format("setProductSalePrice: 输入的最终售价低于指导价，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    prodPriceDownList.add(prodCode + ", " + skuCode + ", " + befPriceSale + ", " + rs);
+                    prodPriceDownList.add(prodCode + ", " + skuCode + ", " + befPriceSale + ", " + result + ",, " + rs);
                     continue;
                 } else if ("4".equals(diffFlg)) {
                     $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    prodPriceUpList.add(prodCode + ", " + skuCode + ", " + befPriceSale + ", " + rs);
+                    prodPriceUpList.add(prodCode + ", " + skuCode + ", " + befPriceSale + ", " + result + ", " + (result * (breakThreshold + 1)) + ", " + rs);
                     continue;
                     // 超过阈值时不更新，(下面注释掉的代码暂时保留，将来可能会有用)
 //                    if (notChkPriceFlg == 1) {
@@ -868,16 +876,13 @@ public class CmsFieldEditService extends BaseAppService {
         $debug("批量修改商品价格 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
         // 如果有未处理的商品，则放入缓存
-        if (prodPriceEqList.size() > 0) {
-            commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "1", prodPriceEqList);
-        }
         if (prodPriceUpList.size() > 0) {
             commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2", prodPriceUpList);
         }
         if (prodPriceDownList.size() > 0) {
             commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "3", prodPriceDownList);
         }
-        rsMap.put("unProcList", prodPriceEqList.size() + prodPriceUpList.size() + prodPriceDownList.size());
+        rsMap.put("unProcList", prodPriceUpList.size() + prodPriceDownList.size());
         rsMap.put("ecd", 0);
         return rsMap;
     }
@@ -919,42 +924,25 @@ public class CmsFieldEditService extends BaseAppService {
      */
     public String getCodeFile(UserSessionBean userInfo) {
         // 取回缓存
-        List<String> prodPriceEqList = commCacheService.getCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "1");
         List<String> prodPriceUpList = commCacheService.getCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2");
         List<String> prodPriceDownList = commCacheService.getCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "3");
         // 删除缓存
-        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "1");
         commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2");
         commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "3");
 
         StringBuilder rs = new StringBuilder();
-        if (prodPriceEqList != null && prodPriceEqList.size() > 0) {
-            rs.append("=====以下是修改前后最终售价格相同的商品code/sku一览==========");
-            rs.append(System.lineSeparator());
-            rs.append("  商品code,  sku code, 修改前售价");
-            rs.append(System.lineSeparator());
-            prodPriceEqList.forEach(item -> { rs.append(item); rs.append(System.lineSeparator()); });
-            rs.append(System.lineSeparator());
-        }
         if (prodPriceUpList != null && prodPriceUpList.size() > 0) {
-            rs.append("=====以下是修改后最终售价低于指导价的商品code/sku一览==========");
-            rs.append(System.lineSeparator());
-            rs.append("  商品code,  sku code, 修改前售价, 修改后售价");
-            rs.append(System.lineSeparator());
-            prodPriceUpList.forEach(item -> { rs.append(item); rs.append(System.lineSeparator()); });
-            rs.append(System.lineSeparator());
+            prodPriceUpList.forEach(item -> { rs.append(item + ", 修改后最终售价大于阈值"); rs.append(System.lineSeparator()); });
         }
         if (prodPriceDownList != null && prodPriceDownList.size() > 0) {
-            rs.append("=====以下是修改后最终售价格大于阈值的商品code/sku一览==========");
-            rs.append(System.lineSeparator());
-            rs.append("  商品code,  sku code, 修改前售价, 修改后售价");
-            rs.append(System.lineSeparator());
-            prodPriceDownList.forEach(item -> { rs.append(item); rs.append(System.lineSeparator()); });
+            prodPriceDownList.forEach(item -> { rs.append(item + ", 修改后最终售价低于指导价"); rs.append(System.lineSeparator()); });
         }
 
         if (rs.length() == 0) {
             $warn("缓存中没有数据啊！");
             return null;
+        } else {
+            rs.insert(0, "  商品code,  sku code, 修改前售价, 指导价, 阈值, 修改后售价, 未处理原因" + System.lineSeparator());
         }
         return rs.toString();
     }

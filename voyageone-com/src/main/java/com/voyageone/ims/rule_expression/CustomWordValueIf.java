@@ -13,8 +13,8 @@ public class CustomWordValueIf extends CustomWordValue{
     public CustomWordValueIf() {
     }
 
-    public CustomWordValueIf(RuleExpression condition, RuleExpression propName) {
-        this.userParam = new CustomModuleUserParamIf(condition, propName);
+    public CustomWordValueIf(RuleExpression condition, RuleExpression propName, RuleExpression propName2, RuleExpression propName3, RuleExpression propName4) {
+        this.userParam = new CustomModuleUserParamIf(condition, propName, propName2, propName3, propName4);
     }
 
     public CustomModuleUserParamIf getUserParam() {

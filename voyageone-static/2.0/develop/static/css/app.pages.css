@@ -254,7 +254,9 @@ s-field textarea.s-html {
     color: #333;
 }
 
-.category_drag_list_dp li .indexSelected {
+.category_drag_list_dp li .indexSelected,
+.category_drag_list_dp .indexSelected
+{
     float: left;
     display: block;
     position: relative;
