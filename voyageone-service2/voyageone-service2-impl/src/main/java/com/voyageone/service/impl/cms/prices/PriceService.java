@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM.*;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -278,8 +279,10 @@ public class PriceService extends BaseService {
             // 就标记价格为异常价格
 
             cart.getSkus().forEach(sku -> {
-                setProductPrice(sku, CmsBtProductConstants.Platform_SKU_COM.priceRetail, -1D);
-                setProductPrice(sku, CmsBtProductConstants.Platform_SKU_COM.originalPriceMsrp, 0D);
+                setProductPrice(sku, priceRetail, -1D);
+                setProductPrice(sku, originalPriceMsrp, 0D);
+                resetPriceIfInvalid(sku, priceMsrp, -1D);
+                resetPriceIfInvalid(sku, priceSale, 0D);
             });
 
             return product;
@@ -324,6 +327,10 @@ public class PriceService extends BaseService {
 
             Double clientNetPrice = commonSku.getClientNetPrice();
             Double clientMsrp = commonSku.getClientMsrpPrice();
+
+            Assert.notNull(clientNetPrice).elseThrowDefaultWithTitle("clientNetPrice");
+            Assert.notNull(clientMsrp).elseThrowDefaultWithTitle("clientMsrp");
+
             Double weight = commonSku.getWeight();
 
             if (weight == null || weight < 1) {
@@ -352,20 +359,20 @@ public class PriceService extends BaseService {
             // 如果打开了同步开关, 则需要同步设置最终售价
 
             // 获取上一次指导价
-            Double lastRetailPrice = getProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail);
+            Double lastRetailPrice = getProductPrice(platformSku, priceRetail);
             // 获取价格波动字符串
             String priceFluctuation = getPriceFluctuation(retailPrice, lastRetailPrice);
             // 保存价格波动
             platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceChgFlg.name(), priceFluctuation);
 
             if (isAutoApprovePrice)
-                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceSale, retailPrice);
+                setProductPrice(platformSku, priceSale, retailPrice);
 
             // 保存击穿标识
             String priceDiffFlg = productSkuService.getPriceDiffFlg(channelId, platformSku);
             platformSku.put(CmsBtProductConstants.Platform_SKU_COM.priceDiffFlg.name(), priceDiffFlg);
 
-            setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceRetail, retailPrice);
+            setProductPrice(platformSku, priceRetail, retailPrice);
 
             // 计算指导价 End
 
@@ -377,9 +384,9 @@ public class PriceService extends BaseService {
                 throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的 MSRP 不合法: %s");
 
             if (isAutoSyncPriceMsrp)
-                setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.priceMsrp, originPriceMsrp);
+                setProductPrice(platformSku, priceMsrp, originPriceMsrp);
 
-            setProductPrice(platformSku, CmsBtProductConstants.Platform_SKU_COM.originalPriceMsrp, originPriceMsrp);
+            setProductPrice(platformSku, originalPriceMsrp, originPriceMsrp);
 
             // 计算 MSRP End
         }
@@ -432,6 +439,12 @@ public class PriceService extends BaseService {
 
     private void setProductPrice(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField, Double priceValue) {
         platformSku.put(commonField.name(), priceValue);
+    }
+
+    private void resetPriceIfInvalid(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField, Double priceValue) {
+        Double _priceValue = getProductPrice(platformSku, commonField);
+        if (_priceValue == null || _priceValue < 1)
+            setProductPrice(platformSku, commonField, priceValue);
     }
 
     /**

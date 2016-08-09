@@ -63,6 +63,11 @@
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;切换主商品
                                             </a>
                                         </li>
+                                        <li ng-if="vm.mastData.isMain != true">
+                                            <a href="javascript:void(0)" ng-click="copyMainProduct()">
+                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;复制主商品
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>

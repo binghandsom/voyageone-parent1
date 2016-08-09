@@ -43,6 +43,7 @@ define([
                 scope.allSkuSale = allSkuSale;
                 scope.focusError = focusError;
                 scope.choseBrand = choseBrand;
+                scope.copyMainProduct = copyMainProduct;
 
                 /**
                  * 获取京东页面初始化数据
@@ -209,6 +210,21 @@ define([
                         scope.vm.platform.pBrandName = context.selectedPlatform;
                     });
 
+                }
+
+                /**
+                 * 复制主数据filed到平台编辑页    copyProperty
+                 * */
+                function copyMainProduct(){
+                    var template = _.template("您确定要复制Master数据到<%=cartName%>吗？");
+
+                    confirm(template({cartName: scope.cartInfo.name})).then(function(){
+                        productDetailService.copyProperty({
+                            prodId:scope.productInfo.productId,
+                            cartId:+scope.cartInfo.value}).then(function(res){
+                            scope.vm.platform = res.data.platform;
+                        });
+                    });
                 }
 
                 /**

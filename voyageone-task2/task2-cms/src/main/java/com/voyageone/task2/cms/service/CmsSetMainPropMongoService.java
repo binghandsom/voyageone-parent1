@@ -147,6 +147,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     @Autowired
     private PriceService priceService;
 
+    // 每个channel的feed->master导入最大件数
+    private final static int FEED_IMPORT_MAX_500 = 500;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -262,6 +265,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         // 适用人群mapping表
         Map<String, String> mapSizeTypeMapping = new HashMap<>();
         // --------------------------------------------------------------------------------------------
+        // 允许approve这个sku到平台上去售卖渠道cart列表
+        List<TypeChannelBean> typeChannelBeanListApprove = null;
+        // 允许展示的cart列表
+        List<TypeChannelBean> typeChannelBeanListDisplay = null;
+
 
         // public setMainProp(String orderChannelId, boolean skip_mapping_check) {
         public setMainProp(String orderChannelId, boolean skip_mapping_check, String priceBreakTime) {
@@ -275,6 +283,29 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             String channelId = this.channel.getOrder_channel_id();
 
+            // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
+            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
+            // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
+            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+
+            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许approve这个sku到平台上去售卖渠道cartId
+            typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(channelId, "A", "en"); // 取得允许Approve的数据
+            if (ListUtils.isNull(typeChannelBeanListApprove)) {
+                String errMsg = String.format("feed->master导入:异常终止:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息(用于生成product分平台信息) [ChannelId=%s A en]", channelId);
+                $error(errMsg);
+                // 回写详细错误信息表(cms_bt_business_log)
+                insertBusinessLog(channelId, "", "", "", "", errMsg, getTaskName());
+            }
+
+            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个需要展示的cart
+            typeChannelBeanListDisplay = TypeChannels.getTypeListSkuCarts(channelId, "D", "en"); // 取得展示用数据
+            if (ListUtils.isNull(typeChannelBeanListDisplay)) {
+                String errMsg = String.format("feed->master导入:异常终止:在com_mt_value_channel表中没有找到当前Channel需要展示的Cart信息(用于生成productGroup信息) [ChannelId=%s D en]", channelId);
+                $error(errMsg);
+                // 回写详细错误信息表(cms_bt_business_log)
+                insertBusinessLog(channelId, "", "", "", "", errMsg, getTaskName());
+            }
+
             // 查找当前渠道,所有等待反映到主数据的商品
             // List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, 0);
             String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, 0);
@@ -284,21 +315,18 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             JomgoQuery queryObject = new JomgoQuery();
             queryObject.setQuery(query);
             queryObject.setSort(sort);
-            queryObject.setLimit(500);
+            queryObject.setLimit(FEED_IMPORT_MAX_500);   // 默认为每次最大500件
             List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
 
-            if (ListUtils.notNull(feedList)) {
-                // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
-                CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
-                // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
-                CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
-
+            // 共通配置信息存在的时候才进行feed->master导入
+            if (ListUtils.notNull(typeChannelBeanListApprove) && ListUtils.notNull(typeChannelBeanListDisplay)
+                    && ListUtils.notNull(feedList)) {
                 // --------------------------------------------------------------------------------------------
                 // 品牌mapping作成
-                List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, channelId);
+                List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, channelId);
 
-                if (ListUtils.notNull(typeChannelBeanList)) {
-                    for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
+                if (ListUtils.notNull(brandTypeChannelBeanList)) {
+                    for (TypeChannelBean typeChannelBean : brandTypeChannelBeanList) {
                         if (
                                 !StringUtils.isEmpty(typeChannelBean.getAdd_name1())
                                         && !StringUtils.isEmpty(typeChannelBean.getName())
@@ -342,15 +370,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                 }
                 // --------------------------------------------------------------------------------------------
-//                // 自定义属性 - 初始化
-//                customPropService.doInit(channelId);
+                //                // 自定义属性 - 初始化
+                //                customPropService.doInit(channelId);
                 // --------------------------------------------------------------------------------------------
-//            }
+                //            }
 
                 // jeff 2016/05 add start
                 // 取得所有主类目
                 // update desmond 2016/07/04 start
-//            List<CmsMtCategoryTreeModel> categoryTreeList = categoryTreeService.getMasterCategory();
+                //            List<CmsMtCategoryTreeModel> categoryTreeList = categoryTreeService.getMasterCategory();
                 List<CmsMtCategoryTreeAllModel> categoryTreeAllList = categoryTreeAllService.getMasterCategory();
                 // update desmond 2016/07/04 end
                 // jeff 2016/05 add end
@@ -366,7 +394,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         feed.setFullAttribute();
                         doSaveProductMainProp(feed, channelId, categoryTreeAllList);
                     } catch (Exception e) {
-//                    e.printStackTrace();
+                        //                    e.printStackTrace();
                         errCnt++;
                         String errMsg = "feed->master导入:异常终止:";
                         if (StringUtils.isNullOrBlank2(e.getMessage())) {
@@ -384,11 +412,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         feed.setModifier(getTaskName());
                         feedInfoService.updateFeedInfo(feed);
 
-//                    // 价格公式错误时，后面所有的feed都不能导入了
-//                    if (errMsg.contains("价格计算公式错误")) {
-//                        // 跳出循环，后面的feed导入不做了
-//                        break;
-//                    }
+                        //                    // 价格公式错误时，后面所有的feed都不能导入了
+                        //                    if (errMsg.contains("价格计算公式错误")) {
+                        //                        // 跳出循环，后面的feed导入不做了
+                        //                        break;
+                        //                    }
                     }
                     // update by desmond 2016/07/05 end
 
@@ -1570,14 +1598,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             platforms.put("P0", platformP0);
             // add desmond 2016/07/04 end
 
-            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许approve这个sku到平台上去售卖渠道cartId
-            List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
-            if (ListUtils.isNull(typeChannelBeanListApprove)) {
-                String errMsg = String.format("feed->master导入:新增:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息 [ChannelId=%s A en]", feed.getChannelId());
-                $error(errMsg);
-                throw new BusinessException(errMsg);
-//                return null;
-            }
+//            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许approve这个sku到平台上去售卖渠道cartId
+//            List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
+//            if (ListUtils.isNull(typeChannelBeanListApprove)) {
+//                String errMsg = String.format("feed->master导入:新增:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息 [ChannelId=%s A en]", feed.getChannelId());
+//                $error(errMsg);
+//                throw new BusinessException(errMsg);
+////                return null;
+//            }
             // delete desmond 2016/07/01 start
 //            List<Integer> skuCarts = new ArrayList<>();
 //            for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
@@ -2103,14 +2131,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
             // add desmond 2016/07/04 end
 
-            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许Approve的cartId
-            List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
-            if (ListUtils.isNull(typeChannelBeanListApprove)) {
-                String errMsg = String.format("feed->master导入:更新:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息 [ChannelId=%s A en]", feed.getChannelId());
-                $error(errMsg);
-                throw new BusinessException(errMsg);
-//                return null;
-            }
+//            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许Approve的cartId
+//            List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
+//            if (ListUtils.isNull(typeChannelBeanListApprove)) {
+//                String errMsg = String.format("feed->master导入:更新:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息 [ChannelId=%s A en]", feed.getChannelId());
+//                $error(errMsg);
+//                throw new BusinessException(errMsg);
+////                return null;
+//            }
 
             // add desmond 2016/07/07 start
             // 根据渠道和平台取得已经申请的平台类目
@@ -2385,20 +2413,20 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             boolean result = true;
 
-            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个需要展示的cart
-            List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
-            if (ListUtils.isNull(typeChannelBeanList)) {
-                String errMsg = String.format("feed->master导入:生成productGroup信息失败:在com_mt_value_channel表中没有找到当前Channel需要展示的Cart信息 [ChannelId=%s D en]", feed.getChannelId());
-                $error(errMsg);
-                throw new BusinessException(errMsg);
-//                return result;
-            }
+//            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个需要展示的cart
+//            List<TypeChannelBean> typeChannelBeanListDisplay = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
+//            if (ListUtils.isNull(typeChannelBeanListDisplay)) {
+//                String errMsg = String.format("feed->master导入:生成productGroup信息失败:在com_mt_value_channel表中没有找到当前Channel需要展示的Cart信息 [ChannelId=%s D en]", feed.getChannelId());
+//                $error(errMsg);
+//                throw new BusinessException(errMsg);
+////                return result;
+//            }
 
             // 根据code, 到group表中去查找所有的group信息
             List<CmsBtProductGroupModel> existGroups = getGroupsByCode(feed.getChannelId(), feed.getCode());
 
             // 循环一下
-            for (TypeChannelBean shop : typeChannelBeanList) {
+            for (TypeChannelBean shop : typeChannelBeanListDisplay) {
                 // 检查一下这个platform是否已经存在, 如果已经存在, 那么就不需要增加了
                 boolean blnFound = false;
                 for (CmsBtProductGroupModel group : existGroups) {
@@ -2996,7 +3024,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         }
 
         /**
-         * doSetPrice 调用共通函数设置product各平台的sku的价格（common.sku价格没人使用，不设置）
+         * doSetPrice 调用共通函数设置product各平台的sku的价格
          *
          * @param channelId  channel id
          * @param feed       feed信息
@@ -3008,11 +3036,40 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //        private CmsBtProductModel doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
         private CmsBtProductModel doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
 
-            // 计算指导价
+            List<CmsBtProductModel_Sku> commonSkuList = cmsProduct.getCommon().getSkus();
+
+            // 设置common.skus里面的价格
+            for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
+                CmsBtProductModel_Sku commonSku = null;
+                if (ListUtils.notNull(commonSkuList)) {
+                    for (CmsBtProductModel_Sku commonSkuTemp : commonSkuList) {
+                        if (sku.getSku().equals(commonSkuTemp.getSkuCode())) {
+                            commonSku = commonSkuTemp;
+                            break;
+                        }
+                    }
+                }
+
+                if (commonSku != null) {
+                    // 美金专柜价
+                    commonSku.setClientMsrpPrice(sku.getPriceClientMsrp());
+                    // 美金指导价
+                    commonSku.setClientRetailPrice(sku.getPriceClientRetail());
+                    // 美金成本价(=priceClientCost)
+                    commonSku.setClientNetPrice(sku.getPriceNet());
+                    // 人民币专柜价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
+                    commonSku.setPriceMsrp(sku.getPriceMsrp());
+                    // 人民币指导价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
+                    commonSku.setPriceRetail(sku.getPriceCurrent());
+                }
+
+            }
+
+            // 设置platform.PXX.skus里面的价格
             try {
                 cmsProduct = priceService.setRetailPrice(cmsProduct);
             } catch (Exception ex) {
-                String errMsg = String.format("feed->master导入:异常终止:调用共通函数计算产品价格时出错 [ChannelId=%s] [FeedCode=%s] " +
+                String errMsg = String.format("feed->master导入:产品新增或更新成功后设置价格失败:调用共通函数计算产品价格时出错 [ChannelId=%s] [FeedCode=%s] " +
                                 " [ErrMsg=", channelId, feed.getCode());
                 if(StringUtils.isNullOrBlank2(ex.getMessage())) {
                     errMsg = errMsg + ex.getStackTrace()[0].toString() + "]";
