@@ -72,8 +72,9 @@ define([
                             'cmsBrand': self.mappingDetail.masterName,
                             'cartId': self.searchInfo.selectedCart,
                             'brandId': res.brandId
+                        }).then(function () {
+                            self.searchBrands();
                         });
-                        self.searchBrands();
                     };
                 })
             }
