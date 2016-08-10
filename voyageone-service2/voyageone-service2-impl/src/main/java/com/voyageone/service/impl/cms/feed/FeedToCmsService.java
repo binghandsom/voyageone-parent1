@@ -168,6 +168,7 @@ public class FeedToCmsService extends BaseService {
                 Integer qty = 0;
                 for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
                     if (sku.getQty() != null) qty += sku.getQty();
+                    weightConvert(sku);
                 }
                 product.setQty(qty);
 
@@ -354,5 +355,29 @@ public class FeedToCmsService extends BaseService {
             }
         });
 
+    }
+
+    private void weightConvert(CmsBtFeedInfoModel_Sku skuModel ){
+        try {
+            if (!StringUtil.isEmpty(skuModel.getWeightOrg()) && !StringUtil.isEmpty(skuModel.getWeightOrgUnit())) {
+                String unit = skuModel.getWeightOrgUnit().trim();
+                String weightOrg = skuModel.getWeightOrg().trim();
+                if (unit.toLowerCase().indexOf("oz") > -1) {
+                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 16.0);
+                    skuModel.setWeightCalc(convertWeight.toString());
+                } else if (unit.toLowerCase().indexOf("lb") > -1) {
+                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg));
+                    skuModel.setWeightCalc(convertWeight.toString());
+                } else if (unit.toLowerCase().equals("g")) {
+                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 453.59237);
+                    skuModel.setWeightCalc(convertWeight.toString());
+                } else if (unit.toLowerCase().equals("kg")) {
+                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 0.4535924);
+                    skuModel.setWeightCalc(convertWeight.toString());
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }
