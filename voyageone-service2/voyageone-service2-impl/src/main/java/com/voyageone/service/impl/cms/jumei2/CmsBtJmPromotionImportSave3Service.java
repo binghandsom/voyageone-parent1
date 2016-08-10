@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.jumei.ProductSaveInfo;
 import com.voyageone.service.dao.cms.*;
+import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionImportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel;
@@ -33,7 +34,8 @@ public class CmsBtJmPromotionImportSave3Service {
     private CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
     @Autowired
     CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
-
+@Autowired
+    CmsBtJmPromotionDaoExt  cmsBtJmPromotionDaoExt;
     @VOTransactional
     public void saveProductSaveInfo(ProductSaveInfo info) {
         //CmsBtJmPromotionProduct
@@ -43,6 +45,7 @@ public class CmsBtJmPromotionImportSave3Service {
             daoCmsBtJmPromotionProduct.update(info.jmProductModel);
         }
         daoExtCmsBtJmPromotionProduct.updateAvgPriceByPromotionProductId(info.jmProductModel.getId());//求价格 折扣 平均值
+        cmsBtJmPromotionDaoExt.updateSumbrandById(info.jmProductModel.getId());//汇总品牌
         //CmsBtJmPromotionSku
         for (CmsBtJmPromotionSkuModel sku : info.jmSkuList) {
             sku.setCmsBtJmPromotionProductId(info.jmProductModel.getId());
@@ -71,5 +74,6 @@ public class CmsBtJmPromotionImportSave3Service {
                 daoCmsBtPromotionSkus.insert(skusModel);
             }
         }
+
     }
 }
