@@ -10,7 +10,7 @@ public class CustomModuleUserParamIf extends CustomModuleUserParam {
     public CustomModuleUserParamIf() {
     }
 
-    public CustomModuleUserParamIf(RuleExpression condition, RuleExpression propValue, RuleExpression propValue2, RuleExpression propValue3, RuleExpression propValue4) {
+    public CustomModuleUserParamIf(RuleExpression condition, RuleExpression propValue) {
         this.condition = condition;
         this.propValue = propValue;
     }

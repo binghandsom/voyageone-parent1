@@ -37,9 +37,9 @@ public class CmsMtFeeTaxService extends BaseService {
      */
     public Double getTaxRate(String hsCode) {
 
-        Assert.notNull(hsCode).elseThrowDefaultWithTitle("hsCode (CmsMtFeeTaxService.getTaxRate)");
+        Assert.hasText(hsCode).elseThrowDefaultWithTitle("hsCode (CmsMtFeeTaxService.getTaxRate)");
 
-        Map<String, Object> queryMap = MapUtil.toMap("shippingType", "", "hsCode", hsCode);
+        Map<String, Object> queryMap = MapUtil.toMap("hsCode", hsCode);
 
         CmsMtFeeTaxModel feeTaxModel = cmsMtFeeTaxDao.selectOne(queryMap);
 
