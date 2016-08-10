@@ -70,6 +70,7 @@ import com.voyageone.task2.cms.bean.ItemDetailsBean;
 import com.voyageone.task2.cms.dao.ItemDetailsDao;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -1665,8 +1666,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 commonSku.setClientSkuCode(sku.getClientSku()); // ClientSku
                 commonSku.setClientSize(sku.getSize()); // ClientSize
                 commonSku.setSize(sku.getSize()); // 尺码
-                // 重量(单位：磅) 如果原始重量不是lb的,feed里已根据公式转成lb(磅)
-                commonSku.setWeight(Double.parseDouble(sku.getWeightCalc()));
+                // 重量(单位：磅) 如果原始重量不是lb的,feed里已根据公式转成lb
+                if (!StringUtils.isEmpty(sku.getWeightCalc()))
+                    commonSku.setWeight(NumberUtils.toDouble(sku.getWeightCalc()));
 
                 // 增加默认渠道
 //                mainSku.setSkuCarts(skuCarts); // 删除现在没有skuCarts这个项目了
@@ -2112,7 +2114,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         sku.setClientSkuCode(feedSku.getClientSku());
                         sku.setClientSize(feedSku.getSize());
                         sku.setSize(feedSku.getSize());
-                        sku.setWeight(Double.parseDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
+                        if (!StringUtils.isEmpty(feedSku.getWeightCalc()))
+                            sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
 
                         break;
                     }
@@ -2127,7 +2130,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     sku.setClientSkuCode(feedSku.getClientSku());
                     sku.setClientSize(feedSku.getSize());
                     sku.setSize(feedSku.getSize());        // Add by desmond 2016/07/04 因为上新用的是这个字段
-                    sku.setWeight(Double.parseDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
+                    if (!StringUtils.isEmpty(feedSku.getWeightCalc()))
+                        sku.setWeight(NumberUtils.toDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
 
                     skuList.add(sku);
                 }

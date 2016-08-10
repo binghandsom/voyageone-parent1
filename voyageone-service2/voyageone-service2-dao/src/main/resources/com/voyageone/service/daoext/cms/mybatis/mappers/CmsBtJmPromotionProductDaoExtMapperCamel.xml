@@ -380,7 +380,7 @@
         SET a.deal_Price=b.deal_price,a.market_price=b.market_price,a.discount=b.discount
         ,a.max_deal_Price=b.max_deal_price,a.max_market_price=b.max_market_price
         ,a.min_deal_Price=b.min_deal_price,a.min_market_price=b.min_market_price
-        ,a.price_status=(case WHEN a.synch_status==2 then 1 else a.price_status end )
+        ,a.price_status=(case WHEN a.synch_status=2 then 1 else a.price_status end )
         WHERE    a.id IN
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
@@ -460,9 +460,9 @@
         SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`
 WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
     </select>
-    <select id="selectNotSynchListByPromotionProductIds">
+    <select id="selectNotSynchListByPromotionProductIds" resultMap="ResultMap">
         SELECT * from  cms_bt_jm_promotion_product
-        WHERE synch_status!=2 and   id in
+        WHERE synch_status!=2  and   id in
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}
@@ -471,7 +471,7 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
     <update id="updateSynch2ErrorMsg">
         update cms_bt_jm_promotion_product
         set  error_msg=#{errorMsg}
-        WHERE synch_status==2 and   id in
+        WHERE synch_status=2 and   id in
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}
