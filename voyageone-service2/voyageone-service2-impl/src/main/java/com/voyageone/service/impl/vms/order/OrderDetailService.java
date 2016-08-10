@@ -74,7 +74,7 @@ public class OrderDetailService extends BaseService {
      */
     public long getTotalOrderNum(Map<String, Object> orderSearchParamsWithLimitAndSort) {
 
-        return vmsBtOrderDetailDaoExt.selectPlatformOrderListNumLimitedByTime(orderSearchParamsWithLimitAndSort);
+        return vmsBtOrderDetailDaoExt.countOrder(orderSearchParamsWithLimitAndSort);
     }
 
     /**
@@ -217,7 +217,7 @@ public class OrderDetailService extends BaseService {
      */
     public long getTotalSkuNum(Map<String, Object> skuSearchParamsWithLimitAndSort) {
 
-        return vmsBtOrderDetailDaoExt.selectSkuListNumLimitedByTime(skuSearchParamsWithLimitAndSort);
+        return vmsBtOrderDetailDaoExt.countSku(skuSearchParamsWithLimitAndSort);
     }
 
     /**

@@ -25,7 +25,8 @@
                 Sorry, audio is not supported in your browser.
             </audio>
             <uib-tabset>
-                <uib-tab heading="{{'TXT_SCANNED' | translate}}" ng-click="ctrl.focusOnScanBar()">
+              <uib-tab heading="{{'TXT_SCANNED' | translate }} {{'(' + ctrl.scannedSkuList.length + ')'}}"
+                       ng-click="ctrl.focusOnScanBar()">
                     <table class="table table-striped table-hover" style="min-width: 0px">
                         <thead>
                         <tr>
@@ -53,7 +54,8 @@
                         </tbody>
                     </table>
                 </uib-tab>
-                <uib-tab heading="{{'TXT_PENDING'| translate }}" ng-click="ctrl.focusOnScanBar()">
+                <uib-tab heading="{{'TXT_PENDING'| translate }} {{'(' + ctrl.waitingSkuList.length + ')'}}"
+                         ng-click="ctrl.focusOnScanBar()">
                     <table class="table table-striped table-hover" style="min-width: 0px">
                         <thead>
                         <tr>
