@@ -266,6 +266,13 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         setAttribute(SELLER_CATS,sellerCats);
     }
 
+    public String getpReallyStatus() {
+        return getStringAttribute("pReallyStatus");
+    }
+    public void setpReallyStatus(String pReallyStatus) {
+        setStringAttribute("pReallyStatus",pReallyStatus);
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public Object put(String key, Object value) {

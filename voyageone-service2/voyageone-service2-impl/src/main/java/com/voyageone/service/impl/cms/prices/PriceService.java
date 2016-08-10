@@ -307,7 +307,7 @@ public class PriceService extends BaseService {
         }
 
         // 公式参数: 税率
-        Double taxRate = feeTaxService.getTaxRate(shippingType, hsCode);
+        Double taxRate = feeTaxService.getTaxRate(hsCode);
 
         // 进入计算阶段
         SystemPriceCalculator systemPriceCalculator = new SystemPriceCalculator()
