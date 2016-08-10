@@ -460,9 +460,9 @@
         SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`
 WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
     </select>
-    <select id="selectNotSynchListByPromotionProductIds">
+    <select id="selectNotSynchListByPromotionProductIds" resultMap="ResultMap">
         SELECT * from  cms_bt_jm_promotion_product
-        WHERE synch_status!=2 and   id in
+        WHERE synch_status!=2  and   id in
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}
@@ -471,7 +471,7 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
     <update id="updateSynch2ErrorMsg">
         update cms_bt_jm_promotion_product
         set  error_msg=#{errorMsg}
-        WHERE synch_status==2 and   id in
+        WHERE synch_status=2 and   id in
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
             #{item}
