@@ -3,8 +3,8 @@ package com.voyageone.web2.admin.bean.channel;
 import com.voyageone.web2.admin.bean.AdminFormBean;
 
 /**
- * @author Wangtd 2016/8/10
- * @since 2.0.0
+ * @author Wangtd
+ * @since 2.0.0 2016/8/10
  */
 public class ChannelFormBean extends AdminFormBean {
 

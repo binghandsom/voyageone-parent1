@@ -16,8 +16,8 @@ import com.voyageone.web2.admin.views.AdminUrlConstants;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 
 /**
- * @author Wangtd 2016/8/9
- * @since 2.0.0
+ * @author Wangtd
+ * @since 2.0.0 2016/8/9
  */
 @RestController
 @RequestMapping(value = AdminUrlConstants.Channel.Self.ROOT, method = RequestMethod.POST)

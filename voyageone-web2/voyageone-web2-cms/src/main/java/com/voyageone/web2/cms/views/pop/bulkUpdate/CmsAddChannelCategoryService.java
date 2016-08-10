@@ -7,7 +7,6 @@ import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -20,11 +19,9 @@ import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BooleanSupplier;
 
 /**
  * @author gjl 2016/5/23.
@@ -40,12 +37,9 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     @Autowired
     private CmsAdvanceSearchService advanceSearchService;
     @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-    @Autowired
     private SxProductService sxProductService;
 
     private static final String DEFAULT_SELLER_CAT_CNT = "10";
-    private static final String DEFAULT_SELLER_CATS_FULL_CIDS = "0";
 
     /**
      * 数据页面初始化(无产品信息)
@@ -67,9 +61,9 @@ public class CmsAddChannelCategoryService extends BaseAppService {
             throw new BusinessException("未选择平台");
         }
 
-        Map<String, Boolean> emptyMap = new HashMap<>(0);
-        data.put("orgChkStsMap", emptyMap);
-        data.put("orgDispMap", emptyMap);
+        //Map<String, Boolean> emptyMap = new HashMap<>(0);
+        data.put("orgChkStsMap", new HashMap<>(0));
+        data.put("orgDispMap", new HashMap<>(0));
 
         //取得店铺渠道
         data.put("cartName", Carts.getCart(cartId).getName());
@@ -87,13 +81,14 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         //channelId
         String channelId = (String) params.get("channelId");
         Map<String, Object> data = new HashMap<>();
-        //产品code
-        List<String> codeList = null;
+
         Integer isSelAll = (Integer) params.get("isSelAll");
         if (isSelAll == null) {
             isSelAll = 0;
         }
 
+        //产品code
+        List<String> codeList;
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             codeList = advanceSearchService.getProductCodeList(channelId, cmsSession);
@@ -120,7 +115,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         query.setParameters(codeList);
         query.setProjection("{'platforms.P" + cartId + ".sellerCats.cId':1}");
         //根据商品code取得对应的类目达标属性
-        List<CmsBtProductModel> prodList = cmsBtProductDao.select(query, channelId);
+        List<CmsBtProductModel> prodList = productService.getList(channelId, query);
         if (prodList == null || prodList.isEmpty()) {
             $warn("getChannelCategory cmsBtProductModel == null " + params.toString());
             throw new BusinessException("所选商品无指定平台的数据");
@@ -255,6 +250,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
 
     /**
      * 取得最大达标个数
+     *
      * @param cartId int
      * @return cnt
      */
@@ -267,17 +263,4 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         return cnt;
     }
 
-    /**
-     * 同一店铺不同渠道的叶子类目插入形式不同
-     * @param cartId int
-     * @return cnt
-     */
-    private String getSellerCatCategoryCid(int cartId) {
-        String cartIdStr = String.valueOf(cartId);
-        String cnt = Codes.getCodeName("SELLER_CATS_FULL_CIDS", cartIdStr);
-        if (StringUtils.isNullOrBlank2(cnt)) {
-            cnt = DEFAULT_SELLER_CATS_FULL_CIDS;
-        }
-        return cnt;
-    }
 }

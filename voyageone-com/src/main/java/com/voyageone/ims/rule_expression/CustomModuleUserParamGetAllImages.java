@@ -13,14 +13,19 @@ public class CustomModuleUserParamGetAllImages extends CustomModuleUserParam {
     private RuleExpression htmlTemplate;
     private RuleExpression imageType;
     private RuleExpression useOriUrl;
+    // addedby morse.lu 2016/07/18 start
+    // 如果有值并且为true，则图片url不使用imageTemplate，而使用图片模板cms_bt_image_template表取出的url
+    private RuleExpression useCmsBtImageTemplate;
+    // addedby morse.lu 2016/07/18 end
 
     public CustomModuleUserParamGetAllImages() {}
 
-    public CustomModuleUserParamGetAllImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageType, RuleExpression useOriUrl) {
+    public CustomModuleUserParamGetAllImages(RuleExpression htmlTemplate, RuleExpression imageTemplate, RuleExpression imageType, RuleExpression useOriUrl, RuleExpression useCmsBtImageTemplate) {
         this.htmlTemplate = htmlTemplate;
         this.imageTemplate = imageTemplate;
         this.imageType = imageType;
         this.useOriUrl = useOriUrl;
+        this.useCmsBtImageTemplate = useCmsBtImageTemplate;
     }
 
     public RuleExpression getHtmlTemplate() {
@@ -53,5 +58,13 @@ public class CustomModuleUserParamGetAllImages extends CustomModuleUserParam {
 
     public void setUseOriUrl(RuleExpression useOriUrl) {
         this.useOriUrl = useOriUrl;
+    }
+
+    public RuleExpression getUseCmsBtImageTemplate() {
+        return useCmsBtImageTemplate;
+    }
+
+    public void setUseCmsBtImageTemplate(RuleExpression useCmsBtImageTemplate) {
+        this.useCmsBtImageTemplate = useCmsBtImageTemplate;
     }
 }

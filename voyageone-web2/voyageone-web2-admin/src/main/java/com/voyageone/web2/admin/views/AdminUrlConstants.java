@@ -2,8 +2,8 @@ package com.voyageone.web2.admin.views;
 
 /**
  * 系统的请求地址统一常量定义，与前端的actions.json相对应。
- * @author Wangtd 2016/8/9
- *  @since 2.0.0
+ * @author Wangtd
+ *  @since 2.0.0 2016/8/9
  */
 public interface AdminUrlConstants {
 	

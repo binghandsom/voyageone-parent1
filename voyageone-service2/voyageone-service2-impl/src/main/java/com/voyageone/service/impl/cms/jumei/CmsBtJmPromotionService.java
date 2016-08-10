@@ -3,7 +3,9 @@ package com.voyageone.service.impl.cms.jumei;
 import com.google.common.base.Preconditions;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
@@ -52,6 +54,7 @@ public class CmsBtJmPromotionService {
         map.put("jmMasterBrandList", jmMasterBrandList);
         return map;
     }
+
     public CmsBtJmPromotionModel select(int id) {
         return dao.select(id);
     }
@@ -138,7 +141,7 @@ public class CmsBtJmPromotionService {
         promotion.setPromotionName(model.getName());
         promotion.setPrePeriodStart(DateTimeUtil.getDateTime(model.getPrePeriodStart(), "yyyy-MM-dd HH:mm:ss"));
         promotion.setPrePeriodEnd(DateTimeUtil.getDateTime(model.getPrePeriodEnd(), "yyyy-MM-dd HH:mm:ss"));
-        promotion.setPromotionStatus(0);
+        promotion.setPromotionStatus(1);
         promotion.setTejiabaoId("");
         promotion.setIsAllPromotion(0);
         promotion.setActive(model.getActive());
@@ -239,9 +242,17 @@ public class CmsBtJmPromotionService {
         return daoExt.selectListByWhere(map);
     }
 
-    public List<MapModel> getJMActivePromotions(String channelId) {
+    public List<MapModel> getJMActivePromotions(int cartId, String channelId) {
         Preconditions.checkArgument(StringUtils.isNotBlank(channelId), "channelId不能为空!");
-        return daoExt.selectActivesOfChannel(channelId);
+        Map params = new HashMap<>();
+        params.put("cartId", cartId);
+        if (Channels.isUsJoi(channelId)) {
+            params.put("orgChannelId", channelId);
+            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        } else {
+            params.put("channelId", channelId);
+        }
+        return daoExt.selectActivesOfChannel(params);
     }
 
 }

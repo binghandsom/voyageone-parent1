@@ -46,6 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -442,7 +443,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             String jmSpuNo = oldSku.getSpu_no();
                             HtSpuUpdateRequest htSpuUpdateRequest = new HtSpuUpdateRequest();
                             htSpuUpdateRequest.setJumei_spu_no(jmSpuNo);
-                            htSpuUpdateRequest.setAbroad_price(skuMap.getDoubleAttribute("clientMsrpPrice"));
+                            DecimalFormat dformat = new DecimalFormat(".00");
+                            String priceStr = dformat.format(Math.ceil(skuMap.getDoubleAttribute("clientMsrpPrice")));
+                            htSpuUpdateRequest.setAbroad_price(Double.valueOf(priceStr));
                             htSpuUpdateRequest.setAttribute(jmFields.getStringAttribute("attribute"));
                             htSpuUpdateRequest.setProperty(skuMap.getStringAttribute("property"));
                             // update by desmond 2016/07/08 start
@@ -474,7 +477,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                     mySku.setJmSpuNo(oldSku.getSpu_no());
                                     mySku.setJmSkuNo(oldSku.getSku_no());
                                     mySku.setModifier(getTaskName());
-                                    mySku.setModifier(getTaskName());
+                                    mySku.setModified(new Date());
                                     cmsBtJmSkuDao.insert(mySku);
                                 }
                             }
@@ -507,6 +510,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                         CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
                                         mySku.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
                                         mySku.setModifier(getTaskName());
+                                        mySku.setModified(new Date());
                                         cmsBtJmSkuDao.update(mySku);
                                     }
                                 }
@@ -529,7 +533,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             String sizeStr = skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
                             htSpuAddRequest.setSize(sizeStr);
                             // update by desmond 2016/07/08 end
-                            htSpuAddRequest.setAbroad_price(skuMap.getStringAttribute("clientMsrpPrice"));
+                            DecimalFormat dformat = new DecimalFormat(".00");
+                            String priceStr = dformat.format(Math.ceil(skuMap.getDoubleAttribute("clientMsrpPrice")));
+                            htSpuAddRequest.setAbroad_price(priceStr);
                             htSpuAddRequest.setArea_code("19");//TODO
                             htSpuAddRequest.setJumei_product_id(jmCart.getpProductId());
                             htSpuAddRequest.setProperty(skuMap.getStringAttribute("property"));
@@ -577,6 +583,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                 throw  new BusinessException(msg);
                             }
                         }
+                        //更新SKU,然而在当前版本中SkuCode是不能改的。所以删掉了更新sku的逻辑
                     }
 
                     //获取jm_hash_id列表
@@ -961,7 +968,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             // update by desmond 2016/07/08 end
             spu.setSize(sizeStr);
 
-            spu.setAbroad_price(jmSku.getDoubleAttribute("priceSale"));
+            spu.setAbroad_price(Math.ceil(jmSku.getDoubleAttribute("clientMsrpPrice")));
             spu.setArea_code("19"); //TODO
 
             JmProductBean_Spus_Sku jmSpuSku = new JmProductBean_Spus_Sku();

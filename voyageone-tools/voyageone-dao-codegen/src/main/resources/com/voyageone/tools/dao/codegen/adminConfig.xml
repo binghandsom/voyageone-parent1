@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+
+<generatorConfiguration>
+
+    <classPathEntry location="voyageone-tools/voyageone-dao-codegen/src/main/resources/com/voyageone/tools/dao/codegen/mysql-connector-java-5.1.30.jar"/>
+
+    <context id="MySQLTables" targetRuntime="MyBatis3">
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.0.0.24/Synship"
+                        userId="root" password="sneakerhead">
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="com.voyageone.service.model.admin"
+                            targetProject="voyageone-service2/voyageone-service2-model/src/main/java/">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+            <property name="rootClass" value="com.voyageone.service.model.admin.AdminBaseModel"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="com.voyageone.service.dao.admin.mybatis.mappers"
+                         targetProject="voyageone-service2/voyageone-service2-dao/src/main/resources/">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.voyageone.service.dao.admin"
+                             targetProject="voyageone-service2/voyageone-service2-dao/src/main/java/">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <table tableName="com_mt_value_channel" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="tm_order_channel" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="tm_order_channel_config" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="com_mt_third_party_config" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="tm_sms_config" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="tm_carrier_channel" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="ct_cart" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="ct_store_config" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="wms_mt_store" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="tm_code" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="com_mt_type" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="com_mt_value" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="com_mt_task" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="tm_task_control" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="tm_channel_shop" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="tm_channel_shop_config" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="com_mt_tracking_info_config" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+        <table tableName="tm_port_config" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
+    </context>
+</generatorConfiguration>

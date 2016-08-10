@@ -19,6 +19,7 @@
 		<module>voyageone-web2-sdk</module>
 		<module>voyageone-web2-vendor</module>
 		<module>voyageone-web2-admin</module>
+		<module>voyageone-web2-security</module>
 	</modules>
 </project>
 

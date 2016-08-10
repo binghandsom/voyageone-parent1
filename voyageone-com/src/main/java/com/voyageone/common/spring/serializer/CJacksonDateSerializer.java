@@ -20,14 +20,20 @@ public class CJacksonDateSerializer extends JsonSerializer<Date> {
     @Override
     public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
 
-        String result = null;
-        if (!DateTimeUtil.getCreatedDefaultDate().equals(value)) {
-            result = DateTimeUtil.format(value, null);
-        }
-        if (result == null) {
-            jgen.writeString("");
+        if (CJacksonSerializerUtil.isCustom(jgen)) {
+            String result = null;
+            if (!DateTimeUtil.getCreatedDefaultDate().equals(value)) {
+                result = DateTimeUtil.format(value, null);
+            }
+            if (result == null) {
+                jgen.writeString("");
+            } else {
+                jgen.writeString(result);
+            }
         } else {
-            jgen.writeString(result);
+            if (value != null) {
+                jgen.writeString(String.valueOf(value.getTime()));
+            }
         }
     }
 }

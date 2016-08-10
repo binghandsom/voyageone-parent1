@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 /**
  * 系统的表单基本项，包括分页属性和表的公共字段等。
- * @author Wangtd 2016/8/10
- * @since 2.0.0
+ * @author Wangtd
+ * @since 2.0.0 2016/8/10
  */
 public class AdminFormBean implements Serializable {
 
