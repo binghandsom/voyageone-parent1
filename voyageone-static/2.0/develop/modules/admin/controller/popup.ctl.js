@@ -10,11 +10,12 @@ define([
 ], function (admin, _, MappingTypes) {
 
     admin.constant('popActions', {
-        "authority": {
-            "new": {
-                "templateUrl": "views/pop/authority/new.tpl.html",
-                "controllerUrl": "modules/admin/views/pop/authority/new.ctl",
-                "controller": 'popAuthorityNewCtl'
+        "config": {
+            "tmOrderChannel": {
+                "templateUrl": "views/pop/config/index.tpl.html",
+                "controllerUrl": "modules/admin/views/pop/config/index.ctl",
+                "controller": 'ConfigController as ctrl',
+                "size":'lg'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -39,13 +40,8 @@ define([
          * 打开新建权限页面
          * @type {openAuthority}
          */
-        $scope.openAuthority = function openAuthority(viewSize, data) {
-            popActions.authority.new.size = viewSize;
-            openModal(popActions.authority.new, {
-                data: function () {
-                    return data;
-                }
-            }, true);
+        $scope.openConfig = function openConfig(context) {
+            return openModal(popActions.config.tmOrderChannel, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {

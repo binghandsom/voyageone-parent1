@@ -29,36 +29,6 @@ define(function () {
     }
 
     return {
-        "core": {
-            "access": {
-                "user": {
-                    "logout": "/core/access/user/logout"
-                }
-            },
-            "home": {
-                "menu": {
-                    "getMenuHeaderInfo": "/core/home/menu/getMenuHeaderInfo",
-                    "setLanguage": "/core/home/menu/setLanguage"
-                }
-            }
-        },
-        "cms": {
-            "home": {
-                "$menuService": {
-                    "root": "/cms/home/menu/",
-                    "getCategoryInfo": session('getCategoryInfo', [KEY.CHANNEL]),
-                    "getPlatformType": session('getPlatformType', [KEY.USERNAME, KEY.CHANNEL]),
-                    "setPlatformType": "setPlatformType",
-                    "getHomeSumData": "getHomeSumData",
-                    "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL])
-                }
-            },
-            "pop": {
-                "$promotionHistoryService": {
-                    "root": "/cms/pop/history_promotion",
-                    "getPromotionHistory": "getPromotionHistory"
-                }
-            }
-        }
+        
     };
 });

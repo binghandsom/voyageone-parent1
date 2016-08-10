@@ -46,11 +46,11 @@ define(function () {
             "home": {
                 "$menuService": {
                     "root": "/cms/home/menu/",
-                    "getCategoryInfo": session('getCategoryInfo', [KEY.CHANNEL]),
-                    "getPlatformType": session('getPlatformType', [KEY.USERNAME, KEY.CHANNEL]),
+                    "getCategoryInfo": 'getCategoryInfo',
+                    "getPlatformType": 'getPlatformType',
                     "setPlatformType": "setPlatformType",
                     "getHomeSumData": "getHomeSumData",
-                    "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL])
+                    "getCmsConfig": 'getCmsConfig'
                 }
             },
             "search": {

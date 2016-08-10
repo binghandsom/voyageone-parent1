@@ -6,7 +6,7 @@
     <meta name="keywords" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    <title>CORE</title>
+    <title>ADMIN</title>
 
     <link rel="stylesheet" href="../../static/css/app.min.css" type="text/css">
     <link rel="stylesheet" href="../../libs/angular-block-ui/0.2.1/angular-block-ui.min.css">
@@ -34,10 +34,11 @@
         <a href class="off-screen-toggle hide" ui-toggle-class="off-screen" data-target=".app-aside"></a>
 
         <!-- breadcrumbs -->
-        <div ng-include=" 'views/home/menu/breadcrumbs.tpl.html' " class="bg-light lter hidden-xs"></div>
+        <!--<div ng-include=" 'views/home/menu/breadcrumbs.tpl.html' " class="bg-light lter hidden-xs"></div>-->
 
         <!-- page content -->
         <div class="app-content-body fade-in-up" ng-view></div>
+        <!--<div class="app-content-body fade-in-up" ng-include=" 'views/tmOrderChannel/index.tpl.html' "></div>-->
 
         <!-- footer -->
         <div class="app-footer wrapper b-t bg-light">
