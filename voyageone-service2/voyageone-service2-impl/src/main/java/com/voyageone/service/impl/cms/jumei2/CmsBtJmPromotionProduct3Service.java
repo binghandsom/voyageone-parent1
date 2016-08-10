@@ -85,12 +85,16 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         result.setIsBegin(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
         result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
         int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
+
         result.setIsUpdateJM(!(hour == 10));//是否可以更新聚美  10到11点一小时之内不允许更新聚美平台
         boolean isBefore5DaysBeforePreBegin = DateTimeUtil.addDays(new Date(), 5).getTime() < preStartLocalTime;//是否是预热开始前5天之前  预热开始前5天之前不让更新聚美
         if(isBefore5DaysBeforePreBegin)// 预热开始前5天之前不让更新聚美
         {
            result.setIsUpdateJM(false);
         }
+        // // TODO: 2016/8/10  测试完 取消注释  spt begin
+        result.setIsUpdateJM(true);
+        // // TODO: 2016/8/10   测试完 取消注释  spt end
         // 获取brand list
         result.setBrandList(TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, language));
         return result;
@@ -233,6 +237,9 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
             throw new BusinessException("预热已经开始,不能批量删除!");
         }
+        //获取未上传的jmproduct
+        List<CmsBtJmPromotionProductModel> listNotSych = daoExt.selectNotSynchListByPromotionProductIds(parameter.getListPromotionProductId());
+
         //2.7.2.1 只删除未上传的商品  先删除sku 再删除product
         daoExtCmsBtJmPromotionSku.batchDeleteSku(parameter.getListPromotionProductId());
         daoExt.batchDeleteProduct(parameter.getListPromotionProductId());
@@ -242,8 +249,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
 
         //2.7.3 删除 CmsBtPromotionCodes  CmsBtPromotionSkus
         CmsBtPromotionModel modelCmsBtPromotion = getCmsBtPromotionModel(parameter.getPromotionId());
-        if (modelCmsBtPromotion != null) {
-            List<CmsBtJmPromotionProductModel> listNotSych = daoExt.selectNotSynchListByPromotionProductIds(parameter.getListPromotionProductId());
+        if (modelCmsBtPromotion != null&&listNotSych.size()>0) {
             List<String> listNotSychCode = getListNotSychCode(listNotSych);//获取未上传的code
             Map<String, Object> map = new HashMap<>();
             map.put("listProductCode", listNotSychCode);
