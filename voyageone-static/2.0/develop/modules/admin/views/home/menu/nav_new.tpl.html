@@ -1,0 +1,47 @@
+<ul class="nav">
+    <!-- 类目管理 -->
+    <!-- Feed管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="glyphicon glyphicon-star icon text-vo"></i>
+            <span class="" translate="TXT_FEED_MANAGER"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_FEED_MANAGER"></span>
+                </a>
+            </li>
+            <!-- Feed商品一览 -->
+            <li ui-sref-active="active">
+                <a href="#/feed/product_list">
+                    <i class="fa fa-reorder icon text-vo"></i>
+                    <span TRANSLATE="TXT_FEED_PRODUCT_LIST"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
+</ul>
+<!--end-->
+
+<script id="categoryMenu" type="text/ng-template">
+    <li ng-repeat="item in categoryMenu">
+        <a class="auto" ng-if="item.isParent == 1">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-plus icon-small text-vo"></i>
+            <span ng-bind="item.catName"></span>
+        </a>
+        <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath,item.catId)">
+            <i class="fa fa-minus icon text-vo"></i>
+            <span ng-bind="item.catName"></span>
+        </a>
+        <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenu'" ng-init="categoryMenu = item.children"></ul>
+    </li>
+</script>

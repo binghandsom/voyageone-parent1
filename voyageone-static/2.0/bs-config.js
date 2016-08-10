@@ -1,8 +1,7 @@
 var morgan = require('morgan'),
     proxy = require('http-proxy-middleware');
 
-var proxyUrl = require('./config').java_proxy,
-    proxyMiddleware = proxy(proxyUrl);
+var proxyMiddleware = proxy('http://localhost:8080');
 
 module.exports = {
     server: {

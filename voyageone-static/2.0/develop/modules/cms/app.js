@@ -49,17 +49,17 @@ define([
             }
         })
 
-        // router config.
-        // translate config.
-        .config(function ($routeProvider, $translateProvider, cLanguageType) {
-
+        .config(function ($routeProvider, $translateProvider, cLanguageType, $uibModalProvider) {
+            // 加载所有的语言配置
             _.each(cLanguageType, function (type) {
                 $translateProvider.translations(type.name, type.value);
             });
-
+            // 加载所有的路由配置
             _.each(routes, function (module) {
                 return $routeProvider.when(module.hash, angularAMD.route(module));
             });
+            // 默认设置所有的弹出模态框的背景不能关闭模态框
+            $uibModalProvider.options.backdrop = 'static';
         })
 
         .run(function ($vresources, $localStorage) {
@@ -95,7 +95,7 @@ define([
         // config
         $scope.app = {
             name: 'VoyageOne',
-            version: 'Version 2.2.0',
+            version: 'Version 2.4.0',
             copyRight: 'Copyright © 2016 VoyageOne. All Rights Reserved.',
             // for chart colors
             color: {
@@ -332,6 +332,7 @@ define([
         function selectMenu(menu) {
             menuService.setMenu(menu.menuTitle).then(function (application) {
                 $window.location = cCommonRoutes.application.modules + application + cCommonRoutes.application.url;
+                vm.userInfo.application = menu.menuTitle;
             });
         }
 

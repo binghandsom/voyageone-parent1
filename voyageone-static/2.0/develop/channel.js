@@ -6,7 +6,7 @@
  * @Version: 2.0.0
  */
 
-define(['components/dist/voyageone.angular.com'], function () {
+define(['components/dist/voyageone.angular.com.js'], function () {
     angular.module('voyageone.cms.channel', [
         'blockUI',
         'ngCookies',
@@ -19,7 +19,11 @@ define(['components/dist/voyageone.angular.com'], function () {
             alert(res.message || res.code);
         });
         $scope.choose = function (channel, app) {
-            $ajax.post('/core/access/user/selectChannel', {channelId: channel.channelId, applicationId:app.applicationId,application:app.application}).then(function () {
+            $ajax.post('/core/access/user/selectChannel', {
+                channelId: channel.channelId,
+                applicationId: app.applicationId,
+                application: app.application
+            }).then(function () {
                 cookieService.application(app.application);
                 cookieService.channel(channel.channelId);
                 // 2016-07-08 13:52:21

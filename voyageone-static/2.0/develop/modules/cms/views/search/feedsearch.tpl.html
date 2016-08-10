@@ -294,6 +294,14 @@
                                     </div>
                                 </div>
                                 <div class="col-md-7 text-right">
+<!--                                    <button class="btn btn-danger btn-pop" popover-placement="left"
+                                            popover-html="'<p class=\'text-left\'>将Feed产品状态变更为&nbsp;<等待导入> </p>
+                                                           <p class=\'text-left\'>例：预定售卖的产品等</p>
+                                                           <p class=\'text-left\'>将Feed产品状态变更为&nbsp;<不导入></p>
+                                                           <p class=\'text-left\'>例：品牌方禁止售卖/不适应中国市场/不适合跨境售卖 的产品等</p>'"
+                                            style="background:#ec971f;border: #ec971f">
+                                        <i class="fa fa-warning"></i>&nbsp;<strong>操作提示</strong>&nbsp;
+                                    </button>-->
                                     <div class="text-warnings">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;将Feed产品状态变更为“等待导入” 例：预定售卖的产品等
                                     </div>
@@ -309,7 +317,12 @@
                             <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="min-width:2840px;table-layout: fixed;" ng-controller="popupCtrl">
                                 <thead>
                                 <tr><!--24-->
-                                    <th class="text-center mfb-x" style="width:66px;padding-left:0px">Select</th>
+                                    <th class="text-center mfb-x" style="width:66px;padding-left:0px">
+                                        <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+                                            <input type="checkbox" ng-click="selectAll(vm.feedSelList)" ng-checked="isAllSelected(vm.feedSelList)" ng-disabled="!vm.feedList.length || !vm.feedSelList.currPageRows.length">
+                                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                        </label>
+                                    </th>
                                     <th class="text-center mfb-x" translate="TXT_IMAGE"></th>
                                     <th class="text-left mfb-x" translate="TXT_CATEGORY"></th>
                                     <th class="text-center mfb-x" translate="TXT_PRODUCT_CODE"></th>

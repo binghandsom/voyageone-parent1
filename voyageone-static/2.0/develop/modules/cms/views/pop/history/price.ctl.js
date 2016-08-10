@@ -15,7 +15,7 @@ define([
 
             skuList.unshift(defaultSku);
             if (!selected.sku)
-                selected.sku = defaultSku;
+                selected.sku = skuList[1];
             else
                 selected.sku = _.find(skuList, function (sku) {
                     return sku.value === selected.sku;
@@ -49,10 +49,12 @@ define([
 
                 if (!selected.cart)
                     selected.cart = cartList[1];
-                else
+                else{
+                    self.isPlatForm = true;
                     selected.cart = _.find(cartList, function (cart) {
                         return cart.value === selected.cart;
                     });
+                }
 
                 self.cartList = cartList;
             }).then(function () {

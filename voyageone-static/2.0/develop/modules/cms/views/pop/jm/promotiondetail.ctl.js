@@ -33,6 +33,10 @@ define([
                 $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
             });
 
+            /** 默认值设置 */
+            $scope.vm.currentTime = new Date();
+            $scope.editModel.model.promotionType = "0";
+
         };
         $scope.addTag = function () {
             if ($scope.editModel.tagList) {
@@ -84,6 +88,8 @@ define([
             _upEntity.model.activityEnd = formatToStr(_upEntity.model.activityEnd);
             _upEntity.model.prePeriodStart = formatToStr(_upEntity.model.prePeriodStart);
             _upEntity.model.prePeriodEnd =_upEntity.model.activityEnd; //formatToStr(_upEntity.model.prePeriodEnd);
+            _upEntity.model.comment = _upEntity.model.comment || ""; //formatToStr(_upEntity.model.prePeriodEnd);
+
             jmPromotionService.saveModel(_upEntity).then(function () {
                 context =$scope.editModel.model;
                 $scope.$close();
