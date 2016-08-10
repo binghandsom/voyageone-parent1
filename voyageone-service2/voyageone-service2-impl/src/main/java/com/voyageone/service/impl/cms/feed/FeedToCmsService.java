@@ -5,6 +5,8 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.Enums.FeedEnums;
+import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
@@ -92,7 +94,7 @@ public class FeedToCmsService extends BaseService {
         Set<String> brandList = new HashSet<>();
         Set<String> sizeTypeList = new HashSet<>();
         Set<String> productTypeList = new HashSet<>();
-
+        Boolean isUsJoi = isUsJoi(channelId);
         Map<String, Map<String, List<String>>> attributeMtDatas = new HashMap<>();
         for (CmsBtFeedInfoModel product : products) {
             boolean insertLog = false;
@@ -156,6 +158,7 @@ public class FeedToCmsService extends BaseService {
                 for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
                     if (sku.getQty() != null) qty += sku.getQty();
                     weightConvert(sku);
+                    if (isUsJoi) priceConvert(sku);
                 }
                 product.setQty(qty);
 
@@ -239,7 +242,7 @@ public class FeedToCmsService extends BaseService {
             if(sku.getPriceNet() == null || sku.getPriceNet().compareTo(0D) == 0){
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
                 product.setUpdMessage("成本价为0");
-                $info(product.getCode() + "----" +product.getUpdMessage());
+                $info(product.getCode() + "----" + product.getUpdMessage());
                 return false;
             }
         }
@@ -358,5 +361,17 @@ public class FeedToCmsService extends BaseService {
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private void priceConvert(CmsBtFeedInfoModel_Sku skuModel) {
+        Integer weightCalc = StringUtil.isEmpty(skuModel.getWeightCalc()) ? 4 : Integer.parseInt(skuModel.getWeightCalc());
+        Double current = (skuModel.getPriceNet() + weightCalc * 3.5) * 6.7 / (1 - 0.1 - 0.05 - 0.119 - 0.05);
+        skuModel.setPriceCurrent(Math.ceil(current));
+        Double msrp = (skuModel.getPriceClientMsrp() + weightCalc * 3.5) * 6.7 / (1 - 0.1 - 0.05 - 0.119 - 0.05);
+        skuModel.setPriceMsrp(Math.ceil(msrp));
+    }
+
+    private Boolean isUsJoi(String channelId) {
+        return "1".equalsIgnoreCase(Feeds.getVal1(channelId, FeedEnums.Name.is_usjoi));
     }
 }

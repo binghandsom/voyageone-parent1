@@ -32,28 +32,24 @@ public class CmsMtFeeTaxService extends BaseService {
     /**
      * 取关税税率
      *
-     * @param shippingType 发货方式
-     * @param hsCode       税号
+     * @param hsCode 税号
      * @return 关税税率
      */
-    public Double getTaxRate(String shippingType, String hsCode) {
+    public Double getTaxRate(String hsCode) {
 
-        Assert.notNull(shippingType).elseThrowDefaultWithTitle("shippingType (CmsMtFeeTaxService.getTaxRate)");
         Assert.notNull(hsCode).elseThrowDefaultWithTitle("hsCode (CmsMtFeeTaxService.getTaxRate)");
 
-        Map<String, Object> queryMap = MapUtil.toMap("shippingType", shippingType, "hsCode", hsCode);
+        Map<String, Object> queryMap = MapUtil.toMap("shippingType", "", "hsCode", hsCode);
 
         CmsMtFeeTaxModel feeTaxModel = cmsMtFeeTaxDao.selectOne(queryMap);
 
         if (feeTaxModel == null)
             return null;
 
-        Double vaTaxRate = feeTaxModel.getVaTaxRate();
-        Double consumptionTaxRate = feeTaxModel.getConsumptionTaxRate();
+        // 此处进行拆箱, 作为错误检查
+        double vaTaxRate = feeTaxModel.getVaTaxRate();
+        double consumptionTaxRate = feeTaxModel.getConsumptionTaxRate();
 
-        Assert.notNull(vaTaxRate).elseThrowDefaultWithTitle("(%s in %s) `s vaTaxRate", hsCode, shippingType);
-        Assert.notNull(consumptionTaxRate).elseThrowDefaultWithTitle("(%s in %s) `s consumptionTaxRate", hsCode, shippingType);
-
-        return feeTaxModel.getVaTaxRate() + feeTaxModel.getConsumptionTaxRate();
+        return vaTaxRate + consumptionTaxRate;
     }
 }
