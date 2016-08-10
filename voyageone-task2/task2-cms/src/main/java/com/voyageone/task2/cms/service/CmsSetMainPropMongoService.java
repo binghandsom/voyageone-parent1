@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.base.exception.CommonConfigNotFoundException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -12,7 +13,6 @@ import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -38,6 +38,7 @@ import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -283,29 +284,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             String channelId = this.channel.getOrder_channel_id();
 
-            // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
-            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
-            // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
-            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
-
-            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许approve这个sku到平台上去售卖渠道cartId
-            typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(channelId, "A", "en"); // 取得允许Approve的数据
-            if (ListUtils.isNull(typeChannelBeanListApprove)) {
-                String errMsg = String.format("feed->master导入:异常终止:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息(用于生成product分平台信息) [ChannelId=%s A en]", channelId);
-                $error(errMsg);
-                // 回写详细错误信息表(cms_bt_business_log)
-                insertBusinessLog(channelId, "", "", "", "", errMsg, getTaskName());
-            }
-
-            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个需要展示的cart
-            typeChannelBeanListDisplay = TypeChannels.getTypeListSkuCarts(channelId, "D", "en"); // 取得展示用数据
-            if (ListUtils.isNull(typeChannelBeanListDisplay)) {
-                String errMsg = String.format("feed->master导入:异常终止:在com_mt_value_channel表中没有找到当前Channel需要展示的Cart信息(用于生成productGroup信息) [ChannelId=%s D en]", channelId);
-                $error(errMsg);
-                // 回写详细错误信息表(cms_bt_business_log)
-                insertBusinessLog(channelId, "", "", "", "", errMsg, getTaskName());
-            }
-
             // 查找当前渠道,所有等待反映到主数据的商品
             // List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, 0);
             String query = String.format("{ channelId: '%s', updFlg: %s}", channelId, 0);
@@ -319,8 +297,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
 
             // 共通配置信息存在的时候才进行feed->master导入
-            if (ListUtils.notNull(typeChannelBeanListApprove) && ListUtils.notNull(typeChannelBeanListDisplay)
-                    && ListUtils.notNull(feedList)) {
+            if (ListUtils.notNull(feedList)) {
+                // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
+                CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
+                // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
+                CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+
                 // --------------------------------------------------------------------------------------------
                 // 品牌mapping作成
                 List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, channelId);
@@ -393,12 +375,27 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     try {
                         feed.setFullAttribute();
                         doSaveProductMainProp(feed, channelId, categoryTreeAllList);
+                    } catch (CommonConfigNotFoundException ce) {
+                        errCnt++;
+                        // 如果是共通配置没有或者价格计算时抛出整个Channel的配置没有的错误时，后面的feed导入就不用做了，免得报出几百条同样的错误
+                        String errMsg = "feed->master导入:异常终止:";
+                        if (StringUtils.isNullOrBlank2(ce.getMessage())) {
+                            errMsg += " [ErrMsg=" + ce.getStackTrace()[0].toString() + "]";
+                        } else {
+                            errMsg = ce.getMessage();
+                        }
+                        // 回写详细错误信息表(cms_bt_business_log)
+                        insertBusinessLog(feed.getChannelId(), "", feed.getModel(), feed.getCode(), "", errMsg, getTaskName());
+
+                        // 回写feedInfo表(本来准备不回写，但一个feed都不回写的话画面上看不见错误信息)
+                        updateFeedInfo(feed, 2, errMsg, "");  // 2:feed->master导入失败
+                        // 跳出循环,后面的feed->master导入不做了，等这个channel共通错误改好了之后再做导入
+                        break;
                     } catch (Exception e) {
-                        //                    e.printStackTrace();
                         errCnt++;
                         String errMsg = "feed->master导入:异常终止:";
                         if (StringUtils.isNullOrBlank2(e.getMessage())) {
-                            errMsg = errMsg + " [ErrMsg=" + e.getStackTrace()[0].toString() + "]";
+                            errMsg += " [ErrMsg=" + e.getStackTrace()[0].toString() + "]";
                             $error(errMsg);
                         } else {
                             errMsg = e.getMessage();
@@ -407,16 +404,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         insertBusinessLog(feed.getChannelId(), "", feed.getModel(), feed.getCode(), "", errMsg, getTaskName());
 
                         // 回写feedInfo表
-                        feed.setUpdFlg(2);  // 2:feed->master导入失败
-                        feed.setUpdMessage(errMsg);
-                        feed.setModifier(getTaskName());
-                        feedInfoService.updateFeedInfo(feed);
-
-                        //                    // 价格公式错误时，后面所有的feed都不能导入了
-                        //                    if (errMsg.contains("价格计算公式错误")) {
-                        //                        // 跳出循环，后面的feed导入不做了
-                        //                        break;
-                        //                    }
+                        updateFeedInfo(feed, 2, errMsg, "");  // 2:feed->master导入失败
+                        // 继续循环做下一条feed->master导入
                     }
                     // update by desmond 2016/07/05 end
 
@@ -469,6 +458,23 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 通过Code查找到的产品
             CmsBtProductModel oldCmsProduct = null;
+
+            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许approve这个sku到平台上去售卖渠道cartId
+            typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(channelId, "A", "en"); // 取得允许Approve的数据
+            if (ListUtils.isNull(typeChannelBeanListApprove)) {
+                String errMsg = String.format("feed->master导入:异常终止:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息(用于生成product分平台信息) [ChannelId=%s A en]", channelId);
+                $error(errMsg);
+                throw new CommonConfigNotFoundException(errMsg);
+            }
+
+            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个需要展示的cart
+            typeChannelBeanListDisplay = TypeChannels.getTypeListSkuCarts(channelId, "D", "en"); // 取得展示用数据
+            if (ListUtils.isNull(typeChannelBeanListDisplay)) {
+                String errMsg = String.format("feed->master导入:异常终止:在com_mt_value_channel表中没有找到当前Channel需要展示的Cart信息(用于生成productGroup信息) [ChannelId=%s D en]", channelId);
+                $error(errMsg);
+                throw new CommonConfigNotFoundException(errMsg);
+            }
+
             // jeff 2016/05 change start
             List <CmsBtFeedInfoModel> feedList = new ArrayList<>();
             List<CmsBtProductModel> cmsProductList = productService.getProductByOriginalCode(channelId, originalFeed.getCode());
@@ -807,6 +813,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                    requestModel.setModifier(getTaskName());
 //                    requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
 
+                    // 更新价格相关项目
+                    cmsProduct = doSetPrice(channelId, feed, cmsProduct);
+
                     // productService.updateProduct(channelId, requestModel);
                     int updCnt = productService.updateProductFeedToMaster(channelId, cmsProduct, getTaskName());
                     if (updCnt == 0) {
@@ -878,6 +887,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                     // tom 20160510 追加 END
 
+                    // 更新价格相关项目
+                    cmsProduct = doSetPrice(channelId, feed, cmsProduct);
+
                     productService.createProduct(channelId, cmsProduct, getTaskName());
 
                     $info("feed->master导入:新增成功:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
@@ -893,21 +905,23 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // 调用共通方法来设置价格
                 // doSetPrice(channelId, feed, cmsProduct);
-                CmsBtProductModel cmsProductBean = doSetPrice(channelId, feed, cmsProduct);
+//                CmsBtProductModel cmsProductBean = doSetPrice(channelId, feed, cmsProduct);
+
+                // 生成productGroup数据
+                doSetGroup(feed);
 
                 // 更新价格履历
                 // productPriceLogService.insertPriceLog(channelId, productPriceBean, productPriceBeanBefore, "Feed导入Master价格更新", getTaskName());
 
                 // add by desmond 2016/07/05 start
-                // 记录商品价格表动履历
-                if (cmsProductBean != null && ListUtils.notNull(cmsProductBean.getCommon().getSkus())) {
-                    List<String> skuCodeList = new ArrayList<>();
-                    skuCodeList = cmsProductBean.getCommon().getSkus()
+                // 记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
+                if (cmsProduct != null && ListUtils.notNull(cmsProduct.getCommon().getSkus())) {
+                    List<String> skuCodeList = cmsProduct.getCommon().getSkus()
                                   .stream()
                                   .map(CmsBtProductModel_Sku::getSkuCode)
                                   .collect(Collectors.toList());
                     // 记录商品价格变动履历
-                    cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skuCodeList, cmsProductBean.getChannelId(), null, getTaskName(), "feed->master导入");
+                    cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skuCodeList, cmsProduct.getChannelId(), null, getTaskName(), "feed->master导入");
                 }
                 // add by desmond 2016/07/05 end
 
@@ -967,11 +981,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
              // jeff 2016/05 add end
             // 设置商品更新完成
-            originalFeed.setUpdFlg(1);           // 1:feed->master导入成功
-            originalFeed.setIsFeedReImport("0");
-            originalFeed.setUpdMessage("");      // add desmond 2016/07/05
-            originalFeed.setModifier(getTaskName());
-            feedInfoService.updateFeedInfo(originalFeed);
+//            originalFeed.setUpdFlg(1);           // 1:feed->master导入成功
+//            originalFeed.setIsFeedReImport("0");
+//            originalFeed.setUpdMessage("");      // add desmond 2016/07/05
+//            originalFeed.setModifier(getTaskName());
+//            feedInfoService.updateFeedInfo(originalFeed);
+            updateFeedInfo(originalFeed, 1, "", "0");
             // ------------- 函数结束
 
         }
@@ -1650,6 +1665,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 commonSku.setClientSkuCode(sku.getClientSku()); // ClientSku
                 commonSku.setClientSize(sku.getSize()); // ClientSize
                 commonSku.setSize(sku.getSize()); // 尺码
+                // 重量(单位：磅) 如果原始重量不是lb的,feed里已根据公式转成lb(磅)
+                commonSku.setWeight(Double.parseDouble(sku.getWeightCalc()));
 
                 // 增加默认渠道
 //                mainSku.setSkuCarts(skuCarts); // 删除现在没有skuCarts这个项目了
@@ -1868,7 +1885,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // jeff 2016/04 change start
 //            CmsBtProductGroupModel group = doSetGroup(feed, product);
 //            product.setGroups(group);
-            doSetGroup(feed);
+//            doSetGroup(feed);
             // jeff 2016/04 change end
 
             return product;
@@ -2090,18 +2107,27 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 for (CmsBtProductModel_Sku sku : skuList) {
                     if (feedSku.getSku().equals(sku.getSkuCode())) {
                         blnFound = true;
+                        // 找到这个skuCode的时候,更新从feed导入的相关项目
+                        sku.setBarcode(feedSku.getBarcode());
+                        sku.setClientSkuCode(feedSku.getClientSku());
+                        sku.setClientSize(feedSku.getSize());
+                        sku.setSize(feedSku.getSize());
+                        sku.setWeight(Double.parseDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
+
                         break;
                     }
                 }
 
                 // 如果找到了,那就什么都不做,如果没有找到,那么就需要添加
                 if (!blnFound) {
+                    // 没找到这个skuCode,则新加这个sku
                     CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
                     sku.setSkuCode(feedSku.getSku());
                     sku.setBarcode(feedSku.getBarcode());
                     sku.setClientSkuCode(feedSku.getClientSku());
                     sku.setClientSize(feedSku.getSize());
                     sku.setSize(feedSku.getSize());        // Add by desmond 2016/07/04 因为上新用的是这个字段
+                    sku.setWeight(Double.parseDouble(feedSku.getWeightCalc()));  // 重量(单位：磅)
 
                     skuList.add(sku);
                 }
@@ -3067,14 +3093,19 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 设置platform.PXX.skus里面的价格
             try {
-                cmsProduct = priceService.setRetailPrice(cmsProduct);
+                priceService.setPrice(cmsProduct);
+            } catch (IllegalPriceConfigException ie) {
+                // 渠道级别价格计算配置错误, 停止后面的feed->master导入，避免报几百条一样的错误信息
+                String errMsg = String.format("feed->master导入:异常终止:发现渠道级别的价格计算配置错误，后面的feed导入不做了，" +
+                        "请修改好相应配置项目后重新导入 [ErrMsg=%s]", ie.getMessage());
+                $error(errMsg);
+                throw new CommonConfigNotFoundException(errMsg);
             } catch (Exception ex) {
-                String errMsg = String.format("feed->master导入:产品新增或更新成功后设置价格失败:调用共通函数计算产品价格时出错 [ChannelId=%s] [FeedCode=%s] " +
-                                " [ErrMsg=", channelId, feed.getCode());
+                String errMsg = String.format("feed->master导入:异常终止:调用共通函数计算产品价格时出错 [ErrMsg= ", channelId, feed.getCode());
                 if(StringUtils.isNullOrBlank2(ex.getMessage())) {
-                    errMsg = errMsg + ex.getStackTrace()[0].toString() + "]";
+                    errMsg += ex.getStackTrace()[0].toString() + "]";
                 } else {
-                    errMsg = errMsg + ex.getMessage() + "]";
+                    errMsg += ex.getMessage() + "]";
                 }
                 $error(errMsg);
                 throw new BusinessException(errMsg);
@@ -3404,7 +3435,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //
 //            productSkuService.updatePrices(channelId, productPrices, getTaskName());
             // delete by desmond 2016/07/01 end
-            productSkuService.updatePricesNew(channelId, cmsProduct, getTaskName());
+            // 不需要自己同步价格区间，后面设置价格变更履历时会自动发MQ消息同步价格区间的
+//            productSkuService.updatePricesNew(channelId, cmsProduct, getTaskName());
             // jeff 2016/04 add start
             // 如果发生价格强制击穿的话，更新价格强制击穿时间
 //            if (synFlg) {
@@ -3603,22 +3635,22 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         businessLogService.insertBusinessLog(businessLogModel);
     }
 
-    /**
-     * 判断该渠道是否是需要基于类目的价格计算公式
-     *
-     * @param channelId String 渠道id
-     */
-    private boolean isCategoryFormula(String channelId) {
-
-        // 有3个渠道('020','025','026')要根据类目税率不一样，要根据类目(config_code字段)取得价格计算公式
-        if (ChannelConfigEnums.Channel.EDCSKINCARE.getId().equals(channelId)           // "020"
-                || ChannelConfigEnums.Channel.FragranceNet.getId().equals(channelId)   // "025"
-                || ChannelConfigEnums.Channel.LightHouse.getId().equals(channelId)) {  // "026"
-            return true;
-        }
-
-        return false;
-    }
+//    /**
+//     * 判断该渠道是否是需要基于类目的价格计算公式
+//     *
+//     * @param channelId String 渠道id
+//     */
+//    private boolean isCategoryFormula(String channelId) {
+//
+//        // 有3个渠道('020','025','026')要根据类目税率不一样，要根据类目(config_code字段)取得价格计算公式
+//        if (ChannelConfigEnums.Channel.EDCSKINCARE.getId().equals(channelId)           // "020"
+//                || ChannelConfigEnums.Channel.FragranceNet.getId().equals(channelId)   // "025"
+//                || ChannelConfigEnums.Channel.LightHouse.getId().equals(channelId)) {  // "026"
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     /**
      * 如果没有取到feed类目对应的价格计算公式时抛出异常处理
@@ -3835,5 +3867,24 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         brandEnValueChannelModel.setCreater(getTaskName());
         brandEnValueChannelModel.setModifier(getTaskName());
         comMtValueChannelDao.insert(brandEnValueChannelModel);
+    }
+
+    /**
+     * feed->master导入成功或者失败之后，回写cms_bt_feed_info_cxxx表
+     *
+     * @param feed CmsBtFeedInfoModel feed信息
+     * @param updFlg Integer 更新flg(1:feed->master导入失败   2:feed->master导入失败)
+     * @param errMsg String 失败的错误消息
+     * @param isFeedReImport String 是否强制重新导入
+     */
+    private void updateFeedInfo(CmsBtFeedInfoModel feed, Integer updFlg, String errMsg, String isFeedReImport) {
+        if (feed == null) return;
+
+        feed.setUpdFlg(updFlg);  // 1:feed->master导入失败   2:feed->master导入失败
+        feed.setUpdMessage(errMsg);
+        if (!StringUtils.isEmpty(isFeedReImport))
+            feed.setIsFeedReImport(isFeedReImport);
+        feed.setModifier(getTaskName());
+        feedInfoService.updateFeedInfo(feed);
     }
 }

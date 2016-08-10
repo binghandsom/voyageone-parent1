@@ -36,7 +36,7 @@ public class PriceServiceTest {
     private ProductService productService;
 
     @Test
-    public void setRetailPrice() throws Exception {
+    public void testSystemPriceSetter() throws Exception {
 
         CmsBtProductModel product = productService.getProductById("017", 5784);
 
@@ -55,7 +55,48 @@ public class PriceServiceTest {
 
         // 测试计算
 
-        priceService.setRetailPrice(product, 27);
+        priceService.setPrice(product, 27);
+
+        // 输出结果
+
+        System.out.println("\n\n");
+
+        for (BaseMongoMap<String, Object> sku : skus) {
+
+            String skuCodeValue = sku.getStringAttribute(skuCode.name());
+
+            List<Double> doubleList = lastPriceListMap.get(skuCodeValue);
+
+            System.out.println(String.format("%s, \t\t%s -> %s", "priceRetail", doubleList.get(0), sku.getDoubleAttribute(priceRetail.name())));
+            System.out.println(String.format("%s, \t%s -> %s", "originalPriceMsrp", doubleList.get(1), sku.getDoubleAttribute(originalPriceMsrp.name())));
+            System.out.println(String.format("%s, \t\t\t%s -> %s", "priceMsrp", doubleList.get(2), sku.getDoubleAttribute(priceMsrp.name())));
+            System.out.println(String.format("%s, \t\t\t%s -> %s", "priceSale", doubleList.get(3), sku.getDoubleAttribute(priceSale.name())));
+        }
+
+        System.out.println("\n\n");
+    }
+
+    @Test
+    public void testFormulaPriceSetter() throws Exception {
+
+        CmsBtProductModel product = productService.getProductById("010", 9303);
+
+        List<BaseMongoMap<String, Object>> skus = product.getPlatform(23).getSkus();
+
+        // 记录老价格
+
+        Map<String, List<Double>> lastPriceListMap = skus.stream().collect(toMap(sku -> sku.getStringAttribute(skuCode.name()), sku -> new ArrayList<Double>() {
+            {
+                add(sku.getDoubleAttribute(priceRetail.name()));
+                add(sku.getDoubleAttribute(originalPriceMsrp.name()));
+                add(sku.getDoubleAttribute(priceMsrp.name()));
+                add(sku.getDoubleAttribute(priceSale.name()));
+            }
+        }));
+
+        // 测试计算
+
+        priceService.setPrice(product, 23);
 
         // 输出结果
 
