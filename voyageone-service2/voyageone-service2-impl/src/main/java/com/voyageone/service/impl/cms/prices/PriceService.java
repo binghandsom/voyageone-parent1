@@ -672,7 +672,7 @@ public class PriceService extends BaseService {
         }
 
         private SystemPriceCalculator setTaxRate(Double taxRate) {
-            checkValid(this.taxRate = taxRate, "运费");
+            checkValid(this.taxRate = taxRate, "税率");
             return this;
         }
 
