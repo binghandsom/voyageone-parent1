@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.jumei.test;
 
 import com.voyageone.common.util.excel.ExcelException;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionExportTask3Service;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,9 @@ import java.io.IOException;
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class CmsBtJmPromotionExportTaskServiceTest {
     @Autowired
-   // CmsBtJmPromotionExportTaskService service;
+    CmsBtJmPromotionExportTask3Service service;
     @Test
     public  void  test() throws IOException, ExcelException {
-     //   service.export(1,"/usr/JMExport");
+        service.export(177,"/usr/web/contents/cms/jumei_sx/export");
     }
 }
