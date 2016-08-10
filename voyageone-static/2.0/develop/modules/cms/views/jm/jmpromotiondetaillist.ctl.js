@@ -247,7 +247,7 @@ define([
              if (model.synchStatus == 1) {
                 return "待上传";
             }
-            else if (model.updateStatus == 1 || model.priceStatus == 1) {
+            else if (model.updateStatus== 1) {//model.priceStatus == 1 ||
                 return "待更新";
             }
             else if (model.dealEndTimeStatus == 1) {
