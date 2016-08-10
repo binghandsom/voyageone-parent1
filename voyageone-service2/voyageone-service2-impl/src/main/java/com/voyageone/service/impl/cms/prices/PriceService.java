@@ -260,7 +260,7 @@ public class PriceService extends BaseService {
         String shippingType;
 
         if (shippingTypeConfig == null || StringUtils.isEmpty(shippingType = shippingTypeConfig.getConfigValue1()))
-            throw new PriceCalculateException("没有找到渠道 %s (%s) 可用的发货方式", channelId, cartId);
+            throw new IllegalPriceConfigException("没有找到渠道 %s (%s) 可用的发货方式", channelId, cartId);
 
         CmsMtFeeCommissionService.CommissionQueryBuilder commissionQueryBuilder = feeCommissionService.new CommissionQueryBuilder()
                 .withChannel(channelId)
@@ -566,7 +566,7 @@ public class PriceService extends BaseService {
      * @param formula 价格计算公式, 从 {@code getCalculateFormula()} 获取
      * @param sku     包含公式参数的 sku 模型
      * @return 计算后的价格
-     * @throws PriceCalculateException sku 中不包含公式所需的参数
+     * @throws IllegalPriceConfigException sku 中不包含公式所需的参数
      */
     private Double calculateByFormula(String formula, CmsBtProductModel_Sku sku, boolean roundUp) throws IllegalPriceConfigException {
 
@@ -699,9 +699,9 @@ public class PriceService extends BaseService {
          *
          * @param inputPrice 原始价格
          * @return 新价格
-         * @throws PriceCalculateException 在计算前, 尝试计算公式的分母, 如果分母为 0 则报错
+         * @throws IllegalPriceConfigException 在计算前, 尝试计算公式的分母, 如果分母为 0 则报错
          */
-        private Double calculate(Double inputPrice) throws PriceCalculateException {
+        private Double calculate(Double inputPrice) throws IllegalPriceConfigException {
 
             if (!valid)
                 return -1D;
@@ -711,7 +711,7 @@ public class PriceService extends BaseService {
 
             // 如果分母不合法。。。
             if (denominator == 0)
-                throw new PriceCalculateException("根据这些参数 [VoyageOne Commission:%s], [Platform Commission:%s], [Return Rate:%s], [Tax Rate:%s] 计算出公式的分母为 0"
+                throw new IllegalPriceConfigException("根据这些参数 [VoyageOne Commission:%s], [Platform Commission:%s], [Return Rate:%s], [Tax Rate:%s] 计算出公式的分母为 0"
                         , voCommission, pfCommission, returnRate, taxRate, denominator);
 
             Double price = ((inputPrice + shippingFee + otherFee) * exchangeRate * 100d) / denominator;
