@@ -380,7 +380,7 @@
         SET a.deal_Price=b.deal_price,a.market_price=b.market_price,a.discount=b.discount
         ,a.max_deal_Price=b.max_deal_price,a.max_market_price=b.max_market_price
         ,a.min_deal_Price=b.min_deal_price,a.min_market_price=b.min_market_price
-        ,a.price_status=(case WHEN a.synch_status==2 then 1 else a.price_status end )
+        ,a.price_status=(case WHEN a.synch_status=2 then 1 else a.price_status end )
         WHERE    a.id IN
         <foreach item="item" index="i" collection="listPromotionProductId"
                  open="(" separator="," close=")">
