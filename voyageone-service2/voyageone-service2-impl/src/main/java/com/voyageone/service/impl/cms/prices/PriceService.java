@@ -348,7 +348,7 @@ public class PriceService extends BaseService {
 
             Double weight = commonSku.getWeight();
 
-            if (weight == null || weight < 1) {
+            if (weight == null || weight <= 0) {
 
                 String weightString = shippingTypeConfig.getConfigValue2();
 
