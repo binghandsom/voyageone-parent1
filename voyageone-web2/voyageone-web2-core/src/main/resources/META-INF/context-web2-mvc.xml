@@ -55,5 +55,5 @@
         </mvc:interceptor>
     </mvc:interceptors>
 
-    <!--<import resource="classpath*:spring-application.xml"/>-->
+
 </beans>
