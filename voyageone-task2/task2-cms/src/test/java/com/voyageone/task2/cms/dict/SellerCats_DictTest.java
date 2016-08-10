@@ -17,7 +17,7 @@ import java.util.List;
  * 4.propValue_4  (cNames 父分类id,子分类id)  (例："系列,彩色宝石")
  *          ↓   ↓   ↓
  * 1."cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类id,子分类id)|cNames(父分类id,子分类id)"
- *  例：propValue1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石
+ *  例："1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石"
  *
  * ※feed->master导入的时候，会读取从表中读取这里生成的字典数据，然后设置到Product.platform.PXX.sellerCarts[]里面
  *
