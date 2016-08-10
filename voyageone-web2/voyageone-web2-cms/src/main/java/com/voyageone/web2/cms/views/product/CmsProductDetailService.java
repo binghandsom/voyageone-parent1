@@ -30,6 +30,7 @@ import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -645,9 +646,12 @@ public class CmsProductDetailService extends BaseAppService {
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
         if (commonModel.getFields().getHsCodePrivate() != null && !commonModel.getFields().getHsCodePrivate().equalsIgnoreCase(oldProduct.getCommon().getFields().getHsCodePrivate())) {
             try {
-                priceService.setRetailPrice(newProduct);
+                priceService.setPrice(newProduct);
             } catch (PriceCalculateException e) {
                 throw new BusinessException("价格计算错误" + e.getMessage());
+            } catch (IllegalPriceConfigException e) {
+                // TODO 当捕获配置错误异常时, 需要停止渠道级别的计算
+                e.printStackTrace();
             }
             newProduct.getPlatforms().forEach((s, platform) -> {
                 if(platform.getCartId() != 0){
@@ -1338,9 +1342,13 @@ public class CmsProductDetailService extends BaseAppService {
         });
         cmsBtProductModel.getCommon().getFields().setHsCodePrivate(hsCode);
         try {
-            priceService.setRetailPrice(cmsBtProductModel);
+            priceService.setPrice(cmsBtProductModel);
         } catch (PriceCalculateException e) {
+            // 当捕获计算错误时, 可以继续 code 级别的计算
             throw new BusinessException("价格计算错误" + e.getMessage());
+        } catch (IllegalPriceConfigException e) {
+            // TODO 当捕获配置错误异常时, 需要停止 code 级别的计算
+            e.printStackTrace();
         }
         cmsBtProductModel.getPlatforms().forEach((s, platform) -> {
             if (platform.getCartId() != 0) {

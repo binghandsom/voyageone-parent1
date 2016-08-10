@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.jumei.test;
+package com.voyageone.task2.cms.service.jumei;
 
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import org.junit.Test;
@@ -7,14 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+/**
+ * Created by dell on 2016/8/9.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
-public class CmsBtJmPromotionImportTaskServiceTest {
+@ContextConfiguration("classpath:context-cms-test.xml")
+public class JmBtPromotionExportJobServiceTest {
     @Autowired
-    CmsBtJmPromotionImportTask3Service service;
-
+    JmBtPromotionExportJobService service;
     @Test
-    public  void  test() throws Exception {
-        service.importFile(29,"/usr/web/contents/cms/jumei_sx/import");
+    public void testOnStartup() throws Exception {
+        //service.onStartup();
     }
 }
