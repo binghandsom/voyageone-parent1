@@ -96,8 +96,17 @@ public class TbItemService extends TbBase {
         request.setNumIid(numIid);
         request.setNum(1L);
         ItemUpdateListingResponse response = reqTaobaoApi(shopBean, request);
+        if (response == null) {
+            logger.error("商品上架失败 " + numIid);
+            return false;
+        }
+        if (response.getItem() == null) {
+            logger.error("商品上架失败 返回Item为空 " + numIid);
+            return false;
+        }
         Long rsNumIId = response.getItem().getNumIid();
         if (rsNumIId == null || rsNumIId == 0) {
+            logger.error("商品上架失败 返回numiid为空 " + numIid);
             return false;
         } else {
             return true;
@@ -114,8 +123,17 @@ public class TbItemService extends TbBase {
         ItemUpdateDelistingRequest request = new ItemUpdateDelistingRequest();
         request.setNumIid(numIid);
         ItemUpdateDelistingResponse response = reqTaobaoApi(shopBean, request);
+        if (response == null) {
+            logger.error("商品下架失败 " + numIid);
+            return false;
+        }
+        if (response.getItem() == null) {
+            logger.error("商品下架失败 返回Item为空 " + numIid);
+            return false;
+        }
         Long rsNumIId = response.getItem().getNumIid();
         if (rsNumIId == null || rsNumIId == 0) {
+            logger.error("商品下架失败 返回numiid为空 " + numIid);
             return false;
         } else {
             return true;

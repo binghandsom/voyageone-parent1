@@ -39,7 +39,6 @@ import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
-import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -3092,28 +3091,21 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             }
 
-            String errMsg = String.format("feed->master导入:异常终止:调用共通函数计算产品价格时出错 [ChannelId=%s] [FeedCode=%s] " +
-                    " [ErrMsg=", channelId, feed.getCode());
-
             // 设置platform.PXX.skus里面的价格
             try {
                 priceService.setPrice(cmsProduct);
-            } catch (IllegalPriceConfigException illegalPriceConfigException) {
-                // TODO 配置错误, 停止渠道级别的价格计算
-            } catch (PriceCalculateException pe) {
-                // 如果是整个channel相关的共通异常，则后面的feed导入不用做了
-                if (StringUtils.isNullOrBlank2(pe.getMessage())) {
-                    errMsg = errMsg + pe.getStackTrace()[0].toString() + "]";
-                } else {
-                    errMsg = errMsg + pe.getMessage() + "]";
-                }
+            } catch (IllegalPriceConfigException ie) {
+                // 渠道级别价格计算配置错误, 停止后面的feed->master导入，避免报几百条一样的错误信息
+                String errMsg = String.format("feed->master导入:异常终止:发现渠道级别的价格计算配置错误，后面的feed导入不做了，" +
+                        "请修改好相应配置项目后重新导入 [ErrMsg=%s]", ie.getMessage());
                 $error(errMsg);
                 throw new CommonConfigNotFoundException(errMsg);
             } catch (Exception ex) {
+                String errMsg = String.format("feed->master导入:异常终止:调用共通函数计算产品价格时出错 [ErrMsg= ", channelId, feed.getCode());
                 if(StringUtils.isNullOrBlank2(ex.getMessage())) {
-                    errMsg = errMsg + ex.getStackTrace()[0].toString() + "]";
+                    errMsg += ex.getStackTrace()[0].toString() + "]";
                 } else {
-                    errMsg = errMsg + ex.getMessage() + "]";
+                    errMsg += ex.getMessage() + "]";
                 }
                 $error(errMsg);
                 throw new BusinessException(errMsg);
