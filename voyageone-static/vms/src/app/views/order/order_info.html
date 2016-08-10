@@ -96,7 +96,7 @@
                         </td>
                         <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderId}}</strong></td>
                         <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderTime | date: 'yyyy-MM-dd HH:mm:ss'}}</strong></td>
-                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
+                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{'(' + item.orderInfoBeanList.length + ' SKUs)'}}</strong></td>
                         <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
                         <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{ctrl.getStatusName(item.status)}}</strong></td>
                         <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>${{item.totalVoPrice}}</strong></td>
