@@ -7,8 +7,6 @@
  */
 package com.voyageone.service.model.admin;
 
-import java.util.Date;
-
 /**
  * 
  */
@@ -80,14 +78,6 @@ public class WmsMtStoreModel extends AdminBaseModel {
     protected String storeComment;
 
     protected Boolean active;
-
-    protected Date created;
-
-    protected String creater;
-
-    protected Date modified;
-
-    protected String modifier;
 
     protected Integer status;
 
@@ -225,38 +215,6 @@ public class WmsMtStoreModel extends AdminBaseModel {
 
     public void setActive(Boolean active) {
         this.active = active;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public String getCreater() {
-        return creater;
-    }
-
-    public void setCreater(String creater) {
-        this.creater = creater == null ? null : creater.trim();
-    }
-
-    public Date getModified() {
-        return modified;
-    }
-
-    public void setModified(Date modified) {
-        this.modified = modified;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier == null ? null : modifier.trim();
     }
 
     public Integer getStatus() {
