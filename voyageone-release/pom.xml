@@ -24,6 +24,11 @@
 			<artifactId>voyageone-web2-vendor</artifactId>
 			<version>${voyageone.web2.vendor.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-web2-security</artifactId>
+			<version>${voyageone.web2.security.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>voyageone-release</finalName>

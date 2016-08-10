@@ -67,7 +67,7 @@ public class MyRealm extends AuthorizingRealm {
 		String username = (String) token.getPrincipal();
 
 		HashMap<String, Object> userFormMap = new HashMap();
-		userFormMap.put("accountname", username);
+		userFormMap.put("userAccount", username);
 		ComUserModel userModel = comUserDao.selectOne(userFormMap);
 
 		if (userModel != null) {
