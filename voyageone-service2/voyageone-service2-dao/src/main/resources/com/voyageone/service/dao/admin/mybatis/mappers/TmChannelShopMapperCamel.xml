@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.admin.TmChannelShopDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.admin.TmChannelShopModel" />
+    <insert id="insert" parameterType="com.voyageone.service.model.admin.TmChannelShopModel" >
+        insert into tm_channel_shop
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="orderChannelId != null" >
+                `order_channel_id`,
+            </if>
+            <if test="cartId != null" >
+                `cart_id`,
+            </if>
+            <if test="shopName != null" >
+                `shop_name`,
+            </if>
+            <if test="appUrl != null" >
+                `app_url`,
+            </if>
+            <if test="appkey != null" >
+                `appKey`,
+            </if>
+            <if test="appsecret != null" >
+                `appSecret`,
+            </if>
+            <if test="sessionkey != null" >
+                `sessionKey`,
+            </if>
+            <if test="comment != null" >
+                `comment`,
+            </if>
+            <if test="active != null" >
+                `active`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="orderChannelId != null" >
+                #{orderChannelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="shopName != null" >
+                #{shopName,jdbcType=VARCHAR},
+            </if>
+            <if test="appUrl != null" >
+                #{appUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="appkey != null" >
+                #{appkey,jdbcType=VARCHAR},
+            </if>
+            <if test="appsecret != null" >
+                #{appsecret,jdbcType=VARCHAR},
+            </if>
+            <if test="sessionkey != null" >
+                #{sessionkey,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null" >
+                #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>
