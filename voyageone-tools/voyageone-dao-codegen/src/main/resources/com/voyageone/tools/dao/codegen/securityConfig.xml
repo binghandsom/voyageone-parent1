@@ -29,7 +29,7 @@
         </javaModelGenerator>
 
         <sqlMapGenerator targetPackage="com.voyageone.security.dao.mybatis.mappers"
-                         targetProject="voyageone-web2/voyageone-web2-security/src/main//resources/">
+                         targetProject="voyageone-web2/voyageone-web2-security/src/main/resources/">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
 
