@@ -14,7 +14,7 @@ import java.util.List;
  * Created by jeff.duan on 16/06/29.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:context-cms-test.xml")
+@ContextConfiguration("classpath:context-vms-test.xml")
 public class VmsOrderDetailDataImportServiceTest {
 
     @Autowired

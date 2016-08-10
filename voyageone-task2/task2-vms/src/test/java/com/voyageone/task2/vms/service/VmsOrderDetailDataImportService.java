@@ -1,23 +1,14 @@
 package com.voyageone.task2.vms.service;
 
-import com.aliyun.oss.common.utils.DateUtil;
-import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
+
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.dao.vms.VmsBtFeedFileDao;
 import com.voyageone.service.dao.vms.VmsBtOrderDetailDao;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.model.vms.VmsBtFeedFileModel;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.base.util.TaskControlUtils;
-import com.voyageone.task2.vms.VmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

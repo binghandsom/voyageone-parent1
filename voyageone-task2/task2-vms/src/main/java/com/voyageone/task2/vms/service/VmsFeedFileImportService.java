@@ -1602,15 +1602,15 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             }
 
             // 按lbs的单位进行转换
-            if ("oz".equals(weightOrgUnit.toLowerCase())) {
-                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(16), 3, BigDecimal.ROUND_HALF_UP).toString();
-            } else if ("g".equals(weightOrgUnit.toLowerCase())) {
-                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(453.59237), 3, BigDecimal.ROUND_HALF_UP).toString();
-            } else if ("kg".equals(weightOrgUnit.toLowerCase())) {
-                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(0.4535924), 3, BigDecimal.ROUND_HALF_UP).toString();
-            } else {
-                weightCalc = weightOrg;
-            }
+//            if ("oz".equals(weightOrgUnit.toLowerCase())) {
+//                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(16), 3, BigDecimal.ROUND_HALF_UP).toString();
+//            } else if ("g".equals(weightOrgUnit.toLowerCase())) {
+//                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(453.59237), 3, BigDecimal.ROUND_HALF_UP).toString();
+//            } else if ("kg".equals(weightOrgUnit.toLowerCase())) {
+//                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(0.4535924), 3, BigDecimal.ROUND_HALF_UP).toString();
+//            } else {
+//                weightCalc = weightOrg;
+//            }
 
             skuInfo.setWeightOrg(weightOrg);
             skuInfo.setWeightOrgUnit(weightOrgUnit);
