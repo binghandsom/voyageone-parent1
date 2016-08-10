@@ -94,11 +94,21 @@ define([
                     if (self.orgFlg == 2) {
                         // 返回值：orgChkStsMap和orgDispMap是互斥的,即一个tag不可能在两个Map中同时出现
                         /**checkbox勾选状态*/
-                        self.orgChkStsMap = res.data.orgChkStsMap;
-                        self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
+                        if (res.data.orgChkStsMap == undefined || res.data.orgChkStsMap == null) {
+                            self.orgChkStsMap = {};
+                            self._orgChkStsMap = {};
+                        } else {
+                            self.orgChkStsMap = res.data.orgChkStsMap;
+                            self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
+                        }
                         /**checkbox半选状态*/
-                        self.orgDispMap = res.data.orgDispMap;
-                        self._orgDispMap = angular.copy(res.data.orgDispMap);
+                        if (res.data.orgDispMap == undefined || res.data.orgDispMap == null) {
+                            self.orgDispMap = {};
+                            self._orgDispMap = {};
+                        } else {
+                            self.orgDispMap = res.data.orgDispMap;
+                            self._orgDispMap = angular.copy(res.data.orgDispMap);
+                        }
                     }
                     self.search(0);
                 });
