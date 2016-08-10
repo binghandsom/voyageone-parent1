@@ -471,6 +471,10 @@ public class PriceService extends BaseService {
 
         if (isAutoApprovePrice)
             skuInPlatform.put(priceSale.name(), retailPrice);
+        else
+            // 如果不强制同步的话, 要看看是否原本是合法价格
+            // 如果原本不是合法价格的话, 就同步设置
+            resetPriceIfInvalid(skuInPlatform, priceSale, retailPrice);
 
         // 保存击穿标识
         String priceDiffFlgValue = productSkuService.getPriceDiffFlg(channelId, skuInPlatform);
@@ -491,6 +495,10 @@ public class PriceService extends BaseService {
 
         if (isAutoSyncPriceMsrp)
             skuInPlatform.put(priceMsrp.name(), originPriceMsrp);
+        else
+            // 如果不强制同步的话, 要看看是否原本是合法价格
+            // 如果原本不是合法价格的话, 就同步设置
+            resetPriceIfInvalid(skuInPlatform, priceMsrp, originPriceMsrp);
 
         skuInPlatform.put(originalPriceMsrp.name(), originPriceMsrp);
     }
