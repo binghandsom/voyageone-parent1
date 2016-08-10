@@ -131,7 +131,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
         return  promotion;
     }
-    //批量修改价格
+    //批量修改价格 批量变更价格
     @VOTransactional
     public CallResult batchUpdateDealPrice(BatchUpdatePriceParameterBean parameter) {
         CallResult result = new CallResult();

@@ -275,7 +275,7 @@ define([
             var listPromotionProduct = [];
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
                 if ($scope.vm.modelList[i].isChecked) {
-                    listPromotionProduct.push($scope.vm.modelList[i].id);
+                    listPromotionProduct.push($scope.vm.modelList[i]);
                 }
             }
             return listPromotionProduct;

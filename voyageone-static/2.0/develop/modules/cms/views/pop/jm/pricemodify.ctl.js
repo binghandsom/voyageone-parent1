@@ -22,10 +22,6 @@ define([
             }
         };
         $scope.ok = function () {
-            $scope.model.listPromotionProductId =listPromotionProductId;
-            $scope.model.jmPromotionId=jmPromotionId;
-            var parameter= angular.copy($scope.model);
-            parameter.discount = $scope.model.discount ? $scope.model.discount * 0.1 : 1;
 
             if(listPromotionProduct.length==0)
             {
@@ -45,6 +41,10 @@ define([
                 }
             }
             if(!isUpdate) return;
+            $scope.model.listPromotionProductId = $scope.getSelectedPromotionProductIdList(listPromotionProduct);
+            $scope.model.jmPromotionId=jmPromotionId;
+            var parameter= angular.copy($scope.model);
+            parameter.discount = $scope.model.discount ? $scope.model.discount * 0.1 : 1;
             jmPromotionDetailService.batchUpdateDealPrice(parameter).then(function (res) {
                 if (!res.data.result) {
                     alert(res.data.msg);
@@ -55,6 +55,15 @@ define([
             }, function (res) {
               alert(res);
             })
+        }
+        $scope.getSelectedPromotionProductIdList = function (modelList) {
+            var listPromotionProductId = [];
+            for (var i = 0; i < modelList.length; i++) {
+                if (modelList[i].isChecked) {
+                    listPromotionProductId.push(modelList[i].id);
+                }
+            }
+            return listPromotionProductId;
         }
         $scope.mnumberKeydown=function(e){
             var ss=window.event||e;
