@@ -23,7 +23,7 @@ import java.util.List;
  * @since 2.4.0
  *
  */
-public class SellerCids_DictTest {
+public class SellerCats_DictTest {
 
 	@Test
 	public void startupTest() {
