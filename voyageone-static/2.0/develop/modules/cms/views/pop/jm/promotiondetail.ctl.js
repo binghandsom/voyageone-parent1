@@ -14,9 +14,9 @@ define([
         $scope.initialize  = function () {
 
             if(context.id){
-                $scope.vm.isBegin=context.isBegin;//活动是否开始
-                $scope.vm.isEnd= context.isEnd;//活动是否结束
                 jmPromotionService.getEditModel(context.id).then(function (res) {
+                    $scope.vm.isBeginPre=res.data.isBeginPre;//活动是否开始
+                    $scope.vm.isEnd= res.data.isEnd;//活动是否结束
                     $scope.editModel.model = res.data.model;
                     $scope.editModel.tagList = res.data.tagList;
                     $scope.editModel.model.activityStart = formatToDate($scope.editModel.model.activityStart);

@@ -34,8 +34,7 @@ public class CmsBtJmPromotionImportSave3Service {
     private CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
     @Autowired
     CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
-@Autowired
-    CmsBtJmPromotionDaoExt  cmsBtJmPromotionDaoExt;
+
     @VOTransactional
     public void saveProductSaveInfo(ProductSaveInfo info) {
         //CmsBtJmPromotionProduct
@@ -45,7 +44,6 @@ public class CmsBtJmPromotionImportSave3Service {
             daoCmsBtJmPromotionProduct.update(info.jmProductModel);
         }
         daoExtCmsBtJmPromotionProduct.updateAvgPriceByPromotionProductId(info.jmProductModel.getId());//求价格 折扣 平均值
-        cmsBtJmPromotionDaoExt.updateSumbrandById(info.jmProductModel.getId());//汇总品牌
         //CmsBtJmPromotionSku
         for (CmsBtJmPromotionSkuModel sku : info.jmSkuList) {
             sku.setCmsBtJmPromotionProductId(info.jmProductModel.getId());

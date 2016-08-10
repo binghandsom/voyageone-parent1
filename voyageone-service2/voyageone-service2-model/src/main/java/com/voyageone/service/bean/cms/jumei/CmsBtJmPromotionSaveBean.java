@@ -27,4 +27,8 @@ public class CmsBtJmPromotionSaveBean {
     public void setTagList(List<CmsBtTagModel> tagList) {
         this.tagList = tagList;
     }
+
+
+    boolean isBeginPre;//活动是否开始
+    boolean isEnd;//活动是否结束
 }

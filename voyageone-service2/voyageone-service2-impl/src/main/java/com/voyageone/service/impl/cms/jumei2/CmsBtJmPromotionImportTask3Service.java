@@ -83,6 +83,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     @Autowired
     CmsBtJmPromotionImportSave3Service serviceCmsBtJmPromotionImportSave3;
     @Autowired
+    CmsBtJmPromotionDaoExt  cmsBtJmPromotionDaoExt;
+    @Autowired
     TransactionRunner transactionRunner;
     public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
         String errorMsg = "";
@@ -287,6 +289,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 listProducctErrorMap.add(MapUtil.toMap(info._importProduct));
             }
         }
+        cmsBtJmPromotionDaoExt.updateSumbrandById(model.getId());//汇总品牌
         $info("保存结束");
     }
     public CmsBtPromotionModel  getCmsBtPromotionModel(int jmPromotionId)
