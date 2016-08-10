@@ -10,32 +10,12 @@ package com.voyageone.service.model.admin;
 /**
  * 
  */
-public class TmCodeModel extends AdminBaseModel {
-    protected String id;
-
-    protected String code;
-
+public class TmCodeModel extends TmCodeKey {
     protected String name;
 
     protected String name1;
 
     protected String des;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id == null ? null : id.trim();
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code == null ? null : code.trim();
-    }
 
     public String getName() {
         return name;

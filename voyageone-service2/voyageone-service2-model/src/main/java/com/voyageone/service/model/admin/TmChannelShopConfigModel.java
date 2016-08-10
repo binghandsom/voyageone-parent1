@@ -10,50 +10,10 @@ package com.voyageone.service.model.admin;
 /**
  * 
  */
-public class TmChannelShopConfigModel extends AdminBaseModel {
-    protected String orderChannelId;
-
-    protected String cartId;
-
-    protected String cfgName;
-
-    protected String cfgVal1;
-
+public class TmChannelShopConfigModel extends TmChannelShopConfigKey {
     protected String cfgVal2;
 
     protected String comment;
-
-    public String getOrderChannelId() {
-        return orderChannelId;
-    }
-
-    public void setOrderChannelId(String orderChannelId) {
-        this.orderChannelId = orderChannelId == null ? null : orderChannelId.trim();
-    }
-
-    public String getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(String cartId) {
-        this.cartId = cartId == null ? null : cartId.trim();
-    }
-
-    public String getCfgName() {
-        return cfgName;
-    }
-
-    public void setCfgName(String cfgName) {
-        this.cfgName = cfgName == null ? null : cfgName.trim();
-    }
-
-    public String getCfgVal1() {
-        return cfgVal1;
-    }
-
-    public void setCfgVal1(String cfgVal1) {
-        this.cfgVal1 = cfgVal1 == null ? null : cfgVal1.trim();
-    }
 
     public String getCfgVal2() {
         return cfgVal2;

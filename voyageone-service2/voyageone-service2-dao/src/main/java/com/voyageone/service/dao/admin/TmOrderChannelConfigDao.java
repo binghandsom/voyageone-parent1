@@ -7,10 +7,25 @@
  */
 package com.voyageone.service.dao.admin;
 
+import com.voyageone.service.model.admin.TmOrderChannelConfigKey;
 import com.voyageone.service.model.admin.TmOrderChannelConfigModel;
+import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TmOrderChannelConfigDao {
+    List<TmOrderChannelConfigModel> selectList(Map<String, Object> map);
+
+    TmOrderChannelConfigModel selectOne(Map<String, Object> map);
+
+    int selectCount(Map<String, Object> map);
+
+    TmOrderChannelConfigModel select(TmOrderChannelConfigKey key);
+
     int insert(TmOrderChannelConfigModel record);
+
+    int update(TmOrderChannelConfigModel record);
+
+    int delete(TmOrderChannelConfigKey key);
 }

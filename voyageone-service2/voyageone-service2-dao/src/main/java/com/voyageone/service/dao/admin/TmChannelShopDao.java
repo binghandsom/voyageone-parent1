@@ -7,10 +7,25 @@
  */
 package com.voyageone.service.dao.admin;
 
+import com.voyageone.service.model.admin.TmChannelShopKey;
 import com.voyageone.service.model.admin.TmChannelShopModel;
+import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TmChannelShopDao {
+    List<TmChannelShopModel> selectList(Map<String, Object> map);
+
+    TmChannelShopModel selectOne(Map<String, Object> map);
+
+    int selectCount(Map<String, Object> map);
+
+    TmChannelShopModel select(TmChannelShopKey key);
+
     int insert(TmChannelShopModel record);
+
+    int update(TmChannelShopModel record);
+
+    int delete(TmChannelShopKey key);
 }

@@ -7,10 +7,25 @@
  */
 package com.voyageone.service.dao.admin;
 
+import com.voyageone.service.model.admin.TmCarrierChannelKey;
 import com.voyageone.service.model.admin.TmCarrierChannelModel;
+import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TmCarrierChannelDao {
+    List<TmCarrierChannelModel> selectList(Map<String, Object> map);
+
+    TmCarrierChannelModel selectOne(Map<String, Object> map);
+
+    int selectCount(Map<String, Object> map);
+
+    TmCarrierChannelModel select(TmCarrierChannelKey key);
+
     int insert(TmCarrierChannelModel record);
+
+    int update(TmCarrierChannelModel record);
+
+    int delete(TmCarrierChannelKey key);
 }

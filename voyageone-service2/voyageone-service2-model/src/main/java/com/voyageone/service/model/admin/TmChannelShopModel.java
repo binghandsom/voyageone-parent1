@@ -10,11 +10,7 @@ package com.voyageone.service.model.admin;
 /**
  * 
  */
-public class TmChannelShopModel extends AdminBaseModel {
-    protected String orderChannelId;
-
-    protected Integer cartId;
-
+public class TmChannelShopModel extends TmChannelShopKey {
     protected String shopName;
 
     protected String appUrl;
@@ -28,22 +24,6 @@ public class TmChannelShopModel extends AdminBaseModel {
     protected String comment;
 
     protected Boolean active;
-
-    public String getOrderChannelId() {
-        return orderChannelId;
-    }
-
-    public void setOrderChannelId(String orderChannelId) {
-        this.orderChannelId = orderChannelId == null ? null : orderChannelId.trim();
-    }
-
-    public Integer getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(Integer cartId) {
-        this.cartId = cartId;
-    }
 
     public String getShopName() {
         return shopName;

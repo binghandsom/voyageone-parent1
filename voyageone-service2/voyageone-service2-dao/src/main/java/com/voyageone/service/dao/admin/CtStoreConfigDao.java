@@ -7,10 +7,25 @@
  */
 package com.voyageone.service.dao.admin;
 
+import com.voyageone.service.model.admin.CtStoreConfigKey;
 import com.voyageone.service.model.admin.CtStoreConfigModel;
+import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CtStoreConfigDao {
+    List<CtStoreConfigModel> selectList(Map<String, Object> map);
+
+    CtStoreConfigModel selectOne(Map<String, Object> map);
+
+    int selectCount(Map<String, Object> map);
+
+    CtStoreConfigModel select(CtStoreConfigKey key);
+
     int insert(CtStoreConfigModel record);
+
+    int update(CtStoreConfigModel record);
+
+    int delete(CtStoreConfigKey key);
 }

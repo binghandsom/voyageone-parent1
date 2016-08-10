@@ -7,10 +7,25 @@
  */
 package com.voyageone.service.dao.admin;
 
+import com.voyageone.service.model.admin.WmsMtStoreKey;
 import com.voyageone.service.model.admin.WmsMtStoreModel;
+import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WmsMtStoreDao {
+    List<WmsMtStoreModel> selectList(Map<String, Object> map);
+
+    WmsMtStoreModel selectOne(Map<String, Object> map);
+
+    int selectCount(Map<String, Object> map);
+
+    WmsMtStoreModel select(WmsMtStoreKey key);
+
     int insert(WmsMtStoreModel record);
+
+    int update(WmsMtStoreModel record);
+
+    int delete(WmsMtStoreKey key);
 }

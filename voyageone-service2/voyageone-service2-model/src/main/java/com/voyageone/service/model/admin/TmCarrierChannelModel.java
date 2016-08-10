@@ -10,11 +10,7 @@ package com.voyageone.service.model.admin;
 /**
  * 
  */
-public class TmCarrierChannelModel extends AdminBaseModel {
-    protected String orderChannelId;
-
-    protected String carrier;
-
+public class TmCarrierChannelModel extends TmCarrierChannelKey {
     protected String apiKey;
 
     protected String apiUser;
@@ -36,22 +32,6 @@ public class TmCarrierChannelModel extends AdminBaseModel {
     protected String wsdlUrl;
 
     protected String comments;
-
-    public String getOrderChannelId() {
-        return orderChannelId;
-    }
-
-    public void setOrderChannelId(String orderChannelId) {
-        this.orderChannelId = orderChannelId == null ? null : orderChannelId.trim();
-    }
-
-    public String getCarrier() {
-        return carrier;
-    }
-
-    public void setCarrier(String carrier) {
-        this.carrier = carrier == null ? null : carrier.trim();
-    }
 
     public String getApiKey() {
         return apiKey;

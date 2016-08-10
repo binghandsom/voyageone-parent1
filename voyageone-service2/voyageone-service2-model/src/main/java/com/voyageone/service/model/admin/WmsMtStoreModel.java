@@ -10,11 +10,7 @@ package com.voyageone.service.model.admin;
 /**
  * 
  */
-public class WmsMtStoreModel extends AdminBaseModel {
-    protected Long storeId;
-
-    protected String orderChannelId;
-
+public class WmsMtStoreModel extends WmsMtStoreKey {
     protected String storeName;
 
     /**
@@ -80,22 +76,6 @@ public class WmsMtStoreModel extends AdminBaseModel {
     protected Boolean active;
 
     protected Integer status;
-
-    public Long getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(Long storeId) {
-        this.storeId = storeId;
-    }
-
-    public String getOrderChannelId() {
-        return orderChannelId;
-    }
-
-    public void setOrderChannelId(String orderChannelId) {
-        this.orderChannelId = orderChannelId == null ? null : orderChannelId.trim();
-    }
 
     public String getStoreName() {
         return storeName;

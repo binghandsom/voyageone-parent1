@@ -7,10 +7,25 @@
  */
 package com.voyageone.service.dao.admin;
 
+import com.voyageone.service.model.admin.TmCodeKey;
 import com.voyageone.service.model.admin.TmCodeModel;
+import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TmCodeDao {
+    List<TmCodeModel> selectList(Map<String, Object> map);
+
+    TmCodeModel selectOne(Map<String, Object> map);
+
+    int selectCount(Map<String, Object> map);
+
+    TmCodeModel select(TmCodeKey key);
+
     int insert(TmCodeModel record);
+
+    int update(TmCodeModel record);
+
+    int delete(TmCodeKey key);
 }

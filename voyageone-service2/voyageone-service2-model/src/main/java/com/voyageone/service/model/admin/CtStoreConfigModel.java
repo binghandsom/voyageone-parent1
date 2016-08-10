@@ -10,40 +10,10 @@ package com.voyageone.service.model.admin;
 /**
  * 
  */
-public class CtStoreConfigModel extends AdminBaseModel {
-    protected Long storeId;
-
-    protected String cfgName;
-
-    protected String cfgVal1;
-
+public class CtStoreConfigModel extends CtStoreConfigKey {
     protected String cfgVal2;
 
     protected String comment;
-
-    public Long getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(Long storeId) {
-        this.storeId = storeId;
-    }
-
-    public String getCfgName() {
-        return cfgName;
-    }
-
-    public void setCfgName(String cfgName) {
-        this.cfgName = cfgName == null ? null : cfgName.trim();
-    }
-
-    public String getCfgVal1() {
-        return cfgVal1;
-    }
-
-    public void setCfgVal1(String cfgVal1) {
-        this.cfgVal1 = cfgVal1 == null ? null : cfgVal1.trim();
-    }
 
     public String getCfgVal2() {
         return cfgVal2;
