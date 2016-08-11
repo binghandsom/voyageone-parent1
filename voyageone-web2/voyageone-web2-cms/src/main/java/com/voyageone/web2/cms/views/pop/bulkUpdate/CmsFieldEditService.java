@@ -101,6 +101,18 @@ public class CmsFieldEditService extends BaseAppService {
             if (field.getIsDisplay() != 1) {
                 continue;
             }
+
+            // 对于VO扣点进行特殊判断
+            if ("voRate".equals(field.getId())) {
+                CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanNoCode(channel_id, CmsConstants.ChannelConfig.PRICE_CALCULATOR);
+                if (priceCalculatorConfig != null) {
+                    if (CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA.equals(priceCalculatorConfig.getConfigValue1())) {
+                        // 不是价格管理体系
+                        continue;
+                    }
+                }
+            }
+
             CmsMtCommonPropDefModel resModel = new CmsMtCommonPropDefModel();
             if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())
                     || CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {

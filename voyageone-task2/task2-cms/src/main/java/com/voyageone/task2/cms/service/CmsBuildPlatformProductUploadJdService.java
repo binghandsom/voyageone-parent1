@@ -1651,29 +1651,32 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
         // 多个条件表达式用分号分隔用
         StringBuilder sbbuilder = new StringBuilder();
-        // 条件表达式表platform_prop_id字段的检索条件为"seller_cids_"加cartId
-        String platformPropId = Prop_ShopCategory + shop.getCart_id();
 
-        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
-
-        // 根据channelid和platformPropId取得cms_bt_condition_prop_value表的条件表达式
-        List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(shop.getOrder_channel_id(), platformPropId);
-
-        // 优先使用条件表达式
-        if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
-            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
-                String conditionExpressionStr = conditionPropValueModel.getCondition_expression();
-                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
-                String propValue = expressionParser.parse(conditionExpression, shop, getTaskName(), null);
-
-                // 多个表达式(2392231-4345291格式)用分号分隔
-                if (!StringUtils.isEmpty(propValue)) {
-                    sbbuilder.append(propValue);
-                    sbbuilder.append(Separtor_Semicolon);   // 用分号(";")分隔
-                }
-            }
-        }
+        // delete by desmond 2016/08/10 店铺内分类字典的解析和设置改为在feed->master导入来做了 start
+//        // 条件表达式表platform_prop_id字段的检索条件为"seller_cids_"加cartId
+//        String platformPropId = Prop_ShopCategory + shop.getCart_id();
+//
+//        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+//
+//        // 根据channelid和platformPropId取得cms_bt_condition_prop_value表的条件表达式
+//        List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(shop.getOrder_channel_id(), platformPropId);
+//
+//        // 优先使用条件表达式
+//        if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
+//            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+//            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
+//                String conditionExpressionStr = conditionPropValueModel.getCondition_expression();
+//                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+//                String propValue = expressionParser.parse(conditionExpression, shop, getTaskName(), null);
+//
+//                // 多个表达式(2392231-4345291格式)用分号分隔
+//                if (!StringUtils.isEmpty(propValue)) {
+//                    sbbuilder.append(propValue);
+//                    sbbuilder.append(Separtor_Semicolon);   // 用分号(";")分隔
+//                }
+//            }
+//        }
+        // delete by desmond 2016/08/10 end
 
         if (StringUtils.isEmpty(sbbuilder.toString())) {
             // 获取京东平台前台展示的商家自定义店内分类(从分平台信息里面取得sellerCats)
