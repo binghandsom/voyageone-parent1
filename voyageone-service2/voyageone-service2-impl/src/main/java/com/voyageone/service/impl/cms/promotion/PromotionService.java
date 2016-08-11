@@ -7,9 +7,7 @@ package com.voyageone.service.impl.cms.promotion;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
@@ -24,7 +22,6 @@ import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExtCamel;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TagService;
-import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotion3Service;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
@@ -32,7 +29,6 @@ import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -250,12 +246,12 @@ public class PromotionService extends BaseService {
         if (paramsTmp == null) {
             paramsTmp = new HashMap<>();
         }
-        if(Channels.isUsJoi(channelId)){
-            paramsTmp.put("orgChannelId", channelId);
-            paramsTmp.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
-        } else {
-            paramsTmp.put("channelId", channelId);
-        }
+//        if(Channels.isUsJoi(channelId)){
+//            paramsTmp.put("orgChannelId", channelId);
+//            paramsTmp.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+//        } else {
+            paramsTmp.put("channelId", channelId); // TODO 在本店铺查询minimall店铺的活动时，再议，还没考虑好怎么做
+//        }
         return this.getByCondition(paramsTmp);
     }
 
@@ -266,12 +262,12 @@ public class PromotionService extends BaseService {
         if (params == null) {
             params = new HashMap<>();
         }
-        if (Channels.isUsJoi(channelId)) {
-            params.put("orgChannelId", channelId);
-            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
-        } else {
-            params.put("channelId", channelId);
-        }
+//        if (Channels.isUsJoi(channelId)) {
+//            params.put("orgChannelId", channelId);
+//            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+//        } else {
+            params.put("channelId", channelId); // TODO 在本店铺查询minimall店铺的活动时，再议，还没考虑好怎么做
+//        }
         return cmsBtPromotionDaoExt.select4AdvSearch(params);
     }
 
