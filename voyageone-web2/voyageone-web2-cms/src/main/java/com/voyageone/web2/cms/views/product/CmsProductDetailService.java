@@ -604,7 +604,7 @@ public class CmsProductDetailService extends BaseAppService {
                 platformStatus.put("pPublishError", platformInfo.getpPublishError());
                 platformStatus.put("pNumIId", platformInfo.getpNumIId());
                 platformStatus.put("cartName", CartEnums.Cart.getValueByID(platformInfo.getCartId() + ""));
-                platformStatus.put("pReallyStatus",platformInfo.getpReallyStatus());
+                platformStatus.put("pReallyStatus", platformInfo.getpReallyStatus());
                 platformList.add(platformStatus);
             });
         }
@@ -645,7 +645,7 @@ public class CmsProductDetailService extends BaseAppService {
         Map<String, Object> result = productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
 
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
-        if (commonModel.getFields().getHsCodePrivate() != null && !commonModel.getFields().getHsCodePrivate().equalsIgnoreCase(oldProduct.getCommon().getFields().getHsCodePrivate())) {
+        if(!compareHsCode(commonModel.getFields().getHsCodePrivate(),oldProduct.getCommon().getFields().getHsCodePrivate())){
             try {
                 priceService.setPrice(newProduct);
             } catch (PriceCalculateException e) {
@@ -656,7 +656,7 @@ public class CmsProductDetailService extends BaseAppService {
             }
             newProduct.getPlatforms().forEach((s, platform) -> {
                 if(platform.getCartId() != 0){
-                    productService.updateProductPlatform(channelId,prodId,platform,modifier,false);
+                    productService.updateProductPlatform(channelId,prodId,platform,modifier,false,"税号变更");
                 }
             });
         }
@@ -664,7 +664,20 @@ public class CmsProductDetailService extends BaseAppService {
 
         return result;
     }
+    private Boolean compareHsCode(String hsCode1, String hsCode2){
+        String hs1="";
+        String hs2="";
+        if(hsCode1 != null){
+            String []temp = hsCode1.split(",");
+            if(temp.length >1) hs1 = temp[0];
+        }
 
+        if(hsCode2 != null){
+            String []temp = hsCode2.split(",");
+            if(temp.length >1) hs2 = temp[0];
+        }
+        return hs1.equalsIgnoreCase(hs2);
+    }
     private void changeMastCategory(CmsBtProductModel_Common commonModel, CmsBtProductModel oldProduct, String modifier) {
         List<CmsMtCategoryTreeAllModel_Platform> platformCategory = categoryTreeAllService.getCategoryByCatPath(commonModel.getCatPath()).getPlatformCategory();
         if (platformCategory == null || platformCategory.size() == 0) return;
@@ -1359,7 +1372,7 @@ public class CmsProductDetailService extends BaseAppService {
         return prices;
     }
 
-    public Map<String, Object> copyPropertyFromMainProduct(String channelId, Long prodId) {
+    public Map<String, Object> copyPropertyFromMainProduct(String channelId, Long prodId, String lang) {
         CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Common common = cmsBtProductModel.getCommon();
 
@@ -1377,10 +1390,11 @@ public class CmsProductDetailService extends BaseAppService {
 
         mainCommon.getFields().forEach((s, o) -> {
             if (common.getFields().containsKey(s)) {
-                if (!StringUtils.isEmpty(common.getFields().get(s).toString())) {
-                    // 天猫的场合 属性ID是 sku darwin_sku不复制
+                if (StringUtils.isEmpty(common.getFields().get(s).toString())) {
                     common.getFields().put(s, o);
                 }
+            }else{
+                common.getFields().put(s, o);
             }
         });
         if("1".equalsIgnoreCase(mainCommon.getFields().getHsCodeStatus())){
@@ -1393,7 +1407,8 @@ public class CmsProductDetailService extends BaseAppService {
             common.getFields().setCategoryStatus("1");
         }
         List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
-        FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, common);
+        this.fillFieldOptions(cmsMtCommonFields, channelId, lang);
+        FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, common.getFields());
         common.put("schemaFields", cmsMtCommonFields);
 
         return common;

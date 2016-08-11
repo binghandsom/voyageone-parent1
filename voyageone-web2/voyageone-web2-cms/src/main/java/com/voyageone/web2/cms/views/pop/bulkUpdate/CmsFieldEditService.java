@@ -713,6 +713,7 @@ public class CmsFieldEditService extends BaseAppService {
         boolean hasUpdFlg = false;
         List<String> prodPriceUpList = new ArrayList<>();
         List<String> prodPriceDownList = new ArrayList<>();
+        List<String> prodPriceDownExList = new ArrayList<>();
 
         List<CmsBtProductModel> prodObjList = productService.getList(userInfo.getSelChannelId(), qryObj);
         $debug("批量修改商品价格 开始批量处理");
@@ -804,9 +805,13 @@ public class CmsFieldEditService extends BaseAppService {
                 }
                 // 要更新最终售价变化状态
                 String diffFlg = productSkuService.getPriceDiffFlg(breakThreshold, rs, result);
-                if ("2".equals(diffFlg) || "5".equals(diffFlg)) {
+                if ("2".equals(diffFlg)) {
                     $info(String.format("setProductSalePrice: 输入的最终售价低于指导价，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                     prodPriceDownList.add(prodCode + ", " + skuCode + ", " + befPriceSale + ", " + result + ",, " + rs);
+                    continue;
+                } else if ("5".equals(diffFlg)) {
+                    $info(String.format("setProductSalePrice: 输入的最终售价低于下限阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+                    prodPriceDownExList.add(prodCode + ", " + skuCode + ", " + befPriceSale + ", " + result + ", " + (result * (1 - breakThreshold)) + ", " + rs);
                     continue;
                 } else if ("4".equals(diffFlg)) {
                     $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
@@ -858,7 +863,7 @@ public class CmsFieldEditService extends BaseAppService {
             }
 
             // 更新产品的信息
-            if (!hasUpdFlg) {
+            if (hasUpdFlg) {
                 JomgoUpdate updObj = new JomgoUpdate();
                 updObj.setQuery("{'common.fields.code':#}");
                 updObj.setUpdate("{$set:{'platforms.P" + cartId + ".skus':#,'modified':#,'modifier':#}}");
@@ -894,7 +899,10 @@ public class CmsFieldEditService extends BaseAppService {
         if (prodPriceDownList.size() > 0) {
             commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "3", prodPriceDownList);
         }
-        rsMap.put("unProcList", prodPriceUpList.size() + prodPriceDownList.size());
+        if (prodPriceDownExList.size() > 0) {
+            commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "4", prodPriceDownExList);
+        }
+        rsMap.put("unProcList", prodPriceUpList.size() + prodPriceDownList.size() + prodPriceDownExList.size());
         rsMap.put("ecd", 0);
         return rsMap;
     }
@@ -938,16 +946,21 @@ public class CmsFieldEditService extends BaseAppService {
         // 取回缓存
         List<String> prodPriceUpList = commCacheService.getCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2");
         List<String> prodPriceDownList = commCacheService.getCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "3");
+        List<String> prodPriceDownExList = commCacheService.getCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "4");
         // 删除缓存
         commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2");
         commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "3");
+        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "4");
 
         StringBuilder rs = new StringBuilder();
         if (prodPriceUpList != null && prodPriceUpList.size() > 0) {
-            prodPriceUpList.forEach(item -> { rs.append(item + ", 修改后最终售价大于阈值"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
+            prodPriceUpList.forEach(item -> { rs.append(item + ", 修改后最终售价高于指导价向上阈值"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
         }
         if (prodPriceDownList != null && prodPriceDownList.size() > 0) {
             prodPriceDownList.forEach(item -> { rs.append(item + ", 修改后最终售价低于指导价"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
+        }
+        if (prodPriceDownExList != null && prodPriceDownExList.size() > 0) {
+            prodPriceDownExList.forEach(item -> { rs.append(item + ", 修改后最终售价低于指导价向下阈值"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
         }
 
         if (rs.length() == 0) {

@@ -207,7 +207,7 @@ public class CmsProductDetailController extends CmsController {
 
         Map<String, Object> result = new HashMap<>();
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
-        result.put("platform", productPropsEditService.copyPropertyFromMainProduct(getUser().getSelChannelId(), prodId));
+        result.put("platform", productPropsEditService.copyPropertyFromMainProduct(getUser().getSelChannelId(), prodId,getLang()));
         return success(result);
     }
 }
