@@ -1377,6 +1377,22 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
 //            productField.put("images1", multiComplex);
             productCommonField.put("images1", multiComplex);
+            // 新增商品时，根据设置决定是否同时设置产品图images2,更新商品时不更新images2
+            if (newFlg || "1".equals(feed.getIsFeedReImport())) {
+                // 从cms_mt_channel_config表从取得新建product时是否自动设置产品图images2(1:自动设置  空，0:不设置)
+                String autoSetImages2Flg = "0";    // 0:不设置产品图images2
+                CmsChannelConfigBean productTypeChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(this.channel.getOrder_channel_id(),
+                        CmsConstants.ChannelConfig.AUTO_SET_IMAGES2_FLG);
+                if (productTypeChannelConfigBean != null && "1".equals(productTypeChannelConfigBean.getConfigValue1())) {
+                    autoSetImages2Flg = "1";       // 1:自动设置产品图images2
+                }
+
+                if ("1".equals(autoSetImages2Flg)) {
+                    // 设置产品图images2
+                    productCommonField.put("images2", multiComplex);
+                }
+            }
+
 //                }
 //            }
 
