@@ -448,6 +448,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
         // 先看看如果trackingNo不存在那么去生成shipment
         Map<String, Object> param = new HashMap<>();
         param.put("channelId", channelId);
+        param.put("expressCompany", expressCompany);
         param.put("trackingNo", trackingNo);
         List<VmsBtShipmentModel> models = shipmentService.selectList(param);
         // 不存在shipment，那么新建一个shipment
