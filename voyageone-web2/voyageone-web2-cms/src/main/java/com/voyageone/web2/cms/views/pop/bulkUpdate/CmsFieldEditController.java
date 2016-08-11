@@ -8,6 +8,7 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,7 +75,7 @@ public class CmsFieldEditController extends CmsController {
     /**
      * 修改最终价格时，下载未处理的商品code列表
      */
-    @RequestMapping(value = CmsUrlConstants.POP.FIELD_EDIT.DLD_PRODUCT_PROCESALE, produces = "application/csv;charset=gb18030")
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.DLD_PRODUCT_PROCESALE)
     public ResponseEntity<byte[]> doExport(@RequestParam Map params) {
         String data = null;
         try {
@@ -88,7 +89,7 @@ public class CmsFieldEditController extends CmsController {
             throw new BusinessException("4000");
         }
         String fileName = getUser().getUserName() + "_" + DateTimeUtil.getLocalTime(getUserTimeZone()) + ".csv";
-        return genResponseEntityFromString(fileName, data);
+        return genResponseEntityFromBytes(MediaType.valueOf("application/csv;charset=gb18030"), fileName, data.getBytes());
     }
 
 }
