@@ -604,14 +604,13 @@ public class CmsFieldEditService extends BaseAppService {
         String skuCode = null;
         List<String> skuCodeList = new ArrayList<>();
         BulkJomgoUpdateList bulkList = new BulkJomgoUpdateList(1000, cmsBtProductDao, userInfo.getSelChannelId());
-        boolean hasUpdFlg = false;
 
         List<CmsBtProductModel> prodObjList = productService.getList(userInfo.getSelChannelId(), qryObj);
         $debug("批量修改商品价格 开始批量处理");
         for (CmsBtProductModel prodObj : prodObjList) {
             List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
             String prodCode = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
-            hasUpdFlg = false;
+
             for (BaseMongoMap skuObj : skuList) {
                 skuCode = skuObj.getStringAttribute("skuCode");
                 if (StringUtils.isEmpty(skuCode)) {
@@ -663,7 +662,6 @@ public class CmsFieldEditService extends BaseAppService {
                 if (rs.equals(skuObj.getDoubleAttribute("priceSale"))) {
                     // 修改前后价格相同
                     $info(String.format("setProductSalePrice: 修改前后价格相同 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    hasUpdFlg = true;
                     continue;
                 }
 
@@ -745,16 +743,14 @@ public class CmsFieldEditService extends BaseAppService {
             }
 
             // 更新产品的信息
-            if (!hasUpdFlg) {
-                JomgoUpdate updObj = new JomgoUpdate();
-                updObj.setQuery("{'common.fields.code':#}");
-                updObj.setUpdate("{$set:{'platforms.P" + cartId + ".skus':#,'modified':#,'modifier':#}}");
-                updObj.setQueryParameters(prodObj.getCommon().getFields().getCode());
-                updObj.setUpdateParameters(skuList, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-                BulkWriteResult rs = bulkList.addBulkJomgo(updObj);
-                if (rs != null) {
-                    $debug(String.format("批量修改商品价格 channelId=%s 执行结果=%s", userInfo.getSelChannelId(), rs.toString()));
-                }
+            JomgoUpdate updObj = new JomgoUpdate();
+            updObj.setQuery("{'common.fields.code':#}");
+            updObj.setUpdate("{$set:{'platforms.P" + cartId + ".skus':#,'modified':#,'modifier':#}}");
+            updObj.setQueryParameters(prodObj.getCommon().getFields().getCode());
+            updObj.setUpdateParameters(skuList, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
+            BulkWriteResult rs = bulkList.addBulkJomgo(updObj);
+            if (rs != null) {
+                $debug(String.format("批量修改商品价格 channelId=%s 执行结果=%s", userInfo.getSelChannelId(), rs.toString()));
             }
         }
         BulkWriteResult rs = bulkList.execute();
