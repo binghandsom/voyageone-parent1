@@ -3,9 +3,7 @@ package com.voyageone.service.impl.cms.jumei;
 import com.google.common.base.Preconditions;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
@@ -252,12 +250,12 @@ public class CmsBtJmPromotionService {
         Preconditions.checkArgument(StringUtils.isNotBlank(channelId), "channelId不能为空!");
         Map params = new HashMap<>();
         params.put("cartId", cartId);
-        if (Channels.isUsJoi(channelId)) {
-            params.put("orgChannelId", channelId);
-            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
-        } else {
-            params.put("channelId", channelId);
-        }
+//        if (Channels.isUsJoi(channelId)) {
+//            params.put("orgChannelId", channelId);
+//            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+//        } else {
+            params.put("channelId", channelId); // TODO 在本店铺查询minimall店铺的活动时，再议，还没考虑好怎么做
+//        }
         return daoExt.selectActivesOfChannel(params);
     }
 
