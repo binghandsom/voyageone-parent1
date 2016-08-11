@@ -140,6 +140,12 @@ define(function () {
             "controllerUrl": "modules/cms/views/channel/defaultAttribute/index.ctl",
             "controller": "defaultAttributeController as ctrl"
         },
+        "channel_default_attribute_detail": {
+            "hash": "/channel/default_attribute_detail",
+            "templateUrl": "views/channel/defaultAttribute/detail.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/defaultAttribute/detail.ctl",
+            "controller": "attributeDetailController as ctrl"
+        },
         "search_advance_new": {
             "hash": "/search/advanceSearch",
             "templateUrl": "views/search/advanceSearch.tpl.html",
