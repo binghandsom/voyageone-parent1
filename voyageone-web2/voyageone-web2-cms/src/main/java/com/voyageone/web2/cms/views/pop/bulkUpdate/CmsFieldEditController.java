@@ -7,11 +7,13 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
@@ -88,8 +90,15 @@ public class CmsFieldEditController extends CmsController {
             $warn("创建文件时出错,文件内容为空");
             throw new BusinessException("4000");
         }
+        byte[] byteData = {(byte)0xFF, (byte)0xFE};
+        try {
+            byteData = ArrayUtils.addAll(byteData, data.getBytes("utf-16le"));
+        } catch (UnsupportedEncodingException e) {
+            $error("转换编码时出错", e);
+            byteData = data.getBytes();
+        }
         String fileName = getUser().getUserName() + "_" + DateTimeUtil.getLocalTime(getUserTimeZone()) + ".csv";
-        return genResponseEntityFromBytes(MediaType.valueOf("application/csv;charset=gb18030"), fileName, data.getBytes());
+        return genResponseEntityFromBytes(MediaType.valueOf("application/csv"), fileName, byteData);
     }
 
 }
