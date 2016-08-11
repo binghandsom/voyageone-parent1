@@ -363,12 +363,14 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
         mainPlatform.getFields().forEach((s, o) -> {
             if (platform.getFields().containsKey(s)) {
-                if (!StringUtils.isEmpty(platform.getFields().get(s).toString())) {
+                if (StringUtils.isEmpty(platform.getFields().get(s).toString())) {
                     // 天猫的场合 属性ID是 sku darwin_sku不复制
                     if (cartId == CartEnums.Cart.TG.getValue() && !"sku".equalsIgnoreCase(s) && !"darwin_sku".equalsIgnoreCase(s)) {
                         platform.getFields().put(s, o);
                     }
                 }
+            } else {
+                platform.getFields().put(s, o);
             }
         });
 
