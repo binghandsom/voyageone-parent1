@@ -6,7 +6,9 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by morse.lu on 16/4/20.
@@ -30,6 +32,49 @@ public class SxData {
 	private String styleCode;
     private String errorCode;     // 出错时回写到businessLog表的errorCode
     private String errorMessage;  // 出错时回写到businessLog表的errorMessage
+	private boolean updateProductFlg; // 是否更新产品，默认false
+	private Map<String, SxDarwinSkuProps> mapDarwinSkuProps; // Map<sku, SxDarwinSkuProps>
+
+	public class SxDarwinSkuProps {
+		private SxDarwinSkuProps() {}
+
+		private String barcode; // 条形码
+		private boolean allowUpdate; // 是否允许更新（表里设定的才是true，新增的规格在表里不用设定，所以是false）
+		private String cspuId; // 规格id
+		private boolean isErr; // 这个规格是否是审核失败的（allowUpdate=true才有用,因为不更新的话就不必去判断是否有错了）（审核成功的规格，只支持修改条形码、吊牌价以及产品规格主图）
+
+		public String getBarcode() {
+			return barcode;
+		}
+
+		public void setBarcode(String barcode) {
+			this.barcode = barcode;
+		}
+
+		public boolean isAllowUpdate() {
+			return allowUpdate;
+		}
+
+		public void setAllowUpdate(boolean allowUpdate) {
+			this.allowUpdate = allowUpdate;
+		}
+
+		public String getCspuId() {
+			return cspuId;
+		}
+
+		public void setCspuId(String cspuId) {
+			this.cspuId = cspuId;
+		}
+
+		public boolean isErr() {
+			return isErr;
+		}
+
+		public void setErr(boolean err) {
+			isErr = err;
+		}
+	}
 
 	public String getChannelId() {
 		return channelId;
@@ -150,4 +195,34 @@ public class SxData {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
+
+	public boolean isUpdateProductFlg() {
+		return updateProductFlg;
+	}
+
+	public void setUpdateProductFlg(boolean updateProductFlg) {
+		this.updateProductFlg = updateProductFlg;
+	}
+
+	public Map<String, SxDarwinSkuProps> getMapDarwinSkuProps() {
+		return mapDarwinSkuProps;
+	}
+
+	public SxDarwinSkuProps getDarwinSkuProps(String skuCode, boolean isCreate) {
+		if (mapDarwinSkuProps == null) {
+			if (isCreate) {
+				mapDarwinSkuProps = new HashMap<>();
+			} else {
+				return null;
+			}
+		}
+
+		SxDarwinSkuProps sxDarwinSkuProps = mapDarwinSkuProps.get(skuCode);
+		if (sxDarwinSkuProps == null && isCreate) {
+			sxDarwinSkuProps = new SxDarwinSkuProps();
+			mapDarwinSkuProps.put(skuCode, sxDarwinSkuProps);
+		}
+
+		return sxDarwinSkuProps;
+	}
 }

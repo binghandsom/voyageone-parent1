@@ -160,14 +160,17 @@ define([
                         return field.id === "hsCodePrivate";
                     });
 
-                    if(!angular.equals(hsCode,scope.vm.hsCodeOrigin)){
+                    var _orgHsCode = scope.vm.hsCodeOrigin.value.value;
+                    var _hscOde = hsCode.value.value;
 
-                        var _prehsCode = angular.copy(scope.vm.hsCodeOrigin.value.value);
+                    if(!angular.equals(_hscOde.split(",")[0],_orgHsCode.split(",")[0])){
+
+                        var _prehsCode = angular.copy(_orgHsCode);
 
                         openHsCodeChange({
                             prodId:scope.productInfo.productId,
                             hsCodeOld:_prehsCode,
-                            hsCodeNew:hsCode.value.value
+                            hsCodeNew:_hscOde
                         }).then(function(context){
                             if(context === 'confirm'){
                                 callSaveProduct(true);

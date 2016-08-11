@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsBtJmMasterBrandModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsBtJmMasterBrandDao {
-    List<CmsBtJmMasterBrandModel> selectList(Map<String, Object> map);
+    List<CmsBtJmMasterBrandModel> selectList(Object map);
 
-    CmsBtJmMasterBrandModel selectOne(Map<String, Object> map);
+    CmsBtJmMasterBrandModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsBtJmMasterBrandModel select(Integer id);
 

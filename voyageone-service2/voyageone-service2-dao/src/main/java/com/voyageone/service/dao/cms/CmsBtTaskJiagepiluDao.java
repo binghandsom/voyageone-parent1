@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsBtTaskJiagepiluDao {
-    List<CmsBtTaskJiagepiluModel> selectList(Map<String, Object> map);
+    List<CmsBtTaskJiagepiluModel> selectList(Object map);
 
-    CmsBtTaskJiagepiluModel selectOne(Map<String, Object> map);
+    CmsBtTaskJiagepiluModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsBtTaskJiagepiluModel select(Integer id);
 
