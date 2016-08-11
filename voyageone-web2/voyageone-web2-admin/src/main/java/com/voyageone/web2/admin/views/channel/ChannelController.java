@@ -2,6 +2,7 @@ package com.voyageone.web2.admin.views.channel;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -67,9 +68,9 @@ public class ChannelController extends AdminController {
 		} else {
 			model.setModifier(username);
 		}
-		
+
+		// 保存渠道信息
 		try {
-			// 保存渠道信息
 			result.put("success", channelService.addOrUpdateChannel(model));
 			result.put("success", true);
 		} catch (BusinessException e) {
@@ -87,6 +88,16 @@ public class ChannelController extends AdminController {
 	@RequestMapping(AdminUrlConstants.Channel.Self.GET_ALL_CHANNEL)
 	public AjaxResponse getAllChannel() {
 		return success(channelService.getAllChannel());
+	}
+	
+	@RequestMapping(AdminUrlConstants.Channel.Self.GENERATE_SECRET_KEY)
+	public AjaxResponse generateSecretKey() {
+		return success(UUID.randomUUID().toString().replace("-", "").toUpperCase());
+	}
+	
+	@RequestMapping(AdminUrlConstants.Channel.Self.GENERATE_SESSION_KEY)
+	public AjaxResponse generateSessionKey() {
+		return success(UUID.randomUUID().toString());
 	}
 
 }

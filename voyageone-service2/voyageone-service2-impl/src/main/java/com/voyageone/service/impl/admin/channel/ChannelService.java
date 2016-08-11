@@ -98,4 +98,8 @@ public class ChannelService extends BaseService {
 		return pageModel;
 	}
 
+	public boolean addOrUpdateChannelConfig(TmOrderChannelConfigModel model) {
+		return false;
+	}
+
 }

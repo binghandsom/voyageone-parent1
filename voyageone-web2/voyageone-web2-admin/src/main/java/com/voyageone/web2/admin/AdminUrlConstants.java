@@ -21,6 +21,10 @@ public interface AdminUrlConstants {
 			String GET_ALL_CHANNEL = "getAllChannel";
 
 			String GET_ALL_COMPANY = "getAllCompany";
+
+			String GENERATE_SECRET_KEY = "generateSecretKey";
+
+			String GENERATE_SESSION_KEY = "generateSessionKey";
 			
 		}
 		
@@ -48,6 +52,8 @@ public interface AdminUrlConstants {
 			String ROOT = "/admin/system/config";
 			
 			String SEARCH_CONFIG = "searchConfig";
+
+			String ADD_OR_UPDATE_CONFIG = "addOrUpdateConfig";
 			
 		}
 		
