@@ -25,7 +25,7 @@ define([
             this.searchInfo = {
                 curr: this.prodPageOption.curr,
                 size: this.prodPageOption.size,
-                hsCodeStatus: "1",
+                hsCodeStatus: "0",
                 searchCondition: ""
             };
             this.selected = false;
