@@ -590,7 +590,7 @@ public class ChannelConfigEnums {
         ShoeMetro("028"),
 
         /**
-         * ShoeMetro
+         * Modotex
          */
         Modotex("029"),
 
