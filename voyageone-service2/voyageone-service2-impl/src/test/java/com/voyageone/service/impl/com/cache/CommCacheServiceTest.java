@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.com.cache;
 
-import com.voyageone.service.impl.cms.sx.SxProductService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

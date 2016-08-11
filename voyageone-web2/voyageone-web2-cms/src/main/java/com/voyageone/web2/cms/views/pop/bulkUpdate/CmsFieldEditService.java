@@ -944,17 +944,17 @@ public class CmsFieldEditService extends BaseAppService {
 
         StringBuilder rs = new StringBuilder();
         if (prodPriceUpList != null && prodPriceUpList.size() > 0) {
-            prodPriceUpList.forEach(item -> { rs.append(item + ", 修改后最终售价大于阈值"); rs.append(System.lineSeparator()); });
+            prodPriceUpList.forEach(item -> { rs.append(item + ", 修改后最终售价大于阈值"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
         }
         if (prodPriceDownList != null && prodPriceDownList.size() > 0) {
-            prodPriceDownList.forEach(item -> { rs.append(item + ", 修改后最终售价低于指导价"); rs.append(System.lineSeparator()); });
+            prodPriceDownList.forEach(item -> { rs.append(item + ", 修改后最终售价低于指导价"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
         }
 
         if (rs.length() == 0) {
             $warn("缓存中没有数据啊！");
             return null;
         } else {
-            rs.insert(0, "  商品code,  sku code, 修改前售价, 指导价, 阈值, 修改后售价, 未处理原因" + System.lineSeparator());
+            rs.insert(0, "  商品code,  sku code, 修改前售价, 指导价, 阈值, 修改后售价, 未处理原因" + com.voyageone.common.util.StringUtils.LineSeparator);
         }
         return rs.toString();
     }

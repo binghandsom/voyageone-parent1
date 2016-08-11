@@ -134,6 +134,12 @@ define(function () {
             "controllerUrl": "modules/cms/views/channel/category/index.ctl",
             "controller": "categoryController as ctrl"
         },
+        "channel_default_attribute_list": {
+            "hash": "/channel/default_attribute_list",
+            "templateUrl": "views/channel/defaultAttribute/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/defaultAttribute/index.ctl",
+            "controller": "defaultAttributeController as ctrl"
+        },
         "search_advance_new": {
             "hash": "/search/advanceSearch",
             "templateUrl": "views/search/advanceSearch.tpl.html",
