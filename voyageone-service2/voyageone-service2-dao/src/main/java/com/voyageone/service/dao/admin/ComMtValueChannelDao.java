@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Repository;
 
-@Repository
+@Repository("AdminComMtValueChannelDao")
 public interface ComMtValueChannelDao {
     List<ComMtValueChannelModel> selectList(Map<String, Object> map);
 

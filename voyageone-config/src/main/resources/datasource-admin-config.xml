@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <!-- Admin -->
+    
+    <!-- sqlSessionFactoryAdmin -->
+    <bean id="sqlSessionFactoryAdmin" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!-- SqlSessionFactory的数据源 -->
+        <property name="dataSource" ref="dataSourceMaster"/>
+        <!-- 配置typeAliasesPackage -->
+        <!-- typeAliasesPackage包路径配置 -->
+        <property name="typeAliasesPackage"
+        	value="com.voyageone.service.model.util,com.voyageone.service.model.admin"/>
+        <!-- 指定sqlMapConfig总配置文件，订制的environment在spring容器中不在生效-->
+        <property name="configLocation" value="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"/>
+        <!--指定实体类映射文件，可以指定同时指定某一包以及子包下面的所有配置文件 -->
+        <property name="mapperLocations" >
+            <list>
+                <value>classpath*:com/voyageone/service/dao/admin/**/*MapperCamel.xml</value>
+                <value>classpath*:com/voyageone/service/daoext/admin/**/*MapperCamel.xml</value>
+            </list>
+        </property>
+        <!-- 配置Mybatis的插件plugin-->
+        <property name="plugins">
+            <array>
+            	<bean class="com.voyageone.base.dao.mysql.MybatisMapCamelInterceptor"/>
+                <bean class="com.voyageone.base.dao.mysql.paginator.MybatisPaginatorInterceptor">
+                    <property name="properties">
+                        <value>id_filter=selectList</value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <!--sqlSessionTemplateAdmin-->
+    <bean id="sqlSessionTemplateAdmin" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSessionFactoryAdmin"/>
+    </bean>
+    
+    <!--mybatis的dao接口和mapper的扫描-->
+    <bean id="mapperScannerConfigurerAdmin" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionTemplateBeanName" value="sqlSessionTemplateAdmin"/>
+        <property name="basePackage" value="com.voyageone.service.dao.admin,com.voyageone.service.daoext.admin"/>
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+    </bean>
+
+</beans>

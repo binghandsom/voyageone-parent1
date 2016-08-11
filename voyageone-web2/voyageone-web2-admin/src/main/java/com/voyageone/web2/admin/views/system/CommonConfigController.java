@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
+import com.voyageone.web2.admin.AdminController;
+import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.system.CommonConfigFormBean;
-import com.voyageone.web2.admin.views.AdminController;
-import com.voyageone.web2.admin.views.AdminUrlConstants;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 
 /**

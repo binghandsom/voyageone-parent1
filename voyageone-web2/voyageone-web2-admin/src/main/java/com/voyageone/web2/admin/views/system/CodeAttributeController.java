@@ -2,7 +2,7 @@ package com.voyageone.web2.admin.views.system;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.voyageone.web2.admin.views.AdminController;
+import com.voyageone.web2.admin.AdminController;
 
 /**
  * @author Wangtd

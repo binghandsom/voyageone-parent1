@@ -1,4 +1,4 @@
-package com.voyageone.web2.admin.views;
+package com.voyageone.web2.admin;
 
 import com.voyageone.web2.base.BaseController;
 

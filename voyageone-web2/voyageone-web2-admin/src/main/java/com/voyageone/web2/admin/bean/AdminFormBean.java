@@ -16,8 +16,8 @@ public class AdminFormBean implements Serializable {
 	/** 每页大小 */
 	private Integer pageSize;
 	
-	/** 状态 [true：可用，false：不可用] */
-	private Boolean active;
+	/** 状态 [1：可用，0：禁用] */
+	private Integer active;
 	
 	public Integer getPageNum() {
 		return pageNum;
@@ -35,11 +35,11 @@ public class AdminFormBean implements Serializable {
 		this.pageSize = pageSize;
 	}
 
-	public Boolean getActive() {
+	public Integer getActive() {
 		return active;
 	}
 
-	public void setActive(Boolean active) {
+	public void setActive(Integer active) {
 		this.active = active;
 	}
 	

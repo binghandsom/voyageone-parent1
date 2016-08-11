@@ -1,4 +1,4 @@
-package com.voyageone.web2.admin.views;
+package com.voyageone.web2.admin;
 
 /**
  * 系统的请求地址统一常量定义，与前端的actions.json相对应。
@@ -19,6 +19,10 @@ public interface AdminUrlConstants {
 			String SEARCH_CHANNEL = "searchChannel";
 			
 			String ADD_OR_UPDATE_CHANNEL = "addOrUpdateChannel";
+			
+			String GET_ALL_CHANNEL = "getAllChannel";
+
+			String GET_ALL_COMPANY = "getAllCompany";
 			
 		}
 		

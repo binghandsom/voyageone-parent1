@@ -10,5 +10,13 @@ public interface AdminConstants {
 	enum ConfigType {
 		Channel, ChannelCart, Port, Store, Task;
 	}
+	
+	/** 状态值 */
+	interface Active {
+		/** 可用 */
+		int ENABLED = 1;
+		/** 禁用 */
+		int DESABLED = 0;
+	}
 
 }

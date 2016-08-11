@@ -18,6 +18,8 @@ public class ChannelFormBean extends AdminFormBean {
 	
 	private String fullName;
 	
+	private String channelName;
+	
 	private String imgUrl;
 	
 	private String sendName;
@@ -62,6 +64,14 @@ public class ChannelFormBean extends AdminFormBean {
 
 	public String getFullName() {
 		return fullName;
+	}
+	
+	public String getChannelName() {
+		return channelName;
+	}
+
+	public void setChannelName(String channelName) {
+		this.channelName = channelName;
 	}
 
 	public void setFullName(String fullName) {
