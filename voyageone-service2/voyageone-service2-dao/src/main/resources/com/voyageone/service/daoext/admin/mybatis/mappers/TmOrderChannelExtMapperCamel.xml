@@ -67,7 +67,7 @@
 		select id, company, description, default_view, active, created, creater, modified, modifier from ct_company
 	</select>
 	
-	<select id="selectChannelList" resultMap="channelModelMap">
+	<select id="selectChannelByPage" resultMap="channelModelMap">
 		select order_channel_id, company_id, name, full_name, img_url, send_name, send_address, send_tel, send_zip,
 			screct_key, session_key, is_usjoi, cart_ids, active, created, creater, modified, modifier
 		from tm_order_channel
@@ -96,7 +96,7 @@
         </where>
 	</sql>
 	
-	<select id="selectChanneConfiglList" resultMap="channelConfigModelMap">
+	<select id="selectChanneConfigByPage" resultMap="channelConfigModelMap">
 		select order_channel_id, cfg_name, cfg_val1, cfg_val2, comment
 		from tm_order_channel_config
 		<include refid="selectChanneConfigFilter"></include>

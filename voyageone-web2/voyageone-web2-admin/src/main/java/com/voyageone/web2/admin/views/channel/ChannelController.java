@@ -34,13 +34,13 @@ public class ChannelController extends AdminController {
 	private ChannelService channelService;
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.SEARCH_CHANNEL)
-	public AjaxResponse searchChannel(@RequestBody ChannelFormBean form) {
+	public AjaxResponse searchChannelByPage(@RequestBody ChannelFormBean form) {
 		// 验证参数
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 
 		// 检索渠道信息
-		PageModel<TmOrderChannelModel> channelPage = channelService.searchChannel(form.getChannelId(),
+		PageModel<TmOrderChannelModel> channelPage = channelService.searchChannelByPage(form.getChannelId(),
 				form.getChannelName(), form.getIsUsjoi(), form.getPageNum(), form.getPageSize());
 		
 		return success(channelPage);

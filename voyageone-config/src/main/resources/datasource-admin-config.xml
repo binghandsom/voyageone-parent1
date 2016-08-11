@@ -30,7 +30,7 @@
             	<bean class="com.voyageone.base.dao.mysql.MybatisMapCamelInterceptor"/>
                 <bean class="com.voyageone.base.dao.mysql.paginator.MybatisPaginatorInterceptor">
                     <property name="properties">
-                        <value>id_filter=selectList</value>
+                        <value>id_filter=selectList,ByPage</value>
                     </property>
                 </bean>
             </array>

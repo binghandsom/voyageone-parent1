@@ -17,12 +17,12 @@ public interface TmOrderChannelDaoExt {
 
 	List<Map<String, Object>> selectAllCompany();
 
-	List<TmOrderChannelModel> selectChannelList(Map<String, Object> params);
+	List<TmOrderChannelModel> selectChannelByPage(Map<String, Object> params);
 
 	Integer selectChannelCount(Map<String, Object> params);
 
 	Integer selectChannelConfigCount(Map<String, Object> params);
 
-	List<TmOrderChannelConfigModel> selectChanneConfiglList(Map<String, Object> params);
+	List<TmOrderChannelConfigModel> selectChanneConfigByPage(Map<String, Object> params);
 	
 }

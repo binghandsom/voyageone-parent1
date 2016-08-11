@@ -35,10 +35,10 @@ public class ChannelService extends BaseService {
 	}
 	
 	public List<TmOrderChannelModel> searchChannel(String channelId, String channelName, Integer isUsjoi) {
-		return searchChannel(channelId, channelName, isUsjoi, 0, 0).getResult();
+		return searchChannelByPage(channelId, channelName, isUsjoi, 0, 0).getResult();
 	}
 	
-	public PageModel<TmOrderChannelModel> searchChannel(String channelId, String channelName, Integer isUsjoi,
+	public PageModel<TmOrderChannelModel> searchChannelByPage(String channelId, String channelName, Integer isUsjoi,
 			int pageNum, int pageSize) {
 		PageModel<TmOrderChannelModel> pageModel = new PageModel<TmOrderChannelModel>();
 		// 设置查询参数
@@ -53,7 +53,7 @@ public class ChannelService extends BaseService {
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询渠道信息
-		pageModel.setResult(channelDaoExt.selectChannelList(params));
+		pageModel.setResult(channelDaoExt.selectChannelByPage(params));
 		
 		return pageModel;
 	}
@@ -75,10 +75,10 @@ public class ChannelService extends BaseService {
 	}
 
 	public List<TmOrderChannelConfigModel> searchChannelConfig(String channelId, String cfgName, String cfgVal) {
-		return searchChannelConfig(channelId, cfgName, cfgVal, 0, 0).getResult();
+		return searchChannelConfigByPage(channelId, cfgName, cfgVal, 0, 0).getResult();
 	}
 	
-	public PageModel<TmOrderChannelConfigModel> searchChannelConfig(String channelId, String cfgName, String cfgVal,
+	public PageModel<TmOrderChannelConfigModel> searchChannelConfigByPage(String channelId, String cfgName, String cfgVal,
 			int pageNum, int pageSize) {
 		PageModel<TmOrderChannelConfigModel> pageModel = new PageModel<TmOrderChannelConfigModel>();
 		// 设置查询参数
@@ -93,7 +93,7 @@ public class ChannelService extends BaseService {
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询渠道信息
-		pageModel.setResult(channelDaoExt.selectChanneConfiglList(params));
+		pageModel.setResult(channelDaoExt.selectChanneConfigByPage(params));
 		
 		return pageModel;
 	}

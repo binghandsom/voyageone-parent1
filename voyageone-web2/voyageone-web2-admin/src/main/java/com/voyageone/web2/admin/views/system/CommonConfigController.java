@@ -37,7 +37,7 @@ public class CommonConfigController extends AdminController {
 		PageModel<?> result = null;
 		switch (form.getConfigType()) {
 		case Channel:
-			result = channelService.searchChannelConfig(form.getChannelId(), form.getCfgName(), form.getCfgVal(),
+			result = channelService.searchChannelConfigByPage(form.getChannelId(), form.getCfgName(), form.getCfgVal(),
 					form.getPageNum(), form.getPageSize());
 			break;
 		case ChannelCart:
