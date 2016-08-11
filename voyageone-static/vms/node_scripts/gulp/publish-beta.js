@@ -17,7 +17,7 @@ var definePrefix = 'define(function(){\n',
     rjsBuildConfig = require('../build');
 
 // 拷贝所有的静态资源到发布目录
-gulp.task('copy', function () {
+gulp.task('copy-beta', function () {
 
     // 对图片, 样式, 媒体文件
     // 全数复制
@@ -43,14 +43,10 @@ gulp.task('copy', function () {
         .pipe(replace(/\/require.js"/, '/require.min.js"')) // 对页面的引用进行 min 替换
         .pipe(replace(/shared\/components\.ng/, 'shared/components')) // 因为 components 都合并了, 所以这里要替换掉
         .pipe(gulp.dest('./dest/beta/'));
-
-    // 复制测试服务文件
-    gulp.src('./bs-config.js')
-        .pipe(gulp.dest('./dest/'));
 });
 
 // 对 js 代码进行打包
-gulp.task('pkg', ['build.vms.module'], function () {
+gulp.task('pkg-beta', ['build.vms.module'], function () {
 
     // 对 shared 代码进行打包
     gulp.src([
@@ -79,11 +75,9 @@ gulp.task('pkg', ['build.vms.module'], function () {
         .pipe(replace(/'.+?':\s?'.+?components\.ng',/, '')) // 因为上面的 components 都合并了, 所以这里要删除掉
         .pipe(replace(/'vo-libs-angular': \['angular'\],|'vo-libs-angular',/g, '')) // 同上, 需要清理
         .pipe(replace(/'vo-libs':\s?\['jquery'\],/, '\'vo-libs\': [\'jquery\', \'angular\'],')) // 同上, 需要追加 require 配置里的依赖
-        .pipe(replace(/'vms': 'vms\.module'/, '\'vms\': \'vms.module.min\'')) // vms.module 也合并, 并切换了名称, 所以也要替换
         .pipe(uglify())
         .pipe(gulp.dest('./dest/beta/app/'));
 });
-
 
 gulp.task('build.vms.module', function(cb){
     rjs.optimize(rjsBuildConfig, function(buildResponse){
@@ -92,3 +86,4 @@ gulp.task('build.vms.module', function(cb){
     }, cb);
 });
 
+gulp.task('beta', ['copy-beta', 'pkg-beta']);

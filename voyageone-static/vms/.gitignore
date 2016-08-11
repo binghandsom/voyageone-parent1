@@ -2,3 +2,5 @@ publish/
 *.doc.js
 node_modules/
 jspm_packages/
+dest/release
+dest/beta
