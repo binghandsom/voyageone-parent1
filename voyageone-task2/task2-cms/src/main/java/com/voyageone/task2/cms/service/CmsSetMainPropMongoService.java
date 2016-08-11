@@ -1275,6 +1275,22 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
 //            productField.put("images1", multiComplex);
             productCommonField.put("images1", multiComplex);
+            // 新增商品时，根据设置决定是否同时设置产品图images2,更新商品时不更新images2(老的数据里面本来就没有images2的时候更新)
+            if (newFlg || ListUtils.isNull(productCommonField.getImages2()) || "1".equals(feed.getIsFeedReImport())) {
+                // 从cms_mt_channel_config表从取得新建product时是否自动设置产品图images2(1:自动设置  空，0:不设置)
+                String autoSetImages2Flg = "0";    // 0:不设置产品图images2
+                CmsChannelConfigBean productTypeChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(this.channel.getOrder_channel_id(),
+                        CmsConstants.ChannelConfig.AUTO_SET_IMAGES2_FLG);
+                if (productTypeChannelConfigBean != null && "1".equals(productTypeChannelConfigBean.getConfigValue1())) {
+                    autoSetImages2Flg = "1";       // 1:自动设置产品图images2
+                }
+
+                if ("1".equals(autoSetImages2Flg)) {
+                    // 设置产品图images2
+                    productCommonField.put("images2", multiComplex);
+                }
+            }
+
 //                }
 //            }
 
@@ -3334,7 +3350,19 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 try {
                     // 判断这个sku是否已经存在
                     //if (skuList.contains(feedSku.getSku())) {
-                    if (itemDetailsDao.selectBySku(channelId, feedSku.getSku()) != null) {
+                    ItemDetailsBean oldRecord = itemDetailsDao.selectBySku(channelId, feedSku.getSku());
+                    if (oldRecord != null) {
+                        // 如果该skuCode没变，但feed里面的code从A->B了，则报出异常, feedCode一致才更新
+                        if (!oldRecord.getItemcode().equals(feed.getCode())) {
+                            String errMsg = String.format("feed->master导入:异常终止:由于该sku所属的feedCode发生了变更," +
+                                            "导致不能更新wms_bt_item_details表 [sku:%s] [OldFeedCode:%s] [NewFeedCode:%s]",
+                                    itemDetailsBean.getSku(),
+                                    oldRecord.getItemcode(),
+                                    feed.getCode()
+                            );
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
                         // 已经存在的场合: 更新数据库
                         itemDetailsDao.updateItemDetails(itemDetailsBean, getTaskName());
                     } else {
