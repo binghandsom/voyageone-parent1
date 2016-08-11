@@ -3398,7 +3398,8 @@ public class SxProductService extends BaseService {
         if (ListUtils.notNull(errProducts)) {
             sbProcContent.append("[pPublishError:'Error'->'']");
         }
-        insModel.setProcContent(sbProcContent.toString());
+        insModel.setProcContent(StringUtils.isEmpty(sbProcContent.toString()) ?
+                "[PlatformStatus,PlatformPid或pPublishError等关键状态信息没有变化]" : sbProcContent.toString());
 
         return cmsBtWorkloadHistoryDao.insert(insModel);
     }
