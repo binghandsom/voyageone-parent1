@@ -1,4 +1,5 @@
-require.config({
+module.exports = {
+    baseUrl: "./src/app/",
     paths: {
         'vo-libs-angular': '../shared/components.ng',
         'vo-libs': '../shared/components',
@@ -21,50 +22,40 @@ require.config({
         'angular-file-upload': '../assets/js/angular-file-upload/2.2.0/angular-file-upload',
         'md5': '../assets/js/angular-md5/0.1.8/angular-md5',
         'chart': '../assets/js/chart/Chart',
-        'angular-chart': '../assets/js/angular-chart/angular-chart',
-        'vms': 'vms'
+        'angular-chart': '../assets/js/angular-chart/angular-chart'
     },
-    shim: {
-        'vo-libs': ['jquery'],
-        'vo-libs-angular': ['angular'],
-        'angular-sanitize': ['angular'],
-        'angular-route': ['angular'],
-        'angular-animate': ['angular'],
-        'angular-cookies': ['angular'],
-        'angular-translate': ['angular'],
-        'angular-block-ui': ['angular'],
-        'angular-ui-bootstrap': ['angular'],
-        'ngStorage': ['angular'],
-        'angular-file-upload': ['angular'],
-        'angular': {exports: 'angular', deps: ['jquery']},
-        'jquery': {exports: 'jQuery'},
-        'filestyle': ['jquery'],
-        'angularAMD': ['angular'],
-        'chosen': ['jquery'],
-        'angular-chosen': ['angular', 'chosen'],
-        'md5': ['angular'],
-        'angular-chart': ['chart'],
-        'vms': [
-            'angularAMD',
-            'underscore',
-            'angular-sanitize',
-            'angular-route',
-            'angular-animate',
-            'angular-cookies',
-            'angular-translate',
-            'angular-block-ui',
-            'angular-ui-bootstrap',
-            'angular-chosen',
-            'ngStorage',
-            'vo-libs-angular',
-            'md5',
-            'notify',
-            'angular-file-upload',
-            'vo-libs',
-            'filestyle',
-            'angular-chart',
-            'jquery'
-        ]
-    },
-    deps: ['vms']
-});
+    excludeShallow: [
+        'vo-libs-angular',
+        'vo-libs',
+        'angular',
+        'jquery',
+        'angularAMD',
+        'underscore',
+        'filestyle',
+        'notify',
+        'angular-block-ui',
+        'angular-cookies',
+        'angular-sanitize',
+        'angular-route',
+        'angular-translate',
+        'angular-ui-bootstrap',
+        'chosen',
+        'angular-chosen',
+        'angular-animate',
+        'ngStorage',
+        'angular-file-upload',
+        'md5',
+        'chart',
+        'angular-chart'
+    ],
+    exclude: [
+        './components/menu.component',
+        './controllers/topbar.controller',
+        './translate/en',
+        './translate/zh'
+    ],
+    useStrict: true,
+    optimize: 'none',
+    name: "vms",
+    out: "./dest/beta/app/vms.js"
+};

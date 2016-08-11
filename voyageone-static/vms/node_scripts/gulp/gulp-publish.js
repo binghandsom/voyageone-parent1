@@ -1,32 +1,26 @@
 require('./gulp-publish-beta');
 
-var fs = require('fs');
-var glob = require('glob');
-var gulp = require('gulp');
-var debug = require('gulp-debug');
-var ngAnnotate = require('gulp-ng-annotate');
-var minifyCss = require('gulp-minify-css');
-var minifyHtml = require('gulp-minify-html');
-var uglify = require('gulp-uglify');
-var replace = require('gulp-replace');
-var rename = require('gulp-rename');
-var concat = require('gulp-concat');
-var header = require('gulp-header');
+var fs = require('fs'),
+    glob = require('glob');
 
-var vars = require('./vars');
+var gulp = require('gulp'),
+    debug = require('gulp-debug'),
+    ngAnnotate = require('gulp-ng-annotate'),
+    minifyCss = require('gulp-minify-css'),
+    minifyHtml = require('gulp-minify-html'),
+    uglify = require('gulp-uglify'),
+    replace = require('gulp-replace'),
+    rename = require('gulp-rename'),
+    concat = require('gulp-concat'),
+    header = require('gulp-header');
+
 var requireMin = require('./gulp-require-min');
-var publish = vars.publish;
-var build = vars.build;
-var tasks = vars.tasks;
 
-var searchMin = [
-    'src',
-    'publish/release/' + vars.versions.publish
-];
+var SEARCH_MIN = ['src'];
 
 // release static
 gulp.task(tasks.publish.statics, function () {
-    
+
     gulp.src(publish.static.img.src)
         .pipe(gulp.dest(publish.release.static.img));
 
@@ -67,7 +61,7 @@ gulp.task(tasks.publish.modules, function () {
 
     // build login.app and channel.app
     gulp.src(publish.loginAndChannel.js)
-        .pipe(requireMin(searchMin))
+        .pipe(requireMin(SEARCH_MIN))
         .pipe(ngAnnotate())
         .pipe(uglify())
         .pipe(rename({suffix: ".min"}))
@@ -80,7 +74,7 @@ gulp.task(tasks.publish.modules, function () {
         .pipe(gulp.dest(publish.release.loginAndChannel));
 
     gulp.src([publish.modules.js, '!src/modules/**/*.doc.js'])
-        .pipe(requireMin(searchMin))
+        .pipe(requireMin(SEARCH_MIN))
         .pipe(ngAnnotate())
         .pipe(uglify())
         .pipe(gulp.dest(publish.release.modules));

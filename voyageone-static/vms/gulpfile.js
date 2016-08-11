@@ -1,1 +1,1 @@
-require('./node_scripts/gulp-publish');
+require('./node_scripts/gulp/gulp-publish-beta');

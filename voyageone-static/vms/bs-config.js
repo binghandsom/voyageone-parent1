@@ -40,6 +40,6 @@ module.exports = {
             if (req.method !== 'POST')
                 return next();
             return proxyMiddleware(req, res, next);
-	}
+        }
     ]
 };

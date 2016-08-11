@@ -3,11 +3,7 @@
  * Created by LinAn.Bin on 15/12/7.
  */
 
-define([
-    'underscore',
-    'require'
-], function (_, require) {
-
+define(function (require) {
     var popups = {
         orderInfo:{
             newShipment: {

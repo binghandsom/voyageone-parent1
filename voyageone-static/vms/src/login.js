@@ -7,6 +7,7 @@ require.config({
         'ng': 'assets/js/angular.js/1.5.6/angular',
         'ng-traslate': 'assets/js/angular-translate/2.8.1/angular-translate',
         'vo-ng': 'shared/components.ng',
+        'jquery': 'assets/js/jquery/2.2.4/jquery',
         'ng-block': 'assets/js/angular-block-ui/0.2.1/angular-block-ui'
     },
     shim: {
@@ -17,6 +18,7 @@ require.config({
 });
 
 require([
+    'jquery',
     'ng-traslate',
     'vo-ng',
     'ng-block'
