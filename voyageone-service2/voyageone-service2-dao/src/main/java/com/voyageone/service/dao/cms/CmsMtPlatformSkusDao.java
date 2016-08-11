@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsMtPlatformSkusModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsMtPlatformSkusDao {
-    List<CmsMtPlatformSkusModel> selectList(Map<String, Object> map);
+    List<CmsMtPlatformSkusModel> selectList(Object map);
 
-    CmsMtPlatformSkusModel selectOne(Map<String, Object> map);
+    CmsMtPlatformSkusModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsMtPlatformSkusModel select(Integer id);
 

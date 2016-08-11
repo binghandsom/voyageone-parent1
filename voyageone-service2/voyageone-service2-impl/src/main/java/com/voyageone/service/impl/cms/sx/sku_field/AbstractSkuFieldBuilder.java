@@ -142,6 +142,54 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
     }
 
     /**
+     * 产品规格里的值
+     * 从各平台下面的fields下面去取cspuList属性
+     * 目前不支持复杂类型
+     */
+    protected final String getCspuValue(CmsBtProductModel cmsBtProductModel, String fieldId, String barcode) {
+        if (cmsBtProductModel.getPlatform(getCartId()).getFields() != null) {
+            Object objCspu = cmsBtProductModel.getPlatform(getCartId()).getFields().getAttribute("cspuList"); // 产品规格
+            if (objCspu != null) {
+                try {
+                    List<Map<String, Object>> listVal = (List<Map<String, Object>>) objCspu;
+                    Object objVal = null;
+                    if (StringUtils.isEmpty((String) listVal.get(0).get("barcode"))) {
+                        // 画面没填的话，会有一条空的数据
+                        throw new BusinessException("没有填写规格!");
+                    }
+                    boolean hasBarcode = false;
+                    for (Map<String, Object> mapSku : listVal) {
+                        if (barcode.equals(mapSku.get("barcode"))) {
+                            // 找到对应barcode
+                            objVal = mapSku.get(fieldId);
+                            hasBarcode = true;
+                            break;
+                        }
+                    }
+                    if (!hasBarcode) {
+                        // 没找到
+                        throw new BusinessException(String.format("没有找到指定规格!barcode=%s", barcode));
+                    }
+                    if (objVal == null) {
+                        return null;
+                    } else if (objVal instanceof String || objVal instanceof Number || objVal instanceof Boolean) {
+                        return String.valueOf(objVal);
+                    } else {
+                        $warn(String.format("cspu属性取得暂不支持复杂类型数据[fieldId:%s,barcode:%s]", fieldId, barcode));
+                        return null;
+                    }
+                } catch (ClassCastException ex) {
+                    throw new BusinessException(String.format("cspu属性取得失败[fieldId:%s,barcode:%s]", fieldId, barcode));
+                }
+            } else {
+                throw new BusinessException(String.format("cspu属性取得失败[fieldId:%s,barcode:%s]", fieldId, barcode));
+            }
+        } else {
+            throw new BusinessException(String.format("cspu属性取得失败[fieldId:%s,barcode:%s]", fieldId, barcode));
+        }
+    }
+
+    /**
      * sku价格取得,根据配置表来决定取哪个价格
      */
     protected final double getSkuPrice(String channelId, CmsBtProductModel cmsBtProductModel, String skuCode) {

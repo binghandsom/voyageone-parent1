@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsZzFeedOverstockPriceDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsZzFeedOverstockPriceModel" />
     <sql id="Base_Column_List" >
-        `id`, `sku`, `cost_price`, `final_rmb_price`, `upd_flg`, `created`, `creater`, `modified`, 
-        `modifier`
+        `id`, `sku_code`, `cost_price`, `final_rmb_price`, `upd_flg`, `created`, `creater`, 
+        `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -17,8 +17,8 @@
     <update id="update" parameterType="com.voyageone.service.model.cms.CmsZzFeedOverstockPriceModel" >
         update cms_zz_feed_overstock_price
         <set >
-            <if test="sku != null" >
-                `sku` = #{sku,jdbcType=VARCHAR},
+            <if test="skuCode != null" >
+                `sku_code` = #{skuCode,jdbcType=VARCHAR},
             </if>
             <if test="costPrice != null" >
                 `cost_price` = #{costPrice,jdbcType=VARCHAR},
@@ -58,8 +58,8 @@
         <include refid="Base_Column_List" />
         from cms_zz_feed_overstock_price
         <where >
-            <if test="sku != null" >
-                and `sku` = #{sku,jdbcType=VARCHAR}
+            <if test="skuCode != null" >
+                and `sku_code` = #{skuCode,jdbcType=VARCHAR}
             </if>
             <if test="costPrice != null" >
                 and `cost_price` = #{costPrice,jdbcType=VARCHAR}
@@ -91,8 +91,8 @@
         <include refid="Base_Column_List" />
         from cms_zz_feed_overstock_price
         <where >
-            <if test="sku != null" >
-                and `sku` = #{sku,jdbcType=VARCHAR}
+            <if test="skuCode != null" >
+                and `sku_code` = #{skuCode,jdbcType=VARCHAR}
             </if>
             <if test="costPrice != null" >
                 and `cost_price` = #{costPrice,jdbcType=VARCHAR}
@@ -121,8 +121,8 @@
     <select id="selectCount" resultType="java.lang.Integer" >
         select count(*) from cms_zz_feed_overstock_price
         <where >
-            <if test="sku != null" >
-                and `sku` = #{sku,jdbcType=VARCHAR}
+            <if test="skuCode != null" >
+                and `sku_code` = #{skuCode,jdbcType=VARCHAR}
             </if>
             <if test="costPrice != null" >
                 and `cost_price` = #{costPrice,jdbcType=VARCHAR}
@@ -151,8 +151,8 @@
     <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsZzFeedOverstockPriceModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_zz_feed_overstock_price
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="sku != null" >
-                `sku`,
+            <if test="skuCode != null" >
+                `sku_code`,
             </if>
             <if test="costPrice != null" >
                 `cost_price`,
@@ -176,8 +176,8 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="sku != null" >
-                #{sku,jdbcType=VARCHAR},
+            <if test="skuCode != null" >
+                #{skuCode,jdbcType=VARCHAR},
             </if>
             <if test="costPrice != null" >
                 #{costPrice,jdbcType=VARCHAR},

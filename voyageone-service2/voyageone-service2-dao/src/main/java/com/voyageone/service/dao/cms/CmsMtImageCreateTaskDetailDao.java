@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsMtImageCreateTaskDetailModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsMtImageCreateTaskDetailDao {
-    List<CmsMtImageCreateTaskDetailModel> selectList(Map<String, Object> map);
+    List<CmsMtImageCreateTaskDetailModel> selectList(Object map);
 
-    CmsMtImageCreateTaskDetailModel selectOne(Map<String, Object> map);
+    CmsMtImageCreateTaskDetailModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsMtImageCreateTaskDetailModel select(Integer id);
 

@@ -60,6 +60,13 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
         // added by morse.lu 2016/07/14 end
 
         String itemSchema = cmsMtPlatformCategorySchemaModel.getPropsItem();
+//        // added by morse.lu 2016/08/04 start
+//        // 暂时还是不这样做
+//        if (sxData.isDarwin()) {
+//        // 达尔文的话，实时去取
+//            itemSchema = tbCategoryService.getTbItemAddSchema(shopBean, categoryCode, Long.valueOf(platformProductId)).getItemResult();
+//        }
+//        // added by morse.lu 2016/08/04 end
         $debug("itemSchema:" + itemSchema);
 
         List<Field> fields;
