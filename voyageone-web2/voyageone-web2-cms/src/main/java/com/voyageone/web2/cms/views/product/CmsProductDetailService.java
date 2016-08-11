@@ -1372,7 +1372,7 @@ public class CmsProductDetailService extends BaseAppService {
         return prices;
     }
 
-    public Map<String, Object> copyPropertyFromMainProduct(String channelId, Long prodId) {
+    public Map<String, Object> copyPropertyFromMainProduct(String channelId, Long prodId, String lang) {
         CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Common common = cmsBtProductModel.getCommon();
 
@@ -1390,10 +1390,11 @@ public class CmsProductDetailService extends BaseAppService {
 
         mainCommon.getFields().forEach((s, o) -> {
             if (common.getFields().containsKey(s)) {
-                if (!StringUtils.isEmpty(common.getFields().get(s).toString())) {
-                    // 天猫的场合 属性ID是 sku darwin_sku不复制
+                if (StringUtils.isEmpty(common.getFields().get(s).toString())) {
                     common.getFields().put(s, o);
                 }
+            }else{
+                common.getFields().put(s, o);
             }
         });
         if("1".equalsIgnoreCase(mainCommon.getFields().getHsCodeStatus())){
@@ -1406,7 +1407,8 @@ public class CmsProductDetailService extends BaseAppService {
             common.getFields().setCategoryStatus("1");
         }
         List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
-        FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, common);
+        this.fillFieldOptions(cmsMtCommonFields, channelId, lang);
+        FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, common.getFields());
         common.put("schemaFields", cmsMtCommonFields);
 
         return common;
