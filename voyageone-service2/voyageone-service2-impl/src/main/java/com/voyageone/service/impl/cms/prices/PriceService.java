@@ -168,7 +168,7 @@ public class PriceService extends BaseService {
             // 计算指导价
             Double retailPrice = calculateByFormula(retailFormula, skuInCommon, roundUp);
 
-            if (retailPrice < 1)
+            if (retailPrice <= 0)
                 throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的指导价不合法: %s", channelId, cartId, skuCodeValue, retailPrice);
 
             setProductRetailPrice(sku, retailPrice, isAutoApprovePrice, channelId);
@@ -176,7 +176,7 @@ public class PriceService extends BaseService {
             // 计算 MSRP
             Double originMsrp = calculateByFormula(msrpFormula, skuInCommon, roundUp);
 
-            if (originMsrp < 1)
+            if (originMsrp <= 0)
                 throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的 MSRP 不合法: %s", channelId, cartId, skuCodeValue, originMsrp);
 
             setProductMsrp(sku, originMsrp, isAutoSyncPriceMsrp);
@@ -365,7 +365,7 @@ public class PriceService extends BaseService {
             // 计算指导价
             Double retailPrice = systemPriceCalculator.calculate(clientNetPrice);
 
-            if (retailPrice < 1)
+            if (retailPrice <= 0)
                 throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的指导价不合法: %s", channelId, cartId, skuCodeValue, retailPrice);
 
             setProductRetailPrice(platformSku, retailPrice, isAutoApprovePrice, channelId);
@@ -373,7 +373,7 @@ public class PriceService extends BaseService {
             // 计算 MSRP
             Double originPriceMsrp = systemPriceCalculator.calculate(clientMsrp);
 
-            if (originPriceMsrp < 1)
+            if (originPriceMsrp <= 0)
                 throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的 MSRP 不合法: %s", channelId, cartId, skuCodeValue, originPriceMsrp);
 
             setProductMsrp(platformSku, originPriceMsrp, isAutoSyncPriceMsrp);
@@ -441,7 +441,7 @@ public class PriceService extends BaseService {
      */
     private void resetPriceIfInvalid(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField, Double priceValue) {
         Double _priceValue = getProductPrice(platformSku, commonField);
-        if (_priceValue == null || _priceValue < 1)
+        if (_priceValue == null || _priceValue <= 0)
             platformSku.put(commonField.name(), priceValue);
     }
 

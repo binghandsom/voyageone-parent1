@@ -74,7 +74,7 @@ public class CmsFieldEditController extends CmsController {
     /**
      * 修改最终价格时，下载未处理的商品code列表
      */
-    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.DLD_PRODUCT_PROCESALE)
+    @RequestMapping(value = CmsUrlConstants.POP.FIELD_EDIT.DLD_PRODUCT_PROCESALE, produces = "application/csv;charset=gb18030")
     public ResponseEntity<byte[]> doExport(@RequestParam Map params) {
         String data = null;
         try {

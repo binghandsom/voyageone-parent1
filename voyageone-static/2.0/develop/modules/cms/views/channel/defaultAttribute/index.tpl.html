@@ -1,0 +1,123 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_DEFAULT_MAPPING_LIST' | translate}} </h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" translate="TXT_CART_NAME"></label>
+                                    <div class="col-sm-7">
+                                        <select  class="form-control" ng-model="ctrl.searchInfo.selectedCart" ng-options="option.value as option.name for option in ctrl.cartList">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" translate="TXT_PLATFORM_CATEGORY"></label>
+                                    <div class="col-sm-7">
+                                        <div class="row">
+                                            <label class="checkbox-inline c-radio">
+                                                <input name="category" type="radio" value="0" ng-model="" ><span class="fa fa-check"></span> 全类目
+                                            </label>&emsp;
+                                            <label class="checkbox-inline c-radio">
+                                                <input name="category" type="radio" value="1" ng-model="" ><span class="fa fa-check"></span> 选择类目
+                                            </label>
+                                            <label class="checkbox-inline c-radio">
+                                                <input name="category" type="radio" value="2" ng-model="" ><span class="fa fa-check"></span> 不限类目
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row">
+                                    <button class="col-sm-2 btn btn-default" ng-click="jdCategoryMapping(popupNewCategory)">
+                                        <i class="fa  fa-th-list"></i>&nbsp;<span translate="TXT_PLATFORM_CATEGORY"></span>
+                                    </button>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="vm.platform.pCatPath">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-t-md">
+                        <div class="col-sm-12 text-center">
+                            <button class="btn btn-default" ng-click="clear()"><i class="fa  fa-undo"></i>&nbsp;{{'BTN_RESET'|translate}}</button>
+                            <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'|translate}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="btn-group">
+                            <button class="btn btn-info btn-pop" ng-click="search()">
+                                <i class="fa fa-plus"></i>&nbsp;{{'TXT_DEFAULT_SETTING'|translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="box box-body">
+
+                <div class="table-responsive">
+                    <div class="col-sm-12 dropdown_table_main">
+                        <table class="table table-hover-new vo_table tableWordBreak">
+                            <thead>
+                            <tr>
+                                <th class="mfb-xt3 text-center" translate="TXT_SEQ"></th>
+                                <th class="mfb-xt3 text-left" translate="TXT_PLATFORM_TYPE"></th>
+                                <th class="mfb-xxt text-left" translate="TXT_PLATFORM_CATEGORY"></th>
+                                <th class="mfb-xt3 text-center" translate="TXT_SIZE_CHART_UPDATE_TIME"></th>
+                                <th class="mfb-xt3 text-left" translate="TXT_UPDATER"></th>
+                                <th class="mfb-xt3 text-center" translate="TXT_CREATE_TIME"></th>
+                                <th class="mfb-xt3 text-left" translate="TXT_CREATER"></th>
+                                <th class="mfb-xt3 text-center" translate="TXT_ACTION"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="list in ctrl.brandMappingList">
+                                <td class="mfb-xt3 text-center">{{list.masterName}}</td>
+                                <td class="mfb-xt3 text-left">{{list.brandName}}</td>
+                                <td class="mfb-xxt text-left" ng-if="list.brandName!=null">已匹配</td>
+                                <td class="mfb-xt3 text-center">{{list.brandName}}</td>
+                                <td class="mfb-xt3 text-left">{{list.brandName}}</td>
+                                <td class="mfb-xt3 text-center">{{list.brandName}}</td>
+                                <td class="mfb-xt3 text-left">{{list.brandName}}</td>
+                                <td class="mfb-xt3 text-center">{{list.brandName}}</td>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <vpagination config="ctrl.platformPageOption" ng-if="ctrl.brandMappingList.length > 0"></vpagination>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
