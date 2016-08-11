@@ -11,12 +11,16 @@ define([
 
     admin.constant('popActions', {
         "config": {
-            "tmOrderChannel": {
-                "templateUrl": "views/pop/config/index.tpl.html",
-                "controllerUrl": "modules/admin/views/pop/config/index.ctl",
-                "controller": 'ConfigController as ctrl',
-                "size":'lg'
-            }
+            "templateUrl": "views/pop/config/index.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/config/index.ctl",
+            "controller": 'ConfigController as ctrl',
+            "size": 'lg'
+        },
+        "add": {
+            "templateUrl": "views/pop/add/index.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/add/index.ctl",
+            "controller": 'AddController as ctrl',
+            "size": 'lg'
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -37,11 +41,16 @@ define([
         }
 
         /**
-         * 打开新建权限页面
-         * @type {openAuthority}
+         * 打开新建权限配置页面
          */
         $scope.openConfig = function openConfig(context) {
-            return openModal(popActions.config.tmOrderChannel, context);
+            return openModal(popActions.config, context);
+        };
+        /**
+         * 打开创建编辑页面
+         */
+        $scope.openAdd = function openAdd(context) {
+            return openModal(popActions.add, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {

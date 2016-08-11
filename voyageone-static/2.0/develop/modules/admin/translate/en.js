@@ -14,6 +14,7 @@ define(function () {
         "TXT_CART_CHANNEL_NAME": "渠道名",
         "TXT_CART_CHANNEL_FULL_NAME": "渠道全名",
         "TXT_CART_IS_USJOI": "是否为集合店",
+        "TXT_CART_CHANNEL_CART": "渠道店铺",
         "TXT_CART_CHANNEL_CART_NAME": "渠道店铺名",
         "TXT_STATUS": "状态",
         "TXT_CART_UPDATE_TIME": "更新时间",
@@ -27,6 +28,14 @@ define(function () {
         "BTN_SAVE": "保存",
         "TXT_SELECT_NO_VALUE": "请选择...",
         "TXT_YES":"是",
-        "TXT_NO":"否"
+        "TXT_NO":"否",
+        "TXT_POP_ADD": "添加",
+        "TXT_ICON_ADDRESS":"图标地址",
+        "TXT_SHIPPER":"发货人",
+        "TXT_SHIPPER_TEL":"发货人电话",
+        "TXT_SHIPPER_ZIP":"发货人邮编",
+        "TXT_SHIPPER_ADDRESS":"发货人地址",
+        "TXT_SECRET_KEY":"Secret Key",
+        "TXT_SESSION_KEY":"Session Key"
     };
 });
