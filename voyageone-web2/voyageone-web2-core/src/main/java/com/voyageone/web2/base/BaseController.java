@@ -62,13 +62,15 @@ public abstract class BaseController extends BaseAppComponent {
      * 生成下载内容
      */
     protected ResponseEntity<byte[]> genResponseEntityFromBytes(String downloadFileName, byte[] bytes) {
+        return genResponseEntityFromBytes(MediaType.APPLICATION_OCTET_STREAM, downloadFileName, bytes);
+    }
+
+    /**
+     * 生成下载内容
+     */
+    protected ResponseEntity<byte[]> genResponseEntityFromBytes(MediaType mediaType, String downloadFileName, byte[] bytes) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-//        try {
-//            headers.setContentDispositionFormData("attachment", URLEncoder.encode(downloadFileName, "UTF-8"));
-//        } catch (UnsupportedEncodingException e) {
-//            throw new SystemException("Unsupported Encoding", e);
-//        }
+        headers.setContentType(mediaType);
         try {
             headers.setContentDispositionFormData("attachment", new String(downloadFileName.getBytes("gb2312"),"iso8859-1"));
         } catch (UnsupportedEncodingException e) {
