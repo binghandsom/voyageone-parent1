@@ -50,9 +50,7 @@ module.exports = {
     ],
     exclude: [
         './components/menu.component',
-        './controllers/topbar.controller',
-        './translate/en',
-        './translate/zh'
+        './controllers/topbar.controller'
     ],
     useStrict: true,
     optimize: 'none',

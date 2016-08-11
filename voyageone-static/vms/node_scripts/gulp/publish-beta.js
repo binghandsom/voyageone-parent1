@@ -1,5 +1,4 @@
-var fs = require('fs'),
-    glob = require('glob');
+var fs = require('fs');
 
 var gulp = require('gulp'),
     debug = require('gulp-debug'),
@@ -11,7 +10,7 @@ var gulp = require('gulp'),
     header = require('gulp-header'),
     footer = require('gulp-footer'),
     rjs = require('requirejs'),
-    replaceRequirePathMain = require('./gulp-require-min');
+    replaceRequirePathMain = require('./require-min');
 
 var definePrefix = 'define(function(){\n',
     defineSuffix = '});',
@@ -32,7 +31,7 @@ gulp.task('copy', function () {
 
     // 对应用下的文件进行原样拷贝
     gulp.src([
-        './src/app/!(css)/**/*.{js,html}',
+        './src/app/!(css|translate)/**/*.{js,html}',
         './src/app/*.{css,html}'
     ])
         .pipe(replace(/\/require.js"/, '/require.min.js"')) // 对页面的引用进行 min 替换
@@ -88,9 +87,7 @@ gulp.task('pkg', ['build.vms.module'], function () {
 
 gulp.task('build.vms.module', function(cb){
     rjs.optimize(rjsBuildConfig, function(buildResponse){
-
         console.log('buildResponse', buildResponse);
-
         cb();
     }, cb);
 });

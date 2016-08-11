@@ -1,4 +1,4 @@
-require('./gulp-publish-beta');
+require('./publish-beta');
 
 var fs = require('fs'),
     glob = require('glob');
@@ -14,7 +14,7 @@ var gulp = require('gulp'),
     concat = require('gulp-concat'),
     header = require('gulp-header');
 
-var requireMin = require('./gulp-require-min');
+var requireMin = require('./require-min');
 
 var SEARCH_MIN = ['src'];
 
