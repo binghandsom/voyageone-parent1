@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsBtProductStatusHistoryModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsBtProductStatusHistoryDao {
-    List<CmsBtProductStatusHistoryModel> selectList(Map<String, Object> map);
+    List<CmsBtProductStatusHistoryModel> selectList(Object map);
 
-    CmsBtProductStatusHistoryModel selectOne(Map<String, Object> map);
+    CmsBtProductStatusHistoryModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsBtProductStatusHistoryModel select(Integer id);
 

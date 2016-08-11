@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsMtFeedCustomPropDao {
-    List<CmsMtFeedCustomPropModel> selectList(Map<String, Object> map);
+    List<CmsMtFeedCustomPropModel> selectList(Object map);
 
-    CmsMtFeedCustomPropModel selectOne(Map<String, Object> map);
+    CmsMtFeedCustomPropModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsMtFeedCustomPropModel select(Integer id);
 

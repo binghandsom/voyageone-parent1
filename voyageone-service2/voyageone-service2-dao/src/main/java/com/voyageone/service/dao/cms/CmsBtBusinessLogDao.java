@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsBtBusinessLogDao {
-    List<CmsBtBusinessLogModel> selectList(Map<String, Object> map);
+    List<CmsBtBusinessLogModel> selectList(Object map);
 
-    CmsBtBusinessLogModel selectOne(Map<String, Object> map);
+    CmsBtBusinessLogModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsBtBusinessLogModel select(Integer id);
 
