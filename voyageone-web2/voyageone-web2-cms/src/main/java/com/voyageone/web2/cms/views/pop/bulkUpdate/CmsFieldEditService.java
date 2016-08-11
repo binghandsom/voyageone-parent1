@@ -710,7 +710,6 @@ public class CmsFieldEditService extends BaseAppService {
         List<CmsBtPriceLogModel> priceLogList = new ArrayList<CmsBtPriceLogModel>();
         String skuCode = null;
         BulkJomgoUpdateList bulkList = new BulkJomgoUpdateList(1000, cmsBtProductDao, userInfo.getSelChannelId());
-        boolean hasUpdFlg = false;
         List<String> prodPriceUpList = new ArrayList<>();
         List<String> prodPriceDownList = new ArrayList<>();
         List<String> prodPriceDownExList = new ArrayList<>();
@@ -720,7 +719,7 @@ public class CmsFieldEditService extends BaseAppService {
         for (CmsBtProductModel prodObj : prodObjList) {
             List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
             String prodCode = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
-            hasUpdFlg = false;
+
             for (BaseMongoMap skuObj : skuList) {
                 skuCode = skuObj.getStringAttribute("skuCode");
                 if (StringUtils.isEmpty(skuCode)) {
@@ -774,7 +773,6 @@ public class CmsFieldEditService extends BaseAppService {
                 if (rs == befPriceSale) {
                     // 修改前后价格相同
                     $info(String.format("setProductSalePrice: 修改前后价格相同 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    hasUpdFlg = false;
                     continue;
                 }
 
@@ -807,15 +805,15 @@ public class CmsFieldEditService extends BaseAppService {
                 String diffFlg = productSkuService.getPriceDiffFlg(breakThreshold, rs, result);
                 if ("2".equals(diffFlg)) {
                     $info(String.format("setProductSalePrice: 输入的最终售价低于指导价，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    prodPriceDownList.add(prodCode + ", " + skuCode + ", " + befPriceSale + ", " + result + ",, " + rs);
+                    prodPriceDownList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t\t " + rs);
                     continue;
                 } else if ("5".equals(diffFlg)) {
                     $info(String.format("setProductSalePrice: 输入的最终售价低于下限阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    prodPriceDownExList.add(prodCode + ", " + skuCode + ", " + befPriceSale + ", " + result + ", " + (result * (1 - breakThreshold)) + ", " + rs);
+                    prodPriceDownExList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (1 - breakThreshold)) + "\t " + rs);
                     continue;
                 } else if ("4".equals(diffFlg)) {
                     $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    prodPriceUpList.add(prodCode + ", " + skuCode + ", " + befPriceSale + ", " + result + ", " + (result * (breakThreshold + 1)) + ", " + rs);
+                    prodPriceUpList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (breakThreshold + 1)) + "\t " + rs);
                     continue;
                     // 超过阈值时不更新，(下面注释掉的代码暂时保留，将来可能会有用)
 //                    if (notChkPriceFlg == 1) {
@@ -831,7 +829,6 @@ public class CmsFieldEditService extends BaseAppService {
 //                        return rsMap;
 //                    }
                 }
-                hasUpdFlg = true;
                 skuObj.setAttribute("priceSale", rs);
                 skuObj.setAttribute("priceDiffFlg", diffFlg);
 
@@ -863,16 +860,14 @@ public class CmsFieldEditService extends BaseAppService {
             }
 
             // 更新产品的信息
-            if (hasUpdFlg) {
-                JomgoUpdate updObj = new JomgoUpdate();
-                updObj.setQuery("{'common.fields.code':#}");
-                updObj.setUpdate("{$set:{'platforms.P" + cartId + ".skus':#,'modified':#,'modifier':#}}");
-                updObj.setQueryParameters(prodObj.getCommon().getFields().getCode());
-                updObj.setUpdateParameters(skuList, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
-                BulkWriteResult rs = bulkList.addBulkJomgo(updObj);
-                if (rs != null) {
-                    $debug(String.format("批量修改商品价格 channelId=%s 执行结果=%s", userInfo.getSelChannelId(), rs.toString()));
-                }
+            JomgoUpdate updObj = new JomgoUpdate();
+            updObj.setQuery("{'common.fields.code':#}");
+            updObj.setUpdate("{$set:{'platforms.P" + cartId + ".skus':#,'modified':#,'modifier':#}}");
+            updObj.setQueryParameters(prodObj.getCommon().getFields().getCode());
+            updObj.setUpdateParameters(skuList, DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
+            BulkWriteResult rs = bulkList.addBulkJomgo(updObj);
+            if (rs != null) {
+                $debug(String.format("批量修改商品价格 channelId=%s 执行结果=%s", userInfo.getSelChannelId(), rs.toString()));
             }
         }
         BulkWriteResult rs = bulkList.execute();
@@ -954,20 +949,20 @@ public class CmsFieldEditService extends BaseAppService {
 
         StringBuilder rs = new StringBuilder();
         if (prodPriceUpList != null && prodPriceUpList.size() > 0) {
-            prodPriceUpList.forEach(item -> { rs.append(item + ", 修改后最终售价高于指导价向上阈值"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
+            prodPriceUpList.forEach(item -> { rs.append(item + "\t 修改后最终售价高于指导价向上阈值"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
         }
         if (prodPriceDownList != null && prodPriceDownList.size() > 0) {
-            prodPriceDownList.forEach(item -> { rs.append(item + ", 修改后最终售价低于指导价"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
+            prodPriceDownList.forEach(item -> { rs.append(item + "\t 修改后最终售价低于指导价"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
         }
         if (prodPriceDownExList != null && prodPriceDownExList.size() > 0) {
-            prodPriceDownExList.forEach(item -> { rs.append(item + ", 修改后最终售价低于指导价向下阈值"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
+            prodPriceDownExList.forEach(item -> { rs.append(item + "\t 修改后最终售价低于指导价向下阈值"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
         }
 
         if (rs.length() == 0) {
             $warn("缓存中没有数据啊！");
             return null;
         } else {
-            rs.insert(0, "  商品code,  sku code, 修改前售价, 指导价, 阈值, 修改后售价, 未处理原因" + com.voyageone.common.util.StringUtils.LineSeparator);
+            rs.insert(0, "  商品code\t  sku code\t 修改前售价\t 指导价\t 阈值\t 修改后售价\t 未处理原因" + com.voyageone.common.util.StringUtils.LineSeparator);
         }
         return rs.toString();
     }
