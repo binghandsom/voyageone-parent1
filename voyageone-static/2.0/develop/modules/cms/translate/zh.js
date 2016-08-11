@@ -130,7 +130,7 @@ define(function () {
         "TXT_PRODUCT_CODE_WITH_COLON": "产品Code:",
         "TXT_PRODUCT_NAME_WITH_COLON": "产品名称:",
         "TXT_SKU_PLATFORM_INFO": "Sku平台信息",
-        "TXT_SKU_INVENTORY": "Sku数",
+        "TXT_SKU_INVENTORY": "Sku库存",
         "TXT_PROMOTION_AND_TAG": "活动 & 标签",
         "TXT_CHANNEL_WITH_COLON": "渠道:",
         "TXT_PROMOTION_NAME_WITH_COLON": "活动名称:",

@@ -675,7 +675,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 Row row = FileUtils.row(sheet, rowIndex);
 
                 FileUtils.cell(row, 0, unlock).setCellValue(key);
-                FileUtils.cell(row, 1, unlock).setCellValue(codes.get(key).get(0).getSalePrice());
+                FileUtils.cell(row, 1, unlock).setCellValue(codes.get(key).get(0).getMsrp());
                 FileUtils.cell(row, 2, unlock).setCellValue(codes.get(key).get(0).getPromotionPrice());
                 rowIndex++;
             }
