@@ -1,9 +1,9 @@
 /**
  * @Description
  * Bootstrap Main App
- * @Date:    2015-11-19 20:31:14
- * @User:    Jonas
- * @Version: 2.0.0
+ * @Date:    2016-08-09 20:31:14
+ * @User:    sofia
+ * @Version: 1.0.0
  */
 
 require.config({

@@ -10,12 +10,17 @@ define([
 ], function (admin, _, MappingTypes) {
 
     admin.constant('popActions', {
-        "authority": {
-            "new": {
-                "templateUrl": "views/pop/authority/new.tpl.html",
-                "controllerUrl": "modules/admin/views/pop/authority/new.ctl",
-                "controller": 'popAuthorityNewCtl'
-            }
+        "config": {
+            "templateUrl": "views/pop/config/index.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/config/index.ctl",
+            "controller": 'ConfigController as ctrl',
+            "size": 'lg'
+        },
+        "add": {
+            "templateUrl": "views/pop/add/index.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/add/index.ctl",
+            "controller": 'AddController as ctrl',
+            "size": 'lg'
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -36,16 +41,16 @@ define([
         }
 
         /**
-         * 打开新建权限页面
-         * @type {openAuthority}
+         * 打开新建权限配置页面
          */
-        $scope.openAuthority = function openAuthority(viewSize, data) {
-            popActions.authority.new.size = viewSize;
-            openModal(popActions.authority.new, {
-                data: function () {
-                    return data;
-                }
-            }, true);
+        $scope.openConfig = function openConfig(context) {
+            return openModal(popActions.config, context);
+        };
+        /**
+         * 打开创建编辑页面
+         */
+        $scope.openAdd = function openAdd(context) {
+            return openModal(popActions.add, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {
