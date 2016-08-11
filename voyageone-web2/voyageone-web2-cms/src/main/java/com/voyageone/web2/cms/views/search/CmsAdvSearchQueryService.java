@@ -418,19 +418,31 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 
         // 获取排序字段1
         if (StringUtils.isNotEmpty(searchValue.getSortOneName()) && StringUtils.isNotEmpty(searchValue.getSortOneType())) {
-            result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
+            if ("comment".equals(searchValue.getSortOneName())) {
+                result.append(MongoUtils.splicingValue("common.comment", Integer.valueOf(searchValue.getSortOneType())));
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
+            }
             result.append(",");
         }
 
         // 获取排序字段2
         if (StringUtils.isNotEmpty(searchValue.getSortTwoName()) && StringUtils.isNotEmpty(searchValue.getSortTwoType())) {
-            result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortTwoType())));
+            if ("comment".equals(searchValue.getSortTwoName())) {
+                result.append(MongoUtils.splicingValue("common.comment", Integer.valueOf(searchValue.getSortTwoType())));
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortTwoType())));
+            }
             result.append(",");
         }
 
         // 获取排序字段3
         if (StringUtils.isNotEmpty(searchValue.getSortThreeName()) && StringUtils.isNotEmpty(searchValue.getSortThreeType())) {
-            result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeType())));
+            if ("comment".equals(searchValue.getSortThreeName())) {
+                result.append(MongoUtils.splicingValue("common.comment", Integer.valueOf(searchValue.getSortThreeType())));
+            } else {
+                result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeType())));
+            }
             result.append(",");
         }
 

@@ -14,7 +14,7 @@
 * sizeType
 * productType
 * brand
-* weight
+* weight   ->用于feed检索页面展示用,设置:第一个sku的重量
 * clientProductURL -> feed的商品官网
 * shortDescription
 * longDescription
@@ -24,6 +24,7 @@
 * material ->材质
 * qty ->库存,默认值0
 * isFeedReImport ->是否重新导入,duan,由李德敏判断,是否还需要这个字段
+* usageEn ->20160720,追加,edward
 * skus
  * sku
  * size
@@ -35,6 +36,10 @@
  * priceClientRetail  -> 客户指导价
  * priceClientMsrp    -> 客户建议零售价
  * iamge -> 用于产品按sku拆分
+ * quantity      ->20160720,edward,库存值
+ * weightQrg     ->20160720,edward,原始重量
+ * weightOrgUnit ->20160720,edward,原始重量单位
+ * weightCalc    ->20160720,edward,如果原始重量不是lb的,根据公式转成lb
 * attribute[]
  * 按feed的字段名字定义数组名称
    eg:MSRP[0] -> 3355.0

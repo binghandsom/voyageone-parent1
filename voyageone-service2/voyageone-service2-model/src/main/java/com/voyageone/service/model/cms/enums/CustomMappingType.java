@@ -18,8 +18,36 @@ public enum CustomMappingType {
     // added by morse.lu 2016/06/29 start
     ITEM_DESCRIPTION(11),
     ITEM_WIRELESS_DESCRIPTION(12),
-    IMAGE(13);
+    IMAGE(13),
+    FREIGHT(14), // 运费模板
+    ;
     // added by morse.lu 2016/06/29 end
+
+    // added by morse.lu 2016/07/19 start
+    public enum ImageProp {
+        PRODUCT_IMAGES("product_images", "产品图片-"), // 产品图片
+        ITEM_IMAGES("item_images", "商品图片-"), // 商品图片
+        VERTICAL_IMAGE("vertical_image", "竖图-"), // 商品竖图
+        ITEM_ATTACH_IMAGES("item_attach_images", "商品资质图片-"), // 商品资质图片(1:吊牌图,2:耐久性标签",3:质检报告,4:合格证)
+        ;
+
+        private final String propId;
+        private final String baseDictName;
+
+        private ImageProp(String propId, String baseDictName) {
+            this.propId = propId;
+            this.baseDictName = baseDictName;
+        }
+
+        public String getPropId() {
+            return propId;
+        }
+
+        public String getBaseDictName() {
+            return baseDictName;
+        }
+    }
+    // added by morse.lu 2016/07/19 start
 
     private int value;
 
@@ -60,6 +88,8 @@ public enum CustomMappingType {
                 return ITEM_WIRELESS_DESCRIPTION;
             case 13:
                 return IMAGE;
+            case 14:
+                return FREIGHT;
             // added by morse.lu 2016/06/29 end
             default:
                 return null;

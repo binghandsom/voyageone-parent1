@@ -12,6 +12,7 @@ public class CmsMtCategoryTreeAllModel extends BaseMongoModel {
     private String parentCatId;
     private Integer isParent;
     private String singleSku;
+    private Integer skuSplit;
     private List<CmsMtCategoryTreeAllModel> children = new ArrayList<>();
     private List<CmsMtCategoryTreeAllModel_Platform> platformCategory = new ArrayList<>();
 
@@ -79,30 +80,24 @@ public class CmsMtCategoryTreeAllModel extends BaseMongoModel {
         this.platformCategory = platformCategory;
     }
 
+    public Integer getSkuSplit() {
+        return skuSplit;
+    }
+
+    public void setSkuSplit(Integer skuSplit) {
+        this.skuSplit = skuSplit;
+    }
+
     /**
      * 根据平台种类Id和平台类目名称找到对应的主类目Id
      * @param platformId 平台种类Id
      * @param platformCatPath 平台名称
-     * @return
      */
     public String getatIdByPlatformInfo (String platformId, String platformCatPath) {
         for (CmsMtCategoryTreeAllModel_Platform platform : platformCategory) {
-
             if (platform.getPlatformId().equals(platformId) && platform.getCatPath().equals(platformCatPath))
                 return this.catId;
         }
         return null;
     }
-
-    /**
-     * 返回该主类目下的平台类目
-     * @param platformId 平台种类Id
-     * @return 平台类目
-     */
-    public CmsMtCategoryTreeAllModel_Platform getPlatformCategoryByPlatformId (String platformId) {
-        return platformCategory.stream()
-                .filter(platform -> platformId.equals(platform.getPlatformId()))
-                .findFirst().get();
-    }
-
 }

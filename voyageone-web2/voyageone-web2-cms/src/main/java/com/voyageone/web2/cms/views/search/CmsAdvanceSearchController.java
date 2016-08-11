@@ -203,7 +203,7 @@ public class CmsAdvanceSearchController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.EXPORT_PRODUCTS)
     public ResponseEntity<byte[]> doExport(@RequestParam String params) {
-        CmsSearchInfoBean2 p = null;
+        CmsSearchInfoBean2 p;
         try {
             p = JacksonUtil.json2Bean(params, CmsSearchInfoBean2.class);
         } catch (Exception exp) {

@@ -199,7 +199,7 @@
               voyageone_cms2.cms_bt_promotion b
         where
             a.promotion_id = b.id
-            and b.promotion_status = 0
+            and b.promotion_status = 1
             and b.is_all_promotion = 0
             and task_type = 0
             and b.channel_id = #{channelId}

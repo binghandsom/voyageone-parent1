@@ -44,14 +44,16 @@
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
     <!-- 配置mvc的拦截器 可以配置多个  -->
-    <mvc:interceptors>
-        <!-- 共通检查及处理拦截器 -->
-        <mvc:interceptor>
-            <mvc:mapping path="/**"/>
-            <!-- 例外 -->
-            <mvc:exclude-mapping path="/core/access/user/login"/>
-            <mvc:exclude-mapping path="/rest/**"/>
-            <bean class="com.voyageone.web2.base.interceptors.Interceptor"/>
-        </mvc:interceptor>
-    </mvc:interceptors>
+    <!--<mvc:interceptors>-->
+        <!--&lt;!&ndash; 共通检查及处理拦截器 &ndash;&gt;-->
+        <!--<mvc:interceptor>-->
+            <!--<mvc:mapping path="/**"/>-->
+            <!--&lt;!&ndash; 例外 &ndash;&gt;-->
+            <!--<mvc:exclude-mapping path="/core/access/user/login"/>-->
+            <!--<mvc:exclude-mapping path="/rest/**"/>-->
+            <!--<bean class="com.voyageone.web2.base.interceptors.Interceptor"/>-->
+        <!--</mvc:interceptor>-->
+    <!--</mvc:interceptors>-->
+
+
 </beans>

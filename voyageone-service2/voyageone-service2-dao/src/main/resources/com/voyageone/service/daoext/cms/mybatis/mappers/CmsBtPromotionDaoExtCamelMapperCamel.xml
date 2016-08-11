@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtPromotionDaoExtCamel">
+    <select id="selectPage" resultType="MapModel">
+        select *
+        from cms_bt_promotion
+        inner join (select a.Id from cms_bt_promotion  as  a
+        <where>
+            a.active = 1
+            and (a.channel_id = #{channelId}
+            <if test="orgChannelId != null">
+                or a.channel_id = #{orgChannelId}
+            </if>
+            )
+            <if test="promotionId != null">
+                and a.id = #{promotionId}
+            </if>
+            <if test="promotionName != null">
+                and a.promotion_name LIKE '%${promotionName}%'
+            </if>
+            <if test="promotionStatus != null">
+                and a.promotion_status = #{promotionStatus}
+            </if>
+            <if test="cartId != null">
+                and a.cart_id = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="promotionType != null">
+                and a.promotion_type = #{promotionType,jdbcType=VARCHAR}
+            </if>
+            <if test="createdStart != null">
+                and a.created >= #{createdStart,jdbcType=VARCHAR}
+            </if>
+            <if test="createdEnd != null">
+                and #{createdEnd,jdbcType=VARCHAR} >= a.created
+            </if>
+        </where>
+        order by ${orderByColumn}  limit #{offset},#{pageRowCount}) as a on a.Id=cms_bt_promotion.Id
+    </select>
+    <select id="selectCount" resultType="Long">
+        select count(*) from cms_bt_promotion as a
+        <where>
+            a.active = 1
+            and (a.channel_id = #{channelId}
+            <if test="orgChannelId != null">
+                or a.channel_id = #{orgChannelId}
+            </if>
+            )
+            <if test="promotionId != null">
+                and a.id = #{promotionId}
+            </if>
+            <if test="promotionName != null">
+                and a.promotion_name LIKE '%${promotionName}%'
+            </if>
+            <if test="promotionStatus != null">
+                and a.promotion_status = #{promotionStatus}
+            </if>
+            <if test="cartId != null">
+                and a.cart_id = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="promotionType != null">
+                and a.promotion_type = #{promotionType,jdbcType=VARCHAR}
+            </if>
+            <if test="createdStart != null">
+                and a.created >= #{createdStart,jdbcType=VARCHAR}
+            </if>
+            <if test="createdEnd != null">
+                and #{createdEnd,jdbcType=VARCHAR} >= a.created
+            </if>
+        </where>
+    </select>
+</mapper>

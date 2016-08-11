@@ -62,16 +62,7 @@ define([
                 }
             }).then(function (resp) {
                 var res = resp.data;
-                self.data = res.data.map(function (row) {
-                    var cart = self.cartList.find(function (cart) {
-                        return cart.value == row.cartId;
-                    });
-
-                    if (cart)
-                        row.cartName = cart.label;
-
-                    return row;
-                });
+                self.data = res.data;
                 self.paging.total = res.count;
             });
         };

@@ -14,6 +14,164 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtExportTaskModel" >
+        update cms_bt_export_task
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="taskType != null" >
+                `task_type` = #{taskType,jdbcType=INTEGER},
+            </if>
+            <if test="parameter != null" >
+                `parameter` = #{parameter,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="status != null" >
+                `status` = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="fileName != null" >
+                `file_name` = #{fileName,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null" >
+                `comment` = #{comment,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_export_task
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_export_task
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="taskType != null" >
+                and `task_type` = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="parameter != null" >
+                and `parameter` = #{parameter,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_export_task
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="taskType != null" >
+                and `task_type` = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="parameter != null" >
+                and `parameter` = #{parameter,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_export_task
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="taskType != null" >
+                and `task_type` = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="parameter != null" >
+                and `parameter` = #{parameter,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="fileName != null" >
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
     <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtExportTaskModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_bt_export_task
         <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -89,163 +247,5 @@
             </if>
         </trim>
     </insert>
-
-    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtExportTaskModel" >
-        update cms_bt_export_task
-        <set >
-            <if test="channelId != null" >
-                `channel_id` = #{channelId,jdbcType=VARCHAR},
-            </if>
-            <if test="taskType != null" >
-                `task_type` = #{taskType,jdbcType=INTEGER},
-            </if>
-            <if test="parameter != null" >
-                `parameter` = #{parameter,jdbcType=LONGVARCHAR},
-            </if>
-            <if test="status != null" >
-                `status` = #{status,jdbcType=INTEGER},
-            </if>
-            <if test="fileName != null" >
-                `file_name` = #{fileName,jdbcType=VARCHAR},
-            </if>
-            <if test="comment != null" >
-                `comment` = #{comment,jdbcType=LONGVARCHAR},
-            </if>
-            <if test="created != null" >
-                `created` = #{created,jdbcType=TIMESTAMP},
-            </if>
-            <if test="creater != null" >
-                `creater` = #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="modified != null" >
-                `modified` = #{modified,jdbcType=TIMESTAMP},
-            </if>
-            <if test="modified == null" >
-                `modified` = now(),
-            </if>
-            <if test="creater != null" >
-                `modifier` = #{creater,jdbcType=VARCHAR},
-            </if>
-        </set>
-        where `id` = #{id,jdbcType=INTEGER}
-    </update>
-
-    <delete id="delete" parameterType="java.lang.Integer" >
-        delete from cms_bt_export_task
-        where `id` = #{id,jdbcType=INTEGER}
-    </delete>
-
-    <select id="selectOne" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from cms_bt_export_task
-        <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="taskType != null" >
-                and `task_type` = #{taskType,jdbcType=INTEGER}
-            </if>
-            <if test="parameter != null" >
-                and `parameter` = #{parameter,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="status != null" >
-                and `status` = #{status,jdbcType=INTEGER}
-            </if>
-            <if test="fileName != null" >
-                and `file_name` = #{fileName,jdbcType=VARCHAR}
-            </if>
-            <if test="comment != null" >
-                and `comment` = #{comment,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-        limit 1
-    </select>
-
-    <select id="selectList" resultMap="BaseResultMap" >
-        select 
-        <include refid="Base_Column_List" />
-        from cms_bt_export_task
-        <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="taskType != null" >
-                and `task_type` = #{taskType,jdbcType=INTEGER}
-            </if>
-            <if test="parameter != null" >
-                and `parameter` = #{parameter,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="status != null" >
-                and `status` = #{status,jdbcType=INTEGER}
-            </if>
-            <if test="fileName != null" >
-                and `file_name` = #{fileName,jdbcType=VARCHAR}
-            </if>
-            <if test="comment != null" >
-                and `comment` = #{comment,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
-
-    <select id="selectCount" resultType="java.lang.Integer" >
-        select count(*) from cms_bt_export_task
-        <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="taskType != null" >
-                and `task_type` = #{taskType,jdbcType=INTEGER}
-            </if>
-            <if test="parameter != null" >
-                and `parameter` = #{parameter,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="status != null" >
-                and `status` = #{status,jdbcType=INTEGER}
-            </if>
-            <if test="fileName != null" >
-                and `file_name` = #{fileName,jdbcType=VARCHAR}
-            </if>
-            <if test="comment != null" >
-                and `comment` = #{comment,jdbcType=LONGVARCHAR}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `modifier` = #{creater,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
 
 </mapper>

@@ -155,4 +155,8 @@ public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
         }
         return mongoTemplate.jongo.createQuery(quyObj.getQuery(), parametersTemp).toDBObject().toString();
     }
+
+    public boolean collectionExists(final String collectionName) {
+        return mongoTemplate.collectionExists(collectionName);
+    }
 }
