@@ -24,8 +24,6 @@ define(function () {
         "TXT_PROPERTY_NAME": "属性名",
         "TXT_PROPERTY_VALUE": "属性值",
         "TXT_COMMENTS": "备注",
-        "BTN_CANCEL": "取消",
-        "BTN_SAVE": "保存",
         "TXT_SELECT_NO_VALUE": "请选择...",
         "TXT_YES":"是",
         "TXT_NO":"否",
@@ -36,6 +34,15 @@ define(function () {
         "TXT_SHIPPER_ZIP":"发货人邮编",
         "TXT_SHIPPER_ADDRESS":"发货人地址",
         "TXT_SECRET_KEY":"Secret Key",
-        "TXT_SESSION_KEY":"Session Key"
+        "TXT_SESSION_KEY":"Session Key",
+
+        /**按钮组*/
+        "BTN_CANCEL": "取消",
+        "BTN_SAVE": "保存",
+        "BTN_OK":"确认",
+
+        /**确认框*/
+        "TXT_CONFIRM":"确认",
+        "TXT_CONFIRM_DELETE_MSG":"您确定要删除选定的渠道信息吗?"
     };
 });

@@ -5,10 +5,11 @@ define(function () {
             "templateUrl": "views/home/welcome/datachart.tpl.html",
             "controllerUrl": "modules/admin/views/home/welcome/datachart.ctl"
         },
-        "tmOrderChannel":{
+        "tmOrderChannel": {
             "hash": "/cart/tmOrderChannel",
             "templateUrl": "views/tmOrderChannel/index.tpl.html",
-            "controllerUrl": "modules/admin/views/tmOrderChannel/index.ctl"
+            "controllerUrl": "modules/admin/views/tmOrderChannel/index.ctl",
+            "controller": "TmOrderChannelController as ctrl"
         }
     };
 });

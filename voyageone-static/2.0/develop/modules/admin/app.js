@@ -53,7 +53,6 @@ define([
             });
             // 加载所有的路由配置
             _.each(routes, function (module) {
-                console.log(module);
                 return $routeProvider.when(module.hash, angularAMD.route(module));
             });
             // 默认设置所有的弹出模态框的背景不能关闭模态框

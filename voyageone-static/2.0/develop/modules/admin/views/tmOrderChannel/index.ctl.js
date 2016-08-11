@@ -8,12 +8,16 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('TmOrderChannelController', (function () {
-        function TmOrderChannelController(popups) {
+        function TmOrderChannelController(popups, confirm) {
             this.popups = popups;
+            this.confirm = confirm;
         }
 
         TmOrderChannelController.prototype = {
-         
+            delete: function () {
+                var self = this;
+                self.confirm('TXT_CONFIRM_DELETE_MSG');
+            }
         };
         return TmOrderChannelController;
     })())
