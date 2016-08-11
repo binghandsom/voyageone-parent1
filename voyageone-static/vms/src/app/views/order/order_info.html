@@ -158,8 +158,7 @@
                         <td class="v-middle">
                             <span class="v-middle" ng-if="item.name.length <= 30">{{item.name}}</span>
                             <span class="v-middle" ng-if="item.name.length > 30" uib-tooltip="{{item.name}}"
-                                  tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name |
-                                stringCutter:true:30:' ...'}}</span>
+                                  tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name | stringCutter:true:30:' ...'}}</span>
                         </td>
                         <td class="v-middle">{{ctrl.getStatusName(item.status)}}</td>
                         <td class="v-middle">${{item.voPrice}}</td>

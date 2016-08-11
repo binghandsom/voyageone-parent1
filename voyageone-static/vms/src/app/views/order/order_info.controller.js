@@ -142,8 +142,16 @@ define([
         OrderInfoController.prototype.downloadPickingList = function () {
             var self = this;
             // todo 这里没有做session验证 需要加回调
-            $.download.post('/vms/order/order_info/downloadPickingList', {"orderType": self.downloadInfo.orderType});
+            $.download.post('/vms/order/order_info/downloadPickingList', {"orderType": self.downloadInfo.orderType}, self.afterDownload, self);
         };
+
+        OrderInfoController.prototype.afterDownload = function (responseContent, param, context) {
+                if (!responseContent) return;
+                var res = JSON.parse(responseContent);
+                if (res.message != '') {
+                    context.alert(res.message);
+                }
+            }
 
         OrderInfoController.prototype.toggleAll = function () {
             var self = this;
