@@ -858,7 +858,7 @@ public class CmsFieldEditService extends BaseAppService {
             }
 
             // 更新产品的信息
-            if (!hasUpdFlg) {
+            if (hasUpdFlg) {
                 JomgoUpdate updObj = new JomgoUpdate();
                 updObj.setQuery("{'common.fields.code':#}");
                 updObj.setUpdate("{$set:{'platforms.P" + cartId + ".skus':#,'modified':#,'modifier':#}}");
