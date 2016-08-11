@@ -14,11 +14,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VmsBtFeedFileDao {
-    List<VmsBtFeedFileModel> selectList(Map<String, Object> map);
+    List<VmsBtFeedFileModel> selectList(Object map);
 
-    VmsBtFeedFileModel selectOne(Map<String, Object> map);
+    VmsBtFeedFileModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     VmsBtFeedFileModel select(Integer id);
 

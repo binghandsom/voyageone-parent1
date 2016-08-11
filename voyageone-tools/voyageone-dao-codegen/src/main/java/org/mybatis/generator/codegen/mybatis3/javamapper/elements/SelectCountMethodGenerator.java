@@ -22,7 +22,7 @@ public class SelectCountMethodGenerator extends AbstractJavaMapperMethodGenerato
         FullyQualifiedJavaType returnType = FullyQualifiedJavaType.getIntInstance();
         method.setReturnType(returnType);
 
-        FullyQualifiedJavaType mapParameterType = new FullyQualifiedJavaType("java.util.Map<String, Object>");
+        FullyQualifiedJavaType mapParameterType = new FullyQualifiedJavaType("Object");
         method.addParameter(new Parameter(mapParameterType, "map")); //$NON-NLS-1$
 
         addMapperAnnotations(interfaze, method);

@@ -14,11 +14,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VmsBtFinancialReportDao {
-    List<VmsBtFinancialReportModel> selectList(Map<String, Object> map);
+    List<VmsBtFinancialReportModel> selectList(Object map);
 
-    VmsBtFinancialReportModel selectOne(Map<String, Object> map);
+    VmsBtFinancialReportModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     VmsBtFinancialReportModel select(Integer id);
 

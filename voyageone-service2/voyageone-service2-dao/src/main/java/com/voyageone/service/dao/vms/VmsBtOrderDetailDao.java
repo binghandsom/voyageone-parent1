@@ -14,11 +14,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VmsBtOrderDetailDao {
-    List<VmsBtOrderDetailModel> selectList(Map<String, Object> map);
+    List<VmsBtOrderDetailModel> selectList(Object map);
 
-    VmsBtOrderDetailModel selectOne(Map<String, Object> map);
+    VmsBtOrderDetailModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     VmsBtOrderDetailModel select(Integer id);
 

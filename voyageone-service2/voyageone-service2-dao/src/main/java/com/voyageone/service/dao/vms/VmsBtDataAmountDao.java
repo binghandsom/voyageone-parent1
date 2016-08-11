@@ -14,11 +14,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VmsBtDataAmountDao {
-    List<VmsBtDataAmountModel> selectList(Map<String, Object> map);
+    List<VmsBtDataAmountModel> selectList(Object map);
 
-    VmsBtDataAmountModel selectOne(Map<String, Object> map);
+    VmsBtDataAmountModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     VmsBtDataAmountModel select(Integer id);
 

@@ -14,11 +14,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VmsBtFeedInfoTempDao {
-    List<VmsBtFeedInfoTempModel> selectList(Map<String, Object> map);
+    List<VmsBtFeedInfoTempModel> selectList(Object map);
 
-    VmsBtFeedInfoTempModel selectOne(Map<String, Object> map);
+    VmsBtFeedInfoTempModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     VmsBtFeedInfoTempModel select(Integer id);
 
