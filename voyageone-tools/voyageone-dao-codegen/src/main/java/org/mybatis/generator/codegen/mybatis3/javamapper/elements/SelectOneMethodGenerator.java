@@ -27,7 +27,7 @@ public class SelectOneMethodGenerator extends AbstractJavaMapperMethodGenerator 
 //        FullyQualifiedJavaType returnType = FullyQualifiedJavaType.getNewListInstance().getNewListInstance();
 //        returnType.addTypeArgument(parameterType);
 
-        FullyQualifiedJavaType mapParameterType = new FullyQualifiedJavaType("java.util.Map<String, Object>");
+        FullyQualifiedJavaType mapParameterType = new FullyQualifiedJavaType("Object");
 
         method.setReturnType(FullyQualifiedJavaType.getNewListInstance());
 

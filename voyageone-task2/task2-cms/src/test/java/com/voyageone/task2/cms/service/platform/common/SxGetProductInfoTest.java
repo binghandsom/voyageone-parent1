@@ -1,43 +1,53 @@
 package com.voyageone.task2.cms.service.platform.common;
 
+import com.taobao.api.ApiException;
+import com.taobao.api.request.TmallItemAddSchemaGetRequest;
+import com.taobao.api.request.TmallProductAddSchemaGetRequest;
+import com.taobao.api.response.TmallItemAddSchemaGetResponse;
+import com.taobao.api.response.TmallProductAddSchemaGetResponse;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
-import com.voyageone.common.masterdate.schema.field.ComplexField;
-import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.MultiComplexField;
-import com.voyageone.common.masterdate.schema.field.SingleCheckField;
+import com.voyageone.common.masterdate.schema.factory.SchemaWriter;
+import com.voyageone.common.masterdate.schema.field.*;
+import com.voyageone.common.masterdate.schema.rule.Rule;
+import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.tmall.service.TbCategoryService;
+import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.bean.cms.product.SxData.SxDarwinSkuProps;
 import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
 import com.voyageone.service.dao.cms.mongo.*;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
-import com.voyageone.task2.Context;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.task2.cms.dao.PlatformSkuInfoDao;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmItemService;
-import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmService;
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmProductService;
+import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmService;
+import com.voyageone.task2.cms.service.CmsPlatformProductImport2Service;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -78,6 +88,18 @@ public class SxGetProductInfoTest {
 
     @Autowired
     private PlatformSchemaService platformSchemaService;
+
+    @Autowired
+    private ProductGroupService productGroupService;
+
+    @Autowired
+    private CmsPlatformProductImport2Service cmsPlatformProductImport2Service;
+
+    @Autowired
+    TbProductService tbProductService;
+
+    @Autowired
+    TbCategoryService tbCategoryService;
 
     @Autowired
     private SxGetProductInfo sxGetProductInfo;
@@ -1669,31 +1691,198 @@ public class SxGetProductInfoTest {
 //        Map<String, String> mapSize = sxProductService.getSizeMap("010", "", "Bracelets", "women");
 //        SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("335"));
 
-        {
-            // schema取得
-        }
+//        {
+//            // bcbg 详情页
+//            SxData sxData = sxProductService.getSxProductDataByGroupId("012", 112233L);
+//            ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
+//            String descriptionValue = sxProductService.resolveDict("详情页描述", exp, getShop("002", 23), "morse", null);
+//            System.out.println(descriptionValue);
+//        }
 
         {
-            // TM 上新
-//            Context context = Context.getContext();
-//            ApplicationContext ctx = new GenericXmlApplicationContext("applicationContext.xml");
-//            context.putAttribute("springContext", ctx);
+            // darwin_sku
+            String channelId = "024";
+            String groupId = "910682";
+            SxData sxData = sxProductService.getSxProductDataByGroupId(channelId, Long.valueOf(groupId));
+            int cartId = sxData.getCartId();
+            ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+            ShopBean shopBean = getShop(channelId, cartId);
+            String platformCategoryId = sxData.getMainProduct().getPlatform(cartId).getpCatId();
+            String brandCode = sxData.getBrandCode();
+
+            String platformProductId = "";
+
+            // 判断商品是否是达尔文
+            boolean isDarwin = false;
+            try {
+                isDarwin = uploadTmProductService.getIsDarwin(sxData, shopBean, platformCategoryId, brandCode);
+            } catch (BusinessException be) {
+                // 判断商品是否是达尔文异常的时候默认为"非达尔文"
+                System.out.println("error!!!");
+            }
+
+            System.out.println("Is Darwin:" + isDarwin);
+            // 设置是否是达尔文体系标志位
+            sxData.setDarwin(isDarwin);
+
+            if (isDarwin) {
+                for (BaseMongoMap<String, Object> sku : sxData.getSkuList()) {
+                    String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+                    SxDarwinSkuProps sxDarwinSkuProps = sxData.getDarwinSkuProps(skuCode, true);
+                    sxDarwinSkuProps.setBarcode(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.barcode.name()));
+                }
+            }
+
+//            {
+//                // 影音电器>耳机/耳麦
+//                sxData.setBrandCode("21466766"); // beats
+//                sxData.getMainProduct().getPlatform(cartId).getFields().put("prop_3125853", "797052091"); // 型号 Solo2 Wireless
+//            }
+
+            List<String> platformProductIdList = uploadTmProductService.getProductIdFromTmall(expressionParser, null, null, shopBean, "morse");
+
+            {
+                // 彩妆/香水/美妆工具>唇膏/口红
+                platformProductIdList.add("523035843");
+//                {
+//                    // 上传图片
+//                    Set<String> images = new HashSet<>();
+//                    images.add("http://image.sneakerhead.com/is/image/sneakerhead/024-17233912-1"); // 一张产品图
+//                    Map<String, String> resImages = sxProductService.uploadImage(channelId, cartId, groupId, shopBean, images, "morse");
+//                    resImages.forEach((old, plat) -> System.out.println(old + " , " + plat));
+//                }
+            }
+
+//            {
+//                // 尿片/洗护/喂哺/推车床>纸尿裤/拉拉裤/纸尿片
+//                platformProductIdList.clear();
+//                platformProductIdList.add("647551511");
+//            }
+
+            if (platformProductIdList != null) {
+                // null的话，表示该类目没有产品，直接进入商品上新
+                // added by morse.lu 2016/06/06 end
+                // 取得可以上传商品的平台产品id
+                // 如果发现已有产品符合我们要上传的商品，但需要等待天猫审核该产品,则抛出异常，不做后续上传产品/商品处理)
+                platformProductId = uploadTmProductService.getUsefulProductId(sxData, platformProductIdList, shopBean);
+
+                // productGroup表和天猫平台上都不存在这个产品时，新增产品
+                if (StringUtils.isEmpty(platformProductId)) {
+                    // 新增产品到平台
+
+
+//                    platformProductId = uploadTmProductService.addTmallProduct(expressionParser, cmsMtPlatformCategorySchemaModel,
+//                            cmsMtPlatformMappingModel, shopProp, getTaskName());
+                } else {
+                    // 更新产品
+                    if (!sxData.isDarwin()) {
+//                        uploadTmProductService.updateTmallProduct(expressionParser, platformProductId, cmsMtPlatformMappingModel, shopProp, getTaskName());
+                    } else {
+                        String schema = tbProductService.getProductSchema(Long.valueOf(platformProductId), shopBean);
+                        System.out.println("产品["+ platformProductId +"]schema："+schema);
+                        List<Field> fields = SchemaReader.readXmlForList(schema);
+
+                        schema = tbProductService.getAddProductSchema(Long.valueOf(platformCategoryId), Long.valueOf(sxData.getBrandCode()), shopBean);
+                        System.out.println("新增产品schema："+schema);
+
+                        schema = tbProductService.getProductUpdateSchema(Long.valueOf(platformProductId), shopBean, new StringBuffer(""));
+                        System.out.println("更新产品schema："+schema);
+
+                        List<Field> fieldList = SchemaReader.readXmlForList(schema);
+                        try {
+                            for (Field field : fieldList) {
+                                setFieldDefaultValues(field);
+                            }
+                        } catch (Exception e) {
+                            System.out.println("设值默认值失败");
+                            return;
+                        }
+
+//                        {
+//                            // 彩妆/香水/美妆工具>唇膏/口红
+//                            // 手动临时加一个错的规格，看看行不行
+//                            for (Field field: fieldList) {
+//                                if ("cspuList".equals(field.getId())) {
+//                                    MultiComplexField multiComplexField = (MultiComplexField) field;
+//                                    List<ComplexValue> multiComplexValues = multiComplexField.getValue();
+//                                    ComplexValue complexValue = new ComplexValue();
+//                                    multiComplexValues.add(complexValue);
 //
-//            String channel_id = "002";
-//            int cart_id = 23;
-//            ShopBean shopBean = getShop(channel_id, cart_id);
+//                                    for (Field subField : multiComplexField.getFields()) {
+//                                        Field valueField = deepCloneField(subField);
+//                                        complexValue.put(valueField);
 //
-//            channel_id = "018";
-//            CmsBtSxWorkloadModel cmsBtSxWorkloadModel = new CmsBtSxWorkloadModel();
-//            cmsBtSxWorkloadModel.setChannelId(channel_id);
-//            cmsBtSxWorkloadModel.setCartId(cart_id);
-//            cmsBtSxWorkloadModel.setGroupId(493891L);
-//            cmsBtSxWorkloadModel.setPublishStatus(0);
+//                                        if ("barcode".equals(valueField.getId())) {
+//                                            ((InputField) valueField).setValue("6921581540270");
+//                                        } else if ("prop_1627207".equals(valueField.getId())) {
+//                                            ((InputField) valueField).setValue("123");
+//                                        } else if ("cspuImg".equals(valueField.getId())) {
+//                                            ((InputField) valueField).setValue("http://img.alicdn.com/imgextra/i3/2939402618/TB2G0z0tVXXXXXEXXXXXXXXXXXX-2939402618.jpg");
+//                                        } else if ("attach_5".equals(valueField.getId())) {
+//                                            ((InputField) valueField).setValue("http://img.alicdn.com/imgextra/i4/2939402618/TB2Re_WtVXXXXX.XXXXXXXXXXXX-2939402618.jpg");
+//                                        } else if ("attach_14".equals(valueField.getId())) {
+//                                            ((InputField) valueField).setValue("http://img.alicdn.com/imgextra/i4/2939402618/TB2n6LYtVXXXXXDXXXXXXXXXXXX-2939402618.jpg");
+//                                        } else if ("attach_11".equals(valueField.getId())) {
+//                                            ((InputField) valueField).setValue("http://img.alicdn.com/imgextra/i1/2939402618/TB2lKDVtVXXXXacXXXXXXXXXXXX-2939402618.jpg");
+//                                        } else if ("attach_13".equals(valueField.getId())) {
+//                                            ((InputField) valueField).setValue("http://img.alicdn.com/imgextra/i4/2939402618/TB2A_vHtVXXXXbsXXXXXXXXXXXX-2939402618.jpg");
+//                                        }
+//                                    }
+//                                }
 //
-//            System.out.println("TM 上新 start");
-//            cmsBuildPlatformProductUploadTmService.uploadProduct(cmsBtSxWorkloadModel, shopBean);
-//            System.out.println("TM 上新 end");
+//                                if ("sale_extend_prop_1627207".equals(field.getId())) {
+//                                    MultiComplexField multiComplexField = (MultiComplexField) field;
+//                                    List<ComplexValue> multiComplexValues = multiComplexField.getValue();
+//                                    ComplexValue complexValue = new ComplexValue();
+//                                    multiComplexValues.add(complexValue);
+//
+//                                    for (Field subField : multiComplexField.getFields()) {
+//                                        Field valueField = deepCloneField(subField);
+//                                        complexValue.put(valueField);
+//
+//                                        if ("basecolor_prop_1627207".equals(valueField.getId())) {
+//                                            List<Value> values = new ArrayList<>();
+//                                            values.add(new Value("28326"));
+//                                            ((MultiCheckField) valueField).setValues(values);
+//                                        } else if ("prop_1627207".equals(valueField.getId())) {
+//                                            ((InputField) valueField).setValue("123");
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+
+//                        System.out.println(SchemaWriter.writeParamXmlString(fieldList));
+
+//                        try {
+//                            // 将取得所有field对应的属性值的列表转成xml字符串
+////                            String xmlData = SchemaWriter.writeParamXmlString(fieldList);
+////                            String xmlData = "<itemParam><field id=\"prop_20000\" name=\"品牌\" type=\"singleCheck\"><value>3527137</value></field><field id=\"prop_153254385\" name=\"单品\" type=\"singleCheck\"><value>1222086694</value></field><field id=\"in_prop_153254385\" name=\"单品\" type=\"input\"><value/></field><field id=\"sub_prop_20000_0\" name=\"品名\" type=\"input\"><value>倍久滢采唇膏 红管</value></field><field id=\"cspuList\" name=\"产品规格列表\" type=\"multiComplex\"><complex-values><field id=\"cspuImg\" type=\"input\"><value>https://img.alicdn.com/imgextra/i6/TB1Rw0zMXXXXXbPaXXX_DHw9FXX_044456.jpg</value></field><field id=\"cspu_id\" type=\"input\"><value>1000011317149891</value></field><field id=\"cspu_status\" type=\"singleCheck\"><value>1</value></field><field id=\"prop_1627207\" type=\"input\"><value>111</value></field><field id=\"barcode\" type=\"input\"><value>3607342551800</value></field></complex-values><complex-values><field id=\"cspuImg\" type=\"input\"><value>https://img.alicdn.com/imgextra/i8/TB1Tq83MXXXXXXxXXXXpOv89FXX_044752.jpg</value></field><field id=\"cspu_id\" type=\"input\"><value>1000011317150915</value></field><field id=\"cspu_status\" type=\"singleCheck\"><value>1</value></field><field id=\"prop_1627207\" type=\"input\"><value>110</value></field><field id=\"barcode\" type=\"input\"><value>3607342551794</value></field></complex-values><complex-values><field id=\"cspuImg\" type=\"input\"><value>https://img.alicdn.com/imgextra/i8/TB1XRxYMXXXXXcwXXXXKMZF9FXX_045339.jpg</value></field><field id=\"cspu_id\" type=\"input\"><value>1000011317151939</value></field><field id=\"cspu_status\" type=\"singleCheck\"><value>1</value></field><field id=\"prop_1627207\" type=\"input\"><value>107</value></field><field id=\"barcode\" type=\"input\"><value>3607342551763</value></field></complex-values></field><field id=\"sale_extend_prop_1627207\" name=\"颜色分类属性扩展\" type=\"multiComplex\"><complex-values><field id=\"prop_1627207\" type=\"input\"><value>111</value></field><field id=\"basecolor_prop_1627207\" type=\"multiCheck\"><values><value>28326</value></values></field></complex-values><complex-values><field id=\"prop_1627207\" type=\"input\"><value>110</value></field><field id=\"basecolor_prop_1627207\" type=\"multiCheck\"><values><value>28326</value></values></field></complex-values><complex-values><field id=\"prop_1627207\" type=\"input\"><value>107</value></field><field id=\"basecolor_prop_1627207\" type=\"multiCheck\"><values><value>28326</value></values></field></complex-values></field><field id=\"prop_8560225\" name=\"上市时间\" type=\"singleCheck\"><value/></field><field id=\"prop_165930321\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133354306\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133330367\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133366277\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133350334\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133312482\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133336375\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133348316\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133358310\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133362307\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133362310\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133406039\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133392195\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133404100\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133380241\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133382232\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133332369\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133328403\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133392185\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133354286\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133362299\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133312466\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133344323\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133320405\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133318470\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133360260\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_122216905\" name=\"功效\" type=\"multiCheck\"><values><value>3996611</value></values></field><field id=\"prop_3364156\" name=\"适合肤质\" type=\"singleCheck\"><value>3510571</value></field><field id=\"prop_1989873\" name=\"保质期\" type=\"singleCheck\"><value>11444072</value></field><field id=\"product_images\" name=\"产品图片\" type=\"complex\"><complex-values><field id=\"product_image_1\" type=\"input\"><value>https://img.alicdn.com/imgextra/i1/TB1zk8GMXXXXXbqXVXXBopf9VXX_045645.jpg</value></field><field id=\"product_image_0\" type=\"input\"><value>https://img.alicdn.com/imgextra/i6/TB1gJRTMXXXXXbeXpXX1n0e9VXX_045641.jpg</value></field></complex-values></field><field id=\"sellPoint\" name=\"产品卖点\" type=\"input\"><value>独一无二的Kate Moss定制唇膏，每款颜色均由Kate亲自挑选，唇色长效持久高达八个小时</value></field></itemParam>";
+////                            String xmlData = "<itemParam><field id=\"prop_20000\" name=\"品牌\" type=\"singleCheck\"><value>3527137</value></field><field id=\"prop_153254385\" name=\"单品\" type=\"singleCheck\"><value>1222086694</value></field><field id=\"in_prop_153254385\" name=\"单品\" type=\"input\"><value/></field><field id=\"sub_prop_20000_0\" name=\"品名\" type=\"input\"><value>倍久滢采唇膏 红管</value></field><field id=\"cspuList\" name=\"产品规格列表\" type=\"multiComplex\"><complex-values><field id=\"cspu_id\" name=\"产品规格ID\" type=\"input\"><value/></field><field id=\"barcode\" name=\"条形码\" type=\"input\"><value>6921581540270</value></field><field id=\"cspuImg\" name=\"产品规格主图\" type=\"input\"><value>http://img.alicdn.com/imgextra/i3/2939402618/TB2G0z0tVXXXXXEXXXXXXXXXXXX-2939402618.jpg</value></field><field id=\"attach_5\" name=\"产品包装条形码特写\" type=\"input\"><value>http://img.alicdn.com/imgextra/i4/2939402618/TB2Re_WtVXXXXX.XXXXXXXXXXXX-2939402618.jpg</value></field><field id=\"attach_14\" name=\"产品包装审核凭证2\" type=\"input\"><value>http://img.alicdn.com/imgextra/i4/2939402618/TB2n6LYtVXXXXXDXXXXXXXXXXXX-2939402618.jpg</value></field><field id=\"attach_11\" name=\"产品包装审核凭证3\" type=\"input\"><value>http://img.alicdn.com/imgextra/i1/2939402618/TB2lKDVtVXXXXacXXXXXXXXXXXX-2939402618.jpg</value></field><field id=\"attach_13\" name=\"产品包装审核凭证1\" type=\"input\"><value>http://img.alicdn.com/imgextra/i4/2939402618/TB2A_vHtVXXXXbsXXXXXXXXXXXX-2939402618.jpg</value></field><field id=\"prop_1627207\" type=\"input\"><value>234</value></field><field id=\"barcode\" type=\"input\"><value>6921581540270</value></field></complex-values></field><field id=\"sale_extend_prop_1627207\" name=\"颜色分类属性扩展\" type=\"multiComplex\"><complex-values><field id=\"prop_1627207\" type=\"input\"><value>234</value></field><field id=\"basecolor_prop_1627207\" type=\"multiCheck\"><values><value>28326</value></values></field></complex-values></field><field id=\"prop_8560225\" name=\"上市时间\" type=\"singleCheck\"><value/></field><field id=\"prop_165930321\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133354306\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133330367\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133366277\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133350334\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133312482\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133336375\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133348316\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133358310\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133362307\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133362310\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133406039\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133392195\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133404100\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133380241\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133382232\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133332369\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133328403\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133392185\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133354286\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133362299\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133312466\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133344323\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133320405\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133318470\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133360260\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_122216905\" name=\"功效\" type=\"multiCheck\"><values><value>3996611</value></values></field><field id=\"prop_3364156\" name=\"适合肤质\" type=\"singleCheck\"><value>3510571</value></field><field id=\"prop_1989873\" name=\"保质期\" type=\"singleCheck\"><value>11444072</value></field><field id=\"product_images\" name=\"产品图片\" type=\"complex\"><complex-values><field id=\"product_image_1\" type=\"input\"><value>https://img.alicdn.com/imgextra/i1/TB1zk8GMXXXXXbqXVXXBopf9VXX_045645.jpg</value></field><field id=\"product_image_0\" type=\"input\"><value>https://img.alicdn.com/imgextra/i6/TB1gJRTMXXXXXbeXpXX1n0e9VXX_045641.jpg</value></field></complex-values></field><field id=\"sellPoint\" name=\"产品卖点\" type=\"input\"><value>独一无二的Kate Moss定制唇膏，每款颜色均由Kate亲自挑选，唇色长效持久高达八个小时</value></field></itemParam>";
+////                            String xmlData = "<itemParam><field id=\"prop_20000\" name=\"品牌\" type=\"singleCheck\"><value>3527137</value></field><field id=\"prop_153254385\" name=\"单品\" type=\"singleCheck\"><value>1222086694</value></field><field id=\"in_prop_153254385\" name=\"单品\" type=\"input\"><value/></field><field id=\"sub_prop_20000_0\" name=\"品名\" type=\"input\"><value>倍久滢采唇膏 红管</value></field><field id=\"cspuList\" name=\"产品规格列表\" type=\"multiComplex\"><complex-values><field id=\"cspuImg\" type=\"input\"><value>https://img.alicdn.com/imgextra/i3/TB1xUYZLXXXXXb7XXXXpUL19pXX_041757.jpg</value></field><field id=\"cspu_id\" type=\"input\"><value>1000013698858179</value></field><field id=\"cspu_status\" type=\"singleCheck\"><value>1</value></field><field id=\"prop_1627207\" type=\"input\"><value>234</value></field><field id=\"barcode\" type=\"input\"><value>0000000000000</value></field></complex-values></field><field id=\"sale_extend_prop_1627207\" name=\"颜色分类属性扩展\" type=\"multiComplex\"><complex-values><field id=\"prop_1627207\" type=\"input\"><value>234</value></field><field id=\"basecolor_prop_1627207\" type=\"multiCheck\"><values><value>28326</value></values></field></complex-values></field><field id=\"prop_8560225\" name=\"上市时间\" type=\"singleCheck\"><value/></field><field id=\"prop_165930321\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133354306\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133330367\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133366277\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133350334\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133312482\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133336375\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133348316\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133358310\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133362307\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133362310\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133406039\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133392195\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133404100\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133380241\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133382232\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133332369\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133328403\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133392185\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133354286\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133362299\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133312466\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133344323\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133320405\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133318470\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133360260\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_122216905\" name=\"功效\" type=\"multiCheck\"><values><value>3996611</value></values></field><field id=\"prop_3364156\" name=\"适合肤质\" type=\"singleCheck\"><value>3510571</value></field><field id=\"prop_1989873\" name=\"保质期\" type=\"singleCheck\"><value>11444072</value></field><field id=\"product_images\" name=\"产品图片\" type=\"complex\"><complex-values><field id=\"product_image_1\" type=\"input\"><value>https://img.alicdn.com/imgextra/i1/TB1zk8GMXXXXXbqXVXXBopf9VXX_045645.jpg</value></field><field id=\"product_image_0\" type=\"input\"><value>https://img.alicdn.com/imgextra/i6/TB1gJRTMXXXXXbeXpXX1n0e9VXX_045641.jpg</value></field></complex-values></field><field id=\"sellPoint\" name=\"产品卖点\" type=\"input\"><value>独一无二的Kate Moss定制唇膏，每款颜色均由Kate亲自挑选，唇色长效持久高达八个小时</value></field></itemParam>";
+//                            String xmlData = "<itemParam><field id=\"prop_20000\" name=\"品牌\" type=\"singleCheck\"><value>3527137</value></field><field id=\"prop_153254385\" name=\"单品\" type=\"singleCheck\"><value>1222086694</value></field><field id=\"in_prop_153254385\" name=\"单品\" type=\"input\"><value/></field><field id=\"sub_prop_20000_0\" name=\"品名\" type=\"input\"><value>倍久滢采唇膏 红管</value></field><field id=\"cspuList\" name=\"产品规格列表\" type=\"multiComplex\"><complex-values><field id=\"cspu_id\" name=\"产品规格ID\" type=\"input\"><value/></field><field id=\"barcode\" name=\"条形码\" type=\"input\"><value>6921581540270</value></field><field id=\"cspuImg\" name=\"产品规格主图\" type=\"input\"><value>http://img.alicdn.com/imgextra/i3/2939402618/TB2G0z0tVXXXXXEXXXXXXXXXXXX-2939402618.jpg</value></field><field id=\"attach_5\" name=\"产品包装条形码特写\" type=\"input\"><value>http://img.alicdn.com/imgextra/i4/2939402618/TB2Re_WtVXXXXX.XXXXXXXXXXXX-2939402618.jpg</value></field><field id=\"attach_14\" name=\"产品包装审核凭证2\" type=\"input\"><value>http://img.alicdn.com/imgextra/i4/2939402618/TB2n6LYtVXXXXXDXXXXXXXXXXXX-2939402618.jpg</value></field><field id=\"attach_11\" name=\"产品包装审核凭证3\" type=\"input\"><value>http://img.alicdn.com/imgextra/i1/2939402618/TB2lKDVtVXXXXacXXXXXXXXXXXX-2939402618.jpg</value></field><field id=\"attach_13\" name=\"产品包装审核凭证1\" type=\"input\"><value>http://img.alicdn.com/imgextra/i4/2939402618/TB2A_vHtVXXXXbsXXXXXXXXXXXX-2939402618.jpg</value></field><field id=\"prop_1627207\" type=\"input\"><value>345</value></field><field id=\"barcode\" type=\"input\"><value>6921581540270</value></field></complex-values></field><field id=\"sale_extend_prop_1627207\" name=\"颜色分类属性扩展\" type=\"multiComplex\"><complex-values><field id=\"prop_1627207\" type=\"input\"><value>345</value></field><field id=\"basecolor_prop_1627207\" type=\"multiCheck\"><values><value>28326</value></values></field></complex-values></field><field id=\"prop_8560225\" name=\"上市时间\" type=\"singleCheck\"><value/></field><field id=\"prop_165930321\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133354306\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133330367\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133366277\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133350334\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133312482\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133336375\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133348316\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133358310\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133362307\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133362310\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133406039\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133392195\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133404100\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133380241\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133382232\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133332369\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133328403\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133392185\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133354286\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133362299\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133312466\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133344323\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133320405\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133318470\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_133360260\" name=\"月份\" type=\"singleCheck\"><value/></field><field id=\"prop_122216905\" name=\"功效\" type=\"multiCheck\"><values><value>3996611</value></values></field><field id=\"prop_3364156\" name=\"适合肤质\" type=\"singleCheck\"><value>3510571</value></field><field id=\"prop_1989873\" name=\"保质期\" type=\"singleCheck\"><value>11444072</value></field><field id=\"product_images\" name=\"产品图片\" type=\"complex\"><complex-values><field id=\"product_image_1\" type=\"input\"><value>https://img.alicdn.com/imgextra/i1/TB1zk8GMXXXXXbqXVXXBopf9VXX_045645.jpg</value></field><field id=\"product_image_0\" type=\"input\"><value>https://img.alicdn.com/imgextra/i6/TB1gJRTMXXXXXbeXpXX1n0e9VXX_045641.jpg</value></field></complex-values></field><field id=\"sellPoint\" name=\"产品卖点\" type=\"input\"><value>独一无二的Kate Moss定制唇膏，每款颜色均由Kate亲自挑选，唇色长效持久高达八个小时</value></field></itemParam>";
+//                            String result = tbProductService.updateProduct(Long.parseLong(platformProductId), xmlData, shopBean, new StringBuffer(""));
+//
+//                            if (!StringUtils.isEmpty(result)) {
+//                                System.out.println("更新产品结果：" + result);
+//                            }
+//                        } catch (TopSchemaException | ApiException e) {
+//                            sxData.setErrorMessage(e.getMessage());
+//                            throw new BusinessException(e.getMessage());
+//                        }
+
+                        schema = tbCategoryService.getTbItemAddSchema(shopBean, Long.valueOf(platformCategoryId), Long.valueOf(platformProductId)).getItemResult();
+                        System.out.println("新增商品schema："+schema);
+
+                    }
+                }
+            }
         }
+
+//        {
+//            ShopBean shopBean = Shops.getShop("012", 23);
+//            cmsPlatformProductImport2Service.doMain("012");
+//        }
 
 //        String url = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?req=imageprops", "tomzhu-image-2016053101903_02");
 //        String result = HttpUtils.get(url, null);
@@ -2403,6 +2592,7 @@ public class SxGetProductInfoTest {
 
 //        sxGetProductInfo.sortSkuInfo(skuSourceList);
 //        System.out.println("end:" + DateTimeUtil.getNowTimeStamp());
+
     }
 
     public Map<String, Field> schemaToIdPropMap(String schema) throws TopSchemaException {
@@ -2447,6 +2637,14 @@ public class SxGetProductInfoTest {
                 default:
                     resultFields.add(field);
             }
+        }
+    }
+
+    private Field deepCloneField(Field field) throws Exception {
+        try {
+            return SchemaReader.elementToField(field.toElement());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
         }
     }
 
@@ -2564,10 +2762,206 @@ public class SxGetProductInfoTest {
 
     }
 
+    private void setFieldDefaultValues(Field field) throws Exception {
 
-    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user, boolean isItem) throws Exception {
+        switch (field.getType()) {
+            case INPUT: {
+                InputField inputField = (InputField) field;
+                inputField.setValue(inputField.getDefaultValue());
+                break;
+            }
+            case MULTIINPUT: {
+                MultiInputField multiInputField = (MultiInputField) field;
+                multiInputField.setValues(multiInputField.getDefaultValues());
+                break;
+            }
+            case LABEL:
+                break;
+            case SINGLECHECK: {
+                SingleCheckField singleCheckField = (SingleCheckField) field;
+                singleCheckField.setValue(singleCheckField.getDefaultValue());
+                break;
+            }
+            case MULTICHECK: {
+                MultiCheckField multiCheckField = (MultiCheckField) field;
+                List<Value> values = new ArrayList<>();
+                multiCheckField.getDefaultValues().forEach(val -> values.add(new Value(val)));
+                multiCheckField.setValues(values);
+                break;
+            }
+            case COMPLEX: {
+                ComplexField complexField = (ComplexField) field;
+                ComplexValue complexValue = new ComplexValue();
+                complexField.setComplexValue(complexValue);
 
-        return null;
+                ComplexValue complexDefaultValue = complexField.getDefaultComplexValue();
+                if (complexDefaultValue != null) {
+                    for (String fieldId : complexDefaultValue.getFieldKeySet()) {
+                        // 克隆的这个方法不能copy出value，先直接用DefaultField吧
+//                        Field valueField = deepCloneField(complexDefaultValue.getValueField(fieldId));
+//                        setFieldDefaultValues(valueField);
+                        Field valueField = complexDefaultValue.getValueField(fieldId);
+                        complexValue.put(valueField);
+                    }
+                }
+                break;
+            }
+            case MULTICOMPLEX: {
+                MultiComplexField multiComplexField = (MultiComplexField) field;
+                List<ComplexValue> multiComplexValues = new ArrayList<>();
+                multiComplexField.setComplexValues(multiComplexValues);
+
+                List<ComplexValue> multiComplexDefaultValues = multiComplexField.getDefaultComplexValues();
+                if (multiComplexDefaultValues != null) {
+                    for (ComplexValue item : multiComplexDefaultValues) {
+                        ComplexValue complexValue = new ComplexValue();
+                        multiComplexValues.add(complexValue);
+
+                        for (String fieldId : item.getFieldKeySet()) {
+                            // 克隆的这个方法不能copy出value，先直接用DefaultField吧
+//                            Field valueField = deepCloneField(item.getValueField(fieldId));
+//                            setFieldDefaultValues(valueField);
+                            Field valueField = item.getValueField(fieldId);
+                            complexValue.put(valueField);
+                        }
+                    }
+                }
+                break;
+            }
+        }
     }
 
+    @Test
+    public void testSx() {
+            // TM 上新
+//            Context context = Context.getContext();
+//            ApplicationContext ctx = new GenericXmlApplicationContext("applicationContext.xml");
+//            context.putAttribute("springContext", ctx);
+
+            String channel_id = "018";
+            int cart_id = 23;
+            ShopBean shopBean = getShop(channel_id, cart_id);
+
+            channel_id = "018";
+            CmsBtSxWorkloadModel cmsBtSxWorkloadModel = new CmsBtSxWorkloadModel();
+            cmsBtSxWorkloadModel.setChannelId(channel_id);
+            cmsBtSxWorkloadModel.setCartId(cart_id);
+            cmsBtSxWorkloadModel.setGroupId(505894L);
+            cmsBtSxWorkloadModel.setPublishStatus(0);
+
+            {
+                // 上传图片
+//                Set<String> images = new HashSet<>();
+//                images.add("https://img.alicdn.com/imgextra/i3/2694857307/TB2kCSUgVXXXXcHXXXXXXXXXXXX_!!2694857307.jpg");
+//                images.add("https://img.alicdn.com/imgextra/i2/2694857307/TB2a3GBgVXXXXXsXpXXXXXXXXXX_!!2694857307.jpg");
+//                images.add("https://img.alicdn.com/imgextra/i2/2694857307/TB2VcOHgVXXXXcmXXXXXXXXXXXX_!!2694857307.jpg");
+//                images.add("https://img.alicdn.com/imgextra/i2/2694857307/TB2dRqWgVXXXXaXXXXXXXXXXXXX_!!2694857307.jpg");
+//                images.add("https://img.alicdn.com/imgextra/i4/2694857307/TB2ZtJfhXXXXXcmXXXXXXXXXXXX_!!2694857307.jpg");
+//                images.add("https://img.alicdn.com/imgextra/i2/2694857307/TB2gdFdhXXXXXcLXXXXXXXXXXXX_!!2694857307.jpg");
+//                images.add("https://img.alicdn.com/imgextra/i1/2694857307/TB2b_StgVXXXXa6XpXXXXXXXXXX_!!2694857307.jpg");
+//
+//                images.add("https://img.alicdn.com/imgextra/i1/2183719539/TB2_Q4EgVXXXXccXpXXXXXXXXXX_!!2183719539.jpg"); // 空白图
+//
+//                Map<String, String> resImages = sxProductService.uploadImage("024", 23, "123", shopBean, images, "morse");
+//                resImages.forEach((old, plat) -> System.out.println(old + " , " + plat));
+            }
+
+            System.out.println("TM 上新 start");
+            cmsBuildPlatformProductUploadTmService.uploadProduct(cmsBtSxWorkloadModel, shopBean);
+            System.out.println("TM 上新 end");
+    }
+
+    @Test
+    public void TbApiGetProductItemSchema() throws Exception {
+        TbApi tbApi = new TbApi();
+
+        System.out.println();
+        System.out.println("Get schema start");
+
+        ShopBean shopBean = getShop("018", 23);
+//        String[] categoryIds = {"121412004","121434005","162104","162116","162201","162205","1623","162702","302910","50000671","50000697","50007068","50008901","50008904","50009032","50010850","50011277","50012010","50012027","50012028","50012032","50013865","50013868","50013869","50013870","50013875","50013882","50014238","50014239"};
+
+        String[] categoryIds = {"121450007"};
+
+        for (String category_id : categoryIds) {
+            try {
+                // 取平台产品schema
+                Long categoryId = Long.valueOf(category_id);
+                String propsProduct = tbApi.getAddProductSchema(categoryId, null, shopBean);
+//                String propsProduct = tbApi.getAddProductSchema(categoryId, 10407679L, shopBean);
+                System.out.println(propsProduct);
+                propsProduct = propsProduct.replaceAll("\"", "\\\\\"");
+
+                // 取平台商品schema
+                String propsItem = tbApi.getAddItemSchema(categoryId, 0L, true, shopBean);
+//                String propsItem = tbApi.getAddItemSchema(categoryId, 688343647L, false, shopBean);
+                System.out.println(propsItem);
+                propsItem = propsItem.replaceAll("\"", "\\\\\"");
+
+//                String strQuery = "{'cartId':23,'catId':'" + category_id + "'}";
+//                String strUpdate = "{\"$set\" : {\"propsProduct\" : \"" + propsProduct + "\", \"propsItem\" : \"" + propsItem + "\"}}";
+//                WriteResult ws = cmsMtPlatformCategorySchemaDao.updateFirst(strQuery, strUpdate, 23);
+//                if (ws == null || !ws.isUpdateOfExisting() || ws.getN() == 0) {
+//                    System.out.println(String.format("类目id[%s]更新失败!", category_id));
+//                }
+            } catch (Exception e) {
+                System.out.println(String.format("类目id[%s]更新失败!", category_id));
+            }
+        }
+
+        System.out.println("Get schema end");
+    }
+
+    private class TbApi extends TbProductService {
+
+        public String getAddProductSchema(Long categoryId, Long brandId, ShopBean config) throws ApiException {
+            TmallProductAddSchemaGetRequest request = new TmallProductAddSchemaGetRequest();
+            request.setCategoryId(categoryId);
+            request.setBrandId(brandId);
+            TmallProductAddSchemaGetResponse response = reqTaobaoApi(config, request);
+            if (response.getErrorCode() != null) {
+                return response.getSubMsg();
+            }
+            return response.getAddProductRule();
+        }
+
+        private String getAddItemSchema(Long categoryId, Long productId, boolean isvInit, ShopBean config) throws ApiException {
+            TmallItemAddSchemaGetRequest request = new TmallItemAddSchemaGetRequest();
+            request.setCategoryId(categoryId);
+            request.setProductId(productId);
+            // 正常接口调用时，请忽略这个参数或者填FALSE。这个参数提供给ISV对接Schema时，如果想先获取了解所有字段和规则，可以将此字段设置为true，product_id也就不需要提供了，设置为0即可
+            request.setIsvInit(isvInit);
+            TmallItemAddSchemaGetResponse response = reqTaobaoApi(config, request);
+            if (response.getErrorCode() != null) {
+                return response.getSubMsg();
+            }
+            return response.getAddItemResult();
+        }
+    }
+
+    /**
+     * 店铺
+     */
+    private ShopBean getShop(String order_channel_id, String cart_id) {
+        ShopBean shopBean = new ShopBean();
+        shopBean.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
+        shopBean.setPlatform("TB");
+
+        shopBean.setAppKey("xxx");
+        shopBean.setAppSecret("xxx");
+        shopBean.setSessionKey("xxx");
+
+        shopBean.setOrder_channel_id(order_channel_id);
+        shopBean.setCart_id(cart_id);
+        shopBean.setCart_type("3");
+        shopBean.setCart_name("TG");
+        shopBean.setComment("天猫国际");
+        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
+
+        return shopBean;
+    }
+
+    private ShopBean getShop(String order_channel_id, int cart_id) {
+        return getShop(order_channel_id, String.valueOf(cart_id));
+    }
 }

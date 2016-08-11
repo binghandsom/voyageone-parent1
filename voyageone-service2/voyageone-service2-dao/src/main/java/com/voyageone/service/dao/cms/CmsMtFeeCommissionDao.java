@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsMtFeeCommissionModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsMtFeeCommissionDao {
-    List<CmsMtFeeCommissionModel> selectList(Map<String, Object> map);
+    List<CmsMtFeeCommissionModel> selectList(Object map);
 
-    CmsMtFeeCommissionModel selectOne(Map<String, Object> map);
+    CmsMtFeeCommissionModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsMtFeeCommissionModel select(Integer id);
 

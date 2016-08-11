@@ -29,8 +29,8 @@ public class CmsBtBusinessLogDaoTest {
 
         // 检索条件
         Map<String, Object> map = new HashMap<>();
-        map.put("channelId", "001");
-        map.put("cartId", 24);
+        map.put("channelId", "010");
+        map.put("cartId", 26);
 
         // Order 条件
         String sortString = "channel_id asc, modified DESC";
