@@ -48,8 +48,6 @@ public class CmsMtFeeShippingService extends BaseService {
         // 是计件, 还是计重
         CmsMtFeeShippingModel shippingModel = cmsMtFeeShippingDao.selectOne(queryMap);
 
-        Assert.notNull(shippingModel).elseThrowDefaultWithTitle("shippingModel");
-
         Byte feeType = shippingModel.getFeeType();
 
         if (BY_WEIGHT.equals(feeType)) {
@@ -61,12 +59,6 @@ public class CmsMtFeeShippingService extends BaseService {
             Double firstWeightFee = shippingModel.getFirstWeightFee();
             Integer additionalWeight = shippingModel.getAdditionalWeight();
             Double additionalWeightFee = shippingModel.getAdditionalWeightFee();
-
-            // 断言检查
-            Assert.notNull(firstWeight).elseThrowDefaultWithTitle("firstWeight");
-            Assert.notNull(firstWeightFee).elseThrowDefaultWithTitle("firstWeightFee");
-            Assert.notNull(additionalWeight).elseThrowDefaultWithTitle("additionalWeight");
-            Assert.notNull(additionalWeightFee).elseThrowDefaultWithTitle("additionalWeightFee");
 
             // 如果商品重量不足以继续计算
             // 就直接用首重费用了

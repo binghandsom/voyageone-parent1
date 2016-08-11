@@ -8,16 +8,10 @@ import com.voyageone.base.exception.CommonConfigNotFoundException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.Carts;
-import com.voyageone.common.configs.Channels;
-import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.*;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.CartBean;
-import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.configs.beans.OrderChannelBean;
-import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.configs.beans.*;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
@@ -28,8 +22,11 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.ims.rule_expression.RuleExpression;
+import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.Condition;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
+import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedMapping2Dao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -43,8 +40,8 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.enums.MappingPropType;
@@ -69,6 +66,8 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.bean.ItemDetailsBean;
 import com.voyageone.task2.cms.dao.ItemDetailsDao;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
+import com.voyageone.task2.cms.model.ConditionPropValueModel;
+import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,8 +80,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-//import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 
 /**
  * feed->master导入服务
@@ -112,8 +109,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     private TmpOldCmsDataDao tmpOldCmsDataDao; // DAO: 旧数据
     @Autowired
     private FeedCustomPropService customPropService;
-    @Autowired
-    private ProductSkuService productSkuService;
+//    @Autowired
+//    private ProductSkuService productSkuService;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -149,6 +146,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     @Autowired
     private PriceService priceService;
 
+    @Autowired
+    private ConditionPropValueRepo conditionPropValueRepo;
+
     // 每个channel的feed->master导入最大件数
     private final static int FEED_IMPORT_MAX_500 = 500;
 
@@ -176,6 +176,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
         // 允许运行的订单渠道取得
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
+
+        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
+        conditionPropValueRepo.init();
 
         // 默认线程池最大线程数
         int threadPoolCnt = 3;
@@ -817,6 +820,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // 更新价格相关项目
                     cmsProduct = doSetPrice(channelId, feed, cmsProduct);
 
+                    // 设置店铺共通的店铺内分类信息
+                    setSellerCats(feed, cmsProduct);
+
                     // productService.updateProduct(channelId, requestModel);
                     int updCnt = productService.updateProductFeedToMaster(channelId, cmsProduct, getTaskName());
                     if (updCnt == 0) {
@@ -890,6 +896,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     // 更新价格相关项目
                     cmsProduct = doSetPrice(channelId, feed, cmsProduct);
+
+                    // 设置店铺共通的店铺内分类信息
+                    setSellerCats(feed, cmsProduct);
 
                     productService.createProduct(channelId, cmsProduct, getTaskName());
 
@@ -3501,7 +3510,19 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 try {
                     // 判断这个sku是否已经存在
                     //if (skuList.contains(feedSku.getSku())) {
-                    if (itemDetailsDao.selectBySku(channelId, feedSku.getSku()) != null) {
+                    ItemDetailsBean oldRecord = itemDetailsDao.selectBySku(channelId, feedSku.getSku());
+                    if (oldRecord != null) {
+                        // 如果该skuCode没变，但feed里面的code从A->B了，则报出异常, feedCode一致才更新
+                        if (!oldRecord.getItemcode().equals(feed.getCode())) {
+                            String errMsg = String.format("feed->master导入:异常终止:由于该sku所属的feedCode发生了变更," +
+                                    "导致不能更新wms_bt_item_details表 [sku:%s] [OldFeedCode:%s] [NewFeedCode:%s]",
+                                    itemDetailsBean.getSku(),
+                                    oldRecord.getItemcode(),
+                                    feed.getCode()
+                            );
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
                         // 已经存在的场合: 更新数据库
                         itemDetailsDao.updateItemDetails(itemDetailsBean, getTaskName());
                     } else {
@@ -3683,156 +3704,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //        throw new BusinessException(errMsg);
 //    }
 
-//    /**
-//     * 没有找到品牌mapping信息时，将该品牌的中英文mapping信息插入到Synship.com_mt_value_channel表中
-//     *
-//     * @param channelId String 渠道id
-//     * @param feed CmsBtFeedInfoModel feed信息
-//     * @param feedBrandLowerCase String feed中品牌的小写值
-//     */
-//    private void insertBrandMappingInfo(String channelId, CmsBtFeedInfoModel feed, String feedBrandLowerCase) {
-//        int intTypeId_41 = 41;      // 41:品牌mapping信息
-//        String strLangIdEn = "en";
-//        String strLangIdCn = "cn";
-//
-////        // 英文品牌mapping数据如果没找到，则分别插入
-////        Map<String, Object> paramsEnMap = new HashMap<>();
-////        paramsEnMap.put("typeId", intTypeId_41);
-////        paramsEnMap.put("channelId", channelId);
-////        paramsEnMap.put("addName1", feedBrandLowerCase);   // map中key为add_name1
-////        paramsEnMap.put("langId", strLangIdEn);
-////
-////        // 如果有2个或以上重复的英文品牌数据(品牌mapping采用英文品牌)，则报异常，中止feed导入
-////        // cms_mt_channel_config表中当有2条及以上addName1不为空，而name为空的数据的时候，用下面的逻辑抛出异常
-////        int brandEnCount = comMtValueChannelDao.selectCount(paramsEnMap);
-////        if (brandEnCount > 1) {
-////            String errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表中有%s条重复的英文品牌mapping数据 " +
-////                    "( typeId: [%s] channel: [%s], addName1: [%s], langId: [%s] feedModel: [%s] )",
-////                    brandEnCount, intTypeId_41, channelId, feedBrandLowerCase, strLangIdEn, feed.getModel());
-////            $error(errMsg);
-////            throw new BusinessException(errMsg);
-////        }
-//
-////        ComMtValueChannelModel brandEnModel = comMtValueChannelDao.selectOne(paramsEnMap);
-////        if (brandEnModel != null && StringUtils.isEmpty(brandEnModel.getName())) {
-////            // 说明该条英文版品牌mapping数据不整合(name为空)，更新(正常是一条数据，如果取到多条就会报异常)
-////            // 如果Name不为空，可能已经被别人修改过mapping值了，就不能做变更了
-////            brandEnModel.setValue(feedBrandLowerCase);
-////            brandEnModel.setName(feedBrandLowerCase);
-////            brandEnModel.setModifier(getTaskName());
-////            brandEnModel.setModified(DateTimeUtil.getDate());
-////            comMtValueChannelDao.update(brandEnModel);
-////        } else {
-//            // 没有英文版品牌mapping信息则插入
-//            ComMtValueChannelModel brandEnValueChannelModel = new ComMtValueChannelModel();
-//            brandEnValueChannelModel.setTypeId(intTypeId_41);
-//            brandEnValueChannelModel.setChannelId(channelId);
-//            brandEnValueChannelModel.setValue(feedBrandLowerCase);
-//            brandEnValueChannelModel.setName(feedBrandLowerCase);
-//            brandEnValueChannelModel.setAddName1(feedBrandLowerCase);
-//            brandEnValueChannelModel.setLangId(strLangIdEn);
-//            brandEnValueChannelModel.setCreater(getTaskName());
-//            brandEnValueChannelModel.setModifier(getTaskName());
-//            comMtValueChannelDao.insert(brandEnValueChannelModel);
-////        }
-//
-//        // 中文品牌mapping数据如果没找到，则分别插入
-//        Map<String, Object> paramsCnMap = new HashMap<>();
-//        paramsCnMap.put("typeId", intTypeId_41);
-//        paramsCnMap.put("channelId", channelId);
-//        paramsCnMap.put("addName1", feedBrandLowerCase);   // map中key为add_name1
-//        paramsCnMap.put("langId", strLangIdCn);
-//
-//        // 如果有2个或以上重复的中文品牌数据，则报出警告信息，但不中止feed导入
-////        // 因为品牌mappping以英文品牌为主，中文品牌数据即使有错也没关系
-////        int brandCnCount = comMtValueChannelDao.selectCount(paramsCnMap);
-////        if (brandCnCount > 1) {
-////            String errMsg = String.format("feed->master导入:警告:在cms_mt_channel_config表中有%s条重复的中文品牌mapping数据 " +
-////                    "( typeId: [%s] channel: [%s], addName1: [%s], langId: [%s] feedModel: [%s] )",
-////                    brandCnCount, intTypeId_41, channelId, feedBrandLowerCase, strLangIdCn, feed.getModel());
-////            $warn(errMsg);
-////            return;
-////        }
-////
-////        ComMtValueChannelModel brandCnModel = comMtValueChannelDao.selectOne(paramsCnMap);
-////        if (brandCnModel != null && StringUtils.isEmpty(brandCnModel.getName())) {
-////            // 说明该条中文版品牌mapping数据不整合(name为空)，更新(正常是一条数据，如果取到多条就会报异常)
-////            // 如果Name不为空，可能已经被别人修改过mapping值了，就不能做变更了
-////            brandCnModel.setValue(feedBrandLowerCase);
-////            brandCnModel.setName(feedBrandLowerCase);
-////            brandCnModel.setModifier(getTaskName());
-////            brandCnModel.setModified(DateTimeUtil.getDate());
-////            comMtValueChannelDao.update(brandCnModel);
-////        } else {
-//            // 没有中文版品牌mapping信息则插入
-//            ComMtValueChannelModel brandCnValueChannelModel = new ComMtValueChannelModel();
-//            brandCnValueChannelModel.setTypeId(intTypeId_41);
-//            brandCnValueChannelModel.setChannelId(channelId);
-//            brandCnValueChannelModel.setValue(feedBrandLowerCase);
-//            brandCnValueChannelModel.setName(feedBrandLowerCase);
-//            brandCnValueChannelModel.setAddName1(feedBrandLowerCase);
-//            brandCnValueChannelModel.setLangId(strLangIdCn);
-//            brandCnValueChannelModel.setCreater(getTaskName());
-//            brandCnValueChannelModel.setModifier(getTaskName());
-//            comMtValueChannelDao.insert(brandCnValueChannelModel);
-////        }
-//    }
-//
-//    /**
-//     * 将一些项目(如：sizeType,productType)的初始化中英文mapping信息插入到Synship.com_mt_value_channel表中
-//     *
-//     * @param intTypeId int mapping类型id
-//     * @param channelId String 渠道id
-//     * @param mappingKey String mapping key的值
-//     * @param mappingKey String mapping value的值
-//     */
-//    private void insertComMtValueChannelMappingInfo(int intTypeId, String channelId, String mappingKey, String mappingValue) {
-//        String strLangIdEn = "en";
-//        String strLangIdCn = "cn";
-//
-//        // 如果没找到英文mapping数据就插入一条
-//        Map<String, Object> paramsEnMap = new HashMap<>();
-//        paramsEnMap.put("typeId", intTypeId);   // 57:productType;58:sizeType;
-//        paramsEnMap.put("channelId", channelId);
-//        paramsEnMap.put("value", mappingKey);   // mapping key
-//        paramsEnMap.put("langId", strLangIdEn);
-//        int brandEnCount = comMtValueChannelDao.selectCount(paramsEnMap);
-//        if (brandEnCount == 0) {
-//            // 没有英文版mapping信息则插入一条
-//            ComMtValueChannelModel brandEnValueChannelModel = new ComMtValueChannelModel();
-//            brandEnValueChannelModel.setTypeId(intTypeId);
-//            brandEnValueChannelModel.setChannelId(channelId);
-//            brandEnValueChannelModel.setValue(mappingKey);      // mapping key
-//            brandEnValueChannelModel.setName(mappingValue);
-//            brandEnValueChannelModel.setAddName1(mappingValue);
-//            brandEnValueChannelModel.setLangId(strLangIdEn);
-//            brandEnValueChannelModel.setCreater(getTaskName());
-//            brandEnValueChannelModel.setModifier(getTaskName());
-//            comMtValueChannelDao.insert(brandEnValueChannelModel);
-//        }
-//
-//        // 如果没找到中文mapping数据就插入一条
-//        Map<String, Object> paramsCnMap = new HashMap<>();
-//        paramsCnMap.put("typeId", intTypeId);
-//        paramsCnMap.put("channelId", channelId);
-//        paramsCnMap.put("value", mappingKey);   // mapping key
-//        paramsCnMap.put("langId", strLangIdCn);
-//        int brandCnCount = comMtValueChannelDao.selectCount(paramsCnMap);
-//        if (brandCnCount == 0) {
-//            // 没有中文版mapping信息则插入一条
-//            ComMtValueChannelModel brandCnValueChannelModel = new ComMtValueChannelModel();
-//            brandCnValueChannelModel.setTypeId(intTypeId);
-//            brandCnValueChannelModel.setChannelId(channelId);
-//            brandCnValueChannelModel.setValue(mappingKey);     // mapping key
-//            brandCnValueChannelModel.setName(mappingValue);
-//            brandCnValueChannelModel.setAddName1(mappingValue);
-//            brandCnValueChannelModel.setLangId(strLangIdCn);
-//            brandCnValueChannelModel.setCreater(getTaskName());
-//            brandCnValueChannelModel.setModifier(getTaskName());
-//            comMtValueChannelDao.insert(brandCnValueChannelModel);
-//        }
-//    }
-
     /**
      * 将一些项目(如：brand,sizeType,productType)的初始化中英文mapping信息插入到Synship.com_mt_value_channel表中
      *
@@ -3891,4 +3762,131 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         feed.setModifier(getTaskName());
         feedInfoService.updateFeedInfo(feed);
     }
+
+    /**
+     * 设置产品各个平台的店铺内分类信息
+     *
+     * 新增或更新产品时，如果字典中解析出来子分类id在产品该平台的店铺内信息中不存在，则新加一条店铺类分类
+     * 存在的话不更新，因为店铺内信息运营有可能已经修改过了
+     *
+     * 从cms_bt_condition_prop_value表中取得该店铺对应的店铺内分类数据字典，
+     * 表里的platformPropId字段的值为：
+     *   "seller_cats_"+cartId  例：seller_cats_26
+     * 店铺内分类字典的里面的value值结构如下：
+     *   结构："cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类id,子分类id)|cNames(父分类id,子分类id)"
+     *   例子："1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石"
+     *
+     * @param feed CmsBtFeedInfoModel feed信息
+     * @param product CmsBtProductModel 产品信息(兼结果返回用)
+     */
+    private void setSellerCats(CmsBtFeedInfoModel feed, CmsBtProductModel product) {
+
+        if (feed == null || product == null) {
+            $warn("feed->master导入:警告:设置店铺内分类时传入的feed或者product信息为null");
+            return;
+        }
+
+        // 遍历主数据product里的分平台信息，设置店铺内分类
+        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
+            // P0（主数据）平台跳过
+            if (entry.getValue().getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
+                continue;
+            }
+
+            ShopBean shopProp = Shops.getShop(product.getChannelId(), entry.getValue().getCartId());
+            if (shopProp == null) {
+                $warn("feed->master导入:警告:设置店铺内分类时获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", product.getChannelId(), entry.getValue().getCartId());
+                continue;
+            }
+
+            List<CmsBtProductModel_SellerCat> sellerCatList = entry.getValue().getSellerCats();
+            if (sellerCatList == null) {
+                // 如果该平台上没有店铺内分类项目，则新建一个店铺内分类列表
+                sellerCatList = new ArrayList<CmsBtProductModel_SellerCat>();
+                entry.getValue().setSellerCats(sellerCatList);
+            }
+
+            // 条件表达式表platform_prop_id字段的检索条件为"seller_cids_"加cartId
+            String platformPropId = "seller_cats_" + entry.getValue().getCartId();
+
+            // 构造解析店铺内分类字典必须的一些对象
+            SxData sxData = new SxData();
+            sxData.setMainProduct(product);                  // product信息
+            sxData.setCmsBtFeedInfoModel(feed);              // feed信息
+            sxData.setChannelId(product.getChannelId());     // channelId
+            sxData.setCartId(entry.getValue().getCartId());  // cartId
+            // 构造字典解析子
+            ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+
+            // 根据channelid和platformPropId取得cms_bt_condition_prop_value表的条件表达式
+            List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(product.getChannelId(), platformPropId);
+            if (ListUtils.isNull(conditionPropValueModels)) {
+                continue;
+            }
+
+            // 解析cms_bt_condition_prop_value表中取得该平台对应店铺内分类数据字典
+            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
+                String conditionExpressionStr = conditionPropValueModel.getCondition_expression();
+                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+                String propValue = "";
+                try {
+                    // 店铺内分类字典的值（"cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类id,子分类id)|cNames(父分类id,子分类id)"）
+                    // 例："1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石"
+                    propValue = expressionParser.parse(conditionExpression, shopProp, getTaskName(), null);
+                } catch (Exception e) {
+                    // 因为店铺内分类即使这里不设置，运营也可以手动设置的，所以这里如果解析字典异常时，不算feed->master导入失败
+                    logIssue(getTaskName(), String.format("feed->master导入:警告:解析店铺内分类数据字典出错 [ChannelId:%s]" +
+                            " [CartId:%s])", product.getChannelId(), entry.getValue().getCartId()));
+                    continue;
+                }
+
+                // 如果从字典里面取得店铺内分类为空
+                if (StringUtils.isEmpty(propValue) || propValue.indexOf("|") == 0 || propValue.indexOf(",") == 0) {
+                    continue;
+                }
+
+                List<String> sellerCatsList = Arrays.asList(propValue.split("|"));
+                // 如果取得的店铺内分类列表为空或者size不为4，继续循环
+                if(ListUtils.isNull(sellerCatsList) || sellerCatsList.size() != 4) {
+                    continue;
+                }
+
+                // cId(子分类id)
+                String strCId = sellerCatsList.get(0);
+                boolean isSellerCatExists = false;
+                for (CmsBtProductModel_SellerCat sellerCat : sellerCatList) {
+                    if (sellerCat.getcId().equalsIgnoreCase(strCId)) {
+                        // 如果在产品已经存在该子分类id的店铺内分类信息
+                        isSellerCatExists = true;
+                        break;
+                    }
+                }
+                // 新增或更新产品时，如果字典中解析出来子分类id在产品该平台的店铺内信息中不存在，则新加一条店铺类分类
+                // 存在的话不更新，因为店铺内信息运营有可能已经修改过了
+                if (isSellerCatExists)
+                    continue;
+
+                // 不存在时新加一条店铺内分类信息
+                CmsBtProductModel_SellerCat sellerCatFromDict = new CmsBtProductModel_SellerCat();
+                // cId(子分类id)           例："1124130584"
+                sellerCatFromDict.setcId(sellerCatsList.get(0));
+                // cIds(父分类id,子分类id)  例："1124130579,1124130584"
+                List<String> cidsList = Arrays.asList(sellerCatsList.get(1).split(","));
+                if (ListUtils.notNull(cidsList)) {
+                    sellerCatFromDict.setcIds(cidsList);
+                }
+                // cName(父分类id,子分类id)  例："系列>彩色宝石"
+                sellerCatFromDict.setcName(sellerCatsList.get(2));
+                // cNames(父分类id,子分类id) 例："系列,彩色宝石"
+                List<String> cNamesList = Arrays.asList(sellerCatsList.get(3).split(","));
+                if (ListUtils.notNull(cNamesList)) {
+                    sellerCatFromDict.setcNames(cNamesList);
+                }
+
+                sellerCatList.add(sellerCatFromDict);
+            }
+        }
+    }
+
 }

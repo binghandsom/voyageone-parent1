@@ -130,7 +130,7 @@ define(function () {
         "TXT_PRODUCT_CODE_WITH_COLON": "产品Code:",
         "TXT_PRODUCT_NAME_WITH_COLON": "产品名称:",
         "TXT_SKU_PLATFORM_INFO": "Sku平台信息",
-        "TXT_SKU_INVENTORY": "Sku库存",
+        "TXT_SKU_INVENTORY": "Sku数",
         "TXT_PROMOTION_AND_TAG": "活动 & 标签",
         "TXT_CHANNEL_WITH_COLON": "渠道:",
         "TXT_PROMOTION_NAME_WITH_COLON": "活动名称:",
@@ -218,6 +218,7 @@ define(function () {
         "TXT_ERROR_MESSAGE": "异常消息",
         "TXT_ERROR_CREATE_TIME": "异常创建时间",
         "TXT_ERROR_CREATER": "异常创建者",
+        "TXT_CREATER": "创建者",
         "TXT_ERROR_IS_FIX": "已解决?",
         "TXT_ATTRIBUTE_ID": "属性ID",
         "TXT_ATTRIBUTE_NAME": "属性名称",
@@ -779,6 +780,12 @@ define(function () {
         "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配状态",
         "TXT_MASTER_BRAND": "Master品牌",
         "TXT_REGET_PLATFORM_BRANDS":"重新获取平台品牌",
-        "TXT_COMPLETE_THE_PLATEFORM_BRAND":"平台品牌未选择"
+        "TXT_COMPLETE_THE_PLATEFORM_BRAND":"平台品牌未选择",
+
+        /**店铺管理-平台默认属性设置一览*/
+        "TXT_DEFAULT_MAPPING_LIST": "平台默认属性设置一览",
+        "TXT_DEFAULT_SETTING":"新建默认设置",
+        "TXT_UPDATER":"更新人"
+
     };
 });

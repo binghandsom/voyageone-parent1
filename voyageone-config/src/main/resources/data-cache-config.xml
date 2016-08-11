@@ -53,18 +53,17 @@
                      <!--pointcut="execution(* com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao.*(..))"/>-->
     <!--</aop:config>-->
 
-
     <!--<bean id="categoryTreeAllServiceKeyGenerator" class="com.voyageone.service.impl.cms.CategoryTreeAllServiceKeyGenerator"/>-->
 
     <!--<cache:advice id="cachingCategoryTreeAllService" cache-manager="cacheManager" key-generator="categoryTreeAllServiceKeyGenerator">-->
-        <!--<cache:caching cache="DATA_KEY_cachingCategoryTreeAllService">-->
+        <!--<cache:caching cache="COMM_CACHE_DATA">-->
             <!--<cache:cacheable method="getCategoriesByChannelId"/>-->
             <!--&lt;!&ndash;<cache:cache-evict method="update"/>&ndash;&gt;-->
         <!--</cache:caching>-->
     <!--</cache:advice>-->
 
     <!--<cache:advice id="cachingRetailPriceConfig" cache-manager="cacheManager" key-generator="voDaoCacheKeyGenerator">-->
-        <!--<cache:caching cache="DATA_KEY_cachingRetailPriceConfig">-->
+        <!--<cache:caching cache="COMM_CACHE_DATA">-->
             <!--<cache:cacheable method="selectOne"/>-->
         <!--</cache:caching>-->
     <!--</cache:advice>-->

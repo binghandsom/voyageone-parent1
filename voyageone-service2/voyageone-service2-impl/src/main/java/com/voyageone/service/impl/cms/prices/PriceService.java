@@ -168,7 +168,7 @@ public class PriceService extends BaseService {
             // 计算指导价
             Double retailPrice = calculateByFormula(retailFormula, skuInCommon, roundUp);
 
-            if (retailPrice < 1)
+            if (retailPrice <= 0)
                 throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的指导价不合法: %s", channelId, cartId, skuCodeValue, retailPrice);
 
             setProductRetailPrice(sku, retailPrice, isAutoApprovePrice, channelId);
@@ -176,7 +176,7 @@ public class PriceService extends BaseService {
             // 计算 MSRP
             Double originMsrp = calculateByFormula(msrpFormula, skuInCommon, roundUp);
 
-            if (originMsrp < 1)
+            if (originMsrp <= 0)
                 throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的 MSRP 不合法: %s", channelId, cartId, skuCodeValue, originMsrp);
 
             setProductMsrp(sku, originMsrp, isAutoSyncPriceMsrp);
@@ -307,7 +307,7 @@ public class PriceService extends BaseService {
         }
 
         // 公式参数: 税率
-        Double taxRate = feeTaxService.getTaxRate(shippingType, hsCode);
+        Double taxRate = feeTaxService.getTaxRate(hsCode);
 
         // 进入计算阶段
         SystemPriceCalculator systemPriceCalculator = new SystemPriceCalculator()
@@ -365,7 +365,7 @@ public class PriceService extends BaseService {
             // 计算指导价
             Double retailPrice = systemPriceCalculator.calculate(clientNetPrice);
 
-            if (retailPrice < 1)
+            if (retailPrice <= 0)
                 throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的指导价不合法: %s", channelId, cartId, skuCodeValue, retailPrice);
 
             setProductRetailPrice(platformSku, retailPrice, isAutoApprovePrice, channelId);
@@ -373,7 +373,7 @@ public class PriceService extends BaseService {
             // 计算 MSRP
             Double originPriceMsrp = systemPriceCalculator.calculate(clientMsrp);
 
-            if (originPriceMsrp < 1)
+            if (originPriceMsrp <= 0)
                 throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的 MSRP 不合法: %s", channelId, cartId, skuCodeValue, originPriceMsrp);
 
             setProductMsrp(platformSku, originPriceMsrp, isAutoSyncPriceMsrp);
@@ -441,7 +441,7 @@ public class PriceService extends BaseService {
      */
     private void resetPriceIfInvalid(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField, Double priceValue) {
         Double _priceValue = getProductPrice(platformSku, commonField);
-        if (_priceValue == null || _priceValue < 1)
+        if (_priceValue == null || _priceValue <= 0)
             platformSku.put(commonField.name(), priceValue);
     }
 
@@ -471,6 +471,10 @@ public class PriceService extends BaseService {
 
         if (isAutoApprovePrice)
             skuInPlatform.put(priceSale.name(), retailPrice);
+        else
+            // 如果不强制同步的话, 要看看是否原本是合法价格
+            // 如果原本不是合法价格的话, 就同步设置
+            resetPriceIfInvalid(skuInPlatform, priceSale, retailPrice);
 
         // 保存击穿标识
         String priceDiffFlgValue = productSkuService.getPriceDiffFlg(channelId, skuInPlatform);
@@ -491,6 +495,10 @@ public class PriceService extends BaseService {
 
         if (isAutoSyncPriceMsrp)
             skuInPlatform.put(priceMsrp.name(), originPriceMsrp);
+        else
+            // 如果不强制同步的话, 要看看是否原本是合法价格
+            // 如果原本不是合法价格的话, 就同步设置
+            resetPriceIfInvalid(skuInPlatform, priceMsrp, originPriceMsrp);
 
         skuInPlatform.put(originalPriceMsrp.name(), originPriceMsrp);
     }
@@ -672,7 +680,7 @@ public class PriceService extends BaseService {
         }
 
         private SystemPriceCalculator setTaxRate(Double taxRate) {
-            checkValid(this.taxRate = taxRate, "运费");
+            checkValid(this.taxRate = taxRate, "税率");
             return this;
         }
 

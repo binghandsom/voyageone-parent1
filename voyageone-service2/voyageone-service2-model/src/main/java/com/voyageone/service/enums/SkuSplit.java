@@ -1,5 +1,6 @@
 package com.voyageone.service.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.HashMap;
@@ -27,7 +28,7 @@ public enum SkuSplit {
     }
 
     public static SkuSplit valueOf(Integer id) {
-        for (SkuSplit item: values()) {
+        for (SkuSplit item : values()) {
             if (item.id.equals(id))
                 return item;
         }
@@ -40,5 +41,10 @@ public enum SkuSplit {
         map.put("id", this.id);
         map.put("name", name());
         return map;
+    }
+
+    @JsonCreator
+    public static SkuSplit valueOf(Map<String, Object> map) {
+        return valueOf((Integer) map.get("id"));
     }
 }

@@ -15,6 +15,9 @@ import java.util.List;
  * 2.propValue_2  (cIds   父分类id,子分类id)  (例："1124130579,1124130584")
  * 3.propValue_3  (cName  父分类id,子分类id)  (例："系列>彩色宝石")
  * 4.propValue_4  (cNames 父分类id,子分类id)  (例："系列,彩色宝石")
+ *          ↓   ↓   ↓
+ * 1."cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类id,子分类id)|cNames(父分类id,子分类id)"
+ *  例："1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石"
  *
  * ※feed->master导入的时候，会读取从表中读取这里生成的字典数据，然后设置到Product.platform.PXX.sellerCarts[]里面
  *
@@ -23,7 +26,7 @@ import java.util.List;
  * @since 2.4.0
  *
  */
-public class SellerCids_DictTest {
+public class SellerCats_DictTest {
 
 	@Test
 	public void startupTest() {
@@ -119,25 +122,25 @@ public class SellerCids_DictTest {
             CustomModuleUserParamIf customModuleUserParamIf = new CustomModuleUserParamIf();
             customModuleUserParamIf.setCondition(conditionListExpressionIf);
 
-            // propValue(cId    子分类id)          (例："1124130584")
+            // propValue "cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类id,子分类id)|cNames(父分类id,子分类id)"
             RuleExpression propValue = new RuleExpression();
-            propValue.addRuleWord(new TextWord("1124130584"));
+            propValue.addRuleWord(new TextWord("1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石"));
             customModuleUserParamIf.setPropValue(propValue);
 
-            // propValue_2(cIds   父分类id,子分类id)  (例："1124130579,1124130584")
-            RuleExpression propValue2 = new RuleExpression();
-            propValue2.addRuleWord(new TextWord("1124130579,1124130584"));
-            customModuleUserParamIf.setPropValue2(propValue2);
-
-            // propValue_3(cName  父分类id,子分类id)  (例："系列>彩色宝石")
-            RuleExpression propValue3 = new RuleExpression();
-            propValue3.addRuleWord(new TextWord("系列>彩色宝石"));
-            customModuleUserParamIf.setPropValue3(propValue3);
-
-            // propValue_4(cNames 父分类id,子分类id)  (例："系列,彩色宝石")
-            RuleExpression propValue4 = new RuleExpression();
-            propValue4.addRuleWord(new TextWord("系列,彩色宝石"));
-            customModuleUserParamIf.setPropValue4(propValue4);
+//            // propValue_2(cIds   父分类id,子分类id)  (例："1124130579,1124130584")
+//            RuleExpression propValue2 = new RuleExpression();
+//            propValue2.addRuleWord(new TextWord("1124130579,1124130584"));
+//            customModuleUserParamIf.setPropValue2(propValue2);
+//
+//            // propValue_3(cName  父分类id,子分类id)  (例："系列>彩色宝石")
+//            RuleExpression propValue3 = new RuleExpression();
+//            propValue3.addRuleWord(new TextWord("系列>彩色宝石"));
+//            customModuleUserParamIf.setPropValue3(propValue3);
+//
+//            // propValue_4(cNames 父分类id,子分类id)  (例："系列,彩色宝石")
+//            RuleExpression propValue4 = new RuleExpression();
+//            propValue4.addRuleWord(new TextWord("系列,彩色宝石"));
+//            customModuleUserParamIf.setPropValue4(propValue4);
 
             CustomWordValueIf customWordValueIf = new CustomWordValueIf();
             customWordValueIf.setUserParam(customModuleUserParamIf);
@@ -182,25 +185,25 @@ public class SellerCids_DictTest {
             CustomModuleUserParamIf customModuleUserParamIf = new CustomModuleUserParamIf();
             customModuleUserParamIf.setCondition(conditionIf);
 
-            // propValue(cId    子分类id)          (例："1124130584")
+            // propValue "cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类id,子分类id)|cNames(父分类id,子分类id)"
             RuleExpression propValue = new RuleExpression();
-            propValue.addRuleWord(new TextWord("1124130584"));
+            propValue.addRuleWord(new TextWord("1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石"));
             customModuleUserParamIf.setPropValue(propValue);
 
-            // propValue_2(cIds   父分类id,子分类id)  (例："1124130579,1124130584")
-            RuleExpression propValue2 = new RuleExpression();
-            propValue2.addRuleWord(new TextWord("1124130579,1124130584"));
-            customModuleUserParamIf.setPropValue2(propValue2);
-
-            // propValue_3(cName  父分类id,子分类id)  (例："系列>彩色宝石")
-            RuleExpression propValue3 = new RuleExpression();
-            propValue3.addRuleWord(new TextWord("系列>彩色宝石"));
-            customModuleUserParamIf.setPropValue3(propValue3);
-
-            // propValue_4(cNames 父分类id,子分类id)  (例："系列,彩色宝石")
-            RuleExpression propValue4 = new RuleExpression();
-            propValue4.addRuleWord(new TextWord("系列,彩色宝石"));
-            customModuleUserParamIf.setPropValue4(propValue4);
+//            // propValue_2(cIds   父分类id,子分类id)  (例："1124130579,1124130584")
+//            RuleExpression propValue2 = new RuleExpression();
+//            propValue2.addRuleWord(new TextWord("1124130579,1124130584"));
+//            customModuleUserParamIf.setPropValue2(propValue2);
+//
+//            // propValue_3(cName  父分类id,子分类id)  (例："系列>彩色宝石")
+//            RuleExpression propValue3 = new RuleExpression();
+//            propValue3.addRuleWord(new TextWord("系列>彩色宝石"));
+//            customModuleUserParamIf.setPropValue3(propValue3);
+//
+//            // propValue_4(cNames 父分类id,子分类id)  (例："系列,彩色宝石")
+//            RuleExpression propValue4 = new RuleExpression();
+//            propValue4.addRuleWord(new TextWord("系列,彩色宝石"));
+//            customModuleUserParamIf.setPropValue4(propValue4);
 
             CustomWordValueIf customWordValueIf = new CustomWordValueIf();
             customWordValueIf.setUserParam(customModuleUserParamIf);

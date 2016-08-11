@@ -101,6 +101,18 @@ public class CmsFieldEditService extends BaseAppService {
             if (field.getIsDisplay() != 1) {
                 continue;
             }
+
+            // 对于VO扣点进行特殊判断
+            if ("voRate".equals(field.getId())) {
+                CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanNoCode(channel_id, CmsConstants.ChannelConfig.PRICE_CALCULATOR);
+                if (priceCalculatorConfig != null) {
+                    if (CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA.equals(priceCalculatorConfig.getConfigValue1())) {
+                        // 不是价格管理体系
+                        continue;
+                    }
+                }
+            }
+
             CmsMtCommonPropDefModel resModel = new CmsMtCommonPropDefModel();
             if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())
                     || CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
@@ -932,17 +944,17 @@ public class CmsFieldEditService extends BaseAppService {
 
         StringBuilder rs = new StringBuilder();
         if (prodPriceUpList != null && prodPriceUpList.size() > 0) {
-            prodPriceUpList.forEach(item -> { rs.append(item + ", 修改后最终售价大于阈值"); rs.append(System.lineSeparator()); });
+            prodPriceUpList.forEach(item -> { rs.append(item + ", 修改后最终售价大于阈值"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
         }
         if (prodPriceDownList != null && prodPriceDownList.size() > 0) {
-            prodPriceDownList.forEach(item -> { rs.append(item + ", 修改后最终售价低于指导价"); rs.append(System.lineSeparator()); });
+            prodPriceDownList.forEach(item -> { rs.append(item + ", 修改后最终售价低于指导价"); rs.append(com.voyageone.common.util.StringUtils.LineSeparator); });
         }
 
         if (rs.length() == 0) {
             $warn("缓存中没有数据啊！");
             return null;
         } else {
-            rs.insert(0, "  商品code,  sku code, 修改前售价, 指导价, 阈值, 修改后售价, 未处理原因" + System.lineSeparator());
+            rs.insert(0, "  商品code,  sku code, 修改前售价, 指导价, 阈值, 修改后售价, 未处理原因" + com.voyageone.common.util.StringUtils.LineSeparator);
         }
         return rs.toString();
     }
