@@ -3510,7 +3510,19 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 try {
                     // 判断这个sku是否已经存在
                     //if (skuList.contains(feedSku.getSku())) {
-                    if (itemDetailsDao.selectBySku(channelId, feedSku.getSku()) != null) {
+                    ItemDetailsBean oldRecord = itemDetailsDao.selectBySku(channelId, feedSku.getSku());
+                    if (oldRecord != null) {
+                        // 如果该skuCode没变，但feed里面的code从A->B了，则报出异常, feedCode一致才更新
+                        if (!oldRecord.getItemcode().equals(feed.getCode())) {
+                            String errMsg = String.format("feed->master导入:异常终止:由于该sku所属的feedCode发生了变更," +
+                                    "导致不能更新wms_bt_item_details表 [sku:%s] [OldFeedCode:%s] [NewFeedCode:%s]",
+                                    itemDetailsBean.getSku(),
+                                    oldRecord.getItemcode(),
+                                    feed.getCode()
+                            );
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
                         // 已经存在的场合: 更新数据库
                         itemDetailsDao.updateItemDetails(itemDetailsBean, getTaskName());
                     } else {
