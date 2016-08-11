@@ -29,10 +29,7 @@ import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.SxData;
-import com.voyageone.service.dao.cms.CmsBtWorkloadHistoryDao;
-import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
-import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
-import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
+import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -51,6 +48,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.sx.sku_field.AbstractSkuFieldBuilder;
 import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
+import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl8;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
@@ -135,6 +133,10 @@ public class SxProductService extends BaseService {
     JumeiImageFileService jumeiImageFileService;
     @Autowired
     private CmsBtWorkloadHistoryDao cmsBtWorkloadHistoryDao;
+    @Autowired
+    private CmsMtPlatformPropSkuDao cmsMtPlatformPropSkuDao;
+    @Autowired
+    private CmsMtChannelSkuConfigDao cmsMtChannelSkuConfigDao;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -2195,6 +2197,38 @@ public class SxProductService extends BaseService {
                     break;
                 }
                 // added by morse.lu 2016/06/29 end
+                // added by morse.lu 2016/08/10 start
+                case CSPU: {
+                    int cartId = sxData.getCartId();
+                    String errorLog = "平台类目id是:" + sxData.getMainProduct().getPlatform(cartId).getpCatId() + ". groupId:" + sxData.getGroupId();
+                    AbstractSkuFieldBuilder skuFieldService = new TmallGjSkuFieldBuilderImpl8();
+                    skuFieldService.setDao(cmsMtPlatformPropSkuDao, cmsMtChannelSkuConfigDao);
+
+                    List<Field> allSkuFields = new ArrayList<>();
+                    recursiveGetFields(processFields, allSkuFields);
+
+                    String imageTemplate = resolveDict("资质图片模板",expressionParser,shopBean, user, null);
+                    if (StringUtils.isEmpty(imageTemplate)) {
+                        String err = "达尔文产品没有设值资质图片模板字典!";
+                        sxData.setErrorMessage(err);
+                        throw new BusinessException(err);
+                    }
+                    skuFieldService.setCodeImageTemplate(imageTemplate);
+
+                    try {
+                        List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
+                        skuInfoFields.forEach(field -> retMap.put(field.getId(), field));
+                    } catch (BusinessException e) {
+                        sxData.setErrorMessage(e.getMessage());
+                        throw new BusinessException(e.getMessage());
+                    } catch (Exception e) {
+                        $warn(e.getMessage());
+                        sxData.setErrorMessage("Can't build SkuInfoField." + errorLog);
+                        throw new BusinessException("Can't build SkuInfoField." + errorLog);
+                    }
+                    break;
+                }
+                // added by morse.lu 2016/08/10 end
             }
         }
 
