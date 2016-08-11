@@ -14,6 +14,7 @@ import com.voyageone.service.dao.admin.TmOrderChannelDao;
 import com.voyageone.service.daoext.admin.TmOrderChannelDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.admin.PageModel;
+import com.voyageone.service.model.admin.TmOrderChannelConfigModel;
 import com.voyageone.service.model.admin.TmOrderChannelModel;
 
 /**
@@ -71,6 +72,30 @@ public class ChannelService extends BaseService {
 		
 		// 保存渠道信息，并返回保存结果。
 		return channelDao.insert(model) > 0;
+	}
+
+	public List<TmOrderChannelConfigModel> searchChannelConfig(String channelId, String cfgName, String cfgVal) {
+		return searchChannelConfig(channelId, cfgName, cfgVal, 0, 0).getResult();
+	}
+	
+	public PageModel<TmOrderChannelConfigModel> searchChannelConfig(String channelId, String cfgName, String cfgVal,
+			int pageNum, int pageSize) {
+		PageModel<TmOrderChannelConfigModel> pageModel = new PageModel<TmOrderChannelConfigModel>();
+		// 设置查询参数
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("orderChannelId", channelId);
+		params.put("cfgName", cfgName);
+		params.put("cfgVal", cfgVal);
+		
+		// 判断查询结果是否分页
+		if (pageNum > 0 && pageSize > 0) {
+			pageModel.setCount(channelDaoExt.selectChannelConfigCount(params));
+			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
+		}
+		// 查询渠道信息
+		pageModel.setResult(channelDaoExt.selectChanneConfiglList(params));
+		
+		return pageModel;
 	}
 
 }

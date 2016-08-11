@@ -9,12 +9,10 @@ public interface AdminUrlConstants {
 	
 	interface Channel {
 		
-		String ROOT = "/admin/channel";
-		
 		/** 渠道信息 */
 		interface Self {
 			
-			String ROOT = Channel.ROOT + "/self";
+			String ROOT = "/admin/channel/self";
 			
 			String SEARCH_CHANNEL = "searchChannel";
 			
@@ -28,18 +26,31 @@ public interface AdminUrlConstants {
 		
 	}
 	
-	interface System {
+	interface Cart {
+
+		/** Cart信息 */
+		interface Self {
+			
+			String ROOT = "/admin/cart/self";
+			
+			String GET_ALL_CART = "getAllCart";
+
+			String GET_CART_BY_IDS = "getCartByIds";
+		}
 		
-		String ROOT = "/admin/system";
+	}
+	
+	interface System {
 		
 		/** 统一属性配置 */
 		interface CommonConfig {
 			
-			String ROOT = System.ROOT + "/config";
+			String ROOT = "/admin/system/config";
 			
 			String SEARCH_CONFIG = "searchConfig";
 			
 		}
+		
 	}
 
 }

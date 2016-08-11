@@ -29,6 +29,8 @@ public class CommonConfigFormBean extends AdminFormBean {
 	
 	private String cfgVal2;
 	
+	private String cfgVal;
+	
 	private String comment;
 
 	public AdminConstants.ConfigType getConfigType() {
@@ -101,6 +103,14 @@ public class CommonConfigFormBean extends AdminFormBean {
 
 	public void setCfgVal2(String cfgVal2) {
 		this.cfgVal2 = cfgVal2;
+	}
+	
+	public String getCfgVal() {
+		return cfgVal;
+	}
+
+	public void setCfgVal(String cfgVal) {
+		this.cfgVal = cfgVal;
 	}
 
 	public String getComment() {

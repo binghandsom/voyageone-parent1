@@ -53,8 +53,8 @@ public class ChannelController extends AdminController {
 		// 验证参数
 		Preconditions.checkNotNull(form.getCompanyId());
 		Preconditions.checkNotNull(form.getChannelId());
-		Preconditions.checkState(StringUtils.isNotBlank(form.getSecretKey()));
-		Preconditions.checkState(StringUtils.isNotBlank(form.getSessionKey()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSecretKey()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSessionKey()));
 		
 		// 设置渠道信息
 		TmOrderChannelModel model = new TmOrderChannelModel();

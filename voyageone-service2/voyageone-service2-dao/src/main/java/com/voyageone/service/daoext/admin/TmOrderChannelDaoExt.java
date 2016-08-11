@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
+import com.voyageone.service.model.admin.TmOrderChannelConfigModel;
 import com.voyageone.service.model.admin.TmOrderChannelModel;
 
 /**
@@ -19,5 +20,9 @@ public interface TmOrderChannelDaoExt {
 	List<TmOrderChannelModel> selectChannelList(Map<String, Object> params);
 
 	Integer selectChannelCount(Map<String, Object> params);
+
+	Integer selectChannelConfigCount(Map<String, Object> params);
+
+	List<TmOrderChannelConfigModel> selectChanneConfiglList(Map<String, Object> params);
 	
 }

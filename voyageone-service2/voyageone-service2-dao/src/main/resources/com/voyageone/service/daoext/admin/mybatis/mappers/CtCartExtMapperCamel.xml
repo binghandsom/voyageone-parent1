@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.admin.CtCartDaoExt">
+
+	<resultMap id="cartModeMap" type="com.voyageone.service.model.admin.CtCartModel" />
+    
+    <select id="selectCartByIds" resultMap="cartModeMap">
+    	select cart_id, name, short_name, description, platform_id, cart_type, active, created, 
+    		creater, modified, modifier
+	    from ct_cart
+	    where cart_id in
+	    <foreach collection="cartIds" open="(" close=")" separator="," item="cartId">
+	    	#{cartId}
+	    </foreach>
+    </select>
+
+</mapper>
