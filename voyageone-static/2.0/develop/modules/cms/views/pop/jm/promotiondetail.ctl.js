@@ -45,10 +45,11 @@ define([
             }
         };
 
-        $scope.getTagList=function(){
+        $scope.getTagList = getTagList;
+        function getTagList(){
             var tagList = _.filter( $scope.editModel.tagList, function(tag){ return tag.active==1; });
-            return tagList||[];
-        };
+            return tagList || [];
+        }
 
         $scope.delTag = function (tag) {
             confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
@@ -86,6 +87,11 @@ define([
 
             if($scope.editModel.model.prePeriodEnd > $scope.editModel.model.activityEnd){
                 alert("预热结束时间不能晚于活动结束时间");
+                return;
+            }
+
+            if(getTagList().length === 0){
+                alert("请至少添加一个标签");
                 return;
             }
 
