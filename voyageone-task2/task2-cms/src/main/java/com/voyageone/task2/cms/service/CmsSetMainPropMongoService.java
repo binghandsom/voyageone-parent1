@@ -8,10 +8,16 @@ import com.voyageone.base.exception.CommonConfigNotFoundException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.*;
+import com.voyageone.common.configs.Carts;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.beans.*;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.CartBean;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.OrderChannelBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
@@ -22,6 +28,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.Condition;
@@ -428,11 +435,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                    + " 新增成功:" + insertCnt + " 更新成功:" + updateCnt + " 失败:" + errCnt + "]");
             String resultInfo = channelId + " " + channel.getFull_name() + "产品导入结果 [总件数:" + feedList.size()
                     + " 新增成功:" + insertCnt + " 更新成功:" + updateCnt + " 失败:" + errCnt + "]";
-            $info(resultInfo);
+//            $info(resultInfo);
             // 将该channel的feed->master导入信息加入map，供channel导入线程全部完成一起显示
             resultMap.put(channelId, resultInfo);
             // add by desmond 2016/07/05 end
-            $info(channel.getFull_name() + "产品导入主数据结束");
+//            $info(channel.getFull_name() + "产品导入主数据结束");
 
         }
 
@@ -3789,9 +3796,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
      * 新增或更新产品时，如果字典中解析出来子分类id在产品该平台的店铺内信息中不存在，则新加一条店铺类分类
      * 存在的话不更新，因为店铺内信息运营有可能已经修改过了
      *
-     * 从cms_bt_condition_prop_value表中取得该店铺对应的店铺内分类数据字典，
+     * 从cms_mt_channel_condition_config表中取得该店铺对应的店铺内分类数据字典，
      * 表里的platformPropId字段的值为：
-     *   "seller_cats_"+cartId  例：seller_cats_26
+     *   "seller_cids_"+cartId  例：seller_cats_26
      * 店铺内分类字典的里面的value值结构如下：
      *   结构："cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类id,子分类id)|cNames(父分类id,子分类id)"
      *   例子："1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石"
@@ -3813,12 +3820,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 continue;
             }
 
-            ShopBean shopProp = Shops.getShop(product.getChannelId(), entry.getValue().getCartId());
-            if (shopProp == null) {
-                $warn("feed->master导入:警告:设置店铺内分类时获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", product.getChannelId(), entry.getValue().getCartId());
-                continue;
-            }
-
             List<CmsBtProductModel_SellerCat> sellerCatList = entry.getValue().getSellerCats();
             if (sellerCatList == null) {
                 // 如果该平台上没有店铺内分类项目，则新建一个店铺内分类列表
@@ -3827,7 +3828,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
 
             // 条件表达式表platform_prop_id字段的检索条件为"seller_cids_"加cartId
-            String platformPropId = "seller_cats_" + entry.getValue().getCartId();
+            String platformPropId = "seller_cids_" + entry.getValue().getCartId();
 
             // 构造解析店铺内分类字典必须的一些对象
             SxData sxData = new SxData();
@@ -3838,22 +3839,35 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 构造字典解析子
             ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
-            // 根据channelid和platformPropId取得cms_bt_condition_prop_value表的条件表达式
+            // 根据channelid和platformPropId取得cms_mt_channel_condition_config表的条件表达式
             List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(product.getChannelId(), platformPropId);
-            if (ListUtils.isNull(conditionPropValueModels)) {
+            if (ListUtils.isNull(conditionPropValueModels))
                 continue;
-            }
 
-            // 解析cms_bt_condition_prop_value表中取得该平台对应店铺内分类数据字典
+            // 解析cms_mt_channel_condition_config表中取得该平台对应店铺内分类数据字典
             RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
             for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
                 String conditionExpressionStr = conditionPropValueModel.getCondition_expression();
-                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
-                String propValue = "";
+                RuleExpression conditionExpression;
+                String propValue;
+
                 try {
+                    // 带名字字典解析
+                    if (conditionExpressionStr.startsWith("{\"type\":\"DICT\"")) {
+                        DictWord conditionDictWord = (DictWord)ruleJsonMapper.deserializeRuleWord(conditionExpressionStr);
+                        conditionExpression = conditionDictWord.getExpression();
+                    } else if (conditionExpressionStr.startsWith("{\"ruleWordList\"")) {
+                        // 不带名字，只有字典表达式字典解析
+                        conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+                    } else {
+                        logIssue(getTaskName(), String.format("feed->master导入:警告:店铺内分类数据字典格式不对 [ChannelId:%s]" +
+                                " [CartId:%s])", product.getChannelId(), entry.getValue().getCartId()));
+                        continue;
+                    }
+
                     // 店铺内分类字典的值（"cId(子分类id)|cIds(父分类id,子分类id)|cName(父分类id,子分类id)|cNames(父分类id,子分类id)"）
                     // 例："1124130584|1124130579,1124130584|系列>彩色宝石|系列,彩色宝石"
-                    propValue = expressionParser.parse(conditionExpression, shopProp, getTaskName(), null);
+                    propValue = expressionParser.parse(conditionExpression, null, getTaskName(), null);
                 } catch (Exception e) {
                     // 因为店铺内分类即使这里不设置，运营也可以手动设置的，所以这里如果解析字典异常时，不算feed->master导入失败
                     logIssue(getTaskName(), String.format("feed->master导入:警告:解析店铺内分类数据字典出错 [ChannelId:%s]" +
@@ -3862,15 +3876,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
 
                 // 如果从字典里面取得店铺内分类为空
-                if (StringUtils.isEmpty(propValue) || propValue.indexOf("|") == 0 || propValue.indexOf(",") == 0) {
+                if (StringUtils.isEmpty(propValue))
                     continue;
-                }
 
-                List<String> sellerCatsList = Arrays.asList(propValue.split("|"));
-                // 如果取得的店铺内分类列表为空或者size不为4，继续循环
-                if(ListUtils.isNull(sellerCatsList) || sellerCatsList.size() != 4) {
+                List<String> sellerCatsList = Arrays.asList(propValue.split("\\|"));
+                // 如果取得的店铺内分类列表为空，继续循环
+                if(ListUtils.isNull(sellerCatsList))
                     continue;
-                }
 
                 // cId(子分类id)
                 String strCId = sellerCatsList.get(0);
@@ -3892,16 +3904,22 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // cId(子分类id)           例："1124130584"
                 sellerCatFromDict.setcId(sellerCatsList.get(0));
                 // cIds(父分类id,子分类id)  例："1124130579,1124130584"
-                List<String> cidsList = Arrays.asList(sellerCatsList.get(1).split(","));
-                if (ListUtils.notNull(cidsList)) {
-                    sellerCatFromDict.setcIds(cidsList);
+                if (sellerCatsList.size() > 1) {
+                    List<String> cidsList = Arrays.asList(sellerCatsList.get(1).split(","));
+                    if (ListUtils.notNull(cidsList)) {
+                        sellerCatFromDict.setcIds(cidsList);
+                    }
                 }
                 // cName(父分类id,子分类id)  例："系列>彩色宝石"
-                sellerCatFromDict.setcName(sellerCatsList.get(2));
+                if (sellerCatsList.size() > 2) {
+                    sellerCatFromDict.setcName(sellerCatsList.get(2));
+                }
                 // cNames(父分类id,子分类id) 例："系列,彩色宝石"
-                List<String> cNamesList = Arrays.asList(sellerCatsList.get(3).split(","));
-                if (ListUtils.notNull(cNamesList)) {
-                    sellerCatFromDict.setcNames(cNamesList);
+                if (sellerCatsList.size() > 3) {
+                    List<String> cNamesList = Arrays.asList(sellerCatsList.get(3).split(","));
+                    if (ListUtils.notNull(cNamesList)) {
+                        sellerCatFromDict.setcNames(cNamesList);
+                    }
                 }
 
                 sellerCatList.add(sellerCatFromDict);
