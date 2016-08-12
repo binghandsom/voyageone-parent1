@@ -3,6 +3,28 @@
 <mapper namespace="com.voyageone.service.daoext.admin.CtCartDaoExt">
 
 	<resultMap id="cartModeMap" type="com.voyageone.service.model.admin.CtCartModel" />
+	
+	<sql id="selectCartFilter">
+		<where >
+			<if test="cartName != null and cartName != ''">
+				and (
+					name like concat('%', #{name}, '%') or short_name like concat('%', #{shortName}, '%')
+				)
+			</if>
+            <if test="description != null" >
+                and description = #{description}
+            </if>
+            <if test="platformId != null" >
+                and platform_id = #{platformId}
+            </if>
+            <if test="cartType != null" >
+                and cart_type = #{cartType}
+            </if>
+            <if test="active != null" >
+                and active = #{active}
+            </if>
+        </where>
+	</sql>
     
     <select id="selectCartByIds" resultMap="cartModeMap">
     	select cart_id, name, short_name, description, platform_id, cart_type, active, created, 
@@ -12,6 +34,22 @@
 	    <foreach collection="cartIds" open="(" close=")" separator="," item="cartId">
 	    	#{cartId}
 	    </foreach>
+    </select>
+    
+    <select id="selectCartByPage" resultMap="cartModeMap">
+    	select cart_id, name, short_name, description, platform_id, cart_type, active, created, 
+    		creater, modified, modifier
+    	from ct_cart
+    	<include refid="selectCartFilter"/>
+    </select>
+    
+    <select id="selectCartCount" resultType="integer">
+    	select count(0) from ct_cart
+    	<include refid="selectCartFilter"/>
+    </select>
+    
+    <select id="selectAllPlatform" resultType="map">
+    	select platform_id, platform, comment from tm_platform
     </select>
 
 </mapper>

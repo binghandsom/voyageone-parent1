@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
 import com.voyageone.service.impl.admin.cart.CartService;
+import com.voyageone.service.model.admin.CtCartModel;
+import com.voyageone.service.model.admin.PageModel;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
+import com.voyageone.web2.admin.bean.cart.CartFormBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 
 /**
@@ -41,6 +44,40 @@ public class CartController extends AdminController {
 		String[] cartIds = StringUtils.split(strCartIds, ",");
 		
 		return success(cartService.getCartByIds(Arrays.asList(cartIds)));
+	}
+	
+	@RequestMapping(AdminUrlConstants.Cart.Self.SEARCH_CART_BY_PAGE)
+	public AjaxResponse searchCartByPage(@RequestBody CartFormBean form) {
+		// 验证参数
+		Preconditions.checkNotNull(form.getPageNum());
+		Preconditions.checkNotNull(form.getPageSize());
+		// 检索Cart信息
+		PageModel<CtCartModel> cartPage = cartService.searchCartByPage(form.getCartId(), form.getCartName(),
+				form.getCartType(), form.getPageNum(), form.getPageSize());
+		
+		return success(cartPage);
+	}
+	
+	@RequestMapping(AdminUrlConstants.Cart.Self.ADD_OR_UPDATE_CART)
+	public AjaxResponse addOrUpdateCart(@RequestBody CartFormBean form) {
+		// 验证参数
+		Preconditions.checkNotNull(form.getModified());
+		Preconditions.checkNotNull(form.getPlatformId());
+		Preconditions.checkNotNull(form.getCartId());
+		Preconditions.checkArgument(StringUtils.isNoneBlank(form.getName()));
+		Preconditions.checkArgument(StringUtils.isNoneBlank(form.getShortName()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCartType()));
+		Preconditions.checkNotNull(form.getActive());
+		Preconditions.checkArgument(StringUtils.isNoneBlank(form.getDescription()));
+		// 保存Cart信息
+		CtCartModel model = new CtCartModel();
+		return success(cartService.addOrUpdateCart(model, form.getModified()));
+		
+	}
+	
+	@RequestMapping(AdminUrlConstants.Cart.Self.GET_ALL_PLATFORM)
+	public AjaxResponse getAllPlatform() {
+		return success(cartService.getAllPlatform());
 	}
 
 }

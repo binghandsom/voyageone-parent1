@@ -8,60 +8,65 @@
     <sql id="selectChannelFilter">
     	<where>
             <if test="orderChannelId != null" >
-            	and order_channel_id = #{orderChannelId,jdbcType=VARCHAR}
+            	and order_channel_id = #{orderChannelId}
             </if>
             <if test="companyId != null" >
-                and company_id = #{companyId,jdbcType=INTEGER}
+                and company_id = #{companyId}
             </if>
             <if test="channelName != null">
             	and (
-            		name = #{channelName,jdbcType=VARCHAR} or full_name = #{channelName,jdbcType=VARCHAR}
+            		name like concat('%', #{channelName}, '%') or full_name like concat('%', #{channelName}, '%')
             	)
             </if>
             <if test="imgUrl != null" >
-                and img_url = #{imgUrl,jdbcType=VARCHAR}
+                and img_url = #{imgUrl}
             </if>
             <if test="sendName != null" >
-                and send_name = #{sendName,jdbcType=VARCHAR}
+                and send_name = #{sendName}
             </if>
             <if test="sendAddress != null" >
-                and send_address = #{sendAddress,jdbcType=VARCHAR}
+                and send_address = #{sendAddress}
             </if>
             <if test="sendTel != null" >
-                and send_tel = #{sendTel,jdbcType=VARCHAR}
+                and send_tel = #{sendTel}
             </if>
             <if test="sendZip != null" >
-                and send_zip = #{sendZip,jdbcType=VARCHAR}
+                and send_zip = #{sendZip}
             </if>
             <if test="screctKey != null" >
-                and screct_key = #{screctKey,jdbcType=VARCHAR}
+                and screct_key = #{screctKey}
             </if>
             <if test="sessionKey != null" >
-                and session_key = #{sessionKey,jdbcType=VARCHAR}
+                and session_key = #{sessionKey}
             </if>
             <if test="isUsjoi != null" >
-                and is_usjoi = #{isUsjoi,jdbcType=INTEGER}
+                and is_usjoi = #{isUsjoi}
             </if>
             <if test="cartIds != null" >
-                and cart_ids = #{cartIds,jdbcType=VARCHAR}
+                and cart_ids = #{cartIds}
             </if>
             <if test="active != null" >
-                and active = #{active,jdbcType=INTEGER}
-            </if>
-            <if test="created != null" >
-                and created = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and creater = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="modified != null" >
-                and modified = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="modifier != null" >
-                and modifier = #{modifier,jdbcType=VARCHAR}
+                and active = #{active}
             </if>
         </where>
     </sql>
+	
+	<sql id="selectChanneConfigFilter">
+		<where>
+            <if test="orderChannelId != null and orderChannelId != ''" >
+                order_channel_id = #{orderChannelId}
+            </if>
+            <if test="cfgName != null and cfgName != ''" >
+                and cfg_name = #{cfgName}
+            </if>
+            <if test="cfgVal != null and cfgVal != ''" >
+                and (cfg_val1 = #{cfgVal} or cfg_val2 = #{cfgVal})
+            </if>
+            <if test="comment != null and comment != ''" >
+                and comment = #{comment}
+            </if>
+        </where>
+	</sql>
 
 	<select id="selectAllCompany" resultType="map">
 		select id, company, description, default_view, active, created, creater, modified, modifier from ct_company
@@ -78,23 +83,6 @@
 		 select count(1) from tm_order_channel
 		 <include refid="selectChannelFilter"/>
 	</select>
-	
-	<sql id="selectChanneConfigFilter">
-		<where>
-            <if test="orderChannelId != null and orderChannelId != ''" >
-                order_channel_id = #{orderChannelId,jdbcType=VARCHAR}
-            </if>
-            <if test="cfgName != null and cfgName != ''" >
-                and cfg_name = #{cfgName,jdbcType=VARCHAR}
-            </if>
-            <if test="cfgVal != null and cfgVal != ''" >
-                and (cfg_val1 = #{cfgVal,jdbcType=VARCHAR} or cfg_val2 = #{cfgVal,jdbcType=VARCHAR})
-            </if>
-            <if test="comment != null and comment != ''" >
-                and comment = #{comment,jdbcType=VARCHAR}
-            </if>
-        </where>
-	</sql>
 	
 	<select id="selectChanneConfigByPage" resultMap="channelConfigModelMap">
 		select order_channel_id, cfg_name, cfg_val1, cfg_val2, comment

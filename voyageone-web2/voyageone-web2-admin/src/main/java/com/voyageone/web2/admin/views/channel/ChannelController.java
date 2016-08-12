@@ -6,8 +6,8 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -40,7 +40,6 @@ public class ChannelController extends AdminController {
 		// 验证参数
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
-
 		// 检索渠道信息
 		PageModel<TmOrderChannelBean> channelPage = channelService.searchChannelByPage(form.getChannelId(),
 				form.getChannelName(), form.getIsUsjoi(), form.getPageNum(), form.getPageSize());
@@ -53,14 +52,14 @@ public class ChannelController extends AdminController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("success", false);
 		// 验证参数
+		Preconditions.checkNotNull(form.getModified());
 		Preconditions.checkNotNull(form.getCompanyId());
 		Preconditions.checkNotNull(form.getChannelId());
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSecretKey()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSessionKey()));
-		
 		// 设置渠道信息
 		TmOrderChannelModel model = new TmOrderChannelModel();
-		BeanUtils.copyProperties(model, form);
+		BeanUtils.copyProperties(form, model);
 		model.setOrderChannelId(form.getChannelId());
 		String username = getUser().getUserName();
 		if (StringUtils.isBlank(form.getChannelId())) {
@@ -69,10 +68,9 @@ public class ChannelController extends AdminController {
 		} else {
 			model.setModifier(username);
 		}
-
 		// 保存渠道信息
 		try {
-			result.put("success", channelService.addOrUpdateChannel(model));
+			result.put("success", channelService.addOrUpdateChannel(model, form.getModified()));
 			result.put("success", true);
 		} catch (BusinessException e) {
 			result.put("message", e.getMessage());
@@ -80,6 +78,16 @@ public class ChannelController extends AdminController {
 		
 		return success(result);
 	}
+	
+	@RequestMapping(AdminUrlConstants.Channel.Self.DELETE_CHANNEL)
+	public AjaxResponse deleteChannel(@RequestBody Map<String, String> params) {
+		// 取出参数值
+		String channelId = params.get("channelId");
+		// 验证参数
+		Preconditions.checkArgument(StringUtils.isNotBlank(channelId));
+		
+		return success(channelService.deleteChannel(channelId));
+	}	
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.GET_ALL_COMPANY)
 	public AjaxResponse getAllCompany() {
