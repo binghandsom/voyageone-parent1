@@ -11,7 +11,8 @@
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_CART_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.searchInfo.companyName" ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList">
+                            <input class="form-control" ng-model="ctrl.searchInfo.channelName" ng-if="ctrl.sourceData" readonly/>
+                            <select class="form-control" ng-model="ctrl.searchInfo.channelName" ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList" ng-if="!ctrl.sourceData">
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
@@ -71,6 +72,9 @@
                     </thead>
                     <tbody>
                     <tr>
+                        <td if-no-rows="ctrl.cfgList.length" colspan="6" style="padding: 0px"></td>
+                    </tr>
+                    <tr ng-repeat="list in ctrl.cfgList">
                         <td class="text-left v-middle">
                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
                                 <input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox"
@@ -79,17 +83,17 @@
                                 <span class="fa fa-check"></span>
                             </label>
                         </td>
-                        <td class="text-center v-middle">010 </td>
-                        <td class="text-left v-middle">JW</td>
-                        <td class="text-left v-middle">Jewelry </td>
-                        <td class="text-center v-middle"> 否</td>
-                        <td class="text-center v-middle">JD/JG/TmallG </td>
+                        <td class="text-center v-middle">{{list.cfgName}}</td>
+                        <td class="text-left v-middle">{{list.cfgName}}</td>
+                        <td class="text-left v-middle">{{list.cfgVal1}}</td>
+                        <td class="text-center v-middle">{{list.cfgVal2}}</td>
+                        <td class="text-center v-middle">{{list.comment}}</td>
                     </tr>
                     </tbody>
                 </table>
             </div>
         </form>
-
+        <vpagination config="ctrl.configPageOption" ng-if="ctrl.cfgList.length"></vpagination>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
