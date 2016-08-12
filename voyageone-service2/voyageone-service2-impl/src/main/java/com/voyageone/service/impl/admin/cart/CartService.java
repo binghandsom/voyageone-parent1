@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.admin.cart;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,8 +29,12 @@ public class CartService extends BaseService {
 		return cartDao.selectList(Collections.emptyMap());
 	}
 
-	public List<CtCartModel> getCartByIds(List<Integer> cartIds) {
-		return cartDaoExt.selectCartByIds(cartIds);
+	public List<CtCartModel> getCartByIds(List<String> cartIds) {
+		List<Integer> iCartIds = new ArrayList<Integer>();
+		for (String cartId : cartIds) {
+			iCartIds.add(Integer.valueOf(cartId));
+		}
+		return cartDaoExt.selectCartByIds(iCartIds);
 	}
 
 }

@@ -1,7 +1,6 @@
 package com.voyageone.web2.admin.views.cart;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -36,17 +35,12 @@ public class CartController extends AdminController {
 	
 	@RequestMapping(AdminUrlConstants.Cart.Self.GET_CART_BY_IDS)
 	public AjaxResponse getCartByIds(@RequestBody Map<String, String> params) {
-		String cartIds = params.get("cartIds");
-		Preconditions.checkArgument(StringUtils.isNotBlank(cartIds));
-		
+		String strCartIds = params.get("cartIds");
+		Preconditions.checkArgument(StringUtils.isNotBlank(strCartIds));
 		// 取得CartId
-		String[] cartIdArr = StringUtils.split(cartIds, ",");
-		List<Integer> cartIdList = new ArrayList<Integer>();
-		for (int i = 0; i < cartIdArr.length; i++) {
-			cartIdList.add(Integer.valueOf(cartIdArr[i]));
-		}
+		String[] cartIds = StringUtils.split(strCartIds, ",");
 		
-		return success(cartService.getCartByIds(cartIdList));
+		return success(cartService.getCartByIds(Arrays.asList(cartIds)));
 	}
 
 }

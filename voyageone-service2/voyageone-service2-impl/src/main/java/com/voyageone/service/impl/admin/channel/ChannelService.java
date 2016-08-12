@@ -1,18 +1,28 @@
 package com.voyageone.service.impl.admin.channel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.bean.admin.TmOrderChannelBean;
 import com.voyageone.service.dao.admin.TmOrderChannelDao;
 import com.voyageone.service.daoext.admin.TmOrderChannelDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.admin.cart.CartService;
+import com.voyageone.service.model.admin.CtCartModel;
 import com.voyageone.service.model.admin.PageModel;
 import com.voyageone.service.model.admin.TmOrderChannelConfigModel;
 import com.voyageone.service.model.admin.TmOrderChannelModel;
@@ -30,17 +40,20 @@ public class ChannelService extends BaseService {
 	@Autowired
 	private TmOrderChannelDaoExt channelDaoExt;
 	
+	@Resource(name = "AdminCartService")
+	private CartService cartService;
+	
 	public List<TmOrderChannelModel> getAllChannel() {
 		return channelDao.selectList(Collections.emptyMap());
 	}
 	
-	public List<TmOrderChannelModel> searchChannel(String channelId, String channelName, Integer isUsjoi) {
+	public List<TmOrderChannelBean> searchChannel(String channelId, String channelName, Integer isUsjoi) throws Exception {
 		return searchChannelByPage(channelId, channelName, isUsjoi, 0, 0).getResult();
 	}
 	
-	public PageModel<TmOrderChannelModel> searchChannelByPage(String channelId, String channelName, Integer isUsjoi,
-			int pageNum, int pageSize) {
-		PageModel<TmOrderChannelModel> pageModel = new PageModel<TmOrderChannelModel>();
+	public PageModel<TmOrderChannelBean> searchChannelByPage(String channelId, String channelName, Integer isUsjoi,
+			int pageNum, int pageSize) throws Exception {
+		PageModel<TmOrderChannelBean> pageModel = new PageModel<TmOrderChannelBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
@@ -53,7 +66,30 @@ public class ChannelService extends BaseService {
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询渠道信息
-		pageModel.setResult(channelDaoExt.selectChannelByPage(params));
+		List<TmOrderChannelModel> channels = channelDaoExt.selectChannelByPage(params);
+		if (CollectionUtils.isNotEmpty(channels)) {
+			// 复制渠道信息，并添加渠道店铺名。
+			List<TmOrderChannelBean> newChannels = new ArrayList<TmOrderChannelBean>();
+			for (int i = 0; i < channels.size(); i++) {
+				TmOrderChannelBean newChannel = new TmOrderChannelBean();
+				BeanUtils.copyProperties(channels.get(i), newChannel);
+				
+				// 取得渠道店铺ID对应的店铺名
+				if (StringUtils.isNotBlank(newChannel.getCartIds())) {
+					List<CtCartModel> carts = cartService.getCartByIds(Arrays.asList(newChannel.getCartIds().split(",")));
+					if (CollectionUtils.isNotEmpty(carts)) {
+						// 取出店铺的名
+						String[] cartNames = new String[carts.size()];
+						for (int j = 0; j < carts.size(); j++) {
+							cartNames[j] = carts.get(j).getName();
+						}
+						newChannel.setCartNames(StringUtils.join(cartNames, "/"));
+					}
+				}
+				newChannels.add(newChannel);
+			}
+			pageModel.setResult(newChannels);	
+		}
 		
 		return pageModel;
 	}

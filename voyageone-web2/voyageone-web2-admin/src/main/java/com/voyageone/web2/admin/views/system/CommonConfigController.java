@@ -30,8 +30,8 @@ public class CommonConfigController extends AdminController {
 	@Resource(name = "AdminChannelService")
 	private ChannelService channelService;
 	
-	@RequestMapping(AdminUrlConstants.System.CommonConfig.SEARCH_CONFIG)
-	public AjaxResponse searchConfig(@RequestBody CommonConfigFormBean form) {
+	@RequestMapping(AdminUrlConstants.System.CommonConfig.SEARCH_CONFIG_BY_PAGE)
+	public AjaxResponse searchConfigByPage(@RequestBody CommonConfigFormBean form) {
 		// 验证配置类型参数
 		Preconditions.checkNotNull(form.getConfigType());
 		// 验证分页参数

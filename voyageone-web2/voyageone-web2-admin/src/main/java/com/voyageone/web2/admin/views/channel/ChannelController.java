@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.bean.admin.TmOrderChannelBean;
 import com.voyageone.service.impl.admin.channel.ChannelService;
 import com.voyageone.service.model.admin.PageModel;
 import com.voyageone.service.model.admin.TmOrderChannelModel;
@@ -34,14 +35,14 @@ public class ChannelController extends AdminController {
 	@Resource(name = "AdminChannelService")
 	private ChannelService channelService;
 	
-	@RequestMapping(AdminUrlConstants.Channel.Self.SEARCH_CHANNEL)
-	public AjaxResponse searchChannelByPage(@RequestBody ChannelFormBean form) {
+	@RequestMapping(AdminUrlConstants.Channel.Self.SEARCH_CHANNEL_BY_PAGE)
+	public AjaxResponse searchChannelByPage(@RequestBody ChannelFormBean form) throws Exception {
 		// 验证参数
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 
 		// 检索渠道信息
-		PageModel<TmOrderChannelModel> channelPage = channelService.searchChannelByPage(form.getChannelId(),
+		PageModel<TmOrderChannelBean> channelPage = channelService.searchChannelByPage(form.getChannelId(),
 				form.getChannelName(), form.getIsUsjoi(), form.getPageNum(), form.getPageSize());
 		
 		return success(channelPage);
