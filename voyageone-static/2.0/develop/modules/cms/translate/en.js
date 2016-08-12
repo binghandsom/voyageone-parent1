@@ -360,6 +360,8 @@ define(function () {
         "TXT_TAG_ONE": "一级标签",
         "TXT_TAG_TWO": "二级标签",
         "TXT_TAG_THREE": "三级标签",
+        "TXT_LONG_DESCRIPTION": "长描述",
+        "TXT_SHORT_DESCRIPTION": "短描述",
 
         "TXT_SEPARATE_PROPORTION": "隔离比例",
         "TXT_REVERT_TIME": "还原时间",
