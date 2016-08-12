@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.security.dao.ComUserDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.security.model.ComUserModel" />
     <sql id="Base_Column_List" >
-        `id`, `user_name`, `user_account`, `password`, `credentialsSalt`, `description`, 
-        `locked`, `active`, `created`, `creater`, `modified`, `modifier`
+        `id`, `user_name`, `user_account`, `password`, `credentialsSalt`, `org_id`, `description`, 
+        `active`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -29,11 +29,11 @@
             <if test="credentialssalt != null" >
                 `credentialsSalt` = #{credentialssalt,jdbcType=VARCHAR},
             </if>
+            <if test="orgId != null" >
+                `org_id` = #{orgId,jdbcType=INTEGER},
+            </if>
             <if test="description != null" >
                 `description` = #{description,jdbcType=VARCHAR},
-            </if>
-            <if test="locked != null" >
-                `locked` = #{locked,jdbcType=INTEGER},
             </if>
             <if test="active != null" >
                 `active` = #{active,jdbcType=INTEGER},
@@ -79,11 +79,11 @@
             <if test="credentialssalt != null" >
                 and `credentialsSalt` = #{credentialssalt,jdbcType=VARCHAR}
             </if>
+            <if test="orgId != null" >
+                and `org_id` = #{orgId,jdbcType=INTEGER}
+            </if>
             <if test="description != null" >
                 and `description` = #{description,jdbcType=VARCHAR}
-            </if>
-            <if test="locked != null" >
-                and `locked` = #{locked,jdbcType=INTEGER}
             </if>
             <if test="active != null" >
                 and `active` = #{active,jdbcType=INTEGER}
@@ -121,11 +121,11 @@
             <if test="credentialssalt != null" >
                 and `credentialsSalt` = #{credentialssalt,jdbcType=VARCHAR}
             </if>
+            <if test="orgId != null" >
+                and `org_id` = #{orgId,jdbcType=INTEGER}
+            </if>
             <if test="description != null" >
                 and `description` = #{description,jdbcType=VARCHAR}
-            </if>
-            <if test="locked != null" >
-                and `locked` = #{locked,jdbcType=INTEGER}
             </if>
             <if test="active != null" >
                 and `active` = #{active,jdbcType=INTEGER}
@@ -160,11 +160,11 @@
             <if test="credentialssalt != null" >
                 and `credentialsSalt` = #{credentialssalt,jdbcType=VARCHAR}
             </if>
+            <if test="orgId != null" >
+                and `org_id` = #{orgId,jdbcType=INTEGER}
+            </if>
             <if test="description != null" >
                 and `description` = #{description,jdbcType=VARCHAR}
-            </if>
-            <if test="locked != null" >
-                and `locked` = #{locked,jdbcType=INTEGER}
             </if>
             <if test="active != null" >
                 and `active` = #{active,jdbcType=INTEGER}
@@ -199,11 +199,11 @@
             <if test="credentialssalt != null" >
                 `credentialsSalt`,
             </if>
+            <if test="orgId != null" >
+                `org_id`,
+            </if>
             <if test="description != null" >
                 `description`,
-            </if>
-            <if test="locked != null" >
-                `locked`,
             </if>
             <if test="active != null" >
                 `active`,
@@ -233,11 +233,11 @@
             <if test="credentialssalt != null" >
                 #{credentialssalt,jdbcType=VARCHAR},
             </if>
+            <if test="orgId != null" >
+                #{orgId,jdbcType=INTEGER},
+            </if>
             <if test="description != null" >
                 #{description,jdbcType=VARCHAR},
-            </if>
-            <if test="locked != null" >
-                #{locked,jdbcType=INTEGER},
             </if>
             <if test="active != null" >
                 #{active,jdbcType=INTEGER},

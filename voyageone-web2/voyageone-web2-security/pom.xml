@@ -19,11 +19,7 @@
 			<artifactId>voyageone-com</artifactId>
 			<version>${voyageone.common.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>voyageone-web2-core</artifactId>
-			<version>${voyageone.web2.core.version}</version>
-		</dependency>
+
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-all</artifactId>

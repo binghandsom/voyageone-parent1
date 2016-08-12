@@ -7,14 +7,10 @@
  */
 package com.voyageone.security.model;
 
-import java.util.Date;
-
 /**
  * 
  */
 public class ComUserModel extends CoreBaseModel {
-    protected Integer id;
-
     /**
      * 用户姓名
      */
@@ -35,48 +31,17 @@ public class ComUserModel extends CoreBaseModel {
      */
     protected String credentialssalt;
 
+    protected Integer orgId;
+
     /**
      * 说明
      */
     protected String description;
 
     /**
-     * 锁定状态:1,锁定;0,未锁定
-     */
-    protected Integer locked;
-
-    /**
-     * 删除标识:1,激活;0,删除
+     * 删除标识:1,激活;0,禁用;2,锁定
      */
     protected Integer active;
-
-    /**
-     * 创建日期
-     */
-    protected Date created;
-
-    /**
-     * 创建人
-     */
-    protected String creater;
-
-    /**
-     * 修改日期
-     */
-    protected Date modified;
-
-    /**
-     * 修改人
-     */
-    protected String modifier;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getUserName() {
         return userName;
@@ -110,6 +75,14 @@ public class ComUserModel extends CoreBaseModel {
         this.credentialssalt = credentialssalt == null ? null : credentialssalt.trim();
     }
 
+    public Integer getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Integer orgId) {
+        this.orgId = orgId;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -118,51 +91,11 @@ public class ComUserModel extends CoreBaseModel {
         this.description = description == null ? null : description.trim();
     }
 
-    public Integer getLocked() {
-        return locked;
-    }
-
-    public void setLocked(Integer locked) {
-        this.locked = locked;
-    }
-
     public Integer getActive() {
         return active;
     }
 
     public void setActive(Integer active) {
         this.active = active;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public String getCreater() {
-        return creater;
-    }
-
-    public void setCreater(String creater) {
-        this.creater = creater == null ? null : creater.trim();
-    }
-
-    public Date getModified() {
-        return modified;
-    }
-
-    public void setModified(Date modified) {
-        this.modified = modified;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier == null ? null : modifier.trim();
     }
 }

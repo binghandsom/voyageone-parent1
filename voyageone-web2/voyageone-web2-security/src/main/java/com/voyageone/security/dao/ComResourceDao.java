@@ -27,6 +27,4 @@ public interface ComResourceDao {
     int update(ComResourceModel record);
 
     int delete(Integer id);
-
-    List<ComResourceModel> selectListByUserChannel(Integer userId, String channelId);
 }

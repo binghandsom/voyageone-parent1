@@ -3,8 +3,7 @@
 <mapper namespace="com.voyageone.security.dao.ComRoleDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.security.model.ComRoleModel" />
     <sql id="Base_Column_List" >
-        `id`, `role_name`, `role_key`, `channel_id`, `store_id`, `description`, `active`, 
-        `created`, `creater`, `modified`, `modifier`
+        `id`, `role_name`, `description`, `active`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -19,15 +18,6 @@
         <set >
             <if test="roleName != null" >
                 `role_name` = #{roleName,jdbcType=VARCHAR},
-            </if>
-            <if test="roleKey != null" >
-                `role_key` = #{roleKey,jdbcType=VARCHAR},
-            </if>
-            <if test="channelId != null" >
-                `channel_id` = #{channelId,jdbcType=VARCHAR},
-            </if>
-            <if test="storeId != null" >
-                `store_id` = #{storeId,jdbcType=VARCHAR},
             </if>
             <if test="description != null" >
                 `description` = #{description,jdbcType=VARCHAR},
@@ -67,15 +57,6 @@
             <if test="roleName != null" >
                 and `role_name` = #{roleName,jdbcType=VARCHAR}
             </if>
-            <if test="roleKey != null" >
-                and `role_key` = #{roleKey,jdbcType=VARCHAR}
-            </if>
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="storeId != null" >
-                and `store_id` = #{storeId,jdbcType=VARCHAR}
-            </if>
             <if test="description != null" >
                 and `description` = #{description,jdbcType=VARCHAR}
             </if>
@@ -106,15 +87,6 @@
             <if test="roleName != null" >
                 and `role_name` = #{roleName,jdbcType=VARCHAR}
             </if>
-            <if test="roleKey != null" >
-                and `role_key` = #{roleKey,jdbcType=VARCHAR}
-            </if>
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="storeId != null" >
-                and `store_id` = #{storeId,jdbcType=VARCHAR}
-            </if>
             <if test="description != null" >
                 and `description` = #{description,jdbcType=VARCHAR}
             </if>
@@ -141,15 +113,6 @@
         <where >
             <if test="roleName != null" >
                 and `role_name` = #{roleName,jdbcType=VARCHAR}
-            </if>
-            <if test="roleKey != null" >
-                and `role_key` = #{roleKey,jdbcType=VARCHAR}
-            </if>
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="storeId != null" >
-                and `store_id` = #{storeId,jdbcType=VARCHAR}
             </if>
             <if test="description != null" >
                 and `description` = #{description,jdbcType=VARCHAR}
@@ -178,15 +141,6 @@
             <if test="roleName != null" >
                 `role_name`,
             </if>
-            <if test="roleKey != null" >
-                `role_key`,
-            </if>
-            <if test="channelId != null" >
-                `channel_id`,
-            </if>
-            <if test="storeId != null" >
-                `store_id`,
-            </if>
             <if test="description != null" >
                 `description`,
             </if>
@@ -208,15 +162,6 @@
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="roleName != null" >
                 #{roleName,jdbcType=VARCHAR},
-            </if>
-            <if test="roleKey != null" >
-                #{roleKey,jdbcType=VARCHAR},
-            </if>
-            <if test="channelId != null" >
-                #{channelId,jdbcType=VARCHAR},
-            </if>
-            <if test="storeId != null" >
-                #{storeId,jdbcType=VARCHAR},
             </if>
             <if test="description != null" >
                 #{description,jdbcType=VARCHAR},
