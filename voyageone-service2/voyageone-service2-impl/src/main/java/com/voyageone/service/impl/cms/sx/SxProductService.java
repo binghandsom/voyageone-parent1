@@ -2050,26 +2050,26 @@ public class SxProductService extends BaseService {
 
                     Field field = processFields.get(0);
                     String platformPropId = field.getId();
-                    List<CmsMtChannelConditionConfigModel> conditionPropValueModels = conditionPropValueService.get(sxData.getChannelId(), platformPropId);
-
-                    //优先使用条件表达式
-                    if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
-                        if (field.getType() != FieldTypeEnum.MULTICHECK) {
-                            $error("tmall item shop_category's field(" + field.getId() + ") must be MultiCheckField");
-                        } else {
-                            MultiCheckField multiCheckField = (MultiCheckField) field;
-                            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-                            for (CmsMtChannelConditionConfigModel conditionPropValueModel : conditionPropValueModels) {
-                                String conditionExpressionStr = conditionPropValueModel.getConditionExpression();
-                                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
-                                String propValue = expressionParser.parse(conditionExpression, shopBean, user, null);
-                                if (propValue != null) {
-                                     multiCheckField.addValue(propValue);
-                                }
-                            }
-                            retMap.put(platformPropId, multiCheckField);
-                        }
-                    } else {
+//                    List<CmsMtChannelConditionConfigModel> conditionPropValueModels = conditionPropValueService.get(sxData.getChannelId(), platformPropId);
+//
+//                    //优先使用条件表达式
+//                    if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
+//                        if (field.getType() != FieldTypeEnum.MULTICHECK) {
+//                            $error("tmall item shop_category's field(" + field.getId() + ") must be MultiCheckField");
+//                        } else {
+//                            MultiCheckField multiCheckField = (MultiCheckField) field;
+//                            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+//                            for (CmsMtChannelConditionConfigModel conditionPropValueModel : conditionPropValueModels) {
+//                                String conditionExpressionStr = conditionPropValueModel.getConditionExpression();
+//                                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+//                                String propValue = expressionParser.parse(conditionExpression, shopBean, user, null);
+//                                if (propValue != null) {
+//                                     multiCheckField.addValue(propValue);
+//                                }
+//                            }
+//                            retMap.put(platformPropId, multiCheckField);
+//                        }
+//                    } else {
 //                        final String sellerCategoryPropId = "seller_cids";
 //                        String numIId = sxData.getPlatform().getNumIId();
 //                        if (!StringUtils.isEmpty(numIId)) {
@@ -2115,7 +2115,7 @@ public class SxProductService extends BaseService {
                             }
                             // modified by morse.lu 2016/06/21 end
 //                        }
-                    }
+//                    }
                     break;
                 }
                 case ITEM_STATUS: {
