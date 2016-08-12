@@ -1,15 +1,11 @@
 package com.voyageone.web2.admin.bean;
 
-import java.io.Serializable;
-
 /**
  * 系统的表单基本项，包括分页属性和表的公共字段等。
  * @author Wangtd
  * @since 2.0.0 2016/8/10
  */
-public class AdminFormBean implements Serializable {
-
-	private static final long serialVersionUID = -7885818140566802730L;
+public class AdminFormBean {
 	
 	/** 页码 */
 	private Integer pageNum;

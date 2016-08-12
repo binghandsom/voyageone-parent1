@@ -1,5 +1,8 @@
 package com.voyageone.service.bean.admin;
 
+import java.util.List;
+
+import com.voyageone.service.model.admin.CtCartModel;
 import com.voyageone.service.model.admin.TmOrderChannelModel;
 
 /**
@@ -8,14 +11,14 @@ import com.voyageone.service.model.admin.TmOrderChannelModel;
  */
 public class TmOrderChannelBean extends TmOrderChannelModel {
 	
-	private String cartNames;
+	private List<CtCartModel> carts;
 
-	public String getCartNames() {
-		return cartNames;
+	public List<CtCartModel> getCarts() {
+		return carts;
 	}
 
-	public void setCartNames(String cartNames) {
-		this.cartNames = cartNames;
+	public void setCarts(List<CtCartModel> carts) {
+		this.carts = carts;
 	}
-	
+
 }

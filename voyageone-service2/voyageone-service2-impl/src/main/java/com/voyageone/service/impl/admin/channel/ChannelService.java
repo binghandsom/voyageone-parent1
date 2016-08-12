@@ -68,23 +68,16 @@ public class ChannelService extends BaseService {
 		// 查询渠道信息
 		List<TmOrderChannelModel> channels = channelDaoExt.selectChannelByPage(params);
 		if (CollectionUtils.isNotEmpty(channels)) {
-			// 复制渠道信息，并添加渠道店铺名。
+			// 复制渠道信息，并添加渠道店铺对象。
 			List<TmOrderChannelBean> newChannels = new ArrayList<TmOrderChannelBean>();
 			for (int i = 0; i < channels.size(); i++) {
 				TmOrderChannelBean newChannel = new TmOrderChannelBean();
 				BeanUtils.copyProperties(channels.get(i), newChannel);
 				
-				// 取得渠道店铺ID对应的店铺名
+				// 取得渠道店铺ID对应的店铺对象
 				if (StringUtils.isNotBlank(newChannel.getCartIds())) {
 					List<CtCartModel> carts = cartService.getCartByIds(Arrays.asList(newChannel.getCartIds().split(",")));
-					if (CollectionUtils.isNotEmpty(carts)) {
-						// 取出店铺的名
-						String[] cartNames = new String[carts.size()];
-						for (int j = 0; j < carts.size(); j++) {
-							cartNames[j] = carts.get(j).getName();
-						}
-						newChannel.setCartNames(StringUtils.join(cartNames, "/"));
-					}
+					newChannel.setCarts(carts);
 				}
 				newChannels.add(newChannel);
 			}

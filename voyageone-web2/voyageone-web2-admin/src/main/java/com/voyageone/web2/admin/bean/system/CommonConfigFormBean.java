@@ -9,8 +9,6 @@ import com.voyageone.web2.admin.bean.AdminFormBean;
  */
 public class CommonConfigFormBean extends AdminFormBean {
 
-	private static final long serialVersionUID = -8013138820877334093L;
-	
 	private AdminConstants.ConfigType configType;
 	
 	private String channelId;
