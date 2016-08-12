@@ -237,6 +237,10 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                     throw new BusinessException("价格不能为空");
                 }
                 Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
+                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (newPriceSale * breakThreshold)).compareTo(comPrice.get(sku)) < 0) {
+                    return "4000094";
+                }
+
                 if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
                     return "4000091";
                 }

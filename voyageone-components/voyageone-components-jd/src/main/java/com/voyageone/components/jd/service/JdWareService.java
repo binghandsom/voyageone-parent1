@@ -657,6 +657,21 @@ public class JdWareService extends JdBase {
 
     /**
      * 商品上架
+     */
+    public WareUpdateListingResponse doWareUpdateListing(ShopBean shop, String wareId)  {
+        WareUpdateListingRequest request = new WareUpdateListingRequest();
+        // 商品id(必须)
+        request.setWareId(wareId);
+        // 流水号（无实际意义，不重复即可）
+        request.setTradeNo(DateTimeUtil.getNowTimeStamp());
+
+        // 调用京东商品上架API(360buy.ware.update.listing)
+        WareUpdateListingResponse response = reqApi(shop, request);
+        return response;
+    }
+
+    /**
+     * 商品上架
      *
      * @param shop ShopBean  店铺信息
      * @param wareId String  京东商品id
@@ -696,6 +711,21 @@ public class JdWareService extends JdBase {
         logger.error("调用京东API商品上架操作失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
                 + shop.getCart_id() + ",ware_id:" + wareId + ",errorMsg:" + ",response=null");
         return false;
+    }
+
+    /**
+     * 商品下架
+     */
+    public WareUpdateDelistingResponse doWareUpdateDelisting(ShopBean shop, String wareId) {
+        WareUpdateDelistingRequest request = new WareUpdateDelistingRequest();
+        // 商品id(必须)
+        request.setWareId(wareId);
+        // 流水号（无实际意义，不重复即可）
+        request.setTradeNo(DateTimeUtil.getNowTimeStamp());
+
+        // 调用京东商品下架API(360buy.ware.update.delisting)
+        WareUpdateDelistingResponse response = reqApi(shop, request);
+        return response;
     }
 
     /**
