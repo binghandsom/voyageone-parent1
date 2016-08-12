@@ -14,8 +14,6 @@ import com.voyageone.components.tmall.TbBase;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,6 +42,8 @@ public class TbSaleService extends TbBase {
         if (response == null) {
             return null;
         }
+        Object[] objs = { strOrderChannelId, strCardId, response.getErrorCode()==null ? "total=" + response.getTotalResults() : response.getBody() };
+        logger.info("getOnsaleProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
         return response.getItems();
     }
 
@@ -69,6 +69,8 @@ public class TbSaleService extends TbBase {
         if (response == null) {
             return null;
         }
+        Object[] objs = { strOrderChannelId, strCardId, response.getErrorCode()==null ? "total=" + response.getTotalResults() : response.getBody() };
+        logger.info("getInventoryProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
         return response.getItems();
     }
 }
