@@ -18,6 +18,7 @@
 		<!-- 自动匹配Mapper映射文件 -->
 		<property name="mapperLocations" value="classpath*:com/voyageone/security/dao/mybatis/mappers/*.xml"/>
 		<property name="typeAliasesPackage" value="com.voyageone.security.model"/>
+		<property name="configLocation" value="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"/>
 	</bean>
 
 	<!-- 通过扫描的模式，扫描目录在com.lanyuan.mapper目录下，所有的mapper都继承SqlMapper接口的接口， 这样一个bean就可以了 -->
@@ -94,15 +95,26 @@
 		<!-- Shiro的核心安全接口，这个属性是必须的 -->
 		<property name="securityManager" ref="securityManager"></property>
 		<!-- 要求登录时的链接(登录页面地址)，非必须的属性，默认会自动寻找Web工程根目录下的"/login.jsp"页面 -->
-		<property name="loginUrl" value="/security/login"></property>
+		<property name="loginUrl" value="/"></property>
 		<!-- 登录成功后要跳转的连接(本例中此属性用不到，因为登录成功后的处理逻辑在LoginController里硬编码) -->
 		<!-- <property name="successUrl" value="/" ></property> -->
 		<!-- 用户访问未对其授权的资源时，所显示的连接 -->
 		<property name="unauthorizedUrl" value="/"></property>
+		<property name="filterChainDefinitionMap" ref="chainDefinitionSectionMetaSource" />
+	</bean>
+
+	<!--自定义filterChainDefinitionMap -->
+	<bean id="chainDefinitionSectionMetaSource" class="com.voyageone.security.shiro.ChainDefinitionSectionMetaSource">
 		<property name="filterChainDefinitions">
 			<value>
-				/security/*=anon
-				/tag=authc
+				/components/** = anon
+				/libs/** = anon
+				/modules/** = anon
+				/static/** = anon
+				/login.html = anon
+				/login.js = anon
+				/channel.html = anon
+				/channel.js = anon
 			</value>
 		</property>
 	</bean>

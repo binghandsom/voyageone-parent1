@@ -2,6 +2,8 @@ package com.voyageone.web2.core.views.user;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
+import com.voyageone.security.dao.ComUserConfigDao;
+import com.voyageone.security.model.ComUserConfigModel;
 import com.voyageone.service.bean.com.ChannelPermissionBean;
 import com.voyageone.service.bean.com.PermissionBean;
 import com.voyageone.service.bean.com.UserBean;
@@ -16,6 +18,8 @@ import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -36,7 +40,13 @@ public class UserService extends BaseAppService {
     private UserDao userDao;
 
     @Autowired
+    private ComUserConfigDao comUserConfigDao;
+
+    @Autowired
     private UserConfigDao userConfigDao;
+
+
+
 
     public UserSessionBean login(String username, String password, int timezone) {
 
@@ -59,7 +69,7 @@ public class UserService extends BaseAppService {
         userSessionBean.setUserId(userBean.getId());
         userSessionBean.setUserName(userBean.getUsername());
         userSessionBean.setTimeZone(timezone);
-        userSessionBean.setUserConfig(getUserConfig(userBean.getId()));
+//        userSessionBean.setUserConfig(getUserConfig(userBean.getId()));
 
         return userSessionBean;
     }
@@ -105,8 +115,25 @@ public class UserService extends BaseAppService {
         return languageInfo != null && languageInfo.size() > 0 ? languageInfo.get(0).getCfg_val1() : "cn";
     }
 
-    private Map<String , List<UserConfigBean>> getUserConfig(int userId) {
-        List<UserConfigBean> ret = userConfigDao.select(userId);
+    public Map<String , List<UserConfigBean>> getUserConfig(int userId) {
+//        List<UserConfigBean> ret = userConfigDao.select(userId);
+//        return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
+
+        Map map = new HashMap<>();
+        map.put("userId", userId);
+        map.put("active", true);
+        List<ComUserConfigModel>  list =  comUserConfigDao.selectList(map);
+        List<UserConfigBean> ret = new ArrayList<>();
+
+        for(ComUserConfigModel model : list)
+        {
+            UserConfigBean bean = new UserConfigBean();
+            bean.setCfg_name(model.getCfgName());
+            bean.setCfg_val1(model.getCfgVal1());
+            bean.setCfg_val2(model.getCfgVal2());
+            bean.setComment(model.getComment());
+            bean.setUser_id(model.getUserId());
+        }
         return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
     }
 
