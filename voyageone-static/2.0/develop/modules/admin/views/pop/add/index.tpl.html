@@ -1,8 +1,8 @@
-<div class="vo_modal">
+<div class="vo_modal" ng-init="ctrl.init()">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="fa fa-codepen"></i>&nbsp;{{'TXT_POP_ADD' | translate}}</h5>
+        <h5 class="modal-title"><i class="fa fa-edit"></i>&nbsp;{{'TXT_POP_EDIT' | translate}}</h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
@@ -11,7 +11,9 @@
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_CART_COMPANY_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <input class="form-control"/>
+                            <select class="form-control" ng-model="ctrl.searchInfo.company" ng-options="cart.id as cart.company for cart in ctrl.companyAllList">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            </select>
                         </div>
                     </div>
                     <div class="row form-group">
@@ -25,15 +27,6 @@
                         <div class="col-sm-8">
                             <input class="form-control"/>
                         </div>
-                    </div>
-                    <div class="row form-group">
-                        <label class="col-sm-3 control-label">{{'TXT_CART_FULL_NAME' | translate}}</label>
-                        <div class="col-sm-8">
-                            <input class="form-control"/>
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_CART' | translate}}：</label>
                     </div>
                 </div>
             </div>
@@ -57,34 +50,10 @@
                             <input class="form-control"/>
                         </div>
                     </div>
-                    <div class="row form-group">
-                        <label class="col-sm-3 control-label">{{'TXT_SHIPPER_ADDRESS' | translate}}</label>
-                        <div class="col-sm-8">
-                            <input class="form-control"/>
-                        </div>
-                    </div>
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-horizontal">
-                    <div class="row form-group">
-                        <label class="col-sm-3 control-label">{{'TXT_ICON_ADDRESS' | translate}}</label>
-                        <div class="col-sm-8">
-                            <input class="form-control"/>
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <label class="col-sm-3 control-label">{{'TXT_SECRET_KEY' | translate}}</label>
-                        <div class="col-sm-8">
-                            <input class="form-control"/>
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <label class="col-sm-3 control-label vo_a_ce" >{{'TXT_SESSION_KEY' | translate}}</label>
-                        <div class="col-sm-8">
-                            <input class="form-control"/>
-                        </div>
-                    </div>
                     <div class="row form-group">
                         <label class="col-sm-4 control-label">{{'TXT_STATUS' | translate}}</label>
                         <div class="col-sm-8">
@@ -107,27 +76,76 @@
                             </label>
                         </div>
                     </div>
+                    <div class="row form-group">
+                        <label class="col-sm-3 control-label">{{'TXT_ICON_ADDRESS' | translate}}</label>
+                        <div class="col-sm-8">
+                            <input class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="col-sm-4">
+                    <div class="row form-group">
+                        <label class="col-sm-3 control-label">{{'TXT_CART_FULL_NAME' | translate}}</label>
+                        <div class="col-sm-8">
+                            <input class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="row form-group">
+                        <label class="col-sm-2 control-label" style="margin-left: -24px;">{{'TXT_SHIPPER_ADDRESS' | translate}}</label>
+                        <div class="col-sm-9">
+                            <input class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="row form-group">
+                    <label class="col-sm-1 control-label">{{'TXT_SECRET_KEY' | translate}}</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" ng-model="ctrl.secretKey" readonly/>
+                    </div>
+                    <button class="btn btn-info btn-pop col-sm-1" ng-click="ctrl.generate('secrect')">生成</button>
+                </div>
+                <div class="row form-group">
+                    <label class="col-sm-1 control-label vo_a_ce" >{{'TXT_SESSION_KEY' | translate}}</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" ng-model="ctrl.sessionKey" readonly/>
+                    </div>
+                    <button class="btn btn-info btn-pop col-sm-1" ng-click="ctrl.generate()">生成</button>
                 </div>
             </div>
         </form>
         <div class="box-body-new">
             <div class="form-horizontal">
                 <div class="row form-group">
-                    <div class="col-sm-10 col-sm-offset-1">
+                    <label class="col-sm-1 control-label">{{'TXT_CART_CHANNEL_CART' | translate}}：</label>
+                    <div class="col-sm-10">
                         <div class="col-sm-5">
                             <div class="column_overflow col-sm-12" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
-                                <div class="col-sm-12">  </div>
+                                <div class="col-sm-12">
+                                    <ul class="list-unstyled">
+                                        <li class="btn-block"></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                         <div class="col-sm-2">
-                            <div class="form-group"><button class="btn btn-default col-sm-10 col-sm-offset-1"><i class="fa fa-angle-double-left"></i></button> </div>
-                            <div class="form-group"><button class="btn btn-default col-sm-10 col-sm-offset-1"><i class="fa fa-angle-left"></i></button></div>
-                            <div class="form-group"><button class="btn btn-default col-sm-10 col-sm-offset-1"><i class="fa fa-angle-right"></i></button></div>
-                            <div class="form-group"><button class="btn btn-default col-sm-10 col-sm-offset-1"><i class="fa fa-angle-double-right"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1"><i class="fa fa-angle-double-left"></i></button> </div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1"><i class="fa fa-angle-left"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1"><i class="fa fa-angle-right"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1"><i class="fa fa-angle-double-right"></i></button></div>
                         </div>
                         <div class="col-sm-5">
                             <div class="column_overflow col-sm-12" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
-                                <div class="col-sm-12">  </div>
+                                <div class="col-sm-12">
+                                    <ul class="list-unstyled">
+                                        <li class="btn-block" ng-repeat="cart in ctrl.cartAllList">{{cart.name}}</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
