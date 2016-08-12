@@ -208,6 +208,7 @@
         </where>
     </select>
 
+
     <insert id="insert" parameterType="com.voyageone.security.model.ComResourceModel" useGeneratedKeys="true" keyProperty="id" >
         insert into com_resource
         <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -301,5 +302,16 @@
             </if>
         </trim>
     </insert>
+
+    <select id="selectListByUserChannel" resultType="com.voyageone.security.model.ComResourceModel">
+        select
+        <include refid="Base_Column_List" />
+        from com_resource
+        <where >
+              `res_name` = #{resName,jdbcType=VARCHAR}
+
+        </where>
+
+    </select>
 
 </mapper>

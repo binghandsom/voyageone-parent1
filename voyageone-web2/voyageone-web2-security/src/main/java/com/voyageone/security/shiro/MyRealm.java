@@ -1,10 +1,14 @@
 package com.voyageone.security.shiro;
 
+import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.dao.ComUserDao;
+import com.voyageone.security.model.ComResourceModel;
 import com.voyageone.security.model.ComUserModel;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.Permission;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -13,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * 自定义Realm,进行数据源配置
@@ -20,13 +25,11 @@ import java.util.HashMap;
  */
 public class MyRealm extends AuthorizingRealm {
 
-//	@Inject
-//	private ResourcesMapper resourcesMapper;
-//
-
-
 	@Autowired
 	private ComUserDao comUserDao;
+
+	@Autowired
+	private ComResourceDao comResourceDao;
 
 	/**
 	 * 只有需要验证权限时才会调用, 授权查询回调函数, 进行鉴权但缓存中无用户的授权信息时调用.在配有缓存的情况下，只加载一次.
@@ -34,22 +37,22 @@ public class MyRealm extends AuthorizingRealm {
 	@Override
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
 		String loginName = SecurityUtils.getSubject().getPrincipal().toString();
-//		if (loginName != null) {
-//			String userId = SecurityUtils.getSubject().getSession().getAttribute("userSessionId").toString();
-//			List<ResFormMap> rs = resourcesMapper.findUserResourcess(userId);
-//			// 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
-//			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-//			// 用户的角色集合
-//			// info.addRole("default");
-//			// 用户的角色集合
-//			// info.setRoles(user.getRolesName());
-//			// 用户的角色对应的所有权限，如果只使用角色定义访问权限
-//			for (ResFormMap resources : rs) {
-//				info.addStringPermission(resources.get("resKey").toString());
-//			}
-//
-//			return info;
-//		}
+		if (loginName != null) {
+			Integer userId = Integer.valueOf(SecurityUtils.getSubject().getSession().getAttribute("userSessionId").toString());
+			String  channelId = SecurityUtils.getSubject().getSession().getAttribute("channelId").toString();
+			List<ComResourceModel> resources = comResourceDao.selectListByUserChannel(userId, channelId);
+			// 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
+			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+			// 用户的角色集合
+			// info.addRole("default");
+			// 用户的角色集合
+			// info.setRoles(user.getRolesName());
+			// 用户的角色对应的所有权限，如果只使用角色定义访问权限
+			for (ComResourceModel res : resources) {
+				info.addStringPermission(res.getResKey());
+			}
+			return info;
+		}
 		return null;
 	}
 
@@ -85,7 +88,7 @@ public class MyRealm extends AuthorizingRealm {
 			);
 			// 当验证都通过后，把用户信息放在session里
 			Session session = SecurityUtils.getSubject().getSession();
-			session.setAttribute("userSession",userModel);
+			session.setAttribute("userModel",userModel);
 			return authenticationInfo;
 		} else {
 			throw new UnknownAccountException();// 没找到帐号
