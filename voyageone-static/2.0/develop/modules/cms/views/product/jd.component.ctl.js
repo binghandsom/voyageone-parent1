@@ -346,6 +346,10 @@ define([
                 }
 
                 /**
+                 *
+                 *
+                 *
+                 *
                  * 右侧导航栏
                  * @param index div的index
                  * @param speed 导航速度 ms为单位
