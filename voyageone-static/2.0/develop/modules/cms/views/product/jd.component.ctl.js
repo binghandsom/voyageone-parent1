@@ -322,6 +322,9 @@ define([
                             return;
                         }
 
+                        if(resp.code == "4000094")
+                            return;
+
                         confirm(resp.message + ",是否强制保存").then(function () {
                             productDetailService.updateProductPlatform({prodId:scope.productInfo.productId,platform:scope.vm.platform}).then(function(resp){
                                 scope.vm.platform.modified = resp.data.modified;
