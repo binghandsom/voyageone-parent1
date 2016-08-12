@@ -78,10 +78,8 @@ public class UserController extends BaseController {
         userSessionBean.setUserName(userModel.getUserAccount());
         userSessionBean.setTimeZone(timezone);
         userSessionBean.setUserConfig(userService.getUserConfig(userModel.getId()));
-
         session.setAttribute(BaseConstants.SESSION_USER, userSessionBean);
-//        session.setAttribute(BaseConstants.SESSION_LANG, userService.getUserLanguage(userSessionBean));
-        session.setAttribute(BaseConstants.SESSION_LANG, "cn");
+        session.setAttribute(BaseConstants.SESSION_LANG, userService.getUserLanguage(userSessionBean));
 
 
 

@@ -2,7 +2,10 @@ package com.voyageone.web2.core.views.user;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
+import com.voyageone.security.bean.ComChannelPermissionBean;
 import com.voyageone.security.dao.ComUserConfigDao;
+import com.voyageone.security.dao.ViewUserResDao;
+import com.voyageone.security.daoext.ComUserDaoExt;
 import com.voyageone.security.model.ComUserConfigModel;
 import com.voyageone.service.bean.com.ChannelPermissionBean;
 import com.voyageone.service.bean.com.PermissionBean;
@@ -42,8 +45,12 @@ public class UserService extends BaseAppService {
     @Autowired
     private ComUserConfigDao comUserConfigDao;
 
+
     @Autowired
-    private UserConfigDao userConfigDao;
+    private ComUserDaoExt comUserDaoExt;
+
+//    @Autowired
+//    private UserConfigDao userConfigDao;
 
 
 
@@ -75,7 +82,31 @@ public class UserService extends BaseAppService {
     }
 
     public List<ChannelPermissionBean> getPermissionCompany(UserSessionBean userSessionBean) {
-        return userDao.selectPermissionChannel(userSessionBean.getUserName());
+
+
+        List<ComChannelPermissionBean>  list =  comUserDaoExt.selectPermissionChannel(userSessionBean.getUserId());
+
+        List<ChannelPermissionBean>  ret = new ArrayList<>();
+
+        for(ComChannelPermissionBean  model : list)
+        {
+            ChannelPermissionBean  bean = new ChannelPermissionBean();
+            bean.setApps(model.getApps());
+            bean.setChannelId(model.getChannelId());
+            bean.setChannelImgUrl(model.getChannelImgUrl());
+            bean.setCompanyId(model.getCompanyId());
+            bean.setChannelName(model.getChannelName());
+            bean.setCompanyName(model.getCompanyName());
+            bean.setApps(model.getApps());
+            ret.add(bean);
+        }
+
+        return ret;
+
+//        return userDao.selectPermissionChannel(userSessionBean.getUserName());
+
+
+
     }
 
     public void setSelectChannel(UserSessionBean user, String channelId,String applicationId,String application) {
@@ -133,6 +164,7 @@ public class UserService extends BaseAppService {
             bean.setCfg_val2(model.getCfgVal2());
             bean.setComment(model.getComment());
             bean.setUser_id(model.getUserId());
+            ret.add(bean);
         }
         return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
     }
