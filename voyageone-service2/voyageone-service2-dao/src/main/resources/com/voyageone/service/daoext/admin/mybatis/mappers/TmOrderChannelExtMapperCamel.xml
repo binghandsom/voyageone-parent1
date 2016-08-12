@@ -7,13 +7,13 @@
     
     <sql id="selectChannelFilter">
     	<where>
-            <if test="orderChannelId != null" >
+            <if test="orderChannelId != null and orderChannelId != ''" >
             	and order_channel_id = #{orderChannelId}
             </if>
             <if test="companyId != null" >
                 and company_id = #{companyId}
             </if>
-            <if test="channelName != null">
+            <if test="channelName != null and channelName != ''">
             	and (
             		name like concat('%', #{channelName}, '%') or full_name like concat('%', #{channelName}, '%')
             	)
@@ -39,7 +39,7 @@
             <if test="sessionKey != null" >
                 and session_key = #{sessionKey}
             </if>
-            <if test="isUsjoi != null" >
+            <if test="isUsjoi != null and isUsjoi != ''" >
                 and is_usjoi = #{isUsjoi}
             </if>
             <if test="cartIds != null" >
