@@ -150,5 +150,5 @@
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->
-    <task:scheduler id="cms-job-scheduler" pool-size="3"/>
+    <task:scheduler id="cms-job-scheduler" pool-size="10"/>
 </beans>
