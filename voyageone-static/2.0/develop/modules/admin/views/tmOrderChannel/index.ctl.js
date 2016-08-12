@@ -20,7 +20,7 @@ define([
             this.tempChannelSelect = null;
             this.searchInfo = {
                 channelId: '',
-                channelFullName: '',
+                channelName: '',
                 isUsjoi: '',
                 pageInfo: this.channelPageOption
             }
@@ -35,20 +35,16 @@ define([
                 var self = this;
                 self.channelService.searchChannelByPage({
                         'pageNum': self.searchInfo.pageInfo.curr,
-                        'pageSize': self.searchInfo.pageInfo.size
+                        'pageSize': self.searchInfo.pageInfo.size,
+                        'channelId': self.searchInfo.channelId,
+                        'channelName': self.searchInfo.channelName,
+                        'isUsjoi': self.searchInfo.isUsjoi
                     })
                     .then(function (res) {
                         self.channelList = res.data.result;
                         self.channelPageOption.total = res.data.count;
-                        var tempCartList = [];
-                        for (var i = 0; i < self.channelList.length; i++) {
-                            if (self.channelList[i].carts == null) return;
-                            self.channelList[i].carts.map(function (item) {
-                                tempCartList.push(item.name);
-                            });
-                            _.extend(self.channelList[i], {'cartName': tempCartList.join('/')});
-                        }
 
+                        // 设置勾选框
                         if (self.tempChannelSelect == null) {
                             self.tempChannelSelect = new self.selectRowsFactory();
                         } else {
@@ -63,6 +59,16 @@ define([
                             }
                         });
                         self.channelSelList = self.tempChannelSelect.selectRowsInfo;
+
+                        // 设置cartName
+                        for (var i = 0; i < self.channelList.length; i++) {
+                            var tempCartList = [];
+                            if (self.channelList[i].carts == null) return;
+                            self.channelList[i].carts.map(function (item) {
+                                tempCartList.push(item.name);
+                            });
+                            _.extend(self.channelList[i], {'cartName': tempCartList.join('/')});
+                        }
                     })
             },
             clear: function () {

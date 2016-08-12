@@ -9,6 +9,6 @@ import com.voyageone.web2.admin.AdminController;
  * @since 2.0.0 2016/8/9
  */
 @RestController
-public class TypeValueController extends AdminController {
+public class CommonAttributeController extends AdminController {
 
 }

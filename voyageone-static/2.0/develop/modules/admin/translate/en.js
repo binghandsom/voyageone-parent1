@@ -3,6 +3,7 @@ define(function () {
         /**渠道管理-渠道信息一览*/
         "TXT_CART_MANAGEMENT": "渠道管理",
         "TXT_CART_INFO_MANAGEMENT": "渠道信息管理",
+        "TXT_CART_INFO_MANAGEMENT_CONFIG": "渠道信息管理-配置",
         "TXT_CART_COMPANY_NAME": "公司名",
         "TXT_CART_FULL_NAME": "渠道(全)名",
         "TXT_CART_SEND_NAME": "发送名",
