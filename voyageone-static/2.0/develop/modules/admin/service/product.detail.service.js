@@ -7,12 +7,12 @@
  */
 
 define([
-	'cms',
+	'admin',
 	'underscore',
-	'modules/cms/enums/Status'
-],function (cms, _) {
+	'modules/admin/enums/Status'
+],function (admin, _) {
 
-	cms.service("productDetailService", productDetailService);
+	admin.service("productDetailService", productDetailService);
 
 	function productDetailService ($q, $productDetailService, $filter) {
 

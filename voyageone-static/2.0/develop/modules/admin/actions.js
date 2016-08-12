@@ -29,6 +29,24 @@ define(function () {
     }
 
     return {
-        
+        "admin": {
+            "channel": {
+                "channelService": {
+                    "root": "/admin/channel/self",
+                    "getAllChannel": 'getAllChannel',
+                    "getAllCompany": 'getAllCompany',
+                    "addOrUpdateChannel": "addOrUpdateChannel",
+                    "searchChannel": "searchChannel",
+                    "generateSecretKey": "generateSecretKey",
+                    "generateSessionKey": "generateSessionKey"
+                }
+            },
+            "cart": {
+                "AdminCartService": {
+                    "root": "/admin/cart/self",
+                    "getAllCart": "getAllCart"
+                }
+            }
+        }
     };
 });

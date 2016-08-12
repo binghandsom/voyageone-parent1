@@ -5,12 +5,12 @@
  * @Version: 2.0.0
  */
 define([
-    'cms',
-    'modules/cms/enums/Carts',
-    'modules/cms/enums/FeedStatus'
-], function (cms, Carts, FeedStatus) {
+    'admin',
+    'modules/admin/enums/Carts',
+    'modules/admin/enums/FeedStatus'
+], function (admin, Carts, FeedStatus) {
     'use strict';
-    return cms.directive("keyValue", function($translate) {
+    return admin.directive("keyValue", function($translate) {
         return {
             restrict: "E",
             require: '^ngModel',

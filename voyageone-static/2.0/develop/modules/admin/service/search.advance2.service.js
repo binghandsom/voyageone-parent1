@@ -5,8 +5,8 @@
 define([
     'angularAMD',
     'underscore',
-    'modules/cms/enums/Carts',
-    'modules/cms/enums/PlatformStatus'
+    'modules/admin/enums/Carts',
+    'modules/admin/enums/PlatformStatus'
 ], function (angularAMD, _, Carts, PlatformStatus) {
     angularAMD.service('searchAdvanceService2', searchAdvanceService2);
 
@@ -78,7 +78,7 @@ define([
                     alert("创建文件时出错。");
                 }
             }
-            $.download.post(cActions.cms.search.$searchAdvanceService2.root + cActions.cms.search.$searchAdvanceService2.exportProducts, {params: JSON.stringify(data)}, _exportFileCallback);
+            $.download.post(cActions.admin.search.$searchAdvanceService2.root + cActions.admin.search.$searchAdvanceService2.exportProducts, {params: JSON.stringify(data)}, _exportFileCallback);
         }
 
         /**

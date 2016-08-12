@@ -21,6 +21,12 @@ define([
             "controllerUrl": "modules/admin/views/pop/add/index.ctl",
             "controller": 'AddController as ctrl',
             "size": 'lg'
+        },
+        "createEdit": {
+            "templateUrl": "views/pop/createEdit/index.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/createEdit/index.ctl",
+            "controller": 'CreateEditController as ctrl',
+            "size": 'md'
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -51,6 +57,12 @@ define([
          */
         $scope.openAdd = function openAdd(context) {
             return openModal(popActions.add, context);
+        };
+        /**
+         * 打开创建编辑页面
+         */
+        $scope.openCreateEdit = function openCreateEdit(context) {
+            return openModal(popActions.createEdit, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {
