@@ -44,7 +44,8 @@ define(function () {
             "cart": {
                 "AdminCartService": {
                     "root": "/admin/cart/self",
-                    "getAllCart": "getAllCart"
+                    "getAllCart": "getAllCart",
+                    "getCartByIds":"getCartByIds"
                 }
             },
             "config": {
