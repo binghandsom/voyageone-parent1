@@ -16,7 +16,7 @@ public class AdminFormBean {
 	private Integer active;
 	
 	/** 区分保存动作 */
-	private Boolean modified;
+	private Boolean append;
 	
 	public Integer getPageNum() {
 		return pageNum;
@@ -42,12 +42,12 @@ public class AdminFormBean {
 		this.active = active;
 	}
 
-	public Boolean getModified() {
-		return modified;
+	public Boolean getAppend() {
+		return append;
 	}
 
-	public void setModified(Boolean modified) {
-		this.modified = modified;
+	public void setAppend(Boolean append) {
+		this.append = append;
 	}
 	
 }

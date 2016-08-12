@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.impl.admin.channel.ChannelService;
 import com.voyageone.service.model.admin.PageModel;
 import com.voyageone.service.model.admin.TmOrderChannelConfigModel;
@@ -63,64 +64,72 @@ public class CommonConfigController extends AdminController {
 	
 	@RequestMapping(AdminUrlConstants.System.CommonConfig.ADD_OR_UPDATE_CONFIG)
 	public AjaxResponse addOrUpdateConfig(@RequestBody CommonConfigFormBean form) {
-		Map<String, Object> result = new HashMap<String, Object>();
 		// 验证配置类型参数
 		Preconditions.checkNotNull(form.getConfigType());
-		Preconditions.checkNotNull(form.getModified());
+		Preconditions.checkNotNull(form.getAppend());
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgName()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgVal1()));
-		boolean success = false;
-		switch (form.getConfigType()) {
-		// 按类型保存配置信息
-		case Channel:
-			TmOrderChannelConfigModel model = new TmOrderChannelConfigModel();
-			BeanUtils.copyProperties(form, model);
-			success = channelService.addOrUpdateChannelConfig(model, form.getModified());
-			break;
-		case ChannelCart:
-			break;
-		case Port:
-			break;
-		case Store:
-			break;
-		case Task:
-			break;
-		default:
-			break;
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put(SUCCESS, false);
+		try {
+			switch (form.getConfigType()) {
+			// 按类型保存配置信息
+			case Channel:
+				TmOrderChannelConfigModel model = new TmOrderChannelConfigModel();
+				BeanUtils.copyProperties(form, model);
+				channelService.addOrUpdateChannelConfig(model, form.getAppend());
+				break;
+			case ChannelCart:
+				break;
+			case Port:
+				break;
+			case Store:
+				break;
+			case Task:
+				break;
+			default:
+				break;
+			}
+			result.put(SUCCESS, true);
+		} catch (BusinessException e) {
+			result.put(MESSAGE, e.getMessage());
 		}
-		// 设置保存结果
-		result.put("success", success);
 		
 		return success(result);
 	}
 	
 	@RequestMapping(AdminUrlConstants.System.CommonConfig.DELETE_CONFIG)
 	public AjaxResponse deleteConfig(@RequestBody CommonConfigFormBean form) {
-		Map<String, Object> result = new HashMap<String, Object>();
 		// 验证配置类型参数
 		Preconditions.checkNotNull(form.getConfigType());
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgName()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgVal1()));
-		boolean success = false;
-		switch (form.getConfigType()) {
-		// 按类型保存配置信息
-		case Channel:
-			Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
-			success = channelService.deleteChannelConfig(form.getChannelId(), form.getCfgName(), form.getCfgVal1());
-			break;
-		case ChannelCart:
-			break;
-		case Port:
-			break;
-		case Store:
-			break;
-		case Task:
-			break;
-		default:
-			break;
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put(SUCCESS, false);
+		try {
+			switch (form.getConfigType()) {
+			// 按类型保存配置信息
+			case Channel:
+				Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
+				channelService.deleteChannelConfig(form.getChannelId(), form.getCfgName(), form.getCfgVal1());
+				break;
+			case ChannelCart:
+				break;
+			case Port:
+				break;
+			case Store:
+				break;
+			case Task:
+				break;
+			default:
+				break;
+			}
+			result.put(SUCCESS, true);
+		} catch (BusinessException e) {
+			result.put(MESSAGE, e.getMessage());
 		}
-		// 设置删除结果
-		result.put("success", success);
 		
 		return success(result);
 	}

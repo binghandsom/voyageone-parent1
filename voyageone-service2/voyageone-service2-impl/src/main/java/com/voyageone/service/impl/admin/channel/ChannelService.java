@@ -58,7 +58,7 @@ public class ChannelService extends BaseService {
 	}
 	
 	public PageModel<TmOrderChannelBean> searchChannelByPage(String channelId, String channelName, Integer isUsjoi,
-			int pageNum, int pageSize) throws Exception {
+			Integer pageNum, Integer pageSize) throws Exception {
 		PageModel<TmOrderChannelBean> pageModel = new PageModel<TmOrderChannelBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -66,7 +66,7 @@ public class ChannelService extends BaseService {
 		params.put("channelName", channelName);
 		params.put("isUsjoi", isUsjoi);
 		// 判断查询结果是否分页
-		if (pageNum > 0 && pageSize > 0) {
+		if (pageNum != null && pageSize != null) {
 			pageModel.setCount(channelDaoExt.selectChannelCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
@@ -96,32 +96,36 @@ public class ChannelService extends BaseService {
 		return channelDaoExt.selectAllCompany();
 	}
 
-	public boolean addOrUpdateChannel(TmOrderChannelModel model, boolean modified) {
+	public void addOrUpdateChannel(TmOrderChannelModel model, boolean append) {
 		TmOrderChannelModel channel = channelDao.select(model.getOrderChannelId());
 		// 保存渠道信息
 		boolean success = false;
-		if (modified) {
-			// 更新渠道信息
-			if (channel == null) {
-				throw new BusinessException("更新的渠道信息已存在");
-			}
-			success = channelDao.update(model) > 0;
-		} else {
+		if (append) {
 			// 添加渠道信息
 			if (channel != null) {
 				throw new BusinessException("添加的渠道信息已存在");
 			}
 			success = channelDao.insert(model) > 0;
+		} else {
+			// 更新渠道信息
+			if (channel == null) {
+				throw new BusinessException("更新的渠道信息已存在");
+			}
+			success = channelDao.update(model) > 0;
 		}
 		
-		return success;
+		if (!success) {
+			throw new BusinessException("保存渠道信息失败");
+		}
 	}
 
-	public Object deleteChannel(String channelId) {
+	public void deleteChannel(String channelId) {
 		TmOrderChannelModel model = new TmOrderChannelModel();
 		model.setOrderChannelId(channelId);
 		model.setActive(0);
-		return channelDao.update(model) > 0;
+		if (channelDao.update(model) > 0) {
+			throw new BusinessException("删除渠道信息失败");
+		}
 	}
 
 	public List<TmOrderChannelConfigModel> searchChannelConfig(String channelId, String cfgName, String cfgVal) {
@@ -129,7 +133,7 @@ public class ChannelService extends BaseService {
 	}
 	
 	public PageModel<TmOrderChannelConfigModel> searchChannelConfigByPage(String channelId, String cfgName,
-			String cfgVal, int pageNum, int pageSize) {
+			String cfgVal, Integer pageNum, Integer pageSize) {
 		PageModel<TmOrderChannelConfigModel> pageModel = new PageModel<TmOrderChannelConfigModel>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -137,7 +141,7 @@ public class ChannelService extends BaseService {
 		params.put("cfgName", cfgName);
 		params.put("cfgVal", cfgVal);
 		// 判断查询结果是否分页
-		if (pageNum > 0 && pageSize > 0) {
+		if (pageNum != null && pageSize != null) {
 			pageModel.setCount(channelDaoExt.selectChannelConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
@@ -147,7 +151,7 @@ public class ChannelService extends BaseService {
 		return pageModel;
 	}
 
-	public boolean addOrUpdateChannelConfig(TmOrderChannelConfigModel model, boolean modified) {
+	public void addOrUpdateChannelConfig(TmOrderChannelConfigModel model, boolean append) {
 		// 查询渠道配置信息
 		TmOrderChannelConfigKey configKey = new TmOrderChannelConfigKey();
 		configKey.setOrderChannelId(model.getOrderChannelId());
@@ -157,31 +161,35 @@ public class ChannelService extends BaseService {
 
 		// 保存渠道配置信息
 		boolean success = false;
-		if (modified) {
-			// 更新渠道配置信息
-			if (channelConfig == null) {
-				throw new BusinessException("更新的渠道配置信息不存在");
-			}
-			success = channelConfigDao.update(model) > 0;
-		} else {
+		if (append) {
 			// 添加渠道配置信息
 			if (channelConfig != null) {
 				throw new BusinessException("添加的渠道配置信息已存在");
 			}
 			success = channelConfigDao.insert(model) > 0;
+		} else {
+			// 更新渠道配置信息
+			if (channelConfig == null) {
+				throw new BusinessException("更新的渠道配置信息不存在");
+			}
+			success = channelConfigDao.update(model) > 0;
 		}
 		
-		return success;
+		if (!success) {
+			throw new BusinessException("保存渠道配置信息失败");
+		}
 	}
 
-	public boolean deleteChannelConfig(String channelId, String cfgName, String cfgVal1) {
+	public void deleteChannelConfig(String channelId, String cfgName, String cfgVal1) {
 		// 设置删除渠道配置的主键
 		TmOrderChannelConfigKey configKey = new TmOrderChannelConfigKey();
 		configKey.setOrderChannelId(channelId);
 		configKey.setCfgName(cfgName);
 		configKey.setCfgVal1(cfgVal1);
-		
-		return channelConfigDao.delete(configKey) > 0;
+		// 删除渠道配置信息
+		if (channelConfigDao.delete(configKey) <= 0) {
+			throw new BusinessException("删除渠道配置信息失败");
+		}
 	}
 
 }

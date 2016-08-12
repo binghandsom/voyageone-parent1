@@ -80,7 +80,7 @@
 	</select>
 	
 	<select id="selectChannelCount" resultType="integer">
-		 select count(1) from tm_order_channel
+		 select count(0) from tm_order_channel
 		 <include refid="selectChannelFilter"/>
 	</select>
 	
@@ -91,7 +91,7 @@
 	</select>
 	
 	<select id="selectChannelConfigCount" resultType="integer">
-		select count(1)
+		select count(0)
 		from tm_order_channel_config
 		<include refid="selectChanneConfigFilter"></include>
 	</select>

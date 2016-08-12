@@ -49,44 +49,53 @@ public class ChannelController extends AdminController {
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.ADD_OR_UPDATE_CHANNEL)
 	public AjaxResponse addOrUpdateChannel(@RequestBody ChannelFormBean form) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("success", false);
 		// 验证参数
-		Preconditions.checkNotNull(form.getModified());
+		Preconditions.checkNotNull(form.getAppend());
 		Preconditions.checkNotNull(form.getCompanyId());
 		Preconditions.checkNotNull(form.getChannelId());
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSecretKey()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSessionKey()));
-		// 设置渠道信息
-		TmOrderChannelModel model = new TmOrderChannelModel();
-		BeanUtils.copyProperties(form, model);
-		model.setOrderChannelId(form.getChannelId());
-		String username = getUser().getUserName();
-		if (StringUtils.isBlank(form.getChannelId())) {
-			model.setCreater(username);
-			model.setModifier(username);
-		} else {
-			model.setModifier(username);
-		}
-		// 保存渠道信息
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put(SUCCESS, false);
 		try {
-			result.put("success", channelService.addOrUpdateChannel(model, form.getModified()));
-			result.put("success", true);
+			// 设置渠道信息
+			TmOrderChannelModel model = new TmOrderChannelModel();
+			BeanUtils.copyProperties(form, model);
+			model.setOrderChannelId(form.getChannelId());
+			String username = getUser().getUserName();
+			if (StringUtils.isBlank(form.getChannelId())) {
+				model.setCreater(username);
+				model.setModifier(username);
+			} else {
+				model.setModifier(username);
+			}
+			// 保存渠道信息
+			channelService.addOrUpdateChannel(model, form.getAppend());
+			result.put(SUCCESS, true);
 		} catch (BusinessException e) {
-			result.put("message", e.getMessage());
+			result.put(MESSAGE, e.getMessage());
 		}
 		
 		return success(result);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.DELETE_CHANNEL)
-	public AjaxResponse deleteChannel(@RequestBody Map<String, String> params) {
-		// 取出参数值
-		String channelId = params.get("channelId");
+	public AjaxResponse deleteChannel(@RequestBody ChannelFormBean form) {
 		// 验证参数
-		Preconditions.checkArgument(StringUtils.isNotBlank(channelId));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
 		
-		return success(channelService.deleteChannel(channelId));
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put(SUCCESS, false);
+		// 删除渠道信息
+		try {
+			channelService.deleteChannel(form.getChannelId());
+			result.put(SUCCESS, true);
+		} catch (BusinessException e) {
+			result.put(MESSAGE, e.getMessage());
+		}
+		
+		return success(result);
 	}	
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.GET_ALL_COMPANY)

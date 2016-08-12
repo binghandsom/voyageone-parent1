@@ -48,8 +48,26 @@ public interface AdminUrlConstants {
 			String GET_ALL_PLATFORM = "getAllPlatform";
 
 			String ADD_OR_UPDATE_CART = "addOrUpdateCart";
+
+			String DELETE_CART = "deleteCart";
 		}
 		
+	}
+	
+	interface Store {
+		
+		/** 仓库信息 */
+		interface Self {
+			
+			String ROOT = "/admin/store/self";
+			
+			String SEARCH_STORE_BY_PAGE = "searchStoreByPage";
+
+			String ADD_OR_UPDATE_STORE = "addOrUpdateStore";
+
+			String GET_ALL_STORE = "getAllStore";
+			
+		}
 	}
 	
 	interface System {

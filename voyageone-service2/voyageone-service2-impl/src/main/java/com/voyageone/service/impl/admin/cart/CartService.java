@@ -42,7 +42,8 @@ public class CartService extends BaseService {
 		return cartDaoExt.selectCartByIds(iCartIds);
 	}
 
-	public PageModel<CtCartModel> searchCartByPage(Integer cartId, String cartName, String cartType, Integer pageNum, Integer pageSize) {
+	public PageModel<CtCartModel> searchCartByPage(Integer cartId, String cartName, String cartType,
+			Integer pageNum, Integer pageSize) {
 		PageModel<CtCartModel> pageModel = new PageModel<CtCartModel>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -50,7 +51,7 @@ public class CartService extends BaseService {
 		params.put("cartName", cartName);
 		params.put("cartType", cartType);
 		// 判断查询结果是否分页
-		if (pageNum > 0 && pageSize > 0) {
+		if (pageNum != null && pageSize != null) {
 			pageModel.setCount(cartDaoExt.selectCartCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
@@ -64,24 +65,35 @@ public class CartService extends BaseService {
 		return cartDaoExt.selectAllPlatform();
 	}
 
-	public boolean addOrUpdateCart(CtCartModel model, boolean modified) {
+	public void addOrUpdateCart(CtCartModel model, boolean append) {
 		CtCartModel cart = cartDao.select(model.getCartId());
 		boolean success = false;
-		if (modified) {
-			// 更新Cart信息
-			if (cart == null) {
-				throw new BusinessException("更新的Cart信息不存在");
-			}
-			success = cartDao.update(model) > 0;
-		} else {
+		if (append) {
 			// 添加Cart信息
 			if (cart != null) {
 				throw new BusinessException("添加的Cart信息已存在");
 			}
 			success = cartDao.insert(model) > 0;
+		} else {
+			// 更新Cart信息
+			if (cart == null) {
+				throw new BusinessException("更新的Cart信息不存在");
+			}
+			success = cartDao.update(model) > 0;
 		}
 		
-		return success;
+		if (!success) {
+			throw new BusinessException("保存Cart信息失败");
+		}
+	}
+
+	public void deleteCart(Integer cartId) {
+		CtCartModel model = new CtCartModel();
+		model.setCartId(cartId);
+		model.setActive(false);
+		if (cartDao.update(model) <= 0) {
+			throw new BusinessException("删除Cart信息失败");
+		}
 	}
 
 }

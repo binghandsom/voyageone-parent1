@@ -7,5 +7,9 @@ import com.voyageone.web2.base.BaseController;
  * @since 2.0.0 2016/8/9
  */
 public class AdminController extends BaseController {
+	
+	public static final String SUCCESS = "success";
+	
+	public static final String MESSAGE = "message";
 
 }
