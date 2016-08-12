@@ -337,6 +337,12 @@ define(function () {
             "hash": "/imagecreate/index",
             "templateUrl": "views/imagecreate/index.tpl.html",
             "controllerUrl": "modules/cms/views/imagecreate/index.ctl"
+        },
+        "re-price": {
+            "hash": "/tools/re/price",
+            "templateUrl": "views/tools/reprice/re.price.tpl.html",
+            "controllerUrl": "modules/cms/views/tools/reprice/re.price.controller",
+            "controller": "RePriceController as ctrl"
         }
     };
 });
