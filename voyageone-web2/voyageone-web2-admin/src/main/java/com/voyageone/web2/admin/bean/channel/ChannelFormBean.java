@@ -8,8 +8,6 @@ import com.voyageone.web2.admin.bean.AdminFormBean;
  */
 public class ChannelFormBean extends AdminFormBean {
 
-	private static final long serialVersionUID = -3153721613200300105L;
-	
 	private Integer companyId;
 	
 	private String channelId;
