@@ -25,6 +25,8 @@ public interface AdminUrlConstants {
 			String GENERATE_SECRET_KEY = "generateSecretKey";
 
 			String GENERATE_SESSION_KEY = "generateSessionKey";
+
+			String DELETE_CHANNEL = "deleteChannel";
 			
 		}
 		
@@ -40,6 +42,12 @@ public interface AdminUrlConstants {
 			String GET_ALL_CART = "getAllCart";
 
 			String GET_CART_BY_IDS = "getCartByIds";
+
+			String SEARCH_CART_BY_PAGE = "searchCartByPage";
+
+			String GET_ALL_PLATFORM = "getAllPlatform";
+
+			String ADD_OR_UPDATE_CART = "addOrUpdateCart";
 		}
 		
 	}
@@ -54,6 +62,8 @@ public interface AdminUrlConstants {
 			String SEARCH_CONFIG_BY_PAGE = "searchConfigByPage";
 
 			String ADD_OR_UPDATE_CONFIG = "addOrUpdateConfig";
+
+			String DELETE_CONFIG = "deleteConfig";
 			
 		}
 		

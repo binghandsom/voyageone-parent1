@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -64,10 +66,14 @@ public class CommonConfigController extends AdminController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		// 验证配置类型参数
 		Preconditions.checkNotNull(form.getConfigType());
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgName()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgVal1()));
 		boolean success = false;
 		switch (form.getConfigType()) {
+		// 按类型保存配置信息
 		case Channel:
 			TmOrderChannelConfigModel model = new TmOrderChannelConfigModel();
+			BeanUtils.copyProperties(form, model);
 			success = channelService.addOrUpdateChannelConfig(model);
 			break;
 		case ChannelCart:
@@ -81,7 +87,38 @@ public class CommonConfigController extends AdminController {
 		default:
 			break;
 		}
+		// 设置保存结果
+		result.put("success", success);
 		
+		return success(result);
+	}
+	
+	@RequestMapping(AdminUrlConstants.System.CommonConfig.DELETE_CONFIG)
+	public AjaxResponse deleteConfig(@RequestBody CommonConfigFormBean form) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		// 验证配置类型参数
+		Preconditions.checkNotNull(form.getConfigType());
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgName()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgVal1()));
+		boolean success = false;
+		switch (form.getConfigType()) {
+		// 按类型保存配置信息
+		case Channel:
+			Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
+			success = channelService.deleteChannelConfig(form.getChannelId(), form.getCfgName(), form.getCfgVal1());
+			break;
+		case ChannelCart:
+			break;
+		case Port:
+			break;
+		case Store:
+			break;
+		case Task:
+			break;
+		default:
+			break;
+		}
+		// 设置删除结果
 		result.put("success", success);
 		
 		return success(result);
