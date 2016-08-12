@@ -18,8 +18,10 @@ define([
             this.searchInfo = {
                 channelName: this.sourceData ? this.sourceData.name : "",
                 configType: 'Channel',
-                pageInfo: this.configPageOption
-
+                pageInfo: this.configPageOption,
+                channelId: this.sourceData ? this.sourceData.orderChannelId : "",
+                cfgName: '',
+                cfgVal: ''
             }
         }
 
@@ -28,7 +30,7 @@ define([
                 var self = this;
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelList = res.data;
-                })
+                });
             },
             search: function () {
                 var self = this;
@@ -37,11 +39,14 @@ define([
                 self.AdminChannelService.searchConfigByPage({
                     'pageNum': self.searchInfo.pageInfo.curr,
                     'pageSize': self.searchInfo.pageInfo.size,
-                    'configType': self.searchInfo.configType
+                    'configType': self.searchInfo.configType,
+                    'channelId': self.searchInfo.channelName,
+                    'cfgName': self.searchInfo.cfgName,
+                    'cfgVal': self.searchInfo.cfgVal
                 }).then(function (res) {
                     self.cfgList = res.data.result;
                     self.configPageOption.total = res.data.count;
-                    
+
                     if (self.tempConfigSelect == null) {
                         self.tempConfigSelect = new self.selectRowsFactory();
                     } else {

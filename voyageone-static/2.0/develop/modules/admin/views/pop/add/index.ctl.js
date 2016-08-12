@@ -6,7 +6,8 @@ define([
 ], function (admin) {
     admin.controller('AddController', (function () {
         function AddController(context, channelService, AdminCartService) {
-            this.sourceData = context;
+            this.sourceData = context ? context : {};
+            this.append = context ? false : true;
             this.channelService = channelService;
             this.AdminCartService = AdminCartService;
         }
@@ -20,7 +21,7 @@ define([
                 self.AdminCartService.getAllCart().then(function (res) {
                     self.cartAllList = res.data
                 });
-
+                if (!self.sourceData.cartIds) return;
                 self.AdminCartService.getCartByIds({'cartIds': self.sourceData.cartIds}).then(function (res) {
 
                     self.cartList = res.data;
@@ -30,11 +31,11 @@ define([
                 var self = this;
                 if (type == 'screctKey') {
                     self.channelService.generateSecretKey().then(function (res) {
-                        self.secretKey = res.data;
+                        self.sourceData.screctKey = res.data;
                     })
                 } else {
                     self.channelService.generateSessionKey().then(function (res) {
-                        self.sessionKey = res.data;
+                        self.sourceData.sessionKey = res.data;
                     })
                 }
             }
