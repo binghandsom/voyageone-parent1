@@ -35,6 +35,7 @@
   "dependencies": {
     "angular-chart.js": "^1.0.0",
     "chart.js": "^2.1.4",
-    "ng-annotate": "^1.2.1"
+    "ng-annotate": "^1.2.1",
+    "requirejs": "^2.2.0"
   }
 }
