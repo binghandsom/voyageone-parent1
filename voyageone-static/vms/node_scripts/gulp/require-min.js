@@ -23,7 +23,8 @@ module.exports = function (dirs) {
         if (!(/require\.config/.test(content)))
             return cb(null, file);
 
-        content = content.replace(/paths:(.|\n)+?\}/, function(match) {
+        content = content.replace(/paths:(.|\n|\r)+?\}/, function(match) {
+
             // 匹配 require.config paths 配置里的路径
             // 检查这个路径下相同文件是否有已压缩的版本
             // 搜索的位置由用户传入的 dirs 决定
