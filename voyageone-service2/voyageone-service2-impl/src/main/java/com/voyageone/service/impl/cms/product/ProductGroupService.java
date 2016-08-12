@@ -232,7 +232,10 @@ public class ProductGroupService extends BaseService {
                 // 设置更新值
                 HashMap<String, Object> bulkUpdateMap = new HashMap<>();
                 if (model.getPlatformStatus() != null) {
+                    // cms系统中的上下架状态
                     bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pStatus", model.getPlatformStatus().name());
+                    // 平台上真实的上下架状态，会有另外一个batch每天从平台上拉一次最新的商品上下架状态，保存到这里
+                    bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pReallyStatus", model.getPlatformStatus().name());
                 }
                 // 设置第一次上新的时候需要更新的值
                 if (unPublishedProducts.contains(code)) {
