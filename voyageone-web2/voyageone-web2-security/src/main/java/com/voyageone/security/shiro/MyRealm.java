@@ -43,8 +43,8 @@ public class MyRealm extends AuthorizingRealm {
 			Integer userId = Integer.valueOf(SecurityUtils.getSubject().getSession().getAttribute("userSessionId").toString());
 			String  channelId = SecurityUtils.getSubject().getSession().getAttribute("channelId").toString();
 			Map queryMap =new HashMap<String, Object>();
-			queryMap.put("userId", 4);
-			queryMap.put("channelId", "017");
+			queryMap.put("userId", userId);
+			queryMap.put("channelId", channelId);
 			List<Map<String, Object>> resources = viewUserResDao.selectResByUserChannel(queryMap);
 			// 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
 			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
