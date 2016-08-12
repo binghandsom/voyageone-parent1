@@ -5187,6 +5187,12 @@ a.text-black:hover {
 .pull-none {
     float: none;
 }
+.pull-left {
+    float: left;
+}
+.pull-right {
+    float: right;
+}
 .rounded {
     border-radius: 500px;
 }
