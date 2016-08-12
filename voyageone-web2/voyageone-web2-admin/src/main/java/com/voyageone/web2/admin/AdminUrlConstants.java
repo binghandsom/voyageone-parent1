@@ -14,7 +14,7 @@ public interface AdminUrlConstants {
 			
 			String ROOT = "/admin/channel/self";
 			
-			String SEARCH_CHANNEL = "searchChannel";
+			String SEARCH_CHANNEL_BY_PAGE = "searchChannelByPage";
 			
 			String ADD_OR_UPDATE_CHANNEL = "addOrUpdateChannel";
 			
@@ -51,7 +51,7 @@ public interface AdminUrlConstants {
 			
 			String ROOT = "/admin/system/config";
 			
-			String SEARCH_CONFIG = "searchConfig";
+			String SEARCH_CONFIG_BY_PAGE = "searchConfigByPage";
 
 			String ADD_OR_UPDATE_CONFIG = "addOrUpdateConfig";
 			
