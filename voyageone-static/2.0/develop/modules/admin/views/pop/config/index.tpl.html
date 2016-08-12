@@ -55,20 +55,20 @@
                 </div>
                 <table class="table table-responsive table-hover-new table-hover table_main">
                     <thead>
-                    <tr>
-                        <th class="text-left mfb-xt">
-                            <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl" style="height: 15px;">
-                                <input type="checkbox" ng-click="selectAll(vm.productSelList)"
-                                       ng-checked="isAllSelected(vm.productSelList)" >
-                                <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
-                            </label>
-                        </th>
-                        <th class="text-center mfb-xt" translate="TXT_CART_NAME"></th>
-                        <th class="text-left mfb-xxt" translate="TXT_PROPERTY_NAME"></th>
-                        <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}1</th>
-                        <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}2</th>
-                        <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
-                    </tr>
+                        <tr>
+                            <th class="text-left mfb-xt">
+                                <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl" style="height: 15px;min-width: 38px;">
+                                    <input type="checkbox" ng-click="selectAll(ctrl.configSelList)"
+                                           ng-checked="isAllSelected(ctrl.configSelList)" >
+                                    <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                </label>
+                            </th>
+                            <th class="text-center mfb-xt" translate="TXT_CART_NAME"></th>
+                            <th class="text-left mfb-xxt" translate="TXT_PROPERTY_NAME"></th>
+                            <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}1</th>
+                            <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}2</th>
+                            <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
+                        </tr>
                     </thead>
                     <tbody>
                     <tr>
@@ -77,9 +77,8 @@
                     <tr ng-repeat="list in ctrl.cfgList">
                         <td class="text-left v-middle">
                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                                <input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox"
-                                       ng-controller="selectRowsCtrl"
-                                       ng-click="selectOne(productInfo.prodId, vm.productSelList)">
+                                <input ng-model="ctrl.configSelList.selFlag[list.orderChannelId]" type="checkbox" ng-controller="selectRowsCtrl"
+                                       ng-click="selectOne(list.orderChannelId, ctrl.configSelList)">
                                 <span class="fa fa-check"></span>
                             </label>
                         </td>

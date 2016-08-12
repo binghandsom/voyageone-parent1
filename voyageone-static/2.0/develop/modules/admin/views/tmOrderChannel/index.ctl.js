@@ -17,7 +17,7 @@ define([
             this.channelPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.channelList = [];
             this.channelSelList = {selList: []};
-            this.tempFeedSelect = null;
+            this.tempChannelSelect = null;
             this.searchInfo = {
                 channelId: '',
                 channelFullName: '',
@@ -40,19 +40,38 @@ define([
                     .then(function (res) {
                         self.channelList = res.data.result;
                         self.channelPageOption.total = res.data.count;
+                        var tempCartList = [];
+                        for (var i = 0; i < self.channelList.length; i++) {
+                            if (self.channelList[i].carts == null) return;
+                            self.channelList[i].carts.map(function (item) {
+                                tempCartList.push(item.name);
+                            });
+                            _.extend(self.channelList[i], {'cartName': tempCartList.join('/')});
+                        }
 
-                        if (self.tempFeedSelect == null) {
-                            self.tempFeedSelect = new self.selectRowsFactory();
+                        if (self.tempChannelSelect == null) {
+                            self.tempChannelSelect = new self.selectRowsFactory();
                         } else {
-                            self.tempFeedSelect.clearCurrPageRows();
+                            self.tempChannelSelect.clearCurrPageRows();
                         }
                         _.forEach(self.channelList, function (channelInfo) {
                             if (channelInfo.updFlg != 8) {
-                                self.tempFeedSelect.currPageRows({ "id": channelInfo.orderChannelId, "code": channelInfo.name });
+                                self.tempChannelSelect.currPageRows({
+                                    "id": channelInfo.orderChannelId,
+                                    "code": channelInfo.name
+                                });
                             }
                         });
-                        self.channelSelList = self.tempFeedSelect.selectRowsInfo;
+                        self.channelSelList = self.tempChannelSelect.selectRowsInfo;
                     })
+            },
+            clear: function () {
+                var self = this;
+                self.searchInfo = {
+                    channelId: '',
+                    channelFullName: '',
+                    isUsjoi: ''
+                }
             },
             config: function () {
                 var self = this;
@@ -66,16 +85,19 @@ define([
                         }
                     })
                 }
-
-
             },
             edit: function () {
                 var self = this;
                 if (self.channelSelList.selList.length <= 0) {
                     self.alert('TXT_MSG_NO_ROWS_SELECT');
                     return;
+                } else {
+                    _.forEach(self.channelList, function (channelInfo) {
+                        if (channelInfo.orderChannelId == self.channelSelList.selList[0].id) {
+                            self.popups.openAdd(channelInfo);
+                        }
+                    })
                 }
-                self.popups.openAdd();
 
             },
             delete: function () {
