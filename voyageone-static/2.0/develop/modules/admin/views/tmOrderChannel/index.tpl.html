@@ -57,10 +57,10 @@
         <div class="box-body-new">
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
-                    <button class="btn btn-default" ng-click="openConfig('')"><i class="fa fa-cog"></i>&nbsp;配置</button>
+                    <button class="btn btn-default" ng-click="ctrl.config()" ng-disabled="ctrl.channelSelList.selList.length > 1"><i class="fa fa-cog"></i>&nbsp;配置</button>
                     <button class="btn btn-default" ng-click="openAdd('')"><i class="fa fa-plus"></i>&nbsp;添加</button>
-                    <button class="btn btn-default" ng-click="ctrl.edit(list)"><i class="fa fa-pencil"></i>&nbsp;修改</button>
-                    <button class="btn btn-default" ng-click="ctrl.delete()"><i class="fa fa-trash"></i>&nbsp;删除</button>
+                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.channelSelList.selList.length <= 0||ctrl.channelSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelSelList.selList.length <= 0"><i class="fa fa-trash"></i>&nbsp;删除</button>
                 </div>
             </div>
             <table class="table table-hover-new table-hover table_main">
@@ -99,7 +99,7 @@
                         <td class="text-left v-middle">{{list.name}}</td>
                         <td class="text-left v-middle">{{list.fullName}}</td>
                         <td class="text-center v-middle">{{list.isUsjoi==0 ? '否':'是'}}</td>
-                        <td class="text-center v-middle">{{list.cartIds}}</td>
+                        <td class="text-center v-middle">{{list.cartNames}}</td>
                         <td class="text-center v-middle">{{list.active==1 ? '可用':'不可用'}}</td>
                         <td class="text-left v-middle">{{list.modified}}</td>
                         <td class="text-center v-middle">{{list.modifier}}</td>

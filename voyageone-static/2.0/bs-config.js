@@ -6,7 +6,7 @@ var proxyMiddleware = proxy('http://localhost:8080');
 module.exports = {
     server: {
         baseDir: "develop",
-        index: "login.html"
+        index: "adminLogin.html"
     },
 /*    files: [
         'develop/static/!**!/!*.css',

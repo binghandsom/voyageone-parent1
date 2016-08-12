@@ -7,27 +7,14 @@
  */
 package com.voyageone.security.model;
 
-import java.util.Date;
-
 /**
  * 
  */
 public class ComRoleModel extends CoreBaseModel {
-    protected Integer id;
-
     /**
      * 角色名
      */
     protected String roleName;
-
-    /**
-     * 角色Key
-     */
-    protected String roleKey;
-
-    protected String channelId;
-
-    protected String storeId;
 
     /**
      * 说明
@@ -39,64 +26,12 @@ public class ComRoleModel extends CoreBaseModel {
      */
     protected Boolean active;
 
-    /**
-     * 创建日期
-     */
-    protected Date created;
-
-    /**
-     * 创建人
-     */
-    protected String creater;
-
-    /**
-     * 修改日期
-     */
-    protected Date modified;
-
-    /**
-     * 修改人
-     */
-    protected String modifier;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public String getRoleName() {
         return roleName;
     }
 
     public void setRoleName(String roleName) {
         this.roleName = roleName == null ? null : roleName.trim();
-    }
-
-    public String getRoleKey() {
-        return roleKey;
-    }
-
-    public void setRoleKey(String roleKey) {
-        this.roleKey = roleKey == null ? null : roleKey.trim();
-    }
-
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId == null ? null : channelId.trim();
-    }
-
-    public String getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(String storeId) {
-        this.storeId = storeId == null ? null : storeId.trim();
     }
 
     public String getDescription() {
@@ -113,37 +48,5 @@ public class ComRoleModel extends CoreBaseModel {
 
     public void setActive(Boolean active) {
         this.active = active;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public String getCreater() {
-        return creater;
-    }
-
-    public void setCreater(String creater) {
-        this.creater = creater == null ? null : creater.trim();
-    }
-
-    public Date getModified() {
-        return modified;
-    }
-
-    public void setModified(Date modified) {
-        this.modified = modified;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier == null ? null : modifier.trim();
     }
 }

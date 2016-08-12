@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.security.dao.ComResourceDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.security.model.ComResourceModel" />
     <sql id="Base_Column_List" >
-        `id`, `res_name`, `parent_id`, `res_key`, `res_type`, `res_url`, `level`, `icon`, 
+        `id`, `res_name`, `res_key`, `res_type`, `parent_id`, `res_url`, `level`, `icon`, 
         `active`, `description`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
@@ -20,14 +20,14 @@
             <if test="resName != null" >
                 `res_name` = #{resName,jdbcType=VARCHAR},
             </if>
-            <if test="parentId != null" >
-                `parent_id` = #{parentId,jdbcType=INTEGER},
-            </if>
             <if test="resKey != null" >
                 `res_key` = #{resKey,jdbcType=VARCHAR},
             </if>
             <if test="resType != null" >
                 `res_type` = #{resType,jdbcType=INTEGER},
+            </if>
+            <if test="parentId != null" >
+                `parent_id` = #{parentId,jdbcType=INTEGER},
             </if>
             <if test="resUrl != null" >
                 `res_url` = #{resUrl,jdbcType=VARCHAR},
@@ -76,14 +76,14 @@
             <if test="resName != null" >
                 and `res_name` = #{resName,jdbcType=VARCHAR}
             </if>
-            <if test="parentId != null" >
-                and `parent_id` = #{parentId,jdbcType=INTEGER}
-            </if>
             <if test="resKey != null" >
                 and `res_key` = #{resKey,jdbcType=VARCHAR}
             </if>
             <if test="resType != null" >
                 and `res_type` = #{resType,jdbcType=INTEGER}
+            </if>
+            <if test="parentId != null" >
+                and `parent_id` = #{parentId,jdbcType=INTEGER}
             </if>
             <if test="resUrl != null" >
                 and `res_url` = #{resUrl,jdbcType=VARCHAR}
@@ -124,14 +124,14 @@
             <if test="resName != null" >
                 and `res_name` = #{resName,jdbcType=VARCHAR}
             </if>
-            <if test="parentId != null" >
-                and `parent_id` = #{parentId,jdbcType=INTEGER}
-            </if>
             <if test="resKey != null" >
                 and `res_key` = #{resKey,jdbcType=VARCHAR}
             </if>
             <if test="resType != null" >
                 and `res_type` = #{resType,jdbcType=INTEGER}
+            </if>
+            <if test="parentId != null" >
+                and `parent_id` = #{parentId,jdbcType=INTEGER}
             </if>
             <if test="resUrl != null" >
                 and `res_url` = #{resUrl,jdbcType=VARCHAR}
@@ -169,14 +169,14 @@
             <if test="resName != null" >
                 and `res_name` = #{resName,jdbcType=VARCHAR}
             </if>
-            <if test="parentId != null" >
-                and `parent_id` = #{parentId,jdbcType=INTEGER}
-            </if>
             <if test="resKey != null" >
                 and `res_key` = #{resKey,jdbcType=VARCHAR}
             </if>
             <if test="resType != null" >
                 and `res_type` = #{resType,jdbcType=INTEGER}
+            </if>
+            <if test="parentId != null" >
+                and `parent_id` = #{parentId,jdbcType=INTEGER}
             </if>
             <if test="resUrl != null" >
                 and `res_url` = #{resUrl,jdbcType=VARCHAR}
@@ -214,14 +214,14 @@
             <if test="resName != null" >
                 `res_name`,
             </if>
-            <if test="parentId != null" >
-                `parent_id`,
-            </if>
             <if test="resKey != null" >
                 `res_key`,
             </if>
             <if test="resType != null" >
                 `res_type`,
+            </if>
+            <if test="parentId != null" >
+                `parent_id`,
             </if>
             <if test="resUrl != null" >
                 `res_url`,
@@ -254,14 +254,14 @@
             <if test="resName != null" >
                 #{resName,jdbcType=VARCHAR},
             </if>
-            <if test="parentId != null" >
-                #{parentId,jdbcType=INTEGER},
-            </if>
             <if test="resKey != null" >
                 #{resKey,jdbcType=VARCHAR},
             </if>
             <if test="resType != null" >
                 #{resType,jdbcType=INTEGER},
+            </if>
+            <if test="parentId != null" >
+                #{parentId,jdbcType=INTEGER},
             </if>
             <if test="resUrl != null" >
                 #{resUrl,jdbcType=VARCHAR},

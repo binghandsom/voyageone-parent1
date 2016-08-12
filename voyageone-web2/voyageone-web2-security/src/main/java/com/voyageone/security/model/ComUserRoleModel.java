@@ -7,45 +7,13 @@
  */
 package com.voyageone.security.model;
 
-import java.util.Date;
-
 /**
  * 
  */
 public class ComUserRoleModel extends CoreBaseModel {
-    protected Integer id;
-
     protected Integer userId;
 
     protected Integer roleId;
-
-    /**
-     * 创建日期
-     */
-    protected Date created;
-
-    /**
-     * 创建人
-     */
-    protected String creater;
-
-    /**
-     * 修改日期
-     */
-    protected Date modified;
-
-    /**
-     * 修改人
-     */
-    protected String modifier;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getUserId() {
         return userId;
@@ -61,37 +29,5 @@ public class ComUserRoleModel extends CoreBaseModel {
 
     public void setRoleId(Integer roleId) {
         this.roleId = roleId;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public String getCreater() {
-        return creater;
-    }
-
-    public void setCreater(String creater) {
-        this.creater = creater == null ? null : creater.trim();
-    }
-
-    public Date getModified() {
-        return modified;
-    }
-
-    public void setModified(Date modified) {
-        this.modified = modified;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier == null ? null : modifier.trim();
     }
 }

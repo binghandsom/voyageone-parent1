@@ -7,33 +7,29 @@
  */
 package com.voyageone.security.model;
 
-import java.util.Date;
-
 /**
  * 
  */
 public class ComResourceModel extends CoreBaseModel {
-    protected Integer id;
-
     /**
      * 菜单资源名称
      */
     protected String resName;
 
     /**
-     * 父id
-     */
-    protected Integer parentId;
-
-    /**
-     * 菜单资源key
+     * 资源Key
      */
     protected String resKey;
 
     /**
-     * 菜单资源类型:0,菜单;1,按钮;2,自定义
+     * 菜单资源类型:0,系统;1,目录,2,菜单;3,按钮;
      */
     protected Integer resType;
+
+    /**
+     * 父id
+     */
+    protected Integer parentId;
 
     protected String resUrl;
 
@@ -45,48 +41,12 @@ public class ComResourceModel extends CoreBaseModel {
 
     protected String description;
 
-    /**
-     * 创建日期
-     */
-    protected Date created;
-
-    /**
-     * 创建人
-     */
-    protected String creater;
-
-    /**
-     * 修改日期
-     */
-    protected Date modified;
-
-    /**
-     * 修改人
-     */
-    protected String modifier;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public String getResName() {
         return resName;
     }
 
     public void setResName(String resName) {
         this.resName = resName == null ? null : resName.trim();
-    }
-
-    public Integer getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Integer parentId) {
-        this.parentId = parentId;
     }
 
     public String getResKey() {
@@ -103,6 +63,14 @@ public class ComResourceModel extends CoreBaseModel {
 
     public void setResType(Integer resType) {
         this.resType = resType;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
     }
 
     public String getResUrl() {
@@ -143,37 +111,5 @@ public class ComResourceModel extends CoreBaseModel {
 
     public void setDescription(String description) {
         this.description = description == null ? null : description.trim();
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public String getCreater() {
-        return creater;
-    }
-
-    public void setCreater(String creater) {
-        this.creater = creater == null ? null : creater.trim();
-    }
-
-    public Date getModified() {
-        return modified;
-    }
-
-    public void setModified(Date modified) {
-        this.modified = modified;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier == null ? null : modifier.trim();
     }
 }
