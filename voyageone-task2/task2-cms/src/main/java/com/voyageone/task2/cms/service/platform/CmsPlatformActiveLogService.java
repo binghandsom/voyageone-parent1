@@ -326,8 +326,15 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     JomgoUpdate updObj2 = new JomgoUpdate();
                     updObj2.setQuery("{'cartId':#,'numIId':#}");
                     updObj2.setQueryParameters(cartId, numIId);
-                    updObj2.setUpdate("{$set:{'platformStatus':#,'modified':#,'modifier':#}}");
-                    updObj2.setUpdateParameters(platformStatus, DateTimeUtil.getNowTimeStamp(), userName);
+                    if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
+                        // 上架
+                        updObj2.setUpdate("{$set:{'platformStatus':#,'onSaleTime':#,'modified':#,'modifier':#}}");
+                        updObj2.setUpdateParameters(platformStatus, DateTimeUtil.getNow(), DateTimeUtil.getNowTimeStamp(), userName);
+                    } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
+                        // 下架
+                        updObj2.setUpdate("{$set:{'platformStatus':#,'inStockTime':#,'modified':#,'modifier':#}}");
+                        updObj2.setUpdateParameters(platformStatus, DateTimeUtil.getNow(), DateTimeUtil.getNowTimeStamp(), userName);
+                    }
                     rs = bulkList2.addBulkJomgo(updObj2);
                     if (rs != null) {
                         $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, numIId=%s cmsBtProductGroup更新结果=%s", cartId, channelId, numIId, rs.toString());
