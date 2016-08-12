@@ -43,8 +43,8 @@ public class CommonConfigController extends AdminController {
 		PageModel<?> result = null;
 		switch (form.getConfigType()) {
 		case Channel:
-			result = channelService.searchChannelConfigByPage(form.getChannelId(), form.getCfgName(), form.getCfgVal(),
-					form.getPageNum(), form.getPageSize());
+			result = channelService.searchChannelConfigByPage(form.getChannelId(), form.getCfgName(),
+					form.getCfgVal(), form.getPageNum(), form.getPageSize());
 			break;
 		case ChannelCart:
 			break;
@@ -66,6 +66,7 @@ public class CommonConfigController extends AdminController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		// 验证配置类型参数
 		Preconditions.checkNotNull(form.getConfigType());
+		Preconditions.checkNotNull(form.getModified());
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgName()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgVal1()));
 		boolean success = false;
@@ -74,7 +75,7 @@ public class CommonConfigController extends AdminController {
 		case Channel:
 			TmOrderChannelConfigModel model = new TmOrderChannelConfigModel();
 			BeanUtils.copyProperties(form, model);
-			success = channelService.addOrUpdateChannelConfig(model);
+			success = channelService.addOrUpdateChannelConfig(model, form.getModified());
 			break;
 		case ChannelCart:
 			break;
