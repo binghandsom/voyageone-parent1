@@ -33,7 +33,7 @@ define(function (require) {
         // 在这里增加你的 popup 配置
     };
 
-    return angular.module('vms.popups', []).factory('popups', function PopupsService($uibModal, $q) {
+    return angular.module('vms.popups', []).factory('popups',['$uibModal', '$q', function PopupsService($uibModal, $q) {
 
         function open(config, context) {
             // if (context)
@@ -63,5 +63,5 @@ define(function (require) {
             }
             // 在这里增加你的打开函数
         };
-    });
+    }]);
 });

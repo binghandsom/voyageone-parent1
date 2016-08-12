@@ -101,29 +101,19 @@ gulp.task('pkg-release', ['release.vms.module'], function () {
 
 //release.vms.module
 gulp.task('release.vms.module', function(cb){
-
     fs.readFile('./src/app/vms.js', (err, content) => {
-
         fs.writeFile('./src/app/vms.js.bak', content, () => {
-
             var res = _ngAnnotate(content.toString(), {add: true});
-
             var newContent = new Buffer(res.src);
-
             fs.writeFile('./src/app/vms.js', newContent, () => {
-
                 rjs.optimize(rjsBuildConfig, function(buildResponse){
                     console.log('buildResponse', buildResponse);
                     fs.rename('./src/app/vms.js.bak', './src/app/vms.js');
                     cb();
                 }, cb);
-
             });
-
         });
-
     });
-
 });
 
 gulp.task('release', ['copy-release', 'pkg-release']);
