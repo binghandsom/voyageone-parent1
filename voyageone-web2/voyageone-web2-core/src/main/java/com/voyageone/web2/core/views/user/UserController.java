@@ -72,6 +72,15 @@ public class UserController extends BaseController {
 
         Session session = SecurityUtils.getSubject().getSession();
         ComUserModel userModel = (ComUserModel)session.getAttribute("userModel");
+        // 填充用户信息到 Session. 权限部分需要在选择了渠道后获取
+        UserSessionBean userSessionBean = new UserSessionBean();
+        userSessionBean.setUserId(userModel.getId());
+        userSessionBean.setUserName(userModel.getUserAccount());
+        userSessionBean.setTimeZone(timezone);
+        userSessionBean.setUserConfig(userService.getUserConfig(userModel.getId()));
+        session.setAttribute(BaseConstants.SESSION_USER, userSessionBean);
+        session.setAttribute(BaseConstants.SESSION_LANG, userService.getUserLanguage(userSessionBean));
+
 
 
         // 返回用户信息

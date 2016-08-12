@@ -2,6 +2,7 @@ package com.voyageone.security.shiro;
 
 import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.dao.ComUserDao;
+import com.voyageone.security.dao.ViewUserResDao;
 import com.voyageone.security.model.ComResourceModel;
 import com.voyageone.security.model.ComUserModel;
 import org.apache.shiro.SecurityUtils;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 自定义Realm,进行数据源配置
@@ -29,7 +31,7 @@ public class MyRealm extends AuthorizingRealm {
 	private ComUserDao comUserDao;
 
 	@Autowired
-	private ComResourceDao comResourceDao;
+	private ViewUserResDao viewUserResDao;
 
 	/**
 	 * 只有需要验证权限时才会调用, 授权查询回调函数, 进行鉴权但缓存中无用户的授权信息时调用.在配有缓存的情况下，只加载一次.
@@ -40,7 +42,10 @@ public class MyRealm extends AuthorizingRealm {
 		if (loginName != null) {
 			Integer userId = Integer.valueOf(SecurityUtils.getSubject().getSession().getAttribute("userSessionId").toString());
 			String  channelId = SecurityUtils.getSubject().getSession().getAttribute("channelId").toString();
-			List<ComResourceModel> resources = comResourceDao.selectListByUserChannel(userId, channelId);
+			Map queryMap =new HashMap<String, Object>();
+			queryMap.put("userId", 4);
+			queryMap.put("channelId", "017");
+			List<Map<String, Object>> resources = viewUserResDao.selectResByUserChannel(queryMap);
 			// 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
 			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 			// 用户的角色集合
@@ -48,8 +53,8 @@ public class MyRealm extends AuthorizingRealm {
 			// 用户的角色集合
 			// info.setRoles(user.getRolesName());
 			// 用户的角色对应的所有权限，如果只使用角色定义访问权限
-			for (ComResourceModel res : resources) {
-				info.addStringPermission(res.getResKey());
+			for (Map res : resources) {
+				info.addStringPermission(res.get("res_key").toString());
 			}
 			return info;
 		}
@@ -74,7 +79,7 @@ public class MyRealm extends AuthorizingRealm {
 		ComUserModel userModel = comUserDao.selectOne(userFormMap);
 
 		if (userModel != null) {
-			if ("2".equals(userModel.getLocked())) {
+			if (userModel.getActive() == 2) {
 				throw new LockedAccountException(); // 帐号锁定
 			}
 			// 从数据库查询出来的账号名和密码,与用户输入的账号和密码对比
@@ -89,6 +94,7 @@ public class MyRealm extends AuthorizingRealm {
 			// 当验证都通过后，把用户信息放在session里
 			Session session = SecurityUtils.getSubject().getSession();
 			session.setAttribute("userModel",userModel);
+			session.setAttribute("userSessionId", userModel.getId());
 			return authenticationInfo;
 		} else {
 			throw new UnknownAccountException();// 没找到帐号

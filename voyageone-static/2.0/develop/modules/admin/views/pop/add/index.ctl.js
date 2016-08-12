@@ -6,7 +6,7 @@ define([
 ], function (admin) {
     admin.controller('AddController', (function () {
         function AddController(context, channelService, AdminCartService) {
-            this.type = context;
+            this.sourceData = context;
             this.channelService = channelService;
             this.AdminCartService = AdminCartService;
         }
@@ -19,11 +19,16 @@ define([
                 });
                 self.AdminCartService.getAllCart().then(function (res) {
                     self.cartAllList = res.data
+                });
+
+                self.AdminCartService.getCartByIds({'cartIds': self.sourceData.cartIds}).then(function (res) {
+
+                    self.cartList = res.data;
                 })
             },
             generate: function (type) {
                 var self = this;
-                if (type == 'secrect') {
+                if (type == 'screctKey') {
                     self.channelService.generateSecretKey().then(function (res) {
                         self.secretKey = res.data;
                     })
