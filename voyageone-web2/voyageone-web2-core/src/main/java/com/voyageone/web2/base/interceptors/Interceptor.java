@@ -17,14 +17,18 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class Interceptor extends VOAbsLoggable implements HandlerInterceptor {
 
-    @Autowired
-    private AuthorizationInterceptor authorizationInterceptor;
+    private final AuthorizationInterceptor authorizationInterceptor;
+
+    private final LoginInterceptor loginInterceptor;
+
+    private final ChannelInterceptor channelInterceptor;
 
     @Autowired
-    private LoginInterceptor loginInterceptor;
-
-    @Autowired
-    private ChannelInterceptor channelInterceptor;
+    public Interceptor(AuthorizationInterceptor authorizationInterceptor, LoginInterceptor loginInterceptor, ChannelInterceptor channelInterceptor) {
+        this.authorizationInterceptor = authorizationInterceptor;
+        this.loginInterceptor = loginInterceptor;
+        this.channelInterceptor = channelInterceptor;
+    }
 
     /**
      * Intercept the execution of a handler. Called after HandlerMapping determined
