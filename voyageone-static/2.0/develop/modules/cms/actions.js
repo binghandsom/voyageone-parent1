@@ -560,6 +560,12 @@ define(function () {
                 "getCartList": "getCartList",
                 "getPlatformCategoryList": {url: "getPlatformCategoryList", cache: CACHE.LOCAL},
                 "setUpdateFlg": "setUpdateFlg"
+            },
+            "defaultAttrService":{
+                "root":"product/fields/map/",
+                "list":"list",
+                "get":"get",
+                "save":"save"
             }
         }
     };
