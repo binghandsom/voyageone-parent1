@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.backdoor;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
@@ -1094,7 +1094,7 @@ public class BackDoorController extends CmsController {
             String code = promtionCode.get("productCode").toString();
             String jmHashId = promtionCode.get("jmHashId").toString();
 
-            JomgoUpdate updateQuery = new JomgoUpdate();
+            JongoUpdate updateQuery = new JongoUpdate();
             updateQuery.setQuery("{\"common.fields.code\": #}");
             updateQuery.setQueryParameters(code);
 
@@ -1104,7 +1104,7 @@ public class BackDoorController extends CmsController {
             cmsBtProductDao.updateFirst(updateQuery, channelId);
 
 
-            JomgoUpdate updateGroupQuery = new JomgoUpdate();
+            JongoUpdate updateGroupQuery = new JongoUpdate();
             updateGroupQuery.setQuery("{\"cartId\": 27, \"productCodes\": #}");
             updateGroupQuery.setQueryParameters(code);
 

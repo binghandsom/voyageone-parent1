@@ -20,14 +20,14 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import java.util.Collection;
 import java.util.List;
 
-
 /**
- * BaseJomgoPartTemplate
+ * BaseJongoPartTemplate
+ *
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
  */
-public class BaseJomgoPartTemplate {
+public class BaseJongoPartTemplate {
 
     private static final Object[] NO_PARAMETERS = new Object[0];
 
@@ -35,7 +35,7 @@ public class BaseJomgoPartTemplate {
 
     protected Jongo jongo;
 
-    public BaseJomgoPartTemplate(MongoTemplate mongoTemplate) {
+    public BaseJongoPartTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
         try {
             Mapper mapper = new VOJacksonMapper.Builder().build();
@@ -79,7 +79,7 @@ public class BaseJomgoPartTemplate {
         if (model instanceof CartPartitionModel) {
             return getCollectionName(collectionName, String.valueOf(((CartPartitionModel) model).getCartId()), BaseMongoCartDao.SPLIT_PART);
         } else if (model instanceof ChannelPartitionModel) {
-            return getCollectionName(collectionName, ((ChannelPartitionModel)model).getChannelId(), BaseMongoChannelDao.SPLIT_PART);
+            return getCollectionName(collectionName, ((ChannelPartitionModel) model).getChannelId(), BaseMongoChannelDao.SPLIT_PART);
         }
         return collectionName;
     }
@@ -100,7 +100,7 @@ public class BaseJomgoPartTemplate {
         mongoTemplate.dropCollection(collectionName);
     }
 
-    public JSONObject findOne( String collectionName) {
+    public JSONObject findOne(String collectionName) {
         return findOne(JSONObject.class, collectionName);
     }
 
@@ -154,7 +154,7 @@ public class BaseJomgoPartTemplate {
     }
 
     public boolean exists(String strQuery, String collectionName) {
-        return getCollection(collectionName).count(strQuery)>0;
+        return getCollection(collectionName).count(strQuery) > 0;
     }
 
     public List<JSONObject> findAll(String collectionName) {
@@ -265,7 +265,7 @@ public class BaseJomgoPartTemplate {
         return findOne(query, entityClass, collectionName);
     }
 
-    public <T> T findAndModify(JomgoUpdate updateObject, Class<T> entityClass, String collectionName) {
+    public <T> T findAndModify(JongoUpdate updateObject, Class<T> entityClass, String collectionName) {
         FindAndModify findAndModify;
 
         //condition
@@ -346,11 +346,11 @@ public class BaseJomgoPartTemplate {
         return getCollection(collectionName).update(strQuery).multi().with(strUpdate);
     }
 
-    public WriteResult updateFirst(JomgoUpdate updObj, final String collectionName) {
+    public WriteResult updateFirst(JongoUpdate updObj, final String collectionName) {
         return getCollection(collectionName).update(updObj.getQuery(), updObj.getQueryParameters()).with(updObj.getUpdate(), updObj.getUpdateParameters());
     }
 
-    public WriteResult updateMulti(JomgoUpdate updObj, final String collectionName) {
+    public WriteResult updateMulti(JongoUpdate updObj, final String collectionName) {
         return getCollection(collectionName).update(updObj.getQuery(), updObj.getQueryParameters()).multi().with(updObj.getUpdate(), updObj.getUpdateParameters());
     }
 

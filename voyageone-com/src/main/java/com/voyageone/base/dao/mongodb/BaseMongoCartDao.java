@@ -14,7 +14,7 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-public abstract class BaseMongoCartDao<T> extends BaseJomgoDao<T> {
+public abstract class BaseMongoCartDao<T> extends BaseJongoDao<T> {
 
     public static final String SPLIT_PART = "p";
 
@@ -70,7 +70,7 @@ public abstract class BaseMongoCartDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findById(id, entityClass, getCollectionName(cartId));
     }
 
-    public T findAndModify(JomgoUpdate updateObject, int cartId) {
+    public T findAndModify(JongoUpdate updateObject, int cartId) {
         return mongoTemplate.findAndModify(updateObject, entityClass, getCollectionName(cartId));
     }
 
@@ -112,12 +112,12 @@ public abstract class BaseMongoCartDao<T> extends BaseJomgoDao<T> {
      * @return List<Map> 返回的Map数据结构和aggregate语句对应
      */
     @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> aggregateToMap(int cartId, List<JomgoAggregate> aggregateList) {
-        JomgoAggregate[] aggregates = aggregateList.toArray(new JomgoAggregate[aggregateList.size()]);
+    public List<Map<String, Object>> aggregateToMap(int cartId, List<JongoAggregate> aggregateList) {
+        JongoAggregate[] aggregates = aggregateList.toArray(new JongoAggregate[aggregateList.size()]);
         return aggregateToMap(cartId, aggregates);
     }
     @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> aggregateToMap(int cartId, JomgoAggregate... aggregates) {
+    public List<Map<String, Object>> aggregateToMap(int cartId, JongoAggregate... aggregates) {
         return (List<Map<String, Object>>) aggregateToObj(Map.class, getCollectionName(cartId), aggregates);
     }
 
@@ -126,11 +126,11 @@ public abstract class BaseMongoCartDao<T> extends BaseJomgoDao<T> {
      * 必须注意：这里的Model不能简单使用表定义对应的Model，而是要和aggregate语句对应(要定义新的Model/Dao)，否则查询无正确数据
      */
     @SuppressWarnings("unchecked")
-    public List<T> aggregateToObj(int cartId, List<JomgoAggregate> aggregateList) {
-        JomgoAggregate[] aggregates = aggregateList.toArray(new JomgoAggregate[aggregateList.size()]);
+    public List<T> aggregateToObj(int cartId, List<JongoAggregate> aggregateList) {
+        JongoAggregate[] aggregates = aggregateList.toArray(new JongoAggregate[aggregateList.size()]);
         return aggregateToObj(cartId, aggregates);
     }
-    public List<T> aggregateToObj(int cartId, JomgoAggregate... aggregates) {
+    public List<T> aggregateToObj(int cartId, JongoAggregate... aggregates) {
         return aggregateToObj(entityClass, getCollectionName(cartId), aggregates);
     }
 }

@@ -8,14 +8,14 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * BaseJomgoTemplate
+ * BaseJongoTemplate
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
  */
-public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
+public class BaseJongoTemplate extends BaseJongoPartTemplate {
 
-    public BaseJomgoTemplate(MongoTemplate mongoTemplate) {
+    public BaseJongoTemplate(MongoTemplate mongoTemplate) {
         super(mongoTemplate);
     }
 
@@ -79,7 +79,7 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
         return findById(id, entityClass, collectionName);
     }
 
-    public <T> T findAndModify(JomgoUpdate updateObject, Class<T> entityClass) {
+    public <T> T findAndModify(JongoUpdate updateObject, Class<T> entityClass) {
         String collectionName = getCollectionName(entityClass);
         return findAndModify(updateObject, entityClass, collectionName);
     }

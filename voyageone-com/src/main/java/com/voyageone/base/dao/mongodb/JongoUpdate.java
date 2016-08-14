@@ -1,14 +1,14 @@
 package com.voyageone.base.dao.mongodb;
 
 /**
- * BaseJomgoPartTemplate Update Object
+ * BaseJongoPartTemplate Update Object
  *
  * @author chuanyu.liang, 12/11/15.
  * @author Jonas, 2015-12-18.
  * @version 2.0.1
  * @since 2.0.0
  */
-public class JomgoUpdate extends BaseCondition {
+public class JongoUpdate extends BaseCondition {
 
     /**
      * column
@@ -54,8 +54,7 @@ public class JomgoUpdate extends BaseCondition {
     private boolean upsert = false;
 
 
-
-    public JomgoUpdate() {
+    public JongoUpdate() {
 
     }
 
@@ -63,7 +62,7 @@ public class JomgoUpdate extends BaseCondition {
         return projection;
     }
 
-    public JomgoUpdate setProjection(String... projection) {
+    public JongoUpdate setProjection(String... projection) {
         String projectionTmp = buildProjection(projection);
         if (projectionTmp != null) {
             this.projection = projectionTmp;
@@ -75,7 +74,7 @@ public class JomgoUpdate extends BaseCondition {
         return query;
     }
 
-    public JomgoUpdate setQuery(String query) {
+    public JongoUpdate setQuery(String query) {
         this.query = query;
         return this;
     }
@@ -84,7 +83,7 @@ public class JomgoUpdate extends BaseCondition {
         return sort;
     }
 
-    public JomgoUpdate setSort(String sort) {
+    public JongoUpdate setSort(String sort) {
         this.sort = sort;
         return this;
     }
@@ -93,7 +92,7 @@ public class JomgoUpdate extends BaseCondition {
         return update;
     }
 
-    public JomgoUpdate setUpdate(String update) {
+    public JongoUpdate setUpdate(String update) {
         this.update = update;
         return this;
     }
@@ -102,7 +101,7 @@ public class JomgoUpdate extends BaseCondition {
         return remove;
     }
 
-    public JomgoUpdate setRemove(boolean remove) {
+    public JongoUpdate setRemove(boolean remove) {
         this.remove = remove;
         return this;
     }
@@ -111,7 +110,7 @@ public class JomgoUpdate extends BaseCondition {
         return returnNew;
     }
 
-    public JomgoUpdate setReturnNew(boolean returnNew) {
+    public JongoUpdate setReturnNew(boolean returnNew) {
         this.returnNew = returnNew;
         return this;
     }
@@ -120,7 +119,7 @@ public class JomgoUpdate extends BaseCondition {
         return upsert;
     }
 
-    public JomgoUpdate setUpsert(boolean upsert) {
+    public JongoUpdate setUpsert(boolean upsert) {
         this.upsert = upsert;
         return this;
     }

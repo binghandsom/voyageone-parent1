@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * BaseJomgoPartTemplate Query Object
+ * BaseJongoPartTemplate Query Object
  *
  * @author chuanyu.liang, 12/11/15.
  * @author Jonas, 2015-12-18.

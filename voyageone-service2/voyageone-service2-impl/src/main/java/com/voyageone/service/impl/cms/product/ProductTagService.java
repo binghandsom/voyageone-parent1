@@ -2,7 +2,7 @@ package com.voyageone.service.impl.cms.product;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
@@ -110,7 +110,7 @@ public class ProductTagService extends BaseService {
             pathList = pathList.stream().distinct().collect(Collectors.toList());
         }
 
-        JomgoUpdate updObj = new JomgoUpdate();
+        JongoUpdate updObj = new JongoUpdate();
         updObj.setQuery("{'common.fields.code':{$in:#}}");
         updObj.setQueryParameters(prodCodeList);
         updObj.setUpdate("{$set:{'freeTags':#}}");

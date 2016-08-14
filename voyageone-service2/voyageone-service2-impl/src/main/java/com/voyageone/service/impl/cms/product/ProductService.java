@@ -4,9 +4,9 @@ import com.google.common.base.Joiner;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoAggregate;
+import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
@@ -353,7 +353,7 @@ public class ProductService extends BaseService {
         return cmsBtProductDao.update(channelId, paraMap, updateMap);
     }
 
-    public WriteResult updateFirstProduct(JomgoUpdate updObj, String channelId) {
+    public WriteResult updateFirstProduct(JongoUpdate updObj, String channelId) {
         return cmsBtProductDao.updateFirst(updObj, channelId);
     }
 
@@ -1077,7 +1077,7 @@ public class ProductService extends BaseService {
         return result.getModifiedCount();
     }
 
-    public WriteResult updateMulti(JomgoUpdate updObj, String channelId) {
+    public WriteResult updateMulti(JongoUpdate updObj, String channelId) {
         return cmsBtProductDao.updateMulti(updObj, channelId);
     }
 
@@ -1089,7 +1089,7 @@ public class ProductService extends BaseService {
         return cmsBtProductDao.countByQuery(strQuery, parameters, channelId);
     }
 
-    public List<Map<String, Object>> aggregateToMap(String channelId, List<JomgoAggregate> aggregateList) {
+    public List<Map<String, Object>> aggregateToMap(String channelId, List<JongoAggregate> aggregateList) {
         return cmsBtProductDao.aggregateToMap(channelId, aggregateList);
     }
 

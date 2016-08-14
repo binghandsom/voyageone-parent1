@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.service.product;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
@@ -106,7 +106,7 @@ public class CmsProcductPriceUpdateService extends BaseMQCmsService {
         double newPriceSaleEd = priceSaleList.get(priceSaleList.size() - 1);
 
         // 先更新产品platforms价格范围（不更新common中的价格范围）
-        JomgoUpdate updObj = new JomgoUpdate();
+        JongoUpdate updObj = new JongoUpdate();
         updObj.setQuery("{'prodId':#,'platforms.P#.skus':{$exists:true}}");
         updObj.setQueryParameters(prodId, cartId);
         updObj.setUpdate("{$set:{'platforms.P#.pPriceMsrpSt':#,'platforms.P#.pPriceMsrpEd':#, 'platforms.P#.pPriceRetailSt':#,'platforms.P#.pPriceRetailEd':#, 'platforms.P#.pPriceSaleSt':#,'platforms.P#.pPriceSaleEd':#, 'modified':#,'modifier':#}}");
@@ -164,7 +164,7 @@ public class CmsProcductPriceUpdateService extends BaseMQCmsService {
         newPriceSaleEd = priceSaleEdList.get(priceSaleEdList.size() - 1);
 
         // 更新group中的价格范围
-        updObj = new JomgoUpdate();
+        updObj = new JongoUpdate();
         updObj.setQuery("{'mainProductCode':#,'cartId':#}");
         updObj.setQueryParameters(mProdCode, cartId);
         updObj.setUpdate("{$set:{'priceMsrpSt':#,'priceMsrpEd':#, 'priceRetailSt':#,'priceRetailEd':#, 'priceSaleSt':#,'priceSaleEd':#, 'modified':#,'modifier':#}}");
