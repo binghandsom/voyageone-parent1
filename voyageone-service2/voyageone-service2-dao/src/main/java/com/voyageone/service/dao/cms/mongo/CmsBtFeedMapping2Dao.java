@@ -1,11 +1,9 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.service.model.cms.mongo.feed.mapping2.CmsBtFeedMapping2Model;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * @author jeff.duan, 16/6/6.
@@ -24,7 +22,7 @@ public class CmsBtFeedMapping2Dao extends BaseMongoChannelDao<CmsBtFeedMapping2M
      */
     public CmsBtFeedMapping2Model findDefault(String channelId, String feedCategory) {
 
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
 
         // 为了防止categoryPath里有单引号, 这里外侧改为双引号
         query.setQuery(String.format("{ \"channelId\": \"%s\", \"feedCategoryPath\": \"%s\", defaultMapping: 1 }",

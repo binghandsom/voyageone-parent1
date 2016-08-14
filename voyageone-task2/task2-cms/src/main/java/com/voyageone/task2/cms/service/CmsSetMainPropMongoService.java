@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.CommonConfigNotFoundException;
@@ -301,7 +301,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // jeff 2016/05 add start
             String sort = "{modified:1}";
             // jeff 2016/05 add end
-            JomgoQuery queryObject = new JomgoQuery();
+            JongoQuery queryObject = new JongoQuery();
             queryObject.setQuery(query);
             queryObject.setSort(sort);
             queryObject.setLimit(FEED_IMPORT_MAX_500);   // 默认为每次最大500件
@@ -2616,7 +2616,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          */
         private List<CmsBtProductGroupModel> getGroupsByCode(String channelId, String code) {
             // 先去看看是否有存在的了
-            JomgoQuery queryObject = new JomgoQuery();
+            JongoQuery queryObject = new JongoQuery();
             queryObject.setQuery("{\"productCodes\":\"" + code + "\"}");
             return productGroupService.getList(channelId, queryObject);
         }

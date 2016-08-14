@@ -4,28 +4,29 @@ import com.voyageone.base.dao.mongodb.support.VOBsonQueryFactory;
 import org.jongo.query.Query;
 
 /**
- * JomgoAggregate Aggregate Object
+ * JongoAggregate Aggregate Object
  *
  * @author chuanyu.liang, 6/11/16
  * @version 2.0.1
  * @since 2.0.0
  */
-public class JomgoAggregate {
+public class JongoAggregate {
+
     private String pipelineOperator;
     private Object[] parameters = new Object[0];
 
-    public JomgoAggregate(String pipelineOperator) {
+    public JongoAggregate(String pipelineOperator) {
         this.pipelineOperator = pipelineOperator;
     }
 
-    public JomgoAggregate(String pipelineOperator, Object... parameters) {
+    public JongoAggregate(String pipelineOperator, Object... parameters) {
         this.pipelineOperator = pipelineOperator;
         if (parameters != null && parameters.length > 0) {
             this.parameters = parameters;
         }
     }
 
-    public String getPipelineOperator() {
+    String getPipelineOperator() {
         return pipelineOperator;
     }
 

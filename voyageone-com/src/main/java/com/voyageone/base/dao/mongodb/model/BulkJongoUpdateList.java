@@ -2,7 +2,7 @@ package com.voyageone.base.dao.mongodb.model;
 
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.logger.VOAbsLoggable;
 
 import java.util.ArrayList;
@@ -10,11 +10,12 @@ import java.util.List;
 
 /**
  * BulkUpdateModel
+ *
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
  */
-public class BulkJomgoUpdateList extends VOAbsLoggable {
+public class BulkJongoUpdateList extends VOAbsLoggable {
     /**
      * 执行缓冲区大小
      */
@@ -22,7 +23,7 @@ public class BulkJomgoUpdateList extends VOAbsLoggable {
     /**
      * 执行队列
      */
-    private List<JomgoUpdate> bulkList = null;
+    private List<JongoUpdate> bulkList = null;
     /**
      * 执行Dao对象
      */
@@ -32,7 +33,7 @@ public class BulkJomgoUpdateList extends VOAbsLoggable {
      */
     private String channelId = null;
 
-    public BulkJomgoUpdateList(int limitSize, BaseMongoChannelDao targetDao, String channelId) {
+    public BulkJongoUpdateList(int limitSize, BaseMongoChannelDao targetDao, String channelId) {
         if (limitSize == 0) {
             throw new IllegalArgumentException("使用BulkUpdateList时必须设置缓冲区大小.");
         }
@@ -42,11 +43,11 @@ public class BulkJomgoUpdateList extends VOAbsLoggable {
         this.channelId = channelId;
     }
 
-    public BulkWriteResult addBulkJomgo(JomgoUpdate jmgObj) {
+    public BulkWriteResult addBulkJongo(JongoUpdate jmgObj) {
         bulkList.add(jmgObj);
         // 批量更新
         if (bulkList.size() > 0 && bulkList.size() % bufferSize == 0) {
-            BulkWriteResult rs = targetDao.bulkUpdateWithJomgo(channelId, bulkList);
+            BulkWriteResult rs = targetDao.bulkUpdateWithJongo(channelId, bulkList);
             bulkList.clear();
             return rs;
         }
@@ -55,7 +56,7 @@ public class BulkJomgoUpdateList extends VOAbsLoggable {
 
     public BulkWriteResult execute() {
         if (bulkList.size() > 0) {
-            BulkWriteResult rs = targetDao.bulkUpdateWithJomgo(channelId, bulkList);
+            BulkWriteResult rs = targetDao.bulkUpdateWithJongo(channelId, bulkList);
             bulkList.clear();
             return rs;
         }

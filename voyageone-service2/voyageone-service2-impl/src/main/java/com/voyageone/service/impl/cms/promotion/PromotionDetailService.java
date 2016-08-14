@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms.promotion;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.transaction.VOTransactional;
@@ -80,7 +80,7 @@ public class PromotionDetailService extends BaseService {
         // 获取Product信息
         CmsBtProductModel productInfo;
         CmsBtProductGroupModel groupModel;
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         if (!StringUtils.isEmpty(productCode)) {
             productInfo = productService.getProductByCode(channelId, productCode);
             query.setQuery("{\"productCodes\":\"" + productCode + "\",\"cartId\":" + cartId + "}");

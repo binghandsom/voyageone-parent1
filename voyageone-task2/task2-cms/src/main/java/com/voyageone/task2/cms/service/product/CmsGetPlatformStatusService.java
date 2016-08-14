@@ -5,7 +5,7 @@ import com.jd.open.api.sdk.domain.ware.Ware;
 import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Item;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -216,7 +216,7 @@ public class CmsGetPlatformStatusService extends BaseTaskService {
     }
 
     private void savePlatfromSts(String channelId, int cartId, List<String> numIIdList, String stsValue) {
-        JomgoUpdate updObj = new JomgoUpdate();
+        JongoUpdate updObj = new JongoUpdate();
         updObj.setQuery("{'platforms.P#.pNumIId':{$in:#},'platforms.P#.status':'Approved'}");
         updObj.setQueryParameters(cartId, numIIdList, cartId);
         updObj.setUpdate("{$set:{'platforms.P#.pReallyStatus':#,'modified':#,'modifier':#}}");

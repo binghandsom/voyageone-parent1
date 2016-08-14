@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
@@ -183,7 +183,7 @@ public class CmsPromotionDetailService extends BaseAppService {
      */
     public List<Map<String, Object>> getPromotionGroup(Map<String, Object> param, int cartId) {
         List<Map<String, Object>> promotionGroups = promotionModelService.getPromotionModelDetailList(param);
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
 
         if (!CollectionUtils.isEmpty(promotionGroups)) {
             promotionGroups.forEach(map -> {
@@ -217,7 +217,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     public List<CmsBtPromotionCodesBean> getPromotionCode(Map<String, Object> param, int cartId) {
         List<CmsBtPromotionCodesBean> promList = promotionCodeService.getPromotionCodeList(param);
 
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setProjection("{'batchField':1,'common.fields.code':1,'_id':0}");
 
         if (!CollectionUtils.isEmpty(promList)) {

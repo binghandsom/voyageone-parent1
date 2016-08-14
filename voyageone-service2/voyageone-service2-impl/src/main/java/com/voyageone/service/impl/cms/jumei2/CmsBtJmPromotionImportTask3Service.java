@@ -1,5 +1,5 @@
 package com.voyageone.service.impl.cms.jumei2;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
@@ -394,7 +394,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     private void loadCmsBtPromotionCodes(ProductSaveInfo saveInfo, List<SkuImportBean> listSkuImport, ProductImportBean product, CmsBtPromotionModel modelPromotion,String userName) {
 
         // 获取Product信息 mongo
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         CmsBtProductModel productInfo = saveInfo.p_ProductInfo;// productService.getProductByCode(modelPromotion.getChannelId(), product.getProductCode());
         query.setQuery("{\"productCodes\":\"" + product.getProductCode() + "\",\"cartId\":" + CartEnums.Cart.JM.getValue() + "}");
         CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(modelPromotion.getChannelId(), query);

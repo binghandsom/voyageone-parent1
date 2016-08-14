@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.group;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.impl.cms.PlatformService;
@@ -67,7 +67,7 @@ public class CmsGroupDetailService extends BaseAppService {
         Map<String, Object> result = new HashMap<>();
 
         // 先取得group信息，
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"groupId\": #}");
         queryObject.setParameters(Integer.valueOf(params.get("id").toString()));
         List<CmsBtProductGroupModel> rstList = productGroupService.getList(userInfo.getSelChannelId(), queryObject);
@@ -84,7 +84,7 @@ public class CmsGroupDetailService extends BaseAppService {
             throw new BusinessException("该group下没有product数据");
         }
 
-        JomgoQuery grpQueryObject = new JomgoQuery();
+        JongoQuery grpQueryObject = new JongoQuery();
         grpQueryObject.setQuery("{\"common.fields.code\": {$in:#}}");
         grpQueryObject.setParameters(codeList);
         List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), grpQueryObject);

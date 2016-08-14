@@ -20,14 +20,15 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * BaseJomgoDao
+ * BaseJongoDao
+ *
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
  */
-public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
+public abstract class BaseJongoDao<T> implements ApplicationContextAware {
 
-    protected BaseJomgoTemplate mongoTemplate;
+    protected BaseJongoTemplate mongoTemplate;
 
     protected String collectionName;
 
@@ -59,7 +60,7 @@ public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
-        this.mongoTemplate = applicationContext.getBean(BaseJomgoTemplate.class);
+        this.mongoTemplate = applicationContext.getBean(BaseJongoTemplate.class);
         if (this.collectionName == null) {
             this.entityClass = getEntityClass();
             this.collectionName = mongoTemplate.getCollectionName(entityClass);
@@ -68,7 +69,7 @@ public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
 
     @SuppressWarnings("unchecked")
     public Class<T> getEntityClass() {
-        return (Class<T>)getSuperClassGenricType(getClass(), 0);
+        return (Class<T>) getSuperClassGenericType(getClass(), 0);
     }
 
     /**
@@ -76,10 +77,10 @@ public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
      *
      * @param clazz clazz The class to introspect
      * @param index the Index of the generic ddeclaration,start from 0.
-     * @return       the index generic declaration, or Object.class if cannot be determined
+     * @return the index generic declaration, or Object.class if cannot be determined
      */
     @SuppressWarnings("unchecked")
-    public static Class<Object> getSuperClassGenricType(final Class clazz, final int index) {
+    private static Class<Object> getSuperClassGenericType(final Class clazz, final int index) {
 
         //返回表示此 Class 所表示的实体（类、接口、基本类型或 void）的直接超类的 Type。
         Type genType = clazz.getGenericSuperclass();
@@ -107,7 +108,7 @@ public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
 
     public WriteResult insertWithList(Collection<? extends T> models) {
         if (models != null && !models.isEmpty()) {
-            BaseMongoModel model = (BaseMongoModel)models.iterator().next();
+            BaseMongoModel model = (BaseMongoModel) models.iterator().next();
             String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
             return mongoTemplate.insert(models, collectionName);
         }
@@ -137,15 +138,15 @@ public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
      * 必须注意：这里的Model不能简单使用表定义对应的Model，而是要和aggregate语句对应(要定义新的Model/Dao)，否则查询无正确数据
      */
     @SuppressWarnings("unchecked")
-    public List<T> aggregateToObj(Class entityClass, String collectionName, JomgoAggregate... aggregates) {
+    public List<T> aggregateToObj(Class entityClass, String collectionName, JongoAggregate... aggregates) {
         Aggregate aggr = mongoTemplate.aggregate(aggregates[0].getPipelineOperator(), collectionName, aggregates[0].getParameters());
-        for (int i=1; i<aggregates.length; i++) {
+        for (int i = 1; i < aggregates.length; i++) {
             aggr.and(aggregates[i].getPipelineOperator(), aggregates[i].getParameters());
         }
         return IteratorUtils.toList(aggr.as(entityClass));
     }
 
-    public String getQueryStr(JomgoQuery quyObj) {
+    public String getQueryStr(JongoQuery quyObj) {
         if (quyObj.getQuery() == null || quyObj.getQuery().isEmpty()) {
             return "";
         }

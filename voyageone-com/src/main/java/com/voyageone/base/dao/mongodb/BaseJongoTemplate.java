@@ -8,14 +8,14 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * BaseJomgoTemplate
+ * BaseJongoTemplate
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
  */
-public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
+public class BaseJongoTemplate extends BaseJongoPartTemplate {
 
-    public BaseJomgoTemplate(MongoTemplate mongoTemplate) {
+    public BaseJongoTemplate(MongoTemplate mongoTemplate) {
         super(mongoTemplate);
     }
 
@@ -34,7 +34,7 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
         return findOne(strQuery, projection, entityClass, collectionName);
     }
 
-    public <T> T findOne(JomgoQuery queryObject, Class<T> entityClass) {
+    public <T> T findOne(JongoQuery queryObject, Class<T> entityClass) {
         String collectionName = getCollectionName(entityClass);
         return findOne(queryObject, entityClass, collectionName);
     }
@@ -59,7 +59,7 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
         return find(strQuery, null, entityClass, collectionName);
     }
 
-    public <T> List<T> find(JomgoQuery queryObject, Class<T> entityClass) {
+    public <T> List<T> find(JongoQuery queryObject, Class<T> entityClass) {
         String collectionName = getCollectionName(entityClass);
         return find(queryObject, entityClass, collectionName);
     }
@@ -69,7 +69,7 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
         return findCursor(strQuery, null, entityClass, collectionName);
     }
 
-    public <T> MongoCursor<T> findCursor(JomgoQuery queryObject, Class<T> entityClass) {
+    public <T> MongoCursor<T> findCursor(JongoQuery queryObject, Class<T> entityClass) {
         String collectionName = getCollectionName(entityClass);
         return findCursor(queryObject, entityClass, collectionName);
     }
@@ -79,7 +79,7 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
         return findById(id, entityClass, collectionName);
     }
 
-    public <T> T findAndModify(JomgoUpdate updateObject, Class<T> entityClass) {
+    public <T> T findAndModify(JongoUpdate updateObject, Class<T> entityClass) {
         String collectionName = getCollectionName(entityClass);
         return findAndModify(updateObject, entityClass, collectionName);
     }

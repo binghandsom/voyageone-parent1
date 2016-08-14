@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
@@ -112,7 +112,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
 
         $info("准备生成 Item 文档 [ %s ]", recCount);
         $info("准备打开文档 [ %s ]", templatePath);
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{'common.fields.code':{$in:#}}");
         queryObject.setParameters(prodCodeList);
         String searchItemStr = CmsAdvanceSearchService.searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems"));
@@ -566,7 +566,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             cartIdList.add(NumberUtils.toInt(cartObj.getValue()));
         }
 
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{'channelId':#,'mainProductCode':{$in:#},'cartId':{$in:#}}");
         queryObject.setParameters(channelId, codeList, cartIdList);
         queryObject.setProjection("{'_id':0,'cartId':1,'mainProductCode':1,'numIId':1,'priceMsrpSt':1,'priceMsrpEd':1,'priceRetailSt':1,'priceRetailEd':1,'priceSaleSt':1,'priceSaleEd':1}");
