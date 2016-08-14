@@ -29,7 +29,9 @@ public class JongoQuery extends BaseCondition {
      * query condition
      */
     private String query;
+
     private List<String> queryStrList = null;
+
     /**
      * query condition
      */
@@ -54,7 +56,6 @@ public class JongoQuery extends BaseCondition {
      * skip count
      */
     private Integer skip;
-
 
     public JongoQuery() {
     }
@@ -91,8 +92,49 @@ public class JongoQuery extends BaseCondition {
      * @param projection 必须是如"{'key1':1,'key2':1}"的形式，必须要有大括号
      *                     注意：如果是单个输出项，该参数也必须设为如："{'key1':1}"
      */
-    public void setProjection(String projection) {
+    public JongoQuery setProjection(String projection) {
         this.projection = projection;
+        return this;
+    }
+
+    public String getSort() {
+        return sort;
+    }
+
+    public JongoQuery setSort(String sort) {
+        this.sort = sort;
+        return this;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public JongoQuery setLimit(Integer limit) {
+        this.limit = limit;
+        return this;
+    }
+
+    public Integer getSkip() {
+        return skip;
+    }
+
+    public JongoQuery setSkip(Integer skip) {
+        this.skip = skip;
+        return this;
+    }
+
+    public ObjectId getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(ObjectId objectId) {
+        this.objectId = objectId;
+    }
+
+    public JongoQuery setQuery(String query) {
+        this.query = query;
+        return this;
     }
 
     public String getQuery() {
@@ -115,11 +157,6 @@ public class JongoQuery extends BaseCondition {
         }
         Query query = queryFactory.createQuery(getQuery(), params);
         return query.toDBObject().toMap();
-    }
-
-    public JongoQuery setQuery(String query) {
-        this.query = query;
-        return this;
     }
 
     public Object[] getParameters() {
@@ -169,41 +206,6 @@ public class JongoQuery extends BaseCondition {
         } else {
             this.parameters = ArrayUtils.addAll(this.parameters, parameters);
         }
-    }
-
-    public String getSort() {
-        return sort;
-    }
-
-    public JongoQuery setSort(String sort) {
-        this.sort = sort;
-        return this;
-    }
-
-    public Integer getLimit() {
-        return limit;
-    }
-
-    public JongoQuery setLimit(Integer limit) {
-        this.limit = limit;
-        return this;
-    }
-
-    public Integer getSkip() {
-        return skip;
-    }
-
-    public JongoQuery setSkip(Integer skip) {
-        this.skip = skip;
-        return this;
-    }
-
-    public ObjectId getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(ObjectId objectId) {
-        this.objectId = objectId;
     }
 
     @Override
