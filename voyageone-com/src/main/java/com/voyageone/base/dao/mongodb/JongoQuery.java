@@ -1,6 +1,7 @@
 package com.voyageone.base.dao.mongodb;
 
 import com.voyageone.base.dao.mongodb.support.VOBsonQueryFactory;
+import com.voyageone.common.util.JacksonUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -59,6 +60,10 @@ public class JongoQuery extends BaseCondition {
     private Integer skip;
 
     public JongoQuery() {
+    }
+
+    public JongoQuery(Criteria criteria) {
+        setQuery(criteria);
     }
 
     public JongoQuery(String projection, String query, String sort, Integer limit, Integer skip) {
@@ -139,7 +144,7 @@ public class JongoQuery extends BaseCondition {
     }
 
     public JongoQuery setQuery(Criteria criteria) {
-        setQuery(criteria.toString());
+        setQuery(JacksonUtil.bean2Json(criteria.getCriteriaObject()));
         return this;
     }
 

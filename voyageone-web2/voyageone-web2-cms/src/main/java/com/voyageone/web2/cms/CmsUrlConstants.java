@@ -793,4 +793,11 @@ public interface CmsUrlConstants {
         String GET_PLATFORM_CATEGORY_LIST = "getPlatformCategoryList";
         String SET_UPDATE_FLG = "setUpdateFlg";
     }
+
+    interface PRODUCT_FIELDS_MAP {
+        String ROOT = "/product/fields/map/";
+        String LIST = "list";
+        String GET = "get";
+        String SAVE = "save";
+    }
 }

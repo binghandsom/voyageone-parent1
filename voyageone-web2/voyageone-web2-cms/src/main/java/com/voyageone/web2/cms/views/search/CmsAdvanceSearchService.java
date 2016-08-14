@@ -282,8 +282,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         if (plusStr == null) {
             plusStr = "";
         }
-        String projStr = queryObject.buildProjection(searchItems.concat(plusStr).split(";"));
-        queryObject.setProjection(projStr);
+        queryObject.setProjectionExt(searchItems.concat(plusStr).split(";"));
         queryObject.setSort(advSearchQueryService.getSortValue(searchValue, cmsSessionBean));
 
         List<CmsBtProductBean> prodInfoList = productService.getBeanList(userInfo.getSelChannelId(), queryObject);
