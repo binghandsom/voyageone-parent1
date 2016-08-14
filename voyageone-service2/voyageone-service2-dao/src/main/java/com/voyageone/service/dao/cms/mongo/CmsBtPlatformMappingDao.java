@@ -2,7 +2,7 @@ package com.voyageone.service.dao.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.service.model.cms.mongo.CmsBtFieldMapsModel;
+import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
@@ -16,9 +16,9 @@ import org.springframework.stereotype.Repository;
  * @since 2.4.0
  */
 @Repository
-public class CmsBtFieldMapsDao extends BaseMongoChannelDao<CmsBtFieldMapsModel> {
+public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMappingModel> {
 
-    public CmsBtFieldMapsModel selectOne(int cartId, int categoryType, String categoryId, String channelId) {
+    public CmsBtPlatformMappingModel selectOne(int cartId, int categoryType, String categoryId, String channelId) {
 
         return selectOneWithQuery(new JongoQuery(
                 new Criteria("cartId").is(cartId)
@@ -26,7 +26,7 @@ public class CmsBtFieldMapsDao extends BaseMongoChannelDao<CmsBtFieldMapsModel> 
                         .and("categoryId").is(categoryId)), channelId);
     }
 
-    public boolean exists(CmsBtFieldMapsModel fieldMapsModel) {
+    public boolean exists(CmsBtPlatformMappingModel fieldMapsModel) {
 
         JongoQuery query = new JongoQuery(
                 new Criteria("cartId").is(fieldMapsModel.getCartId())

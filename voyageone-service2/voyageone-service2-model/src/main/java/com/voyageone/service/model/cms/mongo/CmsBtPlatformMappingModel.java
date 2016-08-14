@@ -14,7 +14,7 @@ import java.util.Map;
  * @version 2.4.0
  * @since 2.4.0
  */
-public class CmsBtFieldMapsModel extends ChannelPartitionModel {
+public class CmsBtPlatformMappingModel extends ChannelPartitionModel {
 
     private Integer cartId;
 

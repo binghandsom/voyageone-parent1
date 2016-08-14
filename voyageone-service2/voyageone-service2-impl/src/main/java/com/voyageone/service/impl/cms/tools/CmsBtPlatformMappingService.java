@@ -2,10 +2,10 @@ package com.voyageone.service.impl.cms.tools;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.service.dao.cms.mongo.CmsBtFieldMapsDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtPlatformMappingDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.mongo.CmsBtFieldMapsModel;
+import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import java.util.Map;
  * @since 2.4.0
  */
 @Service
-public class FieldMapService extends BaseService {
+public class CmsBtPlatformMappingService extends BaseService {
 
     private final static int CATEGORY_TYPE_COMMON = 1;
 
@@ -38,22 +38,22 @@ public class FieldMapService extends BaseService {
 
     private final ProductService productService;
 
-    private final CmsBtFieldMapsDao fieldMapsDao;
+    private final CmsBtPlatformMappingDao platformMappingDao;
 
     @Autowired
-    public FieldMapService(ProductService productService, CmsBtFieldMapsDao fieldMapsDao) {
+    public CmsBtPlatformMappingService(ProductService productService, CmsBtPlatformMappingDao platformMappingDao) {
         this.productService = productService;
-        this.fieldMapsDao = fieldMapsDao;
+        this.platformMappingDao = platformMappingDao;
     }
 
-    boolean saveMap(CmsBtFieldMapsModel fieldMapsModel) {
+    boolean saveMap(CmsBtPlatformMappingModel fieldMapsModel) {
 
         WriteResult writeResult;
 
-        if (fieldMapsDao.exists(fieldMapsModel))
-            writeResult = fieldMapsDao.update(fieldMapsModel);
+        if (platformMappingDao.exists(fieldMapsModel))
+            writeResult = platformMappingDao.update(fieldMapsModel);
         else
-            writeResult = fieldMapsDao.insert(fieldMapsModel);
+            writeResult = platformMappingDao.insert(fieldMapsModel);
 
         return writeResult.getN() > 0;
     }
@@ -66,9 +66,9 @@ public class FieldMapService extends BaseService {
 
         CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
 
-        CmsBtFieldMapsModel fieldMapsModel = fieldMapsDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, cart.getpCatId(), channelId);
+        CmsBtPlatformMappingModel fieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, cart.getpCatId(), channelId);
 
-        CmsBtFieldMapsModel commonFieldMapsModel = fieldMapsDao.selectOne(cartId, CATEGORY_TYPE_COMMON, cart.getpCatId(), channelId);
+        CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_COMMON, cart.getpCatId(), channelId);
 
         Map<String, String> valueMap = new HashMap<>();
 
@@ -81,13 +81,13 @@ public class FieldMapService extends BaseService {
         return valueMap;
     }
 
-    private void fillValueMap(Map<String, String> valueMap, CmsBtProductModel product, CmsBtFieldMapsModel fieldMapsModel) {
+    private void fillValueMap(Map<String, String> valueMap, CmsBtProductModel product, CmsBtPlatformMappingModel fieldMapsModel) {
 
         // 循环所有配置
         // 如果没有表达式配置, 就简单的使用 value 作为值
         // 如果有表达式配置, 需要循环表达式, 根据配置类型去商品获取值进行拼接
 
-        List<CmsBtFieldMapsModel.FieldMapping> mappingList = fieldMapsModel.getMappings();
+        List<CmsBtPlatformMappingModel.FieldMapping> mappingList = fieldMapsModel.getMappings();
 
         if (mappingList == null || mappingList.isEmpty())
             return;
@@ -104,9 +104,9 @@ public class FieldMapService extends BaseService {
 
         CmsBtProductModel_Field master = common.getFields();
 
-        for (CmsBtFieldMapsModel.FieldMapping mapping: mappingList) {
+        for (CmsBtPlatformMappingModel.FieldMapping mapping: mappingList) {
 
-            List<CmsBtFieldMapsModel.FieldMappingExpression> expressionList = mapping.getExpressions();
+            List<CmsBtPlatformMappingModel.FieldMappingExpression> expressionList = mapping.getExpressions();
 
             if (expressionList == null) {
                 valueMap.put(mapping.getFieldId(), mapping.getValue());
@@ -115,7 +115,7 @@ public class FieldMapService extends BaseService {
 
             StringBuilder valueBuilder = new StringBuilder();
 
-            for (CmsBtFieldMapsModel.FieldMappingExpression expression: expressionList) {
+            for (CmsBtPlatformMappingModel.FieldMappingExpression expression: expressionList) {
 
                 String key = expression.getValue();
 

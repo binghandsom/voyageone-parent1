@@ -1,8 +1,8 @@
 package com.voyageone.service.impl.cms.tools;
 
-import com.voyageone.service.dao.cms.mongo.CmsBtFieldMapsDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtPlatformMappingDao;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.mongo.CmsBtFieldMapsModel;
+import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import org.junit.Test;
@@ -25,18 +25,18 @@ import java.util.Map;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
-public class FieldMapServiceTest {
+public class CmsBtPlatformMappingServiceTest {
 
     @Autowired
-    private FieldMapService fieldMapService;
+    private CmsBtPlatformMappingService platformMappingService;
 
     @Autowired
     private ProductService productService;
 
     @Autowired
-    private CmsBtFieldMapsDao fieldMapsDao;
+    private CmsBtPlatformMappingDao fieldMapsDao;
 
-    private CmsBtFieldMapsModel getTestModel() {
+    private CmsBtPlatformMappingModel getTestModel() {
 
         CmsBtProductModel productModel = productService.getProductById("010", 9440);
 
@@ -44,7 +44,7 @@ public class FieldMapServiceTest {
 
         CmsBtProductModel_Platform_Cart cart = productModel.getPlatform(cartId);
 
-        return new CmsBtFieldMapsModel() {
+        return new CmsBtPlatformMappingModel() {
             {
                 setChannelId(productModel.getChannelId());
                 setCategoryId(cart.getpCatId());
@@ -97,9 +97,9 @@ public class FieldMapServiceTest {
     @Test
     public void testSave() {
 
-        CmsBtFieldMapsModel fieldMapsModel = getTestModel();
+        CmsBtPlatformMappingModel fieldMapsModel = getTestModel();
 
-        fieldMapService.saveMap(fieldMapsModel);
+        platformMappingService.saveMap(fieldMapsModel);
 
         fieldMapsModel = fieldMapsDao.selectOne(fieldMapsModel.getCartId(), fieldMapsModel.getCategoryType(), fieldMapsModel.getCategoryId(), fieldMapsModel.getChannelId());
 
@@ -109,11 +109,11 @@ public class FieldMapServiceTest {
     @Test
     public void testFill() {
 
-        CmsBtFieldMapsModel fieldMapsModel = getTestModel();
+        CmsBtPlatformMappingModel fieldMapsModel = getTestModel();
 
-        fieldMapService.saveMap(fieldMapsModel);
+        platformMappingService.saveMap(fieldMapsModel);
 
-        Map<String, String> valueMap = fieldMapService.getValueMap(fieldMapsModel.getChannelId(), 9440, fieldMapsModel.getCartId());
+        Map<String, String> valueMap = platformMappingService.getValueMap(fieldMapsModel.getChannelId(), 9440, fieldMapsModel.getCartId());
 
         assert valueMap != null;
 
