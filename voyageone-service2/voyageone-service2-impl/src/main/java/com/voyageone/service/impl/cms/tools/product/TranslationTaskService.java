@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.tools.product;
 
-import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
@@ -145,14 +144,14 @@ public class TranslationTaskService extends BaseService {
             JongoQuery queryObj = new JongoQuery();
 
             //不能有2个or
-            queryObj.addQuery("'common.fields.isMasterMain':1");
-            queryObj.addQuery("'common.fields.translateStatus': {'$ne' : '1' }");
-            queryObj.addQuery("'$or': [{'common.fields.translator':''},{'common.fields.translateTime':{'$lte':#}},{'common.fields.translator': null}, {'common.fields.translateTime':null}, {'common.fields.translateTime':''}]");
+            queryObj.addQuery("{'common.fields.isMasterMain':1}");
+            queryObj.addQuery("{'common.fields.translateStatus': {'$ne' : '1' }}");
+            queryObj.addQuery("{'$or': [{'common.fields.translator':''},{'common.fields.translateTime':{'$lte':#}},{'common.fields.translator': null}, {'common.fields.translateTime':null}, {'common.fields.translateTime':''}]}");
             queryObj.addParameters(translateTimeStr);
 
 
             if (!StringUtils.isNullOrBlank2(keyWord)) {
-                queryObj.addQuery("'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}},{'common.fields.originalTitleCn':{'$regex': #}}]");
+                queryObj.addQuery("{'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}},{'common.fields.originalTitleCn':{'$regex': #}}]}");
                 queryObj.addParameters(keyWord, keyWord, keyWord);
             }
 
@@ -165,12 +164,6 @@ public class TranslationTaskService extends BaseService {
                     }
                 }
             }
-
-            List<String> queryStrList = queryObj.getQueryStrList().stream().map(w-> "{" + w + "}").collect(Collectors.toList());
-
-            String queryStr1 = "{'$and':[" + Joiner.on(",").join(queryStrList) + "]}";
-
-            queryObj.setQuery(queryStr1);
 
             product = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
         }
@@ -227,83 +220,78 @@ public class TranslationTaskService extends BaseService {
         String queryStr = String.format("{'mainProductCode' : '%s', 'cartId':0}", mainCode);
         CmsBtProductGroupModel group = CmsBtProductGroupDao.selectOneWithQuery(queryStr, channelId);
 
-        if(group == null)
-        {
-            throw  new BusinessException("无法找打主产品为["+ mainCode+ "]的产品组!");
+        if (group == null) {
+            throw new BusinessException("无法找打主产品为[" + mainCode + "]的产品组!");
         }
 
-        if (group != null) {
-            TranslationTaskBean_CommonFields cnFields = bean.getCommonFields();
+        TranslationTaskBean_CommonFields cnFields = bean.getCommonFields();
 
-            //读cms_mt_feed_custom_prop
-            List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, bean
-                    .getFeedCategory());
+        //读cms_mt_feed_custom_prop
+        List<FeedCustomPropWithValueBean> feedCustomPropList = customPropService.getPropList(channelId, bean
+                .getFeedCategory());
 
-            //去除掉feedCustomPropList中的垃圾数据
-            if (feedCustomPropList != null && !feedCustomPropList.isEmpty()) {
-                feedCustomPropList = feedCustomPropList.stream()
-                        .filter(w -> !StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) && !StringUtils
-                                .isNullOrBlank2(w.getFeed_prop_original()))
-                        .collect(Collectors.toList());
-            } else {
-                feedCustomPropList = new ArrayList<>();
+        //去除掉feedCustomPropList中的垃圾数据
+        if (feedCustomPropList != null && !feedCustomPropList.isEmpty()) {
+            feedCustomPropList = feedCustomPropList.stream()
+                    .filter(w -> !StringUtils.isNullOrBlank2(w.getFeed_prop_translation()) && !StringUtils
+                            .isNullOrBlank2(w.getFeed_prop_original()))
+                    .collect(Collectors.toList());
+        } else {
+            feedCustomPropList = new ArrayList<>();
+        }
+        Set<String> custPropKeySet = feedCustomPropList.stream().map
+                (FeedCustomPropWithValueBean::getFeed_prop_original).collect(Collectors.toSet());
+        //根据feedCustomPropList精简cnProps
+        List<CustomPropBean> cnProps = bean.getCustomProps();
+        if (custPropKeySet != null && !custPropKeySet.isEmpty()) {
+            cnProps = cnProps.stream().filter(w -> custPropKeySet.contains(w.getFeedAttrEn())).collect(Collectors.toList());
+        }
+
+
+        //查找产品组
+        List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByCodes(group.getProductCodes(),
+                channelId);
+
+        for (CmsBtProductModel product : productList) {
+            Map<String, Object> rsMap = new HashMap<>();
+
+            Map<String, Object> queryMap = new HashMap<>();
+            queryMap.put("prodId", product.getProdId());
+
+            rsMap.put("common.fields.shortDesCn", cnFields.getShortDesCn());
+            rsMap.put("common.fields.longDesCn", cnFields.getLongDesCn());
+            rsMap.put("common.fields.originalTitleCn", cnFields.getOriginalTitleCn());
+            rsMap.put("common.fields.materialCn", cnFields.getMaterialCn());
+            rsMap.put("common.fields.usageCn", cnFields.getUsageCn());
+            rsMap.put("common.fields.origin", cnFields.getOrigin());
+            rsMap.put("common.fields.translator", userName);
+            rsMap.put("common.fields.translateTime", DateTimeUtil.getNow());
+
+            if (status.equals("1")) {
+                rsMap.put("common.fields.translateStatus", '1');
+            } else if (product.getCommon().getFields().getTranslateStatus() == null) {
+                rsMap.put("common.fields.translateStatus", '0');
             }
-            Set<String> custPropKeySet = feedCustomPropList.stream().map
-                    (FeedCustomPropWithValueBean::getFeed_prop_original).collect(Collectors.toSet());
-            //根据feedCustomPropList精简cnProps
-            List<CustomPropBean> cnProps = bean.getCustomProps();
-            if (custPropKeySet != null && !custPropKeySet.isEmpty()) {
-                cnProps = cnProps.stream().filter(w -> custPropKeySet.contains(w.getFeedAttrEn())).collect(Collectors.toList());
-            }
 
+            rsMap.put("modifier", userName);
+            rsMap.put("modified", DateTimeUtil.getNow());
 
-            //查找产品组
-            List<CmsBtProductModel> productList = cmsBtProductDao.selectProductByCodes(group.getProductCodes(),
-                    channelId);
-
-            for (CmsBtProductModel product : productList) {
-                Map<String, Object> rsMap = new HashMap<>();
-
-                Map<String, Object> queryMap = new HashMap<>();
-                queryMap.put("prodId", product.getProdId());
-
-                rsMap.put("common.fields.shortDesCn", cnFields.getShortDesCn());
-                rsMap.put("common.fields.longDesCn", cnFields.getLongDesCn());
-                rsMap.put("common.fields.originalTitleCn", cnFields.getOriginalTitleCn());
-                rsMap.put("common.fields.materialCn", cnFields.getMaterialCn());
-                rsMap.put("common.fields.usageCn", cnFields.getUsageCn());
-                rsMap.put("common.fields.origin", cnFields.getOrigin());
-                rsMap.put("common.fields.translator", userName);
-                rsMap.put("common.fields.translateTime", DateTimeUtil.getNow());
-
-                if(status.equals("1")) {
-                    rsMap.put("common.fields.translateStatus", '1');
-                }
-                else if(product.getCommon().getFields().getTranslateStatus() == null )
-                {
-                    rsMap.put("common.fields.translateStatus", '0');
-                }
-
-                rsMap.put("modifier", userName);
-                rsMap.put("modified", DateTimeUtil.getNow());
-
-                if (cnProps != null) {
+            if (cnProps != null) {
 //                    rsMap.put("feed.customIds", cnProps.stream().map(CustomPropBean::getFeedAttrEn)
 //                            .collect(Collectors.toList()));
 //                    rsMap.put("feed.customIdsCn", cnProps.stream().map
 //                            (CustomPropBean::getFeedAttrCn).collect(Collectors.toList()));
-                    rsMap.put("feed.orgAtts", cnProps.stream().collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueEn)));
-                    rsMap.put("feed.cnAtts", cnProps.stream().collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueCn)));
-                }
-
-                Map<String, Object> updateMap = new HashMap<>();
-                updateMap.put("$set", rsMap);
-
-                cmsBtProductDao.update(channelId, queryMap, updateMap);
-
+                rsMap.put("feed.orgAtts", cnProps.stream().collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueEn)));
+                rsMap.put("feed.cnAtts", cnProps.stream().collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueCn)));
             }
 
+            Map<String, Object> updateMap = new HashMap<>();
+            updateMap.put("$set", rsMap);
+
+            cmsBtProductDao.update(channelId, queryMap, updateMap);
+
         }
+
         return getTaskById(channelId, userName, bean.getProdId());
     }
 
@@ -321,33 +309,26 @@ public class TranslationTaskService extends BaseService {
 
         JongoQuery queryObj = new JongoQuery();
 
-        queryObj.addQuery("'common.fields.isMasterMain':1");
-        queryObj.addQuery("'common.fields.translator':#");
+        queryObj.addQuery("{'common.fields.isMasterMain':1}");
+        queryObj.addQuery("{'common.fields.translator':#}");
         queryObj.addParameters(userName);
         if (!StringUtils.isNullOrBlank2(keyWord)) {
-            queryObj.addQuery("'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}}," +
-                    "{'common.fields.originalTitleCn':{'$regex': #}}]");
+            queryObj.addQuery("{'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}}," +
+                    "{'common.fields.originalTitleCn':{'$regex': #}}]}");
             queryObj.addParameters(keyWord, keyWord, keyWord);
         }
 
         //不能有2个or
         if (StringUtils.isNullOrBlank2(status)) {
-            queryObj.addQuery("'$or':[{'common.fields.translateStatus':'0','common.fields.translateTime':{'$gt':#}},{'common.fields.translateStatus':'1'}]");
+            queryObj.addQuery("{'$or':[{'common.fields.translateStatus':'0','common.fields.translateTime':{'$gt':#}},{'common.fields.translateStatus':'1'}]}");
             queryObj.addParameters(translateTimeStr);
         } else if ("1".equals(status)) {
-            queryObj.addQuery("'common.fields.translateStatus':'1'");
+            queryObj.addQuery("{'common.fields.translateStatus':'1'}");
         } else if ("0".equals(status)) {
-            queryObj.addQuery("'common.fields.translateStatus':'0'");
-            queryObj.addQuery("'common.fields.translateTime':{'$gt':#}");
+            queryObj.addQuery("{'common.fields.translateStatus':'0'}");
+            queryObj.addQuery("{'common.fields.translateTime':{'$gt':#}}");
             queryObj.addParameters(translateTimeStr);
         }
-
-        List<String> queryStrList = queryObj.getQueryStrList().stream().map(w-> "{" + w + "}").collect(Collectors.toList());
-
-        String queryStr = "{'$and':[" + Joiner.on(",").join(queryStrList) + "]}";
-
-        queryObj.setQuery(queryStr);
-
 
         queryObj.setSort("{'common.fields.translateTime' : -1}");
 

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.jongo.query.Query;
+import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +91,7 @@ public class JongoQuery extends BaseCondition {
      * 直接设置输出项目
      *
      * @param projection 必须是如"{'key1':1,'key2':1}"的形式，必须要有大括号
-     *                     注意：如果是单个输出项，该参数也必须设为如："{'key1':1}"
+     *                   注意：如果是单个输出项，该参数也必须设为如："{'key1':1}"
      */
     public JongoQuery setProjection(String projection) {
         this.projection = projection;
@@ -137,6 +138,11 @@ public class JongoQuery extends BaseCondition {
         return this;
     }
 
+    public JongoQuery setQuery(Criteria criteria) {
+        setQuery(criteria.toString());
+        return this;
+    }
+
     public String getQuery() {
         if (query != null) {
             return query;
@@ -164,48 +170,64 @@ public class JongoQuery extends BaseCondition {
     }
 
     /**
-     * 设置查询参数
-     * 使用该方法时，查询语句的写法必须参照 http://jongo.org/#querying 的Query templating一节
+     * 设置查询参数, 顺序必须同步 query 字符串内, 参数占位符 (#) 的位置
+     * <p>
+     * 使用该方法时，查询语句的写法必须参照 <a href="http://jongo.org/#query-templating">Jongo Query 文档的 Query templating 节</a>
+     * <p>
      * 有输出项目过滤时，必须调用setProjection/setProjectionExt来设置，不能写在查询语句中
      *
-     * @param parameters
+     * @param parameters 按 query 顺序排列的查询参数值
+     * @return 返回当前实例
      */
-    public void setParameters(Object... parameters) {
+    public JongoQuery setParameters(Object... parameters) {
         this.parameters = parameters;
+        return this;
     }
 
     /**
-     * 添加查询条件（使用此方法时不应再使用setQuery()）
-     * 使用方法示例：
-     *     如最终的查询语句为: ("{'prodId':{$in:#},'platforms.P23':{$exists:true},'platforms.P23.pAttributeStatus':#}"
-     *     则调用时应为   jqObj.addQuery("'prodId':{$in:#}");
-     *                   jqObj.addParameters(prodIdList);    // 这里的prodIdList可以是数组或List
-     *                   jqObj.addQuery("'platforms.P23':{$exists:true}");
-     *                   jqObj.addQuery("'platforms.P23.pAttributeStatus':#");
-     *                   jqObj.addParameters(attrSts);
-     * @param queryStr
+     * 添加查询条件。注意, 使用此方法时不应再使用 {@link JongoQuery#setQuery(String)}, 否则查询条件会被覆盖
+     * <p>
+     * 使用方法示例：如最终的查询语句为: ("{'prodId':{$in:#},'platforms.P23':{$exists:true},'platforms.P23.pAttributeStatus':#}"
+     * 则调用时应为
+     * <pre class="code">
+     * jqObj.addQuery("{'prodId':{$in:#}}");
+     * jqObj.addParameters(prodIdList); // 这里的prodIdList可以是数组或List
+     * jqObj.addQuery("{'platforms.P23':{$exists:true}}");
+     * jqObj.addQuery("{'platforms.P23.pAttributeStatus':#}");
+     * jqObj.addParameters(attrSts);
+     * </pre>
+     *
+     * @param queryStr 查询属性定义语句
+     * @return 当前实例
      */
-    public void addQuery(String queryStr) {
+    public JongoQuery addQuery(String queryStr) {
         if (queryStrList == null) {
             queryStrList = new ArrayList<>();
         }
         queryStrList.add(queryStr);
+        return this;
     }
 
     /**
-     * 添加查询参数，应与addQuery()配对使用
-     * 使用此方法添加参数时必须注意，如果某参数刚好是一个数组，例如 String[] codeArr = .....，
+     * 添加查询参数，建议与 {@link JongoQuery#addQuery(String)} 配对使用
+     * <p>
+     * 使用此方法添加参数时必须注意，如果某参数刚好是一个数组，例如 {@code String[] codeArr = ... }，
      * 则不能简单的使用 addParameters(codeArr) 添加参数，必须使用如下形式：
+     * <pre class="code">
      * Object param = codeArr;
      * addParameters(param);
-     * @param parameters
+     * </pre>
+     *
+     * @param parameters 按 query 顺序排列的查询参数值
+     * @return 当前实例
      */
-    public void addParameters(Object... parameters) {
+    public JongoQuery addParameters(Object... parameters) {
         if (this.parameters == null) {
             this.parameters = parameters;
         } else {
             this.parameters = ArrayUtils.addAll(this.parameters, parameters);
         }
+        return this;
     }
 
     @Override
@@ -237,13 +259,5 @@ public class JongoQuery extends BaseCondition {
         }
         rs.append("; }");
         return rs.toString();
-    }
-
-    public List<String> getQueryStrList() {
-        return queryStrList;
-    }
-
-    public void setQueryStrList(List<String> queryStrList) {
-        this.queryStrList = queryStrList;
     }
 }
