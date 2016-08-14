@@ -13,7 +13,7 @@ import com.voyageone.service.bean.cms.imagetemplate.GetDownloadUrlParamter;
 import com.voyageone.service.bean.cms.imagetemplate.ImageTempateParameter;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.imagecreate.LiquidFireImageService;
+//import com.voyageone.service.impl.cms.imagecreate.LiquidFireImageService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class ImageTemplateService extends BaseService {
     private CmsBtImageTemplateDao dao;
 
     @Autowired
-    private LiquidFireImageService serviceLiquidFireImage;
+//    private LiquidFireImageService serviceLiquidFireImage;
 
     // added by morse.lu 2016/07/13 start
     public List<CmsBtImageTemplateModel> getCmsBtImageTemplateModelList(String channelId, int cartId, int imageTemplateType, int viewType, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
@@ -316,7 +316,8 @@ public class ImageTemplateService extends BaseService {
     }
 
     public String getDownloadUrl(GetDownloadUrlParamter paramter) throws Exception {
-        return serviceLiquidFireImage.getDownloadUrl(paramter.getTemplateContent(), JacksonUtil.bean2Json(paramter.getTemplateParameter()));
+//        return serviceLiquidFireImage.getDownloadUrl(paramter.getTemplateContent(), JacksonUtil.bean2Json(paramter.getTemplateParameter()));
+        return null;
     }
 
     public boolean EXISTSName(String ImageTemplateName, long ImageTemplateId) {
