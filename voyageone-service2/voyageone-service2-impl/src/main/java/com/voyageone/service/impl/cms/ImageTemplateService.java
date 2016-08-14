@@ -36,7 +36,7 @@ public class ImageTemplateService extends BaseService {
     @Autowired
     private CmsBtImageTemplateDao dao;
 
-    @Autowired
+//    @Autowired
 //    private LiquidFireImageService serviceLiquidFireImage;
 
     // added by morse.lu 2016/07/13 start
