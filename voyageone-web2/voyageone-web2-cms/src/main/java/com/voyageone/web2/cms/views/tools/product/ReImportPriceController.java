@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.tools.product;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.asserts.Assert;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
@@ -154,7 +154,7 @@ public class ReImportPriceController extends CmsController {
             qurey += String.format(",\"platforms.P%s.pCatId\":%s", cartId, categoryId);
         }
 
-        List<CmsBtProductModel> productModelList = productService.getList(channelId, new JomgoQuery()
+        List<CmsBtProductModel> productModelList = productService.getList(channelId, new JongoQuery()
                 .setQuery("{" + qurey + "}")
                 .setProjectionExt("common.fields.code"));
 

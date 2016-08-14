@@ -2,7 +2,7 @@ package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJomgoUpdateList;
@@ -400,7 +400,7 @@ public class CmsFieldEditService extends BaseAppService {
             }
         }
         if (newcartList.size() > 0) {
-            JomgoQuery queryObject = new JomgoQuery();
+            JongoQuery queryObject = new JongoQuery();
             StringBuilder qryStr = new StringBuilder();
             qryStr.append("{'common.fields.code':{$in:#},$or:[");
             for (Integer cartIdVal : newcartList) {
@@ -636,7 +636,7 @@ public class CmsFieldEditService extends BaseAppService {
             }
             optionsField.setOptions(options);
         } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_SIZE_CHART.equals(field.getDataSource())) {
-            JomgoQuery queryObject = new JomgoQuery();
+            JongoQuery queryObject = new JongoQuery();
             //取得收索的条件
             queryObject.setQuery("{\"channelId\": #, \"finish\": \"1\"}");
             queryObject.setParameters(channelId);
@@ -702,7 +702,7 @@ public class CmsFieldEditService extends BaseAppService {
         }
 
         // 获取产品的信息
-        JomgoQuery qryObj = new JomgoQuery();
+        JongoQuery qryObj = new JongoQuery();
         qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".skus.0':{$exists:true}}");
         qryObj.setParameters(productCodes);
         qryObj.setProjection("{'common.fields.code':1,'prodId':1,'common.skus.skuCode':1,'common.skus.clientMsrpPrice':1,'common.skus.clientRetailPrice':1,'common.skus.clientNetPrice':1,'platforms.P" + cartId + ".skus':1,'_id':0}");

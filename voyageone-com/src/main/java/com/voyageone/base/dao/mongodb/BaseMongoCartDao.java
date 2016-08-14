@@ -34,7 +34,7 @@ public abstract class BaseMongoCartDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findOne(strQuery, entityClass, getCollectionName(cartId));
     }
 
-    public T selectOneWithQuery(JomgoQuery queryObject, int cartId) {
+    public T selectOneWithQuery(JongoQuery queryObject, int cartId) {
         return mongoTemplate.findOne(queryObject, entityClass, getCollectionName(cartId));
     }
 
@@ -54,7 +54,7 @@ public abstract class BaseMongoCartDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.find(strQuery, projection, entityClass, getCollectionName(cartId));
     }
 
-    public List<T> select(JomgoQuery queryObject, int cartId) {
+    public List<T> select(JongoQuery queryObject, int cartId) {
         return mongoTemplate.find(queryObject, entityClass, getCollectionName(cartId));
     }
 
@@ -62,7 +62,7 @@ public abstract class BaseMongoCartDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findCursor(strQuery, null, entityClass, getCollectionName(cartId));
     }
 
-    public Iterator<T> selectCursor(JomgoQuery queryObject, int cartId) {
+    public Iterator<T> selectCursor(JongoQuery queryObject, int cartId) {
         return mongoTemplate.findCursor(queryObject, entityClass, getCollectionName(cartId));
     }
 

@@ -117,13 +117,13 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> T findOne(String strQuery, String projection, Class<T> entityClass, String collectionName) {
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         query.setQuery(strQuery);
         query.setProjection(projection);
         return findOne(query, entityClass, collectionName);
     }
 
-    public <T> T findOne(JomgoQuery queryObject, Class<T> entityClass, String collectionName) {
+    public <T> T findOne(JongoQuery queryObject, Class<T> entityClass, String collectionName) {
         FindOne find;
 
         //condition
@@ -183,7 +183,7 @@ public class BaseJomgoPartTemplate {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> find(JomgoQuery queryObject, Class<T> entityClass, String collectionName) {
+    public <T> List<T> find(JongoQuery queryObject, Class<T> entityClass, String collectionName) {
         return IteratorUtils.toList(findCursor(queryObject, entityClass, collectionName));
     }
 
@@ -208,13 +208,13 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> MongoCursor<T> findCursor(final String strQuery, String projection, Class<T> entityClass, String collectionName) {
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         query.setQuery(strQuery);
         query.setProjection(projection);
         return findCursor(query, entityClass, collectionName);
     }
 
-    public <T> MongoCursor<T> findCursor(JomgoQuery queryObject, Class<T> entityClass, String collectionName) {
+    public <T> MongoCursor<T> findCursor(JongoQuery queryObject, Class<T> entityClass, String collectionName) {
         MongoCursor<T> result;
         Find find;
 

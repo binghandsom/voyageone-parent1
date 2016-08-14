@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CartBean;
@@ -225,7 +225,7 @@ public class CategoryTreeAllService extends BaseService {
      * @return CmsMtCategoryTreeAllModel
      */
     public List<CmsMtCategoryTreeAllModel> getFstLvlMasterCategory() {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setProjection("{'catId':1,'catName':1,'catPath':1,'isParent':1}");
         queryObject.setSort("{'catName':1}");
         return cmsMtCategoryTreeAllDao.select(queryObject);
@@ -237,7 +237,7 @@ public class CategoryTreeAllService extends BaseService {
      * @return CmsMtCategoryTreeAllModel
      */
     public List<CmsMtCategoryTreeAllModel> getMasterCategory() {
-        return cmsMtCategoryTreeAllDao.select(new JomgoQuery());
+        return cmsMtCategoryTreeAllDao.select(new JongoQuery());
     }
 
     /**

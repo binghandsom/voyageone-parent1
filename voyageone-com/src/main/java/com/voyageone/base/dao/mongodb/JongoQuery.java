@@ -7,7 +7,6 @@ import org.bson.types.ObjectId;
 import org.jongo.query.Query;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +18,7 @@ import java.util.Map;
  * @version 2.0.1
  * @since 2.0.0
  */
-public class JomgoQuery extends BaseCondition {
+public class JongoQuery extends BaseCondition {
 
     /**
      * column
@@ -57,10 +56,10 @@ public class JomgoQuery extends BaseCondition {
     private Integer skip;
 
 
-    public JomgoQuery() {
+    public JongoQuery() {
     }
 
-    public JomgoQuery(String projection, String query, String sort, Integer limit, Integer skip) {
+    public JongoQuery(String projection, String query, String sort, Integer limit, Integer skip) {
         this.projection = projection;
         this.query = query;
         this.sort = sort;
@@ -78,7 +77,7 @@ public class JomgoQuery extends BaseCondition {
      * @param projection 参数形式，可以为数组如：['key1','key2']，也可以直接使用字符串的形式如："{'key1':1,'key2':1}"
      *                   注意：如果是单个输出项，该参数可以直接设为如：'key1'
      */
-    public JomgoQuery setProjectionExt(String... projection) {
+    public JongoQuery setProjectionExt(String... projection) {
         String projectionTmp = buildProjection(projection);
         if (projectionTmp != null) {
             this.projection = projectionTmp;
@@ -118,7 +117,7 @@ public class JomgoQuery extends BaseCondition {
         return query.toDBObject().toMap();
     }
 
-    public JomgoQuery setQuery(String query) {
+    public JongoQuery setQuery(String query) {
         this.query = query;
         return this;
     }
@@ -176,7 +175,7 @@ public class JomgoQuery extends BaseCondition {
         return sort;
     }
 
-    public JomgoQuery setSort(String sort) {
+    public JongoQuery setSort(String sort) {
         this.sort = sort;
         return this;
     }
@@ -185,7 +184,7 @@ public class JomgoQuery extends BaseCondition {
         return limit;
     }
 
-    public JomgoQuery setLimit(Integer limit) {
+    public JongoQuery setLimit(Integer limit) {
         this.limit = limit;
         return this;
     }
@@ -194,7 +193,7 @@ public class JomgoQuery extends BaseCondition {
         return skip;
     }
 
-    public JomgoQuery setSkip(Integer skip) {
+    public JongoQuery setSkip(Integer skip) {
         this.skip = skip;
         return this;
     }
@@ -220,7 +219,7 @@ public class JomgoQuery extends BaseCondition {
             Query query = queryFactory.createQuery(queryStr, params);
             queryStr = query.toDBObject().toString();
         }
-        rs.append("JomgoQuery =: { query:=");
+        rs.append("JongoQuery =: { query:=");
         rs.append(queryStr);
         rs.append("; projection:=");
         rs.append(projection);

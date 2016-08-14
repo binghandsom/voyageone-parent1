@@ -28,7 +28,7 @@ public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findOne(strQuery, entityClass, collectionName);
     }
 
-    public T selectOneWithQuery(JomgoQuery queryObject) {
+    public T selectOneWithQuery(JongoQuery queryObject) {
         return mongoTemplate.findOne(queryObject, entityClass, collectionName);
     }
 
@@ -48,7 +48,7 @@ public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.find(strQuery, projection, entityClass, collectionName);
     }
 
-    public List<T> select(JomgoQuery queryObject) {
+    public List<T> select(JongoQuery queryObject) {
         return mongoTemplate.find(queryObject, entityClass, collectionName);
     }
 
@@ -56,7 +56,7 @@ public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findCursor(strQuery, null, entityClass, collectionName);
     }
 
-    public Iterator<T> selectCursor(JomgoQuery queryObject) {
+    public Iterator<T> selectCursor(JongoQuery queryObject) {
         return mongoTemplate.findCursor(queryObject, entityClass, collectionName);
     }
 

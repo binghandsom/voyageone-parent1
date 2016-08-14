@@ -7,7 +7,7 @@ import com.mongodb.WriteResult;
 import com.taobao.api.response.ItemUpdateDelistingResponse;
 import com.taobao.api.response.ItemUpdateListingResponse;
 import com.voyageone.base.dao.mongodb.JomgoAggregate;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJomgoUpdateList;
 import com.voyageone.common.CmsConstants;
@@ -36,8 +36,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * 记录上下架操作历史(新增记录), 并调用上下架API
@@ -83,7 +81,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         long batchNo = sequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID);
         // 先记录上下架操作历史（必须以group为单位，不能用已选中的商品，会重复）
         for (Integer cartId : cartIdList) {
-            JomgoQuery queryObj = new JomgoQuery();
+            JongoQuery queryObj = new JongoQuery();
             // 取得group信息
             queryObj.setQuery("{'productCodes':{$in:#},'cartId':#}");
             queryObj.setParameters(codeList, cartId);
@@ -140,7 +138,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         boolean updRsFlg = false;
         String errMsg = null;
         BulkWriteResult rs = null;
-        JomgoQuery queryObj = new JomgoQuery();
+        JongoQuery queryObj = new JongoQuery();
         for (Integer cartId : cartIdList) {
             ShopBean shopProp = Shops.getShop(channelId, cartId);
             if (shopProp == null) {
@@ -377,7 +375,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
 
     // 取得商品对应的平台状态
     private String getPlatformStatus(String prodCode, String channelId, int cartId) {
-        JomgoQuery queryObj = new JomgoQuery();
+        JongoQuery queryObj = new JongoQuery();
         queryObj.setQuery("{'common.fields.code':#}");
         queryObj.setParameters(prodCode);
         queryObj.setProjectionExt("platforms.P" + cartId + ".pStatus");

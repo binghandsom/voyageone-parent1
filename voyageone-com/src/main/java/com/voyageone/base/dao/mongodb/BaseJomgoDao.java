@@ -145,7 +145,7 @@ public abstract class BaseJomgoDao<T> implements ApplicationContextAware {
         return IteratorUtils.toList(aggr.as(entityClass));
     }
 
-    public String getQueryStr(JomgoQuery quyObj) {
+    public String getQueryStr(JongoQuery quyObj) {
         if (quyObj.getQuery() == null || quyObj.getQuery().isEmpty()) {
             return "";
         }

@@ -35,7 +35,7 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findOne(strQuery, entityClass, getCollectionName(channelId));
     }
 
-    public T selectOneWithQuery(JomgoQuery queryObject, String channelId) {
+    public T selectOneWithQuery(JongoQuery queryObject, String channelId) {
         return mongoTemplate.findOne(queryObject, entityClass, getCollectionName(channelId));
     }
 
@@ -55,7 +55,7 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.find(strQuery, projection, entityClass, getCollectionName(channelId));
     }
 
-    public List<T> select(JomgoQuery queryObject, String channelId) {
+    public List<T> select(JongoQuery queryObject, String channelId) {
         return mongoTemplate.find(queryObject, entityClass, getCollectionName(channelId));
     }
 
@@ -63,7 +63,7 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findCursor(strQuery, null, entityClass, getCollectionName(channelId));
     }
 
-    public Iterator<T> selectCursor(JomgoQuery queryObject, String channelId) {
+    public Iterator<T> selectCursor(JongoQuery queryObject, String channelId) {
         return mongoTemplate.findCursor(queryObject, entityClass, getCollectionName(channelId));
     }
 

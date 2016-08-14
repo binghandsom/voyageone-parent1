@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.cms.tools.product;
 
 import com.google.common.base.Joiner;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
@@ -26,10 +26,8 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -144,7 +142,7 @@ public class TranslationTaskService extends BaseService {
 
         if (product == null) {
             //没有过期任务，按优先级参数分配
-            JomgoQuery queryObj = new JomgoQuery();
+            JongoQuery queryObj = new JongoQuery();
 
             //不能有2个or
             queryObj.addQuery("'common.fields.isMasterMain':1");
@@ -321,7 +319,7 @@ public class TranslationTaskService extends BaseService {
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
-        JomgoQuery queryObj = new JomgoQuery();
+        JongoQuery queryObj = new JongoQuery();
 
         queryObj.addQuery("'common.fields.isMasterMain':1");
         queryObj.addQuery("'common.fields.translator':#");

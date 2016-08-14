@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
@@ -199,7 +199,7 @@ public class ImageGroupService extends BaseService {
     public List<CmsBtImageGroupModel> getList(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
                                               String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList,
                                               int curr, int size) {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery(getSearchQuery(channelId, platFormChangeList, imageType, beginModified,
                 endModified, brandNameList, productTypeList, sizeTypeList));
         queryObject.setSort("{imageGroupId:-1}");
@@ -234,7 +234,7 @@ public class ImageGroupService extends BaseService {
      * @param imageGroupId 图片组id
      */
     public CmsBtImageGroupModel getImageGroupModel(String imageGroupId) {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + ",\"active\":1}");
         return cmsBtImageGroupDao.selectOneWithQuery(queryObject);
     }

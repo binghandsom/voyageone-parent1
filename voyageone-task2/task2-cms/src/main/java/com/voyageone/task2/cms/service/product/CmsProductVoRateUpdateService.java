@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service.product;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.Constants;
@@ -72,7 +72,7 @@ public class CmsProductVoRateUpdateService extends BaseMQCmsService {
             msg = "高价检索 批量更新VO扣点 " + voRate;
         }
 
-        JomgoQuery queryObj = new JomgoQuery();
+        JongoQuery queryObj = new JongoQuery();
         JomgoUpdate updObj = new JomgoUpdate();
 
         List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");

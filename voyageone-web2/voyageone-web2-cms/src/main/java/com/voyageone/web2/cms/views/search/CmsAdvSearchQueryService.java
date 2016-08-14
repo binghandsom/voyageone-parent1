@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -46,8 +46,8 @@ public class CmsAdvSearchQueryService extends BaseAppService {
     /**
      * 返回页面端的检索条件拼装成mongo使用的条件
      */
-    public JomgoQuery getSearchQuery(CmsSearchInfoBean2 searchValue, CmsSessionBean cmsSessionBean, boolean isMain) {
-        JomgoQuery queryObject = new JomgoQuery();
+    public JongoQuery getSearchQuery(CmsSearchInfoBean2 searchValue, CmsSessionBean cmsSessionBean, boolean isMain) {
+        JongoQuery queryObject = new JongoQuery();
 
         // 添加platform cart
         int cartId = searchValue.getCartId();
@@ -210,7 +210,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
     /**
      * 获取其他检索条件
      */
-    private void getSearchValueForMongo(CmsSearchInfoBean2 searchValue, JomgoQuery queryObject) {
+    private void getSearchValueForMongo(CmsSearchInfoBean2 searchValue, JongoQuery queryObject) {
         // 获取 feed category
         if (StringUtils.isNotEmpty(searchValue.getfCatId())) {
             queryObject.addQuery("{'feed.catId':#}");
@@ -581,7 +581,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             resultPlatforms.append(MongoUtils.splicingValue("productCodes", new String[]{prodCode}, "$in"));
 
             // 在group表中过滤platforms相关信息
-            JomgoQuery qrpQuy = new JomgoQuery();
+            JongoQuery qrpQuy = new JongoQuery();
             qrpQuy.setQuery("{" + resultPlatforms.toString() + "}");
             List<CmsBtProductGroupModel> grpList = productGroupService.getList(channelId, qrpQuy);
             CmsBtProductGroupModel groupModelMap = null;
@@ -655,7 +655,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 //                        resultStr.append(MongoUtils.splicingValue("productCodes", new String[]{prodCode}, "$in"));
 //
 //                        // 在group表中过滤platforms相关信息
-//                        JomgoQuery qrpQuyObj = new JomgoQuery();
+//                        JongoQuery qrpQuyObj = new JongoQuery();
 //                        qrpQuyObj.setQuery("{" + resultStr.toString() + "},{'_id':0,'numIId':1}");
 //                        CmsBtProductGroupModel grpItem = productGroupService.getProductGroupByQuery(channelId, qrpQuyObj);
 //                        if (grpItem != null) {
@@ -673,7 +673,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 if (pCdList != null && pCdList.size() > 1) {
                     for (int i = 1, leng = pCdList.size(); i < leng; i++) {
                         // 根据商品code找到其主图片
-                        JomgoQuery queryObj = new JomgoQuery();
+                        JongoQuery queryObj = new JongoQuery();
                         queryObj.setProjection("{'common.fields.images1':1,'prodId': 1, 'common.fields.code': 1,'_id':0}");
                         queryObj.setQuery("{'common.fields.code':'" + String.valueOf(pCdList.get(i)) + "'}");
                         CmsBtProductModel prod = productService.getProductByCondition(channelId, queryObj);
@@ -700,7 +700,7 @@ public class CmsAdvSearchQueryService extends BaseAppService {
 
             // 获取Group的价格区间
             if (hasImgFlg) {
-                qrpQuy = new JomgoQuery();
+                qrpQuy = new JongoQuery();
                 qrpQuy.setQuery("{'mainProductCode':#,'cartId':{$nin:[null,'',0,1]}}");
                 qrpQuy.setParameters(prodCode);
                 grpList = productGroupService.getList(channelId, qrpQuy);

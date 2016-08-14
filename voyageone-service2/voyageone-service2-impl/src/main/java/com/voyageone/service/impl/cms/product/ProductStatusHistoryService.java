@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms.product;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.components.transaction.VOTransactional;
@@ -90,7 +90,7 @@ public class ProductStatusHistoryService extends BaseService {
         List<CmsBtProductStatusHistoryModel> list = new ArrayList<>();
         CmsBtProductStatusHistoryModel productStatusHistory;
 
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         CmsBtProductModel prodObj = null;
         String prodSts = null;
         for (String code : codes) {

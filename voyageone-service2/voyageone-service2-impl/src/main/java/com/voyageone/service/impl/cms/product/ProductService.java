@@ -5,7 +5,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoAggregate;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
@@ -13,9 +13,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.CartEnums.Cart;
-import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -167,7 +165,7 @@ public class ProductService extends BaseService {
     /**
      * 获取商品 根据query
      */
-    public CmsBtProductModel getProductByCondition(String channelId, JomgoQuery query) {
+    public CmsBtProductModel getProductByCondition(String channelId, JongoQuery query) {
         return cmsBtProductDao.selectOneWithQuery(query, channelId);
     }
 
@@ -180,7 +178,7 @@ public class ProductService extends BaseService {
      * @return List<CmsBtProductModel>
      */
     public List<CmsBtProductBean> getProductByGroupId(String channelId, Long groupId, Boolean flag) {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery(String.format("{ \"groupId\":%d}", groupId));
         CmsBtProductGroupModel grpObj = cmsBtProductGroupDao.selectOneWithQuery(queryObject, channelId);
         if (grpObj == null) {
@@ -211,7 +209,7 @@ public class ProductService extends BaseService {
     // 查询指定平台下各商品组中包含的商品code
     // 返回的map中，key是group id，value中是商品code列表
     public Map<String, List<String>> getProductGroupIdCodesMapByCart(String channelId, int cartId, String orgChannelId) {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"cartId\":" + cartId + "}");
         queryObject.setProjection("{'groupId':1,'productCodes':1,'_id':0}");
         List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(queryObject, channelId);
@@ -226,7 +224,7 @@ public class ProductService extends BaseService {
     /**
      * getList
      */
-    public List<CmsBtProductModel> getList(String channelId, JomgoQuery queryObject) {
+    public List<CmsBtProductModel> getList(String channelId, JongoQuery queryObject) {
         return cmsBtProductDao.select(queryObject, channelId);
     }
 
@@ -235,13 +233,13 @@ public class ProductService extends BaseService {
      * 注意：调用此方法时，返回值中的getGroupBean()为空，需要自行填值
      * 如需要groupBean,请使用getListWithGroup()
      */
-    public List<CmsBtProductBean> getBeanList(String channelId, JomgoQuery queryObject) {
+    public List<CmsBtProductBean> getBeanList(String channelId, JongoQuery queryObject) {
         return cmsBtProductDao.selectBean(queryObject, channelId);
     }
 
     // 查询产品信息(合并该产品的组信息)
     // queryObject中必须包含输出项:"common.fields.code"，否则将查询不到组信息
-    public List<CmsBtProductBean> getListWithGroup(String channelId, int cartId, JomgoQuery queryObject) {
+    public List<CmsBtProductBean> getListWithGroup(String channelId, int cartId, JongoQuery queryObject) {
         List<CmsBtProductBean> prodList = cmsBtProductDao.selectBean(queryObject, channelId);
         if (prodList == null || prodList.isEmpty()) {
             return prodList;
@@ -255,7 +253,7 @@ public class ProductService extends BaseService {
             qurStr.append(MongoUtils.splicingValue("productCodes", prodObj.getCommon().getFields().getCode()));
 
             // 在group表中过滤platforms相关信息
-            JomgoQuery qrpQuy = new JomgoQuery();
+            JongoQuery qrpQuy = new JongoQuery();
             qrpQuy.setQuery("{" + qurStr.toString() + "}");
             List<CmsBtProductGroupModel> grpList = cmsBtProductGroupDao.select(qrpQuy, channelId);
             if (grpList == null || grpList.isEmpty()) {
@@ -384,7 +382,7 @@ public class ProductService extends BaseService {
             return;
         }
 
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery(queryStr);
         queryObject.setProjectionExt("prodId", "modified"); // TODO--这里不应该再从fields取status
 
@@ -592,7 +590,7 @@ public class ProductService extends BaseService {
      * get the product info from wms's request
      */
     public ProductForWmsBean getWmsProductsInfo(String channelId, String productSku, String[] projection) {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         // set fields
 //        if (projection != null && projection.length > 0) {
 //            queryObject.setProjectionExt(projection);
@@ -693,7 +691,7 @@ public class ProductService extends BaseService {
                                                       String descriptionIncludes,
                                                       String cartId,
                                                       String[] projection) {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         // set fields
 //        if (projection != null && projection.length > 0) {
 //            queryObject.setProjectionExt(projection);

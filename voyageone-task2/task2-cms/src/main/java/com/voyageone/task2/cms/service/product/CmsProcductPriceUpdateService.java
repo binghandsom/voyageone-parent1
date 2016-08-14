@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service.product;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.util.DateTimeUtil;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -51,7 +50,7 @@ public class CmsProcductPriceUpdateService extends BaseMQCmsService {
 
         int cartId = (Integer) messageMap.get("cartId");
         long prodId = (Integer) messageMap.get("productId");
-        JomgoQuery queryObj = new JomgoQuery();
+        JongoQuery queryObj = new JongoQuery();
         queryObj.setQuery("{'prodId':#,'platforms.P#.skus':{$exists:true}}");
         queryObj.setParameters(prodId, cartId);
         queryObj.setProjectionExt("platforms.P" + cartId + ".mainProductCode", "platforms.P" + cartId + ".skus.priceMsrp", "platforms.P" + cartId + ".skus.priceRetail", "platforms.P" + cartId + ".skus.priceSale");
@@ -117,7 +116,7 @@ public class CmsProcductPriceUpdateService extends BaseMQCmsService {
 
         // 然后更新group中的价格范围
         // 先取得group中各code的价格范围
-        queryObj = new JomgoQuery();
+        queryObj = new JongoQuery();
         queryObj.setQuery("{'platforms.P#.mainProductCode':#}");
         queryObj.setParameters(cartId, mProdCode);
         queryObj.setProjectionExt("platforms.P" + cartId + ".pPriceMsrpSt", "platforms.P" + cartId + ".pPriceMsrpEd", "platforms.P" + cartId + ".pPriceRetailSt", "platforms.P" + cartId + ".pPriceRetailEd", "platforms.P" + cartId + ".pPriceSaleSt", "platforms.P" + cartId + ".pPriceSaleEd");

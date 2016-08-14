@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms.product;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.JacksonUtil;
@@ -225,7 +225,7 @@ public class CmsBtPriceLogService extends BaseService {
 
     private CmsBtProductModel getProduct(String sku, String channelId) {
 
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         query.setQuery("{\"common.skus.skuCode\": #}");
         query.addParameters(sku);
         query.setProjectionExt("common", "platforms", "prodId");

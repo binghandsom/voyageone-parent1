@@ -3,7 +3,7 @@ package com.voyageone.service.impl.cms.product;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
@@ -86,7 +86,7 @@ public class ProductSkuService extends BaseService {
         }
 
         CmsBtProductModel findModel = null;
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setProjectionExt("skus.skuCode");
         if (productId != null) {
             queryObject.setQuery("{\"prodId\":" + productId + "}");
@@ -535,7 +535,7 @@ public class ProductSkuService extends BaseService {
         // 取得更新前的sku数据
         HashMap<String, Object> productQueryMap = new HashMap<>();
         CmsBtProductModel findModel;
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setProjectionExt("prodId", "fields", "skus");
         if (model.getProductId() != null) {
             productQueryMap.put("prodId", model.getProductId());

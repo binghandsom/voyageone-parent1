@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.channel;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Types;
@@ -75,7 +75,7 @@ public class CmsChannelTagService extends BaseAppService {
                 $warn("没有code条件 params=" + param.toString());
             } else {
                 // 检索商品的自由标签设值
-                JomgoQuery queryObj = new JomgoQuery();
+                JongoQuery queryObj = new JongoQuery();
                 queryObj.setQuery("{'common.fields.code':{$in:#}}");
                 queryObj.setParameters(prodCodes);
                 queryObj.setProjectionExt("prodId", "common.fields.code", "freeTags");
