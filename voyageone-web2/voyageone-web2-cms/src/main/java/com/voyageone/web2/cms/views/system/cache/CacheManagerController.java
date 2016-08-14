@@ -1,11 +1,12 @@
 package com.voyageone.web2.cms.views.system.cache;
 
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
-import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.com.cache.CommCacheControlService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,14 +24,22 @@ import java.util.Set;
 @RequestMapping(value = CmsUrlConstants.SYSTEM.CACHE.ROOT, method ={RequestMethod.POST, RequestMethod.GET})
 public class CacheManagerController extends CmsController{
 
+    @Autowired
+    private CommCacheControlService cacheControlService;
+
     @RequestMapping(CmsUrlConstants.SYSTEM.CACHE.INIT)
     public AjaxResponse init(HttpServletRequest request) throws Exception {
-        if(!StringUtils.isEmpty(request.getParameter("cacheKey"))) {
-            CacheHelper.delete(request.getParameter("cacheKey"));
+        // delete one
+        String cacheKey = request.getParameter("cacheKey");
+        if(!StringUtils.isEmpty(cacheKey)) {
+            cacheControlService.deleteCache(CacheKeyEnums.KeyEnum.valueOf(cacheKey));
             return redirectTo("/modules/cms/app.html#/system/cache/index");
         }
-        if(!StringUtils.isEmpty(request.getParameter("delAll"))){
-            cacheKeySet().forEach(CacheHelper::delete);
+
+        //delete all
+        String delAll = request.getParameter("delAll");
+        if(!StringUtils.isEmpty(delAll)){
+            cacheKeySet().forEach(subCacheKey->cacheControlService.deleteCache(CacheKeyEnums.KeyEnum.valueOf(subCacheKey)));
             return redirectTo("/modules/cms/app.html#/system/cache/index");
         }
         return success(cacheKeySet());
@@ -38,7 +47,7 @@ public class CacheManagerController extends CmsController{
 
     private Set<String> cacheKeySet(){
         try {
-            return CacheHelper.getCacheTemplate().keys(CacheKeyEnums.CONFIG_ALL_KEY_REGEX);
+            return cacheControlService.getCacheKeySet();
         } catch (Exception ex) {
             return new HashSet<>();
         }

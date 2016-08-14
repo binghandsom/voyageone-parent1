@@ -71,6 +71,12 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 queryObject.addParameters(cartId, searchValue.getProductStatus());
             }
 
+            // 获取实际平台状态
+            if (searchValue.getpRealStatus() != null && searchValue.getpRealStatus().size() > 0) {
+                queryObject.addQuery("{'platforms.P#.pReallyStatus':{$in:#}}");
+                queryObject.addParameters(cartId, searchValue.getpRealStatus());
+            }
+
             // 获取publishTime End
             if (StringUtils.isNotEmpty(searchValue.getPublishTimeStart())) {
                 if (StringUtils.isNotEmpty(searchValue.getPublishTimeTo())) {
@@ -88,15 +94,20 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 }
             }
 
-            // 获取price start
-            if (StringUtils.isNotEmpty(searchValue.getPriceType()) && searchValue.getPriceStart() != null) {
-                queryObject.addQuery("{'platforms.P#.skus.#':{$gte:#}}");
-                queryObject.addParameters(cartId, searchValue.getPriceType(), searchValue.getPriceStart());
-            }
-            // 获取price end
-            if (StringUtils.isNotEmpty(searchValue.getPriceType()) && searchValue.getPriceEnd() != null) {
-                queryObject.addQuery("{'platforms.P#.skus.#':{$lte:#}}");
-                queryObject.addParameters(cartId, searchValue.getPriceType(), searchValue.getPriceEnd());
+            // 获取price start/end
+            if (StringUtils.isNotEmpty(searchValue.getPriceType())) {
+                if (searchValue.getPriceStart() != null) {
+                    if (searchValue.getPriceEnd() != null) {
+                        queryObject.addQuery("{'platforms.P#.skus.#':{$gte:#,$lte:#}}");
+                        queryObject.addParameters(cartId, searchValue.getPriceType(), searchValue.getPriceStart(), searchValue.getPriceEnd());
+                    } else {
+                        queryObject.addQuery("{'platforms.P#.skus.#':{$gte:#}}");
+                        queryObject.addParameters(cartId, searchValue.getPriceType(), searchValue.getPriceStart());
+                    }
+                } else {
+                    queryObject.addQuery("{'platforms.P#.skus.#':{$lte:#}}");
+                    queryObject.addParameters(cartId, searchValue.getPriceType(), searchValue.getPriceEnd());
+                }
             }
 
             // 获取platform category
@@ -134,9 +145,17 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
 
             // 查询产品上新错误
-            if (searchValue.getHasErrorFlg() == 1) {
-                queryObject.addQuery("{'platforms.P#.pPublishError':'Error'}");
-                queryObject.addParameters(cartId);
+            if (searchValue.getHasErrorFlg() > 0) {
+                if (searchValue.getHasErrorFlg() == 1) {
+                    queryObject.addQuery("{'platforms.P#.pPublishError':{$in:[null,'']}}");
+                    queryObject.addParameters(cartId);
+                } else if (searchValue.getHasErrorFlg() == 2) {
+                    queryObject.addQuery("{'platforms.P#.pPublishError':'Error'}");
+                    queryObject.addParameters(cartId);
+                } else if (searchValue.getHasErrorFlg() == 3) {
+                    queryObject.addQuery("{$or:[{'platforms.P#.pReallyStatus':'OnSale','platforms.P#.pStatus':{$ne:'OnSale'}},{'platforms.P#.pReallyStatus':'InStock','platforms.P#.pStatus':{$ne:'InStock'}}]}");
+                    queryObject.addParameters(cartId, cartId, cartId, cartId);
+                }
             }
 
             // 查询价格变动
@@ -456,7 +475,68 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             }
         }
 
-        return result.toString().length() > 0 ? "{" + result.toString().substring(0, result.toString().length() - 1) + "}" : null;
+        return result.toString().length() > 0 ? "{" + result.toString().substring(0, result.toString().length() - 1) + "}" : "{'prodId':1}";
+    }
+
+    /**
+     * 获取排序列一览（group查询时专用）
+     */
+    public Map<String, List<String>> getSortColumn(CmsSearchInfoBean2 searchValue, CmsSessionBean cmsSessionBean) {
+        List<String> groupOutList = new ArrayList<>();
+        List<String> sortOutList = new ArrayList<>();
+        int listIdx = 0;
+
+        // 获取排序字段1
+        if (StringUtils.isNotEmpty(searchValue.getSortOneName()) && StringUtils.isNotEmpty(searchValue.getSortOneType())) {
+            listIdx = groupOutList.size() + 1;
+            if ("comment".equals(searchValue.getSortOneName())) {
+                groupOutList.add("'col" + listIdx + "':{$first:'$common.comment'}");
+                sortOutList.add("'col" + listIdx + "':" + searchValue.getSortOneType());
+            } else {
+                groupOutList.add("'col" + listIdx + "':{$first:'$common.fields." + searchValue.getSortOneName() + "'}");
+                sortOutList.add("'col" + listIdx + "':" + searchValue.getSortOneType());
+            }
+        }
+
+        // 获取排序字段2
+        if (StringUtils.isNotEmpty(searchValue.getSortTwoName()) && StringUtils.isNotEmpty(searchValue.getSortTwoType())) {
+            listIdx = groupOutList.size() + 1;
+            if ("comment".equals(searchValue.getSortTwoName())) {
+                groupOutList.add("'col" + listIdx + "':{$first:'$common.comment'}");
+                sortOutList.add("'col" + listIdx + "':" + searchValue.getSortTwoType());
+            } else {
+                groupOutList.add("'col" + listIdx + "':{$first:'$common.fields." + searchValue.getSortTwoName() + "'}");
+                sortOutList.add("'col" + listIdx + "':" + searchValue.getSortTwoType());
+            }
+        }
+
+        // 获取排序字段3
+        if (StringUtils.isNotEmpty(searchValue.getSortThreeName()) && StringUtils.isNotEmpty(searchValue.getSortThreeType())) {
+            listIdx = groupOutList.size() + 1;
+            if ("comment".equals(searchValue.getSortThreeName())) {
+                groupOutList.add("'col" + listIdx + "':{$first:'$common.comment'}");
+                sortOutList.add("'col" + listIdx + "':" + searchValue.getSortThreeType());
+            } else {
+                groupOutList.add("'col" + listIdx + "':{$first:'$common.fields." + searchValue.getSortThreeName() + "'}");
+                sortOutList.add("'col" + listIdx + "':" + searchValue.getSortThreeType());
+            }
+        }
+
+        // 添加platform cart
+        int cartId = searchValue.getCartId();
+        if (cartId > 1) {
+            // 获取按销量排序字段
+            if (StringUtils.isNotEmpty(searchValue.getSalesType()) && StringUtils.isNotEmpty(searchValue.getSalesSortType())) {
+                listIdx = groupOutList.size() + 1;
+                groupOutList.add("'col" + listIdx + "':{$first:'$sales.codeSum" + searchValue.getSalesType() + "'}");
+                sortOutList.add("'col" + listIdx + "':" + searchValue.getSalesSortType());
+            }
+        }
+
+        Map<String, List<String>> result = new HashMap<>();
+        result.put("groupOutList", groupOutList);
+        result.put("sortOutList", sortOutList);
+        return result;
     }
 
     /**
@@ -558,7 +638,11 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                         List<String> tagPathStrList = new ArrayList<>();
                         tagList.forEach(tag -> tagPathStrList.add(tag.getTagPathName()));
                         freeTagsList.add(StringUtils.join(tagPathStrList, "<br>"));
+                    } else {
+                        freeTagsList.add("");
                     }
+                } else {
+                    freeTagsList.add("");
                 }
 
 //                // 查询商品在各平台状态

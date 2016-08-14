@@ -254,4 +254,36 @@ public class TypeChannels {
         return resultList;
     }
 
+
+    /**
+     * 根据指定值查询类型列表
+     *
+     * @param type    类型名(注意不能用type_id)
+     * @param value   指定值
+     * @param langId  语言类型
+     * @return List<TypeChannelBean>
+     */
+    public static List<TypeChannelBean> getTypeChannelBeansByTypeValueLang(String type, String value, String langId) {
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
+        List<String> keyList = new ArrayList<>();
+        keySet.forEach(k -> {
+            if (k.startsWith(type + CacheKeyEnums.SKIP)) keyList.add(k);
+        });
+        List<TypeChannelBean> beans = CacheHelper.getBeans(KEY,keyList, selfClass);
+        return CollectionUtils.isEmpty(beans)
+                ? new ArrayList<>()
+                : beans
+                .stream()
+                .filter(bean -> (bean.getValue() != null && bean.getValue().equals(value)
+                        && bean.getLang_id() != null && bean.getLang_id().equals(langId)))
+                .sorted((a, b) -> {
+                    if (a.getType_id() > b.getType_id()) return 1;
+                    if (a.getType_id() == b.getType_id() && a.getDisplay_order() > b.getDisplay_order()) return 1;
+                    if (a.getType_id() == b.getType_id() && a.getDisplay_order() == b.getDisplay_order())
+                        return a.getValue().compareTo(b.getValue());
+                    return -1;
+                })
+                .collect(Collectors.toList());
+    }
+
 }

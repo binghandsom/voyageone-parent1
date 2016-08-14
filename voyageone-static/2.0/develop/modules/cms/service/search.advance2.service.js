@@ -5,8 +5,9 @@
 define([
     'angularAMD',
     'underscore',
-    'modules/cms/enums/Carts'
-], function (angularAMD, _, Carts) {
+    'modules/cms/enums/Carts',
+    'modules/cms/enums/PlatformStatus'
+], function (angularAMD, _, Carts, PlatformStatus) {
     angularAMD.service('searchAdvanceService2', searchAdvanceService2);
 
     function searchAdvanceService2($q, blockUI, $translate, selectRowsFactory, $searchAdvanceService2, $filter, cActions) {
@@ -114,9 +115,9 @@ define([
          * @param data
          * @returns {*}
          */
-        function addFreeTag(tagPath, prodIdList, selAllFlg) {
+        function addFreeTag(tagPathList, prodIdList, selAllFlg) {
             var defer = $q.defer();
-            var data = {"tagPath":tagPath, "prodIdList":prodIdList, "isSelAll":selAllFlg};
+            var data = {"tagPathList":tagPathList, "prodIdList":prodIdList, "isSelAll":selAllFlg};
 
             $searchAdvanceService2.addFreeTag(data).then(function (res) {
                 defer.resolve (res);
@@ -148,11 +149,7 @@ define([
             var searchInfo = angular.copy (data);
             searchInfo.productStatus = _returnKey (searchInfo.productStatus);
             searchInfo.platformStatus = _returnKey(searchInfo.platformStatus);
-            if (searchInfo.hasErrorFlg) {
-                searchInfo.hasErrorFlg = 1;
-            } else {
-                searchInfo.hasErrorFlg = 0;
-            }
+            searchInfo.pRealStatus = _returnKey(searchInfo.pRealStatus);
             if (searchInfo.shopCatStatus) {
                 searchInfo.shopCatStatus = 1;
             } else {
@@ -162,6 +159,30 @@ define([
                 searchInfo.pCatStatus = 1;
             } else {
                 searchInfo.pCatStatus = 0;
+            }
+
+            // 过滤重复的排序条件，相同的以后一个为准
+            if (searchInfo.sortThreeName && searchInfo.sortThreeType) {
+                if (searchInfo.sortTwoName && searchInfo.sortTwoType) {
+                    if (searchInfo.sortThreeName == searchInfo.sortTwoName) {
+                        searchInfo.sortTwoName = '';
+                        searchInfo.sortTwoType = '';
+                    }
+                }
+                if (searchInfo.sortOneName && searchInfo.sortOneType) {
+                    if (searchInfo.sortThreeName == searchInfo.sortOneName) {
+                        searchInfo.sortOneName = '';
+                        searchInfo.sortOneType = '';
+                    }
+                }
+            }
+            if (searchInfo.sortTwoName && searchInfo.sortTwoType) {
+                if (searchInfo.sortOneName && searchInfo.sortOneType) {
+                    if (searchInfo.sortTwoName == searchInfo.sortOneName) {
+                        searchInfo.sortOneName = '';
+                        searchInfo.sortOneType = '';
+                    }
+                }
             }
 
             if (!_.isUndefined(searchInfo.codeList) && !_.isNull(searchInfo.codeList))
@@ -356,8 +377,16 @@ define([
                 });
                 productInfo.selSalesTyeArr = selSalesTyeArr;
 
-                var cartArr = [];
+                productInfo.carts = [];
                 if (productInfo.platforms) {
+                    var ptms = [];
+                    _.forEach(productInfo.platforms, function (data) {
+                        ptms.push(data);
+                    });
+                    productInfo.platforms = ptms.sort(function (a, b) {
+                        return a.cartId > b.cartId;
+                    });
+
                     _.forEach(productInfo.platforms, function (data) {
                         if (data.cartId == undefined || data.cartId == '' || data.cartId == null) {
                             return;
@@ -405,33 +434,35 @@ define([
                         }
                         cartItem.statusTxt = statusTxt;
                         cartItem.publishError = publishError;
-                        cartArr.push(cartItem);
-                    });
-                }
-                productInfo.carts = cartArr;
-                if (productInfo.carts) {
-                    if (productInfo.carts.length > 1) {
-                        productInfo.carts = productInfo.carts.sort(function (a, b) {
-                            return a.cartId > b.cartId;
-                        });
-                    }
-                    _.forEach(productInfo.carts, function (data) {
-                        var cartInfo = Carts.valueOf(data.cartId);
+
+                        // 设置产品跳转URL
+                        var cartInfo = Carts.valueOf(cartItem.cartId);
                         if (cartInfo == null || cartInfo == undefined) {
-                            data._purl = '';
-                            data._pname = '';
+                            cartItem._purl = '';
+                            cartItem._pname = '';
                         } else {
-                            if (data.numiid == null || data.numiid == '' || data.numiid == undefined) {
-                                data._purl = '';
+                            if (cartItem.numiid == null || cartItem.numiid == '' || cartItem.numiid == undefined) {
+                                cartItem._purl = '';
                             } else {
-                                if (data.cartId == 27) {
-                                    data._purl = cartInfo.pUrl + data.numiid + '.html';
+                                if (cartItem.cartId == 27) {
+                                    cartItem._purl = cartInfo.pUrl + cartItem.numiid + '.html';
                                 } else {
-                                    data._purl = cartInfo.pUrl + data.numiid;
+                                    cartItem._purl = cartInfo.pUrl + cartItem.numiid;
                                 }
                             }
-                            data._pname = cartInfo.name;
+                            cartItem._pname = cartInfo.name;
                         }
+                        var stsCnVal = PlatformStatus.getStsTxt(data.pStatus, data.pReallyStatus);
+                        if (stsCnVal) {
+                            cartItem._pTxt = cartItem._pname + ':' + stsCnVal;
+                        } else {
+                            cartItem._pTxt = cartItem._pname;
+                        }
+                        if (data.pIsMain == '1') {
+                            cartItem._pTxt += ' (M)';
+                        }
+
+                        productInfo.carts.push(cartItem);
                     });
                 }
 
@@ -444,7 +475,8 @@ define([
                 // 设置在各平台上的建议售价
                 productInfo.priceMsrp = _setPriceSale(productInfo.platforms, searchParam, 'pPriceMsrpSt', 'pPriceMsrpEd');
                 // 设置指导售价
-                productInfo.priceDetail = _setPriceDetail(productInfo.platforms, cartArr);
+                productInfo.priceRetail = _setPriceSale(productInfo.platforms, searchParam, 'pPriceRetailSt', 'pPriceRetailEd');
+                productInfo._retailPriceCol = _setRetailPriceCol(productInfo.platforms, searchParam);
                 // 设置在各平台上的最终售价
                 productInfo.priceSale = _setPriceSale(productInfo.platforms, searchParam, 'pPriceSaleSt', 'pPriceSaleEd');
 
@@ -529,26 +561,27 @@ define([
             if (object == null || object == undefined) {
                 return [];
             }
-            if (object) {
-                var fstLine = [];
-                var result = [];
-                var fstCode = 0;
-                if (searchParam && searchParam.cartId) {
-                    fstCode = searchParam.cartId;
+
+            var fstLine = [];
+            var result = [];
+            var fstCode = 0;
+            if (searchParam && searchParam.cartId) {
+                fstCode = searchParam.cartId;
+            }
+            _.forEach(object, function (data) {
+                if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
+                    return;
                 }
-                _.forEach(object, function (data) {
-                    if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
-                        return;
-                    }
-                    var priceItem = '';
-                    var cartInfo = Carts.valueOf(data.cartId);
-                    if (cartInfo == null || cartInfo == undefined) {
-                        priceItem += data.cartId;
-                    } else {
-                        priceItem += cartInfo.name;
-                    }
-                    priceItem += ': ';
-                    // 合计sku价格的上下限
+                var priceItem = '';
+                var cartInfo = Carts.valueOf(data.cartId);
+                if (cartInfo == null || cartInfo == undefined) {
+                    priceItem += data.cartId;
+                } else {
+                    priceItem += cartInfo.name;
+                }
+                priceItem += ': ';
+                // 合计sku价格的上下限
+                if (data[stakey] != null && data[stakey] != undefined && data[endKey] != null && data[endKey] != undefined ) {
                     if (data[stakey] == data[endKey]) {
                         priceItem += $filter('number')(data[stakey], 2);
                     } else {
@@ -556,16 +589,83 @@ define([
                         priceItem += " ~ ";
                         priceItem += $filter('number')(data[endKey], 2);
                     }
-                    if (fstCode == data.cartId) {
-                        fstLine.push(priceItem);
-                    } else {
-                        result.push(priceItem);
+                }
+
+                // 当是中国指导价时，要有价格变化提示
+                if (stakey == 'pPriceRetailSt' && data.skus) {
+                    for (idx in data.skus) {
+                        if (data.skus[idx].priceChgFlg && (data.skus[idx].priceChgFlg.indexOf('U') == 0 || data.skus[idx].priceChgFlg.indexOf('D') == 0)) {
+                            priceItem += '<label class="text-u-red font-bold">&nbsp;!</label>'
+                            break;
+                        }
                     }
-                });
-                fstLine = fstLine.concat(result);
+                }
+
+                if (fstCode == data.cartId) {
+                    fstLine.push(priceItem);
+                } else {
+                    result.push(priceItem);
+                }
+            });
+            fstLine = fstLine.concat(result);
+            return fstLine;
+        }
+
+        function _setRetailPriceCol(object, searchParam) {
+            var fstLine = {'pVal':'', 'pFlg':false};
+            if (object == null || object == undefined) {
                 return fstLine;
             }
-            return [];
+
+            var fstCode = 0;
+            if (searchParam && searchParam.cartId) {
+                fstCode = searchParam.cartId;
+            }
+            for (idx in object) {
+                var data = object[idx];
+                if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
+                    continue;
+                }
+                if (fstCode != 0 && fstCode != data.cartId) {
+                    continue;
+                }
+
+                var priceItem = '';
+                var cartInfo = Carts.valueOf(data.cartId);
+                if (cartInfo == null || cartInfo == undefined) {
+                    priceItem += data.cartId;
+                } else {
+                    priceItem += cartInfo.name;
+                }
+                priceItem += ': ';
+                // 合计sku价格的上下限 'pPriceRetailSt', 'pPriceRetailEd'
+                if (data['pPriceRetailSt'] != null && data['pPriceRetailSt'] != undefined && data['pPriceRetailEd'] != null && data['pPriceRetailEd'] != undefined ) {
+                    if (data['pPriceRetailSt'] == data['pPriceRetailEd']) {
+                        priceItem += $filter('number')(data['pPriceRetailSt'], 2);
+                    } else {
+                        priceItem += $filter('number')(data['pPriceRetailSt'], 2);
+                        priceItem += " ~ ";
+                        priceItem += $filter('number')(data['pPriceRetailEd'], 2);
+                    }
+                }
+                fstLine.pVal = priceItem;
+
+                // 当是中国指导价时，要有价格变化提示
+                if (data.skus) {
+                    for (idx in data.skus) {
+                        if (data.skus[idx].priceChgFlg && (data.skus[idx].priceChgFlg.indexOf('U') == 0 || data.skus[idx].priceChgFlg.indexOf('D') == 0)) {
+                            fstLine.pFlg = true;
+                            break;
+                        }
+                    }
+                }
+                if (fstCode == 0) {
+                    // 未选择平台
+                    break;
+                }
+            }
+
+            return fstLine;
         }
 
         /**

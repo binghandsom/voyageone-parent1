@@ -106,5 +106,16 @@ public class CmsProductPlatformDetailController extends CmsController {
         CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTreeModel = platformCategoryService.getCategoryByCatPath(getUser().getSelChannelId(),catPath,cartId);
         return success(cmsMtPlatformCategoryTreeModel != null);
     }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CopyProperty)
+    public AjaxResponse copyProperty (@RequestBody Map params){
+
+        Map<String, Object> result = new HashMap<>();
+        Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
+        Integer cartId = (Integer) params.get("cartId");
+        result.put("platform", cmsProductPlatformDetailService.copyPropertyFromMainProduct(getUser().getSelChannelId(), prodId, cartId));
+        return success(result);
+    }
+
 }
 

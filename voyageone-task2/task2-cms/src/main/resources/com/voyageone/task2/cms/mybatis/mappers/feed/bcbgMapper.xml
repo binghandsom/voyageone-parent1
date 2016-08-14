@@ -22,12 +22,12 @@
     </delete>
 
     <insert id="insertStyles">
-        INSERT INTO voyageone_cms2.cms_zz_feed_bcbg_styles (styleID, productDesc, productImgURLs, md5) VALUES
+        INSERT INTO voyageone_cms2.cms_zz_feed_bcbg_styles (styleID, productDesc, productImgURLs, md5, sizeFit) VALUES
         <foreach collection="bcbgStyles" item="style" separator=",">
             (
             #{style.styleID}, #{style.productDesc},
             CONCAT(<foreach collection="style.productImgURLs" item="img" separator=",';;',">#{img}</foreach>),
-            #{style.md5}
+            #{style.md5}, #{style.sizeFit}
             )
         </foreach>
     </insert>
@@ -75,7 +75,8 @@
             styleID,
             productDesc,
             productImgURLs imageUrls,
-            sf.md5 styleMd5
+            sf.md5 styleMd5,
+            sf.sizeFit
         FROM voyageone_cms2.cms_zz_feed_bcbg_product_full ff
             JOIN voyageone_cms2.cms_zz_feed_bcbg_styles_full sf
                 ON ff.feedStyleID = sf.styleID

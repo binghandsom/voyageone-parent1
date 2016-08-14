@@ -94,7 +94,9 @@
     * pProductId
     * pNumIId
     * pStatus
+    * pReallyStatus ->产品在平台上的真实状态,edward,20160802
     * pPublishError  ->表示平台上新是否失败，用于高级检索
+    * pPublishMessage  ->表示平台上新失败, 显示错误信息
     * pBrandId      ->平台品牌Id
     * pBrandName    ->平台品牌名称
     * pPublishTime
@@ -114,6 +116,7 @@
     * skus[]
       * 平台特有sku属性
       * skuCode
+      * originalPriceMsrp ->各平台品牌方的MSRP售价(double),不可编辑   20160801 edward
       * priceMsrp   ->各平台的MSRP售价(double)
       * priceRetail ->各平台的销售指导价(double)
       * priceSale   ->各平台的最终售价(double)
@@ -136,6 +139,7 @@
 	* pProductId
 	* pNumIId
 	* pStatus
+    * pReallyStatus ->产品在平台上的真实状态,edward,20160802
 	* pBrandId
 	* pBrandName
 	* pPublishTime
@@ -165,6 +169,7 @@
 	  * userPurchaseLimit
 	* skus[]
 	  * skuCode
+      * originalPriceMsrp ->各平台品牌方的MSRP售价(double),不可编辑   20160801 edward
       * priceMsrp   ->各平台的MSRP售价
       * priceRetail ->各平台的销售指导价
 	  * priceSale   ->各平台的中国最终售价

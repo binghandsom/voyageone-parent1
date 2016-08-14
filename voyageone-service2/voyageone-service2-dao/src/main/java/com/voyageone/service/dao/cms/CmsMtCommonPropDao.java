@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsMtCommonPropModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsMtCommonPropDao {
-    List<CmsMtCommonPropModel> selectList(Map<String, Object> map);
+    List<CmsMtCommonPropModel> selectList(Object map);
 
-    CmsMtCommonPropModel selectOne(Map<String, Object> map);
+    CmsMtCommonPropModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsMtCommonPropModel select(Integer id);
 

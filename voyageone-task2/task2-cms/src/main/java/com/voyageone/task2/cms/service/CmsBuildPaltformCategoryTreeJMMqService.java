@@ -36,11 +36,11 @@ public class CmsBuildPaltformCategoryTreeJMMqService extends BaseMQCmsService {
     public void onStartup(Map<String, Object> messageMap) throws Exception {
         String channelId= messageMap.get("channelId").toString();
         ShopBean shopBean = Shops.getShop(channelId, "27");
-        if(shopBean == null) shopBean = new ShopBean();
-                shopBean.setAppKey("131");
-        shopBean.setSessionKey("7e059a48c30c67d2693be14275c2d3be");
-        shopBean.setAppSecret("0f9e3437ca010f63f2c4f3a216b7f4bc9698f071");
-        shopBean.setApp_url("http://openapi.ext.jumei.com/");
+//        if(shopBean == null) shopBean = new ShopBean();
+//                shopBean.setAppKey("131");
+//        shopBean.setSessionKey("7e059a48c30c67d2693be14275c2d3be");
+//        shopBean.setAppSecret("0f9e3437ca010f63f2c4f3a216b7f4bc9698f071");
+//        shopBean.setApp_url("http://openapi.ext.jumei.com/");
         List<CmsMtPlatformCategoryTreeModel> tree = new ArrayList<>();
         List<CmsMtPlatformCategoryTreeModel> cmsMtPlatformCategoryTreeModels = new ArrayList<>();
         List<JmCategoryBean> jmCategoryBeans = jumeiCategoryService.getCategoryListALL(shopBean);

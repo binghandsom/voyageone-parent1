@@ -864,6 +864,11 @@
     </if>
     from
     ${tableName}
+    LEFT JOIN voyageone_cms2.cms_zz_feed_overstock_price ON concat(
+    '024',
+    '-',
+    voyageone_cms2.cms_zz_feed_overstock_product_temp.sku
+    ) = voyageone_cms2.cms_zz_feed_overstock_price.sku_code
     ${keyword}
   </select>
   <update id="updateFlagBySku"  parameterType="java.util.List">

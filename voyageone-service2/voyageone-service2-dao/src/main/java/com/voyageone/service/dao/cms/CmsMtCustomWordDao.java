@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsMtCustomWordModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsMtCustomWordDao {
-    List<CmsMtCustomWordModel> selectList(Map<String, Object> map);
+    List<CmsMtCustomWordModel> selectList(Object map);
 
-    CmsMtCustomWordModel selectOne(Map<String, Object> map);
+    CmsMtCustomWordModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsMtCustomWordModel select(Integer id);
 

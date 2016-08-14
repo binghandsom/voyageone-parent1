@@ -14,12 +14,24 @@ define([
     'modules/cms/enums/Carts'
 ], function (cms, carts) {
     'use strict';
+
     return cms.directive("platformStatus", function() {
         function StatusController($scope, $attrs) {
 
             this.$attrs = $attrs;
             this.$scope = $scope;
             this.statusData = null;
+            //cms对应状态
+            this.statusDes = {
+                "WaitingPublish":"等待上新",
+                "InStock":"在库",
+                "OnSale":"在售"
+            },
+            //平台对应状态
+            this.pStatusDes = {
+                "InStock":"未上架",
+                "OnSale":"已上架"
+            }
         }
 
         StatusController.prototype.init = function(){
@@ -44,6 +56,15 @@ define([
                 }
 
             }
+
+            /**由于cms的商品状态和平台的商品状态可能不一致
+             * 条件1：两者状态相同时只显示cms的商品状态
+             * 条件2：两者状态不一致时两者状态都要显示*/
+            this.pStatusDesc = this.statusDes[this.statusData.pStatus];
+            if(this.statusData.pReallyStatus && this.statusData.pStatus != this.statusData.pReallyStatus){
+                this.pReallyStatusDesc = this.pStatusDes[this.statusData.pReallyStatus];
+            }
+
         };
 
         return {
@@ -58,8 +79,8 @@ define([
                     + "</span>"
                     + "<span class='plateform-status' ng-if='ctrl.statusData.status == \"Approved\"'>"
                     + "<span class='label' ng-class='{\"waiting-publish\": ctrl.statusData.pStatus == \"WaitingPublish\",\"in-stock\": ctrl.statusData.pStatus == \"InStock\",\"on-sale\":ctrl.statusData.pStatus == \"OnSale\",\"error\":ctrl.statusData.pStatus == \"Error\"}'  title='{{ctrl.statusData.pStatus}}'>"
-                    + "<span ng-if='ctrl.statusData.numberId'><a ng-href='{{ctrl.statusData.detailUrl}}' target='_blank' style='color: #000;text-decoration: none;'>{{ctrl.statusData.cartName}}</a></span>"
-                    + "<span ng-if='!ctrl.statusData.numberId'>{{ctrl.statusData.cartName}}</span>"
+                    + "<span ng-if='ctrl.statusData.numberId'><a ng-href='{{ctrl.statusData.detailUrl}}' target='_blank' style='color: #000;text-decoration: none;'>{{ctrl.statusData.cartName}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc?'-'+ctrl.pReallyStatusDesc:''}}</a></span>"
+                    + "<span ng-if='!ctrl.statusData.numberId'>{{ctrl.statusData.cartName}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc?'-'+ctrl.pReallyStatusDesc:''}}</span>"
                     + "</span>"
                     + "</span>",
             link: function ($scope) {

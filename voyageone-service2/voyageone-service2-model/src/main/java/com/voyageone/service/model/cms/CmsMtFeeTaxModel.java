@@ -19,16 +19,6 @@ public class CmsMtFeeTaxModel extends BaseModel {
     protected String hsCode;
 
     /**
-     * 产品名
-     */
-    protected String productName;
-
-    /**
-     * 单位
-     */
-    protected String unit;
-
-    /**
      * 发货方式
      */
     protected String shippingType;
@@ -49,22 +39,6 @@ public class CmsMtFeeTaxModel extends BaseModel {
 
     public void setHsCode(String hsCode) {
         this.hsCode = hsCode == null ? null : hsCode.trim();
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName == null ? null : productName.trim();
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit == null ? null : unit.trim();
     }
 
     public String getShippingType() {

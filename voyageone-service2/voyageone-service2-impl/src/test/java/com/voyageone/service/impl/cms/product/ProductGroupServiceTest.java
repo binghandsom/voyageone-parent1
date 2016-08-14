@@ -148,7 +148,12 @@ public class ProductGroupServiceTest {
         productCodes.add("16189");
         model.setProductCodes(productCodes);
 
-        model = service.updateGroupsPlatformStatus(model);
+        // 上新对象产品Code列表
+        List<String> listSxCode = new ArrayList<>();
+        listSxCode.add("123456");
+        listSxCode.add("123457");
+
+        model = service.updateGroupsPlatformStatus(model, listSxCode);
         System.out.print(model);
     }
 

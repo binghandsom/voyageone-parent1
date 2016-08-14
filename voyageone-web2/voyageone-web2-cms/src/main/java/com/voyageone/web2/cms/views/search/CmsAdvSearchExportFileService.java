@@ -3,10 +3,13 @@ package com.voyageone.web2.cms.views.search;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.FileUtils;
@@ -61,10 +64,10 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
     // Excel 文件最大行数
     private final static int MAX_EXCEL_REC_COUNT = 10000;
     // 各平台固定输出列
-    private final static String[] _DynCol = { "URL", "Numiid", "Category", "MSRP", "RetailPrice", "SalePrice" };
-    private final static String[] _DynColCN = { "URL", "Numiid", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)" };
-    private final static String[] _DynColJM = { "URL", "HashID", "Category", "MSRP", "RetailPrice", "SalePrice" };
-    private final static String[] _DynColCNJM = { "URL", "HashID", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)" };
+    private final static String[] _DynCol = { "URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice" };
+    private final static String[] _DynColCN = { "URL", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)" };
+    private final static String[] _DynColJM = { "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice" };
+    private final static String[] _DynColCNJM = { "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)" };
 
     // 产品数据固定输出列，用于过滤自定义显示列中相同项目
     private final static String[] _prodCol = { "code", "brand", "category", "productNameEn", "originalTitleCn", "model", "quantity", "color" };
@@ -194,7 +197,10 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         Sheet sheet = book.getSheetAt(0);
         // 第一行，英文标题
         Row row = FileUtils.row(sheet, 0);
-        CellStyle style = row.getCell(0).getCellStyle();
+        CellStyle style = null;
+        if (row.getCell(0) != null) {
+            style = row.getCell(0).getCellStyle();
+        }
         // 固定列长度
         int index = 8;
         for (TypeChannelBean cartObj : cartList) {
@@ -234,7 +240,11 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
 
         // 第二行，中文标题
         row = FileUtils.row(sheet, 1);
-        style = row.getCell(0).getCellStyle();
+        if (row.getCell(0) == null) {
+            style = null;
+        } else {
+            style = row.getCell(0).getCellStyle();
+        }
         // 固定列长度
         index = 8;
         for (TypeChannelBean cartObj : cartList) {
@@ -448,16 +458,13 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                 CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
                 if (ptfObj == null) {
                     // 没有设值时也要输出,不然就会错位
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                    for (int i = 0; i < _DynCol.length; i ++) {
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                    }
                     continue;
                 }
                 if (org.apache.commons.lang3.StringUtils.isNotEmpty(ptfObj.getpNumIId())) {
-                    if (cartObj.getValue().equals(CartEnums.Cart.JM.getId())) {
+                    if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
                         FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId() + ".html");
                     } else {
                         FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId());
@@ -466,6 +473,10 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                     FileUtils.cell(row, index++, unlock).setCellValue("");
                 }
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpNumIId()));
+
+                // 设置平台下的商品名
+                FileUtils.cell(row, index++, unlock).setCellValue(getPlatformProdName(cartObj.getValue(), ptfObj.getFieldsNotNull()));
+
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpCatPath()));
                 FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(ptfObj.getpPriceMsrpSt(), ptfObj.getpPriceMsrpEd()));
                 FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(ptfObj.getpPriceRetailSt(), ptfObj.getpPriceRetailEd()));
@@ -591,12 +602,9 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                 CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
                 if (ptfObj == null) {
                     // 没有设值时也要输出,不然就会错位
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                    for (int i = 0; i < _DynCol.length; i ++) {
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                    }
                     continue;
                 }
                 CmsBtProductGroupModel grpModel = null;
@@ -608,15 +616,12 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                 }
                 if (grpModel == null) {
                     // 没有设值时也要输出,不然就会错位
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
-                    FileUtils.cell(row, index++, unlock).setCellValue("");
+                    for (int i = 0; i < _DynCol.length; i ++) {
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                    }
                 } else {
                     if (org.apache.commons.lang3.StringUtils.isNotEmpty(grpModel.getNumIId())) {
-                        if (cartObj.getValue().equals(CartEnums.Cart.JM.getId())) {
+                        if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
                             FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + grpModel.getNumIId() + ".html");
                         } else {
                             FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + grpModel.getNumIId());
@@ -625,6 +630,10 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                         FileUtils.cell(row, index++, unlock).setCellValue("");
                     }
                     FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(grpModel.getNumIId()));
+
+                    // 设置平台下的商品名
+                    FileUtils.cell(row, index++, unlock).setCellValue(getPlatformProdName(cartObj.getValue(), ptfObj.getFieldsNotNull()));
+
                     FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpCatPath()));
                     FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(grpModel.getPriceMsrpSt(), grpModel.getPriceMsrpEd()));
                     FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(grpModel.getPriceRetailSt(), grpModel.getPriceRetailEd()));
@@ -706,23 +715,17 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                     CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
                     if (ptfObj == null) {
                         // 没有设值时也要输出,不然就会错位
-                        FileUtils.cell(row, index++, unlock).setCellValue("");
-                        FileUtils.cell(row, index++, unlock).setCellValue("");
-                        FileUtils.cell(row, index++, unlock).setCellValue("");
-                        FileUtils.cell(row, index++, unlock).setCellValue("");
-                        FileUtils.cell(row, index++, unlock).setCellValue("");
-                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                        for (int i = 0; i < _DynCol.length; i ++) {
+                            FileUtils.cell(row, index++, unlock).setCellValue("");
+                        }
                         continue;
                     }
                     List<BaseMongoMap<String, Object>> innerSkus = ptfObj.getSkus();
                     if (innerSkus == null) {
                         // 没有设值时也要输出,不然就会错位
-                        FileUtils.cell(row, index++, unlock).setCellValue("");
-                        FileUtils.cell(row, index++, unlock).setCellValue("");
-                        FileUtils.cell(row, index++, unlock).setCellValue("");
-                        FileUtils.cell(row, index++, unlock).setCellValue("");
-                        FileUtils.cell(row, index++, unlock).setCellValue("");
-                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                        for (int i = 0; i < _DynCol.length; i ++) {
+                            FileUtils.cell(row, index++, unlock).setCellValue("");
+                        }
                         continue;
                     }
                     for (BaseMongoMap prop : innerSkus) {
@@ -737,6 +740,10 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                                 FileUtils.cell(row, index++, unlock).setCellValue("");
                             }
                             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpNumIId()));
+
+                            // 设置平台下的商品名
+                            FileUtils.cell(row, index++, unlock).setCellValue(getPlatformProdName(cartObj.getValue(), ptfObj.getFieldsNotNull()));
+
                             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpCatPath()));
                             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(prop.getStringAttribute("priceMsrp")));
                             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(prop.getStringAttribute("priceRetail")));
@@ -772,6 +779,10 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
     }
 
     private static Map<String, String> lockStatusMap = null;
+
+    /**
+     * 转换锁定状态，从code转到文字
+     */
     private String getLockStatusTxt(String code) {
         if (lockStatusMap == null || code == null) {
             return "";
@@ -782,4 +793,24 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         }
         return rs;
     }
+
+    /**
+     * 取得平台下的商品名
+     */
+    private String getPlatformProdName(String cartId, BaseMongoMap fieldObj) {
+        String rs = null;
+        // 设置平台下的商品名
+        CartBean cartBean = Carts.getCart(cartId);
+        if (PlatFormEnums.PlatForm.TM.getId().equals(cartBean.getPlatform_id())) {
+            rs = org.apache.commons.lang3.StringUtils.trimToEmpty(fieldObj.getStringAttribute("title"));
+        } else if (PlatFormEnums.PlatForm.JD.getId().equals(cartBean.getPlatform_id())) {
+            rs = org.apache.commons.lang3.StringUtils.trimToEmpty(fieldObj.getStringAttribute("productTitle"));
+        } else if (PlatFormEnums.PlatForm.JM.getId().equals(cartBean.getPlatform_id())) {
+            rs = org.apache.commons.lang3.StringUtils.trimToEmpty(fieldObj.getStringAttribute("productLongName"));
+        } else {
+            rs = "";
+        }
+        return rs;
+    }
+
 }

@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsBtJmPromotionDao {
-    List<CmsBtJmPromotionModel> selectList(Map<String, Object> map);
+    List<CmsBtJmPromotionModel> selectList(Object map);
 
-    CmsBtJmPromotionModel selectOne(Map<String, Object> map);
+    CmsBtJmPromotionModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsBtJmPromotionModel select(Integer id);
 

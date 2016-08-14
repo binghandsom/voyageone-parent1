@@ -1,7 +1,6 @@
 package com.voyageone.task2.base;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.logger.VOAbsIssueLoggable;
@@ -9,8 +8,7 @@ import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -37,6 +35,8 @@ public abstract class BaseTaskJob extends VOAbsIssueLoggable {
     public void run() {
 
         String taskCheck = getTaskName();
+        MDC.put("taskName", taskCheck);
+        MDC.put("subSystem", getSubSystem().name().toLowerCase());
 
         if (running) {
             $info(taskCheck + "正在运行，忽略");
@@ -52,6 +52,8 @@ public abstract class BaseTaskJob extends VOAbsIssueLoggable {
         $info(taskCheck + "任务结束");
 
         running = false;
+        MDC.remove("taskName");
+        MDC.remove("subSystem");
     }
 
     @Autowired

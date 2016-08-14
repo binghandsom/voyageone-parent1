@@ -8,7 +8,6 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
@@ -189,9 +188,19 @@ public class ProductGroupService extends BaseService {
     /**
      * 上新成功时更新该model对应的所有和上新有关的状态信息
      * @param model (model中包含的productCodes,是这次平台上新处理的codes)
+     * @param listSxCode 上新了的code
      * @return CmsBtProductGroupModel
      */
-    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model) {
+    // modified by morse.lu 2016/08/08 start
+    // 一个group下可能有些code不上新，就不要回写了
+//    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model) {
+    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model, List<String> listSxCode) {
+        // modified by morse.lu 2016/08/08 end
+
+        if (model == null) {
+            $error("回写上新成功状态信息时失败! [GroupModel=null]");
+            return model;
+        }
 
         // 更新cms_bt_product_groups表
         this.update(model);
@@ -204,7 +213,16 @@ public class ProductGroupService extends BaseService {
 
             // 批量更新产品的平台状态.
             List<BulkUpdateModel> bulkList = new ArrayList<>();
-            for (String code : model.getProductCodes()) {
+            // modified by morse.lu 2016/08/08 start
+            // 一个group下可能有些code不上新，就不要回写了
+//            for (String code : model.getProductCodes()) {
+            if (ListUtils.isNull(listSxCode)) {
+                $error("回写上新成功状态信息时失败!上新对象产品Code列表为空 [listSxCode=null]");
+                return model;
+            }
+
+            for (String code : listSxCode) {
+                // modified by morse.lu 2016/08/08 end
                 // 设置批量更新条件
                 HashMap<String, Object> bulkQueryMap = new HashMap<>();
                 bulkQueryMap.put("common.fields.code", code);
@@ -214,7 +232,10 @@ public class ProductGroupService extends BaseService {
                 // 设置更新值
                 HashMap<String, Object> bulkUpdateMap = new HashMap<>();
                 if (model.getPlatformStatus() != null) {
+                    // cms系统中的上下架状态
                     bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pStatus", model.getPlatformStatus().name());
+                    // 平台上真实的上下架状态，会有另外一个batch每天从平台上拉一次最新的商品上下架状态，保存到这里
+                    bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pReallyStatus", model.getPlatformStatus().name());
                 }
                 // 设置第一次上新的时候需要更新的值
                 if (unPublishedProducts.contains(code)) {
@@ -228,6 +249,8 @@ public class ProductGroupService extends BaseService {
                 // 设置pPublishError：如果上新成功则更新成功则清空，如果上新失败，设置固定值"Error"
                 // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "");
+                // 设置pPublishMessage(产品平台详情页显示用的错误信息)清空
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishMessage", "");
 
                 // 设定批量更新条件和值
                 if (!bulkUpdateMap.isEmpty()) {
@@ -249,11 +272,17 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
-     * 上新失败时更新该model对应的所有产品的pPublishError的值
-     * @param model (model中包含的productCodes,是这次平台上新处理的codes)
+     * 上新失败时更新该model对应的所有产品的pPublishError和pPublishMessage的值
+     * @param model CmsBtProductGroupModel model中包含的productCodes,是这次平台上新处理的codes
+     * @param errMsg String sxData中的上新错误消息
      * @return boolean 更新结果状态
      */
-    public boolean updateUploadErrorStatus(CmsBtProductGroupModel model) {
+    public boolean updateUploadErrorStatus(CmsBtProductGroupModel model, String errMsg) {
+
+        if (model == null) {
+            $error("回写上新错误信息时失败! [GroupModel=null]");
+            return false;
+        }
 
         // 如果传入的groups包含code列表,则同时更新code的状态
         if (!model.getProductCodes().isEmpty()) {
@@ -270,6 +299,8 @@ public class ProductGroupService extends BaseService {
                 // 设置pPublishError：如果上新失败，设置固定值"Error"
                 // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "Error");
+                // 设置pPublishMessage(产品平台详情页显示用的错误信息)
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishMessage", errMsg);
 
                 // 设定批量更新条件和值
                 if (!bulkUpdateMap.isEmpty()) {

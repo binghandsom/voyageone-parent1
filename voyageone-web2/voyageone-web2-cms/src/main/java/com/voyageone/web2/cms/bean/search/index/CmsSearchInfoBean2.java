@@ -44,6 +44,7 @@ public class CmsSearchInfoBean2 implements Serializable {
     private Integer cartId = 0;
     private List<String> productStatus;
     private List<String> platformStatus;
+    private List<String> pRealStatus;
 
     private String publishTimeStart;
     private String publishTimeTo;
@@ -166,6 +167,14 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     public void setPlatformStatus(List<String> platformStatus) {
         this.platformStatus = platformStatus;
+    }
+
+    public List<String> getpRealStatus() {
+        return pRealStatus;
+    }
+
+    public void setpRealStatus(List<String> pRealStatus) {
+        this.pRealStatus = pRealStatus;
     }
 
     public String getPriceType() {

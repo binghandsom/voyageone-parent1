@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsZzFeedOverstockPriceDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsZzFeedOverstockPriceModel" />
+    <sql id="Base_Column_List" >
+        `id`, `sku_code`, `cost_price`, `final_rmb_price`, `upd_flg`, `created`, `creater`, 
+        `modified`, `modifier`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_zz_feed_overstock_price
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsZzFeedOverstockPriceModel" >
+        update cms_zz_feed_overstock_price
+        <set >
+            <if test="skuCode != null" >
+                `sku_code` = #{skuCode,jdbcType=VARCHAR},
+            </if>
+            <if test="costPrice != null" >
+                `cost_price` = #{costPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="finalRmbPrice != null" >
+                `final_rmb_price` = #{finalRmbPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="updFlg != null" >
+                `upd_flg` = #{updFlg,jdbcType=INTEGER},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_zz_feed_overstock_price
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_zz_feed_overstock_price
+        <where >
+            <if test="skuCode != null" >
+                and `sku_code` = #{skuCode,jdbcType=VARCHAR}
+            </if>
+            <if test="costPrice != null" >
+                and `cost_price` = #{costPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="finalRmbPrice != null" >
+                and `final_rmb_price` = #{finalRmbPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="updFlg != null" >
+                and `upd_flg` = #{updFlg,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_zz_feed_overstock_price
+        <where >
+            <if test="skuCode != null" >
+                and `sku_code` = #{skuCode,jdbcType=VARCHAR}
+            </if>
+            <if test="costPrice != null" >
+                and `cost_price` = #{costPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="finalRmbPrice != null" >
+                and `final_rmb_price` = #{finalRmbPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="updFlg != null" >
+                and `upd_flg` = #{updFlg,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_zz_feed_overstock_price
+        <where >
+            <if test="skuCode != null" >
+                and `sku_code` = #{skuCode,jdbcType=VARCHAR}
+            </if>
+            <if test="costPrice != null" >
+                and `cost_price` = #{costPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="finalRmbPrice != null" >
+                and `final_rmb_price` = #{finalRmbPrice,jdbcType=VARCHAR}
+            </if>
+            <if test="updFlg != null" >
+                and `upd_flg` = #{updFlg,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsZzFeedOverstockPriceModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_zz_feed_overstock_price
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="skuCode != null" >
+                `sku_code`,
+            </if>
+            <if test="costPrice != null" >
+                `cost_price`,
+            </if>
+            <if test="finalRmbPrice != null" >
+                `final_rmb_price`,
+            </if>
+            <if test="updFlg != null" >
+                `upd_flg`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="skuCode != null" >
+                #{skuCode,jdbcType=VARCHAR},
+            </if>
+            <if test="costPrice != null" >
+                #{costPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="finalRmbPrice != null" >
+                #{finalRmbPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="updFlg != null" >
+                #{updFlg,jdbcType=INTEGER},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

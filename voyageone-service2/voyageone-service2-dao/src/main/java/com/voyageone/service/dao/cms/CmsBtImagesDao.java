@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsBtImagesDao {
-    List<CmsBtImagesModel> selectList(Map<String, Object> map);
+    List<CmsBtImagesModel> selectList(Object map);
 
-    CmsBtImagesModel selectOne(Map<String, Object> map);
+    CmsBtImagesModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsBtImagesModel select(Integer id);
 

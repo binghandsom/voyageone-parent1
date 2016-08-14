@@ -6,6 +6,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.HttpScene7;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ftp.FtpComponentFactory;
@@ -19,6 +20,9 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -159,6 +163,8 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
             InputStream inputStream;
             String imageUrl = null;
+            InputStream stream;
+            InputStreamCacher  cacher = null;
             try {
                 //建立连接
                 ftpComponent.openConnect();
@@ -171,10 +177,11 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                         successImageUrlList.add(imagesModel);
                         continue;
                     }
-
                     try {
                         $info("thread-" + threadNo + ":" + imageUrl + "流取得开始");
                         inputStream = HttpUtils.getInputStream(imageUrl);
+                        cacher = new InputStreamCacher(inputStream);
+                        stream = cacher.getInputStream();
                     } catch (Exception ex) {
                         // 图片url错误
                         $error(ex.getMessage(), ex);
@@ -184,9 +191,22 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                         continue;
                     }
 
+
                     String fileName = imagesModel.getImgName() + ".jpg";
+
+                    // 直接通过http的方式上传到s7 start
+                    $info("thread-" + threadNo + ":" + imageUrl + "http上传开始");
+
+                    try {
+                        HttpScene7.uploadImageFile(uploadPath, fileName, stream,false);
+                    }catch (Exception e){
+
+                    }
+                    // 直接通过http的方式上传到s7 end
+                    //读取stream
+                    stream = cacher.getInputStream();
                     $info("thread-" + threadNo + ":" + imageUrl + "ftp上传开始");
-                    FtpFileBean ftpFileBean = new FtpFileBean(inputStream, uploadPath, fileName);
+                    FtpFileBean ftpFileBean = new FtpFileBean(stream, uploadPath, fileName);
                     ftpComponent.uploadFile(ftpFileBean);
                     $info("thread-" + threadNo + ":" + imageUrl + "ftp上传结束");
                     successImageUrlList.add(imagesModel);
@@ -200,10 +220,47 @@ public class CmsImagePostScene7Service extends BaseTaskService {
             } finally {
                 //断开连接
                 ftpComponent.closeConnect();
+                if(cacher != null){
+                    cacher.close();
+                }
             }
         }
 
         return isSuccess;
+    }
+
+    public class InputStreamCacher {
+        /**
+         * 将InputStream中的字节保存到ByteArrayOutputStream中。
+         */
+        private ByteArrayOutputStream byteArrayOutputStream = null;
+
+        public InputStreamCacher(InputStream inputStream) {
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int len;
+            try {
+                while ((len = inputStream.read(buffer)) > -1 ) {
+                    byteArrayOutputStream.write(buffer, 0, len);
+                }
+                byteArrayOutputStream.flush();
+                inputStream.close();
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+
+        public InputStream getInputStream() {
+
+            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        }
+        public void close(){
+            try {
+                byteArrayOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 

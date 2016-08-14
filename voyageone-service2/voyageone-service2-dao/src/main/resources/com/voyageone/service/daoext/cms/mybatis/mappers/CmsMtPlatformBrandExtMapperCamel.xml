@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsMtPlatformBrandsDaoExt">
+
+	<!-- 删除指定渠道和店铺的品牌数据 -->
+	<delete id="deleteBrandsByChannelIdAndCartId">
+		delete from cms_mt_platform_brands where channel_id = #{channelId} and cart_id = #{cartId}
+	</delete>
+	
+</mapper>

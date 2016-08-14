@@ -218,6 +218,7 @@ define(function () {
         "TXT_ERROR_MESSAGE": "异常消息",
         "TXT_ERROR_CREATE_TIME": "异常创建时间",
         "TXT_ERROR_CREATER": "异常创建者",
+        "TXT_CREATER": "创建者",
         "TXT_ERROR_IS_FIX": "已解决?",
         "TXT_ATTRIBUTE_ID": "属性ID",
         "TXT_ATTRIBUTE_NAME": "属性名称",
@@ -359,6 +360,8 @@ define(function () {
         "TXT_TAG_ONE": "一级标签",
         "TXT_TAG_TWO": "二级标签",
         "TXT_TAG_THREE": "三级标签",
+        "TXT_LONG_DESCRIPTION": "长描述",
+        "TXT_SHORT_DESCRIPTION": "短描述",
 
         "TXT_SEPARATE_PROPORTION": "隔离比例",
         "TXT_REVERT_TIME": "还原时间",
@@ -538,6 +541,7 @@ define(function () {
         "BTN_CLOSE": "关闭",
         "BTN_TODAY": "今日",
         "BTN_SAVE": "保存",
+        "BTN_SCRATCH": "暂存",
         "BTN_SELECT": "选择",
         "BTN_SEARCH": "检索",
         "BTN_ADD_TO_PROMOTION": "参加活动",
@@ -665,7 +669,7 @@ define(function () {
         "TXT_ERROR": "错误",
         "TXT_PROPERTY_STATUS": "属性状态",
         "TXT_IMAGE_DOWNLOAD": "图片下载",
-        "TXT_CUS_TAGS_SETTING": "设置自定义标签",
+        "TXT_CUS_TAGS_SETTING": "设置自由标签",
         "TXT_COMMON_EXCHANGE": "共通级变更",
         "TXT_CHANGE_FOR_TG_PLATFORM": "天猫国际平台级变更",
         "TXT_CHANGE_FOR_JD_PLATFORM": "京东国际平台级变更",
@@ -722,8 +726,8 @@ define(function () {
         "TXT_COMMIT_ERROR": "提交请求时出现错误",
         "TXT_NO_PRODUCT_CHOOSED": "未选择商品，请选择后再操作",
         "TXT_NO_OPPERATION": "没有设置上下架操作，请选择后重试",
-        "TXT_CONFIRM_ALL_STORE_PUT_ON": "此操作将会导致全店铺商品上下架，确认无误",
-        "TXT_CONFIRM_NOW_STORE_PUT_ON": "此操作将会导致本店铺商品上下架，确认无误",
+        "TXT_CONFIRM_ALL_STORE_PUT_ON": "您确认要进行全平台的[{{optName}}]操作吗？",
+        "TXT_CONFIRM_NOW_STORE_PUT_ON": "您确认要进行[{{cartName}}]的[{{optName}}]操作吗？",
         "TXT_ITEM_CODE": "商品Code",
 
         /** 翻译页面相关 **/
@@ -777,7 +781,13 @@ define(function () {
         "TXT_CART_NAME": "平台渠道名称",
         "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配状态",
         "TXT_MASTER_BRAND": "Master品牌",
-        "TXT_BRAND_CHANGEABLE":"[%s]品牌",
-        "TXT_COMPLETE_THE_PLATEFORM_BRAND":"平台品牌未选择"
+        "TXT_REGET_PLATFORM_BRANDS":"重新获取平台品牌",
+        "TXT_COMPLETE_THE_PLATEFORM_BRAND":"平台品牌未选择",
+
+        /**店铺管理-平台默认属性设置一览*/
+        "TXT_DEFAULT_MAPPING_LIST": "平台默认属性设置一览",
+        "TXT_DEFAULT_SETTING":"新建默认设置",
+        "TXT_UPDATER":"更新人"
+
     };
 });

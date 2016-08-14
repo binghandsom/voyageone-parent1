@@ -108,12 +108,21 @@ public class SkuTemplateConstants {
     public final static int EXTENDSIZE_HOULANG_RANGE = 98;
     public final static int EXTENDSIZE_HENGDANG = 99;
     public final static int EXTENDSIZE_HENGDANG_RANGE = 100;
+    public final static int EXTENDSIZE_JIAOCHANG = 101;
 
     // 既没有颜色也没有尺码
     public final static int SKU_MASTER = 69;
     public final static int EXTENDMASTER = 70;
     public final static int EXTENDMASTER_MASTER = 71;
     public final static int EXTENDMASTER_ALIASNAME = 72;
+
+    public final static int SKU_CSPUID = 102; // 产品规格
+    public final static int SKU_IMAGE = 103;
+
+    public final static int CSPU = 104; // 产品规格列表
+    public final static int CSPU_IMG = 105; // 产品规格主图
+    public final static int CSPU_ATTACH_IMG = 106; // 产品规格资质图
+    public final static int CSPU_NO_UPDATE = 107; // 产品规格属性里，不会去设值的属性
 
     public final static int UNKOWN = 99999;
 }

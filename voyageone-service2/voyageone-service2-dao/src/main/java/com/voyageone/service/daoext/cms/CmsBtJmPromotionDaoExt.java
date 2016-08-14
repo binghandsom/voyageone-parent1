@@ -14,9 +14,14 @@ public interface CmsBtJmPromotionDaoExt {
 
     /**
      * 获取相关渠道的可用promotions
+     *
      * @return
      */
     List<MapModel> selectActivesOfChannel(Map<String, Object> map);
 
     List<CmsBtJmPromotionModel> selectEndList(Date nowDate);
+
+    List<MapModel> selectMaxJmHashId(String channelId);
+
+    int updateSumbrandById(int id);
 }

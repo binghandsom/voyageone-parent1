@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsBtTagDao {
-    List<CmsBtTagModel> selectList(Map<String, Object> map);
+    List<CmsBtTagModel> selectList(Object map);
 
-    CmsBtTagModel selectOne(Map<String, Object> map);
+    CmsBtTagModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsBtTagModel select(Integer id);
 
