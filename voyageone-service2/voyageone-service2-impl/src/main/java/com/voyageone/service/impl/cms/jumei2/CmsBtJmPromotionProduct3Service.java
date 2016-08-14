@@ -108,21 +108,6 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         return dao.delete(id);
     }
 
-//    @VOTransactional
-//    public int updateDealPrice(BigDecimal dealPrice, int id, String userName) {
-//        CmsBtJmPromotionProductModel model = dao.select(id);
-//        model.setDealPrice(dealPrice);
-//        model.setModifier(userName);
-//        dao.update(model);
-//        return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
-//    }
-
-//    @VOTransactional
-//    public void deleteByPromotionId(int jmPromotionId) {
-//        daoExt.deleteByPromotionId(jmPromotionId);
-//        daoExtCmsBtJmPromotionSku.deleteByPromotionId(jmPromotionId);
-//
-//    }
     public CmsBtPromotionModel getCmsBtPromotionModel(int jmPromotionId)
     {
         Map<String, Object> map = new HashMap<>();

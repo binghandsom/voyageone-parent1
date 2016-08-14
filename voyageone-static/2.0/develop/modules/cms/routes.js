@@ -141,7 +141,7 @@ define(function () {
             "controller": "defaultAttributeController as ctrl"
         },
         "channel_default_attribute_detail": {
-            "hash": "/channel/default_attribute_detail",
+            "hash": "/channel/default_attribute_detail/:upEntity",
             "templateUrl": "views/channel/defaultAttribute/detail.tpl.html",
             "controllerUrl": "modules/cms/views/channel/defaultAttribute/detail.ctl",
             "controller": "attributeDetailController as ctrl"
@@ -337,6 +337,12 @@ define(function () {
             "hash": "/imagecreate/index",
             "templateUrl": "views/imagecreate/index.tpl.html",
             "controllerUrl": "modules/cms/views/imagecreate/index.ctl"
+        },
+        "re-price": {
+            "hash": "/tools/re/price",
+            "templateUrl": "views/tools/reprice/re.price.tpl.html",
+            "controllerUrl": "modules/cms/views/tools/reprice/re.price.controller",
+            "controller": "RePriceController as ctrl"
         }
     };
 });

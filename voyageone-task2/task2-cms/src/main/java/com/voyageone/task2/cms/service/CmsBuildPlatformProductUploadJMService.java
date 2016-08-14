@@ -695,7 +695,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
                 if(StringUtils.isNullOrBlank2(e.getMessage())) {
-                    sxData.setErrorMessage(e.getStackTrace()[0].toString());
+                    sxData.setErrorMessage("聚美上新出现异常，请向管理员确认 " + e.getStackTrace()[0].toString());
                 }
                 else
                 {
@@ -1050,7 +1050,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         String result = sxProductService.resolveDict(dictName, expressionParser, shopProp, getTaskName(), null);
         if(StringUtils.isNullOrBlank2(result))
         {
-            String errorMsg = String.format("字典解析器说:解析的结果是空的! (猜测有可能是素材管理里的共通图片啥的没上传成功到平台? ) [dictName:%s],[ProdId:%s]:", dictName, expressionParser.getSxData().getMainProduct().getProdId());
+            String errorMsg = String.format("字典解析器说:解析的结果是空的! (猜测有可能是素材管理里的共通图片啥的没有一张图片成功上传到平台) [dictName:%s],[ProdId:%s]:", dictName, expressionParser.getSxData().getMainProduct().getProdId());
             throw new BusinessException(errorMsg);
         }
         return  result;

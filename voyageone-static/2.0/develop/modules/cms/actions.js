@@ -107,9 +107,9 @@ define(function () {
                     "setMastProduct": "setMastProduct",
                     "delisting": "delisting",
                     "delistinGroup": "delistinGroup",
-                    "hsCodeChg":"hsCodeChg",
-                    "copyProperty":"copyProperty",
-                    "copyCommonProperty":"copyCommonProperty"
+                    "hsCodeChg": "hsCodeChg",
+                    "copyProperty": "copyProperty",
+                    "copyCommonProperty": "copyCommonProperty"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -198,8 +198,8 @@ define(function () {
                     "updatePromotionProduct": "updatePromotionProduct",
                     "delPromotionModel": "delPromotionModel",
                     "delPromotionCode": "delPromotionCode",
-                    "tmallJuhuasuanExport":"tmallJuhuasuanExport",
-                    "tmallPromotionExport":"tmallPromotionExport",
+                    "tmallJuhuasuanExport": "tmallJuhuasuanExport",
+                    "tmallPromotionExport": "tmallPromotionExport",
                 }
             },
             "jmpromotion": {
@@ -552,7 +552,21 @@ define(function () {
                     "save": "saveHsCodeInfo",
                     "cancel": "cancelHsCodeInfo"
                 }
+            },
+            "rePriceService": {
+                "root": "/cms/tools/reprice/",
+                "getChannelList": {url: "getChannelList", cache: CACHE.LOCAL},
+                "getPlatformList": "getPlatformList",
+                "getCartList": "getCartList",
+                "getPlatformCategoryList": {url: "getPlatformCategoryList", cache: CACHE.LOCAL},
+                "setUpdateFlg": "setUpdateFlg"
             }
+/*            "defaultAttrService":{
+                "root":"product/fields/map/",
+                "list":"list",
+                "get":"get",
+                "save":"save"
+            }*/
         }
     };
 });

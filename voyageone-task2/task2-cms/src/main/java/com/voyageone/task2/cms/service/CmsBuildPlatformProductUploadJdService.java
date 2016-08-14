@@ -605,7 +605,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
                 // nullpoint错误的处理
                 if(StringUtils.isNullOrBlank2(ex.getMessage())) {
-                    sxData.setErrorMessage(shopProp.getShop_name() + " " + ex.getStackTrace()[0].toString());
+                    sxData.setErrorMessage(shopProp.getShop_name() + "上新时出现异常，请向管理员确认. " + ex.getStackTrace()[0].toString());
                 } else {
                     sxData.setErrorMessage(shopProp.getShop_name() + " " +ex.getMessage());
                 }
