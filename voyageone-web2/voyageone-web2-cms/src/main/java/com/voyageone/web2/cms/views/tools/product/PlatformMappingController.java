@@ -2,7 +2,7 @@ package com.voyageone.web2.cms.views.tools.product;
 
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
-import com.voyageone.web2.cms.CmsUrlConstants.PRODUCT_FIELDS_MAP;
+import com.voyageone.web2.cms.CmsUrlConstants.PLATFORM_MAPPING;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,11 +20,11 @@ import java.util.Map;
  * @since 2.4.0
  */
 @RestController
-@RequestMapping(value = PRODUCT_FIELDS_MAP.ROOT, method = RequestMethod.POST)
-public class FieldMapController extends CmsController {
+@RequestMapping(value = PLATFORM_MAPPING.ROOT, method = RequestMethod.POST)
+public class PlatformMappingController extends CmsController {
 
 
-    @RequestMapping(PRODUCT_FIELDS_MAP.LIST)
+    @RequestMapping(PLATFORM_MAPPING.LIST)
     public AjaxResponse list(@RequestBody Map a) {
 
 
@@ -36,12 +36,12 @@ public class FieldMapController extends CmsController {
         return success(null);
     }
 
-    @RequestMapping(PRODUCT_FIELDS_MAP.GET)
+    @RequestMapping(PLATFORM_MAPPING.GET)
     public AjaxResponse get(@RequestBody Map a) {
         return success(null);
     }
 
-    @RequestMapping(PRODUCT_FIELDS_MAP.SAVE)
+    @RequestMapping(PLATFORM_MAPPING.SAVE)
     public AjaxResponse save(@RequestBody Map a) {
         return success(null);
     }

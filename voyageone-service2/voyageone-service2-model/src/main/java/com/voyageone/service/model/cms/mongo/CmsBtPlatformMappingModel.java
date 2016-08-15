@@ -60,7 +60,7 @@ public class CmsBtPlatformMappingModel extends ChannelPartitionModel {
 
         private String fieldId;
 
-        private String value;
+        private Object value;
 
         private List<FieldMappingExpression> expressions;
 
@@ -72,11 +72,11 @@ public class CmsBtPlatformMappingModel extends ChannelPartitionModel {
             this.fieldId = fieldId;
         }
 
-        public String getValue() {
+        public Object getValue() {
             return value;
         }
 
-        public void setValue(String value) {
+        public void setValue(Object value) {
             this.value = value;
         }
 

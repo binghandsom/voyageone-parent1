@@ -16,7 +16,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class CmsPlatformMappingServiceTest {
+public class PlatformMappingDeprecatedServiceTest {
 
     @Autowired
     private CmsPlatformMappingService cmsPlatformMappingService;

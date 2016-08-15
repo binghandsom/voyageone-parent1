@@ -12,12 +12,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
+ * 早期版本的平台类目匹配, 现已废弃, 不再使用
+ *
  * @author liang 2016/2/24.
  * @version 2.0.0
  * @since 2.0.0
  */
 @Service
-public class PlatformMappingService extends BaseService {
+@Deprecated
+public class PlatformMappingDeprecatedService extends BaseService {
 
     @Autowired
     private CmsMtPlatformSpecialFieldDaoExt platformSpecialFieldDao;

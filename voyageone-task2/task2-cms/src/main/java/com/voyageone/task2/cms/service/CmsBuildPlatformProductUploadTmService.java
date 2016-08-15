@@ -16,7 +16,7 @@ import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSxCspuDao;
 import com.voyageone.service.dao.cms.CmsBtSxProductDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.cms.PlatformMappingService;
+import com.voyageone.service.impl.cms.PlatformMappingDeprecatedService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
@@ -64,7 +64,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
     @Autowired
     private TbProductService tbProductService;
     @Autowired
-    private PlatformMappingService platformMappingService;
+    private PlatformMappingDeprecatedService platformMappingDeprecatedService;
     @Autowired
     private PlatformCategoryService platformCategoryService;
     @Autowired
@@ -254,7 +254,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
 
             // 属性值准备
             // 取得主产品类目对应的platform mapping数据
-            cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(channelId, cartId, mainProduct.getCommon().getCatId());
+            cmsMtPlatformMappingModel = platformMappingDeprecatedService.getMappingByMainCatId(channelId, cartId, mainProduct.getCommon().getCatId());
 //            if (cmsMtPlatformMappingModel == null) {
 //                String errMsg = String.format("共通PlatformMapping表中对应的平台Mapping信息不存在！[ChannelId:%s] [CartId:%s] [主产品类目:%s]",
 //                        channelId, cartId, mainProduct.getCommon().getCatId());
