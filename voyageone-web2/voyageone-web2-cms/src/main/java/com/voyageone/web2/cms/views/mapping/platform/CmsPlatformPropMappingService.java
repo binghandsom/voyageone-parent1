@@ -14,7 +14,7 @@ import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.DictService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.cms.PlatformMappingService;
+import com.voyageone.service.impl.cms.PlatformMappingDeprecatedService;
 import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
@@ -52,7 +52,7 @@ class CmsPlatformPropMappingService extends BaseAppService {
     private DictService dictService;
 
     @Autowired
-    private PlatformMappingService platformMappingService;
+    private PlatformMappingDeprecatedService platformMappingDeprecatedService;
 
     /**
      * 获取平台类目和 Mapping 的所有信息
@@ -65,7 +65,7 @@ class CmsPlatformPropMappingService extends BaseAppService {
      */
     Map<String, Object> getPlatformCategory(String categoryId, int cartId, UserSessionBean user) throws TopSchemaException {
 
-        CmsMtPlatformMappingModel platformMappingModel = platformMappingService.getMappingByMainCatId(user.getSelChannelId(), cartId, categoryId);
+        CmsMtPlatformMappingModel platformMappingModel = platformMappingDeprecatedService.getMappingByMainCatId(user.getSelChannelId(), cartId, categoryId);
 
         if (platformMappingModel == null)
             throw new BusinessException("没找到 Mapping");
@@ -185,7 +185,7 @@ class CmsPlatformPropMappingService extends BaseAppService {
      * @return 信息模型
      */
     CmsMtPlatformMappingModel getPlatformMapping(String mainCategoryId, String platformCategoryId, Integer cartId, UserSessionBean user) {
-        return platformMappingService.getMapping(mainCategoryId, platformCategoryId, cartId, user.getSelChannel().getId());
+        return platformMappingDeprecatedService.getMapping(mainCategoryId, platformCategoryId, cartId, user.getSelChannel().getId());
     }
 
     /**
@@ -255,7 +255,7 @@ class CmsPlatformPropMappingService extends BaseAppService {
      */
     Map<String, String> getMultiComplexFieldMappingType(Integer cartId, String platformCategoryId) {
 
-        return platformMappingService.getPlatformSpecialField(cartId, platformCategoryId)
+        return platformMappingDeprecatedService.getPlatformSpecialField(cartId, platformCategoryId)
                 .stream()
                 .collect(toMap(CmsMtPlatformSpecialFieldModel::getFieldId, CmsMtPlatformSpecialFieldModel::getType));
     }
@@ -310,7 +310,7 @@ class CmsPlatformPropMappingService extends BaseAppService {
 
         updateFinalMapping(mappingBean, orgMappingBean);
 
-        platformMappingService.savePlatformMapping(platformMappingModel);
+        platformMappingDeprecatedService.savePlatformMapping(platformMappingModel);
 
         List<String> top = new ArrayList<>();
         top.add(mappingPath.get(0));
@@ -501,21 +501,21 @@ class CmsPlatformPropMappingService extends BaseAppService {
 
     private String getMultiComplexFieldMappingType(Integer cartId, String platformCategoryId, String propertyId) {
 
-        String type = platformMappingService.getSpecialMappingType(cartId, platformCategoryId, propertyId);
+        String type = platformMappingDeprecatedService.getSpecialMappingType(cartId, platformCategoryId, propertyId);
 
         return StringUtils.isEmpty(type) ? "1" : type;
     }
 
     public int setMatchOver(String mainCategoryId, Integer matchOver, Integer cartId, UserSessionBean user) {
 
-        CmsMtPlatformMappingModel platformMappingModel = platformMappingService.getMappingByMainCatId(user.getSelChannelId(), cartId, mainCategoryId);
+        CmsMtPlatformMappingModel platformMappingModel = platformMappingDeprecatedService.getMappingByMainCatId(user.getSelChannelId(), cartId, mainCategoryId);
 
         if (platformMappingModel == null)
             throw new BusinessException("没找到 Mapping");
 
         platformMappingModel.setMatchOver(matchOver);
 
-        int res = platformMappingService.savePlatformMapping(platformMappingModel);
+        int res = platformMappingDeprecatedService.savePlatformMapping(platformMappingModel);
 
         return res > 0 ? matchOver : (matchOver == 1 ? 0 : 1);
     }

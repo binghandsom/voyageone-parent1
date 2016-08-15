@@ -25,10 +25,10 @@ import java.util.Map;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
-public class CmsBtPlatformMappingServiceTest {
+public class PlatformMappingServiceTest {
 
     @Autowired
-    private CmsBtPlatformMappingService platformMappingService;
+    private PlatformMappingService platformMappingService;
 
     @Autowired
     private ProductService productService;

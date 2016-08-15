@@ -7,7 +7,7 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.cms.PlatformMappingService;
+import com.voyageone.service.impl.cms.PlatformMappingDeprecatedService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -39,7 +39,7 @@ class CmsPlatformMappingService extends BaseAppService {
     private PlatformCategoryService platformCategoryService;
 
     @Autowired
-    private PlatformMappingService platformMappingService;
+    private PlatformMappingDeprecatedService platformMappingDeprecatedService;
 
     @Autowired
     private ChannelCategoryService channelCategoryService;
@@ -67,7 +67,7 @@ class CmsPlatformMappingService extends BaseAppService {
         // 获取所有渠道和平台下的 mapping 关系, 画面需要显示
         Map<String, CmsMtPlatformCategoryTreeModel> platformMap = getPlatformMap(user.getSelChannel(), cartId);
 
-        Map<String, Object> mappings = platformMappingService.getMappings(user.getSelChannel().getId(), cartId)
+        Map<String, Object> mappings = platformMappingDeprecatedService.getMappings(user.getSelChannel().getId(), cartId)
                 .stream()
                 .filter(m -> platformMap.containsKey(m.getPlatformCategoryId()))
                 .collect(toMap(
@@ -133,7 +133,7 @@ class CmsPlatformMappingService extends BaseAppService {
         }
 
         // 取老数据
-        CmsMtPlatformMappingModel platformMappingModel = platformMappingService.getMappingByMainCatId(user.getSelChannelId(), cartId, from);
+        CmsMtPlatformMappingModel platformMappingModel = platformMappingDeprecatedService.getMappingByMainCatId(user.getSelChannelId(), cartId, from);
 
         if (platformMappingModel == null) {
             // 如果没有, 那就新建数据
@@ -153,7 +153,7 @@ class CmsPlatformMappingService extends BaseAppService {
         platformMappingModel.setMatchOver(0);
         platformMappingModel.setProps(new ArrayList<>(0));
 
-        platformMappingService.savePlatformMapping(platformMappingModel);
+        platformMappingDeprecatedService.savePlatformMapping(platformMappingModel);
 
         return false;
     }

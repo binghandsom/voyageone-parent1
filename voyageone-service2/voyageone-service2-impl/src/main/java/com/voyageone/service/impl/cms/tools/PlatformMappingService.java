@@ -24,7 +24,7 @@ import java.util.Map;
  * @since 2.4.0
  */
 @Service
-public class CmsBtPlatformMappingService extends BaseService {
+public class PlatformMappingService extends BaseService {
 
     private final static int CATEGORY_TYPE_COMMON = 1;
 
@@ -41,7 +41,7 @@ public class CmsBtPlatformMappingService extends BaseService {
     private final CmsBtPlatformMappingDao platformMappingDao;
 
     @Autowired
-    public CmsBtPlatformMappingService(ProductService productService, CmsBtPlatformMappingDao platformMappingDao) {
+    public PlatformMappingService(ProductService productService, CmsBtPlatformMappingDao platformMappingDao) {
         this.productService = productService;
         this.platformMappingDao = platformMappingDao;
     }
