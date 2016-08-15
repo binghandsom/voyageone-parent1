@@ -49,6 +49,10 @@ public class ShipmentService {
         return vmsBtShipmentDaoExt.update(vmsBtShipmentModel);
     }
 
+    public int update(VmsBtShipmentModel vmsBtShipmentModel) {
+        return vmsBtShipmentDao.update(vmsBtShipmentModel);
+    }
+
 
     public int insert(VmsBtShipmentModel vmsBtShipmentModel) {
         return vmsBtShipmentDao.insert(vmsBtShipmentModel);

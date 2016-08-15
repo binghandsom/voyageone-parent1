@@ -407,7 +407,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
                     }
                 }
             }
-            count = shipmentService.save(model);
+            count = shipmentService.update(model);
         } else {
             throw new ApiException("97", "This Status is not allowed to be update.");
         }

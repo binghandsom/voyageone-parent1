@@ -174,8 +174,8 @@ public class VmsOrderGetRequestTest {
     @Test
     public void testUpdateShipmentStatus4() throws ParseException {
         VmsShipmentStatusUpdateRequest request = new VmsShipmentStatusUpdateRequest();
-        request.setChannelId("088");
-        request.setShipmentId(1);
+        request.setChannelId("017");
+        request.setShipmentId(14398);
         request.setStatus("4");
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
         String str="2016-01-01 10:00:00";
