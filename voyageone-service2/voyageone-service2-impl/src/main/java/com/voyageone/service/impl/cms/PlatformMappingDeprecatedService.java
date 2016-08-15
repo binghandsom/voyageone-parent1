@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.mongodb.WriteResult;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDeprecatedDao;
 import com.voyageone.service.daoext.cms.CmsMtPlatformSpecialFieldDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
@@ -26,7 +26,7 @@ public class PlatformMappingDeprecatedService extends BaseService {
     private CmsMtPlatformSpecialFieldDaoExt platformSpecialFieldDao;
 
     @Autowired
-    private CmsMtPlatformMappingDao platformMappingDao;
+    private CmsMtPlatformMappingDeprecatedDao platformMappingDao;
 
     public CmsMtPlatformMappingDeprecatedModel getMapping(String mainCategoryId, String platformCategoryId, int cartId, String channelId) {
         return platformMappingDao.selectMapping(mainCategoryId, platformCategoryId, cartId, channelId);

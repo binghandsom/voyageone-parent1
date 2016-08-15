@@ -11,9 +11,7 @@ import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
-import com.voyageone.common.masterdate.schema.factory.SchemaWriter;
 import com.voyageone.common.masterdate.schema.field.*;
-import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
@@ -108,7 +106,7 @@ public class SxGetProductInfoTest {
     private ImsBtProductDao imsBtProductDao;
 
     @Autowired
-    private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
+    private CmsMtPlatformMappingDeprecatedDao cmsMtPlatformMappingDao;
 
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;

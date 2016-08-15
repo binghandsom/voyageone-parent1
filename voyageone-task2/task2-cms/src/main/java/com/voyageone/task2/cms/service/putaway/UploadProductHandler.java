@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service.putaway;
 
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDeprecatedDao;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.Context;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class UploadProductHandler extends UploadWorkloadHandler{
 
     private UploadJob uploadJob;
-    private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
+    private CmsMtPlatformMappingDeprecatedDao cmsMtPlatformMappingDao;
     private SkuInventoryDao skuInventoryDao;
 
     private TmallProductService tmallProductService;
@@ -218,7 +218,7 @@ public class UploadProductHandler extends UploadWorkloadHandler{
     }
 
 
-    public UploadProductHandler(UploadJob uploadJob, CmsMtPlatformMappingDao cmsMtPlatformMappingDao, SkuInventoryDao skuInventoryDao, IssueLog issueLog) {
+    public UploadProductHandler(UploadJob uploadJob, CmsMtPlatformMappingDeprecatedDao cmsMtPlatformMappingDao, SkuInventoryDao skuInventoryDao, IssueLog issueLog) {
         super(issueLog);
 
         this.uploadJob = uploadJob;
