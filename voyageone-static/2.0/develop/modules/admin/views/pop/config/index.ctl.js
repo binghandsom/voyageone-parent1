@@ -5,7 +5,8 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('ConfigController', (function () {
-        function ConfigController(context, confirm, channelService, AdminChannelService, selectRowsFactory) {
+        function ConfigController(popups, context, confirm, channelService, AdminChannelService, selectRowsFactory) {
+            this.popups = popups;
             this.sourceData = context;
             this.confirm = confirm;
             this.channelService = channelService;
@@ -16,13 +17,13 @@ define([
             this.tempConfigSelect = null;
             this.show = false;
             this.searchInfo = {
-                channelName: this.sourceData ? this.sourceData.name : "",
+                channelId: this.sourceData ? this.sourceData.orderChannelId : "",
                 configType: 'Channel',
                 pageInfo: this.configPageOption,
-                channelId: this.sourceData ? this.sourceData.orderChannelId : "",
                 cfgName: '',
                 cfgVal: ''
-            }
+            };
+            this.tempChannelList = [];
         }
 
         ConfigController.prototype = {
@@ -40,7 +41,7 @@ define([
                     'pageNum': self.searchInfo.pageInfo.curr,
                     'pageSize': self.searchInfo.pageInfo.size,
                     'configType': self.searchInfo.configType,
-                    'channelId': self.searchInfo.channelName,
+                    'channelId': self.searchInfo.channelId,
                     'cfgName': self.searchInfo.cfgName,
                     'cfgVal': self.searchInfo.cfgVal
                 }).then(function (res) {
@@ -52,17 +53,52 @@ define([
                     } else {
                         self.tempConfigSelect.clearCurrPageRows();
                     }
-                    _.forEach(self.cfgList, function (configInfo) {
+                    _.forEach(self.cfgList, function (configInfo, index) {
                         if (configInfo.updFlg != 8) {
+                            _.extend(configInfo, {mainKey: index});
                             self.tempConfigSelect.currPageRows({
-                                "id": configInfo.orderChannelId,
+                                "id": configInfo.mainKey,
                                 "code": configInfo.cfgName
                             });
                         }
                     });
                     self.configSelList = self.tempConfigSelect.selectRowsInfo;
-                })
 
+                    for (var l = 0; l < self.channelList.length; l++) {
+                        self.tempChannelList.push({
+                            'channelName': self.channelList[l].name,
+                            'channelId': self.channelList[l].orderChannelId
+                        })
+                    }
+                    for (var i = 0; i < self.cfgList.length; i++) {
+                        self.tempChannelList.map(function (item) {
+                            if (item.channelId === self.cfgList[i].orderChannelId) {
+                                _.extend(self.cfgList[i], {'channelName': item.channelName});
+                            }
+                        });
+                    }
+                })
+            },
+            clear: function () {
+                var self = this;
+                self.searchInfo = {
+                    channelId: "",
+                    configType: 'Channel',
+                    pageInfo: self.configPageOption,
+                    channelName: "",
+                    cfgName: '',
+                    cfgVal: ''
+                };
+                self.show = false;
+                self.cfgList = [];
+            },
+            edit: function () {
+                var self = this;
+                _.forEach(self.cfgList, function (cfgInfo) {
+                    if (cfgInfo.mainKey == self.configSelList.selList[0].id) {
+                        self.popups.openCreateEdit(cfgInfo);
+                    }
+                });
             },
             delete: function () {
                 var self = this;

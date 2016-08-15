@@ -2,7 +2,7 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="fa fa-edit"></i>&nbsp;{{'TXT_POP_EDIT' | translate}}</h5>
+        <h5 class="modal-title"><i class="fa fa-edit"></i>&nbsp;{{ctrl.popType}}</h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
@@ -11,7 +11,7 @@
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_CART_COMPANY_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.searchInfo.company" ng-options="cart.id as cart.company for cart in ctrl.companyAllList">
+                            <select class="form-control" ng-model="ctrl.companyId" ng-options="company.id as company.company for company in ctrl.companyAllList">
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
@@ -108,7 +108,7 @@
                     <div class="col-sm-9">
                         <input class="form-control" ng-model="ctrl.sourceData.screctKey" readonly/>
                     </div>
-                    <button class="btn btn-info btn-pop col-sm-1" ng-click="ctrl.generate('screctKey')">生成</button>
+                    <button class="btn btn-info btn-pop col-sm-1" ng-click="ctrl.generate('secretKey')">生成</button>
                 </div>
                 <div class="row form-group">
                     <label class="col-sm-1 control-label vo_a_ce" >{{'TXT_SESSION_KEY' | translate}}</label>
@@ -128,22 +128,26 @@
                             <div class="column_overflow col-sm-12" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
-                                        <li class="btn-block" ng-repeat="cart in ctrl.cartList">{{cart.name}}</li>
+                                        <li class="btn-block" ng-repeat="cart in ctrl.cartList" ng-style="{'background-color': ctrl.leftSelected(cart)? '#dcf3f9': 'white'}">
+                                            <a href="javascript:void(0)" ng-click="ctrl.leftSelected(cart)">{{cart.name}}</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-2">
-                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1"><i class="fa fa-angle-double-left"></i></button> </div>
-                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1"><i class="fa fa-angle-left"></i></button></div>
-                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1"><i class="fa fa-angle-right"></i></button></div>
-                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1"><i class="fa fa-angle-double-right"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('allInclude')"><i class="fa fa-angle-double-left"></i></button> </div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('include')"><i class="fa fa-angle-left"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('exclude',ctrl.leftSelected(cart))"><i class="fa fa-angle-right"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('allExclude')"><i class="fa fa-angle-double-right"></i></button></div>
                         </div>
                         <div class="col-sm-5">
                             <div class="column_overflow col-sm-12" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
-                                        <li class="btn-block" ng-repeat="cart in ctrl.cartAllList">{{cart.name}}</li>
+                                        <li class="btn-block" ng-repeat="cart in ctrl.cartAllList">
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected(cart)">{{cart.name}}</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
