@@ -209,7 +209,6 @@ public class PlatformCategoryService extends BaseService {
         return cmsMtPlatformCategoryExtendInfoDao.selectList(paramsMap);
     }
 
-
     /**
      * 取得一级类目列表（平台数据）
      *
