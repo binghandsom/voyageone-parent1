@@ -1,6 +1,8 @@
 package com.voyageone.web2.admin.views.store;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +18,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.admin.WmsMtStoreBean;
 import com.voyageone.service.impl.admin.store.StoreService;
 import com.voyageone.service.model.admin.PageModel;
+import com.voyageone.service.model.admin.WmsMtStoreKey;
 import com.voyageone.service.model.admin.WmsMtStoreModel;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
@@ -45,10 +48,18 @@ public class StoreController extends AdminController {
 		return success(storePage);
 	}
 	
-	@RequestMapping(AdminUrlConstants.Store.Self.ADD_OR_UPDATE_STORE)
-	public AjaxResponse addOrUpdateStore(@RequestBody StoreFormBean form) {
+	@RequestMapping(AdminUrlConstants.Store.Self.ADD_STORE)
+	public AjaxResponse addStore(@RequestBody StoreFormBean form) {
+		return addOrUpdateStore(form, true);
+	}
+	
+	@RequestMapping(AdminUrlConstants.Store.Self.UPDATE_STORE)
+	public AjaxResponse updateStore(@RequestBody StoreFormBean form) {
+		return addOrUpdateStore(form, false);
+	}
+	
+	public AjaxResponse addOrUpdateStore(@RequestBody StoreFormBean form, boolean append) {
 		// 验证参数
-		Preconditions.checkNotNull(form.getAppend());
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
 		Preconditions.checkNotNull(form.getParentStoreId());
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getStoreType()));
@@ -64,12 +75,37 @@ public class StoreController extends AdminController {
 		try {
 			WmsMtStoreModel model = new WmsMtStoreModel();
 			BeanUtils.copyProperties(form, model);
-			storeService.addOrUpdateStore(model, form.getAppend());
+			storeService.addOrUpdateStore(model, getUser().getUserName(), append);
 			result.put(SUCCESS, true);
 		} catch (BusinessException e) {
 			result.put(MESSAGE, e.getMessage());
 		}
 		
+		return success(result);
+	}
+	
+	@RequestMapping(AdminUrlConstants.Cart.Self.DELETE_STORE)
+	public AjaxResponse deleteStore(@RequestBody StoreFormBean[] forms) {
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put(SUCCESS, false);
+		try {
+			List<WmsMtStoreKey> storeKeys = new ArrayList<WmsMtStoreKey>();
+			for (StoreFormBean form : forms) {
+				// 验证参数
+				Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
+				Preconditions.checkNotNull(form.getStoreId());
+				WmsMtStoreKey storeKey = new WmsMtStoreKey();
+				BeanUtils.copyProperties(form, storeKey);
+				storeKey.setOrderChannelId(form.getChannelId());
+				storeKeys.add(storeKey);
+			}
+			// 删除仓库信息
+			storeService.deleteStore(storeKeys, getUser().getUserName());
+			result.put(SUCCESS, true);
+		} catch (BusinessException e) {
+			result.put(MESSAGE, e.getMessage());
+		}
+
 		return success(result);
 	}
 	

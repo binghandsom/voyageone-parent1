@@ -1,11 +1,13 @@
 package com.voyageone.web2.admin.views.channel;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,10 +49,18 @@ public class ChannelController extends AdminController {
 		return success(channelPage);
 	}
 	
-	@RequestMapping(AdminUrlConstants.Channel.Self.ADD_OR_UPDATE_CHANNEL)
-	public AjaxResponse addOrUpdateChannel(@RequestBody ChannelFormBean form) throws Exception {
+	@RequestMapping(AdminUrlConstants.Channel.Self.ADD_CHANNEL)
+	public AjaxResponse addChannel(@RequestBody ChannelFormBean form, boolean append) {
+		return addOrUpdateChannel(form, true);
+	}
+	
+	@RequestMapping(AdminUrlConstants.Channel.Self.UPDATE_CHANNEL)
+	public AjaxResponse updateChannel(@RequestBody ChannelFormBean form, boolean append) {
+		return addOrUpdateChannel(form, true);
+	}
+	
+	public AjaxResponse addOrUpdateChannel(@RequestBody ChannelFormBean form, boolean append) {
 		// 验证参数
-		Preconditions.checkNotNull(form.getAppend());
 		Preconditions.checkNotNull(form.getCompanyId());
 		Preconditions.checkNotNull(form.getChannelId());
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSecretKey()));
@@ -71,7 +81,7 @@ public class ChannelController extends AdminController {
 				model.setModifier(username);
 			}
 			// 保存渠道信息
-			channelService.addOrUpdateChannel(model, form.getAppend());
+			channelService.addOrUpdateChannel(model, getUser().getUserName(), append);
 			result.put(SUCCESS, true);
 		} catch (BusinessException e) {
 			result.put(MESSAGE, e.getMessage());
@@ -81,15 +91,15 @@ public class ChannelController extends AdminController {
 	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.DELETE_CHANNEL)
-	public AjaxResponse deleteChannel(@RequestBody ChannelFormBean form) {
+	public AjaxResponse deleteChannel(@RequestBody String[] channelIds) {
 		// 验证参数
-		Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
+		Preconditions.checkArgument(ArrayUtils.isNotEmpty(channelIds));
 		
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put(SUCCESS, false);
-		// 删除渠道信息
 		try {
-			channelService.deleteChannel(form.getChannelId());
+			// 删除渠道信息
+			channelService.deleteChannel(Arrays.asList(channelIds), getUser().getUserName());
 			result.put(SUCCESS, true);
 		} catch (BusinessException e) {
 			result.put(MESSAGE, e.getMessage());

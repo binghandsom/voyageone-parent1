@@ -4,6 +4,8 @@
 
 	<resultMap id="storeModeMap" type="com.voyageone.service.bean.admin.WmsMtStoreBean" />
 	
+	<resultMap id="storeConfigModelMap" type="com.voyageone.service.bean.admin.CtStoreConfigBean"/>
+	
 	<sql id="selectStoreFilter">
 		<where>
 			<if test="orderChannelId != null and orderChannelId != ''">
@@ -21,6 +23,23 @@
 		</where>
 	</sql>
 	
+	<sql id="selectStoreConfigFilter">
+		<where>
+			<if test="storeId != null">
+				and csc.store_id = #{storeId}
+			</if>
+            <if test="cfgName != null and cfgName != ''" >
+                and csc.cfg_name = #{cfgName}
+            </if>
+            <if test="cfgVal != null and cfgVal != ''" >
+                and (csc.cfg_val1 = #{cfgVal} or csc.cfg_val2 = #{cfgVal})
+            </if>
+            <if test="comment != null and comment != ''" >
+                and csc.comment = #{comment}
+            </if>
+		</where>
+	</sql>
+	
 	<select id="selectStoreByPage" resultMap="storeModeMap">
 		select wms.store_id, wms.order_channel_id, toc.name as channel_name, wms.store_name, wms.store_type, wms.is_sale,
 			wms.store_location, wms.store_kind, wms.label_type, wms.rsv_sort, wms.inventory_manager,
@@ -32,6 +51,17 @@
 	<select id="selectStoreCount" resultType="integer">
 		select count(0) from wms_mt_store wms
 		<include refid="selectStoreFilter"/>
+	</select>
+	
+	<select id="selectStoreConfigByPage" resultMap="storeConfigModelMap">
+		select wms.store_name, csc.store_id, csc.cfg_name, csc.cfg_val1, csc.cfg_val2, csc.`comment`
+		from ct_store_config csc left join wms_mt_store wms on wms.store_id = csc.store_id
+		<include refid="selectStoreConfigFilter"/>
+	</select>
+	
+	<select id="selectStoreConfigCount" resultType="integer">
+		select count(0) from ct_store_config csc
+		<include refid="selectStoreConfigFilter"/>
 	</select>
 
 </mapper>

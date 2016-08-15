@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.admin.TmOrderChannelBean;
+import com.voyageone.service.bean.admin.TmOrderChannelConfigBean;
 import com.voyageone.service.dao.admin.TmOrderChannelConfigDao;
 import com.voyageone.service.dao.admin.TmOrderChannelDao;
 import com.voyageone.service.daoext.admin.TmOrderChannelDaoExt;
@@ -96,7 +97,7 @@ public class ChannelService extends BaseService {
 		return channelDaoExt.selectAllCompany();
 	}
 
-	public void addOrUpdateChannel(TmOrderChannelModel model, boolean append) {
+	public void addOrUpdateChannel(TmOrderChannelModel model, String username, boolean append) {
 		TmOrderChannelModel channel = channelDao.select(model.getOrderChannelId());
 		// 保存渠道信息
 		boolean success = false;
@@ -105,12 +106,15 @@ public class ChannelService extends BaseService {
 			if (channel != null) {
 				throw new BusinessException("添加的渠道信息已存在");
 			}
+			model.setCreater(username);
+			model.setModifier(username);
 			success = channelDao.insert(model) > 0;
 		} else {
 			// 更新渠道信息
 			if (channel == null) {
 				throw new BusinessException("更新的渠道信息已存在");
 			}
+			model.setModifier(username);
 			success = channelDao.update(model) > 0;
 		}
 		
@@ -119,22 +123,25 @@ public class ChannelService extends BaseService {
 		}
 	}
 
-	public void deleteChannel(String channelId) {
-		TmOrderChannelModel model = new TmOrderChannelModel();
-		model.setOrderChannelId(channelId);
-		model.setActive(0);
-		if (channelDao.update(model) > 0) {
-			throw new BusinessException("删除渠道信息失败");
+	public void deleteChannel(List<String> channelIds, String username) {
+		for (String channelId : channelIds) {
+			TmOrderChannelModel model = new TmOrderChannelModel();
+			model.setOrderChannelId(channelId);
+			model.setActive(0);
+			model.setModifier(username);
+			if (channelDao.update(model) > 0) {
+				throw new BusinessException("删除渠道信息失败");
+			}
 		}
 	}
 
-	public List<TmOrderChannelConfigModel> searchChannelConfig(String channelId, String cfgName, String cfgVal) {
+	public List<TmOrderChannelConfigBean> searchChannelConfig(String channelId, String cfgName, String cfgVal) {
 		return searchChannelConfigByPage(channelId, cfgName, cfgVal, 0, 0).getResult();
 	}
 	
-	public PageModel<TmOrderChannelConfigModel> searchChannelConfigByPage(String channelId, String cfgName,
+	public PageModel<TmOrderChannelConfigBean> searchChannelConfigByPage(String channelId, String cfgName,
 			String cfgVal, Integer pageNum, Integer pageSize) {
-		PageModel<TmOrderChannelConfigModel> pageModel = new PageModel<TmOrderChannelConfigModel>();
+		PageModel<TmOrderChannelConfigBean> pageModel = new PageModel<TmOrderChannelConfigBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
@@ -151,7 +158,7 @@ public class ChannelService extends BaseService {
 		return pageModel;
 	}
 
-	public void addOrUpdateChannelConfig(TmOrderChannelConfigModel model, boolean append) {
+	public void addOrUpdateChannelConfig(TmOrderChannelConfigModel model, String username, boolean append) {
 		// 查询渠道配置信息
 		TmOrderChannelConfigKey configKey = new TmOrderChannelConfigKey();
 		configKey.setOrderChannelId(model.getOrderChannelId());
@@ -166,12 +173,15 @@ public class ChannelService extends BaseService {
 			if (channelConfig != null) {
 				throw new BusinessException("添加的渠道配置信息已存在");
 			}
+			model.setCreater(username);
+			model.setModifier(username);
 			success = channelConfigDao.insert(model) > 0;
 		} else {
 			// 更新渠道配置信息
 			if (channelConfig == null) {
 				throw new BusinessException("更新的渠道配置信息不存在");
 			}
+			model.setModifier(username);
 			success = channelConfigDao.update(model) > 0;
 		}
 		
@@ -180,15 +190,12 @@ public class ChannelService extends BaseService {
 		}
 	}
 
-	public void deleteChannelConfig(String channelId, String cfgName, String cfgVal1) {
-		// 设置删除渠道配置的主键
-		TmOrderChannelConfigKey configKey = new TmOrderChannelConfigKey();
-		configKey.setOrderChannelId(channelId);
-		configKey.setCfgName(cfgName);
-		configKey.setCfgVal1(cfgVal1);
-		// 删除渠道配置信息
-		if (channelConfigDao.delete(configKey) <= 0) {
-			throw new BusinessException("删除渠道配置信息失败");
+	public void deleteChannelConfig(List<TmOrderChannelConfigKey> configKeys) {
+		for (TmOrderChannelConfigKey configKey : configKeys) {
+			// 删除渠道配置信息
+			if (channelConfigDao.delete(configKey) <= 0) {
+				throw new BusinessException("删除渠道配置信息失败");
+			}
 		}
 	}
 

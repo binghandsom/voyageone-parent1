@@ -65,7 +65,7 @@ public class CartService extends BaseService {
 		return cartDaoExt.selectAllPlatform();
 	}
 
-	public void addOrUpdateCart(CtCartModel model, boolean append) {
+	public void addOrUpdateCart(CtCartModel model, String username, boolean append) {
 		CtCartModel cart = cartDao.select(model.getCartId());
 		boolean success = false;
 		if (append) {
@@ -73,12 +73,15 @@ public class CartService extends BaseService {
 			if (cart != null) {
 				throw new BusinessException("添加的Cart信息已存在");
 			}
+			model.setCreater(username);
+			model.setModifier(username);
 			success = cartDao.insert(model) > 0;
 		} else {
 			// 更新Cart信息
 			if (cart == null) {
 				throw new BusinessException("更新的Cart信息不存在");
 			}
+			model.setModifier(username);
 			success = cartDao.update(model) > 0;
 		}
 		
@@ -87,12 +90,15 @@ public class CartService extends BaseService {
 		}
 	}
 
-	public void deleteCart(Integer cartId) {
-		CtCartModel model = new CtCartModel();
-		model.setCartId(cartId);
-		model.setActive(false);
-		if (cartDao.update(model) <= 0) {
-			throw new BusinessException("删除Cart信息失败");
+	public void deleteCart(List<Integer> cartIds, String username) {
+		for (Integer cartId : cartIds) {
+			CtCartModel model = new CtCartModel();
+			model.setCartId(cartId);
+			model.setActive(false);
+			model.setModifier(username);
+			if (cartDao.update(model) <= 0) {
+				throw new BusinessException("删除Cart信息失败");
+			}
 		}
 	}
 

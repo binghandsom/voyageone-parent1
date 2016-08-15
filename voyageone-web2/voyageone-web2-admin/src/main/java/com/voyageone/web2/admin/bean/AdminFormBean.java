@@ -15,9 +15,6 @@ public class AdminFormBean {
 	/** 状态 [1：可用，0：禁用] */
 	private Integer active;
 	
-	/** 区分保存动作 */
-	private Boolean append;
-	
 	public Integer getPageNum() {
 		return pageNum;
 	}
@@ -40,14 +37,6 @@ public class AdminFormBean {
 
 	public void setActive(Integer active) {
 		this.active = active;
-	}
-
-	public Boolean getAppend() {
-		return append;
-	}
-
-	public void setAppend(Boolean append) {
-		this.append = append;
 	}
 	
 }

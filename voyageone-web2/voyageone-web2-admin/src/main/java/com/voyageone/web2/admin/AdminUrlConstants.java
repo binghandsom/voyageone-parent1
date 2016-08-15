@@ -16,7 +16,9 @@ public interface AdminUrlConstants {
 			
 			String SEARCH_CHANNEL_BY_PAGE = "searchChannelByPage";
 			
-			String ADD_OR_UPDATE_CHANNEL = "addOrUpdateChannel";
+			String ADD_CHANNEL = "addChannel";
+
+			String UPDATE_CHANNEL = "updateChannel";
 			
 			String GET_ALL_CHANNEL = "getAllChannel";
 
@@ -47,9 +49,13 @@ public interface AdminUrlConstants {
 
 			String GET_ALL_PLATFORM = "getAllPlatform";
 
-			String ADD_OR_UPDATE_CART = "addOrUpdateCart";
+			String ADD_CART = "addCart";
+
+			String UPDATE_CART = "updateCart";
 
 			String DELETE_CART = "deleteCart";
+
+			String DELETE_STORE = "deleteStore";
 		}
 		
 	}
@@ -63,9 +69,11 @@ public interface AdminUrlConstants {
 			
 			String SEARCH_STORE_BY_PAGE = "searchStoreByPage";
 
-			String ADD_OR_UPDATE_STORE = "addOrUpdateStore";
+			String ADD_STORE = "addStore";
 
 			String GET_ALL_STORE = "getAllStore";
+
+			String UPDATE_STORE = "updateStore";
 			
 		}
 	}
@@ -79,9 +87,11 @@ public interface AdminUrlConstants {
 			
 			String SEARCH_CONFIG_BY_PAGE = "searchConfigByPage";
 
-			String ADD_OR_UPDATE_CONFIG = "addOrUpdateConfig";
+			String ADD_CONFIG = "addConfig";
 
 			String DELETE_CONFIG = "deleteConfig";
+
+			String UPDATE_CONFIG = "updateConfig";
 			
 		}
 		

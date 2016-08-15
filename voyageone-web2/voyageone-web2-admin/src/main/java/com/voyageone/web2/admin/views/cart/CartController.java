@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,10 +62,18 @@ public class CartController extends AdminController {
 		return success(cartPage);
 	}
 	
-	@RequestMapping(AdminUrlConstants.Cart.Self.ADD_OR_UPDATE_CART)
-	public AjaxResponse addOrUpdateCart(@RequestBody CartFormBean form) {
+	@RequestMapping(AdminUrlConstants.Cart.Self.ADD_CART)
+	public AjaxResponse addCart(@RequestBody CartFormBean form) {
+		return addOrUpdateCart(form, true);
+	}
+	
+	@RequestMapping(AdminUrlConstants.Cart.Self.UPDATE_CART)
+	public AjaxResponse updateCart(@RequestBody CartFormBean form) {
+		return addOrUpdateCart(form, false);
+	}
+	
+	private AjaxResponse addOrUpdateCart(CartFormBean form, boolean append) {
 		// 验证参数
-		Preconditions.checkNotNull(form.getAppend());
 		Preconditions.checkNotNull(form.getPlatformId());
 		Preconditions.checkNotNull(form.getCartId());
 		Preconditions.checkArgument(StringUtils.isNoneBlank(form.getName()));
@@ -75,30 +84,29 @@ public class CartController extends AdminController {
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put(SUCCESS, false);
-		// 保存Cart信息
 		try {
 			CtCartModel model = new CtCartModel();
 			BeanUtils.copyProperties(form, model);
-			cartService.addOrUpdateCart(model, form.getAppend());
+			// 保存Cart信息
+			cartService.addOrUpdateCart(model, getUser().getUserName(), append);
 			result.put(SUCCESS, true);
 		} catch (BusinessException e) {
 			result.put(MESSAGE, e.getMessage());
 		}
 		
 		return success(result);
-		
 	}
 	
 	@RequestMapping(AdminUrlConstants.Cart.Self.DELETE_CART)
-	public AjaxResponse deleteCart(@RequestBody CartFormBean form) {
+	public AjaxResponse deleteCart(@RequestBody Integer[] cartIds) {
 		// 验证参数
-		Preconditions.checkNotNull(form.getCartId());
+		Preconditions.checkArgument(ArrayUtils.isNotEmpty(cartIds));
 		
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put(SUCCESS, false);
 		// 删除Cart信息
 		try {
-			cartService.deleteCart(form.getCartId());
+			cartService.deleteCart(Arrays.asList(cartIds), getUser().getUserName());
 			result.put(SUCCESS, true);
 		} catch (BusinessException e) {
 			result.put(MESSAGE, e.getMessage());

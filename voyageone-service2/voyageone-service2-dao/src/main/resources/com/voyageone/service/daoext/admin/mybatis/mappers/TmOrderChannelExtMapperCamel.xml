@@ -3,6 +3,7 @@
 <mapper namespace="com.voyageone.service.daoext.admin.TmOrderChannelDaoExt">
 
     <resultMap id="channelModelMap" type="com.voyageone.service.model.admin.TmOrderChannelModel" />
+    
     <resultMap id="channelConfigModelMap" type="com.voyageone.service.model.admin.TmOrderChannelConfigModel" />
     
     <sql id="selectChannelFilter">
@@ -54,16 +55,16 @@
 	<sql id="selectChanneConfigFilter">
 		<where>
             <if test="orderChannelId != null and orderChannelId != ''" >
-                order_channel_id = #{orderChannelId}
+                and tocc.order_channel_id = #{orderChannelId}
             </if>
             <if test="cfgName != null and cfgName != ''" >
-                and cfg_name = #{cfgName}
+                and tocc.cfg_name = #{cfgName}
             </if>
             <if test="cfgVal != null and cfgVal != ''" >
-                and (cfg_val1 = #{cfgVal} or cfg_val2 = #{cfgVal})
+                and (tocc.cfg_val1 = #{cfgVal} or tocc.cfg_val2 = #{cfgVal})
             </if>
             <if test="comment != null and comment != ''" >
-                and comment = #{comment}
+                and tocc.comment = #{comment}
             </if>
         </where>
 	</sql>
@@ -85,14 +86,15 @@
 	</select>
 	
 	<select id="selectChanneConfigByPage" resultMap="channelConfigModelMap">
-		select order_channel_id, cfg_name, cfg_val1, cfg_val2, comment
-		from tm_order_channel_config
+		select toc.name, tocc.order_channel_id, tocc.cfg_name, tocc.cfg_val1, tocc.cfg_val2, tocc.`comment`
+		from tm_order_channel_config tocc left join tm_order_channel toc
+			on toc.order_channel_id = tocc.order_channel_id
 		<include refid="selectChanneConfigFilter"></include>
 	</select>
 	
 	<select id="selectChannelConfigCount" resultType="integer">
 		select count(0)
-		from tm_order_channel_config
+		from tm_order_channel_config tocc
 		<include refid="selectChanneConfigFilter"></include>
 	</select>
 
