@@ -18,12 +18,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMappingModel> {
 
-    public CmsBtPlatformMappingModel selectOne(int cartId, int categoryType, String categoryId, String channelId) {
+    public CmsBtPlatformMappingModel selectOne(int cartId, int categoryType, String categoryPath, String channelId) {
 
         return selectOneWithQuery(new JongoQuery(
                 new Criteria("cartId").is(cartId)
                         .and("categoryType").is(categoryType)
-                        .and("categoryId").is(categoryId)), channelId);
+                        .and("categoryPath").is(categoryPath)), channelId);
     }
 
     public boolean exists(CmsBtPlatformMappingModel fieldMapsModel) {
@@ -31,7 +31,7 @@ public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMa
         JongoQuery query = new JongoQuery(
                 new Criteria("cartId").is(fieldMapsModel.getCartId())
                         .and("categoryType").is(fieldMapsModel.getCategoryType())
-                        .and("categoryId").is(fieldMapsModel.getCategoryId()));
+                        .and("categoryPath").is(fieldMapsModel.getCategoryPath()));
 
         return countByQuery(query.getQuery(), fieldMapsModel.getChannelId()) > 0;
     }
