@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Document
 @Deprecated
-public class CmsMtPlatformMappingModel extends CartPartitionModel {
+public class CmsMtPlatformMappingDeprecatedModel extends CartPartitionModel {
 
     private String channelId;
 

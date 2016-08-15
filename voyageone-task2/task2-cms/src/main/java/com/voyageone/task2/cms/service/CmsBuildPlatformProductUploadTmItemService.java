@@ -16,7 +16,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +47,7 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
      * @return numIId
      * @throws Exception
      */
-    public String uploadItem(ExpressionParser expressionParser, String platformProductId, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) throws Exception {
+    public String uploadItem(ExpressionParser expressionParser, String platformProductId, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) throws Exception {
         SxData sxData = expressionParser.getSxData();
         String numIId = sxData.getPlatform().getNumIId();
 //        Long categoryCode = Long.valueOf(cmsMtPlatformMappingModel.getPlatformCategoryId());

@@ -23,7 +23,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsMtPlatformPropMappingCustomModel;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +62,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      * @return 返回的天猫platformProductId列表 (如果没有找到, 返回null)
      */
     public List<String> getProductIdFromTmall(ExpressionParser expressionParser, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel,
-                                              CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier){
+                                              CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier){
         // 产品id列表(返回值)
         List<String> platformProductIdList = new ArrayList<>();
         // 上新数据
@@ -358,7 +358,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      * @return 返回的产品上传成功的天猫productId
      */
     public String addTmallProduct(ExpressionParser expressionParser, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel,
-                                  CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
+                                  CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
         // 上传成功返回的产品id(返回值)
         String platformProductId = "";
         // 上新数据
@@ -479,7 +479,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      * @param shopBean ShopBean 店铺信息
      * @param modifier 更新者
      */
-    public void updateTmallProduct(ExpressionParser expressionParser, String platformProductId, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
+    public void updateTmallProduct(ExpressionParser expressionParser, String platformProductId, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
         // 上新数据
         SxData sxData = expressionParser.getSxData();
         StringBuffer failCause = new StringBuffer();

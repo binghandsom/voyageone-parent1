@@ -2,7 +2,7 @@ package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoCartDao;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,9 +14,9 @@ import java.util.List;
  * @since 2.0.0
  */
 @Repository
-public class CmsMtPlatformMappingDao extends BaseMongoCartDao<CmsMtPlatformMappingModel> {
+public class CmsMtPlatformMappingDao extends BaseMongoCartDao<CmsMtPlatformMappingDeprecatedModel> {
 
-    public CmsMtPlatformMappingModel selectMapping(String channelId, int cartId, String platformCategoryId) {
+    public CmsMtPlatformMappingDeprecatedModel selectMapping(String channelId, int cartId, String platformCategoryId) {
         String queryStrTemp = "{" +
                 "channelId:'%s'" +
                 ",platformCartId:%s" +
@@ -36,7 +36,7 @@ public class CmsMtPlatformMappingDao extends BaseMongoCartDao<CmsMtPlatformMappi
         return countByQuery(queryStr, cartId);
     }
 
-    public CmsMtPlatformMappingModel selectMappingByMainCatId(String channelId, int cartId, String mainCatId) {
+    public CmsMtPlatformMappingDeprecatedModel selectMappingByMainCatId(String channelId, int cartId, String mainCatId) {
         String queryStrTemp = "{" +
                 "channelId:'%s'" +
                 ",platformCartId:%s" +
@@ -46,17 +46,17 @@ public class CmsMtPlatformMappingDao extends BaseMongoCartDao<CmsMtPlatformMappi
         return selectOneWithQuery(queryStr, cartId);
     }
 
-    public List<CmsMtPlatformMappingModel> selectMappings(String channelId, int catId) {
+    public List<CmsMtPlatformMappingDeprecatedModel> selectMappings(String channelId, int catId) {
 
         return select(String.format("{ channelId: '%s', platformCartId: %s }", channelId, catId), catId);
     }
 
-    public WriteResult insertPlatformMapping(CmsMtPlatformMappingModel cmsMtPlatformMappingModel) {
+    public WriteResult insertPlatformMapping(CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel) {
         return insert(cmsMtPlatformMappingModel);
     }
 
     // 20160506 tom 这个功能不需要, 删掉 START
-//    public List<CmsMtPlatformMappingModel> selectMappingByMainCatId(String channelId, String mainCatId) {
+//    public List<CmsMtPlatformMappingDeprecatedModel> selectMappingByMainCatId(String channelId, String mainCatId) {
 //
 //        return select(String.format("{ channelId: '%s', mainCategoryId: '%s' }", channelId, mainCatId));
 //    }
@@ -71,7 +71,7 @@ public class CmsMtPlatformMappingDao extends BaseMongoCartDao<CmsMtPlatformMappi
      * @param channelId         渠道
      * @return 模型
      */
-    public CmsMtPlatformMappingModel selectMapping(String mainCategoryId, String platformCategoryId, int cartId, String channelId) {
+    public CmsMtPlatformMappingDeprecatedModel selectMapping(String mainCategoryId, String platformCategoryId, int cartId, String channelId) {
         return selectOneWithQuery(String.format(
                 "{ channelId: '%s', mainCategoryId: '%s', platformCartId: %s, platformCategoryId: '%s' }",
                 channelId, mainCategoryId, cartId, platformCategoryId
