@@ -35,7 +35,7 @@ gulp.task('copy-release', function () {
 
     // 对应用下的文件进行原样拷贝
     gulp.src([
-        './src/*.html',
+        //'./src/*.html',
         './src/app/!(css|translate)/**/*.html',
         './src/app/*.html'
     ])
