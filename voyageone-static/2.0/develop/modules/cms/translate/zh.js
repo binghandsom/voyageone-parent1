@@ -786,6 +786,7 @@ define(function () {
 
         /**店铺管理-平台默认属性设置一览*/
         "TXT_DEFAULT_MAPPING_LIST": "平台默认属性设置一览",
+        "TXT_DEFAULT_MAPPING": "平台默认属性设置",
         "TXT_DEFAULT_SETTING":"新建默认设置",
         "TXT_UPDATER":"更新人"
     };
