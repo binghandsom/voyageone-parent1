@@ -290,7 +290,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
 
 
     /**
-     * 更新某个物品的状态为5：Received；或者 6：Receive with Error
+     * 更新某个物品的状态为5：Received；或者 6：Receive Error
      * @param request VmsOrderStatusUpdateRequest
      * @return VmsOrderStatusUpdateResponse
      *
@@ -346,7 +346,7 @@ public class VmsOrderService extends OpenApiCmsBaseService {
 
 
     /**
-     * 更新某个Shipment的状态为4：Arrived；5：Received；6：Receive with Error
+     * 更新某个Shipment的状态为4：Arrived；5：Received；6：Receive Error
      * @param request VmsShipmentStatusUpdateRequest
      * @return VmsShipmentStatusUpdateResponse
      *
