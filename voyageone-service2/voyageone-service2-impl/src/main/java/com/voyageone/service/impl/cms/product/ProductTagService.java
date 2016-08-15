@@ -1,8 +1,8 @@
 package com.voyageone.service.impl.cms.product;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -111,7 +110,7 @@ public class ProductTagService extends BaseService {
             pathList = pathList.stream().distinct().collect(Collectors.toList());
         }
 
-        JomgoUpdate updObj = new JomgoUpdate();
+        JongoUpdate updObj = new JongoUpdate();
         updObj.setQuery("{'common.fields.code':{$in:#}}");
         updObj.setQueryParameters(prodCodeList);
         updObj.setUpdate("{$set:{'freeTags':#}}");
@@ -156,7 +155,7 @@ public class ProductTagService extends BaseService {
                 tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
                 pathList.add(tagBean.getTagPath());
             } else {
-                JomgoQuery queryObject = new JomgoQuery();
+                JongoQuery queryObject = new JongoQuery();
                 StringBuilder queryStr = new StringBuilder();
                 queryStr.append("{");
                 queryStr.append(MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
@@ -182,7 +181,7 @@ public class ProductTagService extends BaseService {
                         tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
                         pathList.add(tagBean.getTagPath());
                     } else {
-                        queryObject = new JomgoQuery();
+                        queryObject = new JongoQuery();
                         queryStr = new StringBuilder();
                         queryStr.append("{");
                         queryStr.append(MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
@@ -218,7 +217,7 @@ public class ProductTagService extends BaseService {
                 tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
                 pathList.add(tagBean.getTagPath());
             } else {
-                JomgoQuery queryObject = new JomgoQuery();
+                JongoQuery queryObject = new JongoQuery();
                 StringBuilder queryStr = new StringBuilder();
                 queryStr.append("{");
                 queryStr.append(MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));

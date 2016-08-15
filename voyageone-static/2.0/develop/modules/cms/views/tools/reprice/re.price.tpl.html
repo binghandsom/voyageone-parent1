@@ -1,0 +1,36 @@
+<div class="wrapper-md">
+    <div class="panel panel-default panel-vo">
+        <div class="panel-heading">
+            <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;价格重导</h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label for="channel">目标渠道</label>
+                <select name="channel" id="channel" class="form-control"
+                        ng-model="ctrl.selectedChannel" ng-options="c as c.label for c in ctrl.channelList"
+                        ng-change="ctrl.getPlatformList()"></select>
+            </div>
+            <div class="form-group">
+                <label for="platform">目标平台</label>
+                <select name="platform" id="platform" class="form-control"
+                        ng-model="ctrl.selectedPlatform" ng-options="p as p.label for p in ctrl.platformList"
+                        ng-change="ctrl.getCartList()"></select>
+            </div>
+            <div class="form-group">
+                <label for="cart">目标店铺</label>
+                <select name="cart" id="cart" class="form-control"
+                        ng-model="ctrl.selectedCart" ng-options="c as c.label for c in ctrl.cartList"
+                        ng-change="ctrl.getPlatformCategoryList()"></select>
+            </div>
+            <div class="form-group">
+                <label><input type="checkbox" ng-model="ctrl.useCategory">&nbsp;指定类目</label>
+            </div>
+            <div class="form-group" ng-if="ctrl.useCategory">
+                <label for="platform-category">目标类目</label>
+                <select chosen name="platform-category" id="platform-category" class="form-control"
+                        ng-model="ctrl.selectedCategory" ng-options="c as c.catName for c in ctrl.categoryList"></select>
+            </div>
+            <button class="btn btn-primary" type="button" ng-click="ctrl.setUpdateFlg()">价格重导</button>
+        </div>
+    </div>
+</div>

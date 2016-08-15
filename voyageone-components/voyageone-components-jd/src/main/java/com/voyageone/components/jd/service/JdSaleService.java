@@ -42,6 +42,8 @@ public class JdSaleService extends JdBase {
         if (response == null) {
             return null;
         }
+        Object[] objs = { strOrderChannelId, strCardId, "0".equals(response.getCode()) ? "total=" + response.getTotal() : response.getMsg() };
+        logger.info("getOnListProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
         return response.getWareInfos();
     }
 
@@ -63,6 +65,8 @@ public class JdSaleService extends JdBase {
         if (response == null) {
             return null;
         }
+        Object[] objs = { strOrderChannelId, strCardId, "0".equals(response.getCode()) ? "total=" + response.getTotal() : response.getMsg() };
+        logger.info("getDeListProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
         return response.getWareInfos();
     }
 }

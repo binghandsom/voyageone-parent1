@@ -5,7 +5,7 @@ import com.jd.open.api.sdk.domain.ware.Ware;
 import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Item;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -140,7 +140,7 @@ public class CmsGetPlatformStatusService extends BaseTaskService {
                             break;
                         }
                         if (rsList != null && rsList.size() > 0) {
-                            List<Long> numIIdList = rsList.stream().map(tmItem -> tmItem.getNumIid()).collect(Collectors.toList());
+                            List<String> numIIdList = rsList.stream().map(tmItem -> tmItem.getNumIid().toString()).collect(Collectors.toList());
                             savePlatfromSts(channelId, cartId, numIIdList, CmsConstants.PlatformStatus.OnSale.name());
                         }
                     } while (rsList != null && rsList.size() == 200);
@@ -159,7 +159,7 @@ public class CmsGetPlatformStatusService extends BaseTaskService {
                             break;
                         }
                         if (rsList != null && rsList.size() > 0) {
-                            List<Long> numIIdList = rsList.stream().map(tmItem -> tmItem.getNumIid()).collect(Collectors.toList());
+                            List<String> numIIdList = rsList.stream().map(tmItem -> tmItem.getNumIid().toString()).collect(Collectors.toList());
                             savePlatfromSts(channelId, cartId, numIIdList, CmsConstants.PlatformStatus.InStock.name());
                         }
                     } while (rsList != null && rsList.size() == 200);
@@ -167,7 +167,7 @@ public class CmsGetPlatformStatusService extends BaseTaskService {
                 } else if (PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
                     // 再从京东获取商品上下架状态
                     List<Ware> jdList = null;
-                    pageNo = 0;
+                    pageNo = 1;
                     do {
                         jdList = null;
                         try {
@@ -182,12 +182,12 @@ public class CmsGetPlatformStatusService extends BaseTaskService {
                             break;
                         }
                         if (jdList != null && jdList.size() > 0) {
-                            List<Long> numIIdList = jdList.stream().map(jdWare -> jdWare.getWareId()).collect(Collectors.toList());
+                            List<String> numIIdList = jdList.stream().map(jdWare -> jdWare.getWareId().toString()).collect(Collectors.toList());
                             savePlatfromSts(channelId, cartId, numIIdList, CmsConstants.PlatformStatus.OnSale.name());
                         }
                     } while (jdList != null && jdList.size() == 100);
 
-                    pageNo = 0;
+                    pageNo = 1;
                     do {
                         jdList = null;
                         try {
@@ -202,21 +202,25 @@ public class CmsGetPlatformStatusService extends BaseTaskService {
                             break;
                         }
                         if (jdList != null && jdList.size() > 0) {
-                            List<Long> numIIdList = jdList.stream().map(jdWare -> jdWare.getWareId()).collect(Collectors.toList());
+                            List<String> numIIdList = jdList.stream().map(jdWare -> jdWare.getWareId().toString()).collect(Collectors.toList());
                             savePlatfromSts(channelId, cartId, numIIdList, CmsConstants.PlatformStatus.InStock.name());
                         }
                     } while (jdList != null && jdList.size() == 100);
+
+                } else {
+                    $warn("CmsGetPlatformStatusService 缺少店铺信息 未知平台 [ChannelId:%s] [CartId:%s]", channelId, cartId);
+                    continue;
                 }
             }
         }
     }
 
-    private void savePlatfromSts(String channelId, int cartId, List<Long> numIIdList, String stsValue) {
-        JomgoUpdate updObj = new JomgoUpdate();
+    private void savePlatfromSts(String channelId, int cartId, List<String> numIIdList, String stsValue) {
+        JongoUpdate updObj = new JongoUpdate();
         updObj.setQuery("{'platforms.P#.pNumIId':{$in:#},'platforms.P#.status':'Approved'}");
         updObj.setQueryParameters(cartId, numIIdList, cartId);
         updObj.setUpdate("{$set:{'platforms.P#.pReallyStatus':#,'modified':#,'modifier':#}}");
-        updObj.setUpdateParameters(stsValue, DateTimeUtil.getNowTimeStamp(), getTaskName());
+        updObj.setUpdateParameters(cartId, stsValue, DateTimeUtil.getNowTimeStamp(), getTaskName());
         WriteResult rs = cmsBtProductDao.updateMulti(updObj, channelId);
         $debug("CmsGetPlatformStatusService.savePlatfromSts channelId=%s, cartId=%d, 结果=%s", channelId, cartId, rs.toString());
     }

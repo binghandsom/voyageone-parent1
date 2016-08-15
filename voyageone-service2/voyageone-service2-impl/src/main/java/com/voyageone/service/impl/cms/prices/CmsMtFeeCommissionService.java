@@ -72,8 +72,15 @@ public class CmsMtFeeCommissionService extends BaseService {
         if (!COMMISSION_TYPE_LIST.contains(commissionQueryBuilder.getCommissionType()))
             return null;
 
-        for (Map<String, Object> queryMap: commissionQueryBuilder) {
+        for (String[] paramKeys: PRIORITY) {
+
+            Map<String, Object> queryMap = commissionQueryBuilder.getQueryMap(paramKeys);
+
+            if (queryMap == null)
+                continue;
+
             CmsMtFeeCommissionModel feeCommissionModel = feeCommissionDao.selectOne(queryMap);
+
             if (feeCommissionModel != null)
                 return feeCommissionModel;
         }
@@ -92,7 +99,7 @@ public class CmsMtFeeCommissionService extends BaseService {
      * <p>
      * 首次直接使用 {@code getLowerPriorityQueryMap()} 时, 相当于是从顶级优先级的下一次开始, 也是允许的
      */
-    class CommissionQueryBuilder implements Iterable<Map<String, Object>> {
+    class CommissionQueryBuilder {
 
         private Map<String, Object> queryMap = new HashMap<>();
 
@@ -138,83 +145,49 @@ public class CmsMtFeeCommissionService extends BaseService {
             return commission.getCommissonRate();
         }
 
-        /*
-         * 以下是迭代器部分的实现, 仅便于 getCommission 方法用来获取可能的参数
-         */
+        private Map<String, Object> getQueryMap(String[] paramKeys) {
 
-        @Override
-        public Iterator<Map<String, Object>> iterator() {
+            boolean match = true;
 
-            return new Iterator<Map<String, Object>>() {
-
-                private int bounds = PRIORITY.length;
-
-                private int index = 0;
-
-                private String[] currentPriority = null;
-
-                @Override
-                public boolean hasNext() {
-
-                    if (index >= bounds)
-                        return false;
-
-                    for (; ++index < bounds;) {
-
-                        currentPriority = PRIORITY[index];
-
-                        boolean match = true;
-
-                        for (String fieldName : currentPriority) {
-                            // 不包含 KEY
-                            // 则说明不匹配
-                            if (!queryMap.containsKey(fieldName)) {
-                                match = false;
-                                break;
-                            }
-
-                            // 有 Key 但没值, 不匹配
-                            Object value = queryMap.get(fieldName);
-                            if (value == null) {
-                                match = false;
-                                break;
-                            }
-
-                            // 有值, 但是空字符串, 也不匹配
-                            if (value instanceof String && StringUtils.isEmpty((String) value)) {
-                                match = false;
-                                break;
-                            }
-                        }
-
-                        // 当中途匹配成功
-                        // 直接返回
-                        // 此时当前优先级已经被保存
-                        if (match)
-                            break;
-                    }
-
-                    return currentPriority != null;
+            for (String fieldName : paramKeys) {
+                // 不包含 KEY
+                // 则说明不匹配
+                if (!queryMap.containsKey(fieldName)) {
+                    match = false;
+                    break;
                 }
 
-                @Override
-                public Map<String, Object> next() {
-
-                    Map<String, Object> _queryMap = new HashMap<>();
-
-                    _queryMap.put(FIELD_COMMISSION_TYPE, getCommissionType());
-
-                    if (currentPriority.length == 0)
-                        return _queryMap;
-
-                    for (String key : currentPriority) {
-                        _queryMap.put(key, queryMap.get(key));
-                    }
-
-                    return _queryMap;
-
+                // 有 Key 但没值, 不匹配
+                Object value = queryMap.get(fieldName);
+                if (value == null) {
+                    match = false;
+                    break;
                 }
-            };
+
+                // 有值, 但是空字符串, 也不匹配
+                if (value instanceof String && StringUtils.isEmpty((String) value)) {
+                    match = false;
+                    break;
+                }
+            }
+
+            // 当中途匹配成功
+            // 直接返回
+            // 此时当前优先级已经被保存
+            if (!match)
+                return null;
+
+            Map<String, Object> _queryMap = new HashMap<>();
+
+            _queryMap.put(FIELD_COMMISSION_TYPE, getCommissionType());
+
+            if (paramKeys.length == 0)
+                return _queryMap;
+
+            for (String key : paramKeys)
+                _queryMap.put(key, queryMap.get(key));
+
+            return _queryMap;
         }
     }
 }

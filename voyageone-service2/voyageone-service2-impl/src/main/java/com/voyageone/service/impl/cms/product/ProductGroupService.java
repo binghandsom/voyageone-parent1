@@ -1,8 +1,8 @@
 package com.voyageone.service.impl.cms.product;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
@@ -44,7 +44,7 @@ public class ProductGroupService extends BaseService {
     /**
      * getList
      */
-    public List<CmsBtProductGroupModel> getList(String channelId, JomgoQuery queryObject) {
+    public List<CmsBtProductGroupModel> getList(String channelId, JongoQuery queryObject) {
         return cmsBtProductGroupDao.select(queryObject, channelId);
     }
 
@@ -70,7 +70,7 @@ public class ProductGroupService extends BaseService {
      * 根据channelId和groupId取得单个group数据
      */
     public CmsBtProductGroupModel getProductGroupByGroupId(String channelId, Long groupId) {
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         query.setQuery(String.format("{\"groupId\": %d }", groupId));
         return cmsBtProductGroupDao.selectOneWithQuery(query, channelId);
     }
@@ -88,10 +88,10 @@ public class ProductGroupService extends BaseService {
     /**
      * 根据条件获取group数据
      * @param channelId String
-     * @param query JomgoQuery
+     * @param query JongoQuery
      * @return CmsBtProductGroupModel
      */
-    public CmsBtProductGroupModel getProductGroupByQuery(String channelId, JomgoQuery query) {
+    public CmsBtProductGroupModel getProductGroupByQuery(String channelId, JongoQuery query) {
         return cmsBtProductGroupDao.selectOneWithQuery(query, channelId);
     }
 
@@ -99,7 +99,7 @@ public class ProductGroupService extends BaseService {
      * 根据channelId和产品Code检索出productGroup数据.
      */
     public CmsBtProductGroupModel selectProductGroupByCode(String channelId, String code, Integer cartId) {
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         query.setQuery(String.format("{\"productCodes\": \"%s\", \"cartId\": %d}", code, cartId));
         return getProductGroupByQuery(channelId, query);
     }
@@ -108,7 +108,7 @@ public class ProductGroupService extends BaseService {
      * 根据channelId和产品Code检索出是否主商品.
      */
     public CmsBtProductGroupModel selectMainProductGroupByCode(String channelId, String code, Integer cartId) {
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         query.setQuery(String.format("{\"mainProductCode\": \"%s\", \"cartId\": %d}", code, cartId));
         return getProductGroupByQuery(channelId, query);
     }
@@ -170,7 +170,7 @@ public class ProductGroupService extends BaseService {
         // jeff 2016/04 change start
         // List<String> codeList = new ArrayList<>(prodList.size());
         // prodList.forEach(cmsBtProductModel -> codeList.add(cmsBtProductModel.getFields().getCode()));
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         // String[] codeArr = new String[codeList.size()];
         // codeArr = codeList.toArray(codeArr);
         // queryObject.setQuery("{" + MongoUtils.splicingValue("productCodes", codeArr, "$in") + ",'cartId':" + cartId + "}");
@@ -328,7 +328,7 @@ public class ProductGroupService extends BaseService {
      */
     public List<String> getUnPublishedProducts(CmsBtProductGroupModel model) {
         // 获取未上新过的产品信息,用于判断是否需要更新publishTime
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{'common.fields.code':{$in:#}, 'platforms.P" + model.getCartId() + ".pStatus':{$in:[null, '', 'WaitingPublish']}}");
         queryObject.setParameters(model.getProductCodes());
 
@@ -412,11 +412,11 @@ public class ProductGroupService extends BaseService {
         return "成功处理group的总件数:" + allGroupList.size();
     }
 
-    public WriteResult updateFirst(JomgoUpdate updObj, String channelId) {
+    public WriteResult updateFirst(JongoUpdate updObj, String channelId) {
         return cmsBtProductGroupDao.updateFirst(updObj, channelId);
     }
 
-    public WriteResult updateMulti(JomgoUpdate updObj, String channelId) {
+    public WriteResult updateMulti(JongoUpdate updObj, String channelId) {
         return cmsBtProductGroupDao.updateMulti(updObj, channelId);
     }
 

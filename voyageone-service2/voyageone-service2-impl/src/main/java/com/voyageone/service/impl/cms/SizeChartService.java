@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
@@ -34,7 +34,7 @@ public class SizeChartService extends BaseService {
      */
     public List<CmsBtSizeChartModel> getSizeChartSearch(String channelId, String sizeChartName, String finishFlag
             , String startTime, String endTime, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, int curr, int size) {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         //取得收索的条件
         queryObject.setQuery(getSearchQuery(channelId, sizeChartName, finishFlag, startTime, endTime, brandNameList, productTypeList, sizeTypeList));
         queryObject.setSort("{sizeChartId:-1}");
@@ -47,10 +47,10 @@ public class SizeChartService extends BaseService {
     /**
      * 按照填写的条件去数据库检索记录
      *
-     * @param queryObject JomgoQuery
+     * @param queryObject JongoQuery
      * @return List
      */
-    public List<CmsBtSizeChartModel> getSizeCharts(JomgoQuery queryObject) {
+    public List<CmsBtSizeChartModel> getSizeCharts(JongoQuery queryObject) {
         return cmsBtSizeChartDao.select(queryObject);
     }
 
@@ -253,7 +253,7 @@ public class SizeChartService extends BaseService {
      * 根据sizeChartId取得sizeChartInfo
      */
     public CmsBtSizeChartModel getCmsBtSizeChartModel(int sizeChartId, String channelId) {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"sizeChartId\":" + sizeChartId + "},{\"channelId\":" + channelId + "},{\"active\":1}");
         return cmsBtSizeChartDao.selectOneWithQuery(queryObject);
     }

@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.backdoor;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
@@ -127,7 +127,7 @@ public class BackDoorController extends CmsController {
 
         List<CmsBtFeedInfoModel> allFeedInfoList = new ArrayList<CmsBtFeedInfoModel>();
 
-        JomgoQuery selectQuery = new JomgoQuery();
+        JongoQuery selectQuery = new JongoQuery();
 //        selectQuery.setSkip(1);
 //        selectQuery.setLimit(000);
         allFeedInfoList.addAll(cmsBtFeedInfoDao.selectAll("015"));
@@ -754,7 +754,7 @@ public class BackDoorController extends CmsController {
         List<String> messageList = new ArrayList<>();
         List<String> successList = new ArrayList<>();
 
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"updFlg\": {$ne: 9}}");
         queryObject.setProjection("{code: 1}");
         List<CmsBtFeedInfoModel> feeds = feedInfoService.getList(channelId, queryObject);
@@ -805,7 +805,7 @@ public class BackDoorController extends CmsController {
 
                 CmsBtProductModel_Platform_Cart platformInfo = productInfo.getPlatformNotNull(Integer.valueOf(cartId));
 
-                JomgoQuery query = new JomgoQuery();
+                JongoQuery query = new JongoQuery();
                 query.setQuery("{\"mainProductCode\": #, \"cartId\": #}");
                 query.setParameters(platformInfo.getMainProductCode(), platformInfo.getCartId());
                 CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(channelId, query);
@@ -1094,7 +1094,7 @@ public class BackDoorController extends CmsController {
             String code = promtionCode.get("productCode").toString();
             String jmHashId = promtionCode.get("jmHashId").toString();
 
-            JomgoUpdate updateQuery = new JomgoUpdate();
+            JongoUpdate updateQuery = new JongoUpdate();
             updateQuery.setQuery("{\"common.fields.code\": #}");
             updateQuery.setQueryParameters(code);
 
@@ -1104,7 +1104,7 @@ public class BackDoorController extends CmsController {
             cmsBtProductDao.updateFirst(updateQuery, channelId);
 
 
-            JomgoUpdate updateGroupQuery = new JomgoUpdate();
+            JongoUpdate updateGroupQuery = new JongoUpdate();
             updateGroupQuery.setQuery("{\"cartId\": 27, \"productCodes\": #}");
             updateGroupQuery.setQueryParameters(code);
 
@@ -1139,7 +1139,7 @@ public class BackDoorController extends CmsController {
 
                 CmsBtProductModel_Platform_Cart platformInfo = productInfo.getPlatformNotNull(Integer.valueOf(cartId));
 
-                JomgoQuery query = new JomgoQuery();
+                JongoQuery query = new JongoQuery();
                 query.setQuery("{\"mainProductCode\": #, \"cartId\": #}");
                 query.setParameters(platformInfo.getMainProductCode(), platformInfo.getCartId());
                 CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(channelId, query);
@@ -1187,7 +1187,7 @@ public class BackDoorController extends CmsController {
 
         List<String> code = new ArrayList<>();
 
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         query.setQuery("{\"platforms.P27.status\": \"Approved\", \"platforms.P27.skus.isSale\": {$exists: false}}");
         List<CmsBtProductModel> products = cmsBtProductDao.select(query, channelId);
 

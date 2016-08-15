@@ -2,7 +2,6 @@ package com.voyageone.components.jd;
 
 import com.jd.open.api.sdk.DefaultJdClient;
 import com.jd.open.api.sdk.JdClient;
-import com.jd.open.api.sdk.JdException;
 import com.jd.open.api.sdk.request.JdRequest;
 import com.jd.open.api.sdk.response.AbstractResponse;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -47,8 +46,7 @@ public abstract class JdBase extends ComponentBase {
      * @param <T>      API 响应
      * @return T extends AbstractResponse
      */
-    protected <T extends AbstractResponse> T reqApi(ShopBean shopBean, JdRequest<T> request) throws JdException {
-
+    protected <T extends AbstractResponse> T reqApi(ShopBean shopBean, JdRequest<T> request) {
         return reqApi(shopBean, request, ComponentConstants.C_MAX_API_ERROR);
     }
 
@@ -61,8 +59,7 @@ public abstract class JdBase extends ComponentBase {
      * @param <T>         API 响应
      * @return T extends AbstractResponse
      */
-    protected <T extends AbstractResponse> T reqApi(ShopBean shopBean, JdRequest<T> request, int maxTryCount) throws JdException {
-
+    protected <T extends AbstractResponse> T reqApi(ShopBean shopBean, JdRequest<T> request, int maxTryCount) {
         // 按给定的次数，进行多次的尝试
         for (int intApiErrorCount = 0; intApiErrorCount < maxTryCount; intApiErrorCount++) {
 

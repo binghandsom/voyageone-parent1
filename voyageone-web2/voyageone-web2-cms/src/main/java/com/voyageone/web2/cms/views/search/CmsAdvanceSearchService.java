@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.voyageone.base.dao.mongodb.JomgoAggregate;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoAggregate;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
@@ -182,7 +182,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
      * 统计当前查询的product件数（查询条件从画面而来）
      */
     public long countProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        JomgoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
+        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
         return productService.countByQuery(queryObject.getQuery(), queryObject.getParameters(), userInfo.getSelChannelId());
     }
 
@@ -190,7 +190,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
      * 获取当前查询的product列表（查询条件从画面而来）<br>
      */
     public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        JomgoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
+        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
         queryObject.setProjection("{'common.fields.code':1,'_id':0}");
         queryObject.setSort(advSearchQueryService.getSortValue(searchValue, cmsSessionBean));
         if (searchValue.getProductPageNum() > 0) {
@@ -219,7 +219,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
             $warn("高级检索 getProductCodeList session中的查询条件为空");
             return new ArrayList<>(0);
         }
-        JomgoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
+        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
         queryObject.setProjection("{'common.fields.code':1,'_id':0}");
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的product列表 (session) ChannelId=%s, %s", channelId, queryObject.toString()));
@@ -245,7 +245,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
             $warn("高级检索 getProductIdList session中的查询条件为空");
             return new ArrayList<>(0);
         }
-        JomgoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
+        JongoQuery queryObject = advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false);
         queryObject.setProjection("{'prodId':1,'_id':0}");
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的product id列表 (session) ChannelId=%s, %s", channelId, queryObject.toString()));
@@ -274,7 +274,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
             return new ArrayList<>(0);
         }
         // 最后再获取本页实际产品信息
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{'common.fields.code':{$in:#}}");
         queryObject.setParameters(prodCodeList);
 
@@ -282,8 +282,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         if (plusStr == null) {
             plusStr = "";
         }
-        String projStr = queryObject.buildProjection(searchItems.concat(plusStr).split(";"));
-        queryObject.setProjection(projStr);
+        queryObject.setProjectionExt(searchItems.concat(plusStr).split(";"));
         queryObject.setSort(advSearchQueryService.getSortValue(searchValue, cmsSessionBean));
 
         List<CmsBtProductBean> prodInfoList = productService.getBeanList(userInfo.getSelChannelId(), queryObject);
@@ -346,15 +345,15 @@ public class CmsAdvanceSearchService extends BaseAppService {
      * 其实是统计product表中'platforms.Pxx.mainProductCode'的个数(使用聚合查询)，这里需要确保product表和group表的数据一致
      */
     public long countGroupCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        List<JomgoAggregate> aggrList = new ArrayList<>();
+        List<JongoAggregate> aggrList = new ArrayList<>();
         String qry1 = cmsBtProductDao.getQueryStr(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
         if (qry1 != null && qry1.length() > 0) {
-            aggrList.add(new JomgoAggregate("{ $match : " + qry1 + " }"));
+            aggrList.add(new JongoAggregate("{ $match : " + qry1 + " }"));
         }
         String gp1 = "{ $group : { _id : '$platforms.P" + searchValue.getCartId() + ".mainProductCode' } }";
         String gp2 = "{ $group : { _id : null, count: { $sum : 1 } } }";
-        aggrList.add(new JomgoAggregate(gp1));
-        aggrList.add(new JomgoAggregate(gp2));
+        aggrList.add(new JongoAggregate(gp1));
+        aggrList.add(new JongoAggregate(gp2));
         List<Map<String, Object>> rs = productService.aggregateToMap(userInfo.getSelChannelId(), aggrList);
         if (rs == null || rs.isEmpty()) {
             $warn("高级检索 countGroupCodeList Aggregate统计无结果");
@@ -374,11 +373,11 @@ public class CmsAdvanceSearchService extends BaseAppService {
      * 注意要过滤重复code，另外由于$group不会排序，必须在$group中输出排序项后再使用$sort排序
      */
     public List<String> getGroupCodeList(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-        List<JomgoAggregate> aggrList = new ArrayList<>();
+        List<JongoAggregate> aggrList = new ArrayList<>();
         // 查询条件
         String qry1 = cmsBtProductDao.getQueryStr(advSearchQueryService.getSearchQuery(searchValue, cmsSessionBean, false));
         if (qry1 != null && qry1.length() > 0) {
-            aggrList.add(new JomgoAggregate("{ $match : " + qry1 + " }"));
+            aggrList.add(new JongoAggregate("{ $match : " + qry1 + " }"));
         }
 
         Map<String, List<String>> sortColList = advSearchQueryService.getSortColumn(searchValue, cmsSessionBean);
@@ -388,20 +387,20 @@ public class CmsAdvanceSearchService extends BaseAppService {
             // 使用默认排序
             // 分组
             String gp1 = "{ $group : { _id : '$platforms.P" + searchValue.getCartId() + ".mainProductCode', '_pprodId':{$first:'$prodId'} } }";
-            aggrList.add(new JomgoAggregate(gp1));
+            aggrList.add(new JongoAggregate(gp1));
             // 排序
-            aggrList.add(new JomgoAggregate("{ $sort : {'_pprodId':1} }"));
+            aggrList.add(new JongoAggregate("{ $sort : {'_pprodId':1} }"));
         } else {
             // 分组
             String gp1 = "{ $group : { _id : '$platforms.P" + searchValue.getCartId() + ".mainProductCode'," + StringUtils.join(groupOutList, ',') + "} }";
-            aggrList.add(new JomgoAggregate(gp1));
+            aggrList.add(new JongoAggregate(gp1));
             // 排序
-            aggrList.add(new JomgoAggregate("{ $sort : {" + StringUtils.join(sortOutList, ',') + "} }"));
+            aggrList.add(new JongoAggregate("{ $sort : {" + StringUtils.join(sortOutList, ',') + "} }"));
         }
 
-        aggrList.add(new JomgoAggregate("{ $skip:" + (searchValue.getGroupPageNum() - 1) * searchValue.getGroupPageSize() + "}"));
+        aggrList.add(new JongoAggregate("{ $skip:" + (searchValue.getGroupPageNum() - 1) * searchValue.getGroupPageSize() + "}"));
         if (searchValue.getGroupPageSize() > 0) {
-            aggrList.add(new JomgoAggregate("{ $limit:" + searchValue.getGroupPageSize() + "}"));
+            aggrList.add(new JongoAggregate("{ $limit:" + searchValue.getGroupPageSize() + "}"));
         }
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的group id列表 ChannelId=%s, %s", userInfo.getSelChannelId(), aggrList.toString()));

@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategoryTreeDao;
@@ -238,7 +238,7 @@ public class CategoryTreeService extends BaseService {
      * @return CmsMtCategoryTreeModel
      */
     public List<CmsMtCategoryTreeModel> getFstLvlMasterCategory() {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setProjection("{'catId':1,'catName':1,'catPath':1,'isParent':1}");
         queryObject.setSort("{'catName':1}");
         return cmsMtCategoryTreeDao.select(queryObject);
@@ -250,7 +250,7 @@ public class CategoryTreeService extends BaseService {
      * @return CmsMtCategoryTreeModel
      */
     public List<CmsMtCategoryTreeModel> getMasterCategory() {
-        return cmsMtCategoryTreeDao.select(new JomgoQuery());
+        return cmsMtCategoryTreeDao.select(new JongoQuery());
     }
 
     /**
