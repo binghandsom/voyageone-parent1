@@ -4,6 +4,7 @@ import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PLATFORM_MAPPING;
+import com.voyageone.web2.cms.bean.tools.product.PlatformMappingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,24 +26,27 @@ import java.util.Map;
 @RequestMapping(value = PLATFORM_MAPPING.ROOT, method = RequestMethod.POST)
 public class PlatformMappingController extends CmsController {
 
-    private final PlatformMappingService platformMappingService;
+
+
+    private final PlatformMappingViewService platformMappingViewService;
 
     @Autowired
-    public PlatformMappingController(PlatformMappingService platformMappingService) {
+    public PlatformMappingController(PlatformMappingService platformMappingService, PlatformMappingViewService platformMappingViewService) {
         this.platformMappingService = platformMappingService;
+        this.platformMappingViewService = platformMappingViewService;
     }
 
     @RequestMapping(PLATFORM_MAPPING.LIST)
-    public AjaxResponse list(@RequestBody Map a) {
+    public AjaxResponse list(@RequestBody PlatformMappingBean platformMappingBean) {
 
-
+        platformMappingViewService.getList();
 
 
         return success(null);
     }
 
     @RequestMapping(PLATFORM_MAPPING.GET)
-    public AjaxResponse get(@RequestBody Map a) {
+    public AjaxResponse get(@RequestBody PlatformMappingBean platformMappingBean) {
         return success(null);
     }
 

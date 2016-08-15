@@ -26,9 +26,9 @@ import java.util.Map;
 @Service
 public class PlatformMappingService extends BaseService {
 
-    private final static int CATEGORY_TYPE_COMMON = 1;
+    public final static int CATEGORY_TYPE_COMMON = 1;
 
-    private final static int CATEGORY_TYPE_SPECIFIC = 2;
+    public final static int CATEGORY_TYPE_SPECIFIC = 2;
 
     private final static String EXPRESSION_TYPE_FEED_CN = "FEED_CN";
 

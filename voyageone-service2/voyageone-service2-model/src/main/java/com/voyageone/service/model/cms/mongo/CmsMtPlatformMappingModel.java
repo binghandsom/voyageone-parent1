@@ -13,6 +13,7 @@ import java.util.List;
  * @since 2.0.0
  */
 @Document
+@Deprecated
 public class CmsMtPlatformMappingModel extends CartPartitionModel {
 
     private String channelId;
