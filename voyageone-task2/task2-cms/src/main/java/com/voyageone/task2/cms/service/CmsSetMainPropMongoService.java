@@ -37,7 +37,6 @@ import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedMapping2Dao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
-import com.voyageone.service.dao.com.ComMtValueChannelDao;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -49,6 +48,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.enums.MappingPropType;
@@ -65,7 +65,6 @@ import com.voyageone.service.model.cms.mongo.feed.mapping.Mapping;
 import com.voyageone.service.model.cms.mongo.feed.mapping.Prop;
 import com.voyageone.service.model.cms.mongo.feed.mapping2.CmsBtFeedMapping2Model;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.service.model.com.ComMtValueChannelModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -98,26 +97,20 @@ import java.util.stream.Collectors;
 @Service
 public class CmsSetMainPropMongoService extends BaseTaskService {
 
-//    @Autowired
-//    private CmsBtFeedMappingDao cmsBtFeedMappingDao; // DAO: feed->主数据的mapping关系
     @Autowired
     private CmsBtFeedMapping2Dao cmsBtFeedMapping2Dao; // DAO: 新的feed->主数据的mapping关系
     @Autowired
     private CmsBtProductDao cmsBtProductDao; // DAO: 商品的值
     @Autowired
     private MongoSequenceService commSequenceMongoService; // DAO: Sequence
-//    @Autowired
-//    private CmsMtCategorySchemaDao cmsMtCategorySchemaDao; // DAO: 主类目属性结构
     @Autowired
-    private ComMtValueChannelDao comMtValueChannelDao;    // DAO:Synship.com_mt_value_channel
+    private ComMtValueChannelService comMtValueChannelService;    // 更新Synship.com_mt_value_channel表
     @Autowired
     private ItemDetailsDao itemDetailsDao; // DAO: ItemDetailsDao
     @Autowired
     private TmpOldCmsDataDao tmpOldCmsDataDao; // DAO: 旧数据
     @Autowired
     private FeedCustomPropService customPropService;
-//    @Autowired
-//    private ProductSkuService productSkuService;
     @Autowired
     private ProductService productService;
     @Autowired
@@ -132,27 +125,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     CategoryTreeService categoryTreeService;
     @Autowired
     CategoryTreeAllService categoryTreeAllService;
-    // jeff 2016/04 add end
-//    @Autowired
-//    private ImagesService imagesService;
     @Autowired
     private BusinessLogService businessLogService;
-
-//    @Autowired
-//    private DataAmountService dataAmountService;
-
     @Autowired
     private ImagesService imagesService;
-
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
-
     @Autowired
     private SxProductService sxProductService;
-
     @Autowired
     private PriceService priceService;
-
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
 
@@ -218,7 +200,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             ie.printStackTrace();
         }
 
-        $info("=================feed->master导入  最终结果====================");
+        $info("=================feed->master导入  最终结果=====================");
         resultMap.entrySet().stream()
                             .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
                             .forEach(p ->  $info(p.getValue()));
@@ -1156,7 +1138,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // 将该feed品牌小写值mapping信息插入或更新到Synship.com_mt_value_channel表中(41:品牌mapping信息)
 //                    insertBrandMappingInfo(this.channel.getOrder_channel_id(), feed, feedBrandLowerCase);
                     if (!StringUtils.isEmpty(feedBrandLowerCase)) {
-                        insertComMtValueChannelMapping(41, this.channel.getOrder_channel_id(), feedBrandLowerCase, feedBrandLowerCase);
+                        comMtValueChannelService.insertComMtValueChannelMapping(41, this.channel.getOrder_channel_id(),
+                                feedBrandLowerCase, feedBrandLowerCase, getTaskName());
                         // 将更新完整之后的mapping信息添加到前面取出来的品牌mapping表中
                         mapBrandMapping.put(feedBrandLowerCase, feedBrandLowerCase);
                     }
@@ -1475,18 +1458,20 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     && !StringUtils.isEmpty(feedProductType)
                     && !mapProductTypeMapping.containsKey(feedProductType)) {
                 // 插入产品分类初始中英文mapping信息到Synship.com_mt_value_channel表中
-                insertComMtValueChannelMapping(57, feed.getChannelId(), feedProductType, feedProductType);
+                comMtValueChannelService.insertComMtValueChannelMapping(57, feed.getChannelId(), feedProductType,
+                        feedProductType, getTaskName());
                 // 将更新完整之后的mapping信息添加到前面取出来的产品分类mapping表中
                 mapProductTypeMapping.put(feedProductType, feedProductType);
             }
 
-            // 从cms_mt_channel_config表从取得的适用人群是否从feed导入flg=1的时候，才插入产品分类mapping信息
+            // 从cms_mt_channel_config表从取得的适用人群是否从feed导入flg=1的时候，才插入适用人群mapping信息
             if ("1".equals(sizeTypeFromFeedFlg)
                     && !StringUtils.isEmpty(feedSizeType)
                     && !mapSizeTypeMapping.containsKey(feedSizeType)) {
                 // 插入适用人群初始中英文mapping信息到Synship.com_mt_value_channel表中
-                insertComMtValueChannelMapping(58, feed.getChannelId(), feedSizeType, feedSizeType);
-                // 将更新完整之后的mapping信息添加到前面取出来的使用人群mapping表中
+                comMtValueChannelService.insertComMtValueChannelMapping(58, feed.getChannelId(), feedSizeType,
+                        feedSizeType, getTaskName());
+                // 将更新完整之后的mapping信息添加到前面取出来的适用人群mapping表中
                 mapSizeTypeMapping.put(feedSizeType, feedSizeType);
             }
             // add by desmond 2016/07/22 end
@@ -3685,90 +3670,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         businessLogModel.setModifier(modifier);
 
         businessLogService.insertBusinessLog(businessLogModel);
-    }
-
-//    /**
-//     * 判断该渠道是否是需要基于类目的价格计算公式
-//     *
-//     * @param channelId String 渠道id
-//     */
-//    private boolean isCategoryFormula(String channelId) {
-//
-//        // 有3个渠道('020','025','026')要根据类目税率不一样，要根据类目(config_code字段)取得价格计算公式
-//        if (ChannelConfigEnums.Channel.EDCSKINCARE.getId().equals(channelId)           // "020"
-//                || ChannelConfigEnums.Channel.FragranceNet.getId().equals(channelId)   // "025"
-//                || ChannelConfigEnums.Channel.LightHouse.getId().equals(channelId)) {  // "026"
-//            return true;
-//        }
-//
-//        return false;
-//    }
-
-    /**
-     * 如果没有取到feed类目对应的价格计算公式时抛出异常处理
-     *
-     * @param channelId String 渠道id
-     * @param feedCategory String 平台id
-     * @param formula String 价格公式
-     * @param feedModel String feed model
-     */
-//    private void throwNotFoundPriceFormulaException(String channelId, String feedCategory, String formula, String feedModel){
-//        String errMsg = "";
-//
-//        if (!StringUtils.isEmpty(feedCategory)) {
-//            // 根据feed类目未取到相应的价格计算公式时，抛出异常并继续后面的feed导入
-//            errMsg = String.format("feed->master导入:异常终止:在cms_mt_channel_config表中没有找到该feed类目对应的" +
-//                            "价格计算公式( channel: [%s], feedCategory: [%s], formula: [%s], feedModel: [%s] )",
-//                    channelId, feedCategory, formula, feedModel);
-//        } else {
-//            // 不根据feed类目未取到相应的价格计算公式时,中止feed导入，后面的feed也不做了
-//            errMsg = String.format("feed->master导入:异常终止:价格计算公式错误:在cms_mt_channel_config表中没有找到该channel对应的" +
-//                            "价格计算公式( channel: [%s], formula: [%s], feedModel: [%s] )",
-//                    channelId, formula, feedModel);
-//        }
-//
-//        $error(errMsg);
-//        throw new BusinessException(errMsg);
-//    }
-
-    /**
-     * 将一些项目(如：brand,sizeType,productType)的初始化中英文mapping信息插入到Synship.com_mt_value_channel表中
-     *
-     * @param intTypeId Integer mapping类型id
-     * @param channelId String 渠道id
-     * @param mappingKey String mapping key的值
-     * @param mappingKey String mapping value的值
-     * @param mappingKey String strLangId值
-     */
-    private void insertComMtValueChannelMapping(Integer intTypeId, String channelId, String mappingKey, String mappingValue) {
-        // 插入一条英文版mapping信息
-        insertComMtValueChannelMappingInfo(intTypeId, channelId, mappingKey, mappingValue, Constants.LANGUAGE.EN);
-        // 插入一条中文版mapping信息
-        insertComMtValueChannelMappingInfo(intTypeId, channelId, mappingKey, mappingValue, Constants.LANGUAGE.CN);
-    }
-
-    /**
-     * 将一些项目(如：brand,sizeType,productType)的初始化mapping信息插入到Synship.com_mt_value_channel表中
-     *
-     * @param intTypeId Integer mapping类型id
-     * @param channelId String 渠道id
-     * @param mappingKey String mapping key的值
-     * @param mappingKey String mapping value的值
-     * @param mappingKey String strLangId值
-     */
-    private void insertComMtValueChannelMappingInfo(Integer intTypeId, String channelId, String mappingKey, String mappingValue, String strLangId) {
-
-        // 插入一条英文或者中文版mapping信息
-        ComMtValueChannelModel brandEnValueChannelModel = new ComMtValueChannelModel();
-        brandEnValueChannelModel.setTypeId(intTypeId);
-        brandEnValueChannelModel.setChannelId(channelId);
-        brandEnValueChannelModel.setValue(mappingKey);      // mapping key
-        brandEnValueChannelModel.setName(mappingValue);
-        brandEnValueChannelModel.setAddName1(mappingValue);
-        brandEnValueChannelModel.setLangId(strLangId);      // "cn"或"en"
-        brandEnValueChannelModel.setCreater(getTaskName());
-        brandEnValueChannelModel.setModifier(getTaskName());
-        comMtValueChannelDao.insert(brandEnValueChannelModel);
     }
 
     /**
