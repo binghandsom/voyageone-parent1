@@ -31,7 +31,7 @@ public interface AdminUrlConstants {
 			String DELETE_CHANNEL = "deleteChannel";
 			
 		}
-		
+
 	}
 	
 	interface Cart {
@@ -95,6 +95,26 @@ public interface AdminUrlConstants {
 			
 		}
 		
+	}
+
+	interface User {
+
+		/** 用户信息 */
+		interface Self {
+
+			String ROOT = "/admin/user/self";
+
+			String SEARCH_USER_BY_PAGE = "searchUserByPage";
+
+			String INIT = "init";
+
+			String ADD_USER = "addUser";
+
+			String UPDATE_USER = "updateUser";
+
+			String DELETE_USER = "deleteUser";
+		}
+
 	}
 
 }

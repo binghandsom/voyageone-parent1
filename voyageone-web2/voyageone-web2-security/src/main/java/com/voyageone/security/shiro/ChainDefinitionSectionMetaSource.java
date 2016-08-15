@@ -46,7 +46,7 @@ public class ChainDefinitionSectionMetaSource implements FactoryBean<Ini.Section
 		// 所有资源的访问权限，必须放在最后
 		/*section.put("/**", "authc");*/
 		/** 如果需要一个用户只能登录一处地方,,修改为 section.put("/**", "authc,kickout,sysUser,user"); **/
-		section.put("/cms/**", "authc");
+		section.put("/cms/**", "authc, perms[cms]");
 		return section;
 	}
 

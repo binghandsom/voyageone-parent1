@@ -1,14 +1,12 @@
 package com.voyageone.security.shiro;
 
-import com.voyageone.security.dao.ComResourceDao;
+
 import com.voyageone.security.dao.ComUserDao;
 import com.voyageone.security.dao.ViewUserResDao;
-import com.voyageone.security.model.ComResourceModel;
 import com.voyageone.security.model.ComUserModel;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
-import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.session.Session;
@@ -88,7 +86,7 @@ public class MyRealm extends AuthorizingRealm {
 			// 交给AuthenticatingRealm使用CredentialsMatcher进行密码匹配，如果觉得人家的不好可以自定义实现
 			SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(username, // 用户名
 					userModel.getPassword(), // 密码
-					ByteSource.Util.bytes(username + "" + userModel.getCredentialssalt()),// salt=username+salt
+					ByteSource.Util.bytes(username + "" + userModel.getCredentialSalt()),// salt=username+salt
 					getName() // realm name
 			);
 			// 当验证都通过后，把用户信息放在session里

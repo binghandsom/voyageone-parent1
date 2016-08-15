@@ -29,7 +29,7 @@ public class ComUserModel extends CoreBaseModel {
     /**
      * 盐
      */
-    protected String credentialssalt;
+    protected String credentialSalt;
 
     protected Integer orgId;
 
@@ -37,6 +37,8 @@ public class ComUserModel extends CoreBaseModel {
      * 说明
      */
     protected String description;
+
+    protected String email;
 
     /**
      * 删除标识:1,激活;0,禁用;2,锁定
@@ -67,12 +69,12 @@ public class ComUserModel extends CoreBaseModel {
         this.password = password == null ? null : password.trim();
     }
 
-    public String getCredentialssalt() {
-        return credentialssalt;
+    public String getCredentialSalt() {
+        return credentialSalt;
     }
 
-    public void setCredentialssalt(String credentialssalt) {
-        this.credentialssalt = credentialssalt == null ? null : credentialssalt.trim();
+    public void setCredentialSalt(String credentialSalt) {
+        this.credentialSalt = credentialSalt == null ? null : credentialSalt.trim();
     }
 
     public Integer getOrgId() {
@@ -89,6 +91,14 @@ public class ComUserModel extends CoreBaseModel {
 
     public void setDescription(String description) {
         this.description = description == null ? null : description.trim();
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email == null ? null : email.trim();
     }
 
     public Integer getActive() {

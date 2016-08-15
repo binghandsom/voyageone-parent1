@@ -17,10 +17,22 @@
         SELECT DISTINCT (res_name) AS application , r.id AS applicationId , c.order_channel_id as channel_id ,c.full_name,c.img_url,c.company_id, co.company
         from view_user_res r, Synship.tm_order_channel c  , Synship.ct_company co
         where res_type = 0  and r.channel_id = c.order_channel_id and c.company_id = co.id
+        and r.channel_id &lt;&gt; 'ALL'
         and r.active = 1
         and c.active = 1
         and co.active = 1
         and user_id =  #{userId,jdbcType=INTEGER}
+        UNION
+        SELECT DISTINCT (res_name) AS application , r.id AS applicationId , c.order_channel_id as channel_id ,c.full_name,c.img_url,c.company_id, co.company
+        from view_user_res r, Synship.tm_order_channel c  , Synship.ct_company co
+        where res_type = 0  and c.company_id = co.id
+        and r.channel_id = 'ALL'
+        and r.active = 1
+        and c.active = 1
+        and co.active = 1
+        and user_id =  #{userId,jdbcType=INTEGER}
+
+
     </select>
 
 

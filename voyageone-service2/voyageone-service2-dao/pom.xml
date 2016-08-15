@@ -29,6 +29,13 @@
             <artifactId>voyageone-service2-model</artifactId>
             <version>${voyageone.service2.model.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-web2-security</artifactId>
+            <version>${voyageone.web2.security.version}</version>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>voyageone-service2-dao</finalName>

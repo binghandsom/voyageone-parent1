@@ -20,6 +20,17 @@
 		<property name="mapperLocations" value="classpath*:com/voyageone/security/**/mybatis/mappers/*.xml"/>
 		<property name="typeAliasesPackage" value="com.voyageone.security.model"/>
 		<property name="configLocation" value="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"/>
+		<!-- 配置Mybatis的插件plugin-->
+		<property name="plugins">
+			<array>
+				<bean class="com.voyageone.base.dao.mysql.MybatisMapCamelInterceptor"/>
+				<bean class="com.voyageone.base.dao.mysql.paginator.MybatisPaginatorInterceptor">
+					<property name="properties">
+						<value>id_filter=selectList,ByPage</value>
+					</property>
+				</bean>
+			</array>
+		</property>
 	</bean>
 
 	<!-- 通过扫描的模式，扫描目录在com.lanyuan.mapper目录下，所有的mapper都继承SqlMapper接口的接口， 这样一个bean就可以了 -->

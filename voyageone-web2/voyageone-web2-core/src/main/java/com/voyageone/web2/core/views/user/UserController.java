@@ -1,7 +1,9 @@
 package com.voyageone.web2.core.views.user;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.security.bean.ComChannelPermissionBean;
 import com.voyageone.security.model.ComUserModel;
+import com.voyageone.security.service.ComUserService;
 import com.voyageone.service.bean.com.ChannelPermissionBean;
 import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.base.BaseController;
@@ -37,6 +39,9 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ComUserService comUserService;
+
     @RequestMapping(CoreUrlConstants.USER.LOGIN)
     public AjaxResponse login(@RequestBody Map<String, Object> params) {
 
@@ -52,23 +57,8 @@ public class UserController extends BaseController {
 //        // 保存用户的默认语言
 //        getSession().setAttribute(BaseConstants.SESSION_LANG, userService.getUserLanguage(userSessionBean));
 
-        Subject user = SecurityUtils.getSubject();
 
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-
-        try {
-            user.login(token);
-        }catch (LockedAccountException lae) {
-            token.clear();
-            throw new BusinessException("用户已经被锁定不能登录，请与管理员联系!");
-        } catch (ExcessiveAttemptsException e) {
-            token.clear();
-            throw new BusinessException("账号：" + username + " 登录失败次数过多,锁定10分钟!");
-
-        } catch (AuthenticationException e) {
-            token.clear();
-            throw new BusinessException("用户或密码不正确!");
-        }
+        comUserService.login(username, password);
 
         Session session = SecurityUtils.getSubject().getSession();
         ComUserModel userModel = (ComUserModel)session.getAttribute("userModel");
@@ -81,15 +71,13 @@ public class UserController extends BaseController {
         session.setAttribute(BaseConstants.SESSION_USER, userSessionBean);
         session.setAttribute(BaseConstants.SESSION_LANG, userService.getUserLanguage(userSessionBean));
 
-
-
         // 返回用户信息
         return success(true);
     }
 
     @RequestMapping(CoreUrlConstants.USER.GET_CHANNEL)
     public AjaxResponse getChannel() {
-        List<ChannelPermissionBean> companyBeans = userService.getPermissionCompany(getUser());
+        List<ComChannelPermissionBean> companyBeans = comUserService.getPermissionCompany(getUser().getUserId());
         return success(companyBeans);
     }
 
