@@ -21,10 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -190,8 +187,15 @@ public class YogaDemocracyAnalysisService extends BaseAnalysisService {
 
         List<CmsBtFeedInfoYogaDemocracyModel> vtmModelBeans = yogaDemocracyFeedDao.selectSuperfeedModel(colums);
         List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();
+        HashMap<String,Object> parentIdMap = new HashMap<String,Object>();
         for (CmsBtFeedInfoYogaDemocracyModel vtmModelBean : vtmModelBeans) {
-
+            if(StringUtil.isEmpty(vtmModelBean.getParentid())){
+                parentIdMap.put(vtmModelBean.getSku(), vtmModelBean);
+            };
+        }
+        for (CmsBtFeedInfoYogaDemocracyModel vtmModelBean : vtmModelBeans) {
+            //父级数据跳过
+            if(StringUtil.isEmpty(vtmModelBean.getParentid()))continue;
             Map temp = JacksonUtil.json2Bean(JacksonUtil.bean2Json(vtmModelBean), HashMap.class);
             Map<String, List<String>> attribute = new HashMap<>();
             for (String attr : attList) {
@@ -213,6 +217,14 @@ public class YogaDemocracyAnalysisService extends BaseAnalysisService {
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());
             cmsBtFeedInfoModel.setAttribute(attribute);
+            //根据父级数据取得相应的属性
+            if(parentIdMap.keySet().equals(vtmModelBean.getParentid())){
+                CmsBtFeedInfoYogaDemocracyModel YogaBean = (CmsBtFeedInfoYogaDemocracyModel) parentIdMap.get(vtmModelBean.getParentid());
+                cmsBtFeedInfoModel.setImage(YogaBean.getImage());
+                cmsBtFeedInfoModel.setLongDescription(YogaBean.getDescription());
+                cmsBtFeedInfoModel.setShortDescription(YogaBean.getShortDescription());
+            }
+
             List<CmsBtFeedInfoModel_Sku> skus = vtmModelBean.getSkus();
             for (CmsBtFeedInfoModel_Sku sku : skus) {
                 String Weight = sku.getWeightOrg().trim();

@@ -47,9 +47,17 @@
 						</div>
 						<div class="col-sm-12">
 							<div class="form-inline m-b-xs text-center" ng-controller = "popupCtrl">
-								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+								<button class="btn btn-vo" ng-click="searchStatus(null)"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
 								<button class="btn btn-success" ng-click="updateAllStatus(1)"><i class="fa fa-refresh"></i> {{'TXT_STARTUP_ALL' | translate}}</button>
 								<button class="btn btn-danger"  ng-click="updateAllStatus(0)"><i class="fa fa-warning"></i> {{'TXT_STOP_ALL' | translate}}</button>
+								<button class="btn btn-danger"  ng-click="updateAllFailStatus()"><i class="fa fa-warning"></i> {{'TXT_FAIL_STARTUP_ALL' | translate}}</button>
+							</div><!-- /right-btn -->
+						</div>
+						<div class="col-sm-12">
+							<div class="form-inline m-b-xs text-right" >
+								<button class="btn btn-vo" ng-click="searchStatus(1)"><i class="fa fa-warning"></i> Pending{{vm.statusCnt.pendingCnt}}</button>
+								<button class="btn btn-danger"  ng-click="searchStatus(3)"><i class="fa fa-warning"></i> Fail{{vm.statusCnt.failCnt}}</button>
+								<button class="btn btn-danger"  ng-click="searchStatus(0)"><i class="fa fa-warning"></i> Stop{{vm.statusCnt.stopCnt}}</button>
 							</div><!-- /right-btn -->
 						</div>
 						</div>
