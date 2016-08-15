@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.admin.AdminUserDaoExt">
+
+    <resultMap id="comUserModelMap" type="com.voyageone.service.bean.admin.AdminUserBean" />
+
+    <sql id="selectUserFilter">
+    	<where>
+            <if test="userAccount != null and account != ''" >
+                and (
+                user_account like concat('%', #{userAccount}, '%') or user_name like concat('%', #{userAccount}, '%')
+                )
+            </if>
+
+            <if test="active != null" >
+                and active = #{active}
+            </if>
+
+            <if test="orgId != null" >
+                and orgId = #{orgId}
+            </if>
+
+            <if test="channelId != null and channelId != ''" >
+                and channel_id like concat('%,', #{channelId}, '%') or channel_id like concat('%', #{channelId}, ',%')
+            </if>
+
+            <if test="storeId != null and storeId != ''" >
+                and store_id like concat('%,', #{storeId},  '%') or channel_id like concat( '%',#{storeId}, ',%')
+            </if>
+
+        </where>
+    </sql>
+	
+
+	
+	<select id="selectUserByPage" resultMap="comUserModelMap">
+        SELECT * from
+        (
+        SELECT t.id, t.user_name, t.user_account, t.password, t.credential_salt, t.org_id, t.description,
+        t.active,t.created,t.creater,t.modified,t.modifier, t.role_id,
+        MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE 0 END ) channel_id,
+        MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE 0 END ) store_id
+        FROM
+
+        (select u.id, u.user_name, u.user_account, u.password, u.credential_salt, u.org_id, u.description,
+        u.active,u.created,u.creater,u.modified,u.modifier, ur.role_id, rc.cfg_name, GROUP_CONCAT(rc.cfg_val1) as cfg_val1
+        from com_user u, com_user_role ur, com_role r, com_role_config rc
+        where u.id = ur.user_id and ur.role_id = rc.role_id
+        and u.active &lt;&gt; 0
+        and r.active = 1
+        GROUP BY id, rc.cfg_name) t
+
+        GROUP BY t.id
+        )t1
+        <include refid="selectUserFilter"/>
+	</select>
+	
+	<select id="selectUserCount" resultType="Integer">
+        SELECT count(0) from
+        (
+        SELECT t.id, t.user_name, t.user_account, t.password, t.credential_salt, t.org_id, t.description,
+        t.active,t.created,t.creater,t.modified,t.modifier, t.role_id,
+        MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE 0 END ) channel_id,
+        MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE 0 END ) store_id
+        FROM
+
+        (select u.id, u.user_name, u.user_account, u.password, u.credential_salt, u.org_id, u.description,
+        u.active,u.created,u.creater,u.modified,u.modifier, ur.role_id, rc.cfg_name, GROUP_CONCAT(rc.cfg_val1) as cfg_val1
+        from com_user u, com_user_role ur, com_role r, com_role_config rc
+        where u.id = ur.user_id and ur.role_id = rc.role_id
+        and u.active &lt;&gt; 0
+        and r.active = 1
+        GROUP BY id, rc.cfg_name) t
+
+        GROUP BY t.id
+        )t1
+		 <include refid="selectUserFilter"/>
+	</select>
+
+
+</mapper>
