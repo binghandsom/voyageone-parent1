@@ -165,6 +165,11 @@ public class TypeConfigEnums {
 		 * 赠品规则类型
 		 */
 		giftRuleType(35),
+		
+		/**
+		 * 品牌
+		 */
+		brand(41),
 
 		/**
 		 * 产品状态:cms2
@@ -244,7 +249,7 @@ public class TypeConfigEnums {
 		/**
 		 * 商品上下架操作结果
 		 */
-		putOnOffStatus(86);
+		putOnOffStatus(87);
 
 
     	private int id;

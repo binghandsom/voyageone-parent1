@@ -4,10 +4,12 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmPromotionProductModel" />
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `cms_bt_jm_promotion_id`, `product_code`, `jm_hash_id`, `limit`, 
-        `market_price`, `deal_price`, `app_id`, `pc_id`, `modified`, `discount`, `error_msg`, 
-        `sku_count`, `quantity`, `activity_start`, `activity_end`, `synch_status`, `update_status`, 
-        `price_status`, `modifier`, `promotion_tag`, `created`, `creater`, `deal_end_time_status`, 
-        `stock_status`
+        `app_id`, `pc_id`, `modified`, `discount`, `error_msg`, `sku_count`, `quantity`, 
+        `activity_start`, `activity_end`, `synch_status`, `update_status`, `price_status`, 
+        `modifier`, `promotion_tag`, `created`, `creater`, `deal_end_time_status`, `stock_status`, 
+        `max_msrp_usd`, `max_msrp_rmb`, `max_retail_price`, `max_sale_price`, `min_msrp_usd`, 
+        `min_msrp_rmb`, `min_retail_price`, `min_sale_price`, `max_market_price`, `min_market_price`, 
+        `max_deal_price`, `min_deal_price`, `deal_price`, `market_price`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -34,12 +36,6 @@
             </if>
             <if test="limit != null" >
                 `limit` = #{limit,jdbcType=INTEGER},
-            </if>
-            <if test="marketPrice != null" >
-                `market_price` = #{marketPrice,jdbcType=DECIMAL},
-            </if>
-            <if test="dealPrice != null" >
-                `deal_price` = #{dealPrice,jdbcType=DECIMAL},
             </if>
             <if test="appId != null" >
                 `app_id` = #{appId,jdbcType=BIGINT},
@@ -98,6 +94,48 @@
             <if test="stockStatus != null" >
                 `stock_status` = #{stockStatus,jdbcType=INTEGER},
             </if>
+            <if test="maxMsrpUsd != null" >
+                `max_msrp_usd` = #{maxMsrpUsd,jdbcType=DECIMAL},
+            </if>
+            <if test="maxMsrpRmb != null" >
+                `max_msrp_rmb` = #{maxMsrpRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="maxRetailPrice != null" >
+                `max_retail_price` = #{maxRetailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="maxSalePrice != null" >
+                `max_sale_price` = #{maxSalePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="minMsrpUsd != null" >
+                `min_msrp_usd` = #{minMsrpUsd,jdbcType=DECIMAL},
+            </if>
+            <if test="minMsrpRmb != null" >
+                `min_msrp_rmb` = #{minMsrpRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="minRetailPrice != null" >
+                `min_retail_price` = #{minRetailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="minSalePrice != null" >
+                `min_sale_price` = #{minSalePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="maxMarketPrice != null" >
+                `max_market_price` = #{maxMarketPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="minMarketPrice != null" >
+                `min_market_price` = #{minMarketPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="maxDealPrice != null" >
+                `max_deal_price` = #{maxDealPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="minDealPrice != null" >
+                `min_deal_price` = #{minDealPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="dealPrice != null" >
+                `deal_price` = #{dealPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="marketPrice != null" >
+                `market_price` = #{marketPrice,jdbcType=DECIMAL},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -127,12 +165,6 @@
             <if test="limit != null" >
                 and `limit` = #{limit,jdbcType=INTEGER}
             </if>
-            <if test="marketPrice != null" >
-                and `market_price` = #{marketPrice,jdbcType=DECIMAL}
-            </if>
-            <if test="dealPrice != null" >
-                and `deal_price` = #{dealPrice,jdbcType=DECIMAL}
-            </if>
             <if test="appId != null" >
                 and `app_id` = #{appId,jdbcType=BIGINT}
             </if>
@@ -186,6 +218,48 @@
             </if>
             <if test="stockStatus != null" >
                 and `stock_status` = #{stockStatus,jdbcType=INTEGER}
+            </if>
+            <if test="maxMsrpUsd != null" >
+                and `max_msrp_usd` = #{maxMsrpUsd,jdbcType=DECIMAL}
+            </if>
+            <if test="maxMsrpRmb != null" >
+                and `max_msrp_rmb` = #{maxMsrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="maxRetailPrice != null" >
+                and `max_retail_price` = #{maxRetailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="maxSalePrice != null" >
+                and `max_sale_price` = #{maxSalePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="minMsrpUsd != null" >
+                and `min_msrp_usd` = #{minMsrpUsd,jdbcType=DECIMAL}
+            </if>
+            <if test="minMsrpRmb != null" >
+                and `min_msrp_rmb` = #{minMsrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="minRetailPrice != null" >
+                and `min_retail_price` = #{minRetailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="minSalePrice != null" >
+                and `min_sale_price` = #{minSalePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="maxMarketPrice != null" >
+                and `max_market_price` = #{maxMarketPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="minMarketPrice != null" >
+                and `min_market_price` = #{minMarketPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="maxDealPrice != null" >
+                and `max_deal_price` = #{maxDealPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="minDealPrice != null" >
+                and `min_deal_price` = #{minDealPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="dealPrice != null" >
+                and `deal_price` = #{dealPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="marketPrice != null" >
+                and `market_price` = #{marketPrice,jdbcType=DECIMAL}
             </if>
         </where>
         limit 1
@@ -211,12 +285,6 @@
             <if test="limit != null" >
                 and `limit` = #{limit,jdbcType=INTEGER}
             </if>
-            <if test="marketPrice != null" >
-                and `market_price` = #{marketPrice,jdbcType=DECIMAL}
-            </if>
-            <if test="dealPrice != null" >
-                and `deal_price` = #{dealPrice,jdbcType=DECIMAL}
-            </if>
             <if test="appId != null" >
                 and `app_id` = #{appId,jdbcType=BIGINT}
             </if>
@@ -270,6 +338,48 @@
             </if>
             <if test="stockStatus != null" >
                 and `stock_status` = #{stockStatus,jdbcType=INTEGER}
+            </if>
+            <if test="maxMsrpUsd != null" >
+                and `max_msrp_usd` = #{maxMsrpUsd,jdbcType=DECIMAL}
+            </if>
+            <if test="maxMsrpRmb != null" >
+                and `max_msrp_rmb` = #{maxMsrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="maxRetailPrice != null" >
+                and `max_retail_price` = #{maxRetailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="maxSalePrice != null" >
+                and `max_sale_price` = #{maxSalePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="minMsrpUsd != null" >
+                and `min_msrp_usd` = #{minMsrpUsd,jdbcType=DECIMAL}
+            </if>
+            <if test="minMsrpRmb != null" >
+                and `min_msrp_rmb` = #{minMsrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="minRetailPrice != null" >
+                and `min_retail_price` = #{minRetailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="minSalePrice != null" >
+                and `min_sale_price` = #{minSalePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="maxMarketPrice != null" >
+                and `max_market_price` = #{maxMarketPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="minMarketPrice != null" >
+                and `min_market_price` = #{minMarketPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="maxDealPrice != null" >
+                and `max_deal_price` = #{maxDealPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="minDealPrice != null" >
+                and `min_deal_price` = #{minDealPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="dealPrice != null" >
+                and `deal_price` = #{dealPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="marketPrice != null" >
+                and `market_price` = #{marketPrice,jdbcType=DECIMAL}
             </if>
         </where>
     </select>
@@ -292,12 +402,6 @@
             <if test="limit != null" >
                 and `limit` = #{limit,jdbcType=INTEGER}
             </if>
-            <if test="marketPrice != null" >
-                and `market_price` = #{marketPrice,jdbcType=DECIMAL}
-            </if>
-            <if test="dealPrice != null" >
-                and `deal_price` = #{dealPrice,jdbcType=DECIMAL}
-            </if>
             <if test="appId != null" >
                 and `app_id` = #{appId,jdbcType=BIGINT}
             </if>
@@ -352,6 +456,48 @@
             <if test="stockStatus != null" >
                 and `stock_status` = #{stockStatus,jdbcType=INTEGER}
             </if>
+            <if test="maxMsrpUsd != null" >
+                and `max_msrp_usd` = #{maxMsrpUsd,jdbcType=DECIMAL}
+            </if>
+            <if test="maxMsrpRmb != null" >
+                and `max_msrp_rmb` = #{maxMsrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="maxRetailPrice != null" >
+                and `max_retail_price` = #{maxRetailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="maxSalePrice != null" >
+                and `max_sale_price` = #{maxSalePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="minMsrpUsd != null" >
+                and `min_msrp_usd` = #{minMsrpUsd,jdbcType=DECIMAL}
+            </if>
+            <if test="minMsrpRmb != null" >
+                and `min_msrp_rmb` = #{minMsrpRmb,jdbcType=DECIMAL}
+            </if>
+            <if test="minRetailPrice != null" >
+                and `min_retail_price` = #{minRetailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="minSalePrice != null" >
+                and `min_sale_price` = #{minSalePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="maxMarketPrice != null" >
+                and `max_market_price` = #{maxMarketPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="minMarketPrice != null" >
+                and `min_market_price` = #{minMarketPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="maxDealPrice != null" >
+                and `max_deal_price` = #{maxDealPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="minDealPrice != null" >
+                and `min_deal_price` = #{minDealPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="dealPrice != null" >
+                and `deal_price` = #{dealPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="marketPrice != null" >
+                and `market_price` = #{marketPrice,jdbcType=DECIMAL}
+            </if>
         </where>
     </select>
 
@@ -372,12 +518,6 @@
             </if>
             <if test="limit != null" >
                 `limit`,
-            </if>
-            <if test="marketPrice != null" >
-                `market_price`,
-            </if>
-            <if test="dealPrice != null" >
-                `deal_price`,
             </if>
             <if test="appId != null" >
                 `app_id`,
@@ -432,6 +572,48 @@
             <if test="stockStatus != null" >
                 `stock_status`,
             </if>
+            <if test="maxMsrpUsd != null" >
+                `max_msrp_usd`,
+            </if>
+            <if test="maxMsrpRmb != null" >
+                `max_msrp_rmb`,
+            </if>
+            <if test="maxRetailPrice != null" >
+                `max_retail_price`,
+            </if>
+            <if test="maxSalePrice != null" >
+                `max_sale_price`,
+            </if>
+            <if test="minMsrpUsd != null" >
+                `min_msrp_usd`,
+            </if>
+            <if test="minMsrpRmb != null" >
+                `min_msrp_rmb`,
+            </if>
+            <if test="minRetailPrice != null" >
+                `min_retail_price`,
+            </if>
+            <if test="minSalePrice != null" >
+                `min_sale_price`,
+            </if>
+            <if test="maxMarketPrice != null" >
+                `max_market_price`,
+            </if>
+            <if test="minMarketPrice != null" >
+                `min_market_price`,
+            </if>
+            <if test="maxDealPrice != null" >
+                `max_deal_price`,
+            </if>
+            <if test="minDealPrice != null" >
+                `min_deal_price`,
+            </if>
+            <if test="dealPrice != null" >
+                `deal_price`,
+            </if>
+            <if test="marketPrice != null" >
+                `market_price`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
@@ -448,12 +630,6 @@
             </if>
             <if test="limit != null" >
                 #{limit,jdbcType=INTEGER},
-            </if>
-            <if test="marketPrice != null" >
-                #{marketPrice,jdbcType=DECIMAL},
-            </if>
-            <if test="dealPrice != null" >
-                #{dealPrice,jdbcType=DECIMAL},
             </if>
             <if test="appId != null" >
                 #{appId,jdbcType=BIGINT},
@@ -517,6 +693,48 @@
             </if>
             <if test="stockStatus != null" >
                 #{stockStatus,jdbcType=INTEGER},
+            </if>
+            <if test="maxMsrpUsd != null" >
+                #{maxMsrpUsd,jdbcType=DECIMAL},
+            </if>
+            <if test="maxMsrpRmb != null" >
+                #{maxMsrpRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="maxRetailPrice != null" >
+                #{maxRetailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="maxSalePrice != null" >
+                #{maxSalePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="minMsrpUsd != null" >
+                #{minMsrpUsd,jdbcType=DECIMAL},
+            </if>
+            <if test="minMsrpRmb != null" >
+                #{minMsrpRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="minRetailPrice != null" >
+                #{minRetailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="minSalePrice != null" >
+                #{minSalePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="maxMarketPrice != null" >
+                #{maxMarketPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="minMarketPrice != null" >
+                #{minMarketPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="maxDealPrice != null" >
+                #{maxDealPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="minDealPrice != null" >
+                #{minDealPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="dealPrice != null" >
+                #{dealPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="marketPrice != null" >
+                #{marketPrice,jdbcType=DECIMAL},
             </if>
         </trim>
     </insert>

@@ -5,7 +5,7 @@ define([
     'underscore',
     'modules/cms/controller/popup.ctl'
 ], function () {
-    function detailController($scope, popups, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, $routeParams, alert, $translate, confirm, platformMappingService) {
+    function detailController($scope, popups, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, $routeParams, alert, $translate, confirm, platformMappingService,$filter) {
 
         $scope.datePicker = [];
         $scope.vm = {
@@ -475,19 +475,26 @@ define([
                 return "";
             }
             return errorMsg.substr(0, 30) + "...";
-        }
+        };
+
         $scope.getDealPrice = function (m) {
             if (m.maxDealPrice == m.minDealPrice)
                 return m.maxDealPrice;
 
             return m.maxDealPrice + "~" + m.minDealPrice;
-        }
+        };
         $scope.getMarketPrice = function (m) {
             if (m.maxMarketPrice == m.minMarketPrice)
                 return m.maxMarketPrice;
 
             return m.maxMarketPrice + "~" + m.minMarketPrice;
-        }
+        };
+        $scope.getMinMaxPrice = function (minPrice,maxPrice) {
+            if (maxPrice== minPrice)
+                return maxPrice;
+
+            return minPrice + "~" +maxPrice;
+        };
         $scope.changeSelectTag=function(m) {
             var productTagList = [];
             for (var i = 0; i < m.tagNameList.length; i++) {

@@ -20,6 +20,8 @@ public class BcbgStyleBean {
 
     private String md5;
 
+    private String sizeFit;
+
     private Boolean valid;
 
     public String getStyleID() {
@@ -52,6 +54,14 @@ public class BcbgStyleBean {
 
     public void setMd5(String md5) {
         this.md5 = md5;
+    }
+
+    public String getSizeFit() {
+        return sizeFit;
+    }
+
+    public void setSizeFit(String sizeFit) {
+        this.sizeFit = sizeFit;
     }
 
     /**

@@ -15,7 +15,6 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.rule.Rule;
-import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.*;
@@ -34,7 +33,10 @@ import com.voyageone.service.dao.cms.CmsBtWorkloadHistoryDao;
 import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
-import com.voyageone.service.dao.cms.mongo.*;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
@@ -612,14 +614,13 @@ public class SxProductService extends BaseService {
             // 即使scene7上URL对应的图片不存在也不要报异常，直接返回空字符串
             String errMsg = "通过scene7上聚美图片URL取得对应的图片流失败 [picUrl:" + picUrl + "]";
             $error(errMsg);
-            throw new BusinessException(errMsg);
-        } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException ignored) {
                 }
             }
+            throw new BusinessException(errMsg);
         }
 
         try {
@@ -855,6 +856,8 @@ public class SxProductService extends BaseService {
                     List<BaseMongoMap<String, Object>> productPlatformSku = productModel.getPlatform(cartId).getSkus();
                     List<BaseMongoMap<String, Object>> skus = new ArrayList<>(); // 该product下，允许在该平台上上架的sku
                     List<String> listSkuCode = new ArrayList<>();
+                    // 分平台下面的skuCode未在共通sku(common.skus)下找到对应sku的code列表
+                    List<String> notFoundSkuCodes = new ArrayList<>();
                     if (productPlatformSku != null) {
                         productPlatformSku.forEach(sku -> {
                             if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
@@ -863,13 +866,32 @@ public class SxProductService extends BaseService {
                                 // 外面skus的共通属性 + 从各个平台下面的skus(platform.skus)那里取得的属性
                                 // 以防万一，如果各个平台下面的skus，有和外面skus共通属性一样的属性，那么是去取各个平台下面的skus属性，即把外面的值覆盖
                                 BaseMongoMap<String, Object> mapSku = mapProductModelSku.get(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-                                mapSku.putAll(sku); // 外面skus是共通属性 + 从各个平台下面的skus
-                                skus.add(mapSku);
-                                // modified by morse.lu 2016/06/15 end
-                                listSkuCode.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                // update by desmond 2016/08/03 start
+                                if (mapSku != null && mapSku.size() > 0) {
+                                    mapSku.putAll(sku); // 外面skus是共通属性 + 从各个平台下面的skus
+                                    skus.add(mapSku);
+                                    // modified by morse.lu 2016/06/15 end
+                                    listSkuCode.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                } else {
+                                    // 各个平台下面的skuCode没有在共通skus里面找到对应的sku的时候
+                                    notFoundSkuCodes.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                }
+                                // update by desmond 2016/08/03 end
                             }
                         });
                     }
+                    // add by desmond 2016/08/03 start
+                    // 如果分平台下面的skuCode没找到对应的共通skuCode则报错
+                    if (ListUtils.notNull(notFoundSkuCodes)) {
+                        String strNotFoundSkus = notFoundSkuCodes.stream().collect(Collectors.joining(","));
+                        // 该商品对应的feed信息不存在时，暂时的做法就是跳过当前记录， 这个group就不上了
+                        String errorMsg = "取得上新数据(SxData)失败! 分平台sku件数与共通sku件数不一致，有些分平台skuCode没有找到" +
+                                "对应的共通sku (ProductCode:"+ productModel.getCommon().getFields().getCode() + " 未找到的分平台skuCode:" + strNotFoundSkus + ")";
+                        $error(errorMsg);
+                        sxData.setErrorMessage(errorMsg);
+                        break;
+                    }
+                    // add by desmond 2016/08/03 end
 
                     if (!skus.isEmpty()) {
 //                        productModel.getPlatform(cartId).setSkus(skus); // 只留下允许在该平台上上架的sku，且属性为：外面skus的共通属性 + 从各个平台下面的skus的属性
@@ -929,35 +951,37 @@ public class SxProductService extends BaseService {
         Map<String, String> sizeMap = getSizeMap(channelId, sxData.getMainProduct().getCommon().getFields().getBrand(),
                 sxData.getMainProduct().getCommon().getFields().getProductType(), sxData.getMainProduct().getCommon().getFields().getSizeType());
 
-        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 START
-        Map<String, String> mapSizeNick = new HashMap<>();
-        for (BaseMongoMap<String, Object> sku : skuList) {
-            mapSizeNick.put(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), sku.getStringAttribute("sizeNick"));
-        }
-        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 END
-
-        // 防止同一个group里, 不同的product的sku的size使用了不同的sizeNick
-        Map<String, String> sizeSxMap = new HashMap<>();
-        // 优先mainProduct里的sizeNick
-        for (CmsBtProductModel_Sku sku : sxData.getMainProduct().getCommon().getSkus()) {
-            String sizeNick = mapSizeNick.get(sku.getSkuCode());
-            if (!StringUtils.isEmpty(sizeNick)) {
-                sizeSxMap.put(sku.getSize(), sizeNick);
-            }
-        }
-        // 然后把productList里的也一样的做一遍
-        for (CmsBtProductModel productModel : productModelList) {
-            // 遍历每个product里的sku
-            for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
-                // 已经设置过的size就不用再设置了
-                if (!sizeSxMap.containsKey(sku.getSize())) {
-                    String sizeNick = mapSizeNick.get(sku.getSkuCode());
-                    if (!StringUtils.isEmpty(sizeNick)) {
-                        sizeSxMap.put(sku.getSize(), sizeNick);
-                    }
-                }
-            }
-        }
+        // 20160805 这段有问题, 不要了 tom START
+//        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 START
+//        Map<String, String> mapSizeNick = new HashMap<>();
+//        for (BaseMongoMap<String, Object> sku : skuList) {
+//            mapSizeNick.put(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), sku.getStringAttribute("sizeNick"));
+//        }
+//        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 END
+//
+//        // 防止同一个group里, 不同的product的sku的size使用了不同的sizeNick
+//        Map<String, String> sizeSxMap = new HashMap<>();
+//        // 优先mainProduct里的sizeNick
+//        for (CmsBtProductModel_Sku sku : sxData.getMainProduct().getCommon().getSkus()) {
+//            String sizeNick = mapSizeNick.get(sku.getSkuCode());
+//            if (!StringUtils.isEmpty(sizeNick)) {
+//                sizeSxMap.put(sku.getSize(), sizeNick);
+//            }
+//        }
+//        // 然后把productList里的也一样的做一遍
+//        for (CmsBtProductModel productModel : productModelList) {
+//            // 遍历每个product里的sku
+//            for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
+//                // 已经设置过的size就不用再设置了
+//                if (!sizeSxMap.containsKey(sku.getSize())) {
+//                    String sizeNick = mapSizeNick.get(sku.getSkuCode());
+//                    if (!StringUtils.isEmpty(sizeNick)) {
+//                        sizeSxMap.put(sku.getSize(), sizeNick);
+//                    }
+//                }
+//            }
+//        }
+        // 20160805 这段有问题, 不要了 tom END
 
         // 处理一下skuList的所有sizeSx尺码
         // modified by morse.lu 2016/07/08 start
@@ -978,11 +1002,14 @@ public class SxProductService extends BaseService {
 //                sizeSxMap.put(sku.getSize(), sku.getSizeSx());
 //			}
 //		}
+
+        Map<String, String> sizeSxMap = new HashMap<>();
         for (BaseMongoMap<String, Object> sku : skuList) {
             String size = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name());
-            if (sizeSxMap.containsKey(size)) {
+            String sizeNick = sku.getStringAttribute("sizeNick");
+            if (!StringUtils.isEmpty(sizeNick)) {
                 // 直接用Nick
-                sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), sizeSxMap.get(size));
+                sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), sizeNick);
 			} else {
                 // 用size的尺码, 并转换
                 if (sizeMap.containsKey(size)) {
@@ -990,18 +1017,21 @@ public class SxProductService extends BaseService {
                 } else {
                     sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), size);
                 }
-                sizeSxMap.put(size, sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
+//                sizeSxMap.put(size, sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
 			}
+            sizeSxMap.put(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
         }
         // modified by morse.lu 2016/07/08 end
 
         // 把整理好的skuList里的sizeSx, 回写到mainProduct里的sizeSx 和 productList里的sizeSx里
         for (CmsBtProductModel_Sku sku : sxData.getMainProduct().getCommon().getSkus()) {
-            sku.setSizeSx(sizeSxMap.get(sku.getSize()));
+//            sku.setSizeSx(sizeSxMap.get(sku.getSize()));
+            sku.setSizeSx(sizeSxMap.get(sku.getSkuCode()));
         }
         for (CmsBtProductModel productModel : productModelList) {
             for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
-                sku.setSizeSx(sizeSxMap.get(sku.getSize()));
+//                sku.setSizeSx(sizeSxMap.get(sku.getSize()));
+                sku.setSizeSx(sizeSxMap.get(sku.getSkuCode()));
             }
         }
 
@@ -1870,7 +1900,7 @@ public class SxProductService extends BaseService {
                             InputField inputField = (InputField) field;
                             String styleCode = sxData.getStyleCode();
                             if (StringUtils.isEmpty(styleCode)) {
-                                styleCode = generateStyleCode(sxData, field.getId());
+                                styleCode = generateStyleCode(sxData);
                             }
                             inputField.setValue(styleCode);
                             $debug("tmall style code[" + field.getId() + "]: " + field.getValue());
@@ -1891,7 +1921,7 @@ public class SxProductService extends BaseService {
                                     InputField field = (InputField) processField;
                                     String styleCode = sxData.getStyleCode();
                                     if (StringUtils.isEmpty(styleCode)) {
-                                        styleCode = generateStyleCode(sxData, field.getId());
+                                        styleCode = generateStyleCode(sxData);
                                     }
                                     field.setValue(styleCode);
                                     retMap.put(processField.getId(), field);
@@ -1963,7 +1993,7 @@ public class SxProductService extends BaseService {
                             // modified by morse.lu 2016/07/06 end
                             String styleCode = sxData.getStyleCode();
                             if (StringUtils.isEmpty(styleCode)) {
-                                styleCode = generateStyleCode(sxData, field.getId());
+                                styleCode = generateStyleCode(sxData);
                             }
                             field.setValue(styleCode);
                             retMap.put(processField.getId(), field);
@@ -2406,6 +2436,10 @@ public class SxProductService extends BaseService {
                         Field valueField = deepCloneField(subfields.get(index - 1));
                         if (valueField.getType() == FieldTypeEnum.INPUT) {
                             String url = resolveDict(imageProp.getBaseDictName() + index, expressionParser, shopBean, user, null);
+                            if (StringUtils.isEmpty(url)) {
+                                // 如果代码未设定，那么直接用field.name去取着试试看
+                                url = resolveDict(valueField.getName(), expressionParser, shopBean, user, null);
+                            }
                             complexValue.put(valueField);
                             ((InputField) valueField).setValue(url);
                         } else {
@@ -2458,20 +2492,13 @@ public class SxProductService extends BaseService {
      * 1. 如果不是达尔文体系，那么使用model作为款号直接返回
      * 2. 如果是达尔文体系，暂时不做
      * @param sxData SxData
-     * @param propId 优先从platforms.fields.propId里取，取不到用model
      * @throws Exception
      */
-    public String generateStyleCode(SxData sxData, String propId) throws Exception {
+    public String generateStyleCode(SxData sxData) throws Exception {
         boolean isDarwin = sxData.isDarwin();
         if (!isDarwin) {
             // 不是达尔文
             String styleCode = sxData.getMainProduct().getCommon().getFields().getModel();
-            // added by morse.lu 2016/07/22 start
-            String propVal = sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields().getStringAttribute(propId);
-            if (!StringUtils.isEmpty(propVal)) {
-                styleCode = propVal;
-            }
-            // added by morse.lu 2016/07/22 end
             // test用 start
 //            styleCode = "test." + styleCode;
             // test用 end
@@ -3256,9 +3283,9 @@ public class SxProductService extends BaseService {
 
         // 取得变更前的product group表数据
         CmsBtProductGroupModel beforeProductGroup = productGroupService.getProductGroupByGroupId(sxData.getChannelId(),
-                sxData.getPlatform().getGroupId());
+                sxData.getGroupId());
         if (beforeProductGroup == null) {
-            $error("回写上新结果状态之前，没找到更新前的产品group表数据 [ProductCode:%s] [GroupId:%s]",
+            $error("回写上新结果状态失败！没找到更新前的产品group表数据 [ProductCode:%s] [GroupId:%s]",
                     sxData.getChannelId(), sxData.getPlatform().getGroupId());
             return;
         }
@@ -3307,17 +3334,17 @@ public class SxProductService extends BaseService {
 
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
             this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.okNum,
-                    workload.getModifier());
+                    StringUtils.isEmpty(workload.getModifier()) ? modifier : workload.getModifier());
         } else {
             // 上新失败后回写product表pPublishError的值("Error")
-            productGroupService.updateUploadErrorStatus(sxData.getPlatform());
+            productGroupService.updateUploadErrorStatus(sxData.getPlatform(), sxData.getErrorMessage());
 
             // 出错的时候将错误信息回写到cms_bt_business_log表
             this.insertBusinessLog(sxData, modifier);
 
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
             this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.errorNum,
-                    workload.getModifier());
+                    StringUtils.isEmpty(workload.getModifier()) ? modifier : workload.getModifier());
         }
     }
 
@@ -3396,7 +3423,8 @@ public class SxProductService extends BaseService {
      */
     public void insertSxWorkLoad(String channelId, List<String> codeList, Integer cartId, String modifier) {
         // 输入参数检查
-        if (StringUtils.isEmpty(channelId) || codeList == null || StringUtils.isEmpty(modifier)) {
+        if (StringUtils.isEmpty(channelId) || codeList == null || codeList.isEmpty() || StringUtils.isEmpty(modifier)) {
+            $warn("insertSxWorkLoad 缺少参数");
             return;
         }
 

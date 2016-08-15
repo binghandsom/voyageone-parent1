@@ -42,6 +42,8 @@ public class CmsBtDataAmountService {
                 sumPrice(channelId, cartId);
                 //4.平台信息
                 sumPlatInfo(channelId, cartId);
+                sumBrandNoMatch(channelId,cartId);
+
             }
         }
     }
@@ -93,6 +95,11 @@ public class CmsBtDataAmountService {
             long count = daoCmsBtProduct.countByQuery(strQuery, channelId);
             saveCmsBtDataAmount(channelId, cartId, enumFeed, count);
         }
+    }
+    //获取品牌未匹配数量
+    private  void sumBrandNoMatch(String channelId, int cartId) {
+        int count = daoExt.selectBrandNoMatchCount(channelId, cartId);
+        saveCmsBtDataAmount(channelId, cartId, EnumPlatformInfoSum_BrandNoMatch.CMS_BrandNoMatchCount, count);
     }
 
     //保存

@@ -153,8 +153,8 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                         superFeedverStockBean.setMappriceAmount(String.valueOf(variationType.getMapPrice().getAmount()));
                                     }
                                     if (variationType.getMsrpPrice() == null) {
-                                        superFeedverStockBean.setMsrppriceAmount("");
-                                        superFeedverStockBean.setMsrppriceCurrency("");
+                                        superFeedverStockBean.setMsrppriceAmount(String.valueOf(variationType.getSellingPrice().getAmount()));
+                                        superFeedverStockBean.setMsrppriceCurrency(String.valueOf(variationType.getSellingPrice().getCurrency()));
                                     } else {
                                         superFeedverStockBean.setMsrppriceAmount(getValue(String.valueOf(variationType.getMsrpPrice().getAmount())));
                                         superFeedverStockBean.setMsrppriceCurrency(getValue(String.valueOf(variationType.getMsrpPrice().getCurrency())));
@@ -269,15 +269,6 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                             superFeedverStockBean.setAttributeSize(String.valueOf(sbSizeValue.deleteCharAt(sbSizeValue.length() - 1)));
                                         }
                                     }
-                                    //SKU_Image
-                                    List<ImageType> imageTypeList = variationType.getImages().getImage();
-                                    if (imageTypeList.size() > 0) {
-                                        StringBuilder sb = new StringBuilder();
-                                        for (ImageType imageType : imageTypeList) {
-                                            sb.append(imageType.getCdnPath() + ",");
-                                        }
-                                        superFeedverStockBean.setImage(sb.deleteCharAt(sb.length() - 1).toString());
-                                    }
                                     //model_image
                                     List<ImageType> model_imageTypeList = product.getImages().getImage();
                                     if (model_imageTypeList.size() > 0) {
@@ -286,6 +277,16 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                             sb.append(imageType.getCdnPath() + ",");
                                         }
                                         superFeedverStockBean.setModelImage(sb.deleteCharAt(sb.length() - 1).toString());
+                                    }
+                                    //SKU_Image
+                                    List<ImageType> imageTypeList = variationType.getImages().getImage();
+                                    if (imageTypeList.size() > 0) {
+                                        StringBuilder sb = new StringBuilder();
+                                        for (ImageType imageType : imageTypeList) {
+                                            sb.append(imageType.getCdnPath() + ",");
+                                        }
+                                        sb.append(superFeedverStockBean.getModelImage());
+                                        superFeedverStockBean.setImage(sb.toString());
                                     }
                                     superFeedverStockBean.setModelRetailerid(getValue(product.getRetailerId()));
                                     superFeedverStockBean.setModelTitle(getValue(product.getTitle()));
@@ -385,7 +386,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         for (SuperFeedOverStockBean superfeed : superfeedlist) {
 
             if (overStockFeedDao.insertSelective(superfeed) <= 0) {
-                $info("ShoeZoo产品信息插入失败sku = " + superfeed.getSku());
+                $info("OverStock产品信息插入失败sku = " + superfeed.getSku());
             }
         }
         return true;

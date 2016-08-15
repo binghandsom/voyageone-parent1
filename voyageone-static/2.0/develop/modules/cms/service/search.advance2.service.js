@@ -164,6 +164,30 @@ define([
                 searchInfo.pCatStatus = 0;
             }
 
+            // 过滤重复的排序条件，相同的以后一个为准
+            if (searchInfo.sortThreeName && searchInfo.sortThreeType) {
+                if (searchInfo.sortTwoName && searchInfo.sortTwoType) {
+                    if (searchInfo.sortThreeName == searchInfo.sortTwoName) {
+                        searchInfo.sortTwoName = '';
+                        searchInfo.sortTwoType = '';
+                    }
+                }
+                if (searchInfo.sortOneName && searchInfo.sortOneType) {
+                    if (searchInfo.sortThreeName == searchInfo.sortOneName) {
+                        searchInfo.sortOneName = '';
+                        searchInfo.sortOneType = '';
+                    }
+                }
+            }
+            if (searchInfo.sortTwoName && searchInfo.sortTwoType) {
+                if (searchInfo.sortOneName && searchInfo.sortOneType) {
+                    if (searchInfo.sortTwoName == searchInfo.sortOneName) {
+                        searchInfo.sortOneName = '';
+                        searchInfo.sortOneType = '';
+                    }
+                }
+            }
+
             if (!_.isUndefined(searchInfo.codeList) && !_.isNull(searchInfo.codeList))
                 searchInfo.codeList = searchInfo.codeList.split("\n");
             return searchInfo;

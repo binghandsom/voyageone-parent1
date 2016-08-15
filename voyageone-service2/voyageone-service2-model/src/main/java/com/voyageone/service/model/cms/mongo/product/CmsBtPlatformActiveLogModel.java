@@ -23,6 +23,7 @@ public class CmsBtPlatformActiveLogModel extends ChannelPartitionModel {
     private String platformStatus = null;
     private String activeStatus = null;
     private String mainProdCode = null;
+    private Long batchNo;
 
     public String getResult() {
         return result;
@@ -102,6 +103,14 @@ public class CmsBtPlatformActiveLogModel extends ChannelPartitionModel {
 
     public void setCartId(Integer cartId) {
         this.cartId = cartId;
+    }
+
+    public Long getBatchNo() {
+        return batchNo;
+    }
+
+    public void setBatchNo(Long batchNo) {
+        this.batchNo = batchNo;
     }
 
 }

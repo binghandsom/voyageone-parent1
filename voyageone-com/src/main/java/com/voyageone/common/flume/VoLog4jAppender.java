@@ -98,6 +98,16 @@ public class VoLog4jAppender extends AppenderSkeleton {
 
     private boolean isReconnect = false;
 
+    private String splitDir = "";
+
+    public String getSplitDir() {
+        return splitDir;
+    }
+
+    public void setSplitDir(String splitDir) {
+        this.splitDir = splitDir;
+    }
+
     /**
      * If this constructor is used programmatically rather than from a log4j conf
      * you must set the <tt>port</tt> and <tt>hostname</tt> and then call
@@ -130,11 +140,14 @@ public class VoLog4jAppender extends AppenderSkeleton {
     @Override
     // liang change metho
     public synchronized void append(LoggingEvent event) throws FlumeException {
-        threadPool.execute(new LogAppThread(event));
+        event.getMDCCopy();
+        String taskName = (String) event.getMDC("taskName");
+        String subSystem = (String) event.getMDC("subSystem");
+        threadPool.execute(new LogAppThread(event, subSystem, taskName));
     }
 
     // liang change append
-    public synchronized void appendEvent(LoggingEvent event) throws FlumeException {
+    public synchronized void appendEvent(LoggingEvent event, String subSystem, String taskName) throws FlumeException {
         //If rpcClient is null, it means either this appender object was never
         //setup by setting hostname and port and then calling activateOptions
         //or this appender object was closed by calling close(), so we throw an
@@ -196,6 +209,11 @@ public class VoLog4jAppender extends AppenderSkeleton {
             flumeEvent = EventBuilder.withBody(msg, Charset.forName("UTF8"), hdrs);
             // liang add projectFile
             flumeEvent.getHeaders().put("projectFile", projectFile);
+            if (taskName != null && taskName.trim().length() > 0) {
+                flumeEvent.getHeaders().put("taskName", taskName);
+                flumeEvent.getHeaders().put("subSystem", subSystem);
+                flumeEvent.getHeaders().put("splitDir", this.splitDir);
+            }
         }
 
         try {
@@ -394,14 +412,22 @@ public class VoLog4jAppender extends AppenderSkeleton {
 
     private class LogAppThread implements Runnable {
         private LoggingEvent event;
+        private String subSystem;
+        private String taskName;
 
         public LogAppThread(LoggingEvent event) {
             this.event = event;
         }
 
+        public LogAppThread(LoggingEvent event, String subSystem, String taskName) {
+            this.event = event;
+            this.subSystem = subSystem;
+            this.taskName = taskName;
+        }
+
         @Override
         public void run() {
-            appendEvent(event);
+            appendEvent(event, subSystem, taskName);
         }
     }
 }

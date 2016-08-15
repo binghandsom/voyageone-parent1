@@ -14,4 +14,6 @@ import java.util.Map;
 public interface CmsBtDataAmountDaoExt {
 
   List<CmsBtDataAmountModel> selectByListDataAmountTypeId(@Param("channelId") String channelId, @Param("list")List<Integer> listDataAmountTypeId);
+
+  int selectBrandNoMatchCount(@Param("channelId") String channelId,@Param("cartId") int cartId);
 }

@@ -111,6 +111,17 @@ public class CmsConstants {
         // 发货方式
         String SHIPPING_TYPE = "SHIPPING_TYPE";
 
+        // 产品分类是否从feed导入(1：从feed导入，0：不从feed导入运营手动添加)
+        String PRODUCT_TYPE_FROM_FEED_FLG = "PRODUCT_TYPE_FROM_FEED_FLG";
+
+        // 适用人群是否从feed导入(1：从feed导入，0：不从feed导入运营手动添加)
+        String SIZE_TYPE_FROM_FEED_FLG = "SIZE_TYPE_FROM_FEED_FLG";
+
+        // 价格是否向上取整(1：向上取整，0：不向上取整)
+        String PRICE_ROUND_UP_FLG = "PRICE_ROUND_UP_FLG";
+
+        // 新建product时是否自动设置产品图images2(1:自动设置  空，0:不设置)
+        String AUTO_SET_IMAGES2_FLG = "AUTO_SET_IMAGES2_FLG";
     }
 
     public interface DataAmount {

@@ -3,8 +3,9 @@
  * 京东 & 聚美 & 天猫国际 产品概述（schema）
  */
 define([
-    'cms'
-],function(cms) {
+    'cms',
+    'modules/cms/enums/Carts'
+],function(cms,carts) {
     cms.directive("jdSchema", function (productDetailService,platformMappingService,$translate,notify,confirm,$q,$compile,alert) {
         return {
             restrict: "E",
@@ -26,7 +27,8 @@ define([
                     resultFlag:0,
                     sellerCats:[],
                     productUrl:"",
-                    preStatus:null
+                    preStatus:null,
+                    noMaterMsg:null
                 };
 
                 initialize();
@@ -40,6 +42,7 @@ define([
                 scope.pageAnchor = pageAnchor;
                 scope.allSkuSale = allSkuSale;
                 scope.focusError = focusError;
+                scope.choseBrand = choseBrand;
 
                 /**
                  * 获取京东页面初始化数据
@@ -70,32 +73,19 @@ define([
                             scope.vm.checkFlag.category = scope.vm.platform.pCatPath == null ? 0 : 1;
                             scope.vm.platform.pStatus = scope.vm.platform.pStatus == null ? "WaitingPublish" : scope.vm.platform.pStatus;
                             scope.vm.sellerCats = scope.vm.platform.sellerCats == null?[]:scope.vm.platform.sellerCats;
-                            scope.vm.platform.pStatus = scope.vm.platform.pPublishError != null && scope.vm.platform.pPublishError != "" ? "Failed":scope.vm.platform.pStatus;
+                            scope.vm.platform.pStatus = scope.vm.platform.pPublishMessage != null && scope.vm.platform.pPublishMessage != "" ? "Failed":scope.vm.platform.pStatus;
+
                         }
 
                         _.each(scope.vm.mastData.skus,function(mSku){
                             scope.vm.skuTemp[mSku.skuCode] = mSku;
                         });
 
+                    },function(resp){
+                        scope.vm.noMaterMsg = resp.message.indexOf("Server Exception") >=0 ? null : resp.message;
                     });
 
-                    switch(+scope.cartInfo.value){
-                        case 23:
-                            scope.vm.productUrl = "http://detail.tmall.hk/hk/item.htm?id=";
-                            break;
-                        case 26:
-                            scope.vm.productUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=";
-                            break;
-                        case 27:
-                            scope.vm.productUrl = "http://item.jumeiglobal.com/";
-                            break;
-                        case 28:
-                            scope.vm.productUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=";
-                            break;
-                        case 29:
-                            scope.vm.productUrl = "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=";
-                            break;
-                    }
+                    scope.vm.productUrl = carts.valueOf(+scope.cartInfo.value).pUrl;
 
                 }
 
@@ -156,15 +146,17 @@ define([
                 }
 
                 /**
-                 *  切换主类目   cartInfo.value,vm.mastData.productCode
+                 *  切换主商品  cartInfo.value,vm.mastData.productCode
                  */
                 function openSwitchMainPop(openSwitchMain){
+
                     openSwitchMain({
-                        cartId:scope.cartInfo.value,
-                        productCode:scope.vm.mastData.productCode
+                        cartId : scope.cartInfo.value,
+                        productCode : scope.productInfo.masterField.code
                     }).then(function(){
                         //刷新子页面
                         getplatformData();
+                        scope.vm.noMaterMsg = null;
                     });
                 }
 
@@ -172,9 +164,11 @@ define([
                  *  商品下线
                  */
                 function openOffLinePop(openProductOffLine,type){
+                    if(scope.vm.mastData == null)
+                        return;
 
-                    if(scope.vm.status != "Approved"){
-                        alert("该商品还未Approved！");
+                    if(scope.vm.platform == null || scope.vm.platform.pNumIId == null || scope.vm.platform.pNumIId == ""){
+                        alert("商品未完成平台上新，无法操作平台下线。");
                         return;
                     }
 
@@ -191,6 +185,23 @@ define([
                         //刷新子页面
                         getplatformData();
                     });
+                }
+
+                /**
+                 *  商品品牌选择
+                 */
+                function choseBrand(openPlatformMappingSetting){
+
+                    var mainBrand = scope.productInfo.masterField.brand;
+
+                    openPlatformMappingSetting({
+                        cartId: scope.cartInfo.value,
+                        cartName: scope.cartInfo.name,
+                        masterName: mainBrand
+                    }).then(function(context){
+                        scope.vm.platform.pBrandName = context.selectedPlatform;
+                    });
+
                 }
 
                 /**

@@ -82,6 +82,12 @@
             <if test="recoveryStatus != null" >
                 `recovery_status` = #{recoveryStatus,jdbcType=INTEGER},
             </if>
+            <if test="promotionType != null" >
+                `promotion_type` = #{promotionType,jdbcType=INTEGER},
+            </if>
+            <if test="promotionGiftType != null" >
+                `promotion_gift_type` = #{promotionGiftType,jdbcType=INTEGER},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -156,6 +162,12 @@
             <if test="recoveryStatus != null" >
                 and `recovery_status` = #{recoveryStatus,jdbcType=INTEGER}
             </if>
+            <if test="promotionType != null" >
+                and `promotion_type` = #{promotionType,jdbcType=INTEGER}
+            </if>
+            <if test="promotionGiftType != null" >
+                and `promotion_gift_type` = #{promotionGiftType,jdbcType=INTEGER}
+            </if>
         </where>
         limit 1
     </select>
@@ -225,6 +237,12 @@
             <if test="recoveryStatus != null" >
                 and `recovery_status` = #{recoveryStatus,jdbcType=INTEGER}
             </if>
+            <if test="promotionType != null" >
+                and `promotion_type` = #{promotionType,jdbcType=INTEGER}
+            </if>
+            <if test="promotionGiftType != null" >
+                and `promotion_gift_type` = #{promotionGiftType,jdbcType=INTEGER}
+            </if>
         </where>
     </select>
 
@@ -291,6 +309,12 @@
             <if test="recoveryStatus != null" >
                 and `recovery_status` = #{recoveryStatus,jdbcType=INTEGER}
             </if>
+            <if test="promotionType != null" >
+                and `promotion_type` = #{promotionType,jdbcType=INTEGER}
+            </if>
+            <if test="promotionGiftType != null" >
+                and `promotion_gift_type` = #{promotionGiftType,jdbcType=INTEGER}
+            </if>
         </where>
     </select>
 
@@ -355,6 +379,12 @@
             </if>
             <if test="recoveryStatus != null" >
                 `recovery_status`,
+            </if>
+            <if test="promotionType != null" >
+                `promotion_type`,
+            </if>
+            <if test="promotionGiftType != null" >
+                `promotion_gift_type`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -426,6 +456,12 @@
             </if>
             <if test="recoveryStatus != null" >
                 #{recoveryStatus,jdbcType=INTEGER},
+            </if>
+            <if test="promotionType != null" >
+                #{promotionType,jdbcType=INTEGER},
+            </if>
+            <if test="promotionGiftType != null" >
+                #{promotionGiftType,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>

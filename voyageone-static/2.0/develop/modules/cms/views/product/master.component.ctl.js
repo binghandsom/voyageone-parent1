@@ -20,7 +20,8 @@ define([
                     mastData:null,
                     productComm:null,
                     categoryMark:null,
-                    tempImage : {"images1":[],"images2":[],"images3":[],"images4":[],"images5":[],"images6":[],"images7":[],"images8":[],"images9":[]}
+                    tempImage : {"images1":[],"images2":[],"images3":[],"images4":[],"images5":[],"images6":[],"images7":[],"images8":[],"images9":[]},
+                    hsCodeOrigin: null
                 };
 
                 initialize();
@@ -28,6 +29,7 @@ define([
                 scope.openProImageSetting = openProImageSetting;
                 scope.saveProduct = saveProduct;
                 scope.pageAnchor = pageAnchor;
+
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -37,45 +39,37 @@ define([
                         scope.vm.productComm = resp.data.productComm;
 
                         var _fields = scope.vm.productComm.fields;
+
+                        scope.productInfo.masterField = _fields;
+
                         /**通知子页面税号状态和翻译状态*/
                         scope.productInfo.checkFlag = new Date().getTime();
                         scope.productInfo.translateStatus = _fields.translateStatus == null ? 0 : +_fields.translateStatus;
                         scope.productInfo.hsCodeStatus =  _fields.hsCodeStatus == null ? 0: +_fields.hsCodeStatus;
 
-                        constructSchema(scope, $compile);
 
                         /**图片显示*/
                         if ($rootScope.imageUrl == undefined) {
                             $rootScope.imageUrl = '';
                         }
-                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', scope.vm.productComm.fields.images1[0].image1);
+
+                        scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
                         scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
+
+                        //暂存税号个人
+                        scope.vm.hsCodeOrigin = _.find(scope.vm.productComm.schemaFields,function(field){
+                            return field.id === "hsCodePrivate";
+                        });
+
+                        console.log("hsCodeOrigin",scope.vm.hsCodeOrigin);
 
                         /**主商品提示*/
                         if(!scope.vm.mastData.isMain){
                             alert("本商品不是平台主商品，如果您需要在天猫或者京东上新，您所修改的信息不会同步到平台上，图片除外。");
                         }
                     });
-                }
-
-                var schemaScope;
-
-                function constructSchema(parentScope, compile) {
-
-                    var element = $('#schemaContainer');
-
-                    if (schemaScope)
-                        schemaScope.$destroy();
-
-                    element.empty();
-
-                    element.append('<schema data="data"></schema>');
-                    schemaScope = parentScope.$new();
-                    schemaScope.data = parentScope.vm.productComm.schemaFields;
-
-                    compile(element)(schemaScope);
                 }
 
                 /**
@@ -112,6 +106,7 @@ define([
                         productId:  scope.productInfo.productId,
                         imageType: imageType
                     }).then(function(context){
+
                         if(context == null)
                             return;
 
@@ -123,16 +118,19 @@ define([
                         var imgType = null;
                         angular.forEach(context,function(item){
                             imgType = item.imageType;
-                            scope.vm.tempImage[item.imageType].push(item.base64);
+                            scope.vm.tempImage[item.imageType].push($rootScope.imageUrl.replace('%s', item.imageName));
                         });
 
                         _.map(scope.vm.productComm.schemaFields, function(item){
                             if(item.id == imgType){
-                                item.complexValues = context[context.length -1].imageSchema[0].complexValues;
+                                item.complexValues.splice(0,item.complexValues.length);
+                                angular.forEach(context[context.length -1].imageSchema[0].complexValues,function(image){
+                                    item.complexValues.push(image);
+                                });
+
                             }
                         });
 
-                        constructSchema(scope, $compile);
                     });
                 }
 
@@ -167,7 +165,7 @@ define([
 
                 /**
                  * 右侧导航栏
-                 * @param index div的index
+                 * @param area 区域
                  * @param speed 导航速度 ms为单位
                  */
                 function pageAnchor(area,speed){

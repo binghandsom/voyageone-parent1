@@ -108,6 +108,7 @@ public class SkuTemplateConstants {
     public final static int EXTENDSIZE_HOULANG_RANGE = 98;
     public final static int EXTENDSIZE_HENGDANG = 99;
     public final static int EXTENDSIZE_HENGDANG_RANGE = 100;
+    public final static int EXTENDSIZE_JIAOCHANG = 101;
 
     // 既没有颜色也没有尺码
     public final static int SKU_MASTER = 69;

@@ -46,6 +46,8 @@ class BcbgConstants {
     final static String A073_KBETR = "A073_KBETR";
     final static String A073_KONWA = "A073_KONWA";
 
+    final static String SIZE_FIT = "sizeFit";
+
     static Pattern special_symbol;
 
     protected static ChannelConfigEnums.Channel channel;

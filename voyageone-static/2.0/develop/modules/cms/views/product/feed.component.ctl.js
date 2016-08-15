@@ -20,7 +20,9 @@ define([
 
                 function updateFeedInfo(){
                     if(scope.feedFrom.$invalid){
-                        return alert("保存失败，请查看已匹配属性是否填写正确！");
+                        alert("保存失败，请查看已匹配属性是否填写正确！");
+                        focusError();
+                        return;
                     }
 
                     productDetailService.updateProductAtts({prodId:scope.productInfo.productId,feedInfo:scope.productInfo.feedInfo}).then(function(){
@@ -40,6 +42,12 @@ define([
                     if(area != "attribute")
                         offsetTop = element.find("#" + area).offset().top;
                     $("body").animate({ scrollTop:  offsetTop-70}, speed);
+                }
+
+                function focusError(){
+                    var firstError = element.find("input.ng-invalid:first");
+                    firstError.focus();
+                    firstError.addClass("focus-error");
                 }
 
             }

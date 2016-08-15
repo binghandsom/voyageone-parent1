@@ -46,7 +46,7 @@ public class BulkModelUpdateList extends VOAbsLoggable {
         // 批量更新
         if (bulkList.size() > 0 && bulkList.size() % bufferSize == 0) {
             BulkWriteResult rs = targetDao.bulkUpdateWithModel(channelId, bulkList);
-            bulkList = new ArrayList<>();
+            bulkList.clear();
             return rs;
         }
         return null;
@@ -55,6 +55,7 @@ public class BulkModelUpdateList extends VOAbsLoggable {
     public BulkWriteResult execute() {
         if (bulkList.size() > 0) {
             BulkWriteResult rs = targetDao.bulkUpdateWithModel(channelId, bulkList);
+            bulkList.clear();
             return rs;
         }
         return null;

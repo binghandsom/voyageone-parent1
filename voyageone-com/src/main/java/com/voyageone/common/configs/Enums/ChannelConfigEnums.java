@@ -578,6 +578,22 @@ public class ChannelConfigEnums {
          */
         LightHouse("026"),
 
+
+        /**
+         * Yogademocracy
+         */
+        Yogademocracy("027"),
+
+        /**
+         * ShoeMetro
+         */
+        ShoeMetro("028"),
+
+        /**
+         * Modotex
+         */
+        Modotex("029"),
+
         /**
          * TestChannel088
          */
@@ -681,6 +697,9 @@ public class ChannelConfigEnums {
                 case "024": return OverStock;
                 case "025": return FragranceNet;
                 case "026": return LightHouse;
+                case "027": return Yogademocracy;
+                case "028": return ShoeMetro;
+                case "029": return Modotex;
                 case "088": return TestChannel088;
                 case "089": return TestChannel089;
                 case "090": return TestChannel090;

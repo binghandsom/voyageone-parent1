@@ -49,8 +49,8 @@ define(function () {
                     "getCategoryInfo": session('getCategoryInfo', [KEY.CHANNEL]),
                     "getPlatformType": session('getPlatformType', [KEY.USERNAME, KEY.CHANNEL]),
                     "setPlatformType": "setPlatformType",
-                    "getHomeSumData":"getHomeSumData",
-                    "getCmsConfig":session('getCmsConfig',[KEY.CHANNEL])
+                    "getHomeSumData": "getHomeSumData",
+                    "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL])
                 }
             },
             "search": {
@@ -72,8 +72,8 @@ define(function () {
                     "search": "search",
                     "updateFeedStatus": "updateFeedStatus",
                     "doExport": "export",
-                    "exportSearch":"exportSearch",
-                    "download":"download"
+                    "exportSearch": "exportSearch",
+                    "download": "download"
                 }
             },
             "group": {
@@ -100,13 +100,13 @@ define(function () {
                     "updateProductFeed": "updateProductFeed",
                     "getCommonProductInfo": "getCommonProductInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
-                    "updateLock":"updateLock",
-                    "updateProductAtts":"updateProductAtts",
-                    "checkCategory":"checkCategory",
-                    getChangeMastProductInfo:"getChangeMastProductInfo",
-                    setMastProduct:"setMastProduct",
-                    delisting:"delisting",
-                    delistinGroup:"delistinGroup"
+                    "updateLock": "updateLock",
+                    "updateProductAtts": "updateProductAtts",
+                    "checkCategory": "checkCategory",
+                    getChangeMastProductInfo: "getChangeMastProductInfo",
+                    setMastProduct: "setMastProduct",
+                    delisting: "delisting",
+                    delistinGroup: "delistinGroup"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -156,6 +156,16 @@ define(function () {
                     "setDict": "setDict",
                     "delDict": "delDict",
                     "addDict": "addDict"
+                },
+                'brandMappingService': {
+                    'root': '/cms/mapping/brand',
+                    'init': 'init',
+                    'searchBrands': 'searchBrands',
+                    'searchCustBrands': 'searchCustBrands',
+                    'searchMatchedBrands': 'searchMatchedBrands',
+                    'addNewBrandMapping': 'addOrUpdateBrandMapping',
+                    'getSynchronizedTime': 'getSynchronizedTime',
+                    'synchronizePlatformBrands': 'synchronizePlatformBrands'
                 }
             },
             "promotion": {
@@ -173,7 +183,7 @@ define(function () {
                     getEditModel: "getEditModel",
                     saveEditModel: "saveEditModel",
                     deleteByPromotionId: "deleteByPromotionId",
-                    setPromotionStatus:"setPromotionStatus"
+                    setPromotionStatus: "setPromotionStatus"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",
@@ -231,8 +241,8 @@ define(function () {
                     "deleteAllProduct": "deleteAllProduct",
                     "getProductView": "getProductView",
                     "updateDealPrice": "updateDealPrice",
-                    updatePromotionProduct:"updatePromotionProduct",
-                    updatePromotionProductTag:"updatePromotionProductTag"
+                    updatePromotionProduct: "updatePromotionProduct",
+                    updatePromotionProductTag: "updatePromotionProductTag"
                 },
                 "cmsBtJmPromotionImportTask": {
                     "cmsBtJmPromotionImportTaskService": {

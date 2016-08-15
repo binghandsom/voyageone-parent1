@@ -560,6 +560,12 @@ s-field textarea.s-html {
     border-left: 1px solid #ADCAE2;
 }
 
+.product-shema-detail .no-master{
+    font-size: 15px;
+    font-weight: bold;
+    color: #d60032;
+}
+
 .product-shema-detail .container-fluid ng-form[name='skuForm'] schema-complex button {
     margin-top: 23px;
     align-self: auto;
@@ -573,7 +579,7 @@ s-field textarea.s-html {
     min-width: 125px;
 }
 
-.ng-invalid .focus-error{
+schema .ng-invalid.focus-error{
     transition: box-shadow 2s;
     box-shadow: 0 1px 8px 0 #f05050 ! important;
 }
@@ -812,13 +818,18 @@ s-field textarea.s-html {
     color: #bfbebe;
 }
 
-.switch-main .fix-img{
+.switch-main .fix-div{
     position: relative;
+    width: 135px;
+    height: 135px;
+    margin: 15px auto;
+}
+
+.switch-main .img-zoom{
     width: auto;
     height: auto;
-    max-width: 125px;
-    max-height: 125px;
-    margin: 15px auto;
+    max-width: 115px;
+    max-height: 115px;
 }
 
 .switch-main .current{

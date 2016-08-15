@@ -416,6 +416,38 @@ public interface CmsUrlConstants {
 
             String GET_DICT_LIST = "getDictList";
         }
+        
+        /**
+         * 品牌映射
+         */
+        interface BRAND {
+        	/** 根路径 */
+        	String ROOT = "/cms/mapping/brand";
+        	
+        	/** 页面初始化 */
+        	String INIT = "init";
+        	
+        	/** 检索品牌映射关系 */
+        	String SEARCH_BRANDS = "searchBrands";
+        	
+        	/** 检索客户的品牌 */
+        	String SEARCH_CUST_BRANDS = "searchCustBrands";
+        	
+        	/** 检索已匹配的品牌 */
+        	String SEARCH_MATCHED_BRANDS = "searchMatchedBrands";
+        	
+        	/** 添加新匹配的品牌 */
+        	String ADD_NEW_BRAND_MAPPING = "addNewBrandMapping";
+
+        	/** 添加或更新匹配的品牌数据  */
+			String ADD_OR_UPDATE_BRAND_MAPPING = "addOrUpdateBrandMapping";
+
+			/** 同步平台品牌数据 */
+			String SYNCHRONIZE_PLATFORM_BRANDS = "synchronizePlatformBrands";
+
+			/** 取得平台品牌数据同步时间 */
+			String GET_SYNCHRONIZE_TIME = "getSynchronizedTime";
+        }
     }
 
     // 系统设置
@@ -502,6 +534,8 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/pop/image_setting/";
 
             String UPLOAD_IMAGE = "uploadImage";
+
+            String UPLOAD_IMAGES = "uploadImages";
         }
         interface ADD_TO_CHANNEL_CATEGORY {
             String ROOT = "/cms/pop/add_to_channel_category";
@@ -549,6 +583,7 @@ public interface CmsUrlConstants {
             String SetMastProduct="setMastProduct";
             String Delisting="delisting";
             String DelistinGroup="delistinGroup";
+            String HsCodeChg="hsCodeChg";
         }
 
         interface HISTORY {
