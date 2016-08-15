@@ -45,7 +45,8 @@ public class TbPromotionService extends TbBase {
         TmallPromotionTipItemModifyResponse response = reqTaobaoApi(shopBean, req);
         if (response.getErrorCode() != null)
         {
-            logger.error(response.getSubMsg());
+            String msg = (response.getSubMsg() == null?"":response.getSubMsg()) + (response.getMsg() == null?"":response.getMsg());
+            logger.error(msg);
         }
         return response;
     }
