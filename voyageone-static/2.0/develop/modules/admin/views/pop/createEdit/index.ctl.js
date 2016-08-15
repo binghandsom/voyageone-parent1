@@ -10,7 +10,6 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.append = context == 'add' ? true : false;
             this.popType = '修改';
-            console.log(context);
         }
 
         CreateEditController.prototype = {
@@ -23,6 +22,10 @@ define([
             },
             cancel: function () {
                 this.$uibModalInstance.dismiss();
+            },
+            save: function () {
+                var self = this;
+                console.log(self.sourceData);
             }
         };
         return CreateEditController;
