@@ -152,8 +152,8 @@ public class CmsPromotrionService extends BaseTaskService {
                         System.out.println("超时");
                         fail = "超时";
                     } else {
-                        System.out.println("getSubMsg" + response.getSubMsg());
-                        fail = response.getSubMsg();
+                        fail = (response.getSubMsg() == null?"":response.getSubMsg()) + (response.getMsg() == null?"":response.getMsg());
+                        System.out.println(fail);
                     }
                     updateStatus(Integer.parseInt(item.get("promotionId").toString()),item.get("num_iid").toString(),3,fail);
 //                    if (failProduct.get(fail) == null) {
