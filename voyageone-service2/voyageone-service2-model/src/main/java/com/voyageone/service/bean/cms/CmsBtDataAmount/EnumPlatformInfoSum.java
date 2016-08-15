@@ -26,7 +26,12 @@ public enum EnumPlatformInfoSum implements IEnumDataAmountSum{
     CMS_PLATFORM_PUBLISH_SUCCESS("CMS_PLATFORM_PUBLISH_SUCCESS", "{'platforms.P%s.pPublishError':{$in:[null,'']},'platforms.P%s.status':'Approved','platforms.P%s.pStatus':{$in:['InStock','OnSale']}}", "/search/advanceSearch", "", "上新成功数",(m)->{
         return String.format(m.getQueryStr(),m.getCartId(),m.getCartId(),m.getCartId());
     }),//
-    CMS_PLATFORM_PUBLISH_FAILD("CMS_PLATFORM_PUBLISH_FAILD", "{'platforms.P%s.pPublishError':{$nin:[null,'']}}", "/search/advanceSearch", "", "上新失败数");
+    CMS_PLATFORM_PUBLISH_FAILD("CMS_PLATFORM_PUBLISH_FAILD", "{'platforms.P%s.pPublishError':{$nin:[null,'']}}", "/search/advanceSearch", "", "上新失败数"),
+    CMS_PLATFORM_pStatus_pReallyStatus_notEqual("CMS_PLATFORM_pStatus_pReallyStatus_notEqual", "{$where:'this.platforms.Ps%.pStatus!=this.platforms.P%s.pReallyStatus'}", "/search/advanceSearch", "", "商品平台状态与实际相异数",(m)->{
+        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId());
+    }),// priceSale
+    CMS_PLATFORM_priceSale_Equal_minus1("CMS_PLATFORM_priceSale_Equal_minus1", "{'platforms.P%s.priceSale':{$in:['-1']}}", "/search/advanceSearch", "", "中国最终售价价格为-1");
+
     EnumPlatformInfoSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;
         this.strQuery = strQuery;
