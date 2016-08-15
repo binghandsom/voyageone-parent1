@@ -143,6 +143,7 @@ public class CommonConfigController extends AdminController {
 					Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
 					TmOrderChannelConfigKey configKey = new TmOrderChannelConfigKey();
 					BeanUtils.copyProperties(form, configKey);
+					configKey.setOrderChannelId(form.getChannelId());
 					channelConfigKeys.add(configKey);
 				}
 				// 删除渠道配置信息

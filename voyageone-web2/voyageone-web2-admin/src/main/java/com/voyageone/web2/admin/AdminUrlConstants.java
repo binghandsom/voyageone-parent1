@@ -31,6 +31,13 @@ public interface AdminUrlConstants {
 			String DELETE_CHANNEL = "deleteChannel";
 			
 		}
+
+		/** 短信配置信息 */
+		interface Sms {
+
+			String SEARCH_SMS_CONFIG_BY_PAGE = "searchSmsConfigByPage";
+			
+		}
 		
 	}
 	

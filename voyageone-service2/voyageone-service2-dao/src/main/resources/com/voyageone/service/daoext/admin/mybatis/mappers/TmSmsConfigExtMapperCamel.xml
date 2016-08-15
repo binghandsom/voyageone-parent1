@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.admin.TmSmsConfigDaoExt">
+
+	<resultMap id="smsConfigModelType" type="com.voyageone.service.bean.admin.TmSmsConfigBean"/>
+	
+	<sql id="selectSmsConfigFilter">
+		<where>
+			<if test="orderChannelId != null and orderChannelId != ''">
+				and tsc.order_channel_id = #{orderChannelId}
+			</if>
+			<if test="smsType != null and smsType != ''">
+				and tsc.sms_type = #{smsType}
+			</if>
+			<if test="content != null and content != ''">
+				and tsc.content like concat('%, #{content}, '%')
+			</if>
+			<if test="smsCode != null and smsCode != ''">
+				and (
+					tsc.sms_code1 like concat('%, #{smsCode}, '%') or tsc.sms_code2 like concat('%, #{smsCode}, '%')
+				)
+			</if>
+		</where>
+	</sql>
+	
+	<select id="selectSmsConfigByPage" resultMap="smsConfigModelType">
+		select toc.name, tsc.seq, tsc.order_channel_id, tsc.sms_type, tsc.sms_code1, tsc.sms_code2
+			tsc.content, tsc.`describe`, tsc.del_flg
+		from tm_sms_config tsc left join tm_order_channel toc on toc.order_channel_id = tsc.order_channel_id
+		<include refid="selectSmsConfigFilter"/>
+	</select>
+	
+	<select id="selectSmsConfigCount" resultType="integer">
+		select count(0) from tm_sms_config tsc
+		<include refid="selectSmsConfigFilter"/>
+	</select>
+
+</mapper>
