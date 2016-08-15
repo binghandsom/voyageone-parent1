@@ -105,18 +105,20 @@ define([
             },
             delete: function () {
                 var self = this;
-                self.confirm('TXT_CONFIRM_DELETE_MSG');
                 var delList = [];
                 _.forEach(self.configSelList.selList, function (delInfo) {
-                    _.extend(delInfo, {'configType': 'Channel'})
+                    _.extend(delInfo, {'configType': 'Channel'});
                     delList.push(delInfo);
                 });
-                self.channelService.deleteChannel(delList).then(function (res) {
+                self.AdminChannelService.deleteConfig(delList).then(function (res) {
                     console.log(res);
                 })
             },
             cancel: function () {
                 this.$uibModalInstance.dismiss();
+            },
+            save: function () {
+
             }
         };
         return ConfigController;

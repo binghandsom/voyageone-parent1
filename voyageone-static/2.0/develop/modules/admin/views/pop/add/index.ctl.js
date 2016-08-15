@@ -45,11 +45,13 @@ define([
                     })
                 }
             },
-            selected:function (item) {
-                console.log(item);
+            selected: function (item) {
+                var self = this;
+                self.selectedCartId = item.cartId;
             },
             move: function (type) {
                 var self = this;
+                //添加页面
                 if (!self.sourceData.cartIds) {
                     self.cartList = [];
                     switch (type) {
@@ -57,10 +59,17 @@ define([
                             _.extend(self.cartList, self.cartAllList);
                             break;
                         case 'include':
-
+                            self.data = _.find(self.cartAllList, function (cart) {
+                                return cart.cartId == self.selectedCartId;
+                            });
+                            self.cartList.push(self.data);
+                            self.cartAllList.splice(self.cartAllList.indexOf(self.data), 1);
                             break;
                         case 'exclude':
-
+                            console.log(self.selectedCartId);
+                            self.data = _.find(self.cartList, function (cart) {
+                                return cart.cartId == self.selectedCartId;
+                            });
                             break;
                         case 'allExclude':
                             self.cartList = null;
@@ -75,10 +84,17 @@ define([
                             });
                             break;
                         case 'include':
-
+                            self.data = _.find(self.cartAllList, function (cart) {
+                                return cart.cartId == self.selectedCartId;
+                            });
+                            self.cartList.push(self.data);
+                            self.cartAllList.splice(self.cartAllList.indexOf(self.data), 1);
                             break;
                         case 'exclude':
-
+                            self.data = _.find(self.cartList, function (cart) {
+                                return cart.cartId == self.selectedCartId;
+                            });
+                            self.cartList.splice(self.cartList.indexOf(self.data), 1);
                             break;
                         case 'allExclude':
                             self.cartList = null;

@@ -30,6 +30,7 @@ define(function () {
 
     return {
         "admin": {
+            /** 渠道信息 */
             "channel": {
                 "channelService": {
                     "root": "/admin/channel/self",
@@ -43,18 +44,27 @@ define(function () {
                     "generateSessionKey": "generateSessionKey"
                 }
             },
+            /** Cart信息 */
             "cart": {
                 "AdminCartService": {
                     "root": "/admin/cart/self",
                     "getAllCart": "getAllCart",
-                    "getCartByIds": "getCartByIds"
+                    "getCartByIds": "getCartByIds",
+                    "searchCartByPage": "searchCartByPage",
+                    "getAllPlatform": "getAllPlatform",
+                    "addCart": "addCart",
+                    "updateCart": "updateCart",
+                    "deleteCart": "deleteCart",
+                    "deleteStore": "deleteStore"
                 }
             },
+            /** 统一属性配置 */
             "config": {
                 "AdminChannelService": {
                     "root": "/admin/system/config",
                     "searchConfigByPage": "searchConfigByPage",
-                    "addOrUpdateConfig": "addOrUpdateConfig"
+                    "addOrUpdateConfig": "addOrUpdateConfig",
+                    "deleteConfig":"deleteConfig"
                 }
             }
         }

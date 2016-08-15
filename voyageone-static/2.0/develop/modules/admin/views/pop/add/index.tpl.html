@@ -128,8 +128,8 @@
                             <div class="column_overflow col-sm-12" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
-                                        <li class="btn-block" ng-repeat="cart in ctrl.cartList" ng-style="{'background-color': ctrl.leftSelected(cart)? '#dcf3f9': 'white'}">
-                                            <a href="javascript:void(0)" ng-click="ctrl.leftSelected(cart)">{{cart.name}}</a>
+                                        <li class="btn-block" ng-repeat="cart in ctrl.cartList" ng-style="{'background-color': ctrl.selectedCartId==cart.cartId? '#dcf3f9': 'white'}">
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected(cart)">{{cart.name}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -145,7 +145,7 @@
                             <div class="column_overflow col-sm-12" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
-                                        <li class="btn-block" ng-repeat="cart in ctrl.cartAllList">
+                                        <li class="btn-block" ng-repeat="cart in ctrl.cartAllList" ng-style="{'background-color': ctrl.selectedCartId==cart.cartId? '#dcf3f9': 'white'}">
                                             <a href="javascript:void(0)" ng-click="ctrl.selected(cart)">{{cart.name}}</a>
                                         </li>
                                     </ul>
