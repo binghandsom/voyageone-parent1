@@ -95,7 +95,7 @@ define([
             };
 
             this.popups.openShipment(shipmentInfo).then(function () {
-                self.search();
+                self.search(self.searchInfo.curr);
             });
         };
 
