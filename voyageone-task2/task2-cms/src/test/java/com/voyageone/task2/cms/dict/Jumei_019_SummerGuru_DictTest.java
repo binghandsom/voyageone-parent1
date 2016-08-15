@@ -58,10 +58,10 @@ public class Jumei_019_SummerGuru_DictTest {
 
     @Test
     public void dictTest() {
-        SxData sxData = sxProductService.getSxProductDataByGroupId("010", 20893L);
+        SxData sxData = sxProductService.getSxProductDataByGroupId("019", 1034843L);
         sxData.setCartId(27);
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
-        ShopBean shopProp = Shops.getShop("010", 27);
+        ShopBean shopProp = Shops.getShop("019", 27);
 //        shopProp.setCart_id("27");
         shopProp.setPlatform_id(PlatFormEnums.PlatForm.JM.getId());
 
@@ -179,8 +179,7 @@ public class Jumei_019_SummerGuru_DictTest {
     /**
      * 聚美使用方法
      * 1. 详情描述 - 中文
-     * 2. 详情描述 - 英文
-     * 3. 尺码图
+     * 2. 尺码图
      */
     private RuleExpression doDict_聚美使用方法() {
 
@@ -189,13 +188,15 @@ public class Jumei_019_SummerGuru_DictTest {
 
         // 生成内容
         {
-            // 详情描述 - 中文
-            // 注意：<br> 替换成 <br />，并删除所有*号。
+            // 中文长描述
+            MasterWord word = new MasterWord("longDesCn");
+            ruleRoot.addRuleWord(word);
         }
 
         {
-            // 详情描述 - 英文
-            // 注意：<br> 替换成 <br />，并删除所有*号。
+            // 回车一个
+            TextWord word = new TextWord(C_TEXT_BR);
+            ruleRoot.addRuleWord(word);
         }
 
         {
