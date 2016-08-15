@@ -58,7 +58,7 @@ public class PlatformMappingService extends BaseService {
         return writeResult.getN() > 0;
     }
 
-    Map<String, String> getValueMap(String channelId, int productId, int cartId) {
+    public Map<String, String> getValueMap(String channelId, Long productId, int cartId) {
 
         // 查询需要用到的平台类目也在商品中获取
 
