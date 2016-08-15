@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.voyageone.security.dao.ViewUserResDao" >
-    <resultMap id="BaseResultMap" type="com.voyageone.security.model.ComResourceModel" />
+    <resultMap id="BaseResultMap" type="java.util.Map" />
     <sql id="Base_Column_List" >
         `id`, `res_name`, `res_key`, `res_type`, `parent_id`, `res_url`, `level`, `icon`, 
         `active`, `description`, `created`, `creater`, `modified`, `modifier`,`role_id`,`channel_id`,`user_id`

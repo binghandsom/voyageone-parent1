@@ -7,7 +7,6 @@
  */
 package com.voyageone.security.dao;
 
-import com.voyageone.security.model.ComResourceModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
