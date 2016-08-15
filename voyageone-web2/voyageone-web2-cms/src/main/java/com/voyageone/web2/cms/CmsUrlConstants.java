@@ -225,13 +225,6 @@ public interface CmsUrlConstants {
                 String UPDATE_TASK_STATUS = "updateTaskStatus";
             }
 
-            interface FILE {
-
-                String ROOT = "/cms/promotion/file";
-
-//                String GET_CODE_FILE = "getCodeFile";
-            }
-
             interface STOCK {
 
                 String ROOT = "/cms/promotion/task_stock";
@@ -366,39 +359,6 @@ public interface CmsUrlConstants {
             String GET_MAPPINGS = "getMappings";
 
             String GET_MAPPING_INFO = "getMappingInfo";
-        }
-
-        interface PLATFORM {
-
-            String ROOT = "/cms/mapping/platform";
-
-            String GET_MAIN_CATEGORY = "getMainDataFinalCategoryMap";
-
-            String GET_OTHER_MAPPING_PATH = "getOtherMappingCategoryPath";
-
-            String GET_PLATFORM_CATEGORIES = "getPlatformCategories";
-
-            String GET_PLATFORM_CATEGORY = "getPlatformCategory";
-
-            String SET_PLATFORM_MAPPING = "setPlatformMapping";
-
-            String GET_MAIN_CATEGORY_SCHEMA = "getMainCategorySchema";
-
-            String GET_PLATFORM_CATEGORY_SCHEMA = "getPlatformCategorySchema";
-
-            String GET_DICT_LIST = "getDictList";
-
-            String GET_PLATFORM_MAPPING = "getPlatformMapping";
-
-            String GET_MAPPING_TYPE = "getMappingType";
-
-            String SAVE_MAPPING = "saveMapping";
-
-            String SAVE_MATCH_OVER_BY_MAIN_CATE = "saveMatchOverByMainCategory";
-
-            String GET_CARTS = "getCarts";
-
-            String GET_COMMON_SCHEMA = "getCommonSchema";
         }
 
         interface DICTIONARY {
@@ -794,8 +754,8 @@ public interface CmsUrlConstants {
         String SET_UPDATE_FLG = "setUpdateFlg";
     }
 
-    interface PRODUCT_FIELDS_MAP {
-        String ROOT = "/product/fields/map/";
+    interface PLATFORM_MAPPING {
+        String ROOT = "/cms/platform/mapping/";
         String LIST = "list";
         String GET = "get";
         String SAVE = "save";
