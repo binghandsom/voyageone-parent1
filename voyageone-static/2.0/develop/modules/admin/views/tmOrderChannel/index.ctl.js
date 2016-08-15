@@ -108,11 +108,17 @@ define([
             },
             delete: function () {
                 var self = this;
-                if (self.channelSelList.selList.length <= 0) {
-                    self.alert('TXT_MSG_NO_ROWS_SELECT');
-                    return;
-                }
-                self.confirm('TXT_CONFIRM_DELETE_MSG');
+                self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
+                        var delList = [];
+                        _.forEach(self.channelSelList.selList, function (delInfo) {
+                            delList.push(delInfo.id);
+                        });
+                        self.channelService.deleteChannel(delList).then(function (res) {
+                            if (res.data.success == false)self.confirm(res.data.message);
+                            self.search();
+                        })
+                    }
+                );
             }
         };
         return TmOrderChannelController;

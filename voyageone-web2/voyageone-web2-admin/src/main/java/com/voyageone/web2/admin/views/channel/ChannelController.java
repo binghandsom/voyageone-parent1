@@ -62,7 +62,7 @@ public class ChannelController extends AdminController {
 	public AjaxResponse addOrUpdateChannel(@RequestBody ChannelFormBean form, boolean append) {
 		// 验证参数
 		Preconditions.checkNotNull(form.getCompanyId());
-		Preconditions.checkNotNull(form.getChannelId());
+		Preconditions.checkNotNull(StringUtils.isNotBlank(form.getChannelId()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSecretKey()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSessionKey()));
 		
@@ -73,13 +73,6 @@ public class ChannelController extends AdminController {
 			TmOrderChannelModel model = new TmOrderChannelModel();
 			BeanUtils.copyProperties(form, model);
 			model.setOrderChannelId(form.getChannelId());
-			String username = getUser().getUserName();
-			if (StringUtils.isBlank(form.getChannelId())) {
-				model.setCreater(username);
-				model.setModifier(username);
-			} else {
-				model.setModifier(username);
-			}
 			// 保存渠道信息
 			channelService.addOrUpdateChannel(model, getUser().getUserName(), append);
 			result.put(SUCCESS, true);

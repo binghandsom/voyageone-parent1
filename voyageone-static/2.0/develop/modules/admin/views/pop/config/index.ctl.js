@@ -5,11 +5,10 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('ConfigController', (function () {
-        function ConfigController(popups, context, confirm, $uibModalInstance, channelService, AdminChannelService, selectRowsFactory) {
+        function ConfigController(popups, context, confirm, channelService, AdminChannelService, selectRowsFactory) {
             this.popups = popups;
             this.sourceData = context;
             this.confirm = confirm;
-            this.$uibModalInstance = $uibModalInstance;
             this.channelService = channelService;
             this.AdminChannelService = AdminChannelService;
             this.selectRowsFactory = selectRowsFactory;
@@ -105,18 +104,17 @@ define([
             },
             delete: function () {
                 var self = this;
-                self.confirm('TXT_CONFIRM_DELETE_MSG');
-                var delList = [];
-                _.forEach(self.configSelList.selList, function (delInfo) {
-                    _.extend(delInfo, {'configType': 'Channel'})
-                    delList.push(delInfo);
+                self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
+                    var delList = [];
+                    _.forEach(self.configSelList.selList, function (delInfo) {
+                        _.extend(delInfo, {'configType': 'Channel'});
+                        delList.push(delInfo);
+                    });
+                    self.AdminChannelService.deleteConfig(delList).then(function (res) {
+                        if (res.data.success == false)self.confirm(res.data.message);
+                        self.search();
+                    })
                 });
-                self.channelService.deleteChannel(delList).then(function (res) {
-                    console.log(res);
-                })
-            },
-            cancel: function () {
-                this.$uibModalInstance.dismiss();
             }
         };
         return ConfigController;

@@ -128,8 +128,8 @@
                             <div class="column_overflow col-sm-12" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
-                                        <li class="btn-block" ng-repeat="cart in ctrl.cartList" ng-style="{'background-color': ctrl.leftSelected(cart)? '#dcf3f9': 'white'}">
-                                            <a href="javascript:void(0)" ng-click="ctrl.leftSelected(cart)">{{cart.name}}</a>
+                                        <li class="btn-block" ng-repeat="cart in ctrl.cartList" ng-style="{'background-color': ctrl.selectedCartId==cart.cartId? '#dcf3f9': 'white'}">
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected(cart)">{{cart.name}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -138,14 +138,14 @@
                         <div class="col-sm-2">
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('allInclude')"><i class="fa fa-angle-double-left"></i></button> </div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('include')"><i class="fa fa-angle-left"></i></button></div>
-                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('exclude',ctrl.leftSelected(cart))"><i class="fa fa-angle-right"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('exclude')"><i class="fa fa-angle-right"></i></button></div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('allExclude')"><i class="fa fa-angle-double-right"></i></button></div>
                         </div>
                         <div class="col-sm-5">
                             <div class="column_overflow col-sm-12" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
-                                        <li class="btn-block" ng-repeat="cart in ctrl.cartAllList">
+                                        <li class="btn-block" ng-repeat="cart in ctrl.cartAllList" ng-style="{'background-color': ctrl.selectedCartId==cart.cartId? '#dcf3f9': 'white'}">
                                             <a href="javascript:void(0)" ng-click="ctrl.selected(cart)">{{cart.name}}</a>
                                         </li>
                                     </ul>

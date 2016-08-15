@@ -66,11 +66,13 @@ public class ChannelService extends BaseService {
 		params.put("orderChannelId", channelId);
 		params.put("channelName", channelName);
 		params.put("isUsjoi", isUsjoi);
+		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
 			pageModel.setCount(channelDaoExt.selectChannelCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
+		
 		// 查询渠道信息
 		List<TmOrderChannelModel> channels = channelDaoExt.selectChannelByPage(params);
 		if (CollectionUtils.isNotEmpty(channels)) {
@@ -112,7 +114,7 @@ public class ChannelService extends BaseService {
 		} else {
 			// 更新渠道信息
 			if (channel == null) {
-				throw new BusinessException("更新的渠道信息已存在");
+				throw new BusinessException("更新的渠道信息不存在");
 			}
 			model.setModifier(username);
 			success = channelDao.update(model) > 0;

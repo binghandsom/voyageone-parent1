@@ -86,7 +86,7 @@
 	</select>
 	
 	<select id="selectChanneConfigByPage" resultMap="channelConfigModelMap">
-		select toc.name, tocc.order_channel_id, tocc.cfg_name, tocc.cfg_val1, tocc.cfg_val2, tocc.`comment`
+		select toc.name as channel_name, tocc.order_channel_id, tocc.cfg_name, tocc.cfg_val1, tocc.cfg_val2, tocc.`comment`
 		from tm_order_channel_config tocc left join tm_order_channel toc
 			on toc.order_channel_id = tocc.order_channel_id
 		<include refid="selectChanneConfigFilter"></include>

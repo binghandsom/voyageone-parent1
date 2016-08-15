@@ -45,45 +45,34 @@ define([
                     })
                 }
             },
-            selected:function (item) {
-                console.log(item);
+            selected: function (item) {
+                var self = this;
+                self.selectedCartId = item.cartId;
             },
             move: function (type) {
                 var self = this;
-                if (!self.sourceData.cartIds) {
-                    self.cartList = [];
-                    switch (type) {
-                        case 'allInclude':
-                            _.extend(self.cartList, self.cartAllList);
-                            break;
-                        case 'include':
-
-                            break;
-                        case 'exclude':
-
-                            break;
-                        case 'allExclude':
-                            self.cartList = null;
-                            break;
-                    }
-                } else {
-                    switch (type) {
-                        case 'allInclude':
-                            self.AdminCartService.getCartByIds({'cartIds': self.sourceData.cartIds}).then(function (res) {
-                                self.cartList = res.data;
-                                _.extend(self.cartList, self.cartAllList);
-                            });
-                            break;
-                        case 'include':
-
-                            break;
-                        case 'exclude':
-
-                            break;
-                        case 'allExclude':
-                            self.cartList = null;
-                            break;
-                    }
+                self.cartList = self.cartList ? self.cartList : [];
+                switch (type) {
+                    case 'allInclude':
+                        _.extend(self.cartList, self.cartAllList);
+                        break;
+                    case 'include':
+                        self.data = _.find(self.cartAllList, function (cart) {
+                            return cart.cartId == self.selectedCartId;
+                        });
+                        self.cartList.push(self.data);
+                        self.cartAllList.splice(self.cartAllList.indexOf(self.data), 1);
+                        break;
+                    case 'exclude':
+                        self.data = _.find(self.cartList, function (cart) {
+                            return cart.cartId == self.selectedCartId;
+                        });
+                        self.cartAllList.push(self.data);
+                        self.cartList.splice(self.cartList.indexOf(self.data), 1);
+                        break;
+                    case 'allExclude':
+                        self.cartList = null;
+                        break;
                 }
             },
             cancel: function () {
@@ -91,8 +80,13 @@ define([
             },
             save: function () {
                 var self = this;
-                _.extend(self.sourceData, {'append': self.append, 'cartList': self.cartList});
-                self.channelService.addOrUpdateChannel(self.sourceData).then(function (res) {
+                _.extend(self.sourceData, {'cartList': self.cartList});
+                if (self.append == true) {
+                    self.channelService.addChannel(self.sourceData).then(function (res) {
+                        console.log(res);
+                    })
+                }
+                self.channelService.updateChannel(self.sourceData).then(function (res) {
                     console.log(res);
                 })
             }

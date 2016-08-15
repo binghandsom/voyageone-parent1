@@ -32,6 +32,13 @@ public interface AdminUrlConstants {
 			
 		}
 
+		/** 短信配置信息 */
+		interface Sms {
+
+			String SEARCH_SMS_CONFIG_BY_PAGE = "searchSmsConfigByPage";
+
+		}
+
 	}
 	
 	interface Cart {
