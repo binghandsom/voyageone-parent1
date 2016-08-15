@@ -5,10 +5,11 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('ConfigController', (function () {
-        function ConfigController(popups, context, confirm, channelService, AdminChannelService, selectRowsFactory) {
+        function ConfigController(popups, context, confirm, $uibModalInstance, channelService, AdminChannelService, selectRowsFactory) {
             this.popups = popups;
             this.sourceData = context;
             this.confirm = confirm;
+            this.$uibModalInstance = $uibModalInstance;
             this.channelService = channelService;
             this.AdminChannelService = AdminChannelService;
             this.selectRowsFactory = selectRowsFactory;
@@ -58,7 +59,10 @@ define([
                             _.extend(configInfo, {mainKey: index});
                             self.tempConfigSelect.currPageRows({
                                 "id": configInfo.mainKey,
-                                "code": configInfo.cfgName
+                                "code": configInfo.cfgName,
+                                "channelId": configInfo.orderChannelId,
+                                "cfgName": configInfo.cfgName,
+                                'cfgVal1': configInfo.cfgVal1
                             });
                         }
                     });
@@ -89,20 +93,30 @@ define([
                     cfgName: '',
                     cfgVal: ''
                 };
-                self.show = false;
-                self.cfgList = [];
             },
             edit: function () {
                 var self = this;
                 _.forEach(self.cfgList, function (cfgInfo) {
                     if (cfgInfo.mainKey == self.configSelList.selList[0].id) {
                         self.popups.openCreateEdit(cfgInfo);
+                        return;
                     }
                 });
             },
             delete: function () {
                 var self = this;
                 self.confirm('TXT_CONFIRM_DELETE_MSG');
+                var delList = [];
+                _.forEach(self.configSelList.selList, function (delInfo) {
+                    _.extend(delInfo, {'configType': 'Channel'})
+                    delList.push(delInfo);
+                });
+                self.channelService.deleteChannel(delList).then(function (res) {
+                    console.log(res);
+                })
+            },
+            cancel: function () {
+                this.$uibModalInstance.dismiss();
             }
         };
         return ConfigController;

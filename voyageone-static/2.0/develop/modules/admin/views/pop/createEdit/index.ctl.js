@@ -5,8 +5,9 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('CreateEditController', (function () {
-        function CreateEditController(context) {
+        function CreateEditController(context, $uibModalInstance) {
             this.sourceData = context ? context : {};
+            this.$uibModalInstance = $uibModalInstance;
             this.append = context == 'add' ? true : false;
             this.popType = '修改';
             console.log(context);
@@ -19,6 +20,9 @@ define([
                     self.popType = '添加';
                     self.sourceData = {}
                 }
+            },
+            cancel: function () {
+                this.$uibModalInstance.dismiss();
             }
         };
         return CreateEditController;

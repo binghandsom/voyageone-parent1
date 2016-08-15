@@ -5,13 +5,14 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('AddController', (function () {
-        function AddController(context, channelService, AdminCartService) {
+        function AddController(context, channelService, AdminCartService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
             this.channelService = channelService;
             this.AdminCartService = AdminCartService;
             this.popType = '编辑';
             this.companyId = this.sourceData.companyId;
+            this.$uibModalInstance = $uibModalInstance;
         }
 
         AddController.prototype = {
@@ -43,6 +44,9 @@ define([
                         self.sourceData.sessionKey = res.data;
                     })
                 }
+            },
+            selected:function (item) {
+                console.log(item);
             },
             move: function (type) {
                 var self = this;
@@ -81,6 +85,9 @@ define([
                             break;
                     }
                 }
+            },
+            cancel: function () {
+                this.$uibModalInstance.dismiss();
             },
             save: function () {
                 var self = this;

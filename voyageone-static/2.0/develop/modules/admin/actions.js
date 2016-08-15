@@ -35,7 +35,9 @@ define(function () {
                     "root": "/admin/channel/self",
                     "getAllChannel": 'getAllChannel',
                     "getAllCompany": 'getAllCompany',
-                    "addOrUpdateChannel": "addOrUpdateChannel",
+                    "addChannel": "addChannel",
+                    "updateChannel": "updateChannel",
+                    "deleteChannel": "deleteChannel",
                     "searchChannelByPage": "searchChannelByPage",
                     "generateSecretKey": "generateSecretKey",
                     "generateSessionKey": "generateSessionKey"
@@ -45,7 +47,7 @@ define(function () {
                 "AdminCartService": {
                     "root": "/admin/cart/self",
                     "getAllCart": "getAllCart",
-                    "getCartByIds":"getCartByIds"
+                    "getCartByIds": "getCartByIds"
                 }
             },
             "config": {
