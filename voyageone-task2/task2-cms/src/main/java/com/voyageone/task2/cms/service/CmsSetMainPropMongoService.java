@@ -200,7 +200,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             ie.printStackTrace();
         }
 
-        $info("=================feed->master导入  最终结果====================");
+        $info("=================feed->master导入  最终结果=====================");
         resultMap.entrySet().stream()
                             .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
                             .forEach(p ->  $info(p.getValue()));
@@ -1464,14 +1464,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 mapProductTypeMapping.put(feedProductType, feedProductType);
             }
 
-            // 从cms_mt_channel_config表从取得的适用人群是否从feed导入flg=1的时候，才插入产品分类mapping信息
+            // 从cms_mt_channel_config表从取得的适用人群是否从feed导入flg=1的时候，才插入适用人群mapping信息
             if ("1".equals(sizeTypeFromFeedFlg)
                     && !StringUtils.isEmpty(feedSizeType)
                     && !mapSizeTypeMapping.containsKey(feedSizeType)) {
                 // 插入适用人群初始中英文mapping信息到Synship.com_mt_value_channel表中
                 comMtValueChannelService.insertComMtValueChannelMapping(58, feed.getChannelId(), feedSizeType,
                         feedSizeType, getTaskName());
-                // 将更新完整之后的mapping信息添加到前面取出来的使用人群mapping表中
+                // 将更新完整之后的mapping信息添加到前面取出来的适用人群mapping表中
                 mapSizeTypeMapping.put(feedSizeType, feedSizeType);
             }
             // add by desmond 2016/07/22 end
