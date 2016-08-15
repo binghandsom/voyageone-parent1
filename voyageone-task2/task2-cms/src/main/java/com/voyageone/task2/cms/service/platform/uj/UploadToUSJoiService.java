@@ -4,13 +4,16 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
@@ -23,6 +26,7 @@ import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseTaskService;
@@ -30,10 +34,7 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -66,6 +67,9 @@ public class UploadToUSJoiService extends BaseTaskService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
+    @Autowired
+    private ComMtValueChannelService comMtValueChannelService;    // 更新Synship.com_mt_value_channel表
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -79,14 +83,81 @@ public class UploadToUSJoiService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
+        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+
         for (OrderChannelBean channelBean : Channels.getUsJoiChannelList()) {
             List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100, Integer.parseInt(channelBean.getOrder_channel_id()));
             cmsBtSxWorkloadModels.forEach(this::upload);
         }
+
+        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
     }
 
     public void upload(CmsBtSxWorkloadModel sxWorkLoadBean) {
+        // --------------------------------------------------------------------------------------------
+        // 品牌mapping表
+        Map<String, String> mapBrandMapping = new HashMap<>();
+        // 产品分类mapping表
+        Map<String, String> mapProductTypeMapping = new HashMap<>();
+        // 适用人群mapping表
+        Map<String, String> mapSizeTypeMapping = new HashMap<>();
+        // --------------------------------------------------------------------------------------------
+
+        // workload表中的cartId是usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
         String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
+
+        // --------------------------------------------------------------------------------------------
+        // 品牌mapping作成
+        List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, usJoiChannelId);
+
+        if (ListUtils.notNull(brandTypeChannelBeanList)) {
+            for (TypeChannelBean typeChannelBean : brandTypeChannelBeanList) {
+                if (
+                        !StringUtils.isEmpty(typeChannelBean.getAdd_name1())
+                                && !StringUtils.isEmpty(typeChannelBean.getName())
+                                && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
+                        ) {
+                    // 品牌mapping表中key,value都设为小写(feed进来的brand不区分大小写)
+                    mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase().trim(), typeChannelBean.getName().toLowerCase().trim());
+                }
+            }
+        }
+
+        // 产品分类mapping作成
+        List<TypeChannelBean> productTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_57, usJoiChannelId);
+
+        if (ListUtils.notNull(productTypeChannelBeanList)) {
+            for (TypeChannelBean typeChannelBean : productTypeChannelBeanList) {
+                if (
+                        !StringUtils.isEmpty(typeChannelBean.getValue())
+                                && !StringUtils.isEmpty(typeChannelBean.getName())
+                                && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
+                        ) {
+                    // 产品分类mapping表(value是key,name和add_name1是值)
+                    mapProductTypeMapping.put(typeChannelBean.getValue().trim(), typeChannelBean.getName().trim());
+                }
+            }
+        }
+
+        // 适用人群mapping作成
+        List<TypeChannelBean> sizeTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_58, usJoiChannelId);
+
+        if (ListUtils.notNull(sizeTypeChannelBeanList)) {
+            for (TypeChannelBean typeChannelBean : sizeTypeChannelBeanList) {
+                if (
+                        !StringUtils.isEmpty(typeChannelBean.getValue())
+                                && !StringUtils.isEmpty(typeChannelBean.getName())
+                                && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
+                        ) {
+                    // 适用人群mapping作成(value是key,name和add_name1是值)
+                    mapSizeTypeMapping.put(typeChannelBean.getValue().trim(), typeChannelBean.getName().trim());
+                }
+            }
+        }
+        // --------------------------------------------------------------------------------------------
+
         try {
             $info(String.format("channelId:%s  groupId:%d  复制到%s 开始", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
             List<CmsBtProductBean> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), new Long(sxWorkLoadBean.getGroupId()), false);
@@ -296,6 +367,9 @@ public class UploadToUSJoiService extends BaseTaskService {
             cmsBtProductGroupModel.setOnSaleTime(DateTimeUtil.getNowTimeStamp());
             cmsBtProductGroupModel.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
 
+            // 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
+            insertMtValueChannelInfo(usJoiChannelId, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, productModels);
+
             // 上新对象产品Code列表
             List<String> listSxCode = productModels.stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
             productGroupService.updateGroupsPlatformStatus(cmsBtProductGroupModel, listSxCode);
@@ -438,6 +512,62 @@ public class UploadToUSJoiService extends BaseTaskService {
             }
         }
 
+    }
+
+    /**
+     * 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
+     *
+     * @param usjoiChannelId String usjoi channel id
+     * @param mapBrandMapping Map<String, String> 品牌mapping一览
+     * @param mapProductTypeMapping Map<String, String> 产品类型mapping一览
+     * @param mapSizeTypeMapping Map<String, String> 适用人群mapping一览
+     * @param usjoiProductModels List<CmsBtProductBean> 产品列表
+     */
+    private void insertMtValueChannelInfo(String usjoiChannelId, Map<String, String> mapBrandMapping, Map<String, String> mapProductTypeMapping,
+                                          Map<String, String> mapSizeTypeMapping, List<CmsBtProductBean> usjoiProductModels) {
+
+        // 循环产品列表，如果品牌，产品类型或适用人群信息，则插入该信息到Synship.com_mt_value_channel表中
+        for (CmsBtProductBean usjoiProductModel : usjoiProductModels) {
+            if (usjoiProductModel.getCommon() == null || usjoiProductModel.getCommon().getFields() == null) {
+                continue;
+            }
+            // 品牌
+            String usjoiBrand = usjoiProductModel.getCommon().getFields().getBrand();
+            // 产品类型
+            String usjoiProductType = usjoiProductModel.getCommon().getFields().getProductType();
+            // 适用人群
+            String usjoiSizeType = usjoiProductModel.getCommon().getFields().getSizeType();
+
+            // 品牌(不区分大小写，全部小写)
+            if (!StringUtils.isEmpty(usjoiBrand)
+                    && !mapBrandMapping.containsKey(usjoiBrand.toLowerCase().trim())) {
+                // 插入品牌初始中英文mapping信息到Synship.com_mt_value_channel表中
+                comMtValueChannelService.insertComMtValueChannelMapping(41, usjoiChannelId,
+                        usjoiBrand.toLowerCase().trim(), usjoiBrand.toLowerCase().trim(), getTaskName());
+                // 将更新完整之后的mapping信息添加到前面取出来的品牌mapping表中
+                mapBrandMapping.put(usjoiBrand.toLowerCase().trim(), usjoiBrand.toLowerCase().trim());
+            }
+
+            // 产品分类
+            if (!StringUtils.isEmpty(usjoiProductType)
+                    && !mapProductTypeMapping.containsKey(usjoiProductType)) {
+                // 插入产品分类初始中英文mapping信息到Synship.com_mt_value_channel表中
+                comMtValueChannelService.insertComMtValueChannelMapping(57, usjoiChannelId, usjoiProductType,
+                        usjoiProductType, getTaskName());
+                // 将更新完整之后的mapping信息添加到前面取出来的产品分类mapping表中
+                mapProductTypeMapping.put(usjoiProductType, usjoiProductType);
+            }
+
+            // 适用人群
+            if (!StringUtils.isEmpty(usjoiSizeType)
+                    && !mapSizeTypeMapping.containsKey(usjoiSizeType)) {
+                // 插入适用人群初始中英文mapping信息到Synship.com_mt_value_channel表中
+                comMtValueChannelService.insertComMtValueChannelMapping(58, usjoiChannelId, usjoiSizeType,
+                        usjoiSizeType, getTaskName());
+                // 将更新完整之后的mapping信息添加到前面取出来的适用人群mapping表中
+                mapSizeTypeMapping.put(usjoiSizeType, usjoiSizeType);
+            }
+        }
     }
 
 }

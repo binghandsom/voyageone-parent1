@@ -218,10 +218,10 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                             if (name.contains("颜色") || name.contains("Color")) {
                                                 if (valueList.size() > 0) {
                                                     for (String value : valueList) {
+                                                        if (value.toString().equals("N/A")) {
+                                                            continue;
+                                                        }
                                                         sbColorValue.append(value.replace(" ", "") + "-");
-                                                    }
-                                                    if (sbColorValue.toString().equals("N/A-")) {
-                                                        continue;
                                                     }
                                                 }
                                             }
@@ -229,11 +229,12 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                             if (name.equals("金属") || name.equals("Metal")) {
                                                 if (valueList.size() > 0) {
                                                     for (String value : valueList) {
+                                                        if (value.toString().equals("N/A")) {
+                                                            continue;
+                                                        }
                                                         sbMetalValue.append(value.replace(" ", "") + "-");
                                                     }
-                                                    if (sbMetalValue.toString().equals("N/A-")) {
-                                                        continue;
-                                                    }
+
                                                 }
                                             }
                                             //attributeSize
@@ -241,13 +242,12 @@ public class OverStockAnalysisService extends BaseAnalysisService {
 
                                                 if (valueList.size() > 0) {
                                                     for (String value : valueList) {
+                                                        if (value.toString().equals("N/A")) {
+                                                            continue;
+                                                        }
                                                         sbSizeValue.append(value.replace(" ", "") + "-");
                                                     }
-                                                    if (sbSizeValue.toString().equals("N/A-")) {
-                                                        continue;
-                                                    }
                                                 }
-
                                             }
                                         }
                                         //attributeColor
@@ -316,11 +316,12 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                             }
                                             if (valueList.size() > 0) {
                                                 for (String value : valueList) {
+                                                    if (value.toString().equals("N/A")) {
+                                                        continue;
+                                                    }
                                                     sbValue.append(value.replace(" ", "") + "-");
                                                 }
-                                                if (sbValue.toString().equals("N/A-")) {
-                                                    continue;
-                                                }
+
                                                 sb.append(sbValue);
                                             }
                                         }

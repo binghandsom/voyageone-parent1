@@ -292,6 +292,7 @@ define(function () {
         "TXT_DOWNLOAD_TASK_DETAIL": "下载任务明细",
         "TXT_STARTUP_ALL": "启动所有",
         "TXT_STOP_ALL": "停止所有",
+        "TXT_FAIL_STARTUP_ALL": "失败的重新启动",
         "TXT_REVERT_ALL": "还原所有",
         "TXT_SHOW_ALL": "显示所有",
         "TXT_STARTUP": "启动",

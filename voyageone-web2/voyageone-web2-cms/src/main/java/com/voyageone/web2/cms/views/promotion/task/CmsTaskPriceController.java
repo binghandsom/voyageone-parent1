@@ -35,6 +35,12 @@ public class CmsTaskPriceController extends CmsController {
         Map<String,Object> result = new HashMap<>();
         result.put("resultData",resultBean);
         result.put("total", cnt);
+        param.put("synFlg",3);
+        result.put("failCnt",cmsTaskPriceService.getPriceListCnt(param));
+        param.put("synFlg",1);
+        result.put("pendingCnt",cmsTaskPriceService.getPriceListCnt(param));
+        param.put("synFlg",0);
+        result.put("stopCnt",cmsTaskPriceService.getPriceListCnt(param));
         // 返回用户信息
         return success(result);
     }

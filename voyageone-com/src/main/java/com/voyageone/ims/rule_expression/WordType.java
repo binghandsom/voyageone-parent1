@@ -8,6 +8,8 @@ public enum WordType{
     CMS,
     DICT,
     MASTER,
+    MASTER_HTML,
+    MASTER_CLR_HTML,
     CONDITION,
     CUSTOM,
     FEED_ORG,

@@ -58,7 +58,7 @@ public class PlatformMappingService extends BaseService {
         return writeResult.getN() > 0;
     }
 
-    Map<String, String> getValueMap(String channelId, int productId, int cartId) {
+    public Map<String, Object> getValueMap(String channelId, Long productId, int cartId) {
 
         // 查询需要用到的平台类目也在商品中获取
 
@@ -70,7 +70,7 @@ public class PlatformMappingService extends BaseService {
 
         CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_COMMON, cart.getpCatId(), channelId);
 
-        Map<String, String> valueMap = new HashMap<>();
+        Map<String, Object> valueMap = new HashMap<>();
 
         if (fieldMapsModel != null)
             fillValueMap(valueMap, product, fieldMapsModel);
@@ -81,7 +81,7 @@ public class PlatformMappingService extends BaseService {
         return valueMap;
     }
 
-    private void fillValueMap(Map<String, String> valueMap, CmsBtProductModel product, CmsBtPlatformMappingModel fieldMapsModel) {
+    private void fillValueMap(Map<String, Object> valueMap, CmsBtProductModel product, CmsBtPlatformMappingModel fieldMapsModel) {
 
         // 循环所有配置
         // 如果没有表达式配置, 就简单的使用 value 作为值

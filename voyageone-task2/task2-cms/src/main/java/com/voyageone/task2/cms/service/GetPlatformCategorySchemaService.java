@@ -69,18 +69,8 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        // 平台类目schema获取的时候, 需要的一些特殊参数信息(key: channel, cart, category)(条件：active='1')
-        List<CmsMtPlatformCategoryExtendInfoModel> cmsMtPlatformCategoryExtendInfoModelList = platformCategoryService.getPlatformCategoryExtendInfoList(Active_1);
-//        List<CmsMtPlatformCategoryExtendInfoModel> cmsMtPlatformCategoryExtendInfoModelList = null;
-        if (cmsMtPlatformCategoryExtendInfoModelList == null) {
-            $warn("获取有效的平台产品ID一览表数据失败！");
-            cmsMtPlatformCategoryExtendInfoModelList = new ArrayList<>();
-        }
-        // 整理一下便于检索
-        Map<String, CmsMtPlatformCategoryExtendInfoModel> platformCategoryExtendInfoMap = new HashMap<>();
-        for (CmsMtPlatformCategoryExtendInfoModel model : cmsMtPlatformCategoryExtendInfoModelList) {
-            platformCategoryExtendInfoMap.put(getPlatformCategoryExtendInfoKey(model.getChannelId(), model.getCartId(), model.getCategoryId()), model);
-        }
+        // 初始化
+        Map<String, CmsMtPlatformCategoryExtendInfoModel> platformCategoryExtendInfoMap = doInit();
 
         // cart列表
         List<Integer> cartList = new ArrayList<>();
@@ -121,13 +111,32 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
         $info("正常结束");
     }
 
+    /**
+     * 初始化
+     */
+    public Map<String, CmsMtPlatformCategoryExtendInfoModel> doInit() {
+        // 平台类目schema获取的时候, 需要的一些特殊参数信息(key: channel, cart, category)(条件：active='1')
+        List<CmsMtPlatformCategoryExtendInfoModel> cmsMtPlatformCategoryExtendInfoModelList = platformCategoryService.getPlatformCategoryExtendInfoList(Active_1);
+        if (cmsMtPlatformCategoryExtendInfoModelList == null) {
+            $warn("获取有效的平台产品ID一览表数据失败！");
+            cmsMtPlatformCategoryExtendInfoModelList = new ArrayList<>();
+        }
+        // 整理一下便于检索
+        Map<String, CmsMtPlatformCategoryExtendInfoModel> platformCategoryExtendInfoMap = new HashMap<>();
+        for (CmsMtPlatformCategoryExtendInfoModel model : cmsMtPlatformCategoryExtendInfoModelList) {
+            platformCategoryExtendInfoMap.put(getPlatformCategoryExtendInfoKey(model.getChannelId(), model.getCartId(), model.getCategoryId()), model);
+        }
+
+        return platformCategoryExtendInfoMap;
+    }
+
 	/**
      * 主逻辑
      * @param shopBean shopBean
      * @param platformCategoryExtendInfoMap 特殊处理类目的信息一览
      * @param logInfo log用的信息的前缀
      */
-    private void doLogic(ShopBean shopBean, Map<String, CmsMtPlatformCategoryExtendInfoModel> platformCategoryExtendInfoMap, String logInfo) {
+    public void doLogic(ShopBean shopBean, Map<String, CmsMtPlatformCategoryExtendInfoModel> platformCategoryExtendInfoMap, String logInfo) {
         List<Map> allCategoryLeavesMap = new ArrayList<>();
 
         // 根据channel和cart, 获取platform category tree (一条记录就是一级类目含以下的一整棵树)
@@ -162,6 +171,32 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
             String logInfoFull = logInfo + String.format(", category:[%s]", idxCategory++ + "/" + allCategoryLeavesMap.size());
             $info(logInfoFull);
         }
+    }
+
+    /**
+     * 主逻辑 (单类目)
+     * @param shopBean shopBean
+     * @param platformCategoryExtendInfoMap 特殊处理类目的信息一览
+     * @param categoryId 指定类目
+     * @param categoryPath 指定类目的path
+     * @param logInfo log用的信息的前缀
+     */
+    public void doLogicSimple(ShopBean shopBean, Map<String, CmsMtPlatformCategoryExtendInfoModel> platformCategoryExtendInfoMap, String categoryId, String categoryPath, String logInfo) {
+
+        // 删除数据库现有数据(单类目)
+        cmsMtPlatformCategorySchemaTmDao.deletePlatformCategorySchemaByChannnelCartCategory(shopBean.getOrder_channel_id(), Integer.parseInt(shopBean.getCart_id()), categoryId);
+
+        CmsMtPlatformCategoryTreeModel leafObj = new CmsMtPlatformCategoryTreeModel();
+        leafObj.setChannelId(shopBean.getOrder_channel_id());
+        leafObj.setCartId(Integer.parseInt(shopBean.getCart_id()));
+        leafObj.setCatId(categoryId);
+        leafObj.setCatPath(categoryPath);
+
+        doSetPlatformPropTm(shopBean, leafObj, platformCategoryExtendInfoMap);
+
+        String logInfoFull = logInfo + String.format(", category:[%s][%s]", categoryId, categoryPath);
+        $info(logInfoFull);
+
     }
 
 	/**
