@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = AdminUrlConstants.User.Self.ROOT, method = RequestMethod.POST)
-public class UserController  extends AdminController {
+public class AdminUserController extends AdminController {
 
     @Autowired
     AdminUserService adminUserService;
