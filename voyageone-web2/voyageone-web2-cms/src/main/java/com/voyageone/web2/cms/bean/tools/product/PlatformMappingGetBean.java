@@ -1,10 +1,11 @@
 package com.voyageone.web2.cms.bean.tools.product;
 
+import com.voyageone.common.masterdate.schema.field.Field;
+
 import java.util.List;
-import java.util.Map;
 
 /**
- * 接收前端保存的数据类型
+ * 返回给前端的单行模型
  * <p>
  * Created by jonas on 8/15/16.
  *
@@ -12,7 +13,7 @@ import java.util.Map;
  * @version 2.4.0
  * @since 2.4.0
  */
-public class PlatformMappingSaveBean {
+public class PlatformMappingGetBean {
 
     private Integer cartId;
 
@@ -66,23 +67,23 @@ public class PlatformMappingSaveBean {
 
     public static class Schema {
 
-        private List<Map<String, Object>> product;
+        private List<Field> product;
 
-        private List<Map<String, Object>> item;
+        private List<Field> item;
 
-        public List<Map<String, Object>> getProduct() {
+        public List<Field> getProduct() {
             return product;
         }
 
-        public void setProduct(List<Map<String, Object>> product) {
+        public void setProduct(List<Field> product) {
             this.product = product;
         }
 
-        public List<Map<String, Object>> getItem() {
+        public List<Field> getItem() {
             return item;
         }
 
-        public void setItem(List<Map<String, Object>> item) {
+        public void setItem(List<Field> item) {
             this.item = item;
         }
     }

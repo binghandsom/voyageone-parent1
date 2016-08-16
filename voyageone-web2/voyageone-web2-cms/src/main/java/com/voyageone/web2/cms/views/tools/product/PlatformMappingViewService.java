@@ -8,10 +8,13 @@ import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.bean.tools.product.PlatformMappingGetBean;
 import com.voyageone.web2.cms.bean.tools.product.PlatformMappingSaveBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -38,9 +42,12 @@ class PlatformMappingViewService extends BaseAppService {
 
     private final PlatformMappingService platformMappingService;
 
+    private final PlatformSchemaService platformSchemaService;
+
     @Autowired
-    public PlatformMappingViewService(PlatformMappingService platformMappingService) {
+    public PlatformMappingViewService(PlatformMappingService platformMappingService, PlatformSchemaService platformSchemaService) {
         this.platformMappingService = platformMappingService;
+        this.platformSchemaService = platformSchemaService;
     }
 
     public Map<String, Object> page(Integer cartId, Integer categoryType, String categoryPath, int page, int size, UserSessionBean userSessionBean) {
@@ -80,6 +87,53 @@ class PlatformMappingViewService extends BaseAppService {
         result.put("total", total);
 
         return result;
+    }
+
+    public PlatformMappingGetBean get(CmsBtPlatformMappingModel platformMappingModel, String channelId) {
+
+        CmsBtPlatformMappingModel _platformMappingModel = platformMappingService.get(platformMappingModel, channelId);
+
+        Map<String, CmsBtPlatformMappingModel.FieldMapping> fieldMappingMap = null;
+
+        if (_platformMappingModel != null) {
+            platformMappingModel = _platformMappingModel;
+            fieldMappingMap = platformMappingModel.getMappings().stream()
+                    .collect(toMap(CmsBtPlatformMappingModel.FieldMapping::getFieldId, m -> m));
+        }
+
+        PlatformMappingGetBean platformMappingGetBean = new PlatformMappingGetBean();
+
+        String categoryPath = platformMappingModel.getCategoryPath();
+        int cartId = platformMappingModel.getCartId();
+        int type = platformMappingModel.getCategoryType();
+
+        // 同步基础数据
+        platformMappingGetBean.setCartId(cartId);
+        platformMappingGetBean.setCategoryPath(categoryPath);
+        platformMappingGetBean.setCategoryType(type);
+        platformMappingGetBean.setModified(platformMappingModel.getModified());
+
+        // 构造包含关联关系的 schema 数据
+
+        PlatformMappingGetBean.Schema schema = new PlatformMappingGetBean.Schema();
+
+        Map<String, List<Field>> fieldListMap = platformSchemaService.getFieldsByCategoryPath(categoryPath, channelId, cartId);
+
+        List<Field> item = fieldListMap.get(PlatformSchemaService.KEY_ITEM);
+
+        fillFields(item, fieldMappingMap);
+
+        List<Field> product = fieldListMap.get(PlatformSchemaService.KEY_PRODUCT);
+
+        fillFields(product, fieldMappingMap);
+
+        schema.setItem(item);
+
+        schema.setProduct(product);
+
+        platformMappingGetBean.setSchema(schema);
+
+        return platformMappingGetBean;
     }
 
     public boolean save(PlatformMappingSaveBean platformMappingSaveBean, UserSessionBean user) {
@@ -141,13 +195,19 @@ class PlatformMappingViewService extends BaseAppService {
         else
             mappingMap = mappingList.stream().collect(toMap(CmsBtPlatformMappingModel.FieldMapping::getFieldId, m -> m));
 
-        List<Field> item = getStrongSchema(schema.getItem());
+        List<Map<String, Object>> weakItem = schema.getItem();
 
-        fillMapping(mappingMap, item);
+        if (weakItem != null && !weakItem.isEmpty()) {
+            List<Field> item = getStrongSchema(weakItem);
+            fillMapping(mappingMap, item);
+        }
 
-        List<Field> product = getStrongSchema(schema.getProduct());
+        List<Map<String, Object>> weakProduct = schema.getProduct();
 
-        fillMapping(mappingMap, product);
+        if (weakProduct != null && !weakProduct.isEmpty()) {
+            List<Field> product = getStrongSchema(schema.getProduct());
+            fillMapping(mappingMap, product);
+        }
 
         mappingList = mappingMap.entrySet().stream().map(Map.Entry::getValue).collect(toList());
 
@@ -163,7 +223,7 @@ class PlatformMappingViewService extends BaseAppService {
         // 对于 Check 类的, 只有固定值
         // Input 的, 只有匹配关系
 
-        for (Field field: fieldList) {
+        for (Field field : fieldList) {
 
             String fieldId = field.getId();
 
@@ -172,7 +232,6 @@ class PlatformMappingViewService extends BaseAppService {
             if (mapping == null) {
                 mapping = new CmsBtPlatformMappingModel.FieldMapping();
                 mapping.setFieldId(fieldId);
-                mappingMap.put(fieldId, mapping);
             }
 
             switch (field.getType()) {
@@ -181,25 +240,33 @@ class PlatformMappingViewService extends BaseAppService {
                     SingleCheckField singleCheckField = (SingleCheckField) field;
                     Value valueObject = singleCheckField.getValue();
                     String value = valueObject.getValue();
+                    if (StringUtils.isEmpty(value))
+                        continue;
                     mapping.setValue(value);
                     break;
                 case MULTICHECK:
                     MultiCheckField multiCheckField = (MultiCheckField) field;
                     List<Value> valueObjectList = multiCheckField.getValues();
                     List<String> valueList = valueObjectList.stream().map(Value::getValue).collect(toList());
+                    if (valueList.isEmpty())
+                        continue;
                     mapping.setValue(valueList);
                     break;
                 case COMPLEX:
                     ComplexField complexField = (ComplexField) field;
                     List<Field> children = complexField.getFields();
                     fillMapping(mappingMap, children);
-                    break;
+                    continue;
                 case INPUT:
                     InputField inputField = (InputField) field;
-                    setExpressionList(mapping, inputField.getValue());
+                    String expressionListJson = inputField.getValue();
+                    if (StringUtils.isEmpty(expressionListJson))
+                        continue;
+                    setExpressionList(mapping, expressionListJson);
                     break;
             }
 
+            mappingMap.put(fieldId, mapping);
         }
     }
 
@@ -219,5 +286,50 @@ class PlatformMappingViewService extends BaseAppService {
 
     private List<Field> getStrongSchema(List<Map<String, Object>> weakSchema) {
         return SchemaJsonReader.readJsonForList(weakSchema);
+    }
+
+    private void fillFields(List<Field> fieldList, Map<String, CmsBtPlatformMappingModel.FieldMapping> fieldMappingMap) {
+
+        if (fieldMappingMap == null || fieldMappingMap.isEmpty())
+            return;
+
+        for (Field field : fieldList) {
+
+            CmsBtPlatformMappingModel.FieldMapping mapping = fieldMappingMap.get(field.getId());
+
+            if (mapping == null)
+                continue;
+
+            switch (field.getType()) {
+
+                case INPUT:
+                    InputField inputField = (InputField) field;
+                    List<CmsBtPlatformMappingModel.FieldMappingExpression> expressionList = mapping.getExpressions();
+                    if (expressionList == null || expressionList.isEmpty())
+                        continue;
+                    inputField.setValue(JacksonUtil.bean2Json(expressionList));
+                    break;
+                case SINGLECHECK:
+                    SingleCheckField singleCheckField = (SingleCheckField) field;
+                    singleCheckField.setValue(new Value() {{
+                        setValue(String.valueOf(mapping.getValue()));
+                    }});
+                    break;
+                case MULTICHECK:
+                    MultiCheckField multiCheckField = (MultiCheckField) field;
+                    @SuppressWarnings("unchecked")
+                    List<String> valueList = (List<String>) mapping.getValue();
+                    List<Value> valueObjectList = valueList.stream().map(v -> new Value() {{
+                        setValue(v);
+                    }}).collect(toList());
+                    multiCheckField.setValues(valueObjectList);
+                    break;
+                case COMPLEX:
+                    ComplexField complexField = (ComplexField) field;
+                    List<Field> children = complexField.getFields();
+                    fillFields(children, fieldMappingMap);
+                    break;
+            }
+        }
     }
 }

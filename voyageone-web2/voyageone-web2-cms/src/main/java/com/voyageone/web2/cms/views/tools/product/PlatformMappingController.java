@@ -58,10 +58,9 @@ public class PlatformMappingController extends CmsController {
 
     @RequestMapping(PLATFORM_MAPPING.GET)
     public AjaxResponse get(@RequestBody CmsBtPlatformMappingModel platformMappingModel) {
-
-        platformMappingModel = platformMappingService.get(platformMappingModel, getUser().getSelChannelId());
-
-        return success(platformMappingModel);
+        return success(
+                platformMappingViewService.get(platformMappingModel, getUser().getSelChannelId())
+        );
     }
 
     @RequestMapping(PLATFORM_MAPPING.SAVE)
