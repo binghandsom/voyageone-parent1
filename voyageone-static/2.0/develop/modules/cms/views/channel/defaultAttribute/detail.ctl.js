@@ -6,6 +6,7 @@
 define([
     'cms',
     'modules/cms/controller/popup.ctl',
+    'modules/cms/directives/defaultAttr.directive',
     './defaultAttrService.ctl'
 ], function (cms) {
     cms.controller('attributeDetailController', (function () {
@@ -39,7 +40,7 @@ define([
                 });
 
                 self.defaultAttrService.get(self.searchInfo).then(function(res){
-                    console.log(res);
+                    self.fields = res.data.schemaFields;
                 });
             },
             jdCategoryMapping: function () {
@@ -63,6 +64,7 @@ define([
                         self.searchInfo.categoryId = context.selected.catId;
                 });
             }
+
         };
 
         return AttributeDetailController;

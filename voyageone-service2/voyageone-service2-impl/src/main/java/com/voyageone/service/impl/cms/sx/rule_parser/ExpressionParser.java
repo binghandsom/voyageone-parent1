@@ -29,6 +29,8 @@ public class ExpressionParser extends VOAbsLoggable {
     private DictWordParser dictWordParser;
     private CustomWordParser customWordParser;
     private MasterWordParser masterWordParser;
+    private MasterHtmlWordParser masterHtmlWordParser;
+    private MasterClrHtmlWordParser masterClrHtmlWordParser;
     private FeedCnWordParser feedCnWordParser;
     private FeedOrgWordParser feedOrgWordParser;
     private SkuWordParser skuWordParser;
@@ -44,6 +46,8 @@ public class ExpressionParser extends VOAbsLoggable {
         this.customWordParser = new CustomWordParser(this, sxProductService, sxData);
 
         this.masterWordParser = new MasterWordParser(sxData.getMainProduct(), sxData.getCartId());
+        this.masterHtmlWordParser = new MasterHtmlWordParser(sxData.getMainProduct(), sxData.getCartId());
+        this.masterClrHtmlWordParser = new MasterClrHtmlWordParser(sxData.getMainProduct(), sxData.getCartId());
         this.feedCnWordParser = new FeedCnWordParser(sxData.getMainProduct());
         this.feedOrgWordParser = new FeedOrgWordParser(sxData.getMainProduct(), sxData.getCmsBtFeedInfoModel());
         this.skuWordParser = new SkuWordParser();
@@ -79,6 +83,12 @@ public class ExpressionParser extends VOAbsLoggable {
                         break;
                     case MASTER:
                         plainValue = masterWordParser.parse(ruleWord);
+                        break;
+                    case MASTER_HTML:
+                        plainValue = masterHtmlWordParser.parse(ruleWord);
+                        break;
+                    case MASTER_CLR_HTML:
+                        plainValue = masterClrHtmlWordParser.parse(ruleWord);
                         break;
                     case FEED_ORG:
                         plainValue = feedOrgWordParser.parse(ruleWord);

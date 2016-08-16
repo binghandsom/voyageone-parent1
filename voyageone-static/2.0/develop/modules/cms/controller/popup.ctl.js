@@ -249,6 +249,18 @@ define([
                 "controllerUrl": "modules/cms/views/pop/platformMapping/ppOtherPlatform.ctl",
                 "controller": 'otherPlatformPopupController as ctrl',
                 "size": 'md'
+            },
+            "propertyMapping":{
+                "templateUrl": "views/pop/platformMapping/propertyMapping.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/platformMapping/propertyMapping.ctl",
+                "controller": 'propertyMappingController as ctrl',
+                "size": 'lg'
+            },
+            "propertySetting":{
+                "templateUrl": "views/pop/platformMapping/propertySetting.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/platformMapping/propertySetting.ctl",
+                "controller": 'propertySettingController as ctrl',
+                "size": 'md'
             }
         },
         "field": {
@@ -1187,12 +1199,12 @@ define([
             return openModal(popActions.bulkUpdate.updateProductApproval, context);
         };
 
-        //切换主类目
+        /**切换主类目*/
         $scope.openSwitchMain = function openSwitchMain(context) {
             return openModal(popActions.product.switchMain, context);
         };
 
-        //产品下线
+        /**产品下线*/
         $scope.openProductOffLine = function openProductOffLine(context) {
             return openModal(popActions.product.productOffLine, context);
         };
@@ -1204,9 +1216,19 @@ define([
             });
         };
 
-        //税号改变 hsCodeChange
+        /**税号改变 hsCodeChange*/
         $scope.openHsCodeChange = function openHsCodeChange(context){
             return openModal(popActions.product.hsCodeChange,context);
+        };
+
+        /**属性匹配*/
+        $scope.openPropertyMapping = function openPropertyMapping(context){
+            return openModal(popActions.platformMapping.propertyMapping,context);
+        };
+
+        /**属性编辑*/
+        $scope.openPropertySetting = function openPropertySetting(context){
+            return openModal(popActions.platformMapping.propertySetting,context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {

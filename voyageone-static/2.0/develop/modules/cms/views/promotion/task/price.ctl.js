@@ -13,7 +13,9 @@ define([
             "searchKey": '',
             "promotion": {},
             "priceList": [],
-            "pricePageOption": {curr: 1, total: 5, size: 10, fetch: search}
+            "pricePageOption": {curr: 1, total: 5, size: 10, fetch: search},
+            "statusCnt":{},
+            "searchInfo":{}
         };
 
 
@@ -32,16 +34,25 @@ define([
                 "promotionId": $routeParams.promotionId,
                 "taskType":0,
                 "key": $scope.vm.searchKey,
+                "synFlg": $scope.vm.searchInfo.synFlg,
                 "start": ($scope.vm.pricePageOption.curr - 1) * $scope.vm.pricePageOption.size,
                 "length": $scope.vm.pricePageOption.size
             }).then(function (res) {
                 $scope.vm.pricePageOption.total = res.data.total;
                 $scope.vm.priceList = res.data.resultData;
+                $scope.vm.statusCnt.failCnt = res.data.failCnt;
+                $scope.vm.statusCnt.pendingCnt = res.data.pendingCnt;
+                $scope.vm.statusCnt.stopCnt = res.data.stopCnt;
             }, function (err) {
 
             })
         }
 
+        $scope.searchStatus = function(status){
+            $scope.vm.searchInfo.synFlg = status;
+            $scope.vm.pricePageOption.curr = 1;
+            search();
+        }
         $scope.updateStatus = function(item,synFlg){
             var data = _.clone(item);
             data.synFlg = synFlg;
@@ -67,6 +78,21 @@ define([
                     })
                 })
         }
+
+        $scope.updateAllFailStatus = function () {
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
+                .then(function () {
+                    taskPriceService.updateTaskStatus({"promotionId": $routeParams.promotionId,"synFlg":1,"errMsg":"","taskType":0,"selSynFlg":3}).then(function (res) {
+                        _.each($scope.vm.priceList,function(item){
+                            item.synFlg = 1;
+                            item.errMsg = "";
+                        })
+                    }, function (err) {
+                        notify.warning("fail")
+                    })
+                })
+        }
+
         
         
         

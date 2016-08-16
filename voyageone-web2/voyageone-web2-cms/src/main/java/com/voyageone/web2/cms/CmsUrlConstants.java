@@ -568,6 +568,7 @@ public interface CmsUrlConstants {
             String HsCodeChg = "hsCodeChg";
             String CopyProperty = "copyProperty";
             String CopyCommonProperty = "copyCommonProperty";
+            String GET_PLATFORM_CATEGORIES ="getPlatformCategories";
         }
 
         interface HISTORY {

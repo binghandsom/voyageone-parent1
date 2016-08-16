@@ -66,6 +66,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     public static final int WORK_LOAD_SUCCESS = 1;
     private static final int CART_ID = CartEnums.Cart.JM.getValue();
 
+    // 聚美详情,聚美实拍或聚美使用方法里面的html语法解析错误(例："span不能使用face属性","不能使用外链"等)
+    private static final String INVALID_HTML_CONTENT = "109902";
 //    private static final String DUPLICATE_PRODUCT_NAME = "109902";
     // 产品名称(name)在聚美已存在
     private static final String DUPLICATE_PRODUCT_DRAFT_NAME = "103087";
@@ -408,7 +410,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 //上新失败
                 else
                 {
-                    String msg = String.format("上新失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductAddResponse.getErrorMsg());
+                    String errMsg = "";
+                    // 如果是错误代码是"109902"(HTML解析错误)的时候
+                    if (htProductAddResponse.getError_code().contains(INVALID_HTML_CONTENT)) {
+                        errMsg = "Master产品详情中的简短描述,详情描述或聚美使用方法等中英文项目的HTML内容语法解析错误！";
+                    }
+                    String msg = String.format("聚美新增产品上新失败！%s [ProductId:%s], [Message:%s]", errMsg, product.getProdId(), htProductAddResponse.getErrorMsg());
                     $error(msg);
                     throw  new BusinessException(msg);
                 }
@@ -636,12 +643,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         HtDealUpdateRequest htDealUpdateRequest = fillHtDealUpdateRequest(product,hashId,expressionParser,shop);
                         HtDealUpdateResponse htDealUpdateResponse = jumeiHtDealService.update(shop, htDealUpdateRequest);
                         if (htDealUpdateResponse != null && htDealUpdateResponse.is_Success()) {
-                            $info("更新Deal成功！[ProductId:%s]", product.getProdId());
+                            $info("聚美更新Deal成功！[ProductId:%s]", product.getProdId());
                         }
                         //更新Deal失败
                         else
                         {
-                            String msg = String.format("更新Deal失败！[ProductId:%s], [Message:%s]", product.getProdId(), htDealUpdateResponse.getErrorMsg());
+                            String msg = String.format("聚美更新Deal失败！[ProductId:%s], [Message:%s]", product.getProdId(), htDealUpdateResponse.getErrorMsg());
                             $error(msg);
                             throw  new BusinessException(msg);
                         }
@@ -650,7 +657,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 //更新产品失败
                 else
                 {
-                    String msg = String.format("更新产品失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductUpdateResponse.getErrorMsg());
+                    String msg = String.format("聚美更新产品上新失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductUpdateResponse.getErrorMsg());
                     $error(msg);
                     throw  new BusinessException(msg);
                 }
