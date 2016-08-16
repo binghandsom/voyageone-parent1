@@ -1422,7 +1422,9 @@ define([
             return {
                 restrict: 'E',
                 require: ['^^dField'],
-                template: '<button class="btn btn-schema btn-info" ng-click="schemaFieldController.remove(complexValue)"><i class="fa fa-link"></i>&nbsp;<span translate="TXT_MAPPING_ATTRIBUTE"></span></button>',
+                template: '<button class="btn btn-schema btn-info" ng-click="openPropertyMapping()" ng-controller="popupCtrl">'
+                          +'<i class="fa fa-link"></i>&nbsp;<span translate="TXT_MAPPING_ATTRIBUTE"></span>'
+                          +'</button>',
                 scope: false
             };
         })
