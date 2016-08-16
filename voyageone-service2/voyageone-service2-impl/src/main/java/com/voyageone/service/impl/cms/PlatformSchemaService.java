@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -14,12 +13,10 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryExtendFieldDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryInvisibleFieldDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtPlatformPropMappingCustomModel;
 import com.voyageone.service.model.cms.mongo.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -45,19 +42,16 @@ public class PlatformSchemaService extends BaseService {
     private final CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
     private final CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao;
     private final CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao;
-    private final CmsMtPlatformCategorySchemaDao platformCategorySchemaDao;
 
     @Autowired
     public PlatformSchemaService(PlatformCategoryService platformCategoryService,
                                  CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao,
                                  CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao,
-                                 CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao,
-                                 CmsMtPlatformCategorySchemaDao platformCategorySchemaDao) {
+                                 CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao) {
         this.platformCategoryService = platformCategoryService;
         this.cmsMtPlatformPropMappingCustomDao = cmsMtPlatformPropMappingCustomDao;
         this.cmsMtPlatformCategoryInvisibleFieldDao = cmsMtPlatformCategoryInvisibleFieldDao;
         this.cmsMtPlatformCategoryExtendFieldDao = cmsMtPlatformCategoryExtendFieldDao;
-        this.platformCategorySchemaDao = platformCategorySchemaDao;
     }
 
     /**
@@ -73,8 +67,13 @@ public class PlatformSchemaService extends BaseService {
         if (CartEnums.Cart.JM.getValue() == cartId)
             return getFieldForProductImage(null, channelId, cartId);
 
-        CmsMtPlatformCategorySchemaModel platformCategorySchemaModel = platformCategorySchemaDao.selectOneWithQuery(new JongoQuery(
-                new Criteria("catFullPath").is(categoryPath).and("cartId").is(cartId)), cartId);
+        CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
+
+        if (CartEnums.Cart.TM.getValue() == cartId || CartEnums.Cart.TG.getValue() == cartId) {
+            platformCategorySchemaModel = platformCategoryService.getTmallSchemaByCategoryPath(categoryPath, channelId, cartId);
+        } else {
+            platformCategorySchemaModel = platformCategoryService.getPlatformSchemaByCategoryPath(categoryPath, cartId);
+        }
 
         return getFieldListMap(platformCategorySchemaModel);
     }
