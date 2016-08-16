@@ -46,7 +46,7 @@ public class AdminUserServiceTest {
         model.setUserAccount("444");
         model.setEmail("1111@123.com");
         model.setOrgId(1);
-        model.setRoleIds("1");
+        model.setRoleId("1");
 
         adminUserService.addUser(model, "test");
 
@@ -64,7 +64,7 @@ public class AdminUserServiceTest {
         model.setUserAccount("4444");
         model.setEmail("11111@123.com");
         model.setOrgId(1);
-        model.setRoleIds("1");
+        model.setRoleId("1");
 
         adminUserService.updateUser(model, "test");
 

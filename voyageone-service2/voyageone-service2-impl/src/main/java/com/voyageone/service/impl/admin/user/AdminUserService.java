@@ -113,7 +113,7 @@ public class AdminUserService {
         if(relationList.size() > 0) {
 
 
-            String[] roleIds = model.getRoleIds().split(",");
+            String[] roleIds = model.getRoleId().split(",");
             List<String> roleIdList = Arrays.asList(roleIds);
             for (String roleId : roleIds) {
                 ComUserRoleModel oldModel = relationList.stream().filter(w -> w.getRoleId() == Integer.valueOf(roleId)).findFirst().get();
@@ -128,7 +128,7 @@ public class AdminUserService {
         //需要删除的项目
         List<ComUserRoleModel> deleteList = (List<ComUserRoleModel>) CollectionUtils.subtract(relationList , oldList);
         //需要新增的项目
-        String[] roleIds = model.getRoleIds().split(",");
+        String[] roleIds = model.getRoleId().split(",");
         List<String> roleIdList = Arrays.asList(roleIds);
         List<String> addList =  (List<String>) CollectionUtils.subtract(roleIdList , oldIdList);
 
@@ -200,7 +200,7 @@ public class AdminUserService {
             comUserRoleDao.delete(deleteModel.getId());
         }
 
-        String[] addList = model.getRoleIds().split(",");
+        String[] addList = model.getRoleId().split(",");
         for (String roleId  : addList)
         {
             ComUserRoleModel rModel =  new ComUserRoleModel();
