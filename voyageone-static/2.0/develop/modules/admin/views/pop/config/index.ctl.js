@@ -78,6 +78,12 @@ define([
                     cfgVal: ''
                 };
             },
+            add: function (item) {
+                var self = this;
+                self.popups.openCreateEdit(item).then(function (res) {
+                    if (res == 'success') self.search();
+                });
+            },
             edit: function () {
                 var self = this;
                 _.forEach(self.cfgList, function (cfgInfo) {

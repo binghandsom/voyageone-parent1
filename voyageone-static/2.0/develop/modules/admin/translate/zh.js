@@ -45,6 +45,9 @@ define(function () {
         "BTN_SAVE": "保存",
         "BTN_OK":"确认",
         "BTN_GO": "Go",
+        "BTN_ACTIVE":"启用",
+        "BTN_INACTIVE": "禁用",
+
 
         /**分页显示*/
         "TXT_PAGER_SIZE": "每页显示",
