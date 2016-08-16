@@ -38,6 +38,7 @@ define(function () {
         "TXT_SESSION_KEY":"Session Key",
         "TXT_CHOOSED":"已选择",
         "TXT_CHOOSE":"可选择",
+        "TXT_MSG_SEARCH": "检索...",
 
         /**按钮组*/
         "TXT_LOGOUT": "注销",
