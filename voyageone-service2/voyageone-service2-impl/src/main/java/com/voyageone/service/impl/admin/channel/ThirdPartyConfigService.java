@@ -1,9 +1,15 @@
 package com.voyageone.service.impl.admin.channel;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.admin.ComMtThirdPartyConfigBean;
 import com.voyageone.service.dao.admin.ComMtThirdPartyConfigDao;
 import com.voyageone.service.daoext.admin.ComMtThirdPartyConfigDaoExt;
@@ -24,10 +30,24 @@ public class ThirdPartyConfigService extends BaseService {
 	@Autowired
 	private ComMtThirdPartyConfigDaoExt thirdPartyConfigDaoExt;
 
-	public PageModel<ComMtThirdPartyConfigBean> searchThirdPartyConfigByPage(String channelId, Integer pageNum,
-			String propVal, Integer pageNum2, Integer pageSize) {
-		// TODO Auto-generated method stub
-		return null;
+	public PageModel<ComMtThirdPartyConfigBean> searchThirdPartyConfigByPage(String channelId, String propName,
+			String propVal, Integer pageNum, Integer pageSize) {
+		PageModel<ComMtThirdPartyConfigBean> pageModel = new PageModel<ComMtThirdPartyConfigBean>();
+		// 设置查询参数
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("orderChannelId", channelId);
+		params.put("propName", propName);
+		params.put("propVal", propVal);
+		
+		// 判断查询结果是否分页
+		if (pageNum != null && pageSize != null) {
+			pageModel.setCount(thirdPartyConfigDaoExt.searchThirdPartyConfigCount(params));
+			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
+		}
+		// 查询第三方配置信息
+		pageModel.setResult(thirdPartyConfigDaoExt.searchThirdPartyConfigByPage(params));
+		
+		return pageModel;
 	}
 
 	public void addOrUpdateThirdPartyConfig(ComMtThirdPartyConfigModel model, String username, boolean append) {
@@ -49,6 +69,19 @@ public class ThirdPartyConfigService extends BaseService {
 		
 		if (!success) {
 			throw new BusinessException("保存第三方配置信息失败");
+		}
+	}
+
+	@VOTransactional
+	public void deleteThirdPartyConfig(List<Integer> seqIds, String username) {
+		for (Integer seqId : seqIds) {
+			ComMtThirdPartyConfigModel model = new ComMtThirdPartyConfigModel();
+			model.setSeq(seqId);
+			model.setActive(false);
+			model.setModifier(username);
+			if (thirdPartyConfigDao.update(model) <= 0) {
+				throw new BusinessException("删除第三方配置信息失败");
+			}
 		}
 	}
 

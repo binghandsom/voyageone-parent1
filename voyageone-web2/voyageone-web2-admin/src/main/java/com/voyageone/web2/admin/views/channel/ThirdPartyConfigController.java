@@ -1,5 +1,8 @@
 package com.voyageone.web2.admin.views.channel;
 
+import java.util.Arrays;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +39,7 @@ public class ThirdPartyConfigController extends AdminController {
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索第三方配置信息
 		PageModel<ComMtThirdPartyConfigBean> smsConfigPage = thirdPartyConfigService.searchThirdPartyConfigByPage(
-				form.getChannelId(), form.getPageNum(), form.getPropVal(), form.getPageNum(), form.getPageSize());
+				form.getChannelId(), form.getPropName(), form.getPropVal(), form.getPageNum(), form.getPageSize());
 		
 		return success(smsConfigPage);
 	}
@@ -63,6 +66,16 @@ public class ThirdPartyConfigController extends AdminController {
 		BeanUtils.copyProperties(form, model);
 		// 保存第三方配置信息
 		thirdPartyConfigService.addOrUpdateThirdPartyConfig(model, getUser().getUserName(), append);
+		
+		return success(true);
+	}
+	
+	@RequestMapping(AdminUrlConstants.Channel.Self.DELETE_CHANNEL)
+	public AjaxResponse deleteThirdPartyConfig(@RequestBody Integer[] seqIds) {
+		// 验证参数
+		Preconditions.checkArgument(ArrayUtils.isNotEmpty(seqIds));
+		// 删除第三方配置信息
+		thirdPartyConfigService.deleteThirdPartyConfig(Arrays.asList(seqIds), getUser().getUserName());
 		
 		return success(true);
 	}

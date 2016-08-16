@@ -134,6 +134,7 @@
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
         </where>
+        order by `name`
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" >

@@ -151,6 +151,7 @@ public class ChannelService extends BaseService {
 		params.put("orderChannelId", channelId);
 		params.put("cfgName", cfgName);
 		params.put("cfgVal", cfgVal);
+		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
 			pageModel.setCount(channelDaoExt.selectChannelConfigCount(params));

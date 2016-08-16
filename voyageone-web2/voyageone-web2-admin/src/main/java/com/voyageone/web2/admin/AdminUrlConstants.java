@@ -40,6 +40,15 @@ public interface AdminUrlConstants {
 			
 		}
 		
+		/** 渠道属性信息 */
+		interface Attribute {
+			
+			String ROOT = "/admin/channel/attribute";
+			
+			String SEARCH_CHANNEL_ATTRIBUTE_BY_PAGE = "searchChannelAttributeByPage";
+			
+		}
+		
 		/** 第三方配置信息 */
 		interface ThirdParty {
 			
