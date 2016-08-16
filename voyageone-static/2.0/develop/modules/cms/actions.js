@@ -109,7 +109,8 @@ define(function () {
                     "delistinGroup": "delistinGroup",
                     "hsCodeChg": "hsCodeChg",
                     "copyProperty": "copyProperty",
-                    "copyCommonProperty": "copyCommonProperty"
+                    "copyCommonProperty": "copyCommonProperty",
+                    "getPlatformCategories":"getPlatformCategories"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",

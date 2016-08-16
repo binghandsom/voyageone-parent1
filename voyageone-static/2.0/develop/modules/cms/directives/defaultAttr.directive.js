@@ -4,7 +4,6 @@ define([
 
     var FIELD_TYPES = {
         "INPUT": "INPUT",
-        "MULTI_INPUT": "MULTIINPUT",
         "SINGLE_CHECK": "SINGLECHECK",
         "MULTI_CHECK": "MULTICHECK",
         "COMPLEX": "COMPLEX",
