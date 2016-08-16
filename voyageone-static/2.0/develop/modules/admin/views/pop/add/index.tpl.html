@@ -5,27 +5,39 @@
         <h5 class="modal-title"><i class="fa fa-edit"></i>&nbsp;{{ctrl.popType}}</h5>
     </div>
     <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal">
+        <form role="form" class="form-horizontal" name="addForm" novalidate>
             <div class="col-sm-4">
                 <div class="form-horizontal">
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_CART_COMPANY_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.companyId" ng-options="company.id as company.company for company in ctrl.companyAllList">
+                            <select class="form-control" ng-model="ctrl.companyId" ng-options="company.id as company.company for company in ctrl.companyAllList"
+                                    ng-readonly="ctrl.popType == '编辑'" name="companyName" required>
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
                     </div>
                     <div class="row form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.companyName"></vo-message>
+                        </div>
+                    </div>
+                    <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_ID' | translate}}</label>
                         <div class="col-sm-8">
-                            <input class="form-control" ng-model="ctrl.sourceData.orderChannelId"/>
+                            <input type="number" maxlength="3" class="form-control" ng-model="ctrl.sourceData.orderChannelId"
+                                   ng-readonly="ctrl.popType == '编辑'" name="channelId" required/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.channelId"></vo-message>
                         </div>
                     </div>
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <input class="form-control" ng-model="ctrl.sourceData.name"/>
+                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.name"/>
                         </div>
                     </div>
                 </div>
@@ -35,19 +47,19 @@
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_SHIPPER' | translate}}</label>
                         <div class="col-sm-8">
-                            <input class="form-control" ng-model="ctrl.sourceData.sendName"/>
+                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.sendName"/>
                         </div>
                     </div>
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_SHIPPER_TEL' | translate}}</label>
                         <div class="col-sm-8">
-                            <input class="form-control" ng-model="ctrl.sourceData.sendTel"/>
+                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.sendTel"/>
                         </div>
                     </div>
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_SHIPPER_ZIP' | translate}}</label>
                         <div class="col-sm-8">
-                            <input class="form-control" ng-model="ctrl.sourceData.sendZip"/>
+                            <input type="text" maxlength="10" class="form-control" ng-model="ctrl.sourceData.sendZip"/>
                         </div>
                     </div>
                 </div>
@@ -58,10 +70,10 @@
                         <label class="col-sm-4 control-label">{{'TXT_STATUS' | translate}}</label>
                         <div class="col-sm-8">
                             <label class="checkbox-inline c-radio">
-                                <input type="radio" name="status" value="1" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> 可用
+                                <input type="radio" name="status" value="1" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> {{'BTN_ACTIVE'|translate}}
                             </label>
                             <label class="checkbox-inline c-radio">
-                                <input type="radio" name="status" value="0" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> 不可用
+                                <input type="radio" name="status" value="0" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> {{'BTN_INACTIVE'|translate}}
                             </label>
                         </div>
                     </div>
@@ -79,7 +91,7 @@
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_ICON_ADDRESS' | translate}}</label>
                         <div class="col-sm-8">
-                            <input class="form-control" ng-model="ctrl.sourceData.imgUrl"/>
+                            <input type="text" maxlength="250" class="form-control" ng-model="ctrl.sourceData.imgUrl"/>
                         </div>
                     </div>
                 </div>
@@ -106,16 +118,28 @@
                 <div class="row form-group">
                     <label class="col-sm-1 control-label">{{'TXT_SECRET_KEY' | translate}}</label>
                     <div class="col-sm-9">
-                        <input class="form-control" ng-model="ctrl.sourceData.screctKey" readonly/>
+                        <input class="form-control" ng-model="ctrl.sourceData.screctKey"
+                               readonly name="screctKey" required/>
                     </div>
                     <button class="btn btn-info btn-pop col-sm-1" ng-click="ctrl.generate('secretKey')">生成</button>
                 </div>
                 <div class="row form-group">
+                    <div class="col-sm-9 col-sm-offset-1">
+                        <vo-message target="addForm.screctKey"></vo-message>
+                    </div>
+                </div>
+                <div class="row form-group">
                     <label class="col-sm-1 control-label vo_a_ce" >{{'TXT_SESSION_KEY' | translate}}</label>
                     <div class="col-sm-9">
-                        <input class="form-control" ng-model="ctrl.sourceData.sessionKey" readonly/>
+                        <input class="form-control" ng-model="ctrl.sourceData.sessionKey"
+                               readonly name="sessionKey" required/>
                     </div>
                     <button class="btn btn-info btn-pop col-sm-1" ng-click="ctrl.generate()">生成</button>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-9 col-sm-offset-1">
+                        <vo-message target="addForm.sessionKey"></vo-message>
+                    </div>
                 </div>
             </div>
         </form>
