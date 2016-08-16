@@ -257,7 +257,9 @@ public class AdminUserService {
 
         List<ComResourceBean> treeList =  convert2Tree(allRes, resIds);
 
-        result.put("treeList", treeList);
+        Map<String, ComResourceBean> treeMap = treeList.stream().collect(Collectors.toMap(ComResourceBean::getResKey , (p) -> p ));
+
+        result.put("treeMap", treeMap);
         return result;
     }
 
