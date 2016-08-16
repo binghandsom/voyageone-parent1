@@ -97,6 +97,7 @@ public class CommonConfigController extends AdminController {
 			switch (form.getConfigType()) {
 			// 按类型保存配置信息
 			case Channel:
+				Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
 				TmOrderChannelConfigModel channelConfigModel = new TmOrderChannelConfigModel();
 				BeanUtils.copyProperties(form, channelConfigModel);
 				channelService.addOrUpdateChannelConfig(channelConfigModel, username, append);

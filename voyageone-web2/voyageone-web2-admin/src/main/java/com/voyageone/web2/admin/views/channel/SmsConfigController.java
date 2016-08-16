@@ -1,13 +1,16 @@
 package com.voyageone.web2.admin.views.channel;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
@@ -26,6 +29,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
  * @since 2.0.0 2016/8/9
  */
 @RestController
+@RequestMapping(value = AdminUrlConstants.Channel.Sms.ROOT, method = RequestMethod.POST)
 public class SmsConfigController extends AdminController {
 	
 	@Autowired
@@ -43,7 +47,15 @@ public class SmsConfigController extends AdminController {
 		return success(smsConfigPage);
 	}
 	
+	@RequestMapping(AdminUrlConstants.Channel.Sms.ADD_SMS_CONFIG)
+	public AjaxResponse addSmsConfig(@RequestBody SmsConfigFormBean form) {
+		return addOrUpdateSmsConfig(form, true);
+	}
 	
+	@RequestMapping(AdminUrlConstants.Channel.Sms.UPDATE_SMS_CONFIG)
+	public AjaxResponse updateSmsConfig(@RequestBody SmsConfigFormBean form) {
+		return addOrUpdateSmsConfig(form, false);
+	}
 	
 	public AjaxResponse addOrUpdateSmsConfig(@RequestBody SmsConfigFormBean form, boolean append) {
 		// 验证参数
@@ -69,5 +81,22 @@ public class SmsConfigController extends AdminController {
 		return success(result);
 	}
 	
+	@RequestMapping(AdminUrlConstants.Channel.Sms.DELETE_SMS_CONFIG)
+	public AjaxResponse deleteSmsConfig(@RequestBody Integer[] seqIds) {
+		// 验证参数
+		Preconditions.checkArgument(ArrayUtils.isNotEmpty(seqIds));
+		
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put(SUCCESS, false);
+		try {
+			// 删除短信配置信息
+			smsConfigService.deleteSmsConfig(Arrays.asList(seqIds), getUser().getUserName());
+			result.put(SUCCESS, true);
+		} catch (BusinessException e) {
+			result.put(MESSAGE, e.getMessage());
+		}
+		
+		return success(result);
+	}
 
 }

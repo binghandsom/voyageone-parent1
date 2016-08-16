@@ -99,7 +99,7 @@ public class ChannelController extends AdminController {
 		}
 		
 		return success(result);
-	}	
+	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.GET_ALL_COMPANY)
 	public AjaxResponse getAllCompany() {

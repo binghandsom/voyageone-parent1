@@ -34,8 +34,16 @@ public interface AdminUrlConstants {
 
 		/** 短信配置信息 */
 		interface Sms {
+			
+			String ROOT = "/admin/channel/sms";
 
 			String SEARCH_SMS_CONFIG_BY_PAGE = "searchSmsConfigByPage";
+			
+			String ADD_SMS_CONFIG = "addSmsConfig";
+
+			String UPDATE_SMS_CONFIG = "updateSmsConfig";
+
+			String DELETE_SMS_CONFIG = "deleteSmsConfig";
 
 		}
 

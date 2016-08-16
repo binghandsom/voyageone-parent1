@@ -4,7 +4,7 @@
 
     <resultMap id="channelModelMap" type="com.voyageone.service.model.admin.TmOrderChannelModel" />
     
-    <resultMap id="channelConfigModelMap" type="com.voyageone.service.model.admin.TmOrderChannelConfigModel" />
+    <resultMap id="channelConfigBeanMap" type="com.voyageone.service.bean.admin.TmOrderChannelConfigBean" />
     
     <sql id="selectChannelFilter">
     	<where>
@@ -85,7 +85,7 @@
 		 <include refid="selectChannelFilter"/>
 	</select>
 	
-	<select id="selectChanneConfigByPage" resultMap="channelConfigModelMap">
+	<select id="selectChanneConfigByPage" resultMap="channelConfigBeanMap">
 		select toc.name as channel_name, tocc.order_channel_id, tocc.cfg_name, tocc.cfg_val1, tocc.cfg_val2, tocc.`comment`
 		from tm_order_channel_config tocc left join tm_order_channel toc
 			on toc.order_channel_id = tocc.order_channel_id

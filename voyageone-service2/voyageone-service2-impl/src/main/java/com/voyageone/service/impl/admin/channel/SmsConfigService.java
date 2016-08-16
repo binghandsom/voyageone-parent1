@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.admin.channel;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,18 @@ public class SmsConfigService extends BaseService {
 			throw new BusinessException("保存短信配置信息失败");
 		}
 		
+	}
+
+	public void deleteSmsConfig(List<Integer> seqIds, String username) {
+		for (Integer seqId : seqIds) {
+			TmSmsConfigModel smsConfig = new TmSmsConfigModel();
+			smsConfig.setSeq(seqId);
+			smsConfig.setDelFlg("0");
+			smsConfig.setModifier(username);
+			if (smsConfigDao.update(smsConfig) <= 0) {
+				throw new BusinessException("删除短信配置信息失败");
+			}
+		}
 	}
 	
 }

@@ -34,7 +34,7 @@ public class ChannelFormBean extends AdminFormBean {
 	
 	private Integer isUsjoi;
 	
-	private String cardIds;
+	private String cartIds;
 
 	public Integer getCompanyId() {
 		return companyId;
@@ -140,12 +140,12 @@ public class ChannelFormBean extends AdminFormBean {
 		this.isUsjoi = isUsjoi;
 	}
 
-	public String getCardIds() {
-		return cardIds;
+	public String getCartIds() {
+		return cartIds;
 	}
 
-	public void setCardIds(String cardIds) {
-		this.cardIds = cardIds;
+	public void setCartIds(String cartIds) {
+		this.cartIds = cartIds;
 	}
 	
 }
