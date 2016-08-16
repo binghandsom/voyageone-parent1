@@ -854,3 +854,13 @@ schema .ng-invalid.focus-error {
     margin: 0px auto;
     width: 95%;
 }
+
+/**默认属性设置*/
+.default-attr .nav{
+    position: fixed;
+    width: 100px;
+    margin-left:25px;
+    cursor: pointer;
+    border-width: 2px;
+    border-style: dotted;
+}
