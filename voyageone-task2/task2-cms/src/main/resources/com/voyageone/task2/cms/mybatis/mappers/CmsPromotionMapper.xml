@@ -67,8 +67,45 @@
         LEFT JOIN voyageone_cms2.cms_bt_promotion_codes `code` ON sku.promotion_id = `code`.promotion_id
         AND sku.product_code = `code`.product_code
         LEFT JOIN voyageone_cms2.cms_bt_promotion prom ON sku.promotion_id = prom.id
+        <where>
+            <if test="promotionIds != null">
+                sku.promotion_id in
+                <foreach item="item" index="index" collection="promotionIds"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
     ) t2 ON t1.promotion_id = t2.promotion_id
     AND t1.num_iid = t2.num_iid
+    </select>
+    <select id="select_pending_promotion" resultType="int" parameterType="HashMap">
+        SELECT
+                DISTINCT a.promotion_id
+            FROM
+                voyageone_cms2.cms_bt_task_tejiabao a,
+                (
+                    SELECT
+                        id as promotion_id,
+                        tejiabao_id
+                    FROM
+                        voyageone_cms2.cms_bt_promotion
+                    WHERE
+                        channel_id =  #{channelId,jdbcType=VARCHAR}
+                    AND active = 1
+                    AND promotion_status = 1
+                    AND cart_id = #{cartId,jdbcType=VARCHAR}
+                    AND tejiabao_id != 0
+                ) b
+            WHERE
+                syn_flg = 1
+            AND task_type = 0
+            AND a.promotion_id = b.promotion_id
+            AND num_iid != ''
+            GROUP BY
+                promotion_id,
+                num_iid
+            LIMIT 0,200
     </select>
     <update id="update_cms_bt_promotion_task" parameterType="HashMap" >
         update voyageone_cms2.cms_bt_task_tejiabao
