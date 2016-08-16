@@ -113,7 +113,7 @@ public class PlatformMappingServiceTest {
 
         platformMappingService.saveMap(fieldMapsModel);
 
-        Map<String, String> valueMap = platformMappingService.getValueMap(fieldMapsModel.getChannelId(), 9440, fieldMapsModel.getCartId());
+        Map<String, Object> valueMap = platformMappingService.getValueMap(fieldMapsModel.getChannelId(), 9440L, fieldMapsModel.getCartId());
 
         assert valueMap != null;
 

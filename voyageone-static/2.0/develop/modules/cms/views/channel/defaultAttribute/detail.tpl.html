@@ -1,48 +1,47 @@
-<div class="wrapper-md" ng-init="ctrl.init()">
+<div class="wrapper-md default-attr" ng-init="ctrl.init()">
     <div class="panel wrapper vo_attr">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label class="col-md-2 control-label text-right"><strong>{{'TXT_CART_NAME' | translate}}</strong></label>
-                            <div class="col-md-8">
-                                <select class="form-control" ng-model="ctrl.searchInfo.cartId" ng-options="option.value as option.name for option in ctrl.platformTypes">
+                            <label class="col-sm-4 control-label" translate="TXT_CART_NAME"></label>
+                            <div class="col-sm-7">
+                                <select  class="form-control" ng-model="ctrl.searchInfo.cartId" ng-options="option.value as option.name for option in ctrl.platformTypes">
                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 </select>
                             </div>
                         </div>
                     </div>
-
                 </div>
-            </div>
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <label class="col-md-2 control-label text-right"><strong translate="TXT_PLATFORM_CATEGORY"></strong></label>
-                                <div class="row">
-                                    <label class="checkbox-inline c-radio">
-                                        <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType"><span class="fa fa-check"></span> 全类目
-                                    </label>&emsp;
-                                    <label class="checkbox-inline c-radio">
-                                        <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType"><span class="fa fa-check"></span> 选择类目
-                                    </label>
-                                    <label class="checkbox-inline c-radio">
-                                        <input name="category" type="radio" value="3" ng-model="ctrl.searchInfo.categoryType"><span class="fa fa-check"></span> 不限类目
-                                    </label>
+                <div class="col-sm-8">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" translate="TXT_PLATFORM_CATEGORY"></label>
+                                    <div class="col-sm-8">
+                                        <div class="row">
+                                            <label class="checkbox-inline c-radio">
+                                                <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType" ><span class="fa fa-check"></span> 全类目
+                                            </label>&emsp;
+                                            <label class="checkbox-inline c-radio">
+                                                <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType" ><span class="fa fa-check"></span> 选择类目
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-horizontal">
-                            <div class="row">
-                                <button class="col-sm-2 btn btn-default" ng-click="ctrl.jdCategoryMapping()" ng-disabled="!ctrl.searchInfo.cartId || ctrl.searchInfo.categoryType != '2'">
-                                    <i class="fa  fa-th-list"></i>&nbsp;<span translate="TXT_PLATFORM_CATEGORY"></span>
-                                </button>
-                                <div class="col-sm-8">
-                                    <input class="form-control"  title="{{ctrl.searchInfo.categoryPath}}" ng-model="ctrl.searchInfo.categoryPath" disabled>
+                        <div class="col-sm-6">
+                            <div class="form-horizontal">
+                                <div class="row">
+                                    <button class="col-sm-3 btn btn-default" ng-click="ctrl.jdCategoryMapping()" ng-disabled="!ctrl.searchInfo.cartId || ctrl.searchInfo.categoryType != '2'">
+                                        <i class="fa  fa-th-list"></i>&nbsp;<span translate="TXT_PLATFORM_CATEGORY"></span>
+                                    </button>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" title="{{ctrl.searchInfo.categoryPath}}" ng-model="ctrl.searchInfo.categoryPath" disabled>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -50,26 +49,37 @@
                 </div>
             </div>
         </div>
+    </div>
 
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-10">
                     <div class="panel panel-warning">
+                        <div class="panel-heading">
+                            <i class="fa fa-gears"></i>&emsp;<strong translate="TXT_DEFAULT_MAPPING"></strong>
+                        </div>
                         <div class="panel-body">
                             <div class="col-md-10">
-                                <schema data="ctrl.item"></schema>
+                                <ng-form name="defaultAttrForm">
+                                    <default-attr data="ctrl.fields.item"></default-attr>
+                                    <!--<schema data="ctrl.fields.product"></schema>-->
+                                </ng-form>
                             </div>
                             <div class="col-md-2">
-                                <div class="btn-group-vertical pull-right">
-                                    <a class="btn btn-default"><i class="fa fa-reply"></i>&nbsp;&nbsp;返回</a>
-                                    <a class="btn btn-vo" style="margin-top: 10px"><i class="fa fa-save"></i>&nbsp;&nbsp;保存</a>
+                                <div class="panel panel-default nav" drag>
+                                    <div class="panel-body text-center">
+                                        <div class="btn-group-vertical">
+                                            <a href="#/channel/default_attribute_list" class="btn btn-default"><i class="fa fa-reply"></i>&nbsp;&nbsp;返回</a>
+                                            <a href="javascript:void(0)" class="btn btn-vo" style="margin-top: 10px"><i class="fa fa-save"></i>&nbsp;&nbsp;保存</a>
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
 
     </div>
