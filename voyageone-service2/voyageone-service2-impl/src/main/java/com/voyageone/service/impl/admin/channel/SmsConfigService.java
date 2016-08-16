@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.admin.TmSmsConfigBean;
 import com.voyageone.service.dao.admin.TmSmsConfigDao;
 import com.voyageone.service.daoext.admin.TmSmsConfigDaoExt;
@@ -74,6 +75,7 @@ public class SmsConfigService extends BaseService {
 		}
 	}
 
+	@VOTransactional
 	public void deleteSmsConfig(List<Integer> seqIds, String username) {
 		for (Integer seqId : seqIds) {
 			TmSmsConfigModel smsConfig = new TmSmsConfigModel();

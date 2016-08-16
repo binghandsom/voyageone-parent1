@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.admin.TmOrderChannelBean;
 import com.voyageone.service.bean.admin.TmOrderChannelConfigBean;
 import com.voyageone.service.dao.admin.TmOrderChannelConfigDao;
@@ -125,6 +126,7 @@ public class ChannelService extends BaseService {
 		}
 	}
 
+	@VOTransactional
 	public void deleteChannel(List<String> channelIds, String username) {
 		for (String channelId : channelIds) {
 			TmOrderChannelModel model = new TmOrderChannelModel();

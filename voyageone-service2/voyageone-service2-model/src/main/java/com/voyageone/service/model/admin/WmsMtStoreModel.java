@@ -75,8 +75,6 @@ public class WmsMtStoreModel extends WmsMtStoreKey {
 
     protected Boolean active;
 
-    protected Integer status;
-
     public String getStoreName() {
         return storeName;
     }
@@ -197,11 +195,4 @@ public class WmsMtStoreModel extends WmsMtStoreKey {
         this.active = active;
     }
 
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
 }

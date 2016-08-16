@@ -6,7 +6,7 @@
         `store_id`, `order_channel_id`, `store_name`, `store_type`, `store_location`, `store_kind`, 
         `parent_store_id`, `label_type`, `rsv_sort`, `is_sale`, `inventory_manager`, `inventory_hold`, 
         `inventory_syn_type`, `store_area`, `area_id`, `store_comment`, `active`, `created`, 
-        `creater`, `modified`, `modifier`, `status`
+        `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.admin.WmsMtStoreKey" >

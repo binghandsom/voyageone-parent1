@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.admin.CtStoreConfigBean;
 import com.voyageone.service.bean.admin.WmsMtStoreBean;
 import com.voyageone.service.dao.admin.CtStoreConfigDao;
@@ -98,6 +99,7 @@ public class StoreService extends BaseService {
 		}
 	}
 
+	@VOTransactional
 	public void deleteStore(List<WmsMtStoreKey> storeKeys, String username) {
 		for (WmsMtStoreKey storeKey : storeKeys) {
 			// 设置更新参数

@@ -1,8 +1,6 @@
 package com.voyageone.web2.admin.views.channel;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.admin.TmSmsConfigBean;
 import com.voyageone.service.impl.admin.channel.SmsConfigService;
 import com.voyageone.service.model.admin.PageModel;
@@ -65,38 +62,23 @@ public class SmsConfigController extends AdminController {
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSmsCode1()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getContent()));
 		
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put(SUCCESS, false);
-		try {
-			// 设置渠道信息
-			TmSmsConfigModel model = new TmSmsConfigModel();
-			BeanUtils.copyProperties(form, model);
-			// 保存渠道信息
-			smsConfigService.addOrUpdateSmsConfig(model, getUser().getUserName(), append);
-			result.put(SUCCESS, true);
-		} catch (BusinessException e) {
-			result.put(MESSAGE, e.getMessage());
-		}
+		// 设置渠道信息
+		TmSmsConfigModel model = new TmSmsConfigModel();
+		BeanUtils.copyProperties(form, model);
+		// 保存渠道信息
+		smsConfigService.addOrUpdateSmsConfig(model, getUser().getUserName(), append);
 		
-		return success(result);
+		return success(true);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.Sms.DELETE_SMS_CONFIG)
 	public AjaxResponse deleteSmsConfig(@RequestBody Integer[] seqIds) {
 		// 验证参数
 		Preconditions.checkArgument(ArrayUtils.isNotEmpty(seqIds));
+		// 删除短信配置信息
+		smsConfigService.deleteSmsConfig(Arrays.asList(seqIds), getUser().getUserName());
 		
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put(SUCCESS, false);
-		try {
-			// 删除短信配置信息
-			smsConfigService.deleteSmsConfig(Arrays.asList(seqIds), getUser().getUserName());
-			result.put(SUCCESS, true);
-		} catch (BusinessException e) {
-			result.put(MESSAGE, e.getMessage());
-		}
-		
-		return success(result);
+		return success(true);
 	}
 
 }

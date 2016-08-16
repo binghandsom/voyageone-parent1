@@ -29,6 +29,14 @@ public interface AdminUrlConstants {
 			String GENERATE_SESSION_KEY = "generateSessionKey";
 
 			String DELETE_CHANNEL = "deleteChannel";
+
+			String SEARCH_CHANNEL_CONFIG = "searchChannelConfigByPage";
+
+			String ADD_CHANNEL_CONFIG = "addChannelConfig";
+
+			String UPDATE_CHANNEL_CONFIG = "updateChannelConfig";
+
+			String DELETE_CHANNEL_CONFIG = "deleteChannelConfig";
 			
 		}
 		
@@ -82,8 +90,6 @@ public interface AdminUrlConstants {
 			String UPDATE_CART = "updateCart";
 
 			String DELETE_CART = "deleteCart";
-
-			String DELETE_STORE = "deleteStore";
 		}
 		
 	}
@@ -102,6 +108,16 @@ public interface AdminUrlConstants {
 			String GET_ALL_STORE = "getAllStore";
 
 			String UPDATE_STORE = "updateStore";
+
+			String DELETE_STORE = "deleteStore";
+
+			String SEARCH_STORE_CONFIG_BY_PAGE = "searchStoreConfigByPage";
+
+			String ADD_STORE_CONFIG = "addStoreConfig";
+
+			String UPDATE_STORE_CONFIG = "updateStoreConfig";
+
+			String DELETE_STORE_CONFIG = "deleteStoreConfig";
 			
 		}
 	}
@@ -112,14 +128,6 @@ public interface AdminUrlConstants {
 		interface CommonConfig {
 			
 			String ROOT = "/admin/system/config";
-			
-			String SEARCH_CONFIG_BY_PAGE = "searchConfigByPage";
-
-			String ADD_CONFIG = "addConfig";
-
-			String DELETE_CONFIG = "deleteConfig";
-
-			String UPDATE_CONFIG = "updateConfig";
 			
 		}
 		
