@@ -10,7 +10,7 @@ public class ChannelFormBean extends AdminFormBean {
 
 	private Integer companyId;
 	
-	private String channelId;
+	private String orderChannelId;
 	
 	private String name;
 	
@@ -28,7 +28,7 @@ public class ChannelFormBean extends AdminFormBean {
 	
 	private String sendZip;
 	
-	private String secretKey;
+	private String screctKey;
 	
 	private String sessionKey;
 	
@@ -44,12 +44,12 @@ public class ChannelFormBean extends AdminFormBean {
 		this.companyId = companyId;
 	}
 
-	public String getChannelId() {
-		return channelId;
+	public String getOrderChannelId() {
+		return orderChannelId;
 	}
 
-	public void setChannelId(String channelId) {
-		this.channelId = channelId;
+	public void setOrderChannelId(String orderChannelId) {
+		this.orderChannelId = orderChannelId;
 	}
 
 	public String getName() {
@@ -116,12 +116,12 @@ public class ChannelFormBean extends AdminFormBean {
 		this.sendZip = sendZip;
 	}
 
-	public String getSecretKey() {
-		return secretKey;
+	public String getScrectKey() {
+		return screctKey;
 	}
 
-	public void setSecretKey(String secretKey) {
-		this.secretKey = secretKey;
+	public void setScrectKey(String screctKey) {
+		this.screctKey = screctKey;
 	}
 
 	public String getSessionKey() {

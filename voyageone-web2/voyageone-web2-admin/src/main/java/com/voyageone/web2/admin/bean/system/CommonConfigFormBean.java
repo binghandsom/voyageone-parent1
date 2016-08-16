@@ -11,7 +11,7 @@ public class CommonConfigFormBean extends AdminFormBean {
 
 	private AdminConstants.ConfigType configType;
 	
-	private String channelId;
+	private String orderChannelId;
 	
 	private String cartId;
 	
@@ -39,12 +39,12 @@ public class CommonConfigFormBean extends AdminFormBean {
 		this.configType = configType;
 	}
 
-	public String getChannelId() {
-		return channelId;
+	public String getOrderChannelId() {
+		return orderChannelId;
 	}
 
-	public void setChannelId(String channelId) {
-		this.channelId = channelId;
+	public void setOrderChannelId(String orderChannelId) {
+		this.orderChannelId = orderChannelId;
 	}
 
 	public String getCartId() {

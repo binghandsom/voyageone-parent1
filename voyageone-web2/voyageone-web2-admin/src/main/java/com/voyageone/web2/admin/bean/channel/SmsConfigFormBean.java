@@ -10,7 +10,7 @@ public class SmsConfigFormBean extends AdminFormBean {
 	
 	private Integer seq;
 	
-	private String channelId;
+	private String orderChannelId;
 	
 	private String smsType;
 	
@@ -34,12 +34,12 @@ public class SmsConfigFormBean extends AdminFormBean {
 		this.seq = seq;
 	}
 
-	public String getChannelId() {
-		return channelId;
+	public String getOrderChannelId() {
+		return orderChannelId;
 	}
 
-	public void setChannelId(String channelId) {
-		this.channelId = channelId;
+	public void setOrderChannelId(String orderChannelId) {
+		this.orderChannelId = orderChannelId;
 	}
 
 	public String getSmsType() {

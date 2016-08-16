@@ -41,7 +41,7 @@ public class SmsConfigController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索短信配置信息
-		PageModel<TmSmsConfigBean> smsConfigPage = smsConfigService.searchSmsConfigByPage(form.getChannelId(),
+		PageModel<TmSmsConfigBean> smsConfigPage = smsConfigService.searchSmsConfigByPage(form.getOrderChannelId(),
 				form.getSmsType(), form.getContent(), form.getSmsCode(), form.getPageNum(), form.getPageSize());
 		
 		return success(smsConfigPage);
@@ -54,12 +54,13 @@ public class SmsConfigController extends AdminController {
 	
 	@RequestMapping(AdminUrlConstants.Channel.Sms.UPDATE_SMS_CONFIG)
 	public AjaxResponse updateSmsConfig(@RequestBody SmsConfigFormBean form) {
+		Preconditions.checkNotNull(form.getSeq());
 		return addOrUpdateSmsConfig(form, false);
 	}
 	
 	public AjaxResponse addOrUpdateSmsConfig(@RequestBody SmsConfigFormBean form, boolean append) {
 		// 验证参数
-		Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSmsType()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSmsCode1()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getContent()));
@@ -70,7 +71,6 @@ public class SmsConfigController extends AdminController {
 			// 设置渠道信息
 			TmSmsConfigModel model = new TmSmsConfigModel();
 			BeanUtils.copyProperties(form, model);
-			model.setOrderChannelId(form.getChannelId());
 			// 保存渠道信息
 			smsConfigService.addOrUpdateSmsConfig(model, getUser().getUserName(), append);
 			result.put(SUCCESS, true);

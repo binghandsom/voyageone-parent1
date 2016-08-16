@@ -51,19 +51,16 @@ public class SmsConfigService extends BaseService {
 	}
 
 	public void addOrUpdateSmsConfig(TmSmsConfigModel model, String username, boolean append) {
-		// 检索短信配置信息
-		TmSmsConfigModel smsConfig = smsConfigDao.select(model.getSeq());
 		// 保存渠道信息
 		boolean success = false;
 		if (append) {
 			// 添加短信配置信息
-			if (smsConfig != null) {
-				throw new BusinessException("添加的短信配置信息已存在");
-			}
 			model.setCreater(username);
 			model.setModifier(username);
 			success = smsConfigDao.insert(model) > 0;
 		} else {
+			// 检索短信配置信息
+			TmSmsConfigModel smsConfig = smsConfigDao.select(model.getSeq());
 			// 更新渠道信息
 			if (smsConfig == null) {
 				throw new BusinessException("更新的短信配置信息不存在");
@@ -75,7 +72,6 @@ public class SmsConfigService extends BaseService {
 		if (!success) {
 			throw new BusinessException("保存短信配置信息失败");
 		}
-		
 	}
 
 	public void deleteSmsConfig(List<Integer> seqIds, String username) {

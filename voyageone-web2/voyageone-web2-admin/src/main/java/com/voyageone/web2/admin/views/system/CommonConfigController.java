@@ -54,7 +54,7 @@ public class CommonConfigController extends AdminController {
 		PageModel<?> result = null;
 		switch (form.getConfigType()) {
 		case Channel:
-			result = channelService.searchChannelConfigByPage(form.getChannelId(), form.getCfgName(),
+			result = channelService.searchChannelConfigByPage(form.getOrderChannelId(), form.getCfgName(),
 					form.getCfgVal(), form.getPageNum(), form.getPageSize());
 			break;
 		case ChannelCart:
@@ -97,7 +97,7 @@ public class CommonConfigController extends AdminController {
 			switch (form.getConfigType()) {
 			// 按类型保存配置信息
 			case Channel:
-				Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
+				Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
 				TmOrderChannelConfigModel channelConfigModel = new TmOrderChannelConfigModel();
 				BeanUtils.copyProperties(form, channelConfigModel);
 				channelService.addOrUpdateChannelConfig(channelConfigModel, username, append);
@@ -141,10 +141,10 @@ public class CommonConfigController extends AdminController {
 			case Channel:
 				List<TmOrderChannelConfigKey> channelConfigKeys = new ArrayList<TmOrderChannelConfigKey>();
 				for (CommonConfigFormBean form : forms) {
-					Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
+					Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
 					TmOrderChannelConfigKey configKey = new TmOrderChannelConfigKey();
 					BeanUtils.copyProperties(form, configKey);
-					configKey.setOrderChannelId(form.getChannelId());
+					configKey.setOrderChannelId(form.getOrderChannelId());
 					channelConfigKeys.add(configKey);
 				}
 				// 删除渠道配置信息
