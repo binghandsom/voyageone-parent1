@@ -187,7 +187,7 @@ public class YogaDemocracyAnalysisService extends BaseAnalysisService {
 
         List<CmsBtFeedInfoYogaDemocracyModel> vtmModelBeans = yogaDemocracyFeedDao.selectSuperfeedModel(colums);
         List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();
-        HashMap<String,Object> parentIdMap = new HashMap<String,Object>();
+        HashMap<String,Object> parentIdMap = new HashMap<>();
         for (CmsBtFeedInfoYogaDemocracyModel vtmModelBean : vtmModelBeans) {
             if(StringUtil.isEmpty(vtmModelBean.getParentid())){
                 parentIdMap.put(vtmModelBean.getSku(), vtmModelBean);
@@ -218,9 +218,14 @@ public class YogaDemocracyAnalysisService extends BaseAnalysisService {
             CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());
             cmsBtFeedInfoModel.setAttribute(attribute);
             //根据父级数据取得相应的属性
-            if(parentIdMap.keySet().equals(vtmModelBean.getParentid())){
+            if(parentIdMap.keySet().contains(String.valueOf(vtmModelBean.getParentid()))){
                 CmsBtFeedInfoYogaDemocracyModel YogaBean = (CmsBtFeedInfoYogaDemocracyModel) parentIdMap.get(vtmModelBean.getParentid());
-                cmsBtFeedInfoModel.setImage(YogaBean.getImage());
+                List<String> imagesList = new ArrayList<>();
+                for(String image:YogaBean.getImage()){
+                    List<String> imageList = Arrays.asList(image.split(","));
+                    imagesList.addAll(imageList);
+                }
+                cmsBtFeedInfoModel.setImage(imagesList);
                 cmsBtFeedInfoModel.setLongDescription(YogaBean.getDescription());
                 cmsBtFeedInfoModel.setShortDescription(YogaBean.getShortDescription());
             }
@@ -237,15 +242,16 @@ public class YogaDemocracyAnalysisService extends BaseAnalysisService {
                         String weightOrgUnit = Weight.substring(index, Weight.length());
                         sku.setWeightOrg(weightOrg);
                         sku.setWeightOrgUnit(weightOrgUnit);
+                        sku.setImage(cmsBtFeedInfoModel.getImage());
                     }
                 }
+
             }
             cmsBtFeedInfoModel.setSkus(skus);
+
             if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
                 CmsBtFeedInfoModel beforeFeed = codeMap.get(cmsBtFeedInfoModel.getCode());
                 beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
-                beforeFeed.getImage().addAll(cmsBtFeedInfoModel.getImage());
-                beforeFeed.setImage(beforeFeed.getImage().stream().distinct().collect(Collectors.toList()));
                 beforeFeed.setAttribute(attributeMerge(beforeFeed.getAttribute(), cmsBtFeedInfoModel.getAttribute()));
             } else {
                 modelBeans.add(cmsBtFeedInfoModel);
