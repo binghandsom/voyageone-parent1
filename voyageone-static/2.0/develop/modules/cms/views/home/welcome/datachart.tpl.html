@@ -180,29 +180,29 @@
                                             <th class="mfb-xxt text-center">平台</th>
                                             <th class="mfb-xt text-center">商品数</th>
                                             <th class="mfb-xxt text-center">等待设置平台类目数</th>
-                                            <th class="mfb-xxt text-center">等待设置属性数</th>
+                                            <th class="mfb-xt text-center">等待设置属性数</th>
                                             <th class="mfb-xxt text-center">等待Approved数</th>
-                                            <th class="mfb-xxt text-center">等待上新数</th>
-                                            <th class="mfb-xxs text-center">上新成功数</th>
-                                            <th class="mfb-xxt text-center">上新失败数</th>
-                                            <th class="mfb-xxt text-center">品牌未匹配数</th>
+                                            <th class="mfb-xt text-center">等待上新数</th>
+                                            <th class="mfb-xt text-center">上新成功数</th>
+                                            <th class="mfb-xt text-center">上新失败数</th>
+                                            <th class="mfb-xt text-center">品牌未匹配数</th>
                                             <th class="mfb-xxt text-center">商品平台状态与实际相异数</th>
                                             <th class="mfb-xxt text-center">中国最终售价价格为-1</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <tr ng-repeat="m in vm.sumData.listPlatformInfoSum">
-                                            <td class="mfb-xxt text-center">{{m.platformName}}</td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(110,{cartId:m.CMS_PLATFORM_ALL.cartId})">{{m.CMS_PLATFORM_ALL.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(120,{cartId:m.CMS_PLATFORM_NO_CATEGORY.cartId,pCatStatus:true})">{{m.CMS_PLATFORM_NO_CATEGORY.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(130,{cartId:m.CMS_PLATFORM_NO_ATTRIBUTE.cartId,propertyStatus:'0'})">{{m.CMS_PLATFORM_NO_ATTRIBUTE.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_READY.cartId,productStatus:{'Ready':true}})">{{m.CMS_PLATFORM_READY.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_WAITING_PUBLISH.cartId,productStatus:{'Approved':true},platformStatus:{'WaitingPublish':true}})">{{m.CMS_PLATFORM_WAITING_PUBLISH.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_PUBLISH_SUCCESS.cartId,productStatus:{'Approved':true},platformStatus:{'InStock':true,'OnSale':true}})">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(150,{cartId:m.CMS_PLATFORM_PUBLISH_FAILD.cartId,hasErrorFlg:'2'})"><label class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</label></a></td>
-                                            <td class="mfb-xxt text-center"><label class="label label-danger">{{m.CMS_BrandNoMatchCount.amountVal}}</label></td>
-                                            <td class="mfb-xxt text-center"><label class="label label-danger">{{m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.amountVal}}</label></td>
-                                            <td class="mfb-xxt text-center"><label class="label label-danger">{{m.CMS_PLATFORM_priceSale_Equal_minus1.amountVal}}</label></td>
+                                            <td>{{m.platformName}}</td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(110,{cartId:m.CMS_PLATFORM_ALL.cartId})">{{m.CMS_PLATFORM_ALL.amountVal}}</a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(120,{cartId:m.CMS_PLATFORM_NO_CATEGORY.cartId,pCatStatus:true})">{{m.CMS_PLATFORM_NO_CATEGORY.amountVal}}</a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(130,{cartId:m.CMS_PLATFORM_NO_ATTRIBUTE.cartId,propertyStatus:'0'})">{{m.CMS_PLATFORM_NO_ATTRIBUTE.amountVal}}</a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_READY.cartId,productStatus:{'Ready':true}})">{{m.CMS_PLATFORM_READY.amountVal}}</a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_WAITING_PUBLISH.cartId,productStatus:{'Approved':true},platformStatus:{'WaitingPublish':true}})">{{m.CMS_PLATFORM_WAITING_PUBLISH.amountVal}}</a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_PUBLISH_SUCCESS.cartId,productStatus:{'Approved':true},platformStatus:{'InStock':true,'OnSale':true}})">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(150,{cartId:m.CMS_PLATFORM_PUBLISH_FAILD.cartId,hasErrorFlg:'2'})"><label class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</label></a></td>
+                                            <td class=" text-center"><label class="label label-danger">{{m.CMS_BrandNoMatchCount.amountVal}}</label></td>
+                                            <td class=" text-center"><label class="label label-danger">{{m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.amountVal}}</label></td>
+                                            <td class=" text-center"><label class="label label-danger">{{m.CMS_PLATFORM_priceSale_Equal_minus1.amountVal}}</label></td>
                                         </tr>
                                         </tbody>
                                     </table>
