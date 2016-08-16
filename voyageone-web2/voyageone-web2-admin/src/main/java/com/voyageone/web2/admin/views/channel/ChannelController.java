@@ -1,6 +1,8 @@
 package com.voyageone.web2.admin.views.channel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -15,12 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.admin.TmOrderChannelBean;
+import com.voyageone.service.bean.admin.TmOrderChannelConfigBean;
 import com.voyageone.service.impl.admin.channel.ChannelService;
 import com.voyageone.service.model.admin.PageModel;
+import com.voyageone.service.model.admin.TmOrderChannelConfigKey;
+import com.voyageone.service.model.admin.TmOrderChannelConfigModel;
 import com.voyageone.service.model.admin.TmOrderChannelModel;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.channel.ChannelFormBean;
+import com.voyageone.web2.admin.bean.system.CommonConfigFormBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 
 /**
@@ -33,6 +39,15 @@ public class ChannelController extends AdminController {
 	
 	@Resource(name = "AdminChannelService")
 	private ChannelService channelService;
+	
+	//---------------------------------------------------------------------
+	// 渠道信息
+	//---------------------------------------------------------------------
+	
+	@RequestMapping(AdminUrlConstants.Channel.Self.GET_ALL_CHANNEL)
+	public AjaxResponse getAllChannel() {
+		return success(channelService.getAllChannel());
+	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.SEARCH_CHANNEL_BY_PAGE)
 	public AjaxResponse searchChannelByPage(@RequestBody ChannelFormBean form) {
@@ -47,12 +62,12 @@ public class ChannelController extends AdminController {
 	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.ADD_CHANNEL)
-	public AjaxResponse addChannel(@RequestBody ChannelFormBean form, boolean append) {
+	public AjaxResponse addChannel(@RequestBody ChannelFormBean form) {
 		return addOrUpdateChannel(form, true);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.UPDATE_CHANNEL)
-	public AjaxResponse updateChannel(@RequestBody ChannelFormBean form, boolean append) {
+	public AjaxResponse updateChannel(@RequestBody ChannelFormBean form) {
 		return addOrUpdateChannel(form, false);
 	}
 	
@@ -62,10 +77,10 @@ public class ChannelController extends AdminController {
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getScrectKey()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSessionKey()));
-		// 设置渠道信息
+
+		// 保存渠道信息
 		TmOrderChannelModel model = new TmOrderChannelModel();
 		BeanUtils.copyProperties(form, model);
-		// 保存渠道信息
 		channelService.addOrUpdateChannel(model, getUser().getUserName(), append);
 		
 		return success(true);
@@ -80,16 +95,72 @@ public class ChannelController extends AdminController {
 		
 		return success(true);
 	}
+
+	//---------------------------------------------------------------------
+	// 渠道配置信息
+	//---------------------------------------------------------------------
 	
-	@RequestMapping(AdminUrlConstants.Channel.Self.GET_ALL_COMPANY)
-	public AjaxResponse getAllCompany() {
-		return success(channelService.getAllCompany());
+	@RequestMapping(AdminUrlConstants.Channel.Self.SEARCH_CHANNEL_CONFIG)
+	public AjaxResponse searchChannelConfigByPage(@RequestBody CommonConfigFormBean form) {
+		// 验证分页参数
+		Preconditions.checkNotNull(form.getPageNum());
+		Preconditions.checkNotNull(form.getPageSize());
+		// 检索渠道配置信息
+		PageModel<TmOrderChannelConfigBean> channelConfigPage = channelService.searchChannelConfigByPage(
+				form.getOrderChannelId(), form.getCfgName(), form.getCfgVal(), form.getPageNum(), form.getPageSize());
+		
+		return success(channelConfigPage);
 	}
 	
-	@RequestMapping(AdminUrlConstants.Channel.Self.GET_ALL_CHANNEL)
-	public AjaxResponse getAllChannel() {
-		return success(channelService.getAllChannel());
+	@RequestMapping(AdminUrlConstants.Channel.Self.ADD_CHANNEL_CONFIG)
+	public AjaxResponse addChannelConfig(@RequestBody CommonConfigFormBean form) {
+		return addOrUpdateChannelConfig(form, true);
 	}
+	
+	@RequestMapping(AdminUrlConstants.Channel.Self.UPDATE_CHANNEL_CONFIG)
+	public AjaxResponse updateChannelConfig(@RequestBody CommonConfigFormBean form) {
+		return addOrUpdateChannelConfig(form, false);
+	}
+	
+	public AjaxResponse addOrUpdateChannelConfig(@RequestBody CommonConfigFormBean form, boolean append) {
+		// 验证配置类型参数
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgName()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgVal1()));
+		
+		// 保存渠道配置信息
+		TmOrderChannelConfigModel channelConfigModel = new TmOrderChannelConfigModel();
+		BeanUtils.copyProperties(form, channelConfigModel);
+		channelService.addOrUpdateChannelConfig(channelConfigModel, getUser().getUserName(), append);
+		
+		return success(true);
+	}
+	
+	@RequestMapping(AdminUrlConstants.Channel.Self.DELETE_CHANNEL_CONFIG)
+	public AjaxResponse deleteChannelConfig(@RequestBody CommonConfigFormBean[] forms) {
+		// 验证配置类型参数
+		for (CommonConfigFormBean form : forms) {
+			Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
+			Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgName()));
+			Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgVal1()));
+		}
+
+		List<TmOrderChannelConfigKey> channelConfigKeys = new ArrayList<TmOrderChannelConfigKey>();
+		for (CommonConfigFormBean form : forms) {
+			TmOrderChannelConfigKey configKey = new TmOrderChannelConfigKey();
+			BeanUtils.copyProperties(form, configKey);
+			configKey.setOrderChannelId(form.getOrderChannelId());
+			channelConfigKeys.add(configKey);
+		}
+		// 删除渠道配置信息
+		channelService.deleteChannelConfig(channelConfigKeys);
+		
+		return success(true);
+	}
+	
+	//---------------------------------------------------------------------
+	// 唯一的随机数
+	//---------------------------------------------------------------------
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.GENERATE_SECRET_KEY)
 	public AjaxResponse generateSecretKey() {
@@ -99,6 +170,11 @@ public class ChannelController extends AdminController {
 	@RequestMapping(AdminUrlConstants.Channel.Self.GENERATE_SESSION_KEY)
 	public AjaxResponse generateSessionKey() {
 		return success(UUID.randomUUID().toString());
+	}
+	
+	@RequestMapping(AdminUrlConstants.Channel.Self.GET_ALL_COMPANY)
+	public AjaxResponse getAllCompany() {
+		return success(channelService.getAllCompany());
 	}
 
 }

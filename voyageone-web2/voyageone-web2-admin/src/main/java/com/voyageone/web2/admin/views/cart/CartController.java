@@ -1,7 +1,6 @@
 package com.voyageone.web2.admin.views.cart;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.impl.admin.cart.CartService;
 import com.voyageone.service.model.admin.CtCartModel;
 import com.voyageone.service.model.admin.PageModel;
@@ -82,37 +80,22 @@ public class CartController extends AdminController {
 		Preconditions.checkNotNull(form.getActive());
 		Preconditions.checkArgument(StringUtils.isNoneBlank(form.getDescription()));
 
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put(SUCCESS, false);
-		try {
-			CtCartModel model = new CtCartModel();
-			BeanUtils.copyProperties(form, model);
-			// 保存Cart信息
-			cartService.addOrUpdateCart(model, getUser().getUserName(), append);
-			result.put(SUCCESS, true);
-		} catch (BusinessException e) {
-			result.put(MESSAGE, e.getMessage());
-		}
+		// 保存Cart信息
+		CtCartModel model = new CtCartModel();
+		BeanUtils.copyProperties(form, model);
+		cartService.addOrUpdateCart(model, getUser().getUserName(), append);
 		
-		return success(result);
+		return success(true);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Cart.Self.DELETE_CART)
 	public AjaxResponse deleteCart(@RequestBody Integer[] cartIds) {
 		// 验证参数
 		Preconditions.checkArgument(ArrayUtils.isNotEmpty(cartIds));
-		
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put(SUCCESS, false);
 		// 删除Cart信息
-		try {
-			cartService.deleteCart(Arrays.asList(cartIds), getUser().getUserName());
-			result.put(SUCCESS, true);
-		} catch (BusinessException e) {
-			result.put(MESSAGE, e.getMessage());
-		}
+		cartService.deleteCart(Arrays.asList(cartIds), getUser().getUserName());
 
-		return success(result);
+		return success(true);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Cart.Self.GET_ALL_PLATFORM)

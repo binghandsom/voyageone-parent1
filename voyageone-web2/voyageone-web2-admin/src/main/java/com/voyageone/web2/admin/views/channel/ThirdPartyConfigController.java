@@ -1,8 +1,5 @@
 package com.voyageone.web2.admin.views.channel;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.admin.ComMtThirdPartyConfigBean;
 import com.voyageone.service.impl.admin.channel.ThirdPartyConfigService;
 import com.voyageone.service.model.admin.ComMtThirdPartyConfigModel;
@@ -62,20 +58,13 @@ public class ThirdPartyConfigController extends AdminController {
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getPropName()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getPropVal1()));
 		
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put(SUCCESS, false);
-		try {
-			// 设置第三方配置信息
-			ComMtThirdPartyConfigModel model = new ComMtThirdPartyConfigModel();
-			BeanUtils.copyProperties(form, model);
-			// 保存第三方配置信息
-			thirdPartyConfigService.addOrUpdateThirdPartyConfig(model, getUser().getUserName(), append);
-			result.put(SUCCESS, true);
-		} catch (BusinessException e) {
-			result.put(MESSAGE, e.getMessage());
-		}
+		// 设置第三方配置信息
+		ComMtThirdPartyConfigModel model = new ComMtThirdPartyConfigModel();
+		BeanUtils.copyProperties(form, model);
+		// 保存第三方配置信息
+		thirdPartyConfigService.addOrUpdateThirdPartyConfig(model, getUser().getUserName(), append);
 		
-		return success(result);
+		return success(true);
 	}
 
 }
