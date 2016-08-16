@@ -57,6 +57,7 @@ public class AdminUserService {
         params.put("active", active);
         params.put("channelId", channelId);
         params.put("storeId", storeId);
+        params.put("orgId", orgId);
         // 判断查询结果是否分页
         if (pageNum != null && pageSize != null) {
             pageModel.setCount(adminUserDaoExt.selectUserCount(params));
