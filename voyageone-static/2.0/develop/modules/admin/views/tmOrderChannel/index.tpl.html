@@ -12,7 +12,7 @@
                                 <div class="row form-group">
                                     <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_ID' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <input type="number" class="form-control" ng-model="ctrl.searchInfo.channelId"/>
+                                        <input type="text" maxlength="3" class="form-control" ng-model="ctrl.searchInfo.channelId"/>
                                     </div>
                                 </div>
                             </div>
@@ -32,7 +32,7 @@
                                 <div class="row form-group">
                                     <label class="col-sm-3 control-label">{{'TXT_CART_IS_USJOI' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.isUsjoi" ng-change="ctrl.search()">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.isUsjoi">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                             <option value="1">&nbsp;{{'TXT_YES' | translate}}</option>
                                             <option value="0">&nbsp;{{'TXT_NO' | translate}}</option>
@@ -44,7 +44,7 @@
                         <div class="col-sm-12 text-center m-b-xs">
                             <div class="form-horizontal form-inline">
                                 <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;重置</button>
-                                <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                                <button class="btn btn-vo" ng-click="ctrl.search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>
                             </div>
                         </div>
                     </div>
@@ -85,7 +85,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td if-no-rows="ctrl.channelList.length" colspan="9" style="padding: 0px"></td>
+                        <td if-no-rows="ctrl.channelList.length||ctrl.channelList" colspan="9" style="padding: 0px"></td>
                     </tr>
                     <tr ng-repeat="list in ctrl.channelList">
                         <td class="text-left v-middle">
@@ -100,7 +100,7 @@
                         <td class="text-left v-middle">{{list.fullName}}</td>
                         <td class="text-center v-middle">{{list.isUsjoi==0 ? '否':'是'}}</td>
                         <td class="text-center v-middle">{{list.cartName}}</td>
-                        <td class="text-center v-middle">{{list.active==1 ? '可用':'不可用'}}</td>
+                        <td class="text-center v-middle">{{list.active==1 ? '启用':'禁用'}}</td>
                         <td class="text-left v-middle">{{list.modified}}</td>
                         <td class="text-center v-middle">{{list.modifier}}</td>
                     </tr>

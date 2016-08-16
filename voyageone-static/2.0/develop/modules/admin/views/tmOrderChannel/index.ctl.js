@@ -19,7 +19,7 @@ define([
             this.channelSelList = {selList: []};
             this.tempChannelSelect = null;
             this.searchInfo = {
-                channelId: '',
+                orderChannelId: '',
                 channelName: '',
                 isUsjoi: '',
                 pageInfo: this.channelPageOption
@@ -31,12 +31,13 @@ define([
                 var self = this;
                 self.search();
             },
-            search: function () {
+            search: function (page) {
                 var self = this;
+                page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
                 self.channelService.searchChannelByPage({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
-                        'channelId': self.searchInfo.channelId,
+                        'orderChannelId': self.searchInfo.orderChannelId,
                         'channelName': self.searchInfo.channelName,
                         'isUsjoi': self.searchInfo.isUsjoi
                     })
@@ -49,6 +50,7 @@ define([
                             self.tempChannelSelect = new self.selectRowsFactory();
                         } else {
                             self.tempChannelSelect.clearCurrPageRows();
+                            self.tempChannelSelect.clearSelectedList();
                         }
                         _.forEach(self.channelList, function (channelInfo) {
                             if (channelInfo.updFlg != 8) {
@@ -61,6 +63,7 @@ define([
                         self.channelSelList = self.tempChannelSelect.selectRowsInfo;
 
                         // 设置cartName
+                        if (!self.channelList) return;
                         for (var i = 0; i < self.channelList.length; i++) {
                             var tempCartList = [];
                             if (self.channelList[i].carts == null) return;
@@ -74,9 +77,10 @@ define([
             clear: function () {
                 var self = this;
                 self.searchInfo = {
-                    channelId: '',
-                    channelFullName: '',
-                    isUsjoi: ''
+                    pageInfo: this.channelPageOption,
+                    'orderChannelId': '',
+                    'channelName': '',
+                    'isUsjoi': ''
                 }
             },
             config: function () {
@@ -100,7 +104,9 @@ define([
                 } else {
                     _.forEach(self.channelList, function (channelInfo) {
                         if (channelInfo.orderChannelId == self.channelSelList.selList[0].id) {
-                            self.popups.openAdd(channelInfo);
+                            self.popups.openAdd(channelInfo).then(function(){
+                                self.search(1);
+                            });
                         }
                     })
                 }

@@ -12,7 +12,7 @@
                         <label class="col-sm-3 control-label">{{'TXT_CART_COMPANY_NAME' | translate}}</label>
                         <div class="col-sm-8">
                             <select class="form-control" ng-model="ctrl.companyId" ng-options="company.id as company.company for company in ctrl.companyAllList"
-                                    ng-readonly="ctrl.popType == '编辑'" name="companyName" required>
+                                    ng-disabled="ctrl.popType == '编辑'" name="companyName" required>
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
@@ -25,8 +25,8 @@
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_ID' | translate}}</label>
                         <div class="col-sm-8">
-                            <input type="number" maxlength="3" class="form-control" ng-model="ctrl.sourceData.orderChannelId"
-                                   ng-readonly="ctrl.popType == '编辑'" name="channelId" required/>
+                            <input type="text" maxlength="3" class="form-control" ng-model="ctrl.sourceData.orderChannelId"
+                                   ng-disabled="ctrl.popType == '编辑'" name="channelId" required/>
                         </div>
                     </div>
                     <div class="row form-group">
@@ -188,6 +188,6 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-        <button class="btn btn-vo" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled="addForm.$valid==false"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
     </div>
-</div><!-- .vo_modal -->
+</div>
