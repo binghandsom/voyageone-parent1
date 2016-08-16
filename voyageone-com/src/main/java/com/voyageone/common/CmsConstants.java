@@ -58,6 +58,9 @@ public class CmsConstants {
         // 该店铺是否自动审批价格
         String AUTO_APPROVE_PRICE = "AUTO_APPROVE_PRICE";
 
+        // 该渠道是否自动同步 MSRP
+        String AUTO_SYNC_PRICE_MSRP = "AUTO_SYNC_PRICE_MSRP";
+
         // 第三方原始价格单位
         String CLIENT_PRICE_UNIT = "CLIENT_PRICE_UNIT";
 
@@ -96,6 +99,22 @@ public class CmsConstants {
         // Feed导入Master时，在Product更新的情况下，是否更新Feed节点下面的数据
         String FEED_UPDATE_FLG = "FEED_UPDATE_FLG";
 
+        /**
+         * 调用价格计算时, 指定渠道使用什么方式计算价格
+         * <p>
+         * 使用体系 {@code PRICE_CALCULATOR_SYSTEM} 计算, 还是固定 {@code PRICE_CALCULATOR_FORMULA} 计算
+         */
+        String PRICE_CALCULATOR = "PRICE_CALCULATOR";
+
+        /**
+         * {@code PRICE_CALCULATOR} 使用的配置项, 指示计算商品价格时, 使用体系计算价格
+         */
+        String PRICE_CALCULATOR_SYSTEM = "SYSTEM";
+
+        /**
+         * {@code PRICE_CALCULATOR} 使用的配置项, 指示计算商品价格时, 使用配置表中配置的固定公式计算价格
+         */
+        String PRICE_CALCULATOR_FORMULA = "FORMULA";
 
         // 价格相关
         String PRICE = "PRICE";
@@ -111,6 +130,17 @@ public class CmsConstants {
         // 发货方式
         String SHIPPING_TYPE = "SHIPPING_TYPE";
 
+        // 产品分类是否从feed导入(1：从feed导入，0：不从feed导入运营手动添加)
+        String PRODUCT_TYPE_FROM_FEED_FLG = "PRODUCT_TYPE_FROM_FEED_FLG";
+
+        // 适用人群是否从feed导入(1：从feed导入，0：不从feed导入运营手动添加)
+        String SIZE_TYPE_FROM_FEED_FLG = "SIZE_TYPE_FROM_FEED_FLG";
+
+        // 价格是否向上取整(1：向上取整，0：不向上取整)
+        String PRICE_ROUND_UP_FLG = "PRICE_ROUND_UP_FLG";
+
+        // 新建product时是否自动设置产品图images2(1:自动设置  空，0:不设置)
+        String AUTO_SET_IMAGES2_FLG = "AUTO_SET_IMAGES2_FLG";
     }
 
     public interface DataAmount {
@@ -199,6 +229,7 @@ public class CmsConstants {
         int okNum = 1;          // 上新成功
         int errorNum = 2;       // 上新失败
         int uploadingNum = 3;   // 上新中(上新完成后回写状态的时候用)
+        int review = 4;         // 达尔文产品审核中
     }
 
     public interface FeedUpdFlgStatus{

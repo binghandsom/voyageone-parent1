@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsBtSizeMapModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsBtSizeMapDao {
-    List<CmsBtSizeMapModel> selectList(Map<String, Object> map);
+    List<CmsBtSizeMapModel> selectList(Object map);
 
-    CmsBtSizeMapModel selectOne(Map<String, Object> map);
+    CmsBtSizeMapModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsBtSizeMapModel select(Integer id);
 

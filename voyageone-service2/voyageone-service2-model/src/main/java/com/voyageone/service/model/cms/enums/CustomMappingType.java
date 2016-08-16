@@ -20,6 +20,7 @@ public enum CustomMappingType {
     ITEM_WIRELESS_DESCRIPTION(12),
     IMAGE(13),
     FREIGHT(14), // 运费模板
+    CSPU(15), // 产品规格
     ;
     // added by morse.lu 2016/06/29 end
 

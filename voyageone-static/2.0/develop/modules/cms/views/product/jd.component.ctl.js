@@ -213,7 +213,7 @@ define([
                 }
 
                 /**
-                 * 复制主数据filed到平台编辑页    copyProperty
+                 * 复制主数据filed到平台编辑页
                  * */
                 function copyMainProduct(){
                     var template = _.template("您确定要复制Master数据到<%=cartName%>吗？");
@@ -346,6 +346,10 @@ define([
                 }
 
                 /**
+                 *
+                 *
+                 *
+                 *
                  * 右侧导航栏
                  * @param index div的index
                  * @param speed 导航速度 ms为单位

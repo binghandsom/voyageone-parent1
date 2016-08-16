@@ -1,22 +1,15 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
-import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtImageGroupBean;
 import com.voyageone.service.impl.cms.ImageGroupService;
-import com.voyageone.service.impl.cms.MongoSequenceService;
-import com.voyageone.service.impl.cms.StockSeparateService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.views.promotion.task.CmsTaskStockIncrementDetailService;
-import com.voyageone.web2.cms.views.promotion.task.CmsTaskStockService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

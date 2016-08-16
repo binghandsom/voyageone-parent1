@@ -1,9 +1,11 @@
 package com.voyageone.task2.cms.service;
 
+import com.jd.open.api.sdk.response.AbstractResponse;
+import com.jd.open.api.sdk.response.imgzone.ImgzonePictureUploadResponse;
 import com.taobao.api.TaobaoResponse;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -11,6 +13,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.jd.service.JdImgzoneService;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.tmall.service.TbPictureService;
@@ -36,7 +39,7 @@ import java.util.List;
 
 
 /**
- * 图片上传到平台（暂时只支持淘宝/天猫/天猫国际和聚美）
+ * 图片上传到平台（暂时只支持淘宝/天猫/天猫国际/聚美/京东/京东国际/京东国际匠心界/京东国际悦境）
  * @author jeff.duan on 2016/5/10.
  * @version 2.0.0
  */
@@ -62,6 +65,9 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
     @Autowired
     private TbPictureService tbPictureService;
 
+    @Autowired
+    private JdImgzoneService jdImgzoneService;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -75,10 +81,13 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         // 取得图片上传状态为2：等待上传的对象
-        JomgoQuery queryObject = new JomgoQuery();
-        // 暂时只支持淘宝/天猫/天猫国际和聚美
+        JongoQuery queryObject = new JongoQuery();
+        // 暂时只支持淘宝/天猫/天猫国际/聚美/京东/京东国际/京东国际匠心界/京东国际悦境
         queryObject.setQuery("{\"image.status\":"
-                + CmsConstants.ImageUploadStatus.WAITING_UPLOAD + ",\"active\":1,\"cartId\":{$in:[" + CartEnums.Cart.TM.getId() + "," + CartEnums.Cart.TB.getId() + "," + CartEnums.Cart.TG.getId() + "," + CartEnums.Cart.JM.getId() + "]}}");
+                + CmsConstants.ImageUploadStatus.WAITING_UPLOAD + ",\"active\":1,\"cartId\":{$in:[" + CartEnums.Cart.TM.getId() + ","
+                + CartEnums.Cart.TB.getId() + "," + CartEnums.Cart.TG.getId() + "," + CartEnums.Cart.JM.getId() + ","
+                + CartEnums.Cart.JD.getId() + "," + CartEnums.Cart.JG.getId() + "," + CartEnums.Cart.JGJ.getId() + "," + CartEnums.Cart.JGY.getId() + "]}}");
+
         List<CmsBtImageGroupModel> imageGroupList = cmsBtImageGroupDao.select(queryObject);
         for (CmsBtImageGroupModel imageGroup : imageGroupList) {
             List<CmsBtImageGroupModel_Image> images = imageGroup.getImage();
@@ -105,8 +114,11 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
             uploadImageToTB(channelId, cartId, imageType, image);
         } else if (cartId.equals(CartEnums.Cart.JM.getId())) {
             uploadImageToJM(channelId, imageType, image);
+        } else if (cartId.equals(CartEnums.Cart.JD.getId()) || cartId.equals(CartEnums.Cart.JG.getId())
+                || cartId.equals(CartEnums.Cart.JGJ.getId()) || cartId.equals(CartEnums.Cart.JGY.getId())) {
+            uploadImageToJD(channelId, cartId, imageType, image);
         }
-        // TODO 淘宝/天猫/天猫国际和聚美以外 以后往这里加
+        // TODO 淘宝/天猫/天猫国际/聚美/京东/京东国际/京东国际匠心界/京东国际悦境以外 以后往这里加
     }
 
     /**
@@ -172,7 +184,7 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
             } else {
                 // 更新的场合
                 imageName = platformUrl.substring(platformUrl.lastIndexOf("/") + 1);
-                uploadResponse = tbPictureService.replacePicture(shopBean, bytes, imageName, image.getPlatformImageId());
+                uploadResponse = tbPictureService.replacePicture(shopBean, bytes, imageName, Long.parseLong(image.getPlatformImageId()));
             }
             if (uploadResponse == null || !uploadResponse.isSuccess()) {
                 // 设置返回的错误信息
@@ -203,7 +215,7 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
                     // 设置平台返回的Url
                     image.setPlatformUrl(pictureUrl);
                     // 设置平台返回的PictureId
-                    image.setPlatformImageId(platformImageId);
+                    image.setPlatformImageId(String.valueOf(platformImageId));
                     // 设置图片上传状态为上传成功
                     image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_SUCCESS));
                     // 清除errorMsg
@@ -304,6 +316,118 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
             $error(errMsg);
             // 设置返回的错误信息
 
+            // 设置图片上传状态为上传成功
+            image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
+        }
+    }
+
+    /**
+     * 图片上传到京东/京东国际/京东国际匠心界/京东国际悦境
+     *
+     * @param channelId 渠道id
+     * @param cartId 平台id
+     * @param imageType 图片类型
+     * @param image ImageModel
+     */
+    private void uploadImageToJD(String channelId, String cartId, int imageType, CmsBtImageGroupModel_Image image) {
+        String originUrl = image.getOriginUrl();
+        String platformUrl = image.getPlatformUrl();
+        $info("开始上传京东平台图片---图片原始Url:" + originUrl + ", 平台id;" + cartId + ", 渠道id:" + channelId);
+        InputStream inputStream = null;
+        byte[] bytes = null;
+        try {
+            URL url = new URL(originUrl);
+            HttpURLConnection httpUrl = (HttpURLConnection) url.openConnection();
+            httpUrl.connect();
+            inputStream = new BufferedInputStream(httpUrl.getInputStream());
+            bytes = IOUtils.toByteArray(inputStream);
+        } catch (Exception e) {
+            $error("原始Url非法");
+            // 设置返回的错误信息
+            image.setErrorMsg("原始Url非法");
+            // 设置图片上传状态为上传成功
+            image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
+            return;
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException ignored) {
+            }
+        }
+
+        ShopBean shopBean = null;
+        String imageName = "";
+        AbstractResponse uploadResponse = null;
+        try {
+            shopBean = Shops.getShop(channelId, cartId);
+            if (shopBean == null) {
+                throw new BusinessException("appkey信息取得失败");
+            }
+            // 取得类目id
+            String categoryId = "0";
+            ImageCategoryType imageCategoryType = getImageCategoryType(String.valueOf(imageType));
+            if (imageCategoryType != null) {
+                // 看看cms_mt_image_category表里面是否已经存在该图片分类，不存在要在京东图片空间上新建（京东图片分类名不能超过15个字符）
+                CmsMtImageCategoryModel model = imageCategoryDao.select(shopBean, imageCategoryType);
+                if (model == null) {
+                    model = imageCategoryService.createJdImageCategory(shopBean, imageCategoryType, getTaskName());
+                }
+                categoryId = model.getCategory_tid();
+            }
+
+            if (StringUtils.isEmpty(platformUrl)) {
+                // 新建的场合
+                imageName = originUrl.substring(originUrl.lastIndexOf("/") + 1);
+                uploadResponse = jdImgzoneService.uploadPicture(shopBean, bytes, categoryId, imageName);
+            } else {
+                // 更新(替换图片)的场合
+                uploadResponse = jdImgzoneService.replacePicture(shopBean, bytes, String.valueOf(image.getPlatformImageId()));
+            }
+            if (uploadResponse == null || !"0".equals(uploadResponse.getCode())) {
+                // 新增或替换图片失败的场合
+                // 设置返回的错误信息
+                if (uploadResponse == null) {
+                    $error("上传图片到京东图片空间时，超时, response为空");
+                    image.setErrorMsg("上传图片到京东图片空间时，超时, response为空");
+                } else{
+                    String msg = "上传图片到京东图片空间时，错误:" + uploadResponse.getCode() + ", " + uploadResponse.getZhDesc();
+                    $error(msg);
+                    image.setErrorMsg(msg);
+                }
+                // 设置图片上传状态为上传失败
+                image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
+                return;
+            } else {
+                // 新增或替换图片成功的场合，回写mongoDB的cms_bt_image_group表
+                // 新建的场合
+                if (StringUtils.isEmpty(platformUrl)) {
+                    String pictureId = ((ImgzonePictureUploadResponse)uploadResponse).getPictureId();
+                    String pictureUrl = ((ImgzonePictureUploadResponse)uploadResponse).getPictureUrl();
+                    // 加上京东图片地址前缀
+                    pictureUrl = "https://img10.360buyimg.com/imgzone/" + pictureUrl;
+                    // 设置平台返回的Url
+                    image.setPlatformUrl(pictureUrl);
+                    // 设置平台返回的PictureId
+                    image.setPlatformImageId(pictureId);
+                    // 设置图片上传状态为上传成功
+                    image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_SUCCESS));
+                    // 清除errorMsg
+                    image.setErrorMsg(null);
+                } else {
+                    // 更新(替换图片)的场合
+                    // 设置图片上传状态为上传成功
+                    image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_SUCCESS));
+                    // 清除errorMsg
+                    image.setErrorMsg(null);
+                }
+            }
+
+        } catch (Exception e) {
+            $error(e.getMessage());
+            // 设置返回的错误信息
+            image.setErrorMsg(e.getMessage());
             // 设置图片上传状态为上传成功
             image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
         }

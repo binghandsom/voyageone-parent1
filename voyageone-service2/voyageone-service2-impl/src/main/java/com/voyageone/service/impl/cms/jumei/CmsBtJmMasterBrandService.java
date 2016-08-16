@@ -65,4 +65,12 @@ public class CmsBtJmMasterBrandService {
     public List<CmsBtJmMasterBrandModel> selectAll() {
         return dao.selectList(new HashMap<>());
     }
+    
+    /**
+     * 删除全部的品牌数据
+     */
+	public void deleteAll() {
+		daoExtCmsBtJmMasterBrand.deleteAll();
+	}
+	
 }

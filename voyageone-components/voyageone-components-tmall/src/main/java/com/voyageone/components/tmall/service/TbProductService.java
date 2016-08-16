@@ -158,7 +158,7 @@ public class TbProductService extends TbBase {
         req.setNumIid(Long.parseLong(numId));
         ItemDeleteResponse response = reqTaobaoApi(config,req);
         if (response.getErrorCode() != null) {
-            throw new BusinessException("天猫删除商品失败 京东错误码：" + response.getErrorCode());
+            throw new BusinessException("天猫删除商品失败" + response.getSubMsg() + "  京东错误码：" + response.getErrorCode());
         }
         return true;
     }

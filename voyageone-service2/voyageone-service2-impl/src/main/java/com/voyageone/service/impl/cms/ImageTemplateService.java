@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Codes;
@@ -13,7 +13,7 @@ import com.voyageone.service.bean.cms.imagetemplate.GetDownloadUrlParamter;
 import com.voyageone.service.bean.cms.imagetemplate.ImageTempateParameter;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.imagecreate.LiquidFireImageService;
+//import com.voyageone.service.impl.cms.imagecreate.LiquidFireImageService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +36,8 @@ public class ImageTemplateService extends BaseService {
     @Autowired
     private CmsBtImageTemplateDao dao;
 
-    @Autowired
-    private LiquidFireImageService serviceLiquidFireImage;
+//    @Autowired
+//    private LiquidFireImageService serviceLiquidFireImage;
 
     // added by morse.lu 2016/07/13 start
     public List<CmsBtImageTemplateModel> getCmsBtImageTemplateModelList(String channelId, int cartId, int imageTemplateType, int viewType, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
@@ -51,7 +51,7 @@ public class ImageTemplateService extends BaseService {
         param.setSizeType(sizeTypeList);
 
         String query = getSearchQuery(param, channelId);
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery(query);
 
         return dao.select(queryObject);
@@ -62,7 +62,7 @@ public class ImageTemplateService extends BaseService {
         int pageIndex = param.getPageIndex();
         int pageSize = param.getPageSize();
         String parameter = getSearchQuery(param, channelId);
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setProjection("");
         queryObject.setQuery(parameter);
         queryObject.setSort("{imageTemplateId:-1}");
@@ -81,7 +81,7 @@ public class ImageTemplateService extends BaseService {
         dao.update(model);
     }
 
-    public List<CmsBtImageTemplateModel> getList(JomgoQuery queryObject) {
+    public List<CmsBtImageTemplateModel> getList(JongoQuery queryObject) {
         return dao.select(queryObject);
     }
 
@@ -316,7 +316,8 @@ public class ImageTemplateService extends BaseService {
     }
 
     public String getDownloadUrl(GetDownloadUrlParamter paramter) throws Exception {
-        return serviceLiquidFireImage.getDownloadUrl(paramter.getTemplateContent(), JacksonUtil.bean2Json(paramter.getTemplateParameter()));
+//        return serviceLiquidFireImage.getDownloadUrl(paramter.getTemplateContent(), JacksonUtil.bean2Json(paramter.getTemplateParameter()));
+        return null;
     }
 
     public boolean EXISTSName(String ImageTemplateName, long ImageTemplateId) {

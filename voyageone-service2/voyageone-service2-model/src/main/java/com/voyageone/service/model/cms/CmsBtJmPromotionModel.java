@@ -8,6 +8,7 @@
 package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -78,6 +79,36 @@ public class CmsBtJmPromotionModel extends BaseModel {
      * 0：未恢复  1:已恢复  团购价变回【中国最终售价】
      */
     protected Integer recoveryStatus;
+
+    /**
+     * 活动类型 0:日常专场 1:导购团 2:大促 3长期场馆
+     */
+    protected Integer promotionType;
+
+    /**
+     * 是否直降
+     */
+    protected Boolean isPromotionDown;
+
+    /**
+     * 是否满减
+     */
+    protected Boolean isPromotionFullMinus;
+
+    /**
+     * 满减活动-满金额
+     */
+    protected BigDecimal promotionFullAmount;
+
+    /**
+     * 满减活动-减金额
+     */
+    protected BigDecimal promotionMinusAmount;
+
+    /**
+     * 是否赠送优惠卷
+     */
+    protected Boolean isPromotionGiveCoupons;
 
     public String getChannelId() {
         return channelId;
@@ -205,5 +236,53 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     public void setRecoveryStatus(Integer recoveryStatus) {
         this.recoveryStatus = recoveryStatus;
+    }
+
+    public Integer getPromotionType() {
+        return promotionType;
+    }
+
+    public void setPromotionType(Integer promotionType) {
+        this.promotionType = promotionType;
+    }
+
+    public Boolean getIsPromotionDown() {
+        return isPromotionDown;
+    }
+
+    public void setIsPromotionDown(Boolean isPromotionDown) {
+        this.isPromotionDown = isPromotionDown;
+    }
+
+    public Boolean getIsPromotionFullMinus() {
+        return isPromotionFullMinus;
+    }
+
+    public void setIsPromotionFullMinus(Boolean isPromotionFullMinus) {
+        this.isPromotionFullMinus = isPromotionFullMinus;
+    }
+
+    public BigDecimal getPromotionFullAmount() {
+        return promotionFullAmount;
+    }
+
+    public void setPromotionFullAmount(BigDecimal promotionFullAmount) {
+        this.promotionFullAmount = promotionFullAmount;
+    }
+
+    public BigDecimal getPromotionMinusAmount() {
+        return promotionMinusAmount;
+    }
+
+    public void setPromotionMinusAmount(BigDecimal promotionMinusAmount) {
+        this.promotionMinusAmount = promotionMinusAmount;
+    }
+
+    public Boolean getIsPromotionGiveCoupons() {
+        return isPromotionGiveCoupons;
+    }
+
+    public void setIsPromotionGiveCoupons(Boolean isPromotionGiveCoupons) {
+        this.isPromotionGiveCoupons = isPromotionGiveCoupons;
     }
 }

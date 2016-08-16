@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.sx.sku_field.tmall;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -173,6 +174,11 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
         // modified by morse.lu 2016/07/04 end
         if (sku_colorField.getType() == FieldTypeEnum.SINGLECHECK) {
             List<Option> colorOptions = ((SingleCheckField)sku_colorField).getOptions();
+            // added by morse.lu 2016/07/26 start
+            if (availableColorIndex >= colorOptions.size()) {
+                throw new BusinessException(String.format("最多只能%d个sku!请拆分group!", colorOptions.size()));
+            }
+            // added by morse.lu 2016/07/26 end
             String colorValue = colorOptions.get(availableColorIndex++).getValue();
             skuFieldValue.setSingleCheckFieldValue(sku_colorField.getId(), new Value(colorValue));
             buildSkuResult.getColorCmsSkuPropMap().put(colorValue, cmsSkuProp);
@@ -182,6 +188,10 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
 //            RuleExpression skuColorExpression = ((SimpleMappingBean)colorMapping).getExpression();
 //            String skuColor = expressionParser.parse(skuColorExpression, shopBean, user, null);
             String skuColor = getSkuValue(productModel, sku_colorField.getId(), cmsSkuProp.getSkuCode());
+            if (StringUtils.isEmpty(skuColor)) {
+                // 没填的话用code
+                skuColor = productModel.getCommon().getFields().getCode();
+            }
             // modified by morse.lu 2016/07/04 end
             skuFieldValue.setInputFieldValue(sku_colorField.getId(), skuColor);
             buildSkuResult.getColorCmsSkuPropMap().put(skuColor, cmsSkuProp);
@@ -348,7 +358,10 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
             // modified by morse.lu 2016/07/04 end
 
             if (colorExtend_imageField != null) {
-                String propImage = sxProductBean.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+                // modified by morse.lu 2016/08/09 start
+//                String propImage = sxProductBean.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+                String propImage = expressionParser.getSxProductService().getProductImages(sxProductBean, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+                // modified by morse.lu 2016/08/09 end
                 if (propImage != null && !"".equals(propImage)) {
                     if (StringUtils.isEmpty(getCodeImageTemplate())) {
                         $warn("图片模板url未设置");
@@ -408,9 +421,22 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                 // 别名
                 // 一个产品多个sku时，暂定别名用skuCode，以外的场合还是用产品code
                 if (hasSomeSku) {
-                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), cmsSkuProp.getSkuCode());
+                    // modified by morse.lu 2016/08/02 start
+                    // color + size
+//                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), cmsSkuProp.getSkuCode());
+                    String alias = sxProductBean.getCommon().getFields().getColor() + "_" + cmsSkuProp.getSizeSx();
+                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), alias);
+                    // modified by morse.lu 2016/08/02 end
                 } else {
-                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), sxProductBean.getCommon().getFields().getCode());
+                    // modified by morse.lu 2016/08/02 start
+                    // 如果code长度大于60，那么用color
+//                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), sxProductBean.getCommon().getFields().getCode());
+                    String alias = sxProductBean.getCommon().getFields().getCode();
+                    if (alias.length() > 60) {
+                        alias = sxProductBean.getCommon().getFields().getColor();
+                    }
+                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), alias);
+                    // modified by morse.lu 2016/08/02 end
                 }
             }
             if (colorExtend_basecolorField != null) {

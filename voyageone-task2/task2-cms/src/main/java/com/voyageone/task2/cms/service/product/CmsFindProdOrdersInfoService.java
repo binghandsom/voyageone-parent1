@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service.product;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
@@ -70,18 +70,18 @@ public class CmsFindProdOrdersInfoService extends BaseTaskService {
         String begDate2 = DateTimeUtil.getDateBeforeDays(30);
 
         // 统计code销售数据的查询条件
-        JomgoQuery qryObj = new JomgoQuery();
+        JongoQuery qryObj = new JongoQuery();
         qryObj.setProjection("{'common.fields.code':1,'common.skus.skuCode':1,'platforms':1}");
         qryObj.setLimit(PAGE_LIMIT);
         int prodIdx;
 
         // 统计cart数据的查询条件
-        JomgoQuery grpqryObj = new JomgoQuery();
+        JongoQuery grpqryObj = new JongoQuery();
         grpqryObj.setQuery("{'cartId':{$nin:[0,1]}}");
         grpqryObj.setProjection("{'groupId':1,'cartId':1,'productCodes':1,'_id':1}");
         grpqryObj.setLimit(PAGE_LIMIT);
         int grpIdx;
-        JomgoQuery grpqryObj2 = new JomgoQuery();
+        JongoQuery grpqryObj2 = new JongoQuery();
         grpqryObj2.setQuery("{'cartId':0}");
         grpqryObj2.setProjection("{'groupId':1,'productCodes':1,'_id':1}");
         grpqryObj2.setLimit(PAGE_LIMIT);

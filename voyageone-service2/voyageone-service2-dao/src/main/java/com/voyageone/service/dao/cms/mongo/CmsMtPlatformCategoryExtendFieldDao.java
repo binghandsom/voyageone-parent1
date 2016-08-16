@@ -23,7 +23,7 @@ import java.util.Map;
 public class CmsMtPlatformCategoryExtendFieldDao extends BaseMongoCartDao<CmsMtPlatformCategoryExtendFieldModel> {
 
     public CmsMtPlatformCategoryExtendFieldModel selectOneByCatId(String catId, int cartId) {
-//        JomgoQuery query = new JomgoQuery();
+//        JongoQuery query = new JongoQuery();
 //        query.setQuery("{\"catId\":#}");
 //        query.setParameters(catId);
 //        return selectOneWithQuery(query, cartId);

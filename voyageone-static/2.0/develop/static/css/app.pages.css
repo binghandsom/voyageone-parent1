@@ -184,27 +184,33 @@ s-field textarea.s-html {
 .nav-stacked {
     min-width: 360px;
 }
-.nav-stacked .nav-tabs{
+
+.nav-stacked .nav-tabs {
 
     float: left;
 }
+
 .nav-stacked ul {
     max-width: 125px;
 }
-.nav-stacked li{
-    min-width:129px;
+
+.nav-stacked li {
+    min-width: 129px;
 }
-.nav-stacked li.active,.nav-stacked .nav-tabs > li.active > a{
+
+.nav-stacked li.active, .nav-stacked .nav-tabs > li.active > a {
     border-left: 3px solid #e67e22;
     border-top: 1px solid #d4cfcf;
 }
-.nav-stacked div.tab-content{
+
+.nav-stacked div.tab-content {
     float: left;
     border: 1px solid #d4cfcf !important;
     min-width: 238px;
     max-width: 304px;
     min-height: 171px;
 }
+
 @media screen and (max-width: 1544px) {
     .nav-stacked div.tab-content {
         max-width: 238px;
@@ -223,7 +229,7 @@ s-field textarea.s-html {
 }
 
 /**基于类category_drag_list_dp 显示类目选择的popup*/
-.category_popup{
+.category_popup {
     height: 200px;
     overflow-y: auto
 }
@@ -255,8 +261,7 @@ s-field textarea.s-html {
 }
 
 .category_drag_list_dp li .indexSelected,
-.category_drag_list_dp .indexSelected
-{
+.category_drag_list_dp .indexSelected {
     float: left;
     display: block;
     position: relative;
@@ -415,7 +420,7 @@ s-field textarea.s-html {
     line-height: 24px;
 }
 
-.product-shema-detail a .thumb-group{
+.product-shema-detail a .thumb-group {
     max-height: 100px;
 }
 
@@ -431,7 +436,7 @@ s-field textarea.s-html {
     }
 }
 
-.product-shema-detail .panel-body li{
+.product-shema-detail .panel-body li {
     float: left;
     margin-top: 4px;
     margin-bottom: 4px;
@@ -484,7 +489,7 @@ s-field textarea.s-html {
     border-bottom: 2px solid #e67e22;
 }
 
-.product-shema-detail .thumbnail{
+.product-shema-detail .thumbnail {
     max-width: 100px;
 }
 
@@ -562,7 +567,7 @@ s-field textarea.s-html {
     border-left: 1px solid #ADCAE2;
 }
 
-.product-shema-detail .no-master{
+.product-shema-detail .no-master {
     font-size: 15px;
     font-weight: bold;
     color: #d60032;
@@ -581,7 +586,7 @@ s-field textarea.s-html {
     min-width: 125px;
 }
 
-schema .ng-invalid.focus-error{
+schema .ng-invalid.focus-error {
     transition: box-shadow 2s;
     box-shadow: 0 1px 8px 0 #f05050 ! important;
 }
@@ -756,12 +761,12 @@ schema .ng-invalid.focus-error{
 /* 属性翻译页面的定制样式 End */
 
 /**图片上传样式*/
-.img-upload .drop-zone{
+.img-upload .drop-zone {
     border-style: dashed;
     background: #d9eff7;
 }
 
-.img-upload input[type='text']{
+.img-upload input[type='text'] {
     display: none;
 }
 
@@ -779,7 +784,7 @@ schema .ng-invalid.focus-error{
     height: auto;
 }
 
-.img-upload .error-msg{
+.img-upload .error-msg {
     max-width: 100%;
     word-break: break-all;
     max-height: 50px;
@@ -787,7 +792,7 @@ schema .ng-invalid.focus-error{
     border: 2px solid #e26666;
 }
 
-.img-upload .fix-img{
+.img-upload .fix-img {
     position: relative;
     max-width: 125px;
     max-height: 125px;
@@ -795,7 +800,7 @@ schema .ng-invalid.focus-error{
     height: auto;
 }
 
-.img-upload .fix-progress{
+.img-upload .fix-progress {
     width: 125px;
     margin: 0px auto;
 }
@@ -808,7 +813,7 @@ schema .ng-invalid.focus-error{
     font-weight: bold;
 }
 
-.switch-main .middle{
+.switch-main .middle {
     margin: 20px 20px;
     padding: 10px 10px;
     border: 1px solid #e67e22;
@@ -816,31 +821,31 @@ schema .ng-invalid.focus-error{
     overflow-y: scroll;
 }
 
-.switch-main .gray{
+.switch-main .gray {
     color: #bfbebe;
 }
 
-.switch-main .fix-div{
+.switch-main .fix-div {
     position: relative;
     width: 135px;
     height: 135px;
     margin: 15px auto;
 }
 
-.switch-main .img-zoom{
+.switch-main .img-zoom {
     width: auto;
     height: auto;
     max-width: 115px;
     max-height: 115px;
 }
 
-.switch-main .current{
+.switch-main .current {
     border: 2px solid #006cca;
     box-shadow: 0 1px 8px 0 #006cca;
     opacity: 0.4;
 }
 
-.switch-main .status{
+.switch-main .status {
     position: absolute;
 }
 
@@ -850,3 +855,12 @@ schema .ng-invalid.focus-error{
     width: 95%;
 }
 
+/**默认属性设置*/
+.default-attr .nav{
+    position: fixed;
+    width: 100px;
+    margin-left:25px;
+    cursor: pointer;
+    border-width: 2px;
+    border-style: dotted;
+}

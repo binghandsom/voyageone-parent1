@@ -217,6 +217,11 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
         if (sku_colorField.getType() == FieldTypeEnum.SINGLECHECK) {
             if (colorValue == null) {
                 List<Option> colorOptions = ((SingleCheckField) sku_colorField).getOptions();
+                // added by morse.lu 2016/07/26 start
+                if (availableColorIndex >= colorOptions.size()) {
+                    throw new BusinessException(String.format("最多只能%d个code!请拆分group!", colorOptions.size()));
+                }
+                // added by morse.lu 2016/07/26 end
                 colorValue = colorOptions.get(availableColorIndex++).getValue();
                 buildSkuResult.getColorCmsPropductMap().put(colorValue, sxProduct);
                 buildSkuResult.getCmsPropductColorMap().put(sxProduct, colorValue);
@@ -229,6 +234,10 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
 //                RuleExpression skuColorExpression = ((SimpleMappingBean) colorMapping).getExpression();
 //                colorValue = expressionParser.parse(skuColorExpression, shopBean, user, null);
                 colorValue = getSkuValue(sxProduct, sku_colorField.getId(), cmsSkuProp.getSkuCode());
+                if (StringUtils.isEmpty(colorValue)) {
+                    // 没填的话用code
+                    colorValue = sxProduct.getCommon().getFields().getCode();
+                }
                 // modified by morse.lu 2016/07/04 end
                 buildSkuResult.getColorCmsPropductMap().put(colorValue, sxProduct);
                 buildSkuResult.getCmsPropductColorMap().put(sxProduct, colorValue);
@@ -252,6 +261,11 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
             }
             // added by morse.lu 2016/07/08 end
             List<Option> sizeOptions = ((SingleCheckField)sku_sizeField).getOptions();
+            // added by morse.lu 2016/07/26 start
+            if (availableSizeIndex >= sizeOptions.size()) {
+                throw new BusinessException(String.format("最多只能%d个不同尺码!请拆分group!", sizeOptions.size()));
+            }
+            // added by morse.lu 2016/07/26 end
             String sizeValue = sizeOptions.get(availableSizeIndex++).getValue();
             skuFieldValue.setSingleCheckFieldValue(sku_sizeField.getId(), new Value(sizeValue));
             buildSkuResult.getSizeCmsSkuPropMap().put(sizeValue, cmsSkuProp);
@@ -267,9 +281,16 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
 //            RuleExpression skuSizeExpression = ((SimpleMappingBean)sizeMapping).getExpression();
 //            String skuSize = expressionParser.parse(skuSizeExpression, shopBean, user, null);
             String skuSize = getSkuValue(productModel, sku_sizeField.getId(), cmsSkuProp.getSkuCode());
+            if (StringUtils.isEmpty(skuSize)) {
+                // 没填的话用sizeSx
+                skuSize = cmsSkuProp.getSizeSx();
+            }
             // modified by morse.lu 2016/07/04 end
             skuFieldValue.setInputFieldValue(sku_sizeField.getId(), skuSize);
             buildSkuResult.getSizeCmsSkuPropMap().put(skuSize, cmsSkuProp);
+            // added by morse.lu 2016/07/08 start
+            buildSkuResult.getSizeMap().put(skuSize, skuSize);
+            // added by morse.lu 2016/07/08 end
         }
     }
 
@@ -422,7 +443,10 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
             }
 
             if (colorExtend_imageField != null) {
-                String propImage = sxProduct.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+                // modified by morse.lu 2016/08/09 start
+//                String propImage = sxProduct.getCommon().getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+                String propImage = expressionParser.getSxProductService().getProductImages(sxProduct, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+                // modified by morse.lu 2016/08/09 end
                 if (propImage != null && !"".equals(propImage)) {
                     if (StringUtils.isEmpty(getCodeImageTemplate())) {
                         $warn("图片模板url未设置");
@@ -467,7 +491,15 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
 //            }
             if (colorExtend_aliasnameField != null) {
                 // 别名,用产品code
-                complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), sxProduct.getCommon().getFields().getCode());
+                // modified by morse.lu 2016/08/02 start
+                // 如果code长度大于60，那么用color
+//                complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), sxProduct.getCommon().getFields().getCode());
+                String alias = sxProduct.getCommon().getFields().getCode();
+                if (alias.length() > 60) {
+                    alias = sxProduct.getCommon().getFields().getColor();
+                }
+                complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), alias);
+                // modified by morse.lu 2016/08/02 end
             }
             if (colorExtend_basecolorField != null) {
                 // 原先也没做,这版也暂时不做

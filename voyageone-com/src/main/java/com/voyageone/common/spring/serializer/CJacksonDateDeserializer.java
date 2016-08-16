@@ -3,11 +3,11 @@ package com.voyageone.common.spring.serializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -26,9 +26,7 @@ public class CJacksonDateDeserializer extends JsonDeserializer<Date> {
         }
 
         if (StringUtils.isNumeric(fieldData)) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(Long.parseLong(fieldData));
-            return calendar.getTime();
+            return DateDeserializers.DateDeserializer.instance.deserialize(parser, context);
         } else {
             if (fieldData.length() < 19) {
                 fieldData += "0000-00-00 00:00:00".substring(fieldData.length());

@@ -4,19 +4,21 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
-import com.voyageone.service.bean.cms.product.ProductPriceBean;
-import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
-import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
@@ -24,6 +26,7 @@ import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseTaskService;
@@ -31,10 +34,8 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -66,6 +67,9 @@ public class UploadToUSJoiService extends BaseTaskService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
+    @Autowired
+    private ComMtValueChannelService comMtValueChannelService;    // 更新Synship.com_mt_value_channel表
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -79,17 +83,91 @@ public class UploadToUSJoiService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
+        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+
         for (OrderChannelBean channelBean : Channels.getUsJoiChannelList()) {
             List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100, Integer.parseInt(channelBean.getOrder_channel_id()));
             cmsBtSxWorkloadModels.forEach(this::upload);
         }
+
+        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
     }
 
     public void upload(CmsBtSxWorkloadModel sxWorkLoadBean) {
+        // --------------------------------------------------------------------------------------------
+        // 品牌mapping表
+        Map<String, String> mapBrandMapping = new HashMap<>();
+        // 产品分类mapping表
+        Map<String, String> mapProductTypeMapping = new HashMap<>();
+        // 适用人群mapping表
+        Map<String, String> mapSizeTypeMapping = new HashMap<>();
+        // --------------------------------------------------------------------------------------------
+
+        // workload表中的cartId是usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
         String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
+
+        // --------------------------------------------------------------------------------------------
+        // 品牌mapping作成
+        List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, usJoiChannelId);
+
+        if (ListUtils.notNull(brandTypeChannelBeanList)) {
+            for (TypeChannelBean typeChannelBean : brandTypeChannelBeanList) {
+                if (
+                        !StringUtils.isEmpty(typeChannelBean.getAdd_name1())
+                                && !StringUtils.isEmpty(typeChannelBean.getName())
+                                && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
+                        ) {
+                    // 品牌mapping表中key,value都设为小写(feed进来的brand不区分大小写)
+                    mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase().trim(), typeChannelBean.getName().toLowerCase().trim());
+                }
+            }
+        }
+
+        // 产品分类mapping作成
+        List<TypeChannelBean> productTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_57, usJoiChannelId);
+
+        if (ListUtils.notNull(productTypeChannelBeanList)) {
+            for (TypeChannelBean typeChannelBean : productTypeChannelBeanList) {
+                if (
+                        !StringUtils.isEmpty(typeChannelBean.getValue())
+                                && !StringUtils.isEmpty(typeChannelBean.getName())
+                                && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
+                        ) {
+                    // 产品分类mapping表(value是key,name和add_name1是值)
+                    mapProductTypeMapping.put(typeChannelBean.getValue().trim(), typeChannelBean.getName().trim());
+                }
+            }
+        }
+
+        // 适用人群mapping作成
+        List<TypeChannelBean> sizeTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_58, usJoiChannelId);
+
+        if (ListUtils.notNull(sizeTypeChannelBeanList)) {
+            for (TypeChannelBean typeChannelBean : sizeTypeChannelBeanList) {
+                if (
+                        !StringUtils.isEmpty(typeChannelBean.getValue())
+                                && !StringUtils.isEmpty(typeChannelBean.getName())
+                                && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
+                        ) {
+                    // 适用人群mapping作成(value是key,name和add_name1是值)
+                    mapSizeTypeMapping.put(typeChannelBean.getValue().trim(), typeChannelBean.getName().trim());
+                }
+            }
+        }
+        // --------------------------------------------------------------------------------------------
+
         try {
             $info(String.format("channelId:%s  groupId:%d  复制到%s 开始", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
             List<CmsBtProductBean> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), new Long(sxWorkLoadBean.getGroupId()), false);
+
+            if (ListUtils.isNull(productModels)) {
+                String errMsg = "没有找到对应的group信息 (ChannelId:" + sxWorkLoadBean.getChannelId() + " GroupId:" +
+                        sxWorkLoadBean.getGroupId() + ")";
+                $info(errMsg);
+                throw new BusinessException(errMsg);
+            }
 
             $info("productModels" + productModels.size());
             //从group中过滤出需要上的usjoi的产品
@@ -99,7 +177,6 @@ public class UploadToUSJoiService extends BaseTaskService {
             } else {
                 $info("有" + productModels.size() + "个产品要复制");
             }
-
 
             for (CmsBtProductModel productModel : productModels) {
                 productModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel),CmsBtProductModel.class);
@@ -115,10 +192,12 @@ public class UploadToUSJoiService extends BaseTaskService {
 
                 CmsBtProductModel pr = productService.getProductByCode(usJoiChannelId, productModel.getCommon().getFields().getCode());
                 if (pr == null) {
+                    // 产品不存在，新增
                     productModel.setChannelId(usJoiChannelId);
                     productModel.setOrgChannelId(sxWorkLoadBean.getChannelId());
                     productModel.setSales(new CmsBtProductModel_Sales());
                     productModel.setTags(new ArrayList<>());
+                    // 插入或者更新cms_bt_product_group_c928中的productGroup信息
                     creatGroup(productModel, usJoiChannelId);
 
                     productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
@@ -131,25 +210,63 @@ public class UploadToUSJoiService extends BaseTaskService {
                     platform.setpBrandId(null);
                     platform.setpBrandName(null);
                     productModel.platformsClear();
+                    // 下面几个cartId都设成同一个platform
                     if (platform != null) {
                         final CmsBtProductModel finalProductModel = productModel;
-                        cartIds.forEach(cart -> finalProductModel.setPlatform(cart, platform));
+                        for (Integer cartId : cartIds) {
+                            // 重新设置P28平台的mainProductCode和pIsMain
+                            CmsBtProductGroupModel cartGroupModel = productGroupService.selectProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), cartId);
+                            if (cartGroupModel != null && !StringUtils.isEmpty(cartGroupModel.getMainProductCode())) {
+                                // 如果存在group信息，则将group的mainProductCode设为mainProductCode
+                                platform.setMainProductCode(cartGroupModel.getMainProductCode());
+                                if (cartGroupModel.getMainProductCode().equals(productModel.getCommon().getFields().getCode())) {
+                                    platform.setpIsMain(1);
+                                } else {
+                                    platform.setpIsMain(0);
+                                }
+                            } else {
+                                // 如果不存在group信息，则将自身设为mainProductCode
+                                platform.setMainProductCode(productModel.getCommon().getFields().getCode());
+                                platform.setpIsMain(1);
+                            }
+
+                            // 下面几个cartId都设成同一个platform
+                            finalProductModel.setPlatform(cartId, platform);
+                        }
+
                     }
 
+                    // 设置P0平台信息
                     CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), 0);
                     CmsBtProductModel_Platform_Cart p0 = new CmsBtProductModel_Platform_Cart();
                     p0.put("cartId", 0);
-                    p0.put("mainProductCode", groupModel.getMainProductCode());
+//                    p0.put("mainProductCode", groupModel.getMainProductCode());
+                    if (groupModel != null && !StringUtils.isEmpty(groupModel.getMainProductCode())) {
+                        // 如果存在group信息，则将group的mainProductCode设为mainProductCode
+                        p0.setMainProductCode(groupModel.getMainProductCode());
+                        if (groupModel.getMainProductCode().equals(productModel.getCommon().getFields().getCode())) {
+                            productModel.getCommon().getFields().setIsMasterMain(1);
+                        } else {
+                            productModel.getCommon().getFields().setIsMasterMain(0);
+                        }
+                    } else {
+                        // 如果不存在group信息，则将自身设为mainProductCode
+                        p0.setMainProductCode(productModel.getCommon().getFields().getCode());
+                        productModel.getCommon().getFields().setIsMasterMain(1);
+                    }
                     productModel.getPlatforms().put("P0", p0);
 
 
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
 
                 } else {
+                    // 如果已经存在（如老的数据已经有了），更新
+                    boolean commonEditFlg = false;
                     for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
                         CmsBtProductModel_Sku oldSku = pr.getCommon().getSku(sku.getSkuCode());
                         if (oldSku == null) {
                             pr.getCommon().getSkus().add(sku);
+                            commonEditFlg = true;
                         } else {
                             if (oldSku.getPriceMsrp().compareTo(sku.getPriceMsrp()) != 0
                                     || oldSku.getPriceRetail().compareTo(sku.getPriceRetail()) != 0) {
@@ -158,8 +275,12 @@ public class UploadToUSJoiService extends BaseTaskService {
                                 oldSku.setClientRetailPrice(sku.getClientRetailPrice());
                                 oldSku.setPriceMsrp(sku.getPriceMsrp());
                                 oldSku.setPriceRetail(sku.getPriceRetail());
+                                commonEditFlg = true;
                             }
                         }
+                    }
+                    if(commonEditFlg){
+                        productService.updateProductCommon(usJoiChannelId, pr.getProdId(), pr.getCommon(),getTaskName(),false);
                     }
 
                     final CmsBtProductModel finalProductModel1 = productModel;
@@ -183,7 +304,7 @@ public class UploadToUSJoiService extends BaseTaskService {
                                     if(platformCart.getSkus() != null) {
                                         for (BaseMongoMap<String, Object> oldSku : platformCart.getSkus()) {
                                             if (oldSku.get("skuCode").toString().equalsIgnoreCase(newSku.get("skuCode").toString())) {
-                                                oldSku.put("PriceMsrp", newSku.get("PriceMsrp"));
+                                                oldSku.put("priceMsrp", newSku.get("priceMsrp"));
                                                 oldSku.put("priceRetail", newSku.get("priceRetail"));
                                                 updateFlg = true;
                                                 break;
@@ -210,7 +331,20 @@ public class UploadToUSJoiService extends BaseTaskService {
                         CmsBtProductGroupModel groupModel = productGroupService.selectMainProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), 0);
                         CmsBtProductModel_Platform_Cart p0 = new CmsBtProductModel_Platform_Cart();
                         p0.put("cartId",0);
-                        p0.put("mainProductCode",groupModel.getMainProductCode());
+//                        p0.put("mainProductCode",groupModel.getMainProductCode());
+                        if (groupModel != null && !StringUtils.isEmpty(groupModel.getMainProductCode())) {
+                            // 如果存在group信息，则将group的mainProductCode设为mainProductCode
+                            p0.setMainProductCode(groupModel.getMainProductCode());
+                            if (groupModel.getMainProductCode().equals(productModel.getCommon().getFields().getCode())) {
+                                productModel.getCommon().getFields().setIsMasterMain(1);
+                            } else {
+                                productModel.getCommon().getFields().setIsMasterMain(0);
+                            }
+                        } else {
+                            // 如果不存在group信息，则将自身设为mainProductCode
+                            p0.setMainProductCode(productModel.getCommon().getFields().getCode());
+                            productModel.getCommon().getFields().setIsMasterMain(1);
+                        }
                         HashMap<String, Object> queryMap = new HashMap<>();
                         queryMap.put("prodId", pr.getProdId());
 
@@ -231,7 +365,14 @@ public class UploadToUSJoiService extends BaseTaskService {
             CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.getProductGroupByGroupId(sxWorkLoadBean.getChannelId(),sxWorkLoadBean.getGroupId());
             cmsBtProductGroupModel.setPlatformActive(CmsConstants.PlatformActive.ToOnSale);
             cmsBtProductGroupModel.setOnSaleTime(DateTimeUtil.getNowTimeStamp());
-            productGroupService.updateGroupsPlatformStatus(cmsBtProductGroupModel);
+            cmsBtProductGroupModel.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+
+            // 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
+            insertMtValueChannelInfo(usJoiChannelId, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, productModels);
+
+            // 上新对象产品Code列表
+            List<String> listSxCode = productModels.stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
+            productGroupService.updateGroupsPlatformStatus(cmsBtProductGroupModel, listSxCode);
             $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
         } catch (Exception e) {
             sxWorkLoadBean.setPublishStatus(2);
@@ -239,7 +380,6 @@ public class UploadToUSJoiService extends BaseTaskService {
             $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
             e.printStackTrace();
             issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
-            throw e;
         }
     }
 
@@ -290,8 +430,11 @@ public class UploadToUSJoiService extends BaseTaskService {
 
         // 获取当前channel, 有多少个platform
         List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(usJoiChannel, "D", "en"); // 取得展示用数据
-        if (typeChannelBeanList == null) {
-            return;
+        if (ListUtils.isNull(typeChannelBeanList)) {
+            String errMsg = "com_mt_value_channel表中没有usJoiChannel("+usJoiChannel+")对应的展示用(53 D en)mapping" +
+                    "信息,不能插入usJoiGroup信息，终止UploadToUSJoiServie处理";
+            $info(errMsg);
+            throw new BusinessException(errMsg);
         }
 
 
@@ -369,6 +512,62 @@ public class UploadToUSJoiService extends BaseTaskService {
             }
         }
 
+    }
+
+    /**
+     * 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
+     *
+     * @param usjoiChannelId String usjoi channel id
+     * @param mapBrandMapping Map<String, String> 品牌mapping一览
+     * @param mapProductTypeMapping Map<String, String> 产品类型mapping一览
+     * @param mapSizeTypeMapping Map<String, String> 适用人群mapping一览
+     * @param usjoiProductModels List<CmsBtProductBean> 产品列表
+     */
+    private void insertMtValueChannelInfo(String usjoiChannelId, Map<String, String> mapBrandMapping, Map<String, String> mapProductTypeMapping,
+                                          Map<String, String> mapSizeTypeMapping, List<CmsBtProductBean> usjoiProductModels) {
+
+        // 循环产品列表，如果品牌，产品类型或适用人群信息，则插入该信息到Synship.com_mt_value_channel表中
+        for (CmsBtProductBean usjoiProductModel : usjoiProductModels) {
+            if (usjoiProductModel.getCommon() == null || usjoiProductModel.getCommon().getFields() == null) {
+                continue;
+            }
+            // 品牌
+            String usjoiBrand = usjoiProductModel.getCommon().getFields().getBrand();
+            // 产品类型
+            String usjoiProductType = usjoiProductModel.getCommon().getFields().getProductType();
+            // 适用人群
+            String usjoiSizeType = usjoiProductModel.getCommon().getFields().getSizeType();
+
+            // 品牌(不区分大小写，全部小写)
+            if (!StringUtils.isEmpty(usjoiBrand)
+                    && !mapBrandMapping.containsKey(usjoiBrand.toLowerCase().trim())) {
+                // 插入品牌初始中英文mapping信息到Synship.com_mt_value_channel表中
+                comMtValueChannelService.insertComMtValueChannelMapping(41, usjoiChannelId,
+                        usjoiBrand.toLowerCase().trim(), usjoiBrand.toLowerCase().trim(), getTaskName());
+                // 将更新完整之后的mapping信息添加到前面取出来的品牌mapping表中
+                mapBrandMapping.put(usjoiBrand.toLowerCase().trim(), usjoiBrand.toLowerCase().trim());
+            }
+
+            // 产品分类
+            if (!StringUtils.isEmpty(usjoiProductType)
+                    && !mapProductTypeMapping.containsKey(usjoiProductType)) {
+                // 插入产品分类初始中英文mapping信息到Synship.com_mt_value_channel表中
+                comMtValueChannelService.insertComMtValueChannelMapping(57, usjoiChannelId, usjoiProductType,
+                        usjoiProductType, getTaskName());
+                // 将更新完整之后的mapping信息添加到前面取出来的产品分类mapping表中
+                mapProductTypeMapping.put(usjoiProductType, usjoiProductType);
+            }
+
+            // 适用人群
+            if (!StringUtils.isEmpty(usjoiSizeType)
+                    && !mapSizeTypeMapping.containsKey(usjoiSizeType)) {
+                // 插入适用人群初始中英文mapping信息到Synship.com_mt_value_channel表中
+                comMtValueChannelService.insertComMtValueChannelMapping(58, usjoiChannelId, usjoiSizeType,
+                        usjoiSizeType, getTaskName());
+                // 将更新完整之后的mapping信息添加到前面取出来的适用人群mapping表中
+                mapSizeTypeMapping.put(usjoiSizeType, usjoiSizeType);
+            }
+        }
     }
 
 }

@@ -14,11 +14,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ComMtValueChannelDao {
-    List<ComMtValueChannelModel> selectList(Map<String, Object> map);
+    List<ComMtValueChannelModel> selectList(Object map);
 
-    ComMtValueChannelModel selectOne(Map<String, Object> map);
+    ComMtValueChannelModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     ComMtValueChannelModel select(Integer id);
 

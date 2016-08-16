@@ -42,7 +42,7 @@ public class CmsChannelTagServiceTest {
         Map param = new HashMap<>(2);
         param.put("channel_id", "010");
         param.put("tagTypeSelectValue", "1");
-        List<CmsBtTagModel> resultInfo = targetService.getTagInfoList(param);
+        List<CmsBtTagBean> resultInfo = targetService.getTagInfoByChannelId(param);
         Assert.assertNotNull(resultInfo);
         System.out.println("prettyJsonStr: " + JacksonUtil.bean2Json(resultInfo));
     }

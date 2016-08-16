@@ -67,6 +67,21 @@ public class OverstockEventService extends OverstockBase {
     }
 
     /**
+     * 获取event详细信息
+     *
+     * @return 结果集
+     * @throws Exception
+     */
+    @Retryable
+    public Result<EventType> queryingForEventDetail(String eventId) throws Exception {
+        return getClientFactory().forEvents()
+                .getOne(eventId)
+                .withExpand("detail")
+                .build()
+                .execute(getCredentials());
+    }
+
+    /**
      * 获取产品变化信息
      *
      * @return 结果集

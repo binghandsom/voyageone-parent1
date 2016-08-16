@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.cms.feed;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -30,7 +30,7 @@ public class FeedInfoService extends BaseService {
     /**
      * getList
      */
-    public List<CmsBtFeedInfoModel> getList(String channelId, JomgoQuery queryObject) {
+    public List<CmsBtFeedInfoModel> getList(String channelId, JongoQuery queryObject) {
         return cmsBtFeedInfoDao.select(queryObject, channelId);
     }
 
@@ -47,6 +47,10 @@ public class FeedInfoService extends BaseService {
      */
     public CmsBtFeedInfoModel getProductByCode(String channelId, String productCode) {
         return cmsBtFeedInfoDao.selectProductByCode(channelId, productCode);
+    }
+
+    public CmsBtFeedInfoModel getProductBySku(String channelId, String sku) {
+        return cmsBtFeedInfoDao.selectProductBySku(channelId, sku);
     }
 
     /**

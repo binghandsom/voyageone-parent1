@@ -9,6 +9,7 @@ import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.StringUtils;
@@ -65,9 +66,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     public static final int WORK_LOAD_SUCCESS = 1;
     private static final int CART_ID = CartEnums.Cart.JM.getValue();
 
-    private static final String DUPLICATE_PRODUCT_NAME = "109902";
+    // 聚美详情,聚美实拍或聚美使用方法里面的html语法解析错误(例："span不能使用face属性","不能使用外链"等)
+    private static final String INVALID_HTML_CONTENT = "109902";
+//    private static final String DUPLICATE_PRODUCT_NAME = "109902";
+    // 产品名称(name)在聚美已存在
     private static final String DUPLICATE_PRODUCT_DRAFT_NAME = "103087";
+    // 商品自带条码（UPC_CODE）存在相同 值或UPC_CODE在聚美已存在
     private static final String DUPLICATE_SPU_BARCODE = "105106";
+    // 在聚美已存在的商家编码(businessman_num)
     private static final String DUPLICATE_SKU_BUSINESSMAN_NUM = "102063";
     private static final String INVALID_PRODUCT_STATUS = "产品状态不是待审核";
     private static final Pattern special_symbol= Pattern.compile("[~@'\\[\\]\\s\".:#$%&_''‘’^]");
@@ -201,6 +207,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 throw new BusinessException(errorMsg);
             }
 
+            // 上新对象产品Code列表
+            List<String> listSxCode = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
+
             //读店铺信息
             ShopBean shop = Shops.getShop(channelId, CART_ID);
             if (shop == null) {
@@ -233,7 +242,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 //填充cmsBtJmSkuModelList
                 cmsBtJmSkuModelList = fillCmsBtJmSkuModelList(cmsBtJmSkuModelList, product);
 
-
                 //填充JmProductBean
                 JmProductBean bean = fillJmProductBean(product, expressionParser, shop, skuLogicQtyMap);
 
@@ -241,7 +249,34 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 htProductAddRequest.setJmProduct(bean);
                 HtProductAddResponse htProductAddResponse = jumeiHtProductService.addProductAndDeal(shop, htProductAddRequest);
 
+                // 因为聚美API的不稳定性，商品聚美上新成功后会可能存在返回的response获取不到jm的hashId，以及spuno，
+                // 如果返回的response无hashId，或者无spuno，再重新调用聚美获取商品的API拿一次聚美商品信息，做后续处理。
+                // 保证上新成功，聚美的hashId和spuno能够正常回写。
+                boolean jmApiErrorNoHashId = false;
                 if (htProductAddResponse != null && htProductAddResponse.getIs_Success()) {
+                    // 上新成功时，看聚美平台返回的response里面hashId，spuno等是否为空
+                    if (StringUtil.isEmpty(htProductAddResponse.getJm_hash_id())) {
+                        // jmHashId为空时
+                        $info("新增聚美商品成功！但返回的response获取不到jm的hashId,后面会重新调用一次聚美获取商品的API取得" +
+                                "商品信息 [ProductId:%s], [ChannelId:%s], [CartId:%s]", product.getProdId(), channelId, CART_ID);
+                        jmApiErrorNoHashId = true;
+                    } else {
+                        // spuno为空时
+                        List<HtProductAddResponse_Spu> spus = htProductAddResponse.getSpus();
+                        for (CmsBtJmSkuModel jmsku : cmsBtJmSkuModelList) {
+                            HtProductAddResponse_Spu spu = spus.stream().filter(w -> w.getPartner_sku_no().equals(jmsku.getSkuCode())).findFirst().get();
+                            // 只要有一个spuno为空时，就需要重新取得一下聚美商品信息
+                            if (StringUtils.isEmpty(spu.getJumei_spu_no())) {
+                                $info("新增聚美商品成功！但返回的response获取不到jm的spuno或skuno,后面会重新调用一次聚美获取商品的API取得" +
+                                        "商品信息 [ProductId:%s], [ChannelId:%s], [CartId:%s]", product.getProdId(), channelId, CART_ID);
+                                jmApiErrorNoHashId = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (htProductAddResponse != null && htProductAddResponse.getIs_Success() && !jmApiErrorNoHashId) {
                     $info("新增产品成功！[ProductId:%s], [ChannelId:%s], [CartId:%s]", product.getProdId(), channelId, CART_ID);
                     // 新增产品成功
                     String jmProductId = htProductAddResponse.getJumei_Product_Id();
@@ -281,7 +316,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     sxData.getPlatform().setModifier(getTaskName());
                     sxData.getPlatform().setNumIId(jmHashId);
                     sxData.getPlatform().setPlatformPid(jmProductId);
-                    productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+                    productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
                     if(jmHashId.endsWith("p0"))
                     {
                         String errorMsg = String.format("聚美Hash_Id格式错误![ProductId:%s], [ChannelId:%s], [CartId:%s]:", product.getProdId(), channelId, CART_ID);
@@ -290,13 +325,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     }
 
                 }
-                //如果JM中已经有该商品了，则读取商品信息，补全本地库的内容
-                else if(htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_NAME) ||
+                //如果上新成功之后没取到jmHashId,spuno,skuno，或者JM中已经有该商品了，则调用一次聚美获取商品的API取得商品信息，补全本地库的内容
+                else if(jmApiErrorNoHashId ||
+//                        htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_NAME) ||
                         htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_DRAFT_NAME)||
                         htProductAddResponse.getBody().contains(INVALID_PRODUCT_STATUS))
                 {
-                    needRetry = true;
+                    // 上新成功但没取到jmHashId等值得时候，不需要重新上新
+                    if (!jmApiErrorNoHashId) {
+                        needRetry = true;
+                    }
 
+                    // 调用聚美API根据商品名称获取商品详情(/v1/htProduct/getProductByIdOrName)
                     JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductByName(shop, bean.getName() );
                     if(jmGetProductInfoRes != null)
                     {
@@ -357,7 +397,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         sxData.getPlatform().setNumIId(originHashId);
                         sxData.getPlatform().setPlatformPid(jmProductId);
 
-                        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+                        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
 
                     }
                     else
@@ -370,7 +410,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 //上新失败
                 else
                 {
-                    String msg = String.format("上新失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductAddResponse.getErrorMsg());
+                    String errMsg = "";
+                    // 如果是错误代码是"109902"(HTML解析错误)的时候
+                    if (htProductAddResponse.getError_code().contains(INVALID_HTML_CONTENT)) {
+                        errMsg = "Master产品详情中的简短描述,详情描述或聚美使用方法等中英文项目的HTML内容语法解析错误！";
+                    }
+                    String msg = String.format("聚美新增产品上新失败！%s [ProductId:%s], [Message:%s]", errMsg, product.getProdId(), htProductAddResponse.getErrorMsg());
                     $error(msg);
                     throw  new BusinessException(msg);
                 }
@@ -598,12 +643,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         HtDealUpdateRequest htDealUpdateRequest = fillHtDealUpdateRequest(product,hashId,expressionParser,shop);
                         HtDealUpdateResponse htDealUpdateResponse = jumeiHtDealService.update(shop, htDealUpdateRequest);
                         if (htDealUpdateResponse != null && htDealUpdateResponse.is_Success()) {
-                            $info("更新Deal成功！[ProductId:%s]", product.getProdId());
+                            $info("聚美更新Deal成功！[ProductId:%s]", product.getProdId());
                         }
                         //更新Deal失败
                         else
                         {
-                            String msg = String.format("更新Deal失败！[ProductId:%s], [Message:%s]", product.getProdId(), htDealUpdateResponse.getErrorMsg());
+                            String msg = String.format("聚美更新Deal失败！[ProductId:%s], [Message:%s]", product.getProdId(), htDealUpdateResponse.getErrorMsg());
                             $error(msg);
                             throw  new BusinessException(msg);
                         }
@@ -612,7 +657,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 //更新产品失败
                 else
                 {
-                    String msg = String.format("更新产品失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductUpdateResponse.getErrorMsg());
+                    String msg = String.format("聚美更新产品上新失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductUpdateResponse.getErrorMsg());
                     $error(msg);
                     throw  new BusinessException(msg);
                 }
@@ -622,7 +667,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
                 sxData.getPlatform().setModifier(getTaskName());
 
-                productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+                productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
             }
 
             //保存workload
@@ -657,13 +702,16 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
                 if(StringUtils.isNullOrBlank2(e.getMessage())) {
-                    sxData.setErrorMessage(e.getStackTrace()[0].toString());
+                    sxData.setErrorMessage("聚美上新出现异常，请向管理员确认 " + e.getStackTrace()[0].toString());
                 }
                 else
                 {
                     sxData.setErrorMessage(e.getMessage());
                 }
             }
+            // 上新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
+            productGroupService.updateUploadErrorStatus(sxData.getPlatform(), sxData.getErrorMessage());
+
             sxProductService.insertBusinessLog(sxData, getTaskName());
             //保存workload
             saveWorkload(work, WORK_LOAD_FAIL);
@@ -1009,7 +1057,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         String result = sxProductService.resolveDict(dictName, expressionParser, shopProp, getTaskName(), null);
         if(StringUtils.isNullOrBlank2(result))
         {
-            String errorMsg = String.format("字典解析器说:解析的结果是空的! (猜测有可能是素材管理里的共通图片啥的没上传成功到平台? ) [dictName:%s],[ProdId:%s]:", dictName, expressionParser.getSxData().getMainProduct().getProdId());
+            String errorMsg = String.format("字典解析器说:解析的结果是空的! (猜测有可能是素材管理里的共通图片啥的没有一张图片成功上传到平台) [dictName:%s],[ProdId:%s]:", dictName, expressionParser.getSxData().getMainProduct().getProdId());
             throw new BusinessException(errorMsg);
         }
         return  result;
@@ -1028,9 +1076,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         String channelId =  product.getChannelId();
         CmsBtProductModel_Field fields =  product.getCommon().getFields();
         String productCode = fields.getCode();
-        String brandName = fields.getBrand();
-        String productType = fields.getProductType();
-        String sizeType = fields.getSizeType();
 
         if(list == null)
         {

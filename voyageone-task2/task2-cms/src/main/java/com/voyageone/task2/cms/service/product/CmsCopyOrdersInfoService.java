@@ -4,7 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteOperation;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.DBCollection;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.OrderChannelBean;
@@ -62,18 +62,21 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
         }
 
         long oIdx = 0;
+        long qtySum = 0;
         List<Map> rs;
         DBCollection coll = cmsMtProdSalesHisDao.getDBCollection();
         Map<String, Set<String>> prodCodeChannelMap = new HashMap<>();
         boolean hasdata = false;
 
         // 根据skuCode取得商品code
-        JomgoQuery prodQryObj = new JomgoQuery();
+        JongoQuery prodQryObj = new JongoQuery();
         prodQryObj.setQuery("{'common.skus.skuCode':#}");
         prodQryObj.setProjection("{'common.fields.code':1,'_id':0}");
+        List<OrderChannelBean> list2 = new ArrayList<>();
 
         for (OrderChannelBean chnObj : list) {
             // 对每个店铺进行处理
+            qtySum = 0;
             String channelId = chnObj.getOrder_channel_id();
             // 先判断该店铺的cms_bt_product_cxxx表是否存在
             boolean exists = cmsBtProductDao.collectionExists(cmsBtProductDao.getCollectionName(channelId));
@@ -91,6 +94,7 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
             for (TypeChannelBean cartObj : cartList) {
                 // 对指定店铺的每个平台进行处理
                 int cartId = NumberUtils.toInt(cartObj.getValue());
+                oIdx = 0;
                 do {
                     rs = productDao.selectProductOrderCount(cartId, channelId, oIdx * PAGE_LIMIT, PAGE_LIMIT);
                     oIdx ++;
@@ -134,6 +138,7 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                             hasdata = true;
                             bbulkOpe.find(queryObj).upsert().update(updateObj);
 
+                            qtySum += (Long) orderObj.get("qty");
                             // add prodCode 添加code和channelId到缓存
                             if (!prodCodeChannelMap.containsKey(channelId)) {
                                 prodCodeChannelMap.put(channelId, new HashSet<>());
@@ -152,10 +157,14 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                     }
                 } while (rs.size() == PAGE_LIMIT);
             }
+
+            chnObj.setModifier(Long.toString(qtySum));
+            list2.add(chnObj);
         }
 
         $info("copyOrdersInfo end");
         rsMap.put("fstPhase", (System.currentTimeMillis() - staTime) / 1000);
+        rsMap.put("fstPhaseRs", list2);
         return prodCodeChannelMap;
     }
 

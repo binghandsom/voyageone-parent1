@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsMtChannelValuesDao {
-    List<CmsMtChannelValuesModel> selectList(Map<String, Object> map);
+    List<CmsMtChannelValuesModel> selectList(Object map);
 
-    CmsMtChannelValuesModel selectOne(Map<String, Object> map);
+    CmsMtChannelValuesModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsMtChannelValuesModel select(Integer id);
 

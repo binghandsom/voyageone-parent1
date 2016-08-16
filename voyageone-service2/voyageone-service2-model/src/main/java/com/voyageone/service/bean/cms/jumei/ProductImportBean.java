@@ -10,6 +10,15 @@ public class ProductImportBean {
     String promotionTag;
     String errorMsg;
     Double discount;
+//    double maxMsrpUsd; //海外官网价格;
+//    double maxMsrpRmb; //中国官网价格
+//    double maxRetailPrice; //中国指导价格
+//    double maxSalePrice; //中国最终售价
+//
+//    double minMsrpUsd; //海外官网价格;
+//    double minMsrpRmb; //中国官网价格
+//    double minRetailPrice; //中国指导价格
+//    double minSalePrice; //中国最终售价
     public long getAppId() {
         return appId;
     }

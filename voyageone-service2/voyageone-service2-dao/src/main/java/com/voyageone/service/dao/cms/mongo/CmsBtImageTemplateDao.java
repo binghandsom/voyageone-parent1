@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
@@ -14,7 +14,7 @@ import java.util.List;
 public class CmsBtImageTemplateDao extends BaseMongoDao<CmsBtImageTemplateModel> {
 
     public CmsBtImageTemplateModel selectByTemplateId(long imageTemplateId) {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"imageTemplateId\":" + imageTemplateId + "}");
         return selectOneWithQuery(queryObject);
     }

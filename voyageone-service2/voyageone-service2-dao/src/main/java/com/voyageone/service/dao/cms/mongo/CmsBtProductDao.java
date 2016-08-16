@@ -4,7 +4,7 @@ import com.google.common.base.Joiner;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
@@ -85,7 +85,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         String query = "{\"common.fields.code\":\"" + code + "\"}";
         return selectOneWithQuery(query, channelId);
     }
-    public List<CmsBtProductBean> selectBean(JomgoQuery queryObject, String channelId) {
+    public List<CmsBtProductBean> selectBean(JongoQuery queryObject, String channelId) {
         return mongoTemplate.find(queryObject, CmsBtProductBean.class, getCollectionName(channelId));
     }
 
@@ -122,11 +122,11 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      */
     public boolean checkProductDataIsReady(String channelId, Long productId) {
 
-        JomgoQuery jomgoQuery = new JomgoQuery();
-        jomgoQuery.setQuery(String.format("{prodId: %s, batchField.switchCategory: 1}", productId));
-        jomgoQuery.setProjectionExt("prodId");
+        JongoQuery jongoQuery = new JongoQuery();
+        jongoQuery.setQuery(String.format("{prodId: %s, batchField.switchCategory: 1}", productId));
+        jongoQuery.setProjectionExt("prodId");
 
-        List<CmsBtProductModel> result = select(jomgoQuery, channelId);
+        List<CmsBtProductModel> result = select(jongoQuery, channelId);
 
         return result.size() <= 0;
     }
@@ -275,11 +275,11 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      */
     public List<OldCmsBtProductModel> selectOldProduct(String channelId, List<String> codes){
 
-        JomgoQuery jomgoQuery = new JomgoQuery();
+        JongoQuery jongoQuery = new JongoQuery();
         if (codes.size() > 0) {
-            jomgoQuery.setQuery("{\"fields.code\" : { $in : #}}");
-            jomgoQuery.setParameters(codes);
+            jongoQuery.setQuery("{\"fields.code\" : { $in : #}}");
+            jongoQuery.setParameters(codes);
         }
-        return mongoTemplate.find(jomgoQuery, OldCmsBtProductModel.class, "cms_bt_product_c" + channelId);
+        return mongoTemplate.find(jongoQuery, OldCmsBtProductModel.class, "cms_bt_product_c" + channelId);
     }
 }

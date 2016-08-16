@@ -23,6 +23,7 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +44,51 @@ public class RefreshJMSkuService extends BaseTaskService {
 
     @Autowired
     JumeiService jumeiService;
+
+
+    public List<String> getErrorSkuCode(ShopBean shop, CmsBtProductModel product) throws Exception {
+        List<String> result = new ArrayList<>();
+
+        Long productId = product.getProdId();
+
+        $info("product:%s", product.getProdId());
+
+        String jmProductId = product.getPlatform(27).getpProductId();
+        $info("jmProductId:%s", jmProductId);
+
+
+        String hashId = product.getPlatform(27).getpNumIId();
+        $info("hashId:%s", hashId);
+        if (StringUtils.isNullOrBlank2(hashId)) {
+            throw new BusinessException("Bad hashId");
+        }
+
+        JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmProductId);
+
+        Thread.sleep(1000);
+        List<JmGetProductInfo_Spus> spus = jmGetProductInfoRes.getSpus();
+
+        for (JmGetProductInfo_Spus spu : spus) {
+            $info("spu.getSpu_no():%s", spu.getSpu_no());
+            $info("spu.getUpc_code():%s", spu.getUpc_code());
+
+            String jmSpuNo = spu.getSpu_no();
+
+            List<JmGetProductInfo_Spus_Sku> skus = spu.getSku_list();
+            for (JmGetProductInfo_Spus_Sku sku : skus) {
+                String skuCode = sku.getBusinessman_code();
+                String jmSkuNo = sku.getSku_no();
+                if (skuCode.startsWith("ERROR_")) {
+                    $info("skuCode:%s",skuCode);
+
+                    String line  = productId + "," + jmProductId + "," + jmSpuNo + "," + jmSkuNo + ","+skuCode;
+                    result.add(line);
+                }
+            }
+
+        }
+        return result;
+    }
 
 
     public String changeSkuCode(ShopBean shop, CmsBtProductModel product) throws Exception {

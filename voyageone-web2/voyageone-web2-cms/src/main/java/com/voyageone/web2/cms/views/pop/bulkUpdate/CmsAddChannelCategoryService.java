@@ -1,14 +1,19 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -38,6 +43,8 @@ public class CmsAddChannelCategoryService extends BaseAppService {
     private CmsAdvanceSearchService advanceSearchService;
     @Autowired
     private SxProductService sxProductService;
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
 
     private static final String DEFAULT_SELLER_CAT_CNT = "10";
 
@@ -110,7 +117,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         data.put("cnt", getSellerCatCnt(cartId));
 
         //取得商品code
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         query.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + "':{$exists:true}}");
         query.setParameters(codeList);
         query.setProjection("{'platforms.P" + cartId + ".sellerCats.cId':1}");
@@ -233,6 +240,29 @@ public class CmsAddChannelCategoryService extends BaseAppService {
 
         //取得approved的code插入
         sxProductService.insertSxWorkLoad(channelId, codeList, cartId, userName);
+
+        // 记录商品修改历史
+        TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, Integer.toString(cartId), "cn");
+        String msg = "";
+        StringBuilder catNameStr = new StringBuilder();
+        if (sellerCats != null && sellerCats.size() > 0) {
+            catNameStr.append("：");
+            int idx = 0;
+            for (Map<String, Object> catItem : sellerCats) {
+                if (idx > 0) {
+                    catNameStr.append("，");
+                }
+                idx ++;
+                catNameStr.append(catItem.get("cName"));
+            }
+        }
+
+        if (cartObj == null) {
+            msg = "高级检索 批量设置店铺内分类" + catNameStr.toString();
+        } else {
+            msg = "高级检索 批量设置[" + cartObj.getName() + "]店铺内分类" + catNameStr.toString();
+        }
+        productStatusHistoryService.insertList(channelId, codeList, cartId, EnumProductOperationType.BatchSetCats, msg, (String) params.get("userName"));
     }
 
     /**

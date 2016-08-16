@@ -21,7 +21,7 @@ public class CmsBtConfigHistory<T> extends BaseMongoModel {
 
 //    @SuppressWarnings("unchecked")
 //    public Class<T> getEntityClass() {
-//        return (Class<T>)getSuperClassGenricType(getClass(), 0);
+//        return (Class<T>)getSuperClassGenericType(getClass(), 0);
 //    }
 
 

@@ -144,6 +144,7 @@ define([
                 })
             })
         }
+        //单条删除    调用批量删除方法
         $scope.del = function (data) {
             confirm($translate.instant('TXT_MSG_DO_DELETE') + data.productLongName).then(function () {
                 var index = _.indexOf($scope.vm.modelList, data);
@@ -246,7 +247,7 @@ define([
              if (model.synchStatus == 1) {
                 return "待上传";
             }
-            else if (model.updateStatus == 1 || model.priceStatus == 1) {
+            else if (model.updateStatus== 1) {//model.priceStatus == 1 ||
                 return "待更新";
             }
             else if (model.dealEndTimeStatus == 1) {
@@ -274,7 +275,7 @@ define([
             var listPromotionProduct = [];
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
                 if ($scope.vm.modelList[i].isChecked) {
-                    listPromotionProduct.push($scope.vm.modelList[i].id);
+                    listPromotionProduct.push($scope.vm.modelList[i]);
                 }
             }
             return listPromotionProduct;
@@ -288,6 +289,7 @@ define([
             }
             return listPromotionProductCode;
         }
+        //单条更新 调用批量同步价格
         $scope.updateJM = function (promotionProductId) {
             confirm("您确定要重新上传商品吗?").then(function () {
                 var listPromotionProductId = [promotionProductId];
@@ -364,18 +366,18 @@ define([
                 return;
             }
             //2.8.2
-            var isUpdate = false;
             if ($scope.vm.isBegin) {
                 confirm("聚美专场已开始预热，任何变更都有极大可能性引起客诉，点击确认继续操作.").then(function () {
-                    isUpdate = true;
+                    batchCopyDeal_item(listPromotionProductId);
                 });
             }
             else {
                 confirm("聚美平台无任何删除功能，专场内一旦有商品完成上传，该商品禁止删除，该专场禁止删除。点击确认继续操作.").then(function () {
-                    isUpdate = true;
+                    batchCopyDeal_item(listPromotionProductId);
                 });
             }
-            if (!isUpdate) return;
+        }
+        function batchCopyDeal_item(listPromotionProductId) {
             var parameter = {};
             parameter.promotionId = $scope.vm.promotionId;
             parameter.listPromotionProductId = listPromotionProductId;
@@ -407,7 +409,7 @@ define([
                 });
             });
         }
-
+        //批量删除
         $scope.batchDeleteProduct = function () {
             //已再售的不删除
             var listPromotionProductId = $scope.getSelectedPromotionProductIdList();
@@ -420,12 +422,12 @@ define([
                 alert("请选择删除的商品!");
                 return;
             }
-            for (var i = 0; i < $scope.vm.modelList.length; i++) {
-                if ($scope.vm.modelList[i].isChecked && $scope.vm.modelList[i].synchStatus == 2) {
-                    alert("勾选范围内存在商品已完成上传，禁止删除!");
-                    return;
-                }
-            }
+            // for (var i = 0; i < $scope.vm.modelList.length; i++) {
+            //     if ($scope.vm.modelList[i].isChecked && $scope.vm.modelList[i].synchStatus == 2) {
+            //         alert("勾选范围内存在商品已完成上传，禁止删除!");
+            //         return;
+            //     }
+            // }
             confirm($translate.instant('TXT_MSG_DO_DELETE')).then(function () {
                 jmPromotionDetailService.batchDeleteProduct(parameter).then(function (res) {
                     if (res.data.result) {

@@ -63,8 +63,12 @@ public class Tmall_012_Bcbg_DictTest {
 		{
 			{
 				// header
-				String html = "<img src=\"https://img.alicdn.com/imgextra/i3/2694857307/TB2kCSUgVXXXXcHXXXXXXXXXXXX_!!2694857307.jpg\"/>";
+				String html = "<img src=\"https://img.alicdn.com/imgextra/i1/2694857307/TB2DbDBsFXXXXcbXXXXXXXXXXXX_!!2694857307.jpg\"/>";
 				TextWord word = new TextWord(html);
+				ruleRoot.addRuleWord(word);
+
+				html = "<img src=\"https://img.alicdn.com/imgextra/i3/2694857307/TB2kCSUgVXXXXcHXXXXXXXXXXXX_!!2694857307.jpg\"/>";
+				word = new TextWord(html);
 				ruleRoot.addRuleWord(word);
 
 				html = "<img src=\"https://img.alicdn.com/imgextra/i2/2694857307/TB2a3GBgVXXXXXsXpXXXXXXXXXX_!!2694857307.jpg\"/>";
@@ -254,6 +258,10 @@ public class Tmall_012_Bcbg_DictTest {
 				ruleRoot.addRuleWord(word);
 
 				html = "<img src=\"https://img.alicdn.com/imgextra/i2/2694857307/TB2gdFdhXXXXXcLXXXXXXXXXXXX_!!2694857307.jpg\"/>";
+				word = new TextWord(html);
+				ruleRoot.addRuleWord(word);
+
+				html = "<img src=\"https://img.alicdn.com/imgextra/i3/2694857307/TB261bEsFXXXXbKXXXXXXXXXXXX_!!2694857307.jpg\"/>";
 				word = new TextWord(html);
 				ruleRoot.addRuleWord(word);
 			}

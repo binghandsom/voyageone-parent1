@@ -52,7 +52,7 @@
 
     <!-- 查询有效的JM活动 -->
     <select id="selectActivesOfChannel" resultType="com.voyageone.service.model.util.MapModel">
-        select a.*, b.ref_tag_id  from cms_bt_jm_promotion a left join cms_bt_promotion b on a.id = b.promotion_id
+        select DISTINCT a.*, b.ref_tag_id  from cms_bt_jm_promotion a left join cms_bt_promotion b on a.id = b.promotion_id
         inner join voyageone_cms2.cms_bt_tag c on c.parent_tag_id = b.ref_tag_id  and (c.channel_id = #{channelId}
         <if test="orgChannelId != null and orgChannelId != ''">
             or c.channel_id = #{orgChannelId}
@@ -69,6 +69,7 @@
             and b.active = 1
             and a.active = 1
             and c.tag_status = 0
+            and c.active = 1
             and b.cart_id = #{cartId,jdbcType=INTEGER}
             order by id desc
     </select>
@@ -77,4 +78,20 @@
         SELECT * FROM `cms_bt_jm_promotion` WHERE `recovery_status`=0 AND `activity_end` &lt;#{nowDate}  limit 10
     </select>
 
+    <select id="selectMaxJmHashId" resultType="com.voyageone.service.model.util.MapModel">
+      select product_code , jm_hash_id from cms_bt_jm_promotion_product a
+       where exists  (select 1 from (select max(id) as id from cms_bt_jm_promotion_product
+        where channel_id = #{channelId} and jm_hash_id != ''
+        group by product_code) as b where a.id=b.id)
+    </select>
+    <update id="updateSumbrandById">
+        UPDATE `cms_bt_jm_promotion` AS a
+        SET `brand`=(
+        SELECT GROUP_CONCAT(DISTINCT IFNULL(c.brand_name,''))
+        FROM  cms_bt_jm_promotion_product AS b
+        JOIN `cms_bt_jm_product` AS c ON  c.`channel_id`=b.`channel_id` AND c.`product_code`=b.`product_code`
+        WHERE  b.`cms_bt_jm_promotion_id`=a.`id`
+        )
+        WHERE a.id=#{id}
+    </update>
 </mapper>

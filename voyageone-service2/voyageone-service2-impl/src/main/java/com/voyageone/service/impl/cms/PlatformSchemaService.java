@@ -51,13 +51,22 @@ public class PlatformSchemaService extends BaseService {
     /**
      * 产品画面属性list取得
      */
-    public Map<String, List<Field>> getFieldForProductImage(String catId, int cartId) {
+    public Map<String, List<Field>> getFieldForProductImage(String catId, String channelId, int cartId) {
         if (CartEnums.Cart.JM.getValue() == cartId) {
             // 聚美的场合，因为只有一个catId，写死 catId = 1
             catId = "1";
         }
 
-        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(catId, cartId);
+        // 20160727 tom 天猫schema结构变更修改 START
+//        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(catId, cartId);
+
+        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = null;
+        if (CartEnums.Cart.TM.getValue() == cartId || CartEnums.Cart.TG.getValue() == cartId) {
+            platformCatSchemaModel = platformCategoryService.getPlatformCatSchemaTm(catId, channelId, cartId);
+        } else {
+            platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(catId, cartId);
+        }
+        // 20160727 tom 天猫schema结构变更修改 END
         if (platformCatSchemaModel == null) {
             return null;
         }
