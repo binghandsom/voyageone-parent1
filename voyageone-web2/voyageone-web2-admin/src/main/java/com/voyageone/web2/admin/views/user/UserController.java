@@ -58,10 +58,7 @@ public class UserController  extends AdminController {
         Preconditions.checkNotNull(bean.getRoleId());
 
         String username = getUser().getUserName();
-
-        Map<String, Object> result = new HashMap<String, Object>();
         adminUserService.addUser(bean, username);
-        result.put(SUCCESS, true);
         return success(true);
     }
 
@@ -76,11 +73,7 @@ public class UserController  extends AdminController {
         Preconditions.checkNotNull(bean.getRoleId());
 
         String username = getUser().getUserName();
-
-        Map<String, Object> result = new HashMap<String, Object>();
-
         adminUserService.updateUser(bean, username);
-        result.put(SUCCESS, true);
 
         return success(true);
     }

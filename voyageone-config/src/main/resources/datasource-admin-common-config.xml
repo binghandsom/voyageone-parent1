@@ -18,11 +18,8 @@
         <!-- 指定sqlMapConfig总配置文件，订制的environment在spring容器中不在生效-->
         <property name="configLocation" value="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"/>
         <!--指定实体类映射文件，可以指定同时指定某一包以及子包下面的所有配置文件 -->
-        <property name="mapperLocations" >
-            <list>
-                <value>classpath*:com/voyageone/service/daoext/admin/**/*MapperCommon.xml</value>
-            </list>
-        </property>
+        <property name="mapperLocations"  value="classpath*:com/voyageone/service/daoext/admin/**/*MapperCommon.xml"/>
+
         <!-- 配置Mybatis的插件plugin-->
         <property name="plugins">
             <array>
@@ -51,7 +48,7 @@
     <!--mybatis的dao接口和mapper的扫描-->
     <bean id="mapperScannerConfigurerAdminCom" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionTemplateBeanName" value="sqlSessionTemplateAdminCom"/>
-        <property name="basePackage" value="com.voyageone.service.daoext.admin"/>
+        <property name="basePackage" value="com.voyageone.service.daoext.core"/>
         <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
     </bean>
 

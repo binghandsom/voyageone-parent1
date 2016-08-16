@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.daoext.admin.AdminUserDaoExt">
+<mapper namespace="com.voyageone.service.daoext.core.AdminUserDaoExt">
 
     <resultMap id="comUserModelMap" type="com.voyageone.service.bean.admin.AdminUserBean" />
 
@@ -48,12 +48,12 @@
 
         from com_user u, com_user_role ur, com_role r, com_role_config rc , com_organization org, Synship.wms_mt_store st, Synship.tm_order_channel ch
         where u.id = ur.user_id and ur.role_id = rc.role_id and u.org_id = org.id
-        and ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id  or rc.cfg_val1='ALL')) or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id) or rc.cfg_val1='ALL') )
-        and u.active  &lt;&gt; 0
-        and r.active = 1
-        and st.active = 1
-        and ch.active = 1
-        and org.active = 1
+          and ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id  or rc.cfg_val1='ALL')) or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id) or rc.cfg_val1='ALL') )
+          and u.active  &lt;&gt; 0
+          and r.active = 1
+          and st.active = 1
+          and ch.active = 1
+          and org.active = 1
         GROUP BY id, rc.cfg_name) t
 
         GROUP BY t.id
@@ -76,12 +76,12 @@
 
         from com_user u, com_user_role ur, com_role r, com_role_config rc , com_organization org, Synship.wms_mt_store st, Synship.tm_order_channel ch
         where u.id = ur.user_id and ur.role_id = rc.role_id and u.org_id = org.id
-        and ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id  or rc.cfg_val1='ALL')) or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id) or rc.cfg_val1='ALL') )
-        and u.active  &lt;&gt; 0
-        and r.active = 1
-        and st.active = 1
-        and ch.active = 1
-        and org.active = 1
+          and ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id  or rc.cfg_val1='ALL')) or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id) or rc.cfg_val1='ALL') )
+          and u.active  &lt;&gt; 0
+          and r.active = 1
+          and st.active = 1
+          and ch.active = 1
+          and org.active = 1
         GROUP BY id, rc.cfg_name) t
 
         GROUP BY t.id

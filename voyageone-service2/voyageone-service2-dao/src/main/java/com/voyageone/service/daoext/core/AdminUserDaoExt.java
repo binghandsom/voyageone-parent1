@@ -1,4 +1,4 @@
-package com.voyageone.service.daoext.admin;
+package com.voyageone.service.daoext.core;
 
 import com.voyageone.security.model.ComUserModel;
 import com.voyageone.service.bean.admin.AdminUserBean;
