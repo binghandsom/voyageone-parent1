@@ -37,6 +37,8 @@ public class CmsDataAmountService extends BaseTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        $info("CmsDataAmountJob:   begin");
         // 获取允许运行的渠道
        // List<TaskControlBean> charnelList = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
         Set<String> colList = mongoTemplate.getCollectionNames();
@@ -45,8 +47,11 @@ public class CmsDataAmountService extends BaseTaskService {
         $info("orderChannelIdList=" + orderChannelIdList.size());
         // 根据订单渠道运行
         for ( String channelId : orderChannelIdList) {
+            $info("sumByChannelId:%s begin",channelId);
                 cmsBtDataAmountService.sumByChannelId(channelId);
+            $info("sumByChannelId:%s end" ,channelId);
 
         }
+        $info("CmsDataAmountJob:    end");
     }
 }
