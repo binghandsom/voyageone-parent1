@@ -49,7 +49,7 @@ public class UserController  extends AdminController {
     }
 
     @RequestMapping(AdminUrlConstants.User.Self.ADD_USER)
-    public AjaxResponse addUser(@RequestBody AdminUserBean bean) throws Exception {
+    public AjaxResponse addUser(@RequestBody AdminUserBean bean){
         // 验证参数
         Preconditions.checkNotNull(bean.getUserName());
         Preconditions.checkNotNull(bean.getUserAccount());
@@ -60,14 +60,28 @@ public class UserController  extends AdminController {
         String username = getUser().getUserName();
 
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put(SUCCESS, false);
-        try {
-            adminUserService.addUser(bean, username);
-            result.put(SUCCESS, true);
-        } catch (BusinessException e) {
-            result.put(MESSAGE, e.getMessage());
-        }
+        adminUserService.addUser(bean, username);
+        result.put(SUCCESS, true);
+        return success(true);
+    }
 
-        return success(result);
+
+    @RequestMapping(AdminUrlConstants.User.Self.UPDATE_USER)
+    public AjaxResponse updateUser(@RequestBody AdminUserBean bean)  {
+        // 验证参数
+        Preconditions.checkNotNull(bean.getUserName());
+        Preconditions.checkNotNull(bean.getUserAccount());
+        Preconditions.checkNotNull(bean.getEmail());
+        Preconditions.checkNotNull(bean.getOrgId());
+        Preconditions.checkNotNull(bean.getRoleId());
+
+        String username = getUser().getUserName();
+
+        Map<String, Object> result = new HashMap<String, Object>();
+
+        adminUserService.updateUser(bean, username);
+        result.put(SUCCESS, true);
+
+        return success(true);
     }
 }
