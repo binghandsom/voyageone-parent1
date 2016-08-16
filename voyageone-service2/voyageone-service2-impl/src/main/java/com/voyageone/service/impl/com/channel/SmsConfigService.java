@@ -12,7 +12,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.com.TmSmsConfigBean;
 import com.voyageone.service.dao.com.TmSmsConfigDao;
-import com.voyageone.service.daoext.admin.TmSmsConfigDaoExt;
+import com.voyageone.service.daoext.com.TmSmsConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.PageModel;
 import com.voyageone.service.model.com.TmSmsConfigModel;

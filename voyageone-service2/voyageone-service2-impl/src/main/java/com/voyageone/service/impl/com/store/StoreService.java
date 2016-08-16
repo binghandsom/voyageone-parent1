@@ -15,7 +15,7 @@ import com.voyageone.service.bean.com.CtStoreConfigBean;
 import com.voyageone.service.bean.com.WmsMtStoreBean;
 import com.voyageone.service.dao.com.CtStoreConfigDao;
 import com.voyageone.service.dao.com.WmsMtStoreDao;
-import com.voyageone.service.daoext.admin.WmsMtStoreDaoExt;
+import com.voyageone.service.daoext.com.WmsMtStoreDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.CtStoreConfigKey;
 import com.voyageone.service.model.com.CtStoreConfigModel;

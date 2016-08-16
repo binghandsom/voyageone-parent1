@@ -22,7 +22,7 @@ import com.voyageone.service.bean.com.TmOrderChannelBean;
 import com.voyageone.service.bean.com.TmOrderChannelConfigBean;
 import com.voyageone.service.dao.com.TmOrderChannelConfigDao;
 import com.voyageone.service.dao.com.TmOrderChannelDao;
-import com.voyageone.service.daoext.admin.TmOrderChannelDaoExt;
+import com.voyageone.service.daoext.com.TmOrderChannelDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.cart.CartService;
 import com.voyageone.service.model.com.CtCartModel;

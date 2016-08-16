@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.dao.com.CtCartDao;
-import com.voyageone.service.daoext.admin.CtCartDaoExt;
+import com.voyageone.service.daoext.com.CtCartDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.CtCartModel;
 import com.voyageone.service.model.com.PageModel;
