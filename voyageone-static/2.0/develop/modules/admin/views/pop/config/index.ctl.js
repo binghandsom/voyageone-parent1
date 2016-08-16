@@ -5,24 +5,22 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('ConfigController', (function () {
-        function ConfigController(popups, context, confirm, channelService, AdminChannelService, selectRowsFactory) {
+        function ConfigController(popups, context, confirm, channelService, selectRowsFactory) {
             this.popups = popups;
             this.sourceData = context;
             this.confirm = confirm;
             this.channelService = channelService;
-            this.AdminChannelService = AdminChannelService;
             this.selectRowsFactory = selectRowsFactory;
             this.configPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.configSelList = {selList: []};
             this.tempConfigSelect = null;
             this.searchInfo = {
-                channelId: this.sourceData ? this.sourceData.orderChannelId : "",
+                orderChannelId: this.sourceData ? this.sourceData.orderChannelId : "",
                 configType: 'Channel',
                 pageInfo: this.configPageOption,
                 cfgName: '',
                 cfgVal: ''
             };
-            this.tempChannelList = [];
         }
 
         ConfigController.prototype = {
@@ -30,20 +28,40 @@ define([
                 var self = this;
                 self.search();
             },
-            search: function () {
+            search: function (page) {
                 var self = this;
+                page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
                 self.configInfo = {};
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelList = res.data;
                 });
-                self.AdminChannelService.searchConfigByPage({
+                var data = {
                     'pageNum': self.searchInfo.pageInfo.curr,
                     'pageSize': self.searchInfo.pageInfo.size,
                     'configType': self.searchInfo.configType,
-                    'channelId': self.searchInfo.channelId,
+                    'orderChannelId': self.searchInfo.orderChannelId,
                     'cfgName': self.searchInfo.cfgName,
                     'cfgVal': self.searchInfo.cfgVal
-                }).then(function (res) {
+                };
+                switch (self.searchInfo.configType) {
+                    case 'Channel':
+                        var selectKey = function (configInfo) {
+                            return {
+                                "id": configInfo.mainKey,
+                                "code": configInfo.cfgName,
+                                "orderChannelId": configInfo.orderChannelId,
+                                "cfgName": configInfo.cfgName,
+                                'cfgVal1': configInfo.cfgVal1
+                            };
+                        };
+                        self.channelService.searchChannelConfigByPage(data).then(function (res) {
+                            callback(res, selectKey);
+                        });
+                        break;
+                    case 'Store':
+                        break;
+                }
+                function callback(res, selectKey) {
                     self.cfgList = res.data.result;
                     self.configPageOption.total = res.data.count;
 
@@ -51,26 +69,21 @@ define([
                         self.tempConfigSelect = new self.selectRowsFactory();
                     } else {
                         self.tempConfigSelect.clearCurrPageRows();
+                        self.tempConfigSelect.clearSelectedList();
                     }
                     _.forEach(self.cfgList, function (configInfo, index) {
                         if (configInfo.updFlg != 8) {
                             _.extend(configInfo, {mainKey: index});
-                            self.tempConfigSelect.currPageRows({
-                                "id": configInfo.mainKey,
-                                "code": configInfo.cfgName,
-                                "channelId": configInfo.orderChannelId,
-                                "cfgName": configInfo.cfgName,
-                                'cfgVal1': configInfo.cfgVal1
-                            });
+                            self.tempConfigSelect.currPageRows(selectKey(configInfo));
                         }
                     });
                     self.configSelList = self.tempConfigSelect.selectRowsInfo;
-                })
+                }
             },
             clear: function () {
                 var self = this;
                 self.searchInfo = {
-                    channelId: "",
+                    orderChannelId: "",
                     configType: 'Channel',
                     pageInfo: self.configPageOption,
                     channelName: "",
@@ -80,15 +93,21 @@ define([
             },
             add: function (item) {
                 var self = this;
+                self.list = _.filter(self.channelList, function (listItem) {
+                    return listItem.orderChannelId == item.orderChannelId;
+                });
+                _.extend(item, {'channelName': self.list[0].name});
                 self.popups.openCreateEdit(item).then(function (res) {
-                    if (res == 'success') self.search();
+                    if (res.res == 'success') self.search();
                 });
             },
             edit: function () {
                 var self = this;
                 _.forEach(self.cfgList, function (cfgInfo) {
                     if (cfgInfo.mainKey == self.configSelList.selList[0].id) {
-                        self.popups.openCreateEdit(cfgInfo);
+                        self.popups.openCreateEdit(cfgInfo).then(function () {
+                            self.search(1);
+                        });
                         return;
                     }
                 });
@@ -101,10 +120,14 @@ define([
                         _.extend(delInfo, {'configType': 'Channel'});
                         delList.push(delInfo);
                     });
-                    self.AdminChannelService.deleteConfig(delList).then(function (res) {
-                        if (res.data.success == false)self.confirm(res.data.message);
-                        self.search();
-                    })
+                    switch (self.searchInfo.configType) {
+                        case 'Channel':
+                            self.channelService.deleteChannelConfig(delList).then(function (res) {
+                                if (res.data.success == false)self.confirm(res.data.message);
+                                self.search();
+                            });
+                            break;
+                    }
                 });
             }
         };

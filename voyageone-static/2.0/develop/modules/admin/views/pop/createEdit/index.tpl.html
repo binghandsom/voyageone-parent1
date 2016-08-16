@@ -23,7 +23,7 @@
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_PROPERTY_VALUE' | translate}}1</label>
                         <div class="col-sm-8">
-                            <input type="number" maxlength="200" class="form-control" ng-model="ctrl.sourceData.cfgVal1"
+                            <input type="text" maxlength="200" class="form-control" ng-model="ctrl.sourceData.cfgVal1"
                                    name="cfgVal1" required/>
                         </div>
                     </div>
@@ -56,6 +56,6 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-        <button class="btn btn-vo" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled="editForm.$valid==false"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
     </div>
 </div><!-- .vo_modal -->
