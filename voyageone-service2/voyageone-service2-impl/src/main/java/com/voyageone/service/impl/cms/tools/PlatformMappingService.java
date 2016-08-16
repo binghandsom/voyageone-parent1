@@ -2,6 +2,8 @@ package com.voyageone.service.impl.cms.tools;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformMappingDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -46,7 +48,12 @@ public class PlatformMappingService extends BaseService {
         this.platformMappingDao = platformMappingDao;
     }
 
-    boolean saveMap(CmsBtPlatformMappingModel fieldMapsModel) {
+    public CmsBtPlatformMappingModel get(CmsBtPlatformMappingModel platformMappingModel, String channelId) {
+        return platformMappingDao.selectOne(platformMappingModel.getCartId(), platformMappingModel.getCategoryType(),
+                platformMappingModel.getCategoryPath(), channelId);
+    }
+
+    public boolean saveMap(CmsBtPlatformMappingModel fieldMapsModel) {
 
         WriteResult writeResult;
 
@@ -81,6 +88,32 @@ public class PlatformMappingService extends BaseService {
         return valueMap;
     }
 
+    public List<CmsBtPlatformMappingModel> getPage(ChannelConfigEnums.Channel channel, Integer cartId, String categoryPath, int page, int size) {
+
+        return StringUtils.isEmpty(categoryPath)
+                ? platformMappingDao.selectPage(channel.getId(), cartId, page * size, size)
+                : platformMappingDao.selectPage(channel.getId(), cartId, categoryPath, page * size, size);
+    }
+
+    public long getCount(ChannelConfigEnums.Channel channel, Integer cartId, String categoryPath) {
+
+        return StringUtils.isEmpty(categoryPath)
+                ? platformMappingDao.count(channel.getId(), cartId)
+                : platformMappingDao.count(channel.getId(), cartId, categoryPath);
+    }
+
+    public CmsBtPlatformMappingModel getCommon(ChannelConfigEnums.Channel channel, Integer cartId) {
+        // TODO
+        return null;
+    }
+
+    public boolean delete(CmsBtPlatformMappingModel platformMappingModel) {
+
+        WriteResult writeResult = platformMappingDao.delete(platformMappingModel);
+
+        return writeResult.getN() > 0;
+    }
+
     private void fillValueMap(Map<String, Object> valueMap, CmsBtProductModel product, CmsBtPlatformMappingModel fieldMapsModel) {
 
         // 循环所有配置
@@ -104,7 +137,7 @@ public class PlatformMappingService extends BaseService {
 
         CmsBtProductModel_Field master = common.getFields();
 
-        for (CmsBtPlatformMappingModel.FieldMapping mapping: mappingList) {
+        for (CmsBtPlatformMappingModel.FieldMapping mapping : mappingList) {
 
             List<CmsBtPlatformMappingModel.FieldMappingExpression> expressionList = mapping.getExpressions();
 
@@ -115,7 +148,7 @@ public class PlatformMappingService extends BaseService {
 
             StringBuilder valueBuilder = new StringBuilder();
 
-            for (CmsBtPlatformMappingModel.FieldMappingExpression expression: expressionList) {
+            for (CmsBtPlatformMappingModel.FieldMappingExpression expression : expressionList) {
 
                 String key = expression.getValue();
 

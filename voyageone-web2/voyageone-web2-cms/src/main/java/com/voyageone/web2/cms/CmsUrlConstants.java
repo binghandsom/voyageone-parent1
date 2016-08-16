@@ -756,8 +756,9 @@ public interface CmsUrlConstants {
 
     interface PLATFORM_MAPPING {
         String ROOT = "/cms/platform/mapping/";
-        String LIST = "list";
+        String PAGE = "page";
         String GET = "get";
         String SAVE = "save";
+        String DELETE = "delete";
     }
 }

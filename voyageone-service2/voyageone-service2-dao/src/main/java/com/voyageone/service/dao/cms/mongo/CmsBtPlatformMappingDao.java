@@ -6,6 +6,8 @@ import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 查询平台类目的属性匹配
  * <p>
@@ -34,5 +36,21 @@ public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMa
                         .and("categoryPath").is(fieldMapsModel.getCategoryPath()));
 
         return countByQuery(query.getQuery(), fieldMapsModel.getChannelId()) > 0;
+    }
+
+    public List<CmsBtPlatformMappingModel> selectPage(String channelId, int cartId, int offset, int limit) {
+        return select(new JongoQuery(new Criteria("cartId").is(cartId)).setSkip(offset).setLimit(limit), channelId);
+    }
+
+    public long count(String channelId, int cartId) {
+        return countByQuery(new JongoQuery(new Criteria("cartId").is(cartId)).getQuery(), channelId);
+    }
+
+    public List<CmsBtPlatformMappingModel> selectPage(String channelId, int cartId, String categoryPath, int offset, int limit) {
+        return select(new JongoQuery(new Criteria("cartId").is(cartId).and("categoryPath").regex(categoryPath)).setSkip(offset).setLimit(limit), channelId);
+    }
+
+    public long count(String channelId, int cartId, String categoryPath) {
+        return countByQuery(new JongoQuery(new Criteria("cartId").is(cartId).and("categoryPath").regex(categoryPath)).getQuery(), channelId);
     }
 }
