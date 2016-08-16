@@ -10,6 +10,12 @@ define(function () {
             "templateUrl": "views/tmOrderChannel/index.tpl.html",
             "controllerUrl": "modules/admin/views/tmOrderChannel/index.ctl",
             "controller": "TmOrderChannelController as ctrl"
+        },
+        "cartManagement": {
+            "hash": "/cart/cartManagement",
+            "templateUrl": "views/cartManagement/index.tpl.html",
+            "controllerUrl": "modules/admin/views/cartManagement/index.ctl",
+            "controller": "CartManagementController as ctrl"
         }
     };
 });

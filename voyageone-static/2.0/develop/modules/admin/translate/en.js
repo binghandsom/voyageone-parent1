@@ -40,6 +40,15 @@ define(function () {
         "TXT_CHOOSE":"可选择",
         "TXT_MSG_SEARCH": "检索...",
 
+        /**cart管理-信息一览*/
+        "TXT_CART_MANAGE": "Cart管理",
+        "TXT_CART_INFO_MANAGE": "Cart信息管理",
+        "TXT_CART_ID":"Cart ID",
+        "TXT_CART_NAME":"Cart名（缩写）",
+        "TXT_CART_SHORT_NAME":"Cart名缩写",
+        "TXT_CART_TYPE":"Cart类型",
+
+
         /**按钮组*/
         "TXT_LOGOUT": "注销",
         "BTN_CANCEL": "取消",

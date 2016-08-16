@@ -24,5 +24,30 @@
             </li>
         </ul>
     </li>
+    <!-- cart管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_CART_MANAGE"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_CART_MANAGE"></span>
+                </a>
+            </li>
+            <!-- cart信息管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/cart/cartManagement">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_CART_INFO_MANAGE"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
 </ul>
 <!--end-->
