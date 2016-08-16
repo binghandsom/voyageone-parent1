@@ -24,6 +24,10 @@
                 and orgId = #{orgId}
             </if>
 
+            <if test="roleId != null" >
+                and roleId = #{roleId}
+            </if>
+
             <if test="channelId != null and channelId != ''" >
                 and channel_id like concat('%,', #{channelId}, '%') or channel_id like concat('%', #{channelId}, ',%')
             </if>

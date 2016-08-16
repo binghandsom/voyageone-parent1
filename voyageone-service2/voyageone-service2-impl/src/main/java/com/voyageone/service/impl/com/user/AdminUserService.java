@@ -50,7 +50,7 @@ public class AdminUserService {
      * @param pageSize
      * @return
      */
-    public PageModel<AdminUserBean> searchUserByPage(String userAccount, Integer active, Integer orgId,
+    public PageModel<AdminUserBean> searchUserByPage(String userAccount, Integer active, Integer orgId, Integer roleId,
                                                     String channelId,Integer storeId, Integer pageNum, Integer pageSize)
     {
 
@@ -63,6 +63,7 @@ public class AdminUserService {
         params.put("channelId", channelId);
         params.put("storeId", storeId);
         params.put("orgId", orgId);
+        params.put("roleId", roleId);
         // 判断查询结果是否分页
         if (pageNum != null && pageSize != null) {
             pageModel.setCount(adminUserDaoExt.selectUserCount(params));
