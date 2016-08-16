@@ -52,9 +52,11 @@ define([
             move: function (type) {
                 var self = this;
                 self.cartList = self.cartList ? self.cartList : [];
+                self.cartAllList = self.cartAllList ? self.cartAllList : [];
                 switch (type) {
                     case 'allInclude':
                         _.extend(self.cartList, self.cartAllList);
+                        self.cartAllList = null;
                         break;
                     case 'include':
                         self.data = _.find(self.cartAllList, function (cart) {
@@ -71,6 +73,7 @@ define([
                         self.cartList.splice(self.cartList.indexOf(self.data), 1);
                         break;
                     case 'allExclude':
+                        _.extend(self.cartAllList, self.cartList);
                         self.cartList = null;
                         break;
                 }
@@ -84,7 +87,10 @@ define([
                 var tempCartList = [];
                 _.forEach(self.cartList, function (item) {
                     tempCartList.push(item.cartId);
-                    _.extend(self.sourceData, {'cartIds':tempCartList.join(','),'channelId':self.sourceData.orderChannelId});
+                    _.extend(self.sourceData, {
+                        'cartIds': tempCartList.join(','),
+                        'channelId': self.sourceData.orderChannelId
+                    });
                 });
                 if (self.append == true) {
                     self.channelService.addChannel(self.sourceData).then(function (res) {
