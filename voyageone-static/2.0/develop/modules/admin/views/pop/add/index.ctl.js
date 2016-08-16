@@ -80,7 +80,12 @@ define([
             },
             save: function () {
                 var self = this;
-                _.extend(self.sourceData, {'cartList': self.cartList});
+                // 设置cartIds
+                var tempCartList = [];
+                _.forEach(self.cartList, function (item) {
+                    tempCartList.push(item.cartId);
+                    _.extend(self.sourceData, {'cartIds':tempCartList.join(','),'channelId':self.sourceData.orderChannelId});
+                });
                 if (self.append == true) {
                     self.channelService.addChannel(self.sourceData).then(function (res) {
                         console.log(res);

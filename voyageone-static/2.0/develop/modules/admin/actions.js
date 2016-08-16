@@ -63,8 +63,9 @@ define(function () {
                 "AdminChannelService": {
                     "root": "/admin/system/config",
                     "searchConfigByPage": "searchConfigByPage",
-                    "addOrUpdateConfig": "addOrUpdateConfig",
-                    "deleteConfig":"deleteConfig"
+                    "addConfig": "addConfig",
+                    "updateConfig": "updateConfig",
+                    "deleteConfig": "deleteConfig"
                 }
             }
         }

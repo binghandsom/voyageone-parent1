@@ -44,7 +44,7 @@
                     <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
                 </div>
             </div>
-            <div ng-if="ctrl.show">
+            <div ng-if="ctrl.searchInfo.channelId">
                 <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                     <div class="form-group m-t-sm m-r-xs">
                         <button class="btn btn-default" ng-click="openCreateEdit('add')" ng-disabled="ctrl.configSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
@@ -56,7 +56,7 @@
                     <thead>
                         <tr>
                             <th class="text-left mfb-xt">
-                                <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl" style="height: 15px;min-width: 38px;">
+                                <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl" style="height: 15px;min-width: 38px;padding-top: 0px;">
                                     <input type="checkbox" ng-click="selectAll(ctrl.configSelList)"
                                            ng-checked="isAllSelected(ctrl.configSelList)" >
                                     <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
@@ -91,6 +91,6 @@
                 </table>
             </div>
         </form>
-        <vpagination config="ctrl.configPageOption" ng-if="ctrl.cfgList.length"></vpagination>
+        <vpagination config="ctrl.configPageOption" ng-if="ctrl.cfgList||ctrl.searchInfo.channelId"></vpagination>
     </div>
 </div><!-- .vo_modal -->

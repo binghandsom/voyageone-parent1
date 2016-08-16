@@ -36,6 +36,8 @@ define(function () {
         "TXT_SHIPPER_ADDRESS":"发货人地址",
         "TXT_SECRET_KEY":"Secret Key",
         "TXT_SESSION_KEY":"Session Key",
+        "TXT_CHOOSED":"已选择",
+        "TXT_CHOOSE":"可选择",
 
         /**按钮组*/
         "TXT_LOGOUT": "注销",
