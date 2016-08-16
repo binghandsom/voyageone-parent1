@@ -7,15 +7,13 @@ import com.voyageone.security.dao.ComUserRoleDao;
 import com.voyageone.security.model.ComUserModel;
 import com.voyageone.security.model.ComUserRoleModel;
 import com.voyageone.service.bean.admin.AdminUserBean;
-import com.voyageone.service.daoext.admin.AdminUserDaoExt;
+import com.voyageone.service.daoext.core.AdminUserDaoExt;
 import com.voyageone.service.model.admin.PageModel;
-import com.voyageone.service.model.admin.TmOrderChannelModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**

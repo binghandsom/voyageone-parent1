@@ -77,4 +77,9 @@ public class AdminUserServiceTest {
         list.add(5);
         adminUserService.deleteUser(list, "test");
     }
+
+    @Test
+    public void testDeleteUser1() throws Exception {
+
+    }
 }
