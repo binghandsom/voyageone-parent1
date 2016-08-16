@@ -88,7 +88,7 @@ define([
                 var result = {};
                 _.forEach(self.cartList, function (item) {
                     tempCartList.push(item.cartId);
-                    _.extend(self.sourceData, {'cartIds': tempCartList.join(',')});
+                    _.extend(self.sourceData, {'cartIds': tempCartList.join(','),'companyId':self.companyId});
                 });
                 if (self.append == true) {
                     self.channelService.addChannel(self.sourceData).then(function (res) {
