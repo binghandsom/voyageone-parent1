@@ -15,14 +15,17 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +45,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     private CmsMtBrandService cmsMtBrandService;
     @Autowired
     private PlatformSchemaService platformSchemaService;
+    @Autowired
+    private PlatformCategoryService platformCategoryService;
 
     /**
      * 获取产品平台信息
@@ -381,5 +386,16 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId));
 
         return platform;
+    }
+
+    /**
+     * 获取平台所有类目
+     *
+     * @param user   用户配置
+     * @param cartId 平台 ID
+     * @return 类目集合
+     */
+    List<CmsMtPlatformCategoryTreeModel> getPlatformCategories(UserSessionBean user, Integer cartId) {
+        return platformCategoryService.getPlatformCategories(user.getSelChannelId(), cartId);
     }
 }
