@@ -326,7 +326,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     // 插入MongoDb表
                     if (feedInfoModelList.size() > 0) {
                         $info("point-mongo-start" + ",channel：" + channel.getFull_name());
-                        Map<String, List<CmsBtFeedInfoModel>> response = feedToCmsService.updateProduct(channel.getOrder_channel_id(), feedInfoModelList, getTaskName(), false);
+                        Map<String, List<CmsBtFeedInfoModel>> response = feedToCmsService.updateProduct(channel.getOrder_channel_id(), feedInfoModelList, getTaskName(), true);
                         List<CmsBtFeedInfoModel> succeed = response.get("succeed");
                         codeCnt += succeed.size();
                         skuCnt += succeed.stream().mapToInt((model) -> model.getSkus().size()).summaryStatistics().getSum();
@@ -657,7 +657,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         skuModel.setBarcode(skuTemp.getProductId());
                         skuModel.setClientSku(skuTemp.getSku());
                         Map<String, String> skuKeyMap = getSkuKey(skuTemp);
-                        skuModel.setSku(channel.getOrder_channel_id() + "-" + codeModel.getSku() + "-" + skuKeyMap.get("Value").replaceAll(" ", ""));
+                        // skuModel.setSku(channel.getOrder_channel_id() + "-" + codeModel.getSku() + "-" + skuKeyMap.get("Value").replaceAll(" ", ""));
+                        skuModel.setSku(channel.getOrder_channel_id() + "-" + skuTemp.getSku());
                         skuModel.setSize(skuKeyMap.get("Value"));
                         skuModel.setImage(Arrays.asList(images.split(",")));
                         skuModel.setQty(new Integer(skuTemp.getQuantity()));
