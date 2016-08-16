@@ -71,6 +71,7 @@
 
 	<select id="selectAllCompany" resultType="map">
 		select id, company, description, default_view, active, created, creater, modified, modifier from ct_company
+		order by company
 	</select>
 	
 	<select id="selectChannelByPage" resultMap="channelModelMap">

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.admin.ComMtThirdPartyConfigDaoExt">
+
+	<resultMap id="thirdPartyConfigBeanMap" type="com.voyageone.service.bean.admin.ComMtThirdPartyConfigBean" />
+	
+	<sql id="searchThirdPartyConfigFilter">
+		<where>
+			<if test="orderChannelId != null and orderChannelId != ''">
+				cmtpc.channel_id = #{orderChannelId}
+			</if>
+			<if test="propName != null and propName != ''">
+				and cmtpc.prop_name like concat('%', #{propName},'%')
+			</if>
+			<if test="propVal != null and propVal != ''">
+				and (
+					cmtpc.prop_val1 like concat('%', #{propVal},'%')
+					or cmtpc.prop_val2 like concat('%', #{propVal},'%')
+					or cmtpc.prop_val3 like concat('%', #{propVal},'%')
+					or cmtpc.prop_val4 like concat('%', #{propVal},'%')
+					or cmtpc.prop_val5 like concat('%', #{propVal},'%')
+					or cmtpc.prop_val6 like concat('%', #{propVal},'%')
+				)
+			</if>
+		</where>
+	</sql>
+	
+	<select id="searchThirdPartyConfigByPage" resultMap="thirdPartyConfigBeanMap">
+		select toc.name as channel_name, cmtpc.seq, cmtpc.channel_id, cmtpc.prop_name, cmtpc.prop_val1, cmtpc.prop_val2,
+			cmtpc.prop_val3, cmtpc.prop_val4, cmtpc.prop_val5, cmtpc.prop_val6, cmtpc.`comment`, cmtpc.creater,
+			cmtpc.created, cmtpc.modifier, cmtpc.modified, cmtpc.modified
+		from com_mt_third_party_config cmtpc left join tm_order_channel toc on toc.order_channel_id = cmtpc.channel_id
+		<include refid="searchThirdPartyConfigFilter"/>	
+	</select>
+	
+	<select id="searchThirdPartyConfigCount" resultType="integer">
+		select count(0) from com_mt_third_party_config cmtpc
+			left join tm_order_channel toc on toc.order_channel_id = cmtpc.channel_id
+		<include refid="searchThirdPartyConfigFilter"/>
+	</select>
+
+</mapper>

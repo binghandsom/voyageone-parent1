@@ -30,6 +30,8 @@ public class ComMtThirdPartyConfigModel extends AdminBaseModel {
     protected String propVal6;
 
     protected String comment;
+    
+    protected Boolean active;
 
     public Integer getSeq() {
         return seq;
@@ -110,4 +112,13 @@ public class ComMtThirdPartyConfigModel extends AdminBaseModel {
     public void setComment(String comment) {
         this.comment = comment == null ? null : comment.trim();
     }
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+    
 }
