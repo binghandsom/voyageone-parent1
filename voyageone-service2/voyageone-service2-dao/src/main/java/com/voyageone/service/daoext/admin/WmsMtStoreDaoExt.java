@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.voyageone.service.bean.admin.CtStoreConfigBean;
-import com.voyageone.service.bean.admin.WmsMtStoreBean;
+import com.voyageone.service.bean.com.CtStoreConfigBean;
+import com.voyageone.service.bean.com.WmsMtStoreBean;
 
 /**
  * @author Wangtd

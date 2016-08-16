@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
-import com.voyageone.service.bean.admin.ComMtThirdPartyConfigBean;
-import com.voyageone.service.impl.admin.channel.ThirdPartyConfigService;
-import com.voyageone.service.model.admin.ComMtThirdPartyConfigModel;
-import com.voyageone.service.model.admin.PageModel;
+import com.voyageone.service.bean.com.ComMtThirdPartyConfigBean;
+import com.voyageone.service.impl.com.channel.ThirdPartyConfigService;
+import com.voyageone.service.model.com.ComMtThirdPartyConfigModel;
+import com.voyageone.service.model.com.PageModel;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.channel.ThirdPartyConfigFormBean;

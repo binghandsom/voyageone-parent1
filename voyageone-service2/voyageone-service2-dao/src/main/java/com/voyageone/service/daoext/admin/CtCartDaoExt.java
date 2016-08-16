@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import com.voyageone.service.model.admin.CtCartModel;
+import com.voyageone.service.model.com.CtCartModel;
 
 @Repository
 public interface CtCartDaoExt {

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.voyageone.service.bean.admin.ComMtThirdPartyConfigBean;
+import com.voyageone.service.bean.com.ComMtThirdPartyConfigBean;
 
 /**
  * @author Wangtd

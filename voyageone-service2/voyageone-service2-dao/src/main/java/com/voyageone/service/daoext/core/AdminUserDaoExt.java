@@ -1,9 +1,6 @@
 package com.voyageone.service.daoext.core;
 
-import com.voyageone.security.bean.ComResourceBean;
-import com.voyageone.security.model.ComUserModel;
-import com.voyageone.service.bean.admin.AdminUserBean;
-import com.voyageone.service.bean.admin.ResourceNodeBean;
+import com.voyageone.service.bean.com.AdminUserBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

@@ -69,6 +69,7 @@
         <property name="mapperLocations">
             <list>
                 <value>classpath*:com/voyageone/service/dao/com/**/*MapperCamel.xml</value>
+                <value>classpath*:com/voyageone/service/daoext/com/**/*MapperCamel.xml</value>
             </list>
         </property>
         <!-- 配置Mybatis的插件plugin-->
@@ -79,6 +80,12 @@
                         <value>database_schema=synship</value>
                     </property>
                 </bean>
+                <bean class="com.voyageone.base.dao.mysql.paginator.MybatisPaginatorInterceptor">
+                    <property name="properties">
+                        <value>id_filter=selectList,ByPage</value>
+                    </property>
+                </bean>
+                <bean class="com.voyageone.base.dao.mysql.MybatisMapCamelInterceptor"/>
             </array>
         </property>
     </bean>
@@ -92,7 +99,7 @@
     <bean id="updateTemplateDaoScanCom" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionTemplateBeanName" value="updateTemplateCom"/>
         <property name="basePackage" value="com.voyageone.service.dao.com,
-                                          com.voyageone.service.daoext.synship"/>
+                                          com.voyageone.service.daoext.synship, com.voyageone.service.daoext.com"/>
         <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
     </bean>
 

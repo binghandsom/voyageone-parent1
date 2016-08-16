@@ -1,27 +1,20 @@
 package com.voyageone.web2.admin.views.user;
 
 import com.google.common.base.Preconditions;
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.bean.admin.AdminUserBean;
-import com.voyageone.service.impl.admin.user.AdminUserService;
-import com.voyageone.service.model.admin.PageModel;
-import com.voyageone.service.model.admin.TmOrderChannelModel;
+import com.voyageone.service.bean.com.AdminUserBean;
+import com.voyageone.service.impl.com.user.AdminUserService;
+import com.voyageone.service.model.com.PageModel;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.user.UserFormBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Ethan Shi on 2016-08-15.

@@ -15,7 +15,7 @@
     <!--<import resource="classpath*:datasource-jumei-config.xml" />-->
     <import resource="classpath*:datasource-cms2-config.xml"/>
     <import resource="classpath*:datasource-cms2-config-new.xml"/>
-    <import resource="classpath*:datasource-admin-config.xml"/>
+    <!--<import resource="classpath*:datasource-admin-config.xml"/>-->
     <import resource="classpath*:datasource-admin-common-config.xml"/>
     <import resource="classpath*:spring-application.xml"/>
 

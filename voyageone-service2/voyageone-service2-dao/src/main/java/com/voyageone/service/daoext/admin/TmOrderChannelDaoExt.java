@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.voyageone.service.bean.admin.TmOrderChannelConfigBean;
-import com.voyageone.service.model.admin.TmOrderChannelModel;
+import com.voyageone.service.bean.com.TmOrderChannelConfigBean;
+import com.voyageone.service.model.com.TmOrderChannelModel;
 
 /**
  * @author Wangtd
