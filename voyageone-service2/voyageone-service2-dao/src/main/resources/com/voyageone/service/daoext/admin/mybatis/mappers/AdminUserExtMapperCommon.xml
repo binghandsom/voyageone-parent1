@@ -6,6 +6,10 @@
 
     <sql id="selectUserFilter">
     	<where>
+            <if test="id != null" >
+                and id = #{id}
+            </if>
+
             <if test="userAccount != null and account != ''" >
                 and (
                 user_account like concat('%', #{userAccount}, '%') or user_name like concat('%', #{userAccount}, '%')

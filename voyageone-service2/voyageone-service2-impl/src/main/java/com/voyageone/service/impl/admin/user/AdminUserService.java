@@ -1,9 +1,13 @@
 package com.voyageone.service.impl.admin.user;
+
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.security.bean.ComResourceBean;
+import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.dao.ComUserDao;
 import com.voyageone.security.dao.ComUserRoleDao;
+import com.voyageone.security.daoext.ComResourceDaoExt;
 import com.voyageone.security.model.ComUserModel;
 import com.voyageone.security.model.ComUserRoleModel;
 import com.voyageone.service.bean.admin.AdminUserBean;
@@ -31,6 +35,10 @@ public class AdminUserService {
 
     @Autowired
     ComUserRoleDao comUserRoleDao;
+
+
+    @Autowired
+    ComResourceDaoExt comResourceDaoExt;
 
     /**检索用户
      *
@@ -228,6 +236,97 @@ public class AdminUserService {
             }
         }
     }
+
+
+    public Map<String, Object> showAuth(Integer userId)
+    {
+        ComUserModel user = comUserDao.select(userId);
+        if(user == null )
+        {
+            throw new BusinessException("用户不存在。");
+        }
+
+        Map<String, Object> result = new HashMap<>();
+
+
+
+        List<ComResourceBean> resList = comResourceDaoExt.selectResByUser(userId);
+        Set<Integer> resIds = resList.stream().map(ComResourceBean :: getId).collect(Collectors.toSet());
+
+        List<ComResourceBean> allRes = comResourceDaoExt.selectAll();
+
+        List<ComResourceBean> treeList =  convert2Tree(allRes, resIds);
+
+        result.put("treeList", treeList);
+        return result;
+    }
+
+
+    /**
+     * 将资源列转成一组树
+     */
+    private List<ComResourceBean> convert2Tree(List<ComResourceBean> resList, Set<Integer> checkSet) {
+        List<ComResourceBean> roots = findRoots(resList, checkSet);
+        List<ComResourceBean> notRoots = (List<ComResourceBean>) CollectionUtils.subtract(resList, roots);
+        for (ComResourceBean root : roots) {
+            List<ComResourceBean> children = findChildren(root, notRoots, checkSet);
+            root.setChildren(children);
+        }
+        return roots;
+    }
+
+    /**
+     * 查找所有根节点
+     */
+    private List<ComResourceBean> findRoots(List<ComResourceBean> allNodes, Set<Integer> checkSet) {
+        List<ComResourceBean> results = new ArrayList<>();
+        for (ComResourceBean node : allNodes) {
+            if (node.getParentId() == 0) {
+                results.add(node);
+                if(checkSet.contains(node.getId()))
+                {
+                    node.setSelected(1);
+                }
+                else
+                {
+                    node.setSelected(0);
+                }
+            }
+        }
+        return results;
+    }
+
+
+    /**
+     * 查找所有子节点
+     */
+    private List<ComResourceBean> findChildren(ComResourceBean root, List<ComResourceBean> allNodes,  Set<Integer> checkSet) {
+        List<ComResourceBean> children = new ArrayList<>();
+
+        for (ComResourceBean comparedOne : allNodes) {
+            if (comparedOne.getParentId()  == root.getId() ) {
+                children.add(comparedOne);
+                if(checkSet.contains(comparedOne.getId()))
+                {
+                    comparedOne.setSelected(1);
+                }
+                else
+                {
+                    comparedOne.setSelected(0);
+                }
+            }
+        }
+        root.setChildren(children);
+
+        List<ComResourceBean> notChildren = (List<ComResourceBean>) CollectionUtils.subtract(allNodes, children);
+
+        for (ComResourceBean child : children) {
+            List<ComResourceBean> tmpChildren = findChildren(child, notChildren,checkSet );
+            child.setChildren(tmpChildren);
+        }
+        return children;
+    }
+
 
 
 
