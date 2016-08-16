@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -78,8 +79,12 @@ public class AdminUserServiceTest {
         adminUserService.deleteUser(list, "test");
     }
 
-    @Test
-    public void testDeleteUser1() throws Exception {
 
+    @Test
+    public void testShowAuth() throws Exception {
+
+        Map result = adminUserService.showAuth(1);
+
+        System.out.println(JacksonUtil.bean2Json(result));
     }
 }

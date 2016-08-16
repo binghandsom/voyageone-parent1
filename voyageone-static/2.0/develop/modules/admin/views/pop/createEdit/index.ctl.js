@@ -5,10 +5,10 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('CreateEditController', (function () {
-        function CreateEditController(context, $uibModalInstance, AdminChannelService) {
+        function CreateEditController(context, $uibModalInstance, channelService) {
             this.sourceData = context;
             this.$uibModalInstance = $uibModalInstance;
-            this.AdminChannelService = AdminChannelService;
+            this.channelService = channelService;
             this.append = context.type == 'add' ? true : false;
             this.popType = '修改';
             this.configType = 'Channel';
@@ -20,20 +20,32 @@ define([
                 if (self.sourceData.type == 'add') self.popType = '添加';
             },
             cancel: function () {
-                this.$uibModalInstance.dismiss();
+                this.$uibModalInstance.close();
             },
             save: function () {
                 var self = this;
-                _.extend(self.sourceData, {'configType': self.configType, 'channelId': self.sourceData.channelId});
+                _.extend(self.sourceData, {
+                    'configType': self.configType,
+                    'orderChannelId': self.sourceData.orderChannelId
+                });
+                var result = {};
                 if (self.append == true) {
-                    self.AdminChannelService.addConfig(self.sourceData).then(function (res) {
-                        if (res.data.success == false)self.confirm(res.data.message);
-                        self.$uibModalInstance.close('success');
+                    self.channelService.addChannelConfig(self.sourceData).then(function (res) {
+                        if (res.data == false) {
+                            self.confirm(res.data.message);
+                            return;
+                        }
+                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                        self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.AdminChannelService.updateConfig(self.sourceData).then(function (res) {
-                        if (res.data.success == false)self.confirm(res.data.message);
-                        self.$uibModalInstance.close('success');
+                    self.channelService.updateChannelConfig(self.sourceData).then(function (res) {
+                        if (res.data == false) {
+                            self.confirm(res.data.message);
+                            return;
+                        }
+                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                        self.$uibModalInstance.close(result);
                     })
                 }
             }

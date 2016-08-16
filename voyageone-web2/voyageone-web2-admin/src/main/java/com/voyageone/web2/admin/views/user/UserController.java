@@ -16,13 +16,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Ethan Shi on 2016-08-15.
  */
+
+@RestController
+@RequestMapping(value = AdminUrlConstants.User.Self.ROOT, method = RequestMethod.POST)
 public class UserController  extends AdminController {
 
     @Autowired
@@ -74,6 +80,25 @@ public class UserController  extends AdminController {
 
         String username = getUser().getUserName();
         adminUserService.updateUser(bean, username);
+
+        return success(true);
+    }
+
+
+    @RequestMapping(AdminUrlConstants.User.Self.DELETE_USER)
+    public AjaxResponse deleteUser(@RequestBody List<Integer> bean)  {
+        // 验证参数
+        Preconditions.checkNotNull(bean);
+        String username = getUser().getUserName();
+        adminUserService.deleteUser(bean, username);
+        return success(true);
+    }
+
+
+    @RequestMapping(AdminUrlConstants.User.Self.SHOW_AUTH)
+    public AjaxResponse showAuth(@RequestBody Integer userId)  {
+        // 验证参数
+        Preconditions.checkNotNull(userId);
 
         return success(true);
     }

@@ -41,7 +41,11 @@ define(function () {
                     "deleteChannel": "deleteChannel",
                     "searchChannelByPage": "searchChannelByPage",
                     "generateSecretKey": "generateSecretKey",
-                    "generateSessionKey": "generateSessionKey"
+                    "generateSessionKey": "generateSessionKey",
+                    "searchChannelConfigByPage": "searchChannelConfigByPage",
+                    "addChannelConfig": "addChannelConfig",
+                    "updateChannelConfig": "updateChannelConfig",
+                    "deleteChannelConfig": "deleteChannelConfig"
                 }
             },
             /** Cart信息 */
@@ -61,11 +65,7 @@ define(function () {
             /** 统一属性配置 */
             "config": {
                 "AdminChannelService": {
-                    "root": "/admin/system/config",
-                    "searchConfigByPage": "searchConfigByPage",
-                    "addConfig": "addConfig",
-                    "updateConfig": "updateConfig",
-                    "deleteConfig": "deleteConfig"
+                    "root": "/admin/system/config"
                 }
             }
         }

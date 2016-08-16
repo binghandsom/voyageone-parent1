@@ -158,6 +158,8 @@ public interface AdminUrlConstants {
 			String UPDATE_USER = "updateUser";
 
 			String DELETE_USER = "deleteUser";
+
+			String SHOW_AUTH = "showAuth";
 		}
 
 	}
