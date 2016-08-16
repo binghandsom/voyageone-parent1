@@ -55,7 +55,7 @@ public class UserController  extends AdminController {
         Preconditions.checkNotNull(bean.getUserAccount());
         Preconditions.checkNotNull(bean.getEmail());
         Preconditions.checkNotNull(bean.getOrgId());
-        Preconditions.checkNotNull(bean.getRoleIds());
+        Preconditions.checkNotNull(bean.getRoleId());
 
         String username = getUser().getUserName();
 
