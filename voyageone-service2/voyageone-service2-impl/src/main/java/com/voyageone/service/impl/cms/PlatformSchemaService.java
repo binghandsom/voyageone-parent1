@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * 平台Schema取得后，对应一些处理操作
  *
  * @author morse.lu 2016/06/22
- * @version 2.1.0
+ * @version 2.4.0
  * @since 2.1.0
  */
 @Service
@@ -39,14 +39,22 @@ public class PlatformSchemaService extends BaseService {
     public static final String KEY_PRODUCT = "product";
     public static final String KEY_ITEM = "item";
 
+    private final PlatformCategoryService platformCategoryService;
+    private final CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
+    private final CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao;
+    private final CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao;
+
     @Autowired
-    private PlatformCategoryService platformCategoryService;
-    @Autowired
-    private CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
-    @Autowired
-    private CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao;
-    @Autowired
-    private CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao;
+    public PlatformSchemaService(PlatformCategoryService platformCategoryService,
+                                 CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao,
+                                 CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao,
+                                 CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao) {
+        this.platformCategoryService = platformCategoryService;
+        this.cmsMtPlatformPropMappingCustomDao = cmsMtPlatformPropMappingCustomDao;
+        this.cmsMtPlatformCategoryInvisibleFieldDao = cmsMtPlatformCategoryInvisibleFieldDao;
+        this.cmsMtPlatformCategoryExtendFieldDao = cmsMtPlatformCategoryExtendFieldDao;
+    }
+
 
     /**
      * 产品画面属性list取得
@@ -60,7 +68,7 @@ public class PlatformSchemaService extends BaseService {
         // 20160727 tom 天猫schema结构变更修改 START
 //        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(catId, cartId);
 
-        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = null;
+        CmsMtPlatformCategorySchemaModel platformCatSchemaModel;
         if (CartEnums.Cart.TM.getValue() == cartId || CartEnums.Cart.TG.getValue() == cartId) {
             platformCatSchemaModel = platformCategoryService.getPlatformCatSchemaTm(catId, channelId, cartId);
         } else {
@@ -377,7 +385,6 @@ public class PlatformSchemaService extends BaseService {
                 } else {
                     $warn("原先相同的field_id已经存在!");
                 }
-                return;
             } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
                 MultiComplexField multiComplexField = (MultiComplexField) field;
                 if (multiComplexField.getFieldMap().get(addField.getId()) == null) {
@@ -385,10 +392,8 @@ public class PlatformSchemaService extends BaseService {
                 } else {
                     $warn("原先相同的field_id已经存在!");
                 }
-                return;
             } else {
                 $warn(String.format("field_id=%s 不是复杂类型,无法增加属性", field.getId()));
-                return;
             }
         } else {
             String newFieldId = fieldIds[1];
@@ -404,7 +409,6 @@ public class PlatformSchemaService extends BaseService {
                 addExtendField(multiComplexField.getFieldMap(), newFieldId, separator, addField);
             } else {
                 $warn(String.format("field_id=%s 不是复杂类型,没有下一层属性,无法增加属性", field.getId()));
-                return;
             }
         }
     }
