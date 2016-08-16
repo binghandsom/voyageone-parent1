@@ -131,7 +131,7 @@ public class ChannelService extends BaseService {
 			model.setOrderChannelId(channelId);
 			model.setActive(0);
 			model.setModifier(username);
-			if (channelDao.update(model) > 0) {
+			if (channelDao.update(model) <= 0) {
 				throw new BusinessException("删除渠道信息失败");
 			}
 		}

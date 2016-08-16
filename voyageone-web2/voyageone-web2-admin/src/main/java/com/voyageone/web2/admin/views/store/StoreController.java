@@ -42,7 +42,7 @@ public class StoreController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索仓库信息
-		PageModel<WmsMtStoreBean> storePage = storeService.searchStoreByPage(form.getChannelId(), form.getStoreName(),
+		PageModel<WmsMtStoreBean> storePage = storeService.searchStoreByPage(form.getOrderChannelId(), form.getStoreName(),
 				form.getIsSale(), form.getStoreType(), form.getPageNum(), form.getPageSize());
 		
 		return success(storePage);
@@ -60,7 +60,7 @@ public class StoreController extends AdminController {
 	
 	public AjaxResponse addOrUpdateStore(@RequestBody StoreFormBean form, boolean append) {
 		// 验证参数
-		Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
 		Preconditions.checkNotNull(form.getParentStoreId());
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getStoreType()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getStoreLocation()));
@@ -92,11 +92,11 @@ public class StoreController extends AdminController {
 			List<WmsMtStoreKey> storeKeys = new ArrayList<WmsMtStoreKey>();
 			for (StoreFormBean form : forms) {
 				// 验证参数
-				Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
+				Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
 				Preconditions.checkNotNull(form.getStoreId());
 				WmsMtStoreKey storeKey = new WmsMtStoreKey();
 				BeanUtils.copyProperties(form, storeKey);
-				storeKey.setOrderChannelId(form.getChannelId());
+				storeKey.setOrderChannelId(form.getOrderChannelId());
 				storeKeys.add(storeKey);
 			}
 			// 删除仓库信息

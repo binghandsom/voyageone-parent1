@@ -31,11 +31,32 @@ public interface AdminUrlConstants {
 			String DELETE_CHANNEL = "deleteChannel";
 			
 		}
+		
+		/** 第三方配置信息 */
+		interface ThirdParty {
+			
+			String ROOT = "/admin/channel/thirdParty";
+			
+			String SEARCH_THIRD_PARTY_CONFIG_BY_PAGE = "searchThirdPartyConfigByPage";
+
+			String ADD_THIRD_PARTY_CONFIG = "addThirdPartyConfig";
+
+			String UPDATE_THIRD_PARTY_CONFIG = "updateThirdPartyConfig";
+			
+		}
 
 		/** 短信配置信息 */
 		interface Sms {
+			
+			String ROOT = "/admin/channel/sms";
 
 			String SEARCH_SMS_CONFIG_BY_PAGE = "searchSmsConfigByPage";
+			
+			String ADD_SMS_CONFIG = "addSmsConfig";
+
+			String UPDATE_SMS_CONFIG = "updateSmsConfig";
+
+			String DELETE_SMS_CONFIG = "deleteSmsConfig";
 
 		}
 

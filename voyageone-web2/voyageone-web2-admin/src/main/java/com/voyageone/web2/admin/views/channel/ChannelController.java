@@ -43,7 +43,7 @@ public class ChannelController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索渠道信息
-		PageModel<TmOrderChannelBean> channelPage = channelService.searchChannelByPage(form.getChannelId(),
+		PageModel<TmOrderChannelBean> channelPage = channelService.searchChannelByPage(form.getOrderChannelId(),
 				form.getChannelName(), form.getIsUsjoi(), form.getPageNum(), form.getPageSize());
 		
 		return success(channelPage);
@@ -56,14 +56,14 @@ public class ChannelController extends AdminController {
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.UPDATE_CHANNEL)
 	public AjaxResponse updateChannel(@RequestBody ChannelFormBean form, boolean append) {
-		return addOrUpdateChannel(form, true);
+		return addOrUpdateChannel(form, false);
 	}
 	
 	public AjaxResponse addOrUpdateChannel(@RequestBody ChannelFormBean form, boolean append) {
 		// 验证参数
 		Preconditions.checkNotNull(form.getCompanyId());
-		Preconditions.checkNotNull(StringUtils.isNotBlank(form.getChannelId()));
-		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSecretKey()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getScrectKey()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSessionKey()));
 		
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -72,7 +72,6 @@ public class ChannelController extends AdminController {
 			// 设置渠道信息
 			TmOrderChannelModel model = new TmOrderChannelModel();
 			BeanUtils.copyProperties(form, model);
-			model.setOrderChannelId(form.getChannelId());
 			// 保存渠道信息
 			channelService.addOrUpdateChannel(model, getUser().getUserName(), append);
 			result.put(SUCCESS, true);
@@ -99,7 +98,7 @@ public class ChannelController extends AdminController {
 		}
 		
 		return success(result);
-	}	
+	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.GET_ALL_COMPANY)
 	public AjaxResponse getAllCompany() {

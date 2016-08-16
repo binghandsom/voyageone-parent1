@@ -8,7 +8,7 @@ import com.voyageone.web2.admin.bean.AdminFormBean;
  */
 public class StoreFormBean extends AdminFormBean {
 	
-	private String channelId;
+	private String orderChannelId;
 	
 	private Integer storeId;
 	
@@ -40,12 +40,12 @@ public class StoreFormBean extends AdminFormBean {
 	
 	private String storeComment;
 
-	public String getChannelId() {
-		return channelId;
+	public String getOrderChannelId() {
+		return orderChannelId;
 	}
 
-	public void setChannelId(String channelId) {
-		this.channelId = channelId;
+	public void setOrderChannelId(String orderChannelId) {
+		this.orderChannelId = orderChannelId;
 	}
 
 	public Integer getStoreId() {

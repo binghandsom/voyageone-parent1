@@ -15,7 +15,6 @@ define([
             this.configPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.configSelList = {selList: []};
             this.tempConfigSelect = null;
-            this.show = false;
             this.searchInfo = {
                 channelId: this.sourceData ? this.sourceData.orderChannelId : "",
                 configType: 'Channel',
@@ -29,14 +28,14 @@ define([
         ConfigController.prototype = {
             init: function () {
                 var self = this;
-                self.channelService.getAllChannel().then(function (res) {
-                    self.channelList = res.data;
-                });
+                self.search();
             },
             search: function () {
                 var self = this;
-                self.show = true;
                 self.configInfo = {};
+                self.channelService.getAllChannel().then(function (res) {
+                    self.channelList = res.data;
+                });
                 self.AdminChannelService.searchConfigByPage({
                     'pageNum': self.searchInfo.pageInfo.curr,
                     'pageSize': self.searchInfo.pageInfo.size,
@@ -66,20 +65,6 @@ define([
                         }
                     });
                     self.configSelList = self.tempConfigSelect.selectRowsInfo;
-
-                    for (var l = 0; l < self.channelList.length; l++) {
-                        self.tempChannelList.push({
-                            'channelName': self.channelList[l].name,
-                            'channelId': self.channelList[l].orderChannelId
-                        })
-                    }
-                    for (var i = 0; i < self.cfgList.length; i++) {
-                        self.tempChannelList.map(function (item) {
-                            if (item.channelId === self.cfgList[i].orderChannelId) {
-                                _.extend(self.cfgList[i], {'channelName': item.channelName});
-                            }
-                        });
-                    }
                 })
             },
             clear: function () {
