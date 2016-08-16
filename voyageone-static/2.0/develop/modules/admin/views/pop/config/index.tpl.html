@@ -11,8 +11,9 @@
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_CART_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.searchInfo.channelId" ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList" ng-change="ctrl.search()">
-                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.channelId"
+                                    ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList" ng-change="ctrl.search()">
+                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
                     </div>
@@ -47,7 +48,7 @@
             <div ng-if="ctrl.searchInfo.channelId">
                 <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                     <div class="form-group m-t-sm m-r-xs">
-                        <button class="btn btn-default" ng-click="openCreateEdit('add')" ng-disabled="ctrl.configSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                        <button class="btn btn-default" ng-click="ctrl.add({'type':'add','channelId':ctrl.searchInfo.channelId})" ng-disabled="ctrl.configSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
                         <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.configSelList.selList.length < 1||ctrl.configSelList.selList.length > 1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
                         <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.configSelList.selList.length < 1"><i class="fa fa-trash"></i>&nbsp;删除</button>
                     </div>
@@ -91,6 +92,6 @@
                 </table>
             </div>
         </form>
-        <vpagination config="ctrl.configPageOption" ng-if="ctrl.cfgList||ctrl.searchInfo.channelId"></vpagination>
+        <vpagination config="ctrl.configPageOption" ng-if="ctrl.searchInfo.channelId"></vpagination>
     </div>
 </div><!-- .vo_modal -->
