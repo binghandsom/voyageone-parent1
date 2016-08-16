@@ -28,13 +28,13 @@
                                             <div class="col-sm-8">
                                                 <div class="row">
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType" ><span class="fa fa-check"></span> 全类目
+                                                        <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType" ng-click="ctrl.switchType()"><span class="fa fa-check"></span> 全类目
                                                     </label>&emsp;
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType" ><span class="fa fa-check"></span> 选择类目
+                                                        <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType" ng-click="ctrl.switchType()"><span class="fa fa-check"></span> 选择类目
                                                     </label>
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="category" type="radio" value="3" ng-model="ctrl.searchInfo.categoryType" ><span class="fa fa-check"></span> 不限类目
+                                                        <input name="category" type="radio" value="3" ng-model="ctrl.searchInfo.categoryType" ng-click="ctrl.switchType()"><span class="fa fa-check"></span> 不限类目
                                                     </label>
                                                 </div>
                                             </div>
@@ -73,7 +73,7 @@
                 <div class="row">
                     <div class="col-md-5">
                         <div class="btn-group">
-                            <a href="#/channel/default_attribute_detail/{{ctrl.searchInfo}}" target="_blank" class="btn btn-info btn-pop" ng-click="search()">
+                            <a ng-href="#/channel/default_attribute_detail/{{ctrl.searchInfo}}" target="_blank" class="btn btn-info btn-pop" ng-click="search()">
                                 <i class="fa fa-plus"></i>&nbsp;{{'TXT_DEFAULT_SETTING'|translate}}
                             </a>
                         </div>
@@ -107,10 +107,10 @@
                                 <td class="mfb-xt3 text-center">{{entity.created | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                                 <td class="mfb-xt3 text-left">{{entity.creater}}</td>
                                 <td class="mfb-xt3 text-center">
-                                    <button title="编辑" class="btn btn-success btn-xs">
+                                    <a title="编辑" ng-href="#/channel/default_attribute_detail/{{entity}}" class="btn btn-success btn-xs" target="_blank" >
                                         <i class="fa fa-pencil"></i>
-                                    </button>&emsp;
-                                    <button title="删除" class="btn btn-danger btn-xs">
+                                    </a>&emsp;
+                                    <button title="删除" class="btn btn-danger btn-xs" ng-click="ctrl.deleteItem(entity)">
                                         <i class="fa  fa-trash-o"></i>
                                     </button>
                                 </td>
