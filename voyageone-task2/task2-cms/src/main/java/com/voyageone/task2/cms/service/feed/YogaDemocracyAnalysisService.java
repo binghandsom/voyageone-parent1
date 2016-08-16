@@ -65,11 +65,10 @@ public class YogaDemocracyAnalysisService extends BaseAnalysisService {
             String filePath = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_localpath);
             String fileFullName = String.format("%s/%s", filePath, fileName);
             String encode = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_file_coding);
-            reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
+            reader = new CsvReader(new FileInputStream(fileFullName), ',', Charset.forName(encode));
             // Head读入
             reader.readHeaders();
             reader.getHeaders();
-            // Body读入
             while (reader.readRecord()) {
                 SuperFeedYogaDemocracyBean superFeedYogaDemocracyBean = new SuperFeedYogaDemocracyBean();
                 int i = 0;
