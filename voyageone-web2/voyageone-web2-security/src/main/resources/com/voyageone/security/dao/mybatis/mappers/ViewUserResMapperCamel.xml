@@ -3,16 +3,16 @@
 <mapper namespace="com.voyageone.security.dao.ViewUserResDao" >
     <resultMap id="BaseResultMap" type="java.util.Map" />
     <sql id="Base_Column_List" >
-        `id`, `res_name`, `res_key`, `res_type`, `parent_id`, `res_url`, `level`, `icon`, 
+        `id`, `res_name`, `res_key`, `res_type`, `parent_id`, `res_url`, `level`, `icon`,
         `active`, `description`, `created`, `creater`, `modified`, `modifier`,`role_id`,`channel_id`,`user_id`
     </sql>
 
     <select id="selectResByUserChannel" resultMap="BaseResultMap" >
-        select 
+        select
         <include refid="Base_Column_List" />
         from view_user_res
         <where >
-                `user_id` = #{userId,jdbcType=INTEGER} and  `channel_id` = #{channelId,jdbcType=VARCHAR}
+            `user_id` = #{userId,jdbcType=INTEGER} and  `channel_id` = #{channelId,jdbcType=VARCHAR}
         </where>
     </select>
 
