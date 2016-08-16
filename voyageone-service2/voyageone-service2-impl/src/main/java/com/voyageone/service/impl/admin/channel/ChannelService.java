@@ -59,7 +59,7 @@ public class ChannelService extends BaseService {
 	}
 	
 	public PageModel<TmOrderChannelBean> searchChannelByPage(String channelId, String channelName, Integer isUsjoi,
-			Integer pageNum, Integer pageSize) throws Exception {
+			Integer pageNum, Integer pageSize) {
 		PageModel<TmOrderChannelBean> pageModel = new PageModel<TmOrderChannelBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();

@@ -8,6 +8,8 @@
     <!-- localhost dev env -->
     <import resource="classpath*:common-config.xml"/>
     <import resource="classpath*:data-cache-config.xml"/>
+    <import resource="classpath*:datasource-admin-config.xml"/>
+    <import resource="classpath*:datasource-admin-common-config.xml"/>
     <import resource="classpath*:datasource-cms2-config.xml"/>
     <import resource="classpath*:datasource-cms2-config-new.xml"/>
     <import resource="classpath*:datasource-config-mongo-cms2.xml"/>

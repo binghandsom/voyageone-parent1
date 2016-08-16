@@ -1,8 +1,6 @@
 package com.voyageone.web2.admin.views.channel;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.admin.TmOrderChannelBean;
 import com.voyageone.service.impl.admin.channel.ChannelService;
 import com.voyageone.service.model.admin.PageModel;
@@ -38,7 +35,7 @@ public class ChannelController extends AdminController {
 	private ChannelService channelService;
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.SEARCH_CHANNEL_BY_PAGE)
-	public AjaxResponse searchChannelByPage(@RequestBody ChannelFormBean form) throws Exception {
+	public AjaxResponse searchChannelByPage(@RequestBody ChannelFormBean form) {
 		// 验证参数
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
@@ -65,39 +62,23 @@ public class ChannelController extends AdminController {
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getScrectKey()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSessionKey()));
+		// 设置渠道信息
+		TmOrderChannelModel model = new TmOrderChannelModel();
+		BeanUtils.copyProperties(form, model);
+		// 保存渠道信息
+		channelService.addOrUpdateChannel(model, getUser().getUserName(), append);
 		
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put(SUCCESS, false);
-		try {
-			// 设置渠道信息
-			TmOrderChannelModel model = new TmOrderChannelModel();
-			BeanUtils.copyProperties(form, model);
-			// 保存渠道信息
-			channelService.addOrUpdateChannel(model, getUser().getUserName(), append);
-			result.put(SUCCESS, true);
-		} catch (BusinessException e) {
-			result.put(MESSAGE, e.getMessage());
-		}
-		
-		return success(result);
+		return success(true);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.DELETE_CHANNEL)
 	public AjaxResponse deleteChannel(@RequestBody String[] channelIds) {
 		// 验证参数
 		Preconditions.checkArgument(ArrayUtils.isNotEmpty(channelIds));
+		// 删除渠道信息
+		channelService.deleteChannel(Arrays.asList(channelIds), getUser().getUserName());
 		
-		Map<String, Object> result = new HashMap<String, Object>();
-		result.put(SUCCESS, false);
-		try {
-			// 删除渠道信息
-			channelService.deleteChannel(Arrays.asList(channelIds), getUser().getUserName());
-			result.put(SUCCESS, true);
-		} catch (BusinessException e) {
-			result.put(MESSAGE, e.getMessage());
-		}
-		
-		return success(result);
+		return success(true);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.GET_ALL_COMPANY)
