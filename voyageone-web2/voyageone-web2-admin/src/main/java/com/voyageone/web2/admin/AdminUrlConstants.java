@@ -154,9 +154,19 @@ public interface AdminUrlConstants {
 	interface System {
 		
 		/** 统一属性配置 */
-		interface CommonConfig {
+		interface Type {
 			
-			String ROOT = "/admin/system/config";
+			String ROOT = "/admin/system/type";
+			
+			String SEARCH_TYPE_BY_PAGE = "searchTypeByPage";
+
+			String ADD_TYPE = "addType";
+
+			String UPDATE_TYPE = "updateType";
+
+			String DELETE_TYPE = "deleteType";
+
+			String GET_ALL_TYPE = "getAllType";
 			
 		}
 		
@@ -239,8 +249,6 @@ public interface AdminUrlConstants {
 			String DELETE_Res = "deleteRes";
 
 		}
-
-
 
 	}
 

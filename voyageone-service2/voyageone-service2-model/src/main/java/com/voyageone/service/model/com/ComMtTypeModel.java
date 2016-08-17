@@ -16,6 +16,8 @@ public class ComMtTypeModel extends AdminBaseModel {
     protected String name;
 
     protected String comment;
+    
+    protected Boolean active;
 
     public Integer getId() {
         return id;
@@ -40,4 +42,13 @@ public class ComMtTypeModel extends AdminBaseModel {
     public void setComment(String comment) {
         this.comment = comment == null ? null : comment.trim();
     }
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+    
 }
