@@ -9,7 +9,7 @@ define(function (require) {
     var _ = require('underscore');
     var cms = require('cms');
 
-    cms.controller('defaultAttributeController', (function () {
+    cms.controller('DefaultAttributeController', (function () {
 
         function DefaultAttributeController($q, popups, alert, confirm, menuService, $productDetailService, platformMappingService) {
 
