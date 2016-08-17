@@ -19,6 +19,10 @@ define([
         }
 
         PropertyMappingController.prototype = {
+          init:function(){
+              var self = this;
+              console.log(self.context);
+          },
           openPpPropertySetting:function(){
               var self = this;
               self.popups.openPropertySetting().then(function(){

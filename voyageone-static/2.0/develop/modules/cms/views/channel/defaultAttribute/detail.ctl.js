@@ -6,12 +6,12 @@
 define([
     'cms',
     'modules/cms/controller/popup.ctl',
-    'modules/cms/directives/defaultAttr.directive',
-    './defaultAttrService.ctl'
+    'modules/cms/service/product.detail.service',
+    'modules/cms/directives/defaultAttr.directive'
 ], function (cms) {
     cms.controller('attributeDetailController', (function () {
 
-        function AttributeDetailController($translate, $routeParams,$q,popups, menuService,platformMappingService,defaultAttrService) {
+        function AttributeDetailController($translate, $routeParams,$q,popups, menuService,productDetailService,platformMappingService) {
 
             var self = this;
 
@@ -20,8 +20,8 @@ define([
             self.popups = popups;
             self.upEntity = angular.fromJson($routeParams.upEntity);
             self.menuService = menuService;
+            self.productDetailService = productDetailService;
             self.platformMappingService = platformMappingService;
-            self.defaultAttrService = defaultAttrService;
             self.searchInfo = {
                 cartId: self.upEntity.cartId,
                 categoryType: self.upEntity.categoryType,
@@ -39,13 +39,18 @@ define([
                     });
                 });
 
-                self.defaultAttrService.get(self.searchInfo).then(function(res){
-                    self.fields = res.data.schemaFields;
+                //self.searchInfo
+                self.platformMappingService.get({
+                    cartId: 23,
+                    categoryType: 2,
+                    categoryPath:"手表>智能腕表"
+                }).then(function(res){
+                    self.fields = res.data.schema;
                 });
             },
             jdCategoryMapping: function () {
                 var self = this;
-                self.platformMappingService.getPlatformCategories({cartId: self.searchInfo.cartId})
+                self.productDetailService.getPlatformCategories({cartId: self.searchInfo.cartId})
                     .then(function (res) {
                         return self.q(function (resolve, reject) {
                             if (!res.data || !res.data.length) {

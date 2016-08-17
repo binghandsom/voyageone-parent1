@@ -210,32 +210,6 @@ define([
         return rules;
     }
 
-    /**
-     * 获取字段是否包含那种类似 required 的验证类的规则, tip 就不是。
-     */
-    function hasValidateRule(field) {
-
-        if (!field || !field.rules)
-            return false;
-
-        if (!field.rules.length)
-            return false;
-
-        return any(field.rules, function (rule) {
-
-            // 以下规则都不需要追加 vo-message
-
-            return (rule.name === 'valueTypeRule'
-                && rule.value !== VALUE_TYPES.TEXT
-                && rule.value !== VALUE_TYPES.TEXTAREA
-                && rule.value !== VALUE_TYPES.HTML)
-                || (rule.name !== 'tipRule'
-                && rule.name !== 'devTipRule'
-                && rule.name !== 'disableRule');
-
-
-        });
-    }
 
     /**
      * 根据值类型规则返回相应的 input type
@@ -339,40 +313,6 @@ define([
     }
 
     /**
-     * 为 maxlength 和 minlength 规则提供支持
-     */
-    function bindLengthRule(element, rule, name, attr, ngAttr) {
-
-        if (!rule) return;
-
-        if (rule instanceof DependentRule) {
-            element.attr(ngAttr || ('ng-' + attr), 'rules.' + name + '.getLength()');
-        } else {
-            element.attr(attr, rule.value);
-        }
-    }
-
-    function bindInputLengthRule(element, rules) {
-
-        var minRule = rules.minLengthRule,
-            maxRule = rules.maxLengthRule;
-
-        if (minRule) {
-            if (isByteUnit(minRule))
-                bindLengthRule(element, minRule, 'minLengthRule', 'minbytelength', 'minbytelength');
-            else
-                bindLengthRule(element, minRule, 'minLengthRule', 'minlength');
-        }
-
-        if (maxRule) {
-            if (isByteUnit(maxRule))
-                bindLengthRule(element, maxRule, 'maxLengthRule', 'maxbytelength', 'maxbytelength');
-            else
-                bindLengthRule(element, maxRule, 'maxLengthRule', 'maxlength');
-        }
-    }
-
-    /**
      * 为 required 和 readonly 规则提供支持
      */
     function bindBoolRule(element, rule, name, attr) {
@@ -465,10 +405,6 @@ define([
         });
     }
 
-    function isByteUnit(rule) {
-        return rule.unit === 'byte';
-    }
-
     /**
      * 切换字段上的属性所存储的位置。专属!供 disableRule 切换时调用。参见 s-field 中 $render 里的切换逻辑
      * @param {object} field
@@ -525,75 +461,6 @@ define([
             });
         }
     }
-
-    /**
-     * @class 为 multiComplex 字段的 values 提供包装
-     */
-    function ComplexValue(fields) {
-        // 生成 id 用来标记缓存
-        this.$id = '$ComplexValue' + random();
-        // 追加属性
-        this.fieldMap = {};
-        this.fieldKeySet = [];
-        // 存入缓存
-        ComplexValue.Caches[this.$id] = this;
-        // 如果 fields 存在, 就自动生成相应的字段
-        this.putAll(fields);
-    }
-
-    ComplexValue.Caches = {};
-
-    ComplexValue.prototype.get = function (field) {
-        return this.fieldMap[field.id || field];
-    };
-
-    ComplexValue.prototype.put = function (field) {
-        this.fieldKeySet.push(field.id);
-        this.fieldMap[field.id] = field;
-        // 为 field 记录当前 value 组的 id, 便于在依赖计算时查找
-        field.$parentComplexValueId = this.$id;
-
-        return this;
-    };
-
-    ComplexValue.prototype.putAll = function (fields) {
-        var self = this;
-
-        each(fields, function (f) {
-            self.put(angular.copy(f));
-        });
-
-        return self;
-    };
-
-    ComplexValue.prototype.copyFrom = function (originComplexValue, field) {
-        var self = this;
-        var fieldMap = originComplexValue.fieldMap || (originComplexValue.fieldMap = {});
-
-        each(field.fields, function (childField) {
-
-            var mapItem = fieldMap[childField.id];
-
-            if (!mapItem) {
-                // 没有, 创建新的进行字段补全
-                // 否则画面上显示的都不是全部的字段
-                mapItem = angular.copy(childField);
-            } else {
-                // 如果已经存在, 只要补全属性就可以了
-                // 这里没有使用 angular.copy 完整的 field 来覆盖 complexValues 内的 field。
-                // 是为了减少可能存在的影响。
-                // 只选择把后续需要的属性进行了赋值(引用)
-                mapItem.rules = childField.rules;
-                mapItem.name = childField.name;
-                mapItem.options = childField.options;
-                mapItem.fieldValueType = childField.fieldValueType;
-            }
-
-            self.put(mapItem);
-        });
-
-        return self;
-    };
 
     /**
      * @class 依赖型规则
@@ -714,20 +581,6 @@ define([
         });
 
         return (forceFail ? false : result);
-    };
-
-    /**
-     * 根据依赖结果返回正则值
-     */
-    DependentRule.prototype.getRegex = function () {
-        return this.checked() ? this.value : null;
-    };
-
-    /**
-     * 根据依赖结果返回 maxlength 或 minlength 的 length 值
-     */
-    DependentRule.prototype.getLength = function () {
-        return this.checked() ? this.value : null;
     };
 
     function FieldRepeater(fieldList, schema, parentScope, targetElement, $compile) {
@@ -901,13 +754,12 @@ define([
                 controller.$scope = $scope;
 
                 $element = controller.$element;
-                formController = controller.formController;
+                //formController = controller.formController;
                 showName = controller.showName;
 
                 field = controller.field;
 
                 container = $element;
-                hasValidate = !!formController && hasValidateRule(field);
 
                 rules = getRules(field);
 
@@ -924,12 +776,6 @@ define([
                 innerElement = angular.element('<d-container>');
                 container.append(innerElement);
 
-                // 根据需要创建 vo-message
-                if (hasValidate && isSimple) {
-                    var formName = formController.$name;
-                    var voMessage = angular.element('<vo-message target="' + formName + '.' + field.$name + '"></vo-message>');
-                    container.append(voMessage);
-                }
 
                 bindDefaultValueTip(container, field);
                 bindTipRule(container, rules);
@@ -972,15 +818,11 @@ define([
 
             return {
                 restrict: 'E',
-                require: ['^^?form'],
                 scope: true,
                 controllerAs: 'schemaFieldController',
-                link: function ($scope, $element, $attrs, requiredControllers) {
+                link: function ($scope, $element, $attrs) {
 
                     var controller = $scope.schemaFieldController;
-
-                    // 保存 formController, 用于在后面检查, 是否需要渲染 vo-message 包括一系列的 form 验证
-                    controller.formController = requiredControllers[0];
 
                     if (!$attrs.field) {
                         $element.text('请提供 field 属性。');
@@ -1071,8 +913,7 @@ define([
                         case FIELD_TYPES.INPUT:
                             (function createInputElements() {
 
-                                var regexRule = rules.regexRule,
-                                    valueTypeRule = rules.valueTypeRule,
+                                var valueTypeRule = rules.valueTypeRule,
                                     requiredRule = rules.requiredRule,
                                     readOnlyRule = rules.readOnlyRule,
                                     type = getInputType(valueTypeRule),
@@ -1092,23 +933,6 @@ define([
 
                                 bindBoolRule(innerElement, readOnlyRule, 'readOnlyRule', 'readonly');
                                 bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
-
-                                bindInputLengthRule(innerElement, rules);
-
-                                // 处理正则规则
-                                if (regexRule) {
-
-                                    if (regexRule instanceof DependentRule) {
-                                        // 如果是依赖类型
-                                        // 则如果需要, 则赋值正则, 否则为空。为空时将总是验证通过(即不验证)
-                                        innerElement.attr('ng-pattern', 'rules.regexRule.getRegex()');
-
-                                    } else if (regexRule.value !== 'yyyy-MM-dd') {
-                                        // 如果是日期格式验证就不需要了
-                                        // type=date 时 angular 会验证的
-                                        innerElement.attr('pattern', regexRule.value);
-                                    }
-                                }
 
                                 innerElement.attr('title', field.name || field.id);
 
@@ -1147,9 +971,6 @@ define([
                                     innerElement.attr('uib-datepicker-popup', '');
                                     innerElement.attr('is-open', '$opened');
 
-                                    if (readOnlyRule instanceof DependentRule) {
-                                        inputGroupBtn.attr('ng-if', '!rules.readOnlyRule.checked()')
-                                    }
 
                                     inputGroup.append(innerElement);
                                     inputGroup.append(inputGroupBtn);
@@ -1189,7 +1010,7 @@ define([
 
                                 if (!requiredRule) {
                                     // 非必填, 就创建空选项
-                                    // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
+                                    // 但是并不能直接修改 field 上的 options, 否则会导致后端崩溃
                                     // 所以要克隆新的出来使用
                                     options = options.map(function (option) {
                                         var newOption = {};
@@ -1279,16 +1100,6 @@ define([
 
                                     checkbox.attr('ng-change', 'update(' + index + ')');
 
-                                    // checkbox 的必填比较特殊
-                                    if (requiredRule) {
-                                        if (requiredRule instanceof DependentRule) {
-                                            checkbox.attr('ng-required', 'rules.requiredRule.checked() && !field.values.length');
-                                        } else {
-                                            checkbox.attr('ng-required', '!field.values.length');
-                                        }
-                                    }
-
-                                    bindBoolRule(checkbox, rules.readOnlyRule, 'readOnlyRule', 'readonly');
 
                                     // 如果有原值, 就使用原值
                                     // 如果没有, 看下是不是必填字段
@@ -1342,12 +1153,12 @@ define([
                             break;
                     }
 
-                    if (innerElement instanceof Array)
+                    if (innerElement instanceof Array){
                         each(innerElement, function (childElement) {
                             element.append(childElement);
                             element.append(toolbox);
                         });
-                    else{
+                    }else{
                         element.append(innerElement);
                         element.append(toolbox);
                     }
@@ -1385,13 +1196,6 @@ define([
 
                 repeater.renderList();
 
-                // 这里偷个懒, 直接在 scope 找
-                // schemaFieldController.canAdd
-                if (isMulti && $scope.schemaFieldController.canAdd) {
-                    var toolbox = angular.element('<d-toolbox>');
-                    $element.append(toolbox);
-                    $compile(toolbox)($scope);
-                }
             };
 
             return {
@@ -1417,14 +1221,28 @@ define([
             };
         })
 
-        .directive('dToolbox', function () {
+        .directive('dToolbox', function ($compile) {
             return {
                 restrict: 'E',
                 require: ['^^dField'],
-                template: '<button class="btn btn-schema btn-info" ng-click="openPropertyMapping()" ng-controller="popupCtrl">'
-                          +'<i class="fa fa-link"></i>&nbsp;<span translate="TXT_MAPPING_ATTRIBUTE"></span>'
-                          +'</button>',
-                scope: false
+                scope: true,
+                link: function ($scope, $element, $attrs, requiredControllers) {
+
+                    var schemaFieldController = requiredControllers[0];
+
+                    $scope.$watch("ctrl.searchInfo", function (searchInfo) {
+                        console.log(searchInfo);
+                        _.extend(schemaFieldController.getField(),searchInfo);
+                    });
+
+                    $scope.fieldMapping = schemaFieldController.getField();
+
+                    var button = angular.element('<button class="btn btn-schema btn-info" ng-click="openPropertyMapping(fieldMapping)" ng-controller="popupCtrl">'
+                                                +'<i class="fa fa-link"></i>&nbsp;<span translate="TXT_MAPPING_ATTRIBUTE"></span>'
+                                                +'</button>');
+                    $element.append(button);
+                    $compile($element.contents())($scope);
+                }
             };
         })
 
