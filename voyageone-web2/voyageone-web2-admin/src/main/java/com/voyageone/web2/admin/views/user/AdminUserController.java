@@ -24,18 +24,29 @@ import java.util.List;
 @RequestMapping(value = AdminUrlConstants.User.Self.ROOT, method = RequestMethod.POST)
 public class AdminUserController extends AdminController {
 
+
     @Autowired
     AdminUserService adminUserService;
 
     @RequestMapping(AdminUrlConstants.User.Self.SEARCH_USER)
     public AjaxResponse searchUser(@RequestBody UserFormBean form) {
-        // 验证参数
-        Preconditions.checkNotNull(form.getPageNum());
-        Preconditions.checkNotNull(form.getPageSize());
+        int pageNum = 1;
+        int pageSize = DEFAULT_PAGE_SIZE;
+
+        if(form.getPageNum() != null  && form.getPageNum() > 1)
+        {
+            pageNum = form.getPageNum();
+        }
+
+        if(form.getPageSize() != null  && form.getPageNum() > 0)
+        {
+            pageSize = form.getPageSize();
+        }
+
         // 检索用户信息
 
         PageModel<AdminUserBean> userPage = adminUserService.searchUser(form.getUserAccount(), form.getActive(),
-                form.getOrgId(),form.getRoleId(),  form.getChannelId(), form.getStoreId(),form.getPageNum(), form.getPageSize() );
+                form.getOrgId(),form.getRoleId(),  form.getChannelId(), form.getStoreId(),pageNum, pageSize );
 
         return success(userPage);
     }
@@ -43,7 +54,7 @@ public class AdminUserController extends AdminController {
     @RequestMapping(AdminUrlConstants.User.Self.INIT)
     public AjaxResponse init(@RequestBody UserFormBean form)  {
         // 检索用户信息
-        PageModel<AdminUserBean> userPage = adminUserService.searchUser(null, null, null, null, null,null, form.getPageNum(), form.getPageSize());
+        PageModel<AdminUserBean> userPage = adminUserService.searchUser(null, null, null, null, null,null, 1, DEFAULT_PAGE_SIZE);
 
         return success(userPage);
     }

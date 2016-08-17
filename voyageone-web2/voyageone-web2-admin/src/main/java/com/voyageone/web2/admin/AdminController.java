@@ -9,6 +9,8 @@ import com.voyageone.web2.core.bean.UserSessionBean;
  */
 public class AdminController extends BaseController {
 
+	protected  static final  Integer DEFAULT_PAGE_SIZE = 10;
+
 	/**
 	 * 目前没有权限验证，此方法只作测试用。
 	 */

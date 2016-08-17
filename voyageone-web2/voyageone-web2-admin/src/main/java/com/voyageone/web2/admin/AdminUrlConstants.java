@@ -209,6 +209,23 @@ public interface AdminUrlConstants {
 			String GET_ALL_ORG = "getAllOrg";
 		}
 
+		/** 资源信息 */
+		interface Res {
+
+			String ROOT = "/admin/user/res";
+
+			String SEARCH_RES = "searchRes";
+
+			String INIT = "init";
+
+			String ADD_RES = "addRes";
+
+			String UPDATE_RES = "updateRes";
+
+			String DELETE_Res = "deleteRes";
+
+		}
+
 
 
 	}
