@@ -88,6 +88,23 @@ define([
             });
         };
 
+        AttributeDetailController.prototype.save = function () {
+
+            var self = this,
+                fields = self.fields,
+                searchInfo = self.searchInfo,
+                platformMappingService = self.platformMappingService;
+
+            platformMappingService.save({
+                cartId: +searchInfo.cartId,
+                categoryType: +searchInfo.categoryType,
+                categoryPath: searchInfo.categoryPath,
+                schema: fields
+            }).then(function (resp) {
+                console.log(resp);
+            });
+        };
+
         return AttributeDetailController;
     })())
 });

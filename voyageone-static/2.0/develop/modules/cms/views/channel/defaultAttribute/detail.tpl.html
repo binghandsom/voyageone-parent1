@@ -56,12 +56,12 @@
                 <hr ng-if="ctrl.fields.item && ctrl.fields.product">
                 <default-attr data="ctrl.fields.product"></default-attr>
             </div>
-            <div class="col-md-2">
-                <div class="panel panel-default nav" drag>
+            <div class="col-md-2" ng-if="ctrl.fields">
+                <div class="panel panel-default nav">
                     <div class="panel-body text-center">
                         <div class="btn-group-vertical">
                             <a href="#/channel/default_attribute_list" class="btn btn-default"><i class="fa fa-reply"></i>&nbsp;&nbsp;返回</a>
-                            <a href="javascript:void(0)" class="btn btn-vo" style="margin-top: 10px"><i class="fa fa-save"></i>&nbsp;&nbsp;保存</a>
+                            <a href="javascript:void(0)" ng-click="ctrl.save()" class="btn btn-vo" style="margin-top: 10px"><i class="fa fa-save"></i>&nbsp;&nbsp;保存</a>
                         </div>
                     </div>
                 </div>
