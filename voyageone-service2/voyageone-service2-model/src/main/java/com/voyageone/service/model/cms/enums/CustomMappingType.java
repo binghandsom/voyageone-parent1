@@ -91,6 +91,8 @@ public enum CustomMappingType {
                 return IMAGE;
             case 14:
                 return FREIGHT;
+            case 15:
+                return CSPU;
             // added by morse.lu 2016/06/29 end
             default:
                 return null;
