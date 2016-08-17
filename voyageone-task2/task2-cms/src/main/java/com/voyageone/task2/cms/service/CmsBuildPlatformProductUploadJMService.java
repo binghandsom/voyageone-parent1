@@ -1264,10 +1264,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     }
 
     /**
+     * 取得商品自带条码
      * 在barcode的后面拼接vo+channelId+skuCode的前50位字符
-     * @param barcode
-     * @param channelId
-     * @return
+     *
+     * @param barcode String barCode
+     * @param channelId String 渠道id
+     * @param skuCode String skuCode
+     * @return String 商品自带条码
      */
     private String addVoToBarcode(String barcode, String channelId, String skuCode) {
         if (StringUtils.isEmpty(barcode))
