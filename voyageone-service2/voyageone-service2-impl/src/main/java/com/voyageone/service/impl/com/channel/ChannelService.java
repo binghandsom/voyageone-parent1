@@ -157,7 +157,7 @@ public class ChannelService extends BaseService {
 			pageModel.setCount(channelDaoExt.selectChannelConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
-		// 查询渠道信息
+		// 查询渠道配置信息
 		pageModel.setResult(channelDaoExt.selectChanneConfigByPage(params));
 		
 		return pageModel;

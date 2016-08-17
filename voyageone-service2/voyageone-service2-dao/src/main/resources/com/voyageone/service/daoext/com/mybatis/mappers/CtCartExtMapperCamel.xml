@@ -5,7 +5,10 @@
 	<resultMap id="cartModeMap" type="com.voyageone.service.model.com.CtCartModel" />
 	
 	<sql id="selectCartFilter">
-		<where >
+		<where>
+            <if test="cartId != null" >
+                and cast(cart_id as char) like concat('%', #{cartId}, '%')
+            </if>
 			<if test="cartName != null and cartName != ''">
 				and (
 					name like concat('%', #{name}, '%') or short_name like concat('%', #{shortName}, '%')

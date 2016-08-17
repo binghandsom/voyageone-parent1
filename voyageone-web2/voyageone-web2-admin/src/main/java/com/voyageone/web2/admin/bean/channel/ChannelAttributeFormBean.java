@@ -12,7 +12,7 @@ public class ChannelAttributeFormBean extends AdminFormBean {
 	
 	private Integer typeId;
 	
-	private Integer channelId;
+	private String channelId;
 	
 	private String value;
 	
@@ -44,11 +44,11 @@ public class ChannelAttributeFormBean extends AdminFormBean {
 		this.typeId = typeId;
 	}
 
-	public Integer getChannelId() {
+	public String getChannelId() {
 		return channelId;
 	}
 
-	public void setChannelId(Integer channelId) {
+	public void setChannelId(String channelId) {
 		this.channelId = channelId;
 	}
 
