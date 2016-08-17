@@ -110,7 +110,7 @@ define(function () {
                     "hsCodeChg": "hsCodeChg",
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
-                    "getPlatformCategories":"getPlatformCategories"
+                    getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL}
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -395,7 +395,7 @@ define(function () {
                     "rePublistPrice": "rePublishPrice",
                     "getHistory": "getHistory"
                 },
-                "$valueChannelService":{
+                "$valueChannelService": {
                     "root": "/cms/system/valueChannel/",
                     "addHsCodes": "addHsCode"
                 }
@@ -565,13 +565,14 @@ define(function () {
                 "getCartList": "getCartList",
                 "getPlatformCategoryList": {url: "getPlatformCategoryList", cache: CACHE.LOCAL},
                 "setUpdateFlg": "setUpdateFlg"
+            },
+            "platformMappingService": {
+                "root": "/cms/platform/mapping/",
+                "page": "page",
+                "get": "get",
+                "save": "save",
+                "delete": "delete"
             }
-/*            "defaultAttrService":{
-                "root":"product/fields/map/",
-                "list":"list",
-                "get":"get",
-                "save":"save"
-            }*/
         }
     };
 });
