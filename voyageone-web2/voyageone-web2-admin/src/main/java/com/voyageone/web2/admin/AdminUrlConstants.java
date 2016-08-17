@@ -155,7 +155,7 @@ public interface AdminUrlConstants {
 
 			String ROOT = "/admin/user/self";
 
-			String SEARCH_USER_BY_PAGE = "searchUserByPage";
+			String SEARCH_USER = "searchUser";
 
 			String INIT = "init";
 
@@ -167,6 +167,49 @@ public interface AdminUrlConstants {
 
 			String SHOW_AUTH = "showAuth";
 		}
+
+		/** 角色信息 */
+		interface Role {
+
+			String ROOT = "/admin/user/role";
+
+			String SEARCH_ROLE = "searchRole";
+
+			String INIT = "init";
+
+			String ADD_ROLE = "addRole";
+
+			String UPDATE_ROLE = "updateRole";
+
+			String DELETE_ROLE = "deleteRole";
+
+			String SET_AUTH = "setAuth";
+
+			String ADD_AUTH = "addAuth";
+
+			String REMOVE_AUTH = "removeAuth";
+		}
+
+		/** 组织信息 */
+		interface Org {
+
+			String ROOT = "/admin/user/org";
+
+			String SEARCH_ORG = "searchOrg";
+
+			String INIT = "init";
+
+			String ADD_ORG = "addOrg";
+
+			String UPDATE_ORG = "updateOrg";
+
+			String DELETE_ORG = "deleteOrg";
+
+			//for dropdown list options
+			String GET_ALL_ORG = "getAllOrg";
+		}
+
+
 
 	}
 
