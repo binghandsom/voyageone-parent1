@@ -355,7 +355,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         return fields;
     }
 
-    public Map<String, Object> copyPropertyFromMainProduct(String channelId, Long prodId, Integer cartId) {
+    public Map<String, Object> copyPropertyFromMainProduct(String channelId, Long prodId, Integer cartId, String language) {
         CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getPlatform(cartId);
 
@@ -382,7 +382,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             }
         });
 
-        platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId));
+        platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, language));
 
         return platform;
     }
