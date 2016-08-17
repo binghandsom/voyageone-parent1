@@ -136,6 +136,7 @@ define([
                 var self = this;
                 _.forEach(self.cfgList, function (cfgInfo) {
                     if (cfgInfo.mainKey == self.configSelList.selList[0].id) {
+                        _.extend(cfgInfo, {'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(cfgInfo).then(function () {
                             self.search(1);
                         });
@@ -154,6 +155,12 @@ define([
                     switch (self.searchInfo.configType) {
                         case 'Channel':
                             self.channelService.deleteChannelConfig(delList).then(function (res) {
+                                if (res.data.success == false)self.confirm(res.data.message);
+                                self.search();
+                            });
+                            break;
+                        case 'Store':
+                            self.storeService.deleteStoreConfig(delList).then(function (res) {
                                 if (res.data.success == false)self.confirm(res.data.message);
                                 self.search();
                             });
