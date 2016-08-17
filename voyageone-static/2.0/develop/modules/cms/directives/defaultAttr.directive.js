@@ -4,7 +4,6 @@ define([
 
     var FIELD_TYPES = {
         "INPUT": "INPUT",
-        "MULTI_INPUT": "MULTIINPUT",
         "SINGLE_CHECK": "SINGLECHECK",
         "MULTI_CHECK": "MULTICHECK",
         "COMPLEX": "COMPLEX",
@@ -172,11 +171,11 @@ define([
             rules = {};
         }
 
-        // 没啥可用的信息就算了
+        // 没啥可用的信息
         if (!field || !field.rules)
             return rules;
 
-        // 没有规则好处理, 果断算了
+        // 没有规则好处理
         if (!field.rules.length)
             return rules;
 
