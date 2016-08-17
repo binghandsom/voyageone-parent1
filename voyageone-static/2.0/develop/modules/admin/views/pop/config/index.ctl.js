@@ -67,7 +67,7 @@ define([
                     case 'Store':
                         var selectKey = function (configInfo) {
                             return {
-                                "id": configInfo.storeId,
+                                "id": configInfo.mainKey,
                                 "code": configInfo.storeName,
                                 "storeId": configInfo.storeId,
                                 "cfgName": configInfo.cfgName,
@@ -116,7 +116,7 @@ define([
                         self.list = _.filter(self.channelList, function (listItem) {
                             return listItem.orderChannelId == item.orderChannelId;
                         });
-                        _.extend(item, {'channelName': self.list[0].name, 'configType': '渠道'});
+                        _.extend(item, {'channelName': self.list[0].name, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search();
                         });
@@ -125,7 +125,7 @@ define([
                         self.list = _.filter(self.storeList, function (listItem) {
                             return listItem.storeId == item.storeId;
                         });
-                        _.extend(item, {'shortName': self.list[0].storeName, 'configType': '仓库'});
+                        _.extend(item, {'shortName': self.list[0].storeName, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search();
                         });
