@@ -242,15 +242,15 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                     throw new BusinessException("价格不能为空");
                 }
                 Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
-                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (newPriceSale * breakThreshold)).compareTo(comPrice.get(sku)) < 0) {
-                    return "4000094";
+                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (newPriceSale / (2-breakThreshold))).compareTo(comPrice.get(sku)) < 0) {
+                    throw new BusinessException("4000094",((Double)Math.ceil(comPrice.get(sku) * (2 - breakThreshold))).intValue());
                 }
 
                 if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
-                    return "4000091";
+                    throw new BusinessException("4000091");
                 }
                 if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (comPrice.get(sku) * breakThreshold)).compareTo(newPriceSale) < 0) {
-                    return "4000092";
+                    throw new BusinessException("4000092");
                 }
             }
         }
