@@ -27,6 +27,12 @@ define([
             "controllerUrl": "modules/admin/views/pop/createEdit/index.ctl",
             "controller": 'CreateEditController as ctrl',
             "size": 'md'
+        },
+        "cartAdd": {
+            "templateUrl": "views/pop/cartAdd/index.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/cartAdd/index.ctl",
+            "controller": 'CartAddController as ctrl',
+            "size": 'md'
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -63,6 +69,10 @@ define([
          */
         $scope.openCreateEdit = function openCreateEdit(context) {
             return openModal(popActions.createEdit, context);
+        };
+
+        $scope.openCartAdd = function openCartAdd(context) {
+            return openModal(popActions.cartAdd, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {

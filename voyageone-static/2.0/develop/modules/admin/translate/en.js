@@ -44,9 +44,12 @@ define(function () {
         "TXT_CART_MANAGE": "Cart管理",
         "TXT_CART_INFO_MANAGE": "Cart信息管理",
         "TXT_CART_ID":"Cart ID",
+        "TXT_NAME_CART":"Cart名",
         "TXT_CART_NAME":"Cart名（缩写）",
         "TXT_CART_SHORT_NAME":"Cart名缩写",
         "TXT_CART_TYPE":"Cart类型",
+        "TXT_CART_DESC":"Cart描述",
+        "TXT_PLATFORM_NAME":"平台名",
 
 
         /**按钮组*/
@@ -72,6 +75,7 @@ define(function () {
         "TXT_CONFIRM":"确认",
         "TXT_POP_ADD":"添加",
         "TXT_CONFIRM_DELETE_MSG":"您确定要删除选定的渠道信息吗?",
+        "TXT_CONFIRM_INACTIVE_MSG":"您确定要禁用当前选定的信息吗?",
         "TXT_MSG_NO_ROWS_SELECT": "请至少选择一条数据.",
 
         /**警告框*/
@@ -79,6 +83,7 @@ define(function () {
         "TXT_WARNING": "警告",
         "TXT_COMPLETE_INFO": "请完善当前页面的输入内容",
 
+        /**输入验证消息*/
         "INVALID_EMAIL": "请输入正确的E-Mail地址",
         "INVALID_URL": "请输入正确的URL地址",
         "INVALID_DATE": "请输入正确的日期",
@@ -95,5 +100,6 @@ define(function () {
         "INVALID_MAX": "请输入的数据不能大于:{{value}}",
         "INVALID_MIN": "请输入的数据不能小于:{{value}}",
         "INVALID_PATTERN": "请输入的数据必须满足规则:{{value}}",
+
     };
 });
