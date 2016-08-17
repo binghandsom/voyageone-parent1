@@ -26,7 +26,7 @@ public class AdminUserServiceTest {
     @Test
     public void testSearchUserByPage() throws Exception {
 
-        PageModel<AdminUserBean> result =  adminUserService.searchUserByPage(null, null, null, null, null,null, 1, 1);
+        PageModel<AdminUserBean> result =  adminUserService.searchUserByPage(null, null, null, null, null,null, null, null);
 
         System.out.println(JacksonUtil.bean2Json(result));
 
