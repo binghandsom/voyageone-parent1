@@ -2,6 +2,7 @@ package com.voyageone.service.dao.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
@@ -22,9 +23,9 @@ public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMa
 
     public CmsBtPlatformMappingModel selectCommon(int cartId, String channelId) {
 
-        return selectOneWithQuery(new JongoQuery(
-                new Criteria("cartId").is(cartId)
-                        .and("categoryType").is(1)), channelId);
+        Criteria criteria = new Criteria("categoryType").is(1).and("cartId").is(cartId);
+
+        return selectOneWithQuery(new JongoQuery(criteria), channelId);
     }
 
     public CmsBtPlatformMappingModel selectOne(int cartId, int categoryType, String categoryPath, String channelId) {
@@ -45,19 +46,35 @@ public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMa
         return countByQuery(query.getQuery(), fieldMapsModel.getChannelId()) > 0;
     }
 
-    public List<CmsBtPlatformMappingModel> selectPage(String channelId, int cartId, int offset, int limit) {
-        return select(new JongoQuery(new Criteria("cartId").is(cartId)).setSkip(offset).setLimit(limit), channelId);
+    public List<CmsBtPlatformMappingModel> selectPage(String channelId, Integer categoryType, Integer cartId, String categoryPath, int offset, int limit) {
+
+        Criteria criteria = new Criteria("channelId").is(channelId);
+
+        if (categoryType != null)
+            criteria.and("categoryType").is(categoryType);
+
+        if (cartId != null)
+            criteria.and("cartId").is(cartId);
+
+        if (!StringUtils.isEmpty(categoryPath))
+            criteria.and("categoryPath").is(categoryPath);
+
+        return select(new JongoQuery(criteria).setSkip(offset).setLimit(limit), channelId);
     }
 
-    public long count(String channelId, int cartId) {
-        return countByQuery(new JongoQuery(new Criteria("cartId").is(cartId)).getQuery(), channelId);
-    }
+    public long count(String channelId, Integer categoryType, Integer cartId, String categoryPath) {
 
-    public List<CmsBtPlatformMappingModel> selectPage(String channelId, int cartId, String categoryPath, int offset, int limit) {
-        return select(new JongoQuery(new Criteria("cartId").is(cartId).and("categoryPath").regex(categoryPath)).setSkip(offset).setLimit(limit), channelId);
-    }
+        Criteria criteria = new Criteria("channelId").is(channelId);
 
-    public long count(String channelId, int cartId, String categoryPath) {
-        return countByQuery(new JongoQuery(new Criteria("cartId").is(cartId).and("categoryPath").regex(categoryPath)).getQuery(), channelId);
+        if (categoryType != null)
+            criteria.and("categoryType").is(categoryType);
+
+        if (cartId != null)
+            criteria.and("cartId").is(cartId);
+
+        if (!StringUtils.isEmpty(categoryPath))
+            criteria.and("categoryPath").is(categoryPath);
+
+        return countByQuery(new JongoQuery(criteria).getQuery(), channelId);
     }
 }

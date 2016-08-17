@@ -3,7 +3,6 @@ package com.voyageone.service.impl.cms.tools;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformMappingDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -92,23 +91,12 @@ public class PlatformMappingService extends BaseService {
         return valueMap;
     }
 
-    public List<CmsBtPlatformMappingModel> getPage(ChannelConfigEnums.Channel channel, Integer cartId, String categoryPath, int page, int size) {
-
-        return StringUtils.isEmpty(categoryPath)
-                ? platformMappingDao.selectPage(channel.getId(), cartId, page * size, size)
-                : platformMappingDao.selectPage(channel.getId(), cartId, categoryPath, page * size, size);
+    public List<CmsBtPlatformMappingModel> getPage(ChannelConfigEnums.Channel channel, Integer categoryType, Integer cartId, String categoryPath, int page, int size) {
+        return platformMappingDao.selectPage(channel.getId(), categoryType, cartId, categoryPath, page * size, size);
     }
 
-    public long getCount(ChannelConfigEnums.Channel channel, Integer cartId, String categoryPath) {
-
-        return StringUtils.isEmpty(categoryPath)
-                ? platformMappingDao.count(channel.getId(), cartId)
-                : platformMappingDao.count(channel.getId(), cartId, categoryPath);
-    }
-
-    public CmsBtPlatformMappingModel getCommon(ChannelConfigEnums.Channel channel, Integer cartId) {
-
-        return platformMappingDao.selectCommon(cartId, channel.getId());
+    public long getCount(ChannelConfigEnums.Channel channel, Integer categoryType, Integer cartId, String categoryPath) {
+        return platformMappingDao.count(channel.getId(), categoryType, cartId, categoryPath);
     }
 
     public boolean delete(CmsBtPlatformMappingModel platformMappingModel) {

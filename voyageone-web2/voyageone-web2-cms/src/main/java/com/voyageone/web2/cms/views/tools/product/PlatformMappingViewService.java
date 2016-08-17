@@ -58,35 +58,18 @@ class PlatformMappingViewService extends BaseAppService {
 
     public Map<String, Object> page(Integer cartId, Integer categoryType, String categoryPath, int page, int size, UserSessionBean userSessionBean) {
 
-        Assert.notNull(cartId).elseThrowDefaultWithTitle("cartId");
-        Assert.notNull(categoryType).elseThrowDefaultWithTitle("categoryType");
-
         ChannelConfigEnums.Channel channel = userSessionBean.getSelChannel();
 
         Map<String, Object> result = new HashMap<>();
 
-        List<CmsBtPlatformMappingModel> list;
+        if (categoryType != null
+                && categoryType != PlatformMappingService.CATEGORY_TYPE_COMMON
+                && categoryType != PlatformMappingService.CATEGORY_TYPE_SPECIFIC)
+            categoryType = null;
 
-        long total;
+        List<CmsBtPlatformMappingModel> list = platformMappingService.getPage(channel, categoryType, cartId, categoryPath, page, size);
 
-        if (categoryType == 1) {
-
-            list = new ArrayList<>(1);
-
-            CmsBtPlatformMappingModel common = platformMappingService.getCommon(channel, cartId);
-
-            if (common == null) {
-                total = 0;
-            } else {
-                total = 1;
-                list.add(common);
-            }
-        } else {
-
-            list = platformMappingService.getPage(channel, cartId, categoryPath, page, size);
-
-            total = platformMappingService.getCount(channel, cartId, categoryPath);
-        }
+        long total = platformMappingService.getCount(channel, categoryType, cartId, categoryPath);
 
         result.put("list", list);
 
