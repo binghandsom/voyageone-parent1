@@ -9,16 +9,15 @@ package com.voyageone.service.dao.com;
 
 import com.voyageone.service.model.com.ComMtTypeModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ComMtTypeDao {
-    List<ComMtTypeModel> selectList(Map<String, Object> map);
+    List<ComMtTypeModel> selectList(Object map);
 
-    ComMtTypeModel selectOne(Map<String, Object> map);
+    ComMtTypeModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     ComMtTypeModel select(Integer id);
 

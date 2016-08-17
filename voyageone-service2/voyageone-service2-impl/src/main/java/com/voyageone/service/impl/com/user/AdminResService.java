@@ -2,6 +2,7 @@ package com.voyageone.service.impl.com.user;
 
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.security.bean.ComResourceBean;
 import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.model.ComResourceModel;
@@ -26,7 +27,10 @@ public class AdminResService extends BaseService {
     public List<ComResourceBean> searchRes(String app)
     {
         Map<String, Object> map = new HashMap<>();
-        map.put("application", app);
+        if(!StringUtils.isNullOrBlank2(app))
+        {
+            map.put("application", app);
+        }
 
         map = MySqlPageHelper.build(map).addSort("res_type", Order.Direction.ASC).addSort("weight", Order.Direction.ASC).toMap();
 
@@ -39,7 +43,6 @@ public class AdminResService extends BaseService {
             BeanUtils.copyProperties(model, bean);
             beanList.add(bean);
         }
-
         return convert2Tree(beanList);
     }
 
