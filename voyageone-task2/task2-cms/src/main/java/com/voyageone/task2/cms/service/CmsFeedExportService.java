@@ -57,17 +57,28 @@ public class CmsFeedExportService extends BaseMQCmsService {
         messageMap.remove("created");
         messageMap.remove("modified");
         BeanUtils.populate(cmsBtExportTaskModel, messageMap);
-        Map<String, Object> searchValue = JacksonUtil.jsonToMap(cmsBtExportTaskModel.getParameter());
-        Long cnt = feedInfoService.getCnt(cmsBtExportTaskModel.getChannelId(), searchValue);
-        $info("导出的产品数"+cnt);
+        JongoQuery queryObject = new JongoQuery();
+        Long cnt = 0L;
+        if(JacksonUtil.isArray(cmsBtExportTaskModel.getParameter())){
+            List<Map<String,Object>> codes = JacksonUtil.jsonToMapList(cmsBtExportTaskModel.getParameter());
+            cnt = Long.valueOf(codes.size());
+            List<String> codeList = codes.stream().map(stringObjectMap -> stringObjectMap.get("code").toString()).collect(Collectors.toList());
+            queryObject.setQuery("{\"code\":{$in:#}}");
+            queryObject.addParameters(codeList);
+        }else{
+            Map<String, Object> searchValue = JacksonUtil.jsonToMap(cmsBtExportTaskModel.getParameter());
+            cnt = feedInfoService.getCnt(cmsBtExportTaskModel.getChannelId(), searchValue);
+            queryObject.setQuery(feedInfoService.getSearchQuery(searchValue));
+        }
+
+        $info("导出的产品数" + cnt);
         List<String> files = new ArrayList<>();
 
         String fileName = String.format("%s-%s.xlsx", cmsBtExportTaskModel.getChannelId(), DateTimeUtil.getLocalTime(8, "yyyyMMddHHmmss"));
         files.add(fileName);
 
         long pageCnt = cnt / pageSize + (cnt % pageSize == 0 ? 0 : 1);
-        JongoQuery queryObject = new JongoQuery();
-        queryObject.setQuery(feedInfoService.getSearchQuery(searchValue));
+
         int rowIndexCode = 2;
         int rowIndexSku = 2;
         try {

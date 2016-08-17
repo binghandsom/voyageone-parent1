@@ -193,7 +193,12 @@ define([
         };
 
         function doExport() {
-            var data = {"parameter": JSON.stringify($scope.vm.searchInfo)}
+            var data;
+            if ($scope.vm.feedSelList.selList && $scope.vm.feedSelList.selList.length > 0){
+                data = {"parameter": JSON.stringify($scope.vm.feedSelList.selList)}
+            }else{
+                data = {"parameter": JSON.stringify($scope.vm.searchInfo)}
+            }
             $feedSearchService.doExport(data).then(function (data) {
                 $scope.vm.exportList.unshift(data.data);
                 $scope.vm.currTab.export = true;
