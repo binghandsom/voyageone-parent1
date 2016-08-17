@@ -61,7 +61,7 @@ define(function (require) {
                     self.searchInfo.categoryPath = context.selected.catPath;
                     self.searchInfo.categoryId = context.selected.catId;
                 });
-            })
+            });
         };
 
         DefaultAttributeController.prototype.clear = function () {

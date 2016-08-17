@@ -11,65 +11,78 @@ define([
 ], function (cms) {
     cms.controller('attributeDetailController', (function () {
 
-        function AttributeDetailController($translate, $routeParams,$q,popups, menuService,productDetailService,platformMappingService) {
+        function AttributeDetailController($routeParams, popups, menuService, productDetailService, platformMappingService) {
 
             var self = this;
 
-            self.$translate = $translate;
-            self.q = $q;
+            self.searchInfo = angular.fromJson($routeParams.upEntity);
+
             self.popups = popups;
-            self.upEntity = angular.fromJson($routeParams.upEntity);
-            self.menuService = menuService;
             self.productDetailService = productDetailService;
             self.platformMappingService = platformMappingService;
-            self.searchInfo = {
-                cartId: self.upEntity.cartId,
-                categoryType: self.upEntity.categoryType,
-                categoryId: self.upEntity.categoryId,
-                categoryPath: self.upEntity.categoryPath
-            };
+
+            menuService.getPlatformType().then(function (resp) {
+                self.platformTypes = _.filter(resp, function (cart) {
+                    return cart.value != 0 && cart.value != 1
+                });
+
+                var searchInfo = self.searchInfo;
+
+                if (!searchInfo.cartId)
+                    searchInfo.cartId = self.platformTypes[0].value;
+
+                if (searchInfo.categoryType != 1 && searchInfo.categoryType != 2)
+                    searchInfo.categoryType = 1;
+
+                self.tryGet();
+            });
         }
 
-        AttributeDetailController.prototype = {
-            init: function () {
-                var self = this;
-                self.menuService.getPlatformType().then(function (resp) {
-                    self.platformTypes = _.filter(resp, function (cart) {
-                        return cart.value != 0 && cart.value != 1
-                    });
-                });
+        AttributeDetailController.prototype.tryGet = function () {
 
-                //self.searchInfo
-                self.platformMappingService.get({
-                    cartId: 23,
-                    categoryType: 2,
-                    categoryPath:"手表>智能腕表"
-                }).then(function(res){
-                    self.fields = res.data.schema;
-                });
-            },
-            jdCategoryMapping: function () {
-                var self = this;
-                self.productDetailService.getPlatformCategories({cartId: self.searchInfo.cartId})
-                    .then(function (res) {
-                        return self.q(function (resolve, reject) {
-                            if (!res.data || !res.data.length) {
-                                self.notify.danger("数据还未准备完毕");
-                                reject("数据还未准备完毕");
-                            } else {
-                                resolve(self.popups.popupNewCategory({
-                                    from: "",
-                                    categories: res.data,
-                                    divType: ">"
-                                }));
-                            }
-                        });
-                    }).then(function (context) {
-                        self.searchInfo.categoryPath = context.selected.catPath;
-                        self.searchInfo.categoryId = context.selected.catId;
-                });
-            }
+            var self = this,
+                searchInfo = self.searchInfo;
 
+            if (searchInfo.categoryType == 2 && !searchInfo.categoryPath)
+                return;
+
+            self.$get();
+        };
+
+        AttributeDetailController.prototype.$get = function () {
+
+            var self = this,
+                platformMappingService = self.platformMappingService;
+
+            platformMappingService.get(self.searchInfo).then(function (res) {
+                self.fields = res.data.schema;
+            });
+        };
+
+        AttributeDetailController.prototype.openCategorySelector = function () {
+
+            var self = this,
+                productDetailService = self.productDetailService;
+
+            productDetailService.getPlatformCategories(self.searchInfo).then(function (resp) {
+
+                var categoryList = resp.data;
+
+                if (!categoryList || !categoryList.length) {
+                    self.alert("数据还未准备完毕");
+                    return;
+                }
+
+                self.popups.popupNewCategory({
+                    from: "",
+                    categories: categoryList,
+                    divType: ">"
+                }).then(function (context) {
+                    self.searchInfo.categoryPath = context.selected.catPath;
+                    self.searchInfo.categoryId = context.selected.catId;
+                    self.tryGet();
+                });
+            });
         };
 
         return AttributeDetailController;

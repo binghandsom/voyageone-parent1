@@ -7,8 +7,7 @@
                         <div class="form-group">
                             <label class="col-sm-4 control-label" translate="TXT_CART_NAME"></label>
                             <div class="col-sm-7">
-                                <select  class="form-control" ng-model="ctrl.searchInfo.cartId" ng-options="option.value as option.name for option in ctrl.platformTypes">
-                                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                <select class="form-control" ng-model="ctrl.searchInfo.cartId" ng-options="option.value as option.name for option in ctrl.platformTypes">
                                 </select>
                             </div>
                         </div>
@@ -19,24 +18,21 @@
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label" translate="TXT_PLATFORM_CATEGORY"></label>
-                                    <div class="col-sm-8">
-                                        <div class="row">
-                                            <label class="checkbox-inline c-radio">
-                                                <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType" ><span class="fa fa-check"></span> 全类目
-                                            </label>&emsp;
-                                            <label class="checkbox-inline c-radio">
-                                                <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType" ><span class="fa fa-check"></span> 选择类目
-                                            </label>
-                                        </div>
-                                    </div>
+                                    <label class="control-label" translate="TXT_PLATFORM_CATEGORY"></label>
+                                    <span>&nbsp;</span>
+                                    <label>
+                                        <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType" ng-change="ctrl.tryGet()">&nbsp;全类目
+                                    </label>&emsp;
+                                    <label>
+                                        <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType" ng-change="ctrl.tryGet()">&nbsp;选择类目
+                                    </label>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-horizontal">
                                 <div class="row">
-                                    <button class="col-sm-3 btn btn-default" ng-click="ctrl.jdCategoryMapping()" ng-disabled="!ctrl.searchInfo.cartId || ctrl.searchInfo.categoryType != '2'">
+                                    <button class="col-sm-3 btn btn-default" ng-click="ctrl.openCategorySelector()" ng-disabled="!ctrl.searchInfo.cartId || ctrl.searchInfo.categoryType != '2'">
                                         <i class="fa  fa-th-list"></i>&nbsp;<span translate="TXT_PLATFORM_CATEGORY"></span>
                                     </button>
                                     <div class="col-sm-7">
@@ -60,9 +56,9 @@
                         </div>
                         <div class="panel-body">
                             <div class="col-md-10">
-                                    <default-attr data="ctrl.fields.item"></default-attr>
-                                    <!--<schema data="ctrl.fields.product"></schema>-->
-                                </ng-form>
+                                <default-attr data="ctrl.fields.item"></default-attr>
+                                <hr ng-if="ctrl.fields.item">
+                                <default-attr data="ctrl.fields.product"></default-attr>
                             </div>
                             <div class="col-md-2">
                                 <div class="panel panel-default nav" drag>
