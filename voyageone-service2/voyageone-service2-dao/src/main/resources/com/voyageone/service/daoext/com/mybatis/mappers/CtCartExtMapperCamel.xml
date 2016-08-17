@@ -11,7 +11,7 @@
             </if>
 			<if test="cartName != null and cartName != ''">
 				and (
-					name like concat('%', #{name}, '%') or short_name like concat('%', #{shortName}, '%')
+					name like concat('%', #{cartName}, '%') or short_name like concat('%', #{cartName}, '%')
 				)
 			</if>
             <if test="description != null" >
@@ -20,7 +20,7 @@
             <if test="platformId != null" >
                 and platform_id = #{platformId}
             </if>
-            <if test="cartType != null" >
+            <if test="cartType != null and cartType != ''" >
                 and cart_type = #{cartType}
             </if>
             <if test="active != null" >

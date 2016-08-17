@@ -30,7 +30,7 @@ public interface AdminUrlConstants {
 
 			String DELETE_CHANNEL = "deleteChannel";
 
-			String SEARCH_CHANNEL_CONFIG = "searchChannelConfigByPage";
+			String SEARCH_CHANNEL_CONFIG_BY_PAGE = "searchChannelConfigByPage";
 
 			String ADD_CHANNEL_CONFIG = "addChannelConfig";
 
@@ -52,6 +52,20 @@ public interface AdminUrlConstants {
 			String UPDATE_CHANNEL_ATTRIBUTE = "updateChannelAttribute";
 
 			String DELETE_CHANNEL_ATTRIBUTE = "deleteChannelAttribute";
+			
+		}
+		
+		interface Carrier {
+			
+			String ROOT = "/admin/channel/carrier";
+			
+			String SEARCH_CARRIER_CONFIG_BY_PAGE = "searchCarrierConfigByPage";
+
+			String ADD_CARRIER_CONFIG = "addCarrierConfig";
+
+			String UPDATE_CARRIER_CONFIG = "updateCarrierConfig";
+
+			String DELETE_CARRIER_CONFIG = "deleteCarrierConfig";
 			
 		}
 		
