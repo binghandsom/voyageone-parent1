@@ -2209,10 +2209,29 @@ public class SxProductService extends BaseService {
      */
     private void setDescriptionFieldValue(Field field, ExpressionParser expressionParser,  ShopBean shopBean, String user) throws Exception {
         // 详情页描述 (以后可能会根据不同商品信息，取不同的[详情页描述])
-        String descriptionValue = resolveDict("详情页描述", expressionParser, shopBean, user, null);
+        // modified by morse.lu 2016/08/16 start
+        // 画面上有指定的用指定的，没有就还是用原来的"详情页描述"
+//        String descriptionValue = resolveDict("详情页描述", expressionParser, shopBean, user, null);
+        SxData sxData = expressionParser.getSxData();
+        String descriptionValue;
+        RuleExpression ruleDetails = new RuleExpression();
+        MasterWord masterWord = new MasterWord("details");
+        ruleDetails.addRuleWord(masterWord);
+        String details = expressionParser.parse(ruleDetails, shopBean, user, null);
+        if (!StringUtils.isEmpty(details)) {
+            descriptionValue = resolveDict(details, expressionParser, shopBean, user, null);
+            if (StringUtils.isEmpty(descriptionValue)) {
+                String errorMsg = String.format("详情页描述[%s]在dict表里未设定!", details);
+                sxData.setErrorMessage(errorMsg);
+                throw new BusinessException(errorMsg);
+            }
+        } else {
+            descriptionValue = resolveDict("详情页描述", expressionParser, shopBean, user, null);
+        }
+        // modified by morse.lu 2016/08/16 end
         // 详情页描述-空白
         String descriptionBlankValue = resolveDict("详情页描述-空白内容", expressionParser, shopBean, user, null);
-        SxData sxData = expressionParser.getSxData();
+
         String errorMsg = String.format("类目[%s]的商品描述field_id或结构或类型发生变化啦!", sxData.getMainProduct().getCommon().getCatPath());
 
         if (field.getType() == FieldTypeEnum.INPUT) {
