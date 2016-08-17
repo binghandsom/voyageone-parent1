@@ -96,4 +96,8 @@ public class CarrierConfigService extends BaseService {
 		}
 	}
 
+	public List<Map<String, Object>> getAllCarrier() {
+		return carrierChannelDaoExt.selectAllCarrier();
+	}
+
 }

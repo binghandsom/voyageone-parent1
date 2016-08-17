@@ -33,6 +33,11 @@ public class CarrierConfigController extends AdminController {
 	@Autowired
 	private CarrierConfigService carrierConfigService;
 	
+	@RequestMapping(AdminUrlConstants.Channel.Carrier.GET_ALL_CARRIER)
+	public AjaxResponse getAllCarrier() {
+		return success(carrierConfigService.getAllCarrier());
+	}
+	
 	@RequestMapping(AdminUrlConstants.Channel.Carrier.SEARCH_CARRIER_CONFIG_BY_PAGE)
 	public AjaxResponse searchCarrierConfigByPage(@RequestBody CarrierConfigFormBean form) {
 		// 验证参数

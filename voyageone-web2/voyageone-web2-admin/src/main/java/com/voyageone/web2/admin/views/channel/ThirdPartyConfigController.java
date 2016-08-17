@@ -70,7 +70,7 @@ public class ThirdPartyConfigController extends AdminController {
 		return success(true);
 	}
 	
-	@RequestMapping(AdminUrlConstants.Channel.Self.DELETE_CHANNEL)
+	@RequestMapping(AdminUrlConstants.Channel.ThirdParty.DELETE_THIRD_PARTY_CONFIG)
 	public AjaxResponse deleteThirdPartyConfig(@RequestBody Integer[] seqIds) {
 		// 验证参数
 		Preconditions.checkArgument(ArrayUtils.isNotEmpty(seqIds));

@@ -18,4 +18,6 @@ public interface TmCarrierChannelDaoExt {
 
 	List<TmCarrierChannelBean> searchCarrierConfigByPage(Map<String, Object> params);
 
+	List<Map<String, Object>> selectAllCarrier();
+
 }

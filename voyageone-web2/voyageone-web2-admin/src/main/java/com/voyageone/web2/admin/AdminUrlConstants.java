@@ -66,6 +66,8 @@ public interface AdminUrlConstants {
 			String UPDATE_CARRIER_CONFIG = "updateCarrierConfig";
 
 			String DELETE_CARRIER_CONFIG = "deleteCarrierConfig";
+
+			String GET_ALL_CARRIER = "getAllCarrier";
 			
 		}
 		
@@ -79,6 +81,8 @@ public interface AdminUrlConstants {
 			String ADD_THIRD_PARTY_CONFIG = "addThirdPartyConfig";
 
 			String UPDATE_THIRD_PARTY_CONFIG = "updateThirdPartyConfig";
+
+			String DELETE_THIRD_PARTY_CONFIG = "deleteThirdPartyConfig";
 			
 		}
 

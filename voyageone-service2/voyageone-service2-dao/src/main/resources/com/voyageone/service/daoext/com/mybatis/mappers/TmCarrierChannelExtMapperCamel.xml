@@ -30,5 +30,9 @@
 		select count(0) from tm_carrier_channel tcc
 		<include refid="searchCarrierConfigFilter"/>
 	</select>
+	
+	<select id="selectAllCarrier" resultType="map">
+		select carrier, api_url, alias_name from tm_carrier
+	</select>
 
 </mapper>
