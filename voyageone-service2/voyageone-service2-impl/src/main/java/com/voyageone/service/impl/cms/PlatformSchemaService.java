@@ -1,12 +1,19 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.masterdate.schema.field.SingleCheckField;
+import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
@@ -15,7 +22,6 @@ import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryExtendFieldDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryInvisibleFieldDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtPlatformPropMappingCustomModel;
-import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 平台Schema取得后，对应一些处理操作
@@ -51,7 +56,7 @@ public class PlatformSchemaService extends BaseService {
     /**
      * 产品画面属性list取得
      */
-    public Map<String, List<Field>> getFieldForProductImage(String catId, String channelId, int cartId) {
+    public Map<String, List<Field>> getFieldForProductImage(String catId, String channelId, int cartId, String language) {
         if (CartEnums.Cart.JM.getValue() == cartId) {
             // 聚美的场合，因为只有一个catId，写死 catId = 1
             catId = "1";
@@ -97,7 +102,8 @@ public class PlatformSchemaService extends BaseService {
         }
         if (!StringUtils.isEmpty(schemaProduct)) {
             List<Field> listProductField = SchemaReader.readXmlForList(schemaProduct);
-            retMap.put(KEY_PRODUCT, getListFieldForProductImage(listProductField,
+            retMap.put(KEY_PRODUCT, getListFieldForProductImage(channelId, language,
+                    listProductField,
                     invisibleFieldModel != null ? invisibleFieldModel.getPropsProduct() : null,
                     extendFieldModel != null ? extendFieldModel.getPropsProduct() : null));
         }
@@ -106,7 +112,8 @@ public class PlatformSchemaService extends BaseService {
         String schemaItem = platformCatSchemaModel.getPropsItem();
         if (!StringUtils.isEmpty(schemaItem)) {
             List<Field> listItemField = SchemaReader.readXmlForList(schemaItem);
-            retMap.put(KEY_ITEM, getListFieldForProductImage(listItemField,
+            retMap.put(KEY_ITEM, getListFieldForProductImage(channelId, language,
+                    listItemField,
                     invisibleFieldModel != null ? invisibleFieldModel.getPropsItem() : null,
                     extendFieldModel != null ? extendFieldModel.getPropsItem() : null));
         }
@@ -123,7 +130,7 @@ public class PlatformSchemaService extends BaseService {
      * @param listExtendField    增加的fields
      * @return List
      */
-    private List<Field> getListFieldForProductImage(List<Field> listField, List<CmsMtPlatformCategoryInvisibleFieldModel_Field> listInvisibleField, List<CmsMtPlatformCategoryExtendFieldModel_Field> listExtendField) {
+    private List<Field> getListFieldForProductImage(String channelId, String language, List<Field> listField, List<CmsMtPlatformCategoryInvisibleFieldModel_Field> listInvisibleField, List<CmsMtPlatformCategoryExtendFieldModel_Field> listExtendField) {
         Map<String, Field> mapField = new HashMap<>();
         for (Field field : listField) {
             mapField.put(field.getId(), field);
@@ -138,6 +145,10 @@ public class PlatformSchemaService extends BaseService {
         if (listExtendField != null && !listExtendField.isEmpty()) {
             listExtendField.forEach(extendFieldModel -> {
                 Field addField = extendFieldModel.getField();
+                // added by morse.lu 2016/08/16 start
+                // option设值一下
+                setOption(addField, channelId, language);
+                // added by morse.lu 2016/08/16 end
                 FieldUtil.convertFieldIdToDot(addField); // 把field中的【->】替换成【.】
                 addExtendField(mapField, StringUtil.replaceToDot(extendFieldModel.getParentFieldId()), CmsMtPlatformCategoryExtendFieldModel_Field.SEPARATOR, addField);
             });
@@ -414,6 +425,41 @@ public class PlatformSchemaService extends BaseService {
             return SchemaReader.elementToField(field.toElement());
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
+        }
+    }
+
+    private void setOption(Field field, String channelId, String language) {
+        if (field.getType() == FieldTypeEnum.SINGLECHECK) {
+            if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
+                List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
+
+                // 替换成field需要的样式
+                List<Option> options = new ArrayList<>();
+                if (typeBeanList != null) {
+                    for (TypeBean typeBean : typeBeanList) {
+                        Option opt = new Option();
+                        opt.setDisplayName(typeBean.getName());
+                        opt.setValue(typeBean.getValue());
+                        options.add(opt);
+                    }
+                    ((SingleCheckField) field).setOptions(options);
+                }
+            } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+                // 获取type channel bean
+                List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeWithLang(field.getId(), channelId, language);
+
+                // 替换成field需要的样式
+                List<Option> options = new ArrayList<>();
+                if (typeChannelBeanList != null) {
+                    for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
+                        Option opt = new Option();
+                        opt.setDisplayName(typeChannelBean.getName());
+                        opt.setValue(typeChannelBean.getValue());
+                        options.add(opt);
+                    }
+                    ((SingleCheckField) field).setOptions(options);
+                }
+            }
         }
     }
 }
