@@ -37,6 +37,8 @@ define(function (require) {
                     self.search();
                 }
             };
+            // first
+            self.search();
         }
 
         DefaultAttributeController.prototype.openCategorySelector = function () {

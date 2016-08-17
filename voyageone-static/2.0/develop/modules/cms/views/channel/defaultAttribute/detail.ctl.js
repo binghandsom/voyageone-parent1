@@ -14,8 +14,9 @@ define([
         function AttributeDetailController($routeParams, popups, menuService, productDetailService, platformMappingService) {
 
             var self = this;
+            var searchJson = $routeParams.upEntity;
 
-            self.searchInfo = angular.fromJson($routeParams.upEntity);
+            self.searchInfo = searchJson ? angular.fromJson(searchJson) : {};
 
             self.popups = popups;
             self.productDetailService = productDetailService;
@@ -31,9 +32,6 @@ define([
                 if (!searchInfo.cartId)
                     searchInfo.cartId = self.platformTypes[0].value;
 
-                if (searchInfo.categoryType != 1 && searchInfo.categoryType != 2)
-                    searchInfo.categoryType = 1;
-
                 self.tryGet();
             });
         }
@@ -43,8 +41,13 @@ define([
             var self = this,
                 searchInfo = self.searchInfo;
 
+            if (searchInfo.categoryType != 1 && searchInfo.categoryType != 2)
+                return;
+
             if (searchInfo.categoryType == 2 && !searchInfo.categoryPath)
                 return;
+
+            self.categoryTitle = (self.searchInfo.categoryType == 1) ? "全类目" : self.searchInfo.categoryPath;
 
             self.$get();
         };

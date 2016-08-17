@@ -46,36 +46,27 @@
             </div>
         </div>
     </div>
-
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-10">
-                    <div class="panel panel-warning">
-                        <div class="panel-heading">
-                            <i class="fa fa-gears"></i>&emsp;<strong translate="TXT_DEFAULT_MAPPING"></strong>
-                        </div>
-                        <div class="panel-body">
-                            <div class="col-md-10">
-                                <default-attr data="ctrl.fields.item"></default-attr>
-                                <hr ng-if="ctrl.fields.item && ctrl.fields.product">
-                                <default-attr data="ctrl.fields.product"></default-attr>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="panel panel-default nav" drag>
-                                    <div class="panel-body text-center">
-                                        <div class="btn-group-vertical">
-                                            <a href="#/channel/default_attribute_list" class="btn btn-default"><i class="fa fa-reply"></i>&nbsp;&nbsp;返回</a>
-                                            <a href="javascript:void(0)" class="btn btn-vo" style="margin-top: 10px"><i class="fa fa-save"></i>&nbsp;&nbsp;保存</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <i class="fa fa-gears"></i>&nbsp;<strong translate="TXT_DEFAULT_MAPPING"></strong>:<span ng-bind="ctrl.categoryTitle"></span>
+        </div>
+        <div class="panel-body">
+            <div class="col-md-10">
+                <default-attr data="ctrl.fields.item"></default-attr>
+                <hr ng-if="ctrl.fields.item && ctrl.fields.product">
+                <default-attr data="ctrl.fields.product"></default-attr>
+            </div>
+            <div class="col-md-2">
+                <div class="panel panel-default nav" drag>
+                    <div class="panel-body text-center">
+                        <div class="btn-group-vertical">
+                            <a href="#/channel/default_attribute_list" class="btn btn-default"><i class="fa fa-reply"></i>&nbsp;&nbsp;返回</a>
+                            <a href="javascript:void(0)" class="btn btn-vo" style="margin-top: 10px"><i class="fa fa-save"></i>&nbsp;&nbsp;保存</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
+    </div>
     </div>
 </div>
