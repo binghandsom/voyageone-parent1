@@ -23,9 +23,12 @@ public class PromotionDao extends BaseDao {
         Map<String,Object> parameter = new HashMap<>();
         parameter.put("channelId",channelId);
         parameter.put("cartId", cartId);
-
-        List<Map> data = selectList("cms_promotion_select", parameter);
-
+        List<Integer> promotionIds = getPendingPromotionId(channelId, cartId);
+        List<Map> data = null;
+        if(promotionIds != null && promotionIds.size() > 0){
+            parameter.put("promotionIds", promotionIds);
+            data = selectList("cms_promotion_select", parameter);
+        }
         if (data == null){
             data = new ArrayList<>();
         }
@@ -34,5 +37,18 @@ public class PromotionDao extends BaseDao {
 
     public int updatePromotionStatus(Map<String,Object> parameter){
         return update("com.voyageone.cms.sql.update_cms_bt_promotion_task", parameter);
+    }
+
+    public List<Integer> getPendingPromotionId(String channelId, String cartId){
+        Map<String,Object> parameter = new HashMap<>();
+        parameter.put("channelId",channelId);
+        parameter.put("cartId", cartId);
+
+        List<Integer> data = selectList("select_pending_promotion", parameter);
+
+        if (data == null){
+            data = new ArrayList<>();
+        }
+        return data;
     }
 }

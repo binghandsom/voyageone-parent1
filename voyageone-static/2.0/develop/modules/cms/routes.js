@@ -305,6 +305,11 @@ define(function () {
             "templateUrl": "views/system/categorysetting/catunion.tpl.html",
             "controllerUrl": "modules/cms/views/system/categorysetting/catunion.ctl"
         },
+        "system_value_channel": {
+            "hash": "/system/valuechannel",
+            "templateUrl": "views/system/valueChannel/index.tpl.html",
+            "controllerUrl": "modules/cms/views/system/valueChannel/index.ctl"
+        },
         "jm_promotion_detail_list": {
             "hash": "/jm/promotion_detail_list/:parentId",
             "templateUrl": "views/jm/jmpromotiondetaillist.tpl.html",

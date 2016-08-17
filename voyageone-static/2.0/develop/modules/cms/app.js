@@ -95,7 +95,7 @@ define([
         // config
         $scope.app = {
             name: 'VoyageOne',
-            version: 'Version 2.3.1',
+            version: 'Version 2.3.2',
             copyRight: 'Copyright © 2016 VoyageOne. All Rights Reserved.',
             // for chart colors
             color: {

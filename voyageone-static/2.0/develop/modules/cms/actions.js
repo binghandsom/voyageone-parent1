@@ -388,6 +388,10 @@ define(function () {
                     "reUpload": "reUpload",
                     "rePublistPrice": "rePublishPrice",
                     "getHistory": "getHistory"
+                },
+                "$valueChannelService":{
+                    "root": "/cms/system/valueChannel/",
+                    "addHsCodes": "addHsCode"
                 }
             },
             "pop": {
