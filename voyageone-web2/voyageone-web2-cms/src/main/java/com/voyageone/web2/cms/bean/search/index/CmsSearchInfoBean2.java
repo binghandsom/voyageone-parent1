@@ -19,9 +19,8 @@ public class CmsSearchInfoBean2 implements Serializable {
     private Integer productPageSize = 0;
 
     // ** 共通搜索条件 **
-    private String mCatId;
     private String mCatPath;
-    private String fCatId;
+    private List<String> fCatPathList;
 
     private String mCatStatus;
     // 翻译状态查询用标志位
@@ -473,14 +472,6 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.pCatStatus = pCatStatus;
     }
 
-    public String getmCatId() {
-        return mCatId;
-    }
-
-    public void setmCatId(String mCatId) {
-        this.mCatId = mCatId;
-    }
-
     public String getmCatPath() {
         return mCatPath;
     }
@@ -489,12 +480,12 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.mCatPath = mCatPath;
     }
 
-    public String getfCatId() {
-        return fCatId;
+    public List<String> getfCatPathList() {
+        return fCatPathList;
     }
 
-    public void setfCatId(String fCatId) {
-        this.fCatId = fCatId;
+    public void setfCatPathList(List<String> fCatPathList) {
+        this.fCatPathList = fCatPathList;
     }
 
     public String getpCatId() {

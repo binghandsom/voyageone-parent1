@@ -212,9 +212,19 @@ public class CmsAdvSearchQueryService extends BaseAppService {
      */
     private void getSearchValueForMongo(CmsSearchInfoBean2 searchValue, JongoQuery queryObject) {
         // 获取 feed category
-        if (StringUtils.isNotEmpty(searchValue.getfCatId())) {
-            queryObject.addQuery("{'feed.catId':#}");
-            queryObject.addParameters(searchValue.getfCatId());
+        if (searchValue.getfCatPathList() != null && searchValue.getfCatPathList().size() > 0) {
+            StringBuilder fCatPathStr = new StringBuilder("{$or:[");
+            int idx = 0;
+            for (String fCatPath : searchValue.getfCatPathList()) {
+                if (idx == 0) {
+                    queryObject.addQuery("{'feed.catPath':{'$regex':'^" + fCatPath + "'}}");
+                    idx ++;
+                } else {
+                    queryObject.addQuery(",{'feed.catPath':{'$regex':'^" + fCatPath + "'}}");
+                }
+            }
+            fCatPathStr.append("]}");
+            queryObject.addQuery(fCatPathStr.toString());
         }
 
         // 获取 master category
