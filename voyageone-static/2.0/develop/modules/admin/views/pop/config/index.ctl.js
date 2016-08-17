@@ -67,7 +67,7 @@ define([
                     case 'Store':
                         var selectKey = function (configInfo) {
                             return {
-                                "id": configInfo.storeId,
+                                "id": configInfo.mainKey,
                                 "code": configInfo.storeName,
                                 "storeId": configInfo.storeId,
                                 "cfgName": configInfo.cfgName,
@@ -116,7 +116,7 @@ define([
                         self.list = _.filter(self.channelList, function (listItem) {
                             return listItem.orderChannelId == item.orderChannelId;
                         });
-                        _.extend(item, {'channelName': self.list[0].name, 'configType': '渠道'});
+                        _.extend(item, {'channelName': self.list[0].name, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search();
                         });
@@ -125,7 +125,7 @@ define([
                         self.list = _.filter(self.storeList, function (listItem) {
                             return listItem.storeId == item.storeId;
                         });
-                        _.extend(item, {'shortName': self.list[0].storeName, 'configType': '仓库'});
+                        _.extend(item, {'shortName': self.list[0].storeName, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search();
                         });
@@ -136,6 +136,7 @@ define([
                 var self = this;
                 _.forEach(self.cfgList, function (cfgInfo) {
                     if (cfgInfo.mainKey == self.configSelList.selList[0].id) {
+                        _.extend(cfgInfo, {'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(cfgInfo).then(function () {
                             self.search(1);
                         });
@@ -154,6 +155,12 @@ define([
                     switch (self.searchInfo.configType) {
                         case 'Channel':
                             self.channelService.deleteChannelConfig(delList).then(function (res) {
+                                if (res.data.success == false)self.confirm(res.data.message);
+                                self.search();
+                            });
+                            break;
+                        case 'Store':
+                            self.storeService.deleteStoreConfig(delList).then(function (res) {
                                 if (res.data.success == false)self.confirm(res.data.message);
                                 self.search();
                             });
