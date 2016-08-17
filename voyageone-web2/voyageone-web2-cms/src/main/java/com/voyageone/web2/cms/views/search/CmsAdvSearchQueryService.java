@@ -158,13 +158,13 @@ public class CmsAdvSearchQueryService extends BaseAppService {
                 }
             }
 
-            // 查询价格变动
+            // 查询价格变动(指导售价)
             if (StringUtils.isNotEmpty(searchValue.getPriceChgFlg())) {
-                queryObject.addQuery("{'platforms.P#.skus.priceChgFlg':{'$regex':'^"+ searchValue.getPriceChgFlg()+"'}}");
+                queryObject.addQuery("{'platforms.P#.skus.priceChgFlg':{'$regex':'^" + searchValue.getPriceChgFlg() + "'}}");
                 queryObject.addParameters(cartId);
             }
 
-            // 查询价格比较（建议销售价和实际销售价）
+            // 查询价格比较（指导售价和最终售价）
             if (StringUtils.isNotEmpty(searchValue.getPriceDiffFlg())) {
                 // 建议销售价等于实际销售价
                 queryObject.addQuery("{'platforms.P#.skus.priceDiffFlg':#}");
@@ -217,10 +217,10 @@ public class CmsAdvSearchQueryService extends BaseAppService {
             int idx = 0;
             for (String fCatPath : searchValue.getfCatPathList()) {
                 if (idx == 0) {
-                    queryObject.addQuery("{'feed.catPath':{'$regex':'^" + fCatPath + "'}}");
+                    fCatPathStr.append("{'feed.catPath':{'$regex':'^" + fCatPath + "'}}");
                     idx ++;
                 } else {
-                    queryObject.addQuery(",{'feed.catPath':{'$regex':'^" + fCatPath + "'}}");
+                    fCatPathStr.append(",{'feed.catPath':{'$regex':'^" + fCatPath + "'}}");
                 }
             }
             fCatPathStr.append("]}");
