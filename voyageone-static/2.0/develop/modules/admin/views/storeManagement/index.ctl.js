@@ -8,23 +8,24 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('StoreManagementController', (function () {
-        function StoreManagementController(popups, alert, confirm, channelService, AdminCartService, selectRowsFactory) {
+        function StoreManagementController(popups, alert, confirm, channelService, storeService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
             this.channelService = channelService;
             this.selectRowsFactory = selectRowsFactory;
-            this.AdminCartService = AdminCartService;
-            this.cartPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
+            this.storeService = storeService;
+            this.storePageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
-            this.cartList = [];
-            this.cartSelList = {selList: []};
+            this.storeList = [];
+            this.storeSelList = {selList: []};
             this.tempSelect = null;
             this.searchInfo = {
-                cartId: '',
-                cartName: '',
-                carType: '',
-                pageInfo: this.cartPageOption
+                orderChannelId: '',
+                storeName: '',
+                isSale: '',
+                storeType: '',
+                pageInfo: this.storePageOption
             }
         }
 
@@ -39,16 +40,17 @@ define([
             search: function (page) {
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
-                self.AdminCartService.searchCartByPage({
+                self.storeService.searchStoreByPage({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
-                        'cartId': self.searchInfo.cartId,
-                        'cartName': self.searchInfo.cartName,
-                        'carType': self.searchInfo.carType
+                        'orderChannelId': self.searchInfo.orderChannelId,
+                        'storeName': self.searchInfo.storeName,
+                        'isSale': self.searchInfo.isSale,
+                        'storeType': self.searchInfo.storeType
                     })
                     .then(function (res) {
-                        self.cartList = res.data.result;
-                        self.cartPageOption.total = res.data.count;
+                        self.storeList = res.data.result;
+                        self.storePageOption.total = res.data.count;
 
                         // 设置勾选框
                         if (self.tempSelect == null) {
@@ -57,35 +59,50 @@ define([
                             self.tempSelect.clearCurrPageRows();
                             self.tempSelect.clearSelectedList();
                         }
-                        _.forEach(self.cartList, function (Info) {
+                        _.forEach(self.storeList, function (Info) {
                             if (Info.updFlg != 8) {
                                 self.tempSelect.currPageRows({
-                                    "id": Info.cartId,
-                                    "code": Info.name
+                                    "id": Info.storeId,
+                                    "code": Info.storeName
                                 });
                             }
                         });
-                        self.cartSelList = self.tempSelect.selectRowsInfo;
+                        self.storeSelList = self.tempSelect.selectRowsInfo;
                         // End 设置勾选框
                     })
             },
             clear: function () {
                 var self = this;
                 self.searchInfo = {
-                    pageInfo: this.cartPageOption,
+                    pageInfo: this.storePageOption,
                     'orderChannelId': '',
-                    'channelName': '',
-                    'isUsjoi': ''
+                    'storeName': '',
+                    'isSale': '',
+                    'storeType': ''
+                }
+            },
+            config: function (type) {
+                var self = this;
+                if (self.storeSelList.selList.length < 1) {
+                    self.popups.openConfig({'configType':type});
+                    return;
+                } else {
+                    _.forEach(self.storeList, function (storeInfo) {
+                        if (storeInfo.storeId == self.storeSelList.selList[0].id) {
+                            _.extend(storeInfo,{'configType':type});
+                            self.popups.openConfig(storeInfo);
+                        }
+                    })
                 }
             },
             edit: function () {
                 var self = this;
-                if (self.cartSelList.selList.length <= 0) {
+                if (self.storeSelList.selList.length <= 0) {
                     self.alert('TXT_MSG_NO_ROWS_SELECT');
                     return;
                 } else {
                     _.forEach(self.cartList, function (Info) {
-                        if (Info.cartId == self.cartSelList.selList[0].id) {
+                        if (Info.storeId == self.storeSelList.selList[0].id) {
                             self.popups.openCartAdd(Info).then(function () {
                                 self.search(1);
                             });
@@ -98,8 +115,8 @@ define([
                 var self = this;
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
-                        _.forEach(self.cartSelList.selList, function (delInfo) {
-                            delList.push(delInfo.cartId);
+                        _.forEach(self.storeSelList.selList, function (delInfo) {
+                            delList.push(delInfo.storeId);
                         });
                         self.AdminCartService.deleteCart(delList).then(function (res) {
                             // if (res.data.success == false)self.confirm(res.data.message);
@@ -108,20 +125,38 @@ define([
                     }
                 );
             },
-            getCartType: function (type) {
+            getStoreType: function (type) {
                 switch (type) {
+                    case '0':
+                        return '自营仓库';
+                        break;
                     case '1':
-                        return '中国店铺';
+                        return '第三方合作仓库';
                         break;
                     case '2':
-                        return '国外店铺';
+                        return '菜鸟保税仓';
                         break;
                     case '3':
-                        return 'MiniMall';
+                        return '聚美保税仓';
                         break;
                 }
-            }
-
+            },
+            getInventoryHold: function (type) {
+                switch (type) {
+                    case '0':
+                        return '不做保留';
+                        break;
+                    case '1':
+                        return '按加减保留';
+                        break;
+                    case '2':
+                        return '按百分比保留';
+                        break;
+                    case '3':
+                        return '按销售计算（默认百分比）';
+                        break;
+                }
+            },
         };
         return StoreManagementController;
     })())
