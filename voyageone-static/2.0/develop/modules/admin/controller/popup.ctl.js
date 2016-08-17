@@ -33,6 +33,12 @@ define([
             "controllerUrl": "modules/admin/views/pop/addCart/index.ctl",
             "controller": 'CartAddController as ctrl',
             "size": 'md'
+        },
+        "addStore": {
+            "templateUrl": "views/pop/addStore/index.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addStore/index.ctl",
+            "controller": 'AddStoreController as ctrl',
+            "size": 'lg'
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -70,9 +76,17 @@ define([
         $scope.openCreateEdit = function openCreateEdit(context) {
             return openModal(popActions.createEdit, context);
         };
-
+        /**
+         * 打开Cart管理页面的添加页面
+         */
         $scope.openCartAdd = function openCartAdd(context) {
             return openModal(popActions.addCart, context);
+        };
+        /**
+         * 打开Store管理页面的添加页面
+         */
+        $scope.openStoreAdd = function openStoreAdd(context) {
+            return openModal(popActions.addStore, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {

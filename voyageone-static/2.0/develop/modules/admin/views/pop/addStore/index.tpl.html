@@ -1,0 +1,231 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-edit"></i>&nbsp;{{ctrl.popType}}</h5>
+    </div>
+    <div class="modal-body wrapper vbox">
+        <form role="form" class="form-horizontal" name="addForm" novalidate>
+            <div class="col-sm-4">
+                <div class="form-horizontal">
+                    <div class="form-group"><!-- 渠道名 -->
+                        <label class="col-sm-4 control-label">{{'TXT_CHANNEL_NAME' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.sourceData.orderChannelId"
+                                    ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList">
+                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-4">
+                            <vo-message target="addForm.orderChannelId"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group"><!-- 标签类型 -->
+                        <label class="col-sm-4 control-label">{{'TXT_STORE_TAG_TYPE' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" ng-model="ctrl.sourceData.labelType">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                <option value="0">&nbsp;详细拣货单</option>
+                                <option value="1">&nbsp;简单拣货单大</option>
+                                <option value="2">&nbsp;简单拣货单小</option>
+                                <option value="3">&nbsp;两联拣货单</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-4">
+                            <vo-message target="addForm.labelType"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group"><!-- 在售状态 -->
+                        <label class="col-sm-4 control-label">{{'TXT_SALE_STATE' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" ng-model="ctrl.sourceData.isSale">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                <option value="0">&nbsp;不在售</option>
+                                <option value="1">&nbsp;在售</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-4">
+                            <vo-message target="addForm.isSale"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group"><!-- 库存管理状态 -->
+                        <label class="col-sm-4 control-label">{{'TXT_STORE_MANAGE_STATE' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" ng-model="ctrl.sourceData.inventoryManager">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                <option value="0">&nbsp;不管理</option>
+                                <option value="1">&nbsp;管理</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group"><!-- 库存保留量 -->
+                        <label class="col-sm-4 control-label">{{'TXT_STORE_REMAINED' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" ng-model="ctrl.sourceData.inventoryHold">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                <option value="0">&nbsp;不做保留</option>
+                                <option value="1">&nbsp;按加减保留</option>
+                                <option value="2">&nbsp;按百分比保留</option>
+                                <option value="3">&nbsp;按销售计算（默认百分比）</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-horizontal">
+                    <div class="form-group"><!-- 仓库名 -->
+                        <label class="col-sm-4 control-label">{{'TXT_STORE_NAME' | translate}}</label>
+                        <div class="col-sm-8">
+                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.storeName"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-4">
+                            <vo-message target="addForm.storeName"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group"><!-- 主仓库名 -->
+                        <label class="col-sm-4 control-label">{{'TXT_MAIN_STORE_NAME' | translate}}</label>
+                        <div class="col-sm-8">
+                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.mainStoreName"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-4">
+                            <vo-message target="addForm.mainStoreName"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group"><!-- 仓库类型 -->
+                        <label class="col-sm-4 control-label">{{'TXT_STORE_TYPE' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" ng-model="ctrl.sourceData.storeType" name="storeType">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                <option value="0">&nbsp;自营仓库</option>
+                                <option value="1">&nbsp;第三方合作仓库</option>
+                                <option value="2">&nbsp;菜鸟保税仓</option>
+                                <option value="3">&nbsp;聚美保税仓</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-4">
+                            <vo-message target="addForm.storeType"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group"><!-- 库存同步类型 -->
+                        <label class="col-sm-4 control-label">{{'TXT_INVENTORY_ASC_TYPE' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" ng-model="ctrl.sourceData.inventorySynType">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                <option value="0">&nbsp;全量</option>
+                                <option value="1">&nbsp;增量</option>
+                                <option value="2">&nbsp;刷新</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-horizontal">
+                    <div class="form-group"><!-- 仓库位置 -->
+                        <label class="col-sm-4 control-label">{{'TXT_STORE_AREA' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" ng-model="ctrl.sourceData.storeLocation" name="storeLocation">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                <option value="0">&nbsp;国外仓库</option>
+                                <option value="1">&nbsp;中国仓库</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-4">
+                            <vo-message target="addForm.storeArea"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group"><!-- 仓库类别 -->
+                        <label class="col-sm-4 control-label">{{'TXT_STORE_EXCT_TYPE' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" ng-model="ctrl.sourceData.storeKind" name="storeKind">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                <option value="0">&nbsp;真实仓库</option>
+                                <option value="1">&nbsp;超卖仓库</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-4">
+                            <vo-message target="addForm.storeKind"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group"><!-- 拼单区域 -->
+                        <label class="col-sm-4 control-label">{{'TXT_TOGETHER_ZONE' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" type="number" ng-model="ctrl.sourceData.areaId" name="areaId">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                <option value=0>&nbsp;不拼单</option>
+                                <option value=1>&nbsp;US拼单</option>
+                                <option value=2>&nbsp;HK拼单</option>
+                                <option value=3>&nbsp;CN拼单</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-4">
+                            <vo-message target="addForm.rsvSort"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group"><!-- 库存分配优先级 -->
+                        <label class="col-sm-4 control-label">{{'TXT_INVENTORY_ASSIGN_PRE' | translate}}</label>
+                        <div class="col-sm-8">
+                            <input type="text" maxlength="10" class="form-control" ng-model="ctrl.sourceData.rsvSort"/>
+                        </div>
+                    </div>
+                    <div class="form-group"><!-- 状态 -->
+                        <label class="col-sm-4 control-label">{{'TXT_STATUS' | translate}}</label>
+                        <div class="col-sm-8">
+                            <label class="checkbox-inline c-radio">
+                                <input type="radio" name="state" value="1" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> {{'BTN_ACTIVE'|translate}}
+                            </label>
+                            <label class="checkbox-inline c-radio">
+                                <input type="radio" name="state" value="0" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> {{'BTN_INACTIVE'|translate}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="col-sm-6">
+                <div class="form-horizontal">
+                    <div class="row form-group">
+                        <label class="col-sm-3 control-label">{{'TXT_STORE_ADDRESS' | translate}}</label>
+                        <div class="col-sm-8">
+                            <textarea class="form-control" ng-model="ctrl.sourceData.storeLocation" name="storeLocation" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="col-sm-6">
+                <div class="form-horizontal">
+                    <div class="row form-group">
+                        <label class="col-sm-3 control-label">{{'TXT_COMMENTS' | translate}}</label>
+                        <div class="col-sm-8">
+                            <textarea class="form-control" ng-model="ctrl.sourceData.storeComment" name="storeComment" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled="addForm.$valid==false"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+    </div>
+</div>
