@@ -26,12 +26,10 @@ public class UserFormBean extends AdminFormBean {
         this.userAccount = userAccount;
     }
 
-    @Override
     public Integer getActive() {
         return active;
     }
 
-    @Override
     public void setActive(Integer active) {
         this.active = active;
     }

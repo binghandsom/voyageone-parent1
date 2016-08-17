@@ -39,6 +39,8 @@ public class StoreFormBean extends AdminFormBean {
 	private Integer areaId;
 	
 	private String storeComment;
+	
+	private Boolean active;
 
 	public String getOrderChannelId() {
 		return orderChannelId;
@@ -166,6 +168,14 @@ public class StoreFormBean extends AdminFormBean {
 
 	public void setStoreComment(String storeComment) {
 		this.storeComment = storeComment;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 	
 }

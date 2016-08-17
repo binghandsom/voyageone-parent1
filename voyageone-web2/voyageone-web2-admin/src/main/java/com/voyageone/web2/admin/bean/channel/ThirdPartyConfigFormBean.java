@@ -30,6 +30,8 @@ public class ThirdPartyConfigFormBean extends AdminFormBean {
 	
 	private String comment;
 	
+	private Boolean active;
+	
 	public Integer getSeq() {
 		return seq;
 	}
@@ -117,5 +119,13 @@ public class ThirdPartyConfigFormBean extends AdminFormBean {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
 }

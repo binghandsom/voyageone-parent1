@@ -25,6 +25,8 @@ public class ChannelAttributeFormBean extends AdminFormBean {
 	private String langId;
 	
 	private Integer displayOrder;
+	
+	private Boolean active;
 
 	public Integer getId() {
 		return id;
@@ -97,5 +99,13 @@ public class ChannelAttributeFormBean extends AdminFormBean {
 	public void setDisplayOrder(Integer displayOrder) {
 		this.displayOrder = displayOrder;
 	}
-	
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
 }

@@ -35,6 +35,8 @@ public class ChannelFormBean extends AdminFormBean {
 	private Integer isUsjoi;
 	
 	private String cartIds;
+	
+	private Integer active;
 
 	public Integer getCompanyId() {
 		return companyId;
@@ -146,6 +148,14 @@ public class ChannelFormBean extends AdminFormBean {
 
 	public void setCartIds(String cartIds) {
 		this.cartIds = cartIds;
+	}
+
+	public Integer getActive() {
+		return active;
+	}
+
+	public void setActive(Integer active) {
+		this.active = active;
 	}
 	
 }

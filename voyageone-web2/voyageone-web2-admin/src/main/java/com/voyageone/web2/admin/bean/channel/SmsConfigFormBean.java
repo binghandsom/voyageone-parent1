@@ -25,6 +25,8 @@ public class SmsConfigFormBean extends AdminFormBean {
 	private String describe;
 	
 	private String delFlag;
+	
+	private Boolean active;
 
 	public Integer getSeq() {
 		return seq;
@@ -96,6 +98,14 @@ public class SmsConfigFormBean extends AdminFormBean {
 
 	public void setDelFlag(String delFlag) {
 		this.delFlag = delFlag;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 	
 }

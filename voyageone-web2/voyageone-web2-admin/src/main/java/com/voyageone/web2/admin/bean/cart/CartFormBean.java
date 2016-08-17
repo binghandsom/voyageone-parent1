@@ -21,6 +21,8 @@ public class CartFormBean extends AdminFormBean {
 	private Integer platformId;
 	
 	private String cartType;
+	
+	private Boolean active;
 
 	public Integer getCartId() {
 		return cartId;
@@ -76,6 +78,14 @@ public class CartFormBean extends AdminFormBean {
 
 	public void setCartType(String cartType) {
 		this.cartType = cartType;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 	
 }

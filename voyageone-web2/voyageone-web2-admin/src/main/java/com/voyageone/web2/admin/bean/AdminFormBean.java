@@ -12,9 +12,6 @@ public class AdminFormBean {
 	/** 每页大小 */
 	private Integer pageSize;
 	
-	/** 状态 [1：可用，0：禁用] */
-	private Integer active;
-	
 	public Integer getPageNum() {
 		return pageNum;
 	}
@@ -29,14 +26,5 @@ public class AdminFormBean {
 	
 	public void setPageSize(Integer pageSize) {
 		this.pageSize = pageSize;
-	}
-
-	public Integer getActive() {
-		return active;
-	}
-
-	public void setActive(Integer active) {
-		this.active = active;
-	}
-	
+	}	
 }
