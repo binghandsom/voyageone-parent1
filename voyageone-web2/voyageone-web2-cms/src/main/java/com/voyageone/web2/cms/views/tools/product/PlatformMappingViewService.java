@@ -67,6 +67,9 @@ class PlatformMappingViewService extends BaseAppService {
                 && categoryType != PlatformMappingService.CATEGORY_TYPE_SPECIFIC)
             categoryType = null;
 
+        if (categoryType == null || categoryType != PlatformMappingService.CATEGORY_TYPE_SPECIFIC)
+            categoryPath = null;
+
         List<CmsBtPlatformMappingModel> list = platformMappingService.getPage(channel, categoryType, cartId, categoryPath, page, size);
 
         long total = platformMappingService.getCount(channel, categoryType, cartId, categoryPath);

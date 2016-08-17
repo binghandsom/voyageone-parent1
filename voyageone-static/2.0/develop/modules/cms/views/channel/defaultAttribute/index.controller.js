@@ -22,33 +22,12 @@ define(function (require) {
             });
 
             self.$productDetailService = $productDetailService;
-
-            // self.rePriceService.getPlatformCategories()
-            //     .then(function (res) {
-            //         return self.q(function (resolve, reject) {
-            //             if (!res.data || !res.data.length) {
-            //                 self.notify.danger("数据还未准备完毕");
-            //                 reject("数据还未准备完毕");
-            //             } else {
-            //                 resolve(self.popups.popupNewCategory({
-            //                     from: "",
-            //                     categories: res.data,
-            //                     divType: ">"
-            //                 }));
-            //             }
-            //         });
-            //     }).then(function (context) {
-            //     self.searchInfo.categoryPath = context.selected.catPath;
-            //     self.searchInfo.categoryId = context.selected.catId;
-            // });
-            //
-            // $productDetailService.getPlatformCategories({cartId: self.searchInfo.cartId})
+            self.platformMappingService = platformMappingService;
 
             self.q = $q;
             self.popups = popups;
             self.alert = alert;
             self.confirm = confirm;
-            self.platformMappingService = platformMappingService;
             self.searchInfo = {
                 cartId: null,
                 categoryType: 3,
@@ -128,44 +107,6 @@ define(function (require) {
                 });
             });
         };
-
-
-        // DefaultAttributeController.prototype = {
-        //
-        //     clear: function () {
-        //         var self = this;
-        //         _.each(self.searchInfo, function (attr, key) {
-        //             self.searchInfo[key] = null;
-        //         });
-        //     },
-        //     search: function () {
-        //         var self = this;
-        //         var _upEntity = _.extend(self.paging, {
-        //             "cartId": +self.searchInfo.cartId,
-        //             "categoryType": +self.searchInfo.categoryType,
-        //             "categoryPath": self.searchInfo.categoryPath
-        //         });
-        //         self.platformMappingService.page(_upEntity).then(function (res) {
-        //             self.paging.total = res.data.total;
-        //             self.dataList = res.data.list;
-        //         });
-        //     },
-        //     switchType: function () {
-        //         this.searchInfo.categoryPath = this.searchInfo.categoryType == '2' ? this.searchInfo.categoryPath : '';
-        //     },
-        //     deleteItem: function (item) {
-        //         var self = this;
-        //         self.confirm("TXT_MSG_DELETE_ITEM").then(function () {
-        //             self.platformMappingService.deleteItem().then(function (res) {
-        //                 if (res.data)
-        //                     self.notify.success("TXT_MSG_DELETE_SUCCESS");
-        //                 else
-        //                     self.notify.danger("TXT_MSG_DELETE_FAIL");
-        //             });
-        //         });
-        //     }
-        // };
-
 
         return DefaultAttributeController;
     })())
