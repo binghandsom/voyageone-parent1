@@ -52,6 +52,7 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
     private Field sku_quantityField;
     private Field sku_outerIdField;
     private Field sku_imageField;
+    private Field sku_packageTypeField;
 
     private Field colorExtend_colorField;
     private Field colorExtend_imageField;
@@ -167,6 +168,9 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
                 if (type.intValue() == SkuTemplateConstants.SKU_IMAGE) {
                     sku_imageField = platformProp;
                 }
+                if (type.intValue() == SkuTemplateConstants.DARWINSKU_PACKAGE_TYPE) {
+                    sku_packageTypeField = platformProp;
+                }
 
                 //EXTENDCOLOR
                 if (type.intValue() == SkuTemplateConstants.EXTENDCOLOR) {
@@ -272,17 +276,24 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
     private Field buildSkuProp(Field skuField, ExpressionParser expressionParser, MappingBean skuMapping, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
         List<CmsBtProductModel> sxProducts = expressionParser.getSxData().getProductList();
         buildSkuResult = new BuildSkuResult();
+        int skuCnt;
 
         List<ComplexValue> complexValues = new ArrayList<>();
         for (CmsBtProductModel sxProduct : sxProducts) {
+            skuCnt = 0;
             List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCommon().getSkus();
             for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
+                skuCnt++;
                 //CmsBtProductModel_Sku 是Map<String, Object>的子类
                 ComplexValue skuFieldValue = new ComplexValue();
                 complexValues.add(skuFieldValue);
 
-                buildSkuColor(skuFieldValue, sxProduct, cmsSkuProp);
-                buildSkuSize(skuFieldValue, sxProduct, cmsSkuProp);
+                if (sku_colorField != null) {
+                    buildSkuColor(skuFieldValue, sxProduct, cmsSkuProp);
+                }
+                if (sku_sizeField != null) {
+                    buildSkuSize(skuFieldValue, sxProduct, cmsSkuProp);
+                }
 
                 for (Field field : ((MultiComplexField)skuField).getFields()) {
                     String fieldId = field.getId();
@@ -321,6 +332,21 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
 
                     if (sku_imageField != null && fieldId.equals(sku_imageField.getId())) {
                         skuFieldValue.setInputFieldValue(sku_imageField.getId(), getImageUrl(expressionParser, shopBean, user, expressionParser.getSxData(), sxProduct));
+                        continue;
+                    }
+                    if (sku_packageTypeField != null && fieldId.equals(sku_packageTypeField.getId())) {
+                        // 套餐类型(天猫默认是"官方标配[6536025]",且必须要有"官方标配"
+                        // 由于schema里没有备注可以填,而套餐类型又没有别名
+                        // 所以无法备注各个套餐区别,暂时这一版只能不支持多种套餐,即不支持一个code下多个sku
+                        // 干脆代码也写死"官方标配",以后看情况再改
+                        // 参照类目"影音电器>耳机/耳麦"
+                        if (skuCnt > 1) {
+                            // 不支持一个code下多个sku
+                            String errMsg = "本类目不支持一个code下多个sku!";
+                            expressionParser.getSxData().setErrorMessage(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
+                        skuFieldValue.setSingleCheckFieldValue(sku_packageTypeField.getId(), new Value("6536025"));
                         continue;
                     }
 
