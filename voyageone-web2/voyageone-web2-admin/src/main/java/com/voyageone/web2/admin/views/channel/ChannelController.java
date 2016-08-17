@@ -100,7 +100,7 @@ public class ChannelController extends AdminController {
 	// 渠道配置信息
 	//---------------------------------------------------------------------
 	
-	@RequestMapping(AdminUrlConstants.Channel.Self.SEARCH_CHANNEL_CONFIG)
+	@RequestMapping(AdminUrlConstants.Channel.Self.SEARCH_CHANNEL_CONFIG_BY_PAGE)
 	public AjaxResponse searchChannelConfigByPage(@RequestBody CommonConfigFormBean form) {
 		// 验证分页参数
 		Preconditions.checkNotNull(form.getPageNum());

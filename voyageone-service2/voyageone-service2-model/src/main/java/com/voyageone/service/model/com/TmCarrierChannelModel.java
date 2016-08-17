@@ -32,6 +32,8 @@ public class TmCarrierChannelModel extends TmCarrierChannelKey {
     protected String wsdlUrl;
 
     protected String comments;
+    
+    protected Boolean active;
 
     public String getApiKey() {
         return apiKey;
@@ -120,4 +122,13 @@ public class TmCarrierChannelModel extends TmCarrierChannelKey {
     public void setComments(String comments) {
         this.comments = comments == null ? null : comments.trim();
     }
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+    
 }

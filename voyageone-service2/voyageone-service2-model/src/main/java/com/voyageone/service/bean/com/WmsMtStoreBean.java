@@ -9,6 +9,8 @@ import com.voyageone.service.model.com.WmsMtStoreModel;
 public class WmsMtStoreBean extends WmsMtStoreModel {
 	
 	private String channelName;
+	
+	private String mainStoreName;
 
 	public String getChannelName() {
 		return channelName;
@@ -17,5 +19,14 @@ public class WmsMtStoreBean extends WmsMtStoreModel {
 	public void setChannelName(String channelName) {
 		this.channelName = channelName;
 	}
+
+	public String getMainStoreName() {
+		return mainStoreName;
+	}
+
+	public void setMainStoreName(String mainStoreName) {
+		this.mainStoreName = mainStoreName;
+	}
+	
 	
 }

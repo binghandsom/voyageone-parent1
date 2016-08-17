@@ -44,8 +44,10 @@
 		select wms.store_id, wms.order_channel_id, toc.name as channel_name, wms.store_name, wms.store_type, wms.is_sale,
 			wms.store_location, wms.store_kind, wms.label_type, wms.rsv_sort, wms.inventory_manager,
 		    wms.inventory_hold, wms.inventory_syn_type, wms.store_area, wms.area_id, wms.store_comment,
-		    wms.active, wms.created, wms.creater, wms.modified, wms.modifier
+		    wms.active, wms.created, wms.creater, wms.modified, wms.modifier,
+		    wms.parent_store_id, wms2.store_name as main_store_name
 		from wms_mt_store wms left join tm_order_channel toc on toc.order_channel_id = wms.order_channel_id
+			left join wms_mt_store wms2 on wms2.store_id = wms.parent_store_id
 	</select>
 	
 	<select id="selectStoreCount" resultType="integer">

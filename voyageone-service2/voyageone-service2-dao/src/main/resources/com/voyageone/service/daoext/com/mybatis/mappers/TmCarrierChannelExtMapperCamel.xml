@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.com.TmCarrierChannelDaoExt">
+
+	<resultMap id="carrierModeMap" type="com.voyageone.service.bean.com.TmCarrierChannelBean" />
+	
+	<sql id="searchCarrierConfigFilter">
+		<where>
+			<if test="orderChannelId != null and orderChannelId != ''">
+				and tcc.order_channel_id = #{orderChannelId}
+			</if>
+			<if test="carrier != null and carrier != ''">
+				and tcc.carrier like concat('%', #{carrier}, '%')
+			</if>
+			<if test="useKd100Flg != null and useKd100Flg != ''">
+				and tcc.useKd100_flg = #{useKd100Flg}
+			</if>
+		</where>
+	</sql>
+	
+	<select id="searchCarrierConfigByPage" resultMap="carrierModeMap">
+		select toc.name as channel_name, tcc.order_channel_id, tcc.carrier, tcc.api_key, tcc.api_user, tcc.api_pwd,
+			tcc.card_number, tcc.cusite, tcc.cusname, tcc.customer, tcc.useKd100_flg, tcc.allow_delete_flg,
+			tcc.wsdl_url, tcc.comments
+		from tm_carrier_channel tcc left join tm_order_channel toc on toc.order_channel_id = tcc.order_channel_id
+		<include refid="searchCarrierConfigFilter"/>
+	</select>
+	
+	<select id="searchCarrierConfigCount" resultType="integer">
+		select count(0) from tm_carrier_channel tcc
+		<include refid="searchCarrierConfigFilter"/>
+	</select>
+
+</mapper>

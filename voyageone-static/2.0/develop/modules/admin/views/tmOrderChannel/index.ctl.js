@@ -83,14 +83,15 @@ define([
                     'isUsjoi': ''
                 }
             },
-            config: function () {
+            config: function (type) {
                 var self = this;
                 if (self.channelSelList.selList.length < 1) {
-                    self.popups.openConfig();
+                    self.popups.openConfig({'configType':type});
                     return;
                 } else {
                     _.forEach(self.channelList, function (channelInfo) {
                         if (channelInfo.orderChannelId == self.channelSelList.selList[0].id) {
+                            _.extend(channelInfo,{'configType':type});
                             self.popups.openConfig(channelInfo);
                         }
                     })

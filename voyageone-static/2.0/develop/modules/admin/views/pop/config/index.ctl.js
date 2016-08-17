@@ -5,18 +5,20 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('ConfigController', (function () {
-        function ConfigController(popups, context, confirm, channelService, selectRowsFactory) {
+        function ConfigController(popups, context, confirm, channelService, storeService, selectRowsFactory) {
             this.popups = popups;
             this.sourceData = context;
             this.confirm = confirm;
             this.channelService = channelService;
+            this.storeService = storeService;
             this.selectRowsFactory = selectRowsFactory;
             this.configPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.configSelList = {selList: []};
             this.tempConfigSelect = null;
             this.searchInfo = {
                 orderChannelId: this.sourceData ? this.sourceData.orderChannelId : "",
-                configType: 'Channel',
+                storeId: this.sourceData ? this.sourceData.storeId : "",
+                configType: this.sourceData.configType,
                 pageInfo: this.configPageOption,
                 cfgName: '',
                 cfgVal: ''
@@ -35,11 +37,15 @@ define([
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelList = res.data;
                 });
+                self.storeService.getAllStore().then(function (res) {
+                    self.storeList = res.data;
+                });
                 var data = {
                     'pageNum': self.searchInfo.pageInfo.curr,
                     'pageSize': self.searchInfo.pageInfo.size,
                     'configType': self.searchInfo.configType,
                     'orderChannelId': self.searchInfo.orderChannelId,
+                    'storeId': self.searchInfo.storeId,
                     'cfgName': self.searchInfo.cfgName,
                     'cfgVal': self.searchInfo.cfgVal
                 };
@@ -59,6 +65,18 @@ define([
                         });
                         break;
                     case 'Store':
+                        var selectKey = function (configInfo) {
+                            return {
+                                "id": configInfo.storeId,
+                                "code": configInfo.storeName,
+                                "storeId": configInfo.storeId,
+                                "cfgName": configInfo.cfgName,
+                                'cfgVal1': configInfo.cfgVal1
+                            };
+                        };
+                        self.storeService.searchStoreConfigByPage(data).then(function (res) {
+                            callback(res, selectKey);
+                        });
                         break;
                 }
                 function callback(res, selectKey) {
@@ -93,13 +111,26 @@ define([
             },
             add: function (item) {
                 var self = this;
-                self.list = _.filter(self.channelList, function (listItem) {
-                    return listItem.orderChannelId == item.orderChannelId;
-                });
-                _.extend(item, {'channelName': self.list[0].name});
-                self.popups.openCreateEdit(item).then(function (res) {
-                    if (res.res == 'success') self.search();
-                });
+                switch (self.searchInfo.configType) {
+                    case 'Channel':
+                        self.list = _.filter(self.channelList, function (listItem) {
+                            return listItem.orderChannelId == item.orderChannelId;
+                        });
+                        _.extend(item, {'channelName': self.list[0].name, 'configType': '渠道'});
+                        self.popups.openCreateEdit(item).then(function (res) {
+                            if (res.res == 'success') self.search();
+                        });
+                        break;
+                    case 'Store':
+                        self.list = _.filter(self.storeList, function (listItem) {
+                            return listItem.storeId == item.storeId;
+                        });
+                        _.extend(item, {'shortName': self.list[0].storeName, 'configType': '仓库'});
+                        self.popups.openCreateEdit(item).then(function (res) {
+                            if (res.res == 'success') self.search();
+                        });
+                        break;
+                }
             },
             edit: function () {
                 var self = this;
@@ -129,6 +160,16 @@ define([
                             break;
                     }
                 });
+            },
+            getConfigType: function (type) {
+                switch (type) {
+                    case 'Channel':
+                        return "渠道";
+                        break;
+                    case 'Store':
+                        return "仓库";
+                        break;
+                }
             }
         };
         return ConfigController;
