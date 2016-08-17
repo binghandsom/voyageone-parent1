@@ -116,5 +116,8 @@ public class SkuTemplateConstants {
     public final static int EXTENDMASTER_MASTER = 71;
     public final static int EXTENDMASTER_ALIASNAME = 72;
 
+    public final static int SKU_ID = 109; // SkuId
+    public final static int SKU_PRODUCTID = 110; // sku_scProductId 货品Id
+
     public final static int UNKOWN = 99999;
 }
