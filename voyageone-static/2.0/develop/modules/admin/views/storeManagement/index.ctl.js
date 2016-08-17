@@ -101,9 +101,9 @@ define([
                     self.alert('TXT_MSG_NO_ROWS_SELECT');
                     return;
                 } else {
-                    _.forEach(self.cartList, function (Info) {
+                    _.forEach(self.storeList, function (Info) {
                         if (Info.storeId == self.storeSelList.selList[0].id) {
-                            self.popups.openCartAdd(Info).then(function () {
+                            self.popups.openStoreAdd(Info).then(function () {
                                 self.search(1);
                             });
                         }
