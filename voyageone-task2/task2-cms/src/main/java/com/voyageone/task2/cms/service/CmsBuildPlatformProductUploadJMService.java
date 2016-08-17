@@ -1264,7 +1264,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     }
 
     /**
-     * 在barcode的后面拼接vo+channelId+skuCode的前30位字符
+     * 在barcode的后面拼接vo+channelId+skuCode的前50位字符
      * @param barcode
      * @param channelId
      * @return
@@ -1275,6 +1275,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
         String result = barcode + "vo" + channelId + skuCode;
 
-        return result.substring(0, result.length() >= 30 ? 30 : result.length());
+        return result.substring(0, result.length() >= 50 ? 50 : result.length());
     }
 }
