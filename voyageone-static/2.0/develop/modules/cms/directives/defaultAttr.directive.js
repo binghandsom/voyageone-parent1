@@ -1230,17 +1230,13 @@ define([
 
                     var schemaFieldController = requiredControllers[0];
 
-                    $scope.$watch("ctrl.searchInfo", function (searchInfo) {
-                        console.log(searchInfo);
-                        _.extend(schemaFieldController.getField(),searchInfo);
-                    });
-
                     $scope.fieldMapping = schemaFieldController.getField();
 
-                    var button = angular.element('<button class="btn btn-schema btn-info" ng-click="openPropertyMapping(fieldMapping)" ng-controller="popupCtrl">'
+                    var button = angular.element('<button class="btn btn-schema btn-info" ng-click="openPropertyMapping(fieldMapping,ctrl.searchInfo)" ng-controller="popupCtrl">'
                                                 +'<i class="fa fa-link"></i>&nbsp;<span translate="TXT_MAPPING_ATTRIBUTE"></span>'
                                                 +'</button>');
                     $element.append(button);
+
                     $compile($element.contents())($scope);
                 }
             };

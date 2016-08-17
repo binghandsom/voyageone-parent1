@@ -1222,8 +1222,8 @@ define([
         };
 
         /**属性匹配*/
-        $scope.openPropertyMapping = function openPropertyMapping(context){
-            return openModal(popActions.platformMapping.propertyMapping,context);
+        $scope.openPropertyMapping = function openPropertyMapping(fieldMapping,searchInfo){
+            return openModal(popActions.platformMapping.propertyMapping,_.extend(fieldMapping,searchInfo));
         };
 
         /**属性编辑*/
