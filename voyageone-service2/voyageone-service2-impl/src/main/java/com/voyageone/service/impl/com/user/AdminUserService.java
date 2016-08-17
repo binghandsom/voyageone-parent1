@@ -40,7 +40,11 @@ public class AdminUserService extends BaseService {
     @Autowired
     ComResourceDaoExt comResourceDaoExt;
 
-    /**检索用户
+    @Autowired
+    AdminResService adminResService;
+
+    /**
+     * 检索用户
      *
      * @param userAccount
      * @param active
@@ -52,8 +56,7 @@ public class AdminUserService extends BaseService {
      * @return
      */
     public PageModel<AdminUserBean> searchUser(String userAccount, Integer active, Integer orgId, Integer roleId,
-                                               String channelId, Integer storeId, Integer pageNum, Integer pageSize)
-    {
+                                               String channelId, Integer storeId, Integer pageNum, Integer pageSize) {
 
         PageModel<AdminUserBean> pageModel = new PageModel<>();
 
@@ -96,11 +99,10 @@ public class AdminUserService extends BaseService {
 
         map.put("email", model.getEmail());
 
-        List<ComUserModel> userList= comUserDao.selectList(map);
+        List<ComUserModel> userList = comUserDao.selectList(map);
 
-        if(userList.size() >0) {
-            if(userList.stream().filter(w -> w.getId() != model.getId()).count() > 0)
-            {
+        if (userList.size() > 0) {
+            if (userList.stream().filter(w -> w.getId() != model.getId()).count() > 0) {
                 throw new BusinessException("该用户名已在系统中注册。");
             }
         }
@@ -114,11 +116,11 @@ public class AdminUserService extends BaseService {
         Map rMap = new HashMap<>();
         rMap.put("userId", model.getId());
         //如果不为空，则需要判断哪些需要删除
-        List<ComUserRoleModel> relationList =  comUserRoleDao.selectList(rMap);
+        List<ComUserRoleModel> relationList = comUserRoleDao.selectList(rMap);
 
         List<ComUserRoleModel> oldList = new ArrayList<>();
         List<String> oldIdList = new ArrayList<>();
-        if(relationList.size() > 0) {
+        if (relationList.size() > 0) {
 
 
             String[] roleIds = model.getRoleId().split(",");
@@ -129,32 +131,29 @@ public class AdminUserService extends BaseService {
             }
         }
 
-        if(oldList.size() > 0) {
+        if (oldList.size() > 0) {
             oldIdList = oldList.stream().map(w -> w.getRoleId().toString()).collect(Collectors.toList());
         }
 
         //需要删除的项目
-        List<ComUserRoleModel> deleteList = (List<ComUserRoleModel>) CollectionUtils.subtract(relationList , oldList);
+        List<ComUserRoleModel> deleteList = (List<ComUserRoleModel>) CollectionUtils.subtract(relationList, oldList);
         //需要新增的项目
         String[] roleIds = model.getRoleId().split(",");
         List<String> roleIdList = Arrays.asList(roleIds);
-        List<String> addList =  (List<String>) CollectionUtils.subtract(roleIdList , oldIdList);
+        List<String> addList = (List<String>) CollectionUtils.subtract(roleIdList, oldIdList);
 
-        for (ComUserRoleModel deleteModel  : deleteList)
-        {
+        for (ComUserRoleModel deleteModel : deleteList) {
             comUserRoleDao.delete(deleteModel.getId());
         }
 
-        for (ComUserRoleModel oldModel  : oldList)
-        {
+        for (ComUserRoleModel oldModel : oldList) {
             oldModel.setModifier(username);
             oldModel.setModified(new Date());
             comUserRoleDao.update(oldModel);
         }
 
-        for (String roleId  : addList)
-        {
-            ComUserRoleModel rModel =  new ComUserRoleModel();
+        for (String roleId : addList) {
+            ComUserRoleModel rModel = new ComUserRoleModel();
             rModel.setRoleId(Integer.valueOf(roleId));
             rModel.setUserId(model.getId());
             rModel.setCreater(username);
@@ -192,7 +191,7 @@ public class AdminUserService extends BaseService {
 
         // 保存用户信息
         model.setCreater(username);
-        comUserDao.insert(model) ;
+        comUserDao.insert(model);
 
         Integer userId = model.getId();
 
@@ -201,17 +200,15 @@ public class AdminUserService extends BaseService {
         Map rMap = new HashMap<>();
         rMap.put("userId", userId);
         //如果不为空，则全部是垃圾数据
-        List<ComUserRoleModel> deleteList =  comUserRoleDao.selectList(rMap);
+        List<ComUserRoleModel> deleteList = comUserRoleDao.selectList(rMap);
 
-        for (ComUserRoleModel deleteModel  : deleteList)
-        {
+        for (ComUserRoleModel deleteModel : deleteList) {
             comUserRoleDao.delete(deleteModel.getId());
         }
 
         String[] addList = model.getRoleId().split(",");
-        for (String roleId  : addList)
-        {
-            ComUserRoleModel rModel =  new ComUserRoleModel();
+        for (String roleId : addList) {
+            ComUserRoleModel rModel = new ComUserRoleModel();
             rModel.setRoleId(Integer.valueOf(roleId));
             rModel.setUserId(userId);
             rModel.setCreater(username);
@@ -239,101 +236,45 @@ public class AdminUserService extends BaseService {
     }
 
 
-    public Map<String, Object> showAuth(Integer userId)
-    {
+    public Map<String, Object> showAuth(Integer userId) {
         ComUserModel user = comUserDao.select(userId);
-        if(user == null )
-        {
+        if (user == null) {
             throw new BusinessException("用户不存在。");
         }
 
         Map<String, Object> result = new HashMap<>();
 
 
-
         List<ComResourceBean> resList = comResourceDaoExt.selectResByUser(userId);
-        Set<Integer> resIds = resList.stream().map(ComResourceBean :: getId).collect(Collectors.toSet());
+        Set<Integer> resIds = resList.stream().map(ComResourceBean::getId).collect(Collectors.toSet());
 
-        List<ComResourceBean> allRes = comResourceDaoExt.selectAll();
+        List<ComResourceBean> allRes = adminResService.searchRes(null);
 
-        List<ComResourceBean> treeList =  convert2Tree(allRes, resIds);
+        allRes = markSelected(allRes, resIds);
 
-        Map<String, ComResourceBean> treeMap = treeList.stream().collect(Collectors.toMap(ComResourceBean::getResKey , (p) -> p ));
+        Map<String, ComResourceBean> treeMap = allRes.stream().collect(Collectors.toMap(ComResourceBean::getResKey, (p) -> p));
 
         result.put("treeMap", treeMap);
         return result;
     }
 
+    private List<ComResourceBean>  markSelected(List<ComResourceBean> allRes, Set<Integer> resIds) {
+        if (resIds == null || resIds.size() == 0)
+            return  allRes;
 
-    /**
-     * 将资源列转成一组树
-     */
-    private List<ComResourceBean> convert2Tree(List<ComResourceBean> resList, Set<Integer> checkSet) {
-        List<ComResourceBean> roots = findRoots(resList, checkSet);
-        List<ComResourceBean> notRoots = (List<ComResourceBean>) CollectionUtils.subtract(resList, roots);
-        for (ComResourceBean root : roots) {
-            List<ComResourceBean> children = findChildren(root, notRoots, checkSet);
-            root.setChildren(children);
-        }
-        return roots;
-    }
+        for (ComResourceBean bean : allRes) {
+            if (resIds.contains(bean.getId())) {
+                bean.setSelected(1);
+            } else {
+                bean.setSelected(0);
+            }
 
-    /**
-     * 查找所有根节点
-     */
-    private List<ComResourceBean> findRoots(List<ComResourceBean> allNodes, Set<Integer> checkSet) {
-        List<ComResourceBean> results = new ArrayList<>();
-        for (ComResourceBean node : allNodes) {
-            if (node.getParentId() == 0) {
-                results.add(node);
-                if(checkSet.contains(node.getId()))
-                {
-                    node.setSelected(1);
-                }
-                else
-                {
-                    node.setSelected(0);
-                }
+            if (bean.getChildren() != null && bean.getChildren().size() > 0) {
+                markSelected(bean.getChildren(), resIds);
             }
         }
-        return results;
+        return  allRes;
     }
-
-
-    /**
-     * 查找所有子节点
-     */
-    private List<ComResourceBean> findChildren(ComResourceBean root, List<ComResourceBean> allNodes,  Set<Integer> checkSet) {
-        List<ComResourceBean> children = new ArrayList<>();
-
-        for (ComResourceBean comparedOne : allNodes) {
-            if (comparedOne.getParentId()  == root.getId() ) {
-                children.add(comparedOne);
-                if(checkSet.contains(comparedOne.getId()))
-                {
-                    comparedOne.setSelected(1);
-                }
-                else
-                {
-                    comparedOne.setSelected(0);
-                }
-            }
-        }
-        root.setChildren(children);
-
-        List<ComResourceBean> notChildren = (List<ComResourceBean>) CollectionUtils.subtract(allNodes, children);
-
-        for (ComResourceBean child : children) {
-            List<ComResourceBean> tmpChildren = findChildren(child, notChildren,checkSet );
-            child.setChildren(tmpChildren);
-        }
-        return children;
-    }
-
-
-
-
-
 
 
 }

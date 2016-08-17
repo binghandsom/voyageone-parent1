@@ -3,8 +3,9 @@
 <mapper namespace="com.voyageone.security.dao.ComResourceDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.security.model.ComResourceModel" />
     <sql id="Base_Column_List" >
-        `id`, `res_name`, `res_key`, `res_type`, `parent_id`, `res_url`, `level`, `icon`, 
-        `active`, `description`, `created`, `creater`, `modified`, `modifier`
+        `id`, `application`, `res_name`, `res_key`, `res_type`, `parent_id`, `parent_ids`, 
+        `weight`, `res_url`, `icon`, `active`, `description`, `created`, `creater`, `modified`, 
+        `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -17,6 +18,9 @@
     <update id="update" parameterType="com.voyageone.security.model.ComResourceModel" >
         update com_resource
         <set >
+            <if test="application != null" >
+                `application` = #{application,jdbcType=VARCHAR},
+            </if>
             <if test="resName != null" >
                 `res_name` = #{resName,jdbcType=VARCHAR},
             </if>
@@ -29,11 +33,14 @@
             <if test="parentId != null" >
                 `parent_id` = #{parentId,jdbcType=INTEGER},
             </if>
+            <if test="parentIds != null" >
+                `parent_ids` = #{parentIds,jdbcType=VARCHAR},
+            </if>
+            <if test="weight != null" >
+                `weight` = #{weight,jdbcType=INTEGER},
+            </if>
             <if test="resUrl != null" >
                 `res_url` = #{resUrl,jdbcType=VARCHAR},
-            </if>
-            <if test="level != null" >
-                `level` = #{level,jdbcType=INTEGER},
             </if>
             <if test="icon != null" >
                 `icon` = #{icon,jdbcType=VARCHAR},
@@ -73,6 +80,9 @@
         <include refid="Base_Column_List" />
         from com_resource
         <where >
+            <if test="application != null" >
+                and `application` = #{application,jdbcType=VARCHAR}
+            </if>
             <if test="resName != null" >
                 and `res_name` = #{resName,jdbcType=VARCHAR}
             </if>
@@ -85,11 +95,14 @@
             <if test="parentId != null" >
                 and `parent_id` = #{parentId,jdbcType=INTEGER}
             </if>
+            <if test="parentIds != null" >
+                and `parent_ids` = #{parentIds,jdbcType=VARCHAR}
+            </if>
+            <if test="weight != null" >
+                and `weight` = #{weight,jdbcType=INTEGER}
+            </if>
             <if test="resUrl != null" >
                 and `res_url` = #{resUrl,jdbcType=VARCHAR}
-            </if>
-            <if test="level != null" >
-                and `level` = #{level,jdbcType=INTEGER}
             </if>
             <if test="icon != null" >
                 and `icon` = #{icon,jdbcType=VARCHAR}
@@ -121,6 +134,9 @@
         <include refid="Base_Column_List" />
         from com_resource
         <where >
+            <if test="application != null" >
+                and `application` = #{application,jdbcType=VARCHAR}
+            </if>
             <if test="resName != null" >
                 and `res_name` = #{resName,jdbcType=VARCHAR}
             </if>
@@ -133,11 +149,14 @@
             <if test="parentId != null" >
                 and `parent_id` = #{parentId,jdbcType=INTEGER}
             </if>
+            <if test="parentIds != null" >
+                and `parent_ids` = #{parentIds,jdbcType=VARCHAR}
+            </if>
+            <if test="weight != null" >
+                and `weight` = #{weight,jdbcType=INTEGER}
+            </if>
             <if test="resUrl != null" >
                 and `res_url` = #{resUrl,jdbcType=VARCHAR}
-            </if>
-            <if test="level != null" >
-                and `level` = #{level,jdbcType=INTEGER}
             </if>
             <if test="icon != null" >
                 and `icon` = #{icon,jdbcType=VARCHAR}
@@ -166,6 +185,9 @@
     <select id="selectCount" resultType="java.lang.Integer" >
         select count(*) from com_resource
         <where >
+            <if test="application != null" >
+                and `application` = #{application,jdbcType=VARCHAR}
+            </if>
             <if test="resName != null" >
                 and `res_name` = #{resName,jdbcType=VARCHAR}
             </if>
@@ -178,11 +200,14 @@
             <if test="parentId != null" >
                 and `parent_id` = #{parentId,jdbcType=INTEGER}
             </if>
+            <if test="parentIds != null" >
+                and `parent_ids` = #{parentIds,jdbcType=VARCHAR}
+            </if>
+            <if test="weight != null" >
+                and `weight` = #{weight,jdbcType=INTEGER}
+            </if>
             <if test="resUrl != null" >
                 and `res_url` = #{resUrl,jdbcType=VARCHAR}
-            </if>
-            <if test="level != null" >
-                and `level` = #{level,jdbcType=INTEGER}
             </if>
             <if test="icon != null" >
                 and `icon` = #{icon,jdbcType=VARCHAR}
@@ -211,6 +236,9 @@
     <insert id="insert" parameterType="com.voyageone.security.model.ComResourceModel" useGeneratedKeys="true" keyProperty="id" >
         insert into com_resource
         <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="application != null" >
+                `application`,
+            </if>
             <if test="resName != null" >
                 `res_name`,
             </if>
@@ -223,11 +251,14 @@
             <if test="parentId != null" >
                 `parent_id`,
             </if>
+            <if test="parentIds != null" >
+                `parent_ids`,
+            </if>
+            <if test="weight != null" >
+                `weight`,
+            </if>
             <if test="resUrl != null" >
                 `res_url`,
-            </if>
-            <if test="level != null" >
-                `level`,
             </if>
             <if test="icon != null" >
                 `icon`,
@@ -251,6 +282,9 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="application != null" >
+                #{application,jdbcType=VARCHAR},
+            </if>
             <if test="resName != null" >
                 #{resName,jdbcType=VARCHAR},
             </if>
@@ -263,11 +297,14 @@
             <if test="parentId != null" >
                 #{parentId,jdbcType=INTEGER},
             </if>
+            <if test="parentIds != null" >
+                #{parentIds,jdbcType=VARCHAR},
+            </if>
+            <if test="weight != null" >
+                #{weight,jdbcType=INTEGER},
+            </if>
             <if test="resUrl != null" >
                 #{resUrl,jdbcType=VARCHAR},
-            </if>
-            <if test="level != null" >
-                #{level,jdbcType=INTEGER},
             </if>
             <if test="icon != null" >
                 #{icon,jdbcType=VARCHAR},

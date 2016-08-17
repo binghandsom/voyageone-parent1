@@ -16,9 +16,9 @@ define([
             "controller": 'ConfigController as ctrl',
             "size": 'lg'
         },
-        "add": {
-            "templateUrl": "views/pop/add/index.tpl.html",
-            "controllerUrl": "modules/admin/views/pop/add/index.ctl",
+        "addChannel": {
+            "templateUrl": "views/pop/addChannel/index.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addChannel/index.ctl",
             "controller": 'AddController as ctrl',
             "size": 'lg'
         },
@@ -28,9 +28,9 @@ define([
             "controller": 'CreateEditController as ctrl',
             "size": 'md'
         },
-        "cartAdd": {
-            "templateUrl": "views/pop/cartAdd/index.tpl.html",
-            "controllerUrl": "modules/admin/views/pop/cartAdd/index.ctl",
+        "addCart": {
+            "templateUrl": "views/pop/addCart/index.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addCart/index.ctl",
             "controller": 'CartAddController as ctrl',
             "size": 'md'
         }
@@ -62,7 +62,7 @@ define([
          * 打开创建编辑页面
          */
         $scope.openAdd = function openAdd(context) {
-            return openModal(popActions.add, context);
+            return openModal(popActions.addChannel, context);
         };
         /**
          * 打开创建编辑页面
@@ -72,7 +72,7 @@ define([
         };
 
         $scope.openCartAdd = function openCartAdd(context) {
-            return openModal(popActions.cartAdd, context);
+            return openModal(popActions.addCart, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {

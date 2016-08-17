@@ -11,6 +11,8 @@ package com.voyageone.security.model;
  * 
  */
 public class ComResourceModel extends CoreBaseModel {
+    protected String application;
+
     /**
      * 菜单资源名称
      */
@@ -22,7 +24,7 @@ public class ComResourceModel extends CoreBaseModel {
     protected String resKey;
 
     /**
-     * 菜单资源类型:0,系统;1,目录,2,菜单;3,按钮;
+     * 菜单资源类型:0,系统;1,菜单,2,action;3,按钮;
      */
     protected Integer resType;
 
@@ -31,15 +33,25 @@ public class ComResourceModel extends CoreBaseModel {
      */
     protected Integer parentId;
 
-    protected String resUrl;
+    protected String parentIds;
 
-    protected Integer level;
+    protected Integer weight;
+
+    protected String resUrl;
 
     protected String icon;
 
     protected Integer active;
 
     protected String description;
+
+    public String getApplication() {
+        return application;
+    }
+
+    public void setApplication(String application) {
+        this.application = application == null ? null : application.trim();
+    }
 
     public String getResName() {
         return resName;
@@ -73,20 +85,28 @@ public class ComResourceModel extends CoreBaseModel {
         this.parentId = parentId;
     }
 
+    public String getParentIds() {
+        return parentIds;
+    }
+
+    public void setParentIds(String parentIds) {
+        this.parentIds = parentIds == null ? null : parentIds.trim();
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
+    }
+
     public String getResUrl() {
         return resUrl;
     }
 
     public void setResUrl(String resUrl) {
         this.resUrl = resUrl == null ? null : resUrl.trim();
-    }
-
-    public Integer getLevel() {
-        return level;
-    }
-
-    public void setLevel(Integer level) {
-        this.level = level;
     }
 
     public String getIcon() {

@@ -44,17 +44,11 @@
             <!--<generatedKey column="id" sqlStatement="JDBC"/>-->
         <!--</table>-->
 
-        <!--<table tableName="com_company" delimitAllColumns="true" enableCountByExample="false"-->
-               <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
-               <!--selectByExampleQueryId="false">-->
-            <!--<generatedKey column="id" sqlStatement="JDBC"/>-->
-        <!--</table>-->
-
-        <!--<table tableName="com_resource" delimitAllColumns="true" enableCountByExample="false"-->
-               <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
-               <!--selectByExampleQueryId="false">-->
-            <!--<generatedKey column="id" sqlStatement="JDBC"/>-->
-        <!--</table>-->
+        <table tableName="com_resource" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
 
         <!--<table tableName="com_role" delimitAllColumns="true" enableCountByExample="false"-->
                <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
@@ -80,11 +74,11 @@
             <!--<generatedKey column="id" sqlStatement="JDBC"/>-->
         <!--</table>-->
 
-        <table tableName="com_organization" delimitAllColumns="true" enableCountByExample="false"
-        enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-        selectByExampleQueryId="false">
-        <generatedKey column="id" sqlStatement="JDBC"/>
-        </table>
+        <!--<table tableName="com_organization" delimitAllColumns="true" enableCountByExample="false"-->
+        <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+        <!--selectByExampleQueryId="false">-->
+        <!--<generatedKey column="id" sqlStatement="JDBC"/>-->
+        <!--</table>-->
 
         <!--<table tableName="com_user_role" delimitAllColumns="true" enableCountByExample="false"-->
                <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->

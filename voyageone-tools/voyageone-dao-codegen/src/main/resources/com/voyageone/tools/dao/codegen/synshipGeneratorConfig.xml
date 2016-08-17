@@ -37,7 +37,13 @@
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
 
-        <table tableName="com_mt_value_channel" delimitAllColumns="true" enableCountByExample="false"
+        <!--<table tableName="com_mt_value_channel" delimitAllColumns="true" enableCountByExample="false"-->
+               <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+               <!--selectByExampleQueryId="false">-->
+            <!--<generatedKey column="id" sqlStatement="JDBC"/>-->
+        <!--</table>-->
+
+        <table tableName="com_mt_type" delimitAllColumns="true" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="JDBC"/>

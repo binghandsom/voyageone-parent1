@@ -7,25 +7,17 @@
  */
 package com.voyageone.service.model.com;
 
+import com.voyageone.base.dao.mysql.BaseModel;
+
 /**
  * 
  */
-public class ComMtTypeModel extends AdminBaseModel {
-    protected Integer id;
-
+public class ComMtTypeModel extends BaseModel {
     protected String name;
 
     protected String comment;
     
     protected Boolean active;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
