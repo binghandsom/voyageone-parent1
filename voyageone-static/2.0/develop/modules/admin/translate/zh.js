@@ -21,41 +21,49 @@ define(function () {
         "TXT_CART_UPDATE_TIME": "更新时间",
         "TXT_UPDATER": "更新人",
         "TXT_POP_CONFIG": "配置",
-        "TXT_CART_NAME": "渠道名",
+        "TXT_CHANNEL_NAME": "渠道名",
         "TXT_PROPERTY_NAME": "属性名",
         "TXT_PROPERTY_VALUE": "属性值",
         "TXT_COMMENTS": "备注",
         "TXT_SELECT_NO_VALUE": "请选择...",
-        "TXT_YES":"是",
-        "TXT_NO":"否",
+        "TXT_YES": "是",
+        "TXT_NO": "否",
         "TXT_POP_EDIT": "编辑",
-        "TXT_ICON_ADDRESS":"图标地址",
-        "TXT_SHIPPER":"发货人",
-        "TXT_SHIPPER_TEL":"发货人电话",
-        "TXT_SHIPPER_ZIP":"发货人邮编",
-        "TXT_SHIPPER_ADDRESS":"发货人地址",
-        "TXT_SECRET_KEY":"Secret Key",
-        "TXT_SESSION_KEY":"Session Key",
-        "TXT_CHOOSED":"已选择",
-        "TXT_CHOOSE":"可选择",
+        "TXT_ICON_ADDRESS": "图标地址",
+        "TXT_SHIPPER": "发货人",
+        "TXT_SHIPPER_TEL": "发货人电话",
+        "TXT_SHIPPER_ZIP": "发货人邮编",
+        "TXT_SHIPPER_ADDRESS": "发货人地址",
+        "TXT_SECRET_KEY": "Secret Key",
+        "TXT_SESSION_KEY": "Session Key",
+        "TXT_CHOOSED": "已选择",
+        "TXT_CHOOSE": "可选择",
         "TXT_MSG_SEARCH": "检索...",
 
         /**cart管理-信息一览*/
         "TXT_CART_MANAGE": "Cart管理",
         "TXT_CART_INFO_MANAGE": "Cart信息管理",
-        "TXT_CART_ID":"Cart ID",
-        "TXT_CART_NAME":"Cart名（缩写）",
-        "TXT_CART_SHORT_NAME":"Cart名缩写",
-        "TXT_CART_TYPE":"Cart类型",
+        "TXT_CART_ID": "Cart ID",
+        "TXT_NAME_CART": "Cart名",
+        "TXT_CART_NAME_(SHORT)": "Cart名（缩写）",
+        "TXT_CART_SHORT_NAME": "Cart名缩写",
+        "TXT_CART_TYPE": "Cart类型",
+        "TXT_CART_DESC": "Cart描述",
+        "TXT_PLATFORM_NAME": "平台名",
 
+        /**仓库管理-信息一览*/
+        "TXT_STORE_MANAGE": "仓库管理",
+        "TXT_STORE_NAME": "仓库名",
+        "TXT_SALE_STATE": "在售状态",
+        "TXT_STORE_TYPE": "仓库类型",
 
         /**按钮组*/
         "TXT_LOGOUT": "注销",
         "BTN_CANCEL": "取消",
         "BTN_SAVE": "保存",
-        "BTN_OK":"确认",
+        "BTN_OK": "确认",
         "BTN_GO": "Go",
-        "BTN_ACTIVE":"启用",
+        "BTN_ACTIVE": "启用",
         "BTN_INACTIVE": "禁用",
 
 
@@ -69,9 +77,10 @@ define(function () {
         "TXT_MSG_NO_DATE": "当前数据为空...",
 
         /**确认框*/
-        "TXT_CONFIRM":"确认",
-        "TXT_POP_ADD":"添加",
-        "TXT_CONFIRM_DELETE_MSG":"您确定要删除选定的渠道信息吗?",
+        "TXT_CONFIRM": "确认",
+        "TXT_POP_ADD": "添加",
+        "TXT_CONFIRM_DELETE_MSG": "您确定要删除选定的渠道信息吗?",
+        "TXT_CONFIRM_INACTIVE_MSG": "您确定要禁用当前选定的信息吗?",
         "TXT_MSG_NO_ROWS_SELECT": "请至少选择一条数据.",
 
         /**警告框*/
@@ -79,6 +88,7 @@ define(function () {
         "TXT_WARNING": "警告",
         "TXT_COMPLETE_INFO": "请完善当前页面的输入内容",
 
+        /**输入验证消息*/
         "INVALID_EMAIL": "请输入正确的E-Mail地址",
         "INVALID_URL": "请输入正确的URL地址",
         "INVALID_DATE": "请输入正确的日期",
@@ -95,5 +105,6 @@ define(function () {
         "INVALID_MAX": "请输入的数据不能大于:{{value}}",
         "INVALID_MIN": "请输入的数据不能小于:{{value}}",
         "INVALID_PATTERN": "请输入的数据必须满足规则:{{value}}",
+
     };
 });

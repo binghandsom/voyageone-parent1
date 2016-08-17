@@ -30,6 +30,8 @@ public class ComMtValueChannelModel extends AdminBaseModel {
     protected String langId;
 
     protected Integer displayOrder;
+    
+    protected Boolean active;
 
     public Integer getId() {
         return id;
@@ -102,4 +104,13 @@ public class ComMtValueChannelModel extends AdminBaseModel {
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
     }
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+    
 }
