@@ -2354,7 +2354,26 @@ public class SxProductService extends BaseService {
         }
 
         // 无线描述 (以后可能会根据不同商品信息，取不同的[无线描述])
-        String descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
+        // modified by morse.lu 2016/08/16 start
+        // 画面上有指定的用指定的，没有就还是用原来的"详情页描述"
+//        String descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
+        SxData sxData = expressionParser.getSxData();
+        String descriptionValue;
+        RuleExpression ruleDetails = new RuleExpression();
+        MasterWord masterWord = new MasterWord("wirelessDetails");
+        ruleDetails.addRuleWord(masterWord);
+        String details = expressionParser.parse(ruleDetails, shopBean, user, null);
+        if (!StringUtils.isEmpty(details)) {
+            descriptionValue = resolveDict(details, expressionParser, shopBean, user, null);
+            if (StringUtils.isEmpty(descriptionValue)) {
+                String errorMsg = String.format("无线描述[%s]在dict表里未设定!", details);
+                sxData.setErrorMessage(errorMsg);
+                throw new BusinessException(errorMsg);
+            }
+        } else {
+            descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
+        }
+        // modified by morse.lu 2016/08/16 end
         if (StringUtils.isEmpty(descriptionValue)) {
             // 字典表里未设定，先什么都不做吧
             return;

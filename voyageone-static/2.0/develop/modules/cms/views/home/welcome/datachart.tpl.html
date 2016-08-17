@@ -200,11 +200,9 @@
                                             <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_WAITING_PUBLISH.cartId,productStatus:{'Approved':true},platformStatus:{'WaitingPublish':true}})">{{m.CMS_PLATFORM_WAITING_PUBLISH.amountVal}}</a></td>
                                             <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_PUBLISH_SUCCESS.cartId,productStatus:{'Approved':true},platformStatus:{'InStock':true,'OnSale':true}})">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</a></td>
                                             <td class=" text-center"><a ng-click="goSearchPage(150,{cartId:m.CMS_PLATFORM_PUBLISH_FAILD.cartId,hasErrorFlg:'2'})"><label class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</label></a></td>
-                                            <td class=" text-center"><label class="label label-danger">{{m.CMS_BrandNoMatchCount.amountVal}}</label></td>
-                                            <!--{platforms.P%s:{$exists:true},$where:'this.platforms.P%s.pStatus!=this.platforms.P%s.pReallyStatus'}-->
-                                            <td class=" text-center"><a ng-click="goSearchPage(150,{cartId:m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.cartId,hasErrorFlg:'2'})"><label class="label label-danger">{{m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.amountVal}}</label></a></td>
-                                            <!--{platforms.P%s:{$exists:true},'platforms.P%s.skus.priceSale':-1}-->
-                                            <td class=" text-center"><a ng-click="goSearchPage(150,{cartId:m.CMS_PLATFORM_priceSale_Equal_minus1.cartId,hasErrorFlg:'2'})"><label class="label label-danger">{{m.CMS_PLATFORM_priceSale_Equal_minus1.amountVal}}</label></a></td>
+                                            <td class=" text-center"><a href="#/channel/brand_mapping_list"><label class="label label-danger">{{m.CMS_BrandNoMatchCount.amountVal}}</label></a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(170,{cartId:m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.cartId,hasErrorFlg:'3'})"><label class="label label-danger">{{m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.amountVal}}</label></a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(180,{cartId:m.CMS_PLATFORM_priceSale_Equal_minus1.cartId,priceType:'priceSale',priceStart:-1,priceEnd:-1})"><label class="label label-danger">{{m.CMS_PLATFORM_priceSale_Equal_minus1.amountVal}}</label></a></td>
                                         </tr>
                                         </tbody>
                                     </table>

@@ -59,10 +59,13 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
     @Autowired
     private PlatformService platformService;
 
+    // excel cell的内容长度限制
+    private final static int CELL_LENGTH_LIMIT = 2000;
     // DB检索页大小
     private final static int SELECT_PAGE_SIZE = 2000;
     // Excel 文件最大行数
     private final static int MAX_EXCEL_REC_COUNT = 10000;
+
     // 各平台固定输出列
     private final static String[] _DynCol = { "URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice" };
     private final static String[] _DynColCN = { "URL", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)" };
@@ -503,6 +506,15 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                     if ("comment".equals(propId)) {
                         Object value = item.getCommon().getComment();
                         FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
+                    } else if ("longDesEn".equals(propId) || "longDesCn".equals(propId)) {
+                        // 项目长度可能会超过32767个字符，需要截取，否则会报错，目前只检查长描述英文/中文
+                        String longDes = fields.getStringAttribute(propId);
+                        if (longDes == null) {
+                            longDes = "";
+                        } else if (longDes.length() > CELL_LENGTH_LIMIT) {
+                            longDes = longDes.substring(0, CELL_LENGTH_LIMIT);
+                        }
+                        FileUtils.cell(row, index++, unlock).setCellValue(longDes);
                     } else {
                         Object value = fields.getAttribute(propId);
                         FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
