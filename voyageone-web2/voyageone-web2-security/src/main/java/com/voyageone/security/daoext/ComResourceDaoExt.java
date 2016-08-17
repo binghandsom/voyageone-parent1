@@ -10,6 +10,4 @@ import java.util.List;
 public interface ComResourceDaoExt {
     List<ComResourceBean> selectResByUser(Integer userId);
 
-
-    List<ComResourceBean> selectAll();
 }

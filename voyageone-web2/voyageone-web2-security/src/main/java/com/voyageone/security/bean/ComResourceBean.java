@@ -13,8 +13,6 @@ public class ComResourceBean extends ComResourceModel {
     private String channelId;
     private Integer userId;
 
-
-
     private  int selected;
 
     private List<ComResourceBean> children;

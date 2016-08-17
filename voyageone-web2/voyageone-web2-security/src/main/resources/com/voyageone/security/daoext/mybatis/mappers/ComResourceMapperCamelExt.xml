@@ -15,11 +15,4 @@
 
 
 
-    <select id="selectAll" resultMap="comResourceBeanMap" >
-        SELECT id, res_name , res_key, res_type, parent_id, res_url, `level`, icon , active ,
-        description, created, creater, modified, modifier, application
-        from com_resource
-    </select>
-
-
 </mapper>
