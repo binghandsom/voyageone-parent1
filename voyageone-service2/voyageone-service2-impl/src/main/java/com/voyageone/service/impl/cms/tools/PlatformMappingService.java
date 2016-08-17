@@ -49,6 +49,10 @@ public class PlatformMappingService extends BaseService {
     }
 
     public CmsBtPlatformMappingModel get(CmsBtPlatformMappingModel platformMappingModel, String channelId) {
+
+        if (platformMappingModel.getCategoryType() == CATEGORY_TYPE_COMMON)
+            return platformMappingDao.selectCommon(platformMappingModel.getCartId(), channelId);
+
         return platformMappingDao.selectOne(platformMappingModel.getCartId(), platformMappingModel.getCategoryType(),
                 platformMappingModel.getCategoryPath(), channelId);
     }
@@ -103,8 +107,8 @@ public class PlatformMappingService extends BaseService {
     }
 
     public CmsBtPlatformMappingModel getCommon(ChannelConfigEnums.Channel channel, Integer cartId) {
-        // TODO
-        return null;
+
+        return platformMappingDao.selectCommon(cartId, channel.getId());
     }
 
     public boolean delete(CmsBtPlatformMappingModel platformMappingModel) {

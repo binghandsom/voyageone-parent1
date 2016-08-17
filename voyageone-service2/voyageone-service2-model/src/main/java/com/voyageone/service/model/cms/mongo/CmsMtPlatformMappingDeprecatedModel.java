@@ -1,6 +1,7 @@
 package com.voyageone.service.model.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.model.CartPartitionModel;
+import com.voyageone.base.dao.mongodb.support.MongoCollection;
 import com.voyageone.service.bean.cms.MappingBean;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,6 +15,7 @@ import java.util.List;
  */
 @Document
 @Deprecated
+@MongoCollection("cms_mt_platform_mapping")
 public class CmsMtPlatformMappingDeprecatedModel extends CartPartitionModel {
 
     private String channelId;

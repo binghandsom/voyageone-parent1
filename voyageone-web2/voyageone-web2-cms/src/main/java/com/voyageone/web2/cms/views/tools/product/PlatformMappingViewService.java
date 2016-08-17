@@ -11,8 +11,10 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
+import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCommonSchemaModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.tools.product.PlatformMappingGetBean;
 import com.voyageone.web2.cms.bean.tools.product.PlatformMappingSaveBean;
@@ -26,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -44,10 +45,15 @@ class PlatformMappingViewService extends BaseAppService {
 
     private final PlatformSchemaService platformSchemaService;
 
+    private final CmsMtPlatformCommonSchemaService platformCommonSchemaService;
+
     @Autowired
-    public PlatformMappingViewService(PlatformMappingService platformMappingService, PlatformSchemaService platformSchemaService) {
+    public PlatformMappingViewService(PlatformMappingService platformMappingService,
+                                      PlatformSchemaService platformSchemaService,
+                                      CmsMtPlatformCommonSchemaService platformCommonSchemaService) {
         this.platformMappingService = platformMappingService;
         this.platformSchemaService = platformSchemaService;
+        this.platformCommonSchemaService = platformCommonSchemaService;
     }
 
     public Map<String, Object> page(Integer cartId, Integer categoryType, String categoryPath, int page, int size, UserSessionBean userSessionBean) {
@@ -117,13 +123,25 @@ class PlatformMappingViewService extends BaseAppService {
 
         PlatformMappingGetBean.Schema schema = new PlatformMappingGetBean.Schema();
 
-        Map<String, List<Field>> fieldListMap = platformSchemaService.getFieldsByCategoryPath(categoryPath, channelId, cartId);
+        List<Field> item = null, product = null;
 
-        List<Field> item = fieldListMap.get(PlatformSchemaService.KEY_ITEM);
+        if (type == 1) {
+            CmsMtPlatformCommonSchemaModel commonSchemaModel = platformCommonSchemaService.get(cartId);
+
+            List<Map<String, Object>> itemFieldMapList = commonSchemaModel.getPropsItem();
+            if (itemFieldMapList != null && !itemFieldMapList.isEmpty())
+                item = SchemaJsonReader.readJsonForList(itemFieldMapList);
+
+            List<Map<String, Object>> productFieldMapList = commonSchemaModel.getPropsProduct();
+            if (productFieldMapList != null && !productFieldMapList.isEmpty())
+                product = SchemaJsonReader.readJsonForList(productFieldMapList);
+        } else {
+            Map<String, List<Field>> fieldListMap = platformSchemaService.getFieldsByCategoryPath(categoryPath, channelId, cartId);
+            item = fieldListMap.get(PlatformSchemaService.KEY_ITEM);
+            product = fieldListMap.get(PlatformSchemaService.KEY_PRODUCT);
+        }
 
         fillFields(item, fieldMappingMap);
-
-        List<Field> product = fieldListMap.get(PlatformSchemaService.KEY_PRODUCT);
 
         fillFields(product, fieldMappingMap);
 

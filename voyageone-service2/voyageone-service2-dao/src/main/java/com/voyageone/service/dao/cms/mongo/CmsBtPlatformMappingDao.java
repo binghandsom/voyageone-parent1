@@ -20,6 +20,13 @@ import java.util.List;
 @Repository
 public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMappingModel> {
 
+    public CmsBtPlatformMappingModel selectCommon(int cartId, String channelId) {
+
+        return selectOneWithQuery(new JongoQuery(
+                new Criteria("cartId").is(cartId)
+                        .and("categoryType").is(1)), channelId);
+    }
+
     public CmsBtPlatformMappingModel selectOne(int cartId, int categoryType, String categoryPath, String channelId) {
 
         return selectOneWithQuery(new JongoQuery(
