@@ -245,6 +245,6 @@ public final class ImgUtils {
 	 */
 	public static String getImageName (String imageUrl) {
 		String tempExtend = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-		return tempExtend.substring(0, tempExtend.contains(".") ? tempExtend.indexOf(".") : tempExtend.length());
+		return tempExtend.substring(0, tempExtend.contains(".") ? tempExtend.lastIndexOf(".") : tempExtend.length());
 	}
 }
