@@ -54,8 +54,11 @@ define(function () {
         /**仓库管理-信息一览*/
         "TXT_STORE_MANAGE": "仓库管理",
         "TXT_STORE_NAME": "仓库名",
+        "TXT_MAIN_STORE_NAME":"主仓库名",
         "TXT_SALE_STATE": "在售状态",
         "TXT_STORE_TYPE": "仓库类型",
+        "TXT_STORE_MANAGE_STATE":"库存管理状态",
+        "TXT_STORE_REMAINED":"库存保留量",
 
         /**按钮组*/
         "TXT_LOGOUT": "注销",
