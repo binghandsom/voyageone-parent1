@@ -2,6 +2,7 @@ package com.voyageone.service.impl.com.user;
 
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.security.bean.ComResourceBean;
 import com.voyageone.security.dao.ComResourceDao;
@@ -60,8 +61,24 @@ public class AdminResService extends BaseService {
      */
     public void addRes(ComResourceModel model)
     {
-        ComResourceModel parent = comResourceDao.select(model.getParentId());
+        //检查resKey唯一性，resName唯一性
         Map map = new HashMap<>();
+        map.put("resKey" , model.getResKey());
+
+        if(comResourceDao.selectCount(map) > 0)
+        {
+            throw new BusinessException("菜单Key在系统中已存在。");
+        }
+        map.clear();
+        map.put("resName" , model.getResName());
+
+        if(comResourceDao.selectCount(map) > 0)
+        {
+            throw new BusinessException("菜单名称在系统中已存在。");
+        }
+
+        ComResourceModel parent = comResourceDao.select(model.getParentId());
+
         map.put("parentId" , model.getParentId());
         List<ComResourceModel> siblings  = comResourceDao.selectList(map);
         int weight =  siblings.stream().mapToInt(ComResourceModel:: getWeight).max().getAsInt();
