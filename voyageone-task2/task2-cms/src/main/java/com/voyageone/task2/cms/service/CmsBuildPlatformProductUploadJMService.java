@@ -621,28 +621,30 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         //更新SKU,然而在当前版本中SkuCode是不能改的。所以删掉了更新sku的逻辑
                     }
 
-                    //获取jm_hash_id列表
+                    // 获取jm_hash_id列表（去掉cms_bt_jm_promotion表中已删除的活动(status=0)和hashId为空的记录，并根据created降序来排列）
                     List<String> jmHashIdList = cmsBtJmPromotionProductDaoExt.selectJmHashIds(channelId, productCode, DateTimeUtilBeijing.getCurrentBeiJingDate());
                     $info("已经存在的聚美Deal的size:" + jmHashIdList.size() + ",对应的productCode:" + productCode);
+                    // 如果没找到活动对应的jm_hash_id，用originHashId
                     if (jmHashIdList.size() == 0)
                         jmHashIdList.add(originHashId);
 
-
-                    for (String hashId : jmHashIdList) {
+                    // 取得第一条当前有效活动最晚创建的第一条jm_hash_id即可，只可能有一个jm_hash_id，不用循环了
+                    String hashId = jmHashIdList.get(0);
+//                    for (String hashId : jmHashIdList) {
                         $info("更新Deal的hashId:" + hashId);
                         HtDealUpdateRequest htDealUpdateRequest = fillHtDealUpdateRequest(product,hashId,expressionParser,shop);
                         HtDealUpdateResponse htDealUpdateResponse = jumeiHtDealService.update(shop, htDealUpdateRequest);
                         if (htDealUpdateResponse != null && htDealUpdateResponse.is_Success()) {
-                            $info("更新Deal成功！[ProductId:%s]", product.getProdId());
+                            $info("聚美更新Deal成功！[ProductId:%s]", product.getProdId());
                         }
                         //更新Deal失败
                         else
                         {
-                            String msg = String.format("更新Deal失败！[ProductId:%s], [Message:%s]", product.getProdId(), htDealUpdateResponse.getErrorMsg());
+                            String msg = String.format("聚美更新Deal失败！[ProductId:%s], [Message:%s]", product.getProdId(), htDealUpdateResponse.getErrorMsg());
                             $error(msg);
                             throw  new BusinessException(msg);
                         }
-                    }
+//                    }
                 }
                 //更新产品失败
                 else
