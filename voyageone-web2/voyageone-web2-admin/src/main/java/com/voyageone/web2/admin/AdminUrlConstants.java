@@ -46,6 +46,12 @@ public interface AdminUrlConstants {
 			String ROOT = "/admin/channel/attribute";
 			
 			String SEARCH_CHANNEL_ATTRIBUTE_BY_PAGE = "searchChannelAttributeByPage";
+
+			String ADD_CHANNEL_ATTRIBUTE = "addChannelAttribute";
+
+			String UPDATE_CHANNEL_ATTRIBUTE = "updateChannelAttribute";
+
+			String DELETE_CHANNEL_ATTRIBUTE = "deleteChannelAttribute";
 			
 		}
 		

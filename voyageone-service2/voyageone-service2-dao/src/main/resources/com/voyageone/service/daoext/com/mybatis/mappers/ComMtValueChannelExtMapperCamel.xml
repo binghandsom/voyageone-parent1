@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.com.ComMtValueChannelDaoExt">
+
+	<resultMap id="channelAttrModeMap" type="com.voyageone.service.bean.com.ComMtValueChannelBean" />
+	
+	<sql id="searchChannelAttributeFilter">
+		<where>
+			<if test="channelId != null and channelId != ''">
+				and cmvc.channel_id = #{channelId}
+			</if>
+			<if test="typeId != null">
+				and cmvc.type_id = #{typeId}
+			</if>
+			<if test="langId != null and langId != ''">
+				and cmvc.lang_id = #{langId}
+			</if>
+			<if test="value != null and value != ''">
+				and cmvc.value like concat('%', #{value}, '%')
+			</if>
+			<if test="name != null and name != ''">
+				and cmvc.name like concat('%', #{name}, '%')
+			</if>
+		</where>
+	</sql>
+	
+	<select id="searchChannelAttributeByPage" resultMap="channelAttrModeMap">
+		select toc.name as channel_name, cmt.name as type_name, cmvc.id, cmvc.type_id, cmvc.channel_id,
+			cmvc.value, cmvc.name, cmvc.add_name1, cmvc.add_name2, cmvc.lang_id, cmvc.lang_id, cmvc.display_order,
+			cmvc.created, cmvc.creater, cmvc.modified, cmvc.modifier
+		from com_mt_value_channel cmvc left join tm_order_channel toc on toc.order_channel_id = cmvc.channel_id
+			left join com_mt_type cmt on cmt.id = cmvc.type_id
+		<include refid="searchChannelAttributeFilter"/>
+	</select>
+	
+	<select id="searchChannelAttributeCount" resultType="integer">
+		select count(0) from com_mt_value_channel cmvc
+		<include refid="searchChannelAttributeFilter"/>
+	</select>
+	
+</mapper>
