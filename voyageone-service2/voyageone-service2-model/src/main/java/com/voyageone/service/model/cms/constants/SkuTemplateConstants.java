@@ -124,5 +124,7 @@ public class SkuTemplateConstants {
     public final static int CSPU_ATTACH_IMG = 106; // 产品规格资质图
     public final static int CSPU_NO_UPDATE = 107; // 产品规格属性里，不会去设值的属性
 
+    public final static int DARWINSKU_PACKAGE_TYPE = 108; // 套餐类型(天猫默认是"官方标配[6536025]",且必须要有"官方标配",先代码写死,不过这样就不支持多种套餐,即多个sku)，参照类目"影音电器>耳机/耳麦"
+
     public final static int UNKOWN = 99999;
 }
