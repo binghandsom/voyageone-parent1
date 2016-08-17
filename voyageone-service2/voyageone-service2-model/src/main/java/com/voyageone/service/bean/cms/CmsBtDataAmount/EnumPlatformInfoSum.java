@@ -27,9 +27,10 @@ public enum EnumPlatformInfoSum implements IEnumDataAmountSum{
         return String.format(m.getQueryStr(),m.getCartId(),m.getCartId(),m.getCartId());
     }),//
     CMS_PLATFORM_PUBLISH_FAILD("CMS_PLATFORM_PUBLISH_FAILD", "{'platforms.P%s.pPublishError':{$nin:[null,'']}}", "/search/advanceSearch", "", "上新失败数"),
-    CMS_PLATFORM_pStatus_pReallyStatus_notEqual("CMS_PLATFORM_pStatus_pReallyStatus_notEqual", "{platforms.P%s:{$exists:true},$where:'this.platforms.P%s.pStatus!=this.platforms.P%s.pReallyStatus'}", "/search/advanceSearch", "", "商品平台状态与实际相异数",(m)->{
-// TODO-- "{$or:[{'platforms.P#.pReallyStatus':'OnSale','platforms.P#.pStatus':{$ne:'OnSale'}},{'platforms.P#.pReallyStatus':'InStock','platforms.P#.pStatus':{$ne:'InStock'}}]}
-        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId(),m.getCartId());
+    //{platforms.P%s:{$exists:true},$where:'this.platforms.P%s.pStatus!=this.platforms.P%s.pReallyStatus'}
+    CMS_PLATFORM_pStatus_pReallyStatus_notEqual("CMS_PLATFORM_pStatus_pReallyStatus_notEqual", "{$or:[{'platforms.P%s.pReallyStatus':'OnSale','platforms.P%s.pStatus':{$ne:'OnSale'}},{'platforms.P%s.pReallyStatus':'InStock','platforms.P%s.pStatus':{$ne:'InStock'}}]}", "/search/advanceSearch", "", "商品平台状态与实际相异数",(m)->{
+// TODO-- "{$or:[{'platforms.P%s.pReallyStatus':'OnSale','platforms.P%s.pStatus':{$ne:'OnSale'}},{'platforms.P%s.pReallyStatus':'InStock','platforms.P%s.pStatus':{$ne:'InStock'}}]}
+        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId(),m.getCartId(),m.getCartId());
     }),// priceSale
     CMS_PLATFORM_priceSale_Equal_minus1("CMS_PLATFORM_priceSale_Equal_minus1", "{platforms.P%s:{$exists:true},'platforms.P%s.skus.priceSale':-1}", "/search/advanceSearch", "", "中国最终售价价格为-1",(m)->{
         return String.format(m.getQueryStr(),m.getCartId(),m.getCartId());
