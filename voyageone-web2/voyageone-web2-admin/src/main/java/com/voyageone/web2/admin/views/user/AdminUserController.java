@@ -34,7 +34,7 @@ public class AdminUserController extends AdminController {
         Preconditions.checkNotNull(form.getPageSize());
         // 检索用户信息
 
-        PageModel<AdminUserBean> userPage = adminUserService.searchUserByPage(form.getUserAccount(), form.getActive(),
+        PageModel<AdminUserBean> userPage = adminUserService.searchUser(form.getUserAccount(), form.getActive(),
                 form.getOrgId(),form.getRoleId(),  form.getChannelId(), form.getStoreId(),form.getPageNum(), form.getPageSize() );
 
         return success(userPage);
@@ -43,7 +43,7 @@ public class AdminUserController extends AdminController {
     @RequestMapping(AdminUrlConstants.User.Self.INIT)
     public AjaxResponse init(@RequestBody UserFormBean form)  {
         // 检索用户信息
-        PageModel<AdminUserBean> userPage = adminUserService.searchUserByPage(null, null, null, null, null,null, form.getPageNum(), form.getPageSize());
+        PageModel<AdminUserBean> userPage = adminUserService.searchUser(null, null, null, null, null,null, form.getPageNum(), form.getPageSize());
 
         return success(userPage);
     }

@@ -11,6 +11,7 @@ import com.voyageone.security.model.ComUserModel;
 import com.voyageone.security.model.ComUserRoleModel;
 import com.voyageone.service.bean.com.AdminUserBean;
 import com.voyageone.service.daoext.core.AdminUserDaoExt;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.PageModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
  */
 
 @Service
-public class AdminUserService {
+public class AdminUserService extends BaseService {
 
     @Autowired
     AdminUserDaoExt adminUserDaoExt;
@@ -50,11 +51,11 @@ public class AdminUserService {
      * @param pageSize
      * @return
      */
-    public PageModel<AdminUserBean> searchUserByPage(String userAccount, Integer active, Integer orgId, Integer roleId,
-                                                    String channelId,Integer storeId, Integer pageNum, Integer pageSize)
+    public PageModel<AdminUserBean> searchUser(String userAccount, Integer active, Integer orgId, Integer roleId,
+                                               String channelId, Integer storeId, Integer pageNum, Integer pageSize)
     {
 
-        PageModel<AdminUserBean> pageModel = new PageModel<AdminUserBean>();
+        PageModel<AdminUserBean> pageModel = new PageModel<>();
 
         // 设置查询参数
         Map<String, Object> params = new HashMap<String, Object>();

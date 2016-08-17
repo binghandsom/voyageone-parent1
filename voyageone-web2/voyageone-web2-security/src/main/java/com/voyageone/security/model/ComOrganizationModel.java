@@ -13,24 +13,20 @@ package com.voyageone.security.model;
 public class ComOrganizationModel extends CoreBaseModel {
     protected String orgName;
 
-    protected String description;
-
     protected Boolean active;
+
+    protected Integer parentId;
+
+    protected String parentIds;
+
+    protected Integer weight;
 
     public String getOrgName() {
         return orgName;
     }
 
     public void setOrgName(String orgName) {
-        this.orgName = orgName == null ? null : orgName.trim();
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
+        this.orgName = orgName;
     }
 
     public Boolean getActive() {
@@ -39,5 +35,29 @@ public class ComOrganizationModel extends CoreBaseModel {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getParentIds() {
+        return parentIds;
+    }
+
+    public void setParentIds(String parentIds) {
+        this.parentIds = parentIds == null ? null : parentIds.trim();
+    }
+
+    public Integer getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Integer weight) {
+        this.weight = weight;
     }
 }
