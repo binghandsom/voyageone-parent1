@@ -128,6 +128,12 @@ define(function () {
             "controllerUrl": "modules/cms/views/channel/brandMapping/index.ctl",
             "controller": "BrandMappingController as ctrl"
         },
+        "channel_brand_mapping_param": {
+            "hash": "/channel/brand_mapping_list/:cartId",
+            "templateUrl": "views/channel/brandMapping/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/brandMapping/index.ctl",
+            "controller": "BrandMappingController as ctrl"
+        },
         "channel_cart_category_list": {
             "hash": "/channel/cart_category_list",
             "templateUrl": "views/channel/category/index.tpl.html",
