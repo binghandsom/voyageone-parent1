@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.tools.product;
 
 import com.voyageone.common.PageQueryParameters;
+import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -33,7 +34,8 @@ public class PlatformMappingController extends CmsController {
     private final PlatformMappingViewService platformMappingViewService;
 
     @Autowired
-    public PlatformMappingController(PlatformMappingService platformMappingService, PlatformMappingViewService platformMappingViewService) {
+    public PlatformMappingController(PlatformMappingService platformMappingService,
+                                     PlatformMappingViewService platformMappingViewService) {
         this.platformMappingService = platformMappingService;
         this.platformMappingViewService = platformMappingViewService;
     }
@@ -71,5 +73,15 @@ public class PlatformMappingController extends CmsController {
     @RequestMapping(PLATFORM_MAPPING.DELETE)
     public AjaxResponse delete(@RequestBody CmsBtPlatformMappingModel platformMappingModel) {
         return success(platformMappingService.delete(platformMappingModel));
+    }
+
+    @RequestMapping(PLATFORM_MAPPING.GET_COMMONSCHEMA)
+    public AjaxResponse getCommonSchema() {
+        return success(platformMappingViewService.getCommonSchema());
+    }
+
+    @RequestMapping(PLATFORM_MAPPING.GET_FEEDCUSTOMPROPS)
+    public AjaxResponse getFeedCustomProps() {
+        return success(platformMappingViewService.getFeedCustomProps(getUser().getSelChannelId()));
     }
 }

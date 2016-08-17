@@ -2,7 +2,6 @@ package com.voyageone.web2.cms.views.tools.product;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.asserts.Assert;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.*;
@@ -10,10 +9,14 @@ import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.CmsMtFeedCustomPropDao;
+import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
+import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCommonSchemaModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.tools.product.PlatformMappingGetBean;
@@ -47,13 +50,21 @@ class PlatformMappingViewService extends BaseAppService {
 
     private final CmsMtPlatformCommonSchemaService platformCommonSchemaService;
 
+    private final CommonSchemaService commonSchemaService;
+
+    private final CmsMtFeedCustomPropDao feedCustomPropDao;
+
     @Autowired
     public PlatformMappingViewService(PlatformMappingService platformMappingService,
                                       PlatformSchemaService platformSchemaService,
-                                      CmsMtPlatformCommonSchemaService platformCommonSchemaService) {
+                                      CmsMtPlatformCommonSchemaService platformCommonSchemaService,
+                                      CommonSchemaService commonSchemaService,
+                                      CmsMtFeedCustomPropDao feedCustomPropDao) {
         this.platformMappingService = platformMappingService;
         this.platformSchemaService = platformSchemaService;
         this.platformCommonSchemaService = platformCommonSchemaService;
+        this.commonSchemaService = commonSchemaService;
+        this.feedCustomPropDao = feedCustomPropDao;
     }
 
     public Map<String, Object> page(Integer cartId, Integer categoryType, String categoryPath, int page, int size, UserSessionBean userSessionBean) {
@@ -218,6 +229,42 @@ class PlatformMappingViewService extends BaseAppService {
         platformMappingModel.setMappings(mappingList);
 
         return platformMappingService.saveMap(platformMappingModel);
+    }
+
+    public List<Map<String, Object>> getCommonSchema() {
+
+        CmsMtCommonSchemaModel comSchemaModel = commonSchemaService.getComSchemaModel();
+
+        List<Field> fields = comSchemaModel.getFields();
+
+        if (fields == null || fields.isEmpty())
+            return new ArrayList<>(0);
+
+        return fields.stream().map(f -> {
+            Map<String, Object> jsObject = new HashMap<>();
+            jsObject.put("value", f.getId());
+            jsObject.put("label", f.getName());
+            return jsObject;
+        }).collect(toList());
+    }
+
+    public List<Map<String, Object>> getFeedCustomProps(String channelId) {
+
+        CmsMtFeedCustomPropModel feedCustomPropModel = new CmsMtFeedCustomPropModel();
+
+        feedCustomPropModel.setChannelId(channelId);
+
+        List<CmsMtFeedCustomPropModel> feedCustomPropModelList = feedCustomPropDao.selectList(feedCustomPropModel);
+
+        if (feedCustomPropModelList == null || feedCustomPropModelList.isEmpty())
+            return new ArrayList<>(0);
+
+        return feedCustomPropModelList.stream().map(f -> {
+            Map<String, Object> jsObject = new HashMap<>();
+            jsObject.put("value", f.getFeedPropOriginal());
+            jsObject.put("label", f.getFeedPropOriginal());
+            return jsObject;
+        }).collect(toList());
     }
 
     private void fillMapping(Map<String, CmsBtPlatformMappingModel.FieldMapping> mappingMap, List<Field> fieldList) {

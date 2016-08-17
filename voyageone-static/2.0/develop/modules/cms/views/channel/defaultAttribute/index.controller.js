@@ -11,7 +11,7 @@ define(function (require) {
 
     cms.controller('DefaultAttributeController', (function () {
 
-        function DefaultAttributeController($q, popups, alert, confirm, menuService, $productDetailService, platformMappingService) {
+        function DefaultAttributeController(popups, alert, confirm, menuService, $productDetailService, platformMappingService) {
 
             var self = this;
 
@@ -24,7 +24,6 @@ define(function (require) {
             self.$productDetailService = $productDetailService;
             self.platformMappingService = platformMappingService;
 
-            self.q = $q;
             self.popups = popups;
             self.alert = alert;
             self.confirm = confirm;

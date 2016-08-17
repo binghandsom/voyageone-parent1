@@ -567,11 +567,13 @@ define(function () {
                 "setUpdateFlg": "setUpdateFlg"
             },
             "platformMappingService": {
-                "root": "/cms/platform/mapping/",
-                "page": "page",
-                "get": "get",
-                "save": "save",
-                "delete": "delete"
+                root: "/cms/platform/mapping/",
+                page: "page",
+                get: "get",
+                save: "save",
+                delete: "delete",
+                getCommonSchema: {url: "getCommonSchema", cache: CACHE.LOCAL},
+                getFeedCustomProps: {url: "getFeedCustomProps", cache: CACHE.LOCAL}
             }
         }
     };

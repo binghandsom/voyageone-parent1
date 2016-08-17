@@ -568,7 +568,7 @@ public interface CmsUrlConstants {
             String HsCodeChg = "hsCodeChg";
             String CopyProperty = "copyProperty";
             String CopyCommonProperty = "copyCommonProperty";
-            String GET_PLATFORM_CATEGORIES ="getPlatformCategories";
+            String GET_PLATFORM_CATEGORIES = "getPlatformCategories";
         }
 
         interface HISTORY {
@@ -761,5 +761,7 @@ public interface CmsUrlConstants {
         String GET = "get";
         String SAVE = "save";
         String DELETE = "delete";
+        String GET_COMMONSCHEMA = "getCommonSchema";
+        String GET_FEEDCUSTOMPROPS = "getFeedCustomProps";
     }
 }
