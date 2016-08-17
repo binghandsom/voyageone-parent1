@@ -16,6 +16,12 @@ define(function () {
             "templateUrl": "views/cartManagement/index.tpl.html",
             "controllerUrl": "modules/admin/views/cartManagement/index.ctl",
             "controller": "CartManagementController as ctrl"
+        },
+        "storeManagement": {
+            "hash": "/store/storeManagement",
+            "templateUrl": "views/storeManagement/index.tpl.html",
+            "controllerUrl": "modules/admin/views/storeManagement/index.ctl",
+            "controller": "StoreManagementController as ctrl"
         }
     };
 });

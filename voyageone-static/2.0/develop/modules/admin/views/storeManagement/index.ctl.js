@@ -7,11 +7,12 @@ define([
     'admin',
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
-    admin.controller('CartManagementController', (function () {
-        function CartManagementController(popups, alert, confirm, AdminCartService, selectRowsFactory) {
+    admin.controller('StoreManagementController', (function () {
+        function StoreManagementController(popups, alert, confirm, channelService, AdminCartService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
+            this.channelService = channelService;
             this.selectRowsFactory = selectRowsFactory;
             this.AdminCartService = AdminCartService;
             this.cartPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
@@ -20,16 +21,19 @@ define([
             this.cartSelList = {selList: []};
             this.tempSelect = null;
             this.searchInfo = {
-                cartId: null,
+                cartId: '',
                 cartName: '',
-                cartType: '',
+                carType: '',
                 pageInfo: this.cartPageOption
             }
         }
 
-        CartManagementController.prototype = {
+        StoreManagementController.prototype = {
             init: function () {
                 var self = this;
+                self.channelService.getAllChannel().then(function (res) {
+                    self.channelList = res.data;
+                });
                 self.search();
             },
             search: function (page) {
@@ -40,7 +44,7 @@ define([
                         'pageSize': self.searchInfo.pageInfo.size,
                         'cartId': self.searchInfo.cartId,
                         'cartName': self.searchInfo.cartName,
-                        'cartType': self.searchInfo.cartType
+                        'carType': self.searchInfo.carType
                     })
                     .then(function (res) {
                         self.cartList = res.data.result;
@@ -119,6 +123,6 @@ define([
             }
 
         };
-        return CartManagementController;
+        return StoreManagementController;
     })())
 });

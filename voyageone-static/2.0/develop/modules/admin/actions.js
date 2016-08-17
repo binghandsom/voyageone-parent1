@@ -67,6 +67,21 @@ define(function () {
                 "AdminChannelService": {
                     "root": "/admin/system/config"
                 }
+            },
+            /** 仓库信息 */
+            "store": {
+                "storeService": {
+                    "root": "/admin/store/self",
+                    "searchStoreByPage": "searchStoreByPage",
+                    "searchStoreConfigByPage": "searchStoreConfigByPage",
+                    "getAllStore": "getAllStore",
+                    "addStore": "addStore",
+                    "updateStore": "updateStore",
+                    "deleteStore": "deleteStore",
+                    "addStoreConfig": "addStoreConfig",
+                    "updateStoreConfig": "updateStoreConfig",
+                    "deleteStoreConfig": "deleteStoreConfig"
+                }
             }
         }
     };
