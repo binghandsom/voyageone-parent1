@@ -24,6 +24,13 @@ public class AdminResService extends BaseService {
     @Autowired
     ComResourceDao comResourceDao;
 
+
+    /**
+     *查找菜单资源
+     *
+     * @param app
+     * @return
+     */
     public List<ComResourceBean> searchRes(String app)
     {
         Map<String, Object> map = new HashMap<>();
@@ -44,6 +51,25 @@ public class AdminResService extends BaseService {
             beanList.add(bean);
         }
         return convert2Tree(beanList);
+    }
+
+
+    /**
+     *
+     * @param model
+     */
+    public void addRes(ComResourceModel model)
+    {
+        ComResourceModel parent = comResourceDao.select(model.getParentId());
+        Map map = new HashMap<>();
+        map.put("parentId" , model.getParentId());
+        List<ComResourceModel> siblings  = comResourceDao.selectList(map);
+        int weight =  siblings.stream().mapToInt(ComResourceModel:: getWeight).max().getAsInt();
+
+        model.setWeight(++weight);
+        model.setParentIds(parent.getParentIds() + "," + parent.getId());
+        model.setActive(1);
+        comResourceDao.insert(model);
     }
 
 

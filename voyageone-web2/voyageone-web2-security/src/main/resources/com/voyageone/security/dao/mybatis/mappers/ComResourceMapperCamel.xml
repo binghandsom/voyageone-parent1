@@ -4,8 +4,8 @@
     <resultMap id="BaseResultMap" type="com.voyageone.security.model.ComResourceModel" />
     <sql id="Base_Column_List" >
         `id`, `application`, `res_name`, `res_key`, `res_type`, `parent_id`, `parent_ids`, 
-        `weight`, `res_url`, `level`, `icon`, `active`, `description`, `created`, `creater`, 
-        `modified`, `modifier`
+        `weight`, `res_url`, `icon`, `active`, `description`, `created`, `creater`, `modified`, 
+        `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -41,9 +41,6 @@
             </if>
             <if test="resUrl != null" >
                 `res_url` = #{resUrl,jdbcType=VARCHAR},
-            </if>
-            <if test="level != null" >
-                `level` = #{level,jdbcType=INTEGER},
             </if>
             <if test="icon != null" >
                 `icon` = #{icon,jdbcType=VARCHAR},
@@ -107,9 +104,6 @@
             <if test="resUrl != null" >
                 and `res_url` = #{resUrl,jdbcType=VARCHAR}
             </if>
-            <if test="level != null" >
-                and `level` = #{level,jdbcType=INTEGER}
-            </if>
             <if test="icon != null" >
                 and `icon` = #{icon,jdbcType=VARCHAR}
             </if>
@@ -164,9 +158,6 @@
             <if test="resUrl != null" >
                 and `res_url` = #{resUrl,jdbcType=VARCHAR}
             </if>
-            <if test="level != null" >
-                and `level` = #{level,jdbcType=INTEGER}
-            </if>
             <if test="icon != null" >
                 and `icon` = #{icon,jdbcType=VARCHAR}
             </if>
@@ -217,9 +208,6 @@
             </if>
             <if test="resUrl != null" >
                 and `res_url` = #{resUrl,jdbcType=VARCHAR}
-            </if>
-            <if test="level != null" >
-                and `level` = #{level,jdbcType=INTEGER}
             </if>
             <if test="icon != null" >
                 and `icon` = #{icon,jdbcType=VARCHAR}
@@ -272,9 +260,6 @@
             <if test="resUrl != null" >
                 `res_url`,
             </if>
-            <if test="level != null" >
-                `level`,
-            </if>
             <if test="icon != null" >
                 `icon`,
             </if>
@@ -320,9 +305,6 @@
             </if>
             <if test="resUrl != null" >
                 #{resUrl,jdbcType=VARCHAR},
-            </if>
-            <if test="level != null" >
-                #{level,jdbcType=INTEGER},
             </if>
             <if test="icon != null" >
                 #{icon,jdbcType=VARCHAR},

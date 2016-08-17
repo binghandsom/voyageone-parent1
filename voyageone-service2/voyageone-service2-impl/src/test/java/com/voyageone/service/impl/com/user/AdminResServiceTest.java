@@ -2,6 +2,7 @@ package com.voyageone.service.impl.com.user;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.security.bean.ComResourceBean;
+import com.voyageone.security.model.ComResourceModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,5 +30,22 @@ public class AdminResServiceTest {
         List<ComResourceBean> result = adminResService.searchRes("cms");
 
         System.out.println(JacksonUtil.bean2Json(result));
+    }
+
+    @Test
+    public void testAddRes() throws Exception {
+
+        ComResourceModel model = new ComResourceModel();
+        model.setApplication("cms");
+        model.setResKey("test_key");
+        model.setResName("test_name");
+        model.setIcon("");
+        model.setCreater("test");
+        model.setParentId(1);
+        model.setDescription("xxxxx");
+        model.setResType(1);
+
+        adminResService.addRes(model);
+
     }
 }

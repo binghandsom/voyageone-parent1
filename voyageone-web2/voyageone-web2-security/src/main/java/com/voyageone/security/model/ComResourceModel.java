@@ -39,8 +39,6 @@ public class ComResourceModel extends CoreBaseModel {
 
     protected String resUrl;
 
-    protected Integer level;
-
     protected String icon;
 
     protected Integer active;
@@ -109,14 +107,6 @@ public class ComResourceModel extends CoreBaseModel {
 
     public void setResUrl(String resUrl) {
         this.resUrl = resUrl == null ? null : resUrl.trim();
-    }
-
-    public Integer getLevel() {
-        return level;
-    }
-
-    public void setLevel(Integer level) {
-        this.level = level;
     }
 
     public String getIcon() {
