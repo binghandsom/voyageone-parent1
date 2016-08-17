@@ -7,23 +7,17 @@
  */
 package com.voyageone.service.model.com;
 
+import com.voyageone.base.dao.mysql.BaseModel;
+
 /**
  * 
  */
-public class ComMtTypeModel extends AdminBaseModel {
-    protected Integer id;
-
+public class ComMtTypeModel extends BaseModel {
     protected String name;
 
     protected String comment;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    
+    protected Boolean active;
 
     public String getName() {
         return name;
@@ -40,4 +34,13 @@ public class ComMtTypeModel extends AdminBaseModel {
     public void setComment(String comment) {
         this.comment = comment == null ? null : comment.trim();
     }
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+    
 }

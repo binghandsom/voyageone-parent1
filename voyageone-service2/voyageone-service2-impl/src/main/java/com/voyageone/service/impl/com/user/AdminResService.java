@@ -2,6 +2,8 @@ package com.voyageone.service.impl.com.user;
 
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.security.bean.ComResourceBean;
 import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.model.ComResourceModel;
@@ -23,10 +25,20 @@ public class AdminResService extends BaseService {
     @Autowired
     ComResourceDao comResourceDao;
 
+
+    /**
+     *查找菜单资源
+     *
+     * @param app
+     * @return
+     */
     public List<ComResourceBean> searchRes(String app)
     {
         Map<String, Object> map = new HashMap<>();
-        map.put("application", app);
+        if(!StringUtils.isNullOrBlank2(app))
+        {
+            map.put("application", app);
+        }
 
         map = MySqlPageHelper.build(map).addSort("res_type", Order.Direction.ASC).addSort("weight", Order.Direction.ASC).toMap();
 
@@ -39,8 +51,42 @@ public class AdminResService extends BaseService {
             BeanUtils.copyProperties(model, bean);
             beanList.add(bean);
         }
-
         return convert2Tree(beanList);
+    }
+
+
+    /**
+     *
+     * @param model
+     */
+    public void addRes(ComResourceModel model)
+    {
+        //检查resKey唯一性，resName唯一性
+        Map map = new HashMap<>();
+        map.put("resKey" , model.getResKey());
+
+        if(comResourceDao.selectCount(map) > 0)
+        {
+            throw new BusinessException("菜单Key在系统中已存在。");
+        }
+        map.clear();
+        map.put("resName" , model.getResName());
+
+        if(comResourceDao.selectCount(map) > 0)
+        {
+            throw new BusinessException("菜单名称在系统中已存在。");
+        }
+
+        ComResourceModel parent = comResourceDao.select(model.getParentId());
+
+        map.put("parentId" , model.getParentId());
+        List<ComResourceModel> siblings  = comResourceDao.selectList(map);
+        int weight =  siblings.stream().mapToInt(ComResourceModel:: getWeight).max().getAsInt();
+
+        model.setWeight(++weight);
+        model.setParentIds(parent.getParentIds() + "," + parent.getId());
+        model.setActive(1);
+        comResourceDao.insert(model);
     }
 
 

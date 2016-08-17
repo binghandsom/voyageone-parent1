@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.com.ComMtTypeDaoExt">
+
+	<resultMap id="typeModeMap" type="com.voyageone.service.model.com.ComMtTypeModel" />
+	
+	<sql id="searchTypeFilter">
+		<where>
+			<if test="id != null">
+				and cast(id as char) like concat('%', #{id}, '%')
+			</if>
+			<if test="name != null">
+				and name like concat('%', #{name}, '%')
+			</if>
+			<if test="comment != null">
+				and comment like concat('%', #{comment}, '%')
+			</if>
+		</where>
+	</sql>
+	
+	<select id="searchTypeByPage" resultMap="typeModeMap">
+		select id, name, comment, created, creater, modified, modifier from com_mt_type
+		<include refid="searchTypeFilter"/>
+	</select>
+	
+	<select id="searchTypeCount" resultType="integer">
+		select count(0) from com_mt_type
+		<include refid="searchTypeFilter"/>
+	</select>
+
+</mapper>
