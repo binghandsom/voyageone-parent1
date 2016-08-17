@@ -21,7 +21,7 @@
                         <div class="col-md-2 text-right">
                             <label class="control-label"><strong>平台类目</strong></label>
                         </div>
-                        <div class="col-md-8">{{ctrl.context.categoryPath}}</div>
+                        <div class="col-md-8">{{!ctrl.context.categoryPath ? "全类目" : ctrl.context.categoryPath}}</div>
                     </div>
                     <div class="row form-group">
                         <div class="col-md-2 text-right">
@@ -48,25 +48,25 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="item in ctrl.valueArr">
-                            <td class="mfb-xt text-center">{{item.cat}}</td>
+                            <td class="mfb-xt text-center">{{item.type}}</td>
                             <td class="mfb-xt text-center">{{item.value}}</td>
                             <td class="mfb-xxt text-center">
                                 <div class="row">
                                     <label class="checkbox-inline c-radio">
-                                        <input name="symbols" type="radio" value="hh" ng-model="ctrl.searchInfo"><span class="fa fa-check"></span> 换行
+                                        <input name="{{item.$id}}" type="radio" value="<br>" ng-model="item.append"><span class="fa fa-check"></span> 换行
                                     </label>&nbsp;
                                     <label class="checkbox-inline c-radio">
-                                        <input name="symbols" type="radio" value="kg" ng-model="ctrl.searchInfo"><span class="fa fa-check"></span> 空格
+                                        <input name="{{item.$id}}" type="radio" value="'&nbsp;'" ng-model="item.append"><span class="fa fa-check"></span> 空格
                                     </label>
                                     <label class="checkbox-inline c-radio">
-                                        <input name="symbols" type="radio" value="w" ng-model="ctrl.searchInfo"><span class="fa fa-check"></span> 无
+                                        <input name="{{item.$id}}" type="radio" value="" ng-model="item.append"><span class="fa fa-check"></span> 无
                                     </label>
                                 </div>
 
                             </td>
                             <td class="mfb-xt text-center">
-                                <button class="btn btn-default" ng-click="ctrl.order('up')"><i class="fa fa-arrow-up"></i></button>
-                                <button class="btn btn-default" ng-click="ctrl.order('down')"><i class="fa fa-arrow-down"></i></button>
+                                <button class="btn btn-default" ng-click="ctrl.order('up',$index)"><i class="fa fa-arrow-up"></i></button>
+                                <button class="btn btn-default" ng-click="ctrl.order('down',$index)"><i class="fa fa-arrow-down"></i></button>
                             </td>
                             <td class="mfb-xt text-center">
                                 <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
@@ -84,6 +84,6 @@
     <div class="modal-footer">
         <button class="btn btn-success pull-left" ng-click="ctrl.openPpPropertySetting()"><i class="fa fa-plus"></i>&nbsp;添加</button>
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo" ng-click="ctrl.setMastProduct()"><i class="glyphicon glyphicon-floppy-disk"></i> 确定</button>
+        <button class="btn btn-vo" ng-click="ctrl.confirm()"><i class="glyphicon glyphicon-floppy-disk"></i> 确定</button>
     </div>
 </div>

@@ -33,11 +33,27 @@ define([
                   self.valueArr.push(context)
               });
           },
-          order:function(arrow){
+          order:function(arrow,index){
 
+                var curr = this.valueArr[index];
+                var repIndex = arrow == "up" ? index - 1 : index+1;
+
+                if(repIndex < 0 || repIndex > this.valueArr.length - 1)
+                    return;
+
+                var tmp = this.valueArr.splice(repIndex,1,curr);
+                this.valueArr.splice(index,1,tmp[0]);
           },
           remove:function(index){
               this.valueArr.splice(index, 1)
+          },
+          confirm:function(){
+              var valueList = _.map(this.valueArr,function(item){
+                  return {type:item.type,append:item.append,value:item.value};
+              });
+
+              this.context.value = JSON.stringify(valueList);
+              this.uibModalInstance.close();
           }
         };
 
