@@ -147,6 +147,9 @@ public class UploadToUSJoiService extends BaseTaskService {
         // usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
         String usjoiChannelId = channelBean.getOrder_channel_id();
 
+        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+
         // --------------------------------------------------------------------------------------------
         // 品牌mapping表
         Map<String, String> mapBrandMapping = new HashMap<>();
@@ -197,9 +200,6 @@ public class UploadToUSJoiService extends BaseTaskService {
             }
         }
         // --------------------------------------------------------------------------------------------
-
-        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
 
         // 每个channel读入子店数据上新到USJOI主店
         List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(
