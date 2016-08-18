@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.tools.product;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.value.Value;
@@ -138,9 +139,11 @@ class PlatformMappingViewService extends BaseAppService {
             product = fieldListMap.get(PlatformSchemaService.KEY_PRODUCT);
         }
 
-        fillFields(item, fieldMappingMap);
+        if (item != null && !item.isEmpty())
+            fillFields(item, fieldMappingMap);
 
-        fillFields(product, fieldMappingMap);
+        if (product != null && !product.isEmpty())
+            fillFields(product, fieldMappingMap);
 
         schema.setItem(item);
 
@@ -344,43 +347,66 @@ class PlatformMappingViewService extends BaseAppService {
         if (fieldMappingMap == null || fieldMappingMap.isEmpty())
             return;
 
-        for (Field field : fieldList) {
+        fieldList.stream()
+                .filter(f -> {
+                    // 对这三种类型进行过滤
+                    // 这三种不需要去前端显示了, 留下看家
+                    switch (f.getType()) {
+                        case MULTIINPUT:
+                        case MULTICOMPLEX:
+                        case LABEL:
+                            return false;
+                    }
+                    return true;
+                })
+                .map(field -> {
 
-            CmsBtPlatformMappingModel.FieldMapping mapping = fieldMappingMap.get(field.getId());
+                    FieldTypeEnum fieldType = field.getType();
 
-            if (mapping == null)
-                continue;
+                    if (FieldTypeEnum.COMPLEX.equals(fieldType)) {
+                        // 对普通复杂类型
+                        // 直接进入子字段循环
+                        // 自身不进行处理
+                        ComplexField complexField = (ComplexField) field;
+                        List<Field> children = complexField.getFields();
+                        fillFields(children, fieldMappingMap);
+                        return field;
+                    }
 
-            switch (field.getType()) {
+                    // 到达这里的应该只剩下简单输入类型了
 
-                case INPUT:
-                    InputField inputField = (InputField) field;
-                    List<CmsBtPlatformMappingModel.FieldMappingExpression> expressionList = mapping.getExpressions();
-                    if (expressionList == null || expressionList.isEmpty())
-                        continue;
-                    inputField.setValue(JacksonUtil.bean2Json(expressionList));
-                    break;
-                case SINGLECHECK:
-                    SingleCheckField singleCheckField = (SingleCheckField) field;
-                    singleCheckField.setValue(new Value() {{
-                        setValue(String.valueOf(mapping.getValue()));
-                    }});
-                    break;
-                case MULTICHECK:
-                    MultiCheckField multiCheckField = (MultiCheckField) field;
-                    @SuppressWarnings("unchecked")
-                    List<String> valueList = (List<String>) mapping.getValue();
-                    List<Value> valueObjectList = valueList.stream().map(v -> new Value() {{
-                        setValue(v);
-                    }}).collect(toList());
-                    multiCheckField.setValues(valueObjectList);
-                    break;
-                case COMPLEX:
-                    ComplexField complexField = (ComplexField) field;
-                    List<Field> children = complexField.getFields();
-                    fillFields(children, fieldMappingMap);
-                    break;
-            }
-        }
+                    CmsBtPlatformMappingModel.FieldMapping mapping = fieldMappingMap.get(field.getId());
+
+                    if (mapping == null)
+                        return field;
+
+                    switch (fieldType) {
+                        case INPUT:
+                            InputField inputField = (InputField) field;
+                            List<CmsBtPlatformMappingModel.FieldMappingExpression> expressionList = mapping.getExpressions();
+                            if (expressionList == null || expressionList.isEmpty())
+                                break;
+                            inputField.setValue(JacksonUtil.bean2Json(expressionList));
+                            break;
+                        case SINGLECHECK:
+                            SingleCheckField singleCheckField = (SingleCheckField) field;
+                            singleCheckField.setValue(new Value() {{
+                                setValue(String.valueOf(mapping.getValue()));
+                            }});
+                            break;
+                        case MULTICHECK:
+                            MultiCheckField multiCheckField = (MultiCheckField) field;
+                            @SuppressWarnings("unchecked")
+                            List<String> valueList = (List<String>) mapping.getValue();
+                            List<Value> valueObjectList = valueList.stream().map(v -> new Value() {{
+                                setValue(v);
+                            }}).collect(toList());
+                            multiCheckField.setValues(valueObjectList);
+                            break;
+                    }
+
+                    return field;
+                })
+                .collect(toList());
     }
 }
