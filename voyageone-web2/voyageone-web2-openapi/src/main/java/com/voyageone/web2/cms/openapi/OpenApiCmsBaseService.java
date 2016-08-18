@@ -16,7 +16,7 @@ import com.voyageone.web2.sdk.api.exception.ApiException;
  * Created by chuanyu.liang on 15/6/26.
  * @author chuanyu.liang
  */
-public abstract class OpenApiBaseService extends VOAbsLoggable {
+public abstract class OpenApiCmsBaseService extends VOAbsLoggable {
     /**
      * Check Request
      * @param request Request

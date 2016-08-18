@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +45,7 @@ public class FeedInfoService extends BaseService {
     /**
      * getListForVendor
      */
-    public List<CmsBtFeedInfoModel> getListForVendor(String channelId, JomgoQuery queryObject) {
+    public List<CmsBtFeedInfoModel> getListForVendor(String channelId, JongoQuery queryObject) {
         return cmsBtFeedInfoDao.select(queryObject, channelId);
     }
 

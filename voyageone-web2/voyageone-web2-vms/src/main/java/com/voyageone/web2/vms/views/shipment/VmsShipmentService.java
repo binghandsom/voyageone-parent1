@@ -5,8 +5,7 @@ import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
-import com.voyageone.common.util.BeanUtil;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.service.bean.vms.shipment.*;
 import com.voyageone.service.impl.vms.order.OrderDetailService;
 import com.voyageone.service.impl.vms.shipment.ShipmentService;
@@ -14,7 +13,7 @@ import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
-import com.voyageone.web2.vms.bean.shipment.*;
+import com.voyageone.web2.vms.bean.shipment.ShipmentSearchInfoBean;
 import com.voyageone.web2.vms.views.common.VmsChannelConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.voyageone.web2.vms.VmsConstants.*;
+import static com.voyageone.web2.vms.VmsConstants.STATUS_VALUE;
 
 /**
  * shipment service
@@ -86,7 +85,7 @@ public class VmsShipmentService {
     public int submit(UserSessionBean user, ShipmentBean shipmentBean) {
 
         VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel();
-        BeanUtil.copy(shipmentBean, vmsBtShipmentModel);
+        BeanUtils.copy(shipmentBean, vmsBtShipmentModel);
 
         vmsBtShipmentModel.setChannelId(user.getSelChannelId());
         boolean correct = null != vmsBtShipmentModel.getStatus();
@@ -234,7 +233,7 @@ public class VmsShipmentService {
 
             // 更新shipment
             VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel();
-            BeanUtil.copy(shipmentBean, vmsBtShipmentModel);
+            BeanUtils.copy(shipmentBean, vmsBtShipmentModel);
             vmsBtShipmentModel.setModifier(user.getUserName());
             int succeedShipmentCount = shipmentService.save(vmsBtShipmentModel);
 

@@ -1,6 +1,6 @@
 package com.voyageone.service.bean.vms.shipment;
 
-import com.voyageone.common.util.BeanUtil;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 
 import java.util.Date;
@@ -47,7 +47,7 @@ public class ShipmentBean {
 
     public static ShipmentBean getInstance(VmsBtShipmentModel vmsBtShipmentModel) {
         ShipmentBean shipmentBean = new ShipmentBean();
-        BeanUtil.copy(vmsBtShipmentModel, shipmentBean);
+        BeanUtils.copy(vmsBtShipmentModel, shipmentBean);
         return shipmentBean;
     }
 
