@@ -104,9 +104,10 @@ define([
                 } else {
                     _.forEach(self.storeList, function (Info) {
                         if (Info.storeId == self.storeSelList.selList[0].id) {
-                            var remainNum = '';
                             Info['areaId'] = Info['areaId'] + '';
-                            _.extend(Info, {'remainNum': remainNum});
+                            var copyData = Info.inventoryHold.split(",");
+                            Info.inventoryHold = copyData[0];
+                            Info.remainNum = copyData[1];
                             self.popups.openStoreAdd(Info).then(function () {
                                 self.search(1);
                             });
