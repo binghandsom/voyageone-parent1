@@ -107,6 +107,12 @@ public class ProductService extends BaseService {
     @Autowired
     private JdProductService jdProductService;
 
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
+
+    @Autowired
+    private ProductLogService productLogService;
+
 
     /**
      * 获取商品 根据ID获
@@ -913,6 +919,7 @@ public class ProductService extends BaseService {
         List<String> skus = new ArrayList<>();
         platformModel.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
         cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, platformModel.getCartId(), modifier, comment);
+        productStatusHistoryService.insert(channelId, oldProduct.getCommon().getFields().getCode(), platformModel.getStatus(), platformModel.getCartId(), EnumProductOperationType.WebEdit, comment, modifier);
 
         return platformModel.getModified();
     }

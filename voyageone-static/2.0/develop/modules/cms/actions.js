@@ -109,7 +109,8 @@ define(function () {
                     "delistinGroup": "delistinGroup",
                     "hsCodeChg": "hsCodeChg",
                     "copyProperty": "copyProperty",
-                    "copyCommonProperty": "copyCommonProperty"
+                    "copyCommonProperty": "copyCommonProperty",
+                    "getPlatformCategories":"getPlatformCategories"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -393,6 +394,10 @@ define(function () {
                     "reUpload": "reUpload",
                     "rePublistPrice": "rePublishPrice",
                     "getHistory": "getHistory"
+                },
+                "$valueChannelService":{
+                    "root": "/cms/system/valueChannel/",
+                    "addHsCodes": "addHsCode"
                 }
             },
             "pop": {

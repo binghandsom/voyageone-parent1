@@ -64,6 +64,7 @@ define([
                         self.searchInfo.categoryId = context.selected.catId;
                 });
             }
+
         };
 
         return AttributeDetailController;

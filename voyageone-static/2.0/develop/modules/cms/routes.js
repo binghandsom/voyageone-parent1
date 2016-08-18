@@ -128,6 +128,12 @@ define(function () {
             "controllerUrl": "modules/cms/views/channel/brandMapping/index.ctl",
             "controller": "BrandMappingController as ctrl"
         },
+        "channel_brand_mapping_param": {
+            "hash": "/channel/brand_mapping_list/:cartId",
+            "templateUrl": "views/channel/brandMapping/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/brandMapping/index.ctl",
+            "controller": "BrandMappingController as ctrl"
+        },
         "channel_cart_category_list": {
             "hash": "/channel/cart_category_list",
             "templateUrl": "views/channel/category/index.tpl.html",
@@ -316,6 +322,11 @@ define(function () {
             "hash": "/system/categorysetting_catunion",
             "templateUrl": "views/system/categorysetting/catunion.tpl.html",
             "controllerUrl": "modules/cms/views/system/categorysetting/catunion.ctl"
+        },
+        "system_value_channel": {
+            "hash": "/system/valuechannel",
+            "templateUrl": "views/system/valueChannel/index.tpl.html",
+            "controllerUrl": "modules/cms/views/system/valueChannel/index.ctl"
         },
         "jm_promotion_detail_list": {
             "hash": "/jm/promotion_detail_list/:parentId",

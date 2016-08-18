@@ -7,6 +7,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.security.bean.ComResourceBean;
 import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.model.ComResourceModel;
+import com.voyageone.security.model.ComUserModel;
 import com.voyageone.service.impl.BaseService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -80,13 +81,41 @@ public class AdminResService extends BaseService {
         ComResourceModel parent = comResourceDao.select(model.getParentId());
 
         map.put("parentId" , model.getParentId());
-        List<ComResourceModel> siblings  = comResourceDao.selectList(map);
-        int weight =  siblings.stream().mapToInt(ComResourceModel:: getWeight).max().getAsInt();
 
-        model.setWeight(++weight);
+        if(model.getWeight() == null) {
+            List<ComResourceModel> siblings = comResourceDao.selectList(map);
+            int weight = siblings.stream().mapToInt(ComResourceModel::getWeight).max().getAsInt();
+            model.setWeight(++weight);
+        }
         model.setParentIds(parent.getParentIds() + "," + parent.getId());
-        model.setActive(1);
+
         comResourceDao.insert(model);
+    }
+
+
+
+    public void updateRes(ComResourceModel model)
+    {
+        //检查resName唯一性
+        Map map = new HashMap<>();
+        map.put("resName" , model.getResName());
+
+        if(comResourceDao.selectCount(map) > 0)
+        {
+            throw new BusinessException("菜单名称在系统中已存在。");
+        }
+
+        ComResourceModel parent = comResourceDao.select(model.getParentId());
+
+        map.put("parentId" , model.getParentId());
+        if(model.getWeight() == null) {
+            List<ComResourceModel> siblings = comResourceDao.selectList(map);
+            int weight = siblings.stream().mapToInt(ComResourceModel::getWeight).max().getAsInt();
+            model.setWeight(++weight);
+        }
+        model.setParentIds(parent.getParentIds() + "," + parent.getId());
+
+        comResourceDao.update(model);
     }
 
 
@@ -137,5 +166,17 @@ public class AdminResService extends BaseService {
             child.setChildren(tmpChildren);
         }
         return children;
+    }
+
+    public void deleteUser(List<Integer> resIds, String username) {
+        for (Integer id : resIds) {
+            ComResourceModel model = new ComResourceModel();
+            model.setId(id);
+            model.setActive(0);
+            model.setModifier(username);
+            if (!(comResourceDao.update(model) > 0)) {
+                throw new BusinessException("删除菜单资源信息失败");
+            }
+        }
     }
 }
