@@ -46,14 +46,13 @@
             </div>
         </div>
     </div>
-
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <a ng-href="#/channel/default_attribute_detail" target="_blank" class="btn btn-info btn-pop">
-                <i class="fa fa-plus"></i>&nbsp;<span translate="TXT_DEFAULT_SETTING"></span>
-            </a>
-        </div>
-        <div class="panel-body">
+    <div class="m-t-sm m-b-sm">
+        <a ng-href="#/channel/default_attribute_detail" target="_blank" class="btn btn-info btn-pop">
+            <i class="fa fa-plus"></i>&nbsp;<span translate="TXT_DEFAULT_SETTING"></span>
+        </a>
+    </div>
+    <div class="box">
+        <div class="box-body">
             <table class="table table-hover-new vo_table tableWordBreak">
                 <thead>
                 <tr>
@@ -68,7 +67,7 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="entity in ctrl.dataList">
-                    <td class="mfb-xt3 text-center">{{$index}}</td>
+                    <td class="mfb-xt3 text-center">{{$index+1}}</td>
                     <td class="mfb-xt3 text-left">{{!entity.categoryPath?'全类目':entity.categoryPath}}</td>
                     <td class="mfb-xt3 text-center">{{entity.modified | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="mfb-xt3 text-left">{{entity.modifier}}</td>
@@ -84,8 +83,7 @@
                     </td>
                 </tbody>
             </table>
-            <vpagination config="ctrl.paging"></vpagination>
         </div>
     </div>
-
+    <vpagination config="ctrl.paging"></vpagination>
 </div>
