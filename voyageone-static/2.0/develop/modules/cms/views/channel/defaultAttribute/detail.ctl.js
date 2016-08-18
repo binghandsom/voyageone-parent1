@@ -23,7 +23,9 @@ define([
             self.platformMappingService = platformMappingService;
 
             menuService.getPlatformType().then(function (resp) {
-                self.platformTypes = _.filter(resp, function (cart) {
+                self.platformTypes = _.map(resp, function (cart) {
+                    return {name: cart.name, value: +cart.value};
+                }).filter(function(cart){
                     return cart.value != 0 && cart.value != 1
                 });
 
@@ -103,6 +105,11 @@ define([
             }).then(function (resp) {
                 console.log(resp);
             });
+        };
+
+        AttributeDetailController.prototype.close = function (){
+            window.opener.focus();
+            window.close();
         };
 
         return AttributeDetailController;

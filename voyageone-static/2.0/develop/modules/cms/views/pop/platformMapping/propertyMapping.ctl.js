@@ -1,11 +1,3 @@
-/**
- * Created by 123 on 2016/8/16.
- */
-/**
- * @Description:切换主商品
- * @Author piao wenjie
- */
-
 define([
     'cms',
     'modules/cms/enums/Carts'
@@ -29,8 +21,7 @@ define([
           openPpPropertySetting:function(){
               var self = this;
               self.popups.openPropertySetting(self.context).then(function(context){
-                  //{cat,value}
-                  self.valueArr.push(context)
+                  self.valueArr.push(context);
               });
           },
           order:function(arrow,index){
@@ -44,6 +35,18 @@ define([
                 var tmp = this.valueArr.splice(repIndex,1,curr);
                 this.valueArr.splice(index,1,tmp[0]);
           },
+          update:function(item){
+              var self = this;
+              _.extend(item,{
+                  cartPath:self.context.cartPath,
+                  cartName:self.context.cartName,
+                  name:self.context.name
+              });
+              self.popups.openPropertySetting(item).then(function(context){
+                  item.type = context.type;
+                  item.value = context.value;
+              });
+          },
           remove:function(index){
               this.valueArr.splice(index, 1)
           },
@@ -53,7 +56,7 @@ define([
               });
 
               this.context.value = JSON.stringify(valueList);
-              this.uibModalInstance.close();
+              //this.uibModalInstance.close();
           }
         };
 

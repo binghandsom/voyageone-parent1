@@ -51,25 +51,22 @@
                             <td class="mfb-xt text-center">{{item.type}}</td>
                             <td class="mfb-xt text-center">{{item.value}}</td>
                             <td class="mfb-xxt text-center">
-                                <div class="row">
-                                    <label class="checkbox-inline c-radio">
-                                        <input name="{{item.$id}}" type="radio" value="<br>" ng-model="item.append"><span class="fa fa-check"></span> 换行
+                                    <label>
+                                        <input name="{{item.$id}}" type="radio" value="<br>" ng-model="item.append">&nbsp;换行
                                     </label>&nbsp;
-                                    <label class="checkbox-inline c-radio">
-                                        <input name="{{item.$id}}" type="radio" value="'&nbsp;'" ng-model="item.append"><span class="fa fa-check"></span> 空格
+                                    <label>
+                                        <input name="{{item.$id}}" type="radio" value="&amp;nbsp;" ng-model="item.append">&nbsp;空格
+                                    </label>&nbsp;
+                                    <label>
+                                        <input name="{{item.$id}}" type="radio" value="" ng-model="item.append">&nbsp;无
                                     </label>
-                                    <label class="checkbox-inline c-radio">
-                                        <input name="{{item.$id}}" type="radio" value="" ng-model="item.append"><span class="fa fa-check"></span> 无
-                                    </label>
-                                </div>
-
                             </td>
                             <td class="mfb-xt text-center">
                                 <button class="btn btn-default" ng-click="ctrl.order('up',$index)"><i class="fa fa-arrow-up"></i></button>
                                 <button class="btn btn-default" ng-click="ctrl.order('down',$index)"><i class="fa fa-arrow-down"></i></button>
                             </td>
                             <td class="mfb-xt text-center">
-                                <button class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
+                                <button class="btn btn-success btn-xs" ng-click="ctrl.update(item)"><i class="fa fa-pencil"></i></button>
                                 <button class="btn btn-danger btn-xs" ng-click="ctrl.remove($index)"><i class="fa  fa-trash-o"></i></button>
                             </td>
                         </tr>
