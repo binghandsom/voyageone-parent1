@@ -1,7 +1,8 @@
-package com.voyageone.web2.cms.views.search;
+package com.voyageone.task2.cms.service.product;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -12,52 +13,59 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.CmsProperty;
+import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
+import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.bean.CmsSessionBean;
-import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean2;
-import com.voyageone.web2.core.bean.UserSessionBean;
+import com.voyageone.task2.base.BaseMQCmsService;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @author Edward
- * @version 2.0.0, 15/12/14
+ * @author JiangJusheng
+ * @version 2.0.0, 2016/08/18
  */
 @Service
-public class CmsAdvSearchExportFileService extends BaseAppService {
+@RabbitListener(queues = MqRoutingKey.CMS_TASK_AdvSearch_FileDldJob)
+public class CmsAdvSearchExportFileService extends BaseMQCmsService {
 
     @Autowired
     private ProductService productService;
     @Autowired
     private CmsAdvSearchQueryService advSearchQueryService;
     @Autowired
-    private CmsAdvanceSearchService searchIndexService;
-    @Autowired
     private ImagesService imagesService;
     @Autowired
     private ProductGroupService productGroupService;
     @Autowired
     private PlatformService platformService;
+    @Autowired
+    private CmsBtExportTaskService cmsBtExportTaskService;
 
     // excel cell的内容长度限制
     private final static int CELL_LENGTH_LIMIT = 2000;
@@ -72,26 +80,92 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
     private final static String[] _DynColJM = { "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice" };
     private final static String[] _DynColCNJM = { "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)" };
 
-    // 产品数据固定输出列，用于过滤自定义显示列中相同项目
+    // 产品数据（code级）固定输出列，用于过滤自定义显示列中相同项目
     private final static String[] _prodCol = { "code", "brand", "category", "productNameEn", "originalTitleCn", "model", "quantity", "color" };
+
+    @Override
+    public void onStartup(Map<String, Object> messageMap) throws Exception {
+        $debug("高级检索 文件下载任务 param=" + messageMap.toString());
+        Integer taskId = (Integer) messageMap.get("_taskId");
+        if (taskId == null) {
+            $error("高级检索 文件下载任务 查询参数不正确 缺少ID");
+            return;
+        }
+        CmsBtExportTaskModel taskModel = cmsBtExportTaskService.getExportById(taskId);
+        if (taskModel == null) {
+            $error("高级检索 文件下载任务 查询参数不正确 该任务不存在");
+            return;
+        }
+        CmsSearchInfoBean2 searchValue = new CmsSearchInfoBean2();
+        try {
+//            searchValue = CmsSearchInfoBean2.class.newInstance();
+            BeanUtils.populate(searchValue, messageMap);
+            taskModel.setStatus(3); // 开始执行
+            cmsBtExportTaskService.update(taskModel);
+        } catch (Exception exp) {
+            $error("高级检索 文件下载任务 查询参数不正确", exp);
+            // 更新任务状态，然后结束
+            taskModel.setStatus(2);
+            taskModel.setComment("查询参数不正确");
+            cmsBtExportTaskService.update(taskModel);
+            return;
+        }
+
+        $debug("高级检索 文件下载任务 开始执行...");
+        String channleId = (String) messageMap.get("_channleId");
+        String language = (String) messageMap.get("_language");
+        String userName = (String) messageMap.get("_userName");
+        Map<String, Object> sessionBean = (Map<String, Object>) messageMap.get("_sessionBean");
+        if (channleId == null || language == null || userName == null || sessionBean == null) {
+            $error("高级检索 文件下载任务  缺少参数");
+            return;
+        }
+        try {
+            createExcelFile(searchValue, channleId, sessionBean, userName, language);
+            taskModel.setStatus(1); // 成功
+        } catch (Throwable exp) {
+            $error("高级检索 文件下载任务 创建文件时出错 " + exp.getMessage(), exp);
+            // 更新任务状态，然后结束
+            taskModel.setStatus(2);
+            taskModel.setComment("创建文件时出错 " + exp.getMessage());
+        }
+        cmsBtExportTaskService.update(taskModel);
+    }
 
     /**
      * 获取数据文件内容
      */
-    public byte[] getCodeExcelFile(CmsSearchInfoBean2 searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean, String language)
+    private void createExcelFile(CmsSearchInfoBean2 searchValue, String channelId, Map<String, Object> cmsSessionBean, String userName, String language)
             throws IOException, InvalidFormatException {
-
+        String fileName = null;
         String templatePath = null;
         if (searchValue.getFileType() == 1) {
+            fileName = "productList_";
             templatePath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_TEMPLATE_PRODUCT);
         } else if (searchValue.getFileType() == 2) {
+            fileName = "groupList_";
             templatePath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_TEMPLATE_GROUP);
         } else if (searchValue.getFileType() == 3) {
+            fileName = "skuList_";
             templatePath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_TEMPLATE_SKU);
+        }
+        if (templatePath == null || !new File(templatePath).exists()) {
+            $error("高级检索 文件下载任务 创建文件时出错 模板文件不存在 " + templatePath);
+            throw new BusinessException("模板文件不存在 " + templatePath);
+        }
+
+        String exportPath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_PATH);
+        File pathFileObj = new File(exportPath);
+        if (!pathFileObj.exists()) {
+            $info("高级检索 文件下载任务 文件目录不存在 " + exportPath);
+            if (!pathFileObj.mkdirs()) {
+                $error("高级检索 文件下载任务 创建文件目录失败 " + exportPath);
+                throw new BusinessException("创建文件目录失败 " + exportPath);
+            }
         }
 
         // 获取product列表
-        List<String> prodCodeList = searchIndexService.getProductCodeList(searchValue, userInfo, cmsSessionBean);
+        List<String> prodCodeList = advSearchQueryService.getProductCodeList(searchValue, channelId);
         long recCount = prodCodeList.size();
 
         if (searchValue.getFileType() == 2) {
@@ -99,7 +173,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             if (cartId == null) {
                 cartId = 0;
             }
-            prodCodeList = searchIndexService.getGroupCodeList(searchValue, userInfo, cmsSessionBean);
+            prodCodeList = advSearchQueryService.getGroupCodeList(searchValue, channelId);
             if (prodCodeList == null) {
                 prodCodeList = new ArrayList<>(0);
             }
@@ -118,7 +192,10 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{'common.fields.code':{$in:#}}");
         queryObject.setParameters(prodCodeList);
-        String searchItemStr = CmsAdvanceSearchService.searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems"));
+        String searchItemStr = CmsAdvSearchQueryService.searchItems;
+        if (cmsSessionBean.get("_adv_search_props_searchItems") != null) {
+            searchItemStr += (String) cmsSessionBean.get("_adv_search_props_searchItems");
+        }
         if (searchValue.getFileType() == 3) {
             // 要输出sku级信息
             searchItemStr += "common.skus;common.fields.model;common.fields.color;";
@@ -130,10 +207,10 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
         }
 
         queryObject.setProjectionExt(searchItemStr.split(";"));
-        queryObject.setSort(advSearchQueryService.getSortValue(searchValue, cmsSessionBean));
+        queryObject.setSort(advSearchQueryService.getSortValue(searchValue));
 
         // 店铺(cart/平台)列表
-        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
+        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
         if (lockStatusMap == null) {
             List<TypeBean> lockStatusList = TypeConfigEnums.MastType.procLockStatus.getList(language);
             lockStatusMap = lockStatusList.stream().collect(Collectors.toMap((p) -> p.getValue(), (p) -> p.getName()));
@@ -153,7 +230,7 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             for (int i = 0; i < pageCount; i++) {
                 queryObject.setSkip(i * SELECT_PAGE_SIZE);
                 queryObject.setLimit(SELECT_PAGE_SIZE);
-                List<CmsBtProductBean> items = productService.getBeanList(userInfo.getSelChannelId(), queryObject);
+                List<CmsBtProductBean> items = productService.getBeanList(channelId, queryObject);
                 if (items.size() == 0) {
                     break;
                 }
@@ -162,9 +239,9 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
                 int startRowIndex = i * SELECT_PAGE_SIZE + 2;
                 boolean isContinueOutput = false;
                 if (searchValue.getFileType() == 1) {
-                    isContinueOutput = writeRecordToFile(book, items, cmsSessionBean, userInfo.getSelChannelId(), cartList, startRowIndex);
+                    isContinueOutput = writeRecordToFile(book, items, cmsSessionBean, channelId, cartList, startRowIndex);
                 } else if (searchValue.getFileType() == 2) {
-                    isContinueOutput = writeRecordToGroupFile(book, items, userInfo.getSelChannelId(), cartList, startRowIndex);
+                    isContinueOutput = writeRecordToGroupFile(book, items, channelId, cartList, startRowIndex);
                 } else if (searchValue.getFileType() == 3) {
                     isContinueOutput = writeRecordToSkuFile(book, items, cartList, startRowIndex);
                 }
@@ -176,11 +253,11 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
             $info("文档写入完成");
 
             // 返回值设定
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            fileName += userName + "_" + DateTimeUtil.format(DateTimeUtilBeijing.getCurrentBeiJingDate(), DateTimeUtil.DEFAULT_DATETIME_FORMAT_1) + ".xlsx";
+            OutputStream outputStream = new FileOutputStream(exportPath + fileName);
             try {
                 book.write(outputStream);
                 $info("已写入输出流");
-                return outputStream.toByteArray();
             } finally {
                 outputStream.close();
             }
@@ -193,10 +270,10 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
     /**
      * code级数据下载，设置每列标题(包含动态列, 要过滤重复列)
      */
-    private void writeHead(Workbook book, CmsSessionBean cmsSession, List<TypeChannelBean> cartList) {
-        List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_customProps");
-        List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_commonProps");
-        List<Map<String, String>> salesProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_selSalesType");
+    private void writeHead(Workbook book, Map cmsSession, List<TypeChannelBean> cartList) {
+        List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.get("_adv_search_customProps");
+        List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.get("_adv_search_commonProps");
+        List<Map<String, String>> salesProps = (List<Map<String, String>>) cmsSession.get("_adv_search_selSalesType");
         Sheet sheet = book.getSheetAt(0);
         // 第一行，英文标题
         Row row = FileUtils.row(sheet, 0);
@@ -378,11 +455,11 @@ public class CmsAdvSearchExportFileService extends BaseAppService {
      * @param startRowIndex 开始
      * @return boolean 是否终止输出
      */
-    private boolean writeRecordToFile(Workbook book, List<CmsBtProductBean> items, CmsSessionBean cmsSession, String channelId, List<TypeChannelBean> cartList, int startRowIndex) {
+    private boolean writeRecordToFile(Workbook book, List<CmsBtProductBean> items, Map cmsSession, String channelId, List<TypeChannelBean> cartList, int startRowIndex) {
         boolean isContinueOutput = true;
-        List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_customProps");
-        List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.getAttribute("_adv_search_commonProps");
-        List<Map<String, Object>> salesProps = (List<Map<String, Object>>) cmsSession.getAttribute("_adv_search_selSalesType");
+        List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.get("_adv_search_customProps");
+        List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.get("_adv_search_commonProps");
+        List<Map<String, Object>> salesProps = (List<Map<String, Object>>) cmsSession.get("_adv_search_selSalesType");
         CellStyle unlock = FileUtils.createUnLockStyle(book);
 
         // 先取得各产品feed原图url

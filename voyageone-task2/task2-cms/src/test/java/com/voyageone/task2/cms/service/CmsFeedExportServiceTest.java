@@ -27,8 +27,7 @@ public class CmsFeedExportServiceTest {
     CmsBtExportTaskService cmsBtExportTaskService;
     @Test
     public void testOnStartup() throws Exception {
-        List<CmsBtExportTaskModel> cmsBtExportTaskModels = cmsBtExportTaskService.getExportTaskByUser("010", CmsBtExportTaskService.FEED, "james");
-
+        List<CmsBtExportTaskModel> cmsBtExportTaskModels = cmsBtExportTaskService.getExportTaskByUser("010", CmsBtExportTaskService.FEED, "james", 1, 10);
         cmsFeedExportService.onStartup(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(cmsBtExportTaskModels.get(0))));
     }
 }

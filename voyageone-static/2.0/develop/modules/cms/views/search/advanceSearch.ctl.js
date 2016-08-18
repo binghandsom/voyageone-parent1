@@ -799,7 +799,9 @@ define([
                 })
                 .then(function (context) {
                     $scope.vm.searchInfo.pCatPath = context.selected.catPath;
-                    $scope.vm.searchInfo.pCatId = context.selected.catId;
+                    // TODO -- 目前选择画面传回的是单个cat path,以后修改为数组时再对应
+                    $scope.vm.searchInfo.pCatPathList = [];
+                    $scope.vm.searchInfo.pCatPathList.push($scope.vm.searchInfo.pCatPath)
                 });
         }
 

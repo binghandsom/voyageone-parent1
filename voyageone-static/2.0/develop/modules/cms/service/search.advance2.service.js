@@ -73,9 +73,11 @@ define([
                 if (obj.code == '4001') {
                     alert("查询参数不正确，请重试。");
                 } else if (obj.code == '4002') {
-                    alert("未设置下载文件名。");
+                    alert("未选择导出文件类型。");
                 } else if (obj.code == '4003') {
                     alert("创建文件时出错。");
+                } else if (obj.code == '4004') {
+                    alert("已经有一个任务还没有执行完毕。请稍后再导出");
                 }
             }
             $.download.post(cActions.cms.search.$searchAdvanceService2.root + cActions.cms.search.$searchAdvanceService2.exportProducts, {params: JSON.stringify(data)}, _exportFileCallback);

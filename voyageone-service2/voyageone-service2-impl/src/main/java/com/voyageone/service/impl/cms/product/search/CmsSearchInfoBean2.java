@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.bean.search.index;
+package com.voyageone.service.impl.cms.product.search;
 
 import com.voyageone.common.util.JsonUtil;
 
@@ -52,7 +52,7 @@ public class CmsSearchInfoBean2 implements Serializable {
     private Double priceStart;
     private Double priceEnd;
 
-    private String pCatId;
+    private List<String> pCatPathList;
     private int pCatStatus = 0;
 
     private String[] promotionTags;
@@ -488,12 +488,12 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.fCatPathList = fCatPathList;
     }
 
-    public String getpCatId() {
-        return pCatId;
+    public List<String> getpCatPathList() {
+        return pCatPathList;
     }
 
-    public void setpCatId(String pCatId) {
-        this.pCatId = pCatId;
+    public void setpCatPathList(List<String> pCatPathList) {
+        this.pCatPathList = pCatPathList;
     }
 
     public int getpCatStatus() {

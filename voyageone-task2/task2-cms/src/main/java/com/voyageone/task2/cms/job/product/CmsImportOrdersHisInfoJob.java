@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.job.product;
 
 import com.voyageone.task2.base.BaseTaskJob;
 import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.cms.service.product.CmsImportOrdersHisInfoService;
+import com.voyageone.task2.cms.service.product.sales.CmsImportOrdersHisInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
