@@ -8,13 +8,14 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
@@ -23,6 +24,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.MongoSequenceService;
+import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
@@ -69,6 +71,9 @@ public class UploadToUSJoiService extends BaseTaskService {
 
     @Autowired
     private ComMtValueChannelService comMtValueChannelService;    // 更新Synship.com_mt_value_channel表
+
+    @Autowired
+    private CmsBtPriceLogService cmsBtPriceLogService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -170,13 +175,20 @@ public class UploadToUSJoiService extends BaseTaskService {
             }
 
             $info("productModels" + productModels.size());
-            //从group中过滤出需要上的usjoi的产品
+            //从group中过滤出需要上的usjoi的产品(P928,P929平台下包含已approved 并且 isSale为true 的sku的产品)
             productModels = getUSjoiProductModel(productModels, sxWorkLoadBean.getCartId());
             if (productModels.size() == 0) {
                 throw new BusinessException("没有找到需要上新的SKU");
             } else {
                 $info("有" + productModels.size() + "个产品要复制");
             }
+
+            // 新增或更新产品列表，用于最后插入品牌，产品类型和使用人群用
+            List<CmsBtProductModel> targetProductList = new ArrayList<>();
+            // 取得USJOI店铺共通设置(是否自动同步人民币专柜价格)
+            boolean usjoiIsAutoSyncPriceMsrp = isAutoSyncPriceMsrp(usJoiChannelId);
+            // USJOI店铺共通设置(取得该渠道的PlatformActive初始值)
+            CmsConstants.PlatformActive usjoiPlatformActive = CmsConstants.PlatformActive.ToInStock;
 
             for (CmsBtProductModel productModel : productModels) {
                 productModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel),CmsBtProductModel.class);
@@ -256,36 +268,59 @@ public class UploadToUSJoiService extends BaseTaskService {
                     }
                     productModel.getPlatforms().put("P0", p0);
 
-
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
-
+                    // 将子店的产品加入更新对象产品列表中
+                    targetProductList.add(productModel);
                 } else {
                     // 如果已经存在（如老的数据已经有了），更新
-                    boolean commonEditFlg = false;
+                    // 更新common.fields.image1(品牌方商品图)
+                    CmsBtProductModel_Field prCommonFields = pr.getCommon().getFields();
+                    if (prCommonFields != null && productModel.getCommon().getFields() != null)
+                        prCommonFields.setImages1(productModel.getCommon().getFields().getImages1());
+
                     for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
                         CmsBtProductModel_Sku oldSku = pr.getCommon().getSku(sku.getSkuCode());
                         if (oldSku == null) {
+                            // 如果没有在usjoi产品的commom.skus找到子店对应的skuCode，则新增该sku
                             pr.getCommon().getSkus().add(sku);
-                            commonEditFlg = true;
                         } else {
+                            // 如果在usjoi产品的commom.skus找到子店对应的skuCode时
+                            // 跟feed->master统一，无条件更新尺码等共通sku属性
+                            oldSku.setBarcode(sku.getBarcode());
+                            oldSku.setClientSkuCode(sku.getClientSkuCode());
+                            oldSku.setClientSize(sku.getClientSize());
+                            oldSku.setSize(sku.getSize());
+                            oldSku.setWeight((sku.getWeight()));  // 重量(单位：磅)
+
+                            // 价格发生变化的时候更新该sku价格
                             if (oldSku.getPriceMsrp().compareTo(sku.getPriceMsrp()) != 0
                                     || oldSku.getPriceRetail().compareTo(sku.getPriceRetail()) != 0) {
+                                // 美金专柜价
                                 oldSku.setClientMsrpPrice(sku.getClientMsrpPrice());
-                                oldSku.setClientNetPrice(sku.getClientNetPrice());
+                                // 美金指导价
                                 oldSku.setClientRetailPrice(sku.getClientRetailPrice());
+                                // 美金成本价(=priceClientCost)
+                                oldSku.setClientNetPrice(sku.getClientNetPrice());
+                                // 人民币专柜价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
                                 oldSku.setPriceMsrp(sku.getPriceMsrp());
+                                // 人民币指导价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
                                 oldSku.setPriceRetail(sku.getPriceRetail());
-                                commonEditFlg = true;
                             }
                         }
                     }
-                    if(commonEditFlg){
-                        productService.updateProductCommon(usJoiChannelId, pr.getProdId(), pr.getCommon(),getTaskName(),false);
-                    }
+
+                    // 由于需要无条件更新common.image1等属性，所以无条件更新common属性
+                    // 共通方法里面有Approved的时候，自动插入USJOI(928,929)->平台(京东国际匠心界，悦境)上新workload记录
+                    productService.updateProductCommon(usJoiChannelId, pr.getProdId(), pr.getCommon(), getTaskName(), false);
 
                     final CmsBtProductModel finalProductModel1 = productModel;
-                    cartIds.forEach(cart -> {
-                        CmsBtProductModel_Platform_Cart platformCart = pr.getPlatform(cart);
+                    for (Integer cartId : cartIds) {
+                        // 取得USJOI店铺共通设置(取得该渠道的PlatformActive初始值)
+                        if (CmsConstants.PlatformActive.ToOnSale.name().equals(getPlatformActive(usJoiChannelId, cartId))) {
+                            usjoiPlatformActive = CmsConstants.PlatformActive.ToOnSale;
+                        }
+
+                        CmsBtProductModel_Platform_Cart platformCart = pr.getPlatform(cartId);
                         CmsBtProductModel_Platform_Cart newPlatform = finalProductModel1.getPlatform(sxWorkLoadBean.getCartId());
                         if (platformCart == null) {
                             newPlatform.setStatus(CmsConstants.ProductStatus.Pending.toString());
@@ -293,7 +328,7 @@ public class UploadToUSJoiService extends BaseTaskService {
                             newPlatform.setpCatPath(null);
                             newPlatform.setpBrandId(null);
                             newPlatform.setpBrandName(null);
-                            newPlatform.setCartId(cart);
+                            newPlatform.setCartId(cartId);
                             productService.updateProductPlatform(usJoiChannelId, pr.getProdId(), newPlatform,getTaskName());
                         } else {
                             if(platformCart.getSkus() == null){
@@ -304,7 +339,12 @@ public class UploadToUSJoiService extends BaseTaskService {
                                     if(platformCart.getSkus() != null) {
                                         for (BaseMongoMap<String, Object> oldSku : platformCart.getSkus()) {
                                             if (oldSku.get("skuCode").toString().equalsIgnoreCase(newSku.get("skuCode").toString())) {
-                                                oldSku.put("priceMsrp", newSku.get("priceMsrp"));
+                                                // 在更新前的PXX.skus找到对应的新skuCode的时候,更新价格等平台sku属性(不更新priceSale)
+                                                oldSku.put("originalPriceMsrp", newSku.get("originalPriceMsrp"));
+                                                if (usjoiIsAutoSyncPriceMsrp) {
+                                                    // 如果USJOI店铺(928,929)配置了自动同步人民币专柜价格时，才同步priceMsrp
+                                                    oldSku.put("priceMsrp", newSku.get("priceMsrp"));
+                                                }
                                                 oldSku.put("priceRetail", newSku.get("priceRetail"));
                                                 updateFlg = true;
                                                 break;
@@ -322,9 +362,10 @@ public class UploadToUSJoiService extends BaseTaskService {
                             }
                             productService.updateProductPlatform(usJoiChannelId, pr.getProdId(), platformCart,getTaskName());
                         }
-                    });
+                    }
 
                     if (pr.getCommon() == null || pr.getCommon().size() == 0) {
+                        // 共通方法里面有Approved的时候，自动插入USJOI(928,929)->平台(京东国际匠心界，悦境)上新workload记录
                         productService.updateProductCommon(usJoiChannelId, pr.getProdId(), productModel.getCommon(),getTaskName(),false);
                     }
                     if(pr.getPlatform(0) == null){
@@ -357,18 +398,32 @@ public class UploadToUSJoiService extends BaseTaskService {
                         bulkList.add(model);
                         cmsBtProductDao.bulkUpdateWithMap(usJoiChannelId, bulkList, null, "$set");
                     }
+                    // 将USJOI店的产品加入更新对象产品列表中（取得USJOI店的品牌，产品分类和适用人群）
+                    targetProductList.add(pr);
                 }
             }
+
+            // 记录商品价格变动履历,并向Mq发送消息同步sku,code,group价格范围
+            addPriceHistorySyncScope(usJoiChannelId, targetProductList);
+
+            // 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
+            insertMtValueChannelInfo(usJoiChannelId, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, targetProductList);
+
+            // 子店->USJOI店的虚拟上新成功之后回写workload表中的状态(1:USJOI上新成功)
             sxWorkLoadBean.setPublishStatus(1);
             cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
 
+            // 子店->USJOI店的虚拟上新成功之后,取得子店的productGroup信息，设置状态，调用共通的上新成功回写方法，回写子店状态
             CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.getProductGroupByGroupId(sxWorkLoadBean.getChannelId(),sxWorkLoadBean.getGroupId());
-            cmsBtProductGroupModel.setPlatformActive(CmsConstants.PlatformActive.ToOnSale);
-            cmsBtProductGroupModel.setOnSaleTime(DateTimeUtil.getNowTimeStamp());
-            cmsBtProductGroupModel.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
-
-            // 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
-            insertMtValueChannelInfo(usJoiChannelId, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, productModels);
+            // 默认设为ToInStock
+            cmsBtProductGroupModel.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
+            if (CmsConstants.PlatformActive.ToOnSale.equals(usjoiPlatformActive)) {
+                // 如果USJOI店将PlatformActive初始值设置成ToOnSale的时候
+                cmsBtProductGroupModel.setPlatformActive(CmsConstants.PlatformActive.ToOnSale);
+            }
+            // 下面2个项目是真正向京东国际上新之后才回写的，现在设置了也没有意义
+//            cmsBtProductGroupModel.setOnSaleTime(DateTimeUtil.getNowTimeStamp());
+//            cmsBtProductGroupModel.setPlatformStatus(CmsConstants.PlatformStatus.InStock);
 
             // 上新对象产品Code列表
             List<String> listSxCode = productModels.stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
@@ -384,7 +439,7 @@ public class UploadToUSJoiService extends BaseTaskService {
     }
 
     /**
-     * 找出需要上到minmall的产品和sku
+     * 找出需要上到minmall的产品和sku(已经Approved 且 isSale=true)
      *
      * @param productModels 产品列表
      * @return 产品列表
@@ -393,7 +448,7 @@ public class UploadToUSJoiService extends BaseTaskService {
 
         List<CmsBtProductBean> usJoiProductModes = new ArrayList<>();
 
-        // 找出approved 并且 sku的carts里包含 28（usjoi的cartid）
+        // 找出928,929（usjoi的cartid）平台下包含已approved 并且 isSale为true 的sku的产品
         productModels.stream().filter(productModel -> CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(productModel.getPlatform(cartId).getStatus())).forEach(productModel -> {
             List<BaseMongoMap<String, Object>> skus = productModel.getPlatform(cartId).getSkus().stream()
                     .filter(platFormInfo -> {
@@ -524,10 +579,10 @@ public class UploadToUSJoiService extends BaseTaskService {
      * @param usjoiProductModels List<CmsBtProductBean> 产品列表
      */
     private void insertMtValueChannelInfo(String usjoiChannelId, Map<String, String> mapBrandMapping, Map<String, String> mapProductTypeMapping,
-                                          Map<String, String> mapSizeTypeMapping, List<CmsBtProductBean> usjoiProductModels) {
+                                          Map<String, String> mapSizeTypeMapping, List<CmsBtProductModel> usjoiProductModels) {
 
         // 循环产品列表，如果品牌，产品类型或适用人群信息，则插入该信息到Synship.com_mt_value_channel表中
-        for (CmsBtProductBean usjoiProductModel : usjoiProductModels) {
+        for (CmsBtProductModel usjoiProductModel : usjoiProductModels) {
             if (usjoiProductModel.getCommon() == null || usjoiProductModel.getCommon().getFields() == null) {
                 continue;
             }
@@ -569,5 +624,66 @@ public class UploadToUSJoiService extends BaseTaskService {
             }
         }
     }
+
+    /**
+     * 查看该渠道是否自动同步人民币专柜价格MSRP
+     *
+     * @param channelId String channel id
+     */
+    private boolean isAutoSyncPriceMsrp(String channelId) {
+        boolean isAutoSyncPriceMsrp = false;
+
+        CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP);
+
+        if (autoSyncPriceMsrp != null && "1".equals(autoSyncPriceMsrp.getConfigValue1()))
+            isAutoSyncPriceMsrp = true;
+
+        return isAutoSyncPriceMsrp;
+    }
+
+    /**
+     * 取得该渠道的PlatformActive初始值
+     *
+     * @param channelId String channel id
+     * @param cartId int 平台id
+     * @return platformActive CmsConstants.PlatformActive 上新的动作初始值
+     */
+    private CmsConstants.PlatformActive getPlatformActive(String channelId, Integer cartId) {
+        // platform active:上新的动作: 默认是放到:仓库中
+        CmsConstants.PlatformActive platformActive = CmsConstants.PlatformActive.ToInStock;
+
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId
+                , CmsConstants.ChannelConfig.PLATFORM_ACTIVE
+                , String.valueOf(cartId));
+
+        if (cmsChannelConfigBean != null && CmsConstants.PlatformActive.ToOnSale.name().equals(cmsChannelConfigBean.getConfigValue1())) {
+            platformActive = CmsConstants.PlatformActive.ToOnSale;
+        }
+
+        return platformActive;
+    }
+
+    /**
+     * 记录商品价格变动履历,并向Mq发送消息同步sku,code,group价格范围
+     *
+     * @param usjoiChannelId String usjoi渠道id
+     * @param usjoiProductModels List<CmsBtProductModel> usjoi产品列表
+     */
+    private void addPriceHistorySyncScope(String usjoiChannelId, List<CmsBtProductModel> usjoiProductModels) {
+
+        for (CmsBtProductModel usjoiProduct : usjoiProductModels) {
+            // 记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
+            if (usjoiProduct != null && ListUtils.notNull(usjoiProduct.getCommon().getSkus())) {
+                List<String> skuCodeList = usjoiProduct.getCommon().getSkus()
+                        .stream()
+                        .map(CmsBtProductModel_Sku::getSkuCode)
+                        .collect(Collectors.toList());
+                // 记录商品价格变动履历,并向Mq发送消息同步sku,code,group价格范围
+                cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skuCodeList, usjoiChannelId, null, getTaskName(), "子店->USJOI主店导入");
+            }
+        }
+
+    }
+
 
 }

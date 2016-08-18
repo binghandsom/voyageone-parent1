@@ -6,7 +6,7 @@ define([
     'cms',
     'modules/cms/enums/Carts'
 ],function(cms,carts) {
-    cms.directive("jdSchema", function (productDetailService,platformMappingService,$translate,notify,confirm,$q,$compile,alert) {
+    cms.directive("jdSchema", function (productDetailService,$translate,notify,confirm,$q,$compile,alert) {
         return {
             restrict: "E",
             templateUrl : "views/product/jd.component.tpl.html",
@@ -102,7 +102,7 @@ define([
                         return;
                     }
 
-                    platformMappingService.getPlatformCategories({cartId: scope.cartInfo.value})
+                    productDetailService.getPlatformCategories({cartId: scope.cartInfo.value})
                         .then(function (res) {
                             return $q(function(resolve, reject) {
                                 if (!res.data || !res.data.length) {

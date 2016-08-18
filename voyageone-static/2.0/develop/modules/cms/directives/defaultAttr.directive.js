@@ -4,7 +4,6 @@ define([
 
     var FIELD_TYPES = {
         "INPUT": "INPUT",
-        "MULTI_INPUT": "MULTIINPUT",
         "SINGLE_CHECK": "SINGLECHECK",
         "MULTI_CHECK": "MULTICHECK",
         "COMPLEX": "COMPLEX",
@@ -172,11 +171,11 @@ define([
             rules = {};
         }
 
-        // 没啥可用的信息就算了
+        // 没啥可用的信息
         if (!field || !field.rules)
             return rules;
 
-        // 没有规则好处理, 果断算了
+        // 没有规则好处理
         if (!field.rules.length)
             return rules;
 
@@ -1422,7 +1421,9 @@ define([
             return {
                 restrict: 'E',
                 require: ['^^dField'],
-                template: '<button class="btn btn-schema btn-info" ng-click="schemaFieldController.remove(complexValue)"><i class="fa fa-link"></i>&nbsp;<span translate="TXT_MAPPING_ATTRIBUTE"></span></button>',
+                template: '<button class="btn btn-schema btn-info" ng-click="openPropertyMapping()" ng-controller="popupCtrl">'
+                          +'<i class="fa fa-link"></i>&nbsp;<span translate="TXT_MAPPING_ATTRIBUTE"></span>'
+                          +'</button>',
                 scope: false
             };
         })

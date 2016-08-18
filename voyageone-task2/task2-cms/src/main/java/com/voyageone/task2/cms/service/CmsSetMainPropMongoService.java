@@ -1213,7 +1213,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             if (newFlg || StringUtils.isEmpty(productCommonField.getLongDesEn()) || "1".equals(feed.getIsFeedReImport())) {
                 productCommonField.setLongDesEn(feed.getLongDescription());
             }
-            // 税号集货: 不要设置\
+            // 税号集货: 不要设置
             // 税号个人: 不要设置
 //            if (newFlg || (StringUtils.isEmpty(productField.getHsCodePrivate()))) {
 //                field.setHsCodePrivate(getPropSimpleValueByMapping(MappingPropType.COMMON, Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, mapping));
@@ -1335,11 +1335,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 productCommonField.setClientProductUrl(feed.getClientProductURL());
             }
 
-            // 商品图片1, 包装图片2, 带角度图片3, 自定义图片4 : 暂时只设置商品图片1
+            // 1品牌方商品图, 2包装图, 3角度图, 4PC端自定义图, 5APP端自定义图, 6PC端自拍商品图, 7App端自拍商品图, 8吊牌图
+            // 暂时只设置1商品图片,有的店铺设置设置6PC端自拍商品图
 //            {
 //                if (newFlg) {
             List<Map<String, Object>> multiComplex = new LinkedList<>();
-            List<Map<String, Object>> multiComplex2 = new LinkedList<>();
+            List<Map<String, Object>> multiComplex6 = new LinkedList<>();
 
             // jeff 2016/05 change start
             //  List<String> lstImageOrg = feed.getImage();
@@ -1358,35 +1359,35 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             if (lstImageOrg != null && lstImageOrg.size() > 0) {
                 for (String imgOrg : lstImageOrg) {
                     Map<String, Object> multiComplexChildren = new HashMap<>();
-                    Map<String, Object> multiComplexChildren2 = new HashMap<>();
+                    Map<String, Object> multiComplexChildren6 = new HashMap<>();
                     // jeff 2016/04 change start
                     // multiComplexChildren.put("image1", imgOrg);
                     String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg);
                     multiComplexChildren.put("image1", picName);
-                    multiComplexChildren2.put("image2", picName);
+                    multiComplexChildren6.put("image6", picName);
                     // jeff 2016/04 add end
                     multiComplex.add(multiComplexChildren);
-                    multiComplex2.add(multiComplexChildren2);
+                    multiComplex6.add(multiComplexChildren6);
                 }
             }
 
 //            productField.put("images1", multiComplex);
             productCommonField.put("images1", multiComplex);
-            // 新增商品时，根据设置决定是否同时设置产品图images2,更新商品时不更新images2(老的数据里面本来就没有images2的时候更新)
+            // 新增商品时，根据设置决定是否同时设置PC端自拍商品图images6,更新商品时不更新images6(老的数据里面本来就没有images6的时候更新)
             if (newFlg
-                    || (ListUtils.isNull(productCommonField.getImages2()) || StringUtils.isEmpty(productCommonField.getImages2().get(0).getName()))
+                    || (ListUtils.isNull(productCommonField.getImages6()) || StringUtils.isEmpty(productCommonField.getImages6().get(0).getName()))
                     || "1".equals(feed.getIsFeedReImport())) {
-                // 从cms_mt_channel_config表从取得新建product时是否自动设置产品图images2(1:自动设置  空，0:不设置)
-                String autoSetImages2Flg = "0";    // 0:不设置产品图images2
+                // 从cms_mt_channel_config表从取得新建product时是否自动设置PC端自拍商品图images6(1:自动设置  空，0:不设置)
+                String autoSetImages6Flg = "0";    // 0:不设置PC端自拍商品图images6
                 CmsChannelConfigBean productTypeChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(this.channel.getOrder_channel_id(),
-                        CmsConstants.ChannelConfig.AUTO_SET_IMAGES2_FLG);
+                        CmsConstants.ChannelConfig.AUTO_SET_IMAGES6_FLG);
                 if (productTypeChannelConfigBean != null && "1".equals(productTypeChannelConfigBean.getConfigValue1())) {
-                    autoSetImages2Flg = "1";       // 1:自动设置产品图images2
+                    autoSetImages6Flg = "1";       // 1:自动设置PC端自拍商品图images6
                 }
 
-                if ("1".equals(autoSetImages2Flg)) {
-                    // 设置产品图images2
-                    productCommonField.put("images2", multiComplex2);
+                if ("1".equals(autoSetImages6Flg)) {
+                    // 设置PC端自拍商品图images6
+                    productCommonField.put("images6", multiComplex6);
                 }
             }
 

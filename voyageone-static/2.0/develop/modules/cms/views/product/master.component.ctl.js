@@ -176,7 +176,7 @@ define([
                                 callSaveProduct(true);
                             }else{
                                 if(context === 'error')
-                                    alert("价格计算失败，请联系IT人员，税号还原为变更前。");
+                                    alert("价格计算失败，可能价格公式不合法，请联系IT人员，税号还原为变更前。");
                                 hsCode.value.value = _prehsCode;
                             }
                         });
