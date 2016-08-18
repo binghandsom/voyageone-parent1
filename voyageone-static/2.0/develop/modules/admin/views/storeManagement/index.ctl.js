@@ -104,6 +104,7 @@ define([
                 } else {
                     _.forEach(self.storeList, function (Info) {
                         if (Info.storeId == self.storeSelList.selList[0].id) {
+                            Info['areaId'] = Info['areaId'] + '';
                             self.popups.openStoreAdd(Info).then(function () {
                                 self.search(1);
                             });
