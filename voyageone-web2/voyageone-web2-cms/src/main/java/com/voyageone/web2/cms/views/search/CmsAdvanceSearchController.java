@@ -1,12 +1,14 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,8 @@ public class CmsAdvanceSearchController extends CmsController {
     private CmsAdvSearchCustColumnService advSearchCustColumnService;
     @Autowired
     private PlatformService platformService;
+    @Autowired
+    private CmsBtExportTaskService cmsBtExportTaskService;
 
     /**
      * 初始化,获取master数据
@@ -205,21 +210,14 @@ public class CmsAdvanceSearchController extends CmsController {
      * 创建文件下载任务，发送消息到MQ，开始批处理
      */
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.EXPORT_PRODUCTS)
-    public AjaxResponse createFile(@RequestParam String params) {
-        Map p = null;
-        try {
-            p = JacksonUtil.jsonToMap(params);
-        } catch (Exception exp) {
-            $error("查询参数不正确", exp);
-            throw new BusinessException("4001");
-        }
-        if (p == null) {
-            $error("查询参数不正确, 对象转换失败");
-            throw new BusinessException("4001");
-        }
-
+    public AjaxResponse createFile(@RequestBody Map<String, Object> params) {
         String fileName = null;
-        Integer fileType = (Integer) p.get("fileType");
+        Integer fileType = (Integer) params.get("fileType");
+        Map<String, Object> resultBean = new HashMap<String, Object>();
+        if (fileType == null) {
+            resultBean.put("ecd", "4002");
+            return success(resultBean);
+        }
         if (fileType == 1) {
             fileName = "productList_";
         } else if (fileType == 2) {
@@ -228,33 +226,37 @@ public class CmsAdvanceSearchController extends CmsController {
             fileName = "skuList_";
         }
         if (fileName == null) {
-            throw new BusinessException("4002");
+            resultBean.put("ecd", "4002");
+            return success(resultBean);
         }
 
         try {
             // 文件下载时分页查询要做特殊处理
-            searchIndexService.getCodeExcelFile(p, getUser(), getCmsSession(), getLang());
-        } catch (BusinessException e) {
-            throw e;
-        } catch (Exception e) {
+            if (searchIndexService.getCodeExcelFile(params, getUser(), getCmsSession(), getLang())) {
+                resultBean.put("ecd", "0");
+                return success(resultBean);
+            } else {
+                resultBean.put("ecd", "4004");
+                return success(resultBean);
+            }
+        } catch (Throwable e) {
             $error("创建文件时出错", e);
-            throw new BusinessException("4003");
+            resultBean.put("ecd", "4003");
+            return success(resultBean);
         }
-        // 返回
-        return success(null);
     }
 
     /**
      * 查询文件生成的状态
      */
-    @RequestMapping(CmsUrlConstants.SEARCH.FEED.EXPORTSEARCH)
+    @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.EXPORT_SERACH)
     public AjaxResponse searchFile(@RequestBody Map<String, Object> params) {
         Map<String, Object> resultBean = new HashMap<String, Object>();
         UserSessionBean userInfo = getUser();
         Integer pageNum = (Integer) params.get("pageNum");
         Integer pageSize = (Integer) params.get("pageSize");
-//        resultBean.put("exportList", cmsBtExportTaskService.getExportTaskByUser(userInfo.getSelChannelId(), CmsBtExportTaskService.FEED, userInfo.getUserName(), (pageNum - 1) * pageSize, pageSize));
-//        resultBean.put("exportListTotal", cmsBtExportTaskService.getExportTaskByUserCnt(userInfo.getSelChannelId(), CmsBtExportTaskService.FEED, userInfo.getUserName()));
+        resultBean.put("exportList", cmsBtExportTaskService.getExportTaskByUser(userInfo.getSelChannelId(), CmsBtExportTaskService.ADV_SEARCH, userInfo.getUserName(), (pageNum - 1) * pageSize, pageSize));
+        resultBean.put("exportListTotal", cmsBtExportTaskService.getExportTaskByUserCnt(userInfo.getSelChannelId(), CmsBtExportTaskService.ADV_SEARCH, userInfo.getUserName()));
 
         // 返回feed信息
         return success(resultBean);
@@ -263,9 +265,22 @@ public class CmsAdvanceSearchController extends CmsController {
     /**
      * 下载文件
      */
-    @RequestMapping(CmsUrlConstants.SEARCH.FEED.DOWNLOAD)
+    @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.EXPORT_DOWNLOAD)
     public ResponseEntity<byte[]> downloadFile(@RequestParam String fileName) {
-        return genResponseEntityFromFile(fileName, CmsBtExportTaskService.savePath + fileName);
+        String exportPath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_PATH);
+        File pathFileObj = new File(exportPath);
+        if (!pathFileObj.exists()) {
+            $info("高级检索 文件下载任务 文件目录不存在 " + exportPath);
+            throw new BusinessException("4004");
+        }
+
+        exportPath += fileName;
+        pathFileObj = new File(exportPath);
+        if (!pathFileObj.exists()) {
+            $info("高级检索 文件下载任务 文件不存在 " + exportPath);
+            throw new BusinessException("4004");
+        }
+        return genResponseEntityFromFile(fileName, exportPath);
     }
 
     /**

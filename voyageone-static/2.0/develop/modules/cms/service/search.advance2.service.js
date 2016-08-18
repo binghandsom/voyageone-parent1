@@ -12,29 +12,14 @@ define([
 
     function searchAdvanceService2($q, blockUI, $translate, selectRowsFactory, $searchAdvanceService2, $filter, cActions) {
 
-        this.init = init;
         this.search = search;
         this.getGroupList = getGroupList;
         this.getProductList = getProductList;
         this.exportFile = exportFile;
-        this.addFreeTag = addFreeTag;
-        this.getCustSearchList = getCustSearchList;
         this.clearSelList = clearSelList;
 
         var tempGroupSelect = new selectRowsFactory();
         var tempProductSelect = new selectRowsFactory();
-
-        /**
-         * 初始化数据
-         * @returns {*}
-         */
-        function init() {
-            var defer = $q.defer();
-            $searchAdvanceService2.init().then(function (res) {
-                defer.resolve (res);
-            });
-            return defer.promise;
-        }
 
         /**
          * 检索group和product
@@ -68,19 +53,12 @@ define([
 
         function exportFile (data) {
             data = resetSearchInfo(data);
-            function _exportFileCallback (res) {
-                var obj = JSON.parse(res);
-                if (obj.code == '4001') {
-                    alert("查询参数不正确，请重试。");
-                } else if (obj.code == '4002') {
-                    alert("未选择导出文件类型。");
-                } else if (obj.code == '4003') {
-                    alert("创建文件时出错。");
-                } else if (obj.code == '4004') {
-                    alert("已经有一个任务还没有执行完毕。请稍后再导出");
-                }
-            }
-            $.download.post(cActions.cms.search.$searchAdvanceService2.root + cActions.cms.search.$searchAdvanceService2.exportProducts, {params: JSON.stringify(data)}, _exportFileCallback);
+            var defer = $q.defer();
+
+            $searchAdvanceService2.exportProducts(data).then(function (res) {
+                defer.resolve (res);
+            });
+            return defer.promise;
         }
 
         /**
@@ -107,36 +85,6 @@ define([
             var defer = $q.defer();
             $searchAdvanceService2.getProductList(resetProductPagination(data, pagination)).then(function (res) {
                 _resetProductList(res.data, commonProps, customProps, selSalesTypes);
-                defer.resolve (res);
-            });
-            return defer.promise;
-        }
-
-        /**
-         * 添加自由标签
-         * @param data
-         * @returns {*}
-         */
-        function addFreeTag(tagPathList, prodIdList, selAllFlg) {
-            var defer = $q.defer();
-            var data = {"tagPathList":tagPathList, "prodIdList":prodIdList, "isSelAll":selAllFlg};
-
-            $searchAdvanceService2.addFreeTag(data).then(function (res) {
-                defer.resolve (res);
-            });
-            return defer.promise;
-        }
-
-        /**
-         * 自定义搜索条件中，当选择的项目为下拉列表时，获取下拉列表的值
-         * @param fieldsId
-         * @returns {*}
-         */
-        function getCustSearchList(fieldsId, inputType) {
-            var defer = $q.defer();
-            var data = {"fieldsId":fieldsId, "inputType":inputType};
-
-            $searchAdvanceService2.getCustSearchList(data).then(function (res) {
                 defer.resolve (res);
             });
             return defer.promise;
@@ -720,5 +668,6 @@ define([
             tempGroupSelect.clearSelectedList();
             tempProductSelect.clearSelectedList();
         }
+
     }
 });

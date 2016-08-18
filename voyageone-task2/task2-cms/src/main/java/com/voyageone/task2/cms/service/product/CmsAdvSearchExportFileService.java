@@ -98,10 +98,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         }
         CmsSearchInfoBean2 searchValue = new CmsSearchInfoBean2();
         try {
-//            searchValue = CmsSearchInfoBean2.class.newInstance();
             BeanUtils.populate(searchValue, messageMap);
-            taskModel.setStatus(3); // 开始执行
-            cmsBtExportTaskService.update(taskModel);
         } catch (Exception exp) {
             $error("高级检索 文件下载任务 查询参数不正确", exp);
             // 更新任务状态，然后结束
@@ -121,7 +118,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             return;
         }
         try {
-            createExcelFile(searchValue, channleId, sessionBean, userName, language);
+            String fileName = createExcelFile(searchValue, channleId, sessionBean, userName, language);
+            taskModel.setFileName(fileName);
             taskModel.setStatus(1); // 成功
         } catch (Throwable exp) {
             $error("高级检索 文件下载任务 创建文件时出错 " + exp.getMessage(), exp);
@@ -135,7 +133,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
     /**
      * 获取数据文件内容
      */
-    private void createExcelFile(CmsSearchInfoBean2 searchValue, String channelId, Map<String, Object> cmsSessionBean, String userName, String language)
+    private String createExcelFile(CmsSearchInfoBean2 searchValue, String channelId, Map<String, Object> cmsSessionBean, String userName, String language)
             throws IOException, InvalidFormatException {
         String fileName = null;
         String templatePath = null;
@@ -265,6 +263,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             inputStream.close();
             book.close();
         }
+        return fileName;
     }
 
     /**
