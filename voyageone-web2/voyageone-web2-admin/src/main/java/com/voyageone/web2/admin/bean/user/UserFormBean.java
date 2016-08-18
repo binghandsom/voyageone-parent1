@@ -8,6 +8,10 @@ public class UserFormBean extends AdminFormBean {
 
     private String userAccount;
 
+    private String roleName;
+
+    private Integer roleType;
+
     private Integer active;
 
     private Integer orgId;
@@ -17,6 +21,8 @@ public class UserFormBean extends AdminFormBean {
     private Integer storeId;
 
     private Integer roleId;
+
+    private String application;
 
     public String getUserAccount() {
         return userAccount;
@@ -64,5 +70,29 @@ public class UserFormBean extends AdminFormBean {
 
     public void setRoleId(Integer roleId) {
         this.roleId = roleId;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public String getApplication() {
+        return application;
+    }
+
+    public void setApplication(String application) {
+        this.application = application;
+    }
+
+    public Integer getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(Integer roleType) {
+        this.roleType = roleType;
     }
 }

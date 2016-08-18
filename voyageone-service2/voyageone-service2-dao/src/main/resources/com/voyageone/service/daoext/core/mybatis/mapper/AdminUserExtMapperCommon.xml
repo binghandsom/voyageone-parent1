@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.daoext.core.AdminUserDaoExt">
+<mapper namespace="com.voyageone.service.daoext.core.AdminRoleDaoExt">
 
-    <resultMap id="comUserModelMap" type="com.voyageone.service.bean.com.AdminUserBean" />
+    <resultMap id="comRoleModelMap" type="com.voyageone.service.bean.com.AdminUserBean" />
 
-    <sql id="selectUserFilter">
+    <sql id="selectRoleFilter">
     	<where>
             <if test="id != null" >
                 and id = #{id}
@@ -41,7 +41,7 @@
 	
 
 	
-	<select id="selectUserByPage" resultMap="comUserModelMap">
+	<select id="selectUserByPage" resultMap="comRoleModelMap">
         SELECT * from
         (
         SELECT t.id, t.user_name, t.user_account, t.password, t.credential_salt, t.org_id, org_name, t.description,email,
@@ -66,10 +66,10 @@
 
         GROUP BY t.id
         )t1
-        <include refid="selectUserFilter"/>
+        <include refid="selectRoleFilter"/>
 	</select>
 	
-	<select id="selectUserCount" resultType="Integer">
+	<select id="selectRoleCount" resultType="Integer">
         SELECT count(0) from
         (
         SELECT t.id, t.user_name, t.user_account, t.password, t.credential_salt, t.org_id, org_name, t.description,email,
@@ -94,7 +94,7 @@
 
         GROUP BY t.id
         )t1
-		 <include refid="selectUserFilter"/>
+		 <include refid="selectRoleFilter"/>
 	</select>
 
 
