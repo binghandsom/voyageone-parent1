@@ -2,6 +2,7 @@ package com.voyageone.service.bean.cms.CmsBtDataAmount;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by dell on 2016/7/5.
@@ -13,8 +14,10 @@ public enum EnumPlatformPriceSum implements IEnumDataAmountSum{
     CMS_PLATFORM_PRICE_DOWN("CMS_PLATFORM_PRICE_DOWN", "{'platforms.P%s.skus.priceDiffFlg':'2'}", "/search/advanceSearch", "/search/advanceSearch", "比指导价低(未击穿)"),
     CMS_PLATFORM_PRICE_UP("CMS_PLATFORM_PRICE_UP", "{'platforms.P%s.skus.priceDiffFlg':'3'}", "/search/advanceSearch", "/search/advanceSearch", "比指导价高(未击穿)"),
     CMS_PLATFORM_PRICE_UP_BREAKDOWN("CMS_PLATFORM_PRICE_UP_BREAKDOWN", "{'platforms.P%s.skus.priceDiffFlg':'4'}", "/search/advanceSearch", "", "向上击穿警告"),
-    CMS_PLATFORM_PRICE_DOWN_BREAKDOWN("CMS_PLATFORM_PRICE_DOWN_BREAKDOWN", "{'platforms.P%s.skus.priceDiffFlg':'5'}", "/search/advanceSearch", "", "向下击穿警告");
-
+    CMS_PLATFORM_PRICE_DOWN_BREAKDOWN("CMS_PLATFORM_PRICE_DOWN_BREAKDOWN", "{'platforms.P%s.skus.priceDiffFlg':'5'}", "/search/advanceSearch", "", "向下击穿警告"),
+    CMS_PLATFORM_priceSale_Equal_minus1("CMS_PLATFORM_priceSale_Equal_minus1", "{platforms.P%s:{$exists:true},'platforms.P%s.skus.priceSale':-1}", "/search/advanceSearch", "", "中国最终售价价格为-1",(m)->{
+        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId());
+    });
 
     EnumPlatformPriceSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;
@@ -23,6 +26,23 @@ public enum EnumPlatformPriceSum implements IEnumDataAmountSum{
         this.linkParameter = linkParameter;
         this.comment = comment;
     }
+    EnumPlatformPriceSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment, Function<QueryStrFormatParam, String> getQuery) {
+        this.amountName = amountName;
+        this.strQuery = strQuery;
+        this.linkUrl = linkUrl;
+        this.linkParameter = linkParameter;
+        this.comment = comment;
+        this.funFormat=getQuery;
+    }
+    public Function<QueryStrFormatParam, String> getFunFormat() {
+        return funFormat;
+    }
+
+    public void setFunFormat(Function<QueryStrFormatParam, String> funFormat) {
+        this.funFormat = funFormat;
+    }
+
+    private Function<QueryStrFormatParam,String> funFormat;
     private String amountName;//
     private String strQuery;//查询条件
     private String linkUrl;//链接地址

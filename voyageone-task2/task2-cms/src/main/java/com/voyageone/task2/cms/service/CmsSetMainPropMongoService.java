@@ -2475,7 +2475,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //            }
 
             // 根据code, 到group表中去查找所有的group信息
-            List<CmsBtProductGroupModel> existGroups = getGroupsByCode(feed.getChannelId(), feed.getCode());
+            List<CmsBtProductGroupModel> existGroups = productGroupService.selectProductGroupListByCode(feed.getChannelId(), feed.getCode());
 
             // 循环一下
             for (TypeChannelBean shop : typeChannelBeanListDisplay) {
@@ -2600,12 +2600,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param code      品牌方给的Code
          * @return group列表
          */
-        private List<CmsBtProductGroupModel> getGroupsByCode(String channelId, String code) {
-            // 先去看看是否有存在的了
-            JongoQuery queryObject = new JongoQuery();
-            queryObject.setQuery("{\"productCodes\":\"" + code + "\"}");
-            return productGroupService.getList(channelId, queryObject);
-        }
+//        private List<CmsBtProductGroupModel> getGroupsByCode(String channelId, String code) {
+//            // 先去看看是否有存在的了
+//            JongoQuery queryObject = new JongoQuery();
+//            queryObject.setQuery("{\"productCodes\":\"" + code + "\"}");
+//            return productGroupService.getList(channelId, queryObject);
+//        }
 
         /**
          * getPropSimpleValueByMapping 简单属性值的取得
