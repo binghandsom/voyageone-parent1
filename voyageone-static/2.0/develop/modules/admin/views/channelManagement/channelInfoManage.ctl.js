@@ -7,8 +7,8 @@ define([
     'admin',
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
-    admin.controller('TmOrderChannelController', (function () {
-        function TmOrderChannelController(popups, alert, confirm, channelService, selectRowsFactory) {
+    admin.controller('ChannelManagementController', (function () {
+        function ChannelManagementController(popups, alert, confirm, channelService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
@@ -26,7 +26,7 @@ define([
             }
         }
 
-        TmOrderChannelController.prototype = {
+        ChannelManagementController.prototype = {
             init: function () {
                 var self = this;
                 self.search();
@@ -128,6 +128,6 @@ define([
                 );
             }
         };
-        return TmOrderChannelController;
+        return ChannelManagementController;
     })())
 });

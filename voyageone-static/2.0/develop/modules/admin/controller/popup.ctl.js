@@ -22,6 +22,12 @@ define([
             "controller": 'AddController as ctrl',
             "size": 'lg'
         },
+        "addChannelType": {
+            "templateUrl": "views/pop/addChannel/addChannelTypeAttr.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addChannel/addChannelTypeAttr.ctl",
+            "controller": 'AddChannelTypeController as ctrl',
+            "size": 'md'
+        },
         "createEdit": {
             "templateUrl": "views/pop/createEdit/index.tpl.html",
             "controllerUrl": "modules/admin/views/pop/createEdit/index.ctl",
@@ -39,6 +45,12 @@ define([
             "controllerUrl": "modules/admin/views/pop/addStore/index.ctl",
             "controller": 'AddStoreController as ctrl',
             "size": 'lg'
+        },
+        "addType": {
+            "templateUrl": "views/pop/addType/index.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addType/index.ctl",
+            "controller": 'AddTypeController as ctrl',
+            "size": 'md'
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -71,6 +83,12 @@ define([
             return openModal(popActions.addChannel, context);
         };
         /**
+         * 打开渠道类型属性管理Add页面
+         */
+        $scope.openAddChannelType = function openAdd(context) {
+            return openModal(popActions.addChannelType, context);
+        };
+        /**
          * 打开创建编辑页面
          */
         $scope.openCreateEdit = function openCreateEdit(context) {
@@ -87,6 +105,12 @@ define([
          */
         $scope.openStoreAdd = function openStoreAdd(context) {
             return openModal(popActions.addStore, context);
+        };
+        /**
+         * 打开Type管理页面的添加页面
+         */
+        $scope.openTypeAdd = function openTypeAdd(context) {
+            return openModal(popActions.addType, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {

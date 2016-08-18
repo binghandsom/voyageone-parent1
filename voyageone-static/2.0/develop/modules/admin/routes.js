@@ -5,11 +5,17 @@ define(function () {
             "templateUrl": "views/home/welcome/datachart.tpl.html",
             "controllerUrl": "modules/admin/views/home/welcome/datachart.ctl"
         },
-        "tmOrderChannel": {
-            "hash": "/cart/tmOrderChannel",
-            "templateUrl": "views/tmOrderChannel/index.tpl.html",
-            "controllerUrl": "modules/admin/views/tmOrderChannel/index.ctl",
-            "controller": "TmOrderChannelController as ctrl"
+        "channelInfoManage": {
+            "hash": "/channel/channelInfoManage",
+            "templateUrl": "views/channelManagement/channelInfoManage.tpl.html",
+            "controllerUrl": "modules/admin/views/channelManagement/channelInfoManage.ctl",
+            "controller": "ChannelManagementController as ctrl"
+        },
+        "channelTypeAttrManage": {
+            "hash": "/channel/channelTypeAttrManage",
+            "templateUrl": "views/channelManagement/channelTypeAttrManage.tpl.html",
+            "controllerUrl": "modules/admin/views/channelManagement/channelTypeAttrManage.ctl",
+            "controller": "ChannelTypeAttrManagementController as ctrl"
         },
         "cartManagement": {
             "hash": "/cart/cartManagement",
