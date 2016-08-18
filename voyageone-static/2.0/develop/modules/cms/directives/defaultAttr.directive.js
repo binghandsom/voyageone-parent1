@@ -213,6 +213,7 @@ define([
 
     /**
      * 根据值类型规则返回相应的 input type
+     * 默认属性配置=》不会去匹配url类型input
      */
     function getInputType(valueTypeRule) {
 
@@ -225,6 +226,9 @@ define([
             case VALUE_TYPES.HTML:
             case VALUE_TYPES.TEXTAREA:
                 type = 'textarea';
+                break;
+            case VALUE_TYPES.URL:
+                type = 'url';
                 break;
             default:
                 type = 'text';
@@ -292,7 +296,7 @@ define([
                 return parsedValue;
         }
 
-        // default
+        // 默认值
         return value;
     }
 
@@ -588,7 +592,8 @@ define([
             disableRule,
             disabledExpression,
             fieldElement,
-            fieldScope;
+            fieldScope,
+            type;
 
         // 2016-07-08 11:11:54
         // 增加对 isDisplay 属性的支持
@@ -598,8 +603,7 @@ define([
 
         rules = getRules(field, schema);
         disableRule = rules.disableRule;
-
-
+        type = rules.valueTypeRule;
 
         // 如果 disableRule 固定为 true 则这个字段就永远不需要处理
         // 如果不为 true, 是一个依赖型 rule 的话, 就需要为字段创建 ng-if 切换控制
@@ -610,8 +614,9 @@ define([
         if (disableRule && !(disableRule instanceof DependentRule) && disableRule.value === true)
             return;
 
-
-
+        //过滤掉input[type='url']
+        if(getInputType(type) === "url")
+            return;
 
         fieldElement = angular.element('<d-field>');
         // 创建专有 scope, 通过专有 scope 传递 field 给 element(directive)
@@ -729,10 +734,10 @@ define([
             SchemaFieldController.prototype.render = function () {
 
                 var controller = this,
-                    $element, formController, showName,
+                    $element, showName,
                     parentScope, $scope,
-                    field, container, hasValidate,
-                    rules, innerElement, isSimple;
+                    field, container,
+                    rules, innerElement;
 
                 controller.destroy();
 
@@ -751,8 +756,6 @@ define([
                 container = $element;
 
                 rules = getRules(field);
-
-                isSimple = (field.type != FIELD_TYPES.COMPLEX && field.type != FIELD_TYPES.MULTI_COMPLEX);
 
                 if (showName)
                     container.append(angular.element('<d-header>'));
