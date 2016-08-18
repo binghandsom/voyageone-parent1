@@ -24,7 +24,7 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
     @Autowired
     private FeedCustomPropService feedCustomPropService;
     @Autowired
-    private CmsAdvSearchQueryService advSearchQueryService;
+    private CmsAdvSearchOtherService advSearchQueryService;
 
     /**
      * 取得用户自定义显示列设置

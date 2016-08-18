@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service.product;
+package com.voyageone.task2.cms.service.product.sales;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteOperation;

@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service.product;
+package com.voyageone.task2.cms.service.product.sales;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.beans.OrderChannelBean;
