@@ -76,9 +76,9 @@ public class PlatformMappingService extends BaseService {
 
         CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
 
-        CmsBtPlatformMappingModel fieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, cart.getpCatId(), channelId);
+        CmsBtPlatformMappingModel fieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, cart.getpCatPath(), channelId);
 
-        CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_COMMON, cart.getpCatId(), channelId);
+        CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_COMMON, null, channelId);
 
         Map<String, Object> valueMap = new HashMap<>();
 
