@@ -65,10 +65,11 @@ public class StoreController extends AdminController {
 	
 	@RequestMapping(AdminUrlConstants.Store.Self.UPDATE_STORE)
 	public AjaxResponse updateStore(@RequestBody StoreFormBean form) {
+		Preconditions.checkNotNull(form.getStoreId());
 		return addOrUpdateStore(form, false);
 	}
 	
-	public AjaxResponse addOrUpdateStore(@RequestBody StoreFormBean form, boolean append) {
+	public AjaxResponse addOrUpdateStore(StoreFormBean form, boolean append) {
 		// 验证参数
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
 		Preconditions.checkNotNull(form.getParentStoreId());
@@ -131,7 +132,7 @@ public class StoreController extends AdminController {
 		return addOrUpdateStoreConfig(form, false);
 	}
 	
-	public AjaxResponse addOrUpdateStoreConfig(@RequestBody CommonConfigFormBean form, boolean append) {
+	public AjaxResponse addOrUpdateStoreConfig(CommonConfigFormBean form, boolean append) {
 		// 验证配置类型参数
 		Preconditions.checkNotNull(form.getStoreId());
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgName()));

@@ -71,7 +71,7 @@ public class ChannelController extends AdminController {
 		return addOrUpdateChannel(form, false);
 	}
 	
-	public AjaxResponse addOrUpdateChannel(@RequestBody ChannelFormBean form, boolean append) {
+	public AjaxResponse addOrUpdateChannel(ChannelFormBean form, boolean append) {
 		// 验证参数
 		Preconditions.checkNotNull(form.getCompanyId());
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
@@ -122,7 +122,7 @@ public class ChannelController extends AdminController {
 		return addOrUpdateChannelConfig(form, false);
 	}
 	
-	public AjaxResponse addOrUpdateChannelConfig(@RequestBody CommonConfigFormBean form, boolean append) {
+	public AjaxResponse addOrUpdateChannelConfig(CommonConfigFormBean form, boolean append) {
 		// 验证配置类型参数
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgName()));

@@ -56,7 +56,7 @@ public class ChannelAttributeController extends AdminController {
 		return addOrUpdateChannelAttribute(form, false);
 	}
 	
-	public AjaxResponse addOrUpdateChannelAttribute(@RequestBody ChannelAttributeFormBean form, boolean append) {
+	public AjaxResponse addOrUpdateChannelAttribute(ChannelAttributeFormBean form, boolean append) {
 		// 验证参数
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
 		Preconditions.checkNotNull(form.getTypeId());
