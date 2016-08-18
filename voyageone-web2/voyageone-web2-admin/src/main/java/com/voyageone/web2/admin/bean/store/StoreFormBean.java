@@ -36,7 +36,7 @@ public class StoreFormBean extends AdminFormBean {
 	
 	private String storeArea;
 	
-	private Integer areaId;
+	private Long areaId;
 	
 	private String storeComment;
 	
@@ -154,11 +154,11 @@ public class StoreFormBean extends AdminFormBean {
 		this.storeArea = storeArea;
 	}
 
-	public Integer getAreaId() {
+	public Long getAreaId() {
 		return areaId;
 	}
 
-	public void setAreaId(Integer areaId) {
+	public void setAreaId(Long areaId) {
 		this.areaId = areaId;
 	}
 
