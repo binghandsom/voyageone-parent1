@@ -118,7 +118,7 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.storeSelList.selList, function (delInfo) {
-                            _.extend(delList, {'orderChannelId': delInfo.orderChannelId, 'storeId': delInfo.id});
+                            delList.push({'orderChannelId': delInfo.orderChannelId, 'storeId': delInfo.id});
                         });
                         self.storeService.deleteStore(delList).then(function (res) {
                             self.search();
