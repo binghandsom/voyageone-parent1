@@ -13,8 +13,8 @@ define([
 
         $scope.hsCodeInfo="";
         $scope.addHsCode = addHsCode;
-        function addHsCode(){
-            $valueChannelService.addHsCodes({"typeId":43,"hsCodes":$scope.hsCodeInfo}).then(function(){
+        function addHsCode(typeId){
+            $valueChannelService.addHsCodes({"typeId":typeId,"hsCodes":$scope.hsCodeInfo}).then(function(){
                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 $scope.hsCodeInfo = "";
             })
