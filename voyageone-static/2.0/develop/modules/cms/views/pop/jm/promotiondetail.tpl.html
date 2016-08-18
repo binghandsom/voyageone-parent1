@@ -146,12 +146,14 @@
                 <div class="col-sm-8">
                     <div class="row wrapper-xs">
                         <label class="checkbox-inline c-checkbox col-md-2">
-                            <input type="checkbox" ng-model="editModel.model.isPromotionDown" ng-disabled="vm.isBeginPre"><span class="fa fa-check"></span>&nbsp;直降
+                            <input type="checkbox" name="promotionYh" ng-model="editModel.model.isPromotionDown" ng-disabled="vm.isBeginPre" ng-required = "!(editModel.model.isPromotionDown||editModel.model.isPromotionFullMinus||editModel.model.isPromotionGiveCoupons)">
+                            <span class="fa fa-check"></span>&nbsp;直降
                         </label>
                     </div>
                     <div class="row wrapper-xs">
                         <label class="checkbox-inline c-checkbox col-md-2">
-                            <input type="checkbox" ng-model="editModel.model.isPromotionFullMinus" ng-disabled="vm.isBeginPre"><span class="fa fa-check"></span>&nbsp;满减
+                            <input type="checkbox" name="promotionYh" ng-model="editModel.model.isPromotionFullMinus" ng-disabled="vm.isBeginPre" ng-required = "!(editModel.model.isPromotionDown||editModel.model.isPromotionFullMinus||editModel.model.isPromotionGiveCoupons)">
+                            <span class="fa fa-check"></span>&nbsp;满减
                         </label>
                     </div>
                     <div class="row m-l-md">
@@ -168,9 +170,16 @@
                     </div>
                     <div class="row wrapper-xs">
                         <label class="checkbox-inline c-checkbox col-md-4">
-                            <input type="checkbox" ng-model="editModel.model.isPromotionGiveCoupons" ng-disabled="vm.isBeginPre"><span class="fa fa-check"></span>&nbsp;优惠券（聚美承担）
+                            <input type="checkbox" name="promotionYh" ng-model="editModel.model.isPromotionGiveCoupons" ng-disabled="vm.isBeginPre" ng-required = "!(editModel.model.isPromotionDown||editModel.model.isPromotionFullMinus||editModel.model.isPromotionGiveCoupons)">
+                            <span class="fa fa-check"></span>&nbsp;优惠券（聚美承担）
                         </label>
                     </div>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="col-sm-7 col-sm-offset-3">
+                    <vo-message target="promotionForm.promotionYh"></vo-message>
                 </div>
             </div>
 
@@ -245,6 +254,6 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
-        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;确认</button>
+        <button class="btn btn-vo" ng-click="ok()" ng-disabled="promotionForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;确认</button>
     </div>
 </div>
