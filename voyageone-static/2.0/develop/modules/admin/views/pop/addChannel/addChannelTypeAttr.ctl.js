@@ -13,7 +13,8 @@ define([
             this.AdminCartService = AdminCartService;
             this.popType = '编辑';
             this.companyId = this.sourceData.companyId;
-            this.$uibModalInstance = $uibModalInstance;
+            this.$uibModalInstance = $uibModalInstance
+            
         }
 
         AddChannelTypeController.prototype = {
