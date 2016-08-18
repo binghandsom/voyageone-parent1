@@ -594,6 +594,7 @@ public class UploadToUSJoiService extends BaseTaskService {
                     if (!StringUtils.isEmpty(group.getNumIId())) {
                         result = false;
                     }
+                    break;
                 }
             }
             if (blnFound) {
