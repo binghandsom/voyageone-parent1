@@ -61,11 +61,13 @@ define([
                 this.valueArr.splice(index, 1)
             },
             confirm: function () {
-                var valueList = _.map(this.valueArr, function (item) {
-                    return {type: item.type, append: item.append, value: item.value};
-                });
+                if(this.valueArr.length > 0){
+                    var valueList = _.map(this.valueArr, function (item) {
+                        return {type: item.type, append: item.append, value: item.value};
+                    });
 
-                this.context.value = JSON.stringify(valueList);
+                    this.context.value = JSON.stringify(valueList);
+                }
                 this.uibModalInstance.close();
             }
         };
