@@ -11,7 +11,7 @@ define([
 ], function (cms) {
     cms.controller('attributeDetailController', (function () {
 
-        function AttributeDetailController($routeParams, notify, popups, menuService, productDetailService, platformMappingService) {
+        function AttributeDetailController($routeParams, notify, popups, menuService, $productDetailService, platformMappingService) {
 
             var self = this;
             var searchJson = $routeParams.upEntity;
@@ -20,7 +20,7 @@ define([
 
             self.popups = popups;
             self.notify = notify;
-            self.productDetailService = productDetailService;
+            self.$productDetailService = $productDetailService;
             self.platformMappingService = platformMappingService;
 
             menuService.getPlatformType().then(function (resp) {
@@ -68,9 +68,9 @@ define([
         AttributeDetailController.prototype.openCategorySelector = function () {
 
             var self = this,
-                productDetailService = self.productDetailService;
+                $productDetailService = self.$productDetailService;
 
-            productDetailService.getPlatformCategories(self.searchInfo).then(function (resp) {
+            $productDetailService.getPlatformCategories({cartId:self.searchInfo.cartId}).then(function (resp) {
 
                 var categoryList = resp.data;
 
