@@ -322,7 +322,7 @@ public class CmsAdvanceSearchController extends CmsController {
     }
 
     /**
-     * 对产品添加指定自由标签
+     * 对产品设置自由标签
      *
      * @param params
      * @return
@@ -331,7 +331,7 @@ public class CmsAdvanceSearchController extends CmsController {
     public AjaxResponse addFreeTag(@RequestBody Map<String, Object> params) {
         UserSessionBean userInfo = getUser();
 
-        searchIndexService.addProdTag(userInfo.getSelChannelId(), params, "freeTags", userInfo.getUserName(), getCmsSession());
+        searchIndexService.setProdFreeTag(userInfo.getSelChannelId(), params, userInfo.getUserName(), getCmsSession());
         return success(null);
     }
 

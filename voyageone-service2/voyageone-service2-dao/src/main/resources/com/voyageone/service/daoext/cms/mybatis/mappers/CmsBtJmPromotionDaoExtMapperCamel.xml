@@ -84,4 +84,14 @@
         where channel_id = #{channelId} and jm_hash_id != ''
         group by product_code) as b where a.id=b.id)
     </select>
+    <update id="updateSumbrandById">
+        UPDATE `cms_bt_jm_promotion` AS a
+        SET `brand`=(
+        SELECT GROUP_CONCAT(DISTINCT IFNULL(c.brand_name,''))
+        FROM  cms_bt_jm_promotion_product AS b
+        JOIN `cms_bt_jm_product` AS c ON  c.`channel_id`=b.`channel_id` AND c.`product_code`=b.`product_code`
+        WHERE  b.`cms_bt_jm_promotion_id`=a.`id`
+        )
+        WHERE a.id=#{id}
+    </update>
 </mapper>

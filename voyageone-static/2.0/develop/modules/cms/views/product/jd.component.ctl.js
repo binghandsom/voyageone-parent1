@@ -6,7 +6,7 @@ define([
     'cms',
     'modules/cms/enums/Carts'
 ],function(cms,carts) {
-    cms.directive("jdSchema", function (productDetailService,platformMappingService,$translate,notify,confirm,$q,$compile,alert) {
+    cms.directive("jdSchema", function (productDetailService,$translate,notify,confirm,$q,$compile,alert) {
         return {
             restrict: "E",
             templateUrl : "views/product/jd.component.tpl.html",
@@ -43,6 +43,7 @@ define([
                 scope.allSkuSale = allSkuSale;
                 scope.focusError = focusError;
                 scope.choseBrand = choseBrand;
+                scope.copyMainProduct = copyMainProduct;
 
                 /**
                  * 获取京东页面初始化数据
@@ -95,7 +96,13 @@ define([
                  * @param popupNewCategory popup实例
                  */
                 function jdCategoryMapping(popupNewCategory) {
-                    platformMappingService.getPlatformCategories({cartId: scope.cartInfo.value})
+
+                    if(scope.vm.status == 'Approved'){
+                        alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
+                        return;
+                    }
+
+                    productDetailService.getPlatformCategories({cartId: scope.cartInfo.value})
                         .then(function (res) {
                             return $q(function(resolve, reject) {
                                 if (!res.data || !res.data.length) {
@@ -167,7 +174,7 @@ define([
                     if(scope.vm.mastData == null)
                         return;
 
-                    if(scope.vm.platform == null || scope.vm.platform.pNumIId == null || scope.vm.platform.pNumIId == ""){
+                    if(scope.vm.status != 'Approved'){
                         alert("商品未完成平台上新，无法操作平台下线。");
                         return;
                     }
@@ -197,11 +204,27 @@ define([
                     openPlatformMappingSetting({
                         cartId: scope.cartInfo.value,
                         cartName: scope.cartInfo.name,
-                        masterName: mainBrand
+                        masterName: mainBrand,
+                        pBrandId:scope.vm.platform.pBrandId
                     }).then(function(context){
                         scope.vm.platform.pBrandName = context.selectedPlatform;
                     });
 
+                }
+
+                /**
+                 * 复制主数据filed到平台编辑页
+                 * */
+                function copyMainProduct(){
+                    var template = _.template("您确定要复制Master数据到<%=cartName%>吗？");
+
+                    confirm(template({cartName: scope.cartInfo.name})).then(function(){
+                        productDetailService.copyProperty({
+                            prodId:scope.productInfo.productId,
+                            cartId:+scope.cartInfo.value}).then(function(res){
+                            scope.vm.platform = res.data.platform;
+                        });
+                    });
                 }
 
                 /**
@@ -323,6 +346,10 @@ define([
                 }
 
                 /**
+                 *
+                 *
+                 *
+                 *
                  * 右侧导航栏
                  * @param index div的index
                  * @param speed 导航速度 ms为单位

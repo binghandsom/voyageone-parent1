@@ -26,7 +26,13 @@ public enum EnumPlatformInfoSum implements IEnumDataAmountSum{
     CMS_PLATFORM_PUBLISH_SUCCESS("CMS_PLATFORM_PUBLISH_SUCCESS", "{'platforms.P%s.pPublishError':{$in:[null,'']},'platforms.P%s.status':'Approved','platforms.P%s.pStatus':{$in:['InStock','OnSale']}}", "/search/advanceSearch", "", "上新成功数",(m)->{
         return String.format(m.getQueryStr(),m.getCartId(),m.getCartId(),m.getCartId());
     }),//
-    CMS_PLATFORM_PUBLISH_FAILD("CMS_PLATFORM_PUBLISH_FAILD", "{'platforms.P%s.pPublishError':{$nin:[null,'']}}", "/search/advanceSearch", "", "上新失败数");
+    CMS_PLATFORM_PUBLISH_FAILD("CMS_PLATFORM_PUBLISH_FAILD", "{'platforms.P%s.pPublishError':{$nin:[null,'']}}", "/search/advanceSearch", "", "上新失败数"),
+    //{platforms.P%s:{$exists:true},$where:'this.platforms.P%s.pStatus!=this.platforms.P%s.pReallyStatus'}
+    CMS_PLATFORM_pStatus_pReallyStatus_notEqual("CMS_PLATFORM_pStatus_pReallyStatus_notEqual", "{$or:[{'platforms.P%s.pReallyStatus':'OnSale','platforms.P%s.pStatus':{$ne:'OnSale'}},{'platforms.P%s.pReallyStatus':'InStock','platforms.P%s.pStatus':{$ne:'InStock'}}]}", "/search/advanceSearch", "", "商品平台状态与实际相异数",(m)->{
+        return String.format(m.getQueryStr(),m.getCartId(),m.getCartId(),m.getCartId(),m.getCartId());
+    });// priceSale
+
+
     EnumPlatformInfoSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;
         this.strQuery = strQuery;

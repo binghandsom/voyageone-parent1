@@ -5,9 +5,10 @@ import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
-import com.voyageone.common.util.BeanUtil;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.MapUtil;
 import com.voyageone.service.bean.vms.order.*;
+import com.voyageone.service.bean.vms.shipment.ShipmentBean;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.vms.order.OrderDetailService;
 import com.voyageone.service.impl.vms.shipment.ShipmentService;
@@ -16,9 +17,9 @@ import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.bean.SortParamBean;
 import com.voyageone.web2.vms.bean.VmsChannelSettingBean;
-import com.voyageone.web2.vms.bean.order.*;
-import com.voyageone.service.bean.vms.shipment.ShipmentBean;
-import com.voyageone.service.bean.vms.shipment.ShipmentEndCountBean;
+import com.voyageone.web2.vms.bean.order.DownloadInfoBean;
+import com.voyageone.web2.vms.bean.order.OrderSearchInfoBean;
+import com.voyageone.web2.vms.bean.order.ScanInfoBean;
 import com.voyageone.web2.vms.views.common.VmsChannelConfigService;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HeaderFooter;
@@ -31,7 +32,10 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.voyageone.web2.vms.VmsConstants.*;
@@ -337,7 +341,7 @@ public class VmsOrderInfoService extends BaseService {
                     vmsBtOrderDetailModelList.stream()
                             .map(vmsBtOrderDetailModel -> {
                                 SubOrderInfoBean orderInfoBean = new SubOrderInfoBean();
-                                BeanUtil.copy(vmsBtOrderDetailModel, orderInfoBean);
+                                BeanUtils.copy(vmsBtOrderDetailModel, orderInfoBean);
                                 if (!STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
                                     orderInfoBean.setRetailPrice(BigDecimal.ZERO);
                                 return orderInfoBean;
@@ -364,7 +368,7 @@ public class VmsOrderInfoService extends BaseService {
         return vmsBtOrderDetailModelList.stream()
                 .map(vmsBtOrderDetailModel -> {
                     SubOrderInfoBean orderInfoBean = new SubOrderInfoBean();
-                    BeanUtil.copy(vmsBtOrderDetailModel, orderInfoBean);
+                    BeanUtils.copy(vmsBtOrderDetailModel, orderInfoBean);
                     if (!STATUS_VALUE.SALE_PRICE_SHOW.SHOW.equals(channelConfigs.getSalePriceShow()))
                         orderInfoBean.setRetailPrice(BigDecimal.ZERO);
                     return orderInfoBean;
@@ -459,7 +463,7 @@ public class VmsOrderInfoService extends BaseService {
         return orderDetailService.getScannedSku(user.getSelChannelId(), shipment.getId(), orderId).stream()
                 .map(vmsBtOrderDetailModel -> {
                     SubOrderInfoBean subOrderInfoBean = new SubOrderInfoBean();
-                    BeanUtil.copy(vmsBtOrderDetailModel, subOrderInfoBean);
+                    BeanUtils.copy(vmsBtOrderDetailModel, subOrderInfoBean);
                     return subOrderInfoBean;
                 })
                 .collect(Collectors.toList());
@@ -611,7 +615,7 @@ public class VmsOrderInfoService extends BaseService {
         return orderDetailService.selectOrderList(params).stream()
                 .map(vmsBtOrderDetailModel -> {
                     SubOrderInfoBean subOrderInfoBean = new SubOrderInfoBean();
-                    BeanUtil.copy(vmsBtOrderDetailModel, subOrderInfoBean);
+                    BeanUtils.copy(vmsBtOrderDetailModel, subOrderInfoBean);
                     return subOrderInfoBean;
                 })
                 .collect(Collectors.toList());
@@ -657,7 +661,7 @@ public class VmsOrderInfoService extends BaseService {
                 .filter(vmsBtOrderDetailModel -> null == vmsBtOrderDetailModel.getShipmentId())
                 .map(vmsBtOrderDetailModel -> {
                     SubOrderInfoBean subOrderInfoBean = new SubOrderInfoBean();
-                    BeanUtil.copy(vmsBtOrderDetailModel, subOrderInfoBean);
+                    BeanUtils.copy(vmsBtOrderDetailModel, subOrderInfoBean);
                     return subOrderInfoBean;
                 })
                 .collect(Collectors.toList());

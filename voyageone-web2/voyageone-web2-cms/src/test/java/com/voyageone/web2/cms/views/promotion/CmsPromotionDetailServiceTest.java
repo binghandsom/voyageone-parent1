@@ -97,6 +97,11 @@ public class CmsPromotionDetailServiceTest {
 
     }
 
+    @Test
+    public void testGetTMallJuHuaSuanExport() throws Exception {
+        cmsPromotionDetailService.getTMallJuHuaSuanExport(7,"010");
+    }
+
 //    public void testTejiaBaoInsert(){
 //        PromotionCodeAddTejiaBaoRequest request=new PromotionCodeAddTejiaBaoRequest();
 //        request.setModifier("lijun");

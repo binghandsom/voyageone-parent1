@@ -6,7 +6,13 @@ package com.voyageone.service.bean.cms.product;
 public enum  EnumProductOperationType {
     Add(0, "新增"),
     ChangeMastProduct(1, "切换主商品"),
-    Delisting(2, "单品下架");
+    Delisting(2, "单品下架"),
+    BatchUpdate(3, "批量更新"),  // 高级检索 批量更新
+    ProductApproved(4, "商品审批"),  // 高级检索 商品审批
+    BatchSetCats(5, "批量设置店铺内分类"),  // 高级检索 批量设置店铺内分类
+    BatchSetFreeTag(6, "批量设置自由标签"),  // 高级检索 批量设置自由标签
+    WebEdit(7, "页面编辑");                     // 产品编辑页
+
 
     private int id;
     private String name;

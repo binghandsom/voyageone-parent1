@@ -44,7 +44,6 @@ public class CmsBtJmPromotionExportTask3Service {
     public List<CmsBtJmPromotionExportTaskModel> getByPromotionId(int promotionId) {
         return daoExt.selectByPromotionId(promotionId);
     }
-
     public void export(int JmBtPromotionExportTaskId, String exportPath) throws IOException, ExcelException {
         CmsBtJmPromotionExportTaskModel model = dao.select(JmBtPromotionExportTaskId);
         String fileName = "Product" + DateTimeUtil.format(new Date(), "yyyyMMddHHmmssSSS") + ".xls";

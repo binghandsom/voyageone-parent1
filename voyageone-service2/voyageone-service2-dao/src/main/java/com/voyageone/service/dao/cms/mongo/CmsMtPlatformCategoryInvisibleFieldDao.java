@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.BaseMongoCartDao;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryInvisibleFieldModel;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 public class CmsMtPlatformCategoryInvisibleFieldDao extends BaseMongoCartDao<CmsMtPlatformCategoryInvisibleFieldModel> {
 
     public CmsMtPlatformCategoryInvisibleFieldModel selectOneByCatId(String catId, int cartId) {
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         query.setQuery("{\"catId\":#}");
         query.setParameters(catId);
         return selectOneWithQuery(query, cartId);

@@ -14,7 +14,7 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
+public abstract class BaseMongoDao<T> extends BaseJongoDao<T> {
 
     public DBCollection getDBCollection() {
         return mongoTemplate.getDBCollection(collectionName);
@@ -28,7 +28,7 @@ public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findOne(strQuery, entityClass, collectionName);
     }
 
-    public T selectOneWithQuery(JomgoQuery queryObject) {
+    public T selectOneWithQuery(JongoQuery queryObject) {
         return mongoTemplate.findOne(queryObject, entityClass, collectionName);
     }
 
@@ -48,7 +48,7 @@ public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.find(strQuery, projection, entityClass, collectionName);
     }
 
-    public List<T> select(JomgoQuery queryObject) {
+    public List<T> select(JongoQuery queryObject) {
         return mongoTemplate.find(queryObject, entityClass, collectionName);
     }
 
@@ -56,7 +56,7 @@ public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findCursor(strQuery, null, entityClass, collectionName);
     }
 
-    public Iterator<T> selectCursor(JomgoQuery queryObject) {
+    public Iterator<T> selectCursor(JongoQuery queryObject) {
         return mongoTemplate.findCursor(queryObject, entityClass, collectionName);
     }
 
@@ -64,7 +64,7 @@ public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findById(id, entityClass, collectionName);
     }
 
-    public T findAndModify(JomgoUpdate updateObject) {
+    public T findAndModify(JongoUpdate updateObject) {
         return mongoTemplate.findAndModify(updateObject, entityClass, collectionName);
     }
 
@@ -106,12 +106,12 @@ public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
      * @return List<Map> 返回的Map数据结构和aggregate语句对应
      */
     @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> aggregateToMap(List<JomgoAggregate> aggregateList) {
-        JomgoAggregate[] aggregates = aggregateList.toArray(new JomgoAggregate[aggregateList.size()]);
+    public List<Map<String, Object>> aggregateToMap(List<JongoAggregate> aggregateList) {
+        JongoAggregate[] aggregates = aggregateList.toArray(new JongoAggregate[aggregateList.size()]);
         return aggregateToMap(aggregates);
     }
     @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> aggregateToMap(JomgoAggregate... aggregates) {
+    public List<Map<String, Object>> aggregateToMap(JongoAggregate... aggregates) {
         return (List<Map<String, Object>>) aggregateToObj(Map.class, collectionName, aggregates);
     }
 
@@ -119,11 +119,11 @@ public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
      * 聚合查询<br>
      * 必须注意：这里的Model不能简单使用表定义对应的Model，而是要和aggregate语句对应(要定义新的Model/Dao)，否则查询无正确数据
      */
-    public List<T> aggregateToObj(List<JomgoAggregate> aggregateList) {
-        JomgoAggregate[] aggregates = aggregateList.toArray(new JomgoAggregate[aggregateList.size()]);
+    public List<T> aggregateToObj(List<JongoAggregate> aggregateList) {
+        JongoAggregate[] aggregates = aggregateList.toArray(new JongoAggregate[aggregateList.size()]);
         return aggregateToObj(aggregates);
     }
-    public List<T> aggregateToObj(JomgoAggregate... aggregates) {
+    public List<T> aggregateToObj(JongoAggregate... aggregates) {
         return aggregateToObj(entityClass, collectionName, aggregates);
     }
 }

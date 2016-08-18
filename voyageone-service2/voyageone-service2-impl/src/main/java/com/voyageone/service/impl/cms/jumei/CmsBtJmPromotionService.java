@@ -3,11 +3,10 @@ package com.voyageone.service.impl.cms.jumei;
 import com.google.common.base.Preconditions;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
@@ -26,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +84,10 @@ public class CmsBtJmPromotionService {
             List<CmsBtTagModel> tagList = daoCmsBtTag.selectList(map);
             info.setTagList(tagList);
         }
+        long preStartLocalTime = DateTimeUtilBeijing.toLocalTime(model.getPrePeriodStart());//北京时间转本地时区时间戳
+        long activityEndTime = DateTimeUtilBeijing.toLocalTime(model.getActivityEnd());//北京时间转本地时区时间戳
+        info.setIsBeginPre(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
+        info.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
         return info;
     }
     @VOTransactional
@@ -246,12 +250,12 @@ public class CmsBtJmPromotionService {
         Preconditions.checkArgument(StringUtils.isNotBlank(channelId), "channelId不能为空!");
         Map params = new HashMap<>();
         params.put("cartId", cartId);
-        if (Channels.isUsJoi(channelId)) {
-            params.put("orgChannelId", channelId);
-            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
-        } else {
-            params.put("channelId", channelId);
-        }
+//        if (Channels.isUsJoi(channelId)) {
+//            params.put("orgChannelId", channelId);
+//            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+//        } else {
+            params.put("channelId", channelId); // TODO 在本店铺查询minimall店铺的活动时，再议，还没考虑好怎么做
+//        }
         return daoExt.selectActivesOfChannel(params);
     }
 

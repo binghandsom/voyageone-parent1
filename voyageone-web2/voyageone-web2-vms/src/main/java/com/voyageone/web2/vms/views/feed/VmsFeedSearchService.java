@@ -1,6 +1,6 @@
 package com.voyageone.web2.vms.views.feed;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.web2.base.BaseAppService;
@@ -34,7 +34,7 @@ public class VmsFeedSearchService extends BaseAppService {
      * @return
      */
     public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, UserSessionBean userInfo) {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery(feedInfoService.getSearchQueryForVendor(searchValue));
         // 当数据很多时，加上指定字段反而影响性能
         // queryObject.setProjection(searchItems);

@@ -5,7 +5,7 @@ import com.jd.open.api.sdk.response.imgzone.ImgzonePictureUploadResponse;
 import com.taobao.api.TaobaoResponse;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -81,7 +81,7 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         // 取得图片上传状态为2：等待上传的对象
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         // 暂时只支持淘宝/天猫/天猫国际/聚美/京东/京东国际/京东国际匠心界/京东国际悦境
         queryObject.setQuery("{\"image.status\":"
                 + CmsConstants.ImageUploadStatus.WAITING_UPLOAD + ",\"active\":1,\"cartId\":{$in:[" + CartEnums.Cart.TM.getId() + ","

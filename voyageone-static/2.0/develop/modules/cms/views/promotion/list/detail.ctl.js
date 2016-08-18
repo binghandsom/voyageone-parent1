@@ -7,7 +7,7 @@ define([
     'underscore'
 ], function () {
 
-    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory,cookieService) {
+    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory,cookieService,cActions) {
         $scope.promotionOld={};
         $scope.datePicker = [];
         $scope.vm = {
@@ -175,6 +175,20 @@ define([
             return _.isEqual(data1, data2)
         };
 
+        $scope.openOtherDownload = function (promotion) {
+
+            $.download.post(cActions.cms.promotion.promotionService.root + "/" + cActions.cms.promotion.promotionService.exportPromotion, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
+        };
+        $scope.openJuhuasuanDownload = function (promotion) {
+
+            $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallJuhuasuanExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
+        };
+        $scope.openTmallDownload = function (promotion) {
+
+            $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallPromotionExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
+        };
+
+
 
         //function selAllFlag(objectList,id){
         //    objectList.selAllFlag = true;
@@ -240,6 +254,6 @@ define([
             })
         }
     };
-    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory', 'cookieService'];
+    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory', 'cookieService','cActions'];
     return detailController;
 });

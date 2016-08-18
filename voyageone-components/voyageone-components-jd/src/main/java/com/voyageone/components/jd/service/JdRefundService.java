@@ -99,29 +99,29 @@ public class JdRefundService extends JdBase {
 		
 		return jdRefundList;
 	}
-	
+
 	/**
 	 * 京东根据Id查询退款审核单
 	 */
 	public RefundApplyVo doJDRefundDetail(ShopBean shop, String id) {
 		PopAfsSoaRefundapplyQueryByIdRequest request=new PopAfsSoaRefundapplyQueryByIdRequest(); 
 		request.setId(Long.parseLong(id));
-		try {
-			PopAfsSoaRefundapplyQueryByIdResponse response=reqApi(shop, request);
-			if (C_JD_RETURN_SUCCESS.equals(response.getCode())) {
-				// 京东返回正常的场合
-				// 看一下是否有数据，如果列表长度为0，那就不用再继续做了
-				if (!response.getQueryResult().getResult().isEmpty()) {
-					return response.getQueryResult().getResult().get(0);
-				}
-			}
-		} catch (JdException e) {
-			logger.info("error:doRefundDetail:id:" + id);
+
+		PopAfsSoaRefundapplyQueryByIdResponse response = reqApi(shop, request);
+		if (response == null) {
+			logger.error("error:doRefundDetail:id:" + id);
 			return null;
-		} 
+		}
+		if (C_JD_RETURN_SUCCESS.equals(response.getCode())) {
+			// 京东返回正常的场合
+			// 看一下是否有数据，如果列表长度为0，那就不用再继续做了
+			if (!response.getQueryResult().getResult().isEmpty()) {
+				return response.getQueryResult().getResult().get(0);
+			}
+		}
 		return null;
 	}
-	
+
 	/**
 	 * 京东根据服务单号取得退款信息
 	 */

@@ -10,7 +10,9 @@ import com.voyageone.service.bean.cms.CmsBtBrandBean;
 import com.voyageone.service.bean.cms.CmsBtBrandMappingBean;
 
 /**
- * Created by Wangtd on 7/25/16.
+ * 品牌映射数据访问扩展
+ * @author Wangtd 2016/07/25
+ * @since 2.3.0
  */
 @Repository
 public interface CmsBtBrandMappingDaoExt {

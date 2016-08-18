@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -23,13 +23,15 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PriceCalculateException;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
@@ -506,7 +508,7 @@ public class CmsProductDetailService extends BaseAppService {
         }
 
         for (Integer cartId : cartList) {
-            JomgoUpdate updObj = new JomgoUpdate();
+            JongoUpdate updObj = new JongoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#},'platforms.P#':{$exists:true},'platforms.P#.pAttributeStatus':{$in:[null,'','0']}}");
             updObj.setQueryParameters(prodCodes, cartId, cartId);
 
@@ -601,6 +603,7 @@ public class CmsProductDetailService extends BaseAppService {
                 platformStatus.put("pPublishError", platformInfo.getpPublishError());
                 platformStatus.put("pNumIId", platformInfo.getpNumIId());
                 platformStatus.put("cartName", CartEnums.Cart.getValueByID(platformInfo.getCartId() + ""));
+                platformStatus.put("pReallyStatus", platformInfo.getpReallyStatus());
                 platformList.add(platformStatus);
             });
         }
@@ -637,9 +640,43 @@ public class CmsProductDetailService extends BaseAppService {
             feedInfoService.updateFeedInfo(channelId, paraMap, valueMap);
 
         }
-        return productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
-    }
 
+        Map<String, Object> result = productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
+
+        CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
+        if(!compareHsCode(commonModel.getFields().getHsCodePrivate(),oldProduct.getCommon().getFields().getHsCodePrivate())){
+            try {
+                priceService.setPrice(newProduct);
+            } catch (PriceCalculateException e) {
+                throw new BusinessException("价格计算错误" + e.getMessage());
+            } catch (IllegalPriceConfigException e) {
+                // TODO 当捕获配置错误异常时, 需要停止渠道级别的计算
+                e.printStackTrace();
+            }
+            newProduct.getPlatforms().forEach((s, platform) -> {
+                if(platform.getCartId() != 0){
+                    productService.updateProductPlatform(channelId,prodId,platform,modifier,false,"税号变更");
+                }
+            });
+        }
+
+
+        return result;
+    }
+    private Boolean compareHsCode(String hsCode1, String hsCode2){
+        String hs1="";
+        String hs2="";
+        if(hsCode1 != null){
+            String []temp = hsCode1.split(",");
+            if(temp.length >1) hs1 = temp[0];
+        }
+
+        if(hsCode2 != null){
+            String []temp = hsCode2.split(",");
+            if(temp.length >1) hs2 = temp[0];
+        }
+        return hs1.equalsIgnoreCase(hs2);
+    }
     private void changeMastCategory(CmsBtProductModel_Common commonModel, CmsBtProductModel oldProduct, String modifier) {
         List<CmsMtCategoryTreeAllModel_Platform> platformCategory = categoryTreeAllService.getCategoryByCatPath(commonModel.getCatPath()).getPlatformCategory();
         if (platformCategory == null || platformCategory.size() == 0) return;
@@ -1306,7 +1343,6 @@ public class CmsProductDetailService extends BaseAppService {
     public Map<Integer, Map<String, List<Double>>> hsCodeChg(String channelId, Long prodId, String hsCode) {
 
         CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);
-        String oldHscode = cmsBtProductModel.getCommon().getFields().getHsCodePrivate();
         Map<Integer, Map<String, List<Double>>> prices = new HashMap<>();
         cmsBtProductModel.getPlatforms().forEach((s, platform) -> {
             if (platform.getCartId() != 0) {
@@ -1318,12 +1354,69 @@ public class CmsProductDetailService extends BaseAppService {
             }
         });
         cmsBtProductModel.getCommon().getFields().setHsCodePrivate(hsCode);
-        priceService.setRetailPrice(cmsBtProductModel);
+        try {
+            priceService.setPrice(cmsBtProductModel);
+        } catch (PriceCalculateException e) {
+            // 当捕获计算错误时, 可以继续 code 级别的计算
+            throw new BusinessException("价格计算错误" + e.getMessage());
+        } catch (IllegalPriceConfigException e) {
+            // TODO 当捕获配置错误异常时, 需要停止 code 级别的计算
+            e.printStackTrace();
+        }
         cmsBtProductModel.getPlatforms().forEach((s, platform) -> {
             if (platform.getCartId() != 0) {
                 prices.get(platform.getCartId()).get(platform.getSkus().get(0).getStringAttribute("skuCode")).add(platform.getSkus().get(0).getDoubleAttribute("priceRetail"));
+
+                for (BaseMongoMap<String, Object> sku : platform.getSkus()){
+                    if("5".equalsIgnoreCase(sku.getStringAttribute("priceDiffFlg"))){
+                        throw new BusinessException("税号修改后导致 中国最终售价低于指导价阀值请先修改最终销售价格！hscode调整后 指导价是：" + sku.getDoubleAttribute("priceRetail"));
+                    }
+                }
             }
+
         });
         return prices;
+    }
+
+    public Map<String, Object> copyPropertyFromMainProduct(String channelId, Long prodId, String lang) {
+        CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);
+        CmsBtProductModel_Common common = cmsBtProductModel.getCommon();
+
+        CmsBtProductModel mainProduct = productService.getProductByCode(channelId, cmsBtProductModel.getPlatform(0).getMainProductCode());
+        CmsBtProductModel_Common mainCommon = mainProduct.getCommon();
+
+
+        if(StringUtil.isEmpty(common.getCatId())){
+            common.setCatId(mainCommon.getCatId());
+        }
+
+        if(StringUtil.isEmpty(common.getCatPath())) {
+            common.setCatPath(mainCommon.getCatPath());
+        }
+
+        mainCommon.getFields().forEach((s, o) -> {
+            if (common.getFields().containsKey(s)) {
+                if (StringUtils.isEmpty(common.getFields().get(s).toString())) {
+                    common.getFields().put(s, o);
+                }
+            }else{
+                common.getFields().put(s, o);
+            }
+        });
+        if("1".equalsIgnoreCase(mainCommon.getFields().getHsCodeStatus())){
+            common.getFields().setHsCodeStatus("1");
+        }
+        if("1".equalsIgnoreCase(mainCommon.getFields().getTranslateStatus())){
+            common.getFields().setTranslateStatus("1");
+        }
+        if("1".equalsIgnoreCase(mainCommon.getFields().getCategoryStatus())){
+            common.getFields().setCategoryStatus("1");
+        }
+        List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
+        this.fillFieldOptions(cmsMtCommonFields, channelId, lang);
+        FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, common.getFields());
+        common.put("schemaFields", cmsMtCommonFields);
+
+        return common;
     }
 }

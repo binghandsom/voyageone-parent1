@@ -4,7 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteOperation;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.DBCollection;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.OrderChannelBean;
@@ -69,7 +69,7 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
         boolean hasdata = false;
 
         // 根据skuCode取得商品code
-        JomgoQuery prodQryObj = new JomgoQuery();
+        JongoQuery prodQryObj = new JongoQuery();
         prodQryObj.setQuery("{'common.skus.skuCode':#}");
         prodQryObj.setProjection("{'common.fields.code':1,'_id':0}");
         List<OrderChannelBean> list2 = new ArrayList<>();

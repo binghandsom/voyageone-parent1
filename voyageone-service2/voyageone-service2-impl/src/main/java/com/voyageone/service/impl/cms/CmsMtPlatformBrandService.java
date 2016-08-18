@@ -10,7 +10,9 @@ import com.voyageone.service.daoext.cms.CmsMtPlatformBrandsDaoExt;
 import com.voyageone.service.model.cms.CmsMtPlatformBrandsModel;
 
 /**
- * Created by Wangtd on 8/1/16.
+ * 平台品牌服务
+ * @author Wangtd 2016/08/01
+ * @since 2.3.0
  */
 @Service
 public class CmsMtPlatformBrandService {

@@ -128,11 +128,29 @@ define(function () {
             "controllerUrl": "modules/cms/views/channel/brandMapping/index.ctl",
             "controller": "BrandMappingController as ctrl"
         },
+        "channel_brand_mapping_param": {
+            "hash": "/channel/brand_mapping_list/:cartId",
+            "templateUrl": "views/channel/brandMapping/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/brandMapping/index.ctl",
+            "controller": "BrandMappingController as ctrl"
+        },
         "channel_cart_category_list": {
             "hash": "/channel/cart_category_list",
             "templateUrl": "views/channel/category/index.tpl.html",
             "controllerUrl": "modules/cms/views/channel/category/index.ctl",
             "controller": "categoryController as ctrl"
+        },
+        "channel_default_attribute_list": {
+            "hash": "/channel/default_attribute_list",
+            "templateUrl": "views/channel/defaultAttribute/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/defaultAttribute/index.ctl",
+            "controller": "defaultAttributeController as ctrl"
+        },
+        "channel_default_attribute_detail": {
+            "hash": "/channel/default_attribute_detail/:upEntity",
+            "templateUrl": "views/channel/defaultAttribute/detail.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/defaultAttribute/detail.ctl",
+            "controller": "attributeDetailController as ctrl"
         },
         "search_advance_new": {
             "hash": "/search/advanceSearch",
@@ -330,6 +348,12 @@ define(function () {
             "hash": "/imagecreate/index",
             "templateUrl": "views/imagecreate/index.tpl.html",
             "controllerUrl": "modules/cms/views/imagecreate/index.ctl"
+        },
+        "re-price": {
+            "hash": "/tools/re/price",
+            "templateUrl": "views/tools/reprice/re.price.tpl.html",
+            "controllerUrl": "modules/cms/views/tools/reprice/re.price.controller",
+            "controller": "RePriceController as ctrl"
         }
     };
 });

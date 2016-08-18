@@ -16,7 +16,7 @@
             </div>
             <div class="col-sm-4 text-right"><button class="btn btn-default" ng-click="ctrl.getPage(ctrl.paging.curr)" translate="BTN_REFRESH"></button></div>
         </div>
-        <table class="table table-hover-new">
+        <table class="table table-hover-new hbox">
             <thead>
             <tr>
                 <th translate="TXT_ACTION_TIME"></th>
@@ -36,7 +36,7 @@
                 <td>{{::row.cartName}}</td>
                 <td>{{::row.statusCn}}</td>
                 <td>{{::row.operationTypeName}}</td>
-                <td>{{::row.comment}}</td>
+                <td><popover-text content="row.comment" direct="left" size="15"></popover-text></td>
             </tr>
             </tbody>
         </table>

@@ -118,8 +118,8 @@ define([
                 "controller": 'newCategoryCtl as ctrl'
             },
             "platformBrandSetting": {
-                "templateUrl": "views/pop/channel/platform_brand_setting.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/channel/platform_brand_setting.ctl",
+                "templateUrl": "views/pop/channel/platformBrandSetting.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/channel/platformBrandSetting.ctl",
                 "controller": 'PlatformBrandSettingController as ctrl',
                 "backdrop": 'static',
                 "size": 'lg'
@@ -248,6 +248,18 @@ define([
                 "templateUrl": "views/pop/platformMapping/ppOtherPlatform.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/platformMapping/ppOtherPlatform.ctl",
                 "controller": 'otherPlatformPopupController as ctrl',
+                "size": 'md'
+            },
+            "propertyMapping":{
+                "templateUrl": "views/pop/platformMapping/propertyMapping.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/platformMapping/propertyMapping.ctl",
+                "controller": 'propertyMappingController as ctrl',
+                "size": 'lg'
+            },
+            "propertySetting":{
+                "templateUrl": "views/pop/platformMapping/propertySetting.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/platformMapping/propertySetting.ctl",
+                "controller": 'propertySettingController as ctrl',
                 "size": 'md'
             }
         },
@@ -496,6 +508,11 @@ define([
                 "controllerUrl": "modules/cms/views/pop/product/productOffLine.ctl",
                 "controller": 'ProductOffLineController as ctrl',
                 "size": 'lg'
+            },
+            "hsCodeChange": {
+                "templateUrl": "views/pop/product/hsCodeChange.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/hsCodeChange.ctl",
+                "controller": 'HsCodeChangeController as ctrl'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -592,7 +609,7 @@ define([
             var params = null;
             if (context && context.isSelAll) {
                 // 全选
-                params = {"productIds": productIds, 'isSelAll': 1, "cartId": context.cartId};
+                params = {"productIds": productIds, 'isSelAll': 1, "cartId": context.cartId, 'selCnt': context.selCnt};
             } else {
                 if (selList && selList.length) {
                     _.forEach(selList, function (object) {
@@ -600,7 +617,7 @@ define([
                     });
                 }
                 if (context) {
-                    params = {"productIds": productIds, "cartId": context.cartId};
+                    params = {"productIds": productIds, "cartId": context.cartId, 'selCnt': context.selCnt};
                 } else {
                     params = {"productIds": productIds, "cartId": null};
                 }
@@ -1182,12 +1199,12 @@ define([
             return openModal(popActions.bulkUpdate.updateProductApproval, context);
         };
 
-        //切换主类目
+        /**切换主类目*/
         $scope.openSwitchMain = function openSwitchMain(context) {
             return openModal(popActions.product.switchMain, context);
         };
 
-        //产品下线
+        /**产品下线*/
         $scope.openProductOffLine = function openProductOffLine(context) {
             return openModal(popActions.product.productOffLine, context);
         };
@@ -1198,6 +1215,21 @@ define([
                 code: code
             });
         };
+
+        /**税号改变 hsCodeChange*/
+        $scope.openHsCodeChange = function openHsCodeChange(context){
+            return openModal(popActions.product.hsCodeChange,context);
+        };
+
+        /**属性匹配*/
+        $scope.openPropertyMapping = function openPropertyMapping(context){
+            return openModal(popActions.platformMapping.propertyMapping,context);
+        };
+
+        /**属性编辑*/
+        $scope.openPropertySetting = function openPropertySetting(context){
+            return openModal(popActions.platformMapping.propertySetting,context);
+        }
 
     }).factory('popups', function ($controller, $rootScope) {
 

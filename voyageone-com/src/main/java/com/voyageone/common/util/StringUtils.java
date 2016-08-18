@@ -14,6 +14,8 @@ public final class StringUtils {
 
     private static final Pattern special_symbol = Pattern.compile("[.]");
 
+    public static final String LineSeparator = "\r\n";
+
     public static String null2Space(String input) {
         if (input == null) {
             return "";

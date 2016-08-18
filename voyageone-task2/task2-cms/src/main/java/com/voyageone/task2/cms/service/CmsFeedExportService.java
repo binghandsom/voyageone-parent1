@@ -1,27 +1,18 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
-import com.voyageone.common.CmsConstants;
-import com.voyageone.common.configs.Properties;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.excel.ExportFileExcelUtil;
-import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
-import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
-import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
-import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.base.BaseMQCmsService;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
-import org.omg.CORBA.portable.*;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +21,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import java.io.*;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.channels.FileChannel;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,7 +66,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
         files.add(fileName);
 
         long pageCnt = cnt / pageSize + (cnt % pageSize == 0 ? 0 : 1);
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery(feedInfoService.getSearchQuery(searchValue));
         int rowIndexCode = 2;
         int rowIndexSku = 2;

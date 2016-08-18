@@ -64,6 +64,7 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         return success(result);
     }
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_PLATFORM)
     public AjaxResponse doUpdateProductPlatform(@RequestBody Map params) {
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
@@ -72,7 +73,7 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         Map<String, Object> result = new HashMap<>();
 
-        Map<String,Object> platform = (Map<String, Object>) params.get("platform");
+        Map<String, Object> platform = (Map<String, Object>) params.get("platform");
 
         result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName()));
 
@@ -88,23 +89,41 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         Map<String, Object> result = new HashMap<>();
 
-        Map<String,Object> platform = (Map<String, Object>) params.get("platform");
+        Map<String, Object> platform = (Map<String, Object>) params.get("platform");
         String errcode = cmsProductPlatformDetailService.priceChk(channelId, prodId, platform);
 
-        if(errcode != null){
+        if (errcode != null) {
             throw new BusinessException(errcode);
-        }else{
+        } else {
             return doUpdateProductPlatform(params);
         }
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CHECK_CATEGORY)
-    public AjaxResponse checkCategory (@RequestBody Map params){
+    public AjaxResponse checkCategory(@RequestBody Map params) {
 
         String catPath = params.get("pCatPath").toString();
         Integer cartId = (Integer) params.get("cartId");
-        CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTreeModel = platformCategoryService.getCategoryByCatPath(getUser().getSelChannelId(),catPath,cartId);
+        CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTreeModel = platformCategoryService.getCategoryByCatPath(getUser().getSelChannelId(), catPath, cartId);
         return success(cmsMtPlatformCategoryTreeModel != null);
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CopyProperty)
+    public AjaxResponse copyProperty(@RequestBody Map params) {
+
+        Map<String, Object> result = new HashMap<>();
+        Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
+        Integer cartId = (Integer) params.get("cartId");
+        result.put("platform", cmsProductPlatformDetailService.copyPropertyFromMainProduct(getUser().getSelChannelId(), prodId, cartId, getLang()));
+        return success(result);
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PLATFORM_CATEGORIES)
+    public AjaxResponse getPlatformCategories(@RequestBody Map<String, Integer> params) {
+
+        Integer cartId = params.get("cartId");
+
+        return success(cmsProductPlatformDetailService.getPlatformCategories(getUser(), cartId));
     }
 }
 
