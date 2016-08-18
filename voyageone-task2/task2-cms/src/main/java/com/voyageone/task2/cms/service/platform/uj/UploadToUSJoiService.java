@@ -42,6 +42,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -93,6 +96,9 @@ public class UploadToUSJoiService extends BaseTaskService {
     @Autowired
     private BusinessLogService businessLogService;
 
+    // 每个channel的子店->USJOI主店导入最大件数
+    private final static int UPLOAD_TO_USJOI_MAX_100 = 100;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -106,19 +112,41 @@ public class UploadToUSJoiService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
-
+        // 默认线程池最大线程数(目前最后只有2个USJOI的channelId 928, 929)
+        int threadPoolCnt = 2;
+        // 保存每个channel最终导入结果(成功失败件数信息)
+        Map<String, String> resultMap = new HashMap<>();
+        // 创建线程池
+        ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
         for (OrderChannelBean channelBean : Channels.getUsJoiChannelList()) {
-            List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(100, Integer.parseInt(channelBean.getOrder_channel_id()));
-            cmsBtSxWorkloadModels.forEach(this::upload);
+            // 启动多线程(每个USJOI channel一个线程)
+            executor.execute(() -> uploadByChannel(channelBean, resultMap));
+        }
+        // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
+        // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
+        executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
+        try {
+            // 阻塞，直到线程池里所有任务结束
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
         }
 
-        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+        $info("=================子店->USJOI主店导入  最终结果=====================");
+        resultMap.entrySet().stream()
+                .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
+                .forEach(p ->  $info(p.getValue()));
+        $info("=================子店->USJOI主店导入  主线程结束====================");
+
     }
 
-    public void upload(CmsBtSxWorkloadModel sxWorkLoadBean) {
+    public void uploadByChannel(OrderChannelBean channelBean, Map<String, String> resultMap) {
+        int successCnt = 0;
+        int errCnt = 0;
+
+        // usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
+        String usjoiChannelId = channelBean.getOrder_channel_id();
+
         // --------------------------------------------------------------------------------------------
         // 品牌mapping表
         Map<String, String> mapBrandMapping = new HashMap<>();
@@ -126,14 +154,9 @@ public class UploadToUSJoiService extends BaseTaskService {
         Map<String, String> mapProductTypeMapping = new HashMap<>();
         // 适用人群mapping表
         Map<String, String> mapSizeTypeMapping = new HashMap<>();
-        // --------------------------------------------------------------------------------------------
 
-        // workload表中的cartId是usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
-        String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
-
-        // --------------------------------------------------------------------------------------------
         // 品牌mapping作成
-        List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, usJoiChannelId);
+        List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, usjoiChannelId);
         if (ListUtils.notNull(brandTypeChannelBeanList)) {
             for (TypeChannelBean typeChannelBean : brandTypeChannelBeanList) {
                 if (!StringUtils.isEmpty(typeChannelBean.getAdd_name1())
@@ -147,7 +170,7 @@ public class UploadToUSJoiService extends BaseTaskService {
         }
 
         // 产品分类mapping作成
-        List<TypeChannelBean> productTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_57, usJoiChannelId);
+        List<TypeChannelBean> productTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_57, usjoiChannelId);
         if (ListUtils.notNull(productTypeChannelBeanList)) {
             for (TypeChannelBean typeChannelBean : productTypeChannelBeanList) {
                 if (!StringUtils.isEmpty(typeChannelBean.getValue())
@@ -161,7 +184,7 @@ public class UploadToUSJoiService extends BaseTaskService {
         }
 
         // 适用人群mapping作成
-        List<TypeChannelBean> sizeTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_58, usJoiChannelId);
+        List<TypeChannelBean> sizeTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_58, usjoiChannelId);
         if (ListUtils.notNull(sizeTypeChannelBeanList)) {
             for (TypeChannelBean typeChannelBean : sizeTypeChannelBeanList) {
                 if (!StringUtils.isEmpty(typeChannelBean.getValue())
@@ -174,6 +197,43 @@ public class UploadToUSJoiService extends BaseTaskService {
             }
         }
         // --------------------------------------------------------------------------------------------
+
+        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+
+        // 每个channel读入子店数据上新到USJOI主店
+        List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(
+                UPLOAD_TO_USJOI_MAX_100, Integer.parseInt(channelBean.getOrder_channel_id()));
+        for (CmsBtSxWorkloadModel sxWorkloadModel : cmsBtSxWorkloadModels) {
+            try {
+                // 循环上传单个产品到USJOI主店
+                upload(sxWorkloadModel, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping);
+                successCnt++;
+            } catch (Exception e) {
+                errCnt++;
+                // 继续循环做下一条子店->USJOI导入
+            }
+        }
+
+        String resultInfo = usjoiChannelId + " " + channelBean.getFull_name() +
+                "USJOI主店从子店（可能为多个子店）中导入产品结果 [总件数:" + cmsBtSxWorkloadModels.size()
+                + " 成功:" + successCnt + " 失败:" + errCnt + "]";
+//            $info(resultInfo);
+        // 将该channel的子店->主店导入信息加入map，供channel导入线程全部完成一起显示
+        resultMap.put(usjoiChannelId, resultInfo);
+
+        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+    }
+
+
+    public void upload(CmsBtSxWorkloadModel sxWorkLoadBean,
+                       Map<String, String> mapBrandMapping,
+                       Map<String, String> mapProductTypeMapping,
+                       Map<String, String> mapSizeTypeMapping) {
+
+        // workload表中的cartId是usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
+        String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
 
         try {
             $info(String.format("channelId:%s  groupId:%d  复制到%s 开始", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
@@ -444,6 +504,8 @@ public class UploadToUSJoiService extends BaseTaskService {
             insertBusinessLog(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getCartId(),
                     StringUtils.toString(sxWorkLoadBean.getGroupId()), "", "", errMsg, getTaskName());
             issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+            // 抛出错误，让外面统计整个usjoi channel的产品导入错误总数
+            throw e;
         }
     }
 
