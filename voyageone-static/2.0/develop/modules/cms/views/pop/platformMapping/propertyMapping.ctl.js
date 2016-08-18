@@ -17,6 +17,8 @@ define([
               var self = this;
               if(self.context.cartId)
                 self.context.cartName = carts.valueOf(+self.context.cartId).desc;
+
+              self.valueArr = JSON.parse(self.context.value);
           },
           openPpPropertySetting:function(){
               var self = this;
@@ -56,7 +58,7 @@ define([
               });
 
               this.context.value = JSON.stringify(valueList);
-              //this.uibModalInstance.close();
+              this.uibModalInstance.close();
           }
         };
 

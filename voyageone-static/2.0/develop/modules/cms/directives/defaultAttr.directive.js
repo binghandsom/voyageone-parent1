@@ -222,28 +222,12 @@ define([
             return type;
 
         switch (valueTypeRule.value) {
-            case VALUE_TYPES.TEXT:
-                type = 'text';
-                break;
             case VALUE_TYPES.HTML:
             case VALUE_TYPES.TEXTAREA:
                 type = 'textarea';
                 break;
-            case VALUE_TYPES.INTEGER:
-            case VALUE_TYPES.LONG:
-                type = 'number';
-                break;
-            case VALUE_TYPES.DECIMAL:
-                type = 'number';
-                break;
-            case VALUE_TYPES.DATE:
-                type = 'date';
-                break;
-            case VALUE_TYPES.TIME:
-                type = 'datetime-local';
-                break;
-            case VALUE_TYPES.URL:
-                type = 'url';
+            default:
+                type = 'text';
                 break;
         }
 
@@ -615,6 +599,8 @@ define([
         rules = getRules(field, schema);
         disableRule = rules.disableRule;
 
+
+
         // 如果 disableRule 固定为 true 则这个字段就永远不需要处理
         // 如果不为 true, 是一个依赖型 rule 的话, 就需要为字段创建 ng-if 切换控制
         // 如果为 false 或不存在的话, 只需创建单纯的 s-field 即可
@@ -623,6 +609,9 @@ define([
         // 但还是加上更靠谱, 所以我在 2016-07-07 21:58:50 补上了这段内容, 吓尿。。。
         if (disableRule && !(disableRule instanceof DependentRule) && disableRule.value === true)
             return;
+
+
+
 
         fieldElement = angular.element('<d-field>');
         // 创建专有 scope, 通过专有 scope 传递 field 给 element(directive)
@@ -929,6 +918,7 @@ define([
                                     innerElement = angular.element('<input class="form-control">').attr('type', type);
                                 }
 
+                                innerElement.attr('readonly', true);
                                 innerElement.attr('name', name);
 
                                 bindBoolRule(innerElement, readOnlyRule, 'readOnlyRule', 'readonly');
