@@ -14,11 +14,19 @@ define([
 
         PropertyMappingController.prototype = {
             init: function () {
-                var self = this;
+                var self = this,
+                    expressionListJson = self.context.value,
+                    expressionList;
+
                 if (self.context.cartId)
                     self.context.cartName = carts.valueOf(+self.context.cartId).desc;
 
-                self.valueArr = JSON.parse(self.context.value);
+                if (expressionListJson)
+                    expressionList = angular.fromJson(self.context.value);
+                else
+                    expressionList = [];
+
+                self.valueArr = expressionList;
             },
             openPpPropertySetting: function () {
                 var self = this;
