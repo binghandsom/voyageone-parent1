@@ -10,7 +10,9 @@
     <!--<import resource="classpath*:data-cache-config.xml"/>-->
     <!--<import resource="classpath*:datasource-cms2-config.xml"/>-->
     <!--<import resource="classpath*:datasource-cms2-config-new.xml"/>-->
+    <!--<import resource="classpath*:datasource-vms-config.xml"/>-->
     <!--<import resource="classpath*:datasource-config-mongo-cms2.xml"/>-->
+    <!--<import resource="classpath*:sdk-client-config.xml"/>-->
     <!--<import resource="classpath*:mq-config.xml"/>-->
     <!--<import resource="classpath*:redis-config.xml"/>-->
 
@@ -19,6 +21,7 @@
     <import resource="file:/usr/web/spring-config/data-cache-config.xml" />
     <import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />
     <import resource="file:/usr/web/spring-config/datasource-cms2-config-new.xml" />
+    <import resource="file:/usr/web/spring-config/datasource-vms-config.xml" />
     <import resource="file:/usr/web/spring-config/datasource-config-mongo-cms2.xml" />
     <import resource="file:/usr/web/spring-config/sdk-client-config.xml" />
     <import resource="file:/usr/web/spring-config/mq-config.xml" />

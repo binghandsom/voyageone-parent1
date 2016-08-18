@@ -38,8 +38,8 @@ public class CmsConstants {
         ToInStock 		// 在库
     }
 
-	/**
-	 * workload type
+    /**
+     * workload type
      */
     // TODO: 16/4/28 无人使用就删除了
     public enum WorkloadType {

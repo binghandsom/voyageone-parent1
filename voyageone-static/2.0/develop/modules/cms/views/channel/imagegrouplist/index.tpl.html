@@ -34,8 +34,11 @@
                                     <div class="col-sm-9" style="margin-left: -4px;">
                                         <div class="col-sm-10 form-inline">
                                             <div class="col-sm-5 input-group">
-                                                <input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.beginModified"
-                                                       max-date="ctrl.endModified" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker1" ng-required="true" close-text="Close" />
+                                                <input type="text" class="form-control"
+                                                       uib-datepicker-popup
+                                                       ng-model="ctrl.beginModified"
+                                                       is-open="ctrl.datePicker1"
+                                                       ng-required />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker1 = !ctrl.datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>

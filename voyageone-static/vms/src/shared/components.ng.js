@@ -1,0 +1,26 @@
+define(function (require) {
+  require('/shared/ng/modules.js');
+  require('/shared/ng/controllers/selectRows.ctrl.js');
+  require('/shared/ng/controllers/showPopover.ctrl.js');
+  require('/shared/ng/directives/autoFocus.directive.js');
+  require('/shared/ng/directives/enter-click.directive.js');
+  require('/shared/ng/directives/filestyle.directive.js');
+  require('/shared/ng/directives/first-hidden.directive.js');
+  require('/shared/ng/directives/goTop.directive.js');
+  require('/shared/ng/directives/ifNoRows.directive.js');
+  require('/shared/ng/directives/message.directive.js');
+  require('/shared/ng/directives/vpagination.directive.js');
+  require('/shared/ng/directives/vvalidator.directive.js');
+  require('/shared/ng/factories/dialogs.factory.js');
+  require('/shared/ng/factories/interceptor.factory.js');
+  require('/shared/ng/factories/notify.factory.js');
+  require('/shared/ng/factories/pppAutoImpl.factory.js');
+  require('/shared/ng/factories/selectRows.factory.js');
+  require('/shared/ng/services/ajax.service.js');
+  require('/shared/ng/services/cookie.service.js');
+  require('/shared/ng/services/formater.service.js');
+  require('/shared/ng/services/message.service.js');
+  require('/shared/ng/services/permission.service.js');
+  require('/shared/ng/services/translate.service.js');
+  require('/shared/ng/filter/stringCutter.filter.js');
+});
