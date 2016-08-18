@@ -155,6 +155,25 @@ public interface AdminUrlConstants {
 		}
 	}
 	
+	interface Task {
+		
+		/** 任务信息 */
+		interface Self {
+			
+			String ROOT = "/admin/task/self";
+			
+			String SEARCH_TASK_BY_PAGE = "searchTaskByPage";
+
+			String ADD_TASK = "addTask";
+
+			String UPDATE_TASK = "updateTask";
+
+			String DELETE_TASK = "deleteTask";
+			
+		}
+		
+	}
+	
 	interface System {
 		
 		/** 统一属性配置 */
