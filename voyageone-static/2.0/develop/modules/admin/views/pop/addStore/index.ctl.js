@@ -5,11 +5,11 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('AddStoreController', (function () {
-        function AddStoreController(context, channelService, AdminCartService, $uibModalInstance) {
+        function AddStoreController(context, channelService, storeService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
             this.channelService = channelService;
-            this.AdminCartService = AdminCartService;
+            this.storeService = storeService;
             this.popType = '编辑';
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
@@ -25,35 +25,36 @@ define([
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelList = res.data;
                 });
+                self.storeService.getAllStore().then(function (res) {
+                    self.storeAllList = res.data;
+                });
             },
             cancel: function () {
                 this.$uibModalInstance.close();
             },
             save: function () {
                 var self = this;
-                // 设置cartIds
-                var tempCartList = [];
                 var result = {};
-                _.forEach(self.cartList, function (item) {
-                    tempCartList.push(item.cartId);
-                    _.extend(self.sourceData, {'cartIds': tempCartList.join(','),'companyId':self.companyId});
-                });
                 if (self.append == true) {
-                    self.channelService.addChannel(self.sourceData).then(function (res) {
+                    if (self.sourceData.remainNum)
+                        self.sourceData.inventoryHold = self.sourceData.inventoryHold + ',' + self.sourceData.remainNum;
+                    self.storeService.addStore(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
                         }
-                        _.extend(result,{'res':'success','sourceData':self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.channelService.updateChannel(self.sourceData).then(function (res) {
+                    if (self.sourceData.remainNum)
+                        self.sourceData.inventoryHold = self.sourceData.inventoryHold + ',' + self.sourceData.remainNum;
+                    self.storeService.updateStore(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
                         }
-                        _.extend(result,{'res':'success','sourceData':self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
                 }

@@ -55,7 +55,7 @@ public class ThirdPartyConfigController extends AdminController {
 		return addOrUpdateThirdPartyConfig(form, false);
 	}
 	
-	public AjaxResponse addOrUpdateThirdPartyConfig(@RequestBody ThirdPartyConfigFormBean form, boolean append) {
+	public AjaxResponse addOrUpdateThirdPartyConfig(ThirdPartyConfigFormBean form, boolean append) {
 		// 验证参数
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getChannelId()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getPropName()));

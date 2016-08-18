@@ -55,7 +55,7 @@ public class SmsConfigController extends AdminController {
 		return addOrUpdateSmsConfig(form, false);
 	}
 	
-	public AjaxResponse addOrUpdateSmsConfig(@RequestBody SmsConfigFormBean form, boolean append) {
+	public AjaxResponse addOrUpdateSmsConfig(SmsConfigFormBean form, boolean append) {
 		// 验证参数
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getSmsType()));

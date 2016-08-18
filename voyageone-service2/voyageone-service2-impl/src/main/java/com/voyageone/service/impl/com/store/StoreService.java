@@ -109,7 +109,7 @@ public class StoreService extends BaseService {
 			model.setActive(false);
 			model.setModifier(username);
 			// 软删除仓库信息
-			if (storeDao.update(model) > 0) {
+			if (storeDao.update(model) <= 0) {
 				throw new BusinessException("删除仓库信息失败");
 			}
 		}

@@ -63,7 +63,8 @@ define([
                             if (Info.updFlg != 8) {
                                 self.tempSelect.currPageRows({
                                     "id": Info.storeId,
-                                    "code": Info.storeName
+                                    "code": Info.storeName,
+                                    "orderChannelId": Info.orderChannelId
                                 });
                             }
                         });
@@ -84,12 +85,12 @@ define([
             config: function (type) {
                 var self = this;
                 if (self.storeSelList.selList.length < 1) {
-                    self.popups.openConfig({'configType':type});
+                    self.popups.openConfig({'configType': type});
                     return;
                 } else {
                     _.forEach(self.storeList, function (storeInfo) {
                         if (storeInfo.storeId == self.storeSelList.selList[0].id) {
-                            _.extend(storeInfo,{'configType':type});
+                            _.extend(storeInfo, {'configType': type});
                             self.popups.openConfig(storeInfo);
                         }
                     })
@@ -103,6 +104,10 @@ define([
                 } else {
                     _.forEach(self.storeList, function (Info) {
                         if (Info.storeId == self.storeSelList.selList[0].id) {
+                            Info['areaId'] = Info['areaId'] + '';
+                            var copyData = Info.inventoryHold.split(",");
+                            Info.inventoryHold = copyData[0];
+                            Info.remainNum = copyData[1];
                             self.popups.openStoreAdd(Info).then(function () {
                                 self.search(1);
                             });
@@ -116,10 +121,9 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.storeSelList.selList, function (delInfo) {
-                            delList.push(delInfo.storeId);
+                            delList.push({'orderChannelId': delInfo.orderChannelId, 'storeId': delInfo.id});
                         });
-                        self.AdminCartService.deleteCart(delList).then(function (res) {
-                            // if (res.data.success == false)self.confirm(res.data.message);
+                        self.storeService.deleteStore(delList).then(function (res) {
                             self.search();
                         })
                     }
@@ -141,22 +145,41 @@ define([
                         break;
                 }
             },
-            getInventoryHold: function (type) {
-                switch (type) {
-                    case '0':
-                        return '不做保留';
-                        break;
-                    case '1':
-                        return '按加减保留';
-                        break;
-                    case '2':
-                        return '按百分比保留';
-                        break;
-                    case '3':
-                        return '按销售计算（默认百分比）';
-                        break;
+            getInventoryHold: function (item) {
+                if (item.indexOf(',') < 0) {
+                    switch (item) {
+                        case '0':
+                            return '不做保留';
+                            break;
+                        case '1':
+                            return '按加减保留';
+                            break;
+                        case '2':
+                            return '按百分比保留';
+                            break;
+                        case '3':
+                            return '按销售计算（默认百分比）';
+                            break;
+                    }
+                } else {
+                    var type = item.split(",")[0];
+                    var num = item.split(",")[1];
+                    switch (type) {
+                        case '0':
+                            return '不做保留' + '' + num;
+                            break;
+                        case '1':
+                            return '按加减保留' + '' + num;
+                            break;
+                        case '2':
+                            return '按百分比保留' + '' + num;
+                            break;
+                        case '3':
+                            return '按销售计算（默认百分比）' + '' + num;
+                            break;
+                    }
                 }
-            },
+            }
         };
         return StoreManagementController;
     })())
