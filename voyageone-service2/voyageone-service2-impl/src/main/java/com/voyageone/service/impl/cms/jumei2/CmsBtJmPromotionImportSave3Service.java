@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.jumei2;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.jumei.ProductSaveInfo;
 import com.voyageone.service.dao.cms.*;
+import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionImportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel;
@@ -71,5 +72,6 @@ public class CmsBtJmPromotionImportSave3Service {
                 daoCmsBtPromotionSkus.insert(skusModel);
             }
         }
+
     }
 }

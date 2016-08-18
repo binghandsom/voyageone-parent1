@@ -1,12 +1,14 @@
 package com.voyageone.web2.cms.openapi;
 
 import com.mongodb.BulkWriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.web2.OpenApiBaseService;
+import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
+import com.voyageone.web2.sdk.api.exception.ApiException;
 
 
 /**
@@ -14,14 +16,35 @@ import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
  * Created by chuanyu.liang on 15/6/26.
  * @author chuanyu.liang
  */
-public abstract class OpenApiCmsBaseService extends OpenApiBaseService {
+public abstract class OpenApiBaseService extends VOAbsLoggable {
+    /**
+     * Check Request
+     * @param request Request
+     */
+    protected void checkCommRequest(VoApiRequest request) {
+        if (request == null) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
+            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+        }
+    }
+
+    /**
+     * check Request ChannelId
+     * @param channelId channel ID
+     */
+    protected void checkRequestChannelId(String channelId) {
+        if (StringUtils.isEmpty(channelId)) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70003;
+            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+        }
+    }
 
     /**
      * buildProjection
      * @param request VoApiRequest
-     * @param queryObject JomgoQuery
+     * @param queryObject JongoQuery
      */
-    protected void buildProjection(VoApiRequest request, JomgoQuery queryObject) {
+    protected void buildProjection(VoApiRequest request, JongoQuery queryObject) {
         queryObject.setProjectionExt(getProjection(request));
     }
 
@@ -43,7 +66,7 @@ public abstract class OpenApiCmsBaseService extends OpenApiBaseService {
      * @param request VoApiRequest
      * @param queryObject queryObject
      */
-    protected void buildSort(VoApiRequest request, JomgoQuery queryObject) {
+    protected void buildSort(VoApiRequest request, JongoQuery queryObject) {
         queryObject.setSort(getSort(request));
     }
 
@@ -70,9 +93,9 @@ public abstract class OpenApiCmsBaseService extends OpenApiBaseService {
     /**
      * buildLimit
      * @param request VoApiListRequest
-     * @param queryObject JomgoQuery
+     * @param queryObject JongoQuery
      */
-    protected void buildLimit(VoApiListRequest request, JomgoQuery queryObject) {
+    protected void buildLimit(VoApiListRequest request, JongoQuery queryObject) {
         if (request.getIsPage()) {
             int pageSize = request.getPageSize();
             if (pageSize < 1) {

@@ -36,6 +36,18 @@
                                     </a>
                                 </li>
                             </ul>
+                        </div>&nbsp;&nbsp;
+                        <div class="btn-group" uib-dropdown ng-controller="popupCtrl" ng-if="vm.mastData.isMain != true">
+                            <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
+                                &nbsp;Master操作&nbsp;<span class="caret"></span>
+                            </button>
+                            <ul uib-dropdown-menu>
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="copyCommonProperty()">
+                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;复制主商品
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                     <div class="row">
@@ -48,6 +60,7 @@
                                            cartName:entity.cartName,
                                            status:entity.status,
                                            pStatus:entity.pStatus,
+                                           pReallyStatus:entity.pReallyStatus,
                                            pPublishError:entity.pPublishError,
                                            numberId:entity.pNumIId}"></platform-status>
                                     </span>
@@ -58,12 +71,12 @@
                                 <div class="col-md-8">
                                     <div class="row">
                                         <div class="col-xs-6 col-md-2"  ng-repeat="image in vm.mastData.images">
-                                            <a href="javascript:void(0)" class="thumbnail current" ng-if="image.productCode == vm.mastData.productCode">
+                                            <a href="javascript:void(0)" class="thumbnail current" ng-if="image.productCode == productInfo.masterField.code">
                                                 <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
                                             <!--不是当前商品的话可以跳转到图片对应产品详情页-->
-                                            <a ng-href="#/product/detail/{{image.prodId}}" class="thumbnail" ng-if="image.productCode != vm.mastData.productCode" target="_blank">
+                                            <a ng-href="#/product/detail/{{image.prodId}}" class="thumbnail" ng-if="image.productCode != productInfo.masterField.code" target="_blank">
                                                 <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
@@ -103,7 +116,9 @@
                                         <li>
                                         </li>
                                     </ul>
-                                    <button type="button" class="btn btn-nav btn-nav-pop" ng-click="saveProduct()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存</button>
+                                    <button type="button" class="btn btn-nav btn-nav-pop" ng-click="saveProduct(openHsCodeChange)" ng-controller="popupCtrl">
+                                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存
+                                    </button>
                                 </nav>
                             </div>
                         </div>

@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsMtPlatformDictDao {
-    List<CmsMtPlatformDictModel> selectList(Map<String, Object> map);
+    List<CmsMtPlatformDictModel> selectList(Object map);
 
-    CmsMtPlatformDictModel selectOne(Map<String, Object> map);
+    CmsMtPlatformDictModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsMtPlatformDictModel select(Integer id);
 

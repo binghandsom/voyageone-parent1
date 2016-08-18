@@ -32,3 +32,10 @@ small,
 .label.label-xs {
     padding: 0 5px;
 }
+
+.panel-vo .panel-heading {
+    background-color: #e67e22;
+    border: 0;
+    color: #ffffff;
+    padding: 8px;
+}

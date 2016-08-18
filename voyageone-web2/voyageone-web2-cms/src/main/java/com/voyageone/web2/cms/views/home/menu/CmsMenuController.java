@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.CmsBtDataAmountService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
@@ -81,10 +81,8 @@ public class CmsMenuController extends CmsController {
             resultBean.put("categoryTreeList", cmsBtSellerCatList);
         }
 
-
-
         // 判断是否是minimall用户
-        boolean isMiniMall = channelId.equals(ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        boolean isMiniMall = Channels.isUsJoi(channelId);
         resultBean.put("isminimall", isMiniMall ? 1 : 0);
         // 返回用户信息
         return success(resultBean);

@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.taobao.api.domain.SellerCat;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -72,7 +72,7 @@ public class CmsPlatformProductImport2Service extends BaseMQCmsService {
     }
 
     private void doMain(String channelId) throws Exception {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{cartId:23,numIId:{$nin:[\"\",null]}}");
         Long cnt = productGroupService.countByQuery(queryObject.getQuery(), channelId);
         List<CmsBtProductGroupModel> cmsBtProductGroupModels = productGroupService.getList(channelId, queryObject);

@@ -164,14 +164,17 @@ public class CmsBtJmPromotionProductService {
     public CallResult updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
         CallResult result = new CallResult();
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
-        //获取本活动商品在其他活动,处于在售状态的商品
-        CmsBtJmPromotionProductModel modelJmPromotionProduct = daoExt.selectOnSaleByNoPromotionId(modelCmsBtJmPromotion.getChannelId(), parameter.getPromotionId(), DateTimeUtilBeijing.getCurrentBeiJingDate());
-        if (modelJmPromotionProduct != null) {
 
-            result.setMsg("该专场商品已在其它聚美专场上传，且未过期("+modelJmPromotionProduct.getJmHashId()+")。专场延期失败");
+        if (modelCmsBtJmPromotion.getIsPromotionFullMinus())//该专场为 满减专场的场合
+        {
+            result.setMsg("该专场为满减专场不允许延期");
             result.setResult(false);
-            return  result;
+            return result;
         }
+//        if(cms_bt_jm_promotion.is_promotion_full_minus) 该专场为 满减专场的场合
+//        {
+//            errorMsg="满减专场不允许延期"；
+//        }
         modelCmsBtJmPromotion.setActivityEnd(parameter.getDealEndTime());
         daoCmsBtJmPromotion.update(modelCmsBtJmPromotion);
         daoExt.updateDealEndTimeAll(parameter);//商品改变延期状态

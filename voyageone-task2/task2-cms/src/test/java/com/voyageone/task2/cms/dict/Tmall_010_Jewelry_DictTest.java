@@ -21,7 +21,7 @@ public class Tmall_010_Jewelry_DictTest {
 	@Test
 	public void startupTest() {
 
-//		doCreateJson("京东详情页描述", false, doDict_详情页描述());
+//		doCreateJson("详情页描述", false, doDict_详情页描述());
         doCreateJson("无线描述", false, doDict_无线描述());
 
 	}

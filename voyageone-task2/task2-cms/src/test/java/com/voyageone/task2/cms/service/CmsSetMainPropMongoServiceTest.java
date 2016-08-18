@@ -1,7 +1,6 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.cms.service.CmsSetMainPropMongoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +25,19 @@ public class CmsSetMainPropMongoServiceTest {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("016");
+        taskControlBean.setCfg_val1("010");
         taskControlList.add(taskControlBean);
+
+        TaskControlBean taskControlBean2 = new TaskControlBean();
+        taskControlBean2.setCfg_name("order_channel_id");
+        taskControlBean2.setCfg_val1("019");
+        taskControlList.add(taskControlBean2);
+
+        TaskControlBean taskControlBean3 = new TaskControlBean();
+        taskControlBean3.setCfg_name("order_channel_id");
+        taskControlBean3.setCfg_val1("020");
+        taskControlList.add(taskControlBean3);
+
         cmsSetMainPropMongoService.onStartup(taskControlList);
     }
 }

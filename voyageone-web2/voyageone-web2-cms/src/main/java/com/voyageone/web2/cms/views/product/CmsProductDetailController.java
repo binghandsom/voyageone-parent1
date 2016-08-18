@@ -192,7 +192,7 @@ public class CmsProductDetailController extends CmsController {
         productPropsEditService.delistinGroup(parameter, getUser().getUserName());
         return success(null);
     }
-    //group下架
+    //税号变更
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.HsCodeChg)
     public AjaxResponse hsCodeChg(@RequestBody Map<String,Object> parameter){
 
@@ -200,5 +200,14 @@ public class CmsProductDetailController extends CmsController {
         Long prodId = Long.parseLong(String.valueOf(parameter.get("prodId")));
         String hsCode = String.valueOf(parameter.get("hsCode"));
         return success(productPropsEditService.hsCodeChg(channelId,prodId,hsCode));
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CopyCommonProperty)
+    public AjaxResponse copyProperty (@RequestBody Map params){
+
+        Map<String, Object> result = new HashMap<>();
+        Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
+        result.put("platform", productPropsEditService.copyPropertyFromMainProduct(getUser().getSelChannelId(), prodId,getLang()));
+        return success(result);
     }
 }

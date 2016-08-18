@@ -1,13 +1,10 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.cms.bean.ShoeCityFeedBean;
@@ -36,9 +33,6 @@ class SEAnalysisContext {
     private Map<String, CmsBtFeedInfoModel> codeMap = new HashMap<>();
 
     private final ExpressionParser parser = new SpelExpressionParser();
-
-    @Autowired
-    ImageTemplateService imageTemplateService;
 
     void put(ShoeCityFeedBean feedBean) {
 
@@ -154,13 +148,7 @@ class SEAnalysisContext {
      * 表达式常量
      */
     private class ExpParams {
-        public final double ITEM_WEIGHT = 4D;
-        public final double ALIPAY_COMMISSION = 0D;
-        public final double TMALL_COMMISSION = 0.05D;
-        public final double RETURN_MANAGEMENT = 0.05D;
-        public final double ITEM_DUTY = 0.1D;
-        public final double EXCHANGE_RATE = 6.5D;
-        public double cost;
+        double cost;
         ExpParams(ShoeCityFeedBean feedBean) {
             this.cost = feedBean.getCost().doubleValue();
         }

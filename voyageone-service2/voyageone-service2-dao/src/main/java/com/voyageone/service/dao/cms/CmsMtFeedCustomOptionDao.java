@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsMtFeedCustomOptionModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsMtFeedCustomOptionDao {
-    List<CmsMtFeedCustomOptionModel> selectList(Map<String, Object> map);
+    List<CmsMtFeedCustomOptionModel> selectList(Object map);
 
-    CmsMtFeedCustomOptionModel selectOne(Map<String, Object> map);
+    CmsMtFeedCustomOptionModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsMtFeedCustomOptionModel select(Integer id);
 

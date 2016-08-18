@@ -4,7 +4,9 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
- * Created by Wangtd on 8/1/16.
+ * 平台品牌数据访问扩展
+ * @author Wangtd 2016/08/01
+ * @since 2.3.0
  */
 @Repository
 public interface CmsMtPlatformBrandsDaoExt {

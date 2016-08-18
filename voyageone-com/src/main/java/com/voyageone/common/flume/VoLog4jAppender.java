@@ -45,8 +45,6 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -84,7 +82,7 @@ public class VoLog4jAppender extends AppenderSkeleton {
     RpcClient rpcClient = null;
 
     // liang add threadPool
-    private static ExecutorService threadPool = Executors.newFixedThreadPool(1);
+    //private static ExecutorService threadPool = Executors.newFixedThreadPool(1);
     // liang add projectFile
     private String projectFile = "";
 
@@ -143,7 +141,9 @@ public class VoLog4jAppender extends AppenderSkeleton {
         event.getMDCCopy();
         String taskName = (String) event.getMDC("taskName");
         String subSystem = (String) event.getMDC("subSystem");
-        threadPool.execute(new LogAppThread(event, subSystem, taskName));
+        //threadPool.execute(new LogAppThread(event, subSystem, taskName));
+        //appendEvent(event, subSystem, taskName);
+        new Thread(new LogAppThread(event, subSystem, taskName)).start();
     }
 
     // liang change append

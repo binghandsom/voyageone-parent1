@@ -19,6 +19,14 @@ public class CmsMtPlatformCategorySchemaTmDao extends BaseMongoChannelDao<CmsMtP
         return deleteWithQuery(queryStr, channelId);
     }
 
+    /**
+     * 删除参数指定的schema: channel, cart, category
+     */
+    public WriteResult deletePlatformCategorySchemaByChannnelCartCategory(String channelId, Integer cartId, String categoryId){
+        String queryStr = String.format("{channelId: '%s', cartId:%s, catId:%s}", channelId, cartId, categoryId);
+        return deleteWithQuery(queryStr, channelId);
+    }
+
 //    public List<JSONObject> selectAllSchemaKeys(int cartId){
 //        String columnResult="{_id:1}";
 //        return mongoTemplate.find(null, columnResult, getCollectionName(cartId));

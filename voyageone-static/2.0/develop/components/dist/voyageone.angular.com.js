@@ -435,7 +435,7 @@ angular.module("voyageone.angular.directives").directive("input", function () {
                 return;
 
             //默认为2位
-            var scale , _length , _max;
+            var scale , _length;
 
             var _numArr =  attr.scale.split(",");
 
@@ -453,8 +453,6 @@ angular.module("voyageone.angular.directives").directive("input", function () {
                 scale = _numArr[1];
 
             }
-
-            _max = Math.pow(10,+_length - 1) - 1;
 
             element.on('keyup', function () {
 

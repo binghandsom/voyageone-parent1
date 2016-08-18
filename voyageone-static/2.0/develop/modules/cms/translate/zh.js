@@ -218,6 +218,7 @@ define(function () {
         "TXT_ERROR_MESSAGE": "异常消息",
         "TXT_ERROR_CREATE_TIME": "异常创建时间",
         "TXT_ERROR_CREATER": "异常创建者",
+        "TXT_CREATER": "创建者",
         "TXT_ERROR_IS_FIX": "已解决?",
         "TXT_ATTRIBUTE_ID": "属性ID",
         "TXT_ATTRIBUTE_NAME": "属性名称",
@@ -669,7 +670,7 @@ define(function () {
         "TXT_ERROR": "错误",
         "TXT_PROPERTY_STATUS": "属性状态",
         "TXT_IMAGE_DOWNLOAD": "图片下载",
-        "TXT_CUS_TAGS_SETTING": "设置自定义标签",
+        "TXT_CUS_TAGS_SETTING": "设置自由标签",
         "TXT_COMMON_EXCHANGE": "共通级变更",
         "TXT_CHANGE_FOR_TG_PLATFORM": "天猫国际平台级变更",
         "TXT_CHANGE_FOR_JD_PLATFORM": "京东国际平台级变更",
@@ -781,6 +782,13 @@ define(function () {
         "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配状态",
         "TXT_MASTER_BRAND": "Master品牌",
         "TXT_REGET_PLATFORM_BRANDS":"重新获取平台品牌",
-        "TXT_COMPLETE_THE_PLATEFORM_BRAND":"平台品牌未选择"
+        "TXT_COMPLETE_THE_PLATEFORM_BRAND":"平台品牌未选择",
+
+        /**店铺管理-平台默认属性设置一览*/
+        "TXT_DEFAULT_MAPPING_LIST": "平台默认属性设置一览",
+        "TXT_DEFAULT_MAPPING": "平台默认属性设置",
+        "TXT_DEFAULT_PLATEFORM_MAPPING": "平台类目属性匹配",
+        "TXT_DEFAULT_SETTING":"新建默认设置",
+        "TXT_UPDATER":"更新人"
     };
 });

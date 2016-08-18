@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.bson.types.ObjectId;
@@ -47,7 +47,7 @@ public class CmsBtProductDaoTest {
 
         System.out.println(products.size());
 
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         //"_id" : 56e6b8d7eb99b2fdf432ddfe
         ObjectId objectId = new ObjectId("56e6b8d7eb99b2fdf432ddfe");
         queryObject.setObjectId(objectId);

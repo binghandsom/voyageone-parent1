@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Types;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
@@ -48,7 +48,7 @@ public class CmsProductHistoryLogService extends BaseAppService {
             pageSize = 10;
         }
 
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         if (cartId == 0) {
             queryObject.setQuery("{'prodCode':#}");
             queryObject.setParameters(prodCode);

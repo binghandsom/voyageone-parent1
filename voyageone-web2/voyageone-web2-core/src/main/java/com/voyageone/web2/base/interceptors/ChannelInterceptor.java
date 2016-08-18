@@ -27,7 +27,7 @@ class ChannelInterceptor {
         add("/core/access/user/logout");
     }};
 
-    public boolean preHandle(HttpServletRequest request) throws Exception {
+    boolean preHandle(HttpServletRequest request) throws Exception {
 
         if (skip(request)) return true;
 

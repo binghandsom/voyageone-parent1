@@ -19,7 +19,7 @@ import javax.servlet.http.HttpSession;
 @Component
 class AuthorizationInterceptor {
 
-    public boolean preHandle(HttpServletRequest request) throws Exception {
+    boolean preHandle(HttpServletRequest request) throws Exception {
 
         // TODO 开发阶段跳过全部检查
         if (true) return true;

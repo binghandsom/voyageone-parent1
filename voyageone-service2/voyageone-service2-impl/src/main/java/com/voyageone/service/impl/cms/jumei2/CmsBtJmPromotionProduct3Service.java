@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -24,10 +25,7 @@ import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by dell on 2016/3/18.
@@ -87,7 +85,16 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         result.setIsBegin(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
         result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
         int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
+
         result.setIsUpdateJM(!(hour == 10));//是否可以更新聚美  10到11点一小时之内不允许更新聚美平台
+        boolean isBefore5DaysBeforePreBegin = DateTimeUtil.addDays(new Date(), 5).getTime() < preStartLocalTime;//是否是预热开始前5天之前  预热开始前5天之前不让更新聚美
+        if(isBefore5DaysBeforePreBegin)// 预热开始前5天之前不让更新聚美
+        {
+           result.setIsUpdateJM(false);
+        }
+        // // ODO: 2016/8/10  测试完 取消注释  spt begin
+       // result.setIsUpdateJM(true);
+        // // ODO: 2016/8/10   测试完 取消注释  spt end
         // 获取brand list
         result.setBrandList(TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, language));
         return result;
@@ -101,21 +108,6 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         return dao.delete(id);
     }
 
-//    @VOTransactional
-//    public int updateDealPrice(BigDecimal dealPrice, int id, String userName) {
-//        CmsBtJmPromotionProductModel model = dao.select(id);
-//        model.setDealPrice(dealPrice);
-//        model.setModifier(userName);
-//        dao.update(model);
-//        return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
-//    }
-
-//    @VOTransactional
-//    public void deleteByPromotionId(int jmPromotionId) {
-//        daoExt.deleteByPromotionId(jmPromotionId);
-//        daoExtCmsBtJmPromotionSku.deleteByPromotionId(jmPromotionId);
-//
-//    }
     public CmsBtPromotionModel getCmsBtPromotionModel(int jmPromotionId)
     {
         Map<String, Object> map = new HashMap<>();
@@ -124,7 +116,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
         return  promotion;
     }
-    //批量更新价格
+    //批量修改价格 批量变更价格
     @VOTransactional
     public CallResult batchUpdateDealPrice(BatchUpdatePriceParameterBean parameter) {
         CallResult result = new CallResult();
@@ -156,12 +148,6 @@ private CmsBtPromotionDao daoCmsBtPromotion;
             return result;
         }
         price = "CEIL(" + price + ")";//向上取整
-        CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getJmPromotionId());
-        if (modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
-            result.setResult(false);
-            result.setMsg("预热已经开始,不能修改价格!");
-            return result;
-        }
 
         CmsBtJmPromotionSkuModel modelCmsBtJmPromotionSku = daoExtCmsBtJmPromotionSku.selectNotUpdateDealPrice(parameter.getListPromotionProductId(), price);
         if (modelCmsBtJmPromotionSku != null) {
@@ -170,19 +156,15 @@ private CmsBtPromotionDao daoCmsBtPromotion;
             return result;
         }
         daoExtCmsBtJmPromotionSku.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);//更新sku价格
-        daoExt.updateAvgPriceByListPromotionProductId(parameter.getListPromotionProductId());//更新平均值 最大值 最小值
+        daoExt.updateAvgPriceByListPromotionProductId(parameter.getListPromotionProductId());//更新平均值 最大值 最小值    已上新的更新为已经变更
         return result;
     }
 
-    //批量同步价格  1. if未上传  then price_status=1   2.if已上传&预热未开始  then price_status=1
+    //批量同步价格  1. then price_status=1
     public void batchSynchPrice(BatchSynchPriceParameter parameter) {
 
         if (parameter.getListPromotionProductId().isEmpty()) return;
-
-        CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
-
-        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime();
-        daoExt.batchSynchPrice(parameter.getListPromotionProductId(), isPreStart);
+        daoExt.batchSynchPrice(parameter.getListPromotionProductId());
     }
 
     //全量同步价格
@@ -199,18 +181,21 @@ private CmsBtPromotionDao daoCmsBtPromotion;
     }
 
     @VOTransactional
+    //批量上传
     //批量再售 1. if未上传  then synch_status=1  2.if已上传&预热未开始  then price_status=1
     public void batchCopyDeal(BatchCopyDealParameter parameter) {
         if (parameter.getListPromotionProductId().isEmpty()) return;
-
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
-        boolean isPreStart = modelCmsBtJmPromotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime();
-        daoExt.batchCopyDeal(parameter.getListPromotionProductId());////1. if未上传  then synch_status=1
-        if (!isPreStart) {// 2.if已上传&预热未开始  then price_status=1
-            daoExt.batchCopyDealUpdatePrice(parameter.getListPromotionProductId());
-        }
+
+        //2.8.3
+        //更新为待上传   1. if未上传  then synch_status=1
+        daoExt.batchCopyDeal(parameter.getListPromotionProductId());
+        //更新为价格待更新  2. if已上传  then update_status=1
+         daoExt.batchCopyDealUpdatePrice(parameter.getListPromotionProductId());
+
     }
 
+    //全量上传
     //全部再售    //1. if未上传  then synch_status=1   2.if已上传  then price_status=1
     @VOTransactional
     public CallResult copyDealAll(int promotionId) {
@@ -221,28 +206,66 @@ private CmsBtPromotionDao daoCmsBtPromotion;
             result.setResult(false);
             return result;
         }
+        //if 已上传  then 设置为 价格待更新
         daoExt.copyDealAll_UpdatePriceStatus(promotionId);
+        //if 未上传 then 设置为 待上传
         daoExt.copyDealAll_UpdateSynchStatus(promotionId);
         return result;
     }
 
-    //批量删除 product  已经再售的不删
+    //批量删除  product  已经再售的不删
     @VOTransactional
     public void batchDeleteProduct(BatchDeleteProductParameter parameter) {
-        //先删除sku 再删除product
+        CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(parameter.getPromotionId());
+
+        // 2.7.1
+        if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
+            throw new BusinessException("预热已经开始,不能批量删除!");
+        }
+        //获取未上传的jmproduct
+        List<CmsBtJmPromotionProductModel> listNotSych = daoExt.selectNotSynchListByPromotionProductIds(parameter.getListPromotionProductId());
+
+        //2.7.2.1 只删除未上传的商品  先删除sku 再删除product
         daoExtCmsBtJmPromotionSku.batchDeleteSku(parameter.getListPromotionProductId());
         daoExt.batchDeleteProduct(parameter.getListPromotionProductId());
+
+        //2.7.2.2  已经上传的商品  写入错误信息
+        daoExt.updateSynch2ErrorMsg(parameter.getListPromotionProductId(), "该商品已调用过聚美上传API，聚美平台静止相关操作纪录的删除。为保证数据一致性，该商品无法删除");
+
+        //2.7.3 删除 CmsBtPromotionCodes  CmsBtPromotionSkus
         CmsBtPromotionModel modelCmsBtPromotion = getCmsBtPromotionModel(parameter.getPromotionId());
-        if (modelCmsBtPromotion != null) {
+        if (modelCmsBtPromotion != null&&listNotSych.size()>0) {
+            List<String> listNotSychCode = getListNotSychCode(listNotSych);//获取未上传的code
             Map<String, Object> map = new HashMap<>();
-            map.put("listProductCode", parameter.getListProductCode());
+            map.put("listProductCode", listNotSychCode);
             map.put("promotionId", modelCmsBtPromotion.getId());
             daoExtCamelCmsBtPromotionCodes.deleteByPromotionCodeList(map);
             daoExtCamelCmsBtPromotionSkus.deleteByPromotionCodeList(map);
         }
     }
+    public List<String> getListNotSychCode(List<CmsBtJmPromotionProductModel> listNotSych)
+    {
+        List<String> codeList=new ArrayList<>();
+        listNotSych.stream().forEach((o)->{
+            codeList.add(o.getProductCode());
+        });
+        return codeList;
+    }
+    // 全量删除
     @VOTransactional //删除全部product  已经再售的不删
-    public void deleteAllProduct(int jmPromotionId) {
+    public CallResult deleteAllProduct(int jmPromotionId) {
+        CallResult result = new CallResult();
+        CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(jmPromotionId);
+        if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
+            result.setMsg("活动预热已开始,不能删除!");
+            result.setResult(false);
+            return result;
+        }
+
+        if (this.existsCopyDealByPromotionId(jmPromotionId)) {
+            result.setResult(false);
+            result.setMsg("该专场内存在商品已完成上传，禁止删除!");
+        }
         //先删除sku 再删除product
         daoExtCmsBtJmPromotionSku.deleteAllSku(jmPromotionId);
         daoExt.deleteAllProduct(jmPromotionId);
@@ -252,15 +275,28 @@ private CmsBtPromotionDao daoCmsBtPromotion;
             daoExtCamelCmsBtPromotionGroups.deleteByPromotionId(modelCmsBtPromotion.getId());
             daoExtCamelCmsBtPromotionSkus.deleteByPromotionId(modelCmsBtPromotion.getId());
         }
+        return result;
     }
-
+    public CallResult updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
+        CallResult result = new CallResult();
+        CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
+        if (modelCmsBtJmPromotion.getIsPromotionFullMinus())//该专场为 满减专场的场合
+        {
+            result.setMsg("该专场为满减专场,不允许延期");
+            result.setResult(false);
+            return result;
+        }
+        modelCmsBtJmPromotion.setActivityEnd(parameter.getDealEndTime());
+        daoCmsBtJmPromotion.update(modelCmsBtJmPromotion);
+        daoExt.updateDealEndTimeAll(parameter);//商品改变延期状态
+        return result;
+    }
     public boolean existsCopyDealByPromotionId(int promotionId) {
         Map<String, Object> map = new HashMap<>();
         map.put("cmsBtJmPromotionId", promotionId);
         map.put("synchStatus", 2);
         return dao.selectOne(map) != null;
     }
-
     //商品预览
     public ProductViewBean getProductView(int promotionProductId) {
         ProductViewBean productViewBean = new ProductViewBean();
@@ -272,7 +308,6 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         productViewBean.setSkuList(mapModelList);
         return productViewBean;
     }
-
     //更新PromotionProduct 目前只更新 limit
     public int updatePromotionProduct(UpdatePromotionProductParameter parameter, String userName) {
         CmsBtJmPromotionProductModel model = dao.select(parameter.getId());
