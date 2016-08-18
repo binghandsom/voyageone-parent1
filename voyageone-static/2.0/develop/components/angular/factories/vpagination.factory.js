@@ -18,7 +18,6 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
             return config.total;
         };
 
-
         /**
          * 获取每页数量
          * @returns {*}

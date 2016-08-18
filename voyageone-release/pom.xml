@@ -21,8 +21,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.voyageone</groupId>
-			<artifactId>voyageone-web2-vendor</artifactId>
-			<version>${voyageone.web2.vendor.version}</version>
+			<artifactId>voyageone-web2-vms</artifactId>
+			<version>${voyageone.web2.vms.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

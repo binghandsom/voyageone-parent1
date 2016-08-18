@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +40,21 @@ public class FeedInfoService extends BaseService {
      */
     public long getCnt(String channelId, Map<String, Object> searchValue) {
         String queryStr = getSearchQuery(searchValue);
+        return cmsBtFeedInfoDao.countByQuery(queryStr, channelId);
+    }
+
+    /**
+     * getListForVendor
+     */
+    public List<CmsBtFeedInfoModel> getListForVendor(String channelId, JomgoQuery queryObject) {
+        return cmsBtFeedInfoDao.select(queryObject, channelId);
+    }
+
+    /**
+     * getCntForVendor
+     */
+    public long getCntForVendor(String channelId, Map<String, Object> searchValue) {
+        String queryStr = getSearchQueryForVendor(searchValue);
         return cmsBtFeedInfoDao.countByQuery(queryStr, channelId);
     }
 
@@ -70,6 +86,105 @@ public class FeedInfoService extends BaseService {
         Map<String, Object> valueMap = new HashMap<>(1);
         valueMap.put("$set", rsMap);
         return cmsBtFeedInfoDao.update(channelId, paraMap, valueMap);
+    }
+
+    /**
+     * 返回页面端的检索条件拼装成mongo使用的条件
+     */
+    public String getSearchQueryForVendor(Map<String, Object> searchValue) {
+        StringBuilder result = new StringBuilder();
+
+        // 获取code
+        String code = (String) searchValue.get("code");
+        if (!StringUtils.isEmpty(code)) {
+            result.append("{").append(MongoUtils.splicingValue("code", code));
+            result.append("},");
+        }
+
+        // 获取product name
+        String name = (String) searchValue.get("name");
+        if (!StringUtils.isEmpty(name)) {
+            result.append("{").append(MongoUtils.splicingValue("name", replaceRegexReservedChar(name), "$regex"));
+            result.append("},");
+        }
+
+        // 获取category
+        String category = (String) searchValue.get("category");
+        if (!StringUtils.isEmpty(category)) {
+            result.append("{").append(MongoUtils.splicingValue("category", category));
+            result.append("},");
+        }
+
+        // 获取价格
+        // 获取查询的价格区间下限
+        Double priceSta = null;
+        Double priceEnd =  null;
+       if(searchValue.get("priceStart") != null){
+            if (StringUtils.isNumeric(String.valueOf(searchValue.get("priceStart")))) {
+                priceSta = Double.parseDouble(String.valueOf(searchValue.get("priceStart")));
+            }
+        }
+
+        if(searchValue.get("priceEnd") != null){
+            if (StringUtils.isNumeric(String.valueOf(searchValue.get("priceEnd")))) {
+                priceEnd = Double.parseDouble(String.valueOf(searchValue.get("priceEnd")));
+            }
+        }
+
+        if (priceSta != null || priceEnd != null) {
+            result.append("{\"skus.priceClientRetail\":{");
+            if (priceSta != null) {
+                result.append(MongoUtils.splicingValue("$gte", priceSta));
+            }
+            if (priceEnd != null) {
+                if (priceSta != null) {
+                    result.append(",");
+                }
+                result.append(MongoUtils.splicingValue("$lte", priceEnd));
+            }
+            result.append("}},");
+        }
+
+        if (!StringUtils.isEmpty(result.toString())) {
+            return "{$and:[" + result.toString().substring(0, result.toString().length() - 1) + "]}";
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * 转义正则表达式保留字
+     */
+    private String replaceRegexReservedChar(String regStr) {
+        // 替换保留字   \ * . ? + $ ^ [ ] ( ) { } |
+        char reservedChars[] = {'\\','*','.','?','+','$','^','[',']','(',')','{','}','|'};
+        for (char reservedChar : reservedChars) {
+            regStr = replace(regStr, reservedChar);
+        }
+
+        return regStr;
+    }
+
+    /**
+     * 替换转义字符
+     */
+    private String replace(String regStr, char replaceChar) {
+        if (regStr.indexOf(replaceChar) == -1) {
+            return regStr;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i< regStr.length(); i++) {
+            char c = regStr.charAt(i);
+            if (c == replaceChar) {
+                if (c != '\\') {
+                    sb.append("\\\\");
+                } else {
+                    sb.append("\\\\\\");
+                }
+            }
+            sb.append(c);
+        }
+        return sb.toString();
     }
 
     /**

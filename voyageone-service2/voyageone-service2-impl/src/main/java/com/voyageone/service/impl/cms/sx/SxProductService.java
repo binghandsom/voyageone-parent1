@@ -2195,6 +2195,27 @@ public class SxProductService extends BaseService {
                     break;
                 }
                 // added by morse.lu 2016/06/29 end
+                // added by morse.lu 2016/08/18 start
+                case PRODUCT_ID: {
+                    if (processFields == null || processFields.size() != 1) {
+                        throw new BusinessException("tmall item sc_product_id's platformProps must have one prop!");
+                    }
+
+                    Field field = processFields.get(0);
+                    if (field.getType() != FieldTypeEnum.INPUT) {
+                        $error("tmall item sc_product_id's field(" + field.getId() + ") must be input");
+                    } else {
+                        InputField inputField = (InputField) field;
+                        String value = inputField.getDefaultValue();
+                        if (!StringUtils.isEmpty(value)) {
+                            inputField.setValue(value);
+                        }
+                        retMap.put(field.getId(), inputField);
+                    }
+
+                    break;
+                }
+                // added by morse.lu 2016/08/18 end
             }
         }
 
@@ -2209,10 +2230,29 @@ public class SxProductService extends BaseService {
      */
     private void setDescriptionFieldValue(Field field, ExpressionParser expressionParser,  ShopBean shopBean, String user) throws Exception {
         // 详情页描述 (以后可能会根据不同商品信息，取不同的[详情页描述])
-        String descriptionValue = resolveDict("详情页描述", expressionParser, shopBean, user, null);
+        // modified by morse.lu 2016/08/16 start
+        // 画面上有指定的用指定的，没有就还是用原来的"详情页描述"
+//        String descriptionValue = resolveDict("详情页描述", expressionParser, shopBean, user, null);
+        SxData sxData = expressionParser.getSxData();
+        String descriptionValue;
+        RuleExpression ruleDetails = new RuleExpression();
+        MasterWord masterWord = new MasterWord("details");
+        ruleDetails.addRuleWord(masterWord);
+        String details = expressionParser.parse(ruleDetails, shopBean, user, null);
+        if (!StringUtils.isEmpty(details)) {
+            descriptionValue = resolveDict(details, expressionParser, shopBean, user, null);
+            if (StringUtils.isEmpty(descriptionValue)) {
+                String errorMsg = String.format("详情页描述[%s]在dict表里未设定!", details);
+                sxData.setErrorMessage(errorMsg);
+                throw new BusinessException(errorMsg);
+            }
+        } else {
+            descriptionValue = resolveDict("详情页描述", expressionParser, shopBean, user, null);
+        }
+        // modified by morse.lu 2016/08/16 end
         // 详情页描述-空白
         String descriptionBlankValue = resolveDict("详情页描述-空白内容", expressionParser, shopBean, user, null);
-        SxData sxData = expressionParser.getSxData();
+
         String errorMsg = String.format("类目[%s]的商品描述field_id或结构或类型发生变化啦!", sxData.getMainProduct().getCommon().getCatPath());
 
         if (field.getType() == FieldTypeEnum.INPUT) {
@@ -2301,7 +2341,26 @@ public class SxProductService extends BaseService {
         }
 
         // 无线描述 (以后可能会根据不同商品信息，取不同的[无线描述])
-        String descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
+        // modified by morse.lu 2016/08/16 start
+        // 画面上有指定的用指定的，没有就还是用原来的"详情页描述"
+//        String descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
+        SxData sxData = expressionParser.getSxData();
+        String descriptionValue;
+        RuleExpression ruleDetails = new RuleExpression();
+        MasterWord masterWord = new MasterWord("wirelessDetails");
+        ruleDetails.addRuleWord(masterWord);
+        String details = expressionParser.parse(ruleDetails, shopBean, user, null);
+        if (!StringUtils.isEmpty(details)) {
+            descriptionValue = resolveDict(details, expressionParser, shopBean, user, null);
+            if (StringUtils.isEmpty(descriptionValue)) {
+                String errorMsg = String.format("无线描述[%s]在dict表里未设定!", details);
+                sxData.setErrorMessage(errorMsg);
+                throw new BusinessException(errorMsg);
+            }
+        } else {
+            descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
+        }
+        // modified by morse.lu 2016/08/16 end
         if (StringUtils.isEmpty(descriptionValue)) {
             // 字典表里未设定，先什么都不做吧
             return;
