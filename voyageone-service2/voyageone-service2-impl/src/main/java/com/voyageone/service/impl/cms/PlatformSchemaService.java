@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
@@ -80,10 +81,14 @@ public class PlatformSchemaService extends BaseService {
             // 自己没有的话，用共通catId=0
             invisibleFieldModel = cmsMtPlatformCategoryInvisibleFieldDao.selectOneByCatId("0", cartId);
         }
-        CmsMtPlatformCategoryExtendFieldModel extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId(catId, cartId);
+        CmsMtPlatformCategoryExtendFieldModel extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId(catId, cartId, channelId);
         if (extendFieldModel == null) {
             // 自己没有的话，用共通catId=0
-            extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId("0", cartId);
+            extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId("0", cartId, channelId);
+        }
+        if (extendFieldModel == null) {
+            // 还没有的话，用共通catId=0,channelId=000
+            extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId("0", cartId, ChannelConfigEnums.Channel.NONE.getId());
         }
 
         Map<String, List<Field>> retMap = new HashMap<>();

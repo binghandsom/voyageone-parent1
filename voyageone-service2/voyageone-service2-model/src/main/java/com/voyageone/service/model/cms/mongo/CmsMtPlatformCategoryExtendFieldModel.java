@@ -16,6 +16,8 @@ import java.util.List;
 @Document
 public class CmsMtPlatformCategoryExtendFieldModel extends CartPartitionModel {
 
+    private String channelId;
+
     private String catId;
 
     private String catFullPath;
@@ -23,6 +25,14 @@ public class CmsMtPlatformCategoryExtendFieldModel extends CartPartitionModel {
     private List<CmsMtPlatformCategoryExtendFieldModel_Field> propsProduct;
 
     private List<CmsMtPlatformCategoryExtendFieldModel_Field> propsItem;
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
 
     public String getCatId() {
         return catId;
