@@ -36,6 +36,7 @@ define([
 		this.hsCodeChg = hsCodeChg;
 		this.copyProperty = copyProperty;
 		this.copyCommonProperty = copyCommonProperty;
+		this.getPlatformCategories = getPlatformCategories;
 
 		/**
 		 * 获取页面产品信息
@@ -461,6 +462,21 @@ define([
 		function copyCommonProperty(req){
 			var defer = $q.defer();
 			$productDetailService.copyCommonProperty(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 获取平台类目
+		 * @param req {cartId}  平台id
+		 */
+		function getPlatformCategories(req){
+			var defer = $q.defer();
+			$productDetailService.getPlatformCategories(req)
 				.then (function (res) {
 					defer.resolve(res);
 				},function(res){

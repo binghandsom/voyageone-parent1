@@ -92,9 +92,9 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         {
            result.setIsUpdateJM(false);
         }
-        // // TODO: 2016/8/10  测试完 取消注释  spt begin
-        result.setIsUpdateJM(true);
-        // // TODO: 2016/8/10   测试完 取消注释  spt end
+        // // ODO: 2016/8/10  测试完 取消注释  spt begin
+       // result.setIsUpdateJM(true);
+        // // ODO: 2016/8/10   测试完 取消注释  spt end
         // 获取brand list
         result.setBrandList(TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, language));
         return result;

@@ -269,7 +269,7 @@ public interface AdminUrlConstants {
 
 			String UPDATE_RES = "updateRes";
 
-			String DELETE_Res = "deleteRes";
+			String DELETE_RES = "deleteRes";
 
 		}
 

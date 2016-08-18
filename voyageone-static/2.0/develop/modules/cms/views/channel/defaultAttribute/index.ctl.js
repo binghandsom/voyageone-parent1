@@ -10,7 +10,7 @@ define([
 ], function (cms) {
     cms.controller('defaultAttributeController', (function () {
 
-        function DefaultAttributeController($translate,$q,popups,notify,menuService,platformMappingService,defaultAttrService) {
+        function DefaultAttributeController($translate,$q,popups,notify,confirm,menuService,platformMappingService,defaultAttrService) {
 
             var self = this;
 
@@ -18,6 +18,7 @@ define([
             self.q = $q;
             self.popups = popups;
             self.notify = notify;
+            self.confirm = confirm;
             self.menuService = menuService;
             self.platformMappingService = platformMappingService;
             self.defaultAttrService = defaultAttrService;
@@ -65,10 +66,28 @@ define([
           },
           search:function(){
               var self = this;
-              var _upEntity = _.extend(self.paging,self.searchInfo);
-              self.defaultAttrService.list(_upEntity).then(function(res){
+              var _upEntity = _.extend(self.paging,{
+                  "cartId": +self.searchInfo.cartId,
+                  "categoryType": +self.searchInfo.categoryType,
+                  "categoryPath": self.searchInfo.categoryPath
+              });
+              self.defaultAttrService.page(_upEntity).then(function(res){
                   self.paging.total = res.data.total;
                   self.dataList = res.data.list;
+              });
+          },
+          switchType:function(){
+              this.searchInfo.categoryPath = this.searchInfo.categoryType == '2' ? this.searchInfo.categoryPath : '';
+          },
+          deleteItem:function(item){
+              var self = this;
+              self.confirm(self.$translate.instant("TXT_MSG_DELETE_ITEM")).then(function(){
+                  self.defaultAttrService.deleteItem().then(function(res){
+                      if(res.data)
+                        self.notify.success(self.$translate.instant("TXT_MSG_DELETE_SUCCESS"));
+                      else
+                        self.notify(self.$translate.instant("TXT_MSG_DELETE_FAIL"));
+                  });
               });
           }
         };

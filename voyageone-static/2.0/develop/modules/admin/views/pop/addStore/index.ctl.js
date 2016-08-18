@@ -5,11 +5,11 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('AddStoreController', (function () {
-        function AddStoreController(context, channelService, AdminCartService, $uibModalInstance) {
+        function AddStoreController(context, channelService, storeService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
             this.channelService = channelService;
-            this.AdminCartService = AdminCartService;
+            this.storeService = storeService;
             this.popType = '编辑';
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
@@ -25,6 +25,9 @@ define([
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelList = res.data;
                 });
+                self.storeService.getAllStore().then(function (res) {
+                    self.storeAllList = res.data;
+                });
             },
             cancel: function () {
                 this.$uibModalInstance.close();
@@ -39,7 +42,7 @@ define([
                     _.extend(self.sourceData, {'cartIds': tempCartList.join(','),'companyId':self.companyId});
                 });
                 if (self.append == true) {
-                    self.channelService.addChannel(self.sourceData).then(function (res) {
+                    self.storeService.addStore(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
@@ -48,7 +51,7 @@ define([
                         self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.channelService.updateChannel(self.sourceData).then(function (res) {
+                    self.storeService.updateStore(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
