@@ -43,11 +43,11 @@ public class ChannelAttributeService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(channelAttrDaoExt.searchChannelAttributeCount(params));
+			pageModel.setCount(channelAttrDaoExt.selectChannelAttributeCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询渠道属性信息
-		pageModel.setResult(channelAttrDaoExt.searchChannelAttributeByPage(params));
+		pageModel.setResult(channelAttrDaoExt.selectChannelAttributeByPage(params));
 		
 		return pageModel;
 	}

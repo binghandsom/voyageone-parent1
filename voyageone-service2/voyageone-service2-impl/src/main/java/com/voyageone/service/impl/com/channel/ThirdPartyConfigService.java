@@ -41,11 +41,11 @@ public class ThirdPartyConfigService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(thirdPartyConfigDaoExt.searchThirdPartyConfigCount(params));
+			pageModel.setCount(thirdPartyConfigDaoExt.selectThirdPartyConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询第三方配置信息
-		pageModel.setResult(thirdPartyConfigDaoExt.searchThirdPartyConfigByPage(params));
+		pageModel.setResult(thirdPartyConfigDaoExt.selectThirdPartyConfigByPage(params));
 		
 		return pageModel;
 	}

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.com.ComMtTaskDaoExt">
+
+	<resultMap id="taskCtrlBeanMap" type="com.voyageone.service.bean.com.TmTaskControlBean" />
+	
+	<resultMap id="taskBeanMap" type="com.voyageone.service.bean.com.ComMtTaskBean"/>
+	
+	<sql id="selectTypeFilter">
+		<where>
+			<if test="taskType != null and taskType != ''">
+				and cmt.task_type = #{taskType}
+			</if>
+			<if test="taskName != null and taskName != ''">
+				and cmt.task_name concat('%', #{taskName}, '%')
+			</if>
+			<if test="taskComment != null and taskComment != ''">
+				and cmt.task_comment concat('%', #{taskComment}, '%')
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="selectTaskConfigFilter">
+		<where>
+			<if test="taskId = null and taskId != ''">
+				and task_id = #{taskId}
+			</if>
+			<if test="cfgName = null and cfgName != ''">
+				and cfg_name like concat('%, #{cfgName}, '%')
+			</if>
+			<if test="cfgVal = null and cfgVal != ''">
+				and (
+					cfg_val1 like concat('%, #{cfgVal}, '%') or cfg_val2 like concat('%, #{cfgVal}, '%')
+				)
+			</if>
+		</where>
+	</sql>
+	
+	<select id="selectTypeByPage" resultMap="taskBeanMap">
+		select cmt.task_id, cmt.task_type, cmt.task_name, cmt.task_comment, cmt.task_freq, ttc.cfg_val1 as run_flg
+		from com_mt_task cmt left join tm_task_control ttc on (
+				ttc.task_id = cmt.task_id or ttc.task_id = cmt.task_name
+			) and ttc.cfg_name = #{taskAttrName}
+		<include refid="selectTypeFilter"/>
+	</select>
+	
+	<select id="selectTypeCount" resultType="integer">
+		select count(0) from com_mt_task cmt
+		<include refid="selectTypeFilter"/>
+	</select>
+	
+	<select id="selectTaskConfigByPage" resultMap="taskCtrlBeanMap">
+		select task_id, cfg_name, cfg_val1, cfg_val2, end_time, comment from tm_task_control
+		<include refid="selectTaskConfigFilter"/>
+	</select>
+	
+	<select id="selectTaskConfigCount" resultType="integer">
+		select count(0) from tm_task_control
+		<include refid="selectTaskConfigFilter"/>
+	</select>
+
+</mapper>

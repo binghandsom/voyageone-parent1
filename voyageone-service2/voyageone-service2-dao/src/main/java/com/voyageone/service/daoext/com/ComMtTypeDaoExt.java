@@ -14,8 +14,8 @@ import com.voyageone.service.model.com.ComMtTypeModel;
 @Repository
 public interface ComMtTypeDaoExt {
 
-	Integer searchTypeCount(Map<String, Object> params);
+	Integer selectTypeCount(Map<String, Object> params);
 
-	List<ComMtTypeModel> searchTypeByPage(Map<String, Object> params);
+	List<ComMtTypeModel> selectTypeByPage(Map<String, Object> params);
 
 }

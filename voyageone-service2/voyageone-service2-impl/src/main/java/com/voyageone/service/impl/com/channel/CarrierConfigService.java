@@ -42,11 +42,11 @@ public class CarrierConfigService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(carrierChannelDaoExt.searchCarrierConfigCount(params));
+			pageModel.setCount(carrierChannelDaoExt.selectCarrierConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询渠道属性信息
-		pageModel.setResult(carrierChannelDaoExt.searchCarrierConfigByPage(params));
+		pageModel.setResult(carrierChannelDaoExt.selectCarrierConfigByPage(params));
 		
 		return pageModel;
 	}

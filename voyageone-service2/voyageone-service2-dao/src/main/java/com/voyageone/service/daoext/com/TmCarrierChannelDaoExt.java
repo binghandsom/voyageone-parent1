@@ -14,9 +14,9 @@ import com.voyageone.service.bean.com.TmCarrierChannelBean;
 @Repository
 public interface TmCarrierChannelDaoExt {
 
-	Integer searchCarrierConfigCount(Map<String, Object> params);
+	Integer selectCarrierConfigCount(Map<String, Object> params);
 
-	List<TmCarrierChannelBean> searchCarrierConfigByPage(Map<String, Object> params);
+	List<TmCarrierChannelBean> selectCarrierConfigByPage(Map<String, Object> params);
 
 	List<Map<String, Object>> selectAllCarrier();
 

@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.daoext.com.ComMtValueChannelDaoExt">
 
-	<resultMap id="channelAttrModeMap" type="com.voyageone.service.bean.com.ComMtValueChannelBean" />
+	<resultMap id="channelAttrModelMap" type="com.voyageone.service.bean.com.ComMtValueChannelBean" />
 	
-	<sql id="searchChannelAttributeFilter">
+	<sql id="selectChannelAttributeFilter">
 		<where>
 			<if test="channelId != null and channelId != ''">
 				and cmvc.channel_id = #{channelId}
@@ -24,18 +24,18 @@
 		</where>
 	</sql>
 	
-	<select id="searchChannelAttributeByPage" resultMap="channelAttrModeMap">
+	<select id="selectChannelAttributeByPage" resultMap="channelAttrModelMap">
 		select toc.name as channel_name, cmt.name as type_name, cmvc.id, cmvc.type_id, cmvc.channel_id,
 			cmvc.value, cmvc.name, cmvc.add_name1, cmvc.add_name2, cmvc.lang_id, cmvc.lang_id, cmvc.display_order,
 			cmvc.created, cmvc.creater, cmvc.modified, cmvc.modifier
 		from com_mt_value_channel cmvc left join tm_order_channel toc on toc.order_channel_id = cmvc.channel_id
 			left join com_mt_type cmt on cmt.id = cmvc.type_id
-		<include refid="searchChannelAttributeFilter"/>
+		<include refid="selectChannelAttributeFilter"/>
 	</select>
 	
-	<select id="searchChannelAttributeCount" resultType="integer">
+	<select id="selectChannelAttributeCount" resultType="integer">
 		select count(0) from com_mt_value_channel cmvc
-		<include refid="searchChannelAttributeFilter"/>
+		<include refid="selectChannelAttributeFilter"/>
 	</select>
 	
 </mapper>

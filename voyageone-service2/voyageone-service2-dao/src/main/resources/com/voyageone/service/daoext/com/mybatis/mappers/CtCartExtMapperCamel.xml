@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.daoext.com.CtCartDaoExt">
 
-	<resultMap id="cartModeMap" type="com.voyageone.service.model.com.CtCartModel" />
+	<resultMap id="cartModelMap" type="com.voyageone.service.model.com.CtCartModel" />
 	
 	<sql id="selectCartFilter">
 		<where>
@@ -29,7 +29,7 @@
         </where>
 	</sql>
     
-    <select id="selectCartByIds" resultMap="cartModeMap">
+    <select id="selectCartByIds" resultMap="cartModelMap">
     	select cart_id, name, short_name, description, platform_id, cart_type, active, created, 
     		creater, modified, modifier
 	    from ct_cart
@@ -39,7 +39,7 @@
 	    </foreach>
     </select>
     
-    <select id="selectCartByPage" resultMap="cartModeMap">
+    <select id="selectCartByPage" resultMap="cartModelMap">
     	select cart_id, name, short_name, description, platform_id, cart_type, active, created, 
     		creater, modified, modifier
     	from ct_cart

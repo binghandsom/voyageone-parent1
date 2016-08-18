@@ -44,11 +44,11 @@ public class TypeService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(typeDaoExt.searchTypeCount(params));
+			pageModel.setCount(typeDaoExt.selectTypeCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询类型信息
-		pageModel.setResult(typeDaoExt.searchTypeByPage(params));
+		pageModel.setResult(typeDaoExt.selectTypeByPage(params));
 		
 		return pageModel;
 	}

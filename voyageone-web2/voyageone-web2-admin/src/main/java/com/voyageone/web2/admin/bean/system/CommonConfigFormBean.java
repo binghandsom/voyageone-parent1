@@ -1,6 +1,5 @@
 package com.voyageone.web2.admin.bean.system;
 
-import com.voyageone.web2.admin.AdminConstants;
 import com.voyageone.web2.admin.bean.AdminFormBean;
 
 /**
@@ -9,8 +8,6 @@ import com.voyageone.web2.admin.bean.AdminFormBean;
  */
 public class CommonConfigFormBean extends AdminFormBean {
 
-	private AdminConstants.ConfigType configType;
-	
 	private String orderChannelId;
 	
 	private String cartId;
@@ -30,14 +27,6 @@ public class CommonConfigFormBean extends AdminFormBean {
 	private String cfgVal;
 	
 	private String comment;
-
-	public AdminConstants.ConfigType getConfigType() {
-		return configType;
-	}
-
-	public void setConfigType(AdminConstants.ConfigType configType) {
-		this.configType = configType;
-	}
 
 	public String getOrderChannelId() {
 		return orderChannelId;

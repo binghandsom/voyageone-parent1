@@ -14,8 +14,8 @@ import com.voyageone.service.bean.com.ComMtThirdPartyConfigBean;
 @Repository
 public interface ComMtThirdPartyConfigDaoExt {
 
-	Integer searchThirdPartyConfigCount(Map<String, Object> params);
+	Integer selectThirdPartyConfigCount(Map<String, Object> params);
 
-	List<ComMtThirdPartyConfigBean> searchThirdPartyConfigByPage(Map<String, Object> params);
+	List<ComMtThirdPartyConfigBean> selectThirdPartyConfigByPage(Map<String, Object> params);
 
 }

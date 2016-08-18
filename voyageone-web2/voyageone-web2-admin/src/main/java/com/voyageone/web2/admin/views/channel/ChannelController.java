@@ -131,7 +131,7 @@ public class ChannelController extends AdminController {
 		// 保存渠道配置信息
 		TmOrderChannelConfigModel channelConfigModel = new TmOrderChannelConfigModel();
 		BeanUtils.copyProperties(form, channelConfigModel);
-		channelService.addOrUpdateChannelConfig(channelConfigModel, getUser().getUserName(), append);
+		channelService.addOrUpdateChannelConfig(channelConfigModel, append);
 		
 		return success(true);
 	}

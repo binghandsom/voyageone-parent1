@@ -163,7 +163,7 @@ public class ChannelService extends BaseService {
 		return pageModel;
 	}
 
-	public void addOrUpdateChannelConfig(TmOrderChannelConfigModel model, String username, boolean append) {
+	public void addOrUpdateChannelConfig(TmOrderChannelConfigModel model, boolean append) {
 		// 查询渠道配置信息
 		TmOrderChannelConfigKey configKey = new TmOrderChannelConfigKey();
 		configKey.setOrderChannelId(model.getOrderChannelId());
@@ -178,15 +178,12 @@ public class ChannelService extends BaseService {
 			if (channelConfig != null) {
 				throw new BusinessException("添加的渠道配置信息已存在");
 			}
-			model.setCreater(username);
-			model.setModifier(username);
 			success = channelConfigDao.insert(model) > 0;
 		} else {
 			// 更新渠道配置信息
 			if (channelConfig == null) {
 				throw new BusinessException("更新的渠道配置信息不存在");
 			}
-			model.setModifier(username);
 			success = channelConfigDao.update(model) > 0;
 		}
 		

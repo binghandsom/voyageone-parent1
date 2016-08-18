@@ -14,8 +14,8 @@ import com.voyageone.service.bean.com.ComMtValueChannelBean;
 @Repository
 public interface ComMtValueChannelDaoExt {
 
-	Integer searchChannelAttributeCount(Map<String, Object> params);
+	Integer selectChannelAttributeCount(Map<String, Object> params);
 
-	List<ComMtValueChannelBean> searchChannelAttributeByPage(Map<String, Object> params);
+	List<ComMtValueChannelBean> selectChannelAttributeByPage(Map<String, Object> params);
 
 }

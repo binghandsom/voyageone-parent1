@@ -169,6 +169,8 @@ public interface AdminUrlConstants {
 			String UPDATE_TASK = "updateTask";
 
 			String DELETE_TASK = "deleteTask";
+
+			String SEARCH_TASK_CONFIG_BY_PAGE = "searchTaskConfigByPage";
 			
 		}
 		

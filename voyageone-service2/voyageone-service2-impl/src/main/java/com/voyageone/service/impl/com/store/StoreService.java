@@ -134,7 +134,7 @@ public class StoreService extends BaseService {
 		return pageModel;
 	}
 
-	public void addOrUpdateStoreConfig(CtStoreConfigModel model, String username, boolean append) {
+	public void addOrUpdateStoreConfig(CtStoreConfigModel model, boolean append) {
 		// 查询仓库配置信息
 		CtStoreConfigKey configKey = new CtStoreConfigKey();
 		configKey.setStoreId(model.getStoreId());
@@ -149,15 +149,12 @@ public class StoreService extends BaseService {
 			if (storeConfig != null) {
 				throw new BusinessException("添加的仓库配置已存在");
 			}
-			model.setCreater(username);
-			model.setModifier(username);
 			success = storeConfigDao.insert(model) > 0;
 		} else {
 			// 更新仓库配置信息
 			if (storeConfig == null) {
 				throw new BusinessException("更新的仓库配置不存在");
 			}
-			model.setModifier(username);
 			success = storeConfigDao.update(model) > 0;
 		}
 		

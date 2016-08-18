@@ -142,7 +142,7 @@ public class StoreController extends AdminController {
 		// 保存仓库配置信息
 		CtStoreConfigModel storeConfigModel = new CtStoreConfigModel();
 		BeanUtils.copyProperties(form, storeConfigModel);
-		storeService.addOrUpdateStoreConfig(storeConfigModel, getUser().getUserName(), append);
+		storeService.addOrUpdateStoreConfig(storeConfigModel, append);
 		
 		return success(true);
 	}
