@@ -3,6 +3,7 @@ package com.voyageone.web2.admin.views.store;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,7 @@ public class StoreController extends AdminController {
 	
 	@RequestMapping(AdminUrlConstants.Store.Self.DELETE_STORE)
 	public AjaxResponse deleteStore(@RequestBody StoreFormBean[] forms) {
+		Preconditions.checkArgument(ArrayUtils.isNotEmpty(forms), "没有可删除的仓库信息");
 		List<WmsMtStoreKey> storeKeys = new ArrayList<WmsMtStoreKey>();
 		for (StoreFormBean form : forms) {
 			// 验证参数
@@ -97,7 +99,6 @@ public class StoreController extends AdminController {
 			Preconditions.checkNotNull(form.getStoreId());
 			WmsMtStoreKey storeKey = new WmsMtStoreKey();
 			BeanUtils.copyProperties(form, storeKey);
-			storeKey.setOrderChannelId(form.getOrderChannelId());
 			storeKeys.add(storeKey);
 		}
 		// 删除仓库信息

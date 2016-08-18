@@ -48,6 +48,7 @@
 		    wms.parent_store_id, wms2.store_name as main_store_name
 		from wms_mt_store wms left join tm_order_channel toc on toc.order_channel_id = wms.order_channel_id
 			left join wms_mt_store wms2 on wms2.store_id = wms.parent_store_id
+		<include refid="selectStoreFilter"/>
 	</select>
 	
 	<select id="selectStoreCount" resultType="integer">

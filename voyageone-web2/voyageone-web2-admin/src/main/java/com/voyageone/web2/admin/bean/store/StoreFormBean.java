@@ -10,7 +10,7 @@ public class StoreFormBean extends AdminFormBean {
 	
 	private String orderChannelId;
 	
-	private Integer storeId;
+	private Long storeId;
 	
 	private String storeName;
 	
@@ -50,11 +50,11 @@ public class StoreFormBean extends AdminFormBean {
 		this.orderChannelId = orderChannelId;
 	}
 
-	public Integer getStoreId() {
+	public Long getStoreId() {
 		return storeId;
 	}
 
-	public void setStoreId(Integer storeId) {
+	public void setStoreId(Long storeId) {
 		this.storeId = storeId;
 	}
 
