@@ -148,7 +148,7 @@
         <task:scheduled ref="Cms2BcbgAnalysisJob" method="run" cron="40 0/3 * * * *"/>
 
         <!-- 从天猫/京东获取商品的上下架状态（每天早上2点一次） -->
-        <task:scheduled ref="CmsGetPlatformStatusJob" method="run" cron="0 0 2 * * ?"/>
+        <task:scheduled ref="CmsGetPlatformStatusJob" method="run" cron="0 0 0/2 * * ?"/>
 
     </task:scheduled-tasks>
 
