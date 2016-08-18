@@ -45,6 +45,14 @@ public class AdminResController extends AdminController {
         return success(response);
     }
 
+    @RequestMapping(AdminUrlConstants.User.Res.INIT)
+    public AjaxResponse init(@RequestBody Map requestBean) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("treeList", adminResService.searchRes(null));
+
+        return success(response);
+    }
+
     @RequestMapping(AdminUrlConstants.User.Res.ADD_RES)
     public AjaxResponse addRes(@RequestBody Map requestBean) throws Exception {
 

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.core.AdminRoleDaoExt">
+
+    <resultMap id="comUserModelMap" type="com.voyageone.service.bean.com.AdminRoleBean" />
+
+    <sql id="selectUserFilter">
+    	<where>
+            <if test="id != null" >
+                and id = #{id}
+            </if>
+
+            <if test="roleName != null and roleName != ''" >
+                and (
+                role_name like concat('%', #{roleName}, '%') or user_name like concat('%', #{roleName}, '%')
+                )
+            </if>
+
+            <if test="roleType != null" >
+                and roleType = #{active}
+            </if>
+
+            <if test="active != null" >
+                and active = #{active}
+            </if>
+
+            <if test="roleId != null" >
+                and roleId = #{roleId}
+            </if>
+
+            <if test="channelId != null and channelId != ''" >
+                and channel_id like concat('%,', #{channelId}, '%') or channel_id like concat('%', #{channelId}, ',%')
+            </if>
+
+            <if test="storeId != null and storeId != ''" >
+                and store_id like concat('%,', #{storeId},  '%') or channel_id like concat( '%',#{storeId}, ',%')
+            </if>
+
+            <if test="application != null and application != ''" >
+                and application like concat('%,', #{application},  '%') or application like concat( '%',#{application}, ',%')
+            </if>
+
+        </where>
+    </sql>
+	
+
+	
+	<select id="selectRoleByPage" resultMap="comUserModelMap">
+        SELECT t1.* , GROUP_CONCAT( DISTINCT re.application) as application
+        from
+        (
+        SELECT t.id, t.role_name, t.role_type, t.active,t.modified,t.modifier, t.description,
+        MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE 0 END ) channel_id,
+        MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE 0 END ) store_id
+        FROM
+
+        (select r.id, r.role_name,r.role_type, r.description, r.active, r.modified, r.modifier , rc.cfg_name, GROUP_CONCAT( DISTINCT rc.cfg_val1) as cfg_val1
+        from  com_role r, com_role_config rc , Synship.wms_mt_store st, Synship.tm_order_channel ch
+        where
+        ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id  or rc.cfg_val1='ALL'))
+        or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id or rc.cfg_val1='ALL')))
+
+        and r.active = 1
+        and st.active = 1
+        and ch.active = 1
+        GROUP BY id, rc.cfg_name) t
+        GROUP BY t.id) t1 , com_resource re, com_res_role rr, Synship.ct_application ap
+        WHERE re.application = ap.application AND rr.role_id = t1.id AND re.id = rr.res_id AND re.res_type = 0
+        And re.active = 1 AND ap.active =1
+        GROUP BY t1.id
+
+        <include refid="selectUserFilter"/>
+	</select>
+	
+	<select id="selectUserCount" resultType="Integer">
+        SELECT count(0) from
+        (
+        SELECT t1.* , GROUP_CONCAT( DISTINCT re.application) as application
+        from
+        (
+        SELECT t.id, t.role_name, t.role_type, t.active,t.modified,t.modifier, t.description,
+        MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE 0 END ) channel_id,
+        MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE 0 END ) store_id
+        FROM
+
+        (select r.id, r.role_name,r.role_type, r.description, r.active, r.modified, r.modifier , rc.cfg_name, GROUP_CONCAT( DISTINCT rc.cfg_val1) as cfg_val1
+        from  com_role r, com_role_config rc , Synship.wms_mt_store st, Synship.tm_order_channel ch
+        where
+        ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id  or rc.cfg_val1='ALL'))
+        or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id or rc.cfg_val1='ALL')))
+
+        and r.active = 1
+        and st.active = 1
+        and ch.active = 1
+        GROUP BY id, rc.cfg_name) t
+        GROUP BY t.id) t1 , com_resource re, com_res_role rr, Synship.ct_application ap
+        WHERE re.application = ap.application AND rr.role_id = t1.id AND re.id = rr.res_id AND re.res_type = 0
+        And re.active = 1 AND ap.active =1
+        GROUP BY t1.id
+
+        )t2
+		 <include refid="selectUserFilter"/>
+	</select>
+
+
+</mapper>

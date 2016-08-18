@@ -216,6 +216,9 @@ public interface AdminUrlConstants {
 			String ADD_AUTH = "addAuth";
 
 			String REMOVE_AUTH = "removeAuth";
+
+			//for dropdown list options
+			String GET_ALL_ROLE = "getAllRole";
 		}
 
 		/** 组织信息 */
