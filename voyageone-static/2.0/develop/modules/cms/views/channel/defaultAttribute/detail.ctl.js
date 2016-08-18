@@ -11,7 +11,7 @@ define([
 ], function (cms) {
     cms.controller('attributeDetailController', (function () {
 
-        function AttributeDetailController($routeParams, popups, menuService, productDetailService, platformMappingService) {
+        function AttributeDetailController($routeParams, notify, popups, menuService, productDetailService, platformMappingService) {
 
             var self = this;
             var searchJson = $routeParams.upEntity;
@@ -19,6 +19,7 @@ define([
             self.searchInfo = searchJson ? angular.fromJson(searchJson) : {};
 
             self.popups = popups;
+            self.notify = notify;
             self.productDetailService = productDetailService;
             self.platformMappingService = platformMappingService;
 
@@ -102,8 +103,8 @@ define([
                 categoryType: +searchInfo.categoryType,
                 categoryPath: searchInfo.categoryPath,
                 schema: fields
-            }).then(function (resp) {
-                console.log(resp);
+            }).then(function () {
+                self.notify.success('TXT_SAVE_SUCCESS');
             });
         };
 
