@@ -95,10 +95,9 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.cartSelList.selList, function (delInfo) {
-                            delList.push(delInfo.cartId);
+                            delList.push(delInfo.id);
                         });
                         self.AdminCartService.deleteCart(delList).then(function (res) {
-                            // if (res.data.success == false)self.confirm(res.data.message);
                             self.search();
                         })
                     }

@@ -11,8 +11,10 @@
                     <div class="form-group"><!-- 渠道名 -->
                         <label class="col-sm-4 control-label">{{'TXT_CHANNEL_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.sourceData.orderChannelId"
-                                    ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList">
+                            <select search-contains="true" chosen width="'100%'" class="form-control"
+                                    ng-model="ctrl.sourceData.orderChannelId"
+                                    ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList"
+                                    ng-disabled="ctrl.popType == '编辑'">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
@@ -66,7 +68,8 @@
                     </div>
                     <div class="form-group"><!-- 库存保留量 -->
                         <label class="col-sm-4 control-label">{{'TXT_STORE_REMAINED' | translate}}</label>
-                        <div class="col-sm-8">
+                        <label class="col-sm-2 control-label">类型：</label>
+                        <div class="col-sm-6">
                             <select class="form-control" ng-model="ctrl.sourceData.inventoryHold">
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 <option value="0">&nbsp;不做保留</option>
@@ -83,7 +86,7 @@
                     <div class="form-group"><!-- 仓库名 -->
                         <label class="col-sm-4 control-label">{{'TXT_STORE_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.storeName"/>
+                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.storeName" name="storeName"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -94,7 +97,9 @@
                     <div class="form-group"><!-- 主仓库名 -->
                         <label class="col-sm-4 control-label">{{'TXT_MAIN_STORE_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.mainStoreName"/>
+                            <select class="form-control" ng-model="ctrl.sourceData.parentStoreId" ng-options="store.storeId as store.storeName for store in ctrl.storeAllList">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            </select>
                         </div>
                     </div>
                     <div class="form-group">
@@ -130,6 +135,12 @@
                             </select>
                         </div>
                     </div>
+                    <div class="form-group" ng-if="ctrl.sourceData.inventoryHold||ctrl.sourceData.inventoryHold==='0'"><!-- 保留量 -->
+                        <label class="col-sm-4 control-label">{{'TXT_STORE_REMAINED_NUMBER' | translate}}</label>
+                        <div class="col-sm-8">
+                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.storeName" name="storeName"/>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-4">
@@ -146,7 +157,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-sm-8 col-sm-offset-4">
-                            <vo-message target="addForm.storeArea"></vo-message>
+                            <vo-message target="addForm.storeLocation"></vo-message>
                         </div>
                     </div>
                     <div class="form-group"><!-- 仓库类别 -->
@@ -167,18 +178,18 @@
                     <div class="form-group"><!-- 拼单区域 -->
                         <label class="col-sm-4 control-label">{{'TXT_TOGETHER_ZONE' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" type="number" ng-model="ctrl.sourceData.areaId" name="areaId">
+                            <select class="form-control" ng-model="ctrl.sourceData.areaId" name="areaId">
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                <option value=0>&nbsp;不拼单</option>
-                                <option value=1>&nbsp;US拼单</option>
-                                <option value=2>&nbsp;HK拼单</option>
-                                <option value=3>&nbsp;CN拼单</option>
+                                <option value="0">&nbsp;不拼单</option>
+                                <option value="1">&nbsp;US拼单</option>
+                                <option value="2">&nbsp;HK拼单</option>
+                                <option value="3">&nbsp;CN拼单</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="col-sm-8 col-sm-offset-4">
-                            <vo-message target="addForm.rsvSort"></vo-message>
+                            <vo-message target="addForm.areaId"></vo-message>
                         </div>
                     </div>
                     <div class="form-group"><!-- 库存分配优先级 -->
@@ -206,7 +217,7 @@
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{'TXT_STORE_ADDRESS' | translate}}</label>
                         <div class="col-sm-8">
-                            <textarea class="form-control" ng-model="ctrl.sourceData.storeLocation" name="storeLocation" rows="3"></textarea>
+                            <textarea class="form-control" ng-model="ctrl.sourceData.storeArea" name="storeArea" rows="3"></textarea>
                         </div>
                     </div>
                 </div>

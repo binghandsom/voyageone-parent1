@@ -59,6 +59,7 @@ define(function () {
         "TXT_STORE_TYPE": "仓库类型",
         "TXT_STORE_MANAGE_STATE":"库存管理状态",
         "TXT_STORE_REMAINED":"库存保留量",
+        "TXT_STORE_REMAINED_NUMBER":"保留量",
         "TXT_STORE_TAG_TYPE":"标签类型",
         "TXT_STORE_AREA":"仓库位置",
         "TXT_STORE_EXCT_TYPE":"仓库类别",
