@@ -104,7 +104,9 @@ define([
                 } else {
                     _.forEach(self.storeList, function (Info) {
                         if (Info.storeId == self.storeSelList.selList[0].id) {
+                            var remainNum = '';
                             Info['areaId'] = Info['areaId'] + '';
+                            _.extend(Info, {'remainNum': remainNum});
                             self.popups.openStoreAdd(Info).then(function () {
                                 self.search(1);
                             });
@@ -142,22 +144,41 @@ define([
                         break;
                 }
             },
-            getInventoryHold: function (type) {
-                switch (type) {
-                    case '0':
-                        return '不做保留';
-                        break;
-                    case '1':
-                        return '按加减保留';
-                        break;
-                    case '2':
-                        return '按百分比保留';
-                        break;
-                    case '3':
-                        return '按销售计算（默认百分比）';
-                        break;
+            getInventoryHold: function (item) {
+                if (item.indexOf(',') < 0) {
+                    switch (item) {
+                        case '0':
+                            return '不做保留';
+                            break;
+                        case '1':
+                            return '按加减保留';
+                            break;
+                        case '2':
+                            return '按百分比保留';
+                            break;
+                        case '3':
+                            return '按销售计算（默认百分比）';
+                            break;
+                    }
+                } else {
+                    var type = item.split(",")[0];
+                    var num = item.split(",")[1];
+                    switch (type) {
+                        case '0':
+                            return '不做保留' + '' + num;
+                            break;
+                        case '1':
+                            return '按加减保留' + '' + num;
+                            break;
+                        case '2':
+                            return '按百分比保留' + '' + num;
+                            break;
+                        case '3':
+                            return '按销售计算（默认百分比）' + '' + num;
+                            break;
+                    }
                 }
-            },
+            }
         };
         return StoreManagementController;
     })())

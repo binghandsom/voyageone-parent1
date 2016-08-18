@@ -69,7 +69,7 @@
                     <div class="form-group"><!-- 库存保留量 -->
                         <label class="col-sm-4 control-label">{{'TXT_STORE_REMAINED' | translate}}</label>
                         <label class="col-sm-2 control-label">类型：</label>
-                        <div class="col-sm-6">
+                        <div class="col-sm-6">{{ctrl.sourceData.inventoryHold}}
                             <select class="form-control" ng-model="ctrl.sourceData.inventoryHold">
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 <option value="0">&nbsp;不做保留</option>
@@ -138,7 +138,7 @@
                     <div class="form-group" ng-hide="!ctrl.sourceData.inventoryHold||ctrl.sourceData.inventoryHold=='0'"><!-- 保留量 -->
                         <label class="col-sm-4 control-label">{{'TXT_STORE_REMAINED_NUMBER' | translate}}</label>
                         <div class="col-sm-8">
-                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.inventoryHold" name="inventoryHold"/>
+                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.remainNum" name="remainNum"/>
                         </div>
                     </div>
                 </div>

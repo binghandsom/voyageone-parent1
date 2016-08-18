@@ -36,21 +36,25 @@ define([
                 var self = this;
                 var result = {};
                 if (self.append == true) {
+                    if (self.sourceData.remainNum)
+                        self.sourceData.inventoryHold = self.sourceData.inventoryHold + ',' + self.sourceData.remainNum;
                     self.storeService.addStore(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
                         }
-                        _.extend(result,{'res':'success','sourceData':self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
+                    if (self.sourceData.remainNum)
+                        self.sourceData.inventoryHold = self.sourceData.inventoryHold + ',' + self.sourceData.remainNum;
                     self.storeService.updateStore(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
                         }
-                        _.extend(result,{'res':'success','sourceData':self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
                 }
