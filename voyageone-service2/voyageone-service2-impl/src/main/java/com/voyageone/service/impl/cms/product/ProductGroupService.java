@@ -96,12 +96,22 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
-     * 根据channelId和产品Code检索出productGroup数据.
+     * 根据channelId和产品Code,cartId检索出productGroup数据.
      */
     public CmsBtProductGroupModel selectProductGroupByCode(String channelId, String code, Integer cartId) {
         JongoQuery query = new JongoQuery();
         query.setQuery(String.format("{\"productCodes\": \"%s\", \"cartId\": %d}", code, cartId));
         return getProductGroupByQuery(channelId, query);
+    }
+
+    /**
+     * 根据channelId和产品Code检索出productGroup数据列表.
+     */
+    public List<CmsBtProductGroupModel> selectProductGroupListByCode(String channelId, String code) {
+        // 先去看看是否有存在的了
+        JongoQuery queryObject = new JongoQuery();
+        queryObject.setQuery("{\"productCodes\":\"" + code + "\"}");
+        return getList(channelId, queryObject);
     }
 
     /**
