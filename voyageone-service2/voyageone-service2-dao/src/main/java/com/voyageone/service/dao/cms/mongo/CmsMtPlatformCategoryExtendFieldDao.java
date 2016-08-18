@@ -22,13 +22,13 @@ import java.util.Map;
 @Repository
 public class CmsMtPlatformCategoryExtendFieldDao extends BaseMongoCartDao<CmsMtPlatformCategoryExtendFieldModel> {
 
-    public CmsMtPlatformCategoryExtendFieldModel selectOneByCatId(String catId, int cartId) {
+    public CmsMtPlatformCategoryExtendFieldModel selectOneByCatId(String catId, int cartId, String channelId) {
 //        JongoQuery query = new JongoQuery();
 //        query.setQuery("{\"catId\":#}");
 //        query.setParameters(catId);
 //        return selectOneWithQuery(query, cartId);
-        String query = "{'catId':'%s'}";
-        JSONObject result = mongoTemplate.findOne(String.format(query, catId), getCollectionName(cartId));
+        String query = "{'catId':'%s','channelId':'%s'}";
+        JSONObject result = mongoTemplate.findOne(String.format(query, catId, channelId), getCollectionName(cartId));
 
         CmsMtPlatformCategoryExtendFieldModel model = null;
         if (result != null) {
