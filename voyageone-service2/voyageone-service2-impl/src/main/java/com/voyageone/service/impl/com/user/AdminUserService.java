@@ -3,10 +3,10 @@ package com.voyageone.service.impl.com.user;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.security.bean.ComResourceBean;
+import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.security.dao.ComUserDao;
 import com.voyageone.security.dao.ComUserRoleDao;
-import com.voyageone.security.daoext.ComResourceDaoExt;
+import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.security.model.ComUserModel;
 import com.voyageone.security.model.ComUserRoleModel;
 import com.voyageone.service.bean.com.AdminUserBean;
@@ -38,7 +38,7 @@ public class AdminUserService extends BaseService {
 
 
     @Autowired
-    ComResourceDaoExt comResourceDaoExt;
+    AdminResourceDaoExt adminResourceDaoExt;
 
     @Autowired
     AdminResService adminResService;
@@ -245,24 +245,24 @@ public class AdminUserService extends BaseService {
         Map<String, Object> result = new HashMap<>();
 
 
-        List<ComResourceBean> resList = comResourceDaoExt.selectResByUser(userId);
-        Set<Integer> resIds = resList.stream().map(ComResourceBean::getId).collect(Collectors.toSet());
+        List<AdminResourceBean> resList = adminResourceDaoExt.selectResByUser(userId);
+        Set<Integer> resIds = resList.stream().map(AdminResourceBean::getId).collect(Collectors.toSet());
 
-        List<ComResourceBean> allRes = adminResService.searchRes(null);
+        List<AdminResourceBean> allRes = adminResService.searchRes(null);
 
         allRes = markSelected(allRes, resIds);
 
-        Map<String, ComResourceBean> treeMap = allRes.stream().collect(Collectors.toMap(ComResourceBean::getResKey, (p) -> p));
+        Map<String, AdminResourceBean> treeMap = allRes.stream().collect(Collectors.toMap(AdminResourceBean::getResKey, (p) -> p));
 
         result.put("treeMap", treeMap);
         return result;
     }
 
-    private List<ComResourceBean>  markSelected(List<ComResourceBean> allRes, Set<Integer> resIds) {
+    private List<AdminResourceBean>  markSelected(List<AdminResourceBean> allRes, Set<Integer> resIds) {
         if (resIds == null || resIds.size() == 0)
             return  allRes;
 
-        for (ComResourceBean bean : allRes) {
+        for (AdminResourceBean bean : allRes) {
             if (resIds.contains(bean.getId())) {
                 bean.setSelected(1);
             } else {

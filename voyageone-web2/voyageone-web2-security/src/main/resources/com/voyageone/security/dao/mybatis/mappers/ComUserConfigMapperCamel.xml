@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.security.dao.ComUserConfigDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.security.model.ComUserConfigModel" />
     <sql id="Base_Column_List" >
-        `id`, `user_id`, `cfg_name`, `cfg_val1`, `cfg_val2`, `comment`, `active`, `created`, 
-        `creater`, `modified`, `modifier`
+        `id`, `user_id`, `cfg_name`, `cfg_val1`, `cfg_val2`, `comment`, `created`, `creater`, 
+        `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -31,9 +31,6 @@
             </if>
             <if test="comment != null" >
                 `comment` = #{comment,jdbcType=VARCHAR},
-            </if>
-            <if test="active != null" >
-                `active` = #{active,jdbcType=BIT},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -79,9 +76,6 @@
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
-            <if test="active != null" >
-                and `active` = #{active,jdbcType=BIT}
-            </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -118,9 +112,6 @@
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
-            <if test="active != null" >
-                and `active` = #{active,jdbcType=BIT}
-            </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -153,9 +144,6 @@
             </if>
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
-            </if>
-            <if test="active != null" >
-                and `active` = #{active,jdbcType=BIT}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -190,9 +178,6 @@
             <if test="comment != null" >
                 `comment`,
             </if>
-            <if test="active != null" >
-                `active`,
-            </if>
             `created`,
             <if test="creater != null" >
                 `creater`,
@@ -220,9 +205,6 @@
             </if>
             <if test="comment != null" >
                 #{comment,jdbcType=VARCHAR},
-            </if>
-            <if test="active != null" >
-                #{active,jdbcType=BIT},
             </if>
             <if test="created == null" >
                 now(),

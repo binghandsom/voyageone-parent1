@@ -3,6 +3,7 @@ package com.voyageone.service.daoext.com;
 import java.util.List;
 import java.util.Map;
 
+import com.voyageone.service.model.com.WmsMtStoreModel;
 import org.springframework.stereotype.Repository;
 
 import com.voyageone.service.bean.com.CtStoreConfigBean;
@@ -22,5 +23,8 @@ public interface WmsMtStoreDaoExt {
 	Integer selectStoreConfigCount(Map<String, Object> params);
 
 	List<CtStoreConfigBean> selectStoreConfigByPage(Map<String, Object> params);
+
+	List<String> selectIdsByChannel(List<String> ids);
+
 
 }

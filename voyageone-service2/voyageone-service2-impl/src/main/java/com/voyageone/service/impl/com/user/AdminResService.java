@@ -4,10 +4,9 @@ import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.security.bean.ComResourceBean;
+import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.model.ComResourceModel;
-import com.voyageone.security.model.ComUserModel;
 import com.voyageone.service.impl.BaseService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -33,7 +32,7 @@ public class AdminResService extends BaseService {
      * @param app
      * @return
      */
-    public List<ComResourceBean> searchRes(String app)
+    public List<AdminResourceBean> searchRes(String app)
     {
         Map<String, Object> map = new HashMap<>();
         if(!StringUtils.isNullOrBlank2(app))
@@ -44,11 +43,11 @@ public class AdminResService extends BaseService {
         map = MySqlPageHelper.build(map).addSort("res_type", Order.Direction.ASC).addSort("weight", Order.Direction.ASC).toMap();
 
         List<ComResourceModel> list  = comResourceDao.selectList(map);
-        List<ComResourceBean> beanList = new ArrayList<>();
+        List<AdminResourceBean> beanList = new ArrayList<>();
 
         for(ComResourceModel model : list)
         {
-            ComResourceBean bean = new ComResourceBean() ;
+            AdminResourceBean bean = new AdminResourceBean() ;
             BeanUtils.copyProperties(model, bean);
             beanList.add(bean);
         }
@@ -122,11 +121,11 @@ public class AdminResService extends BaseService {
     /**
      * 将资源列转成一组树
      */
-    private List<ComResourceBean> convert2Tree(List<ComResourceBean> resList) {
-        List<ComResourceBean> roots = findRoots(resList);
-        List<ComResourceBean> notRoots = (List<ComResourceBean>) CollectionUtils.subtract(resList, roots);
-        for (ComResourceBean root : roots) {
-            List<ComResourceBean> children = findChildren(root, notRoots);
+    private List<AdminResourceBean> convert2Tree(List<AdminResourceBean> resList) {
+        List<AdminResourceBean> roots = findRoots(resList);
+        List<AdminResourceBean> notRoots = (List<AdminResourceBean>) CollectionUtils.subtract(resList, roots);
+        for (AdminResourceBean root : roots) {
+            List<AdminResourceBean> children = findChildren(root, notRoots);
             root.setChildren(children);
         }
         return roots;
@@ -135,9 +134,9 @@ public class AdminResService extends BaseService {
     /**
      * 查找所有根节点
      */
-    private List<ComResourceBean> findRoots(List<ComResourceBean> allNodes) {
-        List<ComResourceBean> results = new ArrayList<>();
-        for (ComResourceBean node : allNodes) {
+    private List<AdminResourceBean> findRoots(List<AdminResourceBean> allNodes) {
+        List<AdminResourceBean> results = new ArrayList<>();
+        for (AdminResourceBean node : allNodes) {
             if (node.getParentId() == 0) {
                 results.add(node);
             }
@@ -149,26 +148,26 @@ public class AdminResService extends BaseService {
     /**
      * 查找所有子节点
      */
-    private List<ComResourceBean> findChildren(ComResourceBean root, List<ComResourceBean> allNodes) {
-        List<ComResourceBean> children = new ArrayList<>();
+    private List<AdminResourceBean> findChildren(AdminResourceBean root, List<AdminResourceBean> allNodes) {
+        List<AdminResourceBean> children = new ArrayList<>();
 
-        for (ComResourceBean node : allNodes) {
+        for (AdminResourceBean node : allNodes) {
             if (node.getParentId()  == root.getId() ) {
                 children.add(node);
             }
         }
         root.setChildren(children);
 
-        List<ComResourceBean> notChildren = (List<ComResourceBean>) CollectionUtils.subtract(allNodes, children);
+        List<AdminResourceBean> notChildren = (List<AdminResourceBean>) CollectionUtils.subtract(allNodes, children);
 
-        for (ComResourceBean child : children) {
-            List<ComResourceBean> tmpChildren = findChildren(child, notChildren );
+        for (AdminResourceBean child : children) {
+            List<AdminResourceBean> tmpChildren = findChildren(child, notChildren );
             child.setChildren(tmpChildren);
         }
         return children;
     }
 
-    public void deleteUser(List<Integer> resIds, String username) {
+    public void deleteRes(List<Integer> resIds, String username) {
         for (Integer id : resIds) {
             ComResourceModel model = new ComResourceModel();
             model.setId(id);
