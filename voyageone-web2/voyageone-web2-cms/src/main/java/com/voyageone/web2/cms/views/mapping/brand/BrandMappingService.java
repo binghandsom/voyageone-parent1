@@ -1,21 +1,10 @@
 package com.voyageone.web2.cms.views.mapping.brand;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.jboss.netty.util.internal.ConcurrentHashMap;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.jd.open.api.sdk.response.list.VenderBrandPubInfo;
 import com.taobao.api.domain.Brand;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.jd.service.JdCategoryService;
 import com.voyageone.components.jumei.bean.JmBrandBean;
@@ -29,9 +18,17 @@ import com.voyageone.service.impl.cms.jumei.CmsBtJmMasterBrandService;
 import com.voyageone.service.model.cms.CmsBtJmMasterBrandModel;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 import com.voyageone.service.model.cms.CmsMtPlatformBrandsModel;
+import com.voyageone.service.model.cms.enums.CartType;
+import com.voyageone.service.model.cms.enums.PlatformType;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.BrandMappingBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.jboss.netty.util.internal.ConcurrentHashMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 品牌映射服务
@@ -164,13 +161,14 @@ public class BrandMappingService extends BaseAppService {
 			List<?> brands = null;
 			// 取得各品牌的最新数据
 			shop = Shops.getShop(channelId, cartId);
-			if (CartEnums.Cart.JM.getId().equals(cartId)) {
+			Integer platformId = CartType.getPlatformIdById(Integer.valueOf(cartId));
+			if (platformId == PlatformType.JM.getPlatformId()) {
 				// 聚美品牌
 				brands = jumeiBrandService.getBrands(shop);
-			} else if (CartEnums.Cart.TG.getId().equals(cartId)) {
+			} else if (platformId == PlatformType.TMALL.getPlatformId()) {
 				// 天猫品牌
 				brands = tbCategoryService.getSellerCategoriesAuthorize(shop).getBrands();
-			} else if (CartEnums.Cart.JD.getId().equals(cartId)) {
+			} else if (platformId == PlatformType.JD.getPlatformId()) {
 				// 京东品牌
 				brands = jdCategoryService.getCategoryBrandInfo(shop, "");
 			} else {
