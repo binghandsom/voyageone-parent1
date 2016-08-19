@@ -391,7 +391,7 @@ public class PriceService extends BaseService {
      * @param lastRetailPrice 上一次的指导价
      * @return 波动字符串
      */
-    private String getPriceFluctuation(Double retailPrice, Double lastRetailPrice) {
+    public String getPriceFluctuation(Double retailPrice, Double lastRetailPrice) {
 
         // 老价格为空, 表示新建, 则不需要设置波动
         // 新老价格相同也同样
