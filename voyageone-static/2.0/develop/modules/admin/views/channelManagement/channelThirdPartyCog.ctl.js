@@ -16,12 +16,12 @@ define([
             this.thirdPartyConfigService = thirdPartyConfigService;
             this.channelPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.channelList = [];
-            this.channelTypeSelList = {selList: []};
+            this.channelThirdSelList = {selList: []};
             this.tempChannelSelect = null;
             this.searchInfo = {
                 channelId: '',
                 propName: '',
-                value: '',
+                propVal: '',
                 pageInfo: this.channelPageOption
             }
         }
@@ -43,9 +43,9 @@ define([
                 self.thirdPartyConfigService.searchThirdPartyConfigByPage({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
-                        'channelId': self.searchInfo.orderChannelId,
+                        'channelId': self.searchInfo.channelId,
                         'propName': self.searchInfo.propName,
-                        'value': self.searchInfo.value
+                        'propVal': self.searchInfo.propVal
                     })
                     .then(function (res) {
                         self.channelList = res.data.result;
@@ -66,7 +66,7 @@ define([
                                 });
                             }
                         });
-                        self.channelTypeSelList = self.tempChannelSelect.selectRowsInfo;
+                        self.channelThirdSelList = self.tempChannelSelect.selectRowsInfo;
                     })
             },
             clear: function () {
@@ -75,18 +75,18 @@ define([
                     pageInfo: this.channelPageOption,
                     channelId: '',
                     propName: '',
-                    value: ''
+                    propVal: ''
                 }
             },
             edit: function () {
                 var self = this;
-                if (self.channelTypeSelList.selList.length <= 0) {
+                if (self.channelThirdSelList.selList.length <= 0) {
                     self.alert('TXT_MSG_NO_ROWS_SELECT');
                     return;
                 } else {
                     _.forEach(self.channelList, function (channelInfo) {
-                        if (channelInfo.id == self.channelTypeSelList.selList[0].id) {
-                            self.popups.openAddChannelType(channelInfo).then(function () {
+                        if (channelInfo.seq == self.channelThirdSelList.selList[0].id) {
+                            self.popups.openChannelThird(channelInfo).then(function () {
                                 self.search(1);
                             });
                         }
@@ -98,8 +98,8 @@ define([
                 var self = this;
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
                         var delList = [];
-                        _.forEach(self.channelTypeSelList.selList, function (delInfo) {
-                            delList.push(delInfo.id);
+                        _.forEach(self.channelThirdSelList.selList, function (delInfo) {
+                            delList.push(delInfo.seq);
                         });
                         self.channelService.deleteChannel(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);
