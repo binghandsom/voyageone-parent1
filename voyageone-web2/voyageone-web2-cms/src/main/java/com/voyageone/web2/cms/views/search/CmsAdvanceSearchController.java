@@ -129,6 +129,7 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("customProps", cmsSession.getAttribute("_adv_search_customProps"));
         resultBean.put("commonProps", cmsSession.getAttribute("_adv_search_commonProps"));
         resultBean.put("selSalesType", cmsSession.getAttribute("_adv_search_selSalesType"));
+        resultBean.put("selBiDataList", cmsSession.getAttribute("_adv_search_selBiDataList"));
 
         cmsSession.putAttribute("_adv_search_productListTotal", productListTotal);
         cmsSession.putAttribute("_adv_search_groupListTotal", groupListTotal);
@@ -318,20 +319,12 @@ public class CmsAdvanceSearchController extends CmsController {
      */
     @RequestMapping("getCustColumnsInfo")
     public AjaxResponse getCustColumnsInfo() {
-        Map<String, Object> resultBean = new HashMap<>();
         UserSessionBean userInfo = getUser();
-
-        // 取得自定义显示列设置
-        resultBean.put("customProps", searchIndexService.selectAttrs(userInfo.getSelChannelId(), "0"));
-        resultBean.put("commonProps", searchIndexService.getCustColumns());
 
         // 获取该用户自定义显示列设置
         Map<String, Object> colData = advSearchCustColumnService.getUserCustColumns(userInfo, getLang());
-        if (colData != null) {
-            resultBean.putAll(colData);
-        }
         // 返回用户信息
-        return success(resultBean);
+        return success(colData);
     }
 
     /**
@@ -361,11 +354,7 @@ public class CmsAdvanceSearchController extends CmsController {
      */
     @RequestMapping("saveCustColumnsInfo")
     public AjaxResponse saveCustColumnsInfo(@RequestBody Map<String, Object> params) {
-        List<String> customProps = (List<String>) params.get("customProps");
-        List<String> commonProps = (List<String>) params.get("commonProps");
-        List<String> selSalesTypeList = (List<String>) params.get("selSalesTypeList");
-
-        advSearchCustColumnService.saveCustColumnsInfo(getUser(), getCmsSession(), customProps, commonProps, getLang(), selSalesTypeList);
+        advSearchCustColumnService.saveCustColumnsInfo(getUser(), getCmsSession(), params, getLang());
         return success(null);
     }
 

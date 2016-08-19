@@ -62,8 +62,6 @@ public class CmsAdvanceSearchService extends BaseAppService {
     @Autowired
     private ProductService productService;
     @Autowired
-    private FeedCustomPropService feedCustomPropService;
-    @Autowired
     private CmsChannelTagService cmsChannelTagService;
     @Resource
     private CmsBtJmPromotionService jmPromotionService;
@@ -138,6 +136,9 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
         // 设置按销量排序的选择列表
         masterData.put("salesTypeList", advSearchOtherService.getSalesTypeList(userInfo.getSelChannelId(), language, null));
+
+        // 设置BI数据显示的选择列表
+        masterData.put("biDataList", advSearchOtherService.getBiDataList(userInfo.getSelChannelId(), language, null));
 
         // 判断是否是minimall/usjoi用户
         boolean isMiniMall = Channels.isUsJoi(userInfo.getSelChannelId());
@@ -343,20 +344,6 @@ public class CmsAdvanceSearchService extends BaseAppService {
             return 0;
         }
         return (Integer) rsMap.get("count");
-    }
-
-    /**
-     * 根据类目路径查询已翻译的属性信息
-     */
-    public List<Map<String, Object>> selectAttrs(String channelId, String catPath) {
-        return feedCustomPropService.getFeedCustomPropAttrs(channelId, catPath);
-    }
-
-    /**
-     * 取得自定义显示列设置
-     */
-    public List<Map<String, Object>> getCustColumns() {
-        return commonPropService.getCustColumns(2);
     }
 
     /**
