@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.tools;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformMappingDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -26,9 +27,9 @@ import java.util.Map;
 @Service
 public class PlatformMappingService extends BaseService {
 
-    private final static int CATEGORY_TYPE_COMMON = 1;
+    public final static int CATEGORY_TYPE_COMMON = 1;
 
-    private final static int CATEGORY_TYPE_SPECIFIC = 2;
+    public final static int CATEGORY_TYPE_SPECIFIC = 2;
 
     private final static String EXPRESSION_TYPE_FEED_CN = "FEED_CN";
 
@@ -46,7 +47,16 @@ public class PlatformMappingService extends BaseService {
         this.platformMappingDao = platformMappingDao;
     }
 
-    boolean saveMap(CmsBtPlatformMappingModel fieldMapsModel) {
+    public CmsBtPlatformMappingModel get(CmsBtPlatformMappingModel platformMappingModel, String channelId) {
+
+        if (platformMappingModel.getCategoryType() == CATEGORY_TYPE_COMMON)
+            return platformMappingDao.selectCommon(platformMappingModel.getCartId(), channelId);
+
+        return platformMappingDao.selectOne(platformMappingModel.getCartId(), platformMappingModel.getCategoryType(),
+                platformMappingModel.getCategoryPath(), channelId);
+    }
+
+    public boolean saveMap(CmsBtPlatformMappingModel fieldMapsModel) {
 
         WriteResult writeResult;
 
@@ -66,9 +76,9 @@ public class PlatformMappingService extends BaseService {
 
         CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
 
-        CmsBtPlatformMappingModel fieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, cart.getpCatId(), channelId);
+        CmsBtPlatformMappingModel fieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, cart.getpCatPath(), channelId);
 
-        CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_COMMON, cart.getpCatId(), channelId);
+        CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectCommon(cartId, channelId);
 
         Map<String, Object> valueMap = new HashMap<>();
 
@@ -79,6 +89,21 @@ public class PlatformMappingService extends BaseService {
             fillValueMap(valueMap, product, commonFieldMapsModel);
 
         return valueMap;
+    }
+
+    public List<CmsBtPlatformMappingModel> getPage(ChannelConfigEnums.Channel channel, Integer categoryType, Integer cartId, String categoryPath, int page, int size) {
+        return platformMappingDao.selectPage(channel.getId(), categoryType, cartId, categoryPath, page * size, size);
+    }
+
+    public long getCount(ChannelConfigEnums.Channel channel, Integer categoryType, Integer cartId, String categoryPath) {
+        return platformMappingDao.count(channel.getId(), categoryType, cartId, categoryPath);
+    }
+
+    public boolean delete(CmsBtPlatformMappingModel platformMappingModel) {
+
+        WriteResult writeResult = platformMappingDao.delete(platformMappingModel);
+
+        return writeResult.getN() > 0;
     }
 
     private void fillValueMap(Map<String, Object> valueMap, CmsBtProductModel product, CmsBtPlatformMappingModel fieldMapsModel) {
@@ -104,7 +129,7 @@ public class PlatformMappingService extends BaseService {
 
         CmsBtProductModel_Field master = common.getFields();
 
-        for (CmsBtPlatformMappingModel.FieldMapping mapping: mappingList) {
+        for (CmsBtPlatformMappingModel.FieldMapping mapping : mappingList) {
 
             List<CmsBtPlatformMappingModel.FieldMappingExpression> expressionList = mapping.getExpressions();
 
@@ -115,7 +140,7 @@ public class PlatformMappingService extends BaseService {
 
             StringBuilder valueBuilder = new StringBuilder();
 
-            for (CmsBtPlatformMappingModel.FieldMappingExpression expression: expressionList) {
+            for (CmsBtPlatformMappingModel.FieldMappingExpression expression : expressionList) {
 
                 String key = expression.getValue();
 

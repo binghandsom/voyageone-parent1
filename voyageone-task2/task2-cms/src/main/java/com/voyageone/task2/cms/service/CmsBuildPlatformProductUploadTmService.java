@@ -25,7 +25,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxCspuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseTaskService;
@@ -192,7 +192,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
         // 平台类目schema信息
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel;
         // 平台Mapping信息
-        CmsMtPlatformMappingModel cmsMtPlatformMappingModel;
+        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel;
         // 平台类目id
         String platformCategoryId = "";
         // 达尔文是否能上新商品

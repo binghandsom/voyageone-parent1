@@ -51,7 +51,7 @@ import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
 import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl8;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.channel.*;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -1061,7 +1061,7 @@ public class SxProductService extends BaseService {
      * Step3:schema的上记Step1,2以外的全部field
      *
      * @param fields List<Field> 直接把值set进这个fields对象
-     * @param cmsMtPlatformMappingModel CmsMtPlatformMappingModel
+     * @param cmsMtPlatformMappingModel CmsMtPlatformMappingDeprecatedModel
      * @param shopBean ShopBean
      * @param expressionParser ExpressionParser
      * @param user 上传图片用
@@ -1069,7 +1069,7 @@ public class SxProductService extends BaseService {
      * @return Map<field_id mt里转换后的值> （只包含叶子节点，即只包含简单类型，对于复杂类型，也只把复杂类型里的简单类型值put进Map，只为了外部可以不用再循环取值，只需要根据已知的field_id，取得转换后的值）
      * @throws Exception
      */
-    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user, boolean isItem) throws Exception {
+    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user, boolean isItem) throws Exception {
         Map<String, Field> retMap = null;
         SxData sxData = expressionParser.getSxData();
 
@@ -1797,7 +1797,7 @@ public class SxProductService extends BaseService {
      * @param skuInventoryMap sku对应逻辑库存
      * @throws Exception
      */
-    private Map<String, Field> constructCustomPlatformProps(Map<CustomMappingType, List<Field>> mappingTypePropsMap, ExpressionParser expressionParser, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
+    private Map<String, Field> constructCustomPlatformProps(Map<CustomMappingType, List<Field>> mappingTypePropsMap, ExpressionParser expressionParser, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
         Map<String, Field> retMap = new HashMap<>();
 
         SxData sxData = expressionParser.getSxData();

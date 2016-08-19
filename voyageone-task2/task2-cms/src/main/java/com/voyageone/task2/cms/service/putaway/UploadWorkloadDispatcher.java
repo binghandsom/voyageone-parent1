@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service.putaway;
 
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDeprecatedDao;
 import com.voyageone.task2.cms.bean.WorkLoadBean;
 import com.voyageone.task2.cms.dao.SkuInventoryDao;
 import com.voyageone.common.components.issueLog.IssueLog;
@@ -35,7 +35,7 @@ public class UploadWorkloadDispatcher {
     private final Object mainThreadSingal;
 
     @Autowired
-    private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
+    private CmsMtPlatformMappingDeprecatedDao cmsMtPlatformMappingDao;
     @Autowired
     private SkuInventoryDao skuInventoryDao;
     @Autowired

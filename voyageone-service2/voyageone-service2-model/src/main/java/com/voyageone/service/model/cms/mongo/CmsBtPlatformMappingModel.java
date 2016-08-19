@@ -20,7 +20,7 @@ public class CmsBtPlatformMappingModel extends ChannelPartitionModel {
 
     private Integer categoryType;
 
-    private String categoryId;
+    private String categoryPath;
 
     private List<FieldMapping> mappings;
 
@@ -40,12 +40,12 @@ public class CmsBtPlatformMappingModel extends ChannelPartitionModel {
         this.categoryType = categoryType;
     }
 
-    public String getCategoryId() {
-        return categoryId;
+    public String getCategoryPath() {
+        return categoryPath;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public void setCategoryPath(String categoryPath) {
+        this.categoryPath = categoryPath;
     }
 
     public List<FieldMapping> getMappings() {

@@ -324,7 +324,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 属性值准备
             // 2016/06/01 Delete by desmond start   京东不需要mapping表了
             // 取得主产品类目对应的platform mapping数据
-//            CmsMtPlatformMappingModel cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(shopProp.getOrder_channel_id(),
+//            CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(shopProp.getOrder_channel_id(),
 //                    Integer.parseInt(shopProp.getCart_id()), mainProduct.getCatId());
 //            if (cmsMtPlatformMappingModel == null) {
 //                String errMsg = String.format("共通PlatformMapping表中对应的平台Mapping信息不存在！[ChannelId:%s] [CartId:%s] [主产品类目:%s]", channelId, cartId, mainProduct.getCatId());

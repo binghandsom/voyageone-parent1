@@ -2,8 +2,10 @@ package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoCartDao;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import net.minidev.json.JSONObject;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -36,4 +38,8 @@ public class CmsMtPlatformCategorySchemaDao extends BaseMongoCartDao<CmsMtPlatfo
         return selectOneWithQuery(queryStr, cartId);
     }
 
+    public CmsMtPlatformCategorySchemaModel selectByCategoryPath(String categoryPath, int cartId) {
+        return selectOneWithQuery(new JongoQuery(
+                new Criteria("catFullPath").is(categoryPath).and("cartId").is(cartId)), cartId);
+    }
 }

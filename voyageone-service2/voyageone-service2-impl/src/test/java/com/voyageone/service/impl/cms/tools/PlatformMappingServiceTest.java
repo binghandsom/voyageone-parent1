@@ -47,7 +47,7 @@ public class PlatformMappingServiceTest {
         return new CmsBtPlatformMappingModel() {
             {
                 setChannelId(productModel.getChannelId());
-                setCategoryId(cart.getpCatId());
+                setCategoryPath(cart.getpCatPath());
                 setCartId(cartId);
                 setCategoryType(2);
                 setMappings(new ArrayList<FieldMapping>() {
@@ -101,7 +101,7 @@ public class PlatformMappingServiceTest {
 
         platformMappingService.saveMap(fieldMapsModel);
 
-        fieldMapsModel = fieldMapsDao.selectOne(fieldMapsModel.getCartId(), fieldMapsModel.getCategoryType(), fieldMapsModel.getCategoryId(), fieldMapsModel.getChannelId());
+        fieldMapsModel = fieldMapsDao.selectOne(fieldMapsModel.getCartId(), fieldMapsModel.getCategoryType(), fieldMapsModel.getCategoryPath(), fieldMapsModel.getChannelId());
 
         fieldMapsDao.delete(fieldMapsModel);
     }
