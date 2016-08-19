@@ -28,7 +28,10 @@ public class MasterWordParser extends VOAbsLoggable {
 
     //目前只支持解析model级别的属性
     public String parse(RuleWord ruleWord) {
-        if (!WordType.MASTER.equals(ruleWord.getWordType())) {
+        if (!WordType.MASTER.equals(ruleWord.getWordType())
+                && !WordType.MASTER_HTML.equals(ruleWord.getWordType())
+                && !WordType.MASTER_CLR_HTML.equals(ruleWord.getWordType())
+                ) {
             return null;
         } else {
             MasterWord masterWord = (MasterWord) ruleWord;

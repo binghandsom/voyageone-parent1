@@ -1,6 +1,6 @@
 package com.voyageone.common.util;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.support.VOBsonQueryFactory;
 import com.voyageone.common.configs.beans.ShopBean;
 import org.apache.commons.beanutils.BeanUtils;
@@ -75,10 +75,10 @@ public class JacksonUtilTest {
     @Test
     public void test223() {
         String str = "{$and:[{$or:[{\"brand\":\"American West\"}]},{\"updFlg\":#}]}";
-        JomgoQuery jomgoQuery = new JomgoQuery();
-        jomgoQuery.setQuery(str);
-        jomgoQuery.addParameters("aaa\"afasfd");
-        System.out.println(jomgoQuery.getQueryMap());
+        JongoQuery jongoQuery = new JongoQuery();
+        jongoQuery.setQuery(str);
+        jongoQuery.addParameters("aaa\"afasfd");
+        System.out.println(jongoQuery.getQueryMap());
     }
 
     @Test

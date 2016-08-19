@@ -3,8 +3,7 @@ package com.voyageone.web2.vms.views.report;
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.common.configs.Types;
-import com.voyageone.common.util.BeanUtil;
-import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.com.UserConfigBean;
 import com.voyageone.service.bean.vms.report.FinancialReportBean;
@@ -15,7 +14,11 @@ import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -134,7 +137,7 @@ public class VmsFinancialReportService extends BaseAppService {
         for (VmsBtFinancialReportModel financialReport : financialReportModels) {
 
             FinancialReportBean bean = new FinancialReportBean();
-            BeanUtil.copy(financialReport, bean);
+            BeanUtils.copy(financialReport, bean);
 
             // Status
             bean.setStatusName(Types.getTypeName(86, lang,  (String)financialReport.getStatus()));

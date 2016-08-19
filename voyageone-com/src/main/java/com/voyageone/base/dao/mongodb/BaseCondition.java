@@ -16,9 +16,9 @@ import static java.util.stream.Collectors.toList;
  * @version 2.0.1
  * @since 2.0.0
  */
-public abstract class BaseCondition {
+abstract class BaseCondition {
 
-    public String buildProjection(String... projection) {
+    String buildProjection(String... projection) {
         if (projection == null) {
             return null;
         }
@@ -47,5 +47,4 @@ public abstract class BaseCondition {
         // 格式为 {"a":1,"b":1,"c":1},则重复的间隔为 ":1," 则 {"joining(?:1,?:1,?)":1} => {"a":1,"b":1,"c":1}
         return String.format("{\"%s\":1}", fields.stream().collect(joining("\":1,\"")));
     }
-
 }

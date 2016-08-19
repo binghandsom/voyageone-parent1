@@ -15,14 +15,17 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +45,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     private CmsMtBrandService cmsMtBrandService;
     @Autowired
     private PlatformSchemaService platformSchemaService;
+    @Autowired
+    private PlatformCategoryService platformCategoryService;
 
     /**
      * 获取产品平台信息
@@ -61,7 +66,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
         // platform 品牌名
         if (StringUtil.isEmpty(platformCart.getpBrandId()) || StringUtil.isEmpty(platformCart.getpBrandName())) {
-            if(cartId != CartEnums.Cart.USJGJ.getValue()
+            if (cartId != CartEnums.Cart.USJGJ.getValue()
                     && cartId != CartEnums.Cart.USJGY.getValue()
                     && cartId != CartEnums.Cart.USJGT.getValue()) {
                 Map<String, Object> parm = new HashMap<>();
@@ -74,21 +79,21 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                     platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
                     platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
                 }
-            }else{
+            } else {
                 platformCart.setpBrandName(cmsBtProduct.getCommon().getFields().getBrand());
             }
         }
 
-        if(cartId != CartEnums.Cart.USJGJ.getValue()
+        if (cartId != CartEnums.Cart.USJGJ.getValue()
                 && cartId != CartEnums.Cart.USJGY.getValue()
                 && cartId != CartEnums.Cart.USJGT.getValue()) {
             // 非主商品的平台类目跟这个主商品走
-            if(platformCart.getpIsMain() != 1 && cartId != CartEnums.Cart.JM.getValue()){
-                CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(),cartId);
+            if (platformCart.getpIsMain() != 1 && cartId != CartEnums.Cart.JM.getValue()) {
+                CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(), cartId);
                 CmsBtProductModel mainProduct = productService.getProductByCode(channelId, cmsBtProductGroup.getMainProductCode());
                 CmsBtProductModel_Platform_Cart mainPlatform = mainProduct.getPlatform(cartId);
-                if(mainPlatform == null || StringUtil.isEmpty(mainPlatform.getpCatId())){
-                    throw new BusinessException(CartEnums.Cart.getValueByID(cartId+"") + "该商品的主商品类目没有设置，请先设置主商品：" + mainProduct.getCommon().getFields().getCode());
+                if (mainPlatform == null || StringUtil.isEmpty(mainPlatform.getpCatId())) {
+                    throw new BusinessException(CartEnums.Cart.getValueByID(cartId + "") + "该商品的主商品类目没有设置，请先设置主商品：" + mainProduct.getCommon().getFields().getCode());
                 }
                 platformCart.setpCatPath(mainPlatform.getpCatPath());
                 platformCart.setpCatId(mainPlatform.getpCatId());
@@ -125,7 +130,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 image.put("productCode", s1);
                 image.put("imageName", product.getCommon().getFields().getImages1().get(0).get("image1"));
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
-                image.put("prodId",product.getProdId());
+                image.put("prodId", product.getProdId());
                 images.add(image);
             }
         });
@@ -167,7 +172,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, language));
             platformCart.setpCatId(catId);
             // platform 品牌名
-            if (StringUtil.isEmpty(platformCart.getpBrandId())  || StringUtil.isEmpty(platformCart.getpBrandName())) {
+            if (StringUtil.isEmpty(platformCart.getpBrandId()) || StringUtil.isEmpty(platformCart.getpBrandName())) {
                 Map<String, Object> parm = new HashMap<>();
                 parm.put("channelId", channelId);
                 parm.put("cartId", cartId);
@@ -200,9 +205,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
     public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier) {
 
-
-
-        if(platform.get("schemaFields") !=null) {
+        if (platform.get("schemaFields") != null) {
             List<Field> masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
 
             platform.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
@@ -238,11 +241,15 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                     throw new BusinessException("价格不能为空");
                 }
                 Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
+                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (newPriceSale / (2-breakThreshold))).compareTo(comPrice.get(sku)) < 0) {
+                    throw new BusinessException("4000094",((Double)Math.ceil(comPrice.get(sku) * (2 - breakThreshold))).intValue());
+                }
+
                 if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
-                    return "4000091";
+                    throw new BusinessException("4000091");
                 }
                 if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (comPrice.get(sku) * breakThreshold)).compareTo(newPriceSale) < 0) {
-                    return "4000092";
+                    throw new BusinessException("4000092");
                 }
             }
         }
@@ -333,7 +340,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         Map<String, List<Field>> fields = null;
         // JM的场合schema就一条
         if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
-            if(!StringUtil.isEmpty(catId)) {
+            if (!StringUtil.isEmpty(catId)) {
                 fields = platformSchemaService.getFieldForProductImage("1", channelId, cartId, language);
             }
         } else {
@@ -346,5 +353,48 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             FieldUtil.setFieldsValueFromMap(fields.get(PlatformSchemaService.KEY_PRODUCT), fieldsValue);
         }
         return fields;
+    }
+
+    public Map<String, Object> copyPropertyFromMainProduct(String channelId, Long prodId, Integer cartId, String language) {
+        CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);
+        CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getPlatform(cartId);
+
+        CmsBtProductModel mainProduct = productService.getProductByCode(channelId, platform.getMainProductCode());
+        CmsBtProductModel_Platform_Cart mainPlatform = mainProduct.getPlatform(cartId);
+
+        if (CmsConstants.ProductStatus.Pending.toString().equalsIgnoreCase(mainPlatform.getStatus())) {
+            throw new BusinessException("主商品没有编辑完成 请先编辑主商品");
+        }
+
+        platform.setpCatId(mainPlatform.getpCatId());
+        platform.setpCatPath(mainPlatform.getpCatPath());
+
+        mainPlatform.getFields().forEach((s, o) -> {
+            if (platform.getFields().containsKey(s)) {
+                if (StringUtils.isEmpty(platform.getFields().get(s).toString())) {
+                    // 天猫的场合 属性ID是 sku darwin_sku不复制
+                    if (cartId == CartEnums.Cart.TG.getValue() && !"sku".equalsIgnoreCase(s) && !"darwin_sku".equalsIgnoreCase(s)) {
+                        platform.getFields().put(s, o);
+                    }
+                }
+            } else {
+                platform.getFields().put(s, o);
+            }
+        });
+
+        platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, language));
+
+        return platform;
+    }
+
+    /**
+     * 获取平台所有类目
+     *
+     * @param user   用户配置
+     * @param cartId 平台 ID
+     * @return 类目集合
+     */
+    List<CmsMtPlatformCategoryTreeModel> getPlatformCategories(UserSessionBean user, Integer cartId) {
+        return platformCategoryService.getPlatformCategories(user.getSelChannelId(), cartId);
     }
 }

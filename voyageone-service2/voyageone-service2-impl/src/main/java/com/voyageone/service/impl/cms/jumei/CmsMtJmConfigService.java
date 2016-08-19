@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms.jumei;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.dao.cms.CmsMtJmConfigDao;
+//import com.voyageone.service.dao.cms.CmsMtJmConfigDao
 import com.voyageone.service.daoext.cms.CmsMtJmConfigDaoExt;
 import com.voyageone.service.model.cms.CmsMtJmConfigModel;
 import com.voyageone.service.bean.cms.businessmodel.JMDefaultSet;

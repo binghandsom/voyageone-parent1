@@ -20,6 +20,8 @@ public enum CustomMappingType {
     ITEM_WIRELESS_DESCRIPTION(12),
     IMAGE(13),
     FREIGHT(14), // 运费模板
+    CSPU(15), // 产品规格
+    PRODUCT_ID(16), // 货品Id
     ;
     // added by morse.lu 2016/06/29 end
 
@@ -90,6 +92,10 @@ public enum CustomMappingType {
                 return IMAGE;
             case 14:
                 return FREIGHT;
+            case 15:
+                return CSPU;
+            case 16:
+                return PRODUCT_ID;
             // added by morse.lu 2016/06/29 end
             default:
                 return null;

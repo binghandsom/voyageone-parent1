@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsBtSxWorkloadDao {
-    List<CmsBtSxWorkloadModel> selectList(Map<String, Object> map);
+    List<CmsBtSxWorkloadModel> selectList(Object map);
 
-    CmsBtSxWorkloadModel selectOne(Map<String, Object> map);
+    CmsBtSxWorkloadModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsBtSxWorkloadModel select(Integer id);
 

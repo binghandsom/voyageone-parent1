@@ -146,6 +146,7 @@ public class FeedEnums {
         quantity,
         material,
         usage_en,
+        is_usjoi,
         weight_org,
         weight_org_unit,
         weight_calc

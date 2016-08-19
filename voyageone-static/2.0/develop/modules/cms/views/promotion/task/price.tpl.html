@@ -85,7 +85,12 @@
 				<td>{{price.key}}</td>
 				<td><a ng-if="price.numIid" ng-href="{{'https://detail.tmall.hk/hk/item.htm?id='+price.numIid}}" target="_blank"  >{{price.numIid}}</a></td>
 				<td class="text-right">{{price.promotionPrice | number: 2}}</td>
-				<td><span ng-if="price.synFlg == 0" class="badge badge-stop">{{'TXT_STOP'| translate}}</span><span ng-if="price.synFlg == 1" class="badge badge-refresh">{{"TXT_PENDING" | translate}}</span><span ng-if="price.synFlg == 2" class="badge badge-success">{{"TXT_SUCCESS" | translate}}</span><span ng-if="price.synFlg == 3" class="badge badge-failure">{{"TXT_FAIL" |　translate}}</span></td>
+				<td>
+					<span ng-if="price.synFlg == 0" class="badge badge-stop" translate="TXT_STOP"></span>
+					<span ng-if="price.synFlg == 1" class="badge badge-refresh" translate="TXT_PENDING"></span>
+					<span ng-if="price.synFlg == 2" class="badge badge-success" translate="TXT_SUCCESS"></span>
+					<span ng-if="price.synFlg == 3" class="badge badge-failure" translate="TXT_FAIL"></span>
+				</td>
 				<td class="text-hs">{{price.errMsg}}</td>
 				<td class="text-right">
 					<button title="{{'TXT_STARTUP' | translate}}" class="btn btn-success btn-xs" ng-click="updateStatus(price,1)"><i class="fa fa-refresh"></i></button>

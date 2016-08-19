@@ -66,6 +66,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     public static final int WORK_LOAD_SUCCESS = 1;
     private static final int CART_ID = CartEnums.Cart.JM.getValue();
 
+    // 聚美详情,聚美实拍或聚美使用方法里面的html语法解析错误(例："span不能使用face属性","不能使用外链"等)
+    private static final String INVALID_HTML_CONTENT = "109902";
 //    private static final String DUPLICATE_PRODUCT_NAME = "109902";
     // 产品名称(name)在聚美已存在
     private static final String DUPLICATE_PRODUCT_DRAFT_NAME = "103087";
@@ -205,6 +207,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 throw new BusinessException(errorMsg);
             }
 
+            // 上新对象产品Code列表
+            List<String> listSxCode = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
+
             //读店铺信息
             ShopBean shop = Shops.getShop(channelId, CART_ID);
             if (shop == null) {
@@ -311,7 +316,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     sxData.getPlatform().setModifier(getTaskName());
                     sxData.getPlatform().setNumIId(jmHashId);
                     sxData.getPlatform().setPlatformPid(jmProductId);
-                    productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+                    productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
                     if(jmHashId.endsWith("p0"))
                     {
                         String errorMsg = String.format("聚美Hash_Id格式错误![ProductId:%s], [ChannelId:%s], [CartId:%s]:", product.getProdId(), channelId, CART_ID);
@@ -392,7 +397,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         sxData.getPlatform().setNumIId(originHashId);
                         sxData.getPlatform().setPlatformPid(jmProductId);
 
-                        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+                        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
 
                     }
                     else
@@ -405,7 +410,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 //上新失败
                 else
                 {
-                    String msg = String.format("上新失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductAddResponse.getErrorMsg());
+                    String errMsg = "";
+                    // 如果是错误代码是"109902"(HTML解析错误)的时候
+                    if (htProductAddResponse.getError_code().contains(INVALID_HTML_CONTENT)) {
+                        errMsg = "Master产品详情中的简短描述,详情描述或聚美使用方法等中英文项目的HTML内容语法解析错误！";
+                    }
+                    String msg = String.format("聚美新增产品上新失败！%s [ProductId:%s], [Message:%s]", errMsg, product.getProdId(), htProductAddResponse.getErrorMsg());
                     $error(msg);
                     throw  new BusinessException(msg);
                 }
@@ -649,7 +659,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 //更新产品失败
                 else
                 {
-                    String msg = String.format("更新产品失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductUpdateResponse.getErrorMsg());
+                    String msg = String.format("聚美更新产品上新失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductUpdateResponse.getErrorMsg());
                     $error(msg);
                     throw  new BusinessException(msg);
                 }
@@ -659,7 +669,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
                 sxData.getPlatform().setModifier(getTaskName());
 
-                productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+                productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
             }
 
             //保存workload
@@ -694,7 +704,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
                 if(StringUtils.isNullOrBlank2(e.getMessage())) {
-                    sxData.setErrorMessage(e.getStackTrace()[0].toString());
+                    sxData.setErrorMessage("聚美上新出现异常，请向管理员确认 " + e.getStackTrace()[0].toString());
                 }
                 else
                 {
@@ -1049,7 +1059,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         String result = sxProductService.resolveDict(dictName, expressionParser, shopProp, getTaskName(), null);
         if(StringUtils.isNullOrBlank2(result))
         {
-            String errorMsg = String.format("字典解析器说:解析的结果是空的! (猜测有可能是素材管理里的共通图片啥的没上传成功到平台? ) [dictName:%s],[ProdId:%s]:", dictName, expressionParser.getSxData().getMainProduct().getProdId());
+            String errorMsg = String.format("字典解析器说:解析的结果是空的! (猜测有可能是素材管理里的共通图片啥的没有一张图片成功上传到平台) [dictName:%s],[ProdId:%s]:", dictName, expressionParser.getSxData().getMainProduct().getProdId());
             throw new BusinessException(errorMsg);
         }
         return  result;

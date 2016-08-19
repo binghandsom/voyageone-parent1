@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -12,16 +13,20 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.dao.cms.CmsBtSxCspuDao;
+import com.voyageone.service.dao.cms.CmsBtSxProductDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.cms.PlatformMappingService;
+import com.voyageone.service.impl.cms.PlatformMappingDeprecatedService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.model.cms.CmsBtSxCspuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -32,10 +37,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 天猫平台产品上新服务
@@ -56,7 +64,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
     @Autowired
     private TbProductService tbProductService;
     @Autowired
-    private PlatformMappingService platformMappingService;
+    private PlatformMappingDeprecatedService platformMappingDeprecatedService;
     @Autowired
     private PlatformCategoryService platformCategoryService;
     @Autowired
@@ -67,6 +75,11 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
     private ProductGroupService productGroupService;
     @Autowired
     private PromotionDetailService promotionDetailService;
+
+    @Autowired
+    private CmsBtSxProductDao cmsBtSxProductDao;
+    @Autowired
+    private CmsBtSxCspuDao cmsBtSxCspuDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -182,6 +195,8 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
         CmsMtPlatformMappingModel cmsMtPlatformMappingModel;
         // 平台类目id
         String platformCategoryId = "";
+        // 达尔文是否能上新商品
+        boolean canSxDarwinItem = false;
 
         // 天猫产品上新处理
         try {
@@ -239,7 +254,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
 
             // 属性值准备
             // 取得主产品类目对应的platform mapping数据
-            cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(channelId, cartId, mainProduct.getCommon().getCatId());
+            cmsMtPlatformMappingModel = platformMappingDeprecatedService.getMappingByMainCatId(channelId, cartId, mainProduct.getCommon().getCatId());
 //            if (cmsMtPlatformMappingModel == null) {
 //                String errMsg = String.format("共通PlatformMapping表中对应的平台Mapping信息不存在！[ChannelId:%s] [CartId:%s] [主产品类目:%s]",
 //                        channelId, cartId, mainProduct.getCommon().getCatId());
@@ -250,7 +265,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
 
             // 取得主产品类目对应的平台类目
 //            platformCategoryId = cmsMtPlatformMappingModel.getPlatformCategoryId();
-            platformCategoryId = sxData.getMainProduct().getPlatform(cartId).getpCatId();
+            platformCategoryId = mainProduct.getPlatform(cartId).getpCatId();
             // 取得平台类目schema信息
             cmsMtPlatformCategorySchemaModel = platformCategoryService.getPlatformCatSchemaTm(platformCategoryId, channelId, cartId);
             if (cmsMtPlatformCategorySchemaModel == null) {
@@ -278,6 +293,45 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             // 平台产品id(MongoDB的)
             platformProductId = sxData.getPlatform().getPlatformPid();
 
+            // added by morse.lu 2016/08/08 start
+            {
+                // 能否更新商品
+                Map<String, Object> searchParam = new HashMap<>();
+                searchParam.put("channel_id", sxData.getChannelId());
+                searchParam.put("cart_id", sxData.getCartId());
+                searchParam.put("code", mainProduct.getCommon().getFields().getCode());
+                int cnt = cmsBtSxProductDao.selectCount(searchParam);
+                if (cnt == 0) {
+                    // 没找到的话，看看是不是全店都允许
+                    searchParam.put("code", "0");
+                    cnt = cmsBtSxProductDao.selectCount(searchParam);
+                }
+                if (cnt > 0) {
+                    // 找到了，允许更新产品
+                    sxData.setUpdateProductFlg(true);
+                }
+            }
+            if (sxData.isDarwin()) {
+                // 达尔文
+                Map<String, Object> searchParam = new HashMap<>();
+                searchParam.put("channel_id", sxData.getChannelId());
+                searchParam.put("cart_id", sxData.getCartId());
+                List<CmsBtSxCspuModel> cmsBtSxCspuModels = cmsBtSxCspuDao.selectList(searchParam);
+                List<String> allowUpdateBarcode = cmsBtSxCspuModels.stream().map(CmsBtSxCspuModel::getBarcode).collect(Collectors.toList());
+
+                for (BaseMongoMap<String, Object> sku : sxData.getSkuList()) {
+                    String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+                    SxData.SxDarwinSkuProps sxDarwinSkuProps = sxData.getDarwinSkuProps(skuCode, true);
+                    String barcode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.barcode.name());
+                    sxDarwinSkuProps.setBarcode(barcode);
+                    if (allowUpdateBarcode.contains(barcode)) {
+                        // 允许更新规格
+                        sxDarwinSkuProps.setAllowUpdate(true);
+                    }
+                }
+                canSxDarwinItem = uploadTmProductService.sxDarwinProduct(expressionParser, cmsMtPlatformCategorySchemaModel, platformProductId, shopProp, getTaskName());
+            } else
+                // added by morse.lu 2016/08/08 end
             // 天猫产品上新处理
             // 先看一下productGroup表和调用天猫API去平台上取看是否有platformPid,两个地方都没有才需要上传产品，
             // 只要有一个地方有就认为产品已存在，不用新增和更新产品，直接做后面的商品上新处理
@@ -307,9 +361,12 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                         // added by morse.lu 2016/06/08 start
                     } else {
                         // 更新产品
-                        if (!sxData.isDarwin()) {
-                            uploadTmProductService.updateTmallProduct(expressionParser, platformProductId, cmsMtPlatformMappingModel, shopProp, getTaskName());
-                        }
+                        // modified by morse.lu 2016/08/08 start
+                        // 如果表里设定允许更新产品，才会去做产品更新
+                            if (sxData.isUpdateProductFlg()) {
+                        // modified by morse.lu 2016/08/08 end
+                                uploadTmProductService.updateTmallProduct(expressionParser, platformProductId, cmsMtPlatformMappingModel, shopProp, getTaskName());
+                            }
                         // added by morse.lu 2016/06/08 end
                     }
 
@@ -338,7 +395,10 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                 // added by morse.lu 2016/06/08 start
             } else {
                 // 更新产品
-                if (!sxData.isDarwin()) {
+                // modified by morse.lu 2016/08/08 start
+                // 表里设定允许更新产品，才会去做产品更新
+                if (sxData.isUpdateProductFlg()) {
+                    // modified by morse.lu 2016/08/08 end
                     uploadTmProductService.updateTmallProduct(expressionParser, platformProductId, cmsMtPlatformMappingModel, shopProp, getTaskName());
                 }
                 // added by morse.lu 2016/06/08 end
@@ -374,10 +434,17 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             // modified by morse.lu 2016/06/06 end
         }
 
-        // 达尔文体系相关共通处理
-        if (sxData.isDarwin()) {
-            // TODO 达尔文相关共通处理暂时不做
+        // added by morse.lu 2016/08/10 start
+        if (sxData.isDarwin() && !canSxDarwinItem) {
+            // 达尔文，但更新了产品，不能马上上新商品，要等待审核
+            sxData.setErrorMessage("达尔文产品更新成功,请等待审核通过,再重新Approve上新商品.");
+            // 回写workload表  (审核中4)
+            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.review, getTaskName());
+            // 回写详细错误信息表(cms_bt_business_log)
+            sxProductService.insertBusinessLog(sxData, getTaskName());
+            return;
         }
+        // added by morse.lu 2016/08/10 end
 
         // 天猫商品上新(新增或更新)处理
         // 如果平台产品id不为空的话，上传商品到天猫平台

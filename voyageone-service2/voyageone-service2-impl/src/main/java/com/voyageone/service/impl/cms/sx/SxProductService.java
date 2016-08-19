@@ -29,10 +29,7 @@ import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.SxData;
-import com.voyageone.service.dao.cms.CmsBtWorkloadHistoryDao;
-import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
-import com.voyageone.service.dao.cms.CmsMtPlatformDictDao;
-import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
+import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -51,6 +48,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.sx.sku_field.AbstractSkuFieldBuilder;
 import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
+import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl8;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
@@ -135,6 +133,10 @@ public class SxProductService extends BaseService {
     JumeiImageFileService jumeiImageFileService;
     @Autowired
     private CmsBtWorkloadHistoryDao cmsBtWorkloadHistoryDao;
+    @Autowired
+    private CmsMtPlatformPropSkuDao cmsMtPlatformPropSkuDao;
+    @Autowired
+    private CmsMtChannelSkuConfigDao cmsMtChannelSkuConfigDao;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -278,7 +280,7 @@ public class SxProductService extends BaseService {
         sxData.getPlatform().setModifier(modifier);
 
         // 更新ProductGroup表(更新该model对应的所有(包括product表)和上新有关的状态信息)
-        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+        productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList()));
     }
 
     /**
@@ -2048,26 +2050,26 @@ public class SxProductService extends BaseService {
 
                     Field field = processFields.get(0);
                     String platformPropId = field.getId();
-                    List<CmsMtChannelConditionConfigModel> conditionPropValueModels = conditionPropValueService.get(sxData.getChannelId(), platformPropId);
-
-                    //优先使用条件表达式
-                    if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
-                        if (field.getType() != FieldTypeEnum.MULTICHECK) {
-                            $error("tmall item shop_category's field(" + field.getId() + ") must be MultiCheckField");
-                        } else {
-                            MultiCheckField multiCheckField = (MultiCheckField) field;
-                            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-                            for (CmsMtChannelConditionConfigModel conditionPropValueModel : conditionPropValueModels) {
-                                String conditionExpressionStr = conditionPropValueModel.getConditionExpression();
-                                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
-                                String propValue = expressionParser.parse(conditionExpression, shopBean, user, null);
-                                if (propValue != null) {
-                                     multiCheckField.addValue(propValue);
-                                }
-                            }
-                            retMap.put(platformPropId, multiCheckField);
-                        }
-                    } else {
+//                    List<CmsMtChannelConditionConfigModel> conditionPropValueModels = conditionPropValueService.get(sxData.getChannelId(), platformPropId);
+//
+//                    //优先使用条件表达式
+//                    if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
+//                        if (field.getType() != FieldTypeEnum.MULTICHECK) {
+//                            $error("tmall item shop_category's field(" + field.getId() + ") must be MultiCheckField");
+//                        } else {
+//                            MultiCheckField multiCheckField = (MultiCheckField) field;
+//                            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+//                            for (CmsMtChannelConditionConfigModel conditionPropValueModel : conditionPropValueModels) {
+//                                String conditionExpressionStr = conditionPropValueModel.getConditionExpression();
+//                                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+//                                String propValue = expressionParser.parse(conditionExpression, shopBean, user, null);
+//                                if (propValue != null) {
+//                                     multiCheckField.addValue(propValue);
+//                                }
+//                            }
+//                            retMap.put(platformPropId, multiCheckField);
+//                        }
+//                    } else {
 //                        final String sellerCategoryPropId = "seller_cids";
 //                        String numIId = sxData.getPlatform().getNumIId();
 //                        if (!StringUtils.isEmpty(numIId)) {
@@ -2113,7 +2115,7 @@ public class SxProductService extends BaseService {
                             }
                             // modified by morse.lu 2016/06/21 end
 //                        }
-                    }
+//                    }
                     break;
                 }
                 case ITEM_STATUS: {
@@ -2195,6 +2197,59 @@ public class SxProductService extends BaseService {
                     break;
                 }
                 // added by morse.lu 2016/06/29 end
+                // added by morse.lu 2016/08/10 start
+                case CSPU: {
+                    int cartId = sxData.getCartId();
+                    String errorLog = "平台类目id是:" + sxData.getMainProduct().getPlatform(cartId).getpCatId() + ". groupId:" + sxData.getGroupId();
+                    AbstractSkuFieldBuilder skuFieldService = new TmallGjSkuFieldBuilderImpl8();
+                    skuFieldService.setDao(cmsMtPlatformPropSkuDao, cmsMtChannelSkuConfigDao);
+
+                    List<Field> allSkuFields = new ArrayList<>();
+                    recursiveGetFields(processFields, allSkuFields);
+
+                    String imageTemplate = resolveDict("资质图片模板",expressionParser,shopBean, user, null);
+                    if (StringUtils.isEmpty(imageTemplate)) {
+                        String err = "达尔文产品没有设值资质图片模板字典!";
+                        sxData.setErrorMessage(err);
+                        throw new BusinessException(err);
+                    }
+                    skuFieldService.setCodeImageTemplate(imageTemplate);
+
+                    try {
+                        List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
+                        skuInfoFields.forEach(field -> retMap.put(field.getId(), field));
+                    } catch (BusinessException e) {
+                        sxData.setErrorMessage(e.getMessage());
+                        throw new BusinessException(e.getMessage());
+                    } catch (Exception e) {
+                        $warn(e.getMessage());
+                        sxData.setErrorMessage("Can't build SkuInfoField." + errorLog);
+                        throw new BusinessException("Can't build SkuInfoField." + errorLog);
+                    }
+                    break;
+                }
+                // added by morse.lu 2016/08/10 end
+                // added by morse.lu 2016/08/18 start
+                case PRODUCT_ID: {
+                    if (processFields == null || processFields.size() != 1) {
+                        throw new BusinessException("tmall item sc_product_id's platformProps must have one prop!");
+                    }
+
+                    Field field = processFields.get(0);
+                    if (field.getType() != FieldTypeEnum.INPUT) {
+                        $error("tmall item sc_product_id's field(" + field.getId() + ") must be input");
+                    } else {
+                        InputField inputField = (InputField) field;
+                        String value = inputField.getDefaultValue();
+                        if (!StringUtils.isEmpty(value)) {
+                            inputField.setValue(value);
+                        }
+                        retMap.put(field.getId(), inputField);
+                    }
+
+                    break;
+                }
+                // added by morse.lu 2016/08/18 end
             }
         }
 
@@ -3358,8 +3413,10 @@ public class SxProductService extends BaseService {
                 sxData.getPlatform().setOnSaleTime(DateTimeUtil.getNowTimeStamp());
             }
 
+            // 上新对象产品Code列表
+            List<String> listSxCode = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
             // 一般店铺上新成功后回写productGroup及product表的状态
-            productGroupService.updateGroupsPlatformStatus(sxData.getPlatform());
+            productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
 
             // 如果是天猫，京东平台的场合，回写ims_bt_product表(numIId)
             if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())
@@ -3434,7 +3491,8 @@ public class SxProductService extends BaseService {
         if (ListUtils.notNull(errProducts)) {
             sbProcContent.append("[pPublishError:'Error'->'']");
         }
-        insModel.setProcContent(sbProcContent.toString());
+        insModel.setProcContent(StringUtils.isEmpty(sbProcContent.toString()) ?
+                "[PlatformStatus,PlatformPid或pPublishError等关键状态信息没有变化]" : sbProcContent.toString());
 
         return cmsBtWorkloadHistoryDao.insert(insModel);
     }

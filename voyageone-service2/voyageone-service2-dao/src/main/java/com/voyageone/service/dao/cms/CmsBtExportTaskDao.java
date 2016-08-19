@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsBtExportTaskDao {
-    List<CmsBtExportTaskModel> selectList(Map<String, Object> map);
+    List<CmsBtExportTaskModel> selectList(Object map);
 
-    CmsBtExportTaskModel selectOne(Map<String, Object> map);
+    CmsBtExportTaskModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsBtExportTaskModel select(Integer id);
 

@@ -92,6 +92,7 @@ public class Tmall_024_OverStock_DictTest {
 	/**
 	 * 详情页描述(PC端)
 	 * 1. 产品信息(参数图: http://s7d5.scene7.com/is/image/sneakerhead/cpxx?$790_400$&$img=%s&$t1=%s&$text01=%s&$t2=%s&$text02=%s&$t3=%s&$text03=%s&$t4=%s&$text04=%s&$t5=%s&$text05=%s&$t6=%s&$text06=%s&$t7=%s&$text07=%s&$t8=%s&$text08=%s)
+	 * 1. 产品信息(参数图: http://s7d5.scene7.com/is/image/sneakerhead/over_xq_infor?$790_510$&$layer_2_src=%s&$T1=%s&$text01=%s&$t2=%s&$text02=%s&$t3=%s&$text03=%s&$t4=%s&$text04=%s&$t5=%s&$text05=%s&$t6=%s&$text06=%s&$t7=%s&$text07=%s&$t8=%s&$text08=%s)
 	 * 2. 共通图片 - 尺码图
 	 * 3. 商品图前缀 + 商品图(模板:http://s7d5.scene7.com/is/image/sneakerhead/img-1?$790_600$&$img=%s)
 	 * 4. 共通图片 - 购物流程(购物流程+购物须知+7天退货服务须知)
@@ -113,7 +114,7 @@ public class Tmall_024_OverStock_DictTest {
 			{
 				// imageTemplate
 				RuleExpression imageTemplate = new RuleExpression();
-				String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/cpxx?$790_400$&$img=%s&$t1=%s&$text01=%s&$t2=%s&$text02=%s&$t3=%s&$text03=%s&$t4=%s&$text04=%s&$t5=%s&$text05=%s&$t6=%s&$text06=%s&$t7=%s&$text07=%s&$t8=%s&$text08=%s";
+				String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/over_xq_infor?$790_510$&$layer_2_src=%s&$T1=%s&$text01=%s&$t2=%s&$text02=%s&$t3=%s&$text03=%s&$t4=%s&$text04=%s&$t5=%s&$text05=%s&$t6=%s&$text06=%s&$t7=%s&$text07=%s&$t8=%s&$text08=%s";
 				imageTemplate.addRuleWord(new TextWord(htmlTemplate));
 
 				// 参数imageParams

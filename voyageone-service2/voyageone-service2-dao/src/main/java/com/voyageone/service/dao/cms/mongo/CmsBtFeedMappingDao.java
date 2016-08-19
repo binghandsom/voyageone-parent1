@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
@@ -27,7 +27,7 @@ public class CmsBtFeedMappingDao extends BaseMongoChannelDao<CmsBtFeedMappingMod
      */
     public CmsBtFeedMappingModel findDefault(String channelId, String feedCategory, boolean withProps) {
 
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
 
         // 为了防止categoryPath里有单引号, 这里外侧改为双引号
         query.setQuery(String.format("{ \"channelId\": \"%s\", \"feedCategoryPath\": \"%s\", defaultMapping: 1 }",
@@ -101,11 +101,11 @@ public class CmsBtFeedMappingDao extends BaseMongoChannelDao<CmsBtFeedMappingMod
 
     public CmsBtFeedMappingModel findOne(ObjectId objectId,String channelId) {
 
-        JomgoQuery jomgoQuery = new JomgoQuery();
+        JongoQuery jongoQuery = new JongoQuery();
 
-        jomgoQuery.setObjectId(objectId);
+        jongoQuery.setObjectId(objectId);
 
-        return selectOneWithQuery(jomgoQuery,channelId);
+        return selectOneWithQuery(jongoQuery,channelId);
     }
 
     public List<CmsBtFeedMappingModel> findMappingsWithoutProps(String feedCategoryPath, String selChannelId) {
@@ -120,10 +120,10 @@ public class CmsBtFeedMappingDao extends BaseMongoChannelDao<CmsBtFeedMappingMod
 
     public CmsBtFeedMappingModel findOneWithoutProps(ObjectId mappingId,String channelId) {
 
-        JomgoQuery jomgoQuery = new JomgoQuery();
-        jomgoQuery.setObjectId(mappingId);
-        jomgoQuery.setProjection("{\"props\": 0}");
+        JongoQuery jongoQuery = new JongoQuery();
+        jongoQuery.setObjectId(mappingId);
+        jongoQuery.setProjection("{\"props\": 0}");
 
-        return selectOneWithQuery(jomgoQuery,channelId);
+        return selectOneWithQuery(jongoQuery,channelId);
     }
 }

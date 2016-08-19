@@ -18,7 +18,9 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 
 /**
- * Created by Wangtd on 7/25/16.
+ * 品牌映射服务层
+ * @author Wangtd 2016/07/25
+ * @since 2.3.0
  */
 @Service
 public class BrandBtMappingService extends BaseService {
@@ -103,6 +105,9 @@ public class BrandBtMappingService extends BaseService {
 			return cmsMtBrandsMappingDao.insert(brandModel) > 0;
 		} else {
 			// 找到记录就更新品牌映射
+			brandModel.setCreated(brandMapping.getCreated());
+			brandModel.setCreater(brandMapping.getCreater());
+			brandModel.setId(brandMapping.getId());
 			return cmsMtBrandsMappingDao.update(brandModel) > 0;
 		}
 	}

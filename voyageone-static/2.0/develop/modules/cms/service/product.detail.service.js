@@ -33,6 +33,10 @@ define([
 		this.setMastProduct = setMastProduct;
 		this.delisting = delisting;
 		this.delistinGroup = delistinGroup;
+		this.hsCodeChg = hsCodeChg;
+		this.copyProperty = copyProperty;
+		this.copyCommonProperty = copyCommonProperty;
+		this.getPlatformCategories = getPlatformCategories;
 
 		/**
 		 * 获取页面产品信息
@@ -420,7 +424,66 @@ define([
 			return defer.promise;
 		}
 
-	}
+		/**
+		 * 税号改变
+		 * @param req {prodId,hsCode}  产品id，新的税号code
+		 * @returns {*}
+		 */
+		function hsCodeChg(req){
+			var defer = $q.defer();
+			$productDetailService.hsCodeChg(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
 
+		/**
+		 * 复制主数据field到平台编辑页
+		 * @param req {prodId,cartId}  产品id，平台id
+		 */
+		function copyProperty(req){
+			var defer = $q.defer();
+			$productDetailService.copyProperty(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 复制主master数据field到子master
+		 * @param req {prodId}  产品id
+		 */
+		function copyCommonProperty(req){
+			var defer = $q.defer();
+			$productDetailService.copyCommonProperty(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 获取平台类目
+		 * @param req {cartId}  平台id
+		 */
+		function getPlatformCategories(req){
+			var defer = $q.defer();
+			$productDetailService.getPlatformCategories(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+	}
 
 });

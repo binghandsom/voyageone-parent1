@@ -436,10 +436,25 @@ public class Tmall_018_Target_DictTest {
 //                <option displayName="商品推荐" value="520277"/>
 //                </options>
 //            </field>
-            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"true\",\"hot_recommanded_id\":\"626083\"},";
-//            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"false\"},";
+             // modified by morse.lu 2016/08/05 start
+            // 不写死了，从画面上取
+//            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"true\",\"hot_recommanded_id\":\"626083\"},";
+////            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"false\"},";
+//            TextWord word = new TextWord(kv);
+//            ruleRoot.addRuleWord(word);
+
+            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"true\",\"hot_recommanded_id\":\"";
             TextWord word = new TextWord(kv);
             ruleRoot.addRuleWord(word);
+
+            // 同店推荐的field_id
+            MasterWord masterWord = new MasterWord("hot_recommanded_id");
+            ruleRoot.addRuleWord(masterWord);
+
+            kv = "\"},";
+            word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+            // modified by morse.lu 2016/08/05 end
         }
 
         {

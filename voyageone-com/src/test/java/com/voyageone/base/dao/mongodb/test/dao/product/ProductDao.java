@@ -1,7 +1,7 @@
 package com.voyageone.base.dao.mongodb.test.dao.product;
 
 import com.mongodb.CommandResult;
-import com.voyageone.base.dao.mongodb.BaseJomgoTemplate;
+import com.voyageone.base.dao.mongodb.BaseJongoTemplate;
 import com.voyageone.base.dao.mongodb.test.model.product.Product;
 import com.voyageone.common.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.Random;
 public class ProductDao {
 
     @Autowired
-    private BaseJomgoTemplate mongoTemplate;
+    private BaseJongoTemplate mongoTemplate;
 
     public void testExecuteCommand() {
         String cmd = "{collMod: \"" + Product.getCollectionName("013") + "\", usePowerOf2Sizes : true }";

@@ -42,6 +42,7 @@ public class MqRoutingKey {
     /**
      * tmall mq task
      */
+    public static final String CMS_BATCH_PlatformCategorySchemaTmJob = "voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaTmJob_queue";
     public static final String CMS_BATCH_PlatformProductUploadTmJob = "voyageone_cms_batchjob_CmsBuildPlatformProductUploadTmJob_queue";
     /**
      * 同步产品sku的价格至code的group价格范围
@@ -51,5 +52,8 @@ public class MqRoutingKey {
      * 记录上下架操作历史
      */
     public static final String CMS_TASK_PlatformActiveLogJob = "voyageone_cms_task_PlatformActiveLogJob_queue";
-
+    /**
+     * 更新商品vo扣点相关
+     */
+    public static final String CMS_TASK_ProdcutVoRateUpdateJob = "voyageone_cms_task_ProdcutVoRateUpdateJob_queue";
 }

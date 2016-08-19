@@ -103,10 +103,14 @@ define(function () {
                     "updateLock": "updateLock",
                     "updateProductAtts": "updateProductAtts",
                     "checkCategory": "checkCategory",
-                    getChangeMastProductInfo: "getChangeMastProductInfo",
-                    setMastProduct: "setMastProduct",
-                    delisting: "delisting",
-                    delistinGroup: "delistinGroup"
+                    "getChangeMastProductInfo": "getChangeMastProductInfo",
+                    "setMastProduct": "setMastProduct",
+                    "delisting": "delisting",
+                    "delistinGroup": "delistinGroup",
+                    "hsCodeChg": "hsCodeChg",
+                    "copyProperty": "copyProperty",
+                    "copyCommonProperty": "copyCommonProperty",
+                    "getPlatformCategories":"getPlatformCategories"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -194,7 +198,9 @@ define(function () {
                     "teJiaBaoInit": "teJiaBaoInit",
                     "updatePromotionProduct": "updatePromotionProduct",
                     "delPromotionModel": "delPromotionModel",
-                    "delPromotionCode": "delPromotionCode"
+                    "delPromotionCode": "delPromotionCode",
+                    "tmallJuhuasuanExport": "tmallJuhuasuanExport",
+                    "tmallPromotionExport": "tmallPromotionExport",
                 }
             },
             "jmpromotion": {
@@ -404,7 +410,8 @@ define(function () {
                 "$fieldEditService": {
                     "root": "/cms/pop/field_edit",
                     "getPopOptions": "getPopOptions",
-                    "setProductFields": "setProductFields"
+                    "setProductFields": "setProductFields",
+                    "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",
@@ -550,7 +557,21 @@ define(function () {
                     "save": "saveHsCodeInfo",
                     "cancel": "cancelHsCodeInfo"
                 }
+            },
+            "rePriceService": {
+                "root": "/cms/tools/reprice/",
+                "getChannelList": {url: "getChannelList", cache: CACHE.LOCAL},
+                "getPlatformList": "getPlatformList",
+                "getCartList": "getCartList",
+                "getPlatformCategoryList": {url: "getPlatformCategoryList", cache: CACHE.LOCAL},
+                "setUpdateFlg": "setUpdateFlg"
             }
+/*            "defaultAttrService":{
+                "root":"product/fields/map/",
+                "list":"list",
+                "get":"get",
+                "save":"save"
+            }*/
         }
     };
 });

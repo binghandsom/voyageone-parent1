@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsMtPlatformCategoryExtendInfoDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtPlatformCategoryExtendInfoModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `cart_id`, `category_id`, `platform_brand_id`, `platform_product_id`, `active`, `comment`,
-        `created`, `creater`, `modified`, `modifier`
+        `id`, `channel_id`, `cart_id`, `category_id`, `platform_brand_id`, `platform_product_id`, 
+        `active`, `comment`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >

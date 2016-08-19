@@ -1,11 +1,15 @@
 package com.voyageone.task2.cms.service.platform;
 
+import com.jd.open.api.sdk.response.ware.WareUpdateDelistingResponse;
+import com.jd.open.api.sdk.response.ware.WareUpdateListingResponse;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoAggregate;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
-import com.voyageone.base.dao.mongodb.model.BulkJomgoUpdateList;
+import com.taobao.api.response.ItemUpdateDelistingResponse;
+import com.taobao.api.response.ItemUpdateListingResponse;
+import com.voyageone.base.dao.mongodb.JongoAggregate;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
+import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
@@ -32,8 +36,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * 记录上下架操作历史(新增记录), 并调用上下架API
@@ -79,7 +81,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         long batchNo = sequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID);
         // 先记录上下架操作历史（必须以group为单位，不能用已选中的商品，会重复）
         for (Integer cartId : cartIdList) {
-            JomgoQuery queryObj = new JomgoQuery();
+            JongoQuery queryObj = new JongoQuery();
             // 取得group信息
             queryObj.setQuery("{'productCodes':{$in:#},'cartId':#}");
             queryObj.setParameters(codeList, cartId);
@@ -129,13 +131,14 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             platformStatus = CmsConstants.PlatformStatus.InStock.name();
         }
         // 调用实际的上下架Api，记录调用结果，在group表和product表更新相关状态
-        BulkJomgoUpdateList bulkList = new BulkJomgoUpdateList(1000, platformActiveLogDao, channelId);
-        BulkJomgoUpdateList bulkList2 = new BulkJomgoUpdateList(1000, cmsBtProductGroupDao, channelId);
-        BulkJomgoUpdateList bulkList3 = new BulkJomgoUpdateList(1000, cmsBtProductDao, channelId);
+        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, platformActiveLogDao, channelId);
+        BulkJongoUpdateList bulkList2 = new BulkJongoUpdateList(1000, cmsBtProductGroupDao, channelId);
+        BulkJongoUpdateList bulkList3 = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
 
         boolean updRsFlg = false;
+        String errMsg = null;
         BulkWriteResult rs = null;
-        JomgoQuery queryObj = new JomgoQuery();
+        JongoQuery queryObj = new JongoQuery();
         for (Integer cartId : cartIdList) {
             ShopBean shopProp = Shops.getShop(channelId, cartId);
             if (shopProp == null) {
@@ -195,12 +198,12 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                 if (failedComment == null) {
                     continue;
                 }
-                JomgoUpdate updObj = new JomgoUpdate();
+                JongoUpdate updObj = new JongoUpdate();
                 updObj.setQuery("{'cartId':#,'prodCode':#,'batchNo':#}");
                 updObj.setQueryParameters(cartId, prodCode, batchNo);
                 updObj.setUpdate("{$set:{'result':#,'failedComment':#,'modified':#,'modifier':#}}");
                 updObj.setUpdateParameters("3", failedComment, DateTimeUtil.getNowTimeStamp(), userName);
-                rs = bulkList.addBulkJomgo(updObj);
+                rs = bulkList.addBulkJongo(updObj);
                 if (rs != null) {
                     $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s, batchNo=%d platformActiveLog更新结果=%s", cartId, channelId, prodCode, batchNo, rs.toString());
                 }
@@ -211,12 +214,12 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             }
 
             // 经过上面处理剩下的商品就是可以上下架的商品
-            List<JomgoAggregate> aggrList = new ArrayList<>();
+            List<JongoAggregate> aggrList = new ArrayList<>();
             // 查询条件
-            aggrList.add(new JomgoAggregate("{ $match: {'cartId':#,'batchNo':#,'result':'0'} }", cartId, batchNo));
+            aggrList.add(new JongoAggregate("{ $match: {'cartId':#,'batchNo':#,'result':'0'} }", cartId, batchNo));
             // 分组
             String gp1 = "{ $group : { _id : '$numIId','pcdList':{$addToSet:'$prodCode'} } }";
-            aggrList.add(new JomgoAggregate(gp1));
+            aggrList.add(new JongoAggregate(gp1));
 
             List<Map<String, Object>> prs = platformActiveLogDao.aggregateToMap(channelId, aggrList);
             if (prs == null || prs.isEmpty()) {
@@ -226,46 +229,81 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
 
             // 然后对可以上下架的商品调用API并记录结果
             for (Map<String, Object> prodObj : prs) {
-                long numIId = NumberUtils.toLong((String) prodObj.get("_id"));
+                String numIId = StringUtils.trimToNull((String) prodObj.get("_id"));
                 List<String> pcdList = (List<String>) prodObj.get("pcdList");
-                if (numIId == 0 || pcdList == null || pcdList.isEmpty() ) {
+                if (numIId == null || pcdList == null || pcdList.isEmpty() ) {
                     $error("CmsPlatformActiceLogService 数据错误 cartId=%d, channelId=%s data=%s", cartId, channelId, prodObj.toString());
                     continue;
                 }
                 updRsFlg = false;
-                try {
-                    if (shopProp.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
-                        // 天猫国际上下架
-                        if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
-                            // 上架
-                            updRsFlg = tbItemService.doWareUpdateListing(shopProp, numIId);
-                        } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
-                            // 下架
-                            updRsFlg = tbItemService.doWareUpdateDelisting(shopProp, numIId);
+                errMsg = null;
+
+                if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())) {
+                    // 天猫国际上下架
+                    if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
+                        // 上架
+                        ItemUpdateListingResponse response = tbItemService.doWareUpdateListing(shopProp, numIId);
+                        if (response == null) {
+                            errMsg = "调用淘宝商品上架API失败";
+                        } else {
+                            if (StringUtils.isEmpty(response.getErrorCode())) {
+                                updRsFlg = true;
+                            } else {
+                                errMsg = response.getBody();
+                            }
                         }
-                    } else if (shopProp.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
-                        // 京东国际上下架
-                        if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
-                            // 上架
-                            updRsFlg = jdWareService.doWareUpdateListing(shopProp, numIId, true);
-                        } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
-                            // 下架
-                            updRsFlg = jdWareService.doWareUpdateDelisting(shopProp, numIId, true);
+
+                    } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
+                        // 下架
+                        ItemUpdateDelistingResponse response = tbItemService.doWareUpdateDelisting(shopProp, numIId);
+                        if (response == null) {
+                            errMsg = "调用淘宝商品下架API失败";
+                        } else {
+                            if (StringUtils.isEmpty(response.getErrorCode())) {
+                                updRsFlg = true;
+                            } else {
+                                errMsg = response.getBody();
+                            }
                         }
-                    } else {
-                        $error("CmsPlatformActiceLogService 不正确的平台 cartId=%d", cartId);
                     }
-                    if (!updRsFlg) {
-                        $error("CmsPlatformActiceLogService API调用返回错误结果");
+                } else if (PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
+                    // 京东国际上下架
+                    if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
+                        // 上架
+                        WareUpdateListingResponse response = jdWareService.doWareUpdateListing(shopProp, numIId);
+                        if (response == null) {
+                            errMsg = "调用京东商品上架API失败";
+                        } else {
+                            if ("0".equals(response.getCode())) {
+                                updRsFlg = true;
+                            } else {
+                                errMsg = response.getMsg();
+                            }
+                        }
+
+                    } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
+                        // 下架
+                        WareUpdateDelistingResponse response = jdWareService.doWareUpdateDelisting(shopProp, numIId);
+                        if (response == null) {
+                            errMsg = "调用京东商品下架API失败";
+                        } else {
+                            if ("0".equals(response.getCode())) {
+                                updRsFlg = true;
+                            } else {
+                                errMsg = response.getMsg();
+                            }
+                        }
                     }
-                } catch (Exception exp) {
-                    $error("CmsPlatformActiceLogService API调用失败", exp);
-                    updRsFlg = false;
+                } else {
+                    $error("CmsPlatformActiceLogService 不正确的平台 cartId=%d", cartId);
+                }
+                if (!updRsFlg) {
+                    $error("CmsPlatformActiceLogService API调用返回错误结果");
                 }
 
                 // 保存调用结果
                 for (String prodCode : pcdList) {
-                    JomgoUpdate updObj = new JomgoUpdate();
+                    JongoUpdate updObj = new JongoUpdate();
                     updObj.setQuery("{'cartId':#,'prodCode':#,'batchNo':#}");
                     updObj.setQueryParameters(cartId, prodCode, batchNo);
                     if (updRsFlg) {
@@ -275,33 +313,45 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                         updObj.setUpdate("{$set:{'result':#,'failedComment':#,'modified':#,'modifier':#}}");
                         updObj.setUpdateParameters("2", "调用API失败", DateTimeUtil.getNowTimeStamp(), userName);
                     }
-                    rs = bulkList.addBulkJomgo(updObj);
+                    rs = bulkList.addBulkJongo(updObj);
                     if (rs != null) {
                         $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s, batchNo=%d platformActiveLog更新结果=%s", cartId, channelId, prodCode, batchNo, rs.toString());
                     }
                 }
-                if (!updRsFlg) {
-                    continue;
-                }
-                // 在group表和product表更新相关状态
-                JomgoUpdate updObj2 = new JomgoUpdate();
-                updObj2.setQuery("{'cartId':#,'numIId':#}");
-                updObj2.setQueryParameters(cartId, numIId);
-                updObj2.setUpdate("{$set:{'platformStatus':#,'modified':#,'modifier':#}}");
-                updObj2.setUpdateParameters(platformStatus, DateTimeUtil.getNowTimeStamp(), userName);
-                rs = bulkList2.addBulkJomgo(updObj2);
-                if (rs != null) {
-                    $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, numIId=%d cmsBtProductGroup更新结果=%s", cartId, channelId, numIId, rs.toString());
+
+                if (updRsFlg) {
+                    // 在group表更新相关状态
+                    JongoUpdate updObj2 = new JongoUpdate();
+                    updObj2.setQuery("{'cartId':#,'numIId':#}");
+                    updObj2.setQueryParameters(cartId, numIId);
+                    if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
+                        // 上架
+                        updObj2.setUpdate("{$set:{'platformStatus':#,'onSaleTime':#,'modified':#,'modifier':#}}");
+                        updObj2.setUpdateParameters(platformStatus, DateTimeUtil.getNow(), DateTimeUtil.getNowTimeStamp(), userName);
+                    } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
+                        // 下架
+                        updObj2.setUpdate("{$set:{'platformStatus':#,'inStockTime':#,'modified':#,'modifier':#}}");
+                        updObj2.setUpdateParameters(platformStatus, DateTimeUtil.getNow(), DateTimeUtil.getNowTimeStamp(), userName);
+                    }
+                    rs = bulkList2.addBulkJongo(updObj2);
+                    if (rs != null) {
+                        $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, numIId=%s cmsBtProductGroup更新结果=%s", cartId, channelId, numIId, rs.toString());
+                    }
                 }
 
                 // 更新product表时,要检查该group下商品的有效（numIId不存在/商品lock/状态异常）
                 for (String prodCode : pcdList) {
-                    JomgoUpdate updObj3 = new JomgoUpdate();
+                    JongoUpdate updObj3 = new JongoUpdate();
                     updObj3.setQuery("{'common.fields.code':#}");
                     updObj3.setQueryParameters(prodCode);
-                    updObj3.setUpdate("{$set:{'platforms.P#.pStatus':#,'modified':#,'modifier':#}}");
-                    updObj3.setUpdateParameters(cartId, platformStatus, DateTimeUtil.getNowTimeStamp(), userName);
-                    rs = bulkList3.addBulkJomgo(updObj3);
+                    if (updRsFlg) {
+                        updObj3.setUpdate("{$set:{'platforms.P#.pStatus':#,'platforms.P#.pReallyStatus':#,'platforms.P#.pPublishError':'','platforms.P#.pPublishMessage':'','modified':#,'modifier':#}}");
+                        updObj3.setUpdateParameters(cartId, platformStatus, cartId, platformStatus, cartId, cartId, DateTimeUtil.getNowTimeStamp(), userName);
+                    } else {
+                        updObj3.setUpdate("{$set:{'platforms.P#.pPublishError':'Error','platforms.P#.pPublishMessage':#,'modified':#,'modifier':#}}");
+                        updObj3.setUpdateParameters(cartId, cartId, errMsg, DateTimeUtil.getNowTimeStamp(), userName);
+                    }
+                    rs = bulkList3.addBulkJongo(updObj3);
                     if (rs != null) {
                         $debug("CmsPlatformActiceLogService cartId=%d, channelId=%s, code=%s cmsBtProduct更新结果=%s", cartId, channelId, prodCode, rs.toString());
                     }
@@ -325,7 +375,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
 
     // 取得商品对应的平台状态
     private String getPlatformStatus(String prodCode, String channelId, int cartId) {
-        JomgoQuery queryObj = new JomgoQuery();
+        JongoQuery queryObj = new JongoQuery();
         queryObj.setQuery("{'common.fields.code':#}");
         queryObj.setParameters(prodCode);
         queryObj.setProjectionExt("platforms.P" + cartId + ".pStatus");

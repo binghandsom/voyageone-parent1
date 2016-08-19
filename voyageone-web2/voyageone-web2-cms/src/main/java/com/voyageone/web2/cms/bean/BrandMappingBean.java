@@ -3,7 +3,9 @@ package com.voyageone.web2.cms.bean;
 import java.io.Serializable;
 
 /**
- * Created by Wangtd on 7/25/16.
+ * 品牌映射表单属性
+ * @author Wangtd 2016/07/25
+ * @since 2.3.0
  */
 public class BrandMappingBean implements Serializable {
 

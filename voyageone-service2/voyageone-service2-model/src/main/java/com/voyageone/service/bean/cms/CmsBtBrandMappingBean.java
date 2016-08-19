@@ -3,7 +3,9 @@ package com.voyageone.service.bean.cms;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 
 /**
- * Created by Wangtd on 7/25/16.
+ * 品牌映射属性
+ * @author Wangtd 2016/07/25
+ * @since 2.3.0
  */
 public class CmsBtBrandMappingBean extends CmsMtBrandsMappingModel {
 	

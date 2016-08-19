@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.MongoUtils;
@@ -78,7 +78,7 @@ public class CmsAddToPromotionService extends BaseAppService {
             return result;
         }
 
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         StringBuilder queryStr = new StringBuilder();
         queryStr.append("{");
         queryStr.append(MongoUtils.splicingValue("prodId", productIds.toArray(), "$in"));
@@ -148,7 +148,7 @@ public class CmsAddToPromotionService extends BaseAppService {
         }
 
         // 给产品数据添加活动标签
-        productTagService.addProdTag(channelId, tagInfo.getTagPath(), productIds, "tags", modifier);
+        productTagService.addProdTag(channelId, tagInfo.getTagPath(), productIds, modifier);
         productIds.forEach(item -> {
             PromotionDetailAddBean request = new PromotionDetailAddBean();
             request.setModifier(modifier);

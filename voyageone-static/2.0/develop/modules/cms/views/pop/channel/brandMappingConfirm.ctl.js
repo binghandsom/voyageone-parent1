@@ -15,16 +15,19 @@ define([
         BrandMappingConfirmController.prototype = {
             init: function () {
                 var self = this;
-                self.brandMappingService.searchMatchedBrands({ 'cartId': self.platformData.cartId, 'brandId': self.platformData.brandId
-                }).then(function(res){
-                	self.matchedBrandList=res.data.matchedBrandList;
-                    console.log(res);
+                self.brandMappingService.searchMatchedBrands({
+                    'cartId': self.platformData.cartId, 'brandId': self.platformData.brandId
+                }).then(function (res) {
+                    self.matchedBrandList = res.data.matchedBrandList;
                 });
             },
             confirm: function () {
                 var self = this;
-                self.result = true;
-                self.$uibModalInstance.close(self.result);
+                var confirmResult={
+                    result : true,
+                    brandId : self.platformData.brandId
+                };
+                self.$uibModalInstance.close(confirmResult);
             }
         };
         return BrandMappingConfirmController;
