@@ -40,6 +40,12 @@ define([
             "controller": 'AddChannelSmsController as ctrl',
             "size": 'md'
         },
+        "addChannelCarrier": {
+            "templateUrl": "views/pop/addChannel/addChannelCarrier.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addChannel/addChannelCarrier.ctl",
+            "controller": 'AddChannelCarrierController as ctrl',
+            "size": 'lg'
+        },
         "createEdit": {
             "templateUrl": "views/pop/createEdit/index.tpl.html",
             "controllerUrl": "modules/admin/views/pop/createEdit/index.ctl",
@@ -135,6 +141,9 @@ define([
          */
         $scope.openChannelSms = function openChannelSms(context) {
             return openModal(popActions.addChannelSms, context);
+        };
+        $scope.openChannelCarrier = function openChannelCarrier(context) {
+            return openModal(popActions.addChannelCarrier, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {

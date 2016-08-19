@@ -18,6 +18,7 @@ define(function () {
         "TXT_CART_CHANNEL_CART": "渠道店铺",
         "TXT_CART_CHANNEL_CART_NAME": "渠道店铺名",
         "TXT_STATUS": "状态",
+        "TXT_ACTION":"操作",
         "TXT_CART_UPDATE_TIME": "更新时间",
         "TXT_UPDATER": "更新人",
         "TXT_POP_CONFIG": "配置",
@@ -48,15 +49,31 @@ define(function () {
         "TXT_DISPLAY_SORT": "显示顺序",
 
         /**第三方配置信息管理*/
-        "TXT_CHANNEL_THIRD_PARTY_CONFIG":"第三方配置信息管理",
+        "TXT_CHANNEL_THIRD_PARTY_CONFIG": "第三方配置信息管理",
 
         /**短信配置管理*/
-        "TXT_CHANNEL_SMS_CONFIG":"短信配置管理",
-        "TXT_CHANNEL_SMS_TYPE":"短信类型",
-        "TXT_CHANNEL_SMS_CONTENT":"短信内容",
-        "TXT_CHANNEL_SMS_CODE":"短信码",
-        "TXT_CHANNEL_SMS_DESC":"短信描述",
-        "TXT_CHANNEL_SNS_DEL_TARGET":"删除标识",
+        "TXT_CHANNEL_SMS_CONFIG": "短信配置管理",
+        "TXT_CHANNEL_SMS_TYPE": "短信类型",
+        "TXT_CHANNEL_SMS_CONTENT": "短信内容",
+        "TXT_CHANNEL_SMS_CODE": "短信码",
+        "TXT_CHANNEL_SMS_DESC": "短信描述",
+        "TXT_CHANNEL_SNS_DEL_TARGET": "删除标识",
+
+        /**快递信息管理*/
+        "TXT_CHANNEL_CARRIER_MANAGEMENT": "快递信息管理",
+        "TXT_CHANNEL_CARRIER_NAME": "快递名",
+        "TXT_CHANNEL_CARRIER_ISEBUY":"使用快递100",
+        "TXT_CHANNEL_CARRIER_ISEBUY_ID":"使用快递100标识",
+        "TXT_CHANNEL_CARRIER_DELETE_ALLOW":"允许删除标识",
+        "TXT_API_KEY":"API Key",
+        "TXT_API_USER":"API User",
+        "TXT_API_PASS":"API Password",
+        "TXT_API_URL":"API URL",
+        "TXT_CARD_NUMBER":"卡号",
+        "TXT_EMS_USER_NAME":"EMS客户名",
+        "TXT_CUSTOMER_WEB_SITE":"客户网点",
+        "TXT_CUSTOMER_NAME":"客户名",
+        "TXT_DELETE_ALLOWED":"允许删除",
 
         /**cart管理-信息一览*/
         "TXT_CART_MANAGE": "Cart管理",
@@ -85,6 +102,13 @@ define(function () {
         "TXT_INVENTORY_ASSIGN_PRE": "库存分配优先级",
         "TXT_TOGETHER_ZONE": "拼单区域",
         "TXT_STORE_ADDRESS": "仓库地址",
+
+        /**task管理-信息一览*/
+        "TXT_TASK_MANAGEMENT": "任务管理",
+        "TXT_TASK_TYPE": "任务类型",
+        "TXT_TASK_NAME": "任务名",
+        "TXT_TASK_COMMENT": "任务备注",
+        "TXT_TASK_TIME": "任务频次",
 
         /**按钮组*/
         "TXT_LOGOUT": "注销",

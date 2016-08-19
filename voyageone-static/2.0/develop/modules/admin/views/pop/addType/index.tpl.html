@@ -22,7 +22,12 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">{{'TXT_COMMENTS' | translate}}</label>
                         <div class="col-sm-8">
-                            <textarea rows="3" class="form-control" maxlength="100" ng-model="ctrl.sourceData.comment"></textarea>
+                            <textarea rows="3" class="form-control" maxlength="100" ng-model="ctrl.sourceData.comment" name="comment" required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.comment"></vo-message>
                         </div>
                     </div>
                     <div class="form-group">
