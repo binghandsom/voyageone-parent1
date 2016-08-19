@@ -22,6 +22,12 @@ define(function () {
             "templateUrl": "views/channelManagement/channelThirdPartyCog.tpl.html",
             "controllerUrl": "modules/admin/views/channelManagement/channelThirdPartyCog.ctl",
             "controller": "ChannelThirdPartyCogController as ctrl"
+        },//短信配置管理
+        "channelSmsCog": {
+            "hash": "/channel/channelSmsConfig",
+            "templateUrl": "views/channelManagement/channelSmsConfig.tpl.html",
+            "controllerUrl": "modules/admin/views/channelManagement/channelSmsConfig.ctl",
+            "controller": "ChannelSmsCogController as ctrl"
         },
         "cartManagement": {
             "hash": "/cart/cartManagement",

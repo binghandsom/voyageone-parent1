@@ -5,17 +5,17 @@ define([
     'admin',
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
-    admin.controller('ChannelThirdPartyCogController', (function () {
-        function ChannelThirdPartyCogController(popups, alert, confirm, channelService, thirdPartyConfigService, selectRowsFactory) {
+    admin.controller('ChannelSmsCogController', (function () {
+        function ChannelSmsCogController(popups, alert, confirm, channelService, smsConfigService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
             this.selectRowsFactory = selectRowsFactory;
             this.channelService = channelService;
-            this.thirdPartyConfigService = thirdPartyConfigService;
+            this.smsConfigService = smsConfigService;
             this.channelPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.channelList = [];
-            this.channelThirdSelList = {selList: []};
+            this.channelSmsSelList = {selList: []};
             this.tempChannelSelect = null;
             this.searchInfo = {
                 channelId: '',
@@ -25,7 +25,7 @@ define([
             }
         }
 
-        ChannelThirdPartyCogController.prototype = {
+        ChannelSmsCogController.prototype = {
             init: function () {
                 var self = this;
                 self.channelService.getAllChannel().then(function (res) {
@@ -36,7 +36,7 @@ define([
             search: function (page) {
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
-                self.thirdPartyConfigService.searchThirdPartyConfigByPage({
+                self.smsConfigService.searchSmsConfigByPage({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
                         'channelId': self.searchInfo.channelId,
@@ -62,7 +62,7 @@ define([
                                 });
                             }
                         });
-                        self.channelThirdSelList = self.tempChannelSelect.selectRowsInfo;
+                        self.channelSmsSelList = self.tempChannelSelect.selectRowsInfo;
                     })
             },
             clear: function () {
@@ -76,13 +76,13 @@ define([
             },
             edit: function () {
                 var self = this;
-                if (self.channelThirdSelList.selList.length <= 0) {
+                if (self.channelSmsSelList.selList.length <= 0) {
                     self.alert('TXT_MSG_NO_ROWS_SELECT');
                     return;
                 } else {
                     _.forEach(self.channelList, function (channelInfo) {
-                        if (channelInfo.seq == self.channelThirdSelList.selList[0].id) {
-                            self.popups.openChannelThird(channelInfo).then(function () {
+                        if (channelInfo.seq == self.channelSmsSelList.selList[0].id) {
+                            self.popups.openChannelSms(channelInfo).then(function () {
                                 self.search(1);
                             });
                         }
@@ -94,10 +94,10 @@ define([
                 var self = this;
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
                         var delList = [];
-                        _.forEach(self.channelThirdSelList.selList, function (delInfo) {
-                            delList.push(delInfo.id);
+                        _.forEach(self.channelSmsSelList.selList, function (delInfo) {
+                            delList.push(delInfo.seq);
                         });
-                        self.thirdPartyConfigService.deleteThirdPartyConfig(delList).then(function (res) {
+                        self.smsConfigService.deleteSmsConfig(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);
                             self.search();
                         })
@@ -105,6 +105,6 @@ define([
                 );
             }
         };
-        return ChannelThirdPartyCogController;
+        return ChannelSmsCogController;
     })())
 });

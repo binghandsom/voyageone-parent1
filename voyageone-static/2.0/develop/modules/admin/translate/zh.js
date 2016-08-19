@@ -50,6 +50,14 @@ define(function () {
         /**第三方配置信息管理*/
         "TXT_CHANNEL_THIRD_PARTY_CONFIG":"第三方配置信息管理",
 
+        /**短信配置管理*/
+        "TXT_CHANNEL_SMS_CONFIG":"短信配置管理",
+        "TXT_CHANNEL_SMS_TYPE":"短信类型",
+        "TXT_CHANNEL_SMS_CONTENT":"短信内容",
+        "TXT_CHANNEL_SMS_CODE":"短信码",
+        "TXT_CHANNEL_SMS_DESC":"短信描述",
+        "TXT_CHANNEL_SNS_DEL_TARGET":"删除标识",
+
         /**cart管理-信息一览*/
         "TXT_CART_MANAGE": "Cart管理",
         "TXT_CART_INFO_MANAGE": "Cart信息管理",
