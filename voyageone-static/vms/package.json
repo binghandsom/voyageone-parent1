@@ -1,0 +1,41 @@
+{
+  "name": "cms-for-vendor",
+  "version": "1.0.0",
+  "description": "VoyageOne Management System For Vendor",
+  "scripts": {
+    "build-dev-pkg": "node node_scripts/npm/packaging-components.js",
+    "build-css-pkg": "node node_scripts/npm/npm-build-css-package.js",
+    "server": "browser-sync start -c bs-config.js",
+    "i-server": "npm i http-proxy-middleware browser-sync morgan"
+  },
+  "author": "VoyageOne",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "",
+    "extend": "",
+    "glob": "",
+    "gulp": "",
+    "gulp-concat": "",
+    "gulp-debug": "",
+    "gulp-footer": "",
+    "gulp-header": "",
+    "gulp-minify-css": "",
+    "gulp-minify-html": "",
+    "gulp-ng-annotate": "",
+    "gulp-rename": "",
+    "gulp-replace": "",
+    "gulp-sourcemaps": "",
+    "gulp-uglify": "",
+    "gulp-util": "",
+    "http-proxy-middleware": "",
+    "less": "^2.7.1",
+    "morgan": "",
+    "through2": ""
+  },
+  "dependencies": {
+    "angular-chart.js": "^1.0.0",
+    "chart.js": "^2.1.4",
+    "ng-annotate": "^1.2.1",
+    "requirejs": "^2.2.0"
+  }
+}

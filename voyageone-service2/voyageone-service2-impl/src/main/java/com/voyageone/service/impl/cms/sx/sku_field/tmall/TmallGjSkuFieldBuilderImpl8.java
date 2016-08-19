@@ -326,8 +326,12 @@ public class TmallGjSkuFieldBuilderImpl8 extends AbstractSkuFieldBuilder {
                     ComplexValue skuFieldValue = new ComplexValue();
                     complexValues.add(skuFieldValue);
 
-                    buildSkuColor(skuFieldValue, sxProduct, cmsSkuProp);
-                    buildSkuSize(skuFieldValue, sxProduct, cmsSkuProp, barcode);
+                    if (sku_colorField != null) {
+                        buildSkuColor(skuFieldValue, sxProduct, cmsSkuProp);
+                    }
+                    if (sku_sizeField != null) {
+                        buildSkuSize(skuFieldValue, sxProduct, cmsSkuProp, barcode);
+                    }
 
                     // 图片设值
                     setImageFieldValue(expressionParser, sxProduct, barcode, skuFieldValue, shopBean, user);

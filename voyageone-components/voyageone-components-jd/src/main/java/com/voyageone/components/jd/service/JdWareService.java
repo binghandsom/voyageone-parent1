@@ -282,10 +282,19 @@ public class JdWareService extends JdBase {
                     retModified = response.getModified();
                 } else {
                     // 京东返回失败的场合
-                    // 11000012:参数包含非法字符
                     String errMsg = response.getZhDesc();
-                    if ("11000012".equals(response.getCode())) {
-                        errMsg = response.getZhDesc() + " " + "可能是因为尺寸或颜色中包含特殊字符，比如逗号等";
+                    // switch字符串不能为null
+                    if (!StringUtils.isEmpty(response.getCode())) {
+                        switch (response.getCode()) {
+                            case "11000012":
+                                // 11000012:参数包含非法字符
+                                errMsg += " 可能是因为尺寸或颜色中包含特殊字符，比如逗号等";
+                            case "11000019":
+                                // 11000019:非法的参数，不允许或者不能识别
+                                errMsg += " 可能是该产品Sku属性中的容量/尺码没有设置";
+                            default:
+                                errMsg += "";
+                        }
                     }
                     throw new BusinessException(errMsg);
                 }

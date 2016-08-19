@@ -595,7 +595,35 @@ public class ChannelConfigEnums {
         Modotex("029"),
 
         /**
-         * US匠心界
+         * TestChannel088
+         */
+        TestChannel088("088"),
+
+        /**
+         * TestChannel089
+         */
+        TestChannel089("089"),
+
+        /**
+         * TestChannel090
+         */
+        TestChannel090("090"),
+
+        /**
+         * TestChannel091
+         */
+        TestChannel091("091"),
+        /**
+         * TestChannel092
+         */
+        TestChannel092("092"),
+
+        /**
+         * TestChannel093
+         */
+        TestChannel093("093"),
+
+        /**
          * US匠心界
          */
         USJGJ("928"),
@@ -672,6 +700,12 @@ public class ChannelConfigEnums {
                 case "027": return Yogademocracy;
                 case "028": return ShoeMetro;
                 case "029": return Modotex;
+                case "088": return TestChannel088;
+                case "089": return TestChannel089;
+                case "090": return TestChannel090;
+                case "091": return TestChannel091;
+                case "092": return TestChannel092;
+                case "093": return TestChannel093;
                 case "928": return USJGJ;
                 case "929": return USJGY;
                 case "997": return VOYAGEONE;

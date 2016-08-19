@@ -227,6 +227,7 @@ public class YogaDemocracyAnalysisService extends BaseAnalysisService {
                 cmsBtFeedInfoModel.setImage(imagesList);
                 cmsBtFeedInfoModel.setLongDescription(YogaBean.getDescription());
                 cmsBtFeedInfoModel.setShortDescription(YogaBean.getShortDescription());
+                cmsBtFeedInfoModel.setMaterial(YogaBean.getAttributevalue3());
             }
 
             List<CmsBtFeedInfoModel_Sku> skus = vtmModelBean.getSkus();

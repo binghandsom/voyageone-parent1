@@ -1,0 +1,56 @@
+<div class="breadcrumbs">
+    <div class="container">
+        <h4 class="pull-left" translate="TXT_FINANCIAL_REPORT"></h4>
+        <ul class="pull-right breadcrumb">
+            <li><a href="#/home" translate="TXT_HOME"></a></li>
+            <li class="active disabled" translate="TXT_FINANCIAL"></li>
+            <li class="active selected" translate="TXT_FINANCIAL_REPORT"></li>
+        </ul>
+    </div>
+</div>
+<div class="container content" ng-init="ctrl.init()">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="form-inline">
+                <div class="form-group">
+                    <label class="control-label" translate="TXT_YEAR_MONTH">Year-Month</label>
+                    <select name="Year-Month" id="select" ng-model="ctrl.reportYearMonth" class="form-control input-sm"
+                            ng-options="reportYearMonth.value as reportYearMonth.name for reportYearMonth in ctrl.reportYearMonthList" ng-change="ctrl.search()">
+                        <option value="" translate="TXT_SELECT_NO_VALUE"></option>
+                    </select>
+                </div>
+                <!--<div class="pull-right">-->
+                    <!--<button class="btn btn-primary btn-sm">SEARCH</button>-->
+                <!--</div>-->
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-vo">
+        <div class="panel-body">
+            <div class="table-responsive" if-no-rows="ctrl.financialReportList.length">
+                <table class="table table-fixed table-vo table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th class="td-1" translate="TXT_REPORT_ID"></th>
+                        <th class="td-2" translate="TXT_REPORT_PERIOD"></th>
+                        <th class="td-2 text-center" translate="TXT_TOTAL_PRICE"></th>
+                        <th class="td-2 text-center" translate="TXT_EXPORT_REPORT"></th>
+                        <th class="td-1" translate="TXT_STATUS" ng-if="ctrl.canConfirmReport == true"></th>
+                        <th class="td-1" translate="TXT_ACTION" ng-if="ctrl.canConfirmReport == true"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="financialReport in ctrl.financialReportList">
+                        <td>FR{{financialReport.reportYearMonth}}</td>
+                        <td>{{financialReport.reportStartDate}} ~ {{financialReport.reportEndDate}}</td>
+                        <td class="text-center">${{financialReport.totalPrice}}</td>
+                        <td class="text-center"><button class="btn btn-success btn-xs" ng-click="ctrl.download(financialReport.reportFileName)"><i class="fa fa-cloud-download fa-lg"></i></button></td>
+                        <td  ng-if="ctrl.canConfirmReport == true">{{financialReport.statusName}}</td>
+                        <td  ng-if="ctrl.canConfirmReport == true"><button class="btn btn-xs btn-info" ng-click="ctrl.confirmReport(financialReport.id)" ng-if="financialReport.status == '0'" translate="BTN_CONFIRM"></button>&nbsp;</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
