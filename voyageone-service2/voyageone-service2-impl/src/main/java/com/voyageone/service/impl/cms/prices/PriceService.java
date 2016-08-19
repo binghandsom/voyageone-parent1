@@ -395,7 +395,7 @@ public class PriceService extends BaseService {
 
         // 老价格为空, 表示新建, 则不需要设置波动
         // 新老价格相同也同样(价格=-1时，返回空)
-        if (retailPrice == null || retailPrice <= 0D
+        if (retailPrice == null || retailPrice < 0D
                 || lastRetailPrice == null || lastRetailPrice < 0D
                 || lastRetailPrice.equals(retailPrice))
             return "";
