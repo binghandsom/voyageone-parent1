@@ -155,6 +155,8 @@ public class UploadToUSJoiService extends BaseTaskService {
 
         // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
         CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
 
         // --------------------------------------------------------------------------------------------
         // 品牌mapping表
@@ -207,13 +209,23 @@ public class UploadToUSJoiService extends BaseTaskService {
         }
         // --------------------------------------------------------------------------------------------
 
+        // 从synship.tm_order_channel表中取得USJOI店铺channel对应的cartId列表（一般只有一条cartId.如928对应28, 929对应29）
+        // 用于product.PXX追加平台信息(group表里面用到的用于展示的cartId不是从这里取得的)
+        final List<Integer> cartIds;
+        OrderChannelBean usJoiBean = Channels.getChannel(usjoiChannelId);
+        if (usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())) {
+            cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
+        } else {
+            cartIds = new ArrayList<>();
+        }
+
         // 每个channel读入子店数据上新到USJOI主店
         List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(
                 UPLOAD_TO_USJOI_MAX_100, Integer.parseInt(channelBean.getOrder_channel_id()));
         for (CmsBtSxWorkloadModel sxWorkloadModel : cmsBtSxWorkloadModels) {
             try {
                 // 循环上传单个产品到USJOI主店
-                upload(sxWorkloadModel, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping);
+                upload(sxWorkloadModel, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, cartIds);
                 successCnt++;
             } catch (CommonConfigNotFoundException ce) {
                 errCnt++;
@@ -239,7 +251,8 @@ public class UploadToUSJoiService extends BaseTaskService {
     public void upload(CmsBtSxWorkloadModel sxWorkLoadBean,
                        Map<String, String> mapBrandMapping,
                        Map<String, String> mapProductTypeMapping,
-                       Map<String, String> mapSizeTypeMapping) {
+                       Map<String, String> mapSizeTypeMapping,
+                       List<Integer> cartIds) {
 
         // workload表中的cartId是usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
         String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
@@ -279,15 +292,6 @@ public class UploadToUSJoiService extends BaseTaskService {
             List<CmsBtProductModel> targetProductList = new ArrayList<>();
             // 取得USJOI店铺共通设置(是否自动同步人民币专柜价格)
             boolean usjoiIsAutoSyncPriceMsrp = isAutoSyncPriceMsrp(usJoiChannelId);
-
-            // 取得USJOI店铺channel对应的cartId列表（一般只有一条cartId.如928对应28, 929对应29）
-            final List<Integer> cartIds;
-            OrderChannelBean usJoiBean = Channels.getChannel(usJoiChannelId);
-            if (usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())) {
-                cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
-            } else {
-                cartIds = new ArrayList<>();
-            }
 
             for (CmsBtProductModel productModel : productModels) {
                 productModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel), CmsBtProductModel.class);
