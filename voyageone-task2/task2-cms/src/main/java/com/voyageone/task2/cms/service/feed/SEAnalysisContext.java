@@ -148,7 +148,15 @@ class SEAnalysisContext {
      * 表达式常量
      */
     private class ExpParams {
-        double cost;
+
+        // 梁兄请不要删除一下常量 parseExpression会用
+        public final double ITEM_WEIGHT = 4D;
+        public final double ALIPAY_COMMISSION = 0D;
+        public final double TMALL_COMMISSION = 0.05D;
+        public final double RETURN_MANAGEMENT = 0.05D;
+        public final double ITEM_DUTY = 0.1D;
+        public final double EXCHANGE_RATE = 6.5D;
+        public double cost;
         ExpParams(ShoeCityFeedBean feedBean) {
             this.cost = feedBean.getCost().doubleValue();
         }
