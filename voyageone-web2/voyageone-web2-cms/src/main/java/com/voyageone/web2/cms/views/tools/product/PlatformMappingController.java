@@ -61,7 +61,7 @@ public class PlatformMappingController extends CmsController {
     @RequestMapping(PLATFORM_MAPPING.GET)
     public AjaxResponse get(@RequestBody CmsBtPlatformMappingModel platformMappingModel) {
         return success(
-                platformMappingViewService.get(platformMappingModel, getUser().getSelChannelId())
+                platformMappingViewService.get(platformMappingModel, getUser().getSelChannelId(), getLang())
         );
     }
 

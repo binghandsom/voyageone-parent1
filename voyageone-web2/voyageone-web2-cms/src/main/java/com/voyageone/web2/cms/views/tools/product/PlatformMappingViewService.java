@@ -93,7 +93,7 @@ class PlatformMappingViewService extends BaseAppService {
         return result;
     }
 
-    public PlatformMappingGetBean get(CmsBtPlatformMappingModel platformMappingModel, String channelId) {
+    public PlatformMappingGetBean get(CmsBtPlatformMappingModel platformMappingModel, String channelId, String lang) {
 
         CmsBtPlatformMappingModel _platformMappingModel = platformMappingService.get(platformMappingModel, channelId);
 
@@ -134,7 +134,7 @@ class PlatformMappingViewService extends BaseAppService {
             if (productFieldMapList != null && !productFieldMapList.isEmpty())
                 product = SchemaJsonReader.readJsonForList(productFieldMapList);
         } else {
-            Map<String, List<Field>> fieldListMap = platformSchemaService.getFieldsByCategoryPath(categoryPath, channelId, cartId);
+            Map<String, List<Field>> fieldListMap = platformSchemaService.getFieldsByCategoryPath(categoryPath, channelId, cartId, lang);
             item = fieldListMap.get(PlatformSchemaService.KEY_ITEM);
             product = fieldListMap.get(PlatformSchemaService.KEY_PRODUCT);
         }
