@@ -73,7 +73,16 @@ public class CmsBtDataAmountService {
         List<EnumPlatformPriceSum> list = EnumPlatformPriceSum.getList();
         CmsBtDataAmountModel model = null;
         for (EnumPlatformPriceSum enumFeed : list) {
-            long count = daoCmsBtProduct.countByQuery(String.format(enumFeed.getStrQuery(), cartId), channelId);
+            String strQuery = "";
+            if (enumFeed.getFunFormat() != null) {
+                QueryStrFormatParam param=new QueryStrFormatParam();
+                param.setCartId(cartId);
+                param.setQueryStr(enumFeed.getStrQuery());
+                strQuery = enumFeed.getFunFormat().apply(param);
+            } else {
+                strQuery = String.format(enumFeed.getStrQuery(), cartId);
+            }
+            long count = daoCmsBtProduct.countByQuery(strQuery, channelId);
             saveCmsBtDataAmount(channelId, cartId, enumFeed, count);
         }
     }

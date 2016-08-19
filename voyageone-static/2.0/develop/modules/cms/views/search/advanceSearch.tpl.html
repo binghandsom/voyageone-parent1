@@ -931,13 +931,67 @@
                                             </small>
                                         </td>
                                     </tr>
-
                                     </tbody>
                                 </table>
                             </div><!-- .table-responsive -->
                         </div>
                         <div class="col-sm-12 m-t-lg m-b-lg">
                             <vpagination config="vm.groupPageOption"></vpagination>
+                        </div>
+                    </uib-tab>
+
+                    <uib-tab ng-click="exportSearch()">
+                        <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_EXPORT_LIST' | translate}}</tab-heading>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            &emsp;
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-pop btn-default" ng-click="exportSearch()">
+                                                    <i class="fa fa-refresh"></i>&nbsp;刷新
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="table-responsive box box-body">
+                                    <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                                        <thead>
+                                        <tr>
+                                            <th class="text-center mfb-xxt">No.</th>
+                                            <th class="text-left mfb-xxt" translate="TXT_EXPORT_FILE_NAME"></th>
+                                            <th class="text-left mfb-xxt" translate="TXT_EXPORT_REQUEST_TIME"></th>
+                                            <th class="text-left mfb-xxt" translate="TXT_EXPORT_CREATE_TIME"></th>
+                                            <th class="text-left mfb-xxt" translate="TXT_EXPORT_REQUESTER"></th>
+                                            <th class="text-center mfb-xxt" translate="TXT_ACTION"></th>
+                                        </tr>
+                                        </thead>
+                                    </table>
+                                    <div class="box-body" if-no-rows="vm.exportList.length">
+                                        <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                                            <tbody>
+                                            <tr ng-if="vm.exportList.length > 0" ng-repeat="exportInfo in vm.exportList">
+                                                <td class="text-center mfb-xxt">{{$index + 1}}</td>
+                                                <td class="text-left mfb-xxt">
+                                                    <a ng-repeat ="fileItem in exportInfo.fileName"  href="javascript:void(0)" ng-click="openDownload(fileItem)">{{fileItem}}<br></a>
+                                                </td>
+                                                <td class="text-left mfb-xxt">{{exportInfo.created}}</td>
+                                                <td class="text-left mfb-xxt">{{exportInfo.fileName?exportInfo.modified:''}}</td>
+                                                <td class="text-left mfb-xxt">{{exportInfo.creater}}</td>
+                                                <td class="text-center mfb-xxt">{{exportStatus[exportInfo.status]}}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 m-t-lg m-b-lg">
+                                    <vpagination config="vm.exportPageOption"></vpagination>
+                                </div>
+                            </div>
                         </div>
                     </uib-tab>
                 </uib-tabset><!-- tabset -->

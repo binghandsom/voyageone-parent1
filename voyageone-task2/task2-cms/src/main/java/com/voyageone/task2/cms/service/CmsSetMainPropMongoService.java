@@ -170,7 +170,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         conditionPropValueRepo.init();
 
         // 默认线程池最大线程数
-        int threadPoolCnt = 3;
+        int threadPoolCnt = 5;
         // 保存每个channel最终导入结果(成功失败件数信息)
         Map<String, String> resultMap = new HashMap<>();
         // 创建线程池
@@ -2475,7 +2475,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //            }
 
             // 根据code, 到group表中去查找所有的group信息
-            List<CmsBtProductGroupModel> existGroups = getGroupsByCode(feed.getChannelId(), feed.getCode());
+            List<CmsBtProductGroupModel> existGroups = productGroupService.selectProductGroupListByCode(feed.getChannelId(), feed.getCode());
 
             // 循环一下
             for (TypeChannelBean shop : typeChannelBeanListDisplay) {
@@ -2488,6 +2488,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         if (!StringUtils.isEmpty(group.getNumIId())) {
                             result = false;
                         }
+                        break;
                     }
                 }
                 if (blnFound) {
@@ -2600,12 +2601,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param code      品牌方给的Code
          * @return group列表
          */
-        private List<CmsBtProductGroupModel> getGroupsByCode(String channelId, String code) {
-            // 先去看看是否有存在的了
-            JongoQuery queryObject = new JongoQuery();
-            queryObject.setQuery("{\"productCodes\":\"" + code + "\"}");
-            return productGroupService.getList(channelId, queryObject);
-        }
+//        private List<CmsBtProductGroupModel> getGroupsByCode(String channelId, String code) {
+//            // 先去看看是否有存在的了
+//            JongoQuery queryObject = new JongoQuery();
+//            queryObject.setQuery("{\"productCodes\":\"" + code + "\"}");
+//            return productGroupService.getList(channelId, queryObject);
+//        }
 
         /**
          * getPropSimpleValueByMapping 简单属性值的取得

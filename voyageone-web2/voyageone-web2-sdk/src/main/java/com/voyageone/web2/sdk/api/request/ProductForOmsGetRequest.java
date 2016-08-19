@@ -24,7 +24,7 @@ public class ProductForOmsGetRequest extends VoApiRequest<ProductForOmsGetRespon
 
 	@Override
 	public String getApiURLPath() {
-		return "/product/getOmsProductsInfo";
+		return "/cms/product/getOmsProductsInfo";
 	}
 
 	/**

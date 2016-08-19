@@ -6,11 +6,13 @@ import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.MappingBean;
 import com.voyageone.service.bean.cms.product.SxData;
@@ -52,6 +54,11 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
     private Field sku_quantityField;
     private Field sku_outerIdField;
     private Field sku_imageField;
+    private Field sku_packageTypeField;
+    // added by morse.lu 2016/08/17 start
+    private Field sku_skuIdField;
+    private Field sku_productIdField;
+    // added by morse.lu 2016/08/17 end
 
     private Field colorExtend_colorField;
     private Field colorExtend_imageField;
@@ -167,6 +174,17 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
                 if (type.intValue() == SkuTemplateConstants.SKU_IMAGE) {
                     sku_imageField = platformProp;
                 }
+                if (type.intValue() == SkuTemplateConstants.DARWINSKU_PACKAGE_TYPE) {
+                    sku_packageTypeField = platformProp;
+                }
+                // added by morse.lu 2016/08/17 start
+                if (type.intValue() == SkuTemplateConstants.SKU_ID) {
+                    sku_skuIdField = platformProp;
+                }
+                if (type.intValue() == SkuTemplateConstants.SKU_PRODUCTID) {
+                    sku_productIdField = platformProp;
+                }
+                // added by morse.lu 2016/08/17 end
 
                 //EXTENDCOLOR
                 if (type.intValue() == SkuTemplateConstants.EXTENDCOLOR) {
@@ -272,17 +290,41 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
     private Field buildSkuProp(Field skuField, ExpressionParser expressionParser, MappingBean skuMapping, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
         List<CmsBtProductModel> sxProducts = expressionParser.getSxData().getProductList();
         buildSkuResult = new BuildSkuResult();
+        int skuCnt;
+        // added by morse.lu 2016/08/17 start
+        List<ComplexValue> multiComplexDefaultValues = ((MultiComplexField) skuField).getDefaultComplexValues();
+        // Map<sku_outerId商家编码即skuCode, ComplexValue>
+        Map<String, ComplexValue> mapSkuComplexValue = new HashMap<>();
+        if (ListUtils.notNull(multiComplexDefaultValues) && sku_outerIdField != null) {
+            for (ComplexValue complexValue : multiComplexDefaultValues) {
+                String sku_outerId = "";
+                for (String fieldId : complexValue.getFieldKeySet()) {
+                    if (fieldId.equals(sku_outerIdField.getId())) {
+                        sku_outerId = ((InputField) complexValue.getValueField(fieldId)).getValue();
+                        break;
+                    }
+                }
+                mapSkuComplexValue.put(sku_outerId, complexValue);
+            }
+        }
+        // added by morse.lu 2016/08/17 end
 
         List<ComplexValue> complexValues = new ArrayList<>();
         for (CmsBtProductModel sxProduct : sxProducts) {
+            skuCnt = 0;
             List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCommon().getSkus();
             for (CmsBtProductModel_Sku cmsSkuProp : cmsSkuPropBeans) {
+                skuCnt++;
                 //CmsBtProductModel_Sku 是Map<String, Object>的子类
                 ComplexValue skuFieldValue = new ComplexValue();
                 complexValues.add(skuFieldValue);
 
-                buildSkuColor(skuFieldValue, sxProduct, cmsSkuProp);
-                buildSkuSize(skuFieldValue, sxProduct, cmsSkuProp);
+                if (sku_colorField != null) {
+                    buildSkuColor(skuFieldValue, sxProduct, cmsSkuProp);
+                }
+                if (sku_sizeField != null) {
+                    buildSkuSize(skuFieldValue, sxProduct, cmsSkuProp);
+                }
 
                 for (Field field : ((MultiComplexField)skuField).getFields()) {
                     String fieldId = field.getId();
@@ -323,6 +365,43 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
                         skuFieldValue.setInputFieldValue(sku_imageField.getId(), getImageUrl(expressionParser, shopBean, user, expressionParser.getSxData(), sxProduct));
                         continue;
                     }
+                    if (sku_packageTypeField != null && fieldId.equals(sku_packageTypeField.getId())) {
+                        // 套餐类型(天猫默认是"官方标配[6536025]",且必须要有"官方标配"
+                        // 由于schema里没有备注可以填,而套餐类型又没有别名
+                        // 所以无法备注各个套餐区别,暂时这一版只能不支持多种套餐,即不支持一个code下多个sku
+                        // 干脆代码也写死"官方标配",以后看情况再改
+                        // 参照类目"影音电器>耳机/耳麦"
+                        if (skuCnt > 1) {
+                            // 不支持一个code下多个sku
+                            String errMsg = "本类目不支持一个code下多个sku!";
+                            expressionParser.getSxData().setErrorMessage(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
+                        skuFieldValue.setSingleCheckFieldValue(sku_packageTypeField.getId(), new Value("6536025"));
+                        continue;
+                    }
+                    // added by morse.lu 2016/08/17 start
+                    if (sku_skuIdField != null && fieldId.equals(sku_skuIdField.getId())) {
+                        ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
+                        if (complexValue != null) {
+                            Field oldField = complexValue.getValueField(fieldId);
+                            if (oldField != null) {
+                                skuFieldValue.setInputFieldValue(sku_skuIdField.getId(), ((InputField) oldField).getValue());
+                            }
+                        }
+                        continue;
+                    }
+                    if (sku_productIdField != null && fieldId.equals(sku_productIdField.getId())) {
+                        ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
+                        if (complexValue != null) {
+                            Field oldField = complexValue.getValueField(fieldId);
+                            if (oldField != null) {
+                                skuFieldValue.setInputFieldValue(sku_productIdField.getId(), ((InputField) oldField).getValue());
+                            }
+                        }
+                        continue;
+                    }
+                    // added by morse.lu 2016/08/17 end
 
                     // 从各平台下面的fields.sku里取值
                     String val = getSkuValue(sxProduct, fieldId, cmsSkuProp.getSkuCode());

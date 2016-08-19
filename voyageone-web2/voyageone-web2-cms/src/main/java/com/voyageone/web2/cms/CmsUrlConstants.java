@@ -307,14 +307,14 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/search/advance/";
 
             String INIT = "init";
-
             String SEARCH = "search";
 
             String GET_GROUP_LIST = "getGroupList";
-
             String GET_PRODUCT_LIST = "getProductList";
 
             String EXPORT_PRODUCTS = "exportProducts";
+            String EXPORT_SERACH = "exportSearch";
+            String EXPORT_DOWNLOAD = "exportDownload";
         }
 
         interface FEED {

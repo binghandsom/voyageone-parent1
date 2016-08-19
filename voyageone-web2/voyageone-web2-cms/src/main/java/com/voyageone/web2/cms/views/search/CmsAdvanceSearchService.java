@@ -393,7 +393,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
     /**
      * 获取数据文件内容
      */
-    public void getCodeExcelFile(Map<String, Object> searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean, String language) {
+    public boolean getCodeExcelFile(Map<String, Object> searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean, String language) {
         // 创建文件下载任务
         if (cmsBtExportTaskService.checkExportTaskByUser(userInfo.getSelChannelId(), CmsBtExportTaskService.ADV_SEARCH, userInfo.getUserName()) == 0) {
             CmsBtExportTaskModel taskModel = new CmsBtExportTaskModel();
@@ -415,9 +415,10 @@ public class CmsAdvanceSearchService extends BaseAppService {
             searchValue.put("_taskId",  taskModel.getId());
             searchValue.put("_sessionBean",  cmsSessionBean);
             sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_FileDldJob, searchValue);
+            return true;
 
         } else {
-            throw new BusinessException("4004");
+            return false;
         }
     }
 }

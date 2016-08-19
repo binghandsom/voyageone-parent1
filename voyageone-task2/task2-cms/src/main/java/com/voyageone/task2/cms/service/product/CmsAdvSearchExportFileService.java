@@ -98,10 +98,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         }
         CmsSearchInfoBean2 searchValue = new CmsSearchInfoBean2();
         try {
-//            searchValue = CmsSearchInfoBean2.class.newInstance();
             BeanUtils.populate(searchValue, messageMap);
-            taskModel.setStatus(3); // 开始执行
-            cmsBtExportTaskService.update(taskModel);
         } catch (Exception exp) {
             $error("高级检索 文件下载任务 查询参数不正确", exp);
             // 更新任务状态，然后结束
@@ -121,7 +118,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             return;
         }
         try {
-            createExcelFile(searchValue, channleId, sessionBean, userName, language);
+            String fileName = createExcelFile(searchValue, (List<String>) messageMap.get("_selCodeList"), channleId, sessionBean, userName, language);
+            taskModel.setFileName(fileName);
             taskModel.setStatus(1); // 成功
         } catch (Throwable exp) {
             $error("高级检索 文件下载任务 创建文件时出错 " + exp.getMessage(), exp);
@@ -135,7 +133,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
     /**
      * 获取数据文件内容
      */
-    private void createExcelFile(CmsSearchInfoBean2 searchValue, String channelId, Map<String, Object> cmsSessionBean, String userName, String language)
+    private String createExcelFile(CmsSearchInfoBean2 searchValue, List<String> codeList, String channelId, Map<String, Object> cmsSessionBean, String userName, String language)
             throws IOException, InvalidFormatException {
         String fileName = null;
         String templatePath = null;
@@ -165,20 +163,40 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         }
 
         // 获取product列表
-        List<String> prodCodeList = advSearchQueryService.getProductCodeList(searchValue, channelId);
-        long recCount = prodCodeList.size();
-
+        List<String> prodCodeList = null;
         if (searchValue.getFileType() == 2) {
-            Integer cartId = searchValue.getCartId();
-            if (cartId == null) {
-                cartId = 0;
+            if (codeList == null) {
+                prodCodeList = advSearchQueryService.getGroupCodeList(searchValue, channelId);
+            } else {
+                $debug("仅导出选中的记录,再查询group");
+                // 取得该店铺的所有平台
+                List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+                if (cartList == null || cartList.isEmpty()) {
+                    $error("高级检索 文件下载任务 本店铺无平台数据！ channelId=" + channelId);
+                    throw new BusinessException("本店铺无平台数据");
+                }
+                List<Integer> cartIdList = cartList.stream().map(tmItem -> NumberUtils.toInt(tmItem.getValue())).collect(Collectors.toList());
+
+                // 找出选中商品的主商品
+                JongoQuery grpQuyObject = new JongoQuery();
+                grpQuyObject.setQuery("{'cartId':{$in:#},'productCodes':{$in:#}}");
+                grpQuyObject.setParameters(cartIdList, codeList);
+                grpQuyObject.setProjectionExt("mainProductCode");
+                List<CmsBtProductGroupModel> grpList = productGroupService.getList(channelId, grpQuyObject);
+                prodCodeList = grpList.stream().map(tmItem -> tmItem.getMainProductCode()).distinct().collect(Collectors.toList());
             }
-            prodCodeList = advSearchQueryService.getGroupCodeList(searchValue, channelId);
-            if (prodCodeList == null) {
-                prodCodeList = new ArrayList<>(0);
+        } else {
+            if (codeList == null) {
+                prodCodeList = advSearchQueryService.getProductCodeList(searchValue, channelId);
+            } else {
+                $debug("仅导出选中的记录");
+                prodCodeList = codeList;
             }
-            recCount = prodCodeList.size();
         }
+        if (prodCodeList == null) {
+            prodCodeList = new ArrayList<>(0);
+        }
+        long recCount = prodCodeList.size();
 
         int pageCount;
         if ((int) recCount % SELECT_PAGE_SIZE > 0) {
@@ -265,6 +283,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             inputStream.close();
             book.close();
         }
+        return fileName;
     }
 
     /**

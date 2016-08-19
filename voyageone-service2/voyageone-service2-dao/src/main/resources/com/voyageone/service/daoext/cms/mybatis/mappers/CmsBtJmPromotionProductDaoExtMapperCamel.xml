@@ -445,7 +445,16 @@
     </select>
 
     <select id="selectJmHashIds" resultType="java.lang.String">
-        select  jm_hash_id   from cms_bt_jm_promotion_product where channel_id=#{channelId} and product_code=#{productCode} and  #{nowDate} &lt;=`activity_end` and jm_hash_id is not null order by `activity_start` ASC
+        select t1.jm_hash_id
+        from cms_bt_jm_promotion_product as t1
+             join cms_bt_jm_promotion as t2
+             on (t1.channel_id = t2.channel_id and t1.cms_bt_jm_promotion_id = t2.id and t2.status = '1')
+        where t1.channel_id=#{channelId}
+          and t1.product_code=#{productCode}
+          and #{nowDate} &lt;= t1.activity_end
+          and t1.jm_hash_id is not null
+          and t1.jm_hash_id != ''
+        order by t1.created DESC
     </select>
 
     <select id="selectOnSaleByCode" resultType="CmsBtJmPromotionProductModel">
