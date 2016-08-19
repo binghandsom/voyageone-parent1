@@ -53,6 +53,13 @@ define(function () {
                     "addChannelAttribute": 'addChannelAttribute',
                     "updateChannelAttribute": "updateChannelAttribute",
                     "deleteChannelAttribute": "deleteChannelAttribute"
+                },
+                "thirdPartyConfigService": {
+                    "root": "/admin/channel/thirdParty",
+                    "searchThirdPartyConfigByPage": 'searchThirdPartyConfigByPage',
+                    "addThirdPartyConfig": 'addThirdPartyConfig',
+                    "updateThirdPartyConfig": "updateThirdPartyConfig",
+                    "deleteThirdPartyConfig": "deleteThirdPartyConfig"
                 }
             },
             /** Cart信息 */

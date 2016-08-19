@@ -47,6 +47,9 @@ define(function () {
         "TXT_CHANNEL_ADD_NAME": "添加名",
         "TXT_DISPLAY_SORT": "显示顺序",
 
+        /**第三方配置信息管理*/
+        "TXT_CHANNEL_THIRD_PARTY_CONFIG":"第三方配置信息管理",
+
         /**cart管理-信息一览*/
         "TXT_CART_MANAGE": "Cart管理",
         "TXT_CART_INFO_MANAGE": "Cart信息管理",
