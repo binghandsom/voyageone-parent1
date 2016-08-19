@@ -242,7 +242,7 @@ define([
             }
         }
         $scope.getStatus = function (model) {
-            //0:未更新 2:上新成功 3:上传异常
+            //0:未更新 2:上新成功 3:上传异常    未上传；处理中；上传成功；上传失败
 
              if (model.synchStatus == 1) {
                 return "待上传";
@@ -255,12 +255,12 @@ define([
             }
            else if(model.synchStatus==3||model.priceStatus==3 ||model.dealEndTimeStatus==3 || model.stockStatus==3)
             {
-                return "上传异常";
+                return "上传失败";
             }
             else if (model.synchStatus == 0) {
-                return "未更新";
+                return "未上传";
             }
-            return "更新完成";
+            return "上传成功";
         }
         $scope.getSelectedPromotionProductIdList = function () {
             var listPromotionProductId = [];
