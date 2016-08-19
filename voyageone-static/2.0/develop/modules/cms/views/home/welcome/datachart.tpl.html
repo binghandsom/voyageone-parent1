@@ -121,7 +121,7 @@
                                             <tbody>
                                             <tr ng-repeat="m in vm.sumData.listPlatformPriceSum">
                                                 <td class="mfb-xxt text-center">{{m.platformName}}</td>
-                                                <td class=" mfb-xxt text-center"><a ng-click="goSearchPage(180,{cartId:m.CMS_PLATFORM_priceSale_Equal_minus1.cartId,priceType:'priceSale',priceStart:-1,priceEnd:-1})">{{m.CMS_PLATFORM_priceSale_Equal_minus1.amountVal}}</a></td>
+                                                <td class=" mfb-xxt text-center"><a ng-click="goSearchPage(180,{cartId:m.CMS_PLATFORM_priceSale_Equal_minus1.cartId,priceType:'priceRetail',priceStart:-1,priceEnd:-1})">{{m.CMS_PLATFORM_priceSale_Equal_minus1.amountVal}}</a></td>
                                                 <td class="mfb-xxt text-center"><a ng-click="goSearchPage(20,{cartId:m.CMS_PLATFORM_Retail_Price_DOWN.cartId,priceChgFlg:'U'})">{{m.CMS_PLATFORM_Retail_Price_UP.amountVal}}</a></td>
                                                 <td class="mfb-xxt text-center"><a ng-click="goSearchPage(20,{cartId:m.CMS_PLATFORM_Retail_Price_DOWN.cartId,priceChgFlg:'D'})">{{m.CMS_PLATFORM_Retail_Price_DOWN.amountVal}}</a></td>
                                             </tr>

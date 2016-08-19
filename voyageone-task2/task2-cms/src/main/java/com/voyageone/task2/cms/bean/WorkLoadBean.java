@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.bean;
 
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class WorkLoadBean implements Cloneable {
     private SxProductBean mainProduct;
     private Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap;
     private CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel;
-    private CmsMtPlatformMappingModel cmsMtPlatformMappingModel;
+    private CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel;
     private Map<String, Integer> skuInventoryMap;
 
     private CmsBtSxWorkloadModel sxWorkloadModel;
@@ -194,11 +194,11 @@ public class WorkLoadBean implements Cloneable {
         this.cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaModel;
     }
 
-    public CmsMtPlatformMappingModel getCmsMtPlatformMappingModel() {
+    public CmsMtPlatformMappingDeprecatedModel getCmsMtPlatformMappingModel() {
         return cmsMtPlatformMappingModel;
     }
 
-    public void setCmsMtPlatformMappingModel(CmsMtPlatformMappingModel cmsMtPlatformMappingModel) {
+    public void setCmsMtPlatformMappingModel(CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel) {
         this.cmsMtPlatformMappingModel = cmsMtPlatformMappingModel;
     }
 

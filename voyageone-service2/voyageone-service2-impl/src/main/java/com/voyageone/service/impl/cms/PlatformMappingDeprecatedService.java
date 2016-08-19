@@ -1,11 +1,11 @@
 package com.voyageone.service.impl.cms;
 
 import com.mongodb.WriteResult;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDeprecatedDao;
 import com.voyageone.service.daoext.cms.CmsMtPlatformSpecialFieldDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,27 +26,27 @@ public class PlatformMappingDeprecatedService extends BaseService {
     private CmsMtPlatformSpecialFieldDaoExt platformSpecialFieldDao;
 
     @Autowired
-    private CmsMtPlatformMappingDao platformMappingDao;
+    private CmsMtPlatformMappingDeprecatedDao platformMappingDao;
 
-    public CmsMtPlatformMappingModel getMapping(String mainCategoryId, String platformCategoryId, int cartId, String channelId) {
+    public CmsMtPlatformMappingDeprecatedModel getMapping(String mainCategoryId, String platformCategoryId, int cartId, String channelId) {
         return platformMappingDao.selectMapping(mainCategoryId, platformCategoryId, cartId, channelId);
     }
 
-    public List<CmsMtPlatformMappingModel> getMappings(String channelId, int cartId) {
+    public List<CmsMtPlatformMappingDeprecatedModel> getMappings(String channelId, int cartId) {
         return platformMappingDao.selectMappings(channelId, cartId);
     }
 
     // 20160506 tom 这个功能不需要, 删掉 START
-//    public List<CmsMtPlatformMappingModel> getMappingsByMainCatId(String channelId, String mainCatId) {
+//    public List<CmsMtPlatformMappingDeprecatedModel> getMappingsByMainCatId(String channelId, String mainCatId) {
 //        return platformMappingDao.selectMappingByMainCatId(channelId, mainCatId);
 //    }
     // 20160506 tom 这个功能不需要, 删掉 END
 
-    public CmsMtPlatformMappingModel getMappingByMainCatId(String channelId, int cartId, String mainCatId) {
+    public CmsMtPlatformMappingDeprecatedModel getMappingByMainCatId(String channelId, int cartId, String mainCatId) {
         return platformMappingDao.selectMappingByMainCatId(channelId, cartId, mainCatId);
     }
 
-    public int savePlatformMapping(CmsMtPlatformMappingModel platformMappingModel) {
+    public int savePlatformMapping(CmsMtPlatformMappingDeprecatedModel platformMappingModel) {
         WriteResult res = platformMappingDao.update(platformMappingModel);
         return res.getN();
     }

@@ -455,22 +455,27 @@ public class ChannelConfigEnums {
          * Sneakerhead, 001
          */
         SN("001"),
+
         /**
          * PortAmerican, 002
          */
         PA("002"),
+
         /**
          * Essuntial, 003
          */
         GL("003"),
+
         /**
          * Juicy Couture, 004
          */
         JC("004"),
+
         /**
          * Spalding, 005
          */
         SP("005"),
+
         /**
          * BHFO, 006
          */
@@ -495,11 +500,6 @@ public class ChannelConfigEnums {
          * Jewelry, 010
          */
         JEWELRY("010"),
-
-        /**
-         * LOCONDO, 011
-         */
-        LOCONDO("011"),
 
         /**
          * BCBG, 012
@@ -546,7 +546,6 @@ public class ChannelConfigEnums {
          */
         EDCSKINCARE("020"),
 
-
         /**
          * BHFO_MINIMALL
          */
@@ -572,12 +571,10 @@ public class ChannelConfigEnums {
          */
         FragranceNet("025"),
 
-
         /**
          * LightHouse
          */
         LightHouse("026"),
-
 
         /**
          * Yogademocracy
@@ -681,7 +678,6 @@ public class ChannelConfigEnums {
                 case "008": return REAL_MADRID;
                 case "009": return SWISSWATCH;
                 case "010": return JEWELRY;
-                case "011": return LOCONDO;
                 case "012": return BCBG;
                 case "013": return SEARS;
                 case "014": return WMF;
