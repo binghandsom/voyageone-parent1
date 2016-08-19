@@ -125,6 +125,29 @@ public interface AdminUrlConstants {
 			String DELETE_CART = "deleteCart";
 		}
 		
+		/** 商店信息 */
+		interface Shop {
+			
+			String ROOT = "/admin/cart/shop";
+			
+			String SEARCH_CART_SHOP_BY_PAGE = "searchCartShopByPage";
+
+			String ADD_CART_SHOP = "addCartShop";
+
+			String UPDATE_CART_SHOP = "updateCartShop";
+
+			String DELETE_CART_SHOP = "deleteCartShop";
+
+			String SEARCH_CART_SHOP_CONFIG_BY_PAGE = "searchCartShopConfigByPage";
+
+			String ADD_CART_SHOP_CONFIG = "addCartShopConfig";
+
+			String UPDATE_CART_SHOP_CONFIG = "updateCartShopConfig";
+
+			String DELETE_CART_SHOP_CONFIG = "deleteCartShopConfig";
+			
+		}
+		
 	}
 	
 	interface Store {
@@ -171,6 +194,10 @@ public interface AdminUrlConstants {
 			String DELETE_TASK = "deleteTask";
 
 			String SEARCH_TASK_CONFIG_BY_PAGE = "searchTaskConfigByPage";
+
+			String DELETE_TASK_CONFIG = "deleteTaskConfig";
+
+			String ADD_TASK_CONFIG = "addTaskConfig";
 			
 		}
 		
