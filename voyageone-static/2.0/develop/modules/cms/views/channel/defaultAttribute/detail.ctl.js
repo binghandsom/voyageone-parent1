@@ -15,7 +15,6 @@ define([
 
             var self = this;
             var searchJson = $routeParams.upEntity ? $routeParams.upEntity.replace(/✓/g,"/") : null;
-
             self.searchInfo = searchJson ? angular.fromJson(searchJson) : {};
 
             self.popups = popups;
