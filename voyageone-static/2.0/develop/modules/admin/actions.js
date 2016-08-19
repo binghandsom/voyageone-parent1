@@ -60,6 +60,13 @@ define(function () {
                     "addThirdPartyConfig": 'addThirdPartyConfig',
                     "updateThirdPartyConfig": "updateThirdPartyConfig",
                     "deleteThirdPartyConfig": "deleteThirdPartyConfig"
+                },
+                "smsConfigService": {
+                    "root": "/admin/channel/sms",
+                    "searchSmsConfigByPage": 'searchSmsConfigByPage',
+                    "addSmsConfig": 'addSmsConfig',
+                    "updateSmsConfig": "updateSmsConfig",
+                    "deleteSmsConfig": "deleteSmsConfig"
                 }
             },
             /** Cart信息 */
