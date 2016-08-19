@@ -478,6 +478,7 @@ public class PriceService extends BaseService {
 
         // 保存击穿标识
         String priceDiffFlgValue = productSkuService.getPriceDiffFlg(channelId, skuInPlatform);
+        // 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5）
         skuInPlatform.put(priceDiffFlg.name(), priceDiffFlgValue);
 
         skuInPlatform.put(priceRetail.name(), retailPrice);
