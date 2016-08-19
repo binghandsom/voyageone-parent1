@@ -16,7 +16,7 @@ define([
             this.channelAttributeService = channelAttributeService;
             this.channelPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.channelList = [];
-            this.channelSelList = {selList: []};
+            this.channelTypeSelList = {selList: []};
             this.tempChannelSelect = null;
             this.searchInfo = {
                 channelId: '',
@@ -65,23 +65,12 @@ define([
                         _.forEach(self.channelList, function (channelInfo) {
                             if (channelInfo.updFlg != 8) {
                                 self.tempChannelSelect.currPageRows({
-                                    "id": channelInfo.channelId,
+                                    "id": channelInfo.id,
                                     "code": channelInfo.name
                                 });
                             }
                         });
-                        self.channelSelList = self.tempChannelSelect.selectRowsInfo;
-
-                        // 设置cartName
-                        if (!self.channelList) return;
-                        for (var i = 0; i < self.channelList.length; i++) {
-                            var tempCartList = [];
-                            if (self.channelList[i].carts == null) return;
-                            self.channelList[i].carts.map(function (item) {
-                                tempCartList.push(item.name);
-                            });
-                            _.extend(self.channelList[i], {'cartName': tempCartList.join('/')});
-                        }
+                        self.channelTypeSelList = self.tempChannelSelect.selectRowsInfo;
                     })
             },
             clear: function () {
@@ -92,32 +81,18 @@ define([
                     typeId: '',
                     langId: '',
                     name: '',
-                    value: '',
-                }
-            },
-            config: function (type) {
-                var self = this;
-                if (self.channelSelList.selList.length < 1) {
-                    self.popups.openConfig({'configType': type});
-                    return;
-                } else {
-                    _.forEach(self.channelList, function (channelInfo) {
-                        if (channelInfo.channelId == self.channelSelList.selList[0].id) {
-                            _.extend(channelInfo, {'configType': type});
-                            self.popups.openConfig(channelInfo);
-                        }
-                    })
+                    value: ''
                 }
             },
             edit: function () {
                 var self = this;
-                if (self.channelSelList.selList.length <= 0) {
+                if (self.channelTypeSelList.selList.length <= 0) {
                     self.alert('TXT_MSG_NO_ROWS_SELECT');
                     return;
                 } else {
                     _.forEach(self.channelList, function (channelInfo) {
-                        if (channelInfo.channelId == self.channelSelList.selList[0].id) {
-                            self.popups.openAdd(channelInfo).then(function () {
+                        if (channelInfo.id == self.channelTypeSelList.selList[0].id) {
+                            self.popups.openAddChannelType(channelInfo).then(function () {
                                 self.search(1);
                             });
                         }
@@ -129,7 +104,7 @@ define([
                 var self = this;
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
                         var delList = [];
-                        _.forEach(self.channelSelList.selList, function (delInfo) {
+                        _.forEach(self.channelTypeSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
                         self.channelService.deleteChannel(delList).then(function (res) {

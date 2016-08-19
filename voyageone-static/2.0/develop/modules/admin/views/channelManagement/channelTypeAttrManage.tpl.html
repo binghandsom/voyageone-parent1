@@ -75,9 +75,9 @@
         <div class="box-body-new">
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
-                    <button class="btn btn-default" ng-click="openAddChannelType('add')" ng-disabled="ctrl.channelSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
-                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.channelSelList.selList.length <= 0||ctrl.channelSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
-                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                    <button class="btn btn-default" ng-click="openAddChannelType('add')" ng-disabled="ctrl.channelTypeSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.channelTypeSelList.selList.length <= 0||ctrl.channelTypeSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelTypeSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                 </div>
             </div>
             <table class="table table-hover-new table-hover table_main">
@@ -85,8 +85,8 @@
                 <tr>
                     <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
                         <label class="checkbox-inline c-checkbox" style="height: 15px;">
-                            <input type="checkbox" ng-click="selectAll(ctrl.channelSelList)"
-                                   ng-checked="isAllSelected(ctrl.channelSelList)" >
+                            <input type="checkbox" ng-click="selectAll(ctrl.channelTypeSelList)"
+                                   ng-checked="isAllSelected(ctrl.channelTypeSelList)" >
                             <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                         </label>
                     </th>
@@ -109,8 +109,8 @@
                 <tr ng-repeat="list in ctrl.channelList">
                     <td class="text-left v-middle">
                         <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                            <input ng-model="ctrl.channelSelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
-                                   ng-click="selectOne(list.id, ctrl.channelSelList)">
+                            <input ng-model="ctrl.channelTypeSelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
+                                   ng-click="selectOne(list.id, ctrl.channelTypeSelList)">
                             <span class="fa fa-check"></span>
                         </label>
                     </td>

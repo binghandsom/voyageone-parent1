@@ -5,10 +5,11 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('AddTypeController', (function () {
-        function AddTypeController(context, AdminCartService, $uibModalInstance) {
+        function AddTypeController(context, AdminCartService, typeService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
             this.AdminCartService = AdminCartService;
+            this.typeService = typeService;
             this.popType = '编辑';
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
@@ -21,7 +22,7 @@ define([
                     self.popType = '添加';
                     self.sourceData = {}
                 }
-                self.sourceData.active = self.sourceData.active ? "0" : "1";
+                self.sourceData.active = self.sourceData.active ? "1" : "0";
                 self.AdminCartService.getAllPlatform().then(function (res) {
                     self.platformAllList = res.data;
                 });
@@ -32,9 +33,9 @@ define([
             save: function () {
                 var self = this;
                 var result = {};
-                self.sourceData.active = self.sourceData.active == '0' ? true : false;
+                self.sourceData.active = self.sourceData.active == '1' ? true : false;
                 if (self.append == true) {
-                    self.AdminCartService.addCart(self.sourceData).then(function (res) {
+                    self.typeService.addType(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
@@ -43,7 +44,7 @@ define([
                         self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.AdminCartService.updateCart(self.sourceData).then(function (res) {
+                    self.typeService.updateType(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
