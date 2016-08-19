@@ -26,6 +26,8 @@ public class TmSmsConfigModel extends AdminBaseModel {
     protected String describe;
 
     protected String delFlg;
+    
+    protected Boolean active;
 
     public Integer getSeq() {
         return seq;
@@ -90,4 +92,13 @@ public class TmSmsConfigModel extends AdminBaseModel {
     public void setDelFlg(String delFlg) {
         this.delFlg = delFlg == null ? null : delFlg.trim();
     }
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+    
 }

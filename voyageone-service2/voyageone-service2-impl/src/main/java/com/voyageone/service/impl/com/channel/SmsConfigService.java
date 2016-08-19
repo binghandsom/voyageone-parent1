@@ -80,7 +80,7 @@ public class SmsConfigService extends BaseService {
 		for (Integer seqId : seqIds) {
 			TmSmsConfigModel smsConfig = new TmSmsConfigModel();
 			smsConfig.setSeq(seqId);
-			smsConfig.setDelFlg("0");
+			smsConfig.setActive(false);
 			smsConfig.setModifier(username);
 			if (smsConfigDao.update(smsConfig) <= 0) {
 				throw new BusinessException("删除短信配置信息失败");

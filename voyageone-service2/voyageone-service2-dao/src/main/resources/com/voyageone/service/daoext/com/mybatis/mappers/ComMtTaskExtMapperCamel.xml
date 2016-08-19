@@ -38,9 +38,8 @@
 	
 	<select id="selectTypeByPage" resultMap="taskBeanMap">
 		select cmt.task_id, cmt.task_type, cmt.task_name, cmt.task_comment, cmt.task_freq, ttc.cfg_val1 as run_flg
-		from com_mt_task cmt left join tm_task_control ttc on (
-				ttc.task_id = cmt.task_id or ttc.task_id = cmt.task_name
-			) and ttc.cfg_name = #{taskAttrName}
+		from com_mt_task cmt left join tm_task_control ttc on ttc.task_id = cmt.task_name
+			and ttc.cfg_name = #{taskAttrName}
 		<include refid="selectTypeFilter"/>
 	</select>
 	
