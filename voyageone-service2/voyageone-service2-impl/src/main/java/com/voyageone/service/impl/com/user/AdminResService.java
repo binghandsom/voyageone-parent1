@@ -168,7 +168,7 @@ public class AdminResService extends BaseService {
         return children;
     }
 
-    public void deleteUser(List<Integer> resIds, String username) {
+    public void deleteRes(List<Integer> resIds, String username) {
         for (Integer id : resIds) {
             ComResourceModel model = new ComResourceModel();
             model.setId(id);

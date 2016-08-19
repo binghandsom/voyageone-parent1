@@ -67,4 +67,13 @@
 		<include refid="selectStoreConfigFilter"/>
 	</select>
 
+	<select id="selectIdsByChannel" resultType="String">
+		select DISTINCT
+		`store_id`
+		from wms_mt_store where `order_channel_id` in
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
 </mapper>

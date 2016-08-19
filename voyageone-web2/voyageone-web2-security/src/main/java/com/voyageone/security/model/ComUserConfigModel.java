@@ -21,8 +21,6 @@ public class ComUserConfigModel extends CoreBaseModel {
 
     protected String comment;
 
-    protected Boolean active;
-
     public Integer getUserId() {
         return userId;
     }
@@ -61,13 +59,5 @@ public class ComUserConfigModel extends CoreBaseModel {
 
     public void setComment(String comment) {
         this.comment = comment == null ? null : comment.trim();
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 }

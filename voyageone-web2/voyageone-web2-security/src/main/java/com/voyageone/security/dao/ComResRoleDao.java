@@ -9,16 +9,15 @@ package com.voyageone.security.dao;
 
 import com.voyageone.security.model.ComResRoleModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ComResRoleDao {
-    List<ComResRoleModel> selectList(Map<String, Object> map);
+    List<ComResRoleModel> selectList(Object map);
 
-    ComResRoleModel selectOne(Map<String, Object> map);
+    ComResRoleModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     ComResRoleModel select(Integer id);
 

@@ -16,13 +16,15 @@ public class ComRoleModel extends CoreBaseModel {
      */
     protected String roleName;
 
+    protected Short roleType;
+
     /**
      * 说明
      */
     protected String description;
 
     /**
-     * 激活状态:1,激活;2,未激活
+     * 激活状态:1,激活;0,未激活
      */
     protected Boolean active;
 
@@ -32,6 +34,14 @@ public class ComRoleModel extends CoreBaseModel {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName == null ? null : roleName.trim();
+    }
+
+    public Short getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(Short roleType) {
+        this.roleType = roleType;
     }
 
     public String getDescription() {

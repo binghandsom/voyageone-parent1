@@ -9,16 +9,15 @@ package com.voyageone.security.dao;
 
 import com.voyageone.security.model.ComUserConfigModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ComUserConfigDao {
-    List<ComUserConfigModel> selectList(Map<String, Object> map);
+    List<ComUserConfigModel> selectList(Object map);
 
-    ComUserConfigModel selectOne(Map<String, Object> map);
+    ComUserConfigModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     ComUserConfigModel select(Integer id);
 

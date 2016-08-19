@@ -90,7 +90,7 @@ public class AdminResController extends AdminController {
     public AjaxResponse deleteUser(@RequestBody List<Integer> bean)  {
 
         String username = getUser().getUserName();
-        adminResService.deleteUser(bean, username);
+        adminResService.deleteRes(bean, username);
         return success(true);
     }
 
