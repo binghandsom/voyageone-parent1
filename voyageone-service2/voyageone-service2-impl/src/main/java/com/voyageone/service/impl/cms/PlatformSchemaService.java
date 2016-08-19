@@ -70,10 +70,10 @@ public class PlatformSchemaService extends BaseService {
      * @param cartId       平台(店铺)
      * @return 使用 {@link PlatformSchemaService#KEY_ITEM} 和 {@link PlatformSchemaService#KEY_PRODUCT} 作为 KEY 的字段集合字典
      */
-    public Map<String, List<Field>> getFieldsByCategoryPath(String categoryPath, String channelId, int cartId) {
+    public Map<String, List<Field>> getFieldsByCategoryPath(String categoryPath, String channelId, int cartId, String language) {
 
         if (CartEnums.Cart.JM.getValue() == cartId)
-            return getFieldForProductImage(null, channelId, cartId);
+            return getFieldForProductImage(null, channelId, cartId, language);
 
         CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
 
@@ -83,7 +83,7 @@ public class PlatformSchemaService extends BaseService {
             platformCategorySchemaModel = platformCategoryService.getPlatformSchemaByCategoryPath(categoryPath, cartId);
         }
 
-        return getFieldListMap(platformCategorySchemaModel);
+        return getFieldListMap(platformCategorySchemaModel, channelId, language);
     }
 
     /**
@@ -109,10 +109,10 @@ public class PlatformSchemaService extends BaseService {
             return null;
         }
 
-        return getFieldListMap(platformCatSchemaModel);
+        return getFieldListMap(platformCatSchemaModel, channelId, language);
     }
 
-    private Map<String, List<Field>> getFieldListMap(CmsMtPlatformCategorySchemaModel platformCatSchemaModel) {
+    private Map<String, List<Field>> getFieldListMap(CmsMtPlatformCategorySchemaModel platformCatSchemaModel, String channelId, String language) {
 
         String catId = platformCatSchemaModel.getCatId();
 
