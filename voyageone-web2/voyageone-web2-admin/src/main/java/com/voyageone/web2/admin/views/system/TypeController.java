@@ -3,7 +3,6 @@ package com.voyageone.web2.admin.views.system;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +16,6 @@ import com.voyageone.service.model.com.ComMtTypeModel;
 import com.voyageone.service.model.com.PageModel;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
-import com.voyageone.web2.admin.bean.channel.CarrierConfigFormBean;
 import com.voyageone.web2.admin.bean.system.TypeFormBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 
@@ -64,9 +62,9 @@ public class TypeController extends AdminController {
 		// 保存类型信息
 		ComMtTypeModel model = new ComMtTypeModel();
 		BeanUtils.copyProperties(form, model);
-		typeService.addOrUpdateType(model, getUser().getUserName(), append);
+		ComMtTypeModel TypeModel = typeService.addOrUpdateType(model, getUser().getUserName(), append);
 		
-		return success(true);
+		return success(TypeModel);
 	}
 	
 	@RequestMapping(AdminUrlConstants.System.Type.DELETE_TYPE)

@@ -53,14 +53,16 @@ public class TypeService extends BaseService {
 		return pageModel;
 	}
 
-	public void addOrUpdateType(ComMtTypeModel model, String username, boolean append) {
+	public ComMtTypeModel addOrUpdateType(ComMtTypeModel model, String username, boolean append) {
 		// 保存类型信息
 		boolean success = false;
 		if (append) {
 			// 添加类型信息
 			model.setCreater(username);
 			model.setModifier(username);
-			success = typeDao.insert(model) > 0;
+			Integer typeId = typeDao.insert(model);
+			model.setId(typeId);
+			success = typeId > 0;
 		} else {
 			// 更新类型信息
 			ComMtTypeModel typeInfo = typeDao.select(model.getId());
@@ -74,6 +76,8 @@ public class TypeService extends BaseService {
 		if (!success) {
 			throw new BusinessException("保存类型信息失败");
 		}
+		
+		return model;
 	}
 
 	public void deleteType(List<Integer> typeIds, String username) {
