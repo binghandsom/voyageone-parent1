@@ -207,7 +207,7 @@ define([
                         masterName: mainBrand,
                         pBrandId:scope.vm.platform.pBrandId
                     }).then(function(context){
-                        scope.vm.platform.pBrandName = context.selectedPlatform;
+                        scope.vm.platform.pBrandName = context.cmsBrand;
                     });
 
                 }
