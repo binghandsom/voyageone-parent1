@@ -93,10 +93,25 @@ public class CartShopService extends BaseService {
 		}
 	}
 
-	public PageModel<TmChannelShopConfigBean> searchCartShopConfigByPage(String orderChannelId, String cartId,
+	public PageModel<TmChannelShopConfigBean> searchCartShopConfigByPage(String channelId, String cartId,
 			String cfgName, String cfgVal, Integer pageNum, Integer pageSize) {
-		// TODO Auto-generated method stub
-		return null;
+		PageModel<TmChannelShopConfigBean> pageModel = new PageModel<TmChannelShopConfigBean>();
+		// 设置查询参数
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("orderChannelId", channelId);
+		params.put("cartId", cartId);
+		params.put("cfgName", cfgName);
+		params.put("cfgVal", cfgVal);
+		
+		// 判断查询结果是否分页
+		if (pageNum != null && pageSize != null) {
+			pageModel.setCount(cartShopDaoExt.selectCartShopConfigCount(params));
+			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
+		}
+		// 查询渠道配置信息
+		pageModel.setResult(cartShopDaoExt.selectCartShopConfigByPage(params));
+		
+		return pageModel;
 	}
 
 	public void addOrUpdateCartShopConfig(TmChannelShopConfigModel model, boolean append) {

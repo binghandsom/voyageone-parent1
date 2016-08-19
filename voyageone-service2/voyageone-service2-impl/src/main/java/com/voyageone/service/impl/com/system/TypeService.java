@@ -53,7 +53,7 @@ public class TypeService extends BaseService {
 		return pageModel;
 	}
 
-	public void addOrUpdateType(ComMtTypeModel model, String username, boolean append) {
+	public ComMtTypeModel addOrUpdateType(ComMtTypeModel model, String username, boolean append) {
 		// 保存类型信息
 		boolean success = false;
 		if (append) {
@@ -74,6 +74,8 @@ public class TypeService extends BaseService {
 		if (!success) {
 			throw new BusinessException("保存类型信息失败");
 		}
+		
+		return model;
 	}
 
 	public void deleteType(List<Integer> typeIds, String username) {

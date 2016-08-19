@@ -28,6 +28,18 @@ define([
             "controller": 'AddChannelTypeController as ctrl',
             "size": 'md'
         },
+        "addChannelThird": {
+            "templateUrl": "views/pop/addChannel/addChannelThirdPartyCog.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addChannel/addChannelThirdPartyCog.ctl",
+            "controller": 'AddChannelThirdController as ctrl',
+            "size": 'md'
+        },
+        "addChannelSms": {
+            "templateUrl": "views/pop/addChannel/addChannelSmsConfig.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addChannel/addChannelSmsConfig.ctl",
+            "controller": 'AddChannelSmsController as ctrl',
+            "size": 'md'
+        },
         "createEdit": {
             "templateUrl": "views/pop/createEdit/index.tpl.html",
             "controllerUrl": "modules/admin/views/pop/createEdit/index.ctl",
@@ -111,6 +123,18 @@ define([
          */
         $scope.openTypeAdd = function openTypeAdd(context) {
             return openModal(popActions.addType, context);
+        };
+        /**
+         * 打开Type管理页面的添加页面
+         */
+        $scope.openChannelThird = function openChannelThird(context) {
+            return openModal(popActions.addChannelThird, context);
+        };
+        /**
+         * 打开Type管理页面的添加页面
+         */
+        $scope.openChannelSms = function openChannelSms(context) {
+            return openModal(popActions.addChannelSms, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {

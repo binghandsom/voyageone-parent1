@@ -15,13 +15,15 @@ angular.module('voyageone.angular.controllers', []);
 angular.module('voyageone.angular.directives', []);
 angular.module('voyageone.angular.factories', []);
 angular.module('voyageone.angular.services', []);
+angular.module('voyageone.angular.filter', []);
 
 // 总模块, 供子系统一次性引入
 angular.module('voyageone.angular', [
     'voyageone.angular.controllers',
     'voyageone.angular.directives',
     'voyageone.angular.factories',
-    'voyageone.angular.services'
+    'voyageone.angular.services',
+    'voyageone.angular.filter'
 ]);
 
 /*****************************/
@@ -3499,3 +3501,26 @@ TranslateService.prototype = {
         return currentLang.substr(0, 2);
     }
 };
+/**
+ * Created by sofia on 2016/7/22.
+ */
+(function() {
+    angular.module("voyageone.angular.filter", []).filter("stringCutter", function() {
+        return function (value, wordWise, max, tail) {
+            if (!value) return '';
+
+            max = parseInt(max, 10);
+            if (!max) return value;
+            if (value.length <= max) return value;
+
+            value = value.substr(0, max);
+            if (wordWise) {
+                var lastSpace = value.lastIndexOf(' ');
+                if (lastSpace != -1) {
+                    value = value.substr(0, lastSpace);
+                }
+            }
+            return value + (tail || ' …');
+        };
+    });
+})();

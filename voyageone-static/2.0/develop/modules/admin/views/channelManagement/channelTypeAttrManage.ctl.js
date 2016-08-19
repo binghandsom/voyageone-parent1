@@ -107,7 +107,7 @@ define([
                         _.forEach(self.channelTypeSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
-                        self.channelService.deleteChannel(delList).then(function (res) {
+                        self.channelAttributeService.deleteChannelAttribute(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);
                             self.search();
                         })
