@@ -165,12 +165,8 @@ public class ChannelService extends BaseService {
 
 	public void addOrUpdateChannelConfig(TmOrderChannelConfigModel model, boolean append) {
 		// 查询渠道配置信息
-		TmOrderChannelConfigKey configKey = new TmOrderChannelConfigKey();
-		configKey.setOrderChannelId(model.getOrderChannelId());
-		configKey.setCfgName(model.getCfgName());
-		configKey.setCfgVal1(model.getCfgVal1());
-		TmOrderChannelConfigModel channelConfig = channelConfigDao.select(configKey);
-
+		TmOrderChannelConfigModel channelConfig = channelConfigDao.select(model);
+		
 		// 保存渠道配置信息
 		boolean success = false;
 		if (append) {

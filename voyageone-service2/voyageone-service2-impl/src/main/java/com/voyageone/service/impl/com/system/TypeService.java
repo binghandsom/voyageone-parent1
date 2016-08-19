@@ -60,9 +60,7 @@ public class TypeService extends BaseService {
 			// 添加类型信息
 			model.setCreater(username);
 			model.setModifier(username);
-			Integer typeId = typeDao.insert(model);
-			model.setId(typeId);
-			success = typeId > 0;
+			success = typeDao.insert(model) > 0;
 		} else {
 			// 更新类型信息
 			ComMtTypeModel typeInfo = typeDao.select(model.getId());
