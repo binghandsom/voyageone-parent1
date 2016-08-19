@@ -43,7 +43,6 @@ public class CmsBtJmPromotionImportSave3Service {
         } else {
             daoCmsBtJmPromotionProduct.update(info.jmProductModel);
         }
-        daoExtCmsBtJmPromotionProduct.updateAvgPriceByPromotionProductId(info.jmProductModel.getId());//求价格 折扣 平均值
         //CmsBtJmPromotionSku
         for (CmsBtJmPromotionSkuModel sku : info.jmSkuList) {
             sku.setCmsBtJmPromotionProductId(info.jmProductModel.getId());
@@ -72,6 +71,6 @@ public class CmsBtJmPromotionImportSave3Service {
                 daoCmsBtPromotionSkus.insert(skusModel);
             }
         }
-
+        daoExtCmsBtJmPromotionProduct.updateAvgPriceByPromotionProductId(info.jmProductModel.getId());//求价格 折扣 平均值
     }
 }
