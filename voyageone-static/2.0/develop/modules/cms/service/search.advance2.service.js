@@ -240,15 +240,22 @@ define([
             _.forEach(selBiDataList, function (data) {
                 var selValue = data.value;
                 var dotIdx = selValue.indexOf(".", 6);
-                var itemValObj = prodInfo.sales[selValue.substring(6, dotIdx)];
+                var itemValObj = prodInfo.bi[selValue.substring(3, dotIdx)]; // 取到sum一级
                 var itemVal = null;
                 if (itemValObj == undefined) {
-                    itemVal = "0";
+                    itemVal = "";
                 } else {
-                    dotIdx = selValue.lastIndexOf(".");
-                    itemVal = itemValObj[selValue.substring(dotIdx + 1)];
-                    if (itemVal == undefined) {
-                        itemVal = "0";
+                    dotIdx ++;
+                    var lastdotIdx = selValue.indexOf(".", dotIdx);
+                    itemValObj = itemValObj[selValue.substring(dotIdx, lastdotIdx)];    // bi分类
+                    if (itemValObj == undefined) {
+                        itemVal = "";
+                    } else {
+                        lastdotIdx = selValue.lastIndexOf(".");
+                        itemVal = itemValObj[selValue.substring(lastdotIdx + 1)];    // 各平台
+                        if (itemVal == undefined) {
+                            itemVal = "";
+                        }
                     }
                 }
                 selBiDataArr.push({value: itemVal});
