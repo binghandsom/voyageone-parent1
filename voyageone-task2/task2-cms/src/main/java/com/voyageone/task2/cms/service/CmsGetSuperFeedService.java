@@ -413,84 +413,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
     }
 
     /**
-     * LC产品文件读入
-     */
-    public List<SuperFeedLCBean> lcSuperFeedImport() {
-        $info("LC产品文件读入开始");
-
-        List<SuperFeedLCBean> superfeed = new ArrayList<>();
-
-        CsvReader reader;
-        try {
-            reader = new CsvReader(new FileInputStream(Feeds.getVal1(ChannelConfigEnums.Channel.LOCONDO.getId(), FeedEnums.Name.feed_ftp_localpath) + "/"
-                    + Feeds.getVal1(ChannelConfigEnums.Channel.LOCONDO.getId(), FeedEnums.Name.file_id)), ',', Charset.forName(Feeds.getVal1(ChannelConfigEnums.Channel.LOCONDO.getId(), FeedEnums.Name.feed_ftp_file_coding)));
-            // Head读入
-            reader.readHeaders();
-            reader.getHeaders();
-
-            // Body读入
-            while (reader.readRecord()) {
-                SuperFeedLCBean superfeedlcbean = new SuperFeedLCBean();
-
-                int i = 0;
-                superfeedlcbean.setPath(reader.get(i++));
-                superfeedlcbean.setName(reader.get(i++));
-                superfeedlcbean.setCode(reader.get(i++));
-                superfeedlcbean.setSub_code(reader.get(i++));
-                superfeedlcbean.setOriginal_price(reader.get(i++));
-                superfeedlcbean.setPrice(reader.get(i++));
-                superfeedlcbean.setSale_price(reader.get(i++));
-                superfeedlcbean.setOptions(reader.get(i++));
-                superfeedlcbean.setHeadline(reader.get(i++));
-                superfeedlcbean.setCaption(reader.get(i++));
-                superfeedlcbean.setAbstract(reader.get(i++));
-                superfeedlcbean.setExplanation(reader.get(i++));
-                superfeedlcbean.setAdditional1(reader.get(i++));
-                superfeedlcbean.setAdditional2(reader.get(i++));
-                superfeedlcbean.setAdditional3(reader.get(i++));
-                superfeedlcbean.setRelevant_links(reader.get(i++));
-                superfeedlcbean.setShip_weight(reader.get(i++));
-                superfeedlcbean.setTaxable(reader.get(i++));
-                superfeedlcbean.setRelease_date(reader.get(i++));
-                superfeedlcbean.setTemporary_point_term(reader.get(i++));
-                superfeedlcbean.setPoint_code(reader.get(i++));
-                superfeedlcbean.setMeta_key(reader.get(i++));
-                superfeedlcbean.setMeta_desc(reader.get(i++));
-                superfeedlcbean.setDisplay(reader.get(i++));
-                superfeedlcbean.setTemplate(reader.get(i++));
-                superfeedlcbean.setSale_period_start(reader.get(i++));
-                superfeedlcbean.setSale_period_end(reader.get(i++));
-                superfeedlcbean.setSale_limit(reader.get(i++));
-                superfeedlcbean.setSp_code(reader.get(i++));
-                superfeedlcbean.setBrand_code(reader.get(i++));
-                superfeedlcbean.setYahoo_product_code(reader.get(i++));
-                superfeedlcbean.setProduct_code(reader.get(i++));
-                superfeedlcbean.setJan(reader.get(i++));
-                superfeedlcbean.setDelivery(reader.get(i++));
-                superfeedlcbean.setAstk_code(reader.get(i++));
-                superfeedlcbean.setCondition(reader.get(i++));
-                superfeedlcbean.setProduct_category(reader.get(i++));
-                superfeedlcbean.setSpec1(reader.get(i++));
-                superfeedlcbean.setSpec2(reader.get(i++));
-                superfeedlcbean.setSpec3(reader.get(i++));
-                superfeedlcbean.setSpec4(reader.get(i++));
-                superfeedlcbean.setSpec5(reader.get(i++));
-                superfeedlcbean.setSort(reader.get(i++));
-                superfeedlcbean.setSp_additional(reader.get(i));
-
-                superfeed.add(superfeedlcbean);
-            }
-
-            reader.close();
-            $info("LC产品文件读入完成");
-        } catch (Exception ex) {
-            $info("LC产品文件读入失败");
-            logIssue("cms 数据导入处理", "LC产品文件读入失败 " + ex.getMessage());
-        }
-        return superfeed;
-    }
-
-    /**
      * JE产品信息插入
      *
      * @return isSuccess
@@ -512,31 +434,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             $info("JE产品信息插入失败 清TMP表失败");
         }
         $info("JE产品信息插入完成");
-        return isSuccess;
-    }
-
-    /**
-     * LC产品信息插入
-     *
-     * @return isSuccess
-     */
-    public boolean insertSuperFeedLC(List<SuperFeedLCBean> superfeedlist) {
-        boolean isSuccess = true;
-        $info("LC产品信息插入开始");
-
-        // 清表
-        if (superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.LOCONDO.getId(), FeedEnums.Name.table_id)) >= 0) {
-            for (SuperFeedLCBean superfeed : superfeedlist) {
-
-                if (superfeeddao.insertSuperfeedLCInfo(superfeed) <= 0) {
-                    $info("LC产品信息插入失败 code = " + superfeed.getCode());
-                }
-            }
-        } else {
-            isSuccess = false;
-            $info("LC产品信息插入失败 清TMP表失败");
-        }
-        $info("LC产品信息插入完成");
         return isSuccess;
     }
 
