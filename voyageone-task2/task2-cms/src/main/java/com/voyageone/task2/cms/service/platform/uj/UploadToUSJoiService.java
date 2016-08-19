@@ -509,11 +509,11 @@ public class UploadToUSJoiService extends BaseTaskService {
             productGroupService.updateGroupsPlatformStatus(cmsBtProductGroupModel, listSxCode);
             $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
         } catch (CommonConfigNotFoundException ce) {
-            String errMsg = "子店->USJOI主店产品导入:异常终止:[ErrMsg=";
+            String errMsg = "子店->USJOI主店产品导入:异常终止:";
             if (StringUtils.isNullOrBlank2(ce.getMessage())) {
-                errMsg += " [ErrMsg=" + ce.getStackTrace()[0].toString() + "]";
+                errMsg += "出现不可预知的错误，请跟管理员联系 [ErrMsg=" + ce.getStackTrace()[0].toString() + "]";
             } else {
-                errMsg += ce.getMessage() + "]";
+                errMsg += ce.getMessage();
             }
             // 回写详细错误信息表(cms_bt_business_log)
             insertBusinessLog(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getCartId(),
@@ -521,12 +521,12 @@ public class UploadToUSJoiService extends BaseTaskService {
             // 抛出让外面的循环做处理
             throw ce;
         } catch (Exception e) {
-            String errMsg = "子店->USJOI主店产品导入:异常终止:[ErrMsg=";
+            String errMsg = "子店->USJOI主店产品导入:异常终止:";
             if (StringUtils.isNullOrBlank2(e.getMessage())) {
-                errMsg += e.getStackTrace()[0].toString() + "]";
+                errMsg += "出现不可预知的错误，请跟管理员联系 [ErrMsg=" + e.getStackTrace()[0].toString() + "]";
                 $error(errMsg);
             } else {
-                errMsg += e.getMessage() + "]";
+                errMsg += e.getMessage();
             }
             // 将子店->主店的上新workload的状态更新为2(导入上新失败)
             sxWorkLoadBean.setPublishStatus(2);
