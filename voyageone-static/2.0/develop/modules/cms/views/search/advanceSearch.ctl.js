@@ -273,12 +273,21 @@ define([
                 return;
             }
             var msg = '';
+            var selList = getSelProductList();
+            if (selList.length > 0) {
+                msg = '<br>仅导出选中的记录，如需导出全部记录，请回到一览画面取消选择。';
+                $scope.vm.searchInfo._selCodeList = [];
+                _.forEach(selList, function (object) {
+                    $scope.vm.searchInfo._selCodeList.push(object.code);
+                });
+            }
+
             if (fileType == 1) {
-                msg = '即将导出Code级的搜索结果，请确认。';
+                msg = '即将导出Code级的搜索结果，请确认。' + msg;
             } else if (fileType == 2) {
-                msg = '即将导出Group级的搜索结果，请确认。';
+                msg = '即将导出Group级的搜索结果，请确认。' + msg;
             } else if (fileType == 3) {
-                msg = '即将导出SKU级的搜索结果，请确认。';
+                msg = '即将导出SKU级的搜索结果，请确认。' + msg;
             }
             confirm(msg).then(function () {
                 $scope.vm.searchInfo.fileType = fileType;

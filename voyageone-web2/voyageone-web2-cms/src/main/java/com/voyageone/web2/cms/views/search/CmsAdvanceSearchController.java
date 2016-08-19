@@ -264,6 +264,8 @@ public class CmsAdvanceSearchController extends CmsController {
 
     /**
      * 下载文件
+     * TODO-- 注意：这里没有检查文件访问权限，可能会有问题，可以下载其他人的数据文件(通过伪造文件名)
+     * 　　　　　　　 也没考虑过期文件删除的问题
      */
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.EXPORT_DOWNLOAD)
     public ResponseEntity<byte[]> downloadFile(@RequestParam String fileName) {
