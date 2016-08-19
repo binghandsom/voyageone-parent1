@@ -11,7 +11,7 @@ define(function (require) {
 
     cms.controller('DefaultAttributeController', (function () {
 
-        function DefaultAttributeController(popups, alert, confirm, menuService, $productDetailService, platformMappingService) {
+        function DefaultAttributeController(popups, alert, confirm, menuService, $productDetailService,platformMappingService) {
 
             var self = this;
 
@@ -107,6 +107,11 @@ define(function (require) {
                     }
                 });
             });
+        };
+
+        DefaultAttributeController.prototype.editItem = function (item){
+            var _item = angular.copy(item);
+            window.open("#/channel/default_attribute_detail/" + JSON.stringify(_item).replace(/\//g,"✓"));
         };
 
         return DefaultAttributeController;

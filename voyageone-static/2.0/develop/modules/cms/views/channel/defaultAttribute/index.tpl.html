@@ -74,9 +74,9 @@
                     <td class="mfb-xt3 text-center">{{entity.created | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="mfb-xt3 text-left">{{entity.creater}}</td>
                     <td class="mfb-xt3 text-center">
-                        <a title="编辑" ng-href="#/channel/default_attribute_detail/{{entity}}" class="btn btn-success btn-xs" target="_blank" >
+                        <button title="编辑" class="btn btn-success btn-xs" ng-click="ctrl.editItem(entity)" >
                             <i class="fa fa-pencil"></i>
-                        </a>&emsp;
+                        </button>&emsp;
                         <button title="删除" class="btn btn-danger btn-xs" ng-click="ctrl.deleteItem(entity)">
                             <i class="fa  fa-trash-o"></i>
                         </button>
