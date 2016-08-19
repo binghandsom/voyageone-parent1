@@ -77,4 +77,25 @@ public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMa
 
         return countByQuery(new JongoQuery(criteria).getQuery(), channelId);
     }
+
+    public String selectModified(CmsBtPlatformMappingModel fieldMapsModel) {
+
+        String channelId = fieldMapsModel.getChannelId();
+        Integer type = fieldMapsModel.getCategoryType();
+
+        Criteria criteria = new Criteria("channelId").is(channelId)
+                .and("categoryType").is(type)
+                .and("cartId").is(fieldMapsModel.getCartId());
+
+        if (type != 1)
+            criteria.and("categoryPath").is(fieldMapsModel.getCategoryPath());
+
+        JongoQuery query = new JongoQuery(criteria);
+
+        query.setProjectionExt("modified");
+
+        CmsBtPlatformMappingModel model = selectOneWithQuery(query, channelId);
+
+        return model.getModified();
+    }
 }
