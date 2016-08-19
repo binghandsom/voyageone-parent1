@@ -1,8 +1,10 @@
 package com.voyageone.web2.vms.views.report;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
+import com.voyageone.web2.vms.VmsConstants;
 import com.voyageone.web2.vms.VmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -75,7 +77,7 @@ public class VmsFinancialReportController extends BaseController {
     @RequestMapping(VmsUrlConstants.REPORT.FINANCIAL_REPORT.DOWNLOAD_FINANCIAL_REPORT)
     public ResponseEntity downloadFinancialReport(@RequestParam String reportFileName) throws IOException {
         // 财务报表文件路径
-        String reportFilePath = com.voyageone.common.configs.Properties.readValue("vms.report");
+        String reportFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.report");
         reportFilePath += "/" + getUser().getSelChannelId() + "/";
 
         try(FileInputStream file = new FileInputStream(reportFilePath + reportFileName)) {

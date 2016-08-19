@@ -1,8 +1,10 @@
 package com.voyageone.web2.vms.views.inventory;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
+import com.voyageone.web2.vms.VmsConstants;
 import com.voyageone.web2.vms.VmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +44,7 @@ public class VmsInventoryFileUploadController extends BaseController {
     @RequestMapping(VmsUrlConstants.INVENTORY.INVENTORY_FILE_UPLOAD.DOWNLOAD_SAMPLE_INVENTORY_FILE)
     public ResponseEntity downSampleInventoryFile() throws IOException {
         // Feed文件模板的路径
-        String sampleFilePath = com.voyageone.common.configs.Properties.readValue("vms.inventory.sample.file");
+        String sampleFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.inventory.sample.file");
 
         try(FileInputStream file = new FileInputStream(sampleFilePath)) {
             return genResponseEntityFromStream("inventory_file_sample.csv", file);

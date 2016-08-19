@@ -2,6 +2,7 @@ package com.voyageone.task2.vms.service;
 
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.vms.VmsBtFeedFileDao;
 import com.voyageone.service.impl.com.mq.MqSender;
@@ -120,7 +121,7 @@ public class VmsFeedFileScanService extends BaseTaskService {
         }
 
         // 取得FTP测Feed文件上传路径
-        String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.ftp.upload");
+        String feedFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.feed.ftp.upload");
         feedFilePath += "/" + channelId + "/feed/";
 
         // 这个渠道的Feed文件的根目录

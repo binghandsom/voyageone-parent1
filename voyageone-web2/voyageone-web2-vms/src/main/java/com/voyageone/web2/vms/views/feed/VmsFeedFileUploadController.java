@@ -1,8 +1,10 @@
 package com.voyageone.web2.vms.views.feed;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
+import com.voyageone.web2.vms.VmsConstants;
 import com.voyageone.web2.vms.VmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +44,7 @@ public class VmsFeedFileUploadController extends BaseController {
     @RequestMapping(VmsUrlConstants.FEED.FEED_FILE_IMPORT.DOWNLOAD_SAMPLE_FEED_FILE)
     public ResponseEntity downSampleFeedFile() throws IOException {
         // Feed文件模板的路径
-        String sampleFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.sample.file");
+        String sampleFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.feed.sample.file");
 
         try(FileInputStream file = new FileInputStream(sampleFilePath)) {
 

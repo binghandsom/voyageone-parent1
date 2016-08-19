@@ -16,6 +16,9 @@ public class VmsConstants {
     public final static String ORDER_TIME = "order_time";
     public final static String CONSOLIDATION_ORDER_TIME = "consolidation_order_time";
 
+    // VMS_PROPERTY
+    public final static String VMS_PROPERTY = "VMS_PROPERTY";
+
     /**
      * Feed文件导入状态
      */
