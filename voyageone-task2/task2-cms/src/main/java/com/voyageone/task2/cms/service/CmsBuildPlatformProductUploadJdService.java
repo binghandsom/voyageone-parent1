@@ -600,13 +600,13 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 sxData.setChannelId(channelId);
                 sxData.setCartId(cartId);
                 sxData.setGroupId(groupId);
-                sxData.setErrorMessage(shopProp.getShop_name() + " 取得上新用的商品数据信息异常！请向管理员确认 [上新数据为null]");
+                sxData.setErrorMessage(shopProp.getShop_name() + " 取得上新用的商品数据信息异常！请跟管理员联系 [上新数据为null]");
             }
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
                 // nullpoint错误的处理
                 if(StringUtils.isNullOrBlank2(ex.getMessage())) {
-                    sxData.setErrorMessage(shopProp.getShop_name() + "上新时出现异常，请向管理员确认. " + ex.getStackTrace()[0].toString());
+                    sxData.setErrorMessage(shopProp.getShop_name() + "上新时出现不可预知的错误，请跟管理员联系. " + ex.getStackTrace()[0].toString());
                 } else {
                     sxData.setErrorMessage(shopProp.getShop_name() + " " +ex.getMessage());
                 }

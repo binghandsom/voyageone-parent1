@@ -28,6 +28,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -49,6 +50,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM.*;
 
 /**
  * 子店->USJOI主店产品导入服务
@@ -78,6 +80,9 @@ public class UploadToUSJoiService extends BaseTaskService {
 
     @Autowired
     private ProductSkuService productSkuService;
+
+    @Autowired
+    private PriceService priceService;
 
     @Autowired
     private MongoSequenceService commSequenceMongoService;
@@ -412,7 +417,24 @@ public class UploadToUSJoiService extends BaseTaskService {
                                                     // 如果USJOI店铺(928,929)配置了自动同步人民币专柜价格时，才同步priceMsrp
                                                     oldSku.put("priceMsrp", newSku.get("priceMsrp"));
                                                 }
+
+                                                // 获取上一次指导价
+                                                Double lastRetailPrice = oldSku.getDoubleAttribute("priceRetail");
+                                                // 保存最新中国指导价格
                                                 oldSku.put("priceRetail", newSku.get("priceRetail"));
+
+                                                // 获取最新指导价
+                                                Double retailPrice = oldSku.getDoubleAttribute("priceRetail");
+                                                // 获取价格波动字符串
+                                                String priceFluctuation = priceService.getPriceFluctuation(retailPrice, lastRetailPrice);
+                                                // 保存价格波动(U50% D30%)
+                                                oldSku.put(priceChgFlg.name(), priceFluctuation);
+
+                                                // 保存击穿标识
+                                                String priceDiffFlgValue = productSkuService.getPriceDiffFlg(usJoiChannelId, oldSku);
+                                                // 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5）
+                                                oldSku.put(priceDiffFlg.name(), priceDiffFlgValue);
+
                                                 updateFlg = true;
                                                 break;
                                             }
