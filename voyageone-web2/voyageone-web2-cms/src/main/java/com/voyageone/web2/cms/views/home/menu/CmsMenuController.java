@@ -126,7 +126,12 @@ public class CmsMenuController extends CmsController {
     {
         return success(serviceCmsBtDataAmount.getHomeSumData(getUser().getSelChannelId(), getLang()));
     }
-
+    @RequestMapping(value = CmsUrlConstants.HOME.MENU.SumHome,method = RequestMethod.GET)
+    public AjaxResponse SumHome()
+    {
+        serviceCmsBtDataAmount.sumByChannelId(getUser().getSelChannelId());
+        return success("完成");
+    }
     @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CMS_CONFIG)
     public AjaxResponse getCmsConfig()
     {
