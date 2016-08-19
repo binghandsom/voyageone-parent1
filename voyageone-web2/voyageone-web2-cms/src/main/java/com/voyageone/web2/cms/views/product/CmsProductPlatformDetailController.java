@@ -46,7 +46,7 @@ public class CmsProductPlatformDetailController extends CmsController {
         Map<String, Object> result = new HashMap<>();
 
         result.put("mastData", cmsProductPlatformDetailService.getProductMastData(channelId, prodId, cartId));
-        result.put("platform", cmsProductPlatformDetailService.getProductPlatform(channelId, prodId, cartId));
+        result.put("platform", cmsProductPlatformDetailService.getProductPlatform(channelId, prodId, cartId, getLang()));
 
         return success(result);
     }
@@ -60,7 +60,7 @@ public class CmsProductPlatformDetailController extends CmsController {
         String catId = String.valueOf(params.get("catId"));
         Map<String, Object> result = new HashMap<>();
 
-        result.put("platform", cmsProductPlatformDetailService.changePlatformCategory(channelId, prodId, cartId, catId));
+        result.put("platform", cmsProductPlatformDetailService.changePlatformCategory(channelId, prodId, cartId, catId, getLang()));
 
         return success(result);
     }
@@ -114,7 +114,7 @@ public class CmsProductPlatformDetailController extends CmsController {
         Map<String, Object> result = new HashMap<>();
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
         Integer cartId = (Integer) params.get("cartId");
-        result.put("platform", cmsProductPlatformDetailService.copyPropertyFromMainProduct(getUser().getSelChannelId(), prodId, cartId));
+        result.put("platform", cmsProductPlatformDetailService.copyPropertyFromMainProduct(getUser().getSelChannelId(), prodId, cartId, getLang()));
         return success(result);
     }
 

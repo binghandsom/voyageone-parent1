@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.platform.common;
 
+import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
 import com.taobao.api.request.TmallItemAddSchemaGetRequest;
 import com.taobao.api.request.TmallProductAddSchemaGetRequest;
@@ -122,6 +123,8 @@ public class SxGetProductInfoTest {
 
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
+    @Autowired
+    private CmsMtPlatformCategorySchemaTmDao platformCategorySchemaTmDao;
 
     @Autowired
     private CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao;
@@ -2844,7 +2847,7 @@ public class SxGetProductInfoTest {
             CmsBtSxWorkloadModel cmsBtSxWorkloadModel = new CmsBtSxWorkloadModel();
             cmsBtSxWorkloadModel.setChannelId(channel_id);
             cmsBtSxWorkloadModel.setCartId(cart_id);
-            cmsBtSxWorkloadModel.setGroupId(505894L);
+            cmsBtSxWorkloadModel.setGroupId(747515L);
             cmsBtSxWorkloadModel.setPublishStatus(0);
 
             {
@@ -2876,32 +2879,34 @@ public class SxGetProductInfoTest {
         System.out.println();
         System.out.println("Get schema start");
 
-        ShopBean shopBean = getShop("018", 23);
+        String channelId = "018";
+        ShopBean shopBean = getShop(channelId, 23);
 //        String[] categoryIds = {"121412004","121434005","162104","162116","162201","162205","1623","162702","302910","50000671","50000697","50007068","50008901","50008904","50009032","50010850","50011277","50012010","50012027","50012028","50012032","50013865","50013868","50013869","50013870","50013875","50013882","50014238","50014239"};
 
-        String[] categoryIds = {"121450007"};
+        String[] categoryIds = {"1205"};
 
         for (String category_id : categoryIds) {
             try {
                 // 取平台产品schema
                 Long categoryId = Long.valueOf(category_id);
-                String propsProduct = tbApi.getAddProductSchema(categoryId, null, shopBean);
-//                String propsProduct = tbApi.getAddProductSchema(categoryId, 10407679L, shopBean);
+//                String propsProduct = tbApi.getAddProductSchema(categoryId, null, shopBean);
+                String propsProduct = tbApi.getAddProductSchema(categoryId, 21466766L, shopBean);
                 System.out.println(propsProduct);
                 propsProduct = propsProduct.replaceAll("\"", "\\\\\"");
 
                 // 取平台商品schema
-                String propsItem = tbApi.getAddItemSchema(categoryId, 0L, true, shopBean);
-//                String propsItem = tbApi.getAddItemSchema(categoryId, 688343647L, false, shopBean);
+//                String propsItem = tbApi.getAddItemSchema(categoryId, 0L, true, shopBean);
+                String propsItem = tbApi.getAddItemSchema(categoryId, 341743148L, false, shopBean);
                 System.out.println(propsItem);
                 propsItem = propsItem.replaceAll("\"", "\\\\\"");
 
-//                String strQuery = "{'cartId':23,'catId':'" + category_id + "'}";
-//                String strUpdate = "{\"$set\" : {\"propsProduct\" : \"" + propsProduct + "\", \"propsItem\" : \"" + propsItem + "\"}}";
+                String strQuery = "{'cartId':23,'catId':'" + category_id + "'}";
+                String strUpdate = "{\"$set\" : {\"propsProduct\" : \"" + propsProduct + "\", \"propsItem\" : \"" + propsItem + "\"}}";
 //                WriteResult ws = cmsMtPlatformCategorySchemaDao.updateFirst(strQuery, strUpdate, 23);
-//                if (ws == null || !ws.isUpdateOfExisting() || ws.getN() == 0) {
-//                    System.out.println(String.format("类目id[%s]更新失败!", category_id));
-//                }
+                WriteResult ws = platformCategorySchemaTmDao.updateFirst(strQuery, strUpdate, channelId);
+                if (ws == null || !ws.isUpdateOfExisting() || ws.getN() == 0) {
+                    System.out.println(String.format("类目id[%s]更新失败!", category_id));
+                }
             } catch (Exception e) {
                 System.out.println(String.format("类目id[%s]更新失败!", category_id));
             }
