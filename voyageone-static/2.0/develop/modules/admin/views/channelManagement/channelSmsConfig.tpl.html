@@ -87,12 +87,12 @@
                         </label>
                     </th>
                     <th class="text-center mfb-xt" translate="TXT_CHANNEL_NAME"></th>
-                    <th class="text-left mfb-xt" translate="TXT_CHANNEL_SMS_TYPE"></th>
-                    <th class="text-left mfb-xt">{{'TXT_CHANNEL_SMS_CODE'|translate}}1</th>
-                    <th class="text-center mfb-xxt">{{'TXT_CHANNEL_SMS_CODE'|translate}}2</th>
-                    <th class="text-center mfb-xxt" translate="TXT_CHANNEL_SMS_CONTENT"></th>
+                    <th class="text-center mfb-xt" translate="TXT_CHANNEL_SMS_TYPE"></th>
+                    <th class="text-center mfb-xt">{{'TXT_CHANNEL_SMS_CODE'|translate}}1</th>
+                    <th class="text-center mfb-xt">{{'TXT_CHANNEL_SMS_CODE'|translate}}2</th>
+                    <th class="text-left mfb-xxt" translate="TXT_CHANNEL_SMS_CONTENT"></th>
                     <th class="text-center mfb-xxt" translate="TXT_CHANNEL_SMS_DESC"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_CHANNEL_SNS_DEL_TARGET"></th>
+                    <th class="text-center mfb-xt" translate="TXT_CHANNEL_SNS_DEL_TARGET"></th>
                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
                     <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
                     <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
@@ -100,23 +100,23 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td if-no-rows="ctrl.storeList.length||ctrl.storeList" colspan="11" style="padding: 0px"></td>
+                    <td if-no-rows="ctrl.channelList.length||ctrl.channelList" colspan="11" style="padding: 0px"></td>
                 </tr>
-                <tr ng-repeat="list in ctrl.storeList">
+                <tr ng-repeat="list in ctrl.channelList">
                     <td class="text-left v-middle">
                         <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                            <input ng-model="ctrl.channelSmsSelList.selFlag[list.storeId]" type="checkbox" ng-controller="selectRowsCtrl"
-                                   ng-click="selectOne(list.storeId, ctrl.channelSmsSelList)">
+                            <input ng-model="ctrl.channelSmsSelList.selFlag[list.seq]" type="checkbox" ng-controller="selectRowsCtrl"
+                                   ng-click="selectOne(list.seq, ctrl.channelSmsSelList)">
                             <span class="fa fa-check"></span>
                         </label>
                     </td>
                     <td class="text-center v-middle">{{list.channelName}}</td>
-                    <td class="text-left v-middle">{{list.storeName}}</td>
-                    <td class="text-left v-middle">{{list.storeArea}}</td>
-                    <td class="text-center v-middle">{{ctrl.getStoreType(list.storeType)}}</td>
-                    <td class="text-center v-middle">{{list.isSale=='1'?'在售':'不在售'}}</td>
-                    <td class="text-center v-middle">{{list.inventoryManager=='1' ? '管理':'不管理'}}</td>
-                    <td class="text-center v-middle">{{list.modifier}}</td>
+                    <td class="text-center v-middle">{{list.smsType}}</td>
+                    <td class="text-center v-middle">{{list.smsCode1}}</td>
+                    <td class="text-center v-middle">{{list.smsCode2}}</td>
+                    <td class="text-left v-middle">{{list.content}}</td>
+                    <td class="text-center v-middle">{{list.describe}}</td>
+                    <td class="text-center v-middle">{{list.delFlg=='1'?'删除':'未删除'}}</td>
                     <td class="text-center v-middle">{{list.active==true ? '启用':'禁用'}}</td>
                     <td class="text-left v-middle">{{list.modified}}</td>
                     <td class="text-center v-middle">{{list.modifier}}</td>
@@ -124,6 +124,6 @@
                 </tbody>
             </table>
         </div>
-        <vpagination config="ctrl.storePageOption" ng-if="ctrl.storeList.length>0"></vpagination>
+        <vpagination config="ctrl.storePageOption" ng-if="ctrl.channelList.length>0"></vpagination>
     </div>
 </div>

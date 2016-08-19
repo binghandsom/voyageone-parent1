@@ -67,6 +67,14 @@ define(function () {
                     "addSmsConfig": 'addSmsConfig',
                     "updateSmsConfig": "updateSmsConfig",
                     "deleteSmsConfig": "deleteSmsConfig"
+                },
+                "carrierConfigService": {
+                    "root": "/admin/channel/carrier",
+                    "searchCarrierConfigByPage": 'searchCarrierConfigByPage',
+                    "addCarrierConfig": 'addCarrierConfig',
+                    "updateCarrierConfig": "updateCarrierConfig",
+                    "deleteCarrierConfig": "deleteCarrierConfig",
+                    "getAllCarrier": "getAllCarrier"
                 }
             },
             /** Cart信息 */
@@ -113,6 +121,19 @@ define(function () {
                     "updateType": "updateType",
                     "deleteType": "deleteType",
                     "getAllType": "getAllType"
+                }
+            },
+            /** 任务信息 */
+            "task": {
+                "taskService": {
+                    "root": "/admin/task/self",
+                    "searchTaskByPage": "searchTaskByPage",
+                    "addTask": "addTask",
+                    "updateTask": "updateTask",
+                    "deleteTask": "deleteTask",
+                    "searchTaskConfigByPage": "searchTaskConfigByPage",
+                    "deleteTaskConfig": "deleteTaskConfig",
+                    "addTaskConfig": "addTaskConfig"
                 }
             }
         }

@@ -1,25 +1,21 @@
 /**
- * Created by sofia on 2016/8/18.
+ * Created by sofia on 2016/8/19.
  */
 define([
     'admin'
 ], function (admin) {
-    admin.controller('AddChannelTypeController', (function () {
-        function AddChannelTypeController(context, channelService, popups, typeService, AdminCartService, channelAttributeService, $uibModalInstance) {
+    admin.controller('AddChannelCarrierController', (function () {
+        function AddChannelCarrierController(context, channelService, popups, carrierConfigService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
             this.popups = popups;
             this.channelService = channelService;
-            this.typeService = typeService;
-            this.AdminCartService = AdminCartService;
-            this.channelAttributeService = channelAttributeService;
+            this.carrierConfigService = carrierConfigService;
             this.popType = '编辑';
-            this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance
-
         }
 
-        AddChannelTypeController.prototype = {
+        AddChannelCarrierController.prototype = {
             init: function () {
                 var self = this;
                 if (self.sourceData == 'add') {
@@ -30,18 +26,9 @@ define([
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
-                self.typeService.getAllType().then(function (res) {
-                    self.typeList = res.data;
+                self.carrierConfigService.getAllCarrier().then(function (res) {
+                    self.carrierList = res.data;
                 });
-            },
-            add: function (type) {
-                var self = this;
-                self.popups.openTypeAdd(type).then(function (res) {
-                    self.typeService.getAllType().then(function (res) {
-                        self.typeList = res.data;
-                    });
-                    self.sourceData.typeId = res.res.id;
-                })
             },
             cancel: function () {
                 this.$uibModalInstance.close();
@@ -51,18 +38,18 @@ define([
                 var result = {};
                 self.sourceData.active = self.sourceData.active == '0' ? true : false;
                 if (self.append == true) {
-                    self.channelAttributeService.addChannelAttribute(self.sourceData).then(function (res) {
+                    self.carrierConfigService.addCarrierConfig(self.sourceData).then(function (res) {
                         _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.channelAttributeService.updateChannelAttribute(self.sourceData).then(function (res) {
+                    self.carrierConfigService.updateCarrierConfig(self.sourceData).then(function (res) {
                         _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
                 }
             }
         };
-        return AddChannelTypeController;
+        return AddChannelCarrierController;
     })())
 });

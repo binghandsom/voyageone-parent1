@@ -40,7 +40,7 @@ define([
                             self.confirm(res.data.message);
                             return;
                         }
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                        _.extend(result, {'res': res.data, 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
@@ -49,7 +49,7 @@ define([
                             self.confirm(res.data.message);
                             return;
                         }
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                        _.extend(result, {'res': res.data, 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
                 }
