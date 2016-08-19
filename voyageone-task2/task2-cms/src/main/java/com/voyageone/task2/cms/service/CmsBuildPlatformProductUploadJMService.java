@@ -704,7 +704,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
                 if(StringUtils.isNullOrBlank2(e.getMessage())) {
-                    sxData.setErrorMessage("聚美上新出现异常，请向管理员确认 " + e.getStackTrace()[0].toString());
+                    sxData.setErrorMessage("聚美上新出现不可预知的错误，请跟管理员联系 " + e.getStackTrace()[0].toString());
                 }
                 else
                 {

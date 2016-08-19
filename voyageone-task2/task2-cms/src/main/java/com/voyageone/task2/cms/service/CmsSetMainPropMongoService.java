@@ -373,7 +373,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         // 如果是共通配置没有或者价格计算时抛出整个Channel的配置没有的错误时，后面的feed导入就不用做了，免得报出几百条同样的错误
                         String errMsg = "feed->master导入:异常终止:";
                         if (StringUtils.isNullOrBlank2(ce.getMessage())) {
-                            errMsg += " [ErrMsg=" + ce.getStackTrace()[0].toString() + "]";
+                            errMsg += "出现不可预知的错误，请跟管理员联系  [ErrMsg=" + ce.getStackTrace()[0].toString() + "]";
                         } else {
                             errMsg = ce.getMessage();
                         }
@@ -388,7 +388,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         errCnt++;
                         String errMsg = "feed->master导入:异常终止:";
                         if (StringUtils.isNullOrBlank2(e.getMessage())) {
-                            errMsg += " [ErrMsg=" + e.getStackTrace()[0].toString() + "]";
+                            errMsg += "出现不可预知的错误，请跟管理员联系 [ErrMsg=" + e.getStackTrace()[0].toString() + "]";
                             $error(errMsg);
                         } else {
                             errMsg = e.getMessage();
