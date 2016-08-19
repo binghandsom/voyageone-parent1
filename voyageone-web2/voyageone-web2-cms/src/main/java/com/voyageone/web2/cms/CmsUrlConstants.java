@@ -25,6 +25,10 @@ public interface CmsUrlConstants {
             String GetHomeSumData = "getHomeSumData";
 
             String GET_CMS_CONFIG = "getCmsConfig";
+
+            String GET_MAIN_CATEGORIES = "getMainCategories";
+
+            String GET_CARTS = "getCarts";
         }
     }
 
@@ -331,35 +335,6 @@ public interface CmsUrlConstants {
 
     // 匹配关系设置
     interface MAPPING {
-
-        interface FEED {
-
-            String ROOT = "/cms/mapping/feed";
-
-            String GET_TOP_CATEGORIES = "getTopCategories";
-
-            String GET_FEED_CATEGORY_TREE = "getFeedCategoryTree";
-
-            String GET_MAIN_CATEGORIES = "getMainCategories";
-
-            String SET_MAPPING = "setFeedMapping";
-
-            String EXTENDS_MAPPING = "extendsMapping";
-
-            String GET_FIELD_MAPPING = "getFieldMapping";
-
-            String GET_FEED_ATTRS = "getFeedAttributes";
-
-            String SAVE_FIELD_MAPPING = "saveFieldMapping";
-
-            String DIRECT_MATCH_OVER = "directMatchOver";
-
-            String GET_MAIN_MAPPING = "getMainMapping";
-
-            String GET_MAPPINGS = "getMappings";
-
-            String GET_MAPPING_INFO = "getMappingInfo";
-        }
 
         interface DICTIONARY {
 

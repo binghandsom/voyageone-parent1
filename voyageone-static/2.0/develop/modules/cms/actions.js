@@ -118,37 +118,16 @@ define(function () {
                 }
             },
             "mapping": {
+                // 原功能已删除
+                // 但内部的 action 被其他功能调用, 所以暂时保留
+                // 具体的 action 指向其他根地址
                 "feedMappingService": {
-                    "root": "/cms/mapping/feed",
-                    "getTopCategories": "getTopCategories",
-                    "getFeedCategoryTree": "getFeedCategoryTree",
-                    "getMainCategories": "getMainCategories",
-                    "setMapping": "setFeedMapping",
-                    "extendsMapping": "extendsMapping",
-                    "getFieldMapping": "getFieldMapping",
-                    "getFeedAttrs": "getFeedAttributes",
-                    "saveFieldMapping": "saveFieldMapping",
-                    "directMatchOver": "directMatchOver",
-                    "getMainMapping": "getMainMapping",
-                    "getMappings": "getMappings",
-                    "getMappingInfo": "getMappingInfo"
-                },
-                "platformMappingService": {
-                    "root": "/cms/mapping/platform",
-                    "getMainCategory": "getMainDataFinalCategoryMap",
-                    "getOtherMappingPath": "getOtherMappingCategoryPath",
-                    "getPlatformCategories": "getPlatformCategories",
-                    "setPlatformMapping": "setPlatformMapping",
-                    "getPlatformCategory": "getPlatformCategory",
-                    "getPlatformCategorySchema": "getPlatformCategorySchema",
-                    "getMainCategorySchema": "getMainCategorySchema",
-                    "getDictList": "getDictList",
-                    "getPlatformMapping": "getPlatformMapping",
-                    "getMappingTypes": "getMappingType",
-                    "$saveMapping": "saveMapping",
-                    "$saveMatchOverByMainCategory": "saveMatchOverByMainCategory",
-                    "getCarts": "getCarts",
-                    "getCommonSchema": "getCommonSchema"
+                    root: "/cms",
+                    getMainCategories: {
+                        root: "/cms/home/menu/",
+                        url: "getMainCategories",
+                        cache: CACHE.LOCAL
+                    }
                 },
                 "$dictionaryService": {
                     "root": "/cms/mapping/dictionary",
@@ -572,8 +551,30 @@ define(function () {
                 get: "get",
                 save: "save",
                 delete: "delete",
-                getCommonSchema: {url: "getCommonSchema", cache: CACHE.LOCAL},
-                getFeedCustomProps: {url: "getFeedCustomProps", cache: CACHE.LOCAL}
+                getCommonSchema: {
+                    url: "getCommonSchema",
+                    cache: CACHE.LOCAL
+                },
+                getFeedCustomProps: {
+                    url: "getFeedCustomProps",
+                    cache: CACHE.LOCAL,
+                    cacheWith: [KEY.CHANNEL]
+                },
+                // 原 platform mapping 的功能已删除
+                // 原 platformMappingService 的以下两个 action 被其他内容调用
+                // 所以暂时寄存在新的 platformMappingService 下
+                getPlatformCategories: {
+                    root: "/cms/product/detail/",
+                    url: "getPlatformCategories",
+                    cache: CACHE.LOCAL,
+                    cacheWith: [KEY.CHANNEL]
+                },
+                getCarts: {
+                    root: "/cms/home/menu/",
+                    url: "getCarts",
+                    cache: CACHE.LOCAL,
+                    cacheWith: [KEY.CHANNEL]
+                }
             }
         }
     };
