@@ -46,6 +46,20 @@ define(function () {
                     "addChannelConfig": "addChannelConfig",
                     "updateChannelConfig": "updateChannelConfig",
                     "deleteChannelConfig": "deleteChannelConfig"
+                },
+                "channelAttributeService": {
+                    "root": "/admin/channel/attribute",
+                    "searchChannelAttributeByPage": 'searchChannelAttributeByPage',
+                    "addChannelAttribute": 'addChannelAttribute',
+                    "updateChannelAttribute": "updateChannelAttribute",
+                    "deleteChannelAttribute": "deleteChannelAttribute"
+                },
+                "thirdPartyConfigService": {
+                    "root": "/admin/channel/thirdParty",
+                    "searchThirdPartyConfigByPage": 'searchThirdPartyConfigByPage',
+                    "addThirdPartyConfig": 'addThirdPartyConfig',
+                    "updateThirdPartyConfig": "updateThirdPartyConfig",
+                    "deleteThirdPartyConfig": "deleteThirdPartyConfig"
                 }
             },
             /** Cart信息 */
@@ -81,6 +95,17 @@ define(function () {
                     "addStoreConfig": "addStoreConfig",
                     "updateStoreConfig": "updateStoreConfig",
                     "deleteStoreConfig": "deleteStoreConfig"
+                }
+            },
+            /** 统一属性配置 */
+            "type": {
+                "typeService": {
+                    "root": "/admin/system/type",
+                    "searchTypeByPage": "searchTypeByPage",
+                    "addType": "addType",
+                    "updateType": "updateType",
+                    "deleteType": "deleteType",
+                    "getAllType": "getAllType"
                 }
             }
         }

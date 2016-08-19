@@ -40,6 +40,16 @@ define(function () {
         "TXT_CHOOSE": "可选择",
         "TXT_MSG_SEARCH": "检索...",
 
+        /**渠道类型属性管理一览*/
+        "TXT_CHANNEL_TYPE_ATTR_MANAGEMENT": "渠道类型属性管理",
+        "TXT_CHANNEL_TYPE_NAME": "类型名",
+        "TXT_CHANNEL_LANGUAGE_TYPE": "语言类型",
+        "TXT_CHANNEL_ADD_NAME": "添加名",
+        "TXT_DISPLAY_SORT": "显示顺序",
+
+        /**第三方配置信息管理*/
+        "TXT_CHANNEL_THIRD_PARTY_CONFIG":"第三方配置信息管理",
+
         /**cart管理-信息一览*/
         "TXT_CART_MANAGE": "Cart管理",
         "TXT_CART_INFO_MANAGE": "Cart信息管理",
@@ -54,19 +64,19 @@ define(function () {
         /**仓库管理-信息一览*/
         "TXT_STORE_MANAGE": "仓库管理",
         "TXT_STORE_NAME": "仓库名",
-        "TXT_MAIN_STORE_NAME":"主仓库名",
+        "TXT_MAIN_STORE_NAME": "主仓库名",
         "TXT_SALE_STATE": "在售状态",
         "TXT_STORE_TYPE": "仓库类型",
-        "TXT_STORE_MANAGE_STATE":"库存管理状态",
-        "TXT_STORE_REMAINED":"库存保留量",
-        "TXT_STORE_REMAINED_NUMBER":"保留量",
-        "TXT_STORE_TAG_TYPE":"标签类型",
-        "TXT_STORE_AREA":"仓库位置",
-        "TXT_STORE_EXCT_TYPE":"仓库类别",
-        "TXT_INVENTORY_ASC_TYPE":"库存同步类型",
-        "TXT_INVENTORY_ASSIGN_PRE":"库存分配优先级",
-        "TXT_TOGETHER_ZONE":"拼单区域",
-        "TXT_STORE_ADDRESS":"仓库地址",
+        "TXT_STORE_MANAGE_STATE": "库存管理状态",
+        "TXT_STORE_REMAINED": "库存保留量",
+        "TXT_STORE_REMAINED_NUMBER": "保留量",
+        "TXT_STORE_TAG_TYPE": "标签类型",
+        "TXT_STORE_AREA": "仓库位置",
+        "TXT_STORE_EXCT_TYPE": "仓库类别",
+        "TXT_INVENTORY_ASC_TYPE": "库存同步类型",
+        "TXT_INVENTORY_ASSIGN_PRE": "库存分配优先级",
+        "TXT_TOGETHER_ZONE": "拼单区域",
+        "TXT_STORE_ADDRESS": "仓库地址",
 
         /**按钮组*/
         "TXT_LOGOUT": "注销",

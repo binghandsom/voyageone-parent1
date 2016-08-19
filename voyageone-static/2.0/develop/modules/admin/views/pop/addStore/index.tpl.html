@@ -13,6 +13,7 @@
                         <div class="col-sm-8">
                             <select search-contains="true" chosen width="'100%'" class="form-control"
                                     ng-model="ctrl.sourceData.orderChannelId"
+                                    name="orderChannelId" required
                                     ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList"
                                     ng-disabled="ctrl.popType == '编辑'">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
@@ -27,7 +28,7 @@
                     <div class="form-group"><!-- 标签类型 -->
                         <label class="col-sm-4 control-label">{{'TXT_STORE_TAG_TYPE' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.sourceData.labelType">
+                            <select class="form-control" ng-model="ctrl.sourceData.labelType" name="labelType" required>
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 <option value="0">&nbsp;详细拣货单</option>
                                 <option value="1">&nbsp;简单拣货单大</option>
@@ -44,7 +45,7 @@
                     <div class="form-group"><!-- 在售状态 -->
                         <label class="col-sm-4 control-label">{{'TXT_SALE_STATE' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.sourceData.isSale">
+                            <select class="form-control" ng-model="ctrl.sourceData.isSale" name="isSale" required>
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 <option value="0">&nbsp;不在售</option>
                                 <option value="1">&nbsp;在售</option>
@@ -86,7 +87,7 @@
                     <div class="form-group"><!-- 仓库名 -->
                         <label class="col-sm-4 control-label">{{'TXT_STORE_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.storeName" name="storeName"/>
+                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.storeName" name="storeName" required/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -97,7 +98,9 @@
                     <div class="form-group"><!-- 主仓库名 -->
                         <label class="col-sm-4 control-label">{{'TXT_MAIN_STORE_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.sourceData.parentStoreId" ng-options="store.storeId as store.storeName for store in ctrl.storeAllList">
+                            <select class="form-control" ng-model="ctrl.sourceData.parentStoreId"
+                                    ng-options="store.storeId as store.storeName for store in ctrl.storeAllList"
+                                    name="mainStoreName" required>
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
@@ -110,7 +113,7 @@
                     <div class="form-group"><!-- 仓库类型 -->
                         <label class="col-sm-4 control-label">{{'TXT_STORE_TYPE' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.sourceData.storeType" name="storeType">
+                            <select class="form-control" ng-model="ctrl.sourceData.storeType" name="storeType" required>
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 <option value="0">&nbsp;自营仓库</option>
                                 <option value="1">&nbsp;第三方合作仓库</option>
@@ -148,7 +151,7 @@
                     <div class="form-group"><!-- 仓库位置 -->
                         <label class="col-sm-4 control-label">{{'TXT_STORE_AREA' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.sourceData.storeLocation" name="storeLocation">
+                            <select class="form-control" ng-model="ctrl.sourceData.storeLocation" name="storeLocation" required>
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 <option value="0">&nbsp;国外仓库</option>
                                 <option value="1">&nbsp;中国仓库</option>
@@ -163,7 +166,7 @@
                     <div class="form-group"><!-- 仓库类别 -->
                         <label class="col-sm-4 control-label">{{'TXT_STORE_EXCT_TYPE' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.sourceData.storeKind" name="storeKind">
+                            <select class="form-control" ng-model="ctrl.sourceData.storeKind" name="storeKind" required>
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 <option value="0">&nbsp;真实仓库</option>
                                 <option value="1">&nbsp;超卖仓库</option>
@@ -178,7 +181,7 @@
                     <div class="form-group"><!-- 拼单区域 -->
                         <label class="col-sm-4 control-label">{{'TXT_TOGETHER_ZONE' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.sourceData.areaId" name="areaId">
+                            <select class="form-control" ng-model="ctrl.sourceData.areaId" name="areaId" required>
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 <option value="0">&nbsp;不拼单</option>
                                 <option value="1">&nbsp;US拼单</option>
