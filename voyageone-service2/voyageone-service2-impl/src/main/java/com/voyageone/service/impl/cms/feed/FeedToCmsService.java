@@ -86,6 +86,16 @@ public class FeedToCmsService extends BaseService {
      */
     @VOTransactional
     public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> products, String modifier) {
+        return updateProduct(channelId, products, modifier, false);
+    }
+
+    /**
+     * 更新code信息如果不code不存在会新建
+     *
+     * @param products 产品列表
+     */
+    @VOTransactional
+    public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> products, String modifier, boolean isVmsUpdate) {
         List<String> existCategory = new ArrayList<>();
         List<CmsBtFeedInfoModel> failProduct = new ArrayList<>();
         List<CmsBtFeedInfoModel> succeedProduct = new ArrayList<>();
@@ -139,7 +149,10 @@ public class FeedToCmsService extends BaseService {
                     }
                     product.setCreated(befproduct.getCreated());
                     product.setCreater(befproduct.getCreater());
-                    product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
+                    // Vms的场合不MergeAttribute
+                    if (!isVmsUpdate) {
+                        product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
+                    }
                     //feed增加状态属性(New(9), Waiting For Import(0),Finish Import(1),Error(2), Not Import(3))，9,3 ,0->不变, 2, 1->0
                     if (befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1 || befproduct.getUpdFlg() == 0) {
                         if(insertLog) {
@@ -150,6 +163,7 @@ public class FeedToCmsService extends BaseService {
                     }
                 } else {
                     insertLog = true;
+                    product.setCreater(modifier);
                     product.setUpdFlg(9);
                 }
 
@@ -344,17 +358,22 @@ public class FeedToCmsService extends BaseService {
 
     }
 
-
     private void weightConvert(CmsBtFeedInfoModel_Sku skuModel ){
         try {
             if (!StringUtil.isEmpty(skuModel.getWeightOrg()) && !StringUtil.isEmpty(skuModel.getWeightOrgUnit())) {
                 String unit = skuModel.getWeightOrgUnit().trim();
                 String weightOrg = skuModel.getWeightOrg().trim();
-                if (unit.indexOf("oz") > -1) {
+                if (unit.toLowerCase().indexOf("oz") > -1) {
                     Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 16.0);
                     skuModel.setWeightCalc(convertWeight.toString());
-                } else if (unit.indexOf("lb") > -1) {
+                } else if (unit.toLowerCase().indexOf("lb") > -1) {
                     Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg));
+                    skuModel.setWeightCalc(convertWeight.toString());
+                } else if (unit.toLowerCase().equals("g")) {
+                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 453.59237);
+                    skuModel.setWeightCalc(convertWeight.toString());
+                } else if (unit.toLowerCase().equals("kg")) {
+                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 0.4535924);
                     skuModel.setWeightCalc(convertWeight.toString());
                 }
             }

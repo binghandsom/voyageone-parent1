@@ -190,7 +190,10 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         // added by morse.lu 2016/08/08 start
         // barCode对应的是否更新
         Map<String, SxDarwinSkuProps> mapBarcodeProps = new HashMap<>();
-        sxData.getMapDarwinSkuProps().forEach((sku, props)-> mapBarcodeProps.put(props.getBarcode(), props));
+        Map<String, SxDarwinSkuProps> mapDarwinSkuProps = sxData.getMapDarwinSkuProps();
+        if (mapDarwinSkuProps != null) {
+            mapDarwinSkuProps.forEach((sku, props)-> mapBarcodeProps.put(props.getBarcode(), props));
+        }
         // added by morse.lu 2016/08/08 end
 
         for (String pid : platformProductIdList)

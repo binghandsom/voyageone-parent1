@@ -23,7 +23,7 @@ public class CmsMtPlatformCategorySchemaTmDao extends BaseMongoChannelDao<CmsMtP
      * 删除参数指定的schema: channel, cart, category
      */
     public WriteResult deletePlatformCategorySchemaByChannnelCartCategory(String channelId, Integer cartId, String categoryId){
-        String queryStr = String.format("{channelId: '%s', cartId:%s, catId:%s}", channelId, cartId, categoryId);
+        String queryStr = String.format("{channelId: '%s', cartId:%s, catId:'%s'}", channelId, cartId, categoryId);
         return deleteWithQuery(queryStr, channelId);
     }
 

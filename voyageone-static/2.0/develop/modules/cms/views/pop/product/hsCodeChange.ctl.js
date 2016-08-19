@@ -32,9 +32,10 @@ define([
                         self.vm.result.push(_hsObject);
                     });
 
-                },function(){
+                },function(res){
                     /**错误处理*/
-                    self.uibModalInstance.close("error");
+                    if(res.displayType != 1)
+                        self.uibModalInstance.close("error");
                 });
             },
             update:function(mark){
