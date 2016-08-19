@@ -259,11 +259,23 @@ public class FeedInfoService extends BaseService {
         }
 
         // 获取category
-        String category = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("category"));
-        if (category != null) {
-            result.append("{").append(MongoUtils.splicingValue("category", category));
-            result.append("},");
+        if(searchValue.get("category") != null){
+
+            List<String> categorys = (List<String>) searchValue.get("category");
+            if (!categorys.isEmpty()) {
+                List<String> orSearch = new ArrayList<>();
+                categorys = categorys.stream().map(s -> "/^" + s + "/").collect(Collectors.toList());
+                result.append("{").append(MongoUtils.splicingValue("category", categorys,"$in"));
+                result.append("},");
+            }
+//
+//            String category = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("category"));
+//            if (category != null) {
+//                result.append("{").append(MongoUtils.splicingValue("category", category));
+//                result.append("},");
+//            }
         }
+
 
         // 获取product name
         String prodName = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("name"));
