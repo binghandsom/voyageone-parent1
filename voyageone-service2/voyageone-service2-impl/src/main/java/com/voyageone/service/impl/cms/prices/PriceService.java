@@ -471,6 +471,8 @@ public class PriceService extends BaseService {
         // 保存价格波动
         skuInPlatform.put(priceChgFlg.name(), priceFluctuation);
 
+        skuInPlatform.put(priceRetail.name(), retailPrice);
+
         if (isAutoApprovePrice)
             skuInPlatform.put(priceSale.name(), retailPrice);
         else
@@ -483,7 +485,6 @@ public class PriceService extends BaseService {
         // 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5）
         skuInPlatform.put(priceDiffFlg.name(), priceDiffFlgValue);
 
-        skuInPlatform.put(priceRetail.name(), retailPrice);
     }
 
     /**
