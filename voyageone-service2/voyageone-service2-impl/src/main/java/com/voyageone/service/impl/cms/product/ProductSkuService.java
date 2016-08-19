@@ -281,6 +281,7 @@ public class ProductSkuService extends BaseService {
         // 如果价格计算有问题(-1)的时候，清空priceDiffFlg,防止高级检索画面查出来
         if (priceSale < 0.00d || priceRetail < 0.00d) {
             diffFlg = "";
+            return diffFlg;
         }
         if (priceSale < priceRetail) {
             if (priceRetail * (1 - breakThreshold) <= priceSale || breakThreshold == 0) {
