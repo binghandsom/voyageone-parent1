@@ -244,6 +244,10 @@ define([
                 if ($scope.vm.selSalesType == null || $scope.vm.selSalesType == undefined) {
                     $scope.vm.selSalesType = [];
                 }
+                $scope.vm.selBiDataList = res.data.selBiDataList;
+                if ($scope.vm.selBiDataList == null || $scope.vm.selBiDataList == undefined) {
+                    $scope.vm.selBiDataList = [];
+                }
 
                 $scope.vm.productUrl = res.data.productUrl;
                 $scope.vm.groupList = res.data.groupList;
@@ -259,8 +263,8 @@ define([
                 $scope.vm.currTab = "product";
                 $scope.vm.currTab2 = true;
                 // 计算表格宽度
-                $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + 980) + 'px';
-                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 115 + 1250) + 'px';
+                $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + $scope.vm.selBiDataList.length * 100 + 900) + 'px';
+                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + $scope.vm.selBiDataList.length * 100 + 1400) + 'px';
             })
         }
 

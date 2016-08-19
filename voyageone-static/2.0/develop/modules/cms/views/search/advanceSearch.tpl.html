@@ -679,7 +679,8 @@
                                     <td class="text-left" translate="TXT_TIME" style="display:inline-block;width:165px;padding-left:8px"></td>
                                     <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
                                     <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2.name}}</th>
-                                    <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:115px;padding-left:8px">{{prop3.name}}</th>
+                                    <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:100px;padding-left:8px">{{prop3.name}}</th>
+                                    <th class="text-center" ng-repeat="prop4 in vm.selBiDataList" style="display:inline-block;width:100px;padding-left:8px">{{prop4.name}}</th>
                                 </tr>
                                 </thead>
                             </table>
@@ -800,7 +801,8 @@
                                             <span ng-if="prop2.value.length > 50"><popover-text content="prop2.value" direct="left" size="50"></popover-text></span>
                                             <span ng-if="prop2.value.length <= 50">{{prop2.value}}</span>
                                         </td>
-                                        <td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr" style="display:inline-block;width:115px;">{{prop3.value}}</td>
+                                        <td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr" style="display:inline-block;width:100px;">{{prop3.value}}</td>
+                                        <td class="text-center" ng-repeat="prop4 in productInfo.selBiDataArr" style="display:inline-block;width:100px;">{{prop4.value}}</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -827,6 +829,7 @@
                                     <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
                                     <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2.name}}</th>
                                     <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:100px;padding-left:8px">{{prop3.name}}</th>
+                                    <th class="text-center" ng-repeat="prop4 in vm.selBiDataList" style="display:inline-block;width:100px;padding-left:8px">{{prop4.name}}</th>
                                     <th class="text-left" translate="TXT_TIME" style="display:inline-block;width:150px;padding-left:8px"></th>
                                 </tr>
                                 </thead>
@@ -910,7 +913,8 @@
                                             <span ng-if="prop2.value.length > 50"><popover-text content="prop2.value" direct="left" size="50"></popover-text></span>
                                             <span ng-if="prop2.value.length <= 50">{{prop2.value}}</span>
                                         </td>
-                                        <td class="text-center" ng-repeat="prop3 in groupInfo.selSalesTyeArr" style="display:inline-block;width:100px; overflow:hidden;">{{prop3.value}}</td>
+                                        <td class="text-center" ng-repeat="prop3 in groupInfo.selSalesTyeArr" style="display:inline-block;width:100px">{{prop3.value}}</td>
+                                        <td class="text-center" ng-repeat="prop4 in groupInfo.selBiDataArr" style="display:inline-block;width:100px">{{prop4.value}}</td>
                                         <td class="text-left" style="display:inline-block;width:150px;">
                                             <small ng-controller="showPopoverCtrl"
                                                    popover-html="showInfo({{groupInfo.groupBean.timeDetail}})"
