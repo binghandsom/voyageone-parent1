@@ -16,7 +16,8 @@ define([
             init: function () {
                 var self = this;
                 self.brandMappingService.searchMatchedBrands({
-                    'cartId': self.platformData.cartId, 'brandId': self.platformData.brandId
+                    'cartId': self.platformData.cartId,
+                    'brandId': self.platformData.brandId
                 }).then(function (res) {
                     self.matchedBrandList = res.data.matchedBrandList;
                 });
@@ -25,7 +26,8 @@ define([
                 var self = this;
                 var confirmResult={
                     result : true,
-                    brandId : self.platformData.brandId
+                    brandId : self.platformData.brandId,
+                    cmsBrand: self.platformData.cmsBrand
                 };
                 self.$uibModalInstance.close(confirmResult);
             }
