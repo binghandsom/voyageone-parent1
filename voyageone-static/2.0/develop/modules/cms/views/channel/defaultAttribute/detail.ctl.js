@@ -14,7 +14,7 @@ define([
         function AttributeDetailController($routeParams, notify, popups, menuService, $productDetailService, platformMappingService) {
 
             var self = this;
-            var searchJson = $routeParams.upEntity.replace(/✓/g,"/");
+            var searchJson = $routeParams.upEntity ? $routeParams.upEntity.replace(/✓/g,"/") : null;
 
             self.searchInfo = searchJson ? angular.fromJson(searchJson) : {};
 
