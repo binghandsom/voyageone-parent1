@@ -279,7 +279,7 @@ public class ProductSkuService extends BaseService {
     public String getPriceDiffFlg(double breakThreshold, double priceSale, double priceRetail) {
         String diffFlg = "1";  // 最终售价与指导价相等
         // 如果价格计算有问题(-1)的时候，清空priceDiffFlg,防止高级检索画面查出来
-        if (priceSale <= 0.00d || priceRetail <= 0.00d) {
+        if (priceSale < 0.00d || priceRetail < 0.00d) {
             diffFlg = "";
         }
         if (priceSale < priceRetail) {
