@@ -36,6 +36,8 @@ define([
                     /**错误处理*/
                     if(res.displayType != 1)
                         self.uibModalInstance.close("error");
+                    else
+                        self.uibModalInstance.close();
                 });
             },
             update:function(mark){
