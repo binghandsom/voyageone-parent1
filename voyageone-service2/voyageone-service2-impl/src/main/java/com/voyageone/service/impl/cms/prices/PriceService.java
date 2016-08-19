@@ -394,8 +394,10 @@ public class PriceService extends BaseService {
     public String getPriceFluctuation(Double retailPrice, Double lastRetailPrice) {
 
         // 老价格为空, 表示新建, 则不需要设置波动
-        // 新老价格相同也同样
-        if (lastRetailPrice == null || lastRetailPrice.equals(retailPrice))
+        // 新老价格相同也同样(价格=-1时，返回空)
+        if (retailPrice == null || retailPrice <= 0D
+                || lastRetailPrice == null || lastRetailPrice < 0D
+                || lastRetailPrice.equals(retailPrice))
             return "";
 
         Long range;
