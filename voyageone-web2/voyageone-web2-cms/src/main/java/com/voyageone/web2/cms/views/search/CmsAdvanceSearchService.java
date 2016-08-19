@@ -21,7 +21,6 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CommonPropService;
-import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
@@ -107,7 +106,15 @@ public class CmsAdvanceSearchService extends BaseAppService {
         masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
 
         // 获取sort list
-        masterData.put("sortList", commonPropService.getCustColumns(3));
+        List<Map<String, Object>> sortList = commonPropService.getCustColumns(3);
+        List<Map<String, String>> biDataList = advSearchOtherService.getBiDataList(userInfo.getSelChannelId(), language, null);
+        for (Map<String, String> biData : biDataList) {
+            Map<String, Object> keySumMap = new HashMap<>();
+            keySumMap.put("propId", biData.get("value"));
+            keySumMap.put("propName", biData.get("name"));
+            sortList.add(keySumMap);
+        }
+        masterData.put("sortList", sortList);
 
         // 获取category list
         masterData.put("categoryList", channelCategoryService.getAllCategoriesByChannelId(userInfo.getSelChannelId()));
@@ -138,7 +145,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
         masterData.put("salesTypeList", advSearchOtherService.getSalesTypeList(userInfo.getSelChannelId(), language, null));
 
         // 设置BI数据显示的选择列表
-        masterData.put("biDataList", advSearchOtherService.getBiDataList(userInfo.getSelChannelId(), language, null));
+        masterData.put("biDataList", biDataList);
 
         // 判断是否是minimall/usjoi用户
         boolean isMiniMall = Channels.isUsJoi(userInfo.getSelChannelId());

@@ -522,6 +522,9 @@ public class CmsAdvSearchQueryService extends BaseService {
         if (StringUtils.isNotEmpty(searchValue.getSortOneName()) && StringUtils.isNotEmpty(searchValue.getSortOneType())) {
             if ("comment".equals(searchValue.getSortOneName())) {
                 result.append(MongoUtils.splicingValue("common.comment", Integer.valueOf(searchValue.getSortOneType())));
+            } else if (searchValue.getSortOneName().startsWith("bi.sum")) {
+                // 按指定bi数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
             } else {
                 result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
             }
@@ -532,6 +535,9 @@ public class CmsAdvSearchQueryService extends BaseService {
         if (StringUtils.isNotEmpty(searchValue.getSortTwoName()) && StringUtils.isNotEmpty(searchValue.getSortTwoType())) {
             if ("comment".equals(searchValue.getSortTwoName())) {
                 result.append(MongoUtils.splicingValue("common.comment", Integer.valueOf(searchValue.getSortTwoType())));
+            } else if (searchValue.getSortTwoName().startsWith("bi.sum")) {
+                // 按指定bi数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortTwoType())));
             } else {
                 result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortTwoType())));
             }
@@ -542,6 +548,9 @@ public class CmsAdvSearchQueryService extends BaseService {
         if (StringUtils.isNotEmpty(searchValue.getSortThreeName()) && StringUtils.isNotEmpty(searchValue.getSortThreeType())) {
             if ("comment".equals(searchValue.getSortThreeName())) {
                 result.append(MongoUtils.splicingValue("common.comment", Integer.valueOf(searchValue.getSortThreeType())));
+            } else if (searchValue.getSortThreeName().startsWith("bi.sum")) {
+                // 按指定bi数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeType())));
             } else {
                 result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeType())));
             }
