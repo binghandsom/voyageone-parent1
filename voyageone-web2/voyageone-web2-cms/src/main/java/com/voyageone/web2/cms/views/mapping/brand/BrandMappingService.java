@@ -175,7 +175,7 @@ public class BrandMappingService extends BaseAppService {
 				throw new BusinessException("不支持[channelId=" + channelId + ", cartId=" + cartId + "]的平台品牌同步功能");
 			}
 			// 更新数据库中的品牌数据
-			deleteAndAddPlatformBrands(channelId, cartId, brands, userInfo);
+			deleteAndAddPlatformBrands(channelId, cartId, brands, userInfo, platformId);
 		} catch (Exception e) {
 			throw new BusinessException(e.getMessage(), e);
 		}
@@ -185,12 +185,12 @@ public class BrandMappingService extends BaseAppService {
 		synchronizedTimes.put(brandMapping.getChannelId() + "_" + brandMapping.getCartId(), nowTime);
 	}
 	
-	private void deleteAndAddPlatformBrands(String channelId, String cartId, List<?> brands, UserSessionBean userInfo) {
+	private void deleteAndAddPlatformBrands(String channelId, String cartId, List<?> brands, UserSessionBean userInfo, Integer platformId) {
 		if (brands == null || brands.size() == 0) {
 			logger.warn("[channelId={}, cartId={}]没有可以同步的品牌数据", channelId, cartId);
 			return;
 		}
-		if (CartEnums.Cart.JM.getId().equals(cartId)) {
+		if (platformId == PlatformType.JM.getPlatformId()) {
 			// 聚美品牌
 			List<CmsBtJmMasterBrandModel> brandModels = new ArrayList<CmsBtJmMasterBrandModel>();
 			Date now = new Date();
@@ -214,7 +214,7 @@ public class BrandMappingService extends BaseAppService {
 		} else {
 			Date now = new Date();
 			List<CmsMtPlatformBrandsModel> brandModels = new ArrayList<CmsMtPlatformBrandsModel>();
-			if (CartEnums.Cart.TG.getId().equals(cartId)) {
+			if (platformId == PlatformType.TMALL.getPlatformId()) {
 				// 天猫品牌
 				for (int i = 0; i < brands.size(); i++) {
 					Brand brand = (Brand) brands.get(i);
@@ -231,7 +231,7 @@ public class BrandMappingService extends BaseAppService {
 					brandModel.setModifier(userInfo.getUserName());
 					brandModels.add(brandModel);
 				}
-			} else if (CartEnums.Cart.JD.getId().equals(cartId)) {
+			} else if (platformId == PlatformType.JD.getPlatformId()) {
 				// 京东品牌
 				for (int i = 0; i < brands.size(); i++) {
 					VenderBrandPubInfo brand = (VenderBrandPubInfo) brands.get(i);
