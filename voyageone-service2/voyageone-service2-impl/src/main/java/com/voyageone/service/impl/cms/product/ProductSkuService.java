@@ -250,6 +250,8 @@ public class ProductSkuService extends BaseService {
 
     /**
      * sku共同属性PriceDiffFlg计算方法
+     * 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5）
+     *
      * @param channelId 渠道Id
      * @param sku sku数据
      * @return 判断结果
@@ -267,24 +269,30 @@ public class ProductSkuService extends BaseService {
 
     /**
      * sku共同属性PriceDiffFlg计算方法(没有设置阀值时，则不与阀值比较)
+     * 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5）
+     *
      * @param breakThreshold 价格计算阀值
      * @param priceSale 中国最终售价
      * @param priceRetail 中国指导售价
      * @return 判断结果
      */
     public String getPriceDiffFlg(double breakThreshold, double priceSale, double priceRetail) {
-        String diffFlg = "1";
+        String diffFlg = "1";  // 最终售价与指导价相等
+        // 如果价格计算有问题(-1)的时候，清空priceDiffFlg,防止高级检索画面查出来
+        if (priceSale <= 0.00d || priceRetail <= 0.00d) {
+            diffFlg = "";
+        }
         if (priceSale < priceRetail) {
             if (priceRetail * (1 - breakThreshold) <= priceSale || breakThreshold == 0) {
-                diffFlg = "2";
+                diffFlg = "2"; // 最终售价比指导价低
             } else {
-                diffFlg = "5";
+                diffFlg = "5"; // 最终售价向下击穿警告
             }
         } else if (priceSale > priceRetail) {
             if (priceSale <= priceRetail * (breakThreshold + 1) || breakThreshold == 0) {
-                diffFlg = "3";
+                diffFlg = "3"; // 最终售价比指导价高
             } else {
-                diffFlg = "4";
+                diffFlg = "4"; // 最终售价向上击穿警告
             }
         }
         return diffFlg;
