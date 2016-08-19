@@ -105,6 +105,7 @@ public class TaskController extends AdminController {
 		return success(taskConfigPage);
 	}
 	
+	@RequestMapping(AdminUrlConstants.Task.Self.ADD_TASK_CONFIG)
 	public AjaxResponse addTaskConfig(@RequestBody CommonConfigFormBean form) {
 		// 验证参数
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getTaskId()));
@@ -119,6 +120,7 @@ public class TaskController extends AdminController {
 		return success(true);
 	}
 	
+	@RequestMapping(AdminUrlConstants.Task.Self.DELETE_TASK_CONFIG)
 	public AjaxResponse deleteTaskConfig(@RequestBody CommonConfigFormBean[] forms) {
 		// 验证参数
 		Preconditions.checkArgument(ArrayUtils.isNotEmpty(forms), "没有可删除的任务配置信息");

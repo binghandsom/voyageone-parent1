@@ -50,20 +50,17 @@ public class TypeController extends AdminController {
 	}
 	
 	@RequestMapping(AdminUrlConstants.System.Type.ADD_TYPE)
-	public AjaxResponse addType(@RequestBody CarrierConfigFormBean form) {
+	public AjaxResponse addType(@RequestBody TypeFormBean form) {
 		return addOrUpdateType(form, true);
 	}
 	
 	@RequestMapping(AdminUrlConstants.System.Type.UPDATE_TYPE)
-	public AjaxResponse updateType(@RequestBody CarrierConfigFormBean form) {
+	public AjaxResponse updateType(@RequestBody TypeFormBean form) {
+		Preconditions.checkNotNull(form.getId());
 		return addOrUpdateType(form, false);
 	}
 	
-	public AjaxResponse addOrUpdateType(CarrierConfigFormBean form, boolean append) {
-		// 验证参数
-		Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
-		Preconditions.checkNotNull(StringUtils.isNotBlank(form.getCarrier()));
-
+	public AjaxResponse addOrUpdateType(TypeFormBean form, boolean append) {
 		// 保存类型信息
 		ComMtTypeModel model = new ComMtTypeModel();
 		BeanUtils.copyProperties(form, model);
