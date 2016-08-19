@@ -1,5 +1,6 @@
 package com.voyageone.web2.admin.views.user;
 
+import com.google.common.base.Preconditions;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.security.model.ComResourceModel;
 import com.voyageone.security.model.ComRoleModel;
@@ -102,8 +103,14 @@ public class AdminRoleController extends AdminController {
         String allChannel = requestMap.getOrDefault("allChannel", "0").toString();
         String allStore = requestMap.getOrDefault("allStore", "0").toString();
         adminRoleService.updateRole(model ,applications, channelIds,  storeIds , allChannel ,allStore );
+        return success(true);
+    }
 
 
+    @RequestMapping(AdminUrlConstants.User.Role.DELETE_ROLE)
+    public AjaxResponse deleteUser(@RequestBody List<Integer> bean)  {
+        String username = getUser().getUserName();
+        adminRoleService.deleteRole(bean, username);
         return success(true);
     }
 }
