@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.com.ComMtValueDaoExt">
+
+	<resultMap id="typeAttrModelMap" type="com.voyageone.service.model.com.ComMtValueModel"/>
+	
+	<resultMap id="typeAttrBeanMap" type="com.voyageone.service.bean.com.ComMtValueBean"/>
+	
+	<sql id="selectTypeAttributeFilter">
+		<where>
+			<if test="typeId != null">
+				and cmv.type_id = #{typeId}
+			</if>
+			<if test="langId != null and langId != ''">
+				and cmv.lang_id = #{langId}
+			</if>
+			<if test="name != null and name != ''">
+				and cmv.name like concat('%', #{name}, '%')
+			</if>
+			<if test="value != null and value != ''">
+				and cmv.value like concat('%', #{value}, '%')
+			</if>
+		</where>
+	</sql>
+	
+	<select id="selectTypeAttributeByTypeName" resultMap="typeAttrModelMap">
+		select cmv.id, cmv.type_id, cmv.value, cmv.name, cmv.add_name1, cmv.add_name2, cmv.lang_id,
+			cmv.created, cmv.creater, cmv.modifier, cmv.modified
+		from com_mt_value cmv join com_mt_type cmt on cmt.id = cmv.type_id
+		where cmt.name = #{typeName}
+	</select>
+	
+	<select id="selectTypeAttributeByPage" resultMap="typeAttrBeanMap">
+		select cmv.id, cmv.type_id, cmv.value, cmv.name, cmv.add_name1, cmv.add_name2, cmv.lang_id,
+			cmv.created, cmv.creater, cmv.modifier, cmv.modified, cmt.name as type_name
+		from com_mt_value cmv left join com_mt_type cmt on cmt.id = cmv.type_id
+		<include refid="selectTypeAttributeFilter"/>
+	</select>
+	
+	<select id="selectTypeAttributeCount" resultType="integer">
+		select count(0) from com_mt_value cmv
+		<include refid="selectTypeAttributeFilter"/>
+	</select>
+
+</mapper>

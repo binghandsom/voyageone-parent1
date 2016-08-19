@@ -15,8 +15,10 @@ import com.voyageone.service.bean.com.TmTaskControlBean;
 import com.voyageone.service.dao.com.ComMtTaskDao;
 import com.voyageone.service.dao.com.TmTaskControlDao;
 import com.voyageone.service.daoext.com.ComMtTaskDaoExt;
+import com.voyageone.service.daoext.com.ComMtValueDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.ComMtTaskModel;
+import com.voyageone.service.model.com.ComMtValueModel;
 import com.voyageone.service.model.com.PageModel;
 import com.voyageone.service.model.com.TmTaskControlKey;
 import com.voyageone.service.model.com.TmTaskControlModel;
@@ -32,6 +34,8 @@ public class TaskService extends BaseService {
 	
 	private static final String TASK_ATTR_EMPTY_VALUE = "";
 	
+	private static final String DEFAULT_TASK_TYPE_NAME = "SchedulingTask";
+	
 	@Autowired
 	private ComMtTaskDao taskDao;
 	
@@ -40,6 +44,9 @@ public class TaskService extends BaseService {
 	
 	@Autowired
 	private ComMtTaskDaoExt taskDaoExt;
+	
+	@Autowired
+	private ComMtValueDaoExt typeAttrDaoExt;
 
 	public PageModel<ComMtTaskBean> searchTypeByPage(String taskType, String taskName, String taskComment,
 			Integer pageNum, Integer pageSize) {
@@ -166,6 +173,10 @@ public class TaskService extends BaseService {
 				throw new BusinessException("删除任务配置信息失败");
 			}
 		}
+	}
+
+	public List<ComMtValueModel> getAllTaskType() {
+		return typeAttrDaoExt.selectTypeAttributeByTypeName(DEFAULT_TASK_TYPE_NAME);
 	}
 
 }

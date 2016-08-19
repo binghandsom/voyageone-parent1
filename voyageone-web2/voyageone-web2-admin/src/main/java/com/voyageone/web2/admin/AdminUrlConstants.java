@@ -198,6 +198,8 @@ public interface AdminUrlConstants {
 			String DELETE_TASK_CONFIG = "deleteTaskConfig";
 
 			String ADD_TASK_CONFIG = "addTaskConfig";
+
+			String GET_ALL_TASK_TYPE = "getAllTaskType";
 			
 		}
 		
@@ -205,7 +207,7 @@ public interface AdminUrlConstants {
 	
 	interface System {
 		
-		/** 统一属性配置 */
+		/** 类型信息 */
 		interface Type {
 			
 			String ROOT = "/admin/system/type";
@@ -219,6 +221,21 @@ public interface AdminUrlConstants {
 			String DELETE_TYPE = "deleteType";
 
 			String GET_ALL_TYPE = "getAllType";
+			
+		}
+		
+		/** 类型属性信息 */
+		interface Attribute {
+			
+			String ROOT = "/admin/system/attribute";
+			
+			String SEARCH_TYPE_ATTRIBUTE_BY_PAGE = "searchTypeAttributeByPage";
+
+			String ADD_TYPE_ATTRIBUTE = "addTypeAttribute";
+
+			String UPDATE_TYPE_ATTRIBUTE = "updateTypeAttribute";
+
+			String DELETE_TYPE_ATTRIBUTE = "deleteTypeAttribute";
 			
 		}
 		

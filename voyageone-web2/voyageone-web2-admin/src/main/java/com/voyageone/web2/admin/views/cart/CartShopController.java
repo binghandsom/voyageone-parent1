@@ -125,6 +125,7 @@ public class CartShopController extends AdminController {
 	public AjaxResponse addOrUpdateCartShopConfig(CommonConfigFormBean form, boolean append) {
 		// 验证Cart商店配置参数
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCartId()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgName()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgVal1()));
 		

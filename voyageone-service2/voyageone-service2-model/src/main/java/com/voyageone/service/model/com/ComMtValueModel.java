@@ -24,6 +24,8 @@ public class ComMtValueModel extends AdminBaseModel {
     protected String addName2;
 
     protected String langId;
+    
+    protected Boolean active;
 
     public Integer getId() {
         return id;
@@ -80,4 +82,13 @@ public class ComMtValueModel extends AdminBaseModel {
     public void setLangId(String langId) {
         this.langId = langId == null ? null : langId.trim();
     }
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+    
 }

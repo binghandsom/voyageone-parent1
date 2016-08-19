@@ -12,6 +12,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.com.TmChannelShopBean;
 import com.voyageone.service.bean.com.TmChannelShopConfigBean;
+import com.voyageone.service.dao.com.TmChannelShopConfigDao;
 import com.voyageone.service.dao.com.TmChannelShopDao;
 import com.voyageone.service.daoext.com.TmChannelShopDaoExt;
 import com.voyageone.service.impl.BaseService;
@@ -33,6 +34,8 @@ public class CartShopService extends BaseService {
 
 	@Autowired
 	private TmChannelShopDaoExt cartShopDaoExt;
+	
+	private TmChannelShopConfigDao cartShopConfigDao;
 
 	public PageModel<TmChannelShopBean> searchCartShopByPage(String channelId, Integer cartId, String shopName,
 			Integer pageNum, Integer pageSize) {
@@ -108,20 +111,40 @@ public class CartShopService extends BaseService {
 			pageModel.setCount(cartShopDaoExt.selectCartShopConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
-		// 查询渠道配置信息
+		// 查询Cart商店配置信息
 		pageModel.setResult(cartShopDaoExt.selectCartShopConfigByPage(params));
 		
 		return pageModel;
 	}
 
 	public void addOrUpdateCartShopConfig(TmChannelShopConfigModel model, boolean append) {
-		// TODO Auto-generated method stub
+		TmChannelShopConfigModel shopConfig = cartShopConfigDao.select(model);
+		boolean success = false;
+		if (append) {
+			// 添加Cart商店配置信息
+			if (shopConfig != null) {
+				throw new BusinessException("添加的Cart商店配置信息已存在");
+			}
+			success = cartShopConfigDao.insert(model) > 0;
+		} else {
+			// 更新Cart商店配置信息
+			if (shopConfig == null) {
+				throw new BusinessException("更新的Cart商店配置信息不存在");
+			}
+			success = cartShopConfigDao.update(model) > 0;
+		}
 		
+		if (!success) {
+			throw new BusinessException("保存Cart商店配置信息失败");
+		}
 	}
 
 	public void deleteCartShopConfig(List<TmChannelShopConfigKey> shopConfigKeys) {
-		// TODO Auto-generated method stub
-		
+		for (TmChannelShopConfigKey shopConfigKey : shopConfigKeys) {
+			if (cartShopConfigDao.delete(shopConfigKey) <= 0) {
+				throw new BusinessException("删除Cart商店配置信息失败");
+			}
+		}
 	}
 
 }

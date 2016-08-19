@@ -43,6 +43,11 @@ public class TaskController extends AdminController {
 	// 任务信息
 	//---------------------------------------------------------------------
 	
+	@RequestMapping(AdminUrlConstants.Task.Self.GET_ALL_TASK_TYPE)
+	public AjaxResponse getAllTaskType() {
+		return success(taskService.getAllTaskType());
+	}
+	
 	@RequestMapping(AdminUrlConstants.Task.Self.SEARCH_TASK_BY_PAGE)
 	public AjaxResponse searchTaskByPage(@RequestBody TaskFormBean form) {
 		// 验证参数
