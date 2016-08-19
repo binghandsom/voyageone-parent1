@@ -289,117 +289,66 @@ public class CmsAdvSearchOtherService extends BaseAppService {
             }
             Map<String, String> keySumMap = new HashMap<>();
 
-            if (cartId == 0) {
-                keySumMap.put("name", "1天浏览总量");
-                keySumMap.put("value", "bi.sum1.pv.cartId0");
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", "1天访客总数");
-                keySumMap.put("value", "bi.sum1.uv.cartId0");
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", "1天加购总件数");
-                keySumMap.put("value", "bi.sum1.gwc.cartId0");
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", "1天收藏总人数");
-                keySumMap.put("value", "bi.sum1.scs.cartId0");
-                dataSumList.add(keySumMap);
-
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", "7天浏览总量");
-                keySumMap.put("value", "bi.sum7.pv.cartId0");
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", "7天访客总数");
-                keySumMap.put("value", "bi.sum7.uv.cartId0");
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", "7天加购总件数");
-                keySumMap.put("value", "bi.sum7.gwc.cartId0");
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", "7天收藏总人数");
-                keySumMap.put("value", "bi.sum7.scs.cartId0");
-                dataSumList.add(keySumMap);
-
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", "30天浏览总量");
-                keySumMap.put("value", "bi.sum30.pv.cartId0");
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", "30天访客总数");
-                keySumMap.put("value", "bi.sum30.uv.cartId0");
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", "30天加购总件数");
-                keySumMap.put("value", "bi.sum30.gwc.cartId0");
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", "30天收藏总人数");
-                keySumMap.put("value", "bi.sum30.scs.cartId0");
-                dataSumList.add(keySumMap);
-            } else  {
-                // 目前只有淘宝和京东有bi数据，其他平台都忽略
-                ShopBean shopProp = Shops.getShop(channelId, cartId);
-                if (shopProp == null) {
-                    $error("CmsAdvSearchOtherService 获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
-                    continue;
-                }
-                if (!PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id()) && !PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
-                    $info("CmsAdvSearchOtherService 目前只有淘宝和京东有bi数据，其他平台都忽略 [ChannelId:%s] [CartId:%s]", channelId, cartId);
-                    continue;
-                }
-                keySumMap.put("name", cartObj.getName() + "1天浏览量");
-                keySumMap.put("value", "bi.sum1.pv.cartId" + cartId);
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", cartObj.getName() + "1天访客数");
-                keySumMap.put("value", "bi.sum1.uv.cartId" + cartId);
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", cartObj.getName() + "1天加购件数");
-                keySumMap.put("value", "bi.sum1.gwc.cartId" + cartId);
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", cartObj.getName() + "1天收藏人数");
-                keySumMap.put("value", "bi.sum1.scs.cartId" + cartId);
-                dataSumList.add(keySumMap);
-
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", cartObj.getName() + "7天浏览量");
-                keySumMap.put("value", "bi.sum7.pv.cartId" + cartId);
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", cartObj.getName() + "7天访客数");
-                keySumMap.put("value", "bi.sum7.uv.cartId" + cartId);
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", cartObj.getName() + "7天加购件数");
-                keySumMap.put("value", "bi.sum7.gwc.cartId" + cartId);
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", cartObj.getName() + "7天收藏人数");
-                keySumMap.put("value", "bi.sum7.scs.cartId" + cartId);
-                dataSumList.add(keySumMap);
-
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", cartObj.getName() + "30天浏览量");
-                keySumMap.put("value", "bi.sum30.pv.cartId" + cartId);
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", cartObj.getName() + "30天访客数");
-                keySumMap.put("value", "bi.sum30.uv.cartId" + cartId);
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", cartObj.getName() + "30天加购件数");
-                keySumMap.put("value", "bi.sum30.gwc.cartId" + cartId);
-                dataSumList.add(keySumMap);
-                keySumMap = new HashMap<>();
-                keySumMap.put("name", cartObj.getName() + "30天收藏人数");
-                keySumMap.put("value", "bi.sum30.scs.cartId" + cartId);
-                dataSumList.add(keySumMap);
+            // 目前只有淘宝和京东有bi数据，其他平台都忽略
+            // 目前暂不计算平台相加总数
+            ShopBean shopProp = Shops.getShop(channelId, cartId);
+            if (shopProp == null) {
+                $error("CmsAdvSearchOtherService 获取到店铺信息失败(shopProp == null)! [ChannelId:%s] [CartId:%s]", channelId, cartId);
+                continue;
             }
+            if (!PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id()) && !PlatFormEnums.PlatForm.JD.getId().equals(shopProp.getPlatform_id())) {
+                $info("CmsAdvSearchOtherService 目前只有淘宝和京东有bi数据，其他平台都忽略 [ChannelId:%s] [CartId:%s]", channelId, cartId);
+                continue;
+            }
+            keySumMap.put("name", cartObj.getName() + "1天浏览量");
+            keySumMap.put("value", "bi.sum1.pv.cartId" + cartId);
+            dataSumList.add(keySumMap);
+            keySumMap = new HashMap<>();
+            keySumMap.put("name", cartObj.getName() + "1天访客数");
+            keySumMap.put("value", "bi.sum1.uv.cartId" + cartId);
+            dataSumList.add(keySumMap);
+            keySumMap = new HashMap<>();
+            keySumMap.put("name", cartObj.getName() + "1天加购件数");
+            keySumMap.put("value", "bi.sum1.gwc.cartId" + cartId);
+            dataSumList.add(keySumMap);
+            keySumMap = new HashMap<>();
+            keySumMap.put("name", cartObj.getName() + "1天收藏人数");
+            keySumMap.put("value", "bi.sum1.scs.cartId" + cartId);
+            dataSumList.add(keySumMap);
+
+            keySumMap = new HashMap<>();
+            keySumMap.put("name", cartObj.getName() + "7天浏览量");
+            keySumMap.put("value", "bi.sum7.pv.cartId" + cartId);
+            dataSumList.add(keySumMap);
+            keySumMap = new HashMap<>();
+            keySumMap.put("name", cartObj.getName() + "7天访客数");
+            keySumMap.put("value", "bi.sum7.uv.cartId" + cartId);
+            dataSumList.add(keySumMap);
+            keySumMap = new HashMap<>();
+            keySumMap.put("name", cartObj.getName() + "7天加购件数");
+            keySumMap.put("value", "bi.sum7.gwc.cartId" + cartId);
+            dataSumList.add(keySumMap);
+            keySumMap = new HashMap<>();
+            keySumMap.put("name", cartObj.getName() + "7天收藏人数");
+            keySumMap.put("value", "bi.sum7.scs.cartId" + cartId);
+            dataSumList.add(keySumMap);
+
+            keySumMap = new HashMap<>();
+            keySumMap.put("name", cartObj.getName() + "30天浏览量");
+            keySumMap.put("value", "bi.sum30.pv.cartId" + cartId);
+            dataSumList.add(keySumMap);
+            keySumMap = new HashMap<>();
+            keySumMap.put("name", cartObj.getName() + "30天访客数");
+            keySumMap.put("value", "bi.sum30.uv.cartId" + cartId);
+            dataSumList.add(keySumMap);
+            keySumMap = new HashMap<>();
+            keySumMap.put("name", cartObj.getName() + "30天加购件数");
+            keySumMap.put("value", "bi.sum30.gwc.cartId" + cartId);
+            dataSumList.add(keySumMap);
+            keySumMap = new HashMap<>();
+            keySumMap.put("name", cartObj.getName() + "30天收藏人数");
+            keySumMap.put("value", "bi.sum30.scs.cartId" + cartId);
+            dataSumList.add(keySumMap);
         }
 
         if (filterList != null) {
