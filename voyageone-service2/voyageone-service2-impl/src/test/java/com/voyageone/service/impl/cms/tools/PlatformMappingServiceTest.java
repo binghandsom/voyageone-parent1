@@ -13,7 +13,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 对商品属性计算进行单元测试
@@ -100,7 +99,7 @@ public class PlatformMappingServiceTest {
 
         CmsBtPlatformMappingModel fieldMapsModel = getTestModel();
 
-        platformMappingService.saveMap(fieldMapsModel);
+//        platformMappingService.saveMap(fieldMapsModel);
 
         fieldMapsModel = fieldMapsDao.selectOne(fieldMapsModel.getCartId(), fieldMapsModel.getCategoryType(), fieldMapsModel.getCategoryPath(), fieldMapsModel.getChannelId());
 

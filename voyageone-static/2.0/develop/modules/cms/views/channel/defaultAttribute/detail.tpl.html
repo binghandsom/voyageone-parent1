@@ -11,7 +11,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" translate="TXT_CART_NAME"></label>
                                 <div class="col-sm-7">
-                                    <select class="form-control" ng-model="ctrl.searchInfo.cartId" ng-options="option.value as option.name for option in ctrl.platformTypes" ng-disabled="ctrl.searchJson">
+                                    <select class="form-control" ng-change="ctrl.tryGet()" ng-model="ctrl.searchInfo.cartId" ng-options="option.value as option.name for option in ctrl.platformTypes" ng-disabled="ctrl.searchJson">
                                     </select>
                                 </div>
                             </div>

@@ -57,13 +57,13 @@ public class PlatformMappingService extends BaseService {
                 platformMappingModel.getCategoryPath(), channelId);
     }
 
-    public boolean saveMap(CmsBtPlatformMappingModel fieldMapsModel) {
+    public boolean saveMap(CmsBtPlatformMappingModel fieldMapsModel, String modified) {
 
         if (platformMappingDao.exists(fieldMapsModel)) {
 
             String lastModified = platformMappingDao.selectModified(fieldMapsModel);
 
-            if (!lastModified.equals(fieldMapsModel.getModified()))
+            if (!lastModified.equals(modified))
                 return false;
 
             platformMappingDao.update(fieldMapsModel);

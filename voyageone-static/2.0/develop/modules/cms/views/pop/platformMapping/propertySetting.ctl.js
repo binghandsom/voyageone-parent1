@@ -4,11 +4,12 @@ define([
     'use strict';
     return cms.controller('propertySettingController', (function () {
 
-        function PropertySettingController(context, $uibModalInstance, platformMappingService, $q) {
+        function PropertySettingController(context, $uibModalInstance, platformMappingService, $q, alert) {
             this.context = context;
             this.uibModalInstance = $uibModalInstance;
             this.platformMappingService = platformMappingService;
             this.$q = $q;
+            this.alert = alert;
         }
 
         PropertySettingController.prototype = {
@@ -71,6 +72,17 @@ define([
             },
             save: function () {
                 var self = this;
+
+                if (!self.cat) {
+                    self.alert("全数据属性大类 没有选择!");
+                    return;
+                }
+
+                if (self.cat !== "FIXED" && !self.value) {
+                    self.alert("全数据属性名称 没有选择!");
+                    return;
+                }
+
                 var newValue = {
                     $id: Math.random().toString().substr(2, 6),
                     type: self.cat,

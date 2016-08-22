@@ -43,11 +43,15 @@ define([
             var self = this,
                 searchInfo = self.searchInfo;
 
-            if (searchInfo.categoryType != 1 && searchInfo.categoryType != 2)
+            if (searchInfo.categoryType != 1 && searchInfo.categoryType != 2) {
+                self.fields = null;
                 return;
+            }
 
-            if (searchInfo.categoryType == 2 && !searchInfo.categoryPath)
+            if (searchInfo.categoryType == 2 && !searchInfo.categoryPath) {
+                self.fields = null;
                 return;
+            }
 
             self.categoryTitle = (self.searchInfo.categoryType == 1) ? "全类目" : self.searchInfo.categoryPath;
 
@@ -60,6 +64,7 @@ define([
                 platformMappingService = self.platformMappingService;
 
             platformMappingService.get(self.searchInfo).then(function (res) {
+                self.modified = res.data.modified;
                 self.fields = res.data.schema;
             });
         };
@@ -101,8 +106,10 @@ define([
                 cartId: +searchInfo.cartId,
                 categoryType: +searchInfo.categoryType,
                 categoryPath: searchInfo.categoryPath,
-                schema: fields
-            }).then(function () {
+                schema: fields,
+                modified: self.modified
+            }).then(function (resp) {
+                self.modified = resp.data;
                 self.notify.success('TXT_SAVE_SUCCESS');
             });
         };

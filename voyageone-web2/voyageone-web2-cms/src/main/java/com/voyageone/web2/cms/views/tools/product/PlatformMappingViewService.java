@@ -7,7 +7,6 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.value.Value;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtFeedCustomPropDao;
@@ -33,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * Created by jonas on 8/15/16.
@@ -125,6 +123,9 @@ class PlatformMappingViewService extends BaseAppService {
         if (type == 1) {
             CmsMtPlatformCommonSchemaModel commonSchemaModel = platformCommonSchemaService.get(cartId);
 
+            if (commonSchemaModel == null)
+                return platformMappingGetBean;
+
             List<Map<String, Object>> itemFieldMapList = commonSchemaModel.getPropsItem();
             if (itemFieldMapList != null && !itemFieldMapList.isEmpty())
                 item = SchemaJsonReader.readJsonForList(itemFieldMapList);
@@ -153,7 +154,7 @@ class PlatformMappingViewService extends BaseAppService {
         return platformMappingGetBean;
     }
 
-    public boolean save(PlatformMappingSaveBean platformMappingSaveBean, UserSessionBean user) {
+    public String save(PlatformMappingSaveBean platformMappingSaveBean, UserSessionBean user) {
 
         String username = user.getUserName();
 
@@ -196,7 +197,6 @@ class PlatformMappingViewService extends BaseAppService {
             platformMappingModel.setCreater(username);
 
         platformMappingModel.setModifier(username);
-        platformMappingModel.setModified(DateTimeUtil.getNowTimeStamp());
 
         // 依次循环 product 和 item 两组 schema 数据
         // 填充到模型中
@@ -224,7 +224,9 @@ class PlatformMappingViewService extends BaseAppService {
 
         platformMappingModel.setMappings(mappingMap);
 
-        return platformMappingService.saveMap(platformMappingModel);
+        platformMappingService.saveMap(platformMappingModel, platformMappingSaveBean.getModified());
+
+        return platformMappingModel.getModified();
     }
 
     public List<Map<String, Object>> getCommonSchema() {
@@ -304,6 +306,8 @@ class PlatformMappingViewService extends BaseAppService {
                     List<Field> children = complexField.getFields();
                     Map<String, CmsBtPlatformMappingModel.FieldMapping> childrenMapping = new HashMap<>();
                     fillMapping(childrenMapping, children);
+                    if (childrenMapping.isEmpty())
+                        continue;
                     mapping.setChildren(childrenMapping);
                     break;
                 case INPUT:
@@ -311,7 +315,10 @@ class PlatformMappingViewService extends BaseAppService {
                     String expressionListJson = inputField.getValue();
                     if (StringUtils.isEmpty(expressionListJson))
                         continue;
-                    setExpressionList(mapping, expressionListJson);
+                    List<CmsBtPlatformMappingModel.FieldMappingExpression> expressionList = getExpressionList(expressionListJson);
+                    if (expressionList == null || expressionList.isEmpty())
+                        continue;
+                    mapping.setExpressions(expressionList);
                     break;
             }
 
@@ -319,15 +326,13 @@ class PlatformMappingViewService extends BaseAppService {
         }
     }
 
-    private void setExpressionList(CmsBtPlatformMappingModel.FieldMapping mapping, String json) {
+    private List<CmsBtPlatformMappingModel.FieldMappingExpression> getExpressionList(String json) {
         if (StringUtils.isEmpty(json))
-            return;
+            return null;
         ObjectMapper mapper = new ObjectMapper();
         try {
-            List<CmsBtPlatformMappingModel.FieldMappingExpression> expressionList = mapper.readValue(json,
+            return mapper.readValue(json,
                     mapper.getTypeFactory().constructCollectionType(ArrayList.class, CmsBtPlatformMappingModel.FieldMappingExpression.class));
-            mapping.setExpressions(expressionList);
-            mapping.setValue(null);
         } catch (IOException e) {
             throw new BusinessException("读取 ExpressionList 出错", e);
         }
