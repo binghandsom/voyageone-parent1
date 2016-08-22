@@ -69,6 +69,12 @@ define([
             "controllerUrl": "modules/admin/views/pop/addType/index.ctl",
             "controller": 'AddTypeController as ctrl',
             "size": 'md'
+        },
+        "addTask": {
+            "templateUrl": "views/pop/addTask/index.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addTask/index.ctl",
+            "controller": 'AddTaskController as ctrl',
+            "size": 'md'
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -144,6 +150,9 @@ define([
         };
         $scope.openChannelCarrier = function openChannelCarrier(context) {
             return openModal(popActions.addChannelCarrier, context);
+        };
+        $scope.openTask = function openTask(context) {
+            return openModal(popActions.addTask, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {

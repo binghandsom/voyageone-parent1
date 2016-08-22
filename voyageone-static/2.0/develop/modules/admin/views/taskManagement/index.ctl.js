@@ -99,7 +99,7 @@ define([
                 } else {
                     _.forEach(self.taskList, function (Info) {
                         if (Info.taskId == self.taskSelList.selList[0].id) {
-                            self.popups.openStoreAdd(Info).then(function () {
+                            self.popups.openTask(Info).then(function () {
                                 self.search(1);
                             });
                         }
@@ -123,11 +123,11 @@ define([
             run: function (item) {
                 var self = this;
                 if (item.type == 'Start') {
-                    self.taskService.startTask({'taskName':item.taskName}).then(function (res) {
+                    self.taskService.startTask(item.taskName).then(function (res) {
                         console.log(res);
                     })
                 } else {
-                    self.taskService.stopTask({'taskName':item.taskName}).then(function (res) {
+                    self.taskService.stopTask(item.taskName).then(function (res) {
                         console.log(res);
                     })
                 }

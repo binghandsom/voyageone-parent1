@@ -123,6 +123,7 @@ define(function () {
         "BTN_ACTIVE": "启用",
         "BTN_INACTIVE": "禁用",
         "TXT_TIME_END": "结束时间",
+        "TXT_STATE_RUN":"运行状态",
 
 
         /**分页显示*/
