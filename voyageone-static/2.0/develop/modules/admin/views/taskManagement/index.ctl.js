@@ -8,11 +8,10 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('TaskManagementController', (function () {
-        function TaskManagementController(popups, alert, confirm, channelService, taskService, selectRowsFactory) {
+        function TaskManagementController(popups, alert, confirm, taskService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
-            this.channelService = channelService;
             this.selectRowsFactory = selectRowsFactory;
             this.taskService = taskService;
             this.taskPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
@@ -31,10 +30,10 @@ define([
         TaskManagementController.prototype = {
             init: function () {
                 var self = this;
-                self.channelService.getAllChannel().then(function (res) {
-                    self.channelList = res.data;
+                self.taskService.getAllTaskType().then(function(res){
+                    self.taskTypeList = res.data;
                 });
-                self.search();
+                self.search(1);
             },
             search: function (page) {
                 var self = this;
@@ -60,9 +59,8 @@ define([
                         _.forEach(self.taskList, function (Info) {
                             if (Info.updFlg != 8) {
                                 self.tempSelect.currPageRows({
-                                    "id": Info.storeId,
-                                    "code": Info.storeName,
-                                    "orderChannelId": Info.orderChannelId
+                                    "id": Info.taskId,
+                                    "code": Info.taskName
                                 });
                             }
                         });
@@ -85,10 +83,10 @@ define([
                     self.popups.openConfig({'configType': type});
                     return;
                 } else {
-                    _.forEach(self.taskList, function (storeInfo) {
-                        if (storeInfo.storeId == self.taskSelList.selList[0].id) {
-                            _.extend(storeInfo, {'configType': type});
-                            self.popups.openConfig(storeInfo);
+                    _.forEach(self.taskList, function (Info) {
+                        if (Info.taskId == self.taskSelList.selList[0].id) {
+                            _.extend(Info, {'configType': type});
+                            self.popups.openConfig(Info);
                         }
                     })
                 }
@@ -100,11 +98,7 @@ define([
                     return;
                 } else {
                     _.forEach(self.taskList, function (Info) {
-                        if (Info.storeId == self.taskSelList.selList[0].id) {
-                            Info['areaId'] = Info['areaId'] + '';
-                            var copyData = Info.inventoryHold.split(",");
-                            Info.inventoryHold = copyData[0];
-                            Info.remainNum = copyData[1];
+                        if (Info.taskId == self.taskSelList.selList[0].id) {
                             self.popups.openStoreAdd(Info).then(function () {
                                 self.search(1);
                             });
@@ -118,64 +112,13 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.taskSelList.selList, function (delInfo) {
-                            delList.push({'orderChannelId': delInfo.orderChannelId, 'storeId': delInfo.id});
+                            delList.push( delInfo.id );
                         });
                         self.taskService.deleteStore(delList).then(function (res) {
-                            self.search();
+                            self.search(1);
                         })
                     }
                 );
-            },
-            getStoreType: function (type) {
-                switch (type) {
-                    case '0':
-                        return '自营仓库';
-                        break;
-                    case '1':
-                        return '第三方合作仓库';
-                        break;
-                    case '2':
-                        return '菜鸟保税仓';
-                        break;
-                    case '3':
-                        return '聚美保税仓';
-                        break;
-                }
-            },
-            getInventoryHold: function (item) {
-                if (item.indexOf(',') < 0) {
-                    switch (item) {
-                        case '0':
-                            return '不做保留';
-                            break;
-                        case '1':
-                            return '按加减保留';
-                            break;
-                        case '2':
-                            return '按百分比保留';
-                            break;
-                        case '3':
-                            return '按销售计算（默认百分比）';
-                            break;
-                    }
-                } else {
-                    var type = item.split(",")[0];
-                    var num = item.split(",")[1];
-                    switch (type) {
-                        case '0':
-                            return '不做保留' + '' + num;
-                            break;
-                        case '1':
-                            return '按加减保留' + '' + num;
-                            break;
-                        case '2':
-                            return '按百分比保留' + '' + num;
-                            break;
-                        case '3':
-                            return '按销售计算（默认百分比）' + '' + num;
-                            break;
-                    }
-                }
             }
         };
         return TaskManagementController;

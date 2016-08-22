@@ -86,6 +86,10 @@ define(function () {
         "TXT_CART_DESC": "Cart描述",
         "TXT_PLATFORM_NAME": "平台名",
 
+        /**cart管理-渠道Cart管理*/
+        "TXT_CART_CHANNEL_SHOP":"渠道Cart管理",
+        "TXT_SHOP_NAME":"商店名",
+
         /**仓库管理-信息一览*/
         "TXT_STORE_MANAGE": "仓库管理",
         "TXT_STORE_NAME": "仓库名",
@@ -118,6 +122,7 @@ define(function () {
         "BTN_GO": "Go",
         "BTN_ACTIVE": "启用",
         "BTN_INACTIVE": "禁用",
+        "TXT_TIME_END": "结束时间",
 
 
         /**分页显示*/

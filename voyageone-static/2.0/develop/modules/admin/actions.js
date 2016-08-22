@@ -133,7 +133,11 @@ define(function () {
                     "deleteTask": "deleteTask",
                     "searchTaskConfigByPage": "searchTaskConfigByPage",
                     "deleteTaskConfig": "deleteTaskConfig",
-                    "addTaskConfig": "addTaskConfig"
+                    "addTaskConfig": "addTaskConfig",
+                    "getAllTaskType": "getAllTaskType",
+                    "getAllTask": "getAllTask",
+                    "startTask": "startTask",
+                    "stopTask": "stopTask"
                 }
             }
         }

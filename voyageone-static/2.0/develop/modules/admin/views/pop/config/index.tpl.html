@@ -22,6 +22,12 @@
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
+                        <div class="col-sm-8" ng-if="ctrl.searchInfo.configType=='Task'">
+                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.taskId"
+                                    ng-options="task.taskId as task.taskName for task in ctrl.taskList" ng-change="ctrl.search(1)">
+                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -51,12 +57,14 @@
                     <button class="btn btn-vo" ng-click="ctrl.search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>
                 </div>
             </div>
-            <div ng-if="ctrl.searchInfo.orderChannelId||ctrl.searchInfo.storeId">
+            <div ng-if="ctrl.searchInfo.orderChannelId||ctrl.searchInfo.storeId||ctrl.searchInfo.taskId">
                 <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                     <div class="form-group m-t-sm m-r-xs">
-                        <button class="btn btn-default" ng-click="ctrl.add({'type':'add', 'orderChannelId': ctrl.searchInfo.orderChannelId, 'storeId': ctrl.searchInfo.storeId})"
+                        <button class="btn btn-default" ng-click="ctrl.add({'type':'add', 'orderChannelId': ctrl.searchInfo.orderChannelId,
+                         'storeId': ctrl.searchInfo.storeId, 'taskId': ctrl.searchInfo.taskId})"
                                 ng-disabled="ctrl.configSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
-                        <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.configSelList.selList.length < 1||ctrl.configSelList.selList.length > 1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                        <button class="btn btn-default" ng-click="ctrl.edit()" ng-hide="ctrl.searchInfo.configType=='Task'"
+                                ng-disabled="ctrl.configSelList.selList.length < 1||ctrl.configSelList.selList.length > 1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
                         <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.configSelList.selList.length < 1"><i class="fa fa-trash"></i>&nbsp;删除</button>
                     </div>
                 </div>
@@ -74,6 +82,7 @@
                             <th class="text-left mfb-xxt" translate="TXT_PROPERTY_NAME"></th>
                             <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}1</th>
                             <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}2</th>
+                            <th class="text-center mfb-xxt" translate="TXT_TIME_END" ng-if="ctrl.searchInfo.configType=='Task'"></th>
                             <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
                         </tr>
                     </thead>
@@ -89,16 +98,17 @@
                                 <span class="fa fa-check"></span>
                             </label>
                         </td>
-                        <td class="text-center v-middle">{{list.channelName||list.storeName}}</td>
+                        <td class="text-center v-middle">{{list.channelName||list.storeName||list.taskName}}</td>
                         <td class="text-left v-middle">{{list.cfgName}}</td>
                         <td class="text-left v-middle" style="overflow: auto;max-width: 116px;">{{list.cfgVal1}}</td>
                         <td class="text-center v-middle" style="overflow: auto;max-width: 116px;">{{list.cfgVal2}}</td>
+                        <td class="text-center v-middle" ng-if="ctrl.searchInfo.configType=='Task'">{{list.endTime| date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="text-center v-middle">{{list.comment}}</td>
                     </tr>
                     </tbody>
                 </table>
             </div>
         </form>
-        <vpagination config="ctrl.configPageOption" ng-if="ctrl.searchInfo.orderChannelId||ctrl.searchInfo.storeId"></vpagination>
+        <vpagination config="ctrl.configPageOption" ng-if="ctrl.searchInfo.orderChannelId||ctrl.searchInfo.storeId||ctrl.searchInfo.taskId"></vpagination>
     </div>
 </div><!-- .vo_modal -->

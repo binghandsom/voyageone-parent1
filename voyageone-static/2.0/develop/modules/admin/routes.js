@@ -34,12 +34,18 @@ define(function () {
             "templateUrl": "views/channelManagement/channelCarrierConfig.tpl.html",
             "controllerUrl": "modules/admin/views/channelManagement/channelCarrierConfig.ctl",
             "controller": "ChannelCarrierConfigController as ctrl"
-        },
+        },//Cart管理
         "cartManagement": {
             "hash": "/cart/cartManagement",
             "templateUrl": "views/cartManagement/index.tpl.html",
             "controllerUrl": "modules/admin/views/cartManagement/index.ctl",
             "controller": "CartManagementController as ctrl"
+        },//Cart-渠道Cart管理
+        "channelShopManagement": {
+            "hash": "/cart/channelShopManagement",
+            "templateUrl": "views/cartManagement/channelShop.tpl.html",
+            "controllerUrl": "modules/admin/views/cartManagement/channelShop.ctl",
+            "controller": "CartChannelShopManagementController as ctrl"
         },//仓库-仓库管理
         "storeManagement": {
             "hash": "/store/storeManagement",

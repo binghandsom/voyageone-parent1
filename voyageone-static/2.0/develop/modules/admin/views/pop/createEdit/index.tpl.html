@@ -38,6 +38,22 @@
                             <input type="text" maxlength="500" class="form-control" ng-model="ctrl.sourceData.cfgVal2"/>
                         </div>
                     </div>
+                    <div class="row form-group" ng-if="ctrl.type=='任务'">
+                        <label class="col-sm-3 control-label">{{'TXT_TIME_END' | translate}}</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <input type="datetime-local" class="form-control" datepicker-popup
+                                       ng-model="model.dealEndTime"
+                                       min-date="selectMinDate" date-model-format="yyyy-MM-dd HH:mm:ss"
+                                       is-open="datePicker1" ng-required="true" close-text="Close"/>
+                                      <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default"
+                                                ng-click="datePicker1 = !datePicker1"><i
+                                                class="glyphicon glyphicon-calendar"></i></button>
+                                      </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>

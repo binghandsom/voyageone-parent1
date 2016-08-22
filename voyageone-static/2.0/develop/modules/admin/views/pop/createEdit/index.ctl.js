@@ -5,12 +5,13 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('CreateEditController', (function () {
-        function CreateEditController(context, $uibModalInstance, channelService, storeService) {
+        function CreateEditController(context, $uibModalInstance, channelService, storeService, taskService) {
             this.sourceData = context;
             this.$uibModalInstance = $uibModalInstance;
             this.channelService = channelService;
             this.storeService = storeService;
-            this.append = context.type == 'add' ? true : false;
+            this.taskService =
+                this.append = context.type == 'add' ? true : false;
             this.popType = '修改';
             this.configType = this.sourceData.configType;
         }
@@ -25,6 +26,9 @@ define([
                         break;
                     case 'Store':
                         return self.type = "仓库";
+                        break;
+                    case 'Task':
+                        return self.type = "任务";
                         break;
                 }
             },
@@ -64,6 +68,12 @@ define([
                                 self.$uibModalInstance.close(result);
                             })
                         }
+                        break;
+                    case 'Task':
+                        self.taskService.addTaskConfig(self.sourceData).then(function (res) {
+                            _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                            self.$uibModalInstance.close(result);
+                        });
                         break;
                 }
             }

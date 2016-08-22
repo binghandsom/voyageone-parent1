@@ -5,12 +5,13 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('ConfigController', (function () {
-        function ConfigController(popups, context, confirm, channelService, storeService, selectRowsFactory) {
+        function ConfigController(popups, context, confirm, channelService, storeService, taskService, selectRowsFactory) {
             this.popups = popups;
             this.sourceData = context;
             this.confirm = confirm;
             this.channelService = channelService;
             this.storeService = storeService;
+            this.taskService = taskService;
             this.selectRowsFactory = selectRowsFactory;
             this.configPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.configSelList = {selList: []};
@@ -18,6 +19,7 @@ define([
             this.searchInfo = {
                 orderChannelId: this.sourceData ? this.sourceData.orderChannelId : "",
                 storeId: this.sourceData ? this.sourceData.storeId : "",
+                taskId: this.sourceData ? this.sourceData.taskId : "",
                 configType: this.sourceData.configType,
                 pageInfo: this.configPageOption,
                 cfgName: '',
@@ -28,7 +30,7 @@ define([
         ConfigController.prototype = {
             init: function () {
                 var self = this;
-                self.search();
+                self.search(1);
             },
             search: function (page) {
                 var self = this;
@@ -40,12 +42,16 @@ define([
                 self.storeService.getAllStore().then(function (res) {
                     self.storeList = res.data;
                 });
+                self.taskService.getAllTask().then(function (res) {
+                    self.taskList = res.data;
+                });
                 var data = {
                     'pageNum': self.searchInfo.pageInfo.curr,
                     'pageSize': self.searchInfo.pageInfo.size,
                     'configType': self.searchInfo.configType,
                     'orderChannelId': self.searchInfo.orderChannelId,
                     'storeId': self.searchInfo.storeId,
+                    'taskId': self.searchInfo.taskId,
                     'cfgName': self.searchInfo.cfgName,
                     'cfgVal': self.searchInfo.cfgVal
                 };
@@ -78,6 +84,18 @@ define([
                             callback(res, selectKey);
                         });
                         break;
+                    case 'Task':
+                        var selectKey = function (configInfo) {
+                            return {
+                                "id": configInfo.mainKey,
+                                "code": configInfo.taskName,
+                                "taskId": configInfo.taskId
+                            };
+                        };
+                        self.taskService.searchTaskConfigByPage(data).then(function (res) {
+                            callback(res, selectKey);
+                        });
+                        break;
                 }
                 function callback(res, selectKey) {
                     self.cfgList = res.data.result;
@@ -102,9 +120,9 @@ define([
                 var self = this;
                 self.searchInfo = {
                     orderChannelId: "",
-                    configType: 'Channel',
                     pageInfo: self.configPageOption,
                     channelName: "",
+                    taskId: "",
                     cfgName: '',
                     cfgVal: ''
                 };
@@ -126,6 +144,15 @@ define([
                             return listItem.storeId == item.storeId;
                         });
                         _.extend(item, {'shortName': self.list[0].storeName, 'configType': self.searchInfo.configType});
+                        self.popups.openCreateEdit(item).then(function (res) {
+                            if (res.res == 'success') self.search();
+                        });
+                        break;
+                    case 'Task':
+                        self.list = _.filter(self.taskTypeList, function (listItem) {
+                            return listItem.id == item.taskId;
+                        });
+                        _.extend(item, {'taskName': self.list[0].name, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search();
                         });
@@ -165,6 +192,12 @@ define([
                                 self.search();
                             });
                             break;
+                        case 'Task':
+                            self.taskService.deleteTaskConfig(delList).then(function (res) {
+                                if (res.data.success == false)self.confirm(res.data.message);
+                                self.search();
+                            });
+                            break;
                     }
                 });
             },
@@ -175,6 +208,9 @@ define([
                         break;
                     case 'Store':
                         return "仓库";
+                        break;
+                    case 'Task':
+                        return "任务";
                         break;
                 }
             }
