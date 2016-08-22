@@ -166,6 +166,7 @@ public class PlatformMappingService extends BaseService {
 
                     fillValueMap(childrenValue, childrenMapping);
 
+                    valueMap.put(mapping.getFieldId(), childrenValue);
                     continue;
                 }
 
