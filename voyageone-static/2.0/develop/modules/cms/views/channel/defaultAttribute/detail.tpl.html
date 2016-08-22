@@ -1,45 +1,58 @@
 <div class="wrapper-md default-attr" ng-init="ctrl.init()">
-    <div class="panel wrapper vo_attr">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-4">
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label" translate="TXT_CART_NAME"></label>
-                            <div class="col-sm-7">
-                                <select class="form-control" ng-model="ctrl.searchInfo.cartId" ng-options="option.value as option.name for option in ctrl.platformTypes">
-                                </select>
+    <div class="panel panel-default panel-vo">
+        <div class="panel-heading">
+            <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;<span translate="TXT_DEFAULT_MAPPING"></span></h4>
+        </div>
+        <div class="panel-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" translate="TXT_CART_NAME"></label>
+                                <div class="col-sm-7">
+                                    <select class="form-control" ng-model="ctrl.searchInfo.cartId" ng-options="option.value as option.name for option in ctrl.platformTypes" ng-disabled="ctrl.searchJson">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="control-label" translate="TXT_PLATFORM_CATEGORY"></label>
+                                        <span>&nbsp;</span>
+                                        <label>
+                                            <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType" ng-change="ctrl.tryGet()" ng-disabled="ctrl.searchJson">&nbsp;全类目
+                                        </label>&emsp;
+                                        <label>
+                                            <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType" ng-change="ctrl.tryGet()" ng-disabled="ctrl.searchJson">&nbsp;选择类目
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-horizontal">
+                                    <div class="row">
+                                        <button class="col-sm-3 btn btn-default" ng-click="ctrl.openCategorySelector()" ng-disabled="!ctrl.searchInfo.cartId || ctrl.searchInfo.categoryType != '2' || ctrl.searchJson">
+                                            <i class="fa  fa-th-list"></i>&nbsp;<span translate="TXT_PLATFORM_CATEGORY"></span>
+                                        </button>
+                                        <div class="col-sm-7">
+                                            <input class="form-control" title="{{ctrl.searchInfo.categoryPath}}" ng-model="ctrl.searchInfo.categoryPath" disabled>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-8">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="control-label" translate="TXT_PLATFORM_CATEGORY"></label>
-                                    <span>&nbsp;</span>
-                                    <label>
-                                        <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType" ng-change="ctrl.tryGet()">&nbsp;全类目
-                                    </label>&emsp;
-                                    <label>
-                                        <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType" ng-change="ctrl.tryGet()">&nbsp;选择类目
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-horizontal">
-                                <div class="row">
-                                    <button class="col-sm-3 btn btn-default" ng-click="ctrl.openCategorySelector()" ng-disabled="!ctrl.searchInfo.cartId || ctrl.searchInfo.categoryType != '2'">
-                                        <i class="fa  fa-th-list"></i>&nbsp;<span translate="TXT_PLATFORM_CATEGORY"></span>
-                                    </button>
-                                    <div class="col-sm-7">
-                                        <input class="form-control" title="{{ctrl.searchInfo.categoryPath}}" ng-model="ctrl.searchInfo.categoryPath" disabled>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="row">
+                    <div class="col-md-7"></div>
+                    <div class="col-md-5">
+                        <div class="text-warnings" style="padding-left:0px">
+                            <i class="icon fa fa-bell-o"></i>&nbsp;如果选择的类目的默认属性已经编辑过，编辑后保存会覆盖原来默认属性。
                         </div>
                     </div>
                 </div>

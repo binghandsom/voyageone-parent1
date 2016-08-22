@@ -66,6 +66,9 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr>
+                    <td if-no-rows="ctrl.dataList.length" colspan="7" style="padding: 0px"></td>
+                </tr>
                 <tr ng-repeat="entity in ctrl.dataList">
                     <td class="mfb-xt3 text-center">{{$index+1}}</td>
                     <td class="mfb-xt3 text-left">{{!entity.categoryPath?'全类目':entity.categoryPath}}</td>
