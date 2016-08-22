@@ -30,7 +30,7 @@ define([
         TaskManagementController.prototype = {
             init: function () {
                 var self = this;
-                self.taskService.getAllTaskType().then(function(res){
+                self.taskService.getAllTaskType().then(function (res) {
                     self.taskTypeList = res.data;
                 });
                 self.search(1);
@@ -112,13 +112,25 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.taskSelList.selList, function (delInfo) {
-                            delList.push( delInfo.id );
+                            delList.push(delInfo.id);
                         });
                         self.taskService.deleteStore(delList).then(function (res) {
                             self.search(1);
                         })
                     }
                 );
+            },
+            run: function (item) {
+                var self = this;
+                if (item.type == 'Start') {
+                    self.taskService.startTask({'taskName':item.taskName}).then(function (res) {
+                        console.log(res);
+                    })
+                } else {
+                    self.taskService.stopTask({'taskName':item.taskName}).then(function (res) {
+                        console.log(res);
+                    })
+                }
             }
         };
         return TaskManagementController;
