@@ -28,8 +28,8 @@
                                     <div class="col-sm-8">
                                         <select class="form-control" ng-model="ctrl.searchInfo.smsType">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="1">&nbsp;cloud_client</option>
-                                            <option value="0">&nbsp;ship_tracking</option>
+                                            <option value="cloud_client">&nbsp;cloud client</option>
+                                            <option value="ship_tracking">&nbsp;ship tracking</option>
                                         </select>
                                     </div>
                                 </div>
@@ -90,7 +90,7 @@
                     <th class="text-center mfb-xt" translate="TXT_CHANNEL_SMS_TYPE"></th>
                     <th class="text-center mfb-xt">{{'TXT_CHANNEL_SMS_CODE'|translate}}1</th>
                     <th class="text-center mfb-xt">{{'TXT_CHANNEL_SMS_CODE'|translate}}2</th>
-                    <th class="text-left mfb-xxt" translate="TXT_CHANNEL_SMS_CONTENT"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_CHANNEL_SMS_CONTENT"></th>
                     <th class="text-center mfb-xxt" translate="TXT_CHANNEL_SMS_DESC"></th>
                     <th class="text-center mfb-xt" translate="TXT_CHANNEL_SNS_DEL_TARGET"></th>
                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
@@ -124,6 +124,6 @@
                 </tbody>
             </table>
         </div>
-        <vpagination config="ctrl.storePageOption" ng-if="ctrl.channelList.length>0"></vpagination>
+        <vpagination config="ctrl.channelPageOption" ng-if="ctrl.channelList.length>0"></vpagination>
     </div>
 </div>
