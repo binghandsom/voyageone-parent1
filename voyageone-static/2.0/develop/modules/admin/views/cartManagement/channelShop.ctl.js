@@ -6,12 +6,13 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('CartChannelShopManagementController', (function () {
-        function CartChannelShopManagementController(popups, alert, confirm, AdminCartService, selectRowsFactory) {
+        function CartChannelShopManagementController(popups, alert, confirm, AdminCartService, channelService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
             this.selectRowsFactory = selectRowsFactory;
             this.AdminCartService = AdminCartService;
+            this.channelService = channelService;
             this.cartPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
             this.cartList = [];
@@ -28,6 +29,9 @@ define([
         CartChannelShopManagementController.prototype = {
             init: function () {
                 var self = this;
+                self.channelService.getAllChannel().then(function (res) {
+                    self.channelAllList = res.data;
+                });
                 self.search();
             },
             search: function (page) {

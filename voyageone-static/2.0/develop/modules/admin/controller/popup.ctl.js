@@ -58,6 +58,12 @@ define([
             "controller": 'CartAddController as ctrl',
             "size": 'md'
         },
+        "addCartTracking": {
+            "templateUrl": "views/pop/addCart/addTrackingInfo.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addCart/addTrackingInfo.ctl",
+            "controller": 'CartAddTrackingInfoController as ctrl',
+            "size": 'lg'
+        },
         "addStore": {
             "templateUrl": "views/pop/addStore/index.tpl.html",
             "controllerUrl": "modules/admin/views/pop/addStore/index.ctl",
@@ -123,6 +129,9 @@ define([
          */
         $scope.openCartAdd = function openCartAdd(context) {
             return openModal(popActions.addCart, context);
+        };
+        $scope.openCartTrackingInfo = function openCartTrackingInfo(context) {
+            return openModal(popActions.addCartTracking, context);
         };
         /**
          * 打开Store管理页面的添加页面

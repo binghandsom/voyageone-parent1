@@ -65,7 +65,8 @@ define([
                             if (Info.updFlg != 8) {
                                 self.tempSelect.currPageRows({
                                     "id": Info.cartId,
-                                    "code": Info.name
+                                    "code": Info.name,
+                                    "orderChannelId": Info.orderChannelId
                                 });
                             }
                         });
@@ -91,7 +92,7 @@ define([
                 } else {
                     _.forEach(self.cartList, function (Info) {
                         if (Info.cartId == self.cartTrackingSelList.selList[0].id) {
-                            self.popups.openCartAdd(Info).then(function () {
+                            self.popups.openCartTrackingInfo(Info).then(function () {
                                 self.search(1);
                             });
                         }
@@ -104,9 +105,9 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.cartTrackingSelList.selList, function (delInfo) {
-                            delList.push(delInfo.id);
+                            delList.push({'orderChannelId': delInfo.orderChannelId, 'cartId': delInfo.id});
                         });
-                        self.AdminCartService.deleteCart(delList).then(function (res) {
+                        self.cartShopService.deleteCartShop(delList).then(function (res) {
                             self.search();
                         })
                     }

@@ -71,7 +71,7 @@
         <div class="box-body-new">
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
-                    <button class="btn btn-default" ng-click="openCartAdd('add')" ng-disabled="ctrl.cartTrackingSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                    <button class="btn btn-default" ng-click="openCartTrackingInfo('add')" ng-disabled="ctrl.cartTrackingSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
                     <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.cartTrackingSelList.selList.length <= 0||ctrl.cartTrackingSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
                     <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.cartTrackingSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                 </div>
@@ -86,11 +86,13 @@
                             <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                         </label>
                     </th>
-                    <th class="text-center mfb-xt" translate="TXT_CART_ID"></th>
-                    <th class="text-left mfb-xt" translate="TXT_NAME_CART"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_CART_SHORT_NAME"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_CART_DESC"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_CART_TYPE"></th>
+                    <th class="text-center mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
+                    <th class="text-left mfb-xt" translate="TXT_CART_SHOP_NAME"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_TRACKING_STATE"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_TRACKING_INFO"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_TRACKING_LOCATION"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_IS_DISPLAY"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_TRACKING_IS_EXPAND"></th>
                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
                     <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
                     <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
@@ -98,7 +100,7 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td if-no-rows="ctrl.cartList.length||ctrl.cartList" colspan="9" style="padding: 0px"></td>
+                    <td if-no-rows="ctrl.cartList.length||ctrl.cartList" colspan="11" style="padding: 0px"></td>
                 </tr>
                 <tr ng-repeat="list in ctrl.cartList">
                     <td class="text-left v-middle">
@@ -110,6 +112,8 @@
                     </td>
                     <td class="text-center v-middle">{{list.cartId}}</td>
                     <td class="text-left v-middle">{{list.name}}</td>
+                    <td class="text-left v-middle">{{list.shortName}}</td>
+                    <td class="text-center v-middle">{{list.description}}</td>
                     <td class="text-left v-middle">{{list.shortName}}</td>
                     <td class="text-center v-middle">{{list.description}}</td>
                     <td class="text-center v-middle">{{ctrl.getCartType(list.cartType)}}</td>
