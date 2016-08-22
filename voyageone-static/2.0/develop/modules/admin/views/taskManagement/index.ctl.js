@@ -114,7 +114,7 @@ define([
                         _.forEach(self.taskSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
-                        self.taskService.deleteStore(delList).then(function (res) {
+                        self.taskService.deleteTask(delList).then(function (res) {
                             self.search(1);
                         })
                     }

@@ -99,10 +99,10 @@
                         <td class="text-center v-middle">{{list.modified}}</td>
                         <td class="text-center v-middle">{{list.modifier}}</td>
                         <td class="text-center v-middle">
-                            <button class="btn btn-success" ng-if="list.runFlg=='1'"
+                            <button class="btn btn-success" ng-if="list.runFlg=='0'"
                                     ng-click="ctrl.run({'taskName':list.taskName,'type':'Start'})">启动
                             </button>
-                            <button class="btn btn-danger" ng-if="list.runFlg=='0'"
+                            <button class="btn btn-danger" ng-if="list.runFlg=='1'"
                                     ng-click="ctrl.run({'taskName':list.taskName,'type':'Stop'})">停止
                             </button>
                         </td>
