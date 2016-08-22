@@ -8,6 +8,7 @@ import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,5 +50,30 @@ public class BusinessLogService extends BaseService {
     @VOTransactional
     public int insertBusinessLog(CmsBtBusinessLogModel record) {
         return cmsBtBusinessLogDao.insert(record);
+    }
+
+    /**
+     * 根据指定条件将log表中的错误记录的status更新成已解决(1)
+     * 可以通过指定channelId(必须)，cartId,groupId,model或者code来指定更新对象
+     *
+     * @param channelId String 渠道id
+     * @param cartId Integer 平台id
+     * @param groupId String GroupId
+     * @param model String feed model
+     * @param code String 产品code
+     * @param modifier String 更新者
+     * @return int effect count
+     */
+    public int updateFinishStatusByCondition(String channelId, Integer cartId, String groupId,
+                                             String model, String code, String modifier) {
+        Map<String, Object> updateConditionMap = new HashMap<>();
+        updateConditionMap.put("channelId", channelId);
+        updateConditionMap.put("cartId", cartId);
+        updateConditionMap.put("groupId", groupId);
+        updateConditionMap.put("model", model);
+        updateConditionMap.put("code", code);
+        updateConditionMap.put("modifier", modifier);
+
+        return cmsBtBusinessLogDaoExt.updateStatusFinishByCondition(updateConditionMap);
     }
 }
