@@ -238,7 +238,7 @@ public class UploadToUSJoiService extends BaseTaskService {
         }
 
         String resultInfo = usjoiChannelId + " " + channelBean.getFull_name() +
-                "USJOI主店从子店（可能为多个子店）中导入产品结果 [总件数:" + cmsBtSxWorkloadModels.size()
+                " USJOI主店从子店（可能为多个子店）中导入产品结果 [总件数:" + cmsBtSxWorkloadModels.size()
                 + " 成功:" + successCnt + " 失败:" + errCnt + "]";
         // 将该channel的子店->主店导入信息加入map，供channel导入线程全部完成一起显示
         resultMap.put(usjoiChannelId, resultInfo);

@@ -244,8 +244,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                     throw new BusinessException("价格不能为空");
                 }
                 Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
-                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (newPriceSale / (2-breakThreshold))).compareTo(comPrice.get(sku)) < 0) {
-                    throw new BusinessException("4000094",((Double)Math.ceil(comPrice.get(sku) * (2 - breakThreshold))).intValue());
+                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (newPriceSale / (2 - breakThreshold))).compareTo(comPrice.get(sku)) < 0) {
+                    throw new BusinessException("4000094", ((Double) Math.ceil(comPrice.get(sku) * (2 - breakThreshold))).intValue());
                 }
 
                 if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
@@ -344,12 +344,9 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
         // 从mapping 来的默认值合并到商品属性中
         Map<String, Object> mppingFields = platformMappingService.getValueMap(channelId, productId, cartId);
-        mppingFields.forEach((s, s2) -> {
-            Object value = fieldsValue.get(s);
-            if(value == null || StringUtil.isEmpty(value.toString())){
-                fieldsValue.put(s,s2);
-            }
-        });
+
+        setDefaultValue(fieldsValue,mppingFields);
+
         // JM的场合schema就一条
         if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
             if (!StringUtil.isEmpty(catId)) {
@@ -408,5 +405,28 @@ public class CmsProductPlatformDetailService extends BaseAppService {
      */
     List<CmsMtPlatformCategoryTreeModel> getPlatformCategories(UserSessionBean user, Integer cartId) {
         return platformCategoryService.getPlatformCategories(user.getSelChannelId(), cartId);
+    }
+
+    /**
+     * 从共同属性mapping来的属性合并
+     * @param fieldMap
+     * @param valueMap
+     */
+    public void setDefaultValue(BaseMongoMap<String, Object> fieldMap, Map<String, Object> valueMap) {
+        if(valueMap == null || valueMap.size() == 0) return;
+        valueMap.forEach((s, v) -> {
+            Object o = fieldMap.get(s);
+            if(o == null){
+                fieldMap.put(s,v);
+            }else if(o instanceof List){
+                if(((List)o).size() == 0){
+                    fieldMap.put(s,v);
+                }
+            }else if(o instanceof Map){
+                setDefaultValue((BaseMongoMap<String, Object>) o, (Map<String, Object>) v);
+            }else if(StringUtil.isEmpty((String) o)){
+                fieldMap.put(s,v);
+            }
+        });
     }
 }
