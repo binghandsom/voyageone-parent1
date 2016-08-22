@@ -265,7 +265,7 @@ public class FeedInfoService extends BaseService {
             if (!categorys.isEmpty()) {
                 List<String> orSearch = new ArrayList<>();
                 categorys = categorys.stream().map(s -> "/^" + s + "/").collect(Collectors.toList());
-                result.append("{").append(MongoUtils.splicingValue("category", categorys,"$in"));
+                result.append("{").append(MongoUtils.splicingValue("category", categorys.toArray(),"$in"));
                 result.append("},");
             }
 //
