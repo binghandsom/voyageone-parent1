@@ -24,15 +24,15 @@
 	
 	<sql id="selectTaskConfigFilter">
 		<where>
-			<if test="taskId = null and taskId != ''">
+			<if test="taskId != null and taskId != ''">
 				and cmt.task_id = #{taskId}
 			</if>
-			<if test="cfgName = null and cfgName != ''">
-				and ttc.cfg_name like concat('%, #{cfgName}, '%')
+			<if test="cfgName != null and cfgName != ''">
+				and ttc.cfg_name like concat('%', #{cfgName}, '%')
 			</if>
-			<if test="cfgVal = null and cfgVal != ''">
+			<if test="cfgVal != null and cfgVal != ''">
 				and (
-					ttc.cfg_val1 like concat('%, #{cfgVal}, '%') or ttc.cfg_val2 like concat('%, #{cfgVal}, '%')
+					ttc.cfg_val1 like concat('%', #{cfgVal}, '%') or ttc.cfg_val2 like concat('%', #{cfgVal}, '%')
 				)
 			</if>
 		</where>
