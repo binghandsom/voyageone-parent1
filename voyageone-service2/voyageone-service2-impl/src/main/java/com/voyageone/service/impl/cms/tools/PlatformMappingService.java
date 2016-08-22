@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.tools;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformMappingDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -73,11 +74,20 @@ public class PlatformMappingService extends BaseService {
         return true;
     }
 
+    public Map<String, Object> getValueMap(String channelId, Long productId, int cartId) {
+        return getValueMap(channelId, productId, cartId, null);
+    }
+
     public Map<String, Object> getValueMap(String channelId, Long productId, int cartId, String categoryPath) {
 
         // 查询需要用到的平台类目也在商品中获取
 
         CmsBtProductModel product = productService.getProductById(channelId, productId);
+
+        if (StringUtils.isEmpty(categoryPath)) {
+            CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
+            categoryPath = cart.getpCatPath();
+        }
 
         CmsBtPlatformMappingModel fieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, categoryPath, channelId);
 
