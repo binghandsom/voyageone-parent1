@@ -3386,7 +3386,7 @@ public class SxProductService extends BaseService {
         // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
         int effectCnt = businessLogService.updateFinishStatusByCondition(sxData.getChannelId(), sxData.getCartId(), StringUtils.toString(sxData.getGroupId()),
                 null, sxData.getMainProduct().getCommon().getFields().getCode(), modifier);
-        $debug("cms_bt_business_log表以前的错误信息逻辑删除错误件数：%s件 [ChannelId:%s] [CatId:%s] [Code:%s]",
+        $debug("cms_bt_business_log表以前的错误信息逻辑删除件数：%s件 [ChannelId:%s] [CatId:%s] [Code:%s]",
                 effectCnt, sxData.getChannelId(), sxData.getCartId(), sxData.getMainProduct().getCommon().getFields().getCode());
 
         // 上新成功时
