@@ -60,7 +60,9 @@ public class CmsProductPlatformDetailController extends CmsController {
         String catId = String.valueOf(params.get("catId"));
         Map<String, Object> result = new HashMap<>();
 
-        result.put("platform", cmsProductPlatformDetailService.changePlatformCategory(channelId, prodId, cartId, catId, getLang()));
+        String catPath = (String) params.get("catPath");
+
+        result.put("platform", cmsProductPlatformDetailService.changePlatformCategory(channelId, prodId, cartId, catId,catPath, getLang()));
 
         return success(result);
     }
