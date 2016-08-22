@@ -89,6 +89,8 @@ define(function () {
         /**cart管理-渠道Cart管理*/
         "TXT_CART_CHANNEL_SHOP":"渠道Cart管理",
         "TXT_SHOP_NAME":"商店名",
+        "TXT_CART_TRACKING_INFO":"Cart物流信息管理",
+        "TXT_CART_SHOP_NAME":"店铺名",
 
         /**仓库管理-信息一览*/
         "TXT_STORE_MANAGE": "仓库管理",

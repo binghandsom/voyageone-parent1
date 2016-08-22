@@ -46,6 +46,12 @@ define(function () {
             "templateUrl": "views/cartManagement/channelShop.tpl.html",
             "controllerUrl": "modules/admin/views/cartManagement/channelShop.ctl",
             "controller": "CartChannelShopManagementController as ctrl"
+        },//Cart-Cart物流管理
+        "cartTrackingInfoManagement": {
+            "hash": "/cart/trackingInfoManagement",
+            "templateUrl": "views/cartManagement/cartTrackingInfo.tpl.html",
+            "controllerUrl": "modules/admin/views/cartManagement/cartTrackingInfo.ctl",
+            "controller": "CartTrackingInfoManagementController as ctrl"
         },//仓库-仓库管理
         "storeManagement": {
             "hash": "/store/storeManagement",
