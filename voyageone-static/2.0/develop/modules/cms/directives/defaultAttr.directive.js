@@ -1,3 +1,10 @@
+/**
+ *@description 默认属性schema 产品shema简化版
+ *              1.不解析multicomplex
+ *              2.如有默认值，忽略掉
+ *              3.存在依赖，直接洗disabled和required
+ */
+
 define([
     'cms'
 ],function(cms){
@@ -610,7 +617,7 @@ define([
         // 如果为 false 或不存在的话, 只需创建单纯的 s-field 即可
         // 不加入 disableRule instanceof DependentRule 判断, 这里也是可以正常运行的
         // 因为原始的 rule 其 value 是字符串型, 所以 === true 会返回 false, 虽然字符串的内容确实是 "true"
-        // 但还是加上更靠谱, 所以我在 2016-07-07 21:58:50 补上了这段内容, 吓尿。。。
+        // 但还是加上更靠谱, 所以我在 2016-07-07 21:58:50 补上了这段内容。
         if (disableRule && !(disableRule instanceof DependentRule) && disableRule.value === true)
             return;
 
@@ -924,35 +931,13 @@ define([
                                 innerElement.attr('readonly', true);
                                 innerElement.attr('name', name);
 
-                                bindBoolRule(innerElement, readOnlyRule, 'readOnlyRule', 'readonly');
                                 bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
 
                                 innerElement.attr('title', field.name || field.id);
 
-                                // 根据类型转换值类型, 并填值
-                                _value = field.value;
-                                field.value = getInputValue(_value, field, valueTypeRule);
-
-                                // 没有填值, 并且有默认值, 那么就使用默认值
-                                // 之所以不和上面的转换赋值合并, 是因为 getInputValue 有可能转换返回 null
-                                // 所以这里要单独判断
-                                if (!(field.value) && exists(field.defaultValue)) {
-                                    _value = field.defaultValue;
-                                    field.value = getInputValue(_value, field, valueTypeRule);
-                                }
-
                                 if (isDate) {
-                                    // 将转换后的值放在特定的变量上, 供前端绑定
-                                    // 将老格式的值还原回字段对象中
-                                    // 当强类型的值变动, 就同步更新字段值
                                     scope.dateValue = field.value;
-                                    field.value = _value;
                                     innerElement.attr('ng-model', 'dateValue');
-
-
-
-
-
                                     scope.$watch('dateValue', function (newDate) {
                                         field.value = $filter('date')(newDate, (type === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd hh:mm:ss'));
                                     });
@@ -999,11 +984,6 @@ define([
                                     // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
                                     // 所以这一步做额外的处理
                                     field.value.value = getInputValue(field.value.value, field);
-                                }
-
-                                // 处理默认值, 判断基本同 input 类型, 参见 input 中的注释
-                                if (!exists(field.value.value) && exists(field.defaultValue)) {
-                                    field.value.value = getInputValue(field.defaultValue, field);
                                 }
 
                                 if (!requiredRule) {
@@ -1078,13 +1058,6 @@ define([
                                 if (!field.values)
                                     field.values = [];
 
-                                // 先把 values 里的选中值取出, 便于后续判断
-                                valueStringList = field.values.map(function (valueObj) {
-                                    // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
-                                    // 所以这一步做额外的处理
-                                    return (valueObj.value = getInputValue(valueObj.value, field).toString());
-                                });
-
                                 each(field.options, function (option, index) {
 
                                     var label = angular.element('<label></label>'),
@@ -1097,17 +1070,6 @@ define([
                                     checkbox.attr('title', field.name || field.id);
 
                                     checkbox.attr('ng-change', 'update(' + index + ')');
-
-
-                                    // 如果有原值, 就使用原值
-                                    // 如果没有, 看下是不是必填字段
-                                    // 如果是必填字段, 看看是不是有默认值
-                                    // 如果有就把默认值放上去
-                                    if (valueStringList.length) {
-                                        selected[index] = !(valueStringList.indexOf(option.value) < 0);
-                                    } else if (requiredRule && !!defaultValues.length) {
-                                        selected[index] = !(defaultValues.indexOf(option.value) < 0);
-                                    }
 
                                     label.append(checkbox, '&nbsp;', option.displayName);
 
