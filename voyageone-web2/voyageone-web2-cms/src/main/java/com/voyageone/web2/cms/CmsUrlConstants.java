@@ -23,6 +23,7 @@ public interface CmsUrlConstants {
             String SET_CATE_TYPE = "setPlatformType";
 
             String GetHomeSumData = "getHomeSumData";
+            String SumHome="sumHome";
 
             String GET_CMS_CONFIG = "getCmsConfig";
 

@@ -2,6 +2,7 @@ package com.voyageone.task2.vms.service;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.VmsChannelConfigBean;
@@ -337,7 +338,7 @@ public class VmsMakeFinancialReportService extends BaseTaskService {
 
         //新建文件输出流
         // 生成财务报表路径
-        String reportFilePath = com.voyageone.common.configs.Properties.readValue("vms.report");
+        String reportFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.report");
         reportFilePath += "/" + channelId + "/";
         // 创建文件目录
         FileUtils.mkdirPath(reportFilePath);

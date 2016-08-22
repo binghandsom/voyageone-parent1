@@ -16,6 +16,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -132,7 +133,12 @@ public class CmsMenuController extends CmsController {
     {
         return success(serviceCmsBtDataAmount.getHomeSumData(getUser().getSelChannelId(), getLang()));
     }
-
+    @RequestMapping(value = CmsUrlConstants.HOME.MENU.SumHome,method = RequestMethod.GET)
+    public AjaxResponse SumHome()
+    {
+        serviceCmsBtDataAmount.sumByChannelId(getUser().getSelChannelId());
+        return success("完成");
+    }
     @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CMS_CONFIG)
     public AjaxResponse getCmsConfig()
     {
