@@ -12,10 +12,10 @@
 				and cmt.task_type = #{taskType}
 			</if>
 			<if test="taskName != null and taskName != ''">
-				and cmt.task_name concat('%', #{taskName}, '%')
+				and cmt.task_name like concat('%', #{taskName}, '%')
 			</if>
 			<if test="taskComment != null and taskComment != ''">
-				and cmt.task_comment concat('%', #{taskComment}, '%')
+				and cmt.task_comment like concat('%', #{taskComment}, '%')
 			</if>
 		</where>
 	</sql>

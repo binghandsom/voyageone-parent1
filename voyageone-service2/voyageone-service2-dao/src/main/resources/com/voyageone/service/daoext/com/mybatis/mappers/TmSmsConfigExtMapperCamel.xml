@@ -13,11 +13,11 @@
 				and tsc.sms_type = #{smsType}
 			</if>
 			<if test="content != null and content != ''">
-				and tsc.content like concat('%, #{content}, '%')
+				and tsc.content like concat('%', #{content}, '%')
 			</if>
 			<if test="smsCode != null and smsCode != ''">
 				and (
-					tsc.sms_code1 like concat('%, #{smsCode}, '%') or tsc.sms_code2 like concat('%, #{smsCode}, '%')
+					tsc.sms_code1 like concat('%', #{smsCode}, '%') or tsc.sms_code2 like concat('%', #{smsCode}, '%')
 				)
 			</if>
 		</where>

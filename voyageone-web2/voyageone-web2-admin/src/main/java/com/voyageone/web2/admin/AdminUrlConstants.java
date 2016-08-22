@@ -254,6 +254,20 @@ public interface AdminUrlConstants {
 			
 		}
 		
+		interface Code {
+			
+			String ROOT = "/admin/system/code";
+			
+			String SEARCH_CODE_BY_PAGE = "searchCodeByPage";
+
+			String ADD_CODE = "addCode";
+
+			String UPDATE_CODE = "updateCode";
+
+			String DELETE_CODE = "deleteCode";
+			
+		}
+		
 	}
 
 	interface User {

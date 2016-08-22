@@ -62,7 +62,7 @@ public class CartTrackingController extends AdminController {
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getLocation()));
 		Preconditions.checkNotNull(form.getActive());
 
-		// 保存Cart信息
+		// 保存Cart物流信息
 		ComMtTrackingInfoConfigModel model = new ComMtTrackingInfoConfigModel();
 		BeanUtils.copyProperties(form, model);
 		cartTrackingService.addOrUpdateCartTracking(model, getUser().getUserName(), append);
@@ -74,7 +74,7 @@ public class CartTrackingController extends AdminController {
 	public AjaxResponse deleteCartTracking(@RequestBody Integer[] cartTrackingIds) {
 		// 验证参数
 		Preconditions.checkArgument(ArrayUtils.isNotEmpty(cartTrackingIds));
-		// 删除Cart信息
+		// 删除Cart物流信息
 		cartTrackingService.deleteCartTracking(Arrays.asList(cartTrackingIds), getUser().getUserName());
 
 		return success(true);
