@@ -124,11 +124,11 @@ define([
                 var self = this;
                 if (item.type == 'Start') {
                     self.taskService.startTask(item.taskName).then(function (res) {
-                        console.log(res);
+                        if (res.data == true) self.search(1);
                     })
                 } else {
                     self.taskService.stopTask(item.taskName).then(function (res) {
-                        console.log(res);
+                        if (res.data == true) self.search(1);
                     })
                 }
             }

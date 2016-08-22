@@ -6,21 +6,24 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('CartTrackingInfoManagementController', (function () {
-        function CartTrackingInfoManagementController(popups, alert, confirm, AdminCartService, selectRowsFactory) {
+        function CartTrackingInfoManagementController(popups, alert, confirm, channelService, AdminCartService, cartShopService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
             this.selectRowsFactory = selectRowsFactory;
+            this.channelService = channelService;
             this.AdminCartService = AdminCartService;
+            this.cartShopService = cartShopService;
             this.cartPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
             this.cartList = [];
-            this.cartSelList = {selList: []};
+            this.cartTrackingSelList = {selList: []};
             this.tempSelect = null;
             this.searchInfo = {
-                cartId: null,
-                cartName: '',
-                cartType: '',
+                orderChannelId: '',
+                cartId: '',
+                trackingStatus: '',
+                location: '',
                 pageInfo: this.cartPageOption
             }
         }
@@ -28,17 +31,24 @@ define([
         CartTrackingInfoManagementController.prototype = {
             init: function () {
                 var self = this;
-                self.search();
+                self.channelService.getAllChannel().then(function (res) {
+                    self.channelAllList = res.data;
+                });
+                self.AdminCartService.getAllCart().then(function (res) {
+                    self.cartAllList = res.data;
+                });
+                self.search(1);
             },
             search: function (page) {
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
-                self.AdminCartService.searchCartByPage({
+                self.cartShopService.searchCartShopByPage({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
                         'cartId': self.searchInfo.cartId,
-                        'cartName': self.searchInfo.cartName,
-                        'cartType': self.searchInfo.cartType
+                        'orderChannelId': self.searchInfo.orderChannelId,
+                        'trackingStatus': self.searchInfo.trackingStatus,
+                        'location': self.searchInfo.location
                     })
                     .then(function (res) {
                         self.cartList = res.data.result;
@@ -59,7 +69,7 @@ define([
                                 });
                             }
                         });
-                        self.cartSelList = self.tempSelect.selectRowsInfo;
+                        self.cartTrackingSelList = self.tempSelect.selectRowsInfo;
                         // End 设置勾选框
                     })
             },
@@ -67,19 +77,20 @@ define([
                 var self = this;
                 self.searchInfo = {
                     pageInfo: this.cartPageOption,
-                    'orderChannelId': '',
-                    'channelName': '',
-                    'isUsjoi': ''
+                    orderChannelId: '',
+                    cartId: '',
+                    trackingStatus: '',
+                    location: ''
                 }
             },
             edit: function () {
                 var self = this;
-                if (self.cartSelList.selList.length <= 0) {
+                if (self.cartTrackingSelList.selList.length <= 0) {
                     self.alert('TXT_MSG_NO_ROWS_SELECT');
                     return;
                 } else {
                     _.forEach(self.cartList, function (Info) {
-                        if (Info.cartId == self.cartSelList.selList[0].id) {
+                        if (Info.cartId == self.cartTrackingSelList.selList[0].id) {
                             self.popups.openCartAdd(Info).then(function () {
                                 self.search(1);
                             });
@@ -92,7 +103,7 @@ define([
                 var self = this;
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
-                        _.forEach(self.cartSelList.selList, function (delInfo) {
+                        _.forEach(self.cartTrackingSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
                         self.AdminCartService.deleteCart(delList).then(function (res) {
@@ -100,21 +111,7 @@ define([
                         })
                     }
                 );
-            },
-            getCartType: function (type) {
-                switch (type) {
-                    case '1':
-                        return '中国店铺';
-                        break;
-                    case '2':
-                        return '国外店铺';
-                        break;
-                    case '3':
-                        return 'MiniMall';
-                        break;
-                }
             }
-
         };
         return CartTrackingInfoManagementController;
     })())

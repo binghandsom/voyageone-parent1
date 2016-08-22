@@ -89,6 +89,17 @@ define(function () {
                     "updateCart": "updateCart",
                     "deleteCart": "deleteCart",
                     "deleteStore": "deleteStore"
+                },
+                "cartShopService": {
+                    "root": "/admin/cart/shop",
+                    "searchCartShopByPage": "searchCartShopByPage",
+                    "addCartShop": "addCartShop",
+                    "updateCartShop": "updateCartShop",
+                    "deleteCartShop": "deleteCartShop",
+                    "searchCartShopConfigByPage": "searchCartShopConfigByPage",
+                    "addCartShopConfig": "addCartShopConfig",
+                    "updateCartShopConfig": "updateCartShopConfig",
+                    "deleteCartShopConfig": "deleteCartShopConfig"
                 }
             },
             /** 统一属性配置 */

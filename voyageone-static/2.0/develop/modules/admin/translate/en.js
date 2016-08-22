@@ -18,7 +18,7 @@ define(function () {
         "TXT_CART_CHANNEL_CART": "渠道店铺",
         "TXT_CART_CHANNEL_CART_NAME": "渠道店铺名",
         "TXT_STATUS": "状态",
-        "TXT_ACTION":"操作",
+        "TXT_ACTION": "操作",
         "TXT_CART_UPDATE_TIME": "更新时间",
         "TXT_UPDATER": "更新人",
         "TXT_POP_CONFIG": "配置",
@@ -62,18 +62,18 @@ define(function () {
         /**快递信息管理*/
         "TXT_CHANNEL_CARRIER_MANAGEMENT": "快递信息管理",
         "TXT_CHANNEL_CARRIER_NAME": "快递名",
-        "TXT_CHANNEL_CARRIER_ISEBUY":"使用快递100",
-        "TXT_CHANNEL_CARRIER_ISEBUY_ID":"使用快递100标识",
-        "TXT_CHANNEL_CARRIER_DELETE_ALLOW":"允许删除标识",
-        "TXT_API_KEY":"API Key",
-        "TXT_API_USER":"API User",
-        "TXT_API_PASS":"API Password",
-        "TXT_API_URL":"API URL",
-        "TXT_CARD_NUMBER":"卡号",
-        "TXT_EMS_USER_NAME":"EMS客户名",
-        "TXT_CUSTOMER_WEB_SITE":"客户网点",
-        "TXT_CUSTOMER_NAME":"客户名",
-        "TXT_DELETE_ALLOWED":"允许删除",
+        "TXT_CHANNEL_CARRIER_ISEBUY": "使用快递100",
+        "TXT_CHANNEL_CARRIER_ISEBUY_ID": "使用快递100标识",
+        "TXT_CHANNEL_CARRIER_DELETE_ALLOW": "允许删除标识",
+        "TXT_API_KEY": "API Key",
+        "TXT_API_USER": "API User",
+        "TXT_API_PASS": "API Password",
+        "TXT_API_URL": "API URL",
+        "TXT_CARD_NUMBER": "卡号",
+        "TXT_EMS_USER_NAME": "EMS客户名",
+        "TXT_CUSTOMER_WEB_SITE": "客户网点",
+        "TXT_CUSTOMER_NAME": "客户名",
+        "TXT_DELETE_ALLOWED": "允许删除",
 
         /**cart管理-信息一览*/
         "TXT_CART_MANAGE": "Cart管理",
@@ -87,10 +87,15 @@ define(function () {
         "TXT_PLATFORM_NAME": "平台名",
 
         /**cart管理-渠道Cart管理*/
-        "TXT_CART_CHANNEL_SHOP":"渠道Cart管理",
-        "TXT_SHOP_NAME":"商店名",
-        "TXT_CART_TRACKING_INFO":"Cart物流信息管理",
-        "TXT_CART_SHOP_NAME":"店铺名",
+        "TXT_CART_CHANNEL_SHOP": "渠道Cart管理",
+        "TXT_SHOP_NAME": "商店名",
+        "TXT_CART_TRACKING_INFO": "Cart物流信息管理",
+        "TXT_CART_SHOP_NAME": "店铺名",
+        "TXT_TRACKING_STATE": "物流状态",
+        "TXT_TRACKING_LOCATION": "物流位置",
+        "TXT_TRACKING_INFO":"物流信息",
+        "TXT_IS_DISPLAY":"显示标识",
+        "TXT_TRACKING_IS_EXPAND":"物流展开标识",
 
         /**仓库管理-信息一览*/
         "TXT_STORE_MANAGE": "仓库管理",
@@ -125,7 +130,7 @@ define(function () {
         "BTN_ACTIVE": "启用",
         "BTN_INACTIVE": "禁用",
         "TXT_TIME_END": "结束时间",
-        "TXT_STATE_RUN":"运行状态",
+        "TXT_STATE_RUN": "运行状态",
 
 
         /**分页显示*/

@@ -57,7 +57,7 @@
                     <button class="btn btn-vo" ng-click="ctrl.search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>
                 </div>
             </div>
-            <div ng-if="ctrl.searchInfo.orderChannelId||ctrl.searchInfo.storeId||ctrl.searchInfo.taskId">
+            <div>
                 <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                     <div class="form-group m-t-sm m-r-xs">
                         <button class="btn btn-default" ng-click="ctrl.add({'type':'add', 'orderChannelId': ctrl.searchInfo.orderChannelId,
@@ -109,6 +109,6 @@
                 </table>
             </div>
         </form>
-        <vpagination config="ctrl.configPageOption" ng-if="ctrl.searchInfo.orderChannelId||ctrl.searchInfo.storeId||ctrl.searchInfo.taskId"></vpagination>
+        <vpagination config="ctrl.configPageOption"></vpagination>
     </div>
 </div><!-- .vo_modal -->
