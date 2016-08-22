@@ -1,4 +1,4 @@
-package com.voyageone.web2;
+package com.voyageone.web2.openapi;
 
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.StringUtils;
@@ -33,6 +33,19 @@ public abstract class OpenApiBaseService extends VOAbsLoggable {
             VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70003;
             throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
         }
+    }
+
+    /**
+     * getProjection
+     * @param request VoApiRequest
+     * @return String
+     */
+    protected String[] getProjection(VoApiRequest request) {
+        if (StringUtils.isEmpty(request.getFields())) {
+            return null;
+        }
+        String fieldsTmp = request.getFields().replaceAll("[\\s]*;[\\s]*", " ; ");
+        return fieldsTmp.split(" ; ");
     }
 
 }

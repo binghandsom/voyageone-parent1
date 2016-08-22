@@ -1,4 +1,4 @@
-package com.voyageone.web2;
+package com.voyageone.web2.openapi;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author chuanyu.liang
  * @version 2.0.0
  */
-public abstract class OpenAipBaseController extends VOAbsLoggable {
+public abstract class OpenApiBaseController extends VOAbsLoggable {
 
     /**
      * error Handler

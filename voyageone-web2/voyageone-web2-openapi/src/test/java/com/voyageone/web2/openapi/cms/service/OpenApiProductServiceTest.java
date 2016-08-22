@@ -1,7 +1,6 @@
-package com.voyageone.web2.cms.openapi.service;
+package com.voyageone.web2.openapi.cms.service;
 
 import com.voyageone.web2.sdk.api.request.ProductForOmsGetRequest;
-import com.voyageone.web2.sdk.api.request.ProductForWmsGetRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +9,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
-
-import static org.junit.Assert.*;
 
 /**
  * @author james.li on 2016/6/23.
