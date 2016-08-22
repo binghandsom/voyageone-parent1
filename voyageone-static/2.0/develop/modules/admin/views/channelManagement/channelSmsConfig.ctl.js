@@ -83,9 +83,9 @@ define([
                     self.alert('TXT_MSG_NO_ROWS_SELECT');
                     return;
                 } else {
-                    _.forEach(self.channelList, function (channelInfo) {
-                        if (channelInfo.seq == self.channelSmsSelList.selList[0].id) {
-                            self.popups.openChannelSms(channelInfo).then(function () {
+                    _.forEach(self.channelList, function (Info) {
+                        if (Info.seq == self.channelSmsSelList.selList[0].id) {
+                            self.popups.openChannelSms(Info).then(function () {
                                 self.search(1);
                             });
                         }
