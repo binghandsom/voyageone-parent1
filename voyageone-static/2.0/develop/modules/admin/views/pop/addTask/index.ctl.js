@@ -21,7 +21,6 @@ define([
                     self.popType = '添加';
                     self.sourceData = {}
                 }
-                self.sourceData.active = self.sourceData.active ? "1" : "0";
                 self.taskService.getAllTaskType().then(function (res) {
                     self.taskTypeList = res.data;
                 });
@@ -32,7 +31,6 @@ define([
             save: function () {
                 var self = this;
                 var result = {};
-                self.sourceData.active = self.sourceData.active == '1' ? true : false;
                 if (self.append == true) {
                     self.taskService.addTask(self.sourceData).then(function (res) {
                         if (res.data == false) {
