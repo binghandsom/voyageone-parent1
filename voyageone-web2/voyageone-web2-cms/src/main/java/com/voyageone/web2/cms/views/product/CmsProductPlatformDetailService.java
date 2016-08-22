@@ -413,7 +413,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
      * @param fieldMap
      * @param valueMap
      */
-    public void setDefaultValue(BaseMongoMap<String, Object> fieldMap, Map<String, Object> valueMap) {
+    public void setDefaultValue(Map<String, Object> fieldMap, Map<String, Object> valueMap) {
         if(valueMap == null || valueMap.size() == 0) return;
         valueMap.forEach((s, v) -> {
             Object o = fieldMap.get(s);
@@ -424,7 +424,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                     fieldMap.put(s,v);
                 }
             }else if(o instanceof Map){
-                setDefaultValue((BaseMongoMap<String, Object>) o, (Map<String, Object>) v);
+                setDefaultValue((Map<String, Object>) o, (Map<String, Object>) v);
             }else if(StringUtil.isEmpty((String) o)){
                 fieldMap.put(s,v);
             }
