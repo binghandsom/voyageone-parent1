@@ -21,9 +21,9 @@ public class Tmall_018_Target_DictTest {
 	@Test
 	public void startupTest() {
 
-//		doCreateJson("详情页描述", false, doDict_详情页描述());
+		doCreateJson("详情页描述", false, doDict_详情页描述());
 //		doCreateJson("无线描述", false, doDict_无线描述());
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 15; i++) {
             int j = i + 1;
             doCreateJson("无线自定义图片-" + j, false, doDict_无线自定义图片(String.valueOf(i)));   // index(0~9)
         }
@@ -31,6 +31,8 @@ public class Tmall_018_Target_DictTest {
             doCreateJson("无线商品图片-" + i, false, doDict_无线商品图片(String.valueOf(i)));   // index(1~5)
         }
         doCreateJson("无线描述", false, doDict_无线描述2());
+
+        doCreateJson("无线描述-重点商品", false, doDict_无线描述_重点商品());
 
 	}
 
@@ -663,6 +665,219 @@ public class Tmall_018_Target_DictTest {
                 RuleExpression useOriUrl = null;
 
                 CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+                ruleRoot.addRuleWord(new CustomWord(getCommonImagesWord));
+
+                imageStr = "\"}";
+                imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+            }
+
+            // end
+            String endStr = "}";
+            TextWord endWord = new TextWord(endStr);
+            ruleRoot.addRuleWord(endWord);
+        }
+
+        {
+            // end
+            String kv = "}}";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        return ruleRoot;
+    }
+
+    private RuleExpression doDict_无线描述_重点商品() {
+        // 根字典
+        RuleExpression ruleRoot = new RuleExpression();
+        {
+            // start
+            String kv = "{\"wireless_desc\":{";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+//        {
+//            // K-V 模板
+//            String kv = "\"k1\":{\"k1-1\":\"v1\",\"k1-2\":\"v2\"},";
+//            TextWord word = new TextWord(kv);
+//            ruleRoot.addRuleWord(word);
+//
+//            <field id="xxx_enable" name="是否启用" type="singleCheck">
+//                <options>
+//                <option displayName="启用" value="true"/>
+//                <option displayName="不启用" value="false"/>
+//                </options>
+//            </field>
+//        }
+
+        {
+            // item_info 商品信息
+            String kv = "\"item_info\":{\"item_info_enable\":\"false\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // coupon 优惠
+//            String kv = "\"coupon\":{\"coupon_enable\":\"true\",\"coupon_id\":\"xxx\"},";
+            String kv = "\"coupon\":{\"coupon_enable\":\"false\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"true\",\"hot_recommanded_id\":\"";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+
+            // 同店推荐的field_id
+            MasterWord masterWord = new MasterWord("hot_recommanded_id");
+            ruleRoot.addRuleWord(masterWord);
+
+            kv = "\"},";
+            word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+            // modified by morse.lu 2016/08/05 end
+        }
+
+        {
+            // shop_discount 店铺活动
+//            String kv = "\"shop_discount\":{\"shop_discount_enable\":\"true\",\"shop_discount_id\":\"xxx\"},";
+            String kv = "\"shop_discount\":{\"shop_discount_enable\":\"false\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // user_define 自定义
+//            String kv = "\"user_define\":{\"user_define_enable\":\"true\",\"user_define_name\":\"xxx\",\"user_define_image_0\":\"xxx\",\"user_define_image_1\":\"xxx\"},";
+            String kv = "\"user_define\":{\"user_define_enable\":\"false\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // item_picture 商品图片
+            String kv = "\"item_picture\":{\"item_picture_enable\":\"true\"";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+
+            // Target无线端一共20张商品图片
+            // No.1     共通图片-店铺简介        (1张无线图片)
+            // No.2     共通图片-品牌故事        (1张品牌故事图片)
+            // No.3~17  自定义                   (15张无线自定义图)
+            // No.18    共通图片-品牌故事        (1张品牌故事图片)
+            // No.19~20 共通图片-物流图          (2张物流图片)
+
+            // No.1 1张共通图片-店铺简介图片
+            for (int i = 0; i < 1; i++) {
+                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+                TextWord imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+
+                // 店铺图
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("5"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("0")); // 第一张图
+
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
+                ruleRoot.addRuleWord(new CustomWord(getCommonImagesWord));
+
+                imageStr = "\"}";
+                imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+            }
+
+            // No.2 1张共通图片-品牌图
+            for (int i = 1; i < 2; i++) {
+                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+                TextWord imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+
+                // 品牌图
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("3"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("0")); // 第一张图
+
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
+                ruleRoot.addRuleWord(new CustomWord(getCommonImagesWord));
+
+                imageStr = "\"}";
+                imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+            }
+
+            // No.3~17  自定义
+            for (int i = 2; i < 17; i++) {
+                int j = i - 1;
+                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+                TextWord imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+
+                // 无线自定义图字典
+                DictWord dictRoot = new DictWord();
+                dictRoot.setName("无线自定义图片-" + j);   // 1~15
+                ruleRoot.addRuleWord(dictRoot);
+
+                imageStr = "\"}";
+                imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+            }
+
+            // No.18 1张共通图片-品牌图
+            for (int i = 17; i < 18; i++) {
+                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+                TextWord imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+
+                // 品牌图
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("3"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("1")); // 第二张图
+
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
+                ruleRoot.addRuleWord(new CustomWord(getCommonImagesWord));
+
+                imageStr = "\"}";
+                imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+            }
+
+            // No.19~20 共通图片-物流图  (2张无线图片)
+            for (int i = 18; i < 20; i++) {
+                int j = i - 18;
+                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+                TextWord imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+
+                // 物流图
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("4"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord(String.valueOf(j)));   // 图片index(0,1)
+
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
                 ruleRoot.addRuleWord(new CustomWord(getCommonImagesWord));
 
                 imageStr = "\"}";
