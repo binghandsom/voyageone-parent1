@@ -414,6 +414,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
                         if (sellJmEndTime < jmActivityEndTime) {
                             //调用延迟Deal结束时间API
                             jmPromotionProduct.setDealEndTimeStatus(1);
+                            jmPromotionProduct.setActivityEnd(getDealByHashIDResponse.getEnd_time());
                             try {
                                 updateDealEndTime(parameter);//自动延期
                                 LOG.info("延期成功:"+parameter.cmsBtJmPromotionProductModel.getProductCode());
