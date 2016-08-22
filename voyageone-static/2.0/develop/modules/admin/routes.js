@@ -64,6 +64,12 @@ define(function () {
             "templateUrl": "views/taskManagement/index.tpl.html",
             "controllerUrl": "modules/admin/views/taskManagement/index.ctl",
             "controller": "TaskManagementController as ctrl"
+        },//系统配置管理
+        "systemManagement": {
+            "hash": "/system/typeInfoManagement",
+            "templateUrl": "views/systemManagement/typeInfo.tpl.html",
+            "controllerUrl": "modules/admin/views/systemManagement/typeInfo.ctl",
+            "controller": "TypeInfoManagementController as ctrl"
         }
     };
 });

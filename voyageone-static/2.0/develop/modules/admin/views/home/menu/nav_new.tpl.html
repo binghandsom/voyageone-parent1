@@ -111,5 +111,30 @@
             <span class="" translate="TXT_TASK_MANAGEMENT"></span>
         </a>
     </li>
+    <!-- 系统配置管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_SYSTEM_CONFIG"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_SYSTEM_CONFIG"></span>
+                </a>
+            </li>
+            <!-- 类型信息管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/system/typeInfoManagement">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_TYPE_INFO_MANAGEMENT"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
 </ul>
 <!--end-->
