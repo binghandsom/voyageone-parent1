@@ -11,14 +11,20 @@ define(function (require) {
 
     cms.controller('DefaultAttributeController', (function () {
 
-        function DefaultAttributeController(popups, alert, confirm, menuService, $productDetailService,platformMappingService) {
+        function DefaultAttributeController(popups, alert, confirm, menuService, $productDetailService, platformMappingService) {
 
             var self = this;
 
             menuService.getPlatformType().then(function (resp) {
-                self.cartList = _.filter(resp, function (cart) {
+                var cartList = _.filter(resp, function (cart) {
                     return cart.value != 0 && cart.value != 1
                 });
+                self.cartList = cartList;
+                var cartMap = {};
+                _.each(cartList, function (cart) {
+                    cartMap[cart.value] = cart.name;
+                });
+                self.cartMap = cartMap;
             });
 
             self.$productDetailService = $productDetailService;
@@ -109,9 +115,13 @@ define(function (require) {
             });
         };
 
-        DefaultAttributeController.prototype.editItem = function (item){
+        DefaultAttributeController.prototype.editItem = function (item) {
             var _item = angular.copy(item);
-            window.open("#/channel/default_attribute_detail/" + JSON.stringify(_item).replace(/\//g,"✓"));
+            window.open("#/channel/default_attribute_detail/" + JSON.stringify(_item).replace(/\//g, "✓"));
+        };
+
+        DefaultAttributeController.prototype.getMappingCategoryPath = function (entity) {
+            return !entity.categoryPath ? ('全类目(' + this.cartMap[entity.cartId] + ')') : entity.categoryPath;
         };
 
         return DefaultAttributeController;
