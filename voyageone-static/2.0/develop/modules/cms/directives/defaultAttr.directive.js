@@ -755,7 +755,6 @@ define([
                 controller.$scope = $scope;
 
                 $element = controller.$element;
-                //formController = controller.formController;
                 showName = controller.showName;
 
                 field = controller.field;
@@ -874,8 +873,7 @@ define([
                     element.text(field.name || field.id);
 
                     if (required) {
-                        // 如果这个字段是需要必填的
-                        // 就加个红星
+                        // 如果这个字段是需要必填的，就加个红星
                         // 如果是依赖型的必填, 那就要动态变更
                         if (required instanceof DependentRule) {
                             scope.$watch(function () {
@@ -916,7 +914,6 @@ define([
                                     requiredRule = rules.requiredRule,
                                     readOnlyRule = rules.readOnlyRule,
                                     type = getInputType(valueTypeRule),
-                                    _value,
                                     isDate = type.indexOf('date') > -1;
 
                                 if (type === 'textarea') {
@@ -1024,9 +1021,7 @@ define([
                         case FIELD_TYPES.MULTI_CHECK:
                             (function createCheckboxElements() {
 
-                                var selected, valueStringList;
-                                var requiredRule = rules.requiredRule;
-                                var defaultValues = field.defaultValues;
+                                var selected;
 
                                 innerElement = [];
 
