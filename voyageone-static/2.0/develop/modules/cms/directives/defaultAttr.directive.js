@@ -14,6 +14,7 @@ define([
         "SINGLE_CHECK": "SINGLECHECK",
         "MULTI_CHECK": "MULTICHECK",
         "COMPLEX": "COMPLEX",
+        "MULTI_COMPLEX": "MULTICOMPLEX",
         "LABEL": "LABEL"
     };
 
@@ -774,10 +775,12 @@ define([
                 innerElement = angular.element('<d-container>');
                 container.append(innerElement);
 
+                //不去解析multicomplex类型
+                if(!field.type === FIELD_TYPES.MULTI_COMPLEX){
+                    bindDefaultValueTip(container, field);
+                    bindTipRule(container, rules);
 
-                bindDefaultValueTip(container, field);
-                bindTipRule(container, rules);
-
+                }
                 // 最终编译
                 $compile($element.contents())($scope);
             };
@@ -868,6 +871,8 @@ define([
                         case FIELD_TYPES.COMPLEX:
                             element.addClass('complex');
                             break;
+                        default:
+                            return;
                     }
 
                     element.text(field.name || field.id);
@@ -1102,9 +1107,6 @@ define([
 
                             innerElement = angular.element('<d-complex fields="$fields">');
 
-                            break;
-                        default:
-                            element.text('不支持的类型');
                             break;
                     }
 
