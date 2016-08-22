@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.daoext.com.TmSmsConfigDaoExt">
 
-	<resultMap id="smsConfigModelType" type="com.voyageone.service.bean.com.TmSmsConfigBean"/>
+	<resultMap id="smsConfigBeanMap" type="com.voyageone.service.bean.com.TmSmsConfigBean"/>
 	
 	<sql id="selectSmsConfigFilter">
 		<where>
@@ -23,7 +23,7 @@
 		</where>
 	</sql>
 	
-	<select id="selectSmsConfigByPage" resultMap="smsConfigModelType">
+	<select id="selectSmsConfigByPage" resultMap="smsConfigBeanMap">
 		select toc.name, tsc.seq, tsc.order_channel_id, tsc.sms_type, tsc.sms_code1, tsc.sms_code2,
 			tsc.content, tsc.`describe`, tsc.del_flg
 		from tm_sms_config tsc left join tm_order_channel toc on toc.order_channel_id = tsc.order_channel_id
