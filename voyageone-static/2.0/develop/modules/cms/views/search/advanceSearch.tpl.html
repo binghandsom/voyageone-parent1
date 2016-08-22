@@ -607,6 +607,9 @@
                                     <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit)"> {{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</a>
                                 </li>
                                 <li>
+                                    <a href="javascript:void(0)" ng-click="cfmRetailPrice(null)">全店铺指导价变更确认</a>
+                                </li>
+                                <li>
                                     <a href="javascript:void(0)" ng-click="_openPutOnOff(openPutOnOff)">{{'TXT_ALL_PUT_ON|OFF'|translate}}</a>
                                 </li>
                                 <li>
@@ -634,6 +637,9 @@
                                 </li>
                                 <li ng-if="vm.masterData.autoApprovePrice!=1">
                                     <a href="javascript:void(0)" ng-click="toopenSalePrice(openSalePrice,cartBean.value)">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="cfmRetailPrice(cartBean)">指导价变更确认</a>
                                 </li>
                                 <li ng-if="cartBean.value!=27&&cartBean.cartType!=3">
                                     <a href="javascript:void(0)" ng-click="_openPutOnOff(openPutOnOff,cartBean.value)">{{'TXT_PUT_ON/PUT_OFF'|translate}}</a>
@@ -755,7 +761,7 @@
                                                     popover-html="showInfo({{productInfo.priceRetail}})"
                                                     popover-title="{{'TXT_PRICE' | translate}}" type="button"
                                                     popover-placement="left" class="btn btn-default btn-xs">
-                                                {{productInfo._retailPriceCol.pVal}}<label ng-if="productInfo._retailPriceCol.pFlg" class="text-u-red font-bold" style="margin-bottom:0px">&nbsp;!</label>
+                                                {{productInfo._retailPriceCol.pVal}}<label ng-if="productInfo._retailPriceCol.pTxt" ng-class="productInfo._retailPriceCol.cssTxt" style="margin-bottom:0px">&nbsp;{{productInfo._retailPriceCol.pTxt}}</label>
                                             </button>
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:170px;">
@@ -781,13 +787,11 @@
                                                 <div class="table_main">
                                                     <ul ng-if="productInfo.groupBean.publishTime">
                                                         <li>{{'TXT_PUBLISH_TIME' | translate}}</li>
-                                                        <!--<li><span>{{groupInfo.publishDate}}</span></li>-->
                                                         <li><span>{{productInfo.groupBean.publishTime.substring(0, 19)}}</span>
                                                         </li>
                                                     </ul>
                                                     <ul ng-if="!productInfo.groupBean.publishTime">
                                                         <li>{{'TXT_CREATE_TIME' | translate}}</li>
-                                                        <!--<li><span>{{productInfo.publishDate}}</span></li>-->
                                                         <li><span>{{productInfo.created.substring(0, 19)}}</span></li>
                                                     </ul>
                                                 </div>
@@ -922,13 +926,11 @@
                                                 <div class="table_main">
                                                     <ul ng-if="groupInfo.groupBean.publishTime">
                                                         <li>{{'TXT_PUBLISH_TIME' | translate}}</li>
-                                                        <!--<li><span>{{groupInfo.publishDate}}</span></li>-->
                                                         <li><span>{{groupInfo.groupBean.publishTime.substring(0,19)}}</span>
                                                         </li>
                                                     </ul>
                                                     <ul ng-if="!groupInfo.groupBean.publishTime">
                                                         <li>{{'TXT_CREATE_TIME' | translate}}</li>
-                                                        <!--<li><span>{{groupInfo.publishDate}}</span></li>-->
                                                         <li><span>{{groupInfo.created.substring(0,19)}}</span></li>
                                                     </ul>
                                                 </div>

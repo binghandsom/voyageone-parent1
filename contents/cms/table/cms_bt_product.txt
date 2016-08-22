@@ -120,7 +120,8 @@
       * priceMsrp   ->各平台的MSRP售价(double)
       * priceRetail ->各平台的销售指导价(double)
       * priceSale   ->各平台的最终售价(double)
-      * priceChgFlg ->指导售价变化状态（U/D） 这里是指导售价价格本身变化
+      * confirmFlg   ->表示是否已确认指导售价的变更(画面上显示时与priceChgFlg相关) (string型，1:已确认 0:未确认)
+      * priceChgFlg  ->指导售价变化状态（U/D） 这里是指导售价价格本身变化
       * priceDiffFlg ->最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5） 这里表示最终售价与指导价的比较结果 (string型)
       * isSale    ->用于表示该sku是否在该平台销售(true(默认), false)
     * sellerCats[]  ->店铺内分类
@@ -211,7 +212,7 @@
   * codeSumAll
     * cartIdxx
 
-* bi   ->BI数据统计
+* bi   ->BI数据统计  (这里的数据都是long型，将来添加其他项目如转化率等带小数位的数据时，必须是double型，不然没法排序!!不然没法排序!!)
     "sum1" : {       // 1天统计量
         "pv" : {
             "cartId26" : 0,

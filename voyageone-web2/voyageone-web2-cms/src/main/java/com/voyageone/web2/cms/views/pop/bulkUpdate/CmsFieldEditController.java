@@ -54,10 +54,16 @@ public class CmsFieldEditController extends CmsController {
                 Map<String, Object> rs = fieldEditService.setProductApproval(params, getUser(), cmsSession);
                 return success(rs);
             } else if ("putonoff".equals(prop)) {
+                // 商品上下架
                 Map<String, Object> rs = fieldEditService.setProductOnOff(params, getUser(), cmsSession);
                 return success(rs);
             } else if ("saleprice".equals(prop)) {
+                // 修改最终售价
                 Map<String, Object> rs = fieldEditService.setProductSalePrice(params, getUser(), cmsSession);
+                return success(rs);
+            } else if ("retailprice".equals(prop)) {
+                // 指导价变更批量确认
+                Map<String, Object> rs = fieldEditService.confirmRatailPrice(params, getUser(), cmsSession);
                 return success(rs);
             }
             return success(null);
@@ -75,7 +81,7 @@ public class CmsFieldEditController extends CmsController {
     }
 
     /**
-     * 修改最终价格时，下载未处理的商品code列表
+     * 修改最终售价时，下载未处理的商品code列表
      */
     @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.DLD_PRODUCT_PROCESALE)
     public ResponseEntity<byte[]> doExport(@RequestParam Map params) {
