@@ -89,7 +89,10 @@ define([
                             return {
                                 "id": configInfo.mainKey,
                                 "code": configInfo.taskName,
-                                "taskId": configInfo.taskId
+                                "taskId": configInfo.taskId,
+                                "cfgName": configInfo.cfgName,
+                                'cfgVal1': configInfo.cfgVal1,
+                                'cfgVal2': configInfo.cfgVal2
                             };
                         };
                         self.taskService.searchTaskConfigByPage(data).then(function (res) {
@@ -149,10 +152,10 @@ define([
                         });
                         break;
                     case 'Task':
-                        self.list = _.filter(self.taskTypeList, function (listItem) {
-                            return listItem.id == item.taskId;
+                        self.list = _.filter(self.taskList, function (listItem) {
+                            return listItem.taskId == item.taskId;
                         });
-                        _.extend(item, {'taskName': self.list[0].name, 'configType': self.searchInfo.configType});
+                        _.extend(item, {'taskName': self.list[0].taskName, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search();
                         });
@@ -176,7 +179,7 @@ define([
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
                     var delList = [];
                     _.forEach(self.configSelList.selList, function (delInfo) {
-                        _.extend(delInfo, {'configType': 'Channel'});
+                        _.extend(delInfo, {'configType': self.searchInfo.configType});
                         delList.push(delInfo);
                     });
                     switch (self.searchInfo.configType) {

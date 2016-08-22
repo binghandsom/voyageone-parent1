@@ -10,8 +10,8 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.channelService = channelService;
             this.storeService = storeService;
-            this.taskService =
-                this.append = context.type == 'add' ? true : false;
+            this.taskService = taskService;
+            this.append = context.type == 'add' ? true : false;
             this.popType = '修改';
             this.configType = this.sourceData.configType;
         }
