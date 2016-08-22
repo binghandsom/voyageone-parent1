@@ -217,6 +217,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             model.setErrorMsg("");
             model.setActivityEnd(modelCmsBtJmPromotion.getActivityEnd());
             daoCmsBtJmPromotionProduct.update(model);
+            LOG.info("延期成功:"+parameter.cmsBtJmPromotionProductModel.getProductCode());
         }
     }
 
@@ -294,7 +295,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
         } catch (Exception ex) {
             parameter.cmsBtJmPromotionProductModel.setSynchStatus(3);
             parameter.cmsBtJmPromotionProductModel.setPriceStatus(0);
-            parameter.cmsBtJmPromotionProductModel.setDealEndTimeStatus(0);
+            if(parameter.cmsBtJmPromotionProductModel.getDealEndTimeStatus()!=2) {
+                parameter.cmsBtJmPromotionProductModel.setDealEndTimeStatus(0);
+            }
             throw ex;
         }
     }
@@ -417,7 +420,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
                             jmPromotionProduct.setActivityEnd(getDealByHashIDResponse.getEnd_time());
                             try {
                                 updateDealEndTime(parameter);//自动延期
-                                LOG.info("延期成功:"+parameter.cmsBtJmPromotionProductModel.getProductCode());
+
                             }
                             catch (Exception ex) {
                                 errorMsg+=ex.getMessage();
