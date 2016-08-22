@@ -93,10 +93,11 @@ define(function () {
         "TXT_CART_SHOP_NAME": "店铺名",
         "TXT_TRACKING_STATE": "物流状态",
         "TXT_TRACKING_LOCATION": "物流位置",
-        "TXT_TRACKING_AREA":"物流区域",
-        "TXT_TRACKING_INFO":"物流信息",
-        "TXT_IS_DISPLAY":"显示标识",
-        "TXT_TRACKING_IS_EXPAND":"物流展开标识",
+        "TXT_TRACKING_AREA": "物流区域",
+        "TXT_TRACKING_INFO": "物流信息",
+        "TXT_IS_DISPLAY": "显示标识",
+        "TXT_TRACKING_IS_EXPAND": "物流展开标识",
+        "TXT_APP_URL": "App URL",
 
         /**仓库管理-信息一览*/
         "TXT_STORE_MANAGE": "仓库管理",
@@ -132,7 +133,7 @@ define(function () {
         "BTN_INACTIVE": "禁用",
         "TXT_TIME_END": "结束时间",
         "TXT_STATE_RUN": "运行状态",
-        "TXT_DISPLAY_STATE":"显示状态",
+        "TXT_DISPLAY_STATE": "显示状态",
 
 
         /**分页显示*/

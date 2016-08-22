@@ -27,7 +27,7 @@
                                     <label class="col-sm-3 control-label">{{'TXT_CART_SHOP_NAME' | translate}}</label>
                                     <div class="col-sm-8">
                                         <select search-contains="true" chosen width="'100%'" class="form-control"
-                                                ng-model="ctrl.searchInfo.orderChannelId"
+                                                ng-model="ctrl.searchInfo.cartId"
                                                 ng-options="cart.cartId as cart.name for cart in ctrl.cartAllList">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>

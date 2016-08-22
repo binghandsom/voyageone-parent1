@@ -6,22 +6,23 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('CartChannelShopManagementController', (function () {
-        function CartChannelShopManagementController(popups, alert, confirm, AdminCartService, channelService, selectRowsFactory) {
+        function CartChannelShopManagementController(popups, alert, confirm, AdminCartService, channelService, cartShopService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
             this.selectRowsFactory = selectRowsFactory;
             this.AdminCartService = AdminCartService;
             this.channelService = channelService;
+            this.cartShopService = cartShopService;
             this.cartPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
             this.cartList = [];
-            this.cartSelList = {selList: []};
+            this.cartShopSelList = {selList: []};
             this.tempSelect = null;
             this.searchInfo = {
-                cartId: null,
-                cartName: '',
-                cartType: '',
+                orderChannelId: '',
+                cartId: '',
+                shopName: '',
                 pageInfo: this.cartPageOption
             }
         }
@@ -32,17 +33,20 @@ define([
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
+                self.AdminCartService.getAllCart().then(function (res) {
+                    self.cartAllList = res.data;
+                });
                 self.search();
             },
             search: function (page) {
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
-                self.AdminCartService.searchCartByPage({
+                self.cartShopService.searchCartShopByPage({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
+                        'orderChannelId': self.searchInfo.orderChannelId,
                         'cartId': self.searchInfo.cartId,
-                        'cartName': self.searchInfo.cartName,
-                        'cartType': self.searchInfo.cartType
+                        'shopName': self.searchInfo.shopName
                     })
                     .then(function (res) {
                         self.cartList = res.data.result;
@@ -63,7 +67,7 @@ define([
                                 });
                             }
                         });
-                        self.cartSelList = self.tempSelect.selectRowsInfo;
+                        self.cartShopSelList = self.tempSelect.selectRowsInfo;
                         // End 设置勾选框
                     })
             },
@@ -71,19 +75,33 @@ define([
                 var self = this;
                 self.searchInfo = {
                     pageInfo: this.cartPageOption,
-                    'orderChannelId': '',
-                    'channelName': '',
-                    'isUsjoi': ''
+                    orderChannelId: '',
+                    cartId: '',
+                    shopName: ''
+                }
+            },
+            config: function (type) {
+                var self = this;
+                if (self.cartShopSelList.selList.length < 1) {
+                    self.popups.openConfig({'configType': type});
+                    return;
+                } else {
+                    _.forEach(self.cartList, function (Info) {
+                        if (Info.storeId == self.storeSelList.selList[0].id) {
+                            _.extend(Info, {'configType': type});
+                            self.popups.openConfig(Info);
+                        }
+                    })
                 }
             },
             edit: function () {
                 var self = this;
-                if (self.cartSelList.selList.length <= 0) {
+                if (self.cartShopSelList.selList.length <= 0) {
                     self.alert('TXT_MSG_NO_ROWS_SELECT');
                     return;
                 } else {
                     _.forEach(self.cartList, function (Info) {
-                        if (Info.cartId == self.cartSelList.selList[0].id) {
+                        if (Info.cartId == self.cartShopSelList.selList[0].id) {
                             self.popups.openCartAdd(Info).then(function () {
                                 self.search(1);
                             });
@@ -96,7 +114,7 @@ define([
                 var self = this;
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
-                        _.forEach(self.cartSelList.selList, function (delInfo) {
+                        _.forEach(self.cartShopSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
                         self.AdminCartService.deleteCart(delList).then(function (res) {

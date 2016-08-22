@@ -5,13 +5,13 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('ConfigController', (function () {
-        function ConfigController(popups, context, confirm, channelService, storeService, taskService, selectRowsFactory) {
+        function ConfigController(popups, context, confirm, channelService, storeService, AdminCartService, selectRowsFactory) {
             this.popups = popups;
             this.sourceData = context;
             this.confirm = confirm;
             this.channelService = channelService;
             this.storeService = storeService;
-            this.taskService = taskService;
+            this.AdminCartService = AdminCartService;
             this.selectRowsFactory = selectRowsFactory;
             this.configPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.configSelList = {selList: []};
@@ -84,6 +84,27 @@ define([
                     case 'Task':
                         self.taskService.getAllTask().then(function (res) {
                             self.taskList = res.data;
+                        });
+                        var selectKey = function (configInfo) {
+                            return {
+                                "id": configInfo.mainKey,
+                                "code": configInfo.taskName,
+                                "taskId": configInfo.taskId,
+                                "cfgName": configInfo.cfgName,
+                                'cfgVal1': configInfo.cfgVal1,
+                                'cfgVal2': configInfo.cfgVal2
+                            };
+                        };
+                        self.taskService.searchTaskConfigByPage(data).then(function (res) {
+                            callback(res, selectKey);
+                        });
+                        break;
+                    case 'Shop':
+                        self.channelService.getAllChannel().then(function (res) {
+                            self.channelAllList = res.data;
+                        });
+                        self.AdminCartService.getAllCart().then(function (res) {
+                            self.cartAllList = res.data;
                         });
                         var selectKey = function (configInfo) {
                             return {
@@ -214,6 +235,9 @@ define([
                         break;
                     case 'Task':
                         return "任务";
+                        break;
+                    case 'Shop':
+                        return "Cart";
                         break;
                 }
             }

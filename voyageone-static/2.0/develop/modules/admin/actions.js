@@ -100,6 +100,13 @@ define(function () {
                     "addCartShopConfig": "addCartShopConfig",
                     "updateCartShopConfig": "updateCartShopConfig",
                     "deleteCartShopConfig": "deleteCartShopConfig"
+                },
+                "cartTrackingService": {
+                    "root": "/admin/cart/tracking",
+                    "searchCartTrackingByPage": "searchCartTrackingByPage",
+                    "addCartTracking": "addCartTracking",
+                    "updateCartTracking": "updateCartTracking",
+                    "deleteCartTracking": "deleteCartTracking"
                 }
             },
             /** 统一属性配置 */
