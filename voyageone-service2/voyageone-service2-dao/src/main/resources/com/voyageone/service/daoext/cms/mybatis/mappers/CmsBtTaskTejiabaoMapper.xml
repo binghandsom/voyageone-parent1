@@ -73,6 +73,9 @@
             <if test="key != null and key != ''">
                 and a.`key` = #{key,jdbcType=VARCHAR}
             </if>
+            <if test="synFlg != null">
+                and a.syn_flg = #{synFlg,jdbcType=INTEGER}
+            </if>
         ORDER BY a.syn_flg desc,a.key
         <if test="start != null and length != null">
             LIMIT #{start}, #{length}
@@ -95,6 +98,9 @@
         </if>
         <if test="key != null and key != ''">
             and a.`key` = #{key,jdbcType=VARCHAR}
+        </if>
+        <if test="synFlg != null">
+            and a.syn_flg = #{synFlg,jdbcType=INTEGER}
         </if>
     </select>
     <insert id="insert_cms_bt_promotion_task" parameterType="com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel">
@@ -180,6 +186,10 @@
             <if test="key != null and key != ''">
                 and `key` = #{key,jdbcType=VARCHAR}
             </if>
+            <if test="selSynFlg != null">
+                and syn_flg = #{selSynFlg,jdbcType=INTEGER}
+            </if>
+
         </where>
     </update>
 

@@ -169,4 +169,8 @@ public final class JacksonUtil {
         return objectMapper.readValue(json, cls);
     }
 
+    public static Boolean isArray(String json){
+        return json.trim().indexOf("[") == 0;
+    }
+
 }

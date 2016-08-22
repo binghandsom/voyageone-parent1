@@ -93,6 +93,9 @@
         <!-- Modotex feed 导入 cms2 -->
         <task:scheduled ref="CmsModotexAnalysisJob" method="run" cron="0 40 0/1 * * ?"/>
 
+        <!-- SwissWatch feed 导入 cms2 -->
+        <task:scheduled ref="CmsSwissWatchAnalysisJob" method="run" cron="0 0/13 * * * ?"/>
+
         <!-- EdcSkincare feed 导入 cms2 -->
         <task:scheduled ref="CmsEdcSkincareAnalysisJob" method="run" cron="0 50 0/1 * * ?"/>
 
@@ -100,7 +103,7 @@
         <task:scheduled ref="CmsTargetAnalySisJob" method="run" cron="15 0/5 * * * ?"/>
 
         <!-- 维他命 feed 导入 cms2 -->
-        <task:scheduled ref="CmsVtmJob" method="run" cron="10 * 16 * * ?"/>
+        <task:scheduled ref="CmsVtmJob" method="run" cron="10 5 16 * * ?"/>
 
         <!-- Gilt feed 导入 cms2 -->
         <task:scheduled ref="Cms2GiltAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
@@ -145,7 +148,7 @@
         <task:scheduled ref="Cms2BcbgAnalysisJob" method="run" cron="40 0/3 * * * *"/>
 
         <!-- 从天猫/京东获取商品的上下架状态（每天早上2点一次） -->
-        <task:scheduled ref="CmsGetPlatformStatusJob" method="run" cron="0 0 2 * * ?"/>
+        <task:scheduled ref="CmsGetPlatformStatusJob" method="run" cron="0 0 0/2 * * ?"/>
 
     </task:scheduled-tasks>
 

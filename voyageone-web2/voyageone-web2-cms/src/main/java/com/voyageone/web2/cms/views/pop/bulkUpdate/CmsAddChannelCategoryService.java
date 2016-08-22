@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Carts;
@@ -21,7 +21,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,7 +63,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
 
         //cartId
         int cartId = StringUtils.toIntValue(params.get("cartId"));
-        if (cartId == 0) {
+        if (cartId == 0 || Carts.getCart(cartId) == null) {
             $warn("getChannelCategory cartI==0 " + params.toString());
             throw new BusinessException("未选择平台");
         }
@@ -118,7 +117,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
         data.put("cnt", getSellerCatCnt(cartId));
 
         //取得商品code
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         query.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + "':{$exists:true}}");
         query.setParameters(codeList);
         query.setProjection("{'platforms.P" + cartId + ".sellerCats.cId':1}");

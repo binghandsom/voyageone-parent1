@@ -6,63 +6,110 @@
 define([
     'cms',
     'modules/cms/controller/popup.ctl',
-    './defaultAttrService.ctl'
+    'modules/cms/service/product.detail.service',
+    'modules/cms/directives/defaultAttr.directive'
 ], function (cms) {
     cms.controller('attributeDetailController', (function () {
 
-        function AttributeDetailController($translate, $routeParams,$q,popups, menuService,platformMappingService,defaultAttrService) {
+        function AttributeDetailController($routeParams, notify, popups, menuService, $productDetailService, platformMappingService) {
 
             var self = this;
+            var searchJson = $routeParams.upEntity ? $routeParams.upEntity.replace(/✓/g,"/") : null;
+            self.searchInfo = searchJson ? angular.fromJson(searchJson) : {};
 
-            self.$translate = $translate;
-            self.q = $q;
             self.popups = popups;
-            self.upEntity = angular.fromJson($routeParams.upEntity);
-            self.menuService = menuService;
+            self.notify = notify;
+            self.$productDetailService = $productDetailService;
             self.platformMappingService = platformMappingService;
-            self.defaultAttrService = defaultAttrService;
-            self.searchInfo = {
-                cartId: self.upEntity.cartId,
-                categoryType: self.upEntity.categoryType,
-                categoryId: self.upEntity.categoryId,
-                categoryPath: self.upEntity.categoryPath
-            };
+
+            menuService.getPlatformType().then(function (resp) {
+                self.platformTypes = _.map(resp, function (cart) {
+                    return {name: cart.name, value: +cart.value};
+                }).filter(function(cart){
+                    return cart.value != 0 && cart.value != 1
+                });
+
+                var searchInfo = self.searchInfo;
+
+                if (!searchInfo.cartId)
+                    searchInfo.cartId = self.platformTypes[0].value;
+
+                self.tryGet();
+            });
         }
 
-        AttributeDetailController.prototype = {
-            init: function () {
-                var self = this;
-                self.menuService.getPlatformType().then(function (resp) {
-                    self.platformTypes = _.filter(resp, function (cart) {
-                        return cart.value != 0 && cart.value != 1
-                    });
-                });
+        AttributeDetailController.prototype.tryGet = function () {
 
-                self.defaultAttrService.get(self.searchInfo).then(function(res){
-                    console.log(res);
+            var self = this,
+                searchInfo = self.searchInfo;
+
+            if (searchInfo.categoryType != 1 && searchInfo.categoryType != 2)
+                return;
+
+            if (searchInfo.categoryType == 2 && !searchInfo.categoryPath)
+                return;
+
+            self.categoryTitle = (self.searchInfo.categoryType == 1) ? "全类目" : self.searchInfo.categoryPath;
+
+            self.$get();
+        };
+
+        AttributeDetailController.prototype.$get = function () {
+
+            var self = this,
+                platformMappingService = self.platformMappingService;
+
+            platformMappingService.get(self.searchInfo).then(function (res) {
+                self.fields = res.data.schema;
+            });
+        };
+
+        AttributeDetailController.prototype.openCategorySelector = function () {
+
+            var self = this,
+                $productDetailService = self.$productDetailService;
+
+            $productDetailService.getPlatformCategories({cartId:self.searchInfo.cartId}).then(function (resp) {
+
+                var categoryList = resp.data;
+
+                if (!categoryList || !categoryList.length) {
+                    self.alert("数据还未准备完毕");
+                    return;
+                }
+
+                self.popups.popupNewCategory({
+                    from: "",
+                    categories: categoryList,
+                    divType: ">"
+                }).then(function (context) {
+                    self.searchInfo.categoryPath = context.selected.catPath;
+                    self.searchInfo.categoryId = context.selected.catId;
+                    self.tryGet();
                 });
-            },
-            jdCategoryMapping: function () {
-                var self = this;
-                self.platformMappingService.getPlatformCategories({cartId: self.searchInfo.cartId})
-                    .then(function (res) {
-                        return self.q(function (resolve, reject) {
-                            if (!res.data || !res.data.length) {
-                                self.notify.danger("数据还未准备完毕");
-                                reject("数据还未准备完毕");
-                            } else {
-                                resolve(self.popups.popupNewCategory({
-                                    from: "",
-                                    categories: res.data,
-                                    divType: ">"
-                                }));
-                            }
-                        });
-                    }).then(function (context) {
-                        self.searchInfo.categoryPath = context.selected.catPath;
-                        self.searchInfo.categoryId = context.selected.catId;
-                });
-            }
+            });
+        };
+
+        AttributeDetailController.prototype.save = function () {
+
+            var self = this,
+                fields = self.fields,
+                searchInfo = self.searchInfo,
+                platformMappingService = self.platformMappingService;
+
+            platformMappingService.save({
+                cartId: +searchInfo.cartId,
+                categoryType: +searchInfo.categoryType,
+                categoryPath: searchInfo.categoryPath,
+                schema: fields
+            }).then(function () {
+                self.notify.success('TXT_SAVE_SUCCESS');
+            });
+        };
+
+        AttributeDetailController.prototype.close = function (){
+            window.opener.focus();
+            window.close();
         };
 
         return AttributeDetailController;

@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -23,7 +23,6 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
@@ -509,7 +508,7 @@ public class CmsProductDetailService extends BaseAppService {
         }
 
         for (Integer cartId : cartList) {
-            JomgoUpdate updObj = new JomgoUpdate();
+            JongoUpdate updObj = new JongoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#},'platforms.P#':{$exists:true},'platforms.P#.pAttributeStatus':{$in:[null,'','0']}}");
             updObj.setQueryParameters(prodCodes, cartId, cartId);
 
@@ -1363,6 +1362,8 @@ public class CmsProductDetailService extends BaseAppService {
         } catch (IllegalPriceConfigException e) {
             // TODO 当捕获配置错误异常时, 需要停止 code 级别的计算
             e.printStackTrace();
+            // 当捕获计算错误时, 可以继续 code 级别的计算
+            throw new BusinessException("价格计算错误" + e.getMessage());
         }
         cmsBtProductModel.getPlatforms().forEach((s, platform) -> {
             if (platform.getCartId() != 0) {

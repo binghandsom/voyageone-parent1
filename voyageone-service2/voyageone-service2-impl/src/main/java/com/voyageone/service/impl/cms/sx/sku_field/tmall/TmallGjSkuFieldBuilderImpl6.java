@@ -6,12 +6,14 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.depend.DependExpress;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.MappingBean;
 import com.voyageone.service.bean.cms.product.SxData;
@@ -20,7 +22,7 @@ import com.voyageone.service.impl.cms.sx.sku_field.AbstractSkuFieldBuilder;
 import com.voyageone.service.model.cms.CmsMtChannelSkuConfigModel;
 import com.voyageone.service.model.cms.CmsMtPlatformPropSkuModel;
 import com.voyageone.service.model.cms.constants.SkuTemplateConstants;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -55,6 +57,10 @@ public class TmallGjSkuFieldBuilderImpl6 extends AbstractSkuFieldBuilder {
     private Field sku_outerIdField;
     private Field sku_barCodeField;
     private Field sku_market_timeField;
+    // added by morse.lu 2016/08/17 start
+    private Field sku_skuIdField;
+    private Field sku_productIdField;
+    // added by morse.lu 2016/08/17 end
 
     private Field colorExtend_colorField;
     private Field colorExtend_imageField;
@@ -161,6 +167,14 @@ public class TmallGjSkuFieldBuilderImpl6 extends AbstractSkuFieldBuilder {
                 if (type.intValue() == SkuTemplateConstants.SKU_MARKET_TIME) {
                     sku_market_timeField = platformProp;
                 }
+                // added by morse.lu 2016/08/17 start
+                if (type.intValue() == SkuTemplateConstants.SKU_ID) {
+                    sku_skuIdField = platformProp;
+                }
+                if (type.intValue() == SkuTemplateConstants.SKU_PRODUCTID) {
+                    sku_productIdField = platformProp;
+                }
+                // added by morse.lu 2016/08/17 end
 
                 //EXTENDCOLOR
                 if (type.intValue() == SkuTemplateConstants.EXTENDCOLOR) {
@@ -287,6 +301,24 @@ public class TmallGjSkuFieldBuilderImpl6 extends AbstractSkuFieldBuilder {
         List<CmsBtProductModel> sxProducts = expressionParser.getSxData().getProductList();
         buildSkuResult = new BuildSkuResult();
 
+        // added by morse.lu 2016/08/17 start
+        List<ComplexValue> multiComplexDefaultValues = ((MultiComplexField) skuField).getDefaultComplexValues();
+        // Map<sku_outerId商家编码即skuCode, ComplexValue>
+        Map<String, ComplexValue> mapSkuComplexValue = new HashMap<>();
+        if (ListUtils.notNull(multiComplexDefaultValues) && sku_outerIdField != null) {
+            for (ComplexValue complexValue : multiComplexDefaultValues) {
+                String sku_outerId = "";
+                for (String fieldId : complexValue.getFieldKeySet()) {
+                    if (fieldId.equals(sku_outerIdField.getId())) {
+                        sku_outerId = ((InputField) complexValue.getValueField(fieldId)).getValue();
+                        break;
+                    }
+                }
+                mapSkuComplexValue.put(sku_outerId, complexValue);
+            }
+        }
+        // added by morse.lu 2016/08/17 end
+
         List<ComplexValue> complexValues = new ArrayList<>();
         for (CmsBtProductModel sxProduct : sxProducts) {
             List<CmsBtProductModel_Sku> cmsSkuPropBeans = sxProduct.getCommon().getSkus();
@@ -332,6 +364,28 @@ public class TmallGjSkuFieldBuilderImpl6 extends AbstractSkuFieldBuilder {
                         skuFieldValue.setInputFieldValue(hscodeField.getId(), propValue.split(",")[0]);
                         continue;
                     }
+                    // added by morse.lu 2016/08/17 start
+                    if (sku_skuIdField != null && fieldId.equals(sku_skuIdField.getId())) {
+                        ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
+                        if (complexValue != null) {
+                            Field oldField = complexValue.getValueField(fieldId);
+                            if (oldField != null) {
+                                skuFieldValue.setInputFieldValue(sku_skuIdField.getId(), ((InputField) oldField).getValue());
+                            }
+                        }
+                        continue;
+                    }
+                    if (sku_productIdField != null && fieldId.equals(sku_productIdField.getId())) {
+                        ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
+                        if (complexValue != null) {
+                            Field oldField = complexValue.getValueField(fieldId);
+                            if (oldField != null) {
+                                skuFieldValue.setInputFieldValue(sku_productIdField.getId(), ((InputField) oldField).getValue());
+                            }
+                        }
+                        continue;
+                    }
+                    // added by morse.lu 2016/08/17 end
 
                     // 从各平台下面的fields.sku里取值
                     String val = getSkuValue(sxProduct, fieldId, cmsSkuProp.getSkuCode());
@@ -474,7 +528,7 @@ public class TmallGjSkuFieldBuilderImpl6 extends AbstractSkuFieldBuilder {
     }
 
     @Override
-    public List<Field> buildSkuInfoFieldChild(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
+    public List<Field> buildSkuInfoFieldChild(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
         List<Field> skuInfoFields = new ArrayList<>();
 
         MappingBean skuMappingBean = null;

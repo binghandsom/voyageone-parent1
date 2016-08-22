@@ -32,7 +32,7 @@ public class CmsProductPlatformDetailServiceTest {
         Map<String, Object> result = new HashMap<>();
 
         result.put("mastData", cmsProductPlatformDetailService.getProductMastData("010",5924L,27));
-        result.put("platform", cmsProductPlatformDetailService.getProductPlatform("010", 5924L, 27));
+        result.put("platform", cmsProductPlatformDetailService.getProductPlatform("010", 5924L, 27, "cn"));
 
         System.out.println(JacksonUtil.bean2Json(result));
     }
@@ -72,7 +72,7 @@ public class CmsProductPlatformDetailServiceTest {
 
     @Test
     public void testUpdateProductPlatform() throws Exception {
-        Map<String, Object> platform = cmsProductPlatformDetailService.getProductPlatform("010", 5924L, 26);
+        Map<String, Object> platform = cmsProductPlatformDetailService.getProductPlatform("010", 5924L, 26, "cn");
         platform.put("schemaFields",JacksonUtil.jsonToMapList(JacksonUtil.bean2Json(platform.get("schemaFields"))));
         List<Map<String,Object>> a =(List<Map<String,Object>>)platform.get("schemaFields");
         a.get(0).put("8652","bbb");

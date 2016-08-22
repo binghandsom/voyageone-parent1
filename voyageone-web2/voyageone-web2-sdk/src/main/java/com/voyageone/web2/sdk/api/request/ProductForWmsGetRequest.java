@@ -22,7 +22,7 @@ public class ProductForWmsGetRequest extends VoApiRequest<ProductForWmsGetRespon
 
 	@Override
 	public String getApiURLPath() {
-		return "/product/getWmsProductsInfo";
+		return "/cms/product/getWmsProductsInfo";
 	}
 
 	/**

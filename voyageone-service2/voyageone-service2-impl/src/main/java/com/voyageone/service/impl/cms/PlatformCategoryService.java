@@ -55,6 +55,7 @@ public class PlatformCategoryService extends BaseService {
      * 在天猫, 不同店铺的schema不一样, 所以需要增加一个channel来区分
      */
     public CmsMtPlatformCategorySchemaModel getPlatformCatSchemaTm(String catId, String channelId, int cartId) {
+
         CmsMtPlatformCategorySchemaModel platformCatSchemaModel = null;
         CmsMtPlatformCategorySchemaTmModel tmModel = platformCategorySchemaTmDao.selectPlatformCatSchemaTmModel(catId, channelId, cartId);
 
@@ -66,8 +67,29 @@ public class PlatformCategoryService extends BaseService {
             platformCatSchemaModel.setCatFullPath(tmModel.getCatFullPath());
             platformCatSchemaModel.setPropsProduct(tmModel.getPropsProduct());
             platformCatSchemaModel.setPropsItem(tmModel.getPropsItem());
-
         }
+
+        return platformCatSchemaModel;
+    }
+
+    public CmsMtPlatformCategorySchemaModel getPlatformSchemaByCategoryPath(String categoryPath, int cartId) {
+        return platformCategorySchemaDao.selectByCategoryPath(categoryPath, cartId);
+    }
+
+    public CmsMtPlatformCategorySchemaModel getTmallSchemaByCategoryPath(String categoryPath, String channelId, int cartId) {
+
+        CmsMtPlatformCategorySchemaTmModel tmModel = platformCategorySchemaTmDao.selectByCategoryPath(categoryPath, channelId, cartId);
+
+        if (tmModel == null)
+            return null;
+
+        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = new CmsMtPlatformCategorySchemaModel();
+
+        platformCatSchemaModel.setCartId(cartId);
+        platformCatSchemaModel.setCatId(tmModel.getCatId());
+        platformCatSchemaModel.setCatFullPath(tmModel.getCatFullPath());
+        platformCatSchemaModel.setPropsProduct(tmModel.getPropsProduct());
+        platformCatSchemaModel.setPropsItem(tmModel.getPropsItem());
 
         return platformCatSchemaModel;
     }
@@ -208,7 +230,6 @@ public class PlatformCategoryService extends BaseService {
 
         return cmsMtPlatformCategoryExtendInfoDao.selectList(paramsMap);
     }
-
 
     /**
      * 取得一级类目列表（平台数据）

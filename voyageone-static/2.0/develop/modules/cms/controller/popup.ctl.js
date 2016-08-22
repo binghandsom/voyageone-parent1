@@ -187,67 +187,17 @@ define([
                 "controller": "popDictCustomCtl"
             }
         },
-        "feedMapping": {
-            "attribute": {
-                "templateUrl": "views/pop/feedMapping/attribute.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/feedMapping/attribute.ctl",
-                "controller": 'propFeedMappingAttributeController as ctrl',
-                "backdrop": 'static',
+        "platformMapping": {
+            "propertyMapping":{
+                "templateUrl": "views/pop/platformMapping/propertyMapping.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/platformMapping/propertyMapping.ctl",
+                "controller": 'propertyMappingController as ctrl',
                 "size": 'lg'
             },
-            "value": {
-                "templateUrl": "views/pop/feedMapping/value.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/feedMapping/value.ctl",
-                "controller": 'propFeedMappingValueController as ctrl',
-                "backdrop": 'static',
-                "size": 'xlg'
-            }
-        },
-        "platformMapping": {
-            "complex": {
-                "templateUrl": "views/pop/platformMapping/ppComplex.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/platformMapping/ppComplex.ctl",
-                "controller": 'complexMappingPopupController as ctrl',
-                "size": 'md',
-                "backdrop": "static"
-            },
-            "simple": {
-                list: {
-                    "templateUrl": "views/pop/platformMapping/ppSimple.list.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppSimple.list.ctl",
-                    "controller": 'simpleListMappingPopupController as ctrl',
-                    "size": 'lg',
-                    "backdrop": "static"
-                },
-                item: {
-                    "templateUrl": "views/pop/platformMapping/ppSimple.item.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppSimple.item.ctl",
-                    "controller": 'simpleItemMappingPopupController as ctrl',
-                    "size": 'lg',
-                    "backdrop": "static"
-                }
-            },
-            "multiComplex": {
-                list: {
-                    "templateUrl": "views/pop/platformMapping/ppMultiComplex.list.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppMultiComplex.list.ctl",
-                    "controller": 'multiComplexMappingPopupController as ctrl',
-                    "size": 'md',
-                    "backdrop": "static"
-                },
-
-                item: {
-                    "templateUrl": "views/pop/platformMapping/ppMultiComplex.item.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppMultiComplex.item.ctl",
-                    "controller": 'multiComplexItemMappingPopupController as ctrl',
-                    "size": 'md',
-                    "backdrop": "static"
-                }
-            },
-            "otherPlatform": {
-                "templateUrl": "views/pop/platformMapping/ppOtherPlatform.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/platformMapping/ppOtherPlatform.ctl",
-                "controller": 'otherPlatformPopupController as ctrl',
+            "propertySetting":{
+                "templateUrl": "views/pop/platformMapping/propertySetting.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/platformMapping/propertySetting.ctl",
+                "controller": 'propertySettingController as ctrl',
                 "size": 'md'
             }
         },
@@ -715,50 +665,8 @@ define([
             });
         };
 
-        $scope.popupFeed = function popupFeed(context) {
-            return openModal(popActions.feedMapping.attribute, context);
-        };
-
-        $scope.popupFeedValue = function popupFeedValue(context) {
-            return openModal(popActions.feedMapping.value, context);
-        };
-
         $scope.openOtherPlatform = function openOtherPlatform(context) {
             return openModal(popActions.platformMapping.otherPlatform, context);
-        };
-
-        $scope.ppPlatformMapping = function ppPlatformMapping(context) {
-
-            var last = context.path[0];
-            var mapping;
-            var config;
-
-            if (_.isNumber(last)) {
-                config = popActions.platformMapping.multiComplex.item;
-                return openModal(config, context);
-            }
-
-            mapping = last.mapping;
-
-            switch (mapping.type) {
-                case MappingTypes.SIMPLE_MAPPING:
-                    config = popActions.platformMapping.simple.list;
-                    break;
-                case MappingTypes.COMPLEX_MAPPING:
-                    config = popActions.platformMapping.complex;
-                    break;
-                case MappingTypes.MULTI_COMPLEX_MAPPING:
-                    config = popActions.platformMapping.multiComplex.list;
-                    break;
-                default:
-                    throw 'Unknown mapping type: ' + mapping.type;
-            }
-
-            return openModal(config, context);
-        };
-
-        $scope.ppPlatformMapping.simpleItem = function (context) {
-            return openModal(popActions.platformMapping.simple.item, context);
         };
 
         /**
@@ -1187,12 +1095,12 @@ define([
             return openModal(popActions.bulkUpdate.updateProductApproval, context);
         };
 
-        //切换主类目
+        /**切换主类目*/
         $scope.openSwitchMain = function openSwitchMain(context) {
             return openModal(popActions.product.switchMain, context);
         };
 
-        //产品下线
+        /**产品下线*/
         $scope.openProductOffLine = function openProductOffLine(context) {
             return openModal(popActions.product.productOffLine, context);
         };
@@ -1204,9 +1112,19 @@ define([
             });
         };
 
-        //税号改变 hsCodeChange
+        /**税号改变 hsCodeChange*/
         $scope.openHsCodeChange = function openHsCodeChange(context){
             return openModal(popActions.product.hsCodeChange,context);
+        };
+
+        /**属性匹配*/
+        $scope.openPropertyMapping = function openPropertyMapping(fieldMapping,searchInfo){
+            return openModal(popActions.platformMapping.propertyMapping,_.extend(fieldMapping,searchInfo));
+        };
+
+        /**属性编辑*/
+        $scope.openPropertySetting = function openPropertySetting(context){
+            return openModal(popActions.platformMapping.propertySetting,context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {

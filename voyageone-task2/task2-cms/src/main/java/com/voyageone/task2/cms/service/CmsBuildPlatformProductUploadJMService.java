@@ -31,6 +31,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -66,6 +67,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     public static final int WORK_LOAD_SUCCESS = 1;
     private static final int CART_ID = CartEnums.Cart.JM.getValue();
 
+    // 聚美详情,聚美实拍或聚美使用方法里面的html语法解析错误(例："span不能使用face属性","不能使用外链"等)
+    private static final String INVALID_HTML_CONTENT = "109902";
 //    private static final String DUPLICATE_PRODUCT_NAME = "109902";
     // 产品名称(name)在聚美已存在
     private static final String DUPLICATE_PRODUCT_DRAFT_NAME = "103087";
@@ -127,6 +130,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    BusinessLogService businessLogService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -408,7 +414,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 //上新失败
                 else
                 {
-                    String msg = String.format("上新失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductAddResponse.getErrorMsg());
+                    String errMsg = "";
+                    // 如果是错误代码是"109902"(HTML解析错误)的时候
+                    if (htProductAddResponse.getError_code().contains(INVALID_HTML_CONTENT)) {
+                        errMsg = "Master产品详情中的简短描述,详情描述或聚美使用方法等中英文项目的HTML内容语法解析错误！";
+                    }
+                    String msg = String.format("聚美新增产品上新失败！%s [ProductId:%s], [Message:%s]", errMsg, product.getProdId(), htProductAddResponse.getErrorMsg());
                     $error(msg);
                     throw  new BusinessException(msg);
                 }
@@ -492,7 +503,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             String sizeStr = skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
                             // update by desmond 2016/07/08 end
                             htSpuUpdateRequest.setSize(sizeStr);
-                            htSpuUpdateRequest.setUpc_code(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId));
+                            htSpuUpdateRequest.setUpc_code(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId, skuCode));
 //                                  htSpuUpdateRequest.setArea_code(19);//TODO
 
                             HtSpuUpdateResponse htSpuUpdateResponse = jumeiHtSpuService.update(shop, htSpuUpdateRequest);
@@ -564,7 +575,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         //新SPU需要增加
                         else {
                             HtSpuAddRequest htSpuAddRequest = new HtSpuAddRequest();
-                            htSpuAddRequest.setUpc_code(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId));
+                            htSpuAddRequest.setUpc_code(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId, skuCode));
                             // update by desmond 2016/07/08 start
 //                                    String sizeStr = skuMap.getStringAttribute("size");
 //                                    htSpuAddRequest.setSize(getSizeFromSizeMap(sizeStr, channelId, brandName, productType, sizeType));
@@ -624,33 +635,35 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         //更新SKU,然而在当前版本中SkuCode是不能改的。所以删掉了更新sku的逻辑
                     }
 
-                    //获取jm_hash_id列表
+                    // 获取jm_hash_id列表（去掉cms_bt_jm_promotion表中已删除的活动(status=0)和hashId为空的记录，并根据created降序来排列）
                     List<String> jmHashIdList = cmsBtJmPromotionProductDaoExt.selectJmHashIds(channelId, productCode, DateTimeUtilBeijing.getCurrentBeiJingDate());
                     $info("已经存在的聚美Deal的size:" + jmHashIdList.size() + ",对应的productCode:" + productCode);
+                    // 如果没找到活动对应的jm_hash_id，用originHashId
                     if (jmHashIdList.size() == 0)
                         jmHashIdList.add(originHashId);
 
-
-                    for (String hashId : jmHashIdList) {
+                    // 取得第一条当前有效活动最晚创建的第一条jm_hash_id即可，只可能有一个jm_hash_id，不用循环了
+                    String hashId = jmHashIdList.get(0);
+//                    for (String hashId : jmHashIdList) {
                         $info("更新Deal的hashId:" + hashId);
                         HtDealUpdateRequest htDealUpdateRequest = fillHtDealUpdateRequest(product,hashId,expressionParser,shop);
                         HtDealUpdateResponse htDealUpdateResponse = jumeiHtDealService.update(shop, htDealUpdateRequest);
                         if (htDealUpdateResponse != null && htDealUpdateResponse.is_Success()) {
-                            $info("更新Deal成功！[ProductId:%s]", product.getProdId());
+                            $info("聚美更新Deal成功！[ProductId:%s]", product.getProdId());
                         }
                         //更新Deal失败
                         else
                         {
-                            String msg = String.format("更新Deal失败！[ProductId:%s], [Message:%s]", product.getProdId(), htDealUpdateResponse.getErrorMsg());
+                            String msg = String.format("聚美更新Deal失败！[ProductId:%s], [Message:%s]", product.getProdId(), htDealUpdateResponse.getErrorMsg());
                             $error(msg);
                             throw  new BusinessException(msg);
                         }
-                    }
+//                    }
                 }
                 //更新产品失败
                 else
                 {
-                    String msg = String.format("更新产品失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductUpdateResponse.getErrorMsg());
+                    String msg = String.format("聚美更新产品上新失败！[ProductId:%s], [Message:%s]", product.getProdId(), htProductUpdateResponse.getErrorMsg());
                     $error(msg);
                     throw  new BusinessException(msg);
                 }
@@ -673,6 +686,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             }
 
             saveWorkload(work, WORK_LOAD_SUCCESS);
+
+            // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
+            sxProductService.clearBusinessLog(sxData, getTaskName());
+
             $info("保存workload成功！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
 
         }
@@ -691,11 +708,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 sxData.setGroupId(work.getGroupId());
             }
 
+            // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
+            sxProductService.clearBusinessLog(sxData, getTaskName());
+
             //保存错误log
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
                 if(StringUtils.isNullOrBlank2(e.getMessage())) {
-                    sxData.setErrorMessage("聚美上新出现异常，请向管理员确认 " + e.getStackTrace()[0].toString());
+                    sxData.setErrorMessage("聚美上新出现不可预知的错误，请跟管理员联系 " + e.getStackTrace()[0].toString());
                 }
                 else
                 {
@@ -999,7 +1019,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         for (BaseMongoMap<String, Object> jmSku : jmSkus) {
             JmProductBean_Spus spu = new JmProductBean_Spus();
             spu.setPartner_spu_no(jmSku.getStringAttribute("skuCode"));
-            spu.setUpc_code(addVoToBarcode(jmSku.getStringAttribute("barcode"), channelId));
+            spu.setUpc_code(addVoToBarcode(jmSku.getStringAttribute("barcode"), channelId, jmSku.getStringAttribute("skuCode")));
             spu.setPropery(jmSku.getStringAttribute("property"));
             spu.setAttribute(jmFields.getStringAttribute("attribute"));//Code级
             // update by desmond 2016/07/08 start
@@ -1265,14 +1285,20 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     }
 
     /**
-     * 在barcode的后面拼接vo+channelId
-     * @param barcode
-     * @param channelId
-     * @return
+     * 取得商品自带条码
+     * 在barcode的后面拼接vo+channelId+skuCode的前50位字符
+     *
+     * @param barcode String barCode
+     * @param channelId String 渠道id
+     * @param skuCode String skuCode
+     * @return String 商品自带条码
      */
-    private String addVoToBarcode (String barcode, String channelId) {
+    private String addVoToBarcode(String barcode, String channelId, String skuCode) {
         if (StringUtils.isEmpty(barcode))
             return "";
-        return barcode + "vo" + channelId;
+
+        String result = barcode + "vo" + channelId + skuCode;
+
+        return result.substring(0, result.length() >= 50 ? 50 : result.length());
     }
 }

@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms.tools.product;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.TypeChannels;
@@ -108,7 +108,7 @@ public class CmsHsCodeService extends BaseService {
         String translateStatus = "1";
         //检索条件
         String parameter = getSearchQuery(channelId, userName, hsCodeStatus, translateStatus, condition, idCondition);
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         //取得收索的条件
         queryObject.setQuery(parameter);
         //设定返回值
@@ -219,7 +219,7 @@ public class CmsHsCodeService extends BaseService {
             , int hsCodeTaskCnt, String[] retFields, String qtyOrder, String code, boolean isCondition) {
         String translateStatus = "1";
         String parameter = getSearchQuery(channelId, userName, hsCodeStatus, translateStatus, code, isCondition);
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         //取得收索的条件
         queryObject.setQuery(parameter);
         if (!StringUtils.isEmpty(qtyOrder)) {

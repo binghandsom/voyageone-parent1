@@ -16,7 +16,7 @@ import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSxCspuDao;
 import com.voyageone.service.dao.cms.CmsBtSxProductDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.cms.PlatformMappingService;
+import com.voyageone.service.impl.cms.PlatformMappingDeprecatedService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
@@ -25,7 +25,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxCspuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseTaskService;
@@ -64,7 +64,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
     @Autowired
     private TbProductService tbProductService;
     @Autowired
-    private PlatformMappingService platformMappingService;
+    private PlatformMappingDeprecatedService platformMappingDeprecatedService;
     @Autowired
     private PlatformCategoryService platformCategoryService;
     @Autowired
@@ -192,7 +192,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
         // 平台类目schema信息
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel;
         // 平台Mapping信息
-        CmsMtPlatformMappingModel cmsMtPlatformMappingModel;
+        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel;
         // 平台类目id
         String platformCategoryId = "";
         // 达尔文是否能上新商品
@@ -254,7 +254,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
 
             // 属性值准备
             // 取得主产品类目对应的platform mapping数据
-            cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(channelId, cartId, mainProduct.getCommon().getCatId());
+            cmsMtPlatformMappingModel = platformMappingDeprecatedService.getMappingByMainCatId(channelId, cartId, mainProduct.getCommon().getCatId());
 //            if (cmsMtPlatformMappingModel == null) {
 //                String errMsg = String.format("共通PlatformMapping表中对应的平台Mapping信息不存在！[ChannelId:%s] [CartId:%s] [主产品类目:%s]",
 //                        channelId, cartId, mainProduct.getCommon().getCatId());
@@ -426,6 +426,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             }
             // 回写workload表   (失败2)
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            sxProductService.clearBusinessLog(sxData, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
             // modified by morse.lu 2016/06/06 start
@@ -440,6 +441,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             sxData.setErrorMessage("达尔文产品更新成功,请等待审核通过,再重新Approve上新商品.");
             // 回写workload表  (审核中4)
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.review, getTaskName());
+            sxProductService.clearBusinessLog(sxData, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
             return;
@@ -469,6 +471,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                     // 更新特价宝
                     updateTeJiaBaoPromotion(sxData);
 
+                    sxProductService.clearBusinessLog(sxData, getTaskName());
                     // 回写workload表   (成功1)
                     sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
                     // delete by morse.lu 2016/06/06 start
@@ -502,6 +505,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                 }
                 // 回写workload表   (失败2)
                 sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+                sxProductService.clearBusinessLog(sxData, getTaskName());
                 // 回写详细错误信息表(cms_bt_business_log)
                 sxProductService.insertBusinessLog(sxData, getTaskName());
                 // modified by morse.lu 2016/06/06 start

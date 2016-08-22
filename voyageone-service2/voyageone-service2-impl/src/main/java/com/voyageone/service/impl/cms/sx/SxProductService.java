@@ -51,7 +51,7 @@ import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
 import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl8;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.channel.*;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -320,6 +320,25 @@ public class SxProductService extends BaseService {
         businessLogModel.setModifier(modifier);
 
         businessLogService.insertBusinessLog(businessLogModel);
+    }
+
+    /**
+     * cms_bt_business_log对应的以前的错误清一下,即把status更新成1:已解决
+     *
+     * @param sxData 上新数据
+     * @param modifier 更新者
+     */
+    public void clearBusinessLog(SxData sxData, String modifier) {
+        CmsBtProductGroupModel productGroup = sxData.getPlatform();
+
+        // code，没有code就不要设置
+        String mainCode = "";
+        if (productGroup != null) mainCode = productGroup.getMainProductCode();
+
+        int effectCnt = businessLogService.updateFinishStatusByCondition(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()),
+                null, mainCode, modifier);
+        $debug("cms_bt_business_log表以前的错误信息逻辑删除件数：%d件 [ChannelId:%s] [CatId:%s] [GroupId:%s]",
+                effectCnt, sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId());
     }
 
     /**
@@ -1061,7 +1080,7 @@ public class SxProductService extends BaseService {
      * Step3:schema的上记Step1,2以外的全部field
      *
      * @param fields List<Field> 直接把值set进这个fields对象
-     * @param cmsMtPlatformMappingModel CmsMtPlatformMappingModel
+     * @param cmsMtPlatformMappingModel CmsMtPlatformMappingDeprecatedModel
      * @param shopBean ShopBean
      * @param expressionParser ExpressionParser
      * @param user 上传图片用
@@ -1069,7 +1088,7 @@ public class SxProductService extends BaseService {
      * @return Map<field_id mt里转换后的值> （只包含叶子节点，即只包含简单类型，对于复杂类型，也只把复杂类型里的简单类型值put进Map，只为了外部可以不用再循环取值，只需要根据已知的field_id，取得转换后的值）
      * @throws Exception
      */
-    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user, boolean isItem) throws Exception {
+    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user, boolean isItem) throws Exception {
         Map<String, Field> retMap = null;
         SxData sxData = expressionParser.getSxData();
 
@@ -1797,7 +1816,7 @@ public class SxProductService extends BaseService {
      * @param skuInventoryMap sku对应逻辑库存
      * @throws Exception
      */
-    private Map<String, Field> constructCustomPlatformProps(Map<CustomMappingType, List<Field>> mappingTypePropsMap, ExpressionParser expressionParser, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
+    private Map<String, Field> constructCustomPlatformProps(Map<CustomMappingType, List<Field>> mappingTypePropsMap, ExpressionParser expressionParser, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
         Map<String, Field> retMap = new HashMap<>();
 
         SxData sxData = expressionParser.getSxData();
@@ -2229,6 +2248,27 @@ public class SxProductService extends BaseService {
                     break;
                 }
                 // added by morse.lu 2016/08/10 end
+                // added by morse.lu 2016/08/18 start
+                case PRODUCT_ID: {
+                    if (processFields == null || processFields.size() != 1) {
+                        throw new BusinessException("tmall item sc_product_id's platformProps must have one prop!");
+                    }
+
+                    Field field = processFields.get(0);
+                    if (field.getType() != FieldTypeEnum.INPUT) {
+                        $error("tmall item sc_product_id's field(" + field.getId() + ") must be input");
+                    } else {
+                        InputField inputField = (InputField) field;
+                        String value = inputField.getDefaultValue();
+                        if (!StringUtils.isEmpty(value)) {
+                            inputField.setValue(value);
+                        }
+                        retMap.put(field.getId(), inputField);
+                    }
+
+                    break;
+                }
+                // added by morse.lu 2016/08/18 end
             }
         }
 
@@ -2243,10 +2283,29 @@ public class SxProductService extends BaseService {
      */
     private void setDescriptionFieldValue(Field field, ExpressionParser expressionParser,  ShopBean shopBean, String user) throws Exception {
         // 详情页描述 (以后可能会根据不同商品信息，取不同的[详情页描述])
-        String descriptionValue = resolveDict("详情页描述", expressionParser, shopBean, user, null);
+        // modified by morse.lu 2016/08/16 start
+        // 画面上有指定的用指定的，没有就还是用原来的"详情页描述"
+//        String descriptionValue = resolveDict("详情页描述", expressionParser, shopBean, user, null);
+        SxData sxData = expressionParser.getSxData();
+        String descriptionValue;
+        RuleExpression ruleDetails = new RuleExpression();
+        MasterWord masterWord = new MasterWord("details");
+        ruleDetails.addRuleWord(masterWord);
+        String details = expressionParser.parse(ruleDetails, shopBean, user, null);
+        if (!StringUtils.isEmpty(details)) {
+            descriptionValue = resolveDict(details, expressionParser, shopBean, user, null);
+            if (StringUtils.isEmpty(descriptionValue)) {
+                String errorMsg = String.format("详情页描述[%s]在dict表里未设定!", details);
+                sxData.setErrorMessage(errorMsg);
+                throw new BusinessException(errorMsg);
+            }
+        } else {
+            descriptionValue = resolveDict("详情页描述", expressionParser, shopBean, user, null);
+        }
+        // modified by morse.lu 2016/08/16 end
         // 详情页描述-空白
         String descriptionBlankValue = resolveDict("详情页描述-空白内容", expressionParser, shopBean, user, null);
-        SxData sxData = expressionParser.getSxData();
+
         String errorMsg = String.format("类目[%s]的商品描述field_id或结构或类型发生变化啦!", sxData.getMainProduct().getCommon().getCatPath());
 
         if (field.getType() == FieldTypeEnum.INPUT) {
@@ -2335,7 +2394,26 @@ public class SxProductService extends BaseService {
         }
 
         // 无线描述 (以后可能会根据不同商品信息，取不同的[无线描述])
-        String descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
+        // modified by morse.lu 2016/08/16 start
+        // 画面上有指定的用指定的，没有就还是用原来的"详情页描述"
+//        String descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
+        SxData sxData = expressionParser.getSxData();
+        String descriptionValue;
+        RuleExpression ruleDetails = new RuleExpression();
+        MasterWord masterWord = new MasterWord("wirelessDetails");
+        ruleDetails.addRuleWord(masterWord);
+        String details = expressionParser.parse(ruleDetails, shopBean, user, null);
+        if (!StringUtils.isEmpty(details)) {
+            descriptionValue = resolveDict(details, expressionParser, shopBean, user, null);
+            if (StringUtils.isEmpty(descriptionValue)) {
+                String errorMsg = String.format("无线描述[%s]在dict表里未设定!", details);
+                sxData.setErrorMessage(errorMsg);
+                throw new BusinessException(errorMsg);
+            }
+        } else {
+            descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
+        }
+        // modified by morse.lu 2016/08/16 end
         if (StringUtils.isEmpty(descriptionValue)) {
             // 字典表里未设定，先什么都不做吧
             return;
@@ -3324,6 +3402,9 @@ public class SxProductService extends BaseService {
             return;
         }
 
+        // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
+        clearBusinessLog(sxData, modifier);
+
         // 上新成功时
         if (uploadStatus) {
             // 设置共通属性
@@ -3371,6 +3452,7 @@ public class SxProductService extends BaseService {
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
             this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.okNum,
                     StringUtils.isEmpty(workload.getModifier()) ? modifier : workload.getModifier());
+
         } else {
             // 上新失败后回写product表pPublishError的值("Error")
             productGroupService.updateUploadErrorStatus(sxData.getPlatform(), sxData.getErrorMessage());

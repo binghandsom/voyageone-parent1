@@ -128,6 +128,12 @@ define(function () {
             "controllerUrl": "modules/cms/views/channel/brandMapping/index.ctl",
             "controller": "BrandMappingController as ctrl"
         },
+        "channel_brand_mapping_param": {
+            "hash": "/channel/brand_mapping_list/:cartId",
+            "templateUrl": "views/channel/brandMapping/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/brandMapping/index.ctl",
+            "controller": "BrandMappingController as ctrl"
+        },
         "channel_cart_category_list": {
             "hash": "/channel/cart_category_list",
             "templateUrl": "views/channel/category/index.tpl.html",
@@ -137,11 +143,11 @@ define(function () {
         "channel_default_attribute_list": {
             "hash": "/channel/default_attribute_list",
             "templateUrl": "views/channel/defaultAttribute/index.tpl.html",
-            "controllerUrl": "modules/cms/views/channel/defaultAttribute/index.ctl",
-            "controller": "defaultAttributeController as ctrl"
+            "controllerUrl": "modules/cms/views/channel/defaultAttribute/index.controller",
+            "controller": "DefaultAttributeController as ctrl"
         },
         "channel_default_attribute_detail": {
-            "hash": "/channel/default_attribute_detail/:upEntity",
+            "hash": "/channel/default_attribute_detail/:upEntity?",
             "templateUrl": "views/channel/defaultAttribute/detail.tpl.html",
             "controllerUrl": "modules/cms/views/channel/defaultAttribute/detail.ctl",
             "controller": "attributeDetailController as ctrl"
@@ -316,6 +322,11 @@ define(function () {
             "hash": "/system/categorysetting_catunion",
             "templateUrl": "views/system/categorysetting/catunion.tpl.html",
             "controllerUrl": "modules/cms/views/system/categorysetting/catunion.ctl"
+        },
+        "system_value_channel": {
+            "hash": "/system/valuechannel",
+            "templateUrl": "views/system/valueChannel/index.tpl.html",
+            "controllerUrl": "modules/cms/views/system/valueChannel/index.ctl"
         },
         "jm_promotion_detail_list": {
             "hash": "/jm/promotion_detail_list/:parentId",

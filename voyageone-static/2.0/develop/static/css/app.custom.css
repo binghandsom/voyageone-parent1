@@ -34,3 +34,7 @@ ul[uib-datepicker-popup-wrap] button {
      max-height:80px;
      display: inline-block;
  }
+
+.notifyjs-bootstrap-base {
+    font-size: 24px;
+}

@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.platform.common;
 
+import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
 import com.taobao.api.request.TmallItemAddSchemaGetRequest;
 import com.taobao.api.request.TmallProductAddSchemaGetRequest;
@@ -11,9 +12,7 @@ import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
-import com.voyageone.common.masterdate.schema.factory.SchemaWriter;
 import com.voyageone.common.masterdate.schema.field.*;
-import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
@@ -108,7 +107,7 @@ public class SxGetProductInfoTest {
     private ImsBtProductDao imsBtProductDao;
 
     @Autowired
-    private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
+    private CmsMtPlatformMappingDeprecatedDao cmsMtPlatformMappingDao;
 
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
@@ -124,6 +123,8 @@ public class SxGetProductInfoTest {
 
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
+    @Autowired
+    private CmsMtPlatformCategorySchemaTmDao platformCategorySchemaTmDao;
 
     @Autowired
     private CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao;
@@ -1973,7 +1974,7 @@ public class SxGetProductInfoTest {
 //        {
 //            SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
 //            ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
-//            CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid001");
+//            CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid001");
 //            CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(cmsMtPlatformMappingModel.getPlatformCategoryId(), sxData.getCartId());
 //            ShopBean shopBean = new ShopBean();
 //            shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
@@ -2202,10 +2203,10 @@ public class SxGetProductInfoTest {
 //                    "</itemRule>";
 //        }
 //
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid003"); // 模板1
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid002"); // 模板2
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid004"); // 模板3
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid005"); // 模板4
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid003"); // 模板1
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid002"); // 模板2
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid004"); // 模板3
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid005"); // 模板4
 //
 //        Map<String, Integer> skuInventoryMap = new HashMap<>();
 //        skuInventoryMap.put("c001-1", 1100);
@@ -2403,7 +2404,7 @@ public class SxGetProductInfoTest {
 //                "</itemRule>\n";
 //        List<Field> fields = SchemaReader.readXmlForList(schema);
 //////        Map<String, Field> fieldMap = schemaToIdPropMap(schema);
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("002", 23, "DFS3028");
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("002", 23, "DFS3028");
 ////
 //        SxData sxData = sxProductService.getSxProductDataByGroupId("002", Long.valueOf("663055"));
 //        ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
@@ -2846,7 +2847,7 @@ public class SxGetProductInfoTest {
             CmsBtSxWorkloadModel cmsBtSxWorkloadModel = new CmsBtSxWorkloadModel();
             cmsBtSxWorkloadModel.setChannelId(channel_id);
             cmsBtSxWorkloadModel.setCartId(cart_id);
-            cmsBtSxWorkloadModel.setGroupId(505894L);
+            cmsBtSxWorkloadModel.setGroupId(747515L);
             cmsBtSxWorkloadModel.setPublishStatus(0);
 
             {
@@ -2878,32 +2879,34 @@ public class SxGetProductInfoTest {
         System.out.println();
         System.out.println("Get schema start");
 
-        ShopBean shopBean = getShop("018", 23);
+        String channelId = "018";
+        ShopBean shopBean = getShop(channelId, 23);
 //        String[] categoryIds = {"121412004","121434005","162104","162116","162201","162205","1623","162702","302910","50000671","50000697","50007068","50008901","50008904","50009032","50010850","50011277","50012010","50012027","50012028","50012032","50013865","50013868","50013869","50013870","50013875","50013882","50014238","50014239"};
 
-        String[] categoryIds = {"121450007"};
+        String[] categoryIds = {"1205"};
 
         for (String category_id : categoryIds) {
             try {
                 // 取平台产品schema
                 Long categoryId = Long.valueOf(category_id);
-                String propsProduct = tbApi.getAddProductSchema(categoryId, null, shopBean);
-//                String propsProduct = tbApi.getAddProductSchema(categoryId, 10407679L, shopBean);
+//                String propsProduct = tbApi.getAddProductSchema(categoryId, null, shopBean);
+                String propsProduct = tbApi.getAddProductSchema(categoryId, 21466766L, shopBean);
                 System.out.println(propsProduct);
                 propsProduct = propsProduct.replaceAll("\"", "\\\\\"");
 
                 // 取平台商品schema
-                String propsItem = tbApi.getAddItemSchema(categoryId, 0L, true, shopBean);
-//                String propsItem = tbApi.getAddItemSchema(categoryId, 688343647L, false, shopBean);
+//                String propsItem = tbApi.getAddItemSchema(categoryId, 0L, true, shopBean);
+                String propsItem = tbApi.getAddItemSchema(categoryId, 341743148L, false, shopBean);
                 System.out.println(propsItem);
                 propsItem = propsItem.replaceAll("\"", "\\\\\"");
 
-//                String strQuery = "{'cartId':23,'catId':'" + category_id + "'}";
-//                String strUpdate = "{\"$set\" : {\"propsProduct\" : \"" + propsProduct + "\", \"propsItem\" : \"" + propsItem + "\"}}";
+                String strQuery = "{'cartId':23,'catId':'" + category_id + "'}";
+                String strUpdate = "{\"$set\" : {\"propsProduct\" : \"" + propsProduct + "\", \"propsItem\" : \"" + propsItem + "\"}}";
 //                WriteResult ws = cmsMtPlatformCategorySchemaDao.updateFirst(strQuery, strUpdate, 23);
-//                if (ws == null || !ws.isUpdateOfExisting() || ws.getN() == 0) {
-//                    System.out.println(String.format("类目id[%s]更新失败!", category_id));
-//                }
+                WriteResult ws = platformCategorySchemaTmDao.updateFirst(strQuery, strUpdate, channelId);
+                if (ws == null || !ws.isUpdateOfExisting() || ws.getN() == 0) {
+                    System.out.println(String.format("类目id[%s]更新失败!", category_id));
+                }
             } catch (Exception e) {
                 System.out.println(String.format("类目id[%s]更新失败!", category_id));
             }

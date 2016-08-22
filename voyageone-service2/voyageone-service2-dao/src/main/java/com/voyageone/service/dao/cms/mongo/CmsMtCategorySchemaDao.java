@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
@@ -24,8 +24,8 @@ public class CmsMtCategorySchemaDao extends BaseMongoDao<CmsMtCategorySchemaMode
     }
 
     public List<JSONObject> getSchemaList(String columnResult,String query, Integer skip, Integer limit){
-        JomgoQuery jomgoQuery = new JomgoQuery(columnResult,query,null,limit,skip);
-        return mongoTemplate.find(jomgoQuery, JSONObject.class, collectionName);
+        JongoQuery jongoQuery = new JongoQuery(columnResult,query,null,limit,skip);
+        return mongoTemplate.find(jongoQuery, JSONObject.class, collectionName);
     }
 
     public Long getCategoryCount(String params){

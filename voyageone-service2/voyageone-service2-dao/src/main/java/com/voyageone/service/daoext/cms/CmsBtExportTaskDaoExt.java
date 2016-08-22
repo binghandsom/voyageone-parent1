@@ -28,4 +28,6 @@ public interface CmsBtExportTaskDaoExt {
     int delete(Integer id);
 
     int selectCnt(Map<String, Object> map);
+
+    int checkTaskByUser(Map<String, Object> map);
 }

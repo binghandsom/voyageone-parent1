@@ -24,23 +24,23 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
     @Autowired
     private FeedCustomPropService feedCustomPropService;
     @Autowired
-    private CmsAdvSearchQueryService advSearchQueryService;
+    private CmsAdvSearchOtherService advSearchQueryService;
 
     /**
-     * 取得用户自定义显示列设置
+     * 取得用户已选择的自定义显示列设置（一览画面用）
      *
      */
     public void getUserCustColumns(String channelId, int userId, CmsSessionBean cmsSession, String language) {
-        List<Map<String, Object>> rsList = commonPropService.getCustColumnsByUserId(userId);
+        Map<String, Object> rsMap = commonPropService.getCustColumnsByUserId(userId, "cms_prod_cust_col");
         String custAttrStr;
         String commStr;
-        if (rsList == null || rsList.isEmpty()) {
+        if (rsMap == null) {
             $debug("该用户还未设置自定义查询列 userId=" + userId + " channelId=" + channelId);
             custAttrStr = "";
             commStr = "";
         } else {
-            custAttrStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsList.get(0).get("cfg_val1"));
-            commStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsList.get(0).get("cfg_val2"));
+            custAttrStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsMap.get("cfg_val1"));
+            commStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsMap.get("cfg_val2"));
         }
 
         // 设置自定义查询用的属性
@@ -110,10 +110,10 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
         cmsSession.putAttribute("_adv_search_customProps", customProps2);
         cmsSession.putAttribute("_adv_search_commonProps", commonProp2);
 
-        List<Map<String, Object>> rsList2 = commonPropService.getUserCustColumnsSalesType(userId);
+        rsMap = commonPropService.getCustColumnsByUserId(userId, "cms_prod_cust_col_salestype");
         List<String> itemList = new ArrayList<>();
-        if (!rsList2.isEmpty()) {
-            String itemVal = org.apache.commons.lang3.StringUtils.trimToNull((String) rsList2.get(0).get("cfg_val2"));
+        if (rsMap != null) {
+            String itemVal = org.apache.commons.lang3.StringUtils.trimToNull((String) rsMap.get("cfg_val1"));
             if (itemVal != null) {
                 Collections.addAll(itemList, itemVal.split(","));
             }
@@ -121,50 +121,68 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
         cmsSession.putAttribute("_adv_search_selSalesType", advSearchQueryService.getSalesTypeList(channelId, language, itemList));
     }
 
-
     /**
-     * 取得用户自定义显示列设置
-     *
+     * 取得用户自定义显示列设置(弹出画面用，用于确定那些项已被选择)
      */
     public Map<String, Object> getUserCustColumns(UserSessionBean userInfo, String language) {
         Map<String, Object> rsMap = new HashMap<>();
-        rsMap.put("salesTypeList", advSearchQueryService.getSalesTypeList(userInfo.getSelChannelId(), language, null));
 
-        List<Map<String, Object>> rsList2 = commonPropService.getUserCustColumnsSalesType(userInfo.getUserId());
-        if (rsList2 == null || rsList2.isEmpty()) {
+        // 取得所有销量数据显示列
+        rsMap.put("salesTypeList", advSearchQueryService.getSalesTypeList(userInfo.getSelChannelId(), language, null));
+        // 取得已选择的销量数据显示列
+        Map<String, Object> colMap2 = commonPropService.getCustColumnsByUserId(userInfo.getUserId(), "cms_prod_cust_col_salestype");
+        if (colMap2 == null || colMap2.isEmpty()) {
             rsMap.put("selSalesTypeList", new String[]{});
         } else {
-            String selStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsList2.get(0).get("cfg_val2"));
+            String selStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) colMap2.get("cfg_val1"));
             rsMap.put("selSalesTypeList", selStr.split(","));
         }
 
-        List<Map<String, Object>> rsList = commonPropService.getCustColumnsByUserId(userInfo.getUserId());
-        if (rsList == null || rsList.isEmpty()) {
+        // 取得所有BI数据显示列
+        rsMap.put("biDataList", advSearchQueryService.getBiDataList(userInfo.getSelChannelId(), language, null));
+        // 取得已选择的BI数据显示列
+        colMap2 = commonPropService.getCustColumnsByUserId(userInfo.getUserId(), "cms_prod_cust_col_bidata");
+        if (colMap2 == null || colMap2.isEmpty()) {
+            rsMap.put("selBiDataList", new String[]{});
+        } else {
+            String selStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) colMap2.get("cfg_val1"));
+            rsMap.put("selBiDataList", selStr.split(","));
+        }
+
+        // 取得所有自定义显示列
+        rsMap.put("customProps", feedCustomPropService.getFeedCustomPropAttrs(userInfo.getSelChannelId(), "0"));
+        rsMap.put("commonProps", commonPropService.getCustColumns(2));
+        // 取得已选择的自定义显示列
+        colMap2 = commonPropService.getCustColumnsByUserId(userInfo.getUserId(), "cms_prod_cust_col");
+        if (colMap2 == null || colMap2.isEmpty()) {
             rsMap.put("custAttrList", new String[]{});
             rsMap.put("commList", new String[]{});
-            return rsMap;
+        } else {
+            String custAttrStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) colMap2.get("cfg_val1"));
+            String commStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) colMap2.get("cfg_val2"));
+            rsMap.put("custAttrList", custAttrStr.split(","));
+            rsMap.put("commList", commStr.split(","));
         }
-        String custAttrStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsList.get(0).get("cfg_val1"));
-        String commStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsList.get(0).get("cfg_val2"));
-        rsMap.put("custAttrList", custAttrStr.split(","));
-        rsMap.put("commList", commStr.split(","));
+
         return rsMap;
     }
 
     /**
      * 保存用户自定义显示列设置
      */
-    public void saveCustColumnsInfo(UserSessionBean userInfo, CmsSessionBean cmsSessionBean, List<String> param1, List<String> param2, String language, List<String> selSalesTypeList) {
-        String customStrs = org.apache.commons.lang3.StringUtils.trimToEmpty(org.apache.commons.lang3.StringUtils.join(param1, ","));
-        String commonStrs = org.apache.commons.lang3.StringUtils.trimToEmpty(org.apache.commons.lang3.StringUtils.join(param2, ","));
+    public void saveCustColumnsInfo(UserSessionBean userInfo, CmsSessionBean cmsSessionBean, Map<String, Object> params, String language) {
+        List<String> selCustomPropList = (List<String>) params.get("customProps");
+        List<String> selCommonPropList = (List<String>) params.get("commonProps");
+        String customStrs = org.apache.commons.lang3.StringUtils.trimToEmpty(org.apache.commons.lang3.StringUtils.join(selCustomPropList, ","));
+        String commonStrs = org.apache.commons.lang3.StringUtils.trimToEmpty(org.apache.commons.lang3.StringUtils.join(selCommonPropList, ","));
 
         List<Map<String, Object>> customProps2 = new ArrayList<>();
         StringBuilder customPropsStr = new StringBuilder();
-        if (param1 != null && param1.size() > 0) {
+        if (selCustomPropList != null && selCustomPropList.size() > 0) {
             List<Map<String, Object>> customProps = feedCustomPropService.getFeedCustomPropAttrs(userInfo.getSelChannelId(), "0");
             for (Map<String, Object> props : customProps) {
                 String propId = (String) props.get("feed_prop_original");
-                if (param1.contains(propId)) {
+                if (selCustomPropList.contains(propId)) {
                     customProps2.add(props);
                     customPropsStr.append("feed.cnAtts.");
                     customPropsStr.append(propId);
@@ -178,11 +196,11 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
 
         List<Map<String, Object>> commonProp2 = new ArrayList<>();
         StringBuilder commonPropsStr = new StringBuilder();
-        if (param2 != null && param2.size() > 0) {
+        if (selCommonPropList != null && selCommonPropList.size() > 0) {
             List<Map<String, Object>> commonProps = commonPropService.getCustColumns(1);
             for (Map<String, Object> props : commonProps) {
                 String propId = (String) props.get("propId");
-                if (param2.contains(propId)) {
+                if (selCommonPropList.contains(propId)) {
                     commonProp2.add(props);
                     if ("comment".equals(propId)) {
                         commonPropsStr.append("common.comment");
@@ -198,36 +216,54 @@ public class CmsAdvSearchCustColumnService extends BaseAppService {
         cmsSessionBean.putAttribute("_adv_search_customProps", customProps2);
         cmsSessionBean.putAttribute("_adv_search_commonProps", commonProp2);
 
-        List<Map<String, Object>> rsList = commonPropService.getCustColumnsByUserId(userInfo.getUserId());
+        // 保存feed自定义显示列选择和共通自定义显示列选择
+        Map<String, Object> raMap = commonPropService.getCustColumnsByUserId(userInfo.getUserId(), "cms_prod_cust_col");
         int rs;
-        if (rsList == null || rsList.isEmpty()) {
-            rs = commonPropService.addUserCustColumn(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
+        if (raMap == null || raMap.isEmpty()) {
+            rs = commonPropService.addUserCustColumn(userInfo.getUserId(), userInfo.getUserName(), "cms_prod_cust_col", customStrs, commonStrs);
         } else {
-            rs = commonPropService.saveUserCustColumn(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
+            rs = commonPropService.saveUserCustColumn(userInfo.getUserId(), userInfo.getUserName(), "cms_prod_cust_col", customStrs, commonStrs);
         }
         if (rs == 0) {
             $error("保存自定义显示列设置不成功 userid=" + userInfo.getUserId());
         }
 
-        rsList = commonPropService.getUserCustColumnsSalesType(userInfo.getUserId());
+        // 保存销量数据显示列选择
+        List<String> selSalesTypeList = (List<String>) params.get("selSalesTypeList");
+        raMap = commonPropService.getCustColumnsByUserId(userInfo.getUserId(), "cms_prod_cust_col_salestype");
         String selStr;
         if (selSalesTypeList == null || selSalesTypeList.isEmpty()) {
             selStr = "";
         } else {
             selStr = selSalesTypeList.stream().collect(Collectors.joining(","));
         }
-        if (rsList == null || rsList.isEmpty()) {
-            rs = commonPropService.addUserCustColumnsSalesType(userInfo.getUserId(), userInfo.getUserName(), selStr);
+        if (raMap == null || raMap.isEmpty()) {
+            rs = commonPropService.addUserCustColumn(userInfo.getUserId(), userInfo.getUserName(), "cms_prod_cust_col_salestype", selStr, "");
         } else {
-            rs = commonPropService.saveUserCustColumnsSalesType(userInfo.getUserId(), userInfo.getUserName(), selStr);
+            rs = commonPropService.saveUserCustColumn(userInfo.getUserId(), userInfo.getUserName(), "cms_prod_cust_col_salestype", selStr, "");
         }
-        if (selSalesTypeList == null) {
-            selSalesTypeList = new ArrayList<>(0);
-        }
-        cmsSessionBean.putAttribute("_adv_search_selSalesType", advSearchQueryService.getSalesTypeList(userInfo.getSelChannelId(), language, selSalesTypeList));
         if (rs == 0) {
             $error("保存自定义销售数据显示设置不成功 userid=" + userInfo.getUserId());
         }
+        cmsSessionBean.putAttribute("_adv_search_selSalesType", advSearchQueryService.getSalesTypeList(userInfo.getSelChannelId(), language, selSalesTypeList));
+
+        // 保存BI数据显示列选择
+        List<String> selBiDataList = (List<String>) params.get("selBiDataList");
+        raMap = commonPropService.getCustColumnsByUserId(userInfo.getUserId(), "cms_prod_cust_col_bidata");
+        if (selBiDataList == null || selBiDataList.isEmpty()) {
+            selStr = "";
+        } else {
+            selStr = selBiDataList.stream().collect(Collectors.joining(","));
+        }
+        if (raMap == null || raMap.isEmpty()) {
+            rs = commonPropService.addUserCustColumn(userInfo.getUserId(), userInfo.getUserName(), "cms_prod_cust_col_bidata", selStr, "");
+        } else {
+            rs = commonPropService.saveUserCustColumn(userInfo.getUserId(), userInfo.getUserName(), "cms_prod_cust_col_bidata", selStr, "");
+        }
+        if (rs == 0) {
+            $error("保存BI数据显示设置不成功 userid=" + userInfo.getUserId());
+        }
+        cmsSessionBean.putAttribute("_adv_search_selBiDataList", advSearchQueryService.getBiDataList(userInfo.getSelChannelId(), language, selBiDataList));
     }
 
 }

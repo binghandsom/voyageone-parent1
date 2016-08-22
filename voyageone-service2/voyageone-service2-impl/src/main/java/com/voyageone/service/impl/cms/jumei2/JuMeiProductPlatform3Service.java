@@ -147,6 +147,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
             errorMsg = "市场价必须大于团购价";
         }
         if(!StringUtils.isEmpty(errorMsg)) {
+            if(parameter.cmsBtJmPromotionProductModel.getSynchStatus()!=2)
+            {
+                parameter.cmsBtJmPromotionProductModel.setSynchStatus(3);
+            }
             throw new BusinessException(errorMsg);
         }
     }
@@ -314,14 +318,19 @@ public class JuMeiProductPlatform3Service extends BaseService {
             long sellJmEndTime = DateTimeUtilBeijing.toLocalTime(getDealByHashIDResponse.getEnd_time());
             long sellJmStartTime = DateTimeUtilBeijing.toLocalTime(getDealByHashIDResponse.getStart_time());
             CmsBtJmPromotionModel sellJmPromotion = getCmsBtJmPromotionModelBySellHashId(response.getSell_hash_id());
-            String sellJmPromotionName = sellJmPromotion.getName();
-//            if (jmEndTime >= activityStart) {//if true then 和本次活动重叠 Sell_hash_id作为本次活动的jumeiHashId
-//                parameter.cmsBtJmPromotionProductModel.setJmHashId(response.getSell_hash_id());
-//                long activeEnd = DateTimeUtilBeijing.toLocalTime(parameter.cmsBtJmPromotionModel.getActivityEnd());
-//                if (activeEnd > jmEndTime) {//if true then 本次活动时间大于deal的结束时间 延期
-//                    parameter.cmsBtJmPromotionProductModel.setDealEndTimeStatus(1);
-//                }
-//            }
+            String sellJmPromotionName="";
+                    if(sellJmPromotion!=null) {
+                        sellJmPromotionName =sellJmPromotion.getName();
+                    }
+                    else
+                    {
+                        sellJmPromotionName="Sell_hash_id:"+response.getSell_hash_id();
+                    }
+            if(sellJmPromotion==null)
+            {
+                errorMsg = String.format("该商品已加入专场【%s】，并上传成功.由于系统查不到该专场，请于专场【%s】结束后，再进行上传", sellJmPromotionName, sellJmPromotionName);
+                return errorMsg;
+            }
             if (jmPromotion.getIsPromotionFullMinus())//当前专场为 满减专场
             { //4.2.3
                 errorMsg = String.format("该商品已加入专场【%s】，并上传成功。满减专场不可与其它专场共用商品，请于专场【%s】结束后，再进行上传", sellJmPromotionName, sellJmPromotionName);

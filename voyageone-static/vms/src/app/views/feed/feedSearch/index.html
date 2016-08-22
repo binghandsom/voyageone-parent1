@@ -1,0 +1,68 @@
+<div class="breadcrumbs">
+    <div class="container">
+        <h4 class="pull-left" translate="TXT_PRODUCT_FEED_SEARCH"></h4>
+        <ul class="pull-right breadcrumb">
+            <li><a href="#/home" translate="TXT_HOME"></a></li>
+            <li class="active disabled" translate="TXT_FEED"></li>
+            <li class="active selected" translate="TXT_PRODUCT_FEED_SEARCH"></li>
+        </ul>
+    </div>
+</div>
+<div class="container content" ng-init="ctrl.init()">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="form-inline">
+                <div class="form-group">
+                    <!-- Parent SKU -->
+                    <label class="control-label" translate="TXT_PARENT_SKU"></label>
+                    <input id="Parent SKU" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.parentSku" enter-click="#searchButton">
+                    <!-- Brand -->
+                    <label class="control-label" translate="TXT_NAME"></label>
+                    <input id="Brand" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.name" enter-click="#searchButton">
+                    <!-- Category -->
+                    <label class="control-label" translate="TXT_CATEGORY"></label>
+                    <input id="Category" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.category" enter-click="#searchButton">
+                    <!-- Price -->
+                    <label class="control-label" translate="TXT_VO_PRICE"></label>
+                    <input id="startPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceStart" enter-click="#searchButton">
+                    <span>~</span>
+                    <input id="endPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceEnd" enter-click="#searchButton">
+                </div>
+                <div class="pull-right">
+                    <button id="searchButton" class="btn btn-primary btn-sm" ng-click="ctrl.search()" translate="BTN_SEARCH"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-vo">
+        <div class="panel-body">
+            <div class="table-responsive" if-no-rows="ctrl.feedInfoList.length">
+                <table class="table table-fixed table-vo table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th class="v-middle td-1 text-center" translate="TXT_IMAGE"></th>
+                        <th class="v-middle td-1 text-left" translate="TXT_PARENT_SKU"></th>
+                        <th class="v-middle td-3 text-left" translate="TXT_NAME"></th>
+                        <th class="v-middle td-3 text-left" translate="TXT_CATEGORY"></th>
+                        <th class="v-middle td-1 text-left" translate="TXT_VO_PRICE"></th>
+                        <th class="v-middle td-1 text-center" translate="TXT_SKU_NUMBER"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="feedInfo in ctrl.feedInfoList">
+                        <td class="v-middle text-center"><img class="thumb-md" ng-src="{{feedInfo.image[0]}}" ng-click="ctrl.open(feedInfo.image[0])"></td>
+                        <td class="v-middle text-left">{{feedInfo.code}}</td>
+                        <td class="v-middle text-left">{{feedInfo.name}}</td>
+                        <td class="v-middle text-left">{{feedInfo.category}}</td>
+                        <td class="v-middle text-left">{{feedInfo.skus[0].priceClientRetail | currency:'$':2}}</td>
+                        <td class="v-middle text-center">{{feedInfo.skus.length}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-12 m-t-lg no-padding">
+                <vpagination config="ctrl.pageOption" total="ctrl.pageOption.total"></vpagination>
+            </div>
+        </div>
+    </div>
+</div>
