@@ -323,6 +323,25 @@ public class SxProductService extends BaseService {
     }
 
     /**
+     * cms_bt_business_log对应的以前的错误清一下,即把status更新成1:已解决
+     *
+     * @param sxData 上新数据
+     * @param modifier 更新者
+     */
+    public void clearBusinessLog(SxData sxData, String modifier) {
+        CmsBtProductGroupModel productGroup = sxData.getPlatform();
+
+        // code，没有code就不要设置
+        String mainCode = "";
+        if (productGroup != null) mainCode = productGroup.getMainProductCode();
+
+        int effectCnt = businessLogService.updateFinishStatusByCondition(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()),
+                null, mainCode, modifier);
+        $debug("cms_bt_business_log表以前的错误信息逻辑删除件数：%d件 [ChannelId:%s] [CatId:%s] [GroupId:%s]",
+                effectCnt, sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId());
+    }
+
+    /**
      * 回写ims_bt_product表
      *
      * @param sxData 上新数据
