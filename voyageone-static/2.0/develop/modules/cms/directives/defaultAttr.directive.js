@@ -948,6 +948,11 @@ define([
                                     scope.dateValue = field.value;
                                     field.value = _value;
                                     innerElement.attr('ng-model', 'dateValue');
+
+
+
+
+
                                     scope.$watch('dateValue', function (newDate) {
                                         field.value = $filter('date')(newDate, (type === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd hh:mm:ss'));
                                     });

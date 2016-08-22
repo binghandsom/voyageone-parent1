@@ -123,7 +123,10 @@ define([
                                     return;
                             }
 
-                            productDetailService.changePlatformCategory({cartId:scope.cartInfo.value,prodId:scope.productInfo.productId,catId:context.selected.catId}).then(function(resp){
+                            productDetailService.changePlatformCategory({cartId:scope.cartInfo.value,
+                                prodId:scope.productInfo.productId,
+                                catId:context.selected.catId,
+                                catPath:context.selected.catPath}).then(function(resp){
                                 scope.vm.platform = resp.data.platform;
                                 scope.vm.platform.pCatPath = context.selected.catPath;
                                 scope.vm.platform.pCatId = context.selected.catId;
