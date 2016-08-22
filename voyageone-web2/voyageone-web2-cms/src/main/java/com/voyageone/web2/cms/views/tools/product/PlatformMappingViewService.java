@@ -101,8 +101,7 @@ class PlatformMappingViewService extends BaseAppService {
 
         if (_platformMappingModel != null) {
             platformMappingModel = _platformMappingModel;
-            fieldMappingMap = platformMappingModel.getMappings().stream()
-                    .collect(toMap(CmsBtPlatformMappingModel.FieldMapping::getFieldId, m -> m));
+            fieldMappingMap = platformMappingModel.getMappings();
         }
 
         PlatformMappingGetBean platformMappingGetBean = new PlatformMappingGetBean();
@@ -204,14 +203,10 @@ class PlatformMappingViewService extends BaseAppService {
 
         PlatformMappingSaveBean.Schema schema = platformMappingSaveBean.getSchema();
 
-        List<CmsBtPlatformMappingModel.FieldMapping> mappingList = platformMappingModel.getMappings();
+        Map<String, CmsBtPlatformMappingModel.FieldMapping> mappingMap = platformMappingModel.getMappings();
 
-        Map<String, CmsBtPlatformMappingModel.FieldMapping> mappingMap;
-
-        if (mappingList == null || mappingList.isEmpty())
+        if (mappingMap == null)
             mappingMap = new HashMap<>();
-        else
-            mappingMap = mappingList.stream().collect(toMap(CmsBtPlatformMappingModel.FieldMapping::getFieldId, m -> m));
 
         List<Map<String, Object>> weakItem = schema.getItem();
 
@@ -227,9 +222,7 @@ class PlatformMappingViewService extends BaseAppService {
             fillMapping(mappingMap, product);
         }
 
-        mappingList = mappingMap.entrySet().stream().map(Map.Entry::getValue).collect(toList());
-
-        platformMappingModel.setMappings(mappingList);
+        platformMappingModel.setMappings(mappingMap);
 
         return platformMappingService.saveMap(platformMappingModel);
     }
@@ -309,8 +302,10 @@ class PlatformMappingViewService extends BaseAppService {
                 case COMPLEX:
                     ComplexField complexField = (ComplexField) field;
                     List<Field> children = complexField.getFields();
-                    fillMapping(mappingMap, children);
-                    continue;
+                    Map<String, CmsBtPlatformMappingModel.FieldMapping> childrenMapping = new HashMap<>();
+                    fillMapping(childrenMapping, children);
+                    mapping.setChildren(childrenMapping);
+                    break;
                 case INPUT:
                     InputField inputField = (InputField) field;
                     String expressionListJson = inputField.getValue();
@@ -363,18 +358,6 @@ class PlatformMappingViewService extends BaseAppService {
 
                     FieldTypeEnum fieldType = field.getType();
 
-                    if (FieldTypeEnum.COMPLEX.equals(fieldType)) {
-                        // 对普通复杂类型
-                        // 直接进入子字段循环
-                        // 自身不进行处理
-                        ComplexField complexField = (ComplexField) field;
-                        List<Field> children = complexField.getFields();
-                        fillFields(children, fieldMappingMap);
-                        return field;
-                    }
-
-                    // 到达这里的应该只剩下简单输入类型了
-
                     CmsBtPlatformMappingModel.FieldMapping mapping = fieldMappingMap.get(field.getId());
 
                     if (mapping == null)
@@ -402,6 +385,14 @@ class PlatformMappingViewService extends BaseAppService {
                                 setValue(v);
                             }}).collect(toList());
                             multiCheckField.setValues(valueObjectList);
+                            break;
+                        case COMPLEX:
+                            ComplexField complexField = (ComplexField) field;
+                            List<Field> children = complexField.getFields();
+                            Map<String, CmsBtPlatformMappingModel.FieldMapping> childrenMapping = mapping.getChildren();
+                            if (childrenMapping == null || childrenMapping.isEmpty())
+                                break;
+                            fillFields(children, childrenMapping);
                             break;
                     }
 

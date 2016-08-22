@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -50,9 +51,9 @@ public class PlatformMappingServiceTest {
                 setCategoryPath(cart.getpCatPath());
                 setCartId(cartId);
                 setCategoryType(2);
-                setMappings(new ArrayList<FieldMapping>() {
+                setMappings(new HashMap<String, FieldMapping>() {
                     {
-                        add(new FieldMapping() {
+                        put("market_price", new FieldMapping() {
                             {
                                 setFieldId("market_price");
                                 setExpressions(new ArrayList<FieldMappingExpression>() {
@@ -82,7 +83,7 @@ public class PlatformMappingServiceTest {
                                 });
                             }
                         });
-                        add(new FieldMapping() {
+                        put("clientProductUrl", new FieldMapping() {
                             {
                                 setFieldId("clientProductUrl");
                                 setValue("1");
@@ -111,11 +112,13 @@ public class PlatformMappingServiceTest {
 
         CmsBtPlatformMappingModel fieldMapsModel = getTestModel();
 
-        platformMappingService.saveMap(fieldMapsModel);
+//        platformMappingService.saveMap(fieldMapsModel);
 
-        Map<String, Object> valueMap = platformMappingService.getValueMap(fieldMapsModel.getChannelId(), 9440L, fieldMapsModel.getCartId());
+        fieldMapsModel = fieldMapsDao.selectOne(fieldMapsModel.getCartId(), fieldMapsModel.getCategoryType(), fieldMapsModel.getCategoryPath(), fieldMapsModel.getChannelId());
 
-        assert valueMap != null;
+//        Map<String, Object> valueMap = platformMappingService.getValueMap(fieldMapsModel.getChannelId(), 9440L, fieldMapsModel.getCartId(), fieldMapsModel.getCategoryPath());
+//
+//        assert valueMap != null;
 
         fieldMapsDao.delete(fieldMapsModel);
     }
