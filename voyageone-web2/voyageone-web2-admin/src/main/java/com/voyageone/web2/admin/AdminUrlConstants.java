@@ -148,6 +148,21 @@ public interface AdminUrlConstants {
 			
 		}
 		
+		/** Cart物流信息 */
+		interface Tracking {
+			
+			String ROOT = "/admin/cart/tracking";
+			
+			String SEARCH_CART_TRACKING_BY_PAGE = "searchCartTrackingByPage";
+
+			String ADD_CART_TRACKING = "addCartTracking";
+
+			String UPDATE_CART_TRACKING = "updateCartTracking";
+
+			String DELETE_CART_TRACKING = "deleteCartTracking";
+			
+		}
+		
 	}
 	
 	interface Store {
