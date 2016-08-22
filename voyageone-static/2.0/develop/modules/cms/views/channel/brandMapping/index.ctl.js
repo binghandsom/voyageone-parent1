@@ -72,14 +72,8 @@ define([
                 };
                 self.popups.openPlatformMappingSetting(self.mappingDetail).then(function (res) {
                     if (res.result == true) {
-                        self.brandMappingService.addNewBrandMapping({
-                            'cmsBrand': self.mappingDetail.masterName,
-                            'cartId': self.searchInfo.selectedCart,
-                            'brandId': res.brandId
-                        }).then(function () {
-                            self.searchBrands();
-                        });
-                    };
+                        self.searchBrands();
+                    }
                 })
             }
         };

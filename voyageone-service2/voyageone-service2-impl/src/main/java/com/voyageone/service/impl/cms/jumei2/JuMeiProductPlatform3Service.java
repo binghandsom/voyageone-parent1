@@ -147,6 +147,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
             errorMsg = "市场价必须大于团购价";
         }
         if(!StringUtils.isEmpty(errorMsg)) {
+            if(parameter.cmsBtJmPromotionProductModel.getSynchStatus()!=2)
+            {
+                parameter.cmsBtJmPromotionProductModel.setSynchStatus(3);
+            }
             throw new BusinessException(errorMsg);
         }
     }

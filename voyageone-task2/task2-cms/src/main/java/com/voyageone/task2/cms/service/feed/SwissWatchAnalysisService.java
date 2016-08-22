@@ -499,13 +499,24 @@ public class SwissWatchAnalysisService extends BaseAnalysisService {
 
             Map temp = JacksonUtil.json2Bean(JacksonUtil.bean2Json(vtmModelBean), HashMap.class);
             Map<String, List<String>> attribute = new HashMap<>();
+
             for (String attr : attList) {
                 String key = CamelUtil.underlineToCamel(attr.toLowerCase());
                 if (temp.get(key) == null || StringUtil.isEmpty(temp.get(key).toString())) continue;
-
                 List<String> values = new ArrayList<>();
+                if (key.contains("attribute")) continue;
                 values.add((String) temp.get(key));
                 attribute.put(key, values);
+            }
+            for(int i = 2;i<170;i++){
+                if(temp.get("attribute"+i+"value") != null){
+                    String value= (String)temp.get("attribute"+i+"value");
+                    if(!StringUtil.isEmpty(value)){
+                        List<String> values= new ArrayList<>();
+                        values.add(value);
+                        attribute.put(temp.get("attribute" + i + "name").toString(), values);
+                    }
+                }
             }
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());

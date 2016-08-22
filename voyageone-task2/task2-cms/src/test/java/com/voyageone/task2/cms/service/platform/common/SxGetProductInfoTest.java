@@ -12,9 +12,7 @@ import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
-import com.voyageone.common.masterdate.schema.factory.SchemaWriter;
 import com.voyageone.common.masterdate.schema.field.*;
-import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
@@ -109,7 +107,7 @@ public class SxGetProductInfoTest {
     private ImsBtProductDao imsBtProductDao;
 
     @Autowired
-    private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
+    private CmsMtPlatformMappingDeprecatedDao cmsMtPlatformMappingDao;
 
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
@@ -1976,7 +1974,7 @@ public class SxGetProductInfoTest {
 //        {
 //            SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
 //            ExpressionParser exp = new ExpressionParser(sxProductService, sxData);
-//            CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid001");
+//            CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid001");
 //            CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.selectPlatformCatSchemaModel(cmsMtPlatformMappingModel.getPlatformCategoryId(), sxData.getCartId());
 //            ShopBean shopBean = new ShopBean();
 //            shopBean.setPlatform_id(PlatFormEnums.PlatForm.JD.getId());
@@ -2205,10 +2203,10 @@ public class SxGetProductInfoTest {
 //                    "</itemRule>";
 //        }
 //
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid003"); // 模板1
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid002"); // 模板2
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid004"); // 模板3
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid005"); // 模板4
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid003"); // 模板1
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid002"); // 模板2
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid004"); // 模板3
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("066", 23, "cid005"); // 模板4
 //
 //        Map<String, Integer> skuInventoryMap = new HashMap<>();
 //        skuInventoryMap.put("c001-1", 1100);
@@ -2406,7 +2404,7 @@ public class SxGetProductInfoTest {
 //                "</itemRule>\n";
 //        List<Field> fields = SchemaReader.readXmlForList(schema);
 //////        Map<String, Field> fieldMap = schemaToIdPropMap(schema);
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("002", 23, "DFS3028");
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.selectMappingByMainCatId("002", 23, "DFS3028");
 ////
 //        SxData sxData = sxProductService.getSxProductDataByGroupId("002", Long.valueOf("663055"));
 //        ExpressionParser exp = new ExpressionParser(sxProductService, sxData);

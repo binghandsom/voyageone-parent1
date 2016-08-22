@@ -42,9 +42,9 @@ define([
                 tempGroupSelect = new selectRowsFactory();
                 tempProductSelect = new selectRowsFactory();
                 // 获取group列表
-                _resetGroupList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, data);
+                _resetGroupList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, res.data.selBiDataList, data);
                 // 获取product列表
-                _resetProductList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, data);
+                _resetProductList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, res.data.selBiDataList, data);
 
                 defer.resolve (res);
             });
@@ -66,11 +66,11 @@ define([
          * @param data
          * @returns {*}
          */
-        function getGroupList(data, pagination, list, commonProps, customProps, selSalesTypes) {
+        function getGroupList(data, pagination, list, commonProps, customProps, selSalesTypes, selBiDataList) {
             var defer = $q.defer();
 
             $searchAdvanceService2.getGroupList(resetGroupPagination(data, pagination)).then(function (res) {
-                _resetGroupList(res.data, commonProps, customProps, selSalesTypes);
+                _resetGroupList(res.data, commonProps, customProps, selSalesTypes, selBiDataList);
                 defer.resolve (res);
             });
             return defer.promise;
@@ -81,10 +81,10 @@ define([
          * @param data
          * @returns {*}
          */
-        function getProductList(data, pagination, list, commonProps, customProps, selSalesTypes) {
+        function getProductList(data, pagination, list, commonProps, customProps, selSalesTypes, selBiDataList) {
             var defer = $q.defer();
             $searchAdvanceService2.getProductList(resetProductPagination(data, pagination)).then(function (res) {
-                _resetProductList(res.data, commonProps, customProps, selSalesTypes);
+                _resetProductList(res.data, commonProps, customProps, selSalesTypes, selBiDataList);
                 defer.resolve (res);
             });
             return defer.promise;
@@ -179,71 +179,104 @@ define([
                 .value();
         }
 
+        // 把取回的数据作相应转换(转换到画面对应的项目)
+        function _resetProdInfo(prodInfo, commonProps, customProps, selSalesTypes, selBiDataList) {
+            var commArr = [];
+            _.forEach(commonProps, function (data) {
+                var itemVal = '';
+                if ("comment" == data.propId) {
+                    itemVal = prodInfo.common.comment;
+                } else {
+                    itemVal = prodInfo.common.fields[data.propId];
+                }
+                // 原始主商品的转换
+                if (data.propId == 'isMasterMain') {
+                    if (itemVal == 1) {
+                        itemVal = '是';
+                    } else if (itemVal == 0) {
+                        itemVal = '否';
+                    }
+                }
+                if (itemVal == undefined) {
+                    itemVal = "";
+                }
+                commArr.push({value: itemVal.toString()});
+            });
+            prodInfo.commArr = commArr;
+            var custArr = [];
+            _.forEach(customProps, function (data) {
+                var itemVal = prodInfo.feed.cnAtts[data.feed_prop_original];
+                var orgAttsitemVal= prodInfo.feed.orgAtts[data.feed_prop_original];
+                if (itemVal == undefined) {
+                    itemVal = "";
+                }
+                custArr.push({value: itemVal});
+                custArr.push({value: orgAttsitemVal});
+            });
+            prodInfo.custArr = custArr;
+
+            // 销量数据整理
+            var selSalesTyeArr = [];
+            _.forEach(selSalesTypes, function (data) {
+                var selValue = data.value;
+                var dotIdx = selValue.indexOf(".", 6);
+                var itemValObj = prodInfo.sales[selValue.substring(6, dotIdx)];
+                var itemVal = null;
+                if (itemValObj == undefined) {
+                    itemVal = "0";
+                } else {
+                    dotIdx = selValue.lastIndexOf(".");
+                    itemVal = itemValObj[selValue.substring(dotIdx + 1)];
+                    if (itemVal == undefined) {
+                        itemVal = "0";
+                    }
+                }
+                selSalesTyeArr.push({value: itemVal});
+            });
+            prodInfo.selSalesTyeArr = selSalesTyeArr;
+
+            // bi数据整理
+            var selBiDataArr = [];
+            _.forEach(selBiDataList, function (data) {
+                var selValue = data.value;
+                var dotIdx = selValue.indexOf(".", 6);
+                var itemValObj = prodInfo.bi[selValue.substring(3, dotIdx)]; // 取到sum一级
+                var itemVal = null;
+                if (itemValObj == undefined) {
+                    itemVal = "";
+                } else {
+                    dotIdx ++;
+                    var lastdotIdx = selValue.indexOf(".", dotIdx);
+                    itemValObj = itemValObj[selValue.substring(dotIdx, lastdotIdx)];    // bi分类
+                    if (itemValObj == undefined) {
+                        itemVal = "";
+                    } else {
+                        lastdotIdx = selValue.lastIndexOf(".");
+                        itemVal = itemValObj[selValue.substring(lastdotIdx + 1)];    // 各平台
+                        if (itemVal == undefined) {
+                            itemVal = "";
+                        }
+                    }
+                }
+                selBiDataArr.push({value: itemVal});
+            });
+            prodInfo.selBiDataArr = selBiDataArr;
+        }
+
         /**
          * 设置group list
          * @param data
          * @returns {*}
          * @private
          */
-        function _resetGroupList (data, commonProps, customProps, selSalesTypes, searchParam) {
+        function _resetGroupList (data, commonProps, customProps, selSalesTypes, selBiDataList, searchParam) {
             tempGroupSelect.clearCurrPageRows();
             for (idx in data.groupList) {
                 var prodObj = data.groupList[idx];
                 prodObj._grpPriceInfoList = data.grpPriceInfoList[idx];
             }
             _.forEach(data.groupList, function (groupInfo, index) {
-
-                var commArr = [];
-                _.forEach(commonProps, function (data) {
-                    var itemVal = '';
-                    if ("comment" == data.propId) {
-                        itemVal = groupInfo.common.comment;
-                    } else {
-                        itemVal = groupInfo.common.fields[data.propId];
-                    }
-                    // 原始主商品的转换
-                    if (data.propId == 'isMasterMain') {
-                        if (itemVal == 1) {
-                            itemVal = '是';
-                        } else if (itemVal == 0) {
-                            itemVal = '否';
-                        }
-                    }
-                    if (itemVal == undefined) {
-                        itemVal = "";
-                    }
-                    commArr.push({value: itemVal.toString()});
-                });
-                groupInfo.commArr = commArr;
-                var custArr = [];
-                _.forEach(customProps, function (data) {
-                    var itemVal = groupInfo.feed.cnAtts[data.feed_prop_original];
-                    var orgAttsitemVal= groupInfo.feed.orgAtts[data.feed_prop_original];
-                    if (itemVal == undefined) {
-                        itemVal = "";
-                    }
-                    custArr.push({value: itemVal});
-                    custArr.push({value: orgAttsitemVal});
-                });
-                groupInfo.custArr = custArr;
-                var selSalesTyeArr = [];
-                _.forEach(selSalesTypes, function (data) {
-                    var selValue = data.value;
-                    var dotIdx = selValue.indexOf(".", 6);
-                    var itemValObj = groupInfo.sales[selValue.substring(6, dotIdx)];
-                    var itemVal = null;
-                    if (itemValObj == undefined) {
-                        itemVal = "0";
-                    } else {
-                        dotIdx = selValue.lastIndexOf(".");
-                        itemVal = itemValObj[selValue.substring(dotIdx + 1)];
-                        if (itemVal == undefined) {
-                            itemVal = "0";
-                        }
-                    }
-                    selSalesTyeArr.push({value: itemVal});
-                });
-                groupInfo.selSalesTyeArr = selSalesTyeArr;
+                _resetProdInfo(groupInfo, commonProps, customProps, selSalesTypes, selBiDataList);
 
                 // 初始化数据选中需要的数组
                 tempGroupSelect.currPageRows({"id": groupInfo.prodId, "code": groupInfo.common.fields["code"], "prodIds": data.grpProdIdList[index]});
@@ -270,62 +303,10 @@ define([
          * @returns {*}
          * @private
          */
-        function _resetProductList (data, commonProps, customProps, selSalesTypes, searchParam) {
+        function _resetProductList (data, commonProps, customProps, selSalesTypes, selBiDataList, searchParam) {
             tempProductSelect.clearCurrPageRows();
             _.forEach(data.productList, function (productInfo, index) {
-                var commArr = [];
-                _.forEach(commonProps, function (data) {
-                    var itemVal = '';
-                    if ("comment" == data.propId) {
-                        itemVal = productInfo.common.comment;
-                    } else {
-                        itemVal = productInfo.common.fields[data.propId];
-                    }
-                    // 原始主商品的转换
-                    if (data.propId == 'isMasterMain') {
-                        if (itemVal == 1) {
-                            itemVal = '是';
-                        } else if (itemVal == 0) {
-                            itemVal = '否';
-                        }
-                    }
-                    if (itemVal == undefined || itemVal == null) {
-                        itemVal = "";
-                    }
-                    commArr.push({value: itemVal.toString()});
-                });
-                productInfo.commArr = commArr;
-
-                var custArr = [];
-                _.forEach(customProps, function (data) {
-                    var itemVal = productInfo.feed.cnAtts[data.feed_prop_original];
-                    var orgAttsitemVal= productInfo.feed.orgAtts[data.feed_prop_original];
-                    if (itemVal == undefined || itemVal == null) {
-                        itemVal = "";
-                    }
-                    custArr.push({value: itemVal});
-                    custArr.push({value: orgAttsitemVal});
-                });
-                productInfo.custArr = custArr;
-
-                var selSalesTyeArr = [];
-                _.forEach(selSalesTypes, function (data) {
-                    var selValue = data.value;
-                    var dotIdx = selValue.indexOf(".", 6);
-                    var itemValObj = productInfo.sales[selValue.substring(6, dotIdx)];
-                    var itemVal = null;
-                    if (itemValObj == undefined || itemValObj == null) {
-                        itemVal = "0";
-                    } else {
-                        dotIdx = selValue.lastIndexOf(".");
-                        itemVal = itemValObj[selValue.substring(dotIdx + 1)];
-                        if (itemVal == undefined || itemVal == null) {
-                            itemVal = "0";
-                        }
-                    }
-                    selSalesTyeArr.push({value: itemVal});
-                });
-                productInfo.selSalesTyeArr = selSalesTyeArr;
+                _resetProdInfo(productInfo, commonProps, customProps, selSalesTypes, selBiDataList);
 
                 productInfo.carts = [];
                 if (productInfo.platforms) {
@@ -544,8 +525,20 @@ define([
                 // 当是中国指导价时，要有价格变化提示
                 if (stakey == 'pPriceRetailSt' && data.skus) {
                     for (idx in data.skus) {
-                        if (data.skus[idx].priceChgFlg && (data.skus[idx].priceChgFlg.indexOf('U') == 0 || data.skus[idx].priceChgFlg.indexOf('D') == 0)) {
-                            priceItem += '<label class="text-u-red font-bold">&nbsp;!</label>'
+                        if (data.skus[idx].priceChgFlg) {
+                            var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
+                            var downFlg = data.skus[idx].priceChgFlg.indexOf('D');
+                            var cssTxt = "";
+                            if (data.skus[idx].confirmFlg == '0') {
+                                cssTxt = 'class="text-u-red font-bold"';
+                            }
+                            if (upFlg == 0) {
+                                // 涨价
+                                priceItem += '<label ' + cssTxt + '>&nbsp;(↑' + data.skus[idx].priceChgFlg.substring(upFlg + 1) + ')</label>'
+                            } else if (downFlg == 0) {
+                                // 降价
+                                priceItem += '<label ' + cssTxt + '>&nbsp;(↓' + data.skus[idx].priceChgFlg.substring(downFlg + 1) + ')</label>'
+                            }
                             break;
                         }
                     }
@@ -562,7 +555,7 @@ define([
         }
 
         function _setRetailPriceCol(object, searchParam) {
-            var fstLine = {'pVal':'', 'pFlg':false};
+            var fstLine = { 'pVal': '', 'pTxt': '', 'cssTxt': '' };
             if (object == null || object == undefined) {
                 return fstLine;
             }
@@ -598,17 +591,28 @@ define([
                         priceItem += $filter('number')(data['pPriceRetailEd'], 2);
                     }
                 }
-                fstLine.pVal = priceItem;
 
                 // 当是中国指导价时，要有价格变化提示
                 if (data.skus) {
                     for (idx in data.skus) {
-                        if (data.skus[idx].priceChgFlg && (data.skus[idx].priceChgFlg.indexOf('U') == 0 || data.skus[idx].priceChgFlg.indexOf('D') == 0)) {
-                            fstLine.pFlg = true;
+                        if (data.skus[idx].priceChgFlg) {
+                            var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
+                            var downFlg = data.skus[idx].priceChgFlg.indexOf('D');
+                            if (data.skus[idx].confirmFlg == '0') {
+                                fstLine.cssTxt = 'text-u-red font-bold';
+                            }
+                            if (upFlg == 0) {
+                                // 涨价
+                                fstLine.pTxt = '(↑' + data.skus[idx].priceChgFlg.substring(upFlg + 1) + ')'
+                            } else if (downFlg == 0) {
+                                // 降价
+                                fstLine.pTxt = '(↓' + data.skus[idx].priceChgFlg.substring(downFlg + 1) + ')'
+                            }
                             break;
                         }
                     }
                 }
+                fstLine.pVal = priceItem;
                 if (fstCode == 0) {
                     // 未选择平台
                     break;
