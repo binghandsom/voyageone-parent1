@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.voyageone.service.bean.com.ComMtTaskBean;
 import com.voyageone.service.bean.com.TmTaskControlBean;
+import com.voyageone.service.model.com.TmTaskControlModel;
 
 /**
  * @author Wangtd
@@ -22,5 +23,7 @@ public interface ComMtTaskDaoExt {
 	Integer selectTypeCount(Map<String, Object> params);
 
 	List<ComMtTaskBean> selectTypeByPage(Map<String, Object> params);
+
+	TmTaskControlModel selectTask(Map<String, Object> params);
 
 }

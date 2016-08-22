@@ -35,6 +35,8 @@ public class TaskService extends BaseService {
 	
 	private static final String TASK_ATTR_EMPTY_VALUE = "";
 	
+	private static final String DEFAULT_TASK_COMMENT = "Run flag of task.";
+	
 	private static final String DEFAULT_TASK_TYPE_NAME = "SchedulingTask";
 	
 	@Autowired
@@ -75,13 +77,21 @@ public class TaskService extends BaseService {
 
 	@VOTransactional
 	public void addOrUpdateType(ComMtTaskModel taskModel, String runFlg, String username, boolean append) {
+		// 设置任务运行属性
+		TmTaskControlModel newTaskCtrl = new TmTaskControlModel();
+		newTaskCtrl.setTaskId(taskModel.getTaskName());
+		newTaskCtrl.setCfgName(RUN_FLG_NAME);
+		newTaskCtrl.setCfgVal1(runFlg);
+		
 		boolean success = false;
 		// 保存任务信息
 		if (append) {
 			// 添加任务信息
+			newTaskCtrl.setComment(DEFAULT_TASK_COMMENT);
+			newTaskCtrl.setCfgVal2(TASK_ATTR_EMPTY_VALUE);
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("taskName", taskModel.getTaskName());
-			if (taskDao.selectOne(params) != null) {
+			if (taskDaoExt.selectTask(params) != null) {
 				throw new BusinessException("存在同名的任务名[" + taskModel.getTaskName() + "]");
 			}
 			taskModel.setCreater(username);
@@ -99,20 +109,19 @@ public class TaskService extends BaseService {
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("taskId", taskModel.getTaskName());
 				params.put("cfgName", RUN_FLG_NAME);
-				TmTaskControlModel taskCtrlKey = taskCtrlDao.selectOne(params);
+				TmTaskControlModel taskCtrl = taskDaoExt.selectTask(params);
+				if (taskCtrl != null) {
+					newTaskCtrl.setCfgVal2(taskCtrl.getCfgVal2());
+					newTaskCtrl.setComment(taskCtrl.getComment());
+				}
 				// 删除任务运行属性值
-				success = taskCtrlDao.delete(taskCtrlKey) > 0;
+				success = taskCtrlDao.delete(taskCtrl) > 0;
 			}
 		}
 		
 		// 添加任务运行属性值
 		if (success) {
-			TmTaskControlModel taskCtrlModel = new TmTaskControlModel();
-			taskCtrlModel.setTaskId(taskModel.getTaskName());
-			taskCtrlModel.setCfgName(RUN_FLG_NAME);
-			taskCtrlModel.setCfgVal1(runFlg);
-			taskCtrlModel.setCfgVal2(TASK_ATTR_EMPTY_VALUE);
-			success = taskCtrlDao.insert(taskCtrlModel) > 0;
+			success = taskCtrlDao.insert(newTaskCtrl) > 0;
 		}
 		
 		if (!success) {
@@ -164,7 +173,13 @@ public class TaskService extends BaseService {
 		return pageModel;
 	}
 
-	public void addTaskConfig(TmTaskControlModel model) {
+	public void addTaskConfig(Integer taskId, TmTaskControlModel model) {
+		ComMtTaskModel task = taskDao.select(taskId);
+		if (task == null) {
+			throw new BusinessException("配置的任务信息不存在"); 
+		} else {
+			model.setTaskId(task.getTaskName());
+		}
 		if (model.getCfgVal2() == null) {
 			model.setCfgVal2(TASK_ATTR_EMPTY_VALUE);
 		}
@@ -195,18 +210,19 @@ public class TaskService extends BaseService {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("taskId", taskName);
 		params.put("cfgName", RUN_FLG_NAME);
-		TmTaskControlModel taskCtrlKey = taskCtrlDao.selectOne(params);
+		TmTaskControlModel taskCtrl = taskDaoExt.selectTask(params);
 		// 删除任务运行属性值
-		if (taskCtrlDao.delete(taskCtrlKey) <= 0) {
+		if (taskCtrlDao.delete(taskCtrl) <= 0) {
 			throw new BusinessException("删除任务的运行属性失败");
 		}
 		// 添加任务运行属性值
-		TmTaskControlModel taskCtrlModel = new TmTaskControlModel();
-		taskCtrlModel.setTaskId(taskName);
-		taskCtrlModel.setCfgName(RUN_FLG_NAME);
-		taskCtrlModel.setCfgVal1(runFlg ? "1" : "0");
-		taskCtrlModel.setCfgVal2(TASK_ATTR_EMPTY_VALUE);
-		if (taskCtrlDao.insert(taskCtrlModel) <= 0) {
+		TmTaskControlModel newTaskCtrl = new TmTaskControlModel();
+		newTaskCtrl.setTaskId(taskName);
+		newTaskCtrl.setCfgName(RUN_FLG_NAME);
+		newTaskCtrl.setCfgVal1(runFlg ? "1" : "0");
+		newTaskCtrl.setCfgVal2(taskCtrl.getCfgVal2());
+		newTaskCtrl.setComment(taskCtrl.getComment());
+		if (taskCtrlDao.insert(newTaskCtrl) <= 0) {
 			throw new BusinessException("添加任务的运行属性失败");
 		}
 	}

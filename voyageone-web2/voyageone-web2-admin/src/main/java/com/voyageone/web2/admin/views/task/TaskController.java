@@ -133,11 +133,12 @@ public class TaskController extends AdminController {
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getTaskId()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgName()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCfgVal1()));
-
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getComment()));
+		
 		// 添加任务配置信息
 		TmTaskControlModel model = new TmTaskControlModel();
 		BeanUtils.copyProperties(form, model);
-		taskService.addTaskConfig(model);
+		taskService.addTaskConfig(Integer.valueOf(form.getTaskId()), model);
 		
 		return success(true);
 	}
