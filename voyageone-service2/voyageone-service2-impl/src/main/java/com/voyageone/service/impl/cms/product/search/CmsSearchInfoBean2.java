@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.bean.search.index;
+package com.voyageone.service.impl.cms.product.search;
 
 import com.voyageone.common.util.JsonUtil;
 
@@ -19,9 +19,8 @@ public class CmsSearchInfoBean2 implements Serializable {
     private Integer productPageSize = 0;
 
     // ** 共通搜索条件 **
-    private String mCatId;
     private String mCatPath;
-    private String fCatId;
+    private List<String> fCatPathList;
 
     private String mCatStatus;
     // 翻译状态查询用标志位
@@ -53,7 +52,7 @@ public class CmsSearchInfoBean2 implements Serializable {
     private Double priceStart;
     private Double priceEnd;
 
-    private String pCatId;
+    private List<String> pCatPathList;
     private int pCatStatus = 0;
 
     private String[] promotionTags;
@@ -473,14 +472,6 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.pCatStatus = pCatStatus;
     }
 
-    public String getmCatId() {
-        return mCatId;
-    }
-
-    public void setmCatId(String mCatId) {
-        this.mCatId = mCatId;
-    }
-
     public String getmCatPath() {
         return mCatPath;
     }
@@ -489,20 +480,20 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.mCatPath = mCatPath;
     }
 
-    public String getfCatId() {
-        return fCatId;
+    public List<String> getfCatPathList() {
+        return fCatPathList;
     }
 
-    public void setfCatId(String fCatId) {
-        this.fCatId = fCatId;
+    public void setfCatPathList(List<String> fCatPathList) {
+        this.fCatPathList = fCatPathList;
     }
 
-    public String getpCatId() {
-        return pCatId;
+    public List<String> getpCatPathList() {
+        return pCatPathList;
     }
 
-    public void setpCatId(String pCatId) {
-        this.pCatId = pCatId;
+    public void setpCatPathList(List<String> pCatPathList) {
+        this.pCatPathList = pCatPathList;
     }
 
     public int getpCatStatus() {

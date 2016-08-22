@@ -210,5 +210,62 @@
     * cartIdxx
   * codeSumAll
     * cartIdxx
+
+* bi   ->BI数据统计
+    "sum1" : {       // 1天统计量
+        "pv" : {
+            "cartId26" : 0,
+            "cartId23" : 10,
+        },
+        "uv" : {
+            "cartId26" : 0,
+            "cartId23" : 2,
+        },
+        "gwc" : {    // 加购件数
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "scs" : {    // 收藏人数
+            "cartId26" : 0,
+            "cartId23" : 1,
+        }
+    },
+    "sum7" : {       // 7天统计量
+        "pv" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "uv" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "gwc" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "scs" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        }
+    },
+    "sum30" : {       // 30天统计量
+        "pv" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "uv" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "gwc" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "scs" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        }
+    }
+},
 * tags[]  ->标签
 * freeTags[] ->自定义标签

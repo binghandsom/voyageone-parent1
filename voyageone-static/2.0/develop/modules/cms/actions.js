@@ -61,6 +61,8 @@ define(function () {
                     "getGroupList": "getGroupList",
                     "getProductList": "getProductList",
                     "exportProducts": "exportProducts",
+                    "exportSearch": "exportSearch",
+                    "exportDownload": "exportDownload",
                     "getCustColumnsInfo": "getCustColumnsInfo",
                     "saveCustColumnsInfo": "saveCustColumnsInfo",
                     "addFreeTag": "addFreeTag",

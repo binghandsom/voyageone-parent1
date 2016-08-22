@@ -5515,6 +5515,9 @@ a.text-black:hover {
 .m-l-none {
     margin-left: 0 !important;
 }
+.m-l-xss {
+    margin-left: 2px;
+}
 .m-l-xs {
     margin-left: 5px;
 }
@@ -6187,6 +6190,7 @@ a.text-black:hover {
 }
 
 .column_overflow{height:200px;overflow-y:auto;display:block}
+.column_overflow_2{height:350px;}
 .smatop {padding-top:10px}
 .smaBot {padding-bottom:20px}
 .smacot {text-align:center;margin:5px 0px 5px 0px;}
