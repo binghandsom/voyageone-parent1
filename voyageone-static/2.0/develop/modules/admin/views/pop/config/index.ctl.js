@@ -36,15 +36,6 @@ define([
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
                 self.configInfo = {};
-                self.channelService.getAllChannel().then(function (res) {
-                    self.channelList = res.data;
-                });
-                self.storeService.getAllStore().then(function (res) {
-                    self.storeList = res.data;
-                });
-                self.taskService.getAllTask().then(function (res) {
-                    self.taskList = res.data;
-                });
                 var data = {
                     'pageNum': self.searchInfo.pageInfo.curr,
                     'pageSize': self.searchInfo.pageInfo.size,
@@ -57,6 +48,9 @@ define([
                 };
                 switch (self.searchInfo.configType) {
                     case 'Channel':
+                        self.channelService.getAllChannel().then(function (res) {
+                            self.channelList = res.data;
+                        });
                         var selectKey = function (configInfo) {
                             return {
                                 "id": configInfo.mainKey,
@@ -71,6 +65,9 @@ define([
                         });
                         break;
                     case 'Store':
+                        self.storeService.getAllStore().then(function (res) {
+                            self.storeList = res.data;
+                        });
                         var selectKey = function (configInfo) {
                             return {
                                 "id": configInfo.mainKey,
@@ -85,6 +82,9 @@ define([
                         });
                         break;
                     case 'Task':
+                        self.taskService.getAllTask().then(function (res) {
+                            self.taskList = res.data;
+                        });
                         var selectKey = function (configInfo) {
                             return {
                                 "id": configInfo.mainKey,
@@ -123,9 +123,9 @@ define([
                 var self = this;
                 self.searchInfo = {
                     orderChannelId: "",
-                    pageInfo: self.configPageOption,
-                    channelName: "",
+                    storeId: "",
                     taskId: "",
+                    configType: self.sourceData.configType,
                     cfgName: '',
                     cfgVal: ''
                 };
