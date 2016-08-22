@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.com.task;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,10 @@ public class TaskService extends BaseService {
 	@Autowired
 	private ComMtValueDaoExt typeAttrDaoExt;
 
+	public List<ComMtTaskModel> getAllTask() {
+		return taskDao.selectList(Collections.emptyMap());
+	}
+
 	public PageModel<ComMtTaskBean> searchTypeByPage(String taskType, String taskName, String taskComment,
 			Integer pageNum, Integer pageSize) {
 		PageModel<ComMtTaskBean> pageModel = new PageModel<ComMtTaskBean>();
@@ -74,6 +79,11 @@ public class TaskService extends BaseService {
 		// 保存任务信息
 		if (append) {
 			// 添加任务信息
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("taskName", taskModel.getTaskName());
+			if (taskDao.selectOne(params) != null) {
+				throw new BusinessException("存在同名的任务名[" + taskModel.getTaskName() + "]");
+			}
 			taskModel.setCreater(username);
 			taskModel.setModifier(username);
 			success = taskDao.insert(taskModel) > 0;
@@ -177,6 +187,28 @@ public class TaskService extends BaseService {
 
 	public List<ComMtValueModel> getAllTaskType() {
 		return typeAttrDaoExt.selectTypeAttributeByTypeName(DEFAULT_TASK_TYPE_NAME);
+	}
+
+	@VOTransactional
+	public void startOrStopTask(String taskName, boolean runFlg) {
+		// 检索任务运行属性值
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("taskId", taskName);
+		params.put("cfgName", RUN_FLG_NAME);
+		TmTaskControlModel taskCtrlKey = taskCtrlDao.selectOne(params);
+		// 删除任务运行属性值
+		if (taskCtrlDao.delete(taskCtrlKey) <= 0) {
+			throw new BusinessException("删除任务的运行属性失败");
+		}
+		// 添加任务运行属性值
+		TmTaskControlModel taskCtrlModel = new TmTaskControlModel();
+		taskCtrlModel.setTaskId(taskName);
+		taskCtrlModel.setCfgName(RUN_FLG_NAME);
+		taskCtrlModel.setCfgVal1(runFlg ? "1" : "0");
+		taskCtrlModel.setCfgVal2(TASK_ATTR_EMPTY_VALUE);
+		if (taskCtrlDao.insert(taskCtrlModel) <= 0) {
+			throw new BusinessException("添加任务的运行属性失败");
+		}
 	}
 
 }

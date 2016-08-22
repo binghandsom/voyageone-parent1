@@ -48,6 +48,23 @@ public class TaskController extends AdminController {
 		return success(taskService.getAllTaskType());
 	}
 	
+	@RequestMapping(AdminUrlConstants.Task.Self.GET_ALL_TASK)
+	public AjaxResponse getAllTask() {
+		return success(taskService.getAllTask());
+	}
+	
+	@RequestMapping(AdminUrlConstants.Task.Self.START_TASK)
+	public AjaxResponse startTask(@RequestBody String taskName) {
+		taskService.startOrStopTask(taskName, true);
+		return success(true);
+	}
+	
+	@RequestMapping(AdminUrlConstants.Task.Self.STOP_TASK)
+	public AjaxResponse stopTask(@RequestBody String taskName) {
+		taskService.startOrStopTask(taskName, false);
+		return success(true);
+	}
+	
 	@RequestMapping(AdminUrlConstants.Task.Self.SEARCH_TASK_BY_PAGE)
 	public AjaxResponse searchTaskByPage(@RequestBody TaskFormBean form) {
 		// 验证参数

@@ -215,6 +215,12 @@ public interface AdminUrlConstants {
 			String ADD_TASK_CONFIG = "addTaskConfig";
 
 			String GET_ALL_TASK_TYPE = "getAllTaskType";
+
+			String GET_ALL_TASK = "getAllTask";
+
+			String START_TASK = "startTask";
+
+			String STOP_TASK = "stopTask";
 			
 		}
 		
