@@ -241,6 +241,10 @@ public class UploadToUSJoiService extends BaseTaskService {
                        Map<String, String> mapProductTypeMapping,
                        Map<String, String> mapSizeTypeMapping) {
 
+        // 不管子店->USJOI主店上新成功还是失败，都先自动清空之前报的上新错误信息
+        businessLogService.updateFinishStatusByCondition(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getCartId(),
+                StringUtils.toString(sxWorkLoadBean.getGroupId()), null, null, getTaskName());
+
         // workload表中的cartId是usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
         String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
 
