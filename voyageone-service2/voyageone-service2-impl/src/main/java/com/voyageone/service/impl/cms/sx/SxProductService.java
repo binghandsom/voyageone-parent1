@@ -3383,6 +3383,10 @@ public class SxProductService extends BaseService {
             return;
         }
 
+        // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
+        businessLogService.updateFinishStatusByCondition(sxData.getChannelId(), sxData.getCartId(), StringUtils.toString(sxData.getGroupId()),
+                null, sxData.getMainProduct().getCommon().getFields().getCode(), modifier);
+
         // 上新成功时
         if (uploadStatus) {
             // 设置共通属性
@@ -3430,6 +3434,7 @@ public class SxProductService extends BaseService {
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
             this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.okNum,
                     StringUtils.isEmpty(workload.getModifier()) ? modifier : workload.getModifier());
+
         } else {
             // 上新失败后回写product表pPublishError的值("Error")
             productGroupService.updateUploadErrorStatus(sxData.getPlatform(), sxData.getErrorMessage());
