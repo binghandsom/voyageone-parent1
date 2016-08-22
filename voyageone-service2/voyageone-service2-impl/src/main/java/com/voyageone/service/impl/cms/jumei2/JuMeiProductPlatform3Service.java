@@ -388,9 +388,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
             {
                 if (!sellJmPromotion.getIsPromotionFullMinus())//在售专场为非满减专场
                 {
-                    if (DateTimeUtil.addDays(jmPromotion.getActivityEnd(), -4).getTime() >= getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间4天或以上 时
+                    if (DateTimeUtil.addDays(jmPromotion.getActivityStart(), -4).getTime() >= getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间4天或以上 时
                     {
-                        errorMsg = String.format("该商品已加入专场【sellJmPromotion.getName()】，并上传成功。请于【sellJmPromotion.getActivityEnd()】（年月日 时分秒）之后，再进行上传", sellJmPromotionName, DateTimeUtil.format(getDealByHashIDResponse.getEnd_time(), "yyyy-MM-dd HH:mm:ss"));
+                        errorMsg = String.format("该商品已加入专场%s，并上传成功。请于【%s】（年月日 时分秒）之后，再进行上传", sellJmPromotionName, DateTimeUtil.format(getDealByHashIDResponse.getEnd_time(), "yyyy-MM-dd HH:mm:ss"));
                         return errorMsg;
                     }
                 }
@@ -400,7 +400,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             {
                 if (!sellJmPromotion.getIsPromotionFullMinus())//在售专场为非满减专场
                 {
-                    if (DateTimeUtil.addDays(jmPromotion.getActivityEnd(), -4).getTime() < getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
+                    if (DateTimeUtil.addDays(jmPromotion.getActivityStart(), -4).getTime() < getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
                     {
                         //4.2.9.1
                         jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
