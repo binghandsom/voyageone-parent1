@@ -58,14 +58,19 @@ public class PlatformMappingService extends BaseService {
 
     public boolean saveMap(CmsBtPlatformMappingModel fieldMapsModel) {
 
-        WriteResult writeResult;
+        if (platformMappingDao.exists(fieldMapsModel)) {
 
-        if (platformMappingDao.exists(fieldMapsModel))
-            writeResult = platformMappingDao.update(fieldMapsModel);
-        else
-            writeResult = platformMappingDao.insert(fieldMapsModel);
+            String lastModified = platformMappingDao.selectModified(fieldMapsModel);
 
-        return writeResult.getN() > 0;
+            if (!lastModified.equals(fieldMapsModel.getModified()))
+                return false;
+
+            platformMappingDao.update(fieldMapsModel);
+        } else {
+            platformMappingDao.insert(fieldMapsModel);
+        }
+
+        return true;
     }
 
     public Map<String, Object> getValueMap(String channelId, Long productId, int cartId) {
@@ -82,11 +87,11 @@ public class PlatformMappingService extends BaseService {
 
         Map<String, Object> valueMap = new HashMap<>();
 
-        if (fieldMapsModel != null)
-            fillValueMap(valueMap, product, fieldMapsModel);
-
         if (commonFieldMapsModel != null)
             fillValueMap(valueMap, product, commonFieldMapsModel);
+
+        if (fieldMapsModel != null)
+            fillValueMap(valueMap, product, fieldMapsModel);
 
         return valueMap;
     }

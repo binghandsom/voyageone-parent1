@@ -382,7 +382,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     } catch (CommonConfigNotFoundException ce) {
                         errCnt++;
                         // 如果是共通配置没有或者价格计算时抛出整个Channel的配置没有的错误时，后面的feed导入就不用做了，免得报出几百条同样的错误
-                        String errMsg = "feed->master导入:异常终止:";
+                        String errMsg = "feed->master导入:共通配置异常终止:";
                         if (StringUtils.isNullOrBlank2(ce.getMessage())) {
                             errMsg += "出现不可预知的错误，请跟管理员联系  [ErrMsg=" + ce.getStackTrace()[0].toString() + "]";
                             ce.printStackTrace();
@@ -468,7 +468,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许approve这个sku到平台上去售卖渠道cartId
             typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(channelId, "A", "en"); // 取得允许Approve的数据
             if (ListUtils.isNull(typeChannelBeanListApprove)) {
-                String errMsg = String.format("feed->master导入:异常终止:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息(用于生成product分平台信息) [ChannelId=%s A en]", channelId);
+                String errMsg = String.format("feed->master导入:共通配置异常终止:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息(用于生成product分平台信息) [ChannelId=%s A en]", channelId);
                 $error(errMsg);
                 throw new CommonConfigNotFoundException(errMsg);
             }
@@ -476,7 +476,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 从synship.com_mt_value_channel表中获取当前channel, 有多少个需要展示的cart
             typeChannelBeanListDisplay = TypeChannels.getTypeListSkuCarts(channelId, "D", "en"); // 取得展示用数据
             if (ListUtils.isNull(typeChannelBeanListDisplay)) {
-                String errMsg = String.format("feed->master导入:异常终止:在com_mt_value_channel表中没有找到当前Channel需要展示的Cart信息(用于生成productGroup信息) [ChannelId=%s D en]", channelId);
+                String errMsg = String.format("feed->master导入:共通配置异常终止:在com_mt_value_channel表中没有找到当前Channel需要展示的Cart信息(用于生成productGroup信息) [ChannelId=%s D en]", channelId);
                 $error(errMsg);
                 throw new CommonConfigNotFoundException(errMsg);
             }
@@ -3136,7 +3136,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 priceService.setPrice(cmsProduct);
             } catch (IllegalPriceConfigException ie) {
                 // 渠道级别价格计算配置错误, 停止后面的feed->master导入，避免报几百条一样的错误信息
-                String errMsg = String.format("feed->master导入:异常终止:发现渠道级别的价格计算配置错误，后面的feed导入不做了，" +
+                String errMsg = String.format("feed->master导入:共通配置异常终止:发现渠道级别的价格计算配置错误，后面的feed导入不做了，" +
                         "请修改好相应配置项目后重新导入 [ErrMsg=%s]", ie.getMessage());
                 $error(errMsg);
                 throw new CommonConfigNotFoundException(errMsg);
