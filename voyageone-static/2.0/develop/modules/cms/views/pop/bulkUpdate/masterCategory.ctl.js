@@ -129,7 +129,10 @@ define(['cms',
                 });
             },
             selectCat: function (item, event) {
-                var _index = this.catArrs.indexOf(item.catPath);
+                var _index = _.map(this.catArrs,function(item){
+                    return item.catPath;
+                }).indexOf(item.catPath);
+
                 if (_index < 0)
                     this.catArrs.push({catId: item.catId, catPath: item.catPath});
                 else
