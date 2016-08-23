@@ -76,21 +76,4 @@ public class LoggingHandler {
         }
     }
 
-//    public static Map<String, Object> getParmMap(HttpServletRequest request) {
-//        HashMap<String, Object> map = new HashMap<String, Object>();
-//
-//        Map<String, String[]> orimap = request.getParameterMap();
-//        Set<String> keys = orimap.keySet();
-//        for (String key1 : keys) {
-//            String key = key1;
-//            String[] value = orimap.get(key);
-//            if (value.length > 1) {
-//                map.put(key, value);
-//            } else {
-//                map.put(key, value[0]);
-//            }
-//        }
-//        return map;
-//    }
-
 }
