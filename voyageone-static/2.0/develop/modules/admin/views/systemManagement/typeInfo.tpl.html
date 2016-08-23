@@ -53,8 +53,7 @@
         <div class="box-body-new">
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
-                    <button class="btn btn-default" ng-click="ctrl.config('Channel')" ng-disabled="ctrl.sysTypeInfoSelList.selList.length > 1"><i class="fa fa-cog"></i>&nbsp;配置</button>
-                    <button class="btn btn-default" ng-click="openAdd('add')" ng-disabled="ctrl.sysTypeInfoSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                    <button class="btn btn-default" ng-click="openTypeAdd('add')" ng-disabled="ctrl.sysTypeInfoSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
                     <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.sysTypeInfoSelList.selList.length <= 0||ctrl.sysTypeInfoSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
                     <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.sysTypeInfoSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                 </div>
@@ -84,8 +83,8 @@
                 <tr ng-repeat="list in ctrl.systemList">
                     <td class="text-left v-middle">
                         <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                            <input ng-model="ctrl.sysTypeInfoSelList.selFlag[list.orderChannelId]" type="checkbox" ng-controller="selectRowsCtrl"
-                                   ng-click="selectOne(list.orderChannelId, ctrl.sysTypeInfoSelList)">
+                            <input ng-model="ctrl.sysTypeInfoSelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
+                                   ng-click="selectOne(list.id, ctrl.sysTypeInfoSelList)">
                             <span class="fa fa-check"></span>
                         </label>
                     </td>

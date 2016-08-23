@@ -148,7 +148,8 @@ define([
                     taskId: "",
                     configType: self.sourceData.configType,
                     cfgName: '',
-                    cfgVal: ''
+                    cfgVal: '',
+                    pageInfo: self.configPageOption
                 };
             },
             add: function (item) {

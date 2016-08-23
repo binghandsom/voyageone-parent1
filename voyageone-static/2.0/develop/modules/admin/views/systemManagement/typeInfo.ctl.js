@@ -15,7 +15,7 @@ define([
             this.channelPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.systemList = [];
             this.sysTypeInfoSelList = {selList: []};
-            this.tempChannelSelect = null;
+            this.tempSelect = null;
             this.searchInfo = {
                 id: '',
                 name: '',
@@ -44,21 +44,21 @@ define([
                         self.channelPageOption.total = res.data.count;
 
                         // 设置勾选框
-                        if (self.tempChannelSelect == null) {
-                            self.tempChannelSelect = new self.selectRowsFactory();
+                        if (self.tempSelect == null) {
+                            self.tempSelect = new self.selectRowsFactory();
                         } else {
-                            self.tempChannelSelect.clearCurrPageRows();
-                            self.tempChannelSelect.clearSelectedList();
+                            self.tempSelect.clearCurrPageRows();
+                            self.tempSelect.clearSelectedList();
                         }
-                        _.forEach(self.systemList, function (channelInfo) {
-                            if (channelInfo.updFlg != 8) {
-                                self.tempChannelSelect.currPageRows({
-                                    "id": channelInfo.id,
-                                    "code": channelInfo.comment
+                        _.forEach(self.systemList, function (Info) {
+                            if (Info.updFlg != 8) {
+                                self.tempSelect.currPageRows({
+                                    "id": Info.id,
+                                    "code": Info.comment
                                 });
                             }
                         });
-                        self.sysTypeInfoSelList = self.tempChannelSelect.selectRowsInfo;
+                        self.sysTypeInfoSelList = self.tempSelect.selectRowsInfo;
 
                         // 设置cartName
                         if (!self.systemList) return;
@@ -77,21 +77,8 @@ define([
                 self.searchInfo = {
                     id: '',
                     name: '',
-                    comment: ''
-                }
-            },
-            config: function (type) {
-                var self = this;
-                if (self.sysTypeInfoSelList.selList.length < 1) {
-                    self.popups.openConfig({'configType':type});
-                    return;
-                } else {
-                    _.forEach(self.systemList, function (channelInfo) {
-                        if (channelInfo.orderChannelId == self.sysTypeInfoSelList.selList[0].id) {
-                            _.extend(channelInfo,{'configType':type});
-                            self.popups.openConfig(channelInfo);
-                        }
-                    })
+                    comment: '',
+                    pageInfo: self.channelPageOption
                 }
             },
             edit: function () {
@@ -100,9 +87,9 @@ define([
                     self.alert('TXT_MSG_NO_ROWS_SELECT');
                     return;
                 } else {
-                    _.forEach(self.systemList, function (channelInfo) {
-                        if (channelInfo.orderChannelId == self.sysTypeInfoSelList.selList[0].id) {
-                            self.popups.openAdd(channelInfo).then(function(){
+                    _.forEach(self.systemList, function (Info) {
+                        if (Info.id == self.sysTypeInfoSelList.selList[0].id) {
+                            self.popups.openTypeAdd(Info).then(function(){
                                 self.search(1);
                             });
                         }
@@ -117,9 +104,9 @@ define([
                         _.forEach(self.sysTypeInfoSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
-                        self.channelService.deleteChannel(delList).then(function (res) {
+                        self.typeService.deleteType(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);
-                            self.search();
+                            self.search(1);
                         })
                     }
                 );
