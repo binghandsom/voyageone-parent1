@@ -87,11 +87,11 @@
                         </label>
                     </th>
                     <th class="text-center mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
-                    <th class="text-left mfb-xt" translate="TXT_CART_SHOP_NAME"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_TRACKING_STATE"></th>
+                    <th class="text-center mfb-xt" translate="TXT_CART_SHOP_NAME"></th>
+                    <th class="text-center mfb-xt" translate="TXT_TRACKING_STATE"></th>
                     <th class="text-center mfb-xxt" translate="TXT_TRACKING_INFO"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_TRACKING_LOCATION"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_IS_DISPLAY"></th>
+                    <th class="text-center mfb-xt" translate="TXT_TRACKING_LOCATION"></th>
+                    <th class="text-center mfb-xt" translate="TXT_IS_DISPLAY"></th>
                     <th class="text-center mfb-xxt" translate="TXT_TRACKING_IS_EXPAND"></th>
                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
                     <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
@@ -105,19 +105,19 @@
                 <tr ng-repeat="list in ctrl.cartList">
                     <td class="text-left v-middle">
                         <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                            <input ng-model="ctrl.cartTrackingSelList.selFlag[list.cartId]" type="checkbox" ng-controller="selectRowsCtrl"
-                                   ng-click="selectOne(list.cartId, ctrl.cartTrackingSelList)">
+                            <input ng-model="ctrl.cartTrackingSelList.selFlag[list.seq]" type="checkbox" ng-controller="selectRowsCtrl"
+                                   ng-click="selectOne(list.seq, ctrl.cartTrackingSelList)">
                             <span class="fa fa-check"></span>
                         </label>
                     </td>
-                    <td class="text-center v-middle">{{list.cartId}}</td>
-                    <td class="text-left v-middle">{{list.name}}</td>
-                    <td class="text-left v-middle">{{list.shortName}}</td>
-                    <td class="text-center v-middle">{{list.description}}</td>
-                    <td class="text-left v-middle">{{list.shortName}}</td>
-                    <td class="text-center v-middle">{{list.description}}</td>
-                    <td class="text-center v-middle">{{ctrl.getCartType(list.cartType)}}</td>
-                    <td class="text-center v-middle">{{list.active==true ? '启用':'禁用'}}</td>
+                    <td class="text-center v-middle">{{list.channelName}}</td>
+                    <td class="text-center v-middle">{{list.cartName}}</td>
+                    <td class="text-center v-middle">{{list.trackingStatus}}</td>
+                    <td class="text-left v-middle">{{list.trackingInfo}}</td>
+                    <td class="text-center v-middle">{{list.location}}</td>
+                    <td class="text-center v-middle">{{list.displayFlg=='1'?'显示':'隐藏'}}</td>
+                    <td class="text-center v-middle">{{list.trackingSpreadFlg =='1'?'取得运单号路由信息':''}}</td>
+                    <td class="text-center v-middle">{{list.active==true ? '可用':'禁用'}}</td>
                     <td class="text-left v-middle">{{list.modified}}</td>
                     <td class="text-center v-middle">{{list.modifier}}</td>
                 </tr>

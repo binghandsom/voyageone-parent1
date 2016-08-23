@@ -10,10 +10,10 @@
                 <div class="form-horizontal">
                     <div class="col-sm-6">
                         <div class="form-group"><!-- 渠道名* -->
-                            <label class="col-sm-3 control-label">{{'TXT_PLATFORM_NAME' | translate}}</label>
+                            <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_NAME' | translate}}</label>
                             <div class="col-sm-8">
                                 <select search-contains="true" chosen width="'100%'" class="form-control" name="channelName"
-                                        ng-model="ctrl.searchInfo.orderChannelId" ng-disabled="ctrl.popType == '编辑'"
+                                        ng-model="ctrl.sourceData.orderChannelId" ng-disabled="ctrl.popType == '编辑'" required
                                         ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelAllList">
                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 </select>
@@ -27,39 +27,39 @@
                         <div class="form-group"><!-- 物流信息 -->
                             <label class="col-sm-3 control-label">{{'TXT_TRACKING_INFO' | translate}}</label>
                             <div class="col-sm-8">
-                                <textarea class="form-control" name="trackingInfo" rows="3" ng-model="ctrl.sourceData.cartId" maxlength="500" required></textarea>
+                                <textarea class="form-control" name="trackingInfo" rows="3" ng-model="ctrl.sourceData.trackingInfo" maxlength="500" required></textarea>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-8 col-sm-offset-3">
-                                <vo-message target="addForm.cartId"></vo-message>
+                                <vo-message target="addForm.trackingInfo"></vo-message>
                             </div>
                         </div>
                         <div class="form-group"><!-- 显示标识 -->
                             <label class="col-sm-3 control-label">{{'TXT_IS_DISPLAY' | translate}}</label>
                             <div class="col-sm-4">
                                 <label class="checkbox-inline c-radio">
-                                    <input type="radio" name="active" value="1" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> 显示
+                                    <input type="radio" name="displayFlg" value="1" ng-model="ctrl.sourceData.displayFlg"><span class="fa fa-check"></span> 显示
                                 </label>
                                 <label class="checkbox-inline c-radio">
-                                    <input type="radio" name="active" value="0" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> 隐藏
+                                    <input type="radio" name="displayFlg" value="0" ng-model="ctrl.sourceData.displayFlg"><span class="fa fa-check"></span> 隐藏
                                 </label>
                             </div>
                             <!-- 状态 -->
                             <label class="col-sm-1 control-label">{{'TXT_STATUS' | translate}}</label>
                             <div class="col-sm-4">
                                 <label class="checkbox-inline c-radio">
-                                    <input type="radio" name="active" value="1" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> 显示
+                                    <input type="radio" name="active" value="1" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> 可用
                                 </label>
                                 <label class="checkbox-inline c-radio">
-                                    <input type="radio" name="active" value="0" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> 隐藏
+                                    <input type="radio" name="active" value="0" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> 禁用
                                 </label>
                             </div>
                         </div>
                         <div class="form-group"><!-- 物流区域 -->
                             <label class="col-sm-3 control-label">{{'TXT_TRACKING_AREA' | translate}}</label>
                             <div class="col-sm-8">
-                                <select class="form-control" ng-model="ctrl.sourceData.cartType">
+                                <select class="form-control" ng-model="ctrl.sourceData.trackingArea">
                                     <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                     <option value="0">&nbsp;国内快递</option>
                                     <option value="1">&nbsp;国际快递</option>
@@ -69,7 +69,7 @@
                         <div class="form-group"><!-- 物流状态 -->
                             <label class="col-sm-3 control-label">{{'TXT_TRACKING_STATE' | translate}}</label>
                             <div class="col-sm-8">
-                                <input type="text" maxlength="3" class="form-control" ng-model="ctrl.sourceData.shortName"/>
+                                <input type="text" maxlength="3" class="form-control" ng-model="ctrl.sourceData.trackingStatus"/>
                             </div>
                         </div>
                     </div>
@@ -79,7 +79,7 @@
                             <label class="col-sm-3 control-label">{{'TXT_CART_SHOP_NAME' | translate}}</label>
                             <div class="col-sm-8">
                                 <select search-contains="true" chosen width="'100%'" class="form-control" name="shopName"
-                                        ng-model="ctrl.searchInfo.cartId" ng-disabled="ctrl.popType == '编辑'"
+                                        ng-model="ctrl.sourceData.cartId" ng-disabled="ctrl.popType == '编辑'" required
                                         ng-options="cart.cartId as cart.name for cart in ctrl.cartAllList">
                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 </select>
@@ -87,13 +87,13 @@
                         </div>
                         <div class="form-group">
                             <div class="col-sm-8 col-sm-offset-3">
-                                <vo-message target="addForm.channelName"></vo-message>
+                                <vo-message target="addForm.shopName"></vo-message>
                             </div>
                         </div>
                         <div class="form-group"><!-- 物流位置 -->
                             <label class="col-sm-3 control-label">{{'TXT_TRACKING_LOCATION' | translate}}</label>
                             <div class="col-sm-8">
-                                <textarea class="form-control" name="trackingInfo" rows="3" ng-model="ctrl.sourceData.location" maxlength="100" required></textarea>
+                                <input type="text" name="location" class="form-control" ng-model="ctrl.sourceData.location" maxlength="100" required/>
                             </div>
                         </div>
                         <div class="form-group">
@@ -104,13 +104,13 @@
                         <div class="form-group"><!-- 显示状态 -->
                             <label class="col-sm-3 control-label">{{'TXT_DISPLAY_STATE' | translate}}</label>
                             <div class="col-sm-8">
-                                <select class="form-control" ng-model="ctrl.sourceData.cartType">
+                                <select class="form-control" ng-model="ctrl.sourceData.displayStatus">
                                     <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                    <option value="1">&nbsp;拣货中</option>
-                                    <option value="2">&nbsp;待出库</option>
-                                    <option value="3">&nbsp;运输中</option>
-                                    <option value="4">&nbsp;配送中</option>
-                                    <option value="5">&nbsp;已揽收</option>
+                                    <option value="拣货中">&nbsp;拣货中</option>
+                                    <option value="待出库">&nbsp;待出库</option>
+                                    <option value="运输中">&nbsp;运输中</option>
+                                    <option value="配送中">&nbsp;配送中</option>
+                                    <option value="已揽收">&nbsp;已揽收</option>
                                 </select>
                             </div>
                         </div>
@@ -118,15 +118,14 @@
                             <label class="col-sm-3 control-label">{{'TXT_TRACKING_IS_EXPAND' | translate}}</label>
                             <div class="col-sm-8">
                                 <label class="checkbox-inline c-checkbox">
-                                    <input type="checkbox" ng-model="display" value="1"><span class="fa fa-check"></span>
-                                </label>
-                                取得运单号路由信息
+                                    <input type="checkbox" ng-model="ctrl.sourceData.trackingSpreadFlg"><span class="fa fa-check"></span>
+                                </label>取得运单号路由信息
                             </div>
                         </div>
                         <div class="form-group"><!-- 备注 -->
                             <label class="col-sm-3 control-label">{{'TXT_COMMENTS' | translate}}</label>
                             <div class="col-sm-8">
-                                <textarea class="form-control" name="trackingInfo" rows="3" ng-model="ctrl.sourceData.cartId" required></textarea>
+                                <textarea class="form-control" name="comment" rows="3" ng-model="ctrl.sourceData.comment"></textarea>
                             </div>
                         </div>
                     </div>

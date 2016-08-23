@@ -5,12 +5,12 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('CartAddTrackingInfoController', (function () {
-        function CartAddTrackingInfoController(context, channelService, AdminCartService, cartShopService, $uibModalInstance) {
+        function CartAddTrackingInfoController(context, channelService, AdminCartService, cartTrackingService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
             this.channelService = channelService;
             this.AdminCartService = AdminCartService;
-            this.cartShopService = cartShopService;
+            this.cartTrackingService = cartTrackingService;
             this.popType = '编辑';
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
@@ -23,7 +23,7 @@ define([
                     self.popType = '添加';
                     self.sourceData = {}
                 }
-                self.sourceData.active = self.sourceData.active ? "0" : "1";
+                self.sourceData.active = self.sourceData.active ? "1" : "0";
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
@@ -37,9 +37,10 @@ define([
             save: function () {
                 var self = this;
                 var result = {};
-                self.sourceData.active = self.sourceData.active == '0' ? true : false;
+                self.sourceData.active = self.sourceData.active == '1' ? true : false;
+                self.sourceData.trackingSpreadFlg = self.sourceData.trackingSpreadFlg == true ? '1' : '';
                 if (self.append == true) {
-                    self.cartShopService.addCartShop(self.sourceData).then(function (res) {
+                    self.cartTrackingService.addCartTracking(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
@@ -48,7 +49,7 @@ define([
                         self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.cartShopService.updateCartShop(self.sourceData).then(function (res) {
+                    self.cartTrackingService.updateCartTracking(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;

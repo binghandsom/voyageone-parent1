@@ -6,14 +6,14 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('CartTrackingInfoManagementController', (function () {
-        function CartTrackingInfoManagementController(popups, alert, confirm, channelService, AdminCartService, cartShopService, selectRowsFactory) {
+        function CartTrackingInfoManagementController(popups, alert, confirm, channelService, AdminCartService, cartTrackingService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
             this.selectRowsFactory = selectRowsFactory;
             this.channelService = channelService;
             this.AdminCartService = AdminCartService;
-            this.cartShopService = cartShopService;
+            this.cartTrackingService = cartTrackingService;
             this.cartPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
             this.cartList = [];
@@ -42,7 +42,7 @@ define([
             search: function (page) {
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
-                self.cartShopService.searchCartShopByPage({
+                self.cartTrackingService.searchCartTrackingByPage({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
                         'cartId': self.searchInfo.cartId,
@@ -64,9 +64,9 @@ define([
                         _.forEach(self.cartList, function (Info) {
                             if (Info.updFlg != 8) {
                                 self.tempSelect.currPageRows({
-                                    "id": Info.cartId,
-                                    "code": Info.name,
-                                    "orderChannelId": Info.orderChannelId
+                                    "id": Info.seq,
+                                    "orderChannelId": Info.orderChannelId,
+                                    "cartId": Info.cartId
                                 });
                             }
                         });
@@ -91,7 +91,7 @@ define([
                     return;
                 } else {
                     _.forEach(self.cartList, function (Info) {
-                        if (Info.cartId == self.cartTrackingSelList.selList[0].id) {
+                        if (Info.seq == self.cartTrackingSelList.selList[0].id) {
                             self.popups.openCartTrackingInfo(Info).then(function () {
                                 self.search(1);
                             });
@@ -105,9 +105,9 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.cartTrackingSelList.selList, function (delInfo) {
-                            delList.push({'orderChannelId': delInfo.orderChannelId, 'cartId': delInfo.id});
+                            delList.push({'orderChannelId': delInfo.orderChannelId, 'cartId': delInfo.cartId});
                         });
-                        self.cartShopService.deleteCartShop(delList).then(function (res) {
+                        self.cartTrackingService.deleteCartTracking(delList).then(function (res) {
                             self.search();
                         })
                     }
