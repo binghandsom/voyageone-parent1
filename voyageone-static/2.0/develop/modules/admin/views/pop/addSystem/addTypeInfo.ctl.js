@@ -5,10 +5,9 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('AddTypeInfoController', (function () {
-        function AddTypeInfoController(context, AdminCartService, typeService, $uibModalInstance) {
+        function AddTypeInfoController(context, typeService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
-            this.AdminCartService = AdminCartService;
             this.typeService = typeService;
             this.popType = '编辑';
             this.companyId = this.sourceData.companyId;
@@ -23,9 +22,6 @@ define([
                     self.sourceData = {}
                 }
                 self.sourceData.active = self.sourceData.active ? "1" : "0";
-                self.AdminCartService.getAllPlatform().then(function (res) {
-                    self.platformAllList = res.data;
-                });
             },
             cancel: function () {
                 this.$uibModalInstance.close();

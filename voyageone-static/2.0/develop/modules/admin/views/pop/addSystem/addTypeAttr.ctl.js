@@ -5,14 +5,13 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('AddTypeAttrController', (function () {
-        function AddTypeAttrController(context, channelService, popups, typeService, AdminCartService, channelAttributeService, $uibModalInstance) {
+        function AddTypeAttrController(context, channelService, popups, typeService, typeAttrService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
             this.popups = popups;
             this.channelService = channelService;
             this.typeService = typeService;
-            this.AdminCartService = AdminCartService;
-            this.channelAttributeService = channelAttributeService;
+            this.typeAttrService = typeAttrService;
             this.popType = '编辑';
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance
