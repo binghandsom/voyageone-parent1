@@ -131,7 +131,7 @@ define(function () {
                 }
             },
             /** 统一属性配置 */
-            "type": {
+            "system": {
                 "typeService": {
                     "root": "/admin/system/type",
                     "searchTypeByPage": "searchTypeByPage",
@@ -146,6 +146,13 @@ define(function () {
                     "addTypeAttribute": "addTypeAttribute",
                     "updateTypeAttribute": "updateTypeAttribute",
                     "deleteTypeAttribute": "deleteTypeAttribute"
+                },
+                "codeService": {
+                    "root": "/admin/system/code",
+                    "searchCodeByPage": "searchCodeByPage",
+                    "addCode": "addCode",
+                    "updateCode": "updateCode",
+                    "deleteCode": "deleteCode"
                 }
             },
             /** 任务信息 */

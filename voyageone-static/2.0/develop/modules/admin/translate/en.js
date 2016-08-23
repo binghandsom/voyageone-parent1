@@ -132,8 +132,12 @@ define(function () {
         "TXT_TYPE_INFO_MANAGEMENT": "类型信息管理",
         "TXT_TYPE_ATTRIBUTE_MANAGEMENT": "类型属性信息管理",
         "TXT_PROPERTY_UNIFIED_CONFIG": "属性统一配置管理",
-        "TXT_CONFIG_TYPE":"配置类别",
-        
+        "TXT_CONFIG_TYPE": "配置类别",
+        "TXT_CODE_ATTRIBUTE": "Code属性管理",
+        "TXT_CODE": "Code",
+        "TXT_CODE_NAME": "Code名",
+        "TXT_CODE_DESC": "Code描述",
+        "TXT_CODE_ID": "Code ID",
 
         /**按钮组*/
         "TXT_LOGOUT": "注销",
