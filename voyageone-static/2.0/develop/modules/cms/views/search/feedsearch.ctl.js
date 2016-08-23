@@ -237,12 +237,19 @@ define([
                         alert("没数据");
                         return null;
                     }
+
+                    $scope.vm.feedCats = _.filter($scope.vm.feedCats,function(item){
+                        return $scope.vm.searchInfo.category.indexOf(item.catPath) > -1;
+                    });
+
                     return popupNewCategory({
                         categories: res.data.categoryTree,
                         from:$scope.vm.searchInfo.category,
-                        divType:"-"
+                        divType:"-",
+                        anyNode:true
                     }).then(function (context) {
-                            $scope.vm.searchInfo.category = context.selected.catPath;
+                            $scope.vm.feedCats = context;
+                            $scope.vm.searchInfo.category = $scope.vm.searchInfo.catOpts = _.map(context,function(item){return item.catPath;});
                         }
                     );
                 });
