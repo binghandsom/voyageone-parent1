@@ -970,7 +970,7 @@ public class CmsFieldEditService extends BaseAppService {
     /**
      * 批量修改属性.(指导价变更批量确认)
      */
-    public Map<String, Object> confirmRatailPrice(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+    public Map<String, Object> confirmRetailPrice(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
         List<String> productCodes = (ArrayList<String>) params.get("productIds");
         Integer isSelAll = (Integer) params.get("isSelAll");
         if (isSelAll == null) {
@@ -1025,9 +1025,11 @@ public class CmsFieldEditService extends BaseAppService {
                 List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartIdVal).getSkus();
                 for (BaseMongoMap skuObj : skuList) {
                     Boolean isSaleFlg = (Boolean) skuObj.get("isSale");
-                    String cfmFlg = skuObj.getStringAttribute("confirmFlg");
-                    if ("0".equals(cfmFlg) && isSaleFlg) {
-                        skuObj.put("confirmFlg", "1");
+                    String chgFlg = StringUtils.trimToEmpty(skuObj.getStringAttribute("priceChgFlg"));
+                    if ((chgFlg.startsWith("U") || chgFlg.startsWith("D")) && isSaleFlg) {
+                        // 指导价有变更
+                        skuObj.put("priceChgFlg", "0");
+                        skuObj.put("confPriceRetail", skuObj.getDoubleAttribute("priceRetail"));
                         isUpdFlg = true;
                     }
                 }
@@ -1043,6 +1045,9 @@ public class CmsFieldEditService extends BaseAppService {
                     if (rs != null) {
                         $debug(String.format("指导价变更批量确认 channelId=%s 执行结果=%s", userInfo.getSelChannelId(), rs.toString()));
                     }
+
+                    // TODO--保存确认历史
+
                 }
             }
 
