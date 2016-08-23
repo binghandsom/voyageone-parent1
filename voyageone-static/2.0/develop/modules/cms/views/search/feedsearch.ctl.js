@@ -100,9 +100,6 @@ define([
             $scope.vm.searchInfo.pageNum = $scope.vm.feedPageOption.curr;
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;
 
-            //测试数组类型类目
-            $scope.vm.searchInfo.category = ['Bracelets-Anklets-No Stone','Bracelets-Bangles-Agate','Bracelets-Beads-Agate'];
-
             $feedSearchService.search($scope.vm.searchInfo).then(function (res) {
 
                 $scope.vm.currTab.group = true;
@@ -249,7 +246,7 @@ define([
                         anyNode:true
                     }).then(function (context) {
                             $scope.vm.feedCats = context;
-                            $scope.vm.searchInfo.category = $scope.vm.searchInfo.catOpts = _.map(context,function(item){return item.catPath;});
+                            $scope.vm.searchInfo.category = $scope.vm.catOpts = _.map(context,function(item){return item.catPath;});
                         }
                     );
                 });
