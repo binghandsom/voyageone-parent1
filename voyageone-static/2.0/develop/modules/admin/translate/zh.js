@@ -98,6 +98,8 @@ define(function () {
         "TXT_IS_DISPLAY": "显示标识",
         "TXT_TRACKING_IS_EXPAND": "物流展开标识",
         "TXT_APP_URL": "App URL",
+        "TXT_APP_KEY": "App KEY",
+        "TXT_APP_SECRET": "App Secret",
 
         /**仓库管理-信息一览*/
         "TXT_STORE_MANAGE": "仓库管理",

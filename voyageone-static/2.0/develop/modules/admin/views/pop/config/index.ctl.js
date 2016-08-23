@@ -5,13 +5,15 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('ConfigController', (function () {
-        function ConfigController(popups, context, confirm, channelService, storeService, AdminCartService, selectRowsFactory) {
+        function ConfigController(popups, context, confirm, channelService, storeService, taskService, AdminCartService, cartShopService, selectRowsFactory) {
             this.popups = popups;
             this.sourceData = context;
             this.confirm = confirm;
             this.channelService = channelService;
             this.storeService = storeService;
+            this.taskService = taskService;
             this.AdminCartService = AdminCartService;
+            this.cartShopService = cartShopService;
             this.selectRowsFactory = selectRowsFactory;
             this.configPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.configSelList = {selList: []};
@@ -20,6 +22,7 @@ define([
                 orderChannelId: this.sourceData ? this.sourceData.orderChannelId : "",
                 storeId: this.sourceData ? this.sourceData.storeId : "",
                 taskId: this.sourceData ? this.sourceData.taskId : "",
+                cartId: this.sourceData ? this.sourceData.cartId : "",
                 configType: this.sourceData.configType,
                 pageInfo: this.configPageOption,
                 cfgName: '',
@@ -43,6 +46,7 @@ define([
                     'orderChannelId': self.searchInfo.orderChannelId,
                     'storeId': self.searchInfo.storeId,
                     'taskId': self.searchInfo.taskId,
+                    'cartId': self.searchInfo.cartId,
                     'cfgName': self.searchInfo.cfgName,
                     'cfgVal': self.searchInfo.cfgVal
                 };
@@ -110,13 +114,14 @@ define([
                             return {
                                 "id": configInfo.mainKey,
                                 "code": configInfo.taskName,
-                                "taskId": configInfo.taskId,
+                                "orderChannelId": configInfo.orderChannelId,
+                                "cartId": configInfo.cartId,
                                 "cfgName": configInfo.cfgName,
                                 'cfgVal1': configInfo.cfgVal1,
                                 'cfgVal2': configInfo.cfgVal2
                             };
                         };
-                        self.taskService.searchTaskConfigByPage(data).then(function (res) {
+                        self.cartShopService.searchCartShopConfigByPage(data).then(function (res) {
                             callback(res, selectKey);
                         });
                         break;
@@ -146,6 +151,7 @@ define([
                     orderChannelId: "",
                     storeId: "",
                     taskId: "",
+                    cartId: "",
                     configType: self.sourceData.configType,
                     cfgName: '',
                     cfgVal: '',
@@ -156,6 +162,10 @@ define([
                 var self = this;
                 switch (self.searchInfo.configType) {
                     case 'Channel':
+                        if (item.orderChannelId == undefined) {
+                            self.confirm('请选择一个渠道！');
+                            return;
+                        }
                         self.list = _.filter(self.channelList, function (listItem) {
                             return listItem.orderChannelId == item.orderChannelId;
                         });
@@ -165,6 +175,10 @@ define([
                         });
                         break;
                     case 'Store':
+                        if (item.storeId == undefined) {
+                            self.confirm('请选择一个仓库！');
+                            return;
+                        }
                         self.list = _.filter(self.storeList, function (listItem) {
                             return listItem.storeId == item.storeId;
                         });
@@ -174,12 +188,36 @@ define([
                         });
                         break;
                     case 'Task':
+                        if (item.taskId == undefined) {
+                            self.confirm('请选择一个任务！');
+                            return;
+                        }
                         self.list = _.filter(self.taskList, function (listItem) {
                             return listItem.taskId == item.taskId;
                         });
                         _.extend(item, {'taskName': self.list[0].taskName, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search();
+                        });
+                        break;
+                    case 'Shop':
+                        if (item.orderChannelId == undefined || item.cartId == undefined) {
+                            self.confirm('请选择渠道和Cart！');
+                            return;
+                        }
+                        self.channelLlist = _.filter(self.channelAllList, function (listItem) {
+                            return listItem.orderChannelId == item.orderChannelId;
+                        });
+                        self.cartList = _.filter(self.cartAllList, function (listItem) {
+                            return listItem.cartId == item.cartId;
+                        });
+                        _.extend(item, {
+                            'channelName': self.channelLlist[0].name,
+                            'cartName': self.cartList[0].name,
+                            'configType': self.searchInfo.configType
+                        });
+                        self.popups.openCreateEdit(item).then(function (res) {
+                            if (res.res == 'success') self.search(1);
                         });
                         break;
                 }
@@ -208,19 +246,25 @@ define([
                         case 'Channel':
                             self.channelService.deleteChannelConfig(delList).then(function (res) {
                                 if (res.data.success == false)self.confirm(res.data.message);
-                                self.search();
+                                self.search(1);
                             });
                             break;
                         case 'Store':
                             self.storeService.deleteStoreConfig(delList).then(function (res) {
                                 if (res.data.success == false)self.confirm(res.data.message);
-                                self.search();
+                                self.search(1);
                             });
                             break;
                         case 'Task':
                             self.taskService.deleteTaskConfig(delList).then(function (res) {
                                 if (res.data.success == false)self.confirm(res.data.message);
-                                self.search();
+                                self.search(1);
+                            });
+                            break;
+                        case 'Shop':
+                            self.cartShopService.deleteCartShopConfig(delList).then(function (res) {
+                                if (res.data.success == false)self.confirm(res.data.message);
+                                self.search(1);
                             });
                             break;
                     }

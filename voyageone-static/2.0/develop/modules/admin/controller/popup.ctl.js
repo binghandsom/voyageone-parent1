@@ -58,6 +58,12 @@ define([
             "controller": 'CartAddController as ctrl',
             "size": 'md'
         },
+        "addCartChannelShop": {
+            "templateUrl": "views/pop/addCart/addChannelShop.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addCart/addChannelShop.ctl",
+            "controller": 'AddChannelShopController as ctrl',
+            "size": 'md'
+        },
         "addCartTracking": {
             "templateUrl": "views/pop/addCart/addTrackingInfo.tpl.html",
             "controllerUrl": "modules/admin/views/pop/addCart/addTrackingInfo.ctl",
@@ -136,6 +142,11 @@ define([
         $scope.openCartAdd = function openCartAdd(context) {
             return openModal(popActions.addCart, context);
         };
+
+        $scope.openCartChannelShop = function openCartChannelShop(context) {
+            return openModal(popActions.addCartChannelShop, context);
+        };
+
         $scope.openCartTrackingInfo = function openCartTrackingInfo(context) {
             return openModal(popActions.addCartTracking, context);
         };

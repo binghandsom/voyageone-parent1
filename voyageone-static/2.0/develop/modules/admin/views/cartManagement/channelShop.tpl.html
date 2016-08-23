@@ -62,7 +62,7 @@
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default" ng-click="ctrl.config('Shop')" ng-disabled="ctrl.cartShopSelList.selList.length > 1"><i class="fa fa-cog"></i>&nbsp;配置</button>
-                    <button class="btn btn-default" ng-click="openCartAdd('add')" ng-disabled="ctrl.cartShopSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                    <button class="btn btn-default" ng-click="openCartChannelShop('add')" ng-disabled="ctrl.cartShopSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
                     <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.cartShopSelList.selList.length <= 0||ctrl.cartShopSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
                     <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.cartShopSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                 </div>
@@ -99,11 +99,11 @@
                             <span class="fa fa-check"></span>
                         </label>
                     </td>
-                    <td class="text-center v-middle">{{list.cartId}}</td>
-                    <td class="text-left v-middle">{{list.name}}</td>
-                    <td class="text-left v-middle">{{list.shortName}}</td>
-                    <td class="text-center v-middle">{{list.description}}</td>
-                    <td class="text-center v-middle">{{ctrl.getCartType(list.cartType)}}</td>
+                    <td class="text-center v-middle">{{list.channelName}}</td>
+                    <td class="text-left v-middle">{{list.cartName}}</td>
+                    <td class="text-left v-middle">{{list.shopName}}</td>
+                    <td class="text-center v-middle">{{list.appUrl}}</td>
+                    <td class="text-center v-middle">{{list.comment}}</td>
                     <td class="text-center v-middle">{{list.active==true ? '启用':'禁用'}}</td>
                     <td class="text-left v-middle">{{list.modified}}</td>
                     <td class="text-center v-middle">{{list.modifier}}</td>

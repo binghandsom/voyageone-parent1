@@ -5,12 +5,13 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('CreateEditController', (function () {
-        function CreateEditController(context, $uibModalInstance, channelService, storeService, taskService) {
+        function CreateEditController(context, $uibModalInstance, channelService, storeService, taskService, cartShopService) {
             this.sourceData = context;
             this.$uibModalInstance = $uibModalInstance;
             this.channelService = channelService;
             this.storeService = storeService;
             this.taskService = taskService;
+            this.cartShopService = cartShopService;
             this.append = context.type == 'add' ? true : false;
             this.popType = '修改';
             this.configType = this.sourceData.configType;
@@ -29,6 +30,9 @@ define([
                         break;
                     case 'Task':
                         return self.type = "任务";
+                        break;
+                    case 'Shop':
+                        return self.type = "Cart";
                         break;
                 }
             },
@@ -74,6 +78,19 @@ define([
                             _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                             self.$uibModalInstance.close(result);
                         });
+                        break;
+                    case 'Shop':
+                        if (self.append == true) {
+                            self.cartShopService.addCartShopConfig(self.sourceData).then(function (res) {
+                                _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                                self.$uibModalInstance.close(result);
+                            })
+                        } else {
+                            self.cartShopService.updateCartShopConfig(self.sourceData).then(function (res) {
+                                _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                                self.$uibModalInstance.close(result);
+                            })
+                        }
                         break;
                 }
             }
