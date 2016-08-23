@@ -87,5 +87,11 @@
             <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
 
+        <table tableName="com_log" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+
     </context>
 </generatorConfiguration>

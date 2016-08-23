@@ -4,9 +4,12 @@ import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.security.dao.ComUserDao;
+import com.voyageone.security.model.ComUserModel;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.model.ComResourceModel;
+import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.service.impl.BaseService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Ethan Shi on 2016-08-17.
@@ -24,6 +28,12 @@ public class AdminResService extends BaseService {
 
     @Autowired
     ComResourceDao comResourceDao;
+
+    @Autowired
+    ComUserDao comUserDao;
+
+    @Autowired
+    AdminResourceDaoExt adminResourceDaoExt;
 
 
     /**
@@ -178,4 +188,48 @@ public class AdminResService extends BaseService {
             }
         }
     }
+
+    public Map<String, Object> showUserAuth(Integer userId) {
+        ComUserModel user = comUserDao.select(userId);
+        if (user == null) {
+            throw new BusinessException("用户不存在。");
+        }
+
+        Map<String, Object> result = new HashMap<>();
+
+
+        List<AdminResourceBean> resList = adminResourceDaoExt.selectResByUser(userId);
+        Set<Integer> resIds = resList.stream().map(AdminResourceBean::getId).collect(Collectors.toSet());
+
+        List<AdminResourceBean> allRes = searchRes(null);
+
+        allRes = markSelected(allRes, resIds);
+
+        Map<String, AdminResourceBean> treeMap = allRes.stream().collect(Collectors.toMap(AdminResourceBean::getResKey, (p) -> p));
+
+        result.put("treeMap", treeMap);
+        return result;
+    }
+
+    private List<AdminResourceBean>  markSelected(List<AdminResourceBean> allRes, Set<Integer> resIds) {
+        if (resIds == null || resIds.size() == 0)
+            return  allRes;
+
+        for (AdminResourceBean bean : allRes) {
+            if (resIds.contains(bean.getId())) {
+                bean.setSelected(1);
+            } else {
+                bean.setSelected(0);
+            }
+
+            if (bean.getChildren() != null && bean.getChildren().size() > 0) {
+                markSelected(bean.getChildren(), resIds);
+            }
+        }
+        return  allRes;
+    }
+
+
+
+
 }
