@@ -42,7 +42,7 @@ public class CodeService extends BaseService {
 			pageModel.setCount(codeDaoExt.selectCodeCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
-		// 查询任务信息
+		// 查询Code信息
 		pageModel.setResult(codeDaoExt.selectCodeByPage(params));
 		
 		return pageModel;

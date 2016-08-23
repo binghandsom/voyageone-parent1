@@ -55,7 +55,7 @@ public class CartService extends BaseService {
 			pageModel.setCount(cartDaoExt.selectCartCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
-		// 查询渠道信息
+		// 查询Cart信息
 		pageModel.setResult(cartDaoExt.selectCartByPage(params));
 		
 		return pageModel;

@@ -41,10 +41,10 @@ public class TypeController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索类型信息
-		PageModel<ComMtTypeModel> carrierConfigPage = typeService.searchTypeByPage(form.getId(), form.getName(),
+		PageModel<ComMtTypeModel> typePage = typeService.searchTypeByPage(form.getId(), form.getName(),
 				form.getComment(), form.getPageNum(), form.getPageSize());
 		
-		return success(carrierConfigPage);
+		return success(typePage);
 	}
 	
 	@RequestMapping(AdminUrlConstants.System.Type.ADD_TYPE)

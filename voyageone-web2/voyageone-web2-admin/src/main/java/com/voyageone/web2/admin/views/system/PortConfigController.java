@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +28,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 @RequestMapping(value = AdminUrlConstants.System.Port.ROOT, method = RequestMethod.POST)
 public class PortConfigController extends AdminController {
 	
+	@Autowired
 	private PortConfigService portConfigService;
 	
 	@RequestMapping(AdminUrlConstants.System.Port.SEARCH_PORT_CONFIG_BY_PAGE)
@@ -34,11 +36,11 @@ public class PortConfigController extends AdminController {
 		// 验证参数
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
-		// 检索Port信息
-		PageModel<TmPortConfigModel> cartPage = portConfigService.searchPortConfigByPage(form.getPort(),
+		// 检索港口信息
+		PageModel<TmPortConfigModel> portConfigPage = portConfigService.searchPortConfigByPage(form.getPort(),
 				form.getCfgName(), form.getCfgVal(), form.getPageNum(), form.getPageSize());
 		
-		return success(cartPage);
+		return success(portConfigPage);
 	}
 	
 	@RequestMapping(AdminUrlConstants.System.Port.ADD_PORT_CONFIG)
@@ -58,7 +60,7 @@ public class PortConfigController extends AdminController {
 		Preconditions.checkArgument(StringUtils.isNoneBlank(form.getCfgName()));
 		Preconditions.checkArgument(StringUtils.isNoneBlank(form.getCfgVal1()));
 
-		// 保存Port信息
+		// 保存港口信息
 		TmPortConfigModel model = new TmPortConfigModel();
 		BeanUtils.copyProperties(form, model);
 		portConfigService.addOrUpdatePortConfig(model, append);
@@ -70,7 +72,7 @@ public class PortConfigController extends AdminController {
 	public AjaxResponse deletePortConfig(@RequestBody Integer[] portIds) {
 		// 验证参数
 		Preconditions.checkArgument(ArrayUtils.isNotEmpty(portIds));
-		// 删除Port信息
+		// 删除港口信息
 		portConfigService.deletePortConfig(Arrays.asList(portIds));
 
 		return success(true);

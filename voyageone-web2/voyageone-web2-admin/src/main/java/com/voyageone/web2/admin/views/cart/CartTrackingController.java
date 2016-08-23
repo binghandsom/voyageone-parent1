@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,6 +29,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 @RequestMapping(value = AdminUrlConstants.Cart.Tracking.ROOT, method = RequestMethod.POST)
 public class CartTrackingController extends AdminController {
 	
+	@Autowired
 	private CartTrackingService cartTrackingService;
 	
 	@RequestMapping(AdminUrlConstants.Cart.Tracking.SEARCH_CART_TRACKING_BY_PAGE)
@@ -36,11 +38,11 @@ public class CartTrackingController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索Cart物流信息
-		PageModel<ComMtTrackingInfoConfigBean> cartPage = cartTrackingService.searchCartTrackingByPage(
+		PageModel<ComMtTrackingInfoConfigBean> cartTrackingPage = cartTrackingService.searchCartTrackingByPage(
 				form.getOrderChannelId(), form.getCartId(), form.getTrackingStatus(), form.getLocation(),
 				form.getPageNum(), form.getPageSize());
 		
-		return success(cartPage);
+		return success(cartTrackingPage);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Cart.Tracking.ADD_CART_TRACKING)

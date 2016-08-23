@@ -82,7 +82,7 @@ public class TypeService extends BaseService {
 		for (Integer typeId : typeIds) {
 			ComMtTypeModel model = new ComMtTypeModel();
 			model.setId(typeId);
-//			model.setActive(false);
+			model.setActive(false);
 			model.setModifier(username);
 			if (typeDao.update(model) <= 0) {
 				throw new BusinessException("保存类型信息失败");

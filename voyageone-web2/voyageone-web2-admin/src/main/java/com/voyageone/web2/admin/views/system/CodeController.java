@@ -36,10 +36,10 @@ public class CodeController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索Code信息
-		PageModel<TmCodeModel> cartPage = codeService.searchCodeByPage(form.getCode(), form.getName(), form.getDes(),
+		PageModel<TmCodeModel> codePage = codeService.searchCodeByPage(form.getCode(), form.getName(), form.getDes(),
 				form.getPageNum(), form.getPageSize());
 		
-		return success(cartPage);
+		return success(codePage);
 	}
 	
 	@RequestMapping(AdminUrlConstants.System.Code.ADD_CODE)

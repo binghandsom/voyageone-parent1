@@ -52,7 +52,7 @@ public class CartShopService extends BaseService {
 			pageModel.setCount(cartShopDaoExt.selectCartShopCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
-		// 查询渠道配置信息
+		// 查询Cart商店信息
 		pageModel.setResult(cartShopDaoExt.selectCartShopByPage(params));
 		
 		return pageModel;

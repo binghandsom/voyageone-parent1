@@ -38,10 +38,10 @@ public class ThirdPartyConfigController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索第三方配置信息
-		PageModel<ComMtThirdPartyConfigBean> smsConfigPage = thirdPartyConfigService.searchThirdPartyConfigByPage(
+		PageModel<ComMtThirdPartyConfigBean> thirdPartyPage = thirdPartyConfigService.searchThirdPartyConfigByPage(
 				form.getChannelId(), form.getPropName(), form.getPropVal(), form.getPageNum(), form.getPageSize());
 		
-		return success(smsConfigPage);
+		return success(thirdPartyPage);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.ThirdParty.ADD_THIRD_PARTY_CONFIG)

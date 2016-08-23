@@ -45,7 +45,7 @@ public class CarrierConfigService extends BaseService {
 			pageModel.setCount(carrierChannelDaoExt.selectCarrierConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
-		// 查询渠道属性信息
+		// 查询快递信息
 		pageModel.setResult(carrierChannelDaoExt.selectCarrierConfigByPage(params));
 		
 		return pageModel;

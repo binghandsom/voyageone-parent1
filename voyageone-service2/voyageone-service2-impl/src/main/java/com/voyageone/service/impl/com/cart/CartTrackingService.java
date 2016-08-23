@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
@@ -23,8 +24,10 @@ import com.voyageone.service.model.com.PageModel;
 @Service
 public class CartTrackingService extends BaseService {
 	
+	@Autowired
 	private ComMtTrackingInfoConfigDao cartTrackingDao;
 	
+	@Autowired
 	private ComMtTrackingInfoConfigDaoExt cartTrackingDaoExt;
 
 	public PageModel<ComMtTrackingInfoConfigBean> searchCartTrackingByPage(String channelId, Integer cartId,
@@ -41,7 +44,7 @@ public class CartTrackingService extends BaseService {
 			pageModel.setCount(cartTrackingDaoExt.selectCartTrackingCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
-		// 查询渠道信息
+		// 查询Catr物流信息
 		pageModel.setResult(cartTrackingDaoExt.selectCartTrackingByPage(params));
 		
 		return pageModel;
