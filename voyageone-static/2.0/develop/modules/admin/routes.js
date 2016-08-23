@@ -82,6 +82,12 @@ define(function () {
             "templateUrl": "views/systemManagement/propertyUnifiedCog.tpl.html",
             "controllerUrl": "modules/admin/views/systemManagement/propertyUnifiedCog.ctl",
             "controller": "UnifiedConfigController as ctrl"
+        },//系统配置-Code属性管理
+        "codeAttributeConfig": {
+            "hash": "/system/codeAttr",
+            "templateUrl": "views/systemManagement/codeAttr.tpl.html",
+            "controllerUrl": "modules/admin/views/systemManagement/codeAttr.ctl",
+            "controller": "CodeAttributeController as ctrl"
         }
     };
 });
