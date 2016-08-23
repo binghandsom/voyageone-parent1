@@ -323,6 +323,25 @@ public class SxProductService extends BaseService {
     }
 
     /**
+     * cms_bt_business_log对应的以前的错误清一下,即把status更新成1:已解决
+     *
+     * @param sxData 上新数据
+     * @param modifier 更新者
+     */
+    public void clearBusinessLog(SxData sxData, String modifier) {
+        CmsBtProductGroupModel productGroup = sxData.getPlatform();
+
+        // code，没有code就不要设置
+        String mainCode = "";
+        if (productGroup != null) mainCode = productGroup.getMainProductCode();
+
+        int effectCnt = businessLogService.updateFinishStatusByCondition(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()),
+                null, mainCode, modifier);
+        $debug("cms_bt_business_log表以前的错误信息逻辑删除件数：%d件 [ChannelId:%s] [CatId:%s] [GroupId:%s]",
+                effectCnt, sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId());
+    }
+
+    /**
      * 回写ims_bt_product表
      *
      * @param sxData 上新数据
@@ -3383,6 +3402,9 @@ public class SxProductService extends BaseService {
             return;
         }
 
+        // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
+        clearBusinessLog(sxData, modifier);
+
         // 上新成功时
         if (uploadStatus) {
             // 设置共通属性
@@ -3430,6 +3452,7 @@ public class SxProductService extends BaseService {
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
             this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.okNum,
                     StringUtils.isEmpty(workload.getModifier()) ? modifier : workload.getModifier());
+
         } else {
             // 上新失败后回写product表pPublishError的值("Error")
             productGroupService.updateUploadErrorStatus(sxData.getPlatform(), sxData.getErrorMessage());

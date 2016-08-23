@@ -1,9 +1,9 @@
-package com.voyageone.web2.vms.openapi.control;
+package com.voyageone.web2.openapi.vms.control;
 
-import com.voyageone.web2.cms.openapi.OpenAipCmsBaseController;
+import com.voyageone.web2.openapi.OpenApiBaseController;
+import com.voyageone.web2.openapi.vms.service.VmsOrderService;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
-import com.voyageone.web2.vms.openapi.service.VmsOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
         value  = "/rest/vms/order/",
         method = RequestMethod.POST
 )
-public class VmsOrderController extends OpenAipCmsBaseController {
+public class VmsOrderController extends OpenApiBaseController {
 
     @Autowired
     private VmsOrderService vmsOrderService;
