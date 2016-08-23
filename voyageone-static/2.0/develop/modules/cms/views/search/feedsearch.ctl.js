@@ -244,7 +244,7 @@ define([
 
                     return popupNewCategory({
                         categories: res.data.categoryTree,
-                        from:$scope.vm.searchInfo.category,
+                        from:$scope.vm.feedCats,
                         divType:"-",
                         anyNode:true
                     }).then(function (context) {
