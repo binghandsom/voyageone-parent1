@@ -66,17 +66,6 @@ define([
                             }
                         });
                         self.sysTypeAttrSelList = self.tempSelect.selectRowsInfo;
-
-                        // 设置cartName
-                        if (!self.systemList) return;
-                        for (var i = 0; i < self.systemList.length; i++) {
-                            var tempCartList = [];
-                            if (self.systemList[i].carts == null) return;
-                            self.systemList[i].carts.map(function (item) {
-                                tempCartList.push(item.name);
-                            });
-                            _.extend(self.systemList[i], {'cartName': tempCartList.join('/')});
-                        }
                     })
             },
             clear: function () {
@@ -112,7 +101,7 @@ define([
                         _.forEach(self.sysTypeAttrSelList.selList, function (delInfo) {
                             delList.push(delInfo.typeId);
                         });
-                        self.typeService.deleteType(delList).then(function (res) {
+                        self.typeAttrService.deleteTypeAttribute(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);
                             self.search(1);
                         })
