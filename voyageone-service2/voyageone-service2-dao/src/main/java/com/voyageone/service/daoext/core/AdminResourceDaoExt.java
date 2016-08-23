@@ -10,4 +10,6 @@ import java.util.List;
 public interface AdminResourceDaoExt {
     List<AdminResourceBean> selectResByUser(Integer userId);
 
+    List<AdminResourceBean> selectResByRoles(List<Integer> list);
+
 }

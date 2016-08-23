@@ -15,11 +15,15 @@
 
     <select id="selectResByRoles" resultMap="comResourceBeanMap" >
         SELECT id, res_name , res_key, res_type, parent_id, res_url, `level`, icon , active ,
-        description, created, creater, modified, modifier, application, channel_id, user_id, role_id
+        description, created, creater, modified, modifier, application, channel_id, COUNT (DISTINCT role_id) as cnt
         from view_user_res
         WHERE active = 1
-        AND role_id =  #{role_id}
-        GROUP BY res_key, role_id
+        AND
+        where `role_id` in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        GROUP BY res_key
     </select>
 
 
