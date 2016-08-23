@@ -1,37 +1,40 @@
 /**
- * Created by sofia on 2016/8/10.
+ * Created by sofia on 2016/8/23.
  */
 define([
-    'admin'
+    'admin',
+    'modules/admin/controller/popup.ctl'
 ], function (admin) {
-    admin.controller('ConfigController', (function () {
-        function ConfigController(popups, context, confirm, alert, channelService, storeService, taskService, AdminCartService, cartShopService, selectRowsFactory) {
+    admin.controller('UnifiedConfigController', (function () {
+        function UnifiedConfigController(popups, alert, confirm, alert, channelService, AdminCartService, storeService, taskService, typeAttrService, cartShopService, selectRowsFactory) {
             this.popups = popups;
-            this.sourceData = context;
+            this.alert = alert;
             this.confirm = confirm;
             this.alert = alert;
+            this.selectRowsFactory = selectRowsFactory;
             this.channelService = channelService;
+            this.AdminCartService = AdminCartService;
             this.storeService = storeService;
             this.taskService = taskService;
-            this.AdminCartService = AdminCartService;
+            this.typeAttrService = typeAttrService;
             this.cartShopService = cartShopService;
-            this.selectRowsFactory = selectRowsFactory;
             this.configPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
+            this.configSelList = [];
             this.configSelList = {selList: []};
-            this.tempConfigSelect = null;
+            this.tempSelect = null;
             this.searchInfo = {
-                orderChannelId: this.sourceData ? this.sourceData.orderChannelId : "",
-                storeId: this.sourceData ? this.sourceData.storeId : "",
-                taskId: this.sourceData ? this.sourceData.taskId : "",
-                cartId: this.sourceData ? this.sourceData.cartId : "",
-                configType: this.sourceData.configType,
                 pageInfo: this.configPageOption,
+                orderChannelId: "",
+                storeId: "",
+                taskId: "",
+                cartId: "",
+                configType: "",
                 cfgName: '',
                 cfgVal: ''
-            };
+            }
         }
 
-        ConfigController.prototype = {
+        UnifiedConfigController.prototype = {
             init: function () {
                 var self = this;
                 self.search(1);
@@ -153,7 +156,7 @@ define([
                     storeId: "",
                     taskId: "",
                     cartId: "",
-                    configType: self.sourceData.configType,
+                    configType: "",
                     cfgName: '',
                     cfgVal: '',
                     pageInfo: self.configPageOption
@@ -291,6 +294,6 @@ define([
                 }
             }
         };
-        return ConfigController;
+        return UnifiedConfigController;
     })())
 });

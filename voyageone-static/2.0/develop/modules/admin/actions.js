@@ -164,6 +164,14 @@ define(function () {
                     "startTask": "startTask",
                     "stopTask": "stopTask"
                 }
+            },
+            /** 港口信息 */
+            "port": {
+                "root": "/admin/system/port",
+                "searchPortConfigByPage": "searchPortConfigByPage",
+                "addPortConfig": "addPortConfig",
+                "updatePortConfig": "updatePortConfig",
+                "deletePortConfig": "deletePortConfig"
             }
         }
     };

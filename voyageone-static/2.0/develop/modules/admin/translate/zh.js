@@ -126,11 +126,13 @@ define(function () {
         "TXT_TASK_TIME": "任务频次",
 
         /**系统管理-信息一览*/
-        "TXT_SYSTEM_CONFIG":"系统配置管理",
-        "TXT_TYPE_ID":"类型ID",
-        "TXT_TYPE_NAME":"类型名",
-        "TXT_TYPE_INFO_MANAGEMENT":"类型信息管理",
-        "TXT_TYPE_ATTRIBUTE_MANAGEMENT":"类型属性信息管理",
+        "TXT_SYSTEM_CONFIG": "系统配置管理",
+        "TXT_TYPE_ID": "类型ID",
+        "TXT_TYPE_NAME": "类型名",
+        "TXT_TYPE_INFO_MANAGEMENT": "类型信息管理",
+        "TXT_TYPE_ATTRIBUTE_MANAGEMENT": "类型属性信息管理",
+        "TXT_PROPERTY_UNIFIED_CONFIG": "属性统一配置管理",
+        "TXT_CONFIG_TYPE":"配置类别",
 
 
         /**按钮组*/

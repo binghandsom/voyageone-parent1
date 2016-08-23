@@ -76,6 +76,12 @@ define(function () {
             "templateUrl": "views/systemManagement/typeAttribute.tpl.html",
             "controllerUrl": "modules/admin/views/systemManagement/typeAttribute.ctl",
             "controller": "TypeAttributeManagementController as ctrl"
+        },//系统配置-属性统一配置管理
+        "PropertyUnifiedConfig": {
+            "hash": "/system/unifiedConfig",
+            "templateUrl": "views/systemManagement/propertyUnifiedCog.tpl.html",
+            "controllerUrl": "modules/admin/views/systemManagement/propertyUnifiedCog.ctl",
+            "controller": "UnifiedConfigController as ctrl"
         }
     };
 });

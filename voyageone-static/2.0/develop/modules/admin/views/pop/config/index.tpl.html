@@ -82,8 +82,7 @@
                 <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                     <div class="form-group m-t-sm m-r-xs">
                         <button class="btn btn-default" ng-click="ctrl.add({'type':'add', 'orderChannelId': ctrl.searchInfo.orderChannelId,
-                         'storeId': ctrl.searchInfo.storeId, 'taskId': ctrl.searchInfo.taskId, 'cartId': ctrl.searchInfo.cartId})"
-                                ng-disabled="ctrl.configSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                         'storeId': ctrl.searchInfo.storeId, 'taskId': ctrl.searchInfo.taskId, 'cartId': ctrl.searchInfo.cartId})"><i class="fa fa-plus"></i>&nbsp;添加</button>
                         <button class="btn btn-default" ng-click="ctrl.edit()" ng-hide="ctrl.searchInfo.configType=='Task'"
                                 ng-disabled="ctrl.configSelList.selList.length < 1||ctrl.configSelList.selList.length > 1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
                         <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.configSelList.selList.length < 1"><i class="fa fa-trash"></i>&nbsp;删除</button>
