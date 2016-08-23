@@ -58,6 +58,11 @@ public class TypeService extends BaseService {
 		boolean success = false;
 		if (append) {
 			// 添加类型信息
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("name", model.getName());
+			if (typeDao.selectOne(params) != null) {
+				throw new BusinessException("名为[" + model.getName() + "]类型信息已存在");
+			}
 			model.setCreater(username);
 			model.setModifier(username);
 			success = typeDao.insert(model) > 0;
