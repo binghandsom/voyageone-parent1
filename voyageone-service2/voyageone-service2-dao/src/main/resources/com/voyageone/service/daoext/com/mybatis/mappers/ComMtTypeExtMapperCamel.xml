@@ -19,7 +19,7 @@
 	</sql>
 	
 	<select id="selectTypeByPage" resultMap="typeModelMap">
-		select id, name, comment, created, creater, modified, modifier from com_mt_type
+		select id, name, comment, created, creater, modified, modifier, active from com_mt_type
 		<include refid="selectTypeFilter"/>
 	</select>
 	

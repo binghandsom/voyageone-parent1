@@ -41,7 +41,8 @@
 	
 	<select id="selectCartShopByPage" resultMap="cartShopBeanMap">
 		select toc.name as channel_name, tcs.order_channel_id, tcs.cart_id, tcs.shop_name, tcs.app_url,
-			tcs.appKey, tcs.appSecret, tcs.sessionKey, tcs.`comment`, tcs.active, cc.name as cart_name
+			tcs.appKey, tcs.appSecret, tcs.sessionKey, tcs.`comment`, tcs.active, cc.name as cart_name,
+			tcs.created, tcs.creater, tcs.modified, tcs.modifier
 		from tm_channel_shop tcs left join tm_order_channel toc on toc.order_channel_id = tcs.order_channel_id
 			left join ct_cart cc on cc.cart_id = tcs.cart_id
 		<include refid="selectCartShopFilter"/>

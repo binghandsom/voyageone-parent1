@@ -25,14 +25,14 @@
 	
 	<select id="selectTypeAttributeByTypeName" resultMap="typeAttrModelMap">
 		select cmv.id, cmv.type_id, cmv.value, cmv.name, cmv.add_name1, cmv.add_name2, cmv.lang_id,
-			cmv.created, cmv.creater, cmv.modifier, cmv.modified
+			cmv.created, cmv.creater, cmv.modifier, cmv.modified, cmv.active
 		from com_mt_value cmv join com_mt_type cmt on cmt.id = cmv.type_id
 		where cmt.name = #{typeName}
 	</select>
 	
 	<select id="selectTypeAttributeByPage" resultMap="typeAttrBeanMap">
 		select cmv.id, cmv.type_id, cmv.value, cmv.name, cmv.add_name1, cmv.add_name2, cmv.lang_id,
-			cmv.created, cmv.creater, cmv.modifier, cmv.modified, cmt.name as type_name
+			cmv.created, cmv.creater, cmv.modifier, cmv.modified, cmt.name as type_name, cmv.active
 		from com_mt_value cmv left join com_mt_type cmt on cmt.id = cmv.type_id
 		<include refid="selectTypeAttributeFilter"/>
 	</select>

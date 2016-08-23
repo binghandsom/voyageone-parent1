@@ -25,7 +25,7 @@
 	
 	<select id="selectSmsConfigByPage" resultMap="smsConfigBeanMap">
 		select toc.name, tsc.seq, tsc.order_channel_id, tsc.sms_type, tsc.sms_code1, tsc.sms_code2,
-			tsc.content, tsc.`describe`, tsc.del_flg
+			tsc.content, tsc.`describe`, tsc.del_flg, tsc.active, tsc.created, tsc.creater, tsc.modified, tsc.modifier
 		from tm_sms_config tsc left join tm_order_channel toc on toc.order_channel_id = tsc.order_channel_id
 		<include refid="selectSmsConfigFilter"/>
 	</select>

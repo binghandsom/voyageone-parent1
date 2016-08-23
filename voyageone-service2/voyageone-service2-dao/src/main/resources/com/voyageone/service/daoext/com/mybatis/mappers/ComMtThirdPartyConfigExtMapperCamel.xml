@@ -28,7 +28,7 @@
 	<select id="selectThirdPartyConfigByPage" resultMap="thirdPartyConfigBeanMap">
 		select toc.name as channel_name, cmtpc.seq, cmtpc.channel_id, cmtpc.prop_name, cmtpc.prop_val1, cmtpc.prop_val2,
 			cmtpc.prop_val3, cmtpc.prop_val4, cmtpc.prop_val5, cmtpc.prop_val6, cmtpc.`comment`, cmtpc.creater,
-			cmtpc.created, cmtpc.modifier, cmtpc.modified, cmtpc.modified
+			cmtpc.created, cmtpc.modifier, cmtpc.modified, cmtpc.modified, cmtpc.active
 		from com_mt_third_party_config cmtpc left join tm_order_channel toc on toc.order_channel_id = cmtpc.channel_id
 		<include refid="selectThirdPartyConfigFilter"/>	
 	</select>

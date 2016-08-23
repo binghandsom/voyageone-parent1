@@ -13,7 +13,7 @@
                 and cmtic.cart_id = #{cartId}
             </if>
 			<if test="trackingStatus != null and trackingStatus != ''">
-				and cmtic.display_status like concat('', #{trackingStatus}, '')
+				and cmtic.tracking_status like concat('', #{trackingStatus}, '')
 			</if>
             <if test="location != null and location != ''" >
                 and cmtic.location like concat('', #{location}, '')

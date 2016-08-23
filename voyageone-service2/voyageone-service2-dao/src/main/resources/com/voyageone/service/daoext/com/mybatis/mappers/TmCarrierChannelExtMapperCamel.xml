@@ -21,7 +21,7 @@
 	<select id="selectCarrierConfigByPage" resultMap="carrierModelMap">
 		select toc.name as channel_name, tcc.order_channel_id, tcc.carrier, tcc.api_key, tcc.api_user, tcc.api_pwd,
 			tcc.card_number, tcc.cusite, tcc.cusname, tcc.customer, tcc.useKd100_flg, tcc.allow_delete_flg,
-			tcc.wsdl_url, tcc.comments
+			tcc.wsdl_url, tcc.comments, tcc.active, tcc.created, tcc.creater, tcc.modified, tcc.modifier
 		from tm_carrier_channel tcc left join tm_order_channel toc on toc.order_channel_id = tcc.order_channel_id
 		<include refid="selectCarrierConfigFilter"/>
 	</select>

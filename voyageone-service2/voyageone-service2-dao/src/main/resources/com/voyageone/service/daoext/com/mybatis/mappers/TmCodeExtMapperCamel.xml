@@ -19,7 +19,7 @@
 	</sql>
 	
 	<select id="selectCodeByPage" resultMap="codeModelMap">
-		select id, code, name, name1, des from tm_code
+		select id, code, name, name1, des, active, created, creater, modified, modifier from tm_code
 		<include refid="selectCodeFilter"/>
 	</select>
 	
