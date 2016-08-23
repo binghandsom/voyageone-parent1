@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.tools;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformMappingDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -56,37 +57,51 @@ public class PlatformMappingService extends BaseService {
                 platformMappingModel.getCategoryPath(), channelId);
     }
 
-    public boolean saveMap(CmsBtPlatformMappingModel fieldMapsModel) {
+    public boolean saveMap(CmsBtPlatformMappingModel fieldMapsModel, String modified) {
 
-        WriteResult writeResult;
+        if (platformMappingDao.exists(fieldMapsModel)) {
 
-        if (platformMappingDao.exists(fieldMapsModel))
-            writeResult = platformMappingDao.update(fieldMapsModel);
-        else
-            writeResult = platformMappingDao.insert(fieldMapsModel);
+            String lastModified = platformMappingDao.selectModified(fieldMapsModel);
 
-        return writeResult.getN() > 0;
+            if (!lastModified.equals(modified))
+                return false;
+
+            platformMappingDao.update(fieldMapsModel);
+        } else {
+            platformMappingDao.insert(fieldMapsModel);
+        }
+
+        return true;
     }
 
     public Map<String, Object> getValueMap(String channelId, Long productId, int cartId) {
+        return getValueMap(channelId, productId, cartId, null);
+    }
+
+    public Map<String, Object> getValueMap(String channelId, Long productId, int cartId, String categoryPath) {
 
         // 查询需要用到的平台类目也在商品中获取
 
         CmsBtProductModel product = productService.getProductById(channelId, productId);
 
-        CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
+        if (StringUtils.isEmpty(categoryPath)) {
+            CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
+            categoryPath = cart.getpCatPath();
+        }
 
-        CmsBtPlatformMappingModel fieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, cart.getpCatPath(), channelId);
+        CmsBtPlatformMappingModel fieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, categoryPath, channelId);
 
         CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectCommon(cartId, channelId);
 
         Map<String, Object> valueMap = new HashMap<>();
 
-        if (fieldMapsModel != null)
-            fillValueMap(valueMap, product, fieldMapsModel);
+        ValueMapFiller filler = new ValueMapFiller(product);
 
         if (commonFieldMapsModel != null)
-            fillValueMap(valueMap, product, commonFieldMapsModel);
+            fillValueMap(valueMap, filler, commonFieldMapsModel);
+
+        if (fieldMapsModel != null)
+            fillValueMap(valueMap, filler, fieldMapsModel);
 
         return valueMap;
     }
@@ -106,67 +121,92 @@ public class PlatformMappingService extends BaseService {
         return writeResult.getN() > 0;
     }
 
-    private void fillValueMap(Map<String, Object> valueMap, CmsBtProductModel product, CmsBtPlatformMappingModel fieldMapsModel) {
+    private void fillValueMap(Map<String, Object> valueMap, ValueMapFiller filler, CmsBtPlatformMappingModel fieldMapsModel) {
 
-        // 循环所有配置
-        // 如果没有表达式配置, 就简单的使用 value 作为值
-        // 如果有表达式配置, 需要循环表达式, 根据配置类型去商品获取值进行拼接
+        Map<String, CmsBtPlatformMappingModel.FieldMapping> mappingMap = fieldMapsModel.getMappings();
 
-        List<CmsBtPlatformMappingModel.FieldMapping> mappingList = fieldMapsModel.getMappings();
-
-        if (mappingList == null || mappingList.isEmpty())
+        if (mappingMap == null || mappingMap.isEmpty())
             return;
 
-        // 当映射里有 Master / Feed 时, 需要使用商品信息
+        filler.fillValueMap(valueMap, mappingMap);
+    }
 
-        CmsBtProductModel_Feed feed = product.getFeed();
+    private class ValueMapFiller {
 
-        BaseMongoMap<String, Object> cnAtts = feed.getCnAtts();
+        private BaseMongoMap<String, Object> cnAtts;
 
-        BaseMongoMap<String, Object> orgAtts = feed.getOrgAtts();
+        private BaseMongoMap<String, Object> orgAtts;
 
-        CmsBtProductModel_Common common = product.getCommon();
+        private CmsBtProductModel_Field master;
 
-        CmsBtProductModel_Field master = common.getFields();
+        ValueMapFiller(CmsBtProductModel product) {
+            CmsBtProductModel_Feed feed = product.getFeed();
+            CmsBtProductModel_Common common = product.getCommon();
+            this.cnAtts = feed.getCnAtts();
+            this.orgAtts = feed.getOrgAtts();
+            this.master = common.getFields();
+        }
 
-        for (CmsBtPlatformMappingModel.FieldMapping mapping : mappingList) {
+        private void fillValueMap(Map<String, Object> valueMap, Map<String, CmsBtPlatformMappingModel.FieldMapping> mappingMap) {
 
-            List<CmsBtPlatformMappingModel.FieldMappingExpression> expressionList = mapping.getExpressions();
+            // 循环所有配置
+            // 如果没有表达式配置, 就简单的使用 value 作为值
+            // 如果有表达式配置, 需要循环表达式, 根据配置类型去商品获取值进行拼接
 
-            if (expressionList == null) {
-                valueMap.put(mapping.getFieldId(), mapping.getValue());
-                continue;
-            }
+            for (CmsBtPlatformMappingModel.FieldMapping mapping : mappingMap.values()) {
 
-            StringBuilder valueBuilder = new StringBuilder();
+                Map<String, CmsBtPlatformMappingModel.FieldMapping> childrenMapping = mapping.getChildren();
 
-            for (CmsBtPlatformMappingModel.FieldMappingExpression expression : expressionList) {
+                // 先看当前这个 mapping 有没有子字段匹配
+                // 有的话, 说明是 complex
+                // 那么整一个嵌套的 map 即可
+                if (childrenMapping != null && !childrenMapping.isEmpty()) {
 
-                String key = expression.getValue();
+                    Map<String, Object> childrenValue = new HashMap<>();
 
-                switch (expression.getType()) {
+                    fillValueMap(childrenValue, childrenMapping);
 
-                    case EXPRESSION_TYPE_FEED_CN:
-                        valueBuilder.append(String.valueOf(cnAtts.get(key)));
-                        break;
-
-                    case EXPRESSION_TYPE_FEED_ORG:
-                        valueBuilder.append(String.valueOf(orgAtts.get(key)));
-                        break;
-
-                    case EXPRESSION_TYPE_MASTER:
-                        valueBuilder.append(master.getStringAttribute(key));
-                        break;
-
-                    default:
-                        valueBuilder.append(expression.getValue());
-                        break;
+                    valueMap.put(mapping.getFieldId(), childrenValue);
+                    continue;
                 }
 
-                valueBuilder.append(expression.getAppend());
-            }
+                List<CmsBtPlatformMappingModel.FieldMappingExpression> expressionList = mapping.getExpressions();
 
-            valueMap.put(mapping.getFieldId(), valueBuilder.toString());
+                if (expressionList == null) {
+                    valueMap.put(mapping.getFieldId(), mapping.getValue());
+                    continue;
+                }
+
+                StringBuilder valueBuilder = new StringBuilder();
+
+                for (CmsBtPlatformMappingModel.FieldMappingExpression expression : expressionList) {
+
+                    String key = expression.getValue();
+
+                    switch (expression.getType()) {
+
+                        case EXPRESSION_TYPE_FEED_CN:
+                            valueBuilder.append(String.valueOf(cnAtts.get(key)));
+                            break;
+
+                        case EXPRESSION_TYPE_FEED_ORG:
+                            valueBuilder.append(String.valueOf(orgAtts.get(key)));
+                            break;
+
+                        case EXPRESSION_TYPE_MASTER:
+                            valueBuilder.append(master.getStringAttribute(key));
+                            break;
+
+                        default:
+                            valueBuilder.append(expression.getValue());
+                            break;
+                    }
+
+                    valueBuilder.append(expression.getAppend());
+                }
+
+                valueMap.put(mapping.getFieldId(), valueBuilder.toString());
+            }
         }
     }
 }
