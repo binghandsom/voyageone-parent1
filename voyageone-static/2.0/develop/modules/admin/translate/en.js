@@ -98,6 +98,8 @@ define(function () {
         "TXT_IS_DISPLAY": "显示标识",
         "TXT_TRACKING_IS_EXPAND": "物流展开标识",
         "TXT_APP_URL": "App URL",
+        "TXT_APP_KEY": "App KEY",
+        "TXT_APP_SECRET": "App Secret",
 
         /**仓库管理-信息一览*/
         "TXT_STORE_MANAGE": "仓库管理",
@@ -123,11 +125,12 @@ define(function () {
         "TXT_TASK_COMMENT": "任务备注",
         "TXT_TASK_TIME": "任务频次",
 
-        /**task管理-信息一览*/
+        /**系统管理-信息一览*/
         "TXT_SYSTEM_CONFIG":"系统配置管理",
         "TXT_TYPE_ID":"类型ID",
         "TXT_TYPE_NAME":"类型名",
         "TXT_TYPE_INFO_MANAGEMENT":"类型信息管理",
+        "TXT_TYPE_ATTRIBUTE_MANAGEMENT":"类型属性信息管理",
 
 
         /**按钮组*/

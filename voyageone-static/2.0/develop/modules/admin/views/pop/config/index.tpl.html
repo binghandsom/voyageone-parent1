@@ -82,7 +82,7 @@
                 <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                     <div class="form-group m-t-sm m-r-xs">
                         <button class="btn btn-default" ng-click="ctrl.add({'type':'add', 'orderChannelId': ctrl.searchInfo.orderChannelId,
-                         'storeId': ctrl.searchInfo.storeId, 'taskId': ctrl.searchInfo.taskId})"
+                         'storeId': ctrl.searchInfo.storeId, 'taskId': ctrl.searchInfo.taskId, 'cartId': ctrl.searchInfo.cartId})"
                                 ng-disabled="ctrl.configSelList.selList.length > 0"><i class="fa fa-plus"></i>&nbsp;添加</button>
                         <button class="btn btn-default" ng-click="ctrl.edit()" ng-hide="ctrl.searchInfo.configType=='Task'"
                                 ng-disabled="ctrl.configSelList.selList.length < 1||ctrl.configSelList.selList.length > 1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
@@ -99,6 +99,7 @@
                                     <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                 </label>
                             </th>
+                            <th class="text-center mfb-xt" ng-if="ctrl.searchInfo.configType=='Shop'" translate="TXT_CART_CHANNEL_NAME"></th>
                             <th class="text-center mfb-xt">{{ctrl.getConfigType(ctrl.searchInfo.configType)}}名</th>
                             <th class="text-left mfb-xxt" translate="TXT_PROPERTY_NAME"></th>
                             <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}1</th>
@@ -119,7 +120,9 @@
                                 <span class="fa fa-check"></span>
                             </label>
                         </td>
-                        <td class="text-center v-middle">{{list.channelName||list.storeName||list.taskName}}</td>
+                        <td class="text-center v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.channelName}}</td>
+                        <td class="text-center v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.cartName}}</td>
+                        <td class="text-center v-middle"ng-if="ctrl.searchInfo.configType!=='Shop'">{{list.channelName||list.storeName||list.taskName}}</td>
                         <td class="text-left v-middle">{{list.cfgName}}</td>
                         <td class="text-left v-middle" style="overflow: auto;max-width: 116px;">{{list.cfgVal1}}</td>
                         <td class="text-center v-middle" style="overflow: auto;max-width: 116px;">{{list.cfgVal2}}</td>

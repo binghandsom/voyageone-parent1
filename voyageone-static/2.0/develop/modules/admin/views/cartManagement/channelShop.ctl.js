@@ -63,7 +63,8 @@ define([
                             if (Info.updFlg != 8) {
                                 self.tempSelect.currPageRows({
                                     "id": Info.cartId,
-                                    "code": Info.name
+                                    "code": Info.name,
+                                    "orderChannelId": Info.orderChannelId
                                 });
                             }
                         });
@@ -102,7 +103,7 @@ define([
                 } else {
                     _.forEach(self.cartList, function (Info) {
                         if (Info.cartId == self.cartShopSelList.selList[0].id) {
-                            self.popups.openCartAdd(Info).then(function () {
+                            self.popups.openCartChannelShop(Info).then(function () {
                                 self.search(1);
                             });
                         }
@@ -115,9 +116,9 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.cartShopSelList.selList, function (delInfo) {
-                            delList.push(delInfo.id);
+                            delList.push({'cartId': delInfo.id, 'orderChannelId': delInfo.orderChannelId});
                         });
-                        self.AdminCartService.deleteCart(delList).then(function (res) {
+                        self.cartShopService.deleteCartShop(delList).then(function (res) {
                             self.search();
                         })
                     }

@@ -1,21 +1,24 @@
 /**
- * Created by sofia on 2016/8/10.
+ * Created by sofia on 2016/8/23.
  */
 define([
     'admin'
 ], function (admin) {
-    admin.controller('AddTypeController', (function () {
-        function AddTypeController(context, AdminCartService, typeService, $uibModalInstance) {
+    admin.controller('AddChannelShopController', (function () {
+        function AddChannelShopController(context, channelService, popups, AdminCartService, cartShopService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
+            this.popups = popups;
+            this.channelService = channelService;
             this.AdminCartService = AdminCartService;
-            this.typeService = typeService;
+            this.cartShopService = cartShopService;
             this.popType = '编辑';
             this.companyId = this.sourceData.companyId;
-            this.$uibModalInstance = $uibModalInstance;
+            this.$uibModalInstance = $uibModalInstance
+
         }
 
-        AddTypeController.prototype = {
+        AddChannelShopController.prototype = {
             init: function () {
                 var self = this;
                 if (self.sourceData == 'add') {
@@ -23,8 +26,11 @@ define([
                     self.sourceData = {}
                 }
                 self.sourceData.active = self.sourceData.active ? "1" : "0";
-                self.AdminCartService.getAllPlatform().then(function (res) {
-                    self.platformAllList = res.data;
+                self.channelService.getAllChannel().then(function (res) {
+                    self.channelAllList = res.data;
+                });
+                self.AdminCartService.getAllCart().then(function (res) {
+                    self.cartAllList = res.data;
                 });
             },
             cancel: function () {
@@ -35,26 +41,18 @@ define([
                 var result = {};
                 self.sourceData.active = self.sourceData.active == '1' ? true : false;
                 if (self.append == true) {
-                    self.typeService.addType(self.sourceData).then(function (res) {
-                        if (res.data == false) {
-                            self.confirm(res.data.message);
-                            return;
-                        }
-                        _.extend(result, {'res': res.data, 'sourceData': self.sourceData});
+                    self.cartShopService.addCartShop(self.sourceData).then(function (res) {
+                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.typeService.updateType(self.sourceData).then(function (res) {
-                        if (res.data == false) {
-                            self.confirm(res.data.message);
-                            return;
-                        }
-                        _.extend(result, {'res': res.data, 'sourceData': self.sourceData});
+                    self.cartShopService.updateCartShop(self.sourceData).then(function (res) {
+                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
                 }
             }
         };
-        return AddTypeController;
+        return AddChannelShopController;
     })())
 });
