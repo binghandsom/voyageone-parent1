@@ -12,10 +12,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 @Aspect
 @Component
@@ -35,43 +33,36 @@ public class LoggingHandler {
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
 
         long start = System.currentTimeMillis();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String ip = request.getRemoteAddr();
+        String url = request.getRequestURI();
+        String application = "admin";
+        String user = "admin";
+        Object[] arguments = joinPoint.getArgs();
+        String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
+        String methodName = joinPoint.getSignature().getName();
+        String clsAndMethod =  className + "." + methodName;
+        Map<String, Object> map = new HashMap<>();
+        map.put("application", application);
+        map.put("ip", ip);
+        map.put("url", url);
+        map.put("action", clsAndMethod);
+        map.put("request", arguments);
+        map.put("creater", user);
         try {
-            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-            HttpSession session = request.getSession();
-
-            String user = "admin";
-
-
-            Object[] arguments = joinPoint.getArgs();
-
-
-            String ip = request.getRemoteAddr();
-            String url = request.getRequestURI();
-            String application = "admin";
-
-            String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
-            String methodName = joinPoint.getSignature().getName();
-
-            String clsAndMethod =  className + "." + methodName;
+//            HttpSession session = request.getSession();
             Object result = joinPoint.proceed();
             long elapsedTime = System.currentTimeMillis() - start;
-
-            Map<String, Object> map = new HashMap<>();
-            map.put("application", application);
-            map.put("ip", ip);
-            map.put("url", url);
-            map.put("action", clsAndMethod);
-            map.put("request", arguments);
             map.put("response", result);
             map.put("executionTime", elapsedTime);
-            map.put("creater", user);
 
             log.info(JacksonUtil.bean2Json(map));
 
             return result;
-        } catch (IllegalArgumentException e) {
-//            log.error("Illegal argument " + Arrays.toString(joinPoint.getArgs()) + " in "
-//                    + joinPoint.getSignature().getName() + "()");
+        } catch (Exception e) {
+            map.put("response", e.getStackTrace());
+            map.put("executionTime", 0);
+            log.error(JacksonUtil.bean2Json(map));
             throw e;
         }
     }
