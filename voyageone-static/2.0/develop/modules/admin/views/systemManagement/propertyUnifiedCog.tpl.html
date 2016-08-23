@@ -114,7 +114,10 @@
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default"  ng-click="ctrl.add({'type':'add', 'orderChannelId': ctrl.searchInfo.orderChannelId,
                          'storeId': ctrl.searchInfo.storeId, 'taskId': ctrl.searchInfo.taskId, 'cartId': ctrl.searchInfo.cartId})"><i class="fa fa-plus"></i>&nbsp;添加</button>
-                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.configSelList.selList.length <= 0||ctrl.configSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-if="ctrl.searchInfo.configType!=='Task'"
+                            ng-disabled="ctrl.configSelList.selList.length <= 0||ctrl.configSelList.selList.length>1"><i
+                            class="fa fa-pencil"></i>&nbsp;修改
+                    </button>
                     <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.configSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;删除</button>
                 </div>
             </div>
