@@ -528,10 +528,7 @@ define([
                         if (data.skus[idx].priceChgFlg) {
                             var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
                             var downFlg = data.skus[idx].priceChgFlg.indexOf('D');
-                            var cssTxt = "";
-                            if (data.skus[idx].confirmFlg == '0') {
-                                cssTxt = 'class="text-u-red font-bold"';
-                            }
+                            var cssTxt = 'class="text-u-red font-bold"';
                             if (upFlg == 0) {
                                 // 涨价
                                 priceItem += '<label ' + cssTxt + '>&nbsp;(↑' + data.skus[idx].priceChgFlg.substring(upFlg + 1) + ')</label>'
@@ -598,9 +595,8 @@ define([
                         if (data.skus[idx].priceChgFlg) {
                             var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
                             var downFlg = data.skus[idx].priceChgFlg.indexOf('D');
-                            if (data.skus[idx].confirmFlg == '0') {
-                                fstLine.cssTxt = 'text-u-red font-bold';
-                            }
+
+                            fstLine.cssTxt = 'text-u-red font-bold';
                             if (upFlg == 0) {
                                 // 涨价
                                 fstLine.pTxt = '(↑' + data.skus[idx].priceChgFlg.substring(upFlg + 1) + ')'
