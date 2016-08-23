@@ -35,6 +35,7 @@ public class CartShopService extends BaseService {
 	@Autowired
 	private TmChannelShopDaoExt cartShopDaoExt;
 	
+	@Autowired
 	private TmChannelShopConfigDao cartShopConfigDao;
 
 	public PageModel<TmChannelShopBean> searchCartShopByPage(String channelId, Integer cartId, String shopName,

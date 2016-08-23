@@ -38,7 +38,7 @@
 		</where>
 	</sql>
 	
-	<select id="selectTask" resultMap="taskCtrlModelMap">
+	<select id="selectTaskConfig" resultMap="taskCtrlModelMap">
 		select task_id, cfg_name, cfg_val1, cfg_val2, end_time, comment
 		from tm_task_control
 		<where>

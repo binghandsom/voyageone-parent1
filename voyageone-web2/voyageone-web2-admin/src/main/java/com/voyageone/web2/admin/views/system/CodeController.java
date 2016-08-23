@@ -76,7 +76,7 @@ public class CodeController extends AdminController {
 			BeanUtils.copyProperties(form, codeKey);
 			codeKeys.add(codeKey);
 		}
-		// 删除Cart信息
+		// 删除Code信息
 		codeService.deleteCode(codeKeys, getUser().getUserName());
 
 		return success(true);

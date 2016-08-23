@@ -35,7 +35,7 @@ public class TaskService extends BaseService {
 	
 	private static final String TASK_ATTR_EMPTY_VALUE = "";
 	
-	private static final String DEFAULT_TASK_COMMENT = "Run flag of task.";
+	private static final String DEFAULT_TASK_COMMENT = "Run flag of task";
 	
 	private static final String DEFAULT_TASK_TYPE_NAME = "SchedulingTask";
 	
@@ -91,7 +91,7 @@ public class TaskService extends BaseService {
 			newTaskCtrl.setCfgVal2(TASK_ATTR_EMPTY_VALUE);
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("taskName", taskModel.getTaskName());
-			if (taskDaoExt.selectTask(params) != null) {
+			if (taskDao.selectOne(params) != null) {
 				throw new BusinessException("存在同名的任务名[" + taskModel.getTaskName() + "]");
 			}
 			taskModel.setCreater(username);
@@ -109,7 +109,7 @@ public class TaskService extends BaseService {
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put("taskId", taskModel.getTaskName());
 				params.put("cfgName", RUN_FLG_NAME);
-				TmTaskControlModel taskCtrl = taskDaoExt.selectTask(params);
+				TmTaskControlModel taskCtrl = taskDaoExt.selectTaskConfig(params);
 				if (taskCtrl != null) {
 					newTaskCtrl.setCfgVal2(taskCtrl.getCfgVal2());
 					newTaskCtrl.setComment(taskCtrl.getComment());
@@ -210,7 +210,7 @@ public class TaskService extends BaseService {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("taskId", taskName);
 		params.put("cfgName", RUN_FLG_NAME);
-		TmTaskControlModel taskCtrl = taskDaoExt.selectTask(params);
+		TmTaskControlModel taskCtrl = taskDaoExt.selectTaskConfig(params);
 		// 删除任务运行属性值
 		if (taskCtrlDao.delete(taskCtrl) <= 0) {
 			throw new BusinessException("删除任务的运行属性失败");

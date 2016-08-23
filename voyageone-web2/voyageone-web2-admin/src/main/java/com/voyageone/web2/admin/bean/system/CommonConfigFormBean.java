@@ -7,6 +7,8 @@ import com.voyageone.web2.admin.bean.AdminFormBean;
  * @since 2.0.0 2016/8/10
  */
 public class CommonConfigFormBean extends AdminFormBean {
+	
+	private Integer seq;
 
 	private String orderChannelId;
 	
@@ -27,6 +29,14 @@ public class CommonConfigFormBean extends AdminFormBean {
 	private String cfgVal;
 	
 	private String comment;
+	
+	public Integer getSeq() {
+		return seq;
+	}
+
+	public void setSeq(Integer seq) {
+		this.seq = seq;
+	}
 
 	public String getOrderChannelId() {
 		return orderChannelId;

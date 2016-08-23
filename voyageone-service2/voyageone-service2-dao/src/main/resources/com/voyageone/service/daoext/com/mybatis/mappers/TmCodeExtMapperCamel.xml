@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.com.TmCodeDaoExt">
+
+	<resultMap id="codeModelMap" type="com.voyageone.service.model.com.TmCodeModel" />
+	
+	<sql id="selectCodeFilter">
+		<where>
+			<if test="code != null and code != ''">
+				code like concat('%', #{code}, '%')
+			</if>
+			<if test="name != null and name != ''">
+				name like concat('%', #{name}, '%')
+			</if>
+			<if test="des != null and des != ''">
+				des like concat('%', #{des}, '%')
+			</if>
+		</where>
+	</sql>
+	
+	<select id="selectCodeByPage" resultMap="codeModelMap">
+		select id, code, name, name1, des from tm_code
+		<include refid="selectCodeFilter"/>
+	</select>
+	
+	<select id="selectCodeCount" resultType="integer">
+		select count(0) from tm_code
+		<include refid="selectCodeFilter"/>
+	</select>
+
+</mapper>

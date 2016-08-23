@@ -16,6 +16,8 @@ public class TmCodeModel extends TmCodeKey {
     protected String name1;
 
     protected String des;
+    
+    protected Boolean active;
 
     public String getName() {
         return name;
@@ -40,4 +42,13 @@ public class TmCodeModel extends TmCodeKey {
     public void setDes(String des) {
         this.des = des == null ? null : des.trim();
     }
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+    
 }

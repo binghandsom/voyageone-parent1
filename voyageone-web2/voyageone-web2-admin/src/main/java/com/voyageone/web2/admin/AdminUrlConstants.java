@@ -260,6 +260,7 @@ public interface AdminUrlConstants {
 			
 		}
 		
+		/** Code信息 */
 		interface Code {
 			
 			String ROOT = "/admin/system/code";
@@ -271,6 +272,21 @@ public interface AdminUrlConstants {
 			String UPDATE_CODE = "updateCode";
 
 			String DELETE_CODE = "deleteCode";
+			
+		}
+		
+		/** 港口信息 */
+		interface Port {
+			
+			String ROOT = "/admin/system/port";
+			
+			String SEARCH_PORT_CONFIG_BY_PAGE = "searchPortConfigByPage";
+
+			String ADD_PORT_CONFIG = "addPortConfig";
+
+			String UPDATE_PORT_CONFIG = "updatePortConfig";
+
+			String DELETE_PORT_CONFIG = "deletePortConfig";
 			
 		}
 		

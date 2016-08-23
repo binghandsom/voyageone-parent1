@@ -24,6 +24,6 @@ public interface ComMtTaskDaoExt {
 
 	List<ComMtTaskBean> selectTypeByPage(Map<String, Object> params);
 
-	TmTaskControlModel selectTask(Map<String, Object> params);
+	TmTaskControlModel selectTaskConfig(Map<String, Object> params);
 
 }
