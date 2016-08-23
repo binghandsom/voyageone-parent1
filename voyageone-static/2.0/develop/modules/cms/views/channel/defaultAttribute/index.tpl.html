@@ -1,130 +1,92 @@
-<div class="wrapper-md" ng-init="ctrl.init()">
-    <div class="vo_accordion vo_attr">
-        <div class="panel-group">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_DEFAULT_MAPPING_LIST' | translate}} </h4>
-                </div>
-                <div class="container-fluid m-t-xs m-b-xs">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label" translate="TXT_CART_NAME"></label>
-                                    <div class="col-sm-7">
-                                        <select  class="form-control" ng-model="ctrl.searchInfo.cartId" ng-options="option.value as option.name for option in ctrl.platformTypes">
-                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-8">
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <div class="form-horizontal">
-                                        <div class="form-group">
-                                            <label class="col-sm-4 control-label" translate="TXT_PLATFORM_CATEGORY"></label>
-                                            <div class="col-sm-8">
-                                                <div class="row">
-                                                    <label class="checkbox-inline c-radio">
-                                                        <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType" ng-click="ctrl.switchType()"><span class="fa fa-check"></span> 全类目
-                                                    </label>&emsp;
-                                                    <label class="checkbox-inline c-radio">
-                                                        <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType" ng-click="ctrl.switchType()"><span class="fa fa-check"></span> 选择类目
-                                                    </label>
-                                                    <label class="checkbox-inline c-radio">
-                                                        <input name="category" type="radio" value="3" ng-model="ctrl.searchInfo.categoryType" ng-click="ctrl.switchType()"><span class="fa fa-check"></span> 不限类目
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-horizontal">
-                                        <div class="row">
-                                            <button class="col-sm-3 btn btn-default" ng-click="ctrl.jdCategoryMapping()" ng-disabled="!ctrl.searchInfo.cartId || ctrl.searchInfo.categoryType != '2'">
-                                                <i class="fa  fa-th-list"></i>&nbsp;<span translate="TXT_PLATFORM_CATEGORY"></span>
-                                            </button>
-                                            <div class="col-sm-7">
-                                                <input class="form-control" title="{{ctrl.searchInfo.categoryPath}}" ng-model="ctrl.searchInfo.categoryPath" disabled>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row m-t-md">
-                        <div class="col-sm-12 text-center">
-                            <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa  fa-undo"></i>&nbsp;{{'BTN_RESET'|translate}}</button>
-                            <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'|translate}}</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="panel panel-default">
+<div class="wrapper-md">
+    <div class="panel panel-vo">
         <div class="panel-heading">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-5">
-                        <div class="btn-group">
-                            <a ng-href="#/channel/default_attribute_detail/{{ctrl.searchInfo}}" target="_blank" class="btn btn-info btn-pop" ng-click="search()">
-                                <i class="fa fa-plus"></i>&nbsp;{{'TXT_DEFAULT_SETTING'|translate}}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;<span translate="TXT_DEFAULT_MAPPING_LIST"></span></h4>
         </div>
         <div class="panel-body">
-            <div class="box box-body">
-
-                <div class="table-responsive">
-                    <div class="col-sm-12 dropdown_table_main">
-                        <table class="table table-hover-new vo_table tableWordBreak">
-                            <thead>
-                            <tr>
-                                <th class="mfb-xt3 text-center" translate="TXT_SEQ"></th>
-                                <th class="mfb-xxt text-left" translate="TXT_PLATFORM_CATEGORY"></th>
-                                <th class="mfb-xt3 text-center" translate="TXT_SIZE_CHART_UPDATE_TIME"></th>
-                                <th class="mfb-xt3 text-left" translate="TXT_UPDATER"></th>
-                                <th class="mfb-xt3 text-center" translate="TXT_CREATE_TIME"></th>
-                                <th class="mfb-xt3 text-left" translate="TXT_CREATER"></th>
-                                <th class="mfb-xt3 text-center" translate="TXT_ACTION"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="entity in ctrl.dataList">
-                                <td class="mfb-xt3 text-center">{{$index}}</td>
-                                <td class="mfb-xt3 text-left">{{entity.categoryPath}}</td>
-                                <td class="mfb-xt3 text-center">{{entity.modified | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                                <td class="mfb-xt3 text-left">{{entity.modifier}}</td>
-                                <td class="mfb-xt3 text-center">{{entity.created | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                                <td class="mfb-xt3 text-left">{{entity.creater}}</td>
-                                <td class="mfb-xt3 text-center">
-                                    <a title="编辑" ng-href="#/channel/default_attribute_detail/{{entity}}" class="btn btn-success btn-xs" target="_blank" >
-                                        <i class="fa fa-pencil"></i>
-                                    </a>&emsp;
-                                    <button title="删除" class="btn btn-danger btn-xs" ng-click="ctrl.deleteItem(entity)">
-                                        <i class="fa  fa-trash-o"></i>
-                                    </button>
-                                </td>
-                            </tbody>
-                        </table>
+            <div class="row form-inline">
+                <div class="col-sm-4 text-center">
+                    <div class="form-group">
+                        <label translate="TXT_CART_NAME"></label>
+                        <span>&nbsp;</span>
+                        <select class="form-control" ng-model="ctrl.searchInfo.cartId"
+                                ng-options="c.value as c.name for c in ctrl.cartList" style="width: 200px">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
                     </div>
                 </div>
-
-                <div class="col-sm-12">
-                    <vpagination config="ctrl.paging"></vpagination>
+                <div class="col-sm-8 text-center">
+                    <div class="form-group">
+                        <label translate="TXT_PLATFORM_CATEGORY"></label>
+                        <span>&nbsp;</span>
+                        <label>
+                            <input name="category" type="radio" value="3" ng-model="ctrl.searchInfo.categoryType">&nbsp;不限类目
+                        </label>
+                        <label>
+                            <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType">&nbsp;全类目
+                        </label>&emsp;
+                        <label>
+                            <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType">&nbsp;选择类目
+                        </label>
+                    </div>
+                    <span>&nbsp;</span>
+                    <div class="form-group">
+                        <button class="btn btn-default" ng-click="ctrl.openCategorySelector()" ng-disabled="!ctrl.searchInfo.cartId || ctrl.searchInfo.categoryType != '2'">
+                            <i class="fa fa-th-list"></i>&nbsp;<span translate="TXT_PLATFORM_CATEGORY"></span>
+                        </button>
+                        <input style="width: 250px;" class="form-control" title="{{ctrl.searchInfo.categoryPath}}" ng-model="ctrl.searchInfo.categoryPath" disabled>
+                    </div>
                 </div>
-
+            </div>
+            <div class="row m-t-md">
+                <div class="col-sm-12 text-center">
+                    <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-undo"></i>&nbsp;{{'BTN_RESET'|translate}}</button>
+                    <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'|translate}}</button>
+                </div>
             </div>
         </div>
     </div>
-
+    <div class="m-t-sm m-b-sm">
+        <a ng-href="#/channel/default_attribute_detail" target="_blank" class="btn btn-info btn-pop">
+            <i class="fa fa-plus"></i>&nbsp;<span translate="TXT_DEFAULT_SETTING"></span>
+        </a>
+    </div>
+    <div class="box">
+        <div class="box-body">
+            <table class="table table-hover-new vo_table tableWordBreak">
+                <thead>
+                <tr>
+                    <th class="mfb-xt3 text-center" translate="TXT_SEQ"></th>
+                    <th class="mfb-xxt text-left" translate="TXT_PLATFORM_CATEGORY"></th>
+                    <th class="mfb-xt3 text-center" translate="TXT_SIZE_CHART_UPDATE_TIME"></th>
+                    <th class="mfb-xt3 text-left" translate="TXT_UPDATER"></th>
+                    <th class="mfb-xt3 text-center" translate="TXT_CREATE_TIME"></th>
+                    <th class="mfb-xt3 text-left" translate="TXT_CREATER"></th>
+                    <th class="mfb-xt3 text-center" translate="TXT_ACTION"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td if-no-rows="ctrl.dataList.length" colspan="7" style="padding: 0px"></td>
+                </tr>
+                <tr ng-repeat="entity in ctrl.dataList">
+                    <td class="mfb-xt3 text-center">{{$index+1}}</td>
+                    <td class="mfb-xt3 text-left">{{ctrl.getMappingCategoryPath(entity)}}</td>
+                    <td class="mfb-xt3 text-center">{{entity.modified | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                    <td class="mfb-xt3 text-left">{{entity.modifier}}</td>
+                    <td class="mfb-xt3 text-center">{{entity.created | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                    <td class="mfb-xt3 text-left">{{entity.creater}}</td>
+                    <td class="mfb-xt3 text-center">
+                        <button title="编辑" class="btn btn-success btn-xs" ng-click="ctrl.editItem(entity)" >
+                            <i class="fa fa-pencil"></i>
+                        </button>&emsp;
+                        <button title="删除" class="btn btn-danger btn-xs" ng-click="ctrl.deleteItem(entity)">
+                            <i class="fa  fa-trash-o"></i>
+                        </button>
+                    </td>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <vpagination config="ctrl.paging"></vpagination>
 </div>

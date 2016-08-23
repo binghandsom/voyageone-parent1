@@ -235,6 +235,17 @@ public class TypeChannels {
 
         if (typeChannelBeanList != null) {
             for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
+                // 先检查数据有效性
+                String cartId = org.apache.commons.lang3.StringUtils.trimToNull(typeChannelBean.getValue());
+                if (cartId  == null) {
+                    logger.error("getTypeListSkuCarts 未配置cartid " + typeChannelBean.toString());
+                    continue;
+                }
+                if ((!"0".equals(cartId) && !"1".equals(cartId)) && Carts.getCart(cartId) == null) {
+                    logger.error("getTypeListSkuCarts 该cart无效 " + typeChannelBean.toString());
+                    continue;
+                }
+
                 // 如果add_name1里为空, 说明这家店没有好好配置过, 所以不返回记录, 只有配置好了之后才能正常使用
                 String add_name1 = typeChannelBean.getAdd_name1();
                 if (!StringUtils.isEmpty(add_name1)) {

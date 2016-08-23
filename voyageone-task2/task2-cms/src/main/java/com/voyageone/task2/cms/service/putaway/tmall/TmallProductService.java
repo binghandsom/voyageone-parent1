@@ -1,59 +1,22 @@
 package com.voyageone.task2.cms.service.putaway.tmall;
 
-import com.taobao.api.ApiException;
-import com.taobao.api.response.TmallItemSchemaAddResponse;
-import com.taobao.api.response.TmallItemSchemaUpdateResponse;
-import com.taobao.top.schema.enums.FieldTypeEnum;
-import com.taobao.top.schema.exception.TopSchemaException;
-import com.taobao.top.schema.factory.SchemaReader;
-import com.taobao.top.schema.factory.SchemaWriter;
-import com.taobao.top.schema.field.*;
-import com.taobao.top.schema.value.ComplexValue;
-import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.IssueLog;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Shops;
-import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
-import com.voyageone.ims.rule_expression.RuleExpression;
-import com.voyageone.ims.rule_expression.RuleJsonMapper;
-import com.voyageone.service.bean.cms.*;
-import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
-import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.task2.cms.bean.*;
 import com.voyageone.task2.cms.bean.tcb.*;
 import com.voyageone.task2.cms.dao.BrandMapDao;
 import com.voyageone.task2.cms.dao.DictWordDao;
 import com.voyageone.task2.cms.dao.PlatformPropCustomMappingDao;
-import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
-import com.voyageone.task2.cms.enums.TmallWorkloadStatus;
-import com.voyageone.task2.cms.model.ConditionPropValueModel;
-import com.voyageone.task2.cms.model.CustomPlatformPropMappingModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
 import com.voyageone.task2.cms.service.putaway.UploadProductHandler;
-import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by Leo on 2015/5/28.
@@ -313,7 +276,7 @@ public class TmallProductService {
 //            throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(e.getMessage()));
 //        }
 //
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
 //        if (cmsMtPlatformMappingModel == null) {
 //            logger.error("Can't find mapping relation for [channel_id:" + channelId + ", cartId:" + cartId + ", mainCategoryId:" + mainCategoryId + "]");
 //            return;
@@ -512,7 +475,7 @@ public class TmallProductService {
 //        // modified by morse.lu 2016/05/15 end
 //        ExpressionParser expressionParser = tcb.getExpressionParser();
 //        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = workLoadBean.getCmsMtPlatformCategorySchemaModel();
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
 //
 //        //没有找到产品id，需要重新上传Tmall产品
 //        if (productCode == null)
@@ -656,7 +619,7 @@ public class TmallProductService {
 //        // modified by morse.lu 2016/05/15 end
 //        ExpressionParser expressionParser = tcb.getExpressionParser();
 //        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = workLoadBean.getCmsMtPlatformCategorySchemaModel();
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
 //        Set<String> imageSet = new HashSet<>();
 //
 //        String  productCode = tmallUploadRunState.getProduct_code();
@@ -1158,7 +1121,7 @@ public class TmallProductService {
 //                }
 //                ExpressionParser expressionParser = tcb.getExpressionParser();
 //                constructCustomPlatformProps(tcb, fieldMap, expressionParser, null, false);
-//                CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
+//                CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
 //                constructMappingPlatformProps(tcb, fieldMap, cmsMtPlatformMappingModel, expressionParser, new HashSet<>());
 //                updateFields = resolveMappingProps(tmallUploadRunState, null);
 //                // added by morse.lu 2016/06/08 start
@@ -1185,7 +1148,7 @@ public class TmallProductService {
 //        Set<String> imageSet = new HashSet<>();
 //        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = workLoadBean.getCmsMtPlatformCategorySchemaModel();
 //        ExpressionParser expressionParser = tcb.getExpressionParser();
-//        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
+//        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
 //
 //        Map<String, Field> fieldMap;
 //        String itemSchema = cmsMtPlatformCategorySchemaModel.getPropsItem();
@@ -1851,7 +1814,7 @@ public class TmallProductService {
 //        return fieldsMap;
 //    }
 //
-//    public void constructMappingPlatformProps(UploadProductTcb tcb, Map<String, Field> fieldMap, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ExpressionParser expressionParser, Set<String> imageSet) throws TaskSignal {
+//    public void constructMappingPlatformProps(UploadProductTcb tcb, Map<String, Field> fieldMap, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ExpressionParser expressionParser, Set<String> imageSet) throws TaskSignal {
 //        TmallUploadRunState tmallUploadRunState = (TmallUploadRunState) tcb.getPlatformUploadRunState();
 //        WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
 //        SxProductBean sxProductBean = workLoadBean.getMainProduct();

@@ -2,9 +2,12 @@ package com.voyageone.task2.cms.service.platform.uj;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
@@ -20,10 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author james.li on 2016/4/7.
@@ -45,8 +47,10 @@ public class UploadToUSJoiServiceTest {
     @Test
     public void testUpload() throws Exception {
 
-// 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
+        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
         CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
 
         String usjoiChannelId = "929";
 
@@ -101,13 +105,23 @@ public class UploadToUSJoiServiceTest {
         }
         // --------------------------------------------------------------------------------------------
 
+        // 从synship.tm_order_channel表中取得USJOI店铺channel对应的cartId列表（一般只有一条cartId.如928对应28, 929对应29）
+        // 用于product.PXX追加平台信息(group表里面用到的用于展示的cartId不是从这里取得的)
+        final List<Integer> cartIds;
+        OrderChannelBean usJoiBean = Channels.getChannel(usjoiChannelId);
+        if (usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())) {
+            cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
+        } else {
+            cartIds = new ArrayList<>();
+        }
+
         CmsBtSxWorkloadModel sxWorkLoadBean = new CmsBtSxWorkloadModel();
         sxWorkLoadBean.setChannelId("017");
         sxWorkLoadBean.setGroupId(12922L);
         sxWorkLoadBean.setModifier("james");
         sxWorkLoadBean.setCartId(Integer.parseInt(usjoiChannelId)); // "929"
 
-        uploadToUSJoiService.upload(sxWorkLoadBean, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping);
+        uploadToUSJoiService.upload(sxWorkLoadBean, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, cartIds);
     }
 
     @Test
