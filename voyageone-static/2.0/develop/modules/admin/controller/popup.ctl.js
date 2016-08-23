@@ -70,10 +70,16 @@ define([
             "controller": 'AddStoreController as ctrl',
             "size": 'lg'
         },
-        "addType": {
-            "templateUrl": "views/pop/addType/index.tpl.html",
-            "controllerUrl": "modules/admin/views/pop/addType/index.ctl",
-            "controller": 'AddTypeController as ctrl',
+        "addSystemTypeInfo": {
+            "templateUrl": "views/pop/addSystem/addTypeInfo.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addSystem/addTypeInfo.ctl",
+            "controller": 'AddTypeInfoController as ctrl',
+            "size": 'md'
+        },
+        "addSystemTypeAttr": {
+            "templateUrl": "views/pop/addSystem/addTypeAttr.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addSystem/addTypeAttr.ctl",
+            "controller": 'AddTypeAttrController as ctrl',
             "size": 'md'
         },
         "addTask": {
@@ -143,7 +149,10 @@ define([
          * 打开Type管理页面的添加页面
          */
         $scope.openTypeAdd = function openTypeAdd(context) {
-            return openModal(popActions.addType, context);
+            return openModal(popActions.addSystemTypeInfo, context);
+        };
+        $scope.openTypeAttr = function openTypeAttr(context) {
+            return openModal(popActions.addSystemTypeAttr, context);
         };
         /**
          * 打开Type管理页面的添加页面

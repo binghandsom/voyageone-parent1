@@ -139,6 +139,13 @@ define(function () {
                     "updateType": "updateType",
                     "deleteType": "deleteType",
                     "getAllType": "getAllType"
+                },
+                "typeAttrService": {
+                    "root": "/admin/system/attribute",
+                    "searchTypeAttributeByPage": "searchTypeAttributeByPage",
+                    "addTypeAttribute": "addTypeAttribute",
+                    "updateTypeAttribute": "updateTypeAttribute",
+                    "deleteTypeAttribute": "deleteTypeAttribute"
                 }
             },
             /** 任务信息 */

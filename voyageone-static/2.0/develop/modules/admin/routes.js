@@ -65,11 +65,17 @@ define(function () {
             "controllerUrl": "modules/admin/views/taskManagement/index.ctl",
             "controller": "TaskManagementController as ctrl"
         },//系统配置管理
-        "systemManagement": {
+        "typeInfoManagement": {
             "hash": "/system/typeInfoManagement",
             "templateUrl": "views/systemManagement/typeInfo.tpl.html",
             "controllerUrl": "modules/admin/views/systemManagement/typeInfo.ctl",
             "controller": "TypeInfoManagementController as ctrl"
+        },//系统配置-类型属性管理
+        "typeAttributeManagement": {
+            "hash": "/system/typeAttributeManagement",
+            "templateUrl": "views/systemManagement/typeAttribute.tpl.html",
+            "controllerUrl": "modules/admin/views/systemManagement/typeAttribute.ctl",
+            "controller": "TypeAttributeManagementController as ctrl"
         }
     };
 });

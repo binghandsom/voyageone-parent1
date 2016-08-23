@@ -4,8 +4,8 @@
 define([
     'admin'
 ], function (admin) {
-    admin.controller('AddTypeController', (function () {
-        function AddTypeController(context, AdminCartService, typeService, $uibModalInstance) {
+    admin.controller('AddTypeInfoController', (function () {
+        function AddTypeInfoController(context, AdminCartService, typeService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
             this.AdminCartService = AdminCartService;
@@ -15,7 +15,7 @@ define([
             this.$uibModalInstance = $uibModalInstance;
         }
 
-        AddTypeController.prototype = {
+        AddTypeInfoController.prototype = {
             init: function () {
                 var self = this;
                 if (self.sourceData == 'add') {
@@ -55,6 +55,6 @@ define([
                 }
             }
         };
-        return AddTypeController;
+        return AddTypeInfoController;
     })())
 });
