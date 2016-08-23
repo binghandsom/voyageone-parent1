@@ -1269,8 +1269,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             if (commonSkus.stream().filter(w -> w.getSkuCode().equals(code)).count() > 0) {
                 CmsBtProductModel_Sku CommonSku = commonSkus.stream().filter(w -> w.getSkuCode().equals(code)).findFirst().get();
                 jmSku.put("barcode", CommonSku.getBarcode());
-                jmSku.put("priceMsrp", CommonSku.getPriceMsrp());
-                jmSku.put("priceRetail", CommonSku.getPriceRetail());
+                // delete by desmond 2016/08/23 start
+                // 应该是以分平台下面sku的价格优先，不要用common下的价格覆盖正确的价格
+//                jmSku.put("priceMsrp", CommonSku.getPriceMsrp());
+//                jmSku.put("priceRetail", CommonSku.getPriceRetail());
+                // delete by desmond 2016/08/23 end
                 jmSku.put("clientMsrpPrice", CommonSku.getClientMsrpPrice());
                 jmSku.put("clientRetailPrice", CommonSku.getClientRetailPrice());
                 jmSku.put(CmsBtProductConstants.Platform_SKU_COM.size.name(), CommonSku.getSize());
