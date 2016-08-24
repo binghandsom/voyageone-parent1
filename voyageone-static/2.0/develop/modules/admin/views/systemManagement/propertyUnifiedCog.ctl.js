@@ -277,7 +277,7 @@ define([
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
                     var delList = [];
                     _.forEach(self.configSelList.selList, function (delInfo) {
-                        _.extend(delInfo, {'configType': self.searchInfo.configType});
+                        _.extend(delInfo, {'configType': self.searchInfo.configType, 'seq': delInfo.id + 1});
                         delList.push(delInfo);
                     });
                     switch (self.searchInfo.configType) {
