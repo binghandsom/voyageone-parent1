@@ -113,4 +113,10 @@ public class AdminRoleController extends AdminController {
         adminRoleService.deleteRole(bean, username);
         return success(true);
     }
+
+    @RequestMapping(AdminUrlConstants.User.Role.GET_ALL_ROLE)
+    public AjaxResponse getAllRole()  {
+        return success(adminRoleService.getAllRole());
+    }
+
 }
