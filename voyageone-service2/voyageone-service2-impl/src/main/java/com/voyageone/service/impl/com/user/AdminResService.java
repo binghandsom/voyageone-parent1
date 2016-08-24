@@ -89,9 +89,10 @@ public class AdminResService extends BaseService {
 
         ComResourceModel parent = comResourceDao.select(model.getParentId());
 
-        map.put("parentId" , model.getParentId());
 
         if(model.getWeight() == null) {
+            map.clear();
+            map.put("parentId" , model.getParentId());
             List<ComResourceModel> siblings = comResourceDao.selectList(map);
             int weight = siblings.stream().mapToInt(ComResourceModel::getWeight).max().getAsInt();
             model.setWeight(++weight);

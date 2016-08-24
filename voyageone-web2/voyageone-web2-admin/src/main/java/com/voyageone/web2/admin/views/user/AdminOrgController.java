@@ -2,7 +2,9 @@ package com.voyageone.web2.admin.views.user;
 
 import com.voyageone.security.model.ComLogModel;
 import com.voyageone.security.model.ComOrganizationModel;
+import com.voyageone.service.bean.com.AdminOrgBean;
 import com.voyageone.service.impl.com.user.AdminOrgService;
+import com.voyageone.service.model.com.PageModel;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,6 +45,41 @@ public class AdminOrgController extends AdminController {
 
         Integer  pageNum = (Integer) requestBean.getOrDefault("pageNum", 1);
         Integer  pageSize = (Integer) requestBean.getOrDefault("pageSize", DEFAULT_PAGE_SIZE);
+
+       PageModel<AdminOrgBean> result = adminOrgService.searchOrg(model, pageNum, pageSize );
+
+        return success(result);
+    }
+
+    @RequestMapping(AdminUrlConstants.User.Org.ADD_ORG)
+    public AjaxResponse addOrg(@RequestBody Map requestBean) throws Exception {
+
+        ComOrganizationModel model = new ComOrganizationModel();
+
+        BeanUtils.populate(model, requestBean);
+
+        adminOrgService.addOrg(model);
+
+        return success(true);
+    }
+
+    @RequestMapping(AdminUrlConstants.User.Org.UPDATE_ORG)
+    public AjaxResponse updateOrg(@RequestBody Map requestBean) throws Exception {
+
+        ComOrganizationModel model = new ComOrganizationModel();
+
+        BeanUtils.populate(model, requestBean);
+
+        adminOrgService.updateOrg(model);
+
+        return success(true);
+    }
+
+    @RequestMapping(AdminUrlConstants.User.Org.DELETE_ORG)
+    public AjaxResponse deleteOrg(@RequestBody List<Integer> bean) throws Exception {
+
+        String username = getUser().getUserName();
+        adminOrgService.deleteOrg(bean, username);
 
         return success(true);
     }
