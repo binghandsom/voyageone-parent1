@@ -262,6 +262,7 @@ define([
                 }
                 $scope.vm.currTab = "product";
                 $scope.vm.currTab2 = true;
+                $scope.vm.fstShowGrpFlg = true;
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + $scope.vm.selBiDataList.length * 100 + 900) + 'px';
                 $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + $scope.vm.selBiDataList.length * 100 + 1300) + 'px';
@@ -311,10 +312,21 @@ define([
         }
 
         /**
+         * 初始化显示group数据
+         */
+        $scope.firstShowGroupList = function () {
+            $scope.vm.currTab = 'group';
+            if ($scope.vm.fstShowGrpFlg) {
+                $scope.vm.fstShowGrpFlg = false;
+                getGroupList();
+            }
+        };
+
+        /**
          * 分页处理group数据
          */
         function getGroupList() {
-            searchAdvanceService2.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType)
+            searchAdvanceService2.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                 .then(function (res) {
                     $scope.vm.groupList = res.data.groupList == null ? [] : res.data.groupList;
                     $scope.vm.groupPageOption.total = res.data.groupListTotal;
@@ -327,7 +339,7 @@ define([
          * 分页处理product数据
          */
         function getProductList() {
-            searchAdvanceService2.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType)
+            searchAdvanceService2.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                 .then(function (res) {
                     $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
                     $scope.vm.productPageOption.total = res.data.productListTotal;
@@ -353,8 +365,7 @@ define([
             function _openAddPromotion(cartId, selList, context) {
                 openAddToPromotionFnc(context.promotion, selList, context).then(function () {
                     searchAdvanceService2.clearSelList();
-                    getGroupList();
-                    getProductList();
+                    search();
                 })
             }
         }
@@ -673,8 +684,7 @@ define([
                             $searchAdvanceService2.addFreeTag(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
                                 searchAdvanceService2.clearSelList();
-                                getGroupList();
-                                getProductList();
+                                search();
                             })
                         });
                 });

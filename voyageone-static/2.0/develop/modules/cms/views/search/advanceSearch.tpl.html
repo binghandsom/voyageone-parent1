@@ -816,7 +816,7 @@
                             <vpagination config="vm.productPageOption"></vpagination>
                         </div>
                     </uib-tab>
-                    <uib-tab ng-click="vm.currTab = 'group'">
+                    <uib-tab ng-click="firstShowGroupList()">
                         <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
                         <div class="table-responsive box-body">
                             <table class="table-hover-new vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff;min-width: 100%" width="{{vm.tblWidth}}">
@@ -903,8 +903,6 @@
                                                     popover-placement="left" class="btn btn-default btn-xs">
                                                 {{groupInfo.groupBean.priceSale[0]}}
                                             </button>
-                                            <label ng-if="groupInfo._grpProdChgInfo == 1"
-                                                   style="color:red;font-size: 16px;font-weight:bolder">&nbsp;!</label>
                                         </td>
                                         <td class="text-left" style="display:inline-block;width:150px;">
                                             {{groupInfo.common.fields.brand}}

@@ -61,5 +61,9 @@ public class MqRoutingKey {
      * 高级检索-异步生成文件
      */
     public static final String CMS_TASK_AdvSearch_FileDldJob = "voyageone_cms_task_AdvSearch_FileDldJob_queue";
+    /**
+     * 高级检索-批处理
+     */
+    public static final String CMS_TASK_AdvSearch_AsynProcessJob = "voyageone_cms_task_AdvSearch_AsynProcessJob_queue";
 
 }

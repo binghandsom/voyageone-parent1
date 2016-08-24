@@ -29,9 +29,9 @@ define([
         function search(data, groupPagination, productPagination) {
             var defer = $q.defer();
             data = resetSearchInfo(data);
-            // 设置groupPage
-            data.groupPageNum = groupPagination.curr;
-            data.groupPageSize = groupPagination.size;
+            //// 设置groupPage
+            //data.groupPageNum = groupPagination.curr;
+            //data.groupPageSize = groupPagination.size;
             // 设置productPage
             data.productPageNum = productPagination.curr;
             data.productPageSize = productPagination.size;
@@ -42,7 +42,7 @@ define([
                 tempGroupSelect = new selectRowsFactory();
                 tempProductSelect = new selectRowsFactory();
                 // 获取group列表
-                _resetGroupList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, res.data.selBiDataList, data);
+                //_resetGroupList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, res.data.selBiDataList, data);
                 // 获取product列表
                 _resetProductList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, res.data.selBiDataList, data);
 
@@ -70,7 +70,7 @@ define([
             var defer = $q.defer();
 
             $searchAdvanceService2.getGroupList(resetGroupPagination(data, pagination)).then(function (res) {
-                _resetGroupList(res.data, commonProps, customProps, selSalesTypes, selBiDataList);
+                _resetGroupList(res.data, commonProps, customProps, selSalesTypes, selBiDataList, data);
                 defer.resolve (res);
             });
             return defer.promise;
@@ -84,7 +84,7 @@ define([
         function getProductList(data, pagination, list, commonProps, customProps, selSalesTypes, selBiDataList) {
             var defer = $q.defer();
             $searchAdvanceService2.getProductList(resetProductPagination(data, pagination)).then(function (res) {
-                _resetProductList(res.data, commonProps, customProps, selSalesTypes, selBiDataList);
+                _resetProductList(res.data, commonProps, customProps, selSalesTypes, selBiDataList, data);
                 defer.resolve (res);
             });
             return defer.promise;
@@ -288,9 +288,6 @@ define([
                 groupInfo.groupBean.timeDetail = _setTimeDetail(groupInfo);
 
                 groupInfo.grpImgList = data.grpImgList[index];
-
-                groupInfo._grpProdChgInfo = data.grpProdChgInfoList[index];
-
             });
             data.groupSelList = tempGroupSelect.selectRowsInfo;
 
@@ -414,9 +411,7 @@ define([
                 // 设置time detail
                 productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
 
-                productInfo._prodChgInfo = data.prodChgInfoList[index];
                 productInfo._prodOrgChaName = data.prodOrgChaNameList[index];
-
             });
             data.productSelList = tempProductSelect.selectRowsInfo;
 
@@ -479,6 +474,9 @@ define([
          * @private
          */
         function _setGroupPriceSale(object, searchParam) {
+            object._grpPriceInfoList = object._grpPriceInfoList.sort(function (a, b) {
+                return a.cartId > b.cartId;
+            });
             return _setPriceSale(object._grpPriceInfoList, searchParam, 'priceSaleSt', 'priceSaleEd');
         }
 
