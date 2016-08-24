@@ -287,6 +287,8 @@ public interface AdminUrlConstants {
 			String UPDATE_PORT_CONFIG = "updatePortConfig";
 
 			String DELETE_PORT_CONFIG = "deletePortConfig";
+
+			String GET_ALL_PORT = "getAllPort";
 			
 		}
 		

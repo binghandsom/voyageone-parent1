@@ -2,7 +2,9 @@ package com.voyageone.web2.admin.views.task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -19,6 +21,7 @@ import com.voyageone.service.bean.com.ComMtTaskBean;
 import com.voyageone.service.bean.com.TmTaskControlBean;
 import com.voyageone.service.impl.com.task.TaskService;
 import com.voyageone.service.model.com.ComMtTaskModel;
+import com.voyageone.service.model.com.ComMtValueModel;
 import com.voyageone.service.model.com.PageModel;
 import com.voyageone.service.model.com.TmTaskControlKey;
 import com.voyageone.service.model.com.TmTaskControlModel;
@@ -43,14 +46,29 @@ public class TaskController extends AdminController {
 	// 任务信息
 	//---------------------------------------------------------------------
 	
+	@SuppressWarnings("serial")
 	@RequestMapping(AdminUrlConstants.Task.Self.GET_ALL_TASK_TYPE)
 	public AjaxResponse getAllTaskType() {
-		return success(taskService.getAllTaskType());
+		List<ComMtValueModel> taskTypes = taskService.getAllTaskType();
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		taskTypes.stream().forEach(item -> result.add(new HashMap<String, Object>() {{
+			put("id", item.getId());
+			put("name", item.getName());
+			put("typeId", item.getTypeId());
+		}}));
+		return success(result);
 	}
 	
+	@SuppressWarnings("serial")
 	@RequestMapping(AdminUrlConstants.Task.Self.GET_ALL_TASK)
 	public AjaxResponse getAllTask() {
-		return success(taskService.getAllTask());
+		List<ComMtTaskModel> tasks = taskService.getAllTask();
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		tasks.stream().forEach(item -> result.add(new HashMap<String, Object>() {{
+			put("taskId", item.getTaskId());
+			put("taskName", item.getTaskName());
+		}}));
+		return success(result);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Task.Self.START_TASK)

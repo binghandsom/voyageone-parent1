@@ -1,6 +1,10 @@
 package com.voyageone.web2.admin.views.system;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +34,20 @@ public class PortConfigController extends AdminController {
 	
 	@Autowired
 	private PortConfigService portConfigService;
+	
+	@SuppressWarnings("serial")
+	@RequestMapping(AdminUrlConstants.System.Port.GET_ALL_PORT)
+	public AjaxResponse getAllPort() {
+		List<TmPortConfigModel> stores = portConfigService.getAllPort();
+		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+		stores.stream().forEach(item -> result.add(new HashMap<String, String>() {{
+			put("port", item.getPort());
+		}}));
+		Object[] outcome = result.stream().distinct().sorted((a, b) -> 
+			a.get("port").compareTo(b.get("port"))
+		).toArray();
+		return success(outcome);
+	}
 	
 	@RequestMapping(AdminUrlConstants.System.Port.SEARCH_PORT_CONFIG_BY_PAGE)
 	public AjaxResponse searchPortConfigByPage(@RequestBody CommonConfigFormBean form) {

@@ -39,7 +39,8 @@ define(function () {
                     "addUser": "addUser",
                     "updateUser": "updateUser",
                     "deleteUser": "deleteUser",
-                    "showAuth": "showAuth"
+                    "showAuth": "showAuth",
+                    "getAllApp": "getAllApp"
                 },
                 "adminRoleService": {
                     "root": "/admin/user/role",
@@ -201,7 +202,8 @@ define(function () {
                     "searchPortConfigByPage": "searchPortConfigByPage",
                     "addPortConfig": "addPortConfig",
                     "updatePortConfig": "updatePortConfig",
-                    "deletePortConfig": "deletePortConfig"
+                    "deletePortConfig": "deletePortConfig",
+                    "getAllPort": "getAllPort"
                 }
             },
             /** 任务信息 */

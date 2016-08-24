@@ -1,7 +1,9 @@
 package com.voyageone.web2.admin.views.channel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -33,9 +35,15 @@ public class CarrierConfigController extends AdminController {
 	@Autowired
 	private CarrierConfigService carrierConfigService;
 	
+	@SuppressWarnings("serial")
 	@RequestMapping(AdminUrlConstants.Channel.Carrier.GET_ALL_CARRIER)
 	public AjaxResponse getAllCarrier() {
-		return success(carrierConfigService.getAllCarrier());
+		List<Map<String, Object>> carriers = carrierConfigService.getAllCarrier();
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		carriers.stream().forEach(item -> result.add(new HashMap<String, Object>() {{
+			put("carrier", item.get("carrier"));
+		}}));
+		return success(result);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.Carrier.SEARCH_CARRIER_CONFIG_BY_PAGE)
