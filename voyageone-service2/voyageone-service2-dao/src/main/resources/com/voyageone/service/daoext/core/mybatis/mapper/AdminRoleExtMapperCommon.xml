@@ -4,7 +4,7 @@
 
     <resultMap id="comUserModelMap" type="com.voyageone.service.bean.com.AdminRoleBean" />
 
-    <sql id="selectUserFilter">
+    <sql id="selectRoleFilter">
     	<where>
             <if test="id != null" >
                 and id = #{id}
@@ -69,10 +69,10 @@
         And re.active = 1 AND ap.active =1
         GROUP BY t1.id
 
-        <include refid="selectUserFilter"/>
+        <include refid="selectRoleFilter"/>
 	</select>
 	
-	<select id="selectUserCount" resultType="Integer">
+	<select id="selectRoleCount" resultType="Integer">
         SELECT count(0) from
         (
         SELECT t1.* , GROUP_CONCAT( DISTINCT re.application) as application
@@ -99,7 +99,7 @@
         GROUP BY t1.id
 
         )t2
-		 <include refid="selectUserFilter"/>
+		 <include refid="selectRoleFilter"/>
 	</select>
 
 
