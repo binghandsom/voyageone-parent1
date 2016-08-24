@@ -21,10 +21,6 @@ public class LoggingHandler {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
-//    @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
-//    public void controller() {
-//    }
-
     @Pointcut("execution(public * com.voyageone.web2.admin.*.*.*Controller.*(..))")
     protected void controller() {
     }
@@ -39,7 +35,7 @@ public class LoggingHandler {
 
 
 
-    @Around("controller() && !getXXX() && !getXXX()")
+    @Around("controller() && !getXXX() && !searchXXX()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
 
         long start = System.currentTimeMillis();
