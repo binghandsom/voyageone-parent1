@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.security.model.ComLogModel" />
     <sql id="Base_Column_List" >
         `id`, `application`, `ip`, `url`, `action`, `execution_time`,
-        `created`, `creater`, `modified`, `modifier`
+        `created`, `creater` , `modified`, `modifier`
     </sql>
 
     <select id="selectList" resultMap="BaseResultMap" >
@@ -39,11 +39,12 @@
             <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
+
+            <if test="startTime != null" >
+                and `created` &gt;= #{startTime,jdbcType=VARCHAR}
             </if>
-            <if test="modifier != null" >
-                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            <if test="endTime != null" >
+                and `created` &lt; #{endTime,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
@@ -78,11 +79,11 @@
             <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
-            <if test="modified != null" >
-                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            <if test="startTime != null" >
+                and `created` &gt;= #{startTime,jdbcType=VARCHAR}
             </if>
-            <if test="modifier != null" >
-                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            <if test="endTime != null" >
+                and `created` &lt; #{endTime,jdbcType=VARCHAR}
             </if>
         </where>
     </select>

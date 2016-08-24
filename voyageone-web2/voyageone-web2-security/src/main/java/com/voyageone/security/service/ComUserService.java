@@ -2,8 +2,11 @@ package com.voyageone.security.service;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.security.bean.ComChannelPermissionBean;
+import com.voyageone.security.dao.ComLoginLogDao;
 import com.voyageone.security.dao.ComUserConfigDao;
 import com.voyageone.security.daoext.ComUserDaoExt;
+import com.voyageone.security.model.ComLogModel;
+import com.voyageone.security.model.ComLoginLogModel;
 import com.voyageone.security.model.ComUserConfigModel;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -35,6 +38,9 @@ public class ComUserService {
     @Autowired
     ComUserConfigDao comUserConfigDao;
 
+    @Autowired
+    ComLoginLogDao comLoginLogDao;
+
     /**
      * 登录，实际的验证逻辑在MyReal中
      *
@@ -60,6 +66,13 @@ public class ComUserService {
             token.clear();
             throw new BusinessException("用户或密码不正确!");
         }
+
+        ComLoginLogModel model = new ComLoginLogModel();
+        model.setApplication("admin");
+        model.setCreater(account);
+        model.setIp("");
+
+        comLoginLogDao.insert(model);
     }
 
 
