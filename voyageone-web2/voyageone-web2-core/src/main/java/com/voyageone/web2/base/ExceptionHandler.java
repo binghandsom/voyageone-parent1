@@ -121,8 +121,8 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
     }
 
     private boolean isAjax(HttpServletRequest request) {
-        String header = request.getHeader("x_requested_with");
-        return "xmlhttprequest".equals(header);
+        String header = request.getHeader("X-Requested-With");
+        return "XMLHttpRequest".equals(header);
     }
 
     private String getUnknownExceptionMessage(Exception exception) {
