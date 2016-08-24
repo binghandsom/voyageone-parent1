@@ -30,7 +30,11 @@ define([
             },
             openPpPropertySetting: function () {
                 var self = this;
-                self.popups.openPropertySetting(self.context).then(function (context) {
+                self.popups.openPropertySetting({
+                    cartPath: self.context.cartPath,
+                    cartName: self.context.cartName,
+                    name: self.context.name
+                }).then(function (context) {
                     self.valueArr.push(context);
                 });
             },
