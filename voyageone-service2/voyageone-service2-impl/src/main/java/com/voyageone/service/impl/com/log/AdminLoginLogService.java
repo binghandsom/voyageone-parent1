@@ -3,10 +3,7 @@ package com.voyageone.service.impl.com.log;
 
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
-import com.voyageone.security.dao.ComLogDao;
-import com.voyageone.security.model.ComLogModel;
 import com.voyageone.security.model.ComLoginLogModel;
-import com.voyageone.service.daoext.core.AdminLogDaoExt;
 import com.voyageone.service.daoext.core.AdminLoginLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.PageModel;
@@ -35,8 +32,6 @@ public class AdminLoginLogService extends BaseService {
     public PageModel<ComLoginLogModel> searchLog(ComLoginLogModel params, Long startTime, Long endTime, Integer pageNum, Integer pageSize) {
 
         PageModel<ComLoginLogModel> pageModel = new PageModel<>();
-
-
 
         // 判断查询结果是否分页
         boolean needPage = false;

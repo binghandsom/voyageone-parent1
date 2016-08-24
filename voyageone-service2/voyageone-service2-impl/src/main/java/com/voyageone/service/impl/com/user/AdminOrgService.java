@@ -1,8 +1,14 @@
 package com.voyageone.service.impl.com.user;
 
+import com.github.miemiedev.mybatis.paginator.domain.Order;
+import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.security.dao.ComOrganizationDao;
 import com.voyageone.security.model.ComOrganizationModel;
+import com.voyageone.service.bean.com.AdminOrgBean;
+import com.voyageone.service.daoext.core.AdminOrganizationDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.com.PageModel;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +24,9 @@ public class AdminOrgService extends BaseService {
 
     @Autowired
     ComOrganizationDao comOrganizationDao;
+
+    @Autowired
+    AdminOrganizationDaoExt adminOrganizationDaoExt;
 
 
     /**
@@ -36,6 +45,35 @@ public class AdminOrgService extends BaseService {
         Map resultMap = result.stream().collect(Collectors.toMap(ComOrganizationModel:: getId ,ComOrganizationModel:: getOrgName ));
 
         return  resultMap;
+    }
+
+
+    public PageModel<AdminOrgBean>  searchOrg(ComOrganizationModel model, Integer pageNum, Integer pageSize)
+    {
+        PageModel<AdminOrgBean> pageModel = new PageModel<>();
+
+        // 判断查询结果是否分页
+        boolean needPage = false;
+        Map<String,Object> newMap = new HashMap<>();
+        BeanUtils.copyProperties(model, newMap);
+
+        if (pageNum != null && pageSize != null) {
+            needPage = true;
+            pageModel.setCount(adminOrganizationDaoExt.selectCount(newMap));
+            newMap = MySqlPageHelper.build(newMap).page(pageNum).limit(pageSize).addSort("created", Order.Direction.DESC).toMap();
+        }
+        else
+        {
+            newMap = MySqlPageHelper.build(newMap).addSort("created", Order.Direction.DESC).toMap();
+        }
+
+        List<AdminOrgBean> list = adminOrganizationDaoExt.selectList(newMap);
+        if (!needPage) {
+            pageModel.setCount(list.size());
+        }
+
+        pageModel.setResult(list);
+        return pageModel;
     }
 
 

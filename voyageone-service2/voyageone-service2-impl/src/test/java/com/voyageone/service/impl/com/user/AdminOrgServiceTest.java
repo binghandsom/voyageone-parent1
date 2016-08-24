@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.com.user;
 
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.security.model.ComOrganizationModel;
 import com.voyageone.service.bean.com.AdminUserBean;
 import com.voyageone.service.model.com.PageModel;
 import org.junit.Test;
@@ -29,5 +30,11 @@ public class AdminOrgServiceTest {
         Map<Integer, String> result = adminOrgService.getAllOrg();
 
         System.out.println(JacksonUtil.bean2Json(result));
+    }
+
+    @Test
+    public void testSearchOrg() throws Exception {
+
+        System.out.println(JacksonUtil.bean2Json(adminOrgService.searchOrg(new ComOrganizationModel(), 1, 10)));
     }
 }
