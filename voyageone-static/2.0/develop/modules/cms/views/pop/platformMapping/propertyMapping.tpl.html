@@ -48,8 +48,8 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="item in ctrl.valueArr">
-                            <td class="mfb-xt text-center">{{item.type}}</td>
-                            <td class="mfb-xt text-center">{{item.value}}</td>
+                            <td class="mfb-xt text-center">{{ctrl.TYPE[item.type]}}</td>
+                            <td class="mfb-xt text-center">{{ctrl.formatValue(item)}}</td>
                             <td class="mfb-xxt text-center">
                                     <label>
                                         <input name="{{item.$id}}" type="radio" value="<br>" ng-model="item.append">&nbsp;换行

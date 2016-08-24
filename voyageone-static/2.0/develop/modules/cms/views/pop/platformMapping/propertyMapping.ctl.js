@@ -5,18 +5,43 @@ define([
     'use strict';
     return cms.controller('propertyMappingController', (function () {
 
-        function PropertyMappingController(context, $uibModalInstance, popups) {
-            this.context = context;
-            this.uibModalInstance = $uibModalInstance;
-            this.popups = popups;
-            this.valueArr = [];
+        function PropertyMappingController(context, $uibModalInstance, popups, platformMappingService) {
+            var self = this;
+
+            self.context = context;
+            self.uibModalInstance = $uibModalInstance;
+            self.popups = popups;
+            self.valueArr = [];
+
+            platformMappingService.getCommonSchema().then(function (res) {
+                var mastOpts = self.mastOpts = {};
+                _.each(res.data, function (item) {
+                    mastOpts[item.value] = item.label;
+                });
+            });
+
+            platformMappingService.getFeedCustomProps().then(function (res) {
+                var feedCnOpts = self.feedCnOpts = {};
+                _.each(res.data, function (item) {
+                    if (!item.cnLabel)
+                        return;
+                    feedCnOpts[item.value] = item.cnLabel;
+                });
+            });
         }
 
         PropertyMappingController.prototype = {
+            TYPE: {
+                MASTER: "Master详情",
+                FEED_ORG: "Feed属性",
+                FEED_CN: "自定义属性",
+                FIXED: "固定值"
+            },
             init: function () {
                 var self = this,
                     expressionListJson = self.context.value,
-                    expressionList;
+                    expressionList,
+                    platformMappingService = self.platformMappingService;
 
                 if (self.context.cartId)
                     self.context.cartName = carts.valueOf(+self.context.cartId).desc;
@@ -70,6 +95,16 @@ define([
                 });
                 this.context.value = JSON.stringify(valueList);
                 this.uibModalInstance.close();
+            },
+            formatValue: function (item) {
+                var self = this;
+                switch (self.TYPE[item.type]) {
+                    case self.TYPE.FEED_CN:
+                        return self.feedCnOpts[item.value];
+                    case self.TYPE.MASTER:
+                        return self.mastOpts[item.value];
+                }
+                return item.value;
             }
         };
 

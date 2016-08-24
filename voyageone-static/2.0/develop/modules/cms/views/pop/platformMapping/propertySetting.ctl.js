@@ -19,15 +19,26 @@ define([
 
                 self.cat = 'MASTER';
 
-                self.$q.all(platformMappingService.getCommonSchema().then(function (res) {
+                self.$q.all(
+                    platformMappingService.getCommonSchema().then(function (res) {
                         self.mastOpts = res.data;
                         if (self.optionSource === "mastOpts")
                             self.options = self.mastOpts;
                     }),
                     platformMappingService.getFeedCustomProps().then(function (res) {
                         self.feedOpts = res.data;
+                        self.feedCnOpts = res.data.filter(function (item) {
+                            return !!item.cnLabel;
+                        }).map(function (item) {
+                            return {
+                                value: item.value,
+                                label: item.cnLabel
+                            };
+                        });
                         if (self.optionSource === "feedOpts")
                             self.options = self.feedOpts;
+                        else if (self.optionSource === "feedCnOpts")
+                            self.options = self.feedCnOpts;
                     })
                 ).then(function () {
                     //判断是否是编辑入口进来
@@ -48,11 +59,12 @@ define([
                         self.optionSource = "mastOpts";
                         break;
                     case "FEED_ORG":
-
-
-                    case "FEED_CN":
                         self.isFixValue = false;
                         self.optionSource = "feedOpts";
+                        break;
+                    case "FEED_CN":
+                        self.isFixValue = false;
+                        self.optionSource = "feedCnOpts";
                         break;
                     case "FIXED":
                         self.optionSource = null;

@@ -261,6 +261,7 @@ class PlatformMappingViewService extends BaseAppService {
             Map<String, Object> jsObject = new HashMap<>();
             jsObject.put("value", f.getFeedPropOriginal());
             jsObject.put("label", f.getFeedPropOriginal());
+            jsObject.put("cnLabel", f.getFeedPropTranslation());
             return jsObject;
         }).collect(toList());
     }
