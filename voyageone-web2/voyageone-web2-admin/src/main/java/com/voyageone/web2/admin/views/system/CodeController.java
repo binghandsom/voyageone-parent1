@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,6 +29,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 @RequestMapping(value = AdminUrlConstants.System.Code.ROOT, method = RequestMethod.POST)
 public class CodeController extends AdminController {
 	
+	@Autowired
 	private CodeService codeService;
 	
 	@RequestMapping(AdminUrlConstants.System.Code.SEARCH_CODE_BY_PAGE)

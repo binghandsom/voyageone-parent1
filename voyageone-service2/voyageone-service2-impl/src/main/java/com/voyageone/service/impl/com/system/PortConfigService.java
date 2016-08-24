@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.com.system;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,10 @@ public class PortConfigService extends BaseService {
 
 	@Autowired
 	private TmPortConfigDaoExt portConfigDaoExt;
+
+	public List<TmPortConfigModel> getAllPort() {
+		return portConfigDao.selectList(Collections.emptyMap());
+	}
 
 	public PageModel<TmPortConfigModel> searchPortConfigByPage(String port, String cfgName, String cfgVal,
 			Integer pageNum, Integer pageSize) {

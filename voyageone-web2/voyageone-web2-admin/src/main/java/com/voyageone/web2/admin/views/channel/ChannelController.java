@@ -2,7 +2,9 @@ package com.voyageone.web2.admin.views.channel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -44,9 +46,16 @@ public class ChannelController extends AdminController {
 	// 渠道信息
 	//---------------------------------------------------------------------
 	
+	@SuppressWarnings("serial")
 	@RequestMapping(AdminUrlConstants.Channel.Self.GET_ALL_CHANNEL)
 	public AjaxResponse getAllChannel() {
-		return success(channelService.getAllChannel());
+		List<TmOrderChannelModel> channels = channelService.getAllChannel();
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		channels.stream().forEach(item -> result.add(new HashMap<String, Object>(){{
+			put("name", item.getName());
+			put("orderChannelId", item.getOrderChannelId());
+		}}));
+		return success(result);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.SEARCH_CHANNEL_BY_PAGE)

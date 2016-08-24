@@ -1,6 +1,10 @@
 package com.voyageone.web2.admin.views.system;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeanUtils;
@@ -30,9 +34,17 @@ public class TypeController extends AdminController {
 	@Autowired
 	private TypeService typeService;
 	
+	@SuppressWarnings("serial")
 	@RequestMapping(AdminUrlConstants.System.Type.GET_ALL_TYPE)
 	public AjaxResponse getAllType() {
-		return success(typeService.getAllType());
+		List<ComMtTypeModel> types = typeService.getAllType();
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		types.stream().forEach(item -> result.add(new HashMap<String, Object>() {{
+			put("id", item.getId());
+			put("name", item.getName());
+			put("comment", item.getComment());
+		}}));
+		return success(result);
 	}
 	
 	@RequestMapping(AdminUrlConstants.System.Type.SEARCH_TYPE_BY_PAGE)

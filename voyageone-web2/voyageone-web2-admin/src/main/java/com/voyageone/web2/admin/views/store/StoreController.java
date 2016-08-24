@@ -1,7 +1,9 @@
 package com.voyageone.web2.admin.views.store;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,9 +44,16 @@ public class StoreController extends AdminController {
 	// 仓库信息
 	//---------------------------------------------------------------------
 	
+	@SuppressWarnings("serial")
 	@RequestMapping(AdminUrlConstants.Store.Self.GET_ALL_STORE)
 	public AjaxResponse getAllStore() {
-		return success(storeService.getAllStore());
+		List<WmsMtStoreModel> stores = storeService.getAllStore();
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		stores.stream().forEach(item -> result.add(new HashMap<String, Object>() {{
+			put("storeId", item.getStoreId());
+			put("storeName", item.getStoreName());
+		}}));
+		return success(result);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Store.Self.SEARCH_STORE_BY_PAGE)

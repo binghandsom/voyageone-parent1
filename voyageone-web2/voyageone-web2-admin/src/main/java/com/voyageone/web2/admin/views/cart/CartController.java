@@ -1,6 +1,9 @@
 package com.voyageone.web2.admin.views.cart;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -33,19 +36,36 @@ public class CartController extends AdminController {
 	@Resource(name = "AdminCartService")
 	private CartService cartService;
 	
+	@SuppressWarnings("serial")
 	@RequestMapping(AdminUrlConstants.Cart.Self.GET_ALL_CART)
 	public AjaxResponse getAllCart() {
-		return success(cartService.getAllCart());
+		List<CtCartModel> carts = cartService.getAllCart();
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		carts.stream().forEach(item -> result.add(new HashMap<String, Object>() {{
+			put("cartId", item.getCartId());
+			put("name", item.getName());
+			put("shortName", item.getShortName());
+		}}));
+		return success(result);
 	}
 	
+	@SuppressWarnings("serial")
 	@RequestMapping(AdminUrlConstants.Cart.Self.GET_CART_BY_IDS)
 	public AjaxResponse getCartByIds(@RequestBody Map<String, String> params) {
 		String strCartIds = params.get("cartIds");
 		Preconditions.checkArgument(StringUtils.isNotBlank(strCartIds));
 		// 取得CartId
 		String[] cartIds = StringUtils.split(strCartIds, ",");
+		// 检索Cart信息
+		List<CtCartModel> carts = cartService.getCartByIds(Arrays.asList(cartIds));
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		carts.stream().forEach(item -> result.add(new HashMap<String, Object>() {{
+			put("cartId", item.getCartId());
+			put("name", item.getName());
+			put("shortName", item.getShortName());
+		}}));
 		
-		return success(cartService.getCartByIds(Arrays.asList(cartIds)));
+		return success(result);
 	}
 	
 	@RequestMapping(AdminUrlConstants.Cart.Self.SEARCH_CART_BY_PAGE)

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
@@ -21,6 +22,7 @@ import com.voyageone.service.model.com.TmCodeModel;
  * @author Wangtd
  * @since 2.0.0 2016/8/22
  */
+@Service
 public class CodeService extends BaseService {
 	
 	@Autowired
