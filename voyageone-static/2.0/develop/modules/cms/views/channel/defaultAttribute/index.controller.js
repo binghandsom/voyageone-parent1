@@ -116,16 +116,7 @@ define(function (require) {
         };
 
         DefaultAttributeController.prototype.create = function () {
-
-            var self = this,
-                searchInfo = self.searchInfo,
-                createParams = {
-                    cartId: !searchInfo.cartId ? null : +searchInfo.cartId,
-                    categoryType: +searchInfo.categoryType,
-                    categoryPath: searchInfo.categoryPath
-                };
-
-            window.open("#/channel/default_attribute_detail/" + JSON.stringify(createParams).replace(/\//g, "✓"));
+            window.open("#/channel/default_attribute_detail/");
         };
 
         DefaultAttributeController.prototype.editItem = function (item) {
