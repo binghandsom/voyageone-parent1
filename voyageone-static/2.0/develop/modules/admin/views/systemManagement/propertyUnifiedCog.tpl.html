@@ -68,8 +68,8 @@
                                     </div>
                                     <div class="col-sm-8" ng-if="ctrl.searchInfo.configType=='Port'">
                                         <select search-contains="true" chosen width="'100%'" class="form-control"
-                                                ng-model="ctrl.searchInfo.cartId"
-                                                ng-options="cart.cartId as cart.name for cart in ctrl.cartAllList">
+                                                ng-model="ctrl.searchInfo.port"
+                                                ng-options="port.port as port.port for port in ctrl.portList">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>
@@ -113,7 +113,7 @@
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default"  ng-click="ctrl.add({'type':'add', 'orderChannelId': ctrl.searchInfo.orderChannelId,
-                         'storeId': ctrl.searchInfo.storeId, 'taskId': ctrl.searchInfo.taskId, 'cartId': ctrl.searchInfo.cartId})"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                         'storeId': ctrl.searchInfo.storeId, 'taskId': ctrl.searchInfo.taskId, 'cartId': ctrl.searchInfo.cartId, 'port': ctrl.searchInfo.port})"><i class="fa fa-plus"></i>&nbsp;添加</button>
                     <button class="btn btn-default" ng-click="ctrl.edit()" ng-if="ctrl.searchInfo.configType!=='Task'"
                             ng-disabled="ctrl.configSelList.selList.length <= 0||ctrl.configSelList.selList.length>1"><i
                             class="fa fa-pencil"></i>&nbsp;修改
@@ -154,7 +154,7 @@
                     </td>
                     <td class="text-center v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.channelName}}</td>
                     <td class="text-center v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.cartName}}</td>
-                    <td class="text-center v-middle"ng-if="ctrl.searchInfo.configType!=='Shop'">{{list.channelName||list.storeName||list.taskName}}</td>
+                    <td class="text-center v-middle"ng-if="ctrl.searchInfo.configType!=='Shop'">{{list.channelName||list.storeName||list.taskName||list.port}}</td>
                     <td class="text-left v-middle">{{list.cfgName}}</td>
                     <td class="text-left v-middle" style="overflow: auto;max-width: 116px;">{{list.cfgVal1}}</td>
                     <td class="text-center v-middle" style="overflow: auto;max-width: 116px;">{{list.cfgVal2}}</td>

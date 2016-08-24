@@ -7,7 +7,7 @@
                 </div>
                 <div class="container-fluid m-t-xs m-b-xs">
                     <div class="col-sm-12">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="row form-group">
                                     <label class="col-sm-3 control-label">{{'TXT_CODE' | translate}}</label>
@@ -17,7 +17,21 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="row form-group"><!-- 状态 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_STATUS' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.active">
+                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="1">&nbsp;启用</option>
+                                            <option value="0">&nbsp;禁用</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="row form-group">
                                     <label class="col-sm-3 control-label">{{'TXT_CODE_NAME' | translate}}</label>
@@ -27,7 +41,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="row form-group">
                                     <label class="col-sm-3 control-label">{{'TXT_CODE_DESC' | translate}}</label>
@@ -70,8 +84,8 @@
                     </th>
                     <th class="text-center mfb-xt" translate="TXT_CODE_ID"></th>
                     <th class="text-left mfb-xt" translate="TXT_CODE"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_CODE_NAME"></th>
-                    <th class="text-left mfb-xt">{{'TXT_CODE_NAME'|translate}}1</th>
+                    <th class="text-left mfb-xxt" translate="TXT_CODE_NAME"></th>
+                    <th class="text-left mfb-xxt">{{'TXT_CODE_NAME'|translate}}1</th>
                     <th class="text-center mfb-xxt" translate="TXT_CODE_DESC"></th>
                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
                     <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
@@ -85,17 +99,17 @@
                 <tr ng-repeat="list in ctrl.systemList">
                     <td class="text-left v-middle">
                         <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                            <input ng-model="ctrl.codeSelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
-                                   ng-click="selectOne(list.id, ctrl.codeSelList)">
+                            <input ng-model="ctrl.codeSelList.selFlag[list.mainKey]" type="checkbox" ng-controller="selectRowsCtrl"
+                                   ng-click="selectOne(list.mainKey, ctrl.codeSelList)">
                             <span class="fa fa-check"></span>
                         </label>
                     </td>
                     <td class="text-center v-middle">{{list.id}}</td>
+                    <td class="text-left v-middle">{{list.code}}</td>
                     <td class="text-left v-middle">{{list.name}}</td>
-                    <td class="text-center v-middle">{{list.comment}}</td>
-                    <td class="text-left v-middle">{{list.name}}</td>
-                    <td class="text-center v-middle">{{list.comment}}</td>
-                    <td class="text-center v-middle">{{list.active==1 ? '启用':'禁用'}}</td>
+                    <td class="text-left v-middle">{{list.name1}}</td>
+                    <td class="text-left v-middle">{{list.des}}</td>
+                    <td class="text-center v-middle">{{list.active==true ? '启用':'禁用'}}</td>
                     <td class="text-left v-middle">{{list.modified}}</td>
                     <td class="text-center v-middle">{{list.modifier}}</td>
                 </tr>
