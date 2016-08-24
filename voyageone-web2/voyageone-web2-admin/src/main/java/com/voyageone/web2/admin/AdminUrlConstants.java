@@ -375,4 +375,29 @@ public interface AdminUrlConstants {
 
 	}
 
+	interface Log {
+
+		/** 操作Log */
+		interface Action {
+			String ROOT = "/admin/log/action";
+
+			String INIT = "init";
+
+			String SEARCH_LOG = "searchLog";
+
+			String GET_LOG_DETAIL = "getLogDetail";
+		}
+
+		/** 登录Log */
+		interface Login {
+			String ROOT = "/admin/log/login";
+
+			String INIT = "init";
+
+			String SEARCH_LOG = "searchLog";
+
+		}
+
+	}
+
 }
