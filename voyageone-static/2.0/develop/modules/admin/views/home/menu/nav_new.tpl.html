@@ -1,4 +1,29 @@
 <ul class="nav" >
+    <!-- 用户/权限管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-user icon text-vo"></i>
+            <span class="" translate="TXT_USER_ADMIN"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_USER_ADMIN"></span>
+                </a>
+            </li>
+            <!-- 用户管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/admin/userManage">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_USER_MANAGEMENT"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
     <!-- 渠道管理 -->
     <li  ng-if="!$root.isTranslator">
         <a class="auto">
