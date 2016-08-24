@@ -90,9 +90,9 @@ define(function (require) {
                 pageIndex: paging.curr - 1,
                 pageRowCount: paging.size,
                 parameters: {
-                    "cartId": !searchInfo.cartId ? null : +searchInfo.cartId,
-                    "categoryType": +searchInfo.categoryType,
-                    "categoryPath": searchInfo.categoryPath
+                    cartId: !searchInfo.cartId ? null : +searchInfo.cartId,
+                    categoryType: +searchInfo.categoryType,
+                    categoryPath: searchInfo.categoryPath
                 }
             }).then(function (resp) {
                 paging.total = resp.data.total;
@@ -113,6 +113,19 @@ define(function (require) {
                     }
                 });
             });
+        };
+
+        DefaultAttributeController.prototype.create = function () {
+
+            var self = this,
+                searchInfo = self.searchInfo,
+                createParams = {
+                    cartId: !searchInfo.cartId ? null : +searchInfo.cartId,
+                    categoryType: +searchInfo.categoryType,
+                    categoryPath: searchInfo.categoryPath
+                };
+
+            window.open("#/channel/default_attribute_detail/" + JSON.stringify(createParams).replace(/\//g, "✓"));
         };
 
         DefaultAttributeController.prototype.editItem = function (item) {
