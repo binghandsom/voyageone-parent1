@@ -18,7 +18,9 @@
                                 <div class="row form-group"><!-- 角色 -->
                                     <label class="col-sm-3 control-label">{{'TXT_ROLE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control" ng-model="ctrl.searchInfo.roleId"/>
+                                        <select class="form-control" ng-model="ctrl.searchInfo.roleId">
+                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -26,7 +28,7 @@
                         <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="row form-group"><!-- 状态 -->
-                                    <label class="col-sm-3 control-label">{{'TXT_STORE_NAME' | translate}}</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_STATUS' | translate}}</label>
                                     <div class="col-sm-8">
                                         <select class="form-control" ng-model="ctrl.searchInfo.active">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
@@ -38,10 +40,8 @@
                                 <div class="row form-group"><!-- 渠道 -->
                                     <label class="col-sm-3 control-label">{{'TXT_CHANNEL' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.channelId">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.channelId" ng-options="channel.orderChannelId as channel.fullName for channel in ctrl.channelList">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="1">&nbsp;启用</option>
-                                            <option value="0">&nbsp;禁用</option>
                                         </select>
                                     </div>
                                 </div>
@@ -52,20 +52,16 @@
                                 <div class="row form-group"><!-- 组织 -->
                                     <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.orgId">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.orgId" ng-options="org for org in ctrl.orgList">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="1">&nbsp;在售</option>
-                                            <option value="0">&nbsp;不在售</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="row form-group"><!-- 仓库 -->
                                     <label class="col-sm-3 control-label">{{'TXT_STORE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.storeId">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.storeId" ng-options="store.storeId as store.storeName for store in ctrl.storeList">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="1">&nbsp;在售</option>
-                                            <option value="0">&nbsp;不在售</option>
                                         </select>
                                     </div>
                                 </div>
@@ -76,11 +72,8 @@
                                 <div class="row form-group"><!-- 系统 -->
                                     <label class="col-sm-3 control-label">{{'TXT_SYSTEM' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.storeType">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.application" ng-options="app for app in ctrl.appList">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="0">&nbsp;CMS</option>
-                                            <option value="1">&nbsp;WMS</option>
-                                            <option value="2">&nbsp;OMS</option>
                                         </select>
                                     </div>
                                 </div>
@@ -112,10 +105,10 @@
             <table class="table table-hover-new table-hover table_main">
                 <thead>
                 <tr>
-                    <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
+                    <th class="text-left mfb-xt" ng-controller="selectRowsCtrl" style="padding-left: 0;padding-right: 0;">
                         <label class="checkbox-inline c-checkbox" style="height: 15px;">
-                            <input type="checkbox" ng-click="selectAll(ctrl.storeSelList)"
-                                   ng-checked="isAllSelected(ctrl.storeSelList)" >
+                            <input type="checkbox" ng-click="selectAll(ctrl.adminUserSelList)"
+                                   ng-checked="isAllSelected(ctrl.adminUserSelList)" >
                             <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                         </label>
                     </th>
@@ -123,44 +116,44 @@
                     <th class="text-left mfb-xt" translate="TXT_USER_NAME"></th>
                     <th class="text-left mfb-xt" translate="TXT_EMAIL"></th>
                     <th class="text-center mfb-xxt" translate="TXT_ROLE"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_ORGANIZE"></th>
+                    <th class="text-center mfb-xt" translate="TXT_ORGANIZE"></th>
                     <th class="text-center mfb-xxt" translate="TXT_CHANNEL"></th>
                     <th class="text-left mfb-xxt" translate="TXT_STORE"></th>
                     <th class="text-center mfb-xt" translate="TXT_SYSTEM"></th>
                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
-                    <th class="text-center mfb-xt" translate="TXT_INSTRUCTION"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_UPDATER"></th>
-                    <th class="text-center mfb-xt" translate="TXT_CART_UPDATE_TIME"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_INSTRUCTION"></th>
+                    <th class="text-left mfb-xt" translate="TXT_UPDATER"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
                 </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td if-no-rows="ctrl.storeList.length||ctrl.storeList" colspan="13" style="padding: 0px"></td>
+                        <td if-no-rows="ctrl.adminList.length||ctrl.adminList" colspan="13" style="padding: 0px"></td>
                     </tr>
-                    <tr ng-repeat="list in ctrl.storeList">
+                    <tr ng-repeat="list in ctrl.adminList">
                         <td class="text-left v-middle">
                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                                <input ng-model="ctrl.storeSelList.selFlag[list.storeId]" type="checkbox" ng-controller="selectRowsCtrl"
-                                       ng-click="selectOne(list.storeId, ctrl.storeSelList)">
+                                <input ng-model="ctrl.adminUserSelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
+                                       ng-click="selectOne(list.id, ctrl.adminUserSelList)">
                                 <span class="fa fa-check"></span>
                             </label>
                         </td>
+                        <td class="text-center v-middle">{{list.userAccount}}</td>
+                        <td class="text-left v-middle">{{list.userName}}</td>
+                        <td class="text-left v-middle">{{list.email}}</td>
+                        <td class="text-center v-middle">{{list.roleName}}</td>
+                        <td class="text-center v-middle">{{ctrl.getName({'type':'org','value':list.orgId})}}</td>
                         <td class="text-center v-middle">{{list.channelName}}</td>
-                        <td class="text-left v-middle">{{list.storeName}}</td>
-                        <td class="text-left v-middle">{{list.storeArea}}</td>
-                        <td class="text-center v-middle">{{ctrl.getStoreType(list.storeType)}}</td>
-                        <td class="text-center v-middle">{{list.isSale=='1'?'在售':'不在售'}}</td>
-                        <td class="text-center v-middle">{{list.inventoryManager=='1' ? '管理':'不管理'}}</td>
-                        <td class="text-left v-middle">{{ctrl.getInventoryHold(list.inventoryHold)}}</td>
-                        <td class="text-center v-middle">{{list.modifier}}</td>
-                        <td class="text-center v-middle">{{list.modifier}}</td>
+                        <td class="text-left v-middle">{{ctrl.getName({'type':'store','value':list.storeId})}}</td>
+                        <td class="text-center v-middle">{{list.application}}</td>
                         <td class="text-center v-middle">{{list.active==true ? '启用':'禁用'}}</td>
-                        <td class="text-left v-middle">{{list.modified}}</td>
-                        <td class="text-center v-middle">{{list.modifier}}</td>
+                        <td class="text-center v-middle">{{list.description}}</td>
+                        <td class="text-left v-middle">{{list.modifier}}</td>
+                        <td class="text-center v-middle">{{list.modified}}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <vpagination config="ctrl.storePageOption" ng-if="ctrl.storeList.length>0"></vpagination>
+        <vpagination config="ctrl.storePageOption" ng-if="ctrl.adminList.length>0"></vpagination>
     </div>
 </div>

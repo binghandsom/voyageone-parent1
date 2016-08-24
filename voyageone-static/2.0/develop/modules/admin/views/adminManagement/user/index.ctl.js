@@ -8,17 +8,19 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('UserManagementController', (function () {
-        function UserManagementController(popups, alert, confirm, adminUserService, storeService, selectRowsFactory) {
+        function UserManagementController(popups, alert, confirm, adminUserService, storeService, adminOrgService, channelService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
             this.adminUserService = adminUserService;
-            this.selectRowsFactory = selectRowsFactory;
             this.storeService = storeService;
+            this.adminOrgService = adminOrgService;
+            this.channelService = channelService;
+            this.selectRowsFactory = selectRowsFactory;
             this.storePageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
-            this.storeList = [];
-            this.storeSelList = {selList: []};
+            this.adminList = [];
+            this.adminUserSelList = {selList: []};
             this.tempSelect = null;
             this.searchInfo = {
                 userAccount: '',
@@ -26,7 +28,7 @@ define([
                 active: '',
                 channelId: '',
                 orgId: '',
-                storeId: '',
+                application: '',
                 pageInfo: this.storePageOption
             }
         }
@@ -34,6 +36,18 @@ define([
         UserManagementController.prototype = {
             init: function () {
                 var self = this;
+                self.storeService.getAllStore().then(function (res) {
+                    self.storeList = res.data;
+                });
+                self.adminOrgService.getAllOrg().then(function (res) {
+                    self.orgList = res.data;
+                });
+                self.channelService.getAllChannel().then(function (res) {
+                    self.channelList = res.data;
+                });
+                self.adminUserService.getAllApp().then(function (res) {
+                    self.appList = res.data;
+                });
                 self.search(1);
             },
             search: function (page) {
@@ -47,10 +61,10 @@ define([
                         'active': self.searchInfo.active,
                         'channelId': self.searchInfo.channelId,
                         'orgId': self.searchInfo.orgId,
-                        'storeId': self.searchInfo.storeId
+                        'application': self.searchInfo.application
                     })
                     .then(function (res) {
-                        self.storeList = res.data.result;
+                        self.adminList = res.data.result;
                         self.storePageOption.total = res.data.count;
 
                         // 设置勾选框
@@ -60,16 +74,16 @@ define([
                             self.tempSelect.clearCurrPageRows();
                             self.tempSelect.clearSelectedList();
                         }
-                        _.forEach(self.storeList, function (Info) {
+                        _.forEach(self.adminList, function (Info) {
                             if (Info.updFlg != 8) {
                                 self.tempSelect.currPageRows({
-                                    "id": Info.storeId,
+                                    "id": Info.id,
                                     "code": Info.storeName,
                                     "orderChannelId": Info.orderChannelId
                                 });
                             }
                         });
-                        self.storeSelList = self.tempSelect.selectRowsInfo;
+                        self.adminUserSelList = self.tempSelect.selectRowsInfo;
                         // End 设置勾选框
                     })
             },
@@ -82,17 +96,17 @@ define([
                     active: '',
                     channelId: '',
                     orgId: '',
-                    storeId: ''
+                    application: ''
                 }
             },
             config: function (type) {
                 var self = this;
-                if (self.storeSelList.selList.length < 1) {
+                if (self.adminUserSelList.selList.length < 1) {
                     self.popups.openConfig({'configType': type});
                     return;
                 } else {
-                    _.forEach(self.storeList, function (storeInfo) {
-                        if (storeInfo.storeId == self.storeSelList.selList[0].id) {
+                    _.forEach(self.adminList, function (storeInfo) {
+                        if (storeInfo.application == self.adminUserSelList.selList[0].id) {
                             _.extend(storeInfo, {'configType': type});
                             self.popups.openConfig(storeInfo);
                         }
@@ -101,16 +115,12 @@ define([
             },
             edit: function () {
                 var self = this;
-                if (self.storeSelList.selList.length <= 0) {
+                if (self.adminUserSelList.selList.length <= 0) {
                     self.alert('TXT_MSG_NO_ROWS_SELECT');
                     return;
                 } else {
-                    _.forEach(self.storeList, function (Info) {
-                        if (Info.storeId == self.storeSelList.selList[0].id) {
-                            Info['areaId'] = Info['areaId'] + '';
-                            var copyData = Info.inventoryHold.split(",");
-                            Info.inventoryHold = copyData[0];
-                            Info.remainNum = copyData[1];
+                    _.forEach(self.adminList, function (Info) {
+                        if (Info.id == self.adminUserSelList.selList[0].id) {
                             self.popups.openStoreAdd(Info).then(function () {
                                 self.search(1);
                             });
@@ -123,66 +133,34 @@ define([
                 var self = this;
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
-                        _.forEach(self.storeSelList.selList, function (delInfo) {
-                            delList.push({'orderChannelId': delInfo.orderChannelId, 'storeId': delInfo.id});
+                        _.forEach(self.adminUserSelList.selList, function (delInfo) {
+                            delList.push({'orderChannelId': delInfo.orderChannelId, 'application': delInfo.id});
                         });
-                        self.storeService.deleteStore(delList).then(function (res) {
+                        self.adminUserService.deleteUser(delList).then(function (res) {
                             self.search();
                         })
                     }
                 );
             },
-            getStoreType: function (type) {
-                switch (type) {
-                    case '0':
-                        return '自营仓库';
+            getName: function (item) {
+                var self = this;
+                switch (item.type) {
+                    case 'org':
+                        return self.orgList[item.value];
                         break;
-                    case '1':
-                        return '第三方合作仓库';
-                        break;
-                    case '2':
-                        return '菜鸟保税仓';
-                        break;
-                    case '3':
-                        return '聚美保税仓';
+                    case 'store':
+                        var storeName = [];
+                        var copyData = item.value.split(",");
+                        for (var i = 0; i < copyData.length; i++) {
+                            _.map(self.storeList, function (list) {
+                                if (list.storeId == copyData[i])
+                                    storeName.push(list.storeName);
+                            });
+                            return storeName.join(',');
+                        }
                         break;
                 }
             },
-            getInventoryHold: function (item) {
-                if (item.indexOf(',') < 0) {
-                    switch (item) {
-                        case '0':
-                            return '不做保留';
-                            break;
-                        case '1':
-                            return '按加减保留';
-                            break;
-                        case '2':
-                            return '按百分比保留';
-                            break;
-                        case '3':
-                            return '按销售计算（默认百分比）';
-                            break;
-                    }
-                } else {
-                    var type = item.split(",")[0];
-                    var num = item.split(",")[1];
-                    switch (type) {
-                        case '0':
-                            return '不做保留' + '' + num;
-                            break;
-                        case '1':
-                            return '按加减保留' + '' + num;
-                            break;
-                        case '2':
-                            return '按百分比保留' + '' + num;
-                            break;
-                        case '3':
-                            return '按销售计算（默认百分比）' + '' + num;
-                            break;
-                    }
-                }
-            }
         };
         return UserManagementController;
     })())
