@@ -16,6 +16,7 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
@@ -407,7 +408,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
             searchValue.put("_userName",  userInfo.getUserName());
             searchValue.put("_language",  language);
             searchValue.put("_taskId",  taskModel.getId());
-            searchValue.put("_sessionBean",  cmsSessionBean);
+            searchValue.put("_sessionBean", cmsSessionBean);
             sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_FileDldJob, searchValue);
             return true;
 
