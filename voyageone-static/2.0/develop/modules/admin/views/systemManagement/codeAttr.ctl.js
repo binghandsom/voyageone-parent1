@@ -20,6 +20,7 @@ define([
                 code: '',
                 name: '',
                 des: '',
+                active: '',
                 pageInfo: this.channelPageOption
             }
         }
@@ -37,7 +38,8 @@ define([
                         'pageSize': self.searchInfo.pageInfo.size,
                         'code': self.searchInfo.code,
                         'name': self.searchInfo.name,
-                        'des': self.searchInfo.des
+                        'des': self.searchInfo.des,
+                        'active': self.searchInfo.active
                     })
                     .then(function (res) {
                         self.systemList = res.data.result;
@@ -50,11 +52,11 @@ define([
                             self.tempSelect.clearCurrPageRows();
                             self.tempSelect.clearSelectedList();
                         }
-                        _.forEach(self.systemList, function (Info) {
+                        _.forEach(self.systemList, function (Info, index) {
                             if (Info.updFlg != 8) {
+                                _.extend(Info, {mainKey: index});
                                 self.tempSelect.currPageRows({
-                                    "id": Info.id,
-                                    "code": Info.comment
+                                    "id": Info.mainKey
                                 });
                             }
                         });
@@ -67,6 +69,7 @@ define([
                     code: '',
                     name: '',
                     des: '',
+                    active: '',
                     pageInfo: self.channelPageOption
                 }
             },
@@ -78,7 +81,7 @@ define([
                 } else {
                     _.forEach(self.systemList, function (Info) {
                         if (Info.id == self.codeSelList.selList[0].id) {
-                            self.popups.openTypeAdd(Info).then(function(){
+                            self.popups.openTypeAdd(Info).then(function () {
                                 self.search(1);
                             });
                         }

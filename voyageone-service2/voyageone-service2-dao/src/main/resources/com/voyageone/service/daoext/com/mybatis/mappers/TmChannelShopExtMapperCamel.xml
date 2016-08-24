@@ -17,6 +17,9 @@
 			<if test="shopName != null and shopName != ''">
 				and tcs.shop_name like concat('%', #{shopName}, '%')
 			</if>
+			<if test="active != null">
+				and tcs.active = #{active}
+			</if>
 		</where>
 	</sql>
 	

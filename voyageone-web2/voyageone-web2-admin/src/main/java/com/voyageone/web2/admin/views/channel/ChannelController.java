@@ -65,7 +65,7 @@ public class ChannelController extends AdminController {
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索渠道信息
 		PageModel<TmOrderChannelBean> channelPage = channelService.searchChannelByPage(form.getOrderChannelId(),
-				form.getChannelName(), form.getIsUsjoi(), form.getPageNum(), form.getPageSize());
+				form.getChannelName(), form.getIsUsjoi(), form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(channelPage);
 	}

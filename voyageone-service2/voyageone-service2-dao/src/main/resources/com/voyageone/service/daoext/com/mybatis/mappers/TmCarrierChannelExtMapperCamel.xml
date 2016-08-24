@@ -15,6 +15,9 @@
 			<if test="useKd100Flg != null and useKd100Flg != ''">
 				and tcc.useKd100_flg = #{useKd100Flg}
 			</if>
+			<if test="active != null">
+				and tcc.active = #{active}
+			</if>
 		</where>
 	</sql>
 	

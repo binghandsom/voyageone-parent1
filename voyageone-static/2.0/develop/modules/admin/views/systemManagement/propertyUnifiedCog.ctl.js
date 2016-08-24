@@ -132,8 +132,8 @@ define([
                         });
                         break;
                     case 'Port':
-                        self.taskService.getAllTask().then(function (res) {
-                            self.taskList = res.data;
+                        self.portConfigService.getAllPort().then(function (res) {
+                            self.portList = res.data;
                         });
                         var selectKey = function (configInfo) {
                             return {
@@ -250,10 +250,10 @@ define([
                             self.alert('请选择一个港口！');
                             return;
                         }
-                        self.list = _.filter(self.taskList, function (listItem) {
-                            return listItem.taskId == item.taskId;
+                        self.list = _.filter(self.portList, function (listItem) {
+                            return listItem.port == item.port;
                         });
-                        _.extend(item, {'taskName': self.list[0].taskName, 'configType': self.searchInfo.configType});
+                        _.extend(item, {'port': self.list[0].port, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search();
                         });
@@ -277,7 +277,7 @@ define([
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
                     var delList = [];
                     _.forEach(self.configSelList.selList, function (delInfo) {
-                        _.extend(delInfo, {'configType': self.searchInfo.configType});
+                        _.extend(delInfo, {'configType': self.searchInfo.configType, 'seq': delInfo.id + 1});
                         delList.push(delInfo);
                     });
                     switch (self.searchInfo.configType) {
@@ -301,6 +301,12 @@ define([
                             break;
                         case 'Shop':
                             self.cartShopService.deleteCartShopConfig(delList).then(function (res) {
+                                if (res.data == false)self.alert(res.data.message);
+                                self.search(1);
+                            });
+                            break;
+                        case 'Port':
+                            self.portConfigService.deletePortConfig(delList).then(function (res) {
                                 if (res.data == false)self.alert(res.data.message);
                                 self.search(1);
                             });

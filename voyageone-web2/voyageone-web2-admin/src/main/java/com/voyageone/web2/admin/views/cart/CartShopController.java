@@ -49,7 +49,7 @@ public class CartShopController extends AdminController {
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索Cart商店信息
 		PageModel<TmChannelShopBean> cartShopPage = cartShopService.searchCartShopByPage(form.getOrderChannelId(),
-				form.getCartId(), form.getShopName(), form.getPageNum(), form.getPageSize());
+				form.getCartId(), form.getShopName(), form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(cartShopPage);
 	}

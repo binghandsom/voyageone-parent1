@@ -15,6 +15,9 @@
 			<if test="comment != null">
 				and comment like concat('%', #{comment}, '%')
 			</if>
+			<if test="active != null">
+				and active = #{active}
+			</if>
 		</where>
 	</sql>
 	

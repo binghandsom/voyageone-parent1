@@ -54,7 +54,7 @@ public class TypeController extends AdminController {
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索类型信息
 		PageModel<ComMtTypeModel> typePage = typeService.searchTypeByPage(form.getId(), form.getName(),
-				form.getComment(), form.getPageNum(), form.getPageSize());
+				form.getComment(), form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(typePage);
 	}

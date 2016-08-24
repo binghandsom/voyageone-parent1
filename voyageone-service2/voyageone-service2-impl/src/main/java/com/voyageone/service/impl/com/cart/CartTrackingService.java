@@ -31,7 +31,7 @@ public class CartTrackingService extends BaseService {
 	private ComMtTrackingInfoConfigDaoExt cartTrackingDaoExt;
 
 	public PageModel<ComMtTrackingInfoConfigBean> searchCartTrackingByPage(String channelId, Integer cartId,
-			String trackingStatus, String location, Integer pageNum, Integer pageSize) {
+			String trackingStatus, String location, Boolean active, Integer pageNum, Integer pageSize) {
 		PageModel<ComMtTrackingInfoConfigBean> pageModel = new PageModel<ComMtTrackingInfoConfigBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -39,6 +39,7 @@ public class CartTrackingService extends BaseService {
 		params.put("cartId", cartId);
 		params.put("trackingStatus", trackingStatus);
 		params.put("location", location);
+		params.put("active", active);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
 			pageModel.setCount(cartTrackingDaoExt.selectCartTrackingCount(params));

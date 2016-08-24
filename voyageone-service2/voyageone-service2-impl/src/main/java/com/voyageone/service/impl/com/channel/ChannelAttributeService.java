@@ -31,7 +31,7 @@ public class ChannelAttributeService extends BaseService {
 	private ComMtValueChannelDaoExt channelAttrDaoExt;
 
 	public PageModel<ComMtValueChannelBean> searchChannelAttributeByPage(String channelId, Integer typeId,
-			String langId, String name, String value, Integer pageNum, Integer pageSize) {
+			String langId, String name, String value, Boolean active, Integer pageNum, Integer pageSize) {
 		PageModel<ComMtValueChannelBean> pageModel = new PageModel<ComMtValueChannelBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -40,6 +40,7 @@ public class ChannelAttributeService extends BaseService {
 		params.put("langId", langId);
 		params.put("name", name);
 		params.put("value", value);
+		params.put("active", active);
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {

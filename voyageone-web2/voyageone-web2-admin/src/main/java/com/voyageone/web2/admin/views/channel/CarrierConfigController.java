@@ -53,7 +53,7 @@ public class CarrierConfigController extends AdminController {
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索渠道快递信息
 		PageModel<TmCarrierChannelBean> carrierConfigPage = carrierConfigService.searchCarrierConfigByPage(
-				form.getOrderChannelId(), form.getCarrier(), form.getUsekd100Flg(),
+				form.getOrderChannelId(), form.getCarrier(), form.getUsekd100Flg(), form.getActive(),
 				form.getPageNum(), form.getPageSize());
 		
 		return success(carrierConfigPage);

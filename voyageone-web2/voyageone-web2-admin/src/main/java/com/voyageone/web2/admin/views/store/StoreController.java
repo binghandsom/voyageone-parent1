@@ -63,7 +63,7 @@ public class StoreController extends AdminController {
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索仓库信息
 		PageModel<WmsMtStoreBean> storePage = storeService.searchStoreByPage(form.getOrderChannelId(), form.getStoreName(),
-				form.getIsSale(), form.getStoreType(), form.getPageNum(), form.getPageSize());
+				form.getIsSale(), form.getStoreType(), form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(storePage);
 	}
