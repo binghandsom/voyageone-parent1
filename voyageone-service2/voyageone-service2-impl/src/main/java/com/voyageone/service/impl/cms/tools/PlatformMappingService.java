@@ -74,10 +74,6 @@ public class PlatformMappingService extends BaseService {
         return true;
     }
 
-    public Map<String, Object> getValueMap(String channelId, Long productId, int cartId) {
-        return getValueMap(channelId, productId, cartId, null);
-    }
-
     public Map<String, Object> getValueMap(String channelId, Long productId, int cartId, String categoryPath) {
 
         // 查询需要用到的平台类目也在商品中获取
@@ -147,6 +143,7 @@ public class PlatformMappingService extends BaseService {
             this.master = common.getFields();
         }
 
+        @SuppressWarnings("unchecked")
         private void fillValueMap(Map<String, Object> valueMap, Map<String, CmsBtPlatformMappingModel.FieldMapping> mappingMap) {
 
             // 循环所有配置
@@ -157,12 +154,21 @@ public class PlatformMappingService extends BaseService {
 
                 Map<String, CmsBtPlatformMappingModel.FieldMapping> childrenMapping = mapping.getChildren();
 
+                String fieldId = mapping.getFieldId();
+
                 // 先看当前这个 mapping 有没有子字段匹配
                 // 有的话, 说明是 complex
                 // 那么整一个嵌套的 map 即可
                 if (childrenMapping != null && !childrenMapping.isEmpty()) {
 
-                    Map<String, Object> childrenValue = new HashMap<>();
+                    Object childrenValueObject = valueMap.get(fieldId);
+
+                    Map<String, Object> childrenValue;
+
+                    if (childrenValueObject == null || !(childrenValueObject instanceof Map))
+                        childrenValue = new HashMap<>();
+                    else
+                        childrenValue = (Map<String, Object>) childrenValueObject;
 
                     fillValueMap(childrenValue, childrenMapping);
 
