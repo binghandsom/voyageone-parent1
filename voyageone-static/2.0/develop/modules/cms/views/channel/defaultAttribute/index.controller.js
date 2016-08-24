@@ -133,10 +133,6 @@ define(function (require) {
             window.open("#/channel/default_attribute_detail/" + JSON.stringify(_item).replace(/\//g, "✓"));
         };
 
-        DefaultAttributeController.prototype.getMappingCategoryPath = function (entity) {
-            return !entity.categoryPath ? ('全类目(' + this.cartMap[entity.cartId] + ')') : entity.categoryPath;
-        };
-
         return DefaultAttributeController;
     })())
 });

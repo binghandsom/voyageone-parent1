@@ -71,7 +71,12 @@
                 </tr>
                 <tr ng-repeat="entity in ctrl.dataList">
                     <td class="mfb-xt3 text-center">{{$index+1}}</td>
-                    <td class="mfb-xt3 text-left">{{ctrl.getMappingCategoryPath(entity)}}</td>
+                    <td class="mfb-xt3 text-left">
+                        <div class="row">
+                            <div class="col-sm-2">{{ctrl.cartMap[entity.cartId]}}</div>
+                            <div class="col-sm-10">-&nbsp;<span>{{!entity.categoryPath ? '全类目' : entity.categoryPath}}</span></div>
+                        </div>
+                    </td>
                     <td class="mfb-xt3 text-center">{{entity.modified | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="mfb-xt3 text-left">{{entity.modifier}}</td>
                     <td class="mfb-xt3 text-center">{{entity.created | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
