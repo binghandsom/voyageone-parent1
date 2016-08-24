@@ -28,6 +28,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -49,6 +50,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM.*;
 
 /**
  * 子店->USJOI主店产品导入服务
@@ -78,6 +80,9 @@ public class UploadToUSJoiService extends BaseTaskService {
 
     @Autowired
     private ProductSkuService productSkuService;
+
+    @Autowired
+    private PriceService priceService;
 
     @Autowired
     private MongoSequenceService commSequenceMongoService;
@@ -150,6 +155,8 @@ public class UploadToUSJoiService extends BaseTaskService {
 
         // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
         CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
 
         // --------------------------------------------------------------------------------------------
         // 品牌mapping表
@@ -202,13 +209,23 @@ public class UploadToUSJoiService extends BaseTaskService {
         }
         // --------------------------------------------------------------------------------------------
 
+        // 从synship.tm_order_channel表中取得USJOI店铺channel对应的cartId列表（一般只有一条cartId.如928对应28, 929对应29）
+        // 用于product.PXX追加平台信息(group表里面用到的用于展示的cartId不是从这里取得的)
+        final List<Integer> cartIds;
+        OrderChannelBean usJoiBean = Channels.getChannel(usjoiChannelId);
+        if (usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())) {
+            cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
+        } else {
+            cartIds = new ArrayList<>();
+        }
+
         // 每个channel读入子店数据上新到USJOI主店
         List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(
                 UPLOAD_TO_USJOI_MAX_100, Integer.parseInt(channelBean.getOrder_channel_id()));
         for (CmsBtSxWorkloadModel sxWorkloadModel : cmsBtSxWorkloadModels) {
             try {
                 // 循环上传单个产品到USJOI主店
-                upload(sxWorkloadModel, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping);
+                upload(sxWorkloadModel, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, cartIds);
                 successCnt++;
             } catch (CommonConfigNotFoundException ce) {
                 errCnt++;
@@ -221,7 +238,7 @@ public class UploadToUSJoiService extends BaseTaskService {
         }
 
         String resultInfo = usjoiChannelId + " " + channelBean.getFull_name() +
-                "USJOI主店从子店（可能为多个子店）中导入产品结果 [总件数:" + cmsBtSxWorkloadModels.size()
+                " USJOI主店从子店（可能为多个子店）中导入产品结果 [总件数:" + cmsBtSxWorkloadModels.size()
                 + " 成功:" + successCnt + " 失败:" + errCnt + "]";
         // 将该channel的子店->主店导入信息加入map，供channel导入线程全部完成一起显示
         resultMap.put(usjoiChannelId, resultInfo);
@@ -234,7 +251,8 @@ public class UploadToUSJoiService extends BaseTaskService {
     public void upload(CmsBtSxWorkloadModel sxWorkLoadBean,
                        Map<String, String> mapBrandMapping,
                        Map<String, String> mapProductTypeMapping,
-                       Map<String, String> mapSizeTypeMapping) {
+                       Map<String, String> mapSizeTypeMapping,
+                       List<Integer> cartIds) {
 
         // workload表中的cartId是usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
         String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
@@ -274,15 +292,6 @@ public class UploadToUSJoiService extends BaseTaskService {
             List<CmsBtProductModel> targetProductList = new ArrayList<>();
             // 取得USJOI店铺共通设置(是否自动同步人民币专柜价格)
             boolean usjoiIsAutoSyncPriceMsrp = isAutoSyncPriceMsrp(usJoiChannelId);
-
-            // 取得USJOI店铺channel对应的cartId列表（一般只有一条cartId.如928对应28, 929对应29）
-            final List<Integer> cartIds;
-            OrderChannelBean usJoiBean = Channels.getChannel(usJoiChannelId);
-            if (usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())) {
-                cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
-            } else {
-                cartIds = new ArrayList<>();
-            }
 
             for (CmsBtProductModel productModel : productModels) {
                 productModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel), CmsBtProductModel.class);
@@ -412,7 +421,24 @@ public class UploadToUSJoiService extends BaseTaskService {
                                                     // 如果USJOI店铺(928,929)配置了自动同步人民币专柜价格时，才同步priceMsrp
                                                     oldSku.put("priceMsrp", newSku.get("priceMsrp"));
                                                 }
+
+                                                // 获取上一次指导价
+                                                Double lastRetailPrice = oldSku.getDoubleAttribute("priceRetail");
+                                                // 保存最新中国指导价格
                                                 oldSku.put("priceRetail", newSku.get("priceRetail"));
+
+                                                // 获取最新指导价
+                                                Double retailPrice = oldSku.getDoubleAttribute("priceRetail");
+                                                // 获取价格波动字符串
+                                                String priceFluctuation = priceService.getPriceFluctuation(retailPrice, lastRetailPrice);
+                                                // 保存价格波动(U50% D30%)
+                                                oldSku.put(priceChgFlg.name(), priceFluctuation);
+
+                                                // 保存击穿标识
+                                                String priceDiffFlgValue = productSkuService.getPriceDiffFlg(usJoiChannelId, oldSku);
+                                                // 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5）
+                                                oldSku.put(priceDiffFlg.name(), priceDiffFlgValue);
+
                                                 updateFlg = true;
                                                 break;
                                             }
@@ -487,11 +513,11 @@ public class UploadToUSJoiService extends BaseTaskService {
             productGroupService.updateGroupsPlatformStatus(cmsBtProductGroupModel, listSxCode);
             $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
         } catch (CommonConfigNotFoundException ce) {
-            String errMsg = "子店->USJOI主店产品导入:异常终止:[ErrMsg=";
+            String errMsg = "子店->USJOI主店产品导入:异常终止:";
             if (StringUtils.isNullOrBlank2(ce.getMessage())) {
-                errMsg += " [ErrMsg=" + ce.getStackTrace()[0].toString() + "]";
+                errMsg += "出现不可预知的错误，请跟管理员联系 [ErrMsg=" + ce.getStackTrace()[0].toString() + "]";
             } else {
-                errMsg += ce.getMessage() + "]";
+                errMsg += ce.getMessage();
             }
             // 回写详细错误信息表(cms_bt_business_log)
             insertBusinessLog(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getCartId(),
@@ -499,12 +525,12 @@ public class UploadToUSJoiService extends BaseTaskService {
             // 抛出让外面的循环做处理
             throw ce;
         } catch (Exception e) {
-            String errMsg = "子店->USJOI主店产品导入:异常终止:[ErrMsg=";
+            String errMsg = "子店->USJOI主店产品导入:异常终止:";
             if (StringUtils.isNullOrBlank2(e.getMessage())) {
-                errMsg += e.getStackTrace()[0].toString() + "]";
+                errMsg += "出现不可预知的错误，请跟管理员联系 [ErrMsg=" + e.getStackTrace()[0].toString() + "]";
                 $error(errMsg);
             } else {
-                errMsg += e.getMessage() + "]";
+                errMsg += e.getMessage();
             }
             // 将子店->主店的上新workload的状态更新为2(导入上新失败)
             sxWorkLoadBean.setPublishStatus(2);

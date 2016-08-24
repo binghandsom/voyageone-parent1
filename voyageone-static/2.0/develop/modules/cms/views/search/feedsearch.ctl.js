@@ -100,6 +100,9 @@ define([
             $scope.vm.searchInfo.pageNum = $scope.vm.feedPageOption.curr;
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;
 
+            //测试数组类型类目
+            $scope.vm.searchInfo.category = ['Bracelets-Anklets-No Stone','Bracelets-Bangles-Agate','Bracelets-Beads-Agate'];
+
             $feedSearchService.search($scope.vm.searchInfo).then(function (res) {
 
                 $scope.vm.currTab.group = true;
@@ -193,7 +196,12 @@ define([
         };
 
         function doExport() {
-            var data = {"parameter": JSON.stringify($scope.vm.searchInfo)}
+            var data;
+            if ($scope.vm.feedSelList.selList && $scope.vm.feedSelList.selList.length > 0){
+                data = {"parameter": JSON.stringify($scope.vm.feedSelList.selList)}
+            }else{
+                data = {"parameter": JSON.stringify($scope.vm.searchInfo)}
+            }
             $feedSearchService.doExport(data).then(function (data) {
                 $scope.vm.exportList.unshift(data.data);
                 $scope.vm.currTab.export = true;

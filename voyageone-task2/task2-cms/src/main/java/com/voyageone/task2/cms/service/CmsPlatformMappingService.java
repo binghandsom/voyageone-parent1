@@ -19,13 +19,13 @@ import com.voyageone.service.bean.cms.MappingBean;
 import com.voyageone.service.bean.cms.SimpleMappingBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDeprecatedDao;
 import com.voyageone.service.daoext.cms.CmsMtCommonPropDaoExt;
 import com.voyageone.service.model.cms.CmsMtCommonPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingForInsertModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -49,7 +49,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
     @Autowired
-    private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
+    private CmsMtPlatformMappingDeprecatedDao cmsMtPlatformMappingDao;
     @Autowired
     private CmsMtCommonPropDaoExt cmsMtCommonPropDaoExt;
 
@@ -87,7 +87,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
                             finallyCategory.setCartId(platformCategory.getCartId());
                             // 生成mapping关系数据并插入
                             {
-                                CmsMtPlatformMappingModel cmsMtPlatformMappingModel = makePlatformMapping(finallyCategory);
+                                CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = makePlatformMapping(finallyCategory);
 
                                 List<MappingBean> mappingBeanList = cmsMtPlatformMappingModel.getProps();
                                 List<Map<String, Object>> testList = JacksonUtil.jsonToMapList(JacksonUtil.bean2JsonNotNull(mappingBeanList));
@@ -122,8 +122,8 @@ public class CmsPlatformMappingService extends BaseTaskService {
         return JsonUtil.jsonToBeanList(JsonUtil.bean2Json(jsonArray), CmsMtPlatformCategoryTreeModel.class);
     }
 
-    private CmsMtPlatformMappingModel makePlatformMapping(CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTree)  {
-        CmsMtPlatformMappingModel cmsMtPlatformMappingModel = new CmsMtPlatformMappingModel();
+    private CmsMtPlatformMappingDeprecatedModel makePlatformMapping(CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTree)  {
+        CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = new CmsMtPlatformMappingDeprecatedModel();
         // channelid
         cmsMtPlatformMappingModel.setChannelId(cmsMtPlatformCategoryTree.getChannelId());
         // 类目ID

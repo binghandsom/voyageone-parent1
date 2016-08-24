@@ -15,42 +15,52 @@
                         <div class="col-md-3 text-right">
                             <label class="control-label"><strong>平台</strong></label>
                         </div>
-                        <div class="col-md-8">聚美</div>
+                        <div class="col-md-8">{{ctrl.context.cartName}}</div>
                     </div>
                     <div class="row form-group">
                         <div class="col-md-3 text-right">
                             <label class="control-label"><strong>平台类目</strong></label>
                         </div>
-                        <div class="col-md-8">珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰</div>
+                        <div class="col-md-8">{{!ctrl.context.categoryPath? "全类目" : ctrl.context.categoryPath }}</div>
                     </div>
                     <div class="row form-group">
                         <div class="col-md-3 text-right">
                             <label class="control-label"><strong>平台类目属性</strong></label>
                         </div>
-                        <div class="col-md-8">产地</div>
+                        <div class="col-md-8">{{ctrl.context.name}}</div>
                     </div>
                     <div class="row form-group">
                         <div class="col-md-3 text-right">
                             <label class="control-label"><strong>全数据属性大类</strong></label>
                         </div>
                         <div class="col-md-8">
-                            <select class="form-control"></select>
+                            <select class="form-control" ng-model="ctrl.cat" ng-change="ctrl.changeCat()">
+                                <option value="MASTER">Master详情(Product详情画面->Master产品详情-产品属性)</option>
+                                <option value="FEED_ORG">Feed属性(Product详情画面->Feed详情-共通属性)</option>
+                                <option value="FEED_CN">自定义属性(Product详情画面->Feed详情-中文部)</option>
+                                <option value="FIXED">固定值</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="row form-group">
+                    <div class="row form-group" ng-if="!ctrl.isFixValue">
                         <div class="col-md-3 text-right">
                             <label class="control-label"><strong>全数据属性名称</strong></label>
                         </div>
                         <div class="col-md-8">
-                            <select class="form-control"></select>
+                            <select class="form-control"
+                                    search-contains="true"
+                                    width="'100%'"
+                                    chosen
+                                    ng-options="option.value as option.label for option in ctrl.options"
+                                    ng-model="ctrl.value"></select>
                         </div>
                     </div>
-                    <div class="row form-group">
+                    <div class="row form-group" ng-if="ctrl.isFixValue">
                         <div class="col-md-3 text-right">
                             <label class="control-label"><strong>固定值</strong></label>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" class="form-control"/>
+                            <input type="text" class="form-control" ng-model="ctrl.value"/>
                         </div>
                     </div>
                 </div>
@@ -61,6 +71,6 @@
 
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo" ng-click="ctrl.setMastProduct()" ><i class="glyphicon glyphicon-floppy-disk"></i> 确定</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()" ><i class="glyphicon glyphicon-floppy-disk"></i> 确定</button>
     </div>
 </div>

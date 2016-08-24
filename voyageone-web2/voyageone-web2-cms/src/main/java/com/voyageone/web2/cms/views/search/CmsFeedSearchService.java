@@ -213,12 +213,11 @@ public class CmsFeedSearchService extends BaseAppService {
     }
 
     public CmsBtExportTaskModel export(String channelId, CmsBtExportTaskModel cmsBtExportTaskModel, String userName) {
-        List<CmsBtExportTaskModel> cmsBtExportTaskModels = cmsBtExportTaskService.getExportTaskByUser(channelId, CmsBtExportTaskService.FEED, userName);
-        if(cmsBtExportTaskModels == null || cmsBtExportTaskModels.stream().filter(item -> item.getStatus() == 0).collect(Collectors.toList()).size() == 0) {
+        if (cmsBtExportTaskService.checkExportTaskByUser(channelId, CmsBtExportTaskService.FEED, userName) == 0) {
             cmsBtExportTaskService.add(cmsBtExportTaskModel);
             sender.sendMessage(MqRoutingKey.CMS_BATCH_FeedExportJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(cmsBtExportTaskModel)));
             return cmsBtExportTaskModel;
-        }else{
+        } else {
             throw new BusinessException("你已经有一个任务还没有执行完毕。请稍后再导出");
         }
     }

@@ -63,7 +63,7 @@ public class CmsAddChannelCategoryService extends BaseAppService {
 
         //cartId
         int cartId = StringUtils.toIntValue(params.get("cartId"));
-        if (cartId == 0) {
+        if (cartId == 0 || Carts.getCart(cartId) == null) {
             $warn("getChannelCategory cartI==0 " + params.toString());
             throw new BusinessException("未选择平台");
         }

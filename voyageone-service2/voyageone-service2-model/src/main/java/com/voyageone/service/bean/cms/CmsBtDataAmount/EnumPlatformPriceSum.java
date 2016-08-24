@@ -15,7 +15,7 @@ public enum EnumPlatformPriceSum implements IEnumDataAmountSum{
     CMS_PLATFORM_PRICE_UP("CMS_PLATFORM_PRICE_UP", "{'platforms.P%s.skus.priceDiffFlg':'3'}", "/search/advanceSearch", "/search/advanceSearch", "比指导价高(未击穿)"),
     CMS_PLATFORM_PRICE_UP_BREAKDOWN("CMS_PLATFORM_PRICE_UP_BREAKDOWN", "{'platforms.P%s.skus.priceDiffFlg':'4'}", "/search/advanceSearch", "", "向上击穿警告"),
     CMS_PLATFORM_PRICE_DOWN_BREAKDOWN("CMS_PLATFORM_PRICE_DOWN_BREAKDOWN", "{'platforms.P%s.skus.priceDiffFlg':'5'}", "/search/advanceSearch", "", "向下击穿警告"),
-    CMS_PLATFORM_priceSale_Equal_minus1("CMS_PLATFORM_priceSale_Equal_minus1", "{platforms.P%s:{$exists:true},'platforms.P%s.skus.priceSale':-1}", "/search/advanceSearch", "", "中国最终售价价格为-1",(m)->{
+    CMS_PLATFORM_priceSale_Equal_minus1("CMS_PLATFORM_priceSale_Equal_minus1", "{platforms.P%s:{$exists:true},'platforms.P%s.skus.priceRetail':-1}", "/search/advanceSearch", "", "中国最终指导价格为-1",(m)->{
         return String.format(m.getQueryStr(),m.getCartId(),m.getCartId());
     });
 
