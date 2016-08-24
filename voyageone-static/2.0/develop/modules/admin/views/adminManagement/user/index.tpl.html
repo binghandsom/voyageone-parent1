@@ -40,7 +40,7 @@
                                 <div class="row form-group"><!-- 渠道 -->
                                     <label class="col-sm-3 control-label">{{'TXT_CHANNEL' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.channelId" ng-options="channel.orderChannelId as channel.fullName for channel in ctrl.channelList">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.channelId" ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>
