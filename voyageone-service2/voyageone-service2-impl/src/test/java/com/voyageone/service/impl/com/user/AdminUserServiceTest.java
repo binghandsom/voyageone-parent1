@@ -26,7 +26,7 @@ public class AdminUserServiceTest {
     @Test
     public void testSearchUserByPage() throws Exception {
 
-        PageModel<AdminUserBean> result =  adminUserService.searchUser(null, null, null, null, null,null, null, null);
+        PageModel<AdminUserBean> result =  adminUserService.searchUser(null, null, null, null, null,null, null, null,null);
 
         System.out.println(JacksonUtil.bean2Json(result));
 
@@ -62,6 +62,7 @@ public class AdminUserServiceTest {
         model.setEmail("11111@123.com");
         model.setOrgId(1);
         model.setRoleId("1");
+        model.setApplication("admin");
 
         adminUserService.updateUser(model, "test");
 
@@ -82,5 +83,10 @@ public class AdminUserServiceTest {
 //        Map result = adminUserService.showAuth(1);
 
 //        System.out.println(JacksonUtil.bean2Json(result));
+    }
+
+    @Test
+    public void testGetAllApp() throws Exception {
+        System.out.println(JacksonUtil.bean2Json(adminUserService.getAllApp()));
     }
 }

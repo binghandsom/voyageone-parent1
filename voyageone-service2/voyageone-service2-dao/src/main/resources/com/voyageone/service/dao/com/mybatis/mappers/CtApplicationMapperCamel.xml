@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.voyageone.security.dao.ComLogDao" >
-    <resultMap id="BaseResultMap" type="com.voyageone.security.model.ComLogModel" />
+<mapper namespace="com.voyageone.service.dao.com.CtApplicationDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.com.CtApplicationModel" />
     <sql id="Base_Column_List" >
-        `id`, `application`, `ip`, `url`, `action`, `request`, `response`, `execution_time`, 
-        `created`, `creater`, `modified`, `modifier`
+        `id`, `application`, `active`, `description`, `order_by`, `default_url`, `show_in_menu`, 
+        `menu_title`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
         select 
         <include refid="Base_Column_List" />
-        from com_log
+        from ct_application
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <update id="update" parameterType="com.voyageone.security.model.ComLogModel" >
-        update com_log
+    <update id="update" parameterType="com.voyageone.service.model.com.CtApplicationModel" >
+        update ct_application
         <set >
             <if test="application != null" >
                 `application` = #{application,jdbcType=VARCHAR},
             </if>
-            <if test="ip != null" >
-                `ip` = #{ip,jdbcType=VARCHAR},
+            <if test="active != null" >
+                `active` = #{active,jdbcType=BIT},
             </if>
-            <if test="url != null" >
-                `url` = #{url,jdbcType=VARCHAR},
+            <if test="description != null" >
+                `description` = #{description,jdbcType=VARCHAR},
             </if>
-            <if test="action != null" >
-                `action` = #{action,jdbcType=VARCHAR},
+            <if test="orderBy != null" >
+                `order_by` = #{orderBy,jdbcType=INTEGER},
             </if>
-            <if test="request != null" >
-                `request` = #{request,jdbcType=LONGVARCHAR},
+            <if test="defaultUrl != null" >
+                `default_url` = #{defaultUrl,jdbcType=VARCHAR},
             </if>
-            <if test="response != null" >
-                `response` = #{response,jdbcType=LONGVARCHAR},
+            <if test="showInMenu != null" >
+                `show_in_menu` = #{showInMenu,jdbcType=BIT},
             </if>
-            <if test="executionTime != null" >
-                `execution_time` = #{executionTime,jdbcType=INTEGER},
+            <if test="menuTitle != null" >
+                `menu_title` = #{menuTitle,jdbcType=VARCHAR},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -58,35 +58,35 @@
     </update>
 
     <delete id="delete" parameterType="java.lang.Integer" >
-        delete from com_log
+        delete from ct_application
         where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
     <select id="selectOne" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
-        from com_log
+        from ct_application
         <where >
             <if test="application != null" >
                 and `application` = #{application,jdbcType=VARCHAR}
             </if>
-            <if test="ip != null" >
-                and `ip` = #{ip,jdbcType=VARCHAR}
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
             </if>
-            <if test="url != null" >
-                and `url` = #{url,jdbcType=VARCHAR}
+            <if test="description != null" >
+                and `description` = #{description,jdbcType=VARCHAR}
             </if>
-            <if test="action != null" >
-                and `action` = #{action,jdbcType=VARCHAR}
+            <if test="orderBy != null" >
+                and `order_by` = #{orderBy,jdbcType=INTEGER}
             </if>
-            <if test="request != null" >
-                and `request` = #{request,jdbcType=LONGVARCHAR}
+            <if test="defaultUrl != null" >
+                and `default_url` = #{defaultUrl,jdbcType=VARCHAR}
             </if>
-            <if test="response != null" >
-                and `response` = #{response,jdbcType=LONGVARCHAR}
+            <if test="showInMenu != null" >
+                and `show_in_menu` = #{showInMenu,jdbcType=BIT}
             </if>
-            <if test="executionTime != null" >
-                and `execution_time` = #{executionTime,jdbcType=INTEGER}
+            <if test="menuTitle != null" >
+                and `menu_title` = #{menuTitle,jdbcType=VARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -107,28 +107,28 @@
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
-        from com_log
+        from ct_application
         <where >
             <if test="application != null" >
                 and `application` = #{application,jdbcType=VARCHAR}
             </if>
-            <if test="ip != null" >
-                and `ip` = #{ip,jdbcType=VARCHAR}
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
             </if>
-            <if test="url != null" >
-                and `url` = #{url,jdbcType=VARCHAR}
+            <if test="description != null" >
+                and `description` = #{description,jdbcType=VARCHAR}
             </if>
-            <if test="action != null" >
-                and `action` = #{action,jdbcType=VARCHAR}
+            <if test="orderBy != null" >
+                and `order_by` = #{orderBy,jdbcType=INTEGER}
             </if>
-            <if test="request != null" >
-                and `request` = #{request,jdbcType=LONGVARCHAR}
+            <if test="defaultUrl != null" >
+                and `default_url` = #{defaultUrl,jdbcType=VARCHAR}
             </if>
-            <if test="response != null" >
-                and `response` = #{response,jdbcType=LONGVARCHAR}
+            <if test="showInMenu != null" >
+                and `show_in_menu` = #{showInMenu,jdbcType=BIT}
             </if>
-            <if test="executionTime != null" >
-                and `execution_time` = #{executionTime,jdbcType=INTEGER}
+            <if test="menuTitle != null" >
+                and `menu_title` = #{menuTitle,jdbcType=VARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -146,28 +146,28 @@
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" >
-        select count(*) from com_log
+        select count(*) from ct_application
         <where >
             <if test="application != null" >
                 and `application` = #{application,jdbcType=VARCHAR}
             </if>
-            <if test="ip != null" >
-                and `ip` = #{ip,jdbcType=VARCHAR}
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
             </if>
-            <if test="url != null" >
-                and `url` = #{url,jdbcType=VARCHAR}
+            <if test="description != null" >
+                and `description` = #{description,jdbcType=VARCHAR}
             </if>
-            <if test="action != null" >
-                and `action` = #{action,jdbcType=VARCHAR}
+            <if test="orderBy != null" >
+                and `order_by` = #{orderBy,jdbcType=INTEGER}
             </if>
-            <if test="request != null" >
-                and `request` = #{request,jdbcType=LONGVARCHAR}
+            <if test="defaultUrl != null" >
+                and `default_url` = #{defaultUrl,jdbcType=VARCHAR}
             </if>
-            <if test="response != null" >
-                and `response` = #{response,jdbcType=LONGVARCHAR}
+            <if test="showInMenu != null" >
+                and `show_in_menu` = #{showInMenu,jdbcType=BIT}
             </if>
-            <if test="executionTime != null" >
-                and `execution_time` = #{executionTime,jdbcType=INTEGER}
+            <if test="menuTitle != null" >
+                and `menu_title` = #{menuTitle,jdbcType=VARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -184,29 +184,29 @@
         </where>
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.security.model.ComLogModel" useGeneratedKeys="true" keyProperty="id" >
-        insert into com_log
+    <insert id="insert" parameterType="com.voyageone.service.model.com.CtApplicationModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into ct_application
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="application != null" >
                 `application`,
             </if>
-            <if test="ip != null" >
-                `ip`,
+            <if test="active != null" >
+                `active`,
             </if>
-            <if test="url != null" >
-                `url`,
+            <if test="description != null" >
+                `description`,
             </if>
-            <if test="action != null" >
-                `action`,
+            <if test="orderBy != null" >
+                `order_by`,
             </if>
-            <if test="request != null" >
-                `request`,
+            <if test="defaultUrl != null" >
+                `default_url`,
             </if>
-            <if test="response != null" >
-                `response`,
+            <if test="showInMenu != null" >
+                `show_in_menu`,
             </if>
-            <if test="executionTime != null" >
-                `execution_time`,
+            <if test="menuTitle != null" >
+                `menu_title`,
             </if>
             `created`,
             <if test="creater != null" >
@@ -224,23 +224,23 @@
             <if test="application != null" >
                 #{application,jdbcType=VARCHAR},
             </if>
-            <if test="ip != null" >
-                #{ip,jdbcType=VARCHAR},
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
             </if>
-            <if test="url != null" >
-                #{url,jdbcType=VARCHAR},
+            <if test="description != null" >
+                #{description,jdbcType=VARCHAR},
             </if>
-            <if test="action != null" >
-                #{action,jdbcType=VARCHAR},
+            <if test="orderBy != null" >
+                #{orderBy,jdbcType=INTEGER},
             </if>
-            <if test="request != null" >
-                #{request,jdbcType=LONGVARCHAR},
+            <if test="defaultUrl != null" >
+                #{defaultUrl,jdbcType=VARCHAR},
             </if>
-            <if test="response != null" >
-                #{response,jdbcType=LONGVARCHAR},
+            <if test="showInMenu != null" >
+                #{showInMenu,jdbcType=BIT},
             </if>
-            <if test="executionTime != null" >
-                #{executionTime,jdbcType=INTEGER},
+            <if test="menuTitle != null" >
+                #{menuTitle,jdbcType=VARCHAR},
             </if>
             <if test="created == null" >
                 now(),

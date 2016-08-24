@@ -30,6 +30,47 @@ define(function () {
 
     return {
         "admin": {
+            /** 用户信息 */
+            "user": {
+                "adminUserService": {
+                    "root": "/admin/user/self",
+                    "searchUser": 'searchUser',
+                    "init": 'init',
+                    "addUser": "addUser",
+                    "updateUser": "updateUser",
+                    "deleteUser": "deleteUser",
+                    "showAuth": "showAuth"
+                },
+                "adminRoleService": {
+                    "root": "/admin/user/role",
+                    "searchRole": 'searchRole',
+                    "init": 'init',
+                    "addRole": "addRole",
+                    "updateRole": "updateRole",
+                    "deleteRole": "deleteRole",
+                    "setAuth": "setAuth",
+                    "addAuth": "addAuth",
+                    "removeAuth": "removeAuth",
+                    "getAllRole": "getAllRole"
+                },
+                "adminOrgService": {
+                    "root": "/admin/user/org",
+                    "searchOrg": 'searchOrg',
+                    "init": 'init',
+                    "addOrg": "addOrg",
+                    "updateOrg": "updateOrg",
+                    "deleteOrg": "deleteOrg",
+                    "getAllOrg": "getAllOrg"
+                },
+                "adminResService": {
+                    "root": "/admin/user/res",
+                    "searchRes": 'searchRes',
+                    "init": 'init',
+                    "addRes": "addRes",
+                    "updateRes": "updateRes",
+                    "deleteRes": "deleteRes"
+                }
+            },
             /** 渠道信息 */
             "channel": {
                 "channelService": {
@@ -153,6 +194,14 @@ define(function () {
                     "addCode": "addCode",
                     "updateCode": "updateCode",
                     "deleteCode": "deleteCode"
+                },
+                /** 港口信息 */
+                "portConfigService": {
+                    "root": "/admin/system/port",
+                    "searchPortConfigByPage": "searchPortConfigByPage",
+                    "addPortConfig": "addPortConfig",
+                    "updatePortConfig": "updatePortConfig",
+                    "deletePortConfig": "deletePortConfig"
                 }
             },
             /** 任务信息 */
@@ -171,14 +220,6 @@ define(function () {
                     "startTask": "startTask",
                     "stopTask": "stopTask"
                 }
-            },
-            /** 港口信息 */
-            "port": {
-                "root": "/admin/system/port",
-                "searchPortConfigByPage": "searchPortConfigByPage",
-                "addPortConfig": "addPortConfig",
-                "updatePortConfig": "updatePortConfig",
-                "deletePortConfig": "deletePortConfig"
             }
         }
     };

@@ -311,7 +311,10 @@ public interface AdminUrlConstants {
 
 			String DELETE_USER = "deleteUser";
 
-			String SHOW_AUTH = "showAuth";
+			String GET_AUTH = "getAuth";
+
+			//for dropdown list options
+			String GET_ALL_APP = "getAllApp";
 		}
 
 		/** 角色信息 */
@@ -372,6 +375,31 @@ public interface AdminUrlConstants {
 			String UPDATE_RES = "updateRes";
 
 			String DELETE_RES = "deleteRes";
+
+		}
+
+	}
+
+	interface Log {
+
+		/** 操作Log */
+		interface Action {
+			String ROOT = "/admin/log/action";
+
+			String INIT = "init";
+
+			String SEARCH_LOG = "searchLog";
+
+			String GET_LOG_DETAIL = "getLogDetail";
+		}
+
+		/** 登录Log */
+		interface Login {
+			String ROOT = "/admin/log/login";
+
+			String INIT = "init";
+
+			String SEARCH_LOG = "searchLog";
 
 		}
 

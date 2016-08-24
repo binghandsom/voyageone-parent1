@@ -6,7 +6,7 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('UnifiedConfigController', (function () {
-        function UnifiedConfigController(popups, alert, confirm, alert, channelService, AdminCartService, storeService, taskService, typeAttrService, cartShopService, selectRowsFactory) {
+        function UnifiedConfigController(popups, alert, confirm, alert, channelService, AdminCartService, storeService, taskService, typeAttrService, cartShopService, portConfigService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
@@ -18,17 +18,19 @@ define([
             this.taskService = taskService;
             this.typeAttrService = typeAttrService;
             this.cartShopService = cartShopService;
+            this.portConfigService = portConfigService;
             this.configPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.configSelList = [];
             this.configSelList = {selList: []};
             this.tempSelect = null;
             this.searchInfo = {
                 pageInfo: this.configPageOption,
-                orderChannelId: "",
-                storeId: "",
-                taskId: "",
-                cartId: "",
-                configType: "",
+                orderChannelId: '',
+                storeId: '',
+                taskId: '',
+                cartId: '',
+                port: '',
+                configType: '',
                 cfgName: '',
                 cfgVal: ''
             }
@@ -51,6 +53,7 @@ define([
                     'storeId': self.searchInfo.storeId,
                     'taskId': self.searchInfo.taskId,
                     'cartId': self.searchInfo.cartId,
+                    'port': self.searchInfo.port,
                     'cfgName': self.searchInfo.cfgName,
                     'cfgVal': self.searchInfo.cfgVal
                 };
@@ -117,7 +120,6 @@ define([
                         var selectKey = function (configInfo) {
                             return {
                                 "id": configInfo.mainKey,
-                                "code": configInfo.taskName,
                                 "orderChannelId": configInfo.orderChannelId,
                                 "cartId": configInfo.cartId,
                                 "cfgName": configInfo.cfgName,
@@ -126,6 +128,24 @@ define([
                             };
                         };
                         self.cartShopService.searchCartShopConfigByPage(data).then(function (res) {
+                            callback(res, selectKey);
+                        });
+                        break;
+                    case 'Port':
+                        self.taskService.getAllTask().then(function (res) {
+                            self.taskList = res.data;
+                        });
+                        var selectKey = function (configInfo) {
+                            return {
+                                "id": configInfo.mainKey,
+                                "code": configInfo.taskName,
+                                "port": configInfo.port,
+                                "cfgName": configInfo.cfgName,
+                                'cfgVal1': configInfo.cfgVal1,
+                                'cfgVal2': configInfo.cfgVal2
+                            };
+                        };
+                        self.portConfigService.searchPortConfigByPage(data).then(function (res) {
                             callback(res, selectKey);
                         });
                         break;
@@ -156,6 +176,7 @@ define([
                     storeId: "",
                     taskId: "",
                     cartId: "",
+                    port: '',
                     configType: "",
                     cfgName: '',
                     cfgVal: '',
@@ -222,6 +243,19 @@ define([
                         });
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search(1);
+                        });
+                        break;
+                    case 'Port':
+                        if (item.port == undefined || item.port == '') {
+                            self.alert('请选择一个港口！');
+                            return;
+                        }
+                        self.list = _.filter(self.taskList, function (listItem) {
+                            return listItem.taskId == item.taskId;
+                        });
+                        _.extend(item, {'taskName': self.list[0].taskName, 'configType': self.searchInfo.configType});
+                        self.popups.openCreateEdit(item).then(function (res) {
+                            if (res.res == 'success') self.search();
                         });
                         break;
                 }

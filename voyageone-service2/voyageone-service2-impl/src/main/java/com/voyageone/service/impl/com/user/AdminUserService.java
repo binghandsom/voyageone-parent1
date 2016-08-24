@@ -1,17 +1,21 @@
 package com.voyageone.service.impl.com.user;
 
+import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.security.dao.ComUserDao;
 import com.voyageone.security.dao.ComUserRoleDao;
+import com.voyageone.service.dao.com.CtApplicationDao;
 import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.security.model.ComUserModel;
 import com.voyageone.security.model.ComUserRoleModel;
 import com.voyageone.service.bean.com.AdminUserBean;
 import com.voyageone.service.daoext.core.AdminUserDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.com.CtApplicationModel;
 import com.voyageone.service.model.com.PageModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +47,9 @@ public class AdminUserService extends BaseService {
     @Autowired
     AdminResService adminResService;
 
+    @Autowired
+    CtApplicationDao ctApplicationDao;
+
     /**
      * 检索用户
      *
@@ -56,7 +63,7 @@ public class AdminUserService extends BaseService {
      * @return
      */
     public PageModel<AdminUserBean> searchUser(String userAccount, Integer active, Integer orgId, Integer roleId,
-                                               String channelId, Integer storeId, Integer pageNum, Integer pageSize) {
+                                               String channelId, Integer storeId, String application, Integer pageNum, Integer pageSize) {
 
         PageModel<AdminUserBean> pageModel = new PageModel<>();
 
@@ -68,13 +75,26 @@ public class AdminUserService extends BaseService {
         params.put("storeId", storeId);
         params.put("orgId", orgId);
         params.put("roleId", roleId);
+        params.put("application", application);
+
+        boolean needPage = false;
+
         // 判断查询结果是否分页
         if (pageNum != null && pageSize != null) {
+            needPage = true;
             pageModel.setCount(adminUserDaoExt.selectUserCount(params));
-            params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
+            params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).addSort("modified", Order.Direction.DESC).toMap();
+        }
+        else
+        {
+            params = MySqlPageHelper.build(params).addSort("modified", Order.Direction.DESC).toMap();
         }
 
         List<AdminUserBean> list = adminUserDaoExt.selectUserByPage(params);
+        if(!needPage)
+        {
+            pageModel.setCount(list.size());
+        }
         pageModel.setResult(list);
         return pageModel;
     }
@@ -233,6 +253,16 @@ public class AdminUserService extends BaseService {
                 throw new BusinessException("删除用户信息失败");
             }
         }
+    }
+
+
+    public Map<Integer, Object>  getAllApp()
+    {
+       List<CtApplicationModel> list = ctApplicationDao.selectList(Collections.EMPTY_MAP);
+
+        Map<Integer, Object> result = list.stream().collect(Collectors.toMap(CtApplicationModel::getId, CtApplicationModel::getApplication));
+
+        return result;
     }
 
 

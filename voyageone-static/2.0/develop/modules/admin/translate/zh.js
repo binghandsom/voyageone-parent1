@@ -139,6 +139,19 @@ define(function () {
         "TXT_CODE_DESC": "Code描述",
         "TXT_CODE_ID": "Code ID",
 
+        /**权限管理一览*/
+        "TXT_USER_ADMIN": "用户 / 权限管理",
+        "TXT_USER_MANAGEMENT": "用户管理",
+        "TXT_ACCOUNT": "账号",
+        "TXT_USER_NAME":"用户名",
+        "TXT_ORGANIZE": "组织",
+        "TXT_SYSTEM": "系统",
+        "TXT_ROLE": "角色",
+        "TXT_CHANNEL": "渠道",
+        "TXT_STORE": "仓库",
+        "TXT_EMAIL": "邮箱",
+        "TXT_INSTRUCTION": "说明",
+
         /**按钮组*/
         "TXT_LOGOUT": "注销",
         "BTN_CANCEL": "取消",

@@ -3,18 +3,45 @@
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><i class="fa fa-navicon"></i>&nbsp;{{'TXT_STORE_MANAGE'|translate}}</h4>
+                    <h4 class="panel-title"><i class="fa fa-navicon"></i>&nbsp;{{'TXT_USER_MANAGEMENT'|translate}}</h4>
                 </div>
                 <div class="container-fluid m-t-xs m-b-xs">
                     <div class="col-sm-12">
                         <div class="col-sm-3">
                             <div class="form-horizontal">
-                                <div class="row form-group">
-                                    <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_NAME' | translate}}</label>
+                                <div class="row form-group"><!-- 账号 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_ACCOUNT' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.orderChannelId"
-                                                ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList">
-                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        <input class="form-control" ng-model="ctrl.searchInfo.userAccount"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group"><!-- 角色 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_ROLE' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="ctrl.searchInfo.roleId"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="row form-group"><!-- 状态 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_STORE_NAME' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.active">
+                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="1">&nbsp;启用</option>
+                                            <option value="0">&nbsp;禁用</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group"><!-- 渠道 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_CHANNEL' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.channelId">
+                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="1">&nbsp;启用</option>
+                                            <option value="0">&nbsp;禁用</option>
                                         </select>
                                     </div>
                                 </div>
@@ -22,20 +49,20 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="form-horizontal">
-                                <div class="row form-group">
-                                    <label class="col-sm-3 control-label">{{'TXT_STORE_NAME' | translate}}</label>
+                                <div class="row form-group"><!-- 组织 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <input class="form-control" ng-model="ctrl.searchInfo.storeName"/>
+                                        <select class="form-control" ng-model="ctrl.searchInfo.orgId">
+                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="1">&nbsp;在售</option>
+                                            <option value="0">&nbsp;不在售</option>
+                                        </select>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="form-horizontal">
-                                <div class="row form-group">
-                                    <label class="col-sm-3 control-label">{{'TXT_SALE_STATE' | translate}}</label>
+                                <div class="row form-group"><!-- 仓库 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_STORE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.isSale">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.storeId">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                             <option value="1">&nbsp;在售</option>
                                             <option value="0">&nbsp;不在售</option>
@@ -46,15 +73,14 @@
                         </div>
                         <div class="col-sm-3">
                             <div class="form-horizontal">
-                                <div class="row form-group">
-                                    <label class="col-sm-3 control-label">{{'TXT_STORE_TYPE' | translate}}</label>
+                                <div class="row form-group"><!-- 系统 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_SYSTEM' | translate}}</label>
                                     <div class="col-sm-8">
                                         <select class="form-control" ng-model="ctrl.searchInfo.storeType">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="0">&nbsp;自营仓库</option>
-                                            <option value="1">&nbsp;第三方合作仓库</option>
-                                            <option value="2">&nbsp;菜鸟保税仓</option>
-                                            <option value="3">&nbsp;聚美保税仓</option>
+                                            <option value="0">&nbsp;CMS</option>
+                                            <option value="1">&nbsp;WMS</option>
+                                            <option value="2">&nbsp;OMS</option>
                                         </select>
                                     </div>
                                 </div>
@@ -76,10 +102,11 @@
         <div class="box-body-new">
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
-                    <button class="btn btn-default" ng-click="ctrl.config('Store')" ng-disabled="ctrl.channelSelList.selList.length > 1"><i class="fa fa-cog"></i>&nbsp;配置</button>
-                    <button class="btn btn-default" ng-click="openStoreAdd('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
-                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.storeSelList.selList.length <= 0||ctrl.storeSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
-                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.storeSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                    <button class="btn btn-default"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                    <button class="btn btn-default"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
+                    <button class="btn btn-default"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                    <button class="btn btn-default"><i class="fa fa-eye-slash"></i>&nbsp;查看权限</button>
+                    <button class="btn btn-default"><i class="fa fa-key"></i>&nbsp;重置密码</button>
                 </div>
             </div>
             <table class="table table-hover-new table-hover table_main">
@@ -92,22 +119,23 @@
                             <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                         </label>
                     </th>
-                    <th class="text-center mfb-xt" translate="TXT_CHANNEL_NAME"></th>
-                    <th class="text-left mfb-xt" translate="TXT_STORE_NAME"></th>
-                    <th class="text-left mfb-xt" translate="TXT_MAIN_STORE_NAME"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_STORE_TYPE"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_SALE_STATE"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_STORE_MANAGE_STATE"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_STORE_REMAINED"></th>
-                    <th class="text-center mfb-xt" translate="TXT_COMMENTS"></th>
+                    <th class="text-center mfb-xt" translate="TXT_ACCOUNT"></th>
+                    <th class="text-left mfb-xt" translate="TXT_USER_NAME"></th>
+                    <th class="text-left mfb-xt" translate="TXT_EMAIL"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_ROLE"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_ORGANIZE"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_CHANNEL"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_STORE"></th>
+                    <th class="text-center mfb-xt" translate="TXT_SYSTEM"></th>
                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
-                    <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
+                    <th class="text-center mfb-xt" translate="TXT_INSTRUCTION"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_UPDATER"></th>
+                    <th class="text-center mfb-xt" translate="TXT_CART_UPDATE_TIME"></th>
                 </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td if-no-rows="ctrl.storeList.length||ctrl.storeList" colspan="9" style="padding: 0px"></td>
+                        <td if-no-rows="ctrl.storeList.length||ctrl.storeList" colspan="13" style="padding: 0px"></td>
                     </tr>
                     <tr ng-repeat="list in ctrl.storeList">
                         <td class="text-left v-middle">
@@ -124,6 +152,7 @@
                         <td class="text-center v-middle">{{list.isSale=='1'?'在售':'不在售'}}</td>
                         <td class="text-center v-middle">{{list.inventoryManager=='1' ? '管理':'不管理'}}</td>
                         <td class="text-left v-middle">{{ctrl.getInventoryHold(list.inventoryHold)}}</td>
+                        <td class="text-center v-middle">{{list.modifier}}</td>
                         <td class="text-center v-middle">{{list.modifier}}</td>
                         <td class="text-center v-middle">{{list.active==true ? '启用':'禁用'}}</td>
                         <td class="text-left v-middle">{{list.modified}}</td>

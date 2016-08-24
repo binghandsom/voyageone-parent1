@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.daoext.core.AdminRoleDaoExt">
+<mapper namespace="com.voyageone.service.daoext.core.AdminUserDaoExt">
 
-    <resultMap id="comRoleModelMap" type="com.voyageone.service.bean.com.AdminUserBean" />
+    <resultMap id="comUserMap" type="com.voyageone.service.bean.com.AdminUserBean" />
 
-    <sql id="selectRoleFilter">
+    <sql id="selectUserFilter">
     	<where>
             <if test="id != null" >
                 and id = #{id}
@@ -36,13 +36,17 @@
                 and store_id like concat('%,', #{storeId},  '%') or channel_id like concat( '%',#{storeId}, ',%')
             </if>
 
+            <if test="application != null and application != ''" >
+                and application like concat('%,', #{application},  '%') or application like concat( '%',#{application}, ',%')
+            </if>
+
         </where>
     </sql>
 	
 
 	
-	<select id="selectUserByPage" resultMap="comRoleModelMap">
-        SELECT * from
+	<select id="selectUserByPage" resultMap="comUserMap">
+        SELECT t1.*,  GROUP_CONCAT( DISTINCT re.application) as application from
         (
         SELECT t.id, t.user_name, t.user_account, t.password, t.credential_salt, t.org_id, org_name, t.description,email,
         t.active,t.created,t.creater,t.modified,t.modifier, t.role_id,t.role_name,
@@ -65,12 +69,17 @@
         GROUP BY id, rc.cfg_name) t
 
         GROUP BY t.id
-        )t1
-        <include refid="selectRoleFilter"/>
+        )t1, com_resource re, com_res_role rr, Synship.ct_application ap
+        WHERE re.application = ap.application AND rr.role_id = t1.role_id AND re.id = rr.res_id AND re.res_type = 0
+        And re.active = 1 AND ap.active =1
+        GROUP BY t1.id
+        <include refid="selectUserFilter"/>
 	</select>
 	
-	<select id="selectRoleCount" resultType="Integer">
+	<select id="selectUserCount" resultType="Integer">
         SELECT count(0) from
+        (
+        SELECT t1.*,  GROUP_CONCAT( DISTINCT re.application) as application from
         (
         SELECT t.id, t.user_name, t.user_account, t.password, t.credential_salt, t.org_id, org_name, t.description,email,
         t.active,t.created,t.creater,t.modified,t.modifier, t.role_id,t.role_name,
@@ -84,17 +93,21 @@
 
         from com_user u, com_user_role ur, com_role r, com_role_config rc , com_organization org, Synship.wms_mt_store st, Synship.tm_order_channel ch
         where u.id = ur.user_id and ur.role_id = rc.role_id and u.org_id = org.id
-          and ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id  or rc.cfg_val1='ALL')) or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id) or rc.cfg_val1='ALL') )
-          and u.active  &lt;&gt; 0
-          and r.active = 1
-          and st.active = 1
-          and ch.active = 1
-          and org.active = 1
+        and ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id  or rc.cfg_val1='ALL')) or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id) or rc.cfg_val1='ALL') )
+        and u.active  &lt;&gt; 0
+        and r.active = 1
+        and st.active = 1
+        and ch.active = 1
+        and org.active = 1
         GROUP BY id, rc.cfg_name) t
 
         GROUP BY t.id
-        )t1
-		 <include refid="selectRoleFilter"/>
+        )t1, com_resource re, com_res_role rr, Synship.ct_application ap
+        WHERE re.application = ap.application AND rr.role_id = t1.role_id AND re.id = rr.res_id AND re.res_type = 0
+        And re.active = 1 AND ap.active =1
+        GROUP BY t1.id
+        )t2
+		 <include refid="selectUserFilter"/>
 	</select>
 
 
