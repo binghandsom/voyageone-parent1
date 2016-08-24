@@ -103,7 +103,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 platformCart.setpCatId(mainPlatform.getpCatId());
             }
 
-            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), channelId, cartId, prodId, language, null));
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), channelId, cartId, prodId, null, language));
         }
         return platformCart;
     }
