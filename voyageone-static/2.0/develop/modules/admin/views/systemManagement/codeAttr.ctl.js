@@ -22,12 +22,13 @@ define([
                 des: '',
                 active: '',
                 pageInfo: this.channelPageOption
-            }
+            };
         }
 
         CodeAttributeController.prototype = {
             init: function () {
                 var self = this;
+                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.search(1);
             },
             search: function (page) {

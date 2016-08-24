@@ -23,6 +23,7 @@ define([
                 orderChannelId: '',
                 cartId: '',
                 shopName: '',
+                active: '',
                 pageInfo: this.cartPageOption
             }
         }
@@ -30,6 +31,7 @@ define([
         CartChannelShopManagementController.prototype = {
             init: function () {
                 var self = this;
+                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
@@ -46,7 +48,8 @@ define([
                         'pageSize': self.searchInfo.pageInfo.size,
                         'orderChannelId': self.searchInfo.orderChannelId,
                         'cartId': self.searchInfo.cartId,
-                        'shopName': self.searchInfo.shopName
+                        'shopName': self.searchInfo.shopName,
+                        'active': self.searchInfo.active
                     })
                     .then(function (res) {
                         self.cartList = res.data.result;
@@ -78,6 +81,7 @@ define([
                     pageInfo: this.cartPageOption,
                     orderChannelId: '',
                     cartId: '',
+                    active: '',
                     shopName: ''
                 }
             },

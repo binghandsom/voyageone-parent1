@@ -24,6 +24,7 @@ define([
                 orderChannelId: '',
                 storeName: '',
                 isSale: '',
+                active: '',
                 storeType: '',
                 pageInfo: this.storePageOption
             }
@@ -32,6 +33,7 @@ define([
         StoreManagementController.prototype = {
             init: function () {
                 var self = this;
+                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelList = res.data;
                 });
@@ -46,6 +48,7 @@ define([
                         'orderChannelId': self.searchInfo.orderChannelId,
                         'storeName': self.searchInfo.storeName,
                         'isSale': self.searchInfo.isSale,
+                        'active': self.searchInfo.active,
                         'storeType': self.searchInfo.storeType
                     })
                     .then(function (res) {
@@ -78,6 +81,7 @@ define([
                     pageInfo: this.storePageOption,
                     'orderChannelId': '',
                     'storeName': '',
+                    'active': '',
                     'isSale': '',
                     'storeType': ''
                 }

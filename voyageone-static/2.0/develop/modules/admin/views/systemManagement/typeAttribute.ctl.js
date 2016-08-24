@@ -22,6 +22,7 @@ define([
                 langId: '',
                 name: '',
                 value: '',
+                active: '',
                 pageInfo: this.channelPageOption
             }
         }
@@ -29,6 +30,7 @@ define([
         TypeAttributeManagementController.prototype = {
             init: function () {
                 var self = this;
+                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.typeService.getAllType().then(function (res) {
                     self.typeList = res.data;
                 });
@@ -43,6 +45,7 @@ define([
                         'typeId': self.searchInfo.typeId,
                         'langId': self.searchInfo.langId,
                         'value': self.searchInfo.value,
+                        'active': self.searchInfo.active,
                         'name': self.searchInfo.name
                     })
                     .then(function (res) {
@@ -75,6 +78,7 @@ define([
                     langId: '',
                     name: '',
                     value: '',
+                    active: '',
                     pageInfo: self.channelPageOption
                 }
             },

@@ -23,6 +23,7 @@ define([
                 cartId: null,
                 cartName: '',
                 cartType: '',
+                active: '',
                 pageInfo: this.cartPageOption
             }
         }
@@ -30,6 +31,7 @@ define([
         CartManagementController.prototype = {
             init: function () {
                 var self = this;
+                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.search();
             },
             search: function (page) {
@@ -40,7 +42,8 @@ define([
                         'pageSize': self.searchInfo.pageInfo.size,
                         'cartId': self.searchInfo.cartId,
                         'cartName': self.searchInfo.cartName,
-                        'cartType': self.searchInfo.cartType
+                        'cartType': self.searchInfo.cartType,
+                        'active': self.searchInfo.active
                     })
                     .then(function (res) {
                         self.cartList = res.data.result;
@@ -69,9 +72,10 @@ define([
                 var self = this;
                 self.searchInfo = {
                     pageInfo: this.cartPageOption,
-                    'orderChannelId': '',
-                    'channelName': '',
-                    'isUsjoi': ''
+                    orderChannelId: '',
+                    channelName: '',
+                    active: '',
+                    isUsjoi: ''
                 }
             },
             edit: function () {

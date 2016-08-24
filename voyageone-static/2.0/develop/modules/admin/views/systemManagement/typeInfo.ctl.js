@@ -20,6 +20,7 @@ define([
                 id: '',
                 name: '',
                 comment: '',
+                active: '',
                 pageInfo: this.channelPageOption
             }
         }
@@ -27,7 +28,8 @@ define([
         TypeInfoManagementController.prototype = {
             init: function () {
                 var self = this;
-                self.search();
+                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
+                self.search(1);
             },
             search: function (page) {
                 var self = this;
@@ -37,6 +39,7 @@ define([
                         'pageSize': self.searchInfo.pageInfo.size,
                         'id': self.searchInfo.id,
                         'name': self.searchInfo.name,
+                        'active': self.searchInfo.active,
                         'comment': self.searchInfo.comment
                     })
                     .then(function (res) {
@@ -67,6 +70,7 @@ define([
                     id: '',
                     name: '',
                     comment: '',
+                    active: '',
                     pageInfo: self.channelPageOption
                 }
             },

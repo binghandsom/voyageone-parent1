@@ -22,10 +22,8 @@
                                 <div class="row form-group"><!-- 状态 -->
                                     <label class="col-sm-3 control-label">{{'TXT_STATUS' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.active">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.active" ng-options="active.active as active.value for active in ctrl.activeList">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="true">&nbsp;启用</option>
-                                            <option value="false">&nbsp;禁用</option>
                                         </select>
                                     </div>
                                 </div>

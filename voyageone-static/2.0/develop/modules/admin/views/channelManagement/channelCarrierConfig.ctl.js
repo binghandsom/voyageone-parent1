@@ -21,6 +21,7 @@ define([
                 orderChannelId: '',
                 carrier: '',
                 usekd100Flg: '',
+                active: '',
                 pageInfo: this.channelPageOption
             }
         }
@@ -28,6 +29,7 @@ define([
         ChannelCarrierConfigController.prototype = {
             init: function () {
                 var self = this;
+                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
@@ -41,6 +43,7 @@ define([
                         'pageSize': self.searchInfo.pageInfo.size,
                         'orderChannelId': self.searchInfo.orderChannelId,
                         'carrier': self.searchInfo.carrier,
+                        'active': self.searchInfo.active,
                         'usekd100Flg': self.searchInfo.usekd100Flg
                     })
                     .then(function (res) {
@@ -73,6 +76,7 @@ define([
                     pageInfo: this.channelPageOption,
                     orderChannelId: '',
                     carrier: '',
+                    active: '',
                     usekd100Flg: ''
                 }
             },

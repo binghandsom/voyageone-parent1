@@ -21,6 +21,7 @@ define([
                 channelId: '',
                 propName: '',
                 propVal: '',
+                active: '',
                 pageInfo: this.channelPageOption
             }
         }
@@ -28,6 +29,7 @@ define([
         ChannelThirdPartyCogController.prototype = {
             init: function () {
                 var self = this;
+                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
@@ -41,6 +43,7 @@ define([
                         'pageSize': self.searchInfo.pageInfo.size,
                         'channelId': self.searchInfo.channelId,
                         'propName': self.searchInfo.propName,
+                        'active': self.searchInfo.active,
                         'propVal': self.searchInfo.propVal
                     })
                     .then(function (res) {
@@ -71,6 +74,7 @@ define([
                     pageInfo: this.channelPageOption,
                     channelId: '',
                     propName: '',
+                    active: '',
                     propVal: ''
                 }
             },
