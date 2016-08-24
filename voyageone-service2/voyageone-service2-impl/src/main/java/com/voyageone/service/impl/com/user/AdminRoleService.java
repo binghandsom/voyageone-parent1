@@ -7,10 +7,7 @@ import com.voyageone.security.dao.ComResRoleDao;
 import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.dao.ComRoleConfigDao;
 import com.voyageone.security.dao.ComRoleDao;
-import com.voyageone.security.model.ComResRoleModel;
-import com.voyageone.security.model.ComResourceModel;
-import com.voyageone.security.model.ComRoleConfigModel;
-import com.voyageone.security.model.ComRoleModel;
+import com.voyageone.security.model.*;
 import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.daoext.com.WmsMtStoreDaoExt;
 import com.voyageone.service.daoext.core.AdminRoleDaoExt;
@@ -49,6 +46,16 @@ public class AdminRoleService extends BaseService {
     @Autowired
     ComResRoleDao comResRoleDao;
 
+
+    public Map<Integer, String> getAllRole()
+    {
+        List<ComRoleModel> roleList = comRoleDao.selectList(Collections.EMPTY_MAP);
+
+
+        Map resultMap = roleList.stream().collect(Collectors.toMap(ComRoleModel:: getId ,ComRoleModel:: getRoleName ));
+
+        return  resultMap;
+    }
 
     /**
      * 检索角色
