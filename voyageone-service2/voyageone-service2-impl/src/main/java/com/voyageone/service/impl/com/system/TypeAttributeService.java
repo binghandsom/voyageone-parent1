@@ -31,7 +31,7 @@ public class TypeAttributeService extends BaseService {
 	private ComMtValueDaoExt typeAttrDaoExt;
 
 	public PageModel<ComMtValueBean> searchTypeAttributeByPage(Integer typeId, String langId, String name, String value,
-			Integer pageNum, Integer pageSize) {
+			Boolean active, Integer pageNum, Integer pageSize) {
 		PageModel<ComMtValueBean> pageModel = new PageModel<ComMtValueBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -39,6 +39,7 @@ public class TypeAttributeService extends BaseService {
 		params.put("langId", langId);
 		params.put("name", name);
 		params.put("value", value);
+		params.put("active", active);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
 			pageModel.setCount(typeAttrDaoExt.selectTypeAttributeCount(params));

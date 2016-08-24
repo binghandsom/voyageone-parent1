@@ -39,7 +39,8 @@ public class TypeAttributeController extends AdminController {
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索类型属性信息
 		PageModel<ComMtValueBean> typeAttrPage = typeAttrService.searchTypeAttributeByPage(form.getTypeId(),
-				form.getLangId(), form.getName(), form.getValue(), form.getPageNum(), form.getPageSize());
+				form.getLangId(), form.getName(), form.getValue(), form.getActive(),
+				form.getPageNum(), form.getPageSize());
 		
 		return success(typeAttrPage);
 	}

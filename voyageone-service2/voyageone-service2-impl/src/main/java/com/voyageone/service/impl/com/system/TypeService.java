@@ -33,14 +33,15 @@ public class TypeService extends BaseService {
 		return typeDao.selectList(Collections.emptyMap());
 	}
 
-	public PageModel<ComMtTypeModel> searchTypeByPage(Integer id, String name, String comment, Integer pageNum,
-			Integer pageSize) {
+	public PageModel<ComMtTypeModel> searchTypeByPage(Integer id, String name, String comment, Boolean active,
+			Integer pageNum, Integer pageSize) {
 		PageModel<ComMtTypeModel> pageModel = new PageModel<ComMtTypeModel>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("id", id);
 		params.put("name", name);
 		params.put("comment", comment);
+		params.put("active", active);
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {

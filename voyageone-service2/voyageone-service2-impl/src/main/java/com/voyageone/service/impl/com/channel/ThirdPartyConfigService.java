@@ -31,13 +31,14 @@ public class ThirdPartyConfigService extends BaseService {
 	private ComMtThirdPartyConfigDaoExt thirdPartyConfigDaoExt;
 
 	public PageModel<ComMtThirdPartyConfigBean> searchThirdPartyConfigByPage(String channelId, String propName,
-			String propVal, Integer pageNum, Integer pageSize) {
+			String propVal, Boolean active, Integer pageNum, Integer pageSize) {
 		PageModel<ComMtThirdPartyConfigBean> pageModel = new PageModel<ComMtThirdPartyConfigBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
 		params.put("propName", propName);
 		params.put("propVal", propVal);
+		params.put("active", active);
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {

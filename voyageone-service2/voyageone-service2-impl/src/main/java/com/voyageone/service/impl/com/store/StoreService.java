@@ -44,12 +44,12 @@ public class StoreService extends BaseService {
 	}
 	
 	public List<WmsMtStoreBean> searchStore(String channelId, String storeName, String isSale,
-			String storeType) {
-		return searchStoreByPage(channelId, storeName, isSale, storeType, null, null).getResult();
+			String storeType, Boolean active) {
+		return searchStoreByPage(channelId, storeName, isSale, storeType, active, null, null).getResult();
 	}
 
 	public PageModel<WmsMtStoreBean> searchStoreByPage(String channelId, String storeName, String isSale,
-			String storeType, Integer pageNum, Integer pageSize) {
+			String storeType, Boolean active, Integer pageNum, Integer pageSize) {
 		PageModel<WmsMtStoreBean> pageModel = new PageModel<WmsMtStoreBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -57,6 +57,7 @@ public class StoreService extends BaseService {
 		params.put("storeName", storeName);
 		params.put("isSale", isSale);
 		params.put("storeType", storeType);
+		params.put("active", active);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
 			pageModel.setCount(storeDaoExt.selectStoreCount(params));

@@ -40,7 +40,7 @@ public class ChannelAttributeController extends AdminController {
 		// 检索渠道属性信息
 		PageModel<ComMtValueChannelBean> channelAttrPage = channelAttributeService.searchChannelAttributeByPage(
 				form.getChannelId(), form.getTypeId(), form.getLangId(), form.getName(), form.getValue(),
-				form.getPageNum(), form.getPageSize());
+				form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(channelAttrPage);
 	}

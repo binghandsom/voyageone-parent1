@@ -31,7 +31,7 @@ public class SmsConfigService extends BaseService {
 	private TmSmsConfigDaoExt smsConfigDaoExt;
 
 	public PageModel<TmSmsConfigBean> searchSmsConfigByPage(String channelId, String smsType, String content,
-			String smsCode, Integer pageNum, Integer pageSize) {
+			String smsCode, Boolean active, Integer pageNum, Integer pageSize) {
 		PageModel<TmSmsConfigBean> pageModel = new PageModel<TmSmsConfigBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -39,6 +39,7 @@ public class SmsConfigService extends BaseService {
 		params.put("smsType", smsType);
 		params.put("content", content);
 		params.put("smsCode", smsCode);
+		params.put("active", active);
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {

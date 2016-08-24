@@ -75,7 +75,7 @@ public class CartController extends AdminController {
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索Cart信息
 		PageModel<CtCartModel> cartPage = cartService.searchCartByPage(form.getCartId(), form.getCartName(),
-				form.getCartType(), form.getPageNum(), form.getPageSize());
+				form.getCartType(), form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(cartPage);
 	}

@@ -39,7 +39,8 @@ public class SmsConfigController extends AdminController {
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索短信配置信息
 		PageModel<TmSmsConfigBean> smsConfigPage = smsConfigService.searchSmsConfigByPage(form.getOrderChannelId(),
-				form.getSmsType(), form.getContent(), form.getSmsCode(), form.getPageNum(), form.getPageSize());
+				form.getSmsType(), form.getContent(), form.getSmsCode(), form.getActive(), 
+				form.getPageNum(), form.getPageSize());
 		
 		return success(smsConfigPage);
 	}

@@ -39,13 +39,14 @@ public class CartShopService extends BaseService {
 	private TmChannelShopConfigDao cartShopConfigDao;
 
 	public PageModel<TmChannelShopBean> searchCartShopByPage(String channelId, Integer cartId, String shopName,
-			Integer pageNum, Integer pageSize) {
+			Boolean active, Integer pageNum, Integer pageSize) {
 		PageModel<TmChannelShopBean> pageModel = new PageModel<TmChannelShopBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
 		params.put("cartId", cartId);
 		params.put("shopName", shopName);
+		params.put("active", active);
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
