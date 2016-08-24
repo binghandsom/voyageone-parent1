@@ -9,7 +9,4 @@ import java.util.List;
 @Repository
 public interface ComUserDaoExt {
     List<ComChannelPermissionBean> selectPermissionChannel(Integer userId);
-
-
-
 }
