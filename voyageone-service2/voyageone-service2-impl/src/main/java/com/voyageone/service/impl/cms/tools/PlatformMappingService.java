@@ -186,11 +186,15 @@ public class PlatformMappingService extends BaseService {
                     switch (expression.getType()) {
 
                         case EXPRESSION_TYPE_FEED_CN:
-                            valueBuilder.append(String.valueOf(cnAtts.get(key)));
+                            Object cnFeedValue = cnAtts.get(key);
+                            if (cnFeedValue != null)
+                                valueBuilder.append(String.valueOf(cnFeedValue));
                             break;
 
                         case EXPRESSION_TYPE_FEED_ORG:
-                            valueBuilder.append(String.valueOf(orgAtts.get(key)));
+                            Object orgFeedValue = orgAtts.get(key);
+                            if (orgFeedValue != null)
+                                valueBuilder.append(String.valueOf(orgFeedValue));
                             break;
 
                         case EXPRESSION_TYPE_MASTER:

@@ -276,13 +276,12 @@ class PlatformMappingViewService extends BaseAppService {
 
             String fieldId = field.getId();
 
-            CmsBtPlatformMappingModel.FieldMapping mapping = mappingMap.get(fieldId);
+            // 先构造空内容
+            CmsBtPlatformMappingModel.FieldMapping mapping = new CmsBtPlatformMappingModel.FieldMapping();
+            mapping.setFieldId(fieldId);
 
-            if (mapping == null) {
-                mapping = new CmsBtPlatformMappingModel.FieldMapping();
-                mapping.setFieldId(fieldId);
-            }
-
+            // 为内容填充值
+            // 如果值为空, 则将内容重置为 null, 表示该内容将被清除
             switch (field.getType()) {
 
                 case SINGLECHECK:
@@ -290,16 +289,18 @@ class PlatformMappingViewService extends BaseAppService {
                     Value valueObject = singleCheckField.getValue();
                     String value = valueObject.getValue();
                     if (StringUtils.isEmpty(value))
-                        continue;
-                    mapping.setValue(value);
+                        mapping = null;
+                    else
+                        mapping.setValue(value);
                     break;
                 case MULTICHECK:
                     MultiCheckField multiCheckField = (MultiCheckField) field;
                     List<Value> valueObjectList = multiCheckField.getValues();
                     List<String> valueList = valueObjectList.stream().map(Value::getValue).collect(toList());
                     if (valueList.isEmpty())
-                        continue;
-                    mapping.setValue(valueList);
+                        mapping = null;
+                    else
+                        mapping.setValue(valueList);
                     break;
                 case COMPLEX:
                     ComplexField complexField = (ComplexField) field;
@@ -307,22 +308,33 @@ class PlatformMappingViewService extends BaseAppService {
                     Map<String, CmsBtPlatformMappingModel.FieldMapping> childrenMapping = new HashMap<>();
                     fillMapping(childrenMapping, children);
                     if (childrenMapping.isEmpty())
-                        continue;
-                    mapping.setChildren(childrenMapping);
+                        mapping = null;
+                    else
+                        mapping.setChildren(childrenMapping);
                     break;
                 case INPUT:
                     InputField inputField = (InputField) field;
                     String expressionListJson = inputField.getValue();
-                    if (StringUtils.isEmpty(expressionListJson))
-                        continue;
+                    if (StringUtils.isEmpty(expressionListJson)) {
+                        mapping = null;
+                        break;
+                    }
                     List<CmsBtPlatformMappingModel.FieldMappingExpression> expressionList = getExpressionList(expressionListJson);
-                    if (expressionList == null || expressionList.isEmpty())
-                        continue;
+                    if (expressionList == null || expressionList.isEmpty()) {
+                        mapping = null;
+                        break;
+                    }
                     mapping.setExpressions(expressionList);
                     break;
             }
 
-            mappingMap.put(fieldId, mapping);
+            // 判断是否内容为空
+            // 如果为空, 就清空
+            // 否则覆盖
+            if (mapping == null)
+                mappingMap.remove(fieldId);
+            else
+                mappingMap.put(fieldId, mapping);
         }
     }
 
