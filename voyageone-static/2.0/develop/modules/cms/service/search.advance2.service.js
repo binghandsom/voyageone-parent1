@@ -525,8 +525,17 @@ define([
                 // 当是中国指导价时，要有价格变化提示
                 if (stakey == 'pPriceRetailSt' && data.skus) {
                     for (idx in data.skus) {
-                        if (data.skus[idx].priceChgFlg && (data.skus[idx].priceChgFlg.indexOf('U') == 0 || data.skus[idx].priceChgFlg.indexOf('D') == 0)) {
-                            priceItem += '<label class="text-u-red font-bold">&nbsp;!</label>'
+                        if (data.skus[idx].priceChgFlg) {
+                            var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
+                            var downFlg = data.skus[idx].priceChgFlg.indexOf('D');
+                            var cssTxt = 'class="text-u-red font-bold"';
+                            if (upFlg == 0) {
+                                // 涨价
+                                priceItem += '<label ' + cssTxt + '>&nbsp;(↑' + data.skus[idx].priceChgFlg.substring(upFlg + 1) + ')</label>'
+                            } else if (downFlg == 0) {
+                                // 降价
+                                priceItem += '<label ' + cssTxt + '>&nbsp;(↓' + data.skus[idx].priceChgFlg.substring(downFlg + 1) + ')</label>'
+                            }
                             break;
                         }
                     }
@@ -543,7 +552,7 @@ define([
         }
 
         function _setRetailPriceCol(object, searchParam) {
-            var fstLine = {'pVal':'', 'pFlg':false};
+            var fstLine = { 'pVal': '', 'pTxt': '', 'cssTxt': '' };
             if (object == null || object == undefined) {
                 return fstLine;
             }
@@ -579,17 +588,27 @@ define([
                         priceItem += $filter('number')(data['pPriceRetailEd'], 2);
                     }
                 }
-                fstLine.pVal = priceItem;
 
                 // 当是中国指导价时，要有价格变化提示
                 if (data.skus) {
                     for (idx in data.skus) {
-                        if (data.skus[idx].priceChgFlg && (data.skus[idx].priceChgFlg.indexOf('U') == 0 || data.skus[idx].priceChgFlg.indexOf('D') == 0)) {
-                            fstLine.pFlg = true;
+                        if (data.skus[idx].priceChgFlg) {
+                            var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
+                            var downFlg = data.skus[idx].priceChgFlg.indexOf('D');
+
+                            fstLine.cssTxt = 'text-u-red font-bold';
+                            if (upFlg == 0) {
+                                // 涨价
+                                fstLine.pTxt = '(↑' + data.skus[idx].priceChgFlg.substring(upFlg + 1) + ')'
+                            } else if (downFlg == 0) {
+                                // 降价
+                                fstLine.pTxt = '(↓' + data.skus[idx].priceChgFlg.substring(downFlg + 1) + ')'
+                            }
                             break;
                         }
                     }
                 }
+                fstLine.pVal = priceItem;
                 if (fstCode == 0) {
                     // 未选择平台
                     break;

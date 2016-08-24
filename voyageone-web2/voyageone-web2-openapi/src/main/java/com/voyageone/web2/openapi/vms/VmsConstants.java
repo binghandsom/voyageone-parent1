@@ -1,4 +1,4 @@
-package com.voyageone.web2.vms.openapi;
+package com.voyageone.web2.openapi.vms;
 
 public class VmsConstants {
 

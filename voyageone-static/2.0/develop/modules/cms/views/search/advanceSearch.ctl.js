@@ -768,7 +768,7 @@ define([
                         }
 
                         function callback(res) {
-                            if (res.data.ecd == null || res.data.ecd == undefined) {
+                            if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
                                 alert("提交请求时出现错误");
                                 return;
                             }
@@ -999,6 +999,7 @@ define([
             }
         }
 
+        // 查询数据文件创建的状态
         function exportSearch(page) {
             $scope.vm.exportPageOption.curr = !page ? $scope.vm.exportPageOption.curr : page;
 
@@ -1014,6 +1015,7 @@ define([
             })
         }
 
+        // 下载已创建完成的数据文件
         $scope.openDownload = function (fileName) {
             function _exportFileCallback(res) {
                 var obj = JSON.parse(res);
@@ -1022,6 +1024,48 @@ define([
                 }
             }
             $.download.post(cActions.cms.search.$searchAdvanceService2.root + cActions.cms.search.$searchAdvanceService2.exportDownload, {"fileName": fileName}, _exportFileCallback);
+        }
+
+        // 指导价变更批量确认
+        $scope.cfmRetailPrice = function (cartObj) {
+            var cartIdVal = 0;
+            if (cartObj != undefined && cartObj != null) {
+                cartIdVal = cartObj.value;
+            }
+            _chkProductSel(parseInt(cartIdVal), __cfmRetailPrice);
+
+            function __cfmRetailPrice(cartId, _selProdList) {
+                var msg = "";
+                if (cartId == 0) {
+                    msg = "即将对选中的商品全店铺批量确认指导价变更";
+                } else {
+                    msg = "即将对选中的商品批量确认指导价变更";
+                }
+
+                confirm(msg).then(function () {
+                    var productIds = [];
+                    if (_selProdList && _selProdList.length) {
+                        _.forEach(_selProdList, function (object) {
+                            productIds.push(object.code);
+                        });
+                    }
+                    var property = {'cartId': cartId, '_option': 'retailprice', 'productIds': productIds};
+                    property.isSelAll = $scope.vm._selall ? 1 : 0;
+                    $fieldEditService.setProductFields(property).then(function (res) {
+                        if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
+                            alert($translate.instant('TXT_COMMIT_ERROR'));
+                            return;
+                        }
+                        if (res.data.ecd == 1) {
+                            // 未选择商品
+                            alert($translate.instant('未选择商品，请选择后再操作'));
+                            return;
+                        }
+                        $scope.search();
+                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    });
+                });
+            }
         }
     }
 

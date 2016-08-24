@@ -1,4 +1,4 @@
-package com.voyageone.web2.vms.openapi.service;
+package com.voyageone.web2.openapi.vms.service;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.VmsChannelConfigs;
@@ -9,11 +9,11 @@ import com.voyageone.service.impl.vms.order.OrderDetailService;
 import com.voyageone.service.impl.vms.shipment.ShipmentService;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
-import com.voyageone.web2.cms.openapi.OpenApiCmsBaseService;
+import com.voyageone.web2.openapi.OpenApiBaseService;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
-import com.voyageone.web2.vms.openapi.VmsConstants;
+import com.voyageone.web2.openapi.vms.VmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,7 @@ import java.sql.Timestamp;
  * @version 2.0.1
  */
 @Service
-public class VmsOrderService extends OpenApiCmsBaseService {
+public class VmsOrderService extends OpenApiBaseService {
 
     @Autowired
     private OrderDetailService orderDetailService;

@@ -31,6 +31,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -129,6 +130,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    BusinessLogService businessLogService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -682,6 +686,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             }
 
             saveWorkload(work, WORK_LOAD_SUCCESS);
+
+            // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
+            sxProductService.clearBusinessLog(sxData, getTaskName());
+
             $info("保存workload成功！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
 
         }
@@ -699,6 +707,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 sxData.setChannelId(work.getChannelId());
                 sxData.setGroupId(work.getGroupId());
             }
+
+            // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
+            sxProductService.clearBusinessLog(sxData, getTaskName());
 
             //保存错误log
             // 如果上新数据中的errorMessage为空
@@ -1258,8 +1269,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             if (commonSkus.stream().filter(w -> w.getSkuCode().equals(code)).count() > 0) {
                 CmsBtProductModel_Sku CommonSku = commonSkus.stream().filter(w -> w.getSkuCode().equals(code)).findFirst().get();
                 jmSku.put("barcode", CommonSku.getBarcode());
-                jmSku.put("priceMsrp", CommonSku.getPriceMsrp());
-                jmSku.put("priceRetail", CommonSku.getPriceRetail());
+                // delete by desmond 2016/08/23 start
+                // 应该是以分平台下面sku的价格优先，不要用common下的价格覆盖正确的价格
+//                jmSku.put("priceMsrp", CommonSku.getPriceMsrp());
+//                jmSku.put("priceRetail", CommonSku.getPriceRetail());
+                // delete by desmond 2016/08/23 end
                 jmSku.put("clientMsrpPrice", CommonSku.getClientMsrpPrice());
                 jmSku.put("clientRetailPrice", CommonSku.getClientRetailPrice());
                 jmSku.put(CmsBtProductConstants.Platform_SKU_COM.size.name(), CommonSku.getSize());

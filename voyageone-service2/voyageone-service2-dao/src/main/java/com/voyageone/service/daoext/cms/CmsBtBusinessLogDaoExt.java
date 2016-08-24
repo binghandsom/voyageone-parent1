@@ -46,4 +46,14 @@ public class CmsBtBusinessLogDaoExt extends ServiceBaseDao {
         return update("update_business_log_status_finish", conditionParams);
     }
 
+    /**
+     * 根据cheannelId(必须)，cartId,groupId,model或者code来修改log状态到已解决(1)
+     *
+     * @param conditionParams params
+     * @return effect count
+     */
+    public int updateStatusFinishByCondition(Map<?, ?> conditionParams) {
+        return update("update_business_log_status_finish_by_condition", conditionParams);
+    }
+
 }

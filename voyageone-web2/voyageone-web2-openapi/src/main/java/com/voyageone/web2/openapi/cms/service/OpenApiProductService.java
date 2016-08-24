@@ -1,11 +1,11 @@
-package com.voyageone.web2.cms.openapi.service;
+package com.voyageone.web2.openapi.cms.service;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductForOmsBean;
 import com.voyageone.service.bean.cms.product.ProductForWmsBean;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.web2.cms.openapi.OpenApiCmsBaseService;
+import com.voyageone.web2.openapi.OpenApiBaseService;
 import com.voyageone.web2.sdk.api.request.ProductForOmsGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductForWmsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductForOmsGetResponse;
@@ -22,7 +22,7 @@ import java.util.List;
  * @version 2.0.1
  */
 @Service
-public class OpenApiProductService extends OpenApiCmsBaseService {
+public class OpenApiProductService extends OpenApiBaseService {
 
     @Autowired
     private ProductService productService;

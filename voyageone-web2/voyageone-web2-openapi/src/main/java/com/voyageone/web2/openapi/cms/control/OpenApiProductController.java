@@ -1,7 +1,7 @@
-package com.voyageone.web2.cms.openapi.control;
+package com.voyageone.web2.openapi.cms.control;
 
-import com.voyageone.web2.cms.openapi.OpenAipCmsBaseController;
-import com.voyageone.web2.cms.openapi.service.OpenApiProductService;
+import com.voyageone.web2.openapi.OpenApiBaseController;
+import com.voyageone.web2.openapi.cms.service.OpenApiProductService;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
         value  = "/rest/cms/product",
         method = RequestMethod.POST
 )
-public class OpenApiProductController extends OpenAipCmsBaseController {
+public class OpenApiProductController extends OpenApiBaseController {
 
     // TODO 好像不能只取到group的platforms数据
     private final String searchItems = "prodId;channelId;orgChannelId;common.fields;common.skus;fields;skus;platforms";

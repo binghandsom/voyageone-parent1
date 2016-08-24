@@ -10,6 +10,8 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -263,9 +265,8 @@ public class FeedInfoService extends BaseService {
 
             List<String> categorys = (List<String>) searchValue.get("category");
             if (!categorys.isEmpty()) {
-                List<String> orSearch = new ArrayList<>();
-                categorys = categorys.stream().map(s -> "/^" + s + "/").collect(Collectors.toList());
-                result.append("{").append(MongoUtils.splicingValue("category", categorys,"$in"));
+                categorys = categorys.stream().map(s -> "{$regex:\"^" + s + "\"}").collect(Collectors.toList());
+                result.append("{").append(MongoUtils.splicingValue("category", categorys.toArray(),"$in"));
                 result.append("},");
             }
 //
