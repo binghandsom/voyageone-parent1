@@ -346,7 +346,7 @@
             <dependency>
                 <groupId>taobao</groupId>
                 <artifactId>taobao-sdk-java</artifactId>
-                <version>1457083595467</version>
+                <version>1457083595467-20160817</version>
             </dependency>
             <!-- aliyun-sdk-oss -->
             <dependency>
