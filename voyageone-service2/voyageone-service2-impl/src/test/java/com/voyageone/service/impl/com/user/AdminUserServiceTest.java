@@ -87,6 +87,6 @@ public class AdminUserServiceTest {
 
     @Test
     public void testGetAllApp() throws Exception {
-
+        System.out.println(JacksonUtil.bean2Json(adminUserService.getAllApp()));
     }
 }
