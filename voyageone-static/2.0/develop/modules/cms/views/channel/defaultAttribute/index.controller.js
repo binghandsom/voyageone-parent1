@@ -11,7 +11,7 @@ define(function (require) {
 
     cms.controller('DefaultAttributeController', (function () {
 
-        function DefaultAttributeController(popups, alert, confirm, menuService, $productDetailService, platformMappingService) {
+        function DefaultAttributeController(popups, alert, confirm, menuService, $localStorage, $productDetailService, platformMappingService) {
 
             var self = this;
 
@@ -29,6 +29,7 @@ define(function (require) {
 
             self.$productDetailService = $productDetailService;
             self.platformMappingService = platformMappingService;
+            self.$localStorage = $localStorage;
 
             self.popups = popups;
             self.alert = alert;
@@ -120,8 +121,9 @@ define(function (require) {
         };
 
         DefaultAttributeController.prototype.editItem = function (item) {
-            var _item = angular.copy(item);
-            window.open("#/channel/default_attribute_detail/" + JSON.stringify(_item).replace(/\//g, "✓"));
+            var id = item._id;
+            this.$localStorage[id] = angular.copy(item);
+            window.open("#/channel/default_attribute_detail/" + id);
         };
 
         return DefaultAttributeController;
