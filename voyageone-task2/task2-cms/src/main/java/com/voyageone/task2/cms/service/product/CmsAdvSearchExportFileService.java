@@ -117,6 +117,11 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             $error("高级检索 文件下载任务  缺少参数");
             return;
         }
+        sessionBean = (Map<String, Object>) sessionBean.get("extraInfo");
+        if (sessionBean == null) {
+            $error("高级检索 文件下载任务  缺少sessionBean参数");
+            return;
+        }
         try {
             String fileName = createExcelFile(searchValue, (List<String>) messageMap.get("_selCodeList"), channleId, sessionBean, userName, language);
             taskModel.setFileName(fileName);
