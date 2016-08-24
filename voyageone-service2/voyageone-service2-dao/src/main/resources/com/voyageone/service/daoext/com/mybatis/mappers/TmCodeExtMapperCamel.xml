@@ -7,13 +7,16 @@
 	<sql id="selectCodeFilter">
 		<where>
 			<if test="code != null and code != ''">
-				code like concat('%', #{code}, '%')
+				and code like concat('%', #{code}, '%')
 			</if>
 			<if test="name != null and name != ''">
-				name like concat('%', #{name}, '%')
+				and name like concat('%', #{name}, '%')
 			</if>
 			<if test="des != null and des != ''">
-				des like concat('%', #{des}, '%')
+				and des like concat('%', #{des}, '%')
+			</if>
+			<if test="active != null">
+				and active = #{active} 
 			</if>
 		</where>
 	</sql>

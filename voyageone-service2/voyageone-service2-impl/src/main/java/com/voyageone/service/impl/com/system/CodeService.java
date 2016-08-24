@@ -31,14 +31,15 @@ public class CodeService extends BaseService {
 	@Autowired
 	private TmCodeDaoExt codeDaoExt;
 
-	public PageModel<TmCodeModel> searchCodeByPage(String code, String name, String des, Integer pageNum,
-			Integer pageSize) {
+	public PageModel<TmCodeModel> searchCodeByPage(String code, String name, String des, Boolean active,
+			Integer pageNum, Integer pageSize) {
 		PageModel<TmCodeModel> pageModel = new PageModel<TmCodeModel>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("code", code);
 		params.put("name", name);
 		params.put("des", des);
+		params.put("active", active);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
 			pageModel.setCount(codeDaoExt.selectCodeCount(params));

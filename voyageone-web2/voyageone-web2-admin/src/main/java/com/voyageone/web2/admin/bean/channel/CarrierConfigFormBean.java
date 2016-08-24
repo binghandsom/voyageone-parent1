@@ -31,6 +31,8 @@ public class CarrierConfigFormBean extends AdminFormBean {
 	private String wsdlUrl;
 	
 	private String comments;
+	
+	private Boolean active;
 
 	public String getOrderChannelId() {
 		return orderChannelId;
@@ -126,6 +128,14 @@ public class CarrierConfigFormBean extends AdminFormBean {
 
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 	
 }

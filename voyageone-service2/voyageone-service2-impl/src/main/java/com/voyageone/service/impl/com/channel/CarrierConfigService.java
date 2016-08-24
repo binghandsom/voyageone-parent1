@@ -32,13 +32,14 @@ public class CarrierConfigService extends BaseService {
 	private TmCarrierChannelDaoExt carrierChannelDaoExt;
 
 	public PageModel<TmCarrierChannelBean> searchCarrierConfigByPage(String channelId, String carrier,
-			String useKd100Flg, Integer pageNum, Integer pageSize) {
+			String useKd100Flg, Boolean active, Integer pageNum, Integer pageSize) {
 		PageModel<TmCarrierChannelBean> pageModel = new PageModel<TmCarrierChannelBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
 		params.put("carrier", carrier);
 		params.put("useKd100Flg", useKd100Flg);
+		params.put("active", active);
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {

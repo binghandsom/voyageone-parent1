@@ -13,6 +13,8 @@ public class TypeFormBean extends AdminFormBean {
 	private String name;
 	
 	private String comment;
+	
+	private Boolean active;
 
 	public Integer getId() {
 		return id;
@@ -36,6 +38,14 @@ public class TypeFormBean extends AdminFormBean {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 	
 }

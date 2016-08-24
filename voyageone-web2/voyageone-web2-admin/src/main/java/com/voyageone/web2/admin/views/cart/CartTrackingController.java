@@ -40,7 +40,7 @@ public class CartTrackingController extends AdminController {
 		// 检索Cart物流信息
 		PageModel<ComMtTrackingInfoConfigBean> cartTrackingPage = cartTrackingService.searchCartTrackingByPage(
 				form.getOrderChannelId(), form.getCartId(), form.getTrackingStatus(), form.getLocation(),
-				form.getPageNum(), form.getPageSize());
+				form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(cartTrackingPage);
 	}

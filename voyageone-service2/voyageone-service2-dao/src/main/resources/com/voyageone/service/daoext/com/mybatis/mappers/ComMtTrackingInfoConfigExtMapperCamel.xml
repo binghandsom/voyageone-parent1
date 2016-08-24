@@ -18,6 +18,9 @@
             <if test="location != null and location != ''" >
                 and cmtic.location like concat('', #{location}, '')
             </if>
+            <if test="active != null">
+            	and cmtic.active = #{active}
+            </if>
         </where>
 	</sql>
     

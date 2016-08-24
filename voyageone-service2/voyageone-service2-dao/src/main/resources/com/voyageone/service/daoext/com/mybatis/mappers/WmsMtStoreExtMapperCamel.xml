@@ -20,6 +20,9 @@
 			<if test="storeType != null and storeType != ''">
 				and wms.store_type = #{storeType}
 			</if>
+			<if test="active != null">
+				and wms.active = #{active}
+			</if>
 		</where>
 	</sql>
 	

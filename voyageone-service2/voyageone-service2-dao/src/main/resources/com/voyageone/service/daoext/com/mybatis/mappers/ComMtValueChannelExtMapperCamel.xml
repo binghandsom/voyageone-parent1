@@ -21,6 +21,9 @@
 			<if test="name != null and name != ''">
 				and cmvc.name like concat('%', #{name}, '%')
 			</if>
+			<if test="active != null">
+				and cmvc.active = #{active}
+			</if>
 		</where>
 	</sql>
 	

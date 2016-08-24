@@ -20,6 +20,9 @@
 					tsc.sms_code1 like concat('%', #{smsCode}, '%') or tsc.sms_code2 like concat('%', #{smsCode}, '%')
 				)
 			</if>
+			<if test="active != null">
+				and tsc.active = #{active}
+			</if>
 		</where>
 	</sql>
 	

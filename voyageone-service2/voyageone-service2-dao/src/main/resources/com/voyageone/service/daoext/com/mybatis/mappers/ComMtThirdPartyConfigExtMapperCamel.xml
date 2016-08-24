@@ -22,6 +22,9 @@
 					or cmtpc.prop_val6 like concat('%', #{propVal},'%')
 				)
 			</if>
+			<if test="active != null">
+				cmtpc.active = #{active}
+			</if>
 		</where>
 	</sql>
 	

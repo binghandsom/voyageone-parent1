@@ -42,7 +42,7 @@ public class CartService extends BaseService {
 		return cartDaoExt.selectCartByIds(iCartIds);
 	}
 
-	public PageModel<CtCartModel> searchCartByPage(Integer cartId, String cartName, String cartType,
+	public PageModel<CtCartModel> searchCartByPage(Integer cartId, String cartName, String cartType, Boolean active,
 			Integer pageNum, Integer pageSize) {
 		PageModel<CtCartModel> pageModel = new PageModel<CtCartModel>();
 		// 设置查询参数
@@ -50,6 +50,7 @@ public class CartService extends BaseService {
 		params.put("cartId", cartId);
 		params.put("cartName", cartName);
 		params.put("cartType", cartType);
+		params.put("active", active);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
 			pageModel.setCount(cartDaoExt.selectCartCount(params));

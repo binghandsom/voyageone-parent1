@@ -54,19 +54,20 @@ public class ChannelService extends BaseService {
 		return channelDao.selectList(Collections.emptyMap());
 	}
 	
-	public List<TmOrderChannelBean> searchChannel(String channelId, String channelName, Integer isUsjoi)
+	public List<TmOrderChannelBean> searchChannel(String channelId, String channelName, Integer isUsjoi, Integer active)
 			throws Exception {
-		return searchChannelByPage(channelId, channelName, isUsjoi, 0, 0).getResult();
+		return searchChannelByPage(channelId, channelName, isUsjoi, active, 0, 0).getResult();
 	}
 	
 	public PageModel<TmOrderChannelBean> searchChannelByPage(String channelId, String channelName, Integer isUsjoi,
-			Integer pageNum, Integer pageSize) {
+			Integer active, Integer pageNum, Integer pageSize) {
 		PageModel<TmOrderChannelBean> pageModel = new PageModel<TmOrderChannelBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
 		params.put("channelName", channelName);
 		params.put("isUsjoi", isUsjoi);
+		params.put("active", active);
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {

@@ -19,32 +19,8 @@
             		name like concat('%', #{channelName}, '%') or full_name like concat('%', #{channelName}, '%')
             	)
             </if>
-            <if test="imgUrl != null" >
-                and img_url = #{imgUrl}
-            </if>
-            <if test="sendName != null" >
-                and send_name = #{sendName}
-            </if>
-            <if test="sendAddress != null" >
-                and send_address = #{sendAddress}
-            </if>
-            <if test="sendTel != null" >
-                and send_tel = #{sendTel}
-            </if>
-            <if test="sendZip != null" >
-                and send_zip = #{sendZip}
-            </if>
-            <if test="screctKey != null" >
-                and screct_key = #{screctKey}
-            </if>
-            <if test="sessionKey != null" >
-                and session_key = #{sessionKey}
-            </if>
             <if test="isUsjoi != null and isUsjoi != ''" >
                 and is_usjoi = #{isUsjoi}
-            </if>
-            <if test="cartIds != null" >
-                and cart_ids = #{cartIds}
             </if>
             <if test="active != null" >
                 and active = #{active}
