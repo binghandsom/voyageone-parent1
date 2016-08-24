@@ -18,7 +18,8 @@
                                 <div class="row form-group"><!-- 角色 -->
                                     <label class="col-sm-3 control-label">{{'TXT_ROLE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.roleId">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.roleId"
+                                        ng-options="role for role in ctrl.roleList">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>
@@ -141,9 +142,9 @@
                         <td class="text-left v-middle">{{list.userName}}</td>
                         <td class="text-left v-middle">{{list.email}}</td>
                         <td class="text-center v-middle">{{list.roleName}}</td>
-                        <td class="text-center v-middle">{{ctrl.getName({'type':'org','value':list.orgId})}}</td>
+                        <td class="text-center v-middle">{{ctrl.getName(list.orgId)}}</td>
                         <td class="text-center v-middle">{{list.channelName}}</td>
-                        <td class="text-left v-middle">{{ctrl.getName({'type':'store','value':list.storeId})}}</td>
+                        <td class="text-left v-middle">{{list.storeName}}</td>
                         <td class="text-center v-middle">{{list.application}}</td>
                         <td class="text-center v-middle">{{list.active==true ? '启用':'禁用'}}</td>
                         <td class="text-center v-middle">{{list.description}}</td>

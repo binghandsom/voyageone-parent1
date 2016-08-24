@@ -8,7 +8,7 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('UserManagementController', (function () {
-        function UserManagementController(popups, alert, confirm, adminUserService, storeService, adminOrgService, channelService, selectRowsFactory) {
+        function UserManagementController(popups, alert, confirm, adminUserService, storeService, adminOrgService, channelService, adminRoleService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
@@ -16,6 +16,7 @@ define([
             this.storeService = storeService;
             this.adminOrgService = adminOrgService;
             this.channelService = channelService;
+            this.adminRoleService = adminRoleService;
             this.selectRowsFactory = selectRowsFactory;
             this.storePageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
@@ -48,6 +49,9 @@ define([
                 });
                 self.adminUserService.getAllApp().then(function (res) {
                     self.appList = res.data;
+                });
+                self.adminRoleService.getAllRole().then(function (res) {
+                    self.roleList = res.data;
                 });
                 self.search(1);
             },
@@ -145,22 +149,7 @@ define([
             },
             getName: function (item) {
                 var self = this;
-                switch (item.type) {
-                    case 'org':
-                        return self.orgList[item.value];
-                        break;
-                    case 'store':
-                        var storeName = [];
-                        var copyData = item.value.split(",");
-                        for (var i = 0; i < copyData.length; i++) {
-                            _.map(self.storeList, function (list) {
-                                if (list.storeId == copyData[i])
-                                    storeName.push(list.storeName);
-                            });
-                            return storeName.join(',');
-                        }
-                        break;
-                }
+                return self.orgList[item.value];
             },
         };
         return UserManagementController;
