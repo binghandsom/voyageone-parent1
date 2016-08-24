@@ -144,7 +144,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             errorMsg = "商品被Lock，如确实需要上传商品，请先解锁";
         }
         //6.0.2
-        else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() >= parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
+        else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() > parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
             errorMsg = "市场价必须大于团购价";
         }
         if(!StringUtils.isEmpty(errorMsg)) {

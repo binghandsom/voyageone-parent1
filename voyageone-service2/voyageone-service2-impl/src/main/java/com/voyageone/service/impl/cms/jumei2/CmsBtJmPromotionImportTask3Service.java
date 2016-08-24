@@ -228,7 +228,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 if (isImport) {
                     listErroSku.add(sku);
                 }
-            } else if (sku.getDealPrice() >= sku.getMarketPrice()) {
+            } else if (sku.getDealPrice() > sku.getMarketPrice()) {
                 sku.setErrorMsg("skuCode:" + sku.getSkuCode() + "请重新确认价格，市场价必须大于团购价！");
                 if (isImport) {
                     listErroSku.add(sku);
