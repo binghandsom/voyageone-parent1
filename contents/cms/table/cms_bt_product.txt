@@ -121,7 +121,7 @@
       * priceRetail ->各平台的销售指导价(double)
       * confPriceRetail ->各平台确认后的销售指导价(double)
       * priceSale   ->各平台的最终售价(double)
-      * confirmFlg   ->表示是否已确认指导售价的变更(画面上显示时与priceChgFlg相关) (string型，1:已确认 0:未确认)
+      * priceMsrpFlg ->表示指导售价和建议售价的比较，(指导售价小于建议售价时，保存为"XD"; 指导售价大于建议售价时，保存为"XU";相等时清空其值)
       * priceChgFlg  ->指导售价变化状态（U/D） 这里是指导售价价格本身变化
       * priceDiffFlg ->最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5） 这里表示最终售价与指导价的比较结果 (string型)
       * isSale    ->用于表示该sku是否在该平台销售(true(默认), false)

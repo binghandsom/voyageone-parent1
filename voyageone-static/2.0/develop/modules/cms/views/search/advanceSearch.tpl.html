@@ -406,6 +406,8 @@
                                                         <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                         <option value="U">指导售价涨价</option>
                                                         <option value="D">指导售价降价</option>
+                                                        <option value="XD">比中国建议售价低</option>
+                                                        <option value="XU">比中国建议售价高</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -421,8 +423,6 @@
                                                         <option value="4">向上击穿警告</option>
                                                         <option value="5">向下击穿警告</option>
                                                         <option value="1">等于指导售价</option>
-                                                        <option value="6">比中国建议售价低</option>
-                                                        <option value="7">比中国建议售价高</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -816,7 +816,7 @@
                             <vpagination config="vm.productPageOption"></vpagination>
                         </div>
                     </uib-tab>
-                    <uib-tab ng-click="vm.currTab = 'group'">
+                    <uib-tab ng-click="firstShowGroupList()">
                         <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
                         <div class="table-responsive box-body">
                             <table class="table-hover-new vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff;min-width: 100%" width="{{vm.tblWidth}}">
@@ -903,8 +903,6 @@
                                                     popover-placement="left" class="btn btn-default btn-xs">
                                                 {{groupInfo.groupBean.priceSale[0]}}
                                             </button>
-                                            <label ng-if="groupInfo._grpProdChgInfo == 1"
-                                                   style="color:red;font-size: 16px;font-weight:bolder">&nbsp;!</label>
                                         </td>
                                         <td class="text-left" style="display:inline-block;width:150px;">
                                             {{groupInfo.common.fields.brand}}

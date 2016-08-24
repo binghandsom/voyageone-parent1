@@ -51,23 +51,20 @@ public class CmsAdvSearchOtherService extends BaseAppService {
     public List[] getGroupExtraInfo(List<CmsBtProductBean> groupsList, String channelId, int cartId, boolean hasImgFlg) {
         List[] rslt;
         List<List<Map<String, String>>> imgList = new ArrayList<>();
-        List<Integer> chgFlgList = new ArrayList<>();
         List<String> orgChaNameList = new ArrayList<>();
         List<List<Map<String, Object>>> prodIdList = new ArrayList<>();
         List<String> freeTagsList = new ArrayList<>();
         List<List<CmsBtProductGroupModel>> grpPriceList = new ArrayList<>();
 
         if (hasImgFlg) {
-            rslt = new List[4];
-            rslt[0] = chgFlgList;
-            rslt[1] = imgList;
-            rslt[2] = prodIdList;
-            rslt[3] = grpPriceList;
-        } else {
             rslt = new List[3];
-            rslt[0] = chgFlgList;
-            rslt[1] = orgChaNameList;
-            rslt[2] = freeTagsList;
+            rslt[0] = imgList;
+            rslt[1] = prodIdList;
+            rslt[2] = grpPriceList;
+        } else {
+            rslt = new List[2];
+            rslt[0] = orgChaNameList;
+            rslt[1] = freeTagsList;
         }
         if (groupsList == null || groupsList.isEmpty()) {
             $warn("CmsAdvSearchQueryService.getGroupExtraInfo groupsList为空");
@@ -104,32 +101,6 @@ public class CmsAdvSearchOtherService extends BaseAppService {
                 orgChaNameList.add("");
             } else {
                 orgChaNameList.add(channel.getFullName());
-            }
-
-            // 查看价格变化
-            if (cartId > 0) {
-                boolean hasChg = false;
-                CmsBtProductModel_Platform_Cart platformObj = groupObj.getPlatform(cartId);
-                if (platformObj != null) {
-                    List<BaseMongoMap<String, Object>> skus = platformObj.getSkus();
-                    if (skus != null && skus.size() > 0) {
-                        for (BaseMongoMap skuObj : skus) {
-                            String chgFlg = StringUtils.trimToEmpty((String) (skuObj).get("priceChgFlg"));
-                            if (chgFlg.startsWith("U") || chgFlg.startsWith("D") || chgFlg.startsWith("X")) {
-                                hasChg = true;
-                                break;
-                            } else {
-                                hasChg = false;
-                            }
-                        }
-                    }
-                }
-
-                if (hasChg) {
-                    chgFlgList.add(1);
-                } else {
-                    chgFlgList.add(0);
-                }
             }
 
             if (!hasImgFlg) {
