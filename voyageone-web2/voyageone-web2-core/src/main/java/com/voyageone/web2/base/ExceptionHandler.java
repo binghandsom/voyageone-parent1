@@ -117,7 +117,7 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
             }
         }
 
-        return isAjax(request) ? textView(result) : jsonView(result);
+        return isAjax(request) ? jsonView(result) : textView(result);
     }
 
     private boolean isAjax(HttpServletRequest request) {
