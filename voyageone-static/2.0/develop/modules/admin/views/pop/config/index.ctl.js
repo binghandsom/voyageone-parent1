@@ -34,6 +34,31 @@ define([
         ConfigController.prototype = {
             init: function () {
                 var self = this;
+                switch (self.searchInfo.configType) {
+                    case 'Channel':
+                        self.channelService.getAllChannel().then(function (res) {
+                            self.channelList = res.data;
+                        });
+                        break;
+                    case 'Store':
+                        self.storeService.getAllStore().then(function (res) {
+                            self.storeList = res.data;
+                        });
+                        break;
+                    case 'Task':
+                        self.taskService.getAllTask().then(function (res) {
+                            self.taskList = res.data;
+                        });
+                        break;
+                    case 'Shop':
+                        self.channelService.getAllChannel().then(function (res) {
+                            self.channelAllList = res.data;
+                        });
+                        self.AdminCartService.getAllCart().then(function (res) {
+                            self.cartAllList = res.data;
+                        });
+                        break;
+                }
                 self.search(1);
             },
             search: function (page) {
@@ -53,9 +78,6 @@ define([
                 };
                 switch (self.searchInfo.configType) {
                     case 'Channel':
-                        self.channelService.getAllChannel().then(function (res) {
-                            self.channelList = res.data;
-                        });
                         var selectKey = function (configInfo) {
                             return {
                                 "id": configInfo.mainKey,
@@ -70,9 +92,6 @@ define([
                         });
                         break;
                     case 'Store':
-                        self.storeService.getAllStore().then(function (res) {
-                            self.storeList = res.data;
-                        });
                         var selectKey = function (configInfo) {
                             return {
                                 "id": configInfo.mainKey,
@@ -87,9 +106,6 @@ define([
                         });
                         break;
                     case 'Task':
-                        self.taskService.getAllTask().then(function (res) {
-                            self.taskList = res.data;
-                        });
                         var selectKey = function (configInfo) {
                             return {
                                 "id": configInfo.mainKey,
@@ -105,12 +121,6 @@ define([
                         });
                         break;
                     case 'Shop':
-                        self.channelService.getAllChannel().then(function (res) {
-                            self.channelAllList = res.data;
-                        });
-                        self.AdminCartService.getAllCart().then(function (res) {
-                            self.cartAllList = res.data;
-                        });
                         var selectKey = function (configInfo) {
                             return {
                                 "id": configInfo.mainKey,
