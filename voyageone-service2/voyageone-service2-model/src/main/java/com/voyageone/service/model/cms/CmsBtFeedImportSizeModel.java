@@ -21,17 +21,17 @@ public class CmsBtFeedImportSizeModel extends BaseModel {
     /**
      * 产品类型
      */
-    protected String producttype;
+    protected String productType;
 
     /**
      * 尺码类型
      */
-    protected String sizetype;
+    protected String sizeType;
 
     /**
      * 原始尺码
      */
-    protected String originalsize;
+    protected String originalSize;
 
     protected String channelId;
 
@@ -43,28 +43,28 @@ public class CmsBtFeedImportSizeModel extends BaseModel {
         this.brandName = brandName == null ? null : brandName.trim();
     }
 
-    public String getProducttype() {
-        return producttype;
+    public String getProductType() {
+        return productType;
     }
 
-    public void setProducttype(String producttype) {
-        this.producttype = producttype == null ? null : producttype.trim();
+    public void setProductType(String productType) {
+        this.productType = productType == null ? null : productType.trim();
     }
 
-    public String getSizetype() {
-        return sizetype;
+    public String getSizeType() {
+        return sizeType;
     }
 
-    public void setSizetype(String sizetype) {
-        this.sizetype = sizetype == null ? null : sizetype.trim();
+    public void setSizeType(String sizeType) {
+        this.sizeType = sizeType == null ? null : sizeType.trim();
     }
 
-    public String getOriginalsize() {
-        return originalsize;
+    public String getOriginalSize() {
+        return originalSize;
     }
 
-    public void setOriginalsize(String originalsize) {
-        this.originalsize = originalsize == null ? null : originalsize.trim();
+    public void setOriginalSize(String originalSize) {
+        this.originalSize = originalSize == null ? null : originalSize.trim();
     }
 
     public String getChannelId() {
