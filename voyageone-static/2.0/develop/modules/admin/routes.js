@@ -5,6 +5,12 @@ define(function () {
             "templateUrl": "views/home/welcome/datachart.tpl.html",
             "controllerUrl": "modules/admin/views/home/welcome/datachart.ctl"
         },//渠道-渠道信息管理
+        "adminUserManage": {
+            "hash": "/admin/userManage",
+            "templateUrl": "views/adminManagement/user/index.tpl.html",
+            "controllerUrl": "modules/admin/views/adminManagement/user/index.ctl",
+            "controller": "UserManagementController as ctrl"
+        },//渠道-渠道信息管理
         "channelInfoManage": {
             "hash": "/channel/channelInfoManage",
             "templateUrl": "views/channelManagement/channelInfoManage.tpl.html",
