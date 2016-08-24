@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.com.ComMtTypeDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.com.ComMtTypeModel" />
     <sql id="Base_Column_List" >
-        `id`, `name`, `comment`, `creater`, `created`, `modifier`, `modified`
+        `id`, `name`, `comment`, `creater`, `created`, `modifier`, `modified`, `active`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -37,6 +37,9 @@
             <if test="modified == null" >
                 `modified` = now(),
             </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=BIT},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -69,6 +72,9 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
         </where>
         limit 1
     </select>
@@ -96,6 +102,9 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
         </where>
     </select>
 
@@ -120,6 +129,9 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
         </where>
     </select>
 
@@ -143,6 +155,9 @@
                 `modifier`,
             </if>
             `modified`,
+            <if test="active != null" >
+                `active`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="name != null" >
@@ -171,6 +186,9 @@
             </if>
             <if test="modified != null" >
                 #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
             </if>
         </trim>
     </insert>

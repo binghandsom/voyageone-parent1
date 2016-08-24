@@ -3,6 +3,7 @@ package com.voyageone.service.impl.com.user;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.security.dao.ComUserDao;
 import com.voyageone.security.dao.ComUserRoleDao;
@@ -233,6 +234,13 @@ public class AdminUserService extends BaseService {
                 throw new BusinessException("删除用户信息失败");
             }
         }
+    }
+
+
+    public void getAllApp()
+    {
+
+
     }
 
 

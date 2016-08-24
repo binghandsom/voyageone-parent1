@@ -309,7 +309,10 @@ public interface AdminUrlConstants {
 
 			String DELETE_USER = "deleteUser";
 
-			String SHOW_AUTH = "showAuth";
+			String GET_AUTH = "getAuth";
+
+			//for dropdown list options
+			String GET_ALL_APP = "getAllApp";
 		}
 
 		/** 角色信息 */

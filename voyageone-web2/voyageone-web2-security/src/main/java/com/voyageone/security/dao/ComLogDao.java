@@ -26,5 +26,4 @@ public interface ComLogDao {
     int update(ComLogModel record);
 
     int delete(Integer id);
-
 }

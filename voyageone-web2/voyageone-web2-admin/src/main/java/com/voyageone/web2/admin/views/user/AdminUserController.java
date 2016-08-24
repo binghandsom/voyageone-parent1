@@ -100,10 +100,16 @@ public class AdminUserController extends AdminController {
     }
 
 
-    @RequestMapping(AdminUrlConstants.User.Self.SHOW_AUTH)
+    @RequestMapping(AdminUrlConstants.User.Self.GET_AUTH)
     public AjaxResponse showAuth(@RequestBody Integer userId)  {
         // 验证参数
         Preconditions.checkNotNull(userId);
+
+        return success(true);
+    }
+
+    @RequestMapping(AdminUrlConstants.User.Self.GET_ALL_APP)
+    public AjaxResponse getAllApp()  {
 
         return success(true);
     }

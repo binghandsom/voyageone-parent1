@@ -16,7 +16,7 @@ public class ComMtTypeModel extends BaseModel {
     protected String name;
 
     protected String comment;
-    
+
     protected Boolean active;
 
     public String getName() {
@@ -35,12 +35,11 @@ public class ComMtTypeModel extends BaseModel {
         this.comment = comment == null ? null : comment.trim();
     }
 
-	public Boolean getActive() {
-		return active;
-	}
+    public Boolean getActive() {
+        return active;
+    }
 
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-    
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 }
