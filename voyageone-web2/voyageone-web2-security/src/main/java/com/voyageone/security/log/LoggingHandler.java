@@ -29,7 +29,17 @@ public class LoggingHandler {
     protected void controller() {
     }
 
-    @Around("controller() ")
+    @Pointcut("execution(public * com.voyageone.web2.admin.*.*.*Controller.get*(..))")
+    protected void getXXX() {
+    }
+
+    @Pointcut("execution(public * com.voyageone.web2.admin.*.*.*Controller.search*(..))")
+    protected void searchXXX() {
+    }
+
+
+
+    @Around("controller() && !getXXX() && !getXXX()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
 
         long start = System.currentTimeMillis();
@@ -47,7 +57,7 @@ public class LoggingHandler {
         map.put("ip", ip);
         map.put("url", url);
         map.put("action", clsAndMethod);
-        map.put("request", arguments);
+        map.put("request", arguments == null ? "" : arguments);
         map.put("creater", user);
         try {
 //            HttpSession session = request.getSession();
