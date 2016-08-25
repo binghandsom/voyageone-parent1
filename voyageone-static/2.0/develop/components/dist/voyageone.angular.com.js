@@ -157,6 +157,9 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
      * 抄自聚美后台 js
      */
     function sizeof(str) {
+        if (str == undefined || str == null) {
+            return 0;
+        }
         var regex = str.match(/[^\x00-\xff]/g);
         return (str.length + (!regex ? 0 : regex.length));
     }
@@ -2889,7 +2892,6 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
             return config.total;
         };
 
-
         /**
          * 获取每页数量
          * @returns {*}
@@ -3221,7 +3223,11 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
  * @User:    Jonas
  * @Version: 0.2.1
  */
-angular.module("voyageone.angular.services").service("$ajax", $Ajax).service("ajaxService", AjaxService);
+angular.module("voyageone.angular.services").service("$ajax", $Ajax).service("ajaxService", AjaxService).config(['$httpProvider', function ($httpProvider) {
+    $httpProvider.defaults.headers.common = {
+        'X-Requested-With': 'XMLHttpRequest'
+    };
+}]);
 
 function $Ajax($http, blockUI, $q) {
     this.$http = $http;

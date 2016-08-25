@@ -438,7 +438,7 @@ define(function () {
                     "attributeService": {
                         "root": "/cms/channel/custom/prop",
                         "init": "get",
-                        "getCatTree": session("getCatTree"),
+                        "getCatTree": session("getCatTree", [KEY.CHANNEL]),
                         "save": "update",
                         "getCatList": "getCatList"
                     }
