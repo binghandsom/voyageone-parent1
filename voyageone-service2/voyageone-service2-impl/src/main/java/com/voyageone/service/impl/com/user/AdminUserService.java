@@ -5,6 +5,7 @@ import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.mail.Mail;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.security.dao.ComUserDao;
 import com.voyageone.security.dao.ComUserRoleDao;
@@ -18,9 +19,14 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.CtApplicationModel;
 import com.voyageone.service.model.com.PageModel;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -179,8 +185,6 @@ public class AdminUserService extends BaseService {
             rModel.setCreater(username);
             comUserRoleDao.insert(rModel);
         }
-
-
     }
 
 
@@ -211,6 +215,7 @@ public class AdminUserService extends BaseService {
 
         // 保存用户信息
         model.setCreater(username);
+        encryptPassword(model);
         comUserDao.insert(model);
 
         Integer userId = model.getId();
@@ -256,6 +261,43 @@ public class AdminUserService extends BaseService {
     }
 
 
+    @VOTransactional
+    public void restPass (List<Integer> userIds, String pass, String username) {
+        for (Integer id : userIds) {
+            restPass(id, pass, username);
+        }
+    }
+
+    public void restPass(Integer userId, String pass, String username) {
+        ComUserModel model = new ComUserModel();
+        model.setId(userId);
+        model.setPassword(pass);
+        model.setModifier(username);
+        encryptPassword(model);
+        if (!(comUserDao.update(model) > 0)) {
+            throw new BusinessException("重设密码失败");
+        }
+    }
+
+    public void forgetPass(String account)  {
+        ComUserModel model = new ComUserModel();
+        model.setUserAccount(account);
+        ComUserModel user = comUserDao.selectOne(model);
+        if(user == null)
+        {
+            throw new BusinessException("该用户在系统中不存在");
+        }
+
+        String email = user.getEmail();
+
+        try {
+            Mail.send(email, "重置密码", getMailContent(model, "353FTWTWRT"));
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public Map<Integer, Object>  getAllApp()
     {
        List<CtApplicationModel> list = ctApplicationDao.selectList(Collections.EMPTY_MAP);
@@ -263,6 +305,28 @@ public class AdminUserService extends BaseService {
         Map<Integer, Object> result = list.stream().collect(Collectors.toMap(CtApplicationModel::getId, CtApplicationModel::getApplication));
 
         return result;
+    }
+
+
+    private void encryptPassword(ComUserModel model)
+    {
+        RandomNumberGenerator randomNumberGenerator = new SecureRandomNumberGenerator();
+        String salt = randomNumberGenerator.nextBytes().toHex();
+        model.setCredentialSalt(salt);
+        String newPassword = new SimpleHash("md5", model.getPassword(), ByteSource.Util.bytes(model.getUserAccount() + salt), 2).toHex();
+        model.setPassword(newPassword);
+    }
+
+    private String getMailContent(ComUserModel model, String token)
+    {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("<p>").append("亲爱的").append(model.getUserAccount()).append(":</p>");
+        sb.append("<p>").append("我们收到您的密码重置请求，点击下面链接重置你的密码:").append("</p>");
+        sb.append("<p>").append("<a href=").append("www.baidu.com/").append(token).append(">").append("www.baidu.com/").append(token).append("</a>").append("</p>");
+        sb.append("<p>").append("此邮件24小时内有效，如果你忽略这条信息，密码将不进行更改").append("</p>");
+
+        return sb.toString();
     }
 
 

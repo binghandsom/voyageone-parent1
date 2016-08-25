@@ -7,8 +7,6 @@
  */
 package com.voyageone.security.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 /**
  * 
  */
@@ -26,13 +24,11 @@ public class ComUserModel extends CoreBaseModel {
     /**
      * 密码
      */
-    @JsonIgnore
     protected String password;
 
     /**
      * 盐
      */
-    @JsonIgnore
     protected String credentialSalt;
 
     protected Integer orgId;

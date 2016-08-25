@@ -26,7 +26,7 @@ public class ComOrganizationModel extends CoreBaseModel {
     }
 
     public void setOrgName(String orgName) {
-        this.orgName = orgName;
+        this.orgName = orgName == null ? null : orgName.trim();
     }
 
     public Boolean getActive() {
