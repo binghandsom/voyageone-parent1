@@ -32,6 +32,7 @@
 		from com_mt_tracking_info_config cmtic left join ct_cart cc on cc.cart_id = cmtic.cart_id
 			left join tm_order_channel toc on toc.order_channel_id = cmtic.order_channel_id
     	<include refid="selectCartTrackingFilter"/>
+    	order by modified desc
     </select>
     
     <select id="selectCartTrackingCount" resultType="integer">

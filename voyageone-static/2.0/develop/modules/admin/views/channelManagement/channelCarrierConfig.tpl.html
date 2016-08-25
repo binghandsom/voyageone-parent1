@@ -113,10 +113,10 @@
                     </td>
                     <td class="text-center v-middle">{{list.channelName}}</td>
                     <td class="text-center v-middle">{{list.carrier}}</td>
-                    <td class="text-center v-middle">{{list.usekd100Flg=='0'?'否':'是'}}</td>
-                    <td class="text-center v-middle">{{list.allowDeleteFlg=='0'?'禁止':'允许'}}</td>
+                    <td class="text-center v-middle">{{list.usekd100Flg?list.usekd100Flg=='0'?'否':'是':''}}</td>
+                    <td class="text-center v-middle">{{list.allowDeleteFlg?list.allowDeleteFlg=='0'?'禁止':'允许':''}}</td>
                     <td class="text-center v-middle">{{list.comments}}</td>
-                    <td class="text-center v-middle">{{list.active==true?'启用':'禁用'}}</td>
+                    <td class="text-center v-middle">{{list.active?list.active==true?'启用':'禁用':''}}</td>
                     <td class="text-center v-middle">{{list.modified}}</td>
                     <td class="text-center v-middle">{{list.modifier}}</td>
                 </tr>

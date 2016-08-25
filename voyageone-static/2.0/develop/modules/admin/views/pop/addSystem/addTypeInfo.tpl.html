@@ -34,11 +34,16 @@
                         <label class="col-sm-3 control-label">{{'TXT_STATUS' | translate}}</label>
                         <div class="col-sm-8 m-t-xs">
                             <label class="checkbox-inline c-radio">
-                                <input type="radio" name="active" value="1" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> {{'BTN_ACTIVE'|translate}}
+                                <input type="radio" name="active" value="1" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> {{'BTN_ACTIVE'|translate}}
                             </label>
                             <label class="checkbox-inline c-radio">
-                                <input type="radio" name="active" value="0" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> {{'BTN_INACTIVE'|translate}}
+                                <input type="radio" name="active" value="0" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> {{'BTN_INACTIVE'|translate}}
                             </label>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.active"></vo-message>
                         </div>
                     </div>
                 </div>

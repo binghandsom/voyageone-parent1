@@ -24,6 +24,7 @@
 	<select id="selectCodeByPage" resultMap="codeModelMap">
 		select id, code, name, name1, des, active, created, creater, modified, modifier from tm_code
 		<include refid="selectCodeFilter"/>
+		order by modified desc
 	</select>
 	
 	<select id="selectCodeCount" resultType="integer">

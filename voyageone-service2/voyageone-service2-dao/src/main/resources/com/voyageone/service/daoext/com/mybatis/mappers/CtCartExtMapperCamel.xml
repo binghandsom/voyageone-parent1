@@ -44,6 +44,7 @@
     		creater, modified, modifier
     	from ct_cart
     	<include refid="selectCartFilter"/>
+    	order by modified desc
     </select>
     
     <select id="selectCartCount" resultType="integer">
@@ -51,7 +52,7 @@
     	<include refid="selectCartFilter"/>
     </select>
     
-    <select id="selectAllPlatform" resultType="map">
+    <select id="selectAllPlatform" resultType="com.voyageone.service.model.util.MapModel">
     	select platform_id, platform, comment from tm_platform
     </select>
 

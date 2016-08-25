@@ -34,6 +34,7 @@
 		from com_mt_value_channel cmvc left join tm_order_channel toc on toc.order_channel_id = cmvc.channel_id
 			left join com_mt_type cmt on cmt.id = cmvc.type_id
 		<include refid="selectChannelAttributeFilter"/>
+		order by modified desc
 	</select>
 	
 	<select id="selectChannelAttributeCount" resultType="integer">

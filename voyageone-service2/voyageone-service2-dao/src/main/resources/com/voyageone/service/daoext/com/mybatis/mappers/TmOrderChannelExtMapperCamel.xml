@@ -45,7 +45,7 @@
         </where>
 	</sql>
 
-	<select id="selectAllCompany" resultType="map">
+	<select id="selectAllCompany" resultType="com.voyageone.service.model.util.MapModel">
 		select id, company, description, default_view, active, created, creater, modified, modifier from ct_company
 		order by company
 	</select>
@@ -55,6 +55,7 @@
 			screct_key, session_key, is_usjoi, cart_ids, active, created, creater, modified, modifier
 		from tm_order_channel
 		<include refid="selectChannelFilter"/>
+		order by modified desc
 	</select>
 	
 	<select id="selectChannelCount" resultType="integer">

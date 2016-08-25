@@ -49,10 +49,10 @@
                             <label class="col-sm-1 control-label">{{'TXT_STATUS' | translate}}</label>
                             <div class="col-sm-4">
                                 <label class="checkbox-inline c-radio">
-                                    <input type="radio" name="active" value="1" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> 启用
+                                    <input type="radio" name="active" value="1" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> 启用
                                 </label>
                                 <label class="checkbox-inline c-radio">
-                                    <input type="radio" name="active" value="0" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> 禁用
+                                    <input type="radio" name="active" value="0" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> 禁用
                                 </label>
                             </div>
                         </div>
@@ -118,7 +118,7 @@
                             <label class="col-sm-3 control-label">{{'TXT_TRACKING_IS_EXPAND' | translate}}</label>
                             <div class="col-sm-8">
                                 <label class="checkbox-inline c-checkbox">
-                                    <input type="checkbox" ng-model="ctrl.sourceData.trackingSpreadFlg"><span class="fa fa-check"></span>
+                                    <input type="checkbox" ng-model="ctrl.sourceData.trackingSpreadFlg" ng-click="ctrl.sourceData.trackingSpreadFlg=='1'"><span class="fa fa-check"></span>
                                 </label>取得运单号路由信息
                             </div>
                         </div>

@@ -36,8 +36,8 @@ public class SqlMetaData {
 		    StringTokenizer whitespaceTokenizer = new StringTokenizer(sql);
 		    StringBuilder builder = new StringBuilder();
 		    while (whitespaceTokenizer.hasMoreTokens()) {
-		      builder.append(whitespaceTokenizer.nextToken());
-		      builder.append(" ");
+		    	builder.append(whitespaceTokenizer.nextToken());
+		    	builder.append(" ");
 		    }
 		    this.sql = builder.toString();
 		}

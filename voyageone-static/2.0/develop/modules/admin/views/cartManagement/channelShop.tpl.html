@@ -117,7 +117,7 @@
                     <td class="text-left v-middle">{{list.shopName}}</td>
                     <td class="text-center v-middle">{{list.appUrl}}</td>
                     <td class="text-center v-middle">{{list.comment}}</td>
-                    <td class="text-center v-middle">{{list.active==true ? '启用':'禁用'}}</td>
+                    <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
                     <td class="text-left v-middle">{{list.modified}}</td>
                     <td class="text-center v-middle">{{list.modifier}}</td>
                 </tr>

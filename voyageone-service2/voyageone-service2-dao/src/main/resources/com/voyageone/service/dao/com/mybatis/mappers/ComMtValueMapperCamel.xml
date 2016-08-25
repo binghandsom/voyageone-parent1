@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.com.ComMtValueModel" />
     <sql id="Base_Column_List" >
         `id`, `type_id`, `value`, `name`, `add_name1`, `add_name2`, `lang_id`, `created`, 
-        `creater`, `modifier`, `modified`
+        `creater`, `modifier`, `modified`, `active`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -49,6 +49,9 @@
             </if>
             <if test="modified == null" >
                 `modified` = now(),
+            </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=BIT},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -204,6 +207,9 @@
                 `modifier`,
             </if>
             `modified`,
+            <if test="active != null" >
+                `active`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="typeId != null" >
@@ -244,6 +250,9 @@
             </if>
             <if test="modified != null" >
                 #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
             </if>
         </trim>
     </insert>

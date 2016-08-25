@@ -54,6 +54,7 @@ public class TaskController extends AdminController {
 		taskTypes.stream().forEach(item -> result.add(new HashMap<String, Object>() {{
 			put("id", item.getId());
 			put("name", item.getName());
+			put("value", item.getValue());
 			put("typeId", item.getTypeId());
 		}}));
 		return success(result);

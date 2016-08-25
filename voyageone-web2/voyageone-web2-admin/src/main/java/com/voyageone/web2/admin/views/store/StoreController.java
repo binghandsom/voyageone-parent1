@@ -82,7 +82,7 @@ public class StoreController extends AdminController {
 	public AjaxResponse addOrUpdateStore(StoreFormBean form, boolean append) {
 		// 验证参数
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getOrderChannelId()));
-		Preconditions.checkNotNull(form.getParentStoreId());
+		//Preconditions.checkNotNull(form.getParentStoreId());
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getStoreType()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getStoreLocation()));
 		Preconditions.checkArgument(StringUtils.isNotBlank(form.getStoreKind()));
