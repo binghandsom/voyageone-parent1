@@ -614,6 +614,7 @@ define(function () {
         "TXT_PAGER_SIZE": "每页显示",
         /**尺码表*/
         "TXT_SIZE_CHART": "尺码表",
+        "TXT_SIZE_IMAGE": "尺码图",
         "TXT_SIZE_CHART_DETAIL": "尺码表明细",
         "TXT_SIZE_CHART_ADD": "新增尺码表",
         "TXT_SIZE_CHART_IMPORT": "导入尺码表",
