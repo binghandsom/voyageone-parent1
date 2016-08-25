@@ -11,6 +11,7 @@ import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.cms.bean.SuperfeedSummerGuruBean;
 import com.voyageone.task2.cms.dao.feed.SummerGuruFeedDao;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoSummerGuruModel;
@@ -22,6 +23,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.SUMMERGURU;
@@ -199,7 +202,23 @@ public class SummerGuruAnalysisService extends BaseAnalysisService {
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());
             cmsBtFeedInfoModel.setAttribute(attribute);
-
+            //设置重量
+            List<CmsBtFeedInfoModel_Sku> skus = vtmModelBean.getSkus();
+            for (CmsBtFeedInfoModel_Sku sku : skus) {
+                String Weight = sku.getWeightOrg().trim();
+                Pattern pattern = Pattern.compile("[^0-9.]");
+                Matcher matcher = pattern.matcher(Weight);
+                if (matcher.find()) {
+                    int index = Weight.indexOf(matcher.group());
+                    if (index != -1) {
+                        String weightOrg = Weight.substring(0, index);
+                        sku.setWeightOrg(weightOrg);
+                    }
+                }
+                sku.setWeightOrgUnit(sku.getWeightOrgUnit());
+            }
+            cmsBtFeedInfoModel.setSkus(skus);
+            //设置重量结束
             if(codeMap.containsKey(cmsBtFeedInfoModel.getCode())){
                 CmsBtFeedInfoModel beforeFeed =  codeMap.get(cmsBtFeedInfoModel.getCode());
                 beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
