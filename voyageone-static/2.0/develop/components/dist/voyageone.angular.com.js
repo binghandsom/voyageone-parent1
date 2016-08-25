@@ -157,6 +157,9 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
      * 抄自聚美后台 js
      */
     function sizeof(str) {
+        if (str == undefined || str == null) {
+            return 0;
+        }
         var regex = str.match(/[^\x00-\xff]/g);
         return (str.length + (!regex ? 0 : regex.length));
     }
@@ -2888,7 +2891,6 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
         this.getTotal = function () {
             return config.total;
         };
-
 
         /**
          * 获取每页数量
