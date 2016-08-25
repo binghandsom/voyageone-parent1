@@ -14,6 +14,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.overstock.bean.OverstockMultipleRequest;
 import com.voyageone.components.overstock.service.OverstockProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.SuperFeedOverStockBean;
 import com.voyageone.task2.cms.dao.feed.OverStockFeedDao;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.OverStock;
@@ -441,6 +444,24 @@ public class OverStockAnalysisService extends BaseAnalysisService {
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());
             cmsBtFeedInfoModel.setAttribute(attribute);
+
+            //设置重量
+            List<CmsBtFeedInfoModel_Sku> skus = vtmModelBean.getSkus();
+            for (CmsBtFeedInfoModel_Sku sku : skus) {
+                String Weight = sku.getWeightOrg().trim();
+                Pattern pattern = Pattern.compile("[^0-9.]");
+                Matcher matcher = pattern.matcher(Weight);
+                if (matcher.find()) {
+                    int index = Weight.indexOf(matcher.group());
+                    if (index != -1) {
+                        String weightOrg = Weight.substring(0, index);
+                        sku.setWeightOrg(weightOrg);
+                    }
+                }
+                sku.setWeightOrgUnit(sku.getWeightOrgUnit());
+            }
+            cmsBtFeedInfoModel.setSkus(skus);
+            //设置重量结束
 
             if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
                 CmsBtFeedInfoModel beforeFeed = codeMap.get(cmsBtFeedInfoModel.getCode());
