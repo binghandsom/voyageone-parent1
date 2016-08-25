@@ -2207,13 +2207,16 @@ public class SxProductService extends BaseService {
                     List<Field> allSkuFields = new ArrayList<>();
                     recursiveGetFields(processFields, allSkuFields);
 
-                    String imageTemplate = resolveDict("资质图片模板",expressionParser,shopBean, user, null);
-                    if (StringUtils.isEmpty(imageTemplate)) {
-                        String err = "达尔文产品没有设值资质图片模板字典!";
-                        sxData.setErrorMessage(err);
-                        throw new BusinessException(err);
-                    }
-                    skuFieldService.setCodeImageTemplate(imageTemplate);
+                    // deleted by morse.lu 2016/08/25 start
+                    // 暂时画面写死已经上传到平台的url完整路径，所以先注了这段代码，以后改回成画面有上传按钮，只填写图片名，再恢复这段代码
+//                    String imageTemplate = resolveDict("资质图片模板",expressionParser,shopBean, user, null);
+//                    if (StringUtils.isEmpty(imageTemplate)) {
+//                        String err = "达尔文产品没有设值资质图片模板字典!";
+//                        sxData.setErrorMessage(err);
+//                        throw new BusinessException(err);
+//                    }
+//                    skuFieldService.setCodeImageTemplate(imageTemplate);
+                    // deleted by morse.lu 2016/08/25 end
 
                     try {
                         List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
