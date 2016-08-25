@@ -60,6 +60,9 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
         }
     }
 
+    /*
+     * 税号变更
+     */
     private void updateHsCode(String propId, String propValue, List<String> codeList, String channleId, String userName, Boolean synPriceFlg) {
         String msg = "税号变更 " + propId + "=> " + propValue;
         for (String prodCode : codeList) {
