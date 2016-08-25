@@ -10,8 +10,6 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -264,17 +262,12 @@ public class FeedInfoService extends BaseService {
         if(searchValue.get("category") != null){
 
             List<String> categorys = (List<String>) searchValue.get("category");
+
             if (!categorys.isEmpty()) {
-                categorys = categorys.stream().map(s -> "{$regex:\"^" + s + "\"}").collect(Collectors.toList());
-                result.append("{").append(MongoUtils.splicingValue("category", categorys.toArray(),"$in"));
-                result.append("},");
+                StringBuffer categoryQuery = new StringBuffer();
+                categorys.forEach(s -> categoryQuery.append("^" + s + "|"));
+                result.append("{\"category\":{$regex: \"" + categoryQuery.toString().substring(0, categoryQuery.length() -1) + "\"}},");
             }
-//
-//            String category = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("category"));
-//            if (category != null) {
-//                result.append("{").append(MongoUtils.splicingValue("category", category));
-//                result.append("},");
-//            }
         }
 
 

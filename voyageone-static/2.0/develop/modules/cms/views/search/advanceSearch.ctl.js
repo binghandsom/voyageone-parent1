@@ -847,16 +847,22 @@ define([
                         alert("没数据");
                         return null;
                     }
+
+                    if($scope.vm.searchInfo.pCatPathList != null){
+                        $scope.vm.adVanceCats = _.filter($scope.vm.adVanceCats,function(item){
+                            return $scope.vm.searchInfo.pCatPathList.indexOf(item.catPath) > -1;
+                        });
+                    }
+
                     return popupNewCategory({
-                        from: $scope.vm.searchInfo.pCatPath,
-                        categories: res.data
+                        from: $scope.vm.adVanceCats,
+                        categories: res.data,
+                        anyNode:true
                     });
                 })
                 .then(function (context) {
-                    $scope.vm.searchInfo.pCatPath = context.selected.catPath;
-                    // TODO -- 目前选择画面传回的是单个cat path,以后修改为数组时再对应
-                    $scope.vm.searchInfo.pCatPathList = [];
-                    $scope.vm.searchInfo.pCatPathList.push($scope.vm.searchInfo.pCatPath)
+                    $scope.vm.adVanceCats = context;
+                    $scope.vm.searchInfo.pCatPathList = $scope.vm.catOpts = _.map(context,function(item){return item.catPath;});
                 });
         }
 
@@ -888,15 +894,21 @@ define([
                         alert("没数据");
                         return null;
                     }
+
+                    if( $scope.vm.searchInfo.fCatPathList != null){
+                        $scope.vm.feedCats = _.filter($scope.vm.feedCats,function(item){
+                            return $scope.vm.searchInfo.fCatPathList.indexOf(item.catPath) > -1;
+                        });
+                    }
+
                     return popupNewCategory({
                         categories: res.data.categoryTree,
-                        from: $scope.vm.searchInfo.fCatPath,
-                        divType: "-"
+                        from:$scope.vm.feedCats,
+                        divType: "-",
+                        anyNode:true
                     }).then(function (context) {
-                        $scope.vm.searchInfo.fCatPath = context.selected.catPath;
-                        // TODO -- 目前选择画面传回的是单个cat path,以后修改为数组时再对应
-                        $scope.vm.searchInfo.fCatPathList = [];
-                        $scope.vm.searchInfo.fCatPathList.push($scope.vm.searchInfo.fCatPath)
+                        $scope.vm.feedCats = context;
+                        $scope.vm.searchInfo.fCatPathList = $scope.vm.fcatOpts = _.map(context,function(item){return item.catPath;});
                     });
                 });
         }
@@ -983,29 +995,34 @@ define([
 
         // 清空所填项目
         function dismiss(item) {
-            if (item == 'mCatPath') {
-                $scope.vm.searchInfo.mCatPath = null;
-                $scope.vm.searchInfo.mCatId = null;
-
-            } else if (item == 'fCatPath') {
-                $scope.vm.searchInfo.fCatPath = null;
-                $scope.vm.searchInfo.fCatId = null;
-
-            } else if (item == 'freeTag') {
-                $scope.vm._freeTags = null;
-                $scope.vm.searchInfo.freeTags = null;
-
-            } else if (item == 'pCatStatus') {
-                $scope.vm.searchInfo.pCatPath = null;
-                $scope.vm.searchInfo.pCatId = null;
-
-            } else if (item == 'shopCat') {
-                $scope.vm._shopCatValues = null;
-                $scope.vm.searchInfo.cidValue = null;
-
-            } else if (item == 'promotionTag') {
-                $scope.vm._promotionTags = null;
-                $scope.vm.searchInfo.promotionTags = null;
+            switch (item){
+                case 'mCatPath':
+                    $scope.vm.searchInfo.mCatPath = null;
+                    $scope.vm.searchInfo.mCatId = null;
+                    break;
+                case 'fCatPath':
+                    $scope.vm.searchInfo.fCatPath = null;
+                    $scope.vm.searchInfo.fCatId = null;
+                    break;
+                case 'freeTag':
+                    $scope.vm._freeTags = null;
+                    $scope.vm.searchInfo.freeTags = null;
+                    break;
+                case 'pCatStatus':
+                    $scope.vm.searchInfo.pCatPath = null;
+                    $scope.vm.searchInfo.pCatId = null;
+                    break;
+                case 'shopCat':
+                    $scope.vm._shopCatValues = null;
+                    $scope.vm.searchInfo.cidValue = null;
+                    break;
+                case 'promotionTag':
+                    $scope.vm._promotionTags = null;
+                    $scope.vm.searchInfo.promotionTags = null;
+                    break;
+                default:
+                    $scope.vm.searchInfo[item] = null;
+                    break;
             }
         }
 

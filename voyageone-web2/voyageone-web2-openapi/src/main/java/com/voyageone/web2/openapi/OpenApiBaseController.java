@@ -5,10 +5,12 @@ import com.voyageone.base.exception.SystemException;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.web2.sdk.api.VoApiResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
+import com.voyageone.web2.sdk.api.response.SimpleResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * Base Controller。
@@ -54,4 +56,9 @@ public abstract class OpenApiBaseController extends VOAbsLoggable {
         return new VoApiResponse(code, message);
     }
 
+
+
+    protected VoApiResponse simpleResponse(Object resultData) {
+        return new SimpleResponse(resultData);
+    }
 }

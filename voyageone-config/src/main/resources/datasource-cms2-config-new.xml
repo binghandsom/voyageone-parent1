@@ -69,6 +69,8 @@
         <property name="mapperLocations">
             <list>
                 <value>classpath*:com/voyageone/service/dao/com/**/*MapperCamel.xml</value>
+                <value>classpath*:com/voyageone/service/daoext/bi/**/*MapperCamel.xml</value>
+                <value>classpath*:com/voyageone/service/daoext/com/**/*MapperCamel.xml</value>
             </list>
         </property>
         <!-- 配置Mybatis的插件plugin-->
@@ -92,6 +94,8 @@
     <bean id="updateTemplateDaoScanCom" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionTemplateBeanName" value="updateTemplateCom"/>
         <property name="basePackage" value="com.voyageone.service.dao.com,
+                                          com.voyageone.service.daoext.bi,
+                                          com.voyageone.service.daoext.com,
                                           com.voyageone.service.daoext.synship"/>
         <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
     </bean>
