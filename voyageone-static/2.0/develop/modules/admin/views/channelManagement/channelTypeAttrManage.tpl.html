@@ -129,8 +129,8 @@
                     <td class="text-center v-middle">{{list.value}}</td>
                     <td class="text-center v-middle">{{list.addName1}}</td>
                     <td class="text-center v-middle">{{list.addName2}}</td>
-                    <td class="text-center v-middle">{{list.langId=='en'?'英文':'中文'}}</td>
-                    <td class="text-center v-middle">{{list.active==true ? '启用':'禁用'}}</td>
+                    <td class="text-center v-middle">{{list.langId?list.langId=='en'?'英文':'中文':''}}</td>
+                    <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
                     <td class="text-left v-middle">{{list.modified}}</td>
                     <td class="text-center v-middle">{{list.modifier}}</td>
                 </tr>

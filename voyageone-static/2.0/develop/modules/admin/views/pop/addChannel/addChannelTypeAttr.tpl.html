@@ -70,13 +70,13 @@
                     <div class="form-group"><!-- 添加名 -->
                         <label class="col-sm-3 control-label">{{'TXT_CHANNEL_ADD_NAME' | translate}}1</label>
                         <div class="col-sm-8">
-                            <input type="text" maxlength="25" class="form-control" ng-model="ctrl.sourceData.addName1" type="text" maxlength="100" name="addName1"/>
+                            <input type="text" maxlength="25" class="form-control" ng-model="ctrl.sourceData.addName1" name="addName1"/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">{{'TXT_CHANNEL_ADD_NAME' | translate}}2</label>
                         <div class="col-sm-8">
-                            <input type="text" maxlength="10" class="form-control" ng-model="ctrl.sourceData.addName2" type="text" maxlength="100" name="addName2"/>
+                            <input type="text" maxlength="10" class="form-control" ng-model="ctrl.sourceData.addName2" name="addName2"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -104,6 +104,11 @@
                             <label class="checkbox-inline c-radio">
                                 <input type="radio" name="active" value="1" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> {{'BTN_INACTIVE'|translate}}
                             </label>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.active"></vo-message>
                         </div>
                     </div>
                 </div>

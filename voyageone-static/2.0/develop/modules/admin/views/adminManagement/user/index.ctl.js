@@ -149,8 +149,27 @@ define([
             },
             getName: function (item) {
                 var self = this;
-                return self.orgList[item.value];
+                var orgNameList = [];
+                _.map(self.orgList, function (org) {
+                    if (org.id == item) {
+                        orgNameList.push(org.orgName);
+                    }
+                });
+                return orgNameList.join(',');
             },
+            getActive: function (active) {
+                switch (active) {
+                    case 1:
+                        return '启用';
+                        break;
+                    case 0:
+                        return '禁用';
+                        break;
+                    case 2:
+                        return '锁定';
+                        break;
+                }
+            }
         };
         return UserManagementController;
     })())

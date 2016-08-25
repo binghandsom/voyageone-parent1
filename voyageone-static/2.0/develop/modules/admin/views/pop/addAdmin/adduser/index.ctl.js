@@ -5,11 +5,13 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('AddUserController', (function () {
-        function AddUserController(context, adminRoleService, adminOrgService, $uibModalInstance) {
+        function AddUserController(context, adminRoleService, adminOrgService, adminUserService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
             this.adminRoleService = adminRoleService;
             this.adminOrgService = adminOrgService;
+            this.adminUserService = adminUserService;
+
             this.popType = '修改用户';
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
@@ -104,10 +106,6 @@ define([
                         self.$uibModalInstance.close(result);
                     })
                 }
-            },
-            getName: function (item) {
-                var self = this;
-                return self.orgList[item.value];
             }
         };
         return AddUserController;

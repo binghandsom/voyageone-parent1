@@ -113,7 +113,7 @@
                         <td class="text-left v-middle">{{list.shortName}}</td>
                         <td class="text-center v-middle">{{list.description}}</td>
                         <td class="text-center v-middle">{{ctrl.getCartType(list.cartType)}}</td>
-                        <td class="text-center v-middle">{{list.active==true ? '启用':'禁用'}}</td>
+                        <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
                         <td class="text-left v-middle">{{list.modified}}</td>
                         <td class="text-center v-middle">{{list.modifier}}</td>
                     </tr>
