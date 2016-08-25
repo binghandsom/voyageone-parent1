@@ -51,13 +51,13 @@ public class CodeController extends AdminController {
 	
 	@RequestMapping(AdminUrlConstants.System.Code.UPDATE_CODE)
 	public AjaxResponse updateCode(@RequestBody CodeFormBean form) {
-		Preconditions.checkNotNull(form.getId());
 		return addOrUpdateCode(form, false);
 	}
 	
 	private AjaxResponse addOrUpdateCode(CodeFormBean form, boolean append) {
 		// 验证参数
-		Preconditions.checkArgument(StringUtils.isNoneBlank(form.getCode()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getId()));
+		Preconditions.checkArgument(StringUtils.isNotBlank(form.getCode()));
 
 		// 保存Code信息
 		TmCodeModel model = new TmCodeModel();
@@ -72,8 +72,8 @@ public class CodeController extends AdminController {
 		// 验证参数
 		List<TmCodeKey> codeKeys = new ArrayList<TmCodeKey>();
 		for (CodeFormBean form : forms) {
-			Preconditions.checkNotNull(form.getId());
-			Preconditions.checkArgument(StringUtils.isNotEmpty(form.getName()));
+			Preconditions.checkArgument(StringUtils.isNotBlank(form.getId()));
+			Preconditions.checkArgument(StringUtils.isNotBlank(form.getCode()));
 			TmCodeKey codeKey = new TmCodeKey();
 			BeanUtils.copyProperties(form, codeKey);
 			codeKeys.add(codeKey);

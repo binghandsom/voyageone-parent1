@@ -8,7 +8,7 @@ import com.voyageone.web2.admin.bean.AdminFormBean;
  */
 public class CodeFormBean extends AdminFormBean {
 	
-	private Integer id;
+	private String id;
 	
 	private String code;
 	
@@ -20,11 +20,11 @@ public class CodeFormBean extends AdminFormBean {
 	
 	private Boolean active;
 
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
