@@ -517,7 +517,8 @@ define(function () {
                         "init": "sizeChartInit",
                         "search": "sizeChartSearch",
                         "delete": "sizeChartDelete",
-                        "editSave": "sizeChartEditSave"
+                        "editSave": "sizeChartEditSave",
+                        "getNoMatchList":"getNoMatchList"
                     }
                 },
                 "sizeChartDetail": {
