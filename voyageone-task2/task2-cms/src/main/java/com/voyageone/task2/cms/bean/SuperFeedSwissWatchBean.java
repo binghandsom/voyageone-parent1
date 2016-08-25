@@ -14,8 +14,6 @@ public class SuperFeedSwissWatchBean extends SuperFeedBean {
 
     private String buyitnowprice;
 
-    private String retailprice;
-
     private String classification;
 
     private String md5;
@@ -736,14 +734,6 @@ public class SuperFeedSwissWatchBean extends SuperFeedBean {
 
     public void setBuyitnowprice(String buyitnowprice) {
         this.buyitnowprice = buyitnowprice == null ? null : buyitnowprice.trim();
-    }
-
-    public String getRetailprice() {
-        return retailprice;
-    }
-
-    public void setRetailprice(String retailprice) {
-        this.retailprice = retailprice == null ? null : retailprice.trim();
     }
 
     public String getClassification() {
