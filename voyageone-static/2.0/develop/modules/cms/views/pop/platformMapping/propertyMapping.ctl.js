@@ -93,7 +93,12 @@ define([
                 var valueList = _.map(this.valueArr, function (item) {
                     return {type: item.type, append: item.append, value: item.value};
                 });
-                this.context.value = JSON.stringify(valueList);
+
+                if (valueList.length != 0)
+                    this.context.value = JSON.stringify(valueList);
+                else
+                    this.context.value = null;
+
                 this.uibModalInstance.close();
             },
             formatValue: function (item) {
