@@ -109,6 +109,18 @@ public class FeedInfoService extends BaseService {
 
         // 获取category
         String category = (String) searchValue.get("category");
+        String[] categoryArray = category.split("/");
+        category = "";
+        for (String categoryItem : categoryArray) {
+            // 不等于空的情况下，去掉首尾空格，并替换半角横杠为全角横杠，重新组装一下
+            if (!StringUtils.isEmpty(categoryItem)) {
+                category += categoryItem.trim().replaceAll("-", "－") + "-";
+            }
+        }
+        // 去掉最后一个分隔符[-]
+        if (!StringUtils.isEmpty(category)) {
+            category = category.substring(0, category.length() - 1);
+        }
         if (!StringUtils.isEmpty(category)) {
             result.append("{").append(MongoUtils.splicingValue("category", category));
             result.append("},");

@@ -1,6 +1,7 @@
 package com.voyageone.web2.vms.views.feed;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.web2.base.BaseAppService;
@@ -43,7 +44,9 @@ public class VmsFeedSearchService extends BaseAppService {
         int pageSize = (Integer) searchValue.get("size");
         queryObject.setSkip((pageNum - 1) * pageSize);
         queryObject.setLimit(pageSize);
-        return feedInfoService.getListForVendor(userInfo.getSelChannelId(), queryObject);
+        List<CmsBtFeedInfoModel> models = feedInfoService.getListForVendor(userInfo.getSelChannelId(), queryObject);
+        editFeedInfo(models);
+        return models;
     }
 
     /**
@@ -54,5 +57,30 @@ public class VmsFeedSearchService extends BaseAppService {
      */
     public long getFeedCnt(Map<String, Object> searchValue, UserSessionBean userInfo) {
         return feedInfoService.getCntForVendor(userInfo.getSelChannelId(), searchValue);
+    }
+
+    /**
+     * 编辑FeedInfo
+     * @param models 编辑的CmsBtFeedInfoModel列表
+     */
+    private void editFeedInfo(List<CmsBtFeedInfoModel> models) {
+        for(CmsBtFeedInfoModel model : models) {
+            String category = model.getCategory();
+            String[] categoryArray = category.split("-");
+            if (categoryArray.length > 0) {
+                category = "";
+                for (String categoryItem : categoryArray) {
+                    // 不等于空的情况下，去掉首尾空格，并替换全角横杠为半角横杠，重新组装一下
+                    if (!StringUtils.isEmpty(categoryItem)) {
+                        category += categoryItem.trim().replaceAll("－", "-") + "/";
+                    }
+                }
+                // 去掉最后一个分隔符[/]
+                if (!StringUtils.isEmpty(category)) {
+                    category = category.substring(0, category.length() - 1);
+                }
+                model.setCategory(category);
+            }
+        }
     }
 }
