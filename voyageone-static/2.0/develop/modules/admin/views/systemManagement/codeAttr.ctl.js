@@ -59,7 +59,7 @@ define([
                                 self.tempSelect.currPageRows({
                                     "id": Info.mainKey,
                                     "delId": Info.id,
-                                    "delName": Info.name
+                                    "delCode": Info.code
                                 });
                             }
                         });
@@ -97,7 +97,7 @@ define([
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.codeSelList.selList, function (delInfo) {
-                            delList.push({'id':delInfo.delId,'name':delInfo.delName});
+                            delList.push({'id':delInfo.delId,'code':delInfo.delCode});
                         });
                         self.codeService.deleteCode(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);

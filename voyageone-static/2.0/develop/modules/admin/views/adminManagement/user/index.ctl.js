@@ -126,7 +126,7 @@ define([
                 } else {
                     _.forEach(self.adminList, function (Info) {
                         if (Info.id == self.adminUserSelList.selList[0].id) {
-                            self.popups.openStoreAdd(Info).then(function () {
+                            self.popups.openAddUser(Info).then(function () {
                                 self.search(1);
                             });
                         }
