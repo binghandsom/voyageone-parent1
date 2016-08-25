@@ -130,11 +130,11 @@
                         <td class="text-left v-middle">{{list.storeName}}</td>
                         <td class="text-left v-middle">{{list.storeArea}}</td>
                         <td class="text-center v-middle">{{ctrl.getStoreType(list.storeType)}}</td>
-                        <td class="text-center v-middle">{{list.isSale=='1'?'在售':'不在售'}}</td>
-                        <td class="text-center v-middle">{{list.inventoryManager=='1' ? '管理':'不管理'}}</td>
+                        <td class="text-center v-middle">{{list.isSale?list.isSale=='1'?'在售':'不在售':''}}</td>
+                        <td class="text-center v-middle">{{list.inventoryManager?list.inventoryManager=='1' ? '管理':'不管理':''}}</td>
                         <td class="text-left v-middle">{{ctrl.getInventoryHold(list.inventoryHold)}}</td>
                         <td class="text-center v-middle">{{list.modifier}}</td>
-                        <td class="text-center v-middle">{{list.active==true ? '启用':'禁用'}}</td>
+                        <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
                         <td class="text-left v-middle">{{list.modified}}</td>
                         <td class="text-center v-middle">{{list.modifier}}</td>
                     </tr>

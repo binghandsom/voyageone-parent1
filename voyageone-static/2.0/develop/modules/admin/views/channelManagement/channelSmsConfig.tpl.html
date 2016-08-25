@@ -125,8 +125,8 @@
                     <td class="text-center v-middle">{{list.smsCode2}}</td>
                     <td class="text-left v-middle">{{list.content}}</td>
                     <td class="text-center v-middle">{{list.describe}}</td>
-                    <td class="text-center v-middle">{{list.delFlg=='1'?'删除':'未删除'}}</td>
-                    <td class="text-center v-middle">{{list.active==true ? '启用':'禁用'}}</td>
+                    <td class="text-center v-middle">{{list.delFlg?list.delFlg=='1'?'删除':'未删除':''}}</td>
+                    <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
                     <td class="text-left v-middle">{{list.modified}}</td>
                     <td class="text-center v-middle">{{list.modifier}}</td>
                 </tr>

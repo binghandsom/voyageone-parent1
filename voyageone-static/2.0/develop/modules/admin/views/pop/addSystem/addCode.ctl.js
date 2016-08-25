@@ -5,13 +5,14 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('AddCodeController', (function () {
-        function AddCodeController(context, channelService, popups, typeService, typeAttrService, $uibModalInstance) {
+        function AddCodeController(context, channelService, popups, typeService, typeAttrService, codeService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
             this.popups = popups;
             this.channelService = channelService;
             this.typeService = typeService;
             this.typeAttrService = typeAttrService;
+            this.codeService = codeService;
             this.popType = '编辑';
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance
