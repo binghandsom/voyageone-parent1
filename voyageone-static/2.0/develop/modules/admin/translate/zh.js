@@ -150,6 +150,7 @@ define(function () {
         "TXT_CHANNEL": "渠道",
         "TXT_STORE": "仓库",
         "TXT_EMAIL": "邮箱",
+        "TXT_PASSWORD":"密码",
         "TXT_INSTRUCTION": "说明",
 
         /**按钮组*/
