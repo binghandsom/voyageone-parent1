@@ -8,6 +8,7 @@ import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.daoext.cms.CmsZzFeedOverstockPriceDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -148,7 +149,7 @@ public class OverStockPriceAnalysisService extends BaseTaskService {
                     for (BaseMongoMap<String, Object> sku : cart.getSkus()) {
                         if (sku.getStringAttribute("skuCode").equalsIgnoreCase(cmsZzFeedOverstockPriceModel.getSkuCode())) {
                             sku.setAttribute("priceSale", Double.parseDouble(cmsZzFeedOverstockPriceModel.getFinalRmbPrice()));
-                            productService.updateProductPlatform(OverStock.getId(), cmsBtProductModel.getProdId(), cart, getTaskName(), false, "价格导入");
+                            productService.updateProductPlatform(OverStock.getId(), cmsBtProductModel.getProdId(), cart, getTaskName(), false, EnumProductOperationType.WebEdit, "价格导入");
                             break;
                         }
                     }

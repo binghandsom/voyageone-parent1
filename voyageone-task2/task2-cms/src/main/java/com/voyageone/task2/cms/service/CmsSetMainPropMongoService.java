@@ -3133,7 +3133,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 设置platform.PXX.skus里面的价格
             try {
-                priceService.setPrice(cmsProduct);
+                priceService.setPrice(cmsProduct, false);
             } catch (IllegalPriceConfigException ie) {
                 // 渠道级别价格计算配置错误, 停止后面的feed->master导入，避免报几百条一样的错误信息
                 String errMsg = String.format("feed->master导入:共通配置异常终止:发现渠道级别的价格计算配置错误，后面的feed导入不做了，" +

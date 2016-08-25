@@ -875,10 +875,10 @@ public class ProductService extends BaseService {
         return updateProductPlatform(channelId, prodId, platformModel, modifier, false);
     }
     public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk) {
-        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk,"页面编辑");
+        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, "页面编辑");
     }
 
-    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk, String comment) {
+    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk, EnumProductOperationType opeType, String comment) {
         CmsBtProductModel oldProduct = getProductById(channelId, prodId);
         if (isModifiedChk) {
             CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = oldProduct.getPlatform(platformModel.getCartId());
@@ -919,7 +919,7 @@ public class ProductService extends BaseService {
         List<String> skus = new ArrayList<>();
         platformModel.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
         cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, platformModel.getCartId(), modifier, comment);
-        productStatusHistoryService.insert(channelId, oldProduct.getCommon().getFields().getCode(), platformModel.getStatus(), platformModel.getCartId(), EnumProductOperationType.WebEdit, comment, modifier);
+        productStatusHistoryService.insert(channelId, oldProduct.getCommon().getFields().getCode(), platformModel.getStatus(), platformModel.getCartId(), opeType, comment, modifier);
 
         return platformModel.getModified();
     }
