@@ -78,8 +78,8 @@ ImageGroupService imageGroupService;
         cmsImageGroupService.delete(param);
         return success(null);
     }
-    @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP.GetNoMatchSizeImageGroupList)
-    public AjaxResponse getNoMatchList() {
+    @RequestMapping( CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP.GetNoMatchSizeImageGroupList)
+    public AjaxResponse getNoMatchSizeImageGroupList() {
         String channelId = this.getUser().getSelChannelId();
         return success(imageGroupService.getNoMatchSizeImageGroupList(channelId));
     }
