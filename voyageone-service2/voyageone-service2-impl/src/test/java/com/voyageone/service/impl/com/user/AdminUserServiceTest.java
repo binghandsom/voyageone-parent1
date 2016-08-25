@@ -89,4 +89,11 @@ public class AdminUserServiceTest {
     public void testGetAllApp() throws Exception {
         System.out.println(JacksonUtil.bean2Json(adminUserService.getAllApp()));
     }
+
+    @Test
+    public void testForgetPass() throws Exception {
+
+        adminUserService.forgetPass("admin");
+
+    }
 }

@@ -313,6 +313,12 @@ public interface AdminUrlConstants {
 
 			String GET_AUTH = "getAuth";
 
+			String RESET_PASS = "resetPass";
+
+			String EDIT_PASS = "editPass";
+
+			String FORGET_PASS = "forgetPass";
+
 			//for dropdown list options
 			String GET_ALL_APP = "getAllApp";
 		}

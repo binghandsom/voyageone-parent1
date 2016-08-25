@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Ethan Shi on 2016-08-15.
@@ -23,6 +24,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = AdminUrlConstants.User.Self.ROOT, method = RequestMethod.POST)
 public class AdminUserController extends AdminController {
+
+    private static final String DEFAULT_PASS = "1234567890";
 
 
     @Autowired
@@ -96,6 +99,32 @@ public class AdminUserController extends AdminController {
         Preconditions.checkNotNull(bean);
         String username = getUser().getUserName();
         adminUserService.deleteUser(bean, username);
+        return success(true);
+    }
+
+    @RequestMapping(AdminUrlConstants.User.Self.RESET_PASS)
+    public AjaxResponse restPass(@RequestBody List<Integer> bean)  {
+        // 验证参数
+        Preconditions.checkNotNull(bean);
+        String username = getUser().getUserName();
+        adminUserService.restPass(bean, DEFAULT_PASS ,username);
+        return success(true);
+    }
+
+    @RequestMapping(AdminUrlConstants.User.Self.EDIT_PASS)
+    public AjaxResponse editPass(@RequestBody Map requestMap)  {
+        // 验证参数
+        Integer userId = (Integer) requestMap.get("id");
+        String username = getUser().getUserName();
+        adminUserService.restPass(userId, DEFAULT_PASS ,username);
+        return success(true);
+    }
+
+    @RequestMapping(AdminUrlConstants.User.Self.FORGET_PASS)
+    public AjaxResponse forgetPass(@RequestBody Map requestMap)  {
+
+        String userAccount = requestMap.get("userAccount").toString();
+        adminUserService.forgetPass(userAccount);
         return success(true);
     }
 
