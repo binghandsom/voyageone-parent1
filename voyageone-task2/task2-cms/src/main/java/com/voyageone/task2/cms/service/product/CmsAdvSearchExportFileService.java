@@ -13,10 +13,7 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.DateTimeUtilBeijing;
-import com.voyageone.common.util.FileUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
@@ -30,7 +27,6 @@ import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseMQCmsService;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -40,10 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -96,14 +89,15 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             $error("高级检索 文件下载任务 查询参数不正确 该任务不存在");
             return;
         }
-        CmsSearchInfoBean2 searchValue = new CmsSearchInfoBean2();
+        CmsSearchInfoBean2 searchValue = null;
         try {
-            BeanUtils.populate(searchValue, messageMap);
+            searchValue = JacksonUtil.json2Bean(JacksonUtil.bean2Json(messageMap), CmsSearchInfoBean2.class);
         } catch (Exception exp) {
             $error("高级检索 文件下载任务 查询参数不正确", exp);
             // 更新任务状态，然后结束
             taskModel.setStatus(2);
             taskModel.setComment("查询参数不正确");
+            taskModel.setModified(new Date());
             cmsBtExportTaskService.update(taskModel);
             return;
         }
@@ -115,13 +109,13 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         Map<String, Object> sessionBean = (Map<String, Object>) messageMap.get("_sessionBean");
         if (channleId == null || language == null || userName == null || sessionBean == null) {
             $error("高级检索 文件下载任务  缺少参数");
+            taskModel.setStatus(2);
+            taskModel.setComment("缺少参数");
+            taskModel.setModified(new Date());
+            cmsBtExportTaskService.update(taskModel);
             return;
         }
-        sessionBean = (Map<String, Object>) sessionBean.get("extraInfo");
-        if (sessionBean == null) {
-            $error("高级检索 文件下载任务  缺少sessionBean参数");
-            return;
-        }
+
         try {
             String fileName = createExcelFile(searchValue, (List<String>) messageMap.get("_selCodeList"), channleId, sessionBean, userName, language);
             taskModel.setFileName(fileName);
@@ -132,6 +126,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             taskModel.setStatus(2);
             taskModel.setComment("创建文件时出错 " + exp.getMessage());
         }
+        taskModel.setModified(new Date());
         cmsBtExportTaskService.update(taskModel);
     }
 

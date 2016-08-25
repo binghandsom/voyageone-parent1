@@ -265,13 +265,6 @@ public class CmsFieldEditService extends BaseAppService {
                 return rsMap;
             }
 
-            // 是否自动同步指导价到最终售价
-            Boolean synPriceFlg = (Boolean) params.get("synPrice");
-            if (synPriceFlg != null && synPriceFlg) {
-                // 即使未配置自动同步，也同步指导价到最终售价
-
-            }
-
             JongoUpdate updObj = new JongoUpdate();
             updObj.setQuery("{'common.fields.code':{$in:#}}");
             updObj.setQueryParameters(productCodes);
@@ -280,6 +273,12 @@ public class CmsFieldEditService extends BaseAppService {
 
             WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
             $debug("批量更新结果 " + rs.toString());
+
+            params.put("productIds", productCodes);
+            params.put("_taskName", "batchupdate");
+            params.put("_channleId",  userInfo.getSelChannelId());
+            params.put("_userName",  userInfo.getUserName());
+            sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
             rsMap.put("ecd", 0);
             return rsMap;
 

@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service.product.batch;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -17,16 +18,23 @@ import java.util.Map;
 @RabbitListener(queues = MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob)
 public class CmsAdvSearchAsynProcessService extends BaseMQCmsService {
 
-
+    @Autowired
+    private CmsBacthUpdateService bacthUpdateService;
 
     @Override
     public String getTaskName() {
-        return null;
+        return "CmsAdvSearchAsynProcessService";
     }
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
+        String serviceName = (String) messageMap.get("_taskName");
+        if ("batchupdate".equals(serviceName)) {
+            bacthUpdateService.onStartup(messageMap);
 
+        } else {
+            $error("高级检索异步批量处理 未知操作 " + messageMap.toString());
+        }
     }
 
 }
