@@ -12,15 +12,16 @@ import com.voyageone.components.ftp.bean.FtpFileBean;
 import com.voyageone.components.ftp.service.BaseFtpComponent;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtSizeChartImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * ImageGroup Service
@@ -41,7 +42,8 @@ public class ImageGroupService extends BaseService {
     private CmsBtImageGroupDao cmsBtImageGroupDao;
     @Autowired
     private MongoSequenceService commSequenceMongoService; // DAO: Sequence
-
+    @Autowired
+    CmsBtSizeChartImageGroupService cmsBtSizeChartImageGroupService;
     /**
      * 新建ImageGroup信息
      *
@@ -478,5 +480,29 @@ public class ImageGroupService extends BaseService {
             ftpComponent.closeConnect();
         }
         return URL_PREFIX + ftpFileBean.getRemotePath() + "/" + ftpFileBean.getRemoteFilename();
+    }
+    //获取未匹配尺码表
+    public List<Map<String,Object>> getNoMatchSizeImageGroupList(String channelId) {
+        JongoQuery queryObject = new JongoQuery();
+        queryObject.setQuery("{\"channelId\":" + channelId + ",\"imageType\":2}");
+        queryObject.setProjection("{'imageGroupId':1,'imageGroupName':1,'_id':0}");
+        List<CmsBtImageGroupModel> grpList = cmsBtImageGroupDao.select(queryObject);
+
+        HashSet<Long> hsSizeChart = new HashSet<>();
+        List<CmsBtSizeChartImageGroupModel> listCmsBtSizeChartImageGroup = cmsBtSizeChartImageGroupService.getList(channelId);
+        listCmsBtSizeChartImageGroup.forEach((o) -> {
+            hsSizeChart.add(o.getCmsBtImageGroupId());
+        });
+        List<Map<String, Object>> list = new ArrayList<>();
+        grpList.forEach((o) -> {
+            if (!hsSizeChart.contains(o.getImageGroupId()))//未匹配
+            {
+                Map<String, Object> map = new HashedMap();
+                map.put("imageGroupId", o.getImageGroupId());
+                map.put("imageGroupName", o.getImageGroupName());
+                list.add(map);
+            }
+        });
+        return list;
     }
 }

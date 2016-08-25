@@ -24,7 +24,7 @@
                 `cms_bt_size_chart_Id` = #{cmsBtSizeChartId,jdbcType=INTEGER},
             </if>
             <if test="cmsBtImageGroupId != null" >
-                `cms_bt_image_group_id` = #{cmsBtImageGroupId,jdbcType=INTEGER},
+                `cms_bt_image_group_id` = #{cmsBtImageGroupId,jdbcType=BIGINT},
             </if>
             <if test="creater != null" >
                 `creater` = #{creater,jdbcType=VARCHAR},
@@ -62,7 +62,7 @@
                 and `cms_bt_size_chart_Id` = #{cmsBtSizeChartId,jdbcType=INTEGER}
             </if>
             <if test="cmsBtImageGroupId != null" >
-                and `cms_bt_image_group_id` = #{cmsBtImageGroupId,jdbcType=INTEGER}
+                and `cms_bt_image_group_id` = #{cmsBtImageGroupId,jdbcType=BIGINT}
             </if>
             <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
@@ -92,7 +92,7 @@
                 and `cms_bt_size_chart_Id` = #{cmsBtSizeChartId,jdbcType=INTEGER}
             </if>
             <if test="cmsBtImageGroupId != null" >
-                and `cms_bt_image_group_id` = #{cmsBtImageGroupId,jdbcType=INTEGER}
+                and `cms_bt_image_group_id` = #{cmsBtImageGroupId,jdbcType=BIGINT}
             </if>
             <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
@@ -119,7 +119,7 @@
                 and `cms_bt_size_chart_Id` = #{cmsBtSizeChartId,jdbcType=INTEGER}
             </if>
             <if test="cmsBtImageGroupId != null" >
-                and `cms_bt_image_group_id` = #{cmsBtImageGroupId,jdbcType=INTEGER}
+                and `cms_bt_image_group_id` = #{cmsBtImageGroupId,jdbcType=BIGINT}
             </if>
             <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
@@ -168,7 +168,7 @@
                 #{cmsBtSizeChartId,jdbcType=INTEGER},
             </if>
             <if test="cmsBtImageGroupId != null" >
-                #{cmsBtImageGroupId,jdbcType=INTEGER},
+                #{cmsBtImageGroupId,jdbcType=BIGINT},
             </if>
             <if test="creater != null" >
                 #{creater,jdbcType=VARCHAR},
