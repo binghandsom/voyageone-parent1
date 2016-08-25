@@ -171,8 +171,12 @@
                                                 </div>
                                                 <div class="col-sm-8">
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" ng-model="vm.searchInfo.fCatPath" ng-readonly="true">
-                                                        <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('fCatPath')"></button></span>
+                                                        <!--<input type="text" class="form-control" ng-model="vm.searchInfo.fCatPath" ng-readonly="true">-->
+                                                        <select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.fCatPathList"
+                                                                 ng-options="cat as cat for cat in vm.catOpts"
+                                                                 width="'100%'">
+                                                        </select>
+                                                        <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('fCatPathList')"></button></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -317,7 +321,7 @@
                                                              ng-options="cat as cat for cat in vm.catOpts"
                                                              width="'100%'">
                                                     </select>
-                                                    <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('pCatStatus')"></button></span>
+                                                    <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('pCatPathList')"></button></span>
                                                 </div>
                                             </div>
                                         </div>

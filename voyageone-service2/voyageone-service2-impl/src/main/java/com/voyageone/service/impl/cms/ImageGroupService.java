@@ -484,7 +484,7 @@ public class ImageGroupService extends BaseService {
     //获取未匹配尺码表
     public List<Map<String,Object>> getNoMatchSizeImageGroupList(String channelId) {
         JongoQuery queryObject = new JongoQuery();
-        queryObject.setQuery("{\"channelId\":" + channelId + ",\"imageType\":2}");
+        queryObject.setQuery("{\"channelId\":\"" + channelId + "\",\"imageType\":2}");
         queryObject.setProjection("{'imageGroupId':1,'imageGroupName':1,'_id':0}");
         List<CmsBtImageGroupModel> grpList = cmsBtImageGroupDao.select(queryObject);
 
