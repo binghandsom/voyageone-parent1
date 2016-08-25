@@ -1974,7 +1974,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
                                     });
 
                                     options.unshift(nullValueObj = {
-                                        displayName: '',
+                                        displayName: 'Select...',
                                         value: null
                                     });
 
@@ -1987,10 +1987,11 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
                                 // 最终保存到 $scope 上, 供页面绑定使用
                                 scope.$options = options;
 
-                                innerElement = angular.element('<select class="form-control">');
+                                innerElement = angular.element('<select class="form-control" chosen>');
                                 innerElement.attr('ng-options', 'option.value as option.displayName for option in $options');
                                 innerElement.attr('name', name);
                                 innerElement.attr('ng-model', 'field.value.value');
+                                innerElement.attr('width', '"100%"');
                                 innerElement.attr('title', field.name || field.id);
 
                                 bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
