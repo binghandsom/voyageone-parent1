@@ -42,7 +42,6 @@ public class AdminResServiceTest {
         map.put("icon", "11-22-33");
         ComResourceModel model = new ComResourceModel();
 
-
         BeanUtils.populate(model, map);
 
         model.setApplication("cms");

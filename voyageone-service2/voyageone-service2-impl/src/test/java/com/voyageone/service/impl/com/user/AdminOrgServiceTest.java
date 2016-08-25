@@ -37,4 +37,34 @@ public class AdminOrgServiceTest {
 
         System.out.println(JacksonUtil.bean2Json(adminOrgService.searchOrg(new ComOrganizationModel(), 1, 10)));
     }
+
+    @Test
+    public void testAddOrg() throws Exception {
+        ComOrganizationModel model = new ComOrganizationModel();
+
+        model.setActive(true);
+        model.setOrgName("6677788");
+        model.setWeight(1);
+        model.setParentId(1);
+        model.setCreater("admin");
+        adminOrgService.addOrg(model);
+
+    }
+
+    @Test
+    public void testUpdateOrg() throws Exception {
+        ComOrganizationModel model = new ComOrganizationModel();
+        model.setId(7);
+        model.setActive(true);
+        model.setOrgName("554433");
+        model.setWeight(1);
+        model.setParentId(2);
+        model.setModifier("admin");
+        adminOrgService.updateOrg(model);
+    }
+
+    @Test
+    public void testDeleteOrg() throws Exception {
+
+    }
 }
