@@ -3,10 +3,8 @@ package com.voyageone.service.impl.com.log;
 
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
-import com.voyageone.security.dao.ComLogDao;
-import com.voyageone.security.model.ComLogModel;
-import com.voyageone.service.bean.com.AdminRoleBean;
-import com.voyageone.service.daoext.core.AdminLogDaoExt;
+import com.voyageone.security.model.ComLoginLogModel;
+import com.voyageone.service.daoext.core.AdminLoginLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.PageModel;
 import org.springframework.beans.BeanUtils;
@@ -21,24 +19,19 @@ import java.util.Map;
  * Created by Ethan Shi on 2016-08-23.
  */
 @Service
-public class AdminLogService  extends BaseService {
+public class AdminLoginLogService extends BaseService {
 
     @Autowired
-    AdminLogDaoExt adminLogDaoExt;
-
-    @Autowired
-    ComLogDao comLogDao;
+    AdminLoginLogDaoExt adminLoginLogDaoExt;
 
 
-    public PageModel<ComLogModel> searchLog(Integer pageNum, Integer pageSize) {
-        return  searchLog(new ComLogModel(), null, null, pageNum,  pageSize);
+    public PageModel<ComLoginLogModel> searchLog(Integer pageNum, Integer pageSize) {
+        return  searchLog(new ComLoginLogModel(), null, null, pageNum,  pageSize);
     }
 
-    public PageModel<ComLogModel> searchLog(ComLogModel params, Long startTime, Long endTime,  Integer pageNum, Integer pageSize) {
+    public PageModel<ComLoginLogModel> searchLog(ComLoginLogModel params, Long startTime, Long endTime, Integer pageNum, Integer pageSize) {
 
-        PageModel<ComLogModel> pageModel = new PageModel<>();
-
-
+        PageModel<ComLoginLogModel> pageModel = new PageModel<>();
 
         // 判断查询结果是否分页
         boolean needPage = false;
@@ -49,7 +42,7 @@ public class AdminLogService  extends BaseService {
 
         if (pageNum != null && pageSize != null) {
             needPage = true;
-            pageModel.setCount(adminLogDaoExt.selectCount(newMap));
+            pageModel.setCount(adminLoginLogDaoExt.selectCount(newMap));
             newMap = MySqlPageHelper.build(newMap).page(pageNum).limit(pageSize).addSort("created", Order.Direction.DESC).toMap();
         }
         else
@@ -59,7 +52,7 @@ public class AdminLogService  extends BaseService {
 
 
 
-        List<ComLogModel> list = adminLogDaoExt.selectList(newMap);
+        List<ComLoginLogModel> list = adminLoginLogDaoExt.selectList(newMap);
         if (!needPage) {
             pageModel.setCount(list.size());
         }
@@ -67,11 +60,5 @@ public class AdminLogService  extends BaseService {
         pageModel.setResult(list);
         return pageModel;
     }
-
-
-    public ComLogModel  getLog(int id) {
-        return comLogDao.select(id);
-    }
-
 
 }

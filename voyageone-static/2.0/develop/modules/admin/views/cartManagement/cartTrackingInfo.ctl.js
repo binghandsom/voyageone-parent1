@@ -24,6 +24,7 @@ define([
                 cartId: '',
                 trackingStatus: '',
                 location: '',
+                active: '',
                 pageInfo: this.cartPageOption
             }
         }
@@ -31,6 +32,7 @@ define([
         CartTrackingInfoManagementController.prototype = {
             init: function () {
                 var self = this;
+                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
@@ -48,7 +50,8 @@ define([
                         'cartId': self.searchInfo.cartId,
                         'orderChannelId': self.searchInfo.orderChannelId,
                         'trackingStatus': self.searchInfo.trackingStatus,
-                        'location': self.searchInfo.location
+                        'location': self.searchInfo.location,
+                        'active': self.searchInfo.active
                     })
                     .then(function (res) {
                         self.cartList = res.data.result;
@@ -81,6 +84,7 @@ define([
                     orderChannelId: '',
                     cartId: '',
                     trackingStatus: '',
+                    active: '',
                     location: ''
                 }
             },

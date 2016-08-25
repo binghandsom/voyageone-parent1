@@ -24,6 +24,7 @@ define([
                 langId: '',
                 name: '',
                 value: '',
+                active: '',
                 pageInfo: this.channelPageOption
             }
         }
@@ -31,6 +32,7 @@ define([
         ChannelTypeAttrManagementController.prototype = {
             init: function () {
                 var self = this;
+                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
@@ -49,7 +51,8 @@ define([
                         'typeId': self.searchInfo.typeId,
                         'langId': self.searchInfo.langId,
                         'name': self.searchInfo.name,
-                        'value': self.searchInfo.value
+                        'value': self.searchInfo.value,
+                        'active': self.searchInfo.active
                     })
                     .then(function (res) {
                         self.channelList = res.data.result;
@@ -81,6 +84,7 @@ define([
                     typeId: '',
                     langId: '',
                     name: '',
+                    active: '',
                     value: ''
                 }
             },

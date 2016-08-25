@@ -22,6 +22,7 @@ define([
                 smsType: '',
                 content: '',
                 smsCode: '',
+                active: '',
                 pageInfo: this.channelPageOption
             }
         }
@@ -29,6 +30,7 @@ define([
         ChannelSmsCogController.prototype = {
             init: function () {
                 var self = this;
+                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
@@ -43,6 +45,7 @@ define([
                         'orderChannelId': self.searchInfo.orderChannelId,
                         'smsType': self.searchInfo.smsType,
                         'content': self.searchInfo.content,
+                        'active': self.searchInfo.active,
                         'smsCode': self.searchInfo.smsCode
                     })
                     .then(function (res) {
@@ -74,6 +77,7 @@ define([
                     orderChannelId: '',
                     smsType: '',
                     content: '',
+                    active: '',
                     smsCode: ''
                 }
             },

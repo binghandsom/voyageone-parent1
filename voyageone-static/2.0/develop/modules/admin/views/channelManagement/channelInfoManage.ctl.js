@@ -22,6 +22,7 @@ define([
                 orderChannelId: '',
                 channelName: '',
                 isUsjoi: '',
+                active: '',
                 pageInfo: this.channelPageOption
             }
         }
@@ -29,7 +30,7 @@ define([
         ChannelManagementController.prototype = {
             init: function () {
                 var self = this;
-                self.search();
+                self.search(1);
             },
             search: function (page) {
                 var self = this;
@@ -39,6 +40,7 @@ define([
                         'pageSize': self.searchInfo.pageInfo.size,
                         'orderChannelId': self.searchInfo.orderChannelId,
                         'channelName': self.searchInfo.channelName,
+                        'active': self.searchInfo.active,
                         'isUsjoi': self.searchInfo.isUsjoi
                     })
                     .then(function (res) {
@@ -80,18 +82,19 @@ define([
                     pageInfo: this.channelPageOption,
                     'orderChannelId': '',
                     'channelName': '',
+                    'active': '',
                     'isUsjoi': ''
                 }
             },
             config: function (type) {
                 var self = this;
                 if (self.channelSelList.selList.length < 1) {
-                    self.popups.openConfig({'configType':type});
+                    self.popups.openConfig({'configType': type});
                     return;
                 } else {
                     _.forEach(self.channelList, function (channelInfo) {
                         if (channelInfo.orderChannelId == self.channelSelList.selList[0].id) {
-                            _.extend(channelInfo,{'configType':type});
+                            _.extend(channelInfo, {'configType': type});
                             self.popups.openConfig(channelInfo);
                         }
                     })
@@ -105,7 +108,7 @@ define([
                 } else {
                     _.forEach(self.channelList, function (channelInfo) {
                         if (channelInfo.orderChannelId == self.channelSelList.selList[0].id) {
-                            self.popups.openAdd(channelInfo).then(function(){
+                            self.popups.openAdd(channelInfo).then(function () {
                                 self.search(1);
                             });
                         }

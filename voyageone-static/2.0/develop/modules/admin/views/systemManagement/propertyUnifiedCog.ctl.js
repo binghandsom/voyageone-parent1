@@ -6,7 +6,7 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('UnifiedConfigController', (function () {
-        function UnifiedConfigController(popups, alert, confirm, alert, channelService, AdminCartService, storeService, taskService, typeAttrService, cartShopService, portConfigService, selectRowsFactory) {
+        function UnifiedConfigController(popups, alert, confirm, channelService, AdminCartService, storeService, taskService, typeAttrService, cartShopService, portConfigService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
@@ -39,7 +39,37 @@ define([
         UnifiedConfigController.prototype = {
             init: function () {
                 var self = this;
-                self.search(1);
+                switch (self.searchInfo.configType) {
+                    case 'Channel':
+                        self.channelService.getAllChannel().then(function (res) {
+                            self.channelList = res.data;
+                        });
+                        break;
+                    case 'Store':
+                        self.storeService.getAllStore().then(function (res) {
+                            self.storeList = res.data;
+                        });
+                        break;
+                    case 'Task':
+                        self.taskService.getAllTask().then(function (res) {
+                            self.taskList = res.data;
+                        });
+                        break;
+                    case 'Shop':
+                        self.channelService.getAllChannel().then(function (res) {
+                            self.channelAllList = res.data;
+                        });
+                        self.AdminCartService.getAllCart().then(function (res) {
+                            self.cartAllList = res.data;
+                        });
+                        break;
+                    case 'Port':
+                        self.portConfigService.getAllPort().then(function (res) {
+                            self.portList = res.data;
+                        });
+                        break;
+                }
+                self.search(1)
             },
             search: function (page) {
                 var self = this;
@@ -59,9 +89,6 @@ define([
                 };
                 switch (self.searchInfo.configType) {
                     case 'Channel':
-                        self.channelService.getAllChannel().then(function (res) {
-                            self.channelList = res.data;
-                        });
                         var selectKey = function (configInfo) {
                             return {
                                 "id": configInfo.mainKey,
@@ -76,9 +103,6 @@ define([
                         });
                         break;
                     case 'Store':
-                        self.storeService.getAllStore().then(function (res) {
-                            self.storeList = res.data;
-                        });
                         var selectKey = function (configInfo) {
                             return {
                                 "id": configInfo.mainKey,
@@ -93,9 +117,6 @@ define([
                         });
                         break;
                     case 'Task':
-                        self.taskService.getAllTask().then(function (res) {
-                            self.taskList = res.data;
-                        });
                         var selectKey = function (configInfo) {
                             return {
                                 "id": configInfo.mainKey,
@@ -111,12 +132,6 @@ define([
                         });
                         break;
                     case 'Shop':
-                        self.channelService.getAllChannel().then(function (res) {
-                            self.channelAllList = res.data;
-                        });
-                        self.AdminCartService.getAllCart().then(function (res) {
-                            self.cartAllList = res.data;
-                        });
                         var selectKey = function (configInfo) {
                             return {
                                 "id": configInfo.mainKey,
@@ -132,9 +147,6 @@ define([
                         });
                         break;
                     case 'Port':
-                        self.taskService.getAllTask().then(function (res) {
-                            self.taskList = res.data;
-                        });
                         var selectKey = function (configInfo) {
                             return {
                                 "id": configInfo.mainKey,
@@ -250,10 +262,10 @@ define([
                             self.alert('请选择一个港口！');
                             return;
                         }
-                        self.list = _.filter(self.taskList, function (listItem) {
-                            return listItem.taskId == item.taskId;
+                        self.list = _.filter(self.portList, function (listItem) {
+                            return listItem.port == item.port;
                         });
-                        _.extend(item, {'taskName': self.list[0].taskName, 'configType': self.searchInfo.configType});
+                        _.extend(item, {'port': self.list[0].port, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search();
                         });
@@ -277,7 +289,7 @@ define([
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
                     var delList = [];
                     _.forEach(self.configSelList.selList, function (delInfo) {
-                        _.extend(delInfo, {'configType': self.searchInfo.configType});
+                        _.extend(delInfo, {'configType': self.searchInfo.configType, 'seq': delInfo.id + 1});
                         delList.push(delInfo);
                     });
                     switch (self.searchInfo.configType) {
@@ -301,6 +313,16 @@ define([
                             break;
                         case 'Shop':
                             self.cartShopService.deleteCartShopConfig(delList).then(function (res) {
+                                if (res.data == false)self.alert(res.data.message);
+                                self.search(1);
+                            });
+                            break;
+                        case 'Port':
+                            var seqList = [];
+                            _.map(delList, function (item) {
+                                seqList.push(item.seq);
+                            });
+                            self.portConfigService.deletePortConfig(seqList).then(function (res) {
                                 if (res.data == false)self.alert(res.data.message);
                                 self.search(1);
                             });

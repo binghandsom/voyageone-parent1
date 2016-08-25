@@ -1,8 +1,16 @@
 package com.voyageone.service.impl.com.user;
 
+import com.github.miemiedev.mybatis.paginator.domain.Order;
+import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.security.dao.ComOrganizationDao;
 import com.voyageone.security.model.ComOrganizationModel;
+import com.voyageone.security.model.ComResourceModel;
+import com.voyageone.service.bean.com.AdminOrgBean;
+import com.voyageone.service.daoext.core.AdminOrganizationDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.com.PageModel;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +26,9 @@ public class AdminOrgService extends BaseService {
 
     @Autowired
     ComOrganizationDao comOrganizationDao;
+
+    @Autowired
+    AdminOrganizationDaoExt adminOrganizationDaoExt;
 
 
     /**
@@ -36,6 +47,98 @@ public class AdminOrgService extends BaseService {
         Map resultMap = result.stream().collect(Collectors.toMap(ComOrganizationModel:: getId ,ComOrganizationModel:: getOrgName ));
 
         return  resultMap;
+    }
+
+
+    public PageModel<AdminOrgBean>  searchOrg(ComOrganizationModel model, Integer pageNum, Integer pageSize)
+    {
+        PageModel<AdminOrgBean> pageModel = new PageModel<>();
+
+        // 判断查询结果是否分页
+        boolean needPage = false;
+        Map<String,Object> newMap = new HashMap<>();
+        BeanUtils.copyProperties(model, newMap);
+
+        if (pageNum != null && pageSize != null) {
+            needPage = true;
+            pageModel.setCount(adminOrganizationDaoExt.selectCount(newMap));
+            newMap = MySqlPageHelper.build(newMap).page(pageNum).limit(pageSize).addSort("created", Order.Direction.DESC).toMap();
+        }
+        else
+        {
+            newMap = MySqlPageHelper.build(newMap).addSort("created", Order.Direction.DESC).toMap();
+        }
+
+        List<AdminOrgBean> list = adminOrganizationDaoExt.selectList(newMap);
+        if (!needPage) {
+            pageModel.setCount(list.size());
+        }
+
+        pageModel.setResult(list);
+        return pageModel;
+    }
+
+    public void addOrg(ComOrganizationModel model)
+    {
+        //检查orgName唯一性
+        Map map = new HashMap<>();
+        map.put("orgName" , model.getOrgName());
+        map.put("parentId" , model.getParentId());
+
+        if(comOrganizationDao.selectCount(map) > 0)
+        {
+            throw new BusinessException("组织名称在系统中已存在。");
+        }
+
+        ComOrganizationModel parent = comOrganizationDao.select(model.getParentId());
+
+        if(model.getWeight() == null) {
+            map.clear();
+            map.put("parentId" , model.getParentId());
+            List<ComOrganizationModel> siblings = comOrganizationDao.selectList(map);
+            int weight = siblings.stream().mapToInt(ComOrganizationModel::getWeight).max().getAsInt();
+            model.setWeight(++weight);
+        }
+        model.setParentIds(parent.getParentIds() + "," + parent.getId());
+        comOrganizationDao.insert(model);
+    }
+
+
+    public void updateOrg(ComOrganizationModel model)
+    {
+        //检查orgName唯一性
+        Map map = new HashMap<>();
+        map.put("orgName" , model.getOrgName());
+        map.put("parentId" , model.getParentId());
+
+        if(comOrganizationDao.selectCount(map) > 0)
+        {
+            throw new BusinessException("组织名称在系统中已存在。");
+        }
+
+        ComOrganizationModel parent = comOrganizationDao.select(model.getParentId());
+
+        if(model.getWeight() == null) {
+            map.clear();
+            map.put("parentId" , model.getParentId());
+            List<ComOrganizationModel> siblings = comOrganizationDao.selectList(map);
+            int weight = siblings.stream().mapToInt(ComOrganizationModel::getWeight).max().getAsInt();
+            model.setWeight(++weight);
+        }
+        model.setParentIds(parent.getParentIds() + "," + parent.getId());
+        comOrganizationDao.update(model);
+    }
+
+    public void deleteOrg(List<Integer> orgIds, String username) {
+        for (Integer id : orgIds) {
+            ComOrganizationModel model = new ComOrganizationModel();
+            model.setId(id);
+            model.setActive(false);
+            model.setModifier(username);
+            if (!(comOrganizationDao.update(model) > 0)) {
+                throw new BusinessException("禁用组织信息失败");
+            }
+        }
     }
 
 

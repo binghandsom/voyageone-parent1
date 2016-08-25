@@ -88,6 +88,12 @@ define([
             "controller": 'AddTypeAttrController as ctrl',
             "size": 'md'
         },
+        "addSystemCode": {
+            "templateUrl": "views/pop/addSystem/addCode.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addSystem/addCode.ctl",
+            "controller": 'AddCodeController as ctrl',
+            "size": 'md'
+        },
         "addTask": {
             "templateUrl": "views/pop/addTask/index.tpl.html",
             "controllerUrl": "modules/admin/views/pop/addTask/index.ctl",
@@ -164,6 +170,9 @@ define([
         };
         $scope.openTypeAttr = function openTypeAttr(context) {
             return openModal(popActions.addSystemTypeAttr, context);
+        };
+        $scope.openTypeCode = function openTypeCode(context) {
+            return openModal(popActions.addSystemCode, context);
         };
         /**
          * 打开Type管理页面的添加页面

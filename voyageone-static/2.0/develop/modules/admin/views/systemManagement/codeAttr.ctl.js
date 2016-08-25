@@ -20,13 +20,15 @@ define([
                 code: '',
                 name: '',
                 des: '',
+                active: '',
                 pageInfo: this.channelPageOption
-            }
+            };
         }
 
         CodeAttributeController.prototype = {
             init: function () {
                 var self = this;
+                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.search(1);
             },
             search: function (page) {
@@ -37,7 +39,8 @@ define([
                         'pageSize': self.searchInfo.pageInfo.size,
                         'code': self.searchInfo.code,
                         'name': self.searchInfo.name,
-                        'des': self.searchInfo.des
+                        'des': self.searchInfo.des,
+                        'active': self.searchInfo.active
                     })
                     .then(function (res) {
                         self.systemList = res.data.result;
@@ -50,11 +53,13 @@ define([
                             self.tempSelect.clearCurrPageRows();
                             self.tempSelect.clearSelectedList();
                         }
-                        _.forEach(self.systemList, function (Info) {
+                        _.forEach(self.systemList, function (Info, index) {
                             if (Info.updFlg != 8) {
+                                _.extend(Info, {mainKey: index});
                                 self.tempSelect.currPageRows({
-                                    "id": Info.id,
-                                    "code": Info.comment
+                                    "id": Info.mainKey,
+                                    "delId": Info.id,
+                                    "delName": Info.name
                                 });
                             }
                         });
@@ -67,6 +72,7 @@ define([
                     code: '',
                     name: '',
                     des: '',
+                    active: '',
                     pageInfo: self.channelPageOption
                 }
             },
@@ -77,8 +83,8 @@ define([
                     return;
                 } else {
                     _.forEach(self.systemList, function (Info) {
-                        if (Info.id == self.codeSelList.selList[0].id) {
-                            self.popups.openTypeAdd(Info).then(function(){
+                        if (Info.mainKey == self.codeSelList.selList[0].id) {
+                            self.popups.openTypeCode(Info).then(function () {
                                 self.search(1);
                             });
                         }
@@ -91,9 +97,9 @@ define([
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.codeSelList.selList, function (delInfo) {
-                            delList.push(delInfo.id);
+                            delList.push({'id':delInfo.delId,'name':delInfo.delName});
                         });
-                        self.typeService.deleteType(delList).then(function (res) {
+                        self.codeService.deleteCode(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);
                             self.search(1);
                         })

@@ -1,4 +1,4 @@
-package com.voyageone.web2.admin.views.user;
+package com.voyageone.web2.admin.views.log;
 
 import com.voyageone.security.model.ComLogModel;
 import com.voyageone.security.model.ComResourceModel;
@@ -40,8 +40,10 @@ public class AdminLogController extends AdminController {
 
         Integer  pageNum = (Integer) requestBean.getOrDefault("pageNum", 1);
         Integer  pageSize = (Integer) requestBean.getOrDefault("pageSize", DEFAULT_PAGE_SIZE);
+        Long startTime =  (Long)requestBean.get("startTime");
+        Long endTime =  (Long)requestBean.get("startTime");
 
-        return  success(adminLogService.searchLog(model, pageNum, pageSize));
+        return  success(adminLogService.searchLog(model, startTime, endTime, pageNum, pageSize));
     }
 
     @RequestMapping(AdminUrlConstants.Log.Action.GET_LOG_DETAIL)

@@ -177,7 +177,7 @@ define(function () {
         /**确认框*/
         "TXT_CONFIRM": "确认",
         "TXT_POP_ADD": "添加",
-        "TXT_CONFIRM_DELETE_MSG": "您确定要删除选定的渠道信息吗?",
+        "TXT_CONFIRM_DELETE_MSG": "您确定要删除当前选定的信息吗?",
         "TXT_CONFIRM_INACTIVE_MSG": "您确定要禁用当前选定的信息吗?",
         "TXT_MSG_NO_ROWS_SELECT": "请至少选择一条数据.",
 
