@@ -99,7 +99,12 @@ public class AdminOrgService extends BaseService {
             int weight = siblings.stream().mapToInt(ComOrganizationModel::getWeight).max().getAsInt();
             model.setWeight(++weight);
         }
-        model.setParentIds(parent.getParentIds() + "," + parent.getId());
+        if(parent != null) {
+            model.setParentIds(parent.getParentIds() + "," + parent.getId());
+        }else
+        {
+            model.setParentIds("0");
+        }
         comOrganizationDao.insert(model);
     }
 
@@ -125,7 +130,13 @@ public class AdminOrgService extends BaseService {
             int weight = siblings.stream().mapToInt(ComOrganizationModel::getWeight).max().getAsInt();
             model.setWeight(++weight);
         }
-        model.setParentIds(parent.getParentIds() + "," + parent.getId());
+
+        if(parent != null) {
+            model.setParentIds(parent.getParentIds() + "," + parent.getId());
+        }else
+        {
+            model.setParentIds("0");
+        }
         comOrganizationDao.update(model);
     }
 
