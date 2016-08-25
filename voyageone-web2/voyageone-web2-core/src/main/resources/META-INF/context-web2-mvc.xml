@@ -54,5 +54,12 @@
             <mvc:exclude-mapping path="/rest/**"/>
             <bean class="com.voyageone.web2.base.interceptors.Interceptor"/>
         </mvc:interceptor>
+
+        <!-- openApi共通检查及处理拦截器 -->
+        <mvc:interceptor>
+            <mvc:mapping path="/rest/**"/>
+            <mvc:exclude-mapping path="/rest/accessToken"/>
+            <bean class="com.voyageone.web2.openapi.oauth2.interceptors.Interceptor"/>
+        </mvc:interceptor>
     </mvc:interceptors>
 </beans>

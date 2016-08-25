@@ -17,6 +17,8 @@ public class CacheKeyEnums {
 
     public static final String COMM_CACHE_DATA = "COMM_CACHE_DATA";
 
+    public static final String OAUTH_CACHE_DATA = "OATUH_CACHE_DATA";
+
     public enum KeyEnum {
 
         ConfigData_FeedConfigs,
