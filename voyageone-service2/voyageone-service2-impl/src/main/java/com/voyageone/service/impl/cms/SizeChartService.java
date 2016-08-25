@@ -5,13 +5,17 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtSizeChartImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModelSizeMap;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by gjl on 2016/5/6.
@@ -28,7 +32,8 @@ public class SizeChartService extends BaseService {
     private CmsBtSizeChartDao cmsBtSizeChartDao;
     @Autowired
     private MongoSequenceService commSequenceMongoService;
-
+    @Autowired
+    CmsBtSizeChartImageGroupService cmsBtSizeChartImageGroupService;
     /**
      * 按照填写的条件去数据库检索记录
      */
@@ -247,6 +252,30 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartModel.setSizeMap(sizeMapList);
         //跟据尺码关系一览编辑详情编辑的数据更新数据库
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
+    }
+   //获取未匹配尺码表
+    public List<Map<String,Object>> getNoMatchList(String channelId) {
+        JongoQuery queryObject = new JongoQuery();
+        queryObject.setQuery("{\"channelId\":" + channelId + "}");
+        queryObject.setProjection("{'sizeChartId':1,'sizeChartName':1,'_id':0}");
+        List<CmsBtSizeChartModel> grpList = cmsBtSizeChartDao.select(queryObject);
+
+        HashSet<Integer> hsSizeChart = new HashSet<>();
+        List<CmsBtSizeChartImageGroupModel> listCmsBtSizeChartImageGroup = cmsBtSizeChartImageGroupService.getList(channelId);
+        listCmsBtSizeChartImageGroup.forEach((o) -> {
+            hsSizeChart.add(o.getCmsBtSizeChartId());
+        });
+        List<Map<String, Object>> list = new ArrayList<>();
+        grpList.forEach((o) -> {
+            if (!hsSizeChart.contains(o.getSizeChartId()))//未匹配
+            {
+                Map<String, Object> map = new HashedMap();
+                map.put("sizeChartId", o.getSizeChartId());
+                map.put("sizeChartName", o.getSizeChartName());
+                list.add(map);
+            }
+        });
+        return list;
     }
 
     /**

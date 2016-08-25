@@ -3,7 +3,7 @@ package com.voyageone.service.bean.cms.product;
 /**
  * Created by dell on 2016/7/15.
  */
-public enum  EnumProductOperationType {
+public enum EnumProductOperationType {
     Add(0, "新增"),
     ChangeMastProduct(1, "切换主商品"),
     Delisting(2, "单品下架"),

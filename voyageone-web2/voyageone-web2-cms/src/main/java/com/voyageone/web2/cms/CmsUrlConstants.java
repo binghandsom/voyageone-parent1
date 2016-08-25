@@ -634,6 +634,7 @@ public interface CmsUrlConstants {
             String SEARCH_CHANNEL_IMAGE_GROUP = "search";
             String SAVE_CHANNEL_IMAGE_GROUP = "save";
             String DELETE_CHANNEL_IMAGE_GROUP = "delete";
+            String GetNoMatchSizeImageGroupList="getNoMatchSizeImageGroupList";
         }
 
         interface CHANNEL_IMAGE_TEMPLATE {
@@ -667,6 +668,7 @@ public interface CmsUrlConstants {
                 String DELETE_SIZE_CHART = "sizeChartDelete";
                 String SEARCH_SIZE_CHART = "sizeChartSearch";
                 String SAVE_EDIT_SIZE_CHART = "sizeChartEditSave";
+                String GetNoMatchList="getNoMatchList";
             }
 
             interface SIZE_CHART_DETAIL {

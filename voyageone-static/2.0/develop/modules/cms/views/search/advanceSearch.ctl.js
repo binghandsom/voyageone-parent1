@@ -847,16 +847,20 @@ define([
                         alert("没数据");
                         return null;
                     }
+
+                    $scope.vm.adVanceCats = _.filter($scope.vm.adVanceCats,function(item){
+                        return $scope.vm.searchInfo.pCatPathList.indexOf(item.catPath) > -1;
+                    });
+
                     return popupNewCategory({
-                        from: $scope.vm.searchInfo.pCatPath,
-                        categories: res.data
+                        from: $scope.vm.adVanceCats,
+                        categories: res.data,
+                        anyNode:true
                     });
                 })
                 .then(function (context) {
-                    $scope.vm.searchInfo.pCatPath = context.selected.catPath;
-                    // TODO -- 目前选择画面传回的是单个cat path,以后修改为数组时再对应
-                    $scope.vm.searchInfo.pCatPathList = [];
-                    $scope.vm.searchInfo.pCatPathList.push($scope.vm.searchInfo.pCatPath)
+                    $scope.vm.adVanceCats = context;
+                    $scope.vm.searchInfo.pCatPathList = $scope.vm.catOpts = _.map(context,function(item){return item.catPath;});
                 });
         }
 

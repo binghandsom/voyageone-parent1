@@ -311,7 +311,12 @@
                                             </div>
                                             <div class="col-sm-7 m-t-sm">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" ng-model="vm.searchInfo.pCatPath" ng-disabled="vm.searchInfo.pCatStatus" ng-readonly="true">
+
+                                                    <!--<input type="text" class="form-control" ng-model="vm.searchInfo.pCatPath" ng-disabled="vm.searchInfo.pCatStatus" ng-readonly="true">-->
+                                                    <select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.pCatPathList"
+                                                             ng-options="cat as cat for cat in vm.catOpts"
+                                                             width="'100%'">
+                                                    </select>
                                                     <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('pCatStatus')"></button></span>
                                                 </div>
                                             </div>
