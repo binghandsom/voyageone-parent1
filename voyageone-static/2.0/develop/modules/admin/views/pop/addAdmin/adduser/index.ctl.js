@@ -84,15 +84,9 @@ define([
             },
             save: function () {
                 var self = this;
-                // 设置cartIds
-                var tempCartList = [];
                 var result = {};
-                _.forEach(self.cartList, function (item) {
-                    tempCartList.push(item.cartId);
-                    _.extend(self.sourceData, {'cartIds': tempCartList.join(','), 'companyId': self.companyId});
-                });
                 if (self.append == true) {
-                    self.channelService.addChannel(self.sourceData).then(function (res) {
+                    self.adminUserService.addUser(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
@@ -101,7 +95,7 @@ define([
                         self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.channelService.updateChannel(self.sourceData).then(function (res) {
+                    self.adminUserService.updateUser(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
@@ -114,7 +108,7 @@ define([
             getName: function (item) {
                 var self = this;
                 return self.orgList[item.value];
-            },
+            }
         };
         return AddUserController;
     })())
