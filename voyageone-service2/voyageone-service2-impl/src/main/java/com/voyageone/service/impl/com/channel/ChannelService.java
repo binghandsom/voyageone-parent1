@@ -183,6 +183,7 @@ public class ChannelService extends BaseService {
 			}
 			success = channelConfigDao.update(model) > 0;
 		}
+
 		
 		if (!success) {
 			throw new BusinessException("保存渠道配置信息失败");

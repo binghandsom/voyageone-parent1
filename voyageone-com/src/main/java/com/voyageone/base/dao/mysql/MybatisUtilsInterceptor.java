@@ -1,5 +1,6 @@
 package com.voyageone.base.dao.mysql;
 
+import java.sql.Connection;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,6 +10,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.ibatis.executor.resultset.ResultSetHandler;
+import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.plugin.Interceptor;
@@ -20,21 +23,45 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
- * MyBatis拦截器：将检索返回类型为Map的键名转换为驼峰式命名。
+ * MyBatis拦截器
+ * <p>
+ * 1、将检索返回类型为Map的键名转换为驼峰式命名<br>
+ * 2、取得执行的sql和参数
+ * </p>
  * @author Wangtd
  * @since 2.0.0 2016/8/11
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Intercepts({@Signature(type=ResultSetHandler.class, method="handleResultSets", args={Statement.class})})
-public class MybatisMapCamelInterceptor implements Interceptor {
+@Intercepts({@Signature(type=StatementHandler.class, method="prepare", args={Connection.class}),
+	@Signature(type=ResultSetHandler.class, method="handleResultSets", args={Statement.class})})
+public class MybatisUtilsInterceptor implements Interceptor {
+	
+	private static final ThreadLocal<SqlMetaData> SQL_META_DATA = new ThreadLocal<SqlMetaData>();
+	
+	private static final String H_GETTER_KEY = "h";
 	
 	private static final String TARGET_GETTER_KEY = "target";
+	
+	public static SqlMetaData initSqlMetaData() {
+		SQL_META_DATA.set(new SqlMetaData());
+		return SQL_META_DATA.get();
+	}
 
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 		Object target = invocation.getTarget();
 		try {
-			if (target instanceof ResultSetHandler) {
+			if (target instanceof StatementHandler) {
+				SqlMetaData sqlMetaData = SQL_META_DATA.get();
+				if (sqlMetaData != null) {
+					SQL_META_DATA.remove();
+					StatementHandler statementHandler = (StatementHandler) target;
+					BoundSql boundSql = getMetaObjectForHandler(statementHandler, "delegate.boundSql");
+					sqlMetaData.setSql(boundSql.getSql());
+					sqlMetaData.setParameterObject(boundSql.getParameterObject());
+					sqlMetaData.setParameterMappings(boundSql.getParameterMappings());
+				}
+			} else if (target instanceof ResultSetHandler) {
 				Object result = invocation.proceed();
 				
 				if (result != null) {
@@ -111,6 +138,10 @@ public class MybatisMapCamelInterceptor implements Interceptor {
 	
 	private <T> T getMetaObjectForHandler(Object handler, String metaKey) {
 		MetaObject metaStatement = SystemMetaObject.forObject(handler);
+		while (metaStatement.hasGetter(H_GETTER_KEY)) {
+			Object object = metaStatement.getValue(H_GETTER_KEY);
+			metaStatement = SystemMetaObject.forObject(object);
+		}
 		while (metaStatement.hasGetter(TARGET_GETTER_KEY)) {
 			Object object = metaStatement.getValue(TARGET_GETTER_KEY);
 			metaStatement = SystemMetaObject.forObject(object);
@@ -120,7 +151,7 @@ public class MybatisMapCamelInterceptor implements Interceptor {
 
 	@Override
 	public Object plugin(Object target) {
-		if (target instanceof ResultSetHandler) {
+		if (target instanceof StatementHandler || target instanceof ResultSetHandler) {
 			return Plugin.wrap(target, this);
 		} else {
 			return target;
