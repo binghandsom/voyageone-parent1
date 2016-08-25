@@ -24,6 +24,7 @@
 	<select id="selectTypeByPage" resultMap="typeModelMap">
 		select id, name, comment, created, creater, modified, modifier, active from com_mt_type
 		<include refid="selectTypeFilter"/>
+		order by modified desc
 	</select>
 	
 	<select id="selectTypeCount" resultType="integer">

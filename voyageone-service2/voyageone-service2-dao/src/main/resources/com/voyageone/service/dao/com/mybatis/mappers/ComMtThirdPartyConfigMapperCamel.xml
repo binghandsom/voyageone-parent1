@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.com.ComMtThirdPartyConfigModel" />
     <sql id="Base_Column_List" >
         `seq`, `channel_id`, `prop_name`, `prop_val1`, `prop_val2`, `prop_val3`, `prop_val4`, 
-        `prop_val5`, `prop_val6`, `comment`, `creater`, `created`, `modifier`, `modified`
+        `prop_val5`, `prop_val6`, `comment`, `creater`, `created`, `modifier`, `modified`, `active`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -58,6 +58,9 @@
             </if>
             <if test="modified == null" >
                 `modified` = now(),
+            </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=BIT},
             </if>
         </set>
         where `seq` = #{seq,jdbcType=INTEGER}
@@ -252,6 +255,9 @@
                 `modifier`,
             </if>
             `modified`,
+            <if test="active != null" >
+                `active`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="seq != null" >
@@ -304,6 +310,9 @@
             </if>
             <if test="modified != null" >
                 #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
             </if>
         </trim>
     </insert>

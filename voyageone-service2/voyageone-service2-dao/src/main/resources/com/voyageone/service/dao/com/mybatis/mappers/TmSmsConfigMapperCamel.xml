@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.com.TmSmsConfigModel" />
     <sql id="Base_Column_List" >
         `seq`, `order_channel_id`, `sms_type`, `sms_code1`, `sms_code2`, `content`, `describe`, 
-        `del_flg`
+        `del_flg`, `active`, `creater`, `created`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -37,6 +37,24 @@
             </if>
             <if test="delFlg != null" >
                 `del_flg` = #{delFlg,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=BIT},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
         where `seq` = #{seq,jdbcType=INTEGER}
@@ -160,6 +178,20 @@
             <if test="delFlg != null" >
                 `del_flg`,
             </if>
+            <if test="active != null" >
+                `active`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="seq != null" >
@@ -185,6 +217,30 @@
             </if>
             <if test="delFlg != null" >
                 #{delFlg,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

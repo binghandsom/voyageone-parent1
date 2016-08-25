@@ -57,6 +57,7 @@
 		from com_mt_task cmt left join tm_task_control ttc on ttc.task_id = cmt.task_name
 			and ttc.cfg_name = #{taskAttrName}
 		<include refid="selectTypeFilter"/>
+		order by modified desc
 	</select>
 	
 	<select id="selectTypeCount" resultType="integer">

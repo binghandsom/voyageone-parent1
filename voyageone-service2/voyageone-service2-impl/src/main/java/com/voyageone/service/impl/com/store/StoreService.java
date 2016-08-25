@@ -69,29 +69,38 @@ public class StoreService extends BaseService {
 		return pageModel;
 	}
 
+	@VOTransactional
 	public void addOrUpdateStore(WmsMtStoreModel model, String username, boolean append) {
 		// 查询仓库信息
-		WmsMtStoreKey storeKey = new WmsMtStoreKey();
-		storeKey.setOrderChannelId(model.getOrderChannelId());
-		storeKey.setStoreId(model.getStoreId());
-		WmsMtStoreModel store = storeDao.select(storeKey);
-		
-		boolean success = false;
+		WmsMtStoreModel store = storeDao.select(model);
+
 		// 保存仓库信息
+		boolean success = false;
 		if (append) {
 			// 添加仓库信息
 			if (store != null) {
 				throw new BusinessException("添加的仓库信息已存在");
 			}
+			if (model.getParentStoreId() == null) {
+				model.setParentStoreId(0);
+			}
 			model.setCreater(username);
 			model.setModifier(username);
 			success = storeDao.insert(model) > 0;
+			// 更新主仓库名
+			if (model.getParentStoreId() == 0 && success) {
+				model.setParentStoreId(model.getStoreId().intValue());
+				success = storeDao.update(model) > 0;
+			}
 		} else {
 			// 更新仓库信息
 			if (store == null) {
 				throw new BusinessException("更新的仓库信息不存在");
 			}
 			model.setModifier(username);
+			if (model.getParentStoreId() == null) {
+				model.setParentStoreId(model.getStoreId().intValue());
+			}
 			success = storeDao.update(model) > 0;
 		}
 		

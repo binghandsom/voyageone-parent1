@@ -28,7 +28,7 @@
 			<if test="orderChannelId != null and orderChannelId != ''">
 				and tcsc.order_channel_id = #{orderChannelId}
 			</if>
-			<if test="cartId != null">
+			<if test="cartId != null and cartId != ''">
 				and tcsc.cart_id = #{cartId}
 			</if>
 			<if test="cfgName != null and cfgName != ''">
@@ -49,6 +49,7 @@
 		from tm_channel_shop tcs left join tm_order_channel toc on toc.order_channel_id = tcs.order_channel_id
 			left join ct_cart cc on cc.cart_id = tcs.cart_id
 		<include refid="selectCartShopFilter"/>
+		order by modified desc
 	</select>
 	
 	<select id="selectCartShopCount" resultType="integer">

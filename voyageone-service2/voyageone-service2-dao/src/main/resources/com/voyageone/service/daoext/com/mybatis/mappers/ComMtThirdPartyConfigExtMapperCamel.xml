@@ -7,7 +7,7 @@
 	<sql id="selectThirdPartyConfigFilter">
 		<where>
 			<if test="orderChannelId != null and orderChannelId != ''">
-				cmtpc.channel_id = #{orderChannelId}
+				and cmtpc.channel_id = #{orderChannelId}
 			</if>
 			<if test="propName != null and propName != ''">
 				and cmtpc.prop_name like concat('%', #{propName},'%')
@@ -23,7 +23,7 @@
 				)
 			</if>
 			<if test="active != null">
-				cmtpc.active = #{active}
+				and cmtpc.active = #{active}
 			</if>
 		</where>
 	</sql>
@@ -34,6 +34,7 @@
 			cmtpc.created, cmtpc.modifier, cmtpc.modified, cmtpc.modified, cmtpc.active
 		from com_mt_third_party_config cmtpc left join tm_order_channel toc on toc.order_channel_id = cmtpc.channel_id
 		<include refid="selectThirdPartyConfigFilter"/>	
+		order by modified desc
 	</select>
 	
 	<select id="selectThirdPartyConfigCount" resultType="integer">

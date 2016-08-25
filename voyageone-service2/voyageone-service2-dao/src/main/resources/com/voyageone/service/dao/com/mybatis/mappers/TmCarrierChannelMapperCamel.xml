@@ -4,7 +4,8 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.com.TmCarrierChannelModel" />
     <sql id="Base_Column_List" >
         `order_channel_id`, `carrier`, `api_key`, `api_user`, `api_pwd`, `card_number`, `cusite`, 
-        `cusname`, `customer`, `useKd100_flg`, `allow_delete_flg`, `wsdl_url`, `comments`
+        `cusname`, `customer`, `useKd100_flg`, `allow_delete_flg`, `wsdl_url`, `comments`,
+        `active`, `creater`, `created`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.com.TmCarrierChannelKey" >
@@ -50,6 +51,24 @@
             </if>
             <if test="comments != null" >
                 `comments` = #{comments,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=BIT},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
         where `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR}
@@ -226,6 +245,20 @@
             <if test="comments != null" >
                 `comments`,
             </if>
+            <if test="active != null" >
+                `active`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="orderChannelId != null" >
@@ -266,6 +299,30 @@
             </if>
             <if test="comments != null" >
                 #{comments,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

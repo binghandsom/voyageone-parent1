@@ -27,6 +27,7 @@
 			tcc.wsdl_url, tcc.comments, tcc.active, tcc.created, tcc.creater, tcc.modified, tcc.modifier
 		from tm_carrier_channel tcc left join tm_order_channel toc on toc.order_channel_id = tcc.order_channel_id
 		<include refid="selectCarrierConfigFilter"/>
+		order by modified desc
 	</select>
 	
 	<select id="selectCarrierConfigCount" resultType="integer">
@@ -34,7 +35,7 @@
 		<include refid="selectCarrierConfigFilter"/>
 	</select>
 	
-	<select id="selectAllCarrier" resultType="map">
+	<select id="selectAllCarrier" resultType="com.voyageone.service.model.util.MapModel">
 		select carrier, api_url, alias_name from tm_carrier
 	</select>
 
