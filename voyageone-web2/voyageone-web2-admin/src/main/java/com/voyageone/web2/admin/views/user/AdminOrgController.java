@@ -36,6 +36,12 @@ public class AdminOrgController extends AdminController {
     }
 
 
+    @RequestMapping(AdminUrlConstants.User.Org.INIT)
+    public AjaxResponse init() throws Exception {
+        PageModel<AdminOrgBean> result = adminOrgService.searchOrg(1, DEFAULT_PAGE_SIZE );
+        return success(result);
+    }
+
     @RequestMapping(AdminUrlConstants.User.Org.SEARCH_ORG)
     public AjaxResponse searchOrg(@RequestBody Map requestBean) throws Exception {
 

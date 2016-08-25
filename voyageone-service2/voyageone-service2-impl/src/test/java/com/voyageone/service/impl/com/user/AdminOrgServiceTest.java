@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -27,7 +28,7 @@ public class AdminOrgServiceTest {
     @Test
     public void testGetAllOrg() throws Exception {
 
-        Map<Integer, String> result = adminOrgService.getAllOrg();
+        List<Map<String, Object> > result = adminOrgService.getAllOrg();
 
         System.out.println(JacksonUtil.bean2Json(result));
     }

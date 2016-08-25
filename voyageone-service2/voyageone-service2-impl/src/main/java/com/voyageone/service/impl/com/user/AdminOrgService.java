@@ -36,7 +36,7 @@ public class AdminOrgService extends BaseService {
      *
      * @return
      */
-    public Map<Integer, String> getAllOrg()
+    public List<Map<String, Object>> getAllOrg()
     {
         List<ComOrganizationModel> orgList = comOrganizationDao.selectList(new HashMap<>());
 
@@ -44,11 +44,20 @@ public class AdminOrgService extends BaseService {
 
         result = getChildTreeObjects(orgList, 0 , " ", result);
 
-        Map resultMap = result.stream().collect(Collectors.toMap(ComOrganizationModel:: getId ,ComOrganizationModel:: getOrgName ));
+//        Map resultMap = result.stream().collect(Collectors.toMap(ComOrganizationModel:: getId ,ComOrganizationModel:: getOrgName ));
 
-        return  resultMap;
+        List<Map<String, Object>> retList = new ArrayList<>();
+
+
+        result.forEach(w -> retList.add(new HashMap<String, Object>()  {{put("id", w.getId());  put("orgName", w.getOrgName()); } } ) );
+
+        return  retList;
     }
 
+    public PageModel<AdminOrgBean>  searchOrg(Integer pageNum, Integer pageSize)
+    {
+        return searchOrg(new ComOrganizationModel(), pageNum, pageSize);
+    }
 
     public PageModel<AdminOrgBean>  searchOrg(ComOrganizationModel model, Integer pageNum, Integer pageSize)
     {
