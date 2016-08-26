@@ -76,19 +76,25 @@ define([
                     pageInfo: self.channelPageOption
                 }
             },
-            edit: function () {
+            edit: function (type) {
                 var self = this;
-                if (self.codeSelList.selList.length <= 0) {
-                    self.alert('TXT_MSG_NO_ROWS_SELECT');
-                    return;
+                if (type == 'add') {
+                    self.popups.openTypeCode('add').then(function () {
+                        self.search(1);
+                    });
                 } else {
-                    _.forEach(self.systemList, function (Info) {
-                        if (Info.mainKey == self.codeSelList.selList[0].id) {
-                            self.popups.openTypeCode(Info).then(function () {
-                                self.search(1);
-                            });
-                        }
-                    })
+                    if (self.codeSelList.selList.length <= 0) {
+                        self.alert('TXT_MSG_NO_ROWS_SELECT');
+                        return;
+                    } else {
+                        _.forEach(self.systemList, function (Info) {
+                            if (Info.mainKey == self.codeSelList.selList[0].id) {
+                                self.popups.openTypeCode(Info).then(function () {
+                                    self.search(1);
+                                });
+                            }
+                        })
+                    }
                 }
 
             },
@@ -97,7 +103,7 @@ define([
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.codeSelList.selList, function (delInfo) {
-                            delList.push({'id':delInfo.delId,'code':delInfo.delCode});
+                            delList.push({'id': delInfo.delId, 'code': delInfo.delCode});
                         });
                         self.codeService.deleteCode(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);

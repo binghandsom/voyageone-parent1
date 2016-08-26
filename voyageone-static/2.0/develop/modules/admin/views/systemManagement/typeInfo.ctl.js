@@ -74,21 +74,26 @@ define([
                     pageInfo: self.channelPageOption
                 }
             },
-            edit: function () {
+            edit: function (type) {
                 var self = this;
-                if (self.sysTypeInfoSelList.selList.length <= 0) {
-                    self.alert('TXT_MSG_NO_ROWS_SELECT');
-                    return;
+                if (type == 'add') {
+                    self.popups.openTypeAdd('add').then(function () {
+                        self.search(1);
+                    });
                 } else {
-                    _.forEach(self.systemList, function (Info) {
-                        if (Info.id == self.sysTypeInfoSelList.selList[0].id) {
-                            self.popups.openTypeAdd(Info).then(function(){
-                                self.search(1);
-                            });
-                        }
-                    })
+                    if (self.sysTypeInfoSelList.selList.length <= 0) {
+                        self.alert('TXT_MSG_NO_ROWS_SELECT');
+                        return;
+                    } else {
+                        _.forEach(self.systemList, function (Info) {
+                            if (Info.id == self.sysTypeInfoSelList.selList[0].id) {
+                                self.popups.openTypeAdd(Info).then(function () {
+                                    self.search(1);
+                                });
+                            }
+                        })
+                    }
                 }
-
             },
             delete: function () {
                 var self = this;

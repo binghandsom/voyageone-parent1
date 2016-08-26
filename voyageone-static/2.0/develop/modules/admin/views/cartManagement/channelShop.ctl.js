@@ -99,21 +99,26 @@ define([
                     })
                 }
             },
-            edit: function () {
+            edit: function (type) {
                 var self = this;
-                if (self.cartShopSelList.selList.length <= 0) {
-                    self.alert('TXT_MSG_NO_ROWS_SELECT');
-                    return;
+                if (type == 'add') {
+                    self.popups.openCartChannelShop('add').then(function () {
+                        self.search(1);
+                    });
                 } else {
-                    _.forEach(self.cartList, function (Info) {
-                        if (Info.cartId == self.cartShopSelList.selList[0].id) {
-                            self.popups.openCartChannelShop(Info).then(function () {
-                                self.search(1);
-                            });
-                        }
-                    })
+                    if (self.cartShopSelList.selList.length <= 0) {
+                        self.alert('TXT_MSG_NO_ROWS_SELECT');
+                        return;
+                    } else {
+                        _.forEach(self.cartList, function (Info) {
+                            if (Info.cartId == self.cartShopSelList.selList[0].id) {
+                                self.popups.openCartChannelShop(Info).then(function () {
+                                    self.search(1);
+                                });
+                            }
+                        })
+                    }
                 }
-
             },
             delete: function () {
                 var self = this;

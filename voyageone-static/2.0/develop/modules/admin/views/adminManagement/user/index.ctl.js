@@ -8,7 +8,7 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('UserManagementController', (function () {
-        function UserManagementController(popups, alert, confirm, adminUserService, storeService, adminOrgService, channelService, adminRoleService, selectRowsFactory) {
+        function UserManagementController(popups, alert, confirm, adminUserService, storeService, adminOrgService, channelService, adminRoleService, selectRowsFactory, IntegralUITreeGridService, $timeout) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
@@ -18,6 +18,8 @@ define([
             this.channelService = channelService;
             this.adminRoleService = adminRoleService;
             this.selectRowsFactory = selectRowsFactory;
+            this.IntegralUITreeGridService = IntegralUITreeGridService;
+            this.$timeout = $timeout;
             this.storePageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
             this.adminList = [];

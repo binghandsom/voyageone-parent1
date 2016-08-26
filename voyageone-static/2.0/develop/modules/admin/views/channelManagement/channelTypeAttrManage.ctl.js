@@ -88,19 +88,25 @@ define([
                     value: ''
                 }
             },
-            edit: function () {
+            edit: function (type) {
                 var self = this;
-                if (self.channelTypeSelList.selList.length <= 0) {
-                    self.alert('TXT_MSG_NO_ROWS_SELECT');
-                    return;
+                if (type == 'add') {
+                    self.popups.openAddChannelType(channelInfo).then(function () {
+                        self.search(1);
+                    });
                 } else {
-                    _.forEach(self.channelList, function (channelInfo) {
-                        if (channelInfo.id == self.channelTypeSelList.selList[0].id) {
-                            self.popups.openAddChannelType(channelInfo).then(function () {
-                                self.search(1);
-                            });
-                        }
-                    })
+                    if (self.channelTypeSelList.selList.length <= 0) {
+                        self.alert('TXT_MSG_NO_ROWS_SELECT');
+                        return;
+                    } else {
+                        _.forEach(self.channelList, function (channelInfo) {
+                            if (channelInfo.id == self.channelTypeSelList.selList[0].id) {
+                                self.popups.openAddChannelType(channelInfo).then(function () {
+                                    self.search(1);
+                                });
+                            }
+                        })
+                    }
                 }
 
             },

@@ -91,21 +91,26 @@ define([
                     })
                 }
             },
-            edit: function () {
+            edit: function (type) {
                 var self = this;
-                if (self.taskSelList.selList.length <= 0) {
-                    self.alert('TXT_MSG_NO_ROWS_SELECT');
-                    return;
+                if (type == 'add') {
+                    self.popups.openTask(Info).then(function () {
+                        self.search(1);
+                    });
                 } else {
-                    _.forEach(self.taskList, function (Info) {
-                        if (Info.taskId == self.taskSelList.selList[0].id) {
-                            self.popups.openTask(Info).then(function () {
-                                self.search(1);
-                            });
-                        }
-                    })
+                    if (self.taskSelList.selList.length <= 0) {
+                        self.alert('TXT_MSG_NO_ROWS_SELECT');
+                        return;
+                    } else {
+                        _.forEach(self.taskList, function (Info) {
+                            if (Info.taskId == self.taskSelList.selList[0].id) {
+                                self.popups.openTask(Info).then(function () {
+                                    self.search(1);
+                                });
+                            }
+                        })
+                    }
                 }
-
             },
             delete: function () {
                 var self = this;

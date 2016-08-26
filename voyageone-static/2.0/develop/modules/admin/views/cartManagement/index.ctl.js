@@ -78,19 +78,25 @@ define([
                     isUsjoi: ''
                 }
             },
-            edit: function () {
+            edit: function (type) {
                 var self = this;
-                if (self.cartSelList.selList.length <= 0) {
-                    self.alert('TXT_MSG_NO_ROWS_SELECT');
-                    return;
+                if (type == 'add') {
+                    self.popups.openCartAdd('add').then(function () {
+                        self.search(1);
+                    });
                 } else {
-                    _.forEach(self.cartList, function (Info) {
-                        if (Info.cartId == self.cartSelList.selList[0].id) {
-                            self.popups.openCartAdd(Info).then(function () {
-                                self.search(1);
-                            });
-                        }
-                    })
+                    if (self.cartSelList.selList.length <= 0) {
+                        self.alert('TXT_MSG_NO_ROWS_SELECT');
+                        return;
+                    } else {
+                        _.forEach(self.cartList, function (Info) {
+                            if (Info.cartId == self.cartSelList.selList[0].id) {
+                                self.popups.openCartAdd(Info).then(function () {
+                                    self.search(1);
+                                });
+                            }
+                        })
+                    }
                 }
 
             },

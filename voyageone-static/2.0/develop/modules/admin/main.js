@@ -32,8 +32,11 @@ require.config({
         'chosen': 'libs/chosen/1.4.2/chosen.jquery',
         'angular-chosen': 'libs/angular-chosen/1.2.0/angular-chosen',
         'md5': 'libs/angular-md5/0.1.8/angular-md5',
-        'angular-drag':'libs/angular-drag/angular-drag',
-        'integralui':''
+        'angular-drag': 'libs/angular-drag/angular-drag',
+        'integralui': 'libs/integralui/angular.integralui.min',
+        'integralui-checkbox': 'libs/integralui/angular.integralui.checkbox.min',
+        'integralui-lists': 'libs/integralui/angular.integralui.lists.min',
+        'integralui-treegrid': 'libs/integralui/angular.integralui.treegrid.min'
     },
     waitSeconds: 0,
     shim: {
@@ -56,8 +59,12 @@ require.config({
         'chosen': ['jquery'],
         'angular-chosen': ['angular', 'chosen'],
         'angular-ui-utils': ['angular'],
-        'angular-drag':['angular'],
+        'angular-drag': ['angular'],
         'md5': ['angular'],
+        'integralui':['angular'],
+        'integralui-checkbox':['angular'],
+        'integralui-lists':['angular'],
+        'integralui-treegrid':['angular'],
         'admin': [
             'underscore',
             'voyageone-angular-com',
@@ -76,7 +83,11 @@ require.config({
             'angular-chosen',
             'angular-ui-utils',
             'md5',
-            'angular-drag'
+            'angular-drag',
+            'integralui',
+            'integralui-checkbox',
+            'integralui-lists',
+            'integralui-treegrid'
         ]
     },
     deps: ['admin']

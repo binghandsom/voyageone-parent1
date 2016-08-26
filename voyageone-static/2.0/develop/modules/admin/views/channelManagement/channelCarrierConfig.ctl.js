@@ -59,7 +59,7 @@ define([
                         }
                         _.forEach(self.carrierList, function (channelInfo, index) {
                             if (channelInfo.updFlg != 8) {
-                                _.extend(channelInfo,{"mainKey": index});
+                                _.extend(channelInfo, {"mainKey": index});
                                 self.tempChannelSelect.currPageRows({
                                     "id": channelInfo.mainKey,
                                     "code": channelInfo.carrier,
@@ -80,19 +80,25 @@ define([
                     usekd100Flg: ''
                 }
             },
-            edit: function () {
+            edit: function (type) {
                 var self = this;
-                if (self.carrierSelList.selList.length <= 0) {
-                    self.alert('TXT_MSG_NO_ROWS_SELECT');
-                    return;
+                if (type == 'add') {
+                    self.popups.openChannelCarrier('add').then(function () {
+                        self.search(1);
+                    });
                 } else {
-                    _.forEach(self.carrierList, function (Info) {
-                        if (Info.mainKey == self.carrierSelList.selList[0].id) {
-                            self.popups.openChannelCarrier(Info).then(function () {
-                                self.search(1);
-                            });
-                        }
-                    })
+                    if (self.carrierSelList.selList.length <= 0) {
+                        self.alert('TXT_MSG_NO_ROWS_SELECT');
+                        return;
+                    } else {
+                        _.forEach(self.carrierList, function (Info) {
+                            if (Info.mainKey == self.carrierSelList.selList[0].id) {
+                                self.popups.openChannelCarrier(Info).then(function () {
+                                    self.search(1);
+                                });
+                            }
+                        })
+                    }
                 }
 
             },
