@@ -212,7 +212,7 @@ public class CmsImageGroupService extends BaseAppService {
         if (param.containsKey("sizeChartId")) {
             sizeChartId = IntUtils.parseInt(param.get("sizeChartId"));
         }
-        if (param.containsKey("sizeChartName")) {
+        if (param.containsKey("sizeChartName")&&param.get("sizeChartName")!=null) {
             sizeChartName = param.get("sizeChartName").toString();
         }
         // 必须输入check
