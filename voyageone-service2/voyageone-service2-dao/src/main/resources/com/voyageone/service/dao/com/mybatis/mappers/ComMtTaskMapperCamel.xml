@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.com.ComMtTaskDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.com.ComMtTaskModel" />
     <sql id="Base_Column_List" >
-        `task_id`, `task_type`, `task_name`, `task_comment`, `task_freq`
+        `task_id`, `task_type`, `task_name`, `task_comment`, `task_freq`, `creater`, `created`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -27,6 +27,21 @@
             </if>
             <if test="taskFreq != null" >
                 `task_freq` = #{taskFreq,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
         where `task_id` = #{taskId,jdbcType=INTEGER}
@@ -114,6 +129,17 @@
             <if test="taskFreq != null" >
                 `task_freq`,
             </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="taskId != null" >
@@ -130,6 +156,27 @@
             </if>
             <if test="taskFreq != null" >
                 #{taskFreq,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

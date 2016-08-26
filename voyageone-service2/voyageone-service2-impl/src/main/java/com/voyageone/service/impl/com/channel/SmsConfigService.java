@@ -29,6 +29,10 @@ public class SmsConfigService extends BaseService {
 	
 	@Autowired
 	private TmSmsConfigDaoExt smsConfigDaoExt;
+	
+	public List<TmSmsConfigBean> searchSmsConfigByChannelId(String channelId) {
+		return searchSmsConfigByPage(channelId, null, null, null, null, null, null).getResult();
+	}
 
 	public PageModel<TmSmsConfigBean> searchSmsConfigByPage(String channelId, String smsType, String content,
 			String smsCode, Boolean active, Integer pageNum, Integer pageSize) {

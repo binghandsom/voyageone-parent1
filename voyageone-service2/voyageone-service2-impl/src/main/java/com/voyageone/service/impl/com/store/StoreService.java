@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,17 @@ public class StoreService extends BaseService {
 
 	public List<WmsMtStoreModel> getAllStore() {
 		return storeDao.selectList(Collections.emptyMap());
+	}
+	
+	public List<WmsMtStoreBean> searchStoreAndConfigByChannelId(String channelId) {
+		List<WmsMtStoreBean> stores = searchStore(channelId, null, null, null, null);
+		if (CollectionUtils.isNotEmpty(stores)) {
+			stores.forEach(store -> {
+				store.setStoreConfig(searchStoreConfigByPage(store.getStoreId(), null, null, null, null).getResult());
+			});
+		}
+		
+		return stores;
 	}
 	
 	public List<WmsMtStoreBean> searchStore(String channelId, String storeName, String isSale,

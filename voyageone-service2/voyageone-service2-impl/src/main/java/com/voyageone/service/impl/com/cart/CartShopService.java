@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,19 @@ public class CartShopService extends BaseService {
 	
 	@Autowired
 	private TmChannelShopConfigDao cartShopConfigDao;
+	
+	public List<TmChannelShopBean> searchCartShopAndConfigByKeys(String channelId, Integer cartId) {
+		List<TmChannelShopBean> cartShops = searchCartShopByPage(channelId, cartId, null, null, null, null).getResult();
+		if (CollectionUtils.isNotEmpty(cartShops)) {
+			cartShops.forEach(cartShop -> {
+				PageModel<TmChannelShopConfigBean> cartShopConfigPage = searchCartShopConfigByPage(channelId,
+						String.valueOf(cartId), null, null, null, null);
+				cartShop.setCartShopConfig(cartShopConfigPage.getResult());
+			});
+		}
+		
+		return cartShops;
+	}
 
 	public PageModel<TmChannelShopBean> searchCartShopByPage(String channelId, Integer cartId, String shopName,
 			Boolean active, Integer pageNum, Integer pageSize) {

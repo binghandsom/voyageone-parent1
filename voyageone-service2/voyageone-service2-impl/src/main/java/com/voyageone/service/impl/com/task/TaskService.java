@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,8 @@ public class TaskService extends BaseService {
 	
 	private static final String RUN_FLG_NAME = "run_flg";
 	
+	private static final String CHANNEL_ID_NAME = "order_channel_id";
+	
 	private static final String TASK_ATTR_EMPTY_VALUE = "";
 	
 	private static final String DEFAULT_TASK_COMMENT = "Run flag of task";
@@ -54,8 +57,20 @@ public class TaskService extends BaseService {
 	public List<ComMtTaskModel> getAllTask() {
 		return taskDao.selectList(Collections.emptyMap());
 	}
+	
+	public List<ComMtTaskBean> searchTaskByChannelId(String channelId) {
+		List<ComMtTaskBean> tasks = taskDaoExt.searchTaskByChannelId(CHANNEL_ID_NAME, channelId);
+		if (CollectionUtils.isNotEmpty(tasks)) {
+			tasks.forEach(task -> {
+				task.setTaskConfig(searchTaskConfigByPage(String.valueOf(task.getTaskId()),
+						null, null, null, null).getResult());
+			});
+		}
+		
+		return tasks;
+	}
 
-	public PageModel<ComMtTaskBean> searchTypeByPage(String taskType, String taskName, String taskComment,
+	public PageModel<ComMtTaskBean> searchTaskByPage(String taskType, String taskName, String taskComment,
 			Integer pageNum, Integer pageSize) {
 		PageModel<ComMtTaskBean> pageModel = new PageModel<ComMtTaskBean>();
 		// 设置查询参数
@@ -76,7 +91,7 @@ public class TaskService extends BaseService {
 	}
 
 	@VOTransactional
-	public void addOrUpdateType(ComMtTaskModel taskModel, String runFlg, String username, boolean append) {
+	public void addOrUpdateTask(ComMtTaskModel taskModel, String runFlg, String username, boolean append) {
 		// 设置任务运行属性
 		TmTaskControlModel newTaskCtrl = new TmTaskControlModel();
 		newTaskCtrl.setTaskId(taskModel.getTaskName());

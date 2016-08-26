@@ -90,7 +90,7 @@ public class TaskController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索任务信息
-		PageModel<ComMtTaskBean> taskPage = taskService.searchTypeByPage(form.getTaskType(), form.getTaskName(),
+		PageModel<ComMtTaskBean> taskPage = taskService.searchTaskByPage(form.getTaskType(), form.getTaskName(),
 				form.getTaskComment(), form.getPageNum(), form.getPageSize());
 		
 		return success(taskPage);
@@ -115,7 +115,7 @@ public class TaskController extends AdminController {
 		// 保存任务信息
 		ComMtTaskModel taskModel = new ComMtTaskModel();
 		BeanUtils.copyProperties(form, taskModel);
-		taskService.addOrUpdateType(taskModel, form.getRunFlg(), getUser().getUserName(), append);
+		taskService.addOrUpdateTask(taskModel, form.getRunFlg(), getUser().getUserName(), append);
 		
 		return success(true);
 	}
