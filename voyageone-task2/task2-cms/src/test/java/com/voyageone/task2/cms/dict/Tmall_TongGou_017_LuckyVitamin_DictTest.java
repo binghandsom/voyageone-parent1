@@ -42,8 +42,7 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest {
     @Test
     public void startupTest() {
 
-//        // 聚美详情
-//        doCreateJson("聚美详情", false, doDict_聚美详情());
+
 //
 //        // 聚美使用方法
 //        doCreateJson("聚美使用方法", false, doDict_聚美使用方法());
@@ -53,6 +52,11 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest {
 
         // 天猫同购商品主图5张
         doCreateJson("天猫同购商品主图5张", false, doDict_天猫同购商品主图5张());
+
+        // 天猫同购描述(详情页描述)
+//        doCreateJson("天猫同购描述", false, doDict_天猫同购描述());
+
+        // 属性图片模板
 
     }
 
@@ -83,11 +87,6 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest {
         try {
             String result = "";
 
-//            // 聚美详情
-//            System.out.println("=====================================");
-//            System.out.println("字典: 聚美详情");
-//            String result = sxProductService.resolveDict("聚美详情", expressionParser, shopProp, getTaskName(), null);
-//            System.out.println(result);
 //
 //            // 聚美使用方法
 //            System.out.println("=====================================");
@@ -111,6 +110,12 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest {
 //                System.out.println(jmPicUrl);
                 System.out.println(picUrl);
             }
+
+            // 天猫同购描述
+            System.out.println("=====================================");
+            System.out.println("字典: 天猫同购描述");
+            result = sxProductService.resolveDict("天猫同购描述", expressionParser, shopProp, getTaskName(), null);
+            System.out.println(result);
 
 
         } catch (Exception e) {
@@ -166,6 +171,7 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest {
             CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
 
             RuleExpression imageTemplate = new RuleExpression();
+            // 带logo商品图片（不是产品图片）的源图片模板
             imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/BHFO%%5F2015%%5Fx1000%%5F1000x?$jc1000_1000$&$product=%s"));
             userParam.setImageTemplate(imageTemplate);
             RuleExpression imageIndex = new RuleExpression();
@@ -188,5 +194,35 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest {
         return ruleRoot;
 
     }
+
+//    /**
+//     * 天猫同购描述（参考聚美详情）
+//     */
+//    private RuleExpression doDict_天猫同购描述() {
+//
+//        // 根字典
+//        RuleExpression ruleRoot = new RuleExpression();
+//
+//        // 生成内容
+//        {
+//            // 天猫同购描述
+//            RuleExpression htmlTemplate = new RuleExpression();
+//            htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+//
+//            RuleExpression imageType = new RuleExpression();
+//            imageType.addRuleWord(new TextWord("3"));
+//
+//            RuleExpression viewType = new RuleExpression();
+//            viewType.addRuleWord(new TextWord("1"));
+//
+//            RuleExpression useOriUrl = null;
+//
+//            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+//            ruleRoot.addRuleWord(new CustomWord(word));
+//        }
+//
+//        return ruleRoot;
+//
+//    }
 
 }
