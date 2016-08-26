@@ -2836,6 +2836,16 @@ public class SxProductService extends BaseService {
             }
             if (matchModels.size() == 1) {
                 $info("找到image_group记录!");
+                if (matchModels.get(0).getImage() == null || matchModels.get(0).getImage().size() == 0) {
+                    throw new BusinessException("共通图片表找到的图片类型对应的图片数为0,请确保至少上传1张图片！" +
+                            "channelId= " + channelId +
+                            ",cartId= " + cartId +
+                            ",imageType= " + imageType +
+                            ",viewType= "+ viewType +
+                            ",BrandName= " + paramBrandName +
+                            ",ProductType= " + paramProductType +
+                            ",SizeType=" + paramSizeType);
+                }
                 for (CmsBtImageGroupModel_Image imageInfo : matchModels.get(0).getImage()) {
                     if (getOriUrl) {
                         // 取原始图url

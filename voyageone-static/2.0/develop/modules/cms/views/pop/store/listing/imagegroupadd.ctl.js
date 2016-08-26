@@ -26,18 +26,19 @@ define([
             this.productType = [];
             this.sizeType = [];
         }
+
         PopImageGroupAddCtl.prototype = {
             save: function () {
                 var main = this;
                 main.imageGroupService.save({
-                    "platform" : main.platform,
-                    "imageGroupName" : main.imageGroupName,
-                    "viewType" : main.viewType,
-                    "imageType" : main.imageType,
-                    "brandName" : main.brandName,
-                    "productType" : main.productType,
-                    "sizeType" : main.sizeType
-                }).then(function (res) {
+                    "platform": main.platform,
+                    "imageGroupName": main.imageGroupName,
+                    "viewType": main.viewType,
+                    "imageType": main.imageType,
+                    "brandName": main.brandName,
+                    "productType": main.productType,
+                    "sizeType": main.sizeType
+                }).then(function () {
                     main.notify.success('TXT_MSG_UPDATE_SUCCESS');
                     main.$uibModalInstance.close();
                     main.parent.search();

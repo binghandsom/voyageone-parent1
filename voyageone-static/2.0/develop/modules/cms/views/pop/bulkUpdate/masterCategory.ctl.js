@@ -136,7 +136,7 @@ define(['cms',
                 if (_index < 0)
                     this.catArrs.push({catId: item.catId, catPath: item.catPath});
                 else
-                    this.catArrs.splice(_index);
+                    this.catArrs.splice(_index,1);
 
                 event.stopPropagation();
             },

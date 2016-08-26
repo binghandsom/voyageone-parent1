@@ -188,9 +188,9 @@ public class HttpScene7 {
         try {
             HttpResponse response = httpclient.execute(post);
             if (HttpStatus.SC_OK == response.getStatusLine().getStatusCode()) {
-                HttpEntity entitys = response.getEntity();
-                if (entity != null) {
-                    String message = EntityUtils.toString(entitys).replace("\n", "");
+                HttpEntity httpEntity = response.getEntity();
+                if (httpEntity != null) {
+                    String message = EntityUtils.toString(httpEntity).replace("\n", "");
                     String resultMsg = String.format("[file:%s,size:%s,message%s]", fileName, entity.getContentLength(), message);
                     if (message.indexOf("<jobHandle>") > 0) {
                         logger.info("uploadImageFileToS7 OK " + resultMsg);

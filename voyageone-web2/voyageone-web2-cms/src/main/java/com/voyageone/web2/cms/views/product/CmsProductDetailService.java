@@ -646,7 +646,7 @@ public class CmsProductDetailService extends BaseAppService {
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
         if(!compareHsCode(commonModel.getFields().getHsCodePrivate(),oldProduct.getCommon().getFields().getHsCodePrivate())){
             try {
-                priceService.setPrice(newProduct);
+                priceService.setPrice(newProduct, false);
             } catch (PriceCalculateException e) {
                 throw new BusinessException("价格计算错误" + e.getMessage());
             } catch (IllegalPriceConfigException e) {
@@ -655,7 +655,7 @@ public class CmsProductDetailService extends BaseAppService {
             }
             newProduct.getPlatforms().forEach((s, platform) -> {
                 if(platform.getCartId() != 0){
-                    productService.updateProductPlatform(channelId,prodId,platform,modifier,false,"税号变更");
+                    productService.updateProductPlatform(channelId,prodId,platform,modifier,false, EnumProductOperationType.WebEdit, "税号变更");
                 }
             });
         }
@@ -1355,7 +1355,7 @@ public class CmsProductDetailService extends BaseAppService {
         });
         cmsBtProductModel.getCommon().getFields().setHsCodePrivate(hsCode);
         try {
-            priceService.setPrice(cmsBtProductModel);
+            priceService.setPrice(cmsBtProductModel, false);
         } catch (PriceCalculateException e) {
             // 当捕获计算错误时, 可以继续 code 级别的计算
             throw new BusinessException("价格计算错误" + e.getMessage());

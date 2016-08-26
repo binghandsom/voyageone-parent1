@@ -60,7 +60,7 @@ public class PriceServiceTest {
 
         // 测试计算
 
-        priceService.setPrice(product, 27);
+        priceService.setPrice(product, 27, false);
 
         // 输出结果
 
@@ -101,7 +101,7 @@ public class PriceServiceTest {
 
         // 测试计算
 
-        priceService.setPrice(product, 23);
+        priceService.setPrice(product, 23, false);
 
         // 输出结果
 

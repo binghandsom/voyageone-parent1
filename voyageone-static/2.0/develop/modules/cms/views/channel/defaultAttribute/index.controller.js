@@ -11,7 +11,7 @@ define(function (require) {
 
     cms.controller('DefaultAttributeController', (function () {
 
-        function DefaultAttributeController(popups, alert, confirm, menuService, $productDetailService, platformMappingService) {
+        function DefaultAttributeController(popups, alert, confirm, menuService, $localStorage, $productDetailService, platformMappingService) {
 
             var self = this;
 
@@ -29,6 +29,7 @@ define(function (require) {
 
             self.$productDetailService = $productDetailService;
             self.platformMappingService = platformMappingService;
+            self.$localStorage = $localStorage;
 
             self.popups = popups;
             self.alert = alert;
@@ -90,9 +91,9 @@ define(function (require) {
                 pageIndex: paging.curr - 1,
                 pageRowCount: paging.size,
                 parameters: {
-                    "cartId": !searchInfo.cartId ? null : +searchInfo.cartId,
-                    "categoryType": +searchInfo.categoryType,
-                    "categoryPath": searchInfo.categoryPath
+                    cartId: !searchInfo.cartId ? null : +searchInfo.cartId,
+                    categoryType: +searchInfo.categoryType,
+                    categoryPath: searchInfo.categoryPath
                 }
             }).then(function (resp) {
                 paging.total = resp.data.total;
@@ -115,13 +116,14 @@ define(function (require) {
             });
         };
 
-        DefaultAttributeController.prototype.editItem = function (item) {
-            var _item = angular.copy(item);
-            window.open("#/channel/default_attribute_detail/" + JSON.stringify(_item).replace(/\//g, "✓"));
+        DefaultAttributeController.prototype.create = function () {
+            window.open("#/channel/default_attribute_detail/");
         };
 
-        DefaultAttributeController.prototype.getMappingCategoryPath = function (entity) {
-            return !entity.categoryPath ? ('全类目(' + this.cartMap[entity.cartId] + ')') : entity.categoryPath;
+        DefaultAttributeController.prototype.editItem = function (item) {
+            var id = item._id;
+            this.$localStorage[id] = angular.copy(item);
+            window.open("#/channel/default_attribute_detail/" + id);
         };
 
         return DefaultAttributeController;

@@ -8,7 +8,8 @@ import java.util.List;
 /**
  * MySqlOrder
  *
- * @author miemiedev
+ * @author chuanyu.liang
+ * @version 2.0.0, 5/5/16
  */
 public class MySqlOrder extends Order {
 

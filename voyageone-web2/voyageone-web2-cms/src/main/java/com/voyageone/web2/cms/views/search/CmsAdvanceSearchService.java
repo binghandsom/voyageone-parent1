@@ -407,7 +407,13 @@ public class CmsAdvanceSearchService extends BaseAppService {
             searchValue.put("_userName",  userInfo.getUserName());
             searchValue.put("_language",  language);
             searchValue.put("_taskId",  taskModel.getId());
-            searchValue.put("_sessionBean",  cmsSessionBean);
+
+            Map<String, Object> sessionBean = new HashMap<>();
+            sessionBean.put("_adv_search_props_searchItems", cmsSessionBean.getAttribute("_adv_search_props_searchItems"));
+            sessionBean.put("_adv_search_customProps", cmsSessionBean.getAttribute("_adv_search_customProps"));
+            sessionBean.put("_adv_search_commonProps", cmsSessionBean.getAttribute("_adv_search_commonProps"));
+            sessionBean.put("_adv_search_selSalesType", cmsSessionBean.getAttribute("_adv_search_selSalesType"));
+            searchValue.put("_sessionBean", sessionBean);
             sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_FileDldJob, searchValue);
             return true;
 

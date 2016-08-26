@@ -178,7 +178,7 @@ public class CmsAdvSearchQueryService extends BaseService {
             if (searchValue.getpCatPathList() != null && searchValue.getpCatPathList().size() > 0) {
                 StringBuilder pCatPathStr = new StringBuilder("{$or:[");
                 int idx = 0;
-                for (String pCatPath : searchValue.getfCatPathList()) {
+                for (String pCatPath : searchValue.getpCatPathList()) {
                     if (idx == 0) {
                         pCatPathStr.append("{'platforms.P" + cartId + ".pCatPath':{'$regex':'^" + pCatPath + "'}}");
                         idx ++;

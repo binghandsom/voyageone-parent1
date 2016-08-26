@@ -151,7 +151,7 @@ public class CmsFieldEditService extends BaseAppService {
         Map<String, Object> prop = (Map<String, Object>) params.get("property");
         String prop_id = StringUtils.trimToEmpty((String) prop.get("id"));
         if ("productType".equals(prop_id) || "sizeType".equals(prop_id)) {
-            // 税号更新
+            // 产品分类/适用人群
             String stsCode = null;
             Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
             if (valObj != null) {
@@ -251,6 +251,36 @@ public class CmsFieldEditService extends BaseAppService {
             logParams.put("codeList", productCodes);
             logParams.put("voRate", voRateVal);
             sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
+
+        } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id)) {
+            // 税号更新
+            String hsCode = null;
+            Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
+            if (valObj != null) {
+                hsCode = (String) valObj.get("value");
+            }
+            if (hsCode == null || hsCode.isEmpty()) {
+                $warn("没有设置变更项目 params=" + params.toString());
+                rsMap.put("ecd", 2);
+                return rsMap;
+            }
+
+            JongoUpdate updObj = new JongoUpdate();
+            updObj.setQuery("{'common.fields.code':{$in:#}}");
+            updObj.setQueryParameters(productCodes);
+            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}");
+            updObj.setUpdateParameters(hsCode, userInfo.getUserName(), DateTimeUtil.getNow());
+
+            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
+            $debug("批量更新结果 " + rs.toString());
+
+            params.put("productIds", productCodes);
+            params.put("_taskName", "batchupdate");
+            params.put("_channleId",  userInfo.getSelChannelId());
+            params.put("_userName",  userInfo.getUserName());
+            sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+            rsMap.put("ecd", 0);
+            return rsMap;
 
         } else {
             $warn("CmsFieldEditService.setProductFields 错误的选择项 params=" + params.toString());

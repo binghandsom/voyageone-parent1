@@ -157,6 +157,9 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
      * 抄自聚美后台 js
      */
     function sizeof(str) {
+        if (str == undefined || str == null) {
+            return 0;
+        }
         var regex = str.match(/[^\x00-\xff]/g);
         return (str.length + (!regex ? 0 : regex.length));
     }
@@ -821,7 +824,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
         is = {};
 
         exists = function (target) {
-            return target !== null && target !== undefined;
+            return target !== null && target !== undefined && target !== "";
         };
 
         if (!window._)
@@ -1940,54 +1943,63 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
                         case FIELD_TYPES.SINGLE_CHECK:
                             (function createSelectElements() {
 
-                                var nullValueObj;
+                                var nullValueObj, foundValueObject;
 
-                                var requiredRule = rules.requiredRule;
+                                var requiredRule = rules.requiredRule,
+                                    options = field.options,
+                                    valueObject = field.value;
 
-                                var options = field.options;
+                                // 要对 option 匹配, 就需要强类型转换
+                                // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
+                                // 所以要克隆新的出来使用
+                                options = options.map(function (option) {
+                                    var newOption = {};
+                                    newOption.__proto__ = option;
+                                    newOption.value = getInputValue(option.value, field);
+                                    return newOption;
+                                });
 
-                                if (!field.value)
-                                    field.value = {value: null};
-                                else {
+                                if (!valueObject) {
+                                    valueObject = {value: null};
+                                } else if (exists(valueObject.value)) {
                                     // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
                                     // 所以这一步做额外的处理
-                                    field.value.value = getInputValue(field.value.value, field);
+                                    valueObject.value = getInputValue(valueObject.value, field);
+
+                                    foundValueObject = _.find(options, function (optionItem) {
+                                        return optionItem.value == valueObject.value;
+                                    });
+
+                                    valueObject.value = foundValueObject ? foundValueObject.value : valueObject.value = null;
                                 }
 
                                 // 处理默认值, 判断基本同 input 类型, 参见 input 中的注释
-                                if (!exists(field.value.value) && exists(field.defaultValue)) {
-                                    field.value.value = getInputValue(field.defaultValue, field);
+                                if (!exists(valueObject.value) && exists(field.defaultValue)) {
+                                    valueObject.value = getInputValue(field.defaultValue, field);
                                 }
 
                                 if (!requiredRule) {
                                     // 非必填, 就创建空选项
-                                    // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
-                                    // 所以要克隆新的出来使用
-                                    options = options.map(function (option) {
-                                        var newOption = {};
-                                        newOption.__proto__ = option;
-                                        newOption.value = getInputValue(option.value, field);
-                                        return newOption;
-                                    });
-
                                     options.unshift(nullValueObj = {
-                                        displayName: '',
+                                        displayName: 'Select...',
                                         value: null
                                     });
 
                                     // 如果当前的选中值也木有, 就用这个默认的
-                                    if (!field.value.value) {
-                                        field.value = nullValueObj;
+                                    if (!valueObject.value) {
+                                        valueObject = nullValueObj;
                                     }
                                 }
 
                                 // 最终保存到 $scope 上, 供页面绑定使用
                                 scope.$options = options;
+                                field.value = valueObject;
 
-                                innerElement = angular.element('<select class="form-control">');
+                                innerElement = angular.element('<select class="form-control" chosen>');
                                 innerElement.attr('ng-options', 'option.value as option.displayName for option in $options');
                                 innerElement.attr('name', name);
                                 innerElement.attr('ng-model', 'field.value.value');
+                                innerElement.attr('width', '"100%"');
                                 innerElement.attr('title', field.name || field.id);
 
                                 bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
@@ -2888,7 +2900,6 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
         this.getTotal = function () {
             return config.total;
         };
-
 
         /**
          * 获取每页数量
