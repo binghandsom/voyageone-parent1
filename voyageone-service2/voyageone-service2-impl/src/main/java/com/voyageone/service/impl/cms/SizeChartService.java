@@ -148,7 +148,7 @@ public class SizeChartService extends BaseService {
     /**
      * 根据尺码关系一览编辑的数据插入数据库
      */
-    public void insert(String channelId, String userName, String sizeChartName
+    public CmsBtSizeChartModel insert(String channelId, String userName, String sizeChartName
             , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         //取得数据Model
         CmsBtSizeChartModel cmsBtSizeChartModel = new CmsBtSizeChartModel();
@@ -194,6 +194,7 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartModel.setActive(1);
         //根据尺码关系一览编辑的数据插入数据库
         cmsBtSizeChartDao.insert(cmsBtSizeChartModel);
+        return cmsBtSizeChartModel;
     }
 
     /**
@@ -285,5 +286,9 @@ public class SizeChartService extends BaseService {
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"sizeChartId\":" + sizeChartId + "},{\"channelId\":" + channelId + "},{\"active\":1}");
         return cmsBtSizeChartDao.selectOneWithQuery(queryObject);
+    }
+    public  void  update(CmsBtSizeChartModel model)
+    {
+        cmsBtSizeChartDao.update(model);
     }
 }
