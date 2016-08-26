@@ -1745,9 +1745,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // cartId
                 platform.setCartId(Integer.parseInt(typeChannelBean.getValue()));
                 // 设定是否主商品
-                // 如果是聚美的话，那么就是一个Code对应一个Group
+                // 如果是聚美或者独立官网的话，那么就是一个Code对应一个Group
                 CmsBtProductGroupModel group = null;
-                if (!CartEnums.Cart.JM.getId().equals(typeChannelBean.getValue())) {
+                if (!CartEnums.Cart.JM.getId().equals(typeChannelBean.getValue())
+                            && !CartEnums.Cart.CN.getId().equals(typeChannelBean.getValue())) {
                     group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), typeChannelBean.getValue());
                 }
                 if (group == null) {
