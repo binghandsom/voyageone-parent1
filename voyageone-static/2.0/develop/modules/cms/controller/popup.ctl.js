@@ -543,22 +543,23 @@ define([
          * pop出properties变更页面,用于批量更新产品属性
          */
         $scope.openFieldEdit = function openFieldEdit(selList, context) {
-            var productIds = [];
             var params = null;
-            if (context && context.isSelAll) {
-                // 全选
-                params = {"productIds": productIds, 'isSelAll': 1, "cartId": context.cartId, 'selCnt': context.selCnt};
-            } else {
-                if (selList && selList.length) {
-                    _.forEach(selList, function (object) {
-                        productIds.push(object.code);
-                    });
-                }
-                if (context) {
-                    params = {"productIds": productIds, "cartId": context.cartId, 'selCnt': context.selCnt};
+            if (context) {
+                if (context.isSelAll) {
+                    // 全选
+                    params = context;
                 } else {
-                    params = {"productIds": productIds, "cartId": null};
+                    var productIds = [];
+                    if (selList && selList.length) {
+                        _.forEach(selList, function (object) {
+                            productIds.push(object.code);
+                        });
+                    }
+                    params = context;
+                    params.productIds = productIds;
                 }
+            } else {
+                params = {};
             }
             return openModal(popActions.bulkUpdate.fieldEdit, params);
         };

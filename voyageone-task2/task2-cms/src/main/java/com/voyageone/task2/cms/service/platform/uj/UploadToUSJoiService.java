@@ -634,10 +634,11 @@ public class UploadToUSJoiService extends BaseTaskService {
 
             // group对象
             CmsBtProductGroupModel group = null;
-            // 聚美意外的平台取得product.model对应的group信息（如果是聚美的话，那么就是一个Code对应一个Group）
+            // 如果是聚美或者独立官网的时候，是一个Code对应一个Group,其他的平台都是几个Code对应一个Group
             // 目前的USJOI没有聚美平台，只有京东国际平台
-            if (!CartEnums.Cart.JM.getId().equalsIgnoreCase(shop.getValue())) {
-                // 获取group id
+            if (!CartEnums.Cart.JM.getId().equals(shop.getValue())
+                    && !CartEnums.Cart.CN.getId().equals(shop.getValue())) {
+                // 取得product.model对应的group信息
                 group = getGroupIdByFeedModel(cmsBtProductModel.getChannelId(), cmsBtProductModel.getCommon().getFields().getModel(), shop.getValue());
             }
 

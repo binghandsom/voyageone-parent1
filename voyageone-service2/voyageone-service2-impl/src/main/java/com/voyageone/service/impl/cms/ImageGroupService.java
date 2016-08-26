@@ -58,16 +58,24 @@ public class ImageGroupService extends BaseService {
      * @param sizeTypeList    相关尺码列表
      */
     public CmsBtImageGroupModel save(String channelId, String userName, String cartId, String imageGroupName, String imageType, String viewType,
-                     List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+                     List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList,int sizeChartId,String sizeChartName) {
         CmsBtImageGroupModel model = new CmsBtImageGroupModel();
         model.setChannelId(channelId);
         model.setCreater(userName);
         model.setModifier(userName);
-        model.setCartId(Integer.parseInt(cartId));
+        if(cartId!=null) {
+            model.setCartId(Integer.parseInt(cartId));
+        }
         model.setImageGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_GROUP_ID));
         model.setImageGroupName(imageGroupName);
-        model.setImageType(Integer.parseInt(imageType));
-        model.setViewType(Integer.parseInt(viewType));
+        if(imageType!=null) {
+            model.setImageType(Integer.parseInt(imageType));
+        }
+        if(viewType!=null) {
+            model.setViewType(Integer.parseInt(viewType));
+        }
+        model.setSizeChartId(sizeChartId);
+        model.setSizeChartName(sizeChartName);
         // 什么都不选的情况下，要设置成"All"
         if (brandNameList.isEmpty()) {
             List<String> lst = new ArrayList<>();
@@ -238,7 +246,8 @@ public class ImageGroupService extends BaseService {
      */
     public CmsBtImageGroupModel getImageGroupModel(String imageGroupId) {
         JongoQuery queryObject = new JongoQuery();
-        queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + ",\"active\":1}");
+       // queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + ",\"active\":1}");
+        queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + "}");
         return cmsBtImageGroupDao.selectOneWithQuery(queryObject);
     }
 

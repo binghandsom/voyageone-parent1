@@ -1745,9 +1745,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // cartId
                 platform.setCartId(Integer.parseInt(typeChannelBean.getValue()));
                 // 设定是否主商品
-                // 如果是聚美的话，那么就是一个Code对应一个Group
+                // 如果是聚美或者独立官网的话，那么就是一个Code对应一个Group
                 CmsBtProductGroupModel group = null;
-                if (!CartEnums.Cart.JM.getId().equals(typeChannelBean.getValue())) {
+                if (!CartEnums.Cart.JM.getId().equals(typeChannelBean.getValue())
+                            && !CartEnums.Cart.CN.getId().equals(typeChannelBean.getValue())) {
                     group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), typeChannelBean.getValue());
                 }
                 if (group == null) {
@@ -2510,8 +2511,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // group对象
                 CmsBtProductGroupModel group = null;
-                // 如果是聚美的话，那么就是一个Code对应一个Group
-                if (!CartEnums.Cart.JM.getId().equals(shop.getValue())) {
+                // 如果是聚美或者独立官网的时候，是一个Code对应一个Group,其他的平台都是几个Code对应一个Group
+                if (!CartEnums.Cart.JM.getId().equals(shop.getValue())
+                        && !CartEnums.Cart.CN.getId().equals(shop.getValue())) {
+                    // 取得product.model对应的group信息
                     group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
                 }
 
