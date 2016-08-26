@@ -63,11 +63,17 @@ public class ImageGroupService extends BaseService {
         model.setChannelId(channelId);
         model.setCreater(userName);
         model.setModifier(userName);
-        model.setCartId(Integer.parseInt(cartId));
+        if(cartId!=null) {
+            model.setCartId(Integer.parseInt(cartId));
+        }
         model.setImageGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_GROUP_ID));
         model.setImageGroupName(imageGroupName);
-        model.setImageType(Integer.parseInt(imageType));
-        model.setViewType(Integer.parseInt(viewType));
+        if(imageType!=null) {
+            model.setImageType(Integer.parseInt(imageType));
+        }
+        if(viewType!=null) {
+            model.setViewType(Integer.parseInt(viewType));
+        }
         model.setSizeChartId(sizeChartId);
         model.setSizeChartName(sizeChartName);
         // 什么都不选的情况下，要设置成"All"

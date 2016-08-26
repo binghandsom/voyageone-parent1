@@ -138,7 +138,7 @@ public class CmsSizeChartService extends BaseAppService {
         if (param.containsKey("imageGroupId")) {
             imageGroupId = LongUtils.parseLong(param.get("imageGroupId"));
         }
-        if (param.containsKey("imageGroupName")) {
+        if (param.containsKey("imageGroupName")&&param.get("imageGroupName")!=null) {
             imageGroupName = param.get("imageGroupName").toString();
         }
 //根据尺码关系一览编辑的数据插入数据库
