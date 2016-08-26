@@ -690,7 +690,7 @@ define([
                 });
 
             }
-        }
+        };
 
         function openAdvanceImagedetail(item) {
             if (item.common == undefined || item.common.fields == undefined) {
@@ -848,21 +848,25 @@ define([
                         return null;
                     }
 
-                    if($scope.vm.searchInfo.pCatPathList != null){
-                        $scope.vm.adVanceCats = _.filter($scope.vm.adVanceCats,function(item){
+                    if ($scope.vm.searchInfo.pCatPathList != null) {
+                        $scope.vm.adVanceCats = _.filter($scope.vm.adVanceCats, function (item) {
                             return $scope.vm.searchInfo.pCatPathList.indexOf(item.catPath) > -1;
                         });
+                    } else {
+                        $scope.vm.adVanceCats = null;
                     }
 
                     return popupNewCategory({
                         from: $scope.vm.adVanceCats,
                         categories: res.data,
-                        anyNode:true
+                        anyNode: true
                     });
                 })
                 .then(function (context) {
                     $scope.vm.adVanceCats = context;
-                    $scope.vm.searchInfo.pCatPathList = $scope.vm.catOpts = _.map(context,function(item){return item.catPath;});
+                    $scope.vm.searchInfo.pCatPathList = $scope.vm.catOpts = _.map(context, function (item) {
+                        return item.catPath;
+                    });
                 });
         }
 
@@ -895,20 +899,24 @@ define([
                         return null;
                     }
 
-                    if( $scope.vm.searchInfo.fCatPathList != null){
-                        $scope.vm.feedCats = _.filter($scope.vm.feedCats,function(item){
+                    if ($scope.vm.searchInfo.fCatPathList != null) {
+                        $scope.vm.feedCats = _.filter($scope.vm.feedCats, function (item) {
                             return $scope.vm.searchInfo.fCatPathList.indexOf(item.catPath) > -1;
                         });
+                    } else {
+                        $scope.vm.feedCats = null;
                     }
 
                     return popupNewCategory({
                         categories: res.data.categoryTree,
-                        from:$scope.vm.feedCats,
+                        from: $scope.vm.feedCats,
                         divType: "-",
-                        anyNode:true
+                        anyNode: true
                     }).then(function (context) {
                         $scope.vm.feedCats = context;
-                        $scope.vm.searchInfo.fCatPathList = $scope.vm.fcatOpts = _.map(context,function(item){return item.catPath;});
+                        $scope.vm.searchInfo.fCatPathList = $scope.vm.fcatOpts = _.map(context, function (item) {
+                            return item.catPath;
+                        });
                     });
                 });
         }
@@ -995,7 +1003,7 @@ define([
 
         // 清空所填项目
         function dismiss(item) {
-            switch (item){
+            switch (item) {
                 case 'mCatPath':
                     $scope.vm.searchInfo.mCatPath = null;
                     $scope.vm.searchInfo.mCatId = null;
@@ -1037,7 +1045,7 @@ define([
                 $scope.vm.exportList = res.data.exportList;
                 _.each($scope.vm.exportList, function (item) {
                     item.fileName = item.fileName.split(",");
-                })
+                });
                 $scope.vm.exportPageOption.total = res.data.exportListTotal;
             })
         }
@@ -1050,8 +1058,9 @@ define([
                     alert("此文件不存在");
                 }
             }
+
             $.download.post(cActions.cms.search.$searchAdvanceService2.root + cActions.cms.search.$searchAdvanceService2.exportDownload, {"fileName": fileName}, _exportFileCallback);
-        }
+        };
 
         // 指导价变更批量确认
         $scope.cfmRetailPrice = function (cartObj) {
