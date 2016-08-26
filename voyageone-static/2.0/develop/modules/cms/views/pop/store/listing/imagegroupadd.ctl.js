@@ -38,7 +38,7 @@ define([
                     "brandName": main.brandName,
                     "productType": main.productType,
                     "sizeType": main.sizeType
-                }).then(function (res) {
+                }).then(function () {
                     main.notify.success('TXT_MSG_UPDATE_SUCCESS');
                     main.$uibModalInstance.close();
                     main.parent.search();
