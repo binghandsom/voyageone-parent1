@@ -25,7 +25,7 @@ define([
                     self.popType = '添加';
                     self.sourceData = {}
                 }
-                self.sourceData.active = self.sourceData.active ? "0" : "1";
+                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "0" : "1":'';
                 self.typeService.getAllType().then(function (res) {
                     self.typeList = res.data;
                 });

@@ -22,6 +22,7 @@ define([
                     self.popType = '添加';
                     self.sourceData = {}
                 }
+                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "0" : "1" : '';
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelList = res.data;
                 });
@@ -35,6 +36,7 @@ define([
             save: function () {
                 var self = this;
                 var result = {};
+                self.sourceData.active = self.sourceData.active == '0' ? true : false;
                 if (self.append == true) {
                     if (self.sourceData.remainNum)
                         self.sourceData.inventoryHold = self.sourceData.inventoryHold + ',' + self.sourceData.remainNum;

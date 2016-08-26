@@ -23,7 +23,7 @@ define([
                     self.popType = '添加';
                     self.sourceData = {}
                 }
-                self.sourceData.active = self.sourceData.active ? "1" : "0";
+                self.sourceData.active = self.sourceData.active ?  self.sourceData.active ? "1" : "0":'';
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
