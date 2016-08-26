@@ -16,11 +16,11 @@ public class CartShopFormBean extends AdminFormBean {
 	
 	private String appUrl;
 	
-	private String appKey;
+	private String appkey;
 	
-	private String appSecret;
+	private String appsecret;
 	
-	private String sessionKey;
+	private String sessionkey;
 	
 	private String comment;
 	
@@ -58,28 +58,28 @@ public class CartShopFormBean extends AdminFormBean {
 		this.appUrl = appUrl;
 	}
 
-	public String getAppKey() {
-		return appKey;
+	public String getAppkey() {
+		return appkey;
 	}
 
-	public void setAppKey(String appKey) {
-		this.appKey = appKey;
+	public void setAppkey(String appkey) {
+		this.appkey = appkey;
 	}
 
-	public String getAppSecret() {
-		return appSecret;
+	public String getAppsecret() {
+		return appsecret;
 	}
 
-	public void setAppSecret(String appSecret) {
-		this.appSecret = appSecret;
+	public void setAppsecret(String appsecret) {
+		this.appsecret = appsecret;
 	}
 
-	public String getSessionKey() {
-		return sessionKey;
+	public String getSessionkey() {
+		return sessionkey;
 	}
 
-	public void setSessionKey(String sessionKey) {
-		this.sessionKey = sessionKey;
+	public void setSessionkey(String sessionkey) {
+		this.sessionkey = sessionkey;
 	}
 
 	public String getComment() {
