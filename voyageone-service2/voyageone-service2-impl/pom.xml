@@ -62,6 +62,12 @@
             <version>${voyageone.components.tmall.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-cn</artifactId>
+            <version>${voyageone.components.cn.version}</version>
+        </dependency>
+
         <!-- liquifire START REMOVE LiquidFire liang 2016/06/29 -->
         <!--<dependency>-->
             <!--<groupId>com.voyageone</groupId>-->
