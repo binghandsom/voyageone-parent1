@@ -506,4 +506,8 @@ public class ImageGroupService extends BaseService {
         });
         return list;
     }
+    public void update(CmsBtImageGroupModel model)
+    {
+        cmsBtImageGroupDao.update(model);
+    }
 }

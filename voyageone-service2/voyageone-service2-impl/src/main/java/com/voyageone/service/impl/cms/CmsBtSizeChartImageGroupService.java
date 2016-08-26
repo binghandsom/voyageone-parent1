@@ -18,19 +18,22 @@ import java.util.Map;
 public class CmsBtSizeChartImageGroupService extends BaseService {
     @Autowired
     CmsBtSizeChartImageGroupDao dao;
+
     public List<CmsBtSizeChartImageGroupModel> getList(String channelId) {
         Map<String, Object> map = new HashedMap();
         map.put("channelId", channelId);
         return dao.selectList(map);
     }
-    public CmsBtSizeChartImageGroupModel get(String channelId,int cmsBtSizeChartId, long cmsBtImageGroupId) {
+
+    public CmsBtSizeChartImageGroupModel get(String channelId, int cmsBtSizeChartId, long cmsBtImageGroupId) {
         Map<String, Object> map = new HashedMap();
         map.put("cmsBtSizeChartId", cmsBtSizeChartId);
         map.put("cmsBtImageGroupId", cmsBtImageGroupId);
-        map.put("channelId",channelId);
+        map.put("channelId", channelId);
         return dao.selectOne(map);
     }
-    public  void  save(String channelId,int cmsBtSizeChartId, long cmsBtImageGroupId,String userName) {
+
+    public void save(String channelId, int cmsBtSizeChartId, long cmsBtImageGroupId, String userName) {
         CmsBtSizeChartImageGroupModel model = get(channelId, cmsBtSizeChartId, cmsBtImageGroupId);
         if (model == null) {// 不存在新增
             model = new CmsBtSizeChartImageGroupModel();
