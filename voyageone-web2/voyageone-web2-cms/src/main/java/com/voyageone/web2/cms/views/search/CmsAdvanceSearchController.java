@@ -65,7 +65,7 @@ public class CmsAdvanceSearchController extends CmsController {
     }
 
     /**
-     * 检索出group和product数据
+     * 检索product数据,group数据只是在点击[GROUP一览]时才加载，性能优化
      * @param params
      * @return
      */
@@ -86,10 +86,12 @@ public class CmsAdvanceSearchController extends CmsController {
         // 获取product列表
         // 分页
         int endIdx = params.getProductPageSize();
-        // 先统计product件数
+        // 先统计product件数,并放到session中(这时group总件数为空)
         long productListTotal = searchIndexService.countProductCodeList(params, userInfo, cmsSession);
-        List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId());
+        cmsSession.putAttribute("_adv_search_productListTotal", productListTotal);
+        cmsSession.putAttribute("_adv_search_groupListTotal", null);
 
+        List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId());
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("productList", prodInfoList);
@@ -101,29 +103,8 @@ public class CmsAdvanceSearchController extends CmsController {
 
         // 查询商品其它画面显示用的信息
         List[] infoArr = advSearchOtherService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), cartId, false);
-        resultBean.put("prodChgInfoList", infoArr[0]);
-        resultBean.put("prodOrgChaNameList", infoArr[1]);
-        resultBean.put("freeTagsList", infoArr[2]);
-
-        // 获取group列表
-        // 先统计group件数
-        long groupListTotal = searchIndexService.countGroupCodeList(params, userInfo, cmsSession);
-        // 然后再取得当页显示用的group信息
-        List<String> groupCodeList = advSearchQueryService.getGroupCodeList(params, userInfo.getSelChannelId());
-        List<CmsBtProductBean> grpInfoList = searchIndexService.getProductInfoList(groupCodeList, params, userInfo, cmsSession);
-
-        searchIndexService.checkProcStatus(grpInfoList, getLang());
-        resultBean.put("groupList", grpInfoList);
-        resultBean.put("groupListTotal", groupListTotal);
-
-        infoArr = advSearchOtherService.getGroupExtraInfo(grpInfoList, userInfo.getSelChannelId(), cartId, true);
-        // 获取该组商品图片
-        resultBean.put("grpImgList", infoArr[1]);
-        // 查询该组商品是否有价格变动
-        resultBean.put("grpProdChgInfoList", infoArr[0]);
-        // 获取该组商品的prodId
-        resultBean.put("grpProdIdList", infoArr[2]);
-        resultBean.put("grpPriceInfoList", infoArr[3]);
+        resultBean.put("prodOrgChaNameList", infoArr[0]);
+        resultBean.put("freeTagsList", infoArr[1]);
 
         // 获取该用户自定义显示列设置
         resultBean.put("customProps", cmsSession.getAttribute("_adv_search_customProps"));
@@ -131,8 +112,6 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("selSalesType", cmsSession.getAttribute("_adv_search_selSalesType"));
         resultBean.put("selBiDataList", cmsSession.getAttribute("_adv_search_selBiDataList"));
 
-        cmsSession.putAttribute("_adv_search_productListTotal", productListTotal);
-        cmsSession.putAttribute("_adv_search_groupListTotal", groupListTotal);
         // 返回用户信息
         return success(resultBean);
     }
@@ -151,8 +130,12 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("productUrl", platformService.getPlatformProductUrl(cartId.toString()));
 
         // 获取group列表
-        // 先统计group件数 TODO--翻页时总件数从session中取得
-        long groupListTotal = (Long) cmsSession.getAttribute("_adv_search_groupListTotal");//searchIndexService.countGroupCodeList(params, userInfo, cmsSession);
+        // 先统计group件数， 翻页时总件数从session中取得
+        Long groupListTotal = (Long) cmsSession.getAttribute("_adv_search_groupListTotal");
+        if (groupListTotal == null) {
+            groupListTotal = searchIndexService.countGroupCodeList(params, userInfo, cmsSession);
+            cmsSession.putAttribute("_adv_search_groupListTotal", groupListTotal);
+        }
 
         // 然后再取得当页显示用的group信息
         List<String> groupCodeList = advSearchQueryService.getGroupCodeList(params, userInfo.getSelChannelId());
@@ -163,12 +146,10 @@ public class CmsAdvanceSearchController extends CmsController {
 
         List[] infoArr = advSearchOtherService.getGroupExtraInfo(grpInfoList, userInfo.getSelChannelId(), cartId, true);
         // 获取该组商品图片
-        resultBean.put("grpImgList", infoArr[1]);
-        // 查询该组商品是否有价格变动
-        resultBean.put("grpProdChgInfoList", infoArr[0]);
+        resultBean.put("grpImgList", infoArr[0]);
         // 获取该组商品的prodId
-        resultBean.put("grpProdIdList", infoArr[2]);
-        resultBean.put("grpPriceInfoList", infoArr[3]);
+        resultBean.put("grpProdIdList", infoArr[1]);
+        resultBean.put("grpPriceInfoList", infoArr[2]);
 
         // 返回用户信息
         return success(resultBean);
@@ -187,8 +168,8 @@ public class CmsAdvanceSearchController extends CmsController {
         Integer cartId = params.getCartId();
         resultBean.put("productUrl", platformService.getPlatformProductUrl(cartId.toString()));
 
-        // 先统计product件数 TODO--翻页时总件数从session中取得
-        long productListTotal = (Long) cmsSession.getAttribute("_adv_search_productListTotal"); //searchIndexService.countProductCodeList(params, userInfo, cmsSession);
+        // 先统计product件数
+        long productListTotal = (Long) cmsSession.getAttribute("_adv_search_productListTotal");
 
         // 获取product列表
         List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId());
@@ -199,9 +180,8 @@ public class CmsAdvanceSearchController extends CmsController {
 
         // 查询商品其它画面显示用的信息
         List[] infoArr = advSearchOtherService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), cartId, false);
-        resultBean.put("prodChgInfoList", infoArr[0]);
-        resultBean.put("prodOrgChaNameList", infoArr[1]);
-        resultBean.put("freeTagsList", infoArr[2]);
+        resultBean.put("prodOrgChaNameList", infoArr[0]);
+        resultBean.put("freeTagsList", infoArr[1]);
 
         // 返回用户信息
         return success(resultBean);

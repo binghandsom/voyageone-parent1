@@ -11,21 +11,49 @@ define([
 ], function (cms) {
     cms.controller('attributeDetailController', (function () {
 
-        function AttributeDetailController($routeParams, notify, popups, menuService, $productDetailService, platformMappingService) {
+        function AttributeDetailController($routeParams, alert, notify, popups, menuService, $sessionStorage,
+                                           $localStorage, $productDetailService, platformMappingService) {
 
             var self = this;
-            var searchJson = $routeParams.upEntity ? $routeParams.upEntity.replace(/✓/g,"/") : null;
-            self.searchInfo = searchJson ? angular.fromJson(searchJson) : {};
 
+            self.platformMappingFrontId = $routeParams.upEntity;
             self.popups = popups;
             self.notify = notify;
             self.$productDetailService = $productDetailService;
             self.platformMappingService = platformMappingService;
+            self.menuService = menuService;
+            self.$sessionStorage = $sessionStorage;
+            self.$localStorage = $localStorage;
+            self.alert = alert;
+        }
+
+        AttributeDetailController.prototype.init = function () {
+
+            var self = this,
+                menuService = self.menuService,
+                $sessionStorage = self.$sessionStorage,
+                $localStorage = self.$localStorage,
+                platformMappingFrontId = self.platformMappingFrontId,
+                alert = self.alert;
+
+            var platformMapping = $localStorage[platformMappingFrontId];
+
+            if (platformMapping) {
+                $sessionStorage[platformMappingFrontId] = platformMapping;
+                delete $localStorage[platformMappingFrontId];
+            } else {
+                platformMapping = $sessionStorage[platformMappingFrontId];
+            }
+
+            if (platformMappingFrontId && !platformMapping)
+                alert("没有找到你要编辑的内容, 将进行新建操作");
+
+            self.searchInfo = platformMapping || {};
 
             menuService.getPlatformType().then(function (resp) {
                 self.platformTypes = _.map(resp, function (cart) {
                     return {name: cart.name, value: +cart.value};
-                }).filter(function(cart){
+                }).filter(function (cart) {
                     return cart.value != 0 && cart.value != 1
                 });
 
@@ -36,18 +64,22 @@ define([
 
                 self.tryGet();
             });
-        }
+        };
 
         AttributeDetailController.prototype.tryGet = function () {
 
             var self = this,
                 searchInfo = self.searchInfo;
 
-            if (searchInfo.categoryType != 1 && searchInfo.categoryType != 2)
+            if (searchInfo.categoryType != 1 && searchInfo.categoryType != 2) {
+                self.fields = null;
                 return;
+            }
 
-            if (searchInfo.categoryType == 2 && !searchInfo.categoryPath)
+            if (searchInfo.categoryType == 2 && !searchInfo.categoryPath) {
+                self.fields = null;
                 return;
+            }
 
             self.categoryTitle = (self.searchInfo.categoryType == 1) ? "全类目" : self.searchInfo.categoryPath;
 
@@ -60,6 +92,7 @@ define([
                 platformMappingService = self.platformMappingService;
 
             platformMappingService.get(self.searchInfo).then(function (res) {
+                self.modified = res.data.modified;
                 self.fields = res.data.schema;
             });
         };
@@ -69,7 +102,7 @@ define([
             var self = this,
                 $productDetailService = self.$productDetailService;
 
-            $productDetailService.getPlatformCategories({cartId:self.searchInfo.cartId}).then(function (resp) {
+            $productDetailService.getPlatformCategories({cartId: self.searchInfo.cartId}).then(function (resp) {
 
                 var categoryList = resp.data;
 
@@ -101,13 +134,15 @@ define([
                 cartId: +searchInfo.cartId,
                 categoryType: +searchInfo.categoryType,
                 categoryPath: searchInfo.categoryPath,
-                schema: fields
-            }).then(function () {
+                schema: fields,
+                modified: self.modified
+            }).then(function (resp) {
+                self.modified = resp.data;
                 self.notify.success('TXT_SAVE_SUCCESS');
             });
         };
 
-        AttributeDetailController.prototype.close = function (){
+        AttributeDetailController.prototype.close = function () {
             window.opener.focus();
             window.close();
         };

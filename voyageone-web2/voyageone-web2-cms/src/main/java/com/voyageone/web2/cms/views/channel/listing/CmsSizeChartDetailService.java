@@ -4,6 +4,8 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
+import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModelSizeMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ import java.util.*;
  */
 @Service
 public class CmsSizeChartDetailService extends BaseService {
+    @Autowired
+    CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
     @Autowired
     private SizeChartService sizeChartService;
     @Autowired
@@ -31,9 +35,37 @@ public class CmsSizeChartDetailService extends BaseService {
         int sizeChartId = (int) param.get("sizeChartId");
         //尺码表自增键取得当前的记录
         CmsBtSizeChartModel cmsBtSizeChartModel =sizeChartService.getCmsBtSizeChartModel(sizeChartId,channelId);
+        addFeddImportSize(cmsBtSizeChartModel);
         sizeChartList.add(cmsBtSizeChartModel);
         //尺码关系一览检索
         param.put("sizeChartList", cmsSizeChartService.changeToBeanList(sizeChartList, channelId, lang));
+    }
+    public void  addFeddImportSize( CmsBtSizeChartModel cmsBtSizeChartModel) {
+        List<String> listBrandName = cmsBtSizeChartModel.getBrandName();
+        List<String> listProductType = cmsBtSizeChartModel.getProductType();
+        List<String> listSizeType = cmsBtSizeChartModel.getSizeType();
+        String channelId = cmsBtSizeChartModel.getChannelId();
+
+        //获取feed导入的尺码
+        List<CmsBtFeedImportSizeModel> listCmsBtFeedImportSizeModel = cmsBtFeedImportSizeService.getList(channelId, listBrandName, listProductType, listSizeType);
+
+
+        HashSet<String> hsSize = new HashSet<>();
+        List<CmsBtSizeChartModelSizeMap> listSizeMap = cmsBtSizeChartModel.getSizeMap();
+        for (CmsBtSizeChartModelSizeMap sizeMap : listSizeMap) {
+            hsSize.add(sizeMap.getOriginalSize());
+        }
+
+        //把feed导入的尺码加进尺码表
+        for (CmsBtFeedImportSizeModel importSize : listCmsBtFeedImportSizeModel) {
+            //在尺码表中不存在    添加进尺码表
+            if (!hsSize.contains(importSize.getOriginalSize())) {
+                CmsBtSizeChartModelSizeMap cmsBtSizeChartModelSizeMap = new CmsBtSizeChartModelSizeMap();
+                cmsBtSizeChartModelSizeMap.setOriginalSize(importSize.getOriginalSize());
+                listSizeMap.add(cmsBtSizeChartModelSizeMap);
+                hsSize.add(importSize.getOriginalSize());
+            }
+        }
     }
     /**
      * 尺码关系一览编辑详情编辑画面

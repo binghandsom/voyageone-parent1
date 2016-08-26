@@ -7,7 +7,6 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.value.Value;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtFeedCustomPropDao;
@@ -33,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * Created by jonas on 8/15/16.
@@ -101,8 +99,7 @@ class PlatformMappingViewService extends BaseAppService {
 
         if (_platformMappingModel != null) {
             platformMappingModel = _platformMappingModel;
-            fieldMappingMap = platformMappingModel.getMappings().stream()
-                    .collect(toMap(CmsBtPlatformMappingModel.FieldMapping::getFieldId, m -> m));
+            fieldMappingMap = platformMappingModel.getMappings();
         }
 
         PlatformMappingGetBean platformMappingGetBean = new PlatformMappingGetBean();
@@ -125,6 +122,9 @@ class PlatformMappingViewService extends BaseAppService {
 
         if (type == 1) {
             CmsMtPlatformCommonSchemaModel commonSchemaModel = platformCommonSchemaService.get(cartId);
+
+            if (commonSchemaModel == null)
+                return platformMappingGetBean;
 
             List<Map<String, Object>> itemFieldMapList = commonSchemaModel.getPropsItem();
             if (itemFieldMapList != null && !itemFieldMapList.isEmpty())
@@ -154,7 +154,7 @@ class PlatformMappingViewService extends BaseAppService {
         return platformMappingGetBean;
     }
 
-    public boolean save(PlatformMappingSaveBean platformMappingSaveBean, UserSessionBean user) {
+    public String save(PlatformMappingSaveBean platformMappingSaveBean, UserSessionBean user) {
 
         String username = user.getUserName();
 
@@ -197,21 +197,16 @@ class PlatformMappingViewService extends BaseAppService {
             platformMappingModel.setCreater(username);
 
         platformMappingModel.setModifier(username);
-        platformMappingModel.setModified(DateTimeUtil.getNowTimeStamp());
 
         // 依次循环 product 和 item 两组 schema 数据
         // 填充到模型中
 
         PlatformMappingSaveBean.Schema schema = platformMappingSaveBean.getSchema();
 
-        List<CmsBtPlatformMappingModel.FieldMapping> mappingList = platformMappingModel.getMappings();
+        Map<String, CmsBtPlatformMappingModel.FieldMapping> mappingMap = platformMappingModel.getMappings();
 
-        Map<String, CmsBtPlatformMappingModel.FieldMapping> mappingMap;
-
-        if (mappingList == null || mappingList.isEmpty())
+        if (mappingMap == null)
             mappingMap = new HashMap<>();
-        else
-            mappingMap = mappingList.stream().collect(toMap(CmsBtPlatformMappingModel.FieldMapping::getFieldId, m -> m));
 
         List<Map<String, Object>> weakItem = schema.getItem();
 
@@ -227,11 +222,11 @@ class PlatformMappingViewService extends BaseAppService {
             fillMapping(mappingMap, product);
         }
 
-        mappingList = mappingMap.entrySet().stream().map(Map.Entry::getValue).collect(toList());
+        platformMappingModel.setMappings(mappingMap);
 
-        platformMappingModel.setMappings(mappingList);
+        platformMappingService.saveMap(platformMappingModel, platformMappingSaveBean.getModified());
 
-        return platformMappingService.saveMap(platformMappingModel);
+        return platformMappingModel.getModified();
     }
 
     public List<Map<String, Object>> getCommonSchema() {
@@ -266,6 +261,7 @@ class PlatformMappingViewService extends BaseAppService {
             Map<String, Object> jsObject = new HashMap<>();
             jsObject.put("value", f.getFeedPropOriginal());
             jsObject.put("label", f.getFeedPropOriginal());
+            jsObject.put("cnLabel", f.getFeedPropTranslation());
             return jsObject;
         }).collect(toList());
     }
@@ -281,13 +277,12 @@ class PlatformMappingViewService extends BaseAppService {
 
             String fieldId = field.getId();
 
-            CmsBtPlatformMappingModel.FieldMapping mapping = mappingMap.get(fieldId);
+            // 先构造空内容
+            CmsBtPlatformMappingModel.FieldMapping mapping = new CmsBtPlatformMappingModel.FieldMapping();
+            mapping.setFieldId(fieldId);
 
-            if (mapping == null) {
-                mapping = new CmsBtPlatformMappingModel.FieldMapping();
-                mapping.setFieldId(fieldId);
-            }
-
+            // 为内容填充值
+            // 如果值为空, 则将内容重置为 null, 表示该内容将被清除
             switch (field.getType()) {
 
                 case SINGLECHECK:
@@ -295,44 +290,62 @@ class PlatformMappingViewService extends BaseAppService {
                     Value valueObject = singleCheckField.getValue();
                     String value = valueObject.getValue();
                     if (StringUtils.isEmpty(value))
-                        continue;
-                    mapping.setValue(value);
+                        mapping = null;
+                    else
+                        mapping.setValue(value);
                     break;
                 case MULTICHECK:
                     MultiCheckField multiCheckField = (MultiCheckField) field;
                     List<Value> valueObjectList = multiCheckField.getValues();
                     List<String> valueList = valueObjectList.stream().map(Value::getValue).collect(toList());
                     if (valueList.isEmpty())
-                        continue;
-                    mapping.setValue(valueList);
+                        mapping = null;
+                    else
+                        mapping.setValue(valueList);
                     break;
                 case COMPLEX:
                     ComplexField complexField = (ComplexField) field;
                     List<Field> children = complexField.getFields();
-                    fillMapping(mappingMap, children);
-                    continue;
+                    Map<String, CmsBtPlatformMappingModel.FieldMapping> childrenMapping = new HashMap<>();
+                    fillMapping(childrenMapping, children);
+                    if (childrenMapping.isEmpty())
+                        mapping = null;
+                    else
+                        mapping.setChildren(childrenMapping);
+                    break;
                 case INPUT:
                     InputField inputField = (InputField) field;
                     String expressionListJson = inputField.getValue();
-                    if (StringUtils.isEmpty(expressionListJson))
-                        continue;
-                    setExpressionList(mapping, expressionListJson);
+                    if (StringUtils.isEmpty(expressionListJson)) {
+                        mapping = null;
+                        break;
+                    }
+                    List<CmsBtPlatformMappingModel.FieldMappingExpression> expressionList = getExpressionList(expressionListJson);
+                    if (expressionList == null || expressionList.isEmpty()) {
+                        mapping = null;
+                        break;
+                    }
+                    mapping.setExpressions(expressionList);
                     break;
             }
 
-            mappingMap.put(fieldId, mapping);
+            // 判断是否内容为空
+            // 如果为空, 就清空
+            // 否则覆盖
+            if (mapping == null)
+                mappingMap.remove(fieldId);
+            else
+                mappingMap.put(fieldId, mapping);
         }
     }
 
-    private void setExpressionList(CmsBtPlatformMappingModel.FieldMapping mapping, String json) {
+    private List<CmsBtPlatformMappingModel.FieldMappingExpression> getExpressionList(String json) {
         if (StringUtils.isEmpty(json))
-            return;
+            return null;
         ObjectMapper mapper = new ObjectMapper();
         try {
-            List<CmsBtPlatformMappingModel.FieldMappingExpression> expressionList = mapper.readValue(json,
+            return mapper.readValue(json,
                     mapper.getTypeFactory().constructCollectionType(ArrayList.class, CmsBtPlatformMappingModel.FieldMappingExpression.class));
-            mapping.setExpressions(expressionList);
-            mapping.setValue(null);
         } catch (IOException e) {
             throw new BusinessException("读取 ExpressionList 出错", e);
         }
@@ -363,18 +376,6 @@ class PlatformMappingViewService extends BaseAppService {
 
                     FieldTypeEnum fieldType = field.getType();
 
-                    if (FieldTypeEnum.COMPLEX.equals(fieldType)) {
-                        // 对普通复杂类型
-                        // 直接进入子字段循环
-                        // 自身不进行处理
-                        ComplexField complexField = (ComplexField) field;
-                        List<Field> children = complexField.getFields();
-                        fillFields(children, fieldMappingMap);
-                        return field;
-                    }
-
-                    // 到达这里的应该只剩下简单输入类型了
-
                     CmsBtPlatformMappingModel.FieldMapping mapping = fieldMappingMap.get(field.getId());
 
                     if (mapping == null)
@@ -402,6 +403,14 @@ class PlatformMappingViewService extends BaseAppService {
                                 setValue(v);
                             }}).collect(toList());
                             multiCheckField.setValues(valueObjectList);
+                            break;
+                        case COMPLEX:
+                            ComplexField complexField = (ComplexField) field;
+                            List<Field> children = complexField.getFields();
+                            Map<String, CmsBtPlatformMappingModel.FieldMapping> childrenMapping = mapping.getChildren();
+                            if (childrenMapping == null || childrenMapping.isEmpty())
+                                break;
+                            fillFields(children, childrenMapping);
                             break;
                     }
 

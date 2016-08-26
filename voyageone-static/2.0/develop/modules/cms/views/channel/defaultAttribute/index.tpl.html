@@ -1,5 +1,5 @@
 <div class="wrapper-md">
-    <div class="panel panel-default panel-vo">
+    <div class="panel panel-vo">
         <div class="panel-heading">
             <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;<span translate="TXT_DEFAULT_MAPPING_LIST"></span></h4>
         </div>
@@ -47,9 +47,9 @@
         </div>
     </div>
     <div class="m-t-sm m-b-sm">
-        <a ng-href="#/channel/default_attribute_detail" target="_blank" class="btn btn-info btn-pop">
+        <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.create()">
             <i class="fa fa-plus"></i>&nbsp;<span translate="TXT_DEFAULT_SETTING"></span>
-        </a>
+        </button>
     </div>
     <div class="box">
         <div class="box-body">
@@ -66,9 +66,17 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr>
+                    <td if-no-rows="ctrl.dataList.length" colspan="7" style="padding: 0px"></td>
+                </tr>
                 <tr ng-repeat="entity in ctrl.dataList">
                     <td class="mfb-xt3 text-center">{{$index+1}}</td>
-                    <td class="mfb-xt3 text-left">{{!entity.categoryPath?'全类目':entity.categoryPath}}</td>
+                    <td class="mfb-xt3 text-left">
+                        <div class="row">
+                            <div class="col-sm-2">{{ctrl.cartMap[entity.cartId]}}</div>
+                            <div class="col-sm-10">-&nbsp;<span>{{!entity.categoryPath ? '全类目' : entity.categoryPath}}</span></div>
+                        </div>
+                    </td>
                     <td class="mfb-xt3 text-center">{{entity.modified | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="mfb-xt3 text-left">{{entity.modifier}}</td>
                     <td class="mfb-xt3 text-center">{{entity.created | date: 'yyyy-MM-dd HH:mm:ss'}}</td>

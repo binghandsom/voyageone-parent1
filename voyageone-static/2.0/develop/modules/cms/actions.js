@@ -438,7 +438,7 @@ define(function () {
                     "attributeService": {
                         "root": "/cms/channel/custom/prop",
                         "init": "get",
-                        "getCatTree": session("getCatTree"),
+                        "getCatTree": session("getCatTree", [KEY.CHANNEL]),
                         "save": "update",
                         "getCatList": "getCatList"
                     }
@@ -498,7 +498,8 @@ define(function () {
                     "init": "init",
                     "search": "search",
                     "save": "save",
-                    "delete": "delete"
+                    "delete": "delete",
+                    "getNoMatchSizeImageGroupList":"getNoMatchSizeImageGroupList"
                 },
                 "imageGroupDetailService": {
                     "root": "/cms/channel/image_group_detail",
@@ -517,7 +518,8 @@ define(function () {
                         "init": "sizeChartInit",
                         "search": "sizeChartSearch",
                         "delete": "sizeChartDelete",
-                        "editSave": "sizeChartEditSave"
+                        "editSave": "sizeChartEditSave",
+                        "getNoMatchList":"getNoMatchList"
                     }
                 },
                 "sizeChartDetail": {

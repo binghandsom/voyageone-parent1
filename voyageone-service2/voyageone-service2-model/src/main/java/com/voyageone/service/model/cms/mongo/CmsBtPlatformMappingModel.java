@@ -22,7 +22,7 @@ public class CmsBtPlatformMappingModel extends ChannelPartitionModel {
 
     private String categoryPath;
 
-    private List<FieldMapping> mappings;
+    private Map<String, FieldMapping> mappings;
 
     public Integer getCartId() {
         return cartId;
@@ -48,11 +48,11 @@ public class CmsBtPlatformMappingModel extends ChannelPartitionModel {
         this.categoryPath = categoryPath;
     }
 
-    public List<FieldMapping> getMappings() {
+    public Map<String, FieldMapping> getMappings() {
         return mappings;
     }
 
-    public void setMappings(List<FieldMapping> mappings) {
+    public void setMappings(Map<String, FieldMapping> mappings) {
         this.mappings = mappings;
     }
 
@@ -61,6 +61,8 @@ public class CmsBtPlatformMappingModel extends ChannelPartitionModel {
         private String fieldId;
 
         private Object value;
+
+        private Map<String, FieldMapping> children;
 
         private List<FieldMappingExpression> expressions;
 
@@ -78,6 +80,14 @@ public class CmsBtPlatformMappingModel extends ChannelPartitionModel {
 
         public void setValue(Object value) {
             this.value = value;
+        }
+
+        public Map<String, FieldMapping> getChildren() {
+            return children;
+        }
+
+        public void setChildren(Map<String, FieldMapping> children) {
+            this.children = children;
         }
 
         public List<FieldMappingExpression> getExpressions() {

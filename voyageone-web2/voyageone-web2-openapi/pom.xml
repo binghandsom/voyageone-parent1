@@ -37,28 +37,14 @@
 			<version>${voyageone.service2.impl.version}</version>
 		</dependency>
 
-		<!--<dependency>-->
-			<!--<groupId>com.voyageone</groupId>-->
-			<!--<artifactId>voyageone-service2-dao</artifactId>-->
-			<!--<version>${voyageone.service2.dao.version}</version>-->
-		<!--</dependency>-->
-
-		<!--<dependency>-->
-			<!--<groupId>javax.servlet</groupId>-->
-			<!--<artifactId>javax.servlet-api</artifactId>-->
-		<!--</dependency>-->
-		<!--<dependency>-->
-			<!--<groupId>javax.servlet.jsp</groupId>-->
-			<!--<artifactId>javax.servlet.jsp-api</artifactId>-->
-		<!--</dependency>-->
-		<!--<dependency>-->
-			<!--<groupId>jstl</groupId>-->
-			<!--<artifactId>jstl</artifactId>-->
-		<!--</dependency>-->
-		<!--<dependency>-->
-			<!--<groupId>org.apache.shiro</groupId>-->
-			<!--<artifactId>shiro-all</artifactId>-->
-		<!--</dependency>-->
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
+		</dependency>
 
 	</dependencies>
 	<build>
