@@ -1576,7 +1576,7 @@ public class SxProductService extends BaseService {
      * 新版上新Field设值，不再根据Mapping，直接从product表platform下fields里取值
      * 做一个假的MASTER类型的WordParse的方式去处理
      */
-    private Map<String, Field> resolveMappingFromProductField(Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+    public Map<String, Field> resolveMappingFromProductField(Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
         Map<String, Field> retMap = null;
         SxData sxData = expressionParser.getSxData();
 
