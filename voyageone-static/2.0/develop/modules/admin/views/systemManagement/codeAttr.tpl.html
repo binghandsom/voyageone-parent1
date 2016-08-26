@@ -107,7 +107,7 @@
                     <td class="text-left v-middle">{{list.name}}</td>
                     <td class="text-left v-middle">{{list.name1}}</td>
                     <td class="text-left v-middle">{{list.des}}</td>
-                    <td class="text-center v-middle">{{list.active==true ? '启用':'禁用'}}</td>
+                    <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
                     <td class="text-left v-middle">{{list.modified}}</td>
                     <td class="text-center v-middle">{{list.modifier}}</td>
                 </tr>

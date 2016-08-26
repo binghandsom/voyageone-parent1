@@ -104,7 +104,7 @@
                     <td class="text-center v-middle">{{list.id}}</td>
                     <td class="text-left v-middle">{{list.name}}</td>
                     <td class="text-center v-middle">{{list.comment}}</td>
-                    <td class="text-center v-middle">{{list.active==1 ? '启用':'禁用'}}</td>
+                    <td class="text-center v-middle">{{list.active?list.active==1 ? '启用':'禁用':''}}</td>
                     <td class="text-left v-middle">{{list.modified}}</td>
                     <td class="text-center v-middle">{{list.modifier}}</td>
                 </tr>
