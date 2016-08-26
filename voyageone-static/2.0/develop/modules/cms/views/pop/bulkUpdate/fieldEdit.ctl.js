@@ -17,13 +17,17 @@ define([
                 cartId: context.cartId
             },
             properties: [],
-            selCnt: context.selCnt
+            selCnt: context.selCnt,
+            autoSynPrice: context.autoSynPrice
         };
 
         $scope.initialize = initialize;
         $scope.save = save;
 
         function initialize() {
+            if ($scope.vm.autoSynPrice == undefined || $scope.vm.autoSynPrice == null) {
+                $scope.vm.autoSynPrice == '0';
+            }
             $fieldEditService.getPopOptions().then(function (res) {
                 $scope.vm.properties = res.data;
             });
