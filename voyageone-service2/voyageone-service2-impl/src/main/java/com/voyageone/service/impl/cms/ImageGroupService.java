@@ -57,7 +57,7 @@ public class ImageGroupService extends BaseService {
      * @param productTypeList 相关产品类型列表
      * @param sizeTypeList    相关尺码列表
      */
-    public void save(String channelId, String userName, String cartId, String imageGroupName, String imageType, String viewType,
+    public CmsBtImageGroupModel save(String channelId, String userName, String cartId, String imageGroupName, String imageType, String viewType,
                      List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         CmsBtImageGroupModel model = new CmsBtImageGroupModel();
         model.setChannelId(channelId);
@@ -92,6 +92,7 @@ public class ImageGroupService extends BaseService {
         }
         model.setActive(1);
         cmsBtImageGroupDao.insert(model);
+        return  model;
     }
 
     /**

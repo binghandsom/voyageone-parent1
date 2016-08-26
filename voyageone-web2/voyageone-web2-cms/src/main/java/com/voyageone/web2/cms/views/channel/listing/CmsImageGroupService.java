@@ -1,14 +1,19 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
+import com.mchange.lang.IntegerUtils;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.IntUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtImageGroupBean;
+import com.voyageone.service.impl.cms.CmsBtSizeChartImageGroupService;
 import com.voyageone.service.impl.cms.ImageGroupService;
+import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import com.voyageone.web2.base.BaseAppService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +33,11 @@ public class CmsImageGroupService extends BaseAppService {
 
     @Autowired
     private ImageGroupService imageGroupService;
+@Autowired
+    CmsBtSizeChartImageGroupService cmsBtSizeChartImageGroupService;
 
+    @Autowired
+    SizeChartService sizeChartService;
     /**
      * 取得检索条件信息
      *
@@ -189,25 +198,50 @@ public class CmsImageGroupService extends BaseAppService {
      * @param param 客户端参数
      */
     public void save(Map<String, Object> param) {
-        String channelId = (String)param.get("channelId");
-        String userName = (String)param.get("userName");
-        String cartId = (String)param.get("platform");
-        String imageGroupName = (String)param.get("imageGroupName");
-        String imageType = (String)param.get("imageType");
-        String viewType = (String)param.get("viewType");
-        List<String> brandNameList = (List<String>)param.get("brandName");
-        List<String> productTypeList = (List<String>)param.get("productType");
-        List<String> sizeTypeList = (List<String>)param.get("sizeType");
-
+        String channelId = (String) param.get("channelId");
+        String userName = (String) param.get("userName");
+        String cartId = (String) param.get("platform");
+        String imageGroupName = (String) param.get("imageGroupName");
+        String imageType = (String) param.get("imageType");
+        String viewType = (String) param.get("viewType");
+        List<String> brandNameList = (List<String>) param.get("brandName");
+        List<String> productTypeList = (List<String>) param.get("productType");
+        List<String> sizeTypeList = (List<String>) param.get("sizeType");
+        int sizeChartId = 0;
+        String sizeChartName = "";
+        if (param.containsKey("sizeChartId")) {
+            sizeChartId = IntUtils.parseInt(param.get("sizeChartId"));
+        }
+        if (param.containsKey("sizeChartName")) {
+            sizeChartName = param.get("sizeChartName").toString();
+        }
         // 必须输入check
         if (StringUtils.isEmpty(cartId) || StringUtils.isEmpty(imageGroupName)
                 || StringUtils.isEmpty(imageType) || StringUtils.isEmpty(viewType)) {
             // 请输入必填项目
             throw new BusinessException("7000080");
         }
-
-        imageGroupService.save(channelId, userName, cartId, imageGroupName, imageType, viewType,
+        CmsBtImageGroupModel model = imageGroupService.save(channelId, userName, cartId, imageGroupName, imageType, viewType,
                 brandNameList, productTypeList, sizeTypeList);
+
+        if (sizeChartId > 0) {
+            //更新尺码表
+            CmsBtSizeChartModel cmsBtSizeChartModel = sizeChartService.getCmsBtSizeChartModel(sizeChartId, channelId);
+            cmsBtSizeChartModel.setBrandName(brandNameList);
+            cmsBtSizeChartModel.setProductType(productTypeList);
+            cmsBtSizeChartModel.setSizeType(sizeTypeList);
+            cmsBtSizeChartModel.setModifier(userName);
+            sizeChartService.update(cmsBtSizeChartModel);
+
+        } else if (!StringUtils.isEmpty(sizeChartName)) {
+            //新增尺码表
+            CmsBtSizeChartModel cmsBtSizeChartModel = sizeChartService.insert(channelId, userName, sizeChartName, brandNameList, productTypeList, sizeTypeList);
+            sizeChartId = cmsBtSizeChartModel.getSizeChartId();
+        }
+        if (sizeChartId > 0) {
+            //保存 尺码表 图片组关系表
+            cmsBtSizeChartImageGroupService.save(channelId, sizeChartId, model.getImageGroupId(), userName);
+        }
     }
 
     /**
