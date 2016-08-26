@@ -222,7 +222,7 @@ public class CmsImageGroupService extends BaseAppService {
             throw new BusinessException("7000080");
         }
         CmsBtImageGroupModel model = imageGroupService.save(channelId, userName, cartId, imageGroupName, imageType, viewType,
-                brandNameList, productTypeList, sizeTypeList);
+                brandNameList, productTypeList, sizeTypeList, sizeChartId, sizeChartName);
 
         if (sizeChartId > 0) {
             //更新尺码表
@@ -235,8 +235,11 @@ public class CmsImageGroupService extends BaseAppService {
 
         } else if (!StringUtils.isEmpty(sizeChartName)) {
             //新增尺码表
-            CmsBtSizeChartModel cmsBtSizeChartModel = sizeChartService.insert(channelId, userName, sizeChartName, brandNameList, productTypeList, sizeTypeList);
+            CmsBtSizeChartModel cmsBtSizeChartModel = sizeChartService.insert(channelId, userName, sizeChartName, brandNameList, productTypeList, sizeTypeList,model.getImageGroupId(),model.getImageGroupName());
             sizeChartId = cmsBtSizeChartModel.getSizeChartId();
+            model.setSizeChartId(cmsBtSizeChartModel.getSizeChartId());
+            model.setSizeChartName(cmsBtSizeChartModel.getSizeChartName());
+            imageGroupService.update(model);
         }
         if (sizeChartId > 0) {
             //保存 尺码表 图片组关系表

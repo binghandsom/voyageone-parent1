@@ -149,7 +149,8 @@ public class SizeChartService extends BaseService {
      * 根据尺码关系一览编辑的数据插入数据库
      */
     public CmsBtSizeChartModel insert(String channelId, String userName, String sizeChartName
-            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, long imageGroupId,
+                                              String imageGroupName) {
         //取得数据Model
         CmsBtSizeChartModel cmsBtSizeChartModel = new CmsBtSizeChartModel();
         //更新者
@@ -158,6 +159,8 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartModel.setCreater(userName);
         //店铺渠道
         cmsBtSizeChartModel.setChannelId(channelId);
+        cmsBtSizeChartModel.setImageGroupId(imageGroupId);
+        cmsBtSizeChartModel.setImageGroupName(imageGroupName);
         //尺码表自增键取得
         Long sizeChartId = commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_SIZE_CHART_ID);
         //尺码自增键

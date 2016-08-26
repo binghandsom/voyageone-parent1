@@ -131,8 +131,7 @@ public class CmsSizeChartService extends BaseAppService {
         if (StringUtils.isEmpty(sizeChartName)) {
             throw new BusinessException("7000080");
         }
-        //根据尺码关系一览编辑的数据插入数据库
-        CmsBtSizeChartModel model= sizeChartService.insert(channelId,userName,sizeChartName,brandNameList,productTypeList,sizeTypeList);
+
 
         long imageGroupId = 0;
         String imageGroupName = "";
@@ -142,7 +141,8 @@ public class CmsSizeChartService extends BaseAppService {
         if (param.containsKey("imageGroupName")) {
             imageGroupName = param.get("imageGroupName").toString();
         }
-
+//根据尺码关系一览编辑的数据插入数据库
+        CmsBtSizeChartModel model= sizeChartService.insert(channelId,userName,sizeChartName,brandNameList,productTypeList,sizeTypeList,imageGroupId,imageGroupName);
         if (imageGroupId > 0) {
             //更新组图
             CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.getImageGroupModel(String.valueOf(imageGroupId));
@@ -150,12 +150,16 @@ public class CmsSizeChartService extends BaseAppService {
             cmsBtImageGroupModel.setProductType(productTypeList);
             cmsBtImageGroupModel.setSizeType(sizeTypeList);
             cmsBtImageGroupModel.setModifier(userName);
+            cmsBtImageGroupModel.setSizeChartId(model.getSizeChartId());
+            cmsBtImageGroupModel.setSizeChartName(model.getSizeChartName());
             imageGroupService.update(cmsBtImageGroupModel);
-
         } else if (!StringUtils.isEmpty(imageGroupName)) {
             //新增组图
-            CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.save(channelId, userName,null,imageGroupName,null,null,brandNameList,productTypeList,sizeTypeList);
+            CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.save(channelId, userName,null,imageGroupName,null,null,brandNameList,productTypeList,sizeTypeList,model.getSizeChartId(),model.getSizeChartName());
             imageGroupId = cmsBtImageGroupModel.getImageGroupId();
+            model.setImageGroupId(cmsBtImageGroupModel.getImageGroupId());
+            model.setImageGroupName(cmsBtImageGroupModel.getImageGroupName());
+            sizeChartService.update(model);
         }
         if (imageGroupId > 0) {
             //保存 尺码表 图片组关系表
