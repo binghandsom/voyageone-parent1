@@ -144,7 +144,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             errorMsg = "商品被Lock，如确实需要上传商品，请先解锁";
         }
         //6.0.2
-        else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() >= parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
+        else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() > parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
             errorMsg = "市场价必须大于团购价";
         }
         if(!StringUtils.isEmpty(errorMsg)) {
@@ -174,12 +174,12 @@ public class JuMeiProductPlatform3Service extends BaseService {
         String errorMsg = "";
         if (parameter.cmsBtJmPromotionModel.getIsPromotionFullMinus())//满减专场
         {
-            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getCmsBtJmPromotionId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
             if (modelPromotionProduct != null) { //活动日期重叠
                 errorMsg = "该商品已于相关时间段内，在其它专场中完成上传，为避免财务结算问题，请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品";//取一个活动id
             }
         } else { //非满减专场 非大促
-            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectFullMinusDateRepeat(model.getId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectFullMinusDateRepeat(model.getCmsBtJmPromotionId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
             if (modelPromotionProduct != null) { //活动日期重叠
                 errorMsg = "该商品已在该大促时间范围内的其它未过期聚美专场中，完成上传，且开始时间与大促开始时间不一致。无法加入当前大促专场。聚美会监控大促专场的营销数据，禁止商品在活动启动前偷跑，大促商品必须有预热。请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品";//取一个活动id
 
@@ -187,7 +187,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
         if (StringUtils.isEmpty(errorMsg) && parameter.cmsBtJmPromotionModel.getPromotionType() == 2)//大促专场
         {
-            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getCmsBtJmPromotionId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
             if (modelPromotionProduct != null && modelPromotionProduct.getActivityStart() != model.getActivityStart()) { //活动日期重叠 开始时间不相等
                 errorMsg = "该商品已于相关时间段内，在其它专场中完成上传，为避免财务结算问题，请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品";//取一个活动id
 

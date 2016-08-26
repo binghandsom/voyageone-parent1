@@ -65,7 +65,10 @@
                         <div class="form-group">
                             <label for="fuzzy-search" class="control-label col-md-2" translate="TXT_FUZZY_SEARCH"></label>
                             <div class="col-md-6">
-                                <input id="fuzzy-search" class="form-control" ng-model="ctrl.assignInfo.keyWord" uib-tooltip="{{'TXT_TRANSLATION_FUZZY_SEARCH_TIP'|translate}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">
+                                <textarea id="fuzzy-search" class="form-control inherited" rows="3" ng-model="ctrl.assignInfo.keyWord" uib-tooltip="{{'TXT_TRANSLATION_FUZZY_SEARCH_TIP'|translate}}" tooltip-trigger="mouseenter" tooltip-placement="bottom"></textarea>
+                                <div class="text-warnings">
+                                    <i class="icon fa fa-bell-o"></i>&nbsp;换行分隔可批量输入产品Code，锁定【获取任务】范围.
+                                </div>
                             </div>
                             <div class="col-md-4">
                                 <button class="btn btn-success" ng-click="ctrl.assign()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>

@@ -340,7 +340,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         }
     }
 
-    private Map<String, List<Field>> getSchemaFields(BaseMongoMap<String, Object> fieldsValue, String catId, String channelId, Integer cartId, Long productId, String catPath, String language) {
+    private Map<String, List<Field>> getSchemaFields(BaseMongoMap<String, Object> fieldsValue, String catId, String channelId, Integer cartId, Long productId, String language, String catPath) {
         Map<String, List<Field>> fields = null;
 
         // 从mapping 来的默认值合并到商品属性中
