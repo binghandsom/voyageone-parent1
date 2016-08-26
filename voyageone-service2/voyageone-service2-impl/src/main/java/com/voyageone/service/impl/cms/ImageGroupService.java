@@ -240,7 +240,8 @@ public class ImageGroupService extends BaseService {
      */
     public CmsBtImageGroupModel getImageGroupModel(String imageGroupId) {
         JongoQuery queryObject = new JongoQuery();
-        queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + ",\"active\":1}");
+       // queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + ",\"active\":1}");
+        queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + "}");
         return cmsBtImageGroupDao.selectOneWithQuery(queryObject);
     }
 
