@@ -2,7 +2,8 @@
  * Created by sofia on 7/5/2016.
  */
 define([
-    'vms'
+    'vms',
+    'directives/angularBarcode.directive'
 ], function (vms) {
     vms.controller('AddToShipmentController', (function () {
 
@@ -67,6 +68,17 @@ define([
                 self.scan(self.barcode);
             }
 
+        };
+
+        AddToShipmentController.prototype.printLabel = function () {
+            var canvas = $('#label').find('canvas').get(0);
+            var popupWin = window.open('', '_blank', 'width=300,height=300');
+            popupWin.document.open();
+            var img = canvas.toDataURL("image/png");
+            popupWin.document.write('<img src="'+img+'"/>');
+            popupWin.document.close();
+            popupWin.print();
+            popupWin.close();
         };
 
         return AddToShipmentController;
