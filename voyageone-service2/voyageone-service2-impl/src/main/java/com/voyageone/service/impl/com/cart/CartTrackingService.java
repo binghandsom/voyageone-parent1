@@ -29,6 +29,10 @@ public class CartTrackingService extends BaseService {
 	
 	@Autowired
 	private ComMtTrackingInfoConfigDaoExt cartTrackingDaoExt;
+	
+	public List<ComMtTrackingInfoConfigBean> searchCartTrackingByKeys(String channelId, Integer cartId) {
+		return searchCartTrackingByPage(channelId, cartId, null, null, null, null, null).getResult();
+	}
 
 	public PageModel<ComMtTrackingInfoConfigBean> searchCartTrackingByPage(String channelId, Integer cartId,
 			String trackingStatus, String location, Boolean active, Integer pageNum, Integer pageSize) {

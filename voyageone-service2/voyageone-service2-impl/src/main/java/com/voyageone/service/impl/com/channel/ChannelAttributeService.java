@@ -29,6 +29,10 @@ public class ChannelAttributeService extends BaseService {
 	
 	@Autowired
 	private ComMtValueChannelDaoExt channelAttrDaoExt;
+	
+	public List<ComMtValueChannelBean> searchChannelAttributeByChannelId(String channelId) {
+		return searchChannelAttributeByPage(channelId, null, null, null, null, null, null, null).getResult();
+	}
 
 	public PageModel<ComMtValueChannelBean> searchChannelAttributeByPage(String channelId, Integer typeId,
 			String langId, String name, String value, Boolean active, Integer pageNum, Integer pageSize) {

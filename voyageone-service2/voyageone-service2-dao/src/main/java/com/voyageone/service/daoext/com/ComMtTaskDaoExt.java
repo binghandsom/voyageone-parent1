@@ -3,6 +3,7 @@ package com.voyageone.service.daoext.com;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.voyageone.service.bean.com.ComMtTaskBean;
@@ -25,5 +26,7 @@ public interface ComMtTaskDaoExt {
 	List<ComMtTaskBean> selectTypeByPage(Map<String, Object> params);
 
 	TmTaskControlModel selectTaskConfig(Map<String, Object> params);
+
+	List<ComMtTaskBean> searchTaskByChannelId(@Param("cfgName") String cfgName, @Param("channelId") String channelId);
 
 }

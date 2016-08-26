@@ -29,6 +29,10 @@ public class ThirdPartyConfigService extends BaseService {
 	
 	@Autowired
 	private ComMtThirdPartyConfigDaoExt thirdPartyConfigDaoExt;
+	
+	public List<ComMtThirdPartyConfigBean> searchThirdPartyConfigByChannelId(String channelId) {
+		return searchThirdPartyConfigByPage(channelId, null, null, null, null, null).getResult();
+	}
 
 	public PageModel<ComMtThirdPartyConfigBean> searchThirdPartyConfigByPage(String channelId, String propName,
 			String propVal, Boolean active, Integer pageNum, Integer pageSize) {

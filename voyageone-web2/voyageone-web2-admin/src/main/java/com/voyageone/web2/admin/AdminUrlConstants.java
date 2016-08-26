@@ -293,6 +293,21 @@ public interface AdminUrlConstants {
 		}
 		
 	}
+	
+	interface OpenShop {
+		
+		/** 开店信息 */
+		interface Self {
+			
+			String ROOT = "/admin/openshop/self";
+			
+			String GET_CHANNEL_SERIES = "getChannelSeries";
+
+			String GET_NEW_CHANNEL_SERIES = "getNewChannelSeries";
+			
+		}
+		
+	}
 
 	interface User {
 

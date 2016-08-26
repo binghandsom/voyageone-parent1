@@ -30,6 +30,10 @@ public class CarrierConfigService extends BaseService {
 	
 	@Autowired
 	private TmCarrierChannelDaoExt carrierChannelDaoExt;
+	
+	public List<TmCarrierChannelBean> searchCarrierConfigByChannelId(String channelId) {
+		return searchCarrierConfigByPage(channelId, null, null, null, null, null).getResult();
+	}
 
 	public PageModel<TmCarrierChannelBean> searchCarrierConfigByPage(String channelId, String carrier,
 			String useKd100Flg, Boolean active, Integer pageNum, Integer pageSize) {

@@ -1,5 +1,7 @@
 package com.voyageone.service.bean.com;
 
+import java.util.List;
+
 import com.voyageone.service.model.com.TmChannelShopModel;
 
 /**
@@ -11,6 +13,8 @@ public class TmChannelShopBean extends TmChannelShopModel {
 	private String channelName;
 	
 	private String cartName;
+	
+	private List<TmChannelShopConfigBean> cartShopConfig;
 
 	public String getChannelName() {
 		return channelName;
@@ -26,6 +30,14 @@ public class TmChannelShopBean extends TmChannelShopModel {
 
 	public void setCartName(String cartName) {
 		this.cartName = cartName;
+	}
+
+	public List<TmChannelShopConfigBean> getCartShopConfig() {
+		return cartShopConfig;
+	}
+
+	public void setCartShopConfig(List<TmChannelShopConfigBean> cartShopConfig) {
+		this.cartShopConfig = cartShopConfig;
 	}
 	
 }

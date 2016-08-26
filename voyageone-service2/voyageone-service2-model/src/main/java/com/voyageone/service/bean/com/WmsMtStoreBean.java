@@ -1,5 +1,7 @@
 package com.voyageone.service.bean.com;
 
+import java.util.List;
+
 import com.voyageone.service.model.com.WmsMtStoreModel;
 
 /**
@@ -11,6 +13,8 @@ public class WmsMtStoreBean extends WmsMtStoreModel {
 	private String channelName;
 	
 	private String mainStoreName;
+	
+	private List<CtStoreConfigBean> storeConfig;
 
 	public String getChannelName() {
 		return channelName;
@@ -27,6 +31,13 @@ public class WmsMtStoreBean extends WmsMtStoreModel {
 	public void setMainStoreName(String mainStoreName) {
 		this.mainStoreName = mainStoreName;
 	}
-	
+
+	public List<CtStoreConfigBean> getStoreConfig() {
+		return storeConfig;
+	}
+
+	public void setStoreConfig(List<CtStoreConfigBean> storeConfig) {
+		this.storeConfig = storeConfig;
+	}
 	
 }

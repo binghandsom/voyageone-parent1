@@ -1,5 +1,7 @@
 package com.voyageone.service.bean.com;
 
+import java.util.List;
+
 import com.voyageone.service.model.com.ComMtTaskModel;
 
 /**
@@ -9,6 +11,8 @@ import com.voyageone.service.model.com.ComMtTaskModel;
 public class ComMtTaskBean extends ComMtTaskModel {
 	
 	private String runFlg;
+	
+	private List<TmTaskControlBean> taskConfig;
 
 	public String getRunFlg() {
 		return runFlg;
@@ -16,6 +20,14 @@ public class ComMtTaskBean extends ComMtTaskModel {
 
 	public void setRunFlg(String runFlg) {
 		this.runFlg = runFlg;
+	}
+
+	public List<TmTaskControlBean> getTaskConfig() {
+		return taskConfig;
+	}
+
+	public void setTaskConfig(List<TmTaskControlBean> taskConfig) {
+		this.taskConfig = taskConfig;
 	}
 	
 }

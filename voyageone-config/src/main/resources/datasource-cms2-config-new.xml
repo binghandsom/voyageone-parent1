@@ -85,7 +85,6 @@
                         <value>id_filter=selectList,ByPage</value>
                     </property>
                 </bean>
-                <bean class="com.voyageone.base.dao.mysql.MybatisUtilsInterceptor"/>
             </array>
         </property>
     </bean>

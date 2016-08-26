@@ -75,5 +75,12 @@
 		select count(0) from tm_task_control ttc join com_mt_task cmt on cmt.task_name = ttc.task_id
 		<include refid="selectTaskConfigFilter"/>
 	</select>
+	
+	<select id="searchTaskByChannelId" resultMap="taskBeanMap">
+		select cmt.task_id, cmt.task_type, cmt.task_name, cmt.task_comment, cmt.task_freq, ttc.cfg_val1 as run_flg,
+			cmt.created, cmt.creater, cmt.modified, cmt.modifier 
+		from com_mt_task cmt join tm_task_control ttc on ttc.task_id = cmt.task_name
+		where ttc.cfg_name = #{cfgName} and ttc.cfg_val1 = #{channelId}
+	</select>
 
 </mapper>
