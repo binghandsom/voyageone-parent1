@@ -82,19 +82,31 @@ define([
                     pageInfo: self.channelPageOption
                 }
             },
-            edit: function () {
+            edit: function (type) {
                 var self = this;
-                if (self.sysTypeAttrSelList.selList.length <= 0) {
-                    self.alert('TXT_MSG_NO_ROWS_SELECT');
-                    return;
-                } else {
-                    _.forEach(self.systemList, function (Info) {
-                        if (Info.id == self.sysTypeAttrSelList.selList[0].id) {
-                            self.popups.openTypeAttr(Info).then(function () {
-                                self.search(1);
+                switch (type) {
+                    case 'edit':
+                        if (self.sysTypeAttrSelList.selList.length <= 0) {
+                            self.alert('TXT_MSG_NO_ROWS_SELECT');
+                            return;
+                        } else {
+                            _.forEach(self.systemList, function (Info) {
+                                if (Info.id == self.sysTypeAttrSelList.selList[0].id) {
+                                    self.popups.openTypeAttr(Info).then(function () {
+                                        self.search(1);
+                                    });
+                                }
                             });
                         }
-                    })
+                        break;
+                    case 'add':
+                        self.popups.openTypeAttr('add').then(function () {
+                            self.typeService.getAllType().then(function (res) {
+                                self.typeList = res.data;
+                            });
+                            self.search(1);
+                        });
+                        break;
                 }
 
             },

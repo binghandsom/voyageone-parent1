@@ -101,7 +101,7 @@ define([
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.carrierSelList.selList, function (delInfo) {
-                            delList.push({'orderChannelId': delInfo.id, 'carrier': delInfo.code});
+                            delList.push({'orderChannelId': delInfo.orderChannelId, 'carrier': delInfo.code});
                         });
                         self.carrierConfigService.deleteCarrierConfig(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);

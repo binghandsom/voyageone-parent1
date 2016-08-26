@@ -92,7 +92,7 @@ define([
                     return;
                 } else {
                     _.forEach(self.cartList, function (Info) {
-                        if (Info.storeId == self.storeSelList.selList[0].id) {
+                        if (Info.cartId == self.cartShopSelList.selList[0].id) {
                             _.extend(Info, {'configType': type});
                             self.popups.openConfig(Info);
                         }

@@ -14,6 +14,7 @@ define([
             this.popType = '编辑';
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
+            this.checked = false;
         }
 
         CartAddTrackingInfoController.prototype = {
@@ -23,7 +24,9 @@ define([
                     self.popType = '添加';
                     self.sourceData = {}
                 }
-                self.sourceData.active = self.sourceData.active ?  self.sourceData.active ? "1" : "0":'';
+                self.sourceData.trackingSpreadFlg ? self.sourceData.trackingSpreadFlg == '1' ? self.checked = true : self.checked = false : '';
+                self.checked == true ? self.sourceData.trackingSpreadFlg = true : self.sourceData.trackingSpreadFlg = false;
+                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "1" : "0" : '';
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
@@ -37,6 +40,7 @@ define([
             save: function () {
                 var self = this;
                 var result = {};
+                self.sourceData.trackingSpreadFlg = self.sourceData.trackingSpreadFlg == true ? self.sourceData.trackingSpreadFlg = '1' : '';
                 self.sourceData.active = self.sourceData.active == '1' ? true : false;
                 self.sourceData.trackingSpreadFlg = self.sourceData.trackingSpreadFlg == true ? '1' : '';
                 if (self.append == true) {

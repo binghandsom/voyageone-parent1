@@ -109,7 +109,7 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.cartTrackingSelList.selList, function (delInfo) {
-                            delList.push({'orderChannelId': delInfo.orderChannelId, 'cartId': delInfo.cartId});
+                            delList.push({'seq': delInfo.id, 'cartId': delInfo.cartId});
                         });
                         self.cartTrackingService.deleteCartTracking(delList).then(function (res) {
                             self.search();
