@@ -5,13 +5,13 @@ import org.junit.Test;
 
 /**
  * 京东国际平台详情页描述JSON生成工具
- *  (929) 悦境店: 默认、保健品
+ *  (929) 悦境店: 化妆品
  *
  * @author desmond on 2016/6/12.
  * @version 2.1.0
  * @since 2.1.0
  */
-public class Jingdong_929_YueJing_LuckyVitamin_DictTest {
+public class Jingdong_929_YueJing_HuaZhuangPin_DictTest {
 
     String C_TEXT_BR = "<br />";
     String C_TEMPLATE_IMG = "<img src=%s>";
@@ -39,7 +39,7 @@ public class Jingdong_929_YueJing_LuckyVitamin_DictTest {
     @Test
     public void startupTest() {
 
-        doCreateJson("京东详情页描述【保健品】", false, doDict_详情页描述());
+        doCreateJson("京东详情页描述【化妆品】", false, doDict_详情页描述());
 //        doCreateJson("京东详情页描述", false, doDict_详情页描述_TEST());
 //        doCreateJson("关联版式", false, doDict_关联版式_TEST());
 
@@ -130,13 +130,13 @@ public class Jingdong_929_YueJing_LuckyVitamin_DictTest {
 
                 {
                     //   1.1 寻遍全球发现好货
-                    TextWord textWord = new TextWord("<img src=\"http://img30.360buyimg.com/popWaterMark/jfs/t2614/193/2518100957/183329/4d2ed181/57691885Naec223d0.jpg\"><br />");
+                    TextWord textWord = new TextWord("<img src=\"https://img10.360buyimg.com/imgzone/jfs/t3280/128/376652726/240734/e8f786b4/57b3d884Na0f84fec.jpg\"><br />");
                     ruleRoot.addRuleWord(textWord);
                 }
 
                 {
                     //   1.2 消费者告知书
-                    TextWord textWord = new TextWord("<img src=\"http://img30.360buyimg.com/popWaterMark/jfs/t2938/149/794673756/131726/6d62c641/57691885N60b9803f.jpg\"><br />");
+                    TextWord textWord = new TextWord("<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2980/183/2593730632/143801/8c4b5c8d/57b3d885N517d2a54.jpg\"><br />");
                     ruleRoot.addRuleWord(textWord);
                 }
 
@@ -166,7 +166,7 @@ public class Jingdong_929_YueJing_LuckyVitamin_DictTest {
 
             {
                 // 所有商品图的提示文字固定图片
-                TextWord textWord = new TextWord("<img src=\"http://img10.360buyimg.com/imgzone/jfs/t2746/300/2296315934/10785/df3e02ca/575f7935N54e565a9.jpg\" />");
+                TextWord textWord = new TextWord("<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2905/52/4273225125/23134/b834a6f0/57b3d885N27e1a5a5.jpg\" />");
                 ruleRoot.addRuleWord(textWord);
             }
 
@@ -195,19 +195,19 @@ public class Jingdong_929_YueJing_LuckyVitamin_DictTest {
 
                 {
                     //   4.1 购物流程
-                    TextWord textWord = new TextWord("<img src=\"http://img30.360buyimg.com/popWaterMark/jfs/t2932/112/792034825/74390/cc1ee443/576918daN74acf582.jpg\"><br />");
+                    TextWord textWord = new TextWord("<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2746/97/4339733011/85805/3091b824/57b3d885Neb1d2684.jpg\"><br />");
                     ruleRoot.addRuleWord(textWord);
                 }
 
                 {
                     //   4.2 温馨提示
-                    TextWord textWord = new TextWord("<img src=\"http://img30.360buyimg.com/popWaterMark/jfs/t2599/362/2585900445/111062/fd1de4de/576918e9N079e484c.jpg\"><br />");
+                    TextWord textWord = new TextWord("<img src=\"https://img10.360buyimg.com/imgzone/jfs/t3208/68/375918826/121574/a1313c41/57b3d886Ne2ac4430.jpg\"><br />");
                     ruleRoot.addRuleWord(textWord);
                 }
 
                 {
                     //   4.3 售后须知
-                    TextWord textWord = new TextWord("<img src=\"http://img30.360buyimg.com/popWaterMark/jfs/t2896/79/2495768949/140387/224f1a88/576918f8N9f40000d.jpg\"><br />");
+                    TextWord textWord = new TextWord("<img src=\"https://img10.360buyimg.com/imgzone/jfs/t3184/211/368691495/151000/2acca73a/57b3d886N142aa3a3.jpg\"><br />");
                     ruleRoot.addRuleWord(textWord);
                 }
 
