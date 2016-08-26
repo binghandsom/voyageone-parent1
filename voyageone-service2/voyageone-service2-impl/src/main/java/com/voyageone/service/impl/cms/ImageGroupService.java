@@ -207,7 +207,7 @@ public class ImageGroupService extends BaseService {
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery(getSearchQuery(channelId, platFormChangeList, imageType, beginModified,
                 endModified, brandNameList, productTypeList, sizeTypeList));
-        queryObject.setSort("{imageGroupId:-1}");
+        queryObject.setSort("{imageGroupId:1}");
         queryObject.setLimit(size);
         queryObject.setSkip((curr - 1) * size);
         return cmsBtImageGroupDao.select(queryObject);

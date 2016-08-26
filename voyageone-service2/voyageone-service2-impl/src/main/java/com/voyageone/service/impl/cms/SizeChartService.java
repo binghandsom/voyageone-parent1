@@ -42,7 +42,7 @@ public class SizeChartService extends BaseService {
         JongoQuery queryObject = new JongoQuery();
         //取得收索的条件
         queryObject.setQuery(getSearchQuery(channelId, sizeChartName, finishFlag, startTime, endTime, brandNameList, productTypeList, sizeTypeList));
-        queryObject.setSort("{sizeChartId:-1}");
+        queryObject.setSort("{sizeChartId:1}");
         queryObject.setLimit(size);
         queryObject.setSkip((curr - 1) * size);
         //返回数据的类型
