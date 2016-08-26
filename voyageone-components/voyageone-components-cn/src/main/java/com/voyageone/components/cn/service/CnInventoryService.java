@@ -3,7 +3,7 @@ package com.voyageone.components.cn.service;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.cn.CnBase;
 import com.voyageone.components.cn.beans.InventoryUpdateBean;
-import com.voyageone.components.cn.enums.InventorySynType;
+import com.voyageone.components.cn.enums.CnUpdateType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 
@@ -30,7 +30,7 @@ public class CnInventoryService extends CnBase {
      * @return response
      * @throws UnsupportedEncodingException
      */
-    public String UpdateInventory(InventorySynType synType, ShopBean shopBean, List<InventoryUpdateBean> beans) throws Exception {
+    public String UpdateInventory(CnUpdateType synType, ShopBean shopBean, List<InventoryUpdateBean> beans) throws Exception {
 
         String sign = shopBean.getAppKey();
 
