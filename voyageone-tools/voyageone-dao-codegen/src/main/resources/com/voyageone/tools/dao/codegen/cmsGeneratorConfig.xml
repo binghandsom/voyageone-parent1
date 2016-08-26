@@ -411,7 +411,15 @@
                selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
-
-
+        <table tableName="cms_bt_feed_import_size" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table tableName="cms_bt_size_chart_image_group" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
     </context>
 </generatorConfiguration>

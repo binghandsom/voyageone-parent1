@@ -63,7 +63,7 @@ public class CmsFieldEditController extends CmsController {
                 return success(rs);
             } else if ("retailprice".equals(prop)) {
                 // 指导价变更批量确认
-                Map<String, Object> rs = fieldEditService.confirmRatailPrice(params, getUser(), cmsSession);
+                Map<String, Object> rs = fieldEditService.confirmRetailPrice(params, getUser(), cmsSession);
                 return success(rs);
             }
             return success(null);

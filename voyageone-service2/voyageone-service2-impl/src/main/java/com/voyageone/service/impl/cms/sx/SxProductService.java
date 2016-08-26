@@ -323,6 +323,25 @@ public class SxProductService extends BaseService {
     }
 
     /**
+     * cms_bt_business_log对应的以前的错误清一下,即把status更新成1:已解决
+     *
+     * @param sxData 上新数据
+     * @param modifier 更新者
+     */
+    public void clearBusinessLog(SxData sxData, String modifier) {
+        CmsBtProductGroupModel productGroup = sxData.getPlatform();
+
+        // code，没有code就不要设置
+        String mainCode = "";
+        if (productGroup != null) mainCode = productGroup.getMainProductCode();
+
+        int effectCnt = businessLogService.updateFinishStatusByCondition(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()),
+                null, mainCode, modifier);
+        $debug("cms_bt_business_log表以前的错误信息逻辑删除件数：%d件 [ChannelId:%s] [CatId:%s] [GroupId:%s]",
+                effectCnt, sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId());
+    }
+
+    /**
      * 回写ims_bt_product表
      *
      * @param sxData 上新数据
@@ -2817,6 +2836,16 @@ public class SxProductService extends BaseService {
             }
             if (matchModels.size() == 1) {
                 $info("找到image_group记录!");
+                if (matchModels.get(0).getImage() == null || matchModels.get(0).getImage().size() == 0) {
+                    throw new BusinessException("共通图片表找到的图片类型对应的图片数为0,请确保至少上传1张图片！" +
+                            "channelId= " + channelId +
+                            ",cartId= " + cartId +
+                            ",imageType= " + imageType +
+                            ",viewType= "+ viewType +
+                            ",BrandName= " + paramBrandName +
+                            ",ProductType= " + paramProductType +
+                            ",SizeType=" + paramSizeType);
+                }
                 for (CmsBtImageGroupModel_Image imageInfo : matchModels.get(0).getImage()) {
                     if (getOriUrl) {
                         // 取原始图url
@@ -3384,8 +3413,7 @@ public class SxProductService extends BaseService {
         }
 
         // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
-        businessLogService.updateFinishStatusByCondition(sxData.getChannelId(), sxData.getCartId(), StringUtils.toString(sxData.getGroupId()),
-                null, sxData.getMainProduct().getCommon().getFields().getCode(), modifier);
+        clearBusinessLog(sxData, modifier);
 
         // 上新成功时
         if (uploadStatus) {

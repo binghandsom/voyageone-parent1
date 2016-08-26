@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.com.ComOpenApiClientDaoExt">
+
+    <select id="selectByClientSecret"  resultType="com.voyageone.service.model.openapi.oauth.ComOpenApiClientModel">
+        select
+            user_account,
+            client_id
+        from voyageone_core.com_openapi_client
+        where client_id=#{clientId,jdbcType=VARCHAR} and client_secret=#{clientSecret,jdbcType=VARCHAR} and active=1
+    </select>
+
+</mapper>

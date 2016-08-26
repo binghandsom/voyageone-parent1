@@ -178,7 +178,7 @@ public class CmsAdvSearchQueryService extends BaseService {
             if (searchValue.getpCatPathList() != null && searchValue.getpCatPathList().size() > 0) {
                 StringBuilder pCatPathStr = new StringBuilder("{$or:[");
                 int idx = 0;
-                for (String pCatPath : searchValue.getfCatPathList()) {
+                for (String pCatPath : searchValue.getpCatPathList()) {
                     if (idx == 0) {
                         pCatPathStr.append("{'platforms.P" + cartId + ".pCatPath':{'$regex':'^" + pCatPath + "'}}");
                         idx ++;
@@ -234,8 +234,14 @@ public class CmsAdvSearchQueryService extends BaseService {
 
             // 查询价格变动(指导售价)
             if (StringUtils.isNotEmpty(searchValue.getPriceChgFlg())) {
-                queryObject.addQuery("{'platforms.P#.skus.priceChgFlg':{'$regex':'^" + searchValue.getPriceChgFlg() + "'}}");
-                queryObject.addParameters(cartId);
+                if (searchValue.getPriceChgFlg().startsWith("X")) {
+                    // 比较指导售价和建议售价的大小
+                    queryObject.addQuery("{'platforms.P#.skus.priceMsrpFlg':{'$regex':'^" + searchValue.getPriceChgFlg() + "'}}");
+                    queryObject.addParameters(cartId);
+                } else {
+                    queryObject.addQuery("{'platforms.P#.skus.priceChgFlg':{'$regex':'^" + searchValue.getPriceChgFlg() + "'}}");
+                    queryObject.addParameters(cartId);
+                }
             }
 
             // 查询价格比较（最终售价）

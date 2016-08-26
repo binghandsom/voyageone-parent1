@@ -151,7 +151,7 @@ public class CmsFieldEditService extends BaseAppService {
         Map<String, Object> prop = (Map<String, Object>) params.get("property");
         String prop_id = StringUtils.trimToEmpty((String) prop.get("id"));
         if ("productType".equals(prop_id) || "sizeType".equals(prop_id)) {
-            // 税号更新
+            // 产品分类/适用人群
             String stsCode = null;
             Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
             if (valObj != null) {
@@ -251,6 +251,36 @@ public class CmsFieldEditService extends BaseAppService {
             logParams.put("codeList", productCodes);
             logParams.put("voRate", voRateVal);
             sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
+
+        } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id)) {
+            // 税号更新
+            String hsCode = null;
+            Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
+            if (valObj != null) {
+                hsCode = (String) valObj.get("value");
+            }
+            if (hsCode == null || hsCode.isEmpty()) {
+                $warn("没有设置变更项目 params=" + params.toString());
+                rsMap.put("ecd", 2);
+                return rsMap;
+            }
+
+            JongoUpdate updObj = new JongoUpdate();
+            updObj.setQuery("{'common.fields.code':{$in:#}}");
+            updObj.setQueryParameters(productCodes);
+            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}");
+            updObj.setUpdateParameters(hsCode, userInfo.getUserName(), DateTimeUtil.getNow());
+
+            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
+            $debug("批量更新结果 " + rs.toString());
+
+            params.put("productIds", productCodes);
+            params.put("_taskName", "batchupdate");
+            params.put("_channleId",  userInfo.getSelChannelId());
+            params.put("_userName",  userInfo.getUserName());
+            sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+            rsMap.put("ecd", 0);
+            return rsMap;
 
         } else {
             $warn("CmsFieldEditService.setProductFields 错误的选择项 params=" + params.toString());
@@ -970,7 +1000,7 @@ public class CmsFieldEditService extends BaseAppService {
     /**
      * 批量修改属性.(指导价变更批量确认)
      */
-    public Map<String, Object> confirmRatailPrice(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+    public Map<String, Object> confirmRetailPrice(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
         List<String> productCodes = (ArrayList<String>) params.get("productIds");
         Integer isSelAll = (Integer) params.get("isSelAll");
         if (isSelAll == null) {
@@ -1025,9 +1055,11 @@ public class CmsFieldEditService extends BaseAppService {
                 List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartIdVal).getSkus();
                 for (BaseMongoMap skuObj : skuList) {
                     Boolean isSaleFlg = (Boolean) skuObj.get("isSale");
-                    String cfmFlg = skuObj.getStringAttribute("confirmFlg");
-                    if ("0".equals(cfmFlg) && isSaleFlg) {
-                        skuObj.put("confirmFlg", "1");
+                    String chgFlg = StringUtils.trimToEmpty(skuObj.getStringAttribute("priceChgFlg"));
+                    if ((chgFlg.startsWith("U") || chgFlg.startsWith("D")) && isSaleFlg) {
+                        // 指导价有变更
+                        skuObj.put("priceChgFlg", "0");
+                        skuObj.put("confPriceRetail", skuObj.getDoubleAttribute("priceRetail"));
                         isUpdFlg = true;
                     }
                 }
@@ -1043,6 +1075,9 @@ public class CmsFieldEditService extends BaseAppService {
                     if (rs != null) {
                         $debug(String.format("指导价变更批量确认 channelId=%s 执行结果=%s", userInfo.getSelChannelId(), rs.toString()));
                     }
+
+                    // TODO--保存确认历史
+
                 }
             }
 

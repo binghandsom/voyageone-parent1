@@ -15,6 +15,12 @@
         <!-- ms -->
         <constructor-arg name="readTimeout" value="60000"/>
         <!-- ms -->
+
+        <!--clientId-->
+        <property name="clientId" value="c1ebe466-1cdc-4bd3-ab69-77c3561b9dee"/>
+        <!--clientSecret-->
+        <property name="clientSecret" value="d8346ea2-6017-43ed-ad68-19c0f971738b"/>
+
     </bean>
 
 </beans>

@@ -4,20 +4,15 @@ import com.google.common.base.Preconditions;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.cms.CmsBtStoreOperationHistoryBean;
 import com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel;
-import org.apache.commons.lang.math.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.annotation.Resource;
-import javax.validation.constraints.AssertTrue;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @description
