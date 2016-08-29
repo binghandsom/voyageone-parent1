@@ -1,8 +1,10 @@
 package com.voyageone.web2.vms.views.feed;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
+import com.voyageone.web2.vms.VmsConstants;
 import com.voyageone.web2.vms.VmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +67,7 @@ public class VmsFeedImportResultController extends BaseController {
     @RequestMapping(VmsUrlConstants.FEED.FEED_IMPORT_RESULT.DOWN_FEED_ERROR_FILE)
     public ResponseEntity downloadFeedErrorFile(@RequestParam String errorFileName) throws IOException {
         // Feed错误文件路径
-        String checkResultFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.check");
+        String checkResultFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.feed.check");
         checkResultFilePath += "/" + getUser().getSelChannelId() + "/";
 
         try(FileInputStream file = new FileInputStream(checkResultFilePath + errorFileName)) {

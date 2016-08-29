@@ -121,7 +121,7 @@ public class HtDealGetDealByHashIDResponse extends BaseJMResponse {
             if ("".equals(this.error_code)) {
                 this.setIs_Success(true);
             } else {
-                this.setErrorMsg(this.body);
+                this.setErrorMsg(this.getRequestUrl()+this.body);
             }
         } catch (Exception ex) {
             logger.error("setBody ",ex);

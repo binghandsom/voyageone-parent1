@@ -15,7 +15,16 @@ import java.io.Serializable;
  */
 public abstract class BaseJMResponse implements Serializable {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
     @Autowired
     protected IssueLog issueLog;
+
+    public String requestUrl;
+
+    public String getRequestUrl() {
+        return requestUrl;
+    }
+
+    public void setRequestUrl(String requestUrl) {
+        this.requestUrl = requestUrl;
+    }
 }

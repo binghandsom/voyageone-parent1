@@ -46,7 +46,7 @@ public class HtDealUpdateResponse extends BaseJMResponse {
         if (map.containsKey("error_code") && "0".equals(map.get("error_code"))) {
             this.setIs_Success(true);
         } else {
-            this.setErrorMsg(UnicodeUtil.decodeUnicode(body));
+            this.setErrorMsg(this.getRequestUrl()+UnicodeUtil.decodeUnicode(body));
         }
         this.body = body;
         } catch (Exception ex) {

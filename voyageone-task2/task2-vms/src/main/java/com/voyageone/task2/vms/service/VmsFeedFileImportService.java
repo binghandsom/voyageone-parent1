@@ -184,11 +184,11 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 String feedFilePath = "";
                 // online上传的场合
                 if (VmsConstants.FeedFileUploadType.ONLINE.equals(uploadType)) {
-                    feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.online.upload");
+                    feedFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.feed.online.upload");
                     feedFilePath += "/" + channel.getOrder_channel_id() + "/";
                 } else {
                     // ftp上传的场合
-                    feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.ftp.upload");
+                    feedFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY,"vms.feed.ftp.upload");
                     feedFilePath += "/" + channel.getOrder_channel_id() + "/feed/";
                 }
 
@@ -1547,7 +1547,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         private String createErrorFilePath() {
             $info("生成Feed检索结果Error文件,channel：" + channel.getFull_name());
             // 取得Feed文件检查结果路径
-            String feedErrorFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.check");
+            String feedErrorFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.feed.check");
             feedErrorFilePath += "/" + channel.getOrder_channel_id() + "/";
             // 创建文件目录
             FileUtils.mkdirPath(feedErrorFilePath);
@@ -1563,11 +1563,11 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             String feedFilePath ="";
             // online上传的场合
             if (VmsConstants.FeedFileUploadType.ONLINE.equals(uploadType)) {
-                feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.online.upload");
+                feedFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.feed.online.upload");
                 feedFilePath +=  "/" + channel.getOrder_channel_id() + "/";
             } else {
                 // ftp上传的场合
-                feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.ftp.upload");
+                feedFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.feed.ftp.upload");
                 feedFilePath += "/" + channel.getOrder_channel_id() + "/feed/";
             }
             // 创建文件目录

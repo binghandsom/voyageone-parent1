@@ -9,6 +9,8 @@ public class VmsConstants {
 	public final static char COMMA = ',';
 	// utf-8
 	public final static String UTF_8 = "utf-8";
+	// VMS_PROPERTY
+	public final static String VMS_PROPERTY = "VMS_PROPERTY";
 
 
 	/**

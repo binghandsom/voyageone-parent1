@@ -294,6 +294,9 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                 // 产品规格
                 MultiComplexField cspuListField = (MultiComplexField) field;
                 for (Field subField : cspuListField.getFields()) {
+                    if (subField.getType() != FieldTypeEnum.COMPLEX) {
+                        continue;
+                    }
                     ComplexField cspuField = (ComplexField) subField;
                     Map<String, Field> mapFields = cspuField.getFieldMap();
                     String[] barcodeXml = ((InputField) mapFields.get("barcode")).getDefaultValue().split(":"); // 3:090891203253  1:3607342551800 冒号前面不知道是什么
