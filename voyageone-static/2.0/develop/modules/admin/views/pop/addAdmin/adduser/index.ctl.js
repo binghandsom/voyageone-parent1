@@ -33,6 +33,7 @@ define([
                     for (var item in self.allList) {
                         self.roleAllList.push({'roleId': item, 'roleName': self.allList[item]});
                     }
+                    if (self.popType == '添加用户') return;
                     return call(self.roleAllList);
                 });
                 function call(roleAllList) {

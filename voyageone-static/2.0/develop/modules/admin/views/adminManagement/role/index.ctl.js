@@ -7,8 +7,8 @@ define([
     'admin',
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
-    admin.controller('UserManagementController', (function () {
-        function UserManagementController(popups, alert, confirm, adminUserService, storeService, adminOrgService, channelService, adminRoleService, selectRowsFactory) {
+    admin.controller('RoleManagementController', (function () {
+        function RoleManagementController(popups, alert, confirm, adminUserService, storeService, adminOrgService, channelService, adminRoleService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
@@ -34,7 +34,7 @@ define([
             }
         }
 
-        UserManagementController.prototype = {
+        RoleManagementController.prototype = {
             init: function () {
                 var self = this;
                 self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
@@ -104,26 +104,21 @@ define([
                     application: ''
                 }
             },
-            edit: function (type) {
+            edit: function () {
                 var self = this;
-                if (type == 'add') {
-                    self.popups.openAddUser('add').then(function () {
-                        self.search(1);
-                    });
+                if (self.adminUserSelList.selList.length <= 0) {
+                    self.alert('TXT_MSG_NO_ROWS_SELECT');
+                    return;
                 } else {
-                    if (self.adminUserSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.adminList, function (Info) {
-                            if (Info.id == self.adminUserSelList.selList[0].id) {
-                                self.popups.openAddUser(Info).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
-                    }
+                    _.forEach(self.adminList, function (Info) {
+                        if (Info.id == self.adminUserSelList.selList[0].id) {
+                            self.popups.openAddUser(Info).then(function () {
+                                self.search(1);
+                            });
+                        }
+                    })
                 }
+
             },
             vieAuthority: function () {
                 var self = this;
@@ -177,6 +172,6 @@ define([
                 }
             }
         };
-        return UserManagementController;
+        return RoleManagementController;
     })())
 });
