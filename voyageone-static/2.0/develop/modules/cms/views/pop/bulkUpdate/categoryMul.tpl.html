@@ -42,6 +42,7 @@
                     <div class="col-sm-6">
                         <select  multiple chosen class="form-control m-r-xs" ng-model="ctrl.catArrs"
                                  ng-options="cat as cat.catPath for cat in ctrl.catArrs"
+                                 ng-change = "ctrl.selectChange()"
                                  width="'100%'">
                         </select>
                     </div>
