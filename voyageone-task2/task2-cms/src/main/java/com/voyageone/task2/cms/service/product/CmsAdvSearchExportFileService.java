@@ -520,7 +520,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         Sheet sheet = book.getSheetAt(0);
         CellStyle cs = book.createCellStyle();
         cs.setWrapText(true);
-
+        int nowIdx = 0;
         for (CmsBtProductBean item : items) {
             if (item.getCommon() == null) {
                 continue;
@@ -581,11 +581,11 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(ptfObj.getpPriceRetailSt(), ptfObj.getpPriceRetailEd()));
                 FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(ptfObj.getpPriceSaleSt(), ptfObj.getpPriceSaleEd()));
             }
-            int nowIdx = index++;
+            nowIdx = index++;
             Cell cell = FileUtils.cell(row, nowIdx, unlock);
             cell.setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty((String) codeImgMap.get(fields.getCode())));
             cell.setCellStyle(cs);
-            sheet.autoSizeColumn(nowIdx);
+//            sheet.setc
             Integer imgCnt = (Integer) codeImgMap.get(fields.getCode() + "_img_cnt");
             if (imgCnt != null && imgCnt > 1) {
                 row.setHeightInPoints(imgCnt * sheet.getDefaultRowHeightInPoints());
@@ -641,6 +641,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 }
             }
         }
+        sheet.autoSizeColumn(nowIdx);
 
         return isContinueOutput;
     }
