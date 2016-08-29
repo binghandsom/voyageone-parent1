@@ -403,6 +403,7 @@ define([
                     selCnt = $scope.vm.productPageOption.total;
                 }
                 context.selCnt = selCnt;
+                context.autoSynPrice = $scope.vm.masterData.autoApprovePrice;
                 openFieldEdit(selList, context).then(function (res) {
                     $scope.search();
                 })

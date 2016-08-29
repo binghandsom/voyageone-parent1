@@ -1115,6 +1115,10 @@ public class ProductService extends BaseService {
 
         //读feed_info
         CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(product.getOrgChannelId(), fields.getOriginalCode());
+        if (feedInfo == null) {
+            $error("getCustomProp 无feedInfo channelid=%s, prodid=%d", channelId, product.getProdId());
+            return props;
+        }
         Map<String, List<String>> feedAttr = feedInfo.getAttribute();
 
         //读cms_mt_feed_custom_prop

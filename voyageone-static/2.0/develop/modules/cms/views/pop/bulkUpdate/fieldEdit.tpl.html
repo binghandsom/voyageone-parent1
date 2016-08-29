@@ -26,7 +26,7 @@
                     <s-field ng-if="vm.propertyInfo.property.id" field="vm.propertyInfo.property" show-name="false"></s-field>
                 </div>
             </div>
-            <div class="form-group" style="padding-top:8px" ng-show="vm.propertyInfo.property.id == 'hsCodePrivate'">
+            <div class="form-group" style="padding-top:8px" ng-show="(vm.propertyInfo.property.id=='hsCodePrivate')&&(vm.autoSynPrice!='1')">
                 <div class="col-sm-3 control-label">确认项</div>
                 <div class="col-sm-2">
                     <div class="onoffswitch">

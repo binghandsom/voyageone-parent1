@@ -473,6 +473,7 @@ public class PlatformSchemaService extends BaseService {
 
     private void setOption(Field field, String channelId, String language) {
         if (field.getType() == FieldTypeEnum.SINGLECHECK) {
+            List<Option> defaultOptions = ((SingleCheckField) field).getOptions();
             if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
                 List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
 
@@ -485,6 +486,7 @@ public class PlatformSchemaService extends BaseService {
                         opt.setValue(typeBean.getValue());
                         options.add(opt);
                     }
+                    options.addAll(defaultOptions);
                     ((SingleCheckField) field).setOptions(options);
                 }
             } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
@@ -500,6 +502,7 @@ public class PlatformSchemaService extends BaseService {
                         opt.setValue(typeChannelBean.getValue());
                         options.add(opt);
                     }
+                    options.addAll(defaultOptions);
                     ((SingleCheckField) field).setOptions(options);
                 }
             }
