@@ -2,8 +2,11 @@ package com.voyageone.web2.vms.views.feed;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,9 @@ public class VmsFeedSearchService extends BaseAppService {
     @Autowired
     private FeedInfoService feedInfoService;
 
+    @Autowired
+    private FeedCategoryTreeService feedCategoryTreeService;
+
     // 查询产品信息时的缺省输出列
     private final String searchItems = "{'category':1,'code':1,'name':1,'image':1,'skus':1}";
 
@@ -29,12 +35,22 @@ public class VmsFeedSearchService extends BaseAppService {
     private final String sortItems = "{'code':1}";
 
     /**
+     * 初始化（取得类目信息)
+     * @param channelId
+     * @return
+     */
+    public List<CmsMtFeedCategoryTreeModel> init(String channelId) {
+        List<CmsMtFeedCategoryTreeModel> feedCategoryTree = feedCategoryTreeService.getFeedAllCategoryTree(channelId);
+        return feedCategoryTree;
+    }
+
+    /**
      * 获取当前页的FEED信息
      * @param searchValue
      * @param userInfo
      * @return
      */
-    public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, UserSessionBean userInfo) {
+    public List<Map<String, Object>> getFeedList(Map<String, Object> searchValue, UserSessionBean userInfo) {
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery(feedInfoService.getSearchQueryForVendor(searchValue));
         // 当数据很多时，加上指定字段反而影响性能
@@ -45,8 +61,8 @@ public class VmsFeedSearchService extends BaseAppService {
         queryObject.setSkip((pageNum - 1) * pageSize);
         queryObject.setLimit(pageSize);
         List<CmsBtFeedInfoModel> models = feedInfoService.getListForVendor(userInfo.getSelChannelId(), queryObject);
-        editFeedInfo(models);
-        return models;
+        List<Map<String, Object>> feedInfoList = editFeedInfo(models);
+        return feedInfoList;
     }
 
     /**
@@ -63,8 +79,26 @@ public class VmsFeedSearchService extends BaseAppService {
      * 编辑FeedInfo
      * @param models 编辑的CmsBtFeedInfoModel列表
      */
-    private void editFeedInfo(List<CmsBtFeedInfoModel> models) {
+    private List<Map<String, Object>> editFeedInfo(List<CmsBtFeedInfoModel> models) {
+        List<Map<String, Object>> feedInfoList = new ArrayList<>();
         for(CmsBtFeedInfoModel model : models) {
+
+            Map<String, Object> feedInfoMap = new HashMap();
+            feedInfoMap.put("code", model.getCode());
+            feedInfoMap.put("name", model.getName());
+            List<CmsBtFeedInfoModel_Sku> skuList = model.getSkus();
+            if (skuList != null && skuList.size() > 0) {
+                feedInfoMap.put("skuNum", skuList.size());
+            } else {
+                feedInfoMap.put("skuNum", 0);
+            }
+            List<String> imageList = model.getImage();
+            if (imageList != null && imageList.size() > 0) {
+                feedInfoMap.put("image", imageList.get(0));
+            } else {
+                feedInfoMap.put("image", "");
+            }
+
             String category = model.getCategory();
             String[] categoryArray = category.split("-");
             if (categoryArray.length > 0) {
@@ -81,6 +115,34 @@ public class VmsFeedSearchService extends BaseAppService {
                 }
                 model.setCategory(category);
             }
+            feedInfoMap.put("category", model.getCategory());
+
+            // 子Sku的编辑
+            List<Map<String, Object>> skuInfoList = new ArrayList<>();
+            Double maxPrice = null;
+            Double minPrice = null;
+            if (skuList != null && skuList.size() > 0) {
+                for (CmsBtFeedInfoModel_Sku skuModel : skuList) {
+                    Map<String, Object> skuInfoMap = new HashMap();
+                    skuInfoMap.put("sku", skuModel.getClientSku());
+                    skuInfoMap.put("voPrice", skuModel.getPriceNet());
+                    skuInfoList.add(skuInfoMap);
+                    if (maxPrice == null || skuModel.getPriceNet() > maxPrice) {
+                        maxPrice = skuModel.getPriceNet();
+                    }
+                    if (minPrice == null || skuModel.getPriceNet() < minPrice) {
+                        minPrice = skuModel.getPriceNet();
+                    }
+                }
+            }
+            feedInfoMap.put("maxVoPrice", maxPrice == null ? 0.00 : maxPrice);
+            feedInfoMap.put("minVoPrice", minPrice == null ? 0.00 : minPrice);
+            if (skuInfoList.size() > 1) {
+                feedInfoMap.put("skus", skuInfoList);
+            }
+            feedInfoList.add(feedInfoMap);
         }
+
+        return feedInfoList;
     }
 }
