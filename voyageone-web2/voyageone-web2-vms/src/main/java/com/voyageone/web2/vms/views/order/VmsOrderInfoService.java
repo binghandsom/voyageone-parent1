@@ -554,14 +554,67 @@ public class VmsOrderInfoService extends BaseService {
                         && vmsBtOrderDetailModel.getShipmentId().equals(shipment.getId())
                         && vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
                 .count();
+        return scannedCount == currentOrderInfo.size();
+    }
 
-        // 全部扫描完毕 则更新状态为packaged
-        if (scannedCount == currentOrderInfo.size()) {
-            orderDetailService.updateOrderStatus(user.getSelChannelId(), orderId, STATUS_VALUE.PRODUCT_STATUS
-                    .PACKAGE, user.getUserName());
-            return true;
-        }
-        return false;
+    /**
+     * 确认打包订单
+     *
+     * @param user         当前用户
+     * @param scanInfoBean 扫描条件
+     * @return 更新条数
+     */
+    public int finishOrderScanning(UserSessionBean user, ScanInfoBean scanInfoBean) {
+        ShipmentBean shipment = scanInfoBean.getShipment();
+        String orderId = scanInfoBean.getConsolidationOrderId();
+
+        // 检查订单状态
+        Map<String, Object> checkParams = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannelId());
+            put("consolidationOrderId", scanInfoBean.getConsolidationOrderId());
+        }};
+
+        // 检查当前订单是否全部扫描完毕
+        List<VmsBtOrderDetailModel> currentOrderInfo = orderDetailService.select(checkParams);
+        long scannedCount = currentOrderInfo.stream()
+                .filter(vmsBtOrderDetailModel -> null != vmsBtOrderDetailModel.getShipmentId()
+                        && vmsBtOrderDetailModel.getShipmentId().equals(shipment.getId())
+                        && vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
+                .count();
+        if (scannedCount == currentOrderInfo.size())
+            return orderDetailService.updateOrderStatus(user.getSelChannelId(), scanInfoBean.getConsolidationOrderId()
+                    , STATUS_VALUE.PRODUCT_STATUS.PACKAGE, user.getUserName());
+        throw new BusinessException("Order not ready"); // TODO: Order not ready. vantis
+    }
+
+    /**
+     * 取消扫描
+     *
+     * @param user         当前用户
+     * @param scanInfoBean 扫描信息
+     * @return 更新条数
+     */
+    public int revertScanning(UserSessionBean user, ScanInfoBean scanInfoBean) {
+        // TODO: 16-8-29 检查当前订单状态 vantis
+        ShipmentBean shipment = scanInfoBean.getShipment();
+        String orderId = scanInfoBean.getConsolidationOrderId();
+        // 检查订单状态
+        Map<String, Object> checkParams = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannelId());
+            put("consolidationOrderId", scanInfoBean.getConsolidationOrderId());
+        }};
+
+        // 检查当前订单是否全部扫描完毕
+        List<VmsBtOrderDetailModel> currentOrderInfo = orderDetailService.select(checkParams);
+        long scannedCount = currentOrderInfo.stream()
+                .filter(vmsBtOrderDetailModel -> null != vmsBtOrderDetailModel.getShipmentId()
+                        && vmsBtOrderDetailModel.getShipmentId().equals(shipment.getId())
+                        && !vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
+                .count();
+        if (scannedCount == 0)
+            return orderDetailService.removeSkuOrderId(user.getSelChannelId(), orderId);
+        // TODO: 16-8-29 取消订单内sku的扫描状态 vantis
+        throw new BusinessException("Order changed."); //todo: skus' status not good vantis
     }
 
     /**
@@ -670,7 +723,7 @@ public class VmsOrderInfoService extends BaseService {
     /**
      * 统计已经扫描好的订单数
      *
-     * @param user 当前用户
+     * @param user       当前用户
      * @param shipmentId 当前shipment的ID
      * @return 统计订单数
      */

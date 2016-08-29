@@ -71,11 +71,11 @@
                         <th class="td-1-5" translate="TXT_ORDER_ID"></th>
                         <th class="td-2" translate="TXT_ORDER_DATE"></th>
                         <th class="td-1" translate="TXT_SKU"></th>
-                        <th class="td-1-5" translate="TXT_NAME"></th>
+                        <th class="td-2" translate="TXT_NAME"></th>
                         <th class="td-1" translate="TXT_STATUS"></th>
                         <th class="td-1" translate="TXT_VO_PRICE"></th>
                         <th class="td-1" ng-if="ctrl.channelConfigs.salePriceShow == '1'" translate="TXT_SALE_PRICE"></th>
-                        <th class="td-3" translate="TXT_ACTION"></th>
+                        <th class="td-2-5" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -94,7 +94,7 @@
                         <td class="v-middle">
                             <button class="btn btn-xs btn-danger" ng-if="item.status == 1" ng-click="ctrl.cancelOrder(item)" translate="BTN_CANCEL"></button>
                             <button class="btn btn-xs btn-info" ng-if="item.status == 1" ng-click="ctrl.popAddToShipment(item)" ng-disabled="!ctrl.currentShipment" translate="BTN_ADD_TO_SHIPMENT"></button>
-                            <button class="btn btn-xs btn-primary" ng-click="ctrl.printLabel($index)" translate="BTN_LABEL"></button>
+                            <button class="btn btn-xs btn-primary" ng-click="ctrl.printLabel($index)" ng-if="item.status == 2 || item.status ==3" translate="BTN_LABEL"></button>
                         </td>
 
                     </tr>
@@ -104,8 +104,8 @@
                         <td class="v-middle">{{detail.consolidationOrderTime| date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="v-middle">{{detail.clientSku}}</td>
                         <td class="v-middle">
-                            <span class="v-middle" ng-if="detail.name.length <= 20">{{detail.name}}</span>
-                            <span class="v-middle" ng-if="detail.name.length > 20" uib-tooltip="{{detail.name}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{detail.name | stringCutter:true:20:' ...'}}</span>
+                            <span class="v-middle" ng-if="detail.name.length <= 25">{{detail.name}}</span>
+                            <span class="v-middle" ng-if="detail.name.length > 25" uib-tooltip="{{detail.name}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{detail.name | stringCutter:true:25:' ...'}}</span>
                         </td>
                         <td class="v-middle">{{ctrl.getStatusName(detail.status)}}</td>
                         <td class="v-middle">${{detail.voPrice}}</td>

@@ -107,7 +107,8 @@ define(function () {
         "TXT_WELCOME": "Welcome",
         "TXT_YEAR_MONTH": "Year-Month",
         "TXT_USER": "User",
-
+        "TXT_READY_TO_PACKAGE": "Ready to package this order?",
+        "TXT_CONFIRM_REVERT_SCANNED_SKU": "Confirm to revert scanning in this order?",
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
         "BTN_BACK": "BACK",

@@ -1,10 +1,9 @@
 <div class="modal-content modal-blue">
     <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel"><i class="fa fa-tasks"></i>SKU List</h4>
+        <h4 class="modal-title" id="myModalLabel"><i class="fa fa-tasks"></i>SKU List<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i></h4>
     </div>
     <div class="center-block sr-only" style="width: 200px; height: 200px;">
-        <barcode id="label" type="code128b" string="{{ctrl.shipmentDetails.consolidationOrderId}}"
-                 options="barcodeOpts"></barcode>
+        <barcode id="label" type="code128b" string="{{ctrl.shipmentDetails.consolidationOrderId}}" options="barcodeOpts"></barcode>
     </div>
     <div class="modal-body">
         <div class="panel-body" style="padding-left: 0; padding-right: 0">
@@ -12,38 +11,29 @@
                 <form class="form-inline">
                     <div class="form-group">
                         <label class="control-label" translate="TXT_SHIPMENT"></label>
-                        <input id="Shipment_Name" type="text" class="form-control input-sm"
-                               ng-model="::ctrl.shipmentDetails.shipment.shipmentName" disabled>
+                        <input id="Shipment_Name" type="text" class="form-control input-sm" ng-model="::ctrl.shipmentDetails.shipment.shipmentName" disabled>
                     </div>
                     <div class="form-group">
                         <label class="control-label" translate="TXT_ORDER_ID"></label>
-                        <input id="Order_ID" type="text" class="form-control input-sm"
-                               ng-model="::ctrl.shipmentDetails.consolidationOrderId" disabled>
+                        <input id="Order_ID" type="text" class="form-control input-sm" ng-model="::ctrl.shipmentDetails.consolidationOrderId" disabled>
                     </div>
                 </form>
             </div>
             <div class="col-sm-2" style="padding: 0;">
-                <button class="btn btn-success btn-sm" ng-click="ctrl.printLabel()"
-                        translate="BTN_FINISH"></button>
-                <button class="btn btn-warning btn-sm pull-right" ng-click="ctrl.printLabel()"
-                        translate="BTN_REVERT"></button>
+                <button class="btn btn-success btn-sm" ng-click="ctrl.finishScanning()" ng-if="ctrl.finished && ctrl.printed" translate="BTN_FINISH"></button>
+                <button class="btn btn-warning btn-sm pull-right" ng-click="ctrl.revertScanning()" ng-disabled="ctrl.scannedSkuList.length == 0" translate="BTN_REVERT"></button>
             </div>
         </div>
         <hr>
-        <div class="col-sm-10 col-sm-offset-1 input-group" ng-if="ctrl.waitingSkuList.length > 0">
-            <input name="barcodeInputBar" type="text" class="form-control"
-                   ng-attr-placeholder="{{'TXT_BARCODE' | translate}}" ng-model="ctrl.barcode"
-                   ng-keyup="ctrl.scanKeyUp($event)" autofocus>
+        <div class="col-sm-10 col-sm-offset-1 input-group" ng-if="!ctrl.finished">
+            <input name="barcodeInputBar" type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}" ng-model="ctrl.barcode" ng-keyup="ctrl.scanKeyUp($event)" autofocus>
             <span class="input-group-btn">
-                    <button id="scanBarcodeButton" class="btn btn-info" type="button"
-                            ng-click="ctrl.scan(ctrl.barcode)" translate="BTN_SCAN"
-                            ng-disabled="!ctrl.barcode"></button>
+                    <button id="scanBarcodeButton" class="btn btn-info" type="button" ng-click="ctrl.scan(ctrl.barcode)" translate="BTN_SCAN" ng-disabled="!ctrl.barcode"> </button>
             </span>
         </div>
-        <div class="col-sm-10 col-sm-offset-1 input-group" ng-if="ctrl.waitingSkuList.length > 0">
+        <div class="col-sm-10 col-sm-offset-1 input-group" ng-if="ctrl.finished">
             <div class="form-group">
-                <button class="btn btn-primary btn-block" ng-click="ctrl.printLabel()"
-                        translate="BTN_PRINT_ORDER_LABEL"></button>
+                <button name="printButton" class="btn btn-primary btn-block" ng-click="ctrl.printLabel()" translate="BTN_PRINT_ORDER_LABEL" autofocus></button>
             </div>
         </div>
         <audio id="warningAudio">
@@ -68,10 +58,7 @@
                 <td class="text-left">{{item.clientSku}}</td>
                 <td class="text-left v-middle">
                     <span ng-if="item.name.length <= 30">{{item.name}}</span>
-                    <span ng-if="item.name.length > 30" uib-tooltip="{{item.name}}"
-                          tooltip-trigger="mouseenter" tooltip-placement="top">
-                                    {{item.name | stringCutter:true:30:' ...'}}
-                                </span>
+                    <span ng-if="item.name.length > 30" uib-tooltip="{{item.name}}" tooltip-trigger="mouseenter" tooltip-placement="top"> {{item.name | stringCutter:true:30:' ...'}} </span>
                 </td>
                 <td class="text-left">{{item.containerizingTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                 <td class="text-left">{{item.containerizer}}</td>
@@ -80,14 +67,12 @@
                 <td class="text-left">{{item.clientSku}}</td>
                 <td class="text-left v-middle">
                     <span ng-if="item.name.length <= 30">{{item.name}}</span>
-                    <span ng-if="item.name.length > 30" uib-tooltip="{{item.name}}"
-                          tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name | stringCutter:true:30:' ...'}}</span>
+                    <span ng-if="item.name.length > 30" uib-tooltip="{{item.name}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name | stringCutter:true:30:' ...'}}</span>
                 </td>
                 <td class="text-left">{{item.containerizingTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                 <td class="text-left">{{item.containerizer}}</td>
             </tr>
             </tbody>
         </table>
-
     </div>
 </div>

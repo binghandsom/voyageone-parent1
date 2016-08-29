@@ -349,6 +349,14 @@ public class OrderDetailService extends BaseService {
         return vmsBtOrderDetailDaoExt.cancelOrderShipmentStatus(params);
     }
 
+    public int removeSkuOrderId(String channelId, String consolidationOrderId) {
+        Map<String, Object> params = new HashMap<String, Object>() {{
+            put("channelId", channelId);
+            put("consolidationOrderId", consolidationOrderId);
+        }};
+        return vmsBtOrderDetailDaoExt.cancelOrderShipmentStatus(params);
+    }
+
     public int updateOrderStatusWithShipmentId(String channelId, Integer shipmentId, String status, Date operateTime,
                                                String operator) {
 

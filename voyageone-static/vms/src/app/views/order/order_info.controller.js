@@ -192,7 +192,8 @@ define([
                 shipment: self.currentShipment,
                 type: type,
                 pendingShipmentStatus: pendingShipmentStatus,
-                statusList: this.shipmentStatusList
+                statusList: this.shipmentStatusList,
+                defaultDeliveryCompany: this.channelConfigs.defaultDeliveryCompany
             };
 
             this.popups.openShipment(shipmentInfo).then(function (shipment) {
