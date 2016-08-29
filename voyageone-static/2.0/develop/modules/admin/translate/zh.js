@@ -152,6 +152,11 @@ define(function () {
         "TXT_EMAIL": "邮箱",
         "TXT_PASSWORD":"密码",
         "TXT_INSTRUCTION": "说明",
+        "TXT_ORG_MANAGE":"组织管理",
+        "TXT_ORG_NAME":"组织名",
+        "TXT_ORG_NAMES":"组织名称",
+        "TXT_UPPER_ORG":"上级组织",
+        "TXT_SORT_PRE":"排序权重",
 
         /**按钮组*/
         "TXT_LOGOUT": "注销",

@@ -104,20 +104,6 @@ define([
                     application: ''
                 }
             },
-            config: function (type) {
-                var self = this;
-                if (self.adminUserSelList.selList.length < 1) {
-                    self.popups.openConfig({'configType': type});
-                    return;
-                } else {
-                    _.forEach(self.adminList, function (storeInfo) {
-                        if (storeInfo.application == self.adminUserSelList.selList[0].id) {
-                            _.extend(storeInfo, {'configType': type});
-                            self.popups.openConfig(storeInfo);
-                        }
-                    })
-                }
-            },
             edit: function () {
                 var self = this;
                 if (self.adminUserSelList.selList.length <= 0) {
@@ -133,6 +119,21 @@ define([
                     })
                 }
 
+            },
+            vieAuthority: function () {
+                var self = this;
+                if (self.adminUserSelList.selList.length <= 0) {
+                    self.alert('TXT_MSG_NO_ROWS_SELECT');
+                    return;
+                } else {
+                    _.forEach(self.adminList, function (Info) {
+                        if (Info.id == self.adminUserSelList.selList[0].id) {
+                            self.popups.openUserAuthority(Info).then(function () {
+                                self.search(1);
+                            });
+                        }
+                    });
+                }
             },
             delete: function () {
                 var self = this;

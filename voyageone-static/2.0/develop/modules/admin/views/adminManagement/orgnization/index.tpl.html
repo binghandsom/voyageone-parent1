@@ -1,0 +1,97 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-navicon"></i>&nbsp;{{'TXT_ORG_MANAGE'|translate}}</h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-6">
+                            <div class="form-horizontal">
+                                <div class="row form-group"><!-- 组织 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="ctrl.searchInfo.orgName"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-horizontal">
+                                <div class="row form-group"><!-- 状态 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_STATUS' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.active"
+                                                ng-options="active.active as active.value for active in ctrl.activeList">
+                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 text-center m-b-xs">
+                            <div class="form-horizontal form-inline">
+                                <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;重置</button>
+                                <button class="btn btn-vo" ng-click="ctrl.search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-body-new">
+            <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
+                <div class="form-group m-t-sm m-r-xs">
+                    <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                    <button class="btn btn-default" ng-click="ctrl.edit()"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete()"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                </div>
+            </div>
+
+            <table class="table table-hover-new table-hover table_main">
+                <thead>
+                <tr>
+                    <th class="text-left mfb-xt" ng-controller="selectRowsCtrl" style="padding-left: 0;padding-right: 0;">
+                        <label class="checkbox-inline c-checkbox" style="height: 15px;">
+                            <input type="checkbox" ng-click="selectAll(ctrl.adminOrgSelList)"
+                                   ng-checked="isAllSelected(ctrl.adminOrgSelList)" >
+                            <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                        </label>
+                    </th>
+                    <th class="text-center mfb-xxt" translate="TXT_ORG_NAME"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_UPPER_ORG"></th>
+                    <th class="text-left mfb-xt" translate="TXT_STATUS"></th>
+                    <th class="text-center mfb-xt" translate="TXT_SORT_PRE"></th>
+                    <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td if-no-rows="ctrl.orgDataList.length||ctrl.orgDataList" colspan="7" style="padding: 0px"></td>
+                    </tr>
+                    <tr ng-repeat="list in ctrl.orgDataList">
+                        <td class="text-left v-middle">
+                            <label class="checkbox-inline c-checkbox" style="padding-top:4px">
+                                <input ng-model="ctrl.adminOrgSelList.selFlag[list.mainKey]" type="checkbox" ng-controller="selectRowsCtrl"
+                                       ng-click="selectOne(list.mainKey, ctrl.adminOrgSelList)">
+                                <span class="fa fa-check"></span>
+                            </label>
+                        </td>
+                        <td class="text-center v-middle">{{list.orgName}}</td>
+                        <td class="text-left v-middle">{{list.parentName}}</td>
+                        <td class="text-left v-middle">{{list.active?list.active==true?'启用':'禁用':''}}</td>
+                        <td class="text-center v-middle">{{list.weight}}</td>
+                        <td class="text-center v-middle">{{list.modifier}}</td>
+                        <td class="text-center v-middle">{{list.modified}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <vpagination config="ctrl.pageOption" ng-if="ctrl.orgDataList.length>0"></vpagination>
+    </div>
+</div>

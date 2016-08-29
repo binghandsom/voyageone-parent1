@@ -4,12 +4,18 @@ define(function () {
             "hash": "/home",
             "templateUrl": "views/home/welcome/datachart.tpl.html",
             "controllerUrl": "modules/admin/views/home/welcome/datachart.ctl"
-        },//渠道-渠道信息管理
+        },//用户/权限-用户管理
         "adminUserManage": {
             "hash": "/admin/userManage",
             "templateUrl": "views/adminManagement/user/index.tpl.html",
             "controllerUrl": "modules/admin/views/adminManagement/user/index.ctl",
             "controller": "UserManagementController as ctrl"
+        },//用户/权限-组织管理
+        "adminOrgManage": {
+            "hash": "/admin/orgManage",
+            "templateUrl": "views/adminManagement/orgnization/index.tpl.html",
+            "controllerUrl": "modules/admin/views/adminManagement/orgnization/index.ctl",
+            "controller": "OrgManagementController as ctrl"
         },//渠道-渠道信息管理
         "channelInfoManage": {
             "hash": "/channel/channelInfoManage",
