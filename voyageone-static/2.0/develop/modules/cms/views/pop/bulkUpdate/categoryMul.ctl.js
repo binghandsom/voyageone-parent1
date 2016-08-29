@@ -1,5 +1,10 @@
 /**
  * @description 类目多选popup
+       context = {
+                categories: 类目原数据,
+                from: 调用页面选中的值,
+                divType: 分隔符
+                }
  * @author piao wenjie
  * @version 2.5.0
  */
@@ -135,7 +140,7 @@ define(['cms',
         };
 
         /**
-         * 保存
+         * 传递类目数组
          */
         PopCategoryMulController.prototype.ok = function(){
 
@@ -148,7 +153,7 @@ define(['cms',
         };
 
         /**
-         * 取消
+         * 关闭popup
          */
         PopCategoryMulController.prototype.cancel = function(){
             this.$uibModalInstance.dismiss();

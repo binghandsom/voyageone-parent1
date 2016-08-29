@@ -242,8 +242,7 @@ define([
                     return popCategoryMul({
                         categories: res.data.categoryTree,
                         from: $scope.vm.feedCats,
-                        divType: "-",
-                        anyNode: true
+                        divType: "-"
                     }).then(function (context) {
                             $scope.vm.feedCats = context;
                             $scope.vm.searchInfo.category = _.map(context, function (item) {
