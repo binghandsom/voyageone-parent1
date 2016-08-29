@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service.putaway;
 
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.cms.bean.PlatformUploadRunState;
 import com.voyageone.task2.cms.bean.SxProductBean;
@@ -32,7 +32,7 @@ public abstract class AbstractSkuFieldBuilder {
 
     public abstract List buildSkuInfoField(int cartId, String categoryCode, List platformProps,
                                            List<SxProductBean> processSxProducts, Map<CmsBtProductModel_Sku, SxProductBean> skuProductMap,
-                                           CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap,
+                                           CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap,
                                            PlatformUploadRunState.PlatformContextBuildCustomFields contextBuildCustomFields,
                                            Set<String> imageSet) throws TaskSignal;
 

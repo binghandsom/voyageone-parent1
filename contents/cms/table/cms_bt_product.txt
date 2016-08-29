@@ -121,7 +121,7 @@
       * priceRetail ->各平台的销售指导价(double)
       * priceSale   ->各平台的最终售价(double)
       * priceChgFlg ->指导售价变化状态（U/D） 这里是指导售价价格本身变化
-      * priceDiffFlg ->最终售价变化状态（比指导价低:2，比指导价高:3，等于指导价:1，向上击穿警告:4，向下击穿警告:5） 这里表示最终售价与指导价的比较结果 (string型)
+      * priceDiffFlg ->最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5） 这里表示最终售价与指导价的比较结果 (string型)
       * isSale    ->用于表示该sku是否在该平台销售(true(默认), false)
     * sellerCats[]  ->店铺内分类
       * cId
@@ -210,5 +210,62 @@
     * cartIdxx
   * codeSumAll
     * cartIdxx
+
+* bi   ->BI数据统计
+    "sum1" : {       // 1天统计量
+        "pv" : {
+            "cartId26" : 0,
+            "cartId23" : 10,
+        },
+        "uv" : {
+            "cartId26" : 0,
+            "cartId23" : 2,
+        },
+        "gwc" : {    // 加购件数
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "scs" : {    // 收藏人数
+            "cartId26" : 0,
+            "cartId23" : 1,
+        }
+    },
+    "sum7" : {       // 7天统计量
+        "pv" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "uv" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "gwc" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "scs" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        }
+    },
+    "sum30" : {       // 30天统计量
+        "pv" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "uv" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "gwc" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "scs" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        }
+    }
+},
 * tags[]  ->标签
 * freeTags[] ->自定义标签

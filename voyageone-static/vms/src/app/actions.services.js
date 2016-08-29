@@ -163,6 +163,7 @@ define(function (require) {
             search: "search"
         }),
         feedInfoSearchService: new CommonDataService('/vms/feed/feed_info_search', {
+            init: "init",
             search: "search"
         }),
 

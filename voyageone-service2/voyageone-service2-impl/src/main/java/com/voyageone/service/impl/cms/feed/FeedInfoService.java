@@ -93,10 +93,13 @@ public class FeedInfoService extends BaseService {
     public String getSearchQueryForVendor(Map<String, Object> searchValue) {
         StringBuilder result = new StringBuilder();
 
-        // 获取code
+        // 获取code/sku
         String code = (String) searchValue.get("code");
         if (!StringUtils.isEmpty(code)) {
-            result.append("{").append(MongoUtils.splicingValue("code", code));
+            List<String> orSearch = new ArrayList<>();
+            orSearch.add(MongoUtils.splicingValue("code", code));
+            orSearch.add(MongoUtils.splicingValue("skus.clientSku", code));
+            result.append("{").append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
             result.append("},");
         }
 
@@ -109,8 +112,20 @@ public class FeedInfoService extends BaseService {
 
         // 获取category
         String category = (String) searchValue.get("category");
+        String[] categoryArray = category.split("/");
+        category = "";
+        for (String categoryItem : categoryArray) {
+            // 不等于空的情况下，去掉首尾空格，并替换半角横杠为全角横杠，重新组装一下
+            if (!StringUtils.isEmpty(categoryItem)) {
+                category += categoryItem.trim().replaceAll("-", "－") + "-";
+            }
+        }
+        // 去掉最后一个分隔符[-]
         if (!StringUtils.isEmpty(category)) {
-            result.append("{").append(MongoUtils.splicingValue("category", category));
+            category = category.substring(0, category.length() - 1);
+        }
+        if (!StringUtils.isEmpty(category)) {
+            result.append("{").append(MongoUtils.splicingValue("category", replaceRegexReservedChar(category), "$regex"));
             result.append("},");
         }
 
@@ -131,7 +146,7 @@ public class FeedInfoService extends BaseService {
         }
 
         if (priceSta != null || priceEnd != null) {
-            result.append("{\"skus.priceClientRetail\":{");
+            result.append("{\"skus\":{$elemMatch:{\"priceNet\":{");
             if (priceSta != null) {
                 result.append(MongoUtils.splicingValue("$gte", priceSta));
             }
@@ -141,7 +156,7 @@ public class FeedInfoService extends BaseService {
                 }
                 result.append(MongoUtils.splicingValue("$lte", priceEnd));
             }
-            result.append("}},");
+            result.append("}}}},");
         }
 
         if (!StringUtils.isEmpty(result.toString())) {
@@ -259,11 +274,23 @@ public class FeedInfoService extends BaseService {
         }
 
         // 获取category
-        String category = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("category"));
-        if (category != null) {
-            result.append("{").append(MongoUtils.splicingValue("category", category));
-            result.append("},");
+        if(searchValue.get("category") != null){
+
+//            List<String> categorys = (List<String>) searchValue.get("category");
+//            if (!categorys.isEmpty()) {
+//                List<String> orSearch = new ArrayList<>();
+//                Object[] newcategorys = categorys.stream().map(s -> "'/^" + s + "/'").collect(Collectors.toList()).toArray();
+//                result.append("{").append(MongoUtils.splicingValue("category", newcategorys,"$in"));
+//                result.append("},");
+//            }
+//
+            String category = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("category"));
+            if (category != null) {
+                result.append("{").append(MongoUtils.splicingValue("category", category));
+                result.append("},");
+            }
         }
+
 
         // 获取product name
         String prodName = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("name"));

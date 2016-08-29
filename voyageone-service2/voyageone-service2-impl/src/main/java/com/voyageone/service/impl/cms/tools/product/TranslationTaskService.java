@@ -151,8 +151,15 @@ public class TranslationTaskService extends BaseService {
 
 
             if (!StringUtils.isNullOrBlank2(keyWord)) {
-                queryObj.addQuery("{'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}},{'common.fields.originalTitleCn':{'$regex': #}}]}");
-                queryObj.addParameters(keyWord, keyWord, keyWord);
+
+                List<String> codeList = Arrays.asList(keyWord.split("\n"));
+                if (codeList.size() == 1) {
+                    queryObj.addQuery("{'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}},{'common.fields.originalTitleCn':{'$regex': #}}]}");
+                    queryObj.addParameters(keyWord, keyWord, keyWord);
+                } else {
+                    queryObj.addQuery("{'common.fields.code':{$in:#}}");
+                    queryObj.addParameters(codeList);
+                }
             }
 
             if (!StringUtils.isNullOrBlank2(priority)) {

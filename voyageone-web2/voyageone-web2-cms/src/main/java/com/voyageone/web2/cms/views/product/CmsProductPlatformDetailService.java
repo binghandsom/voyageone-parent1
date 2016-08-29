@@ -19,7 +19,9 @@ import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -45,6 +47,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     private CmsMtBrandService cmsMtBrandService;
     @Autowired
     private PlatformSchemaService platformSchemaService;
+    @Autowired
+    private PlatformMappingService platformMappingService;
     @Autowired
     private PlatformCategoryService platformCategoryService;
 
@@ -99,7 +103,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 platformCart.setpCatId(mainPlatform.getpCatId());
             }
 
-            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), channelId, cartId, language));
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), channelId, cartId, prodId, language, null));
         }
         return platformCart;
     }
@@ -164,12 +168,12 @@ public class CmsProductPlatformDetailService extends BaseAppService {
      * @param catId
      * @return
      */
-    public Map<String, Object> changePlatformCategory(String channelId, Long prodId, int cartId, String catId, String language) {
+    public Map<String, Object> changePlatformCategory(String channelId, Long prodId, int cartId, String catId, String catPath, String language) {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);
         if (platformCart != null) {
 
-            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, language));
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language, catPath));
             platformCart.setpCatId(catId);
             // platform 品牌名
             if (StringUtil.isEmpty(platformCart.getpBrandId()) || StringUtil.isEmpty(platformCart.getpBrandName())) {
@@ -186,7 +190,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             }
         } else {
             platformCart = new CmsBtProductModel_Platform_Cart();
-            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, language));
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language,catPath));
 
             Map<String, Object> parm = new HashMap<>();
             parm.put("channelId", channelId);
@@ -241,8 +245,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                     throw new BusinessException("价格不能为空");
                 }
                 Double newPriceSale = Double.parseDouble(stringObjectBaseMongoMap.get("priceSale").toString());
-                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (newPriceSale / (2-breakThreshold))).compareTo(comPrice.get(sku)) < 0) {
-                    throw new BusinessException("4000094",((Double)Math.ceil(comPrice.get(sku) * (2 - breakThreshold))).intValue());
+                if (breakThreshold != null && comPrice.containsKey(sku) && ((Double) (newPriceSale / (2 - breakThreshold))).compareTo(comPrice.get(sku)) < 0) {
+                    throw new BusinessException("4000094", ((Double) Math.ceil(comPrice.get(sku) * (2 - breakThreshold))).intValue());
                 }
 
                 if (comPrice.containsKey(sku) && comPrice.get(sku).compareTo(newPriceSale) > 0) {
@@ -336,8 +340,14 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         }
     }
 
-    private Map<String, List<Field>> getSchemaFields(BaseMongoMap<String, Object> fieldsValue, String catId, String channelId, Integer cartId, String language) {
+    private Map<String, List<Field>> getSchemaFields(BaseMongoMap<String, Object> fieldsValue, String catId, String channelId, Integer cartId, Long productId, String language, String catPath) {
         Map<String, List<Field>> fields = null;
+
+        // 从mapping 来的默认值合并到商品属性中
+        Map<String, Object> mppingFields = platformMappingService.getValueMap(channelId, productId, cartId, catPath);
+
+        setDefaultValue(fieldsValue,mppingFields);
+
         // JM的场合schema就一条
         if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
             if (!StringUtil.isEmpty(catId)) {
@@ -382,7 +392,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             }
         });
 
-        platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, language));
+        platform.put("schemaFields", getSchemaFields(platform.getFields(), platform.getpCatId(), channelId, cartId, prodId, language, null));
 
         return platform;
     }
@@ -396,5 +406,28 @@ public class CmsProductPlatformDetailService extends BaseAppService {
      */
     List<CmsMtPlatformCategoryTreeModel> getPlatformCategories(UserSessionBean user, Integer cartId) {
         return platformCategoryService.getPlatformCategories(user.getSelChannelId(), cartId);
+    }
+
+    /**
+     * 从共同属性mapping来的属性合并
+     * @param fieldMap
+     * @param valueMap
+     */
+    public void setDefaultValue(Map<String, Object> fieldMap, Map<String, Object> valueMap) {
+        if(valueMap == null || valueMap.size() == 0) return;
+        valueMap.forEach((s, v) -> {
+            Object o = fieldMap.get(s);
+            if(o == null){
+                fieldMap.put(s,v);
+            }else if(o instanceof List){
+                if(((List)o).size() == 0){
+                    fieldMap.put(s,v);
+                }
+            }else if(o instanceof Map){
+                setDefaultValue((Map<String, Object>) o, (Map<String, Object>) v);
+            }else if(StringUtil.isEmpty((String) o)){
+                fieldMap.put(s,v);
+            }
+        });
     }
 }

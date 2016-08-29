@@ -229,25 +229,32 @@ define([
         };
         function loadSearchInfo() {
             $scope.searchInfo.synchStatusList = [];
-            $scope.searchInfo.errorStatus=undefined;
+            //$scope.searchInfo.errorStatus=undefined;//错误状态
+            //$scope.searchInfo.allStatus1=undefined;//处理中
+            $scope.searchInfo.hasStatus=undefined;//是否有状态
             if ($scope.searchInfo.synchStatus0) {
                 $scope.searchInfo.synchStatusList.push(0)
                 $scope.searchInfo.synchStatusList.push(1)
+                $scope.searchInfo.hasStatus=1;
+            }
+            if ($scope.searchInfo.allStatus1) {
+                $scope.searchInfo.hasStatus=1;
             }
             if ($scope.searchInfo.synchStatus2) {
                 $scope.searchInfo.synchStatusList.push(2)
+                $scope.searchInfo.hasStatus=1;
             }
-            if ($scope.searchInfo.synchStatus3) {
-                $scope.searchInfo.errorStatus=3;
+            if ($scope.searchInfo.allErrorStatus) {
+                $scope.searchInfo.hasStatus=1;
             }
         }
         $scope.getStatus = function (model) {
-            //0:未更新 2:上新成功 3:上传异常
+            //0:未更新 2:上新成功 3:上传异常    未上传；处理中；上传成功；上传失败
 
              if (model.synchStatus == 1) {
                 return "待上传";
             }
-            else if (model.updateStatus== 1) {//model.priceStatus == 1 ||
+            else if (model.priceStatus== 1) {//model.priceStatus == 1 ||
                 return "待更新";
             }
             else if (model.dealEndTimeStatus == 1) {
@@ -255,12 +262,12 @@ define([
             }
            else if(model.synchStatus==3||model.priceStatus==3 ||model.dealEndTimeStatus==3 || model.stockStatus==3)
             {
-                return "上传异常";
+                return "上传失败";
             }
             else if (model.synchStatus == 0) {
-                return "未更新";
+                return "未上传";
             }
-            return "更新完成";
+            return "上传成功";
         }
         $scope.getSelectedPromotionProductIdList = function () {
             var listPromotionProductId = [];
@@ -316,18 +323,18 @@ define([
                 alert("请选择同步价格的商品!");
                 return;
             }
-            var isUpdate = false;
             if ($scope.vm.isBegin) {
                 confirm("聚美专场已开始预热，价格变更将有极大可能性引起客诉。点击确认继续操作！").then(function () {
-                    isUpdate = true;
+                    batchSynchPrice_item(listPromotionProductId);
                 });
             }
             else {
                 confirm("聚美平台无任何删除功能，专场内一旦有商品完成上传，该商品禁止删除，该专场禁止删除，点击确认继续操作.").then(function () {
-                    isUpdate = true;
+                    batchSynchPrice_item(listPromotionProductId);
                 });
             }
-            if(!isUpdate) return;
+        };
+        function  batchSynchPrice_item(listPromotionProductId) {
             var parameter = {};
             parameter.promotionId = $scope.vm.promotionId;
             parameter.listPromotionProductId = listPromotionProductId;
@@ -342,7 +349,7 @@ define([
             }, function (res) {
                 alert($translate.instant('TXT_FAIL'));
             });
-        };
+        }
         $scope.synchAllPrice = function () {
             confirm("您确定要重新上传商品吗?").then(function () {
                 jmPromotionDetailService.synchAllPrice($scope.vm.promotionId).then(function (res) {

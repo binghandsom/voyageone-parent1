@@ -116,7 +116,7 @@ public class HtDealCopyDealResponse extends BaseJMResponse {
             if ("0".equals(this.error_code)&&!"error".equals(this.getReason())) {
                 this.setIs_Success(true);
             } else {
-                this.setErrorMsg(this.body);
+                this.setErrorMsg(this.getRequestUrl()+this.body);
             }
         } catch (Exception ex) {
             logger.error("setBody ", ex);

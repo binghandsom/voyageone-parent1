@@ -51,7 +51,7 @@ import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
 import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl8;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.channel.*;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -1061,7 +1061,7 @@ public class SxProductService extends BaseService {
      * Step3:schema的上记Step1,2以外的全部field
      *
      * @param fields List<Field> 直接把值set进这个fields对象
-     * @param cmsMtPlatformMappingModel CmsMtPlatformMappingModel
+     * @param cmsMtPlatformMappingModel CmsMtPlatformMappingDeprecatedModel
      * @param shopBean ShopBean
      * @param expressionParser ExpressionParser
      * @param user 上传图片用
@@ -1069,7 +1069,7 @@ public class SxProductService extends BaseService {
      * @return Map<field_id mt里转换后的值> （只包含叶子节点，即只包含简单类型，对于复杂类型，也只把复杂类型里的简单类型值put进Map，只为了外部可以不用再循环取值，只需要根据已知的field_id，取得转换后的值）
      * @throws Exception
      */
-    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user, boolean isItem) throws Exception {
+    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user, boolean isItem) throws Exception {
         Map<String, Field> retMap = null;
         SxData sxData = expressionParser.getSxData();
 
@@ -1797,7 +1797,7 @@ public class SxProductService extends BaseService {
      * @param skuInventoryMap sku对应逻辑库存
      * @throws Exception
      */
-    private Map<String, Field> constructCustomPlatformProps(Map<CustomMappingType, List<Field>> mappingTypePropsMap, ExpressionParser expressionParser, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
+    private Map<String, Field> constructCustomPlatformProps(Map<CustomMappingType, List<Field>> mappingTypePropsMap, ExpressionParser expressionParser, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
         Map<String, Field> retMap = new HashMap<>();
 
         SxData sxData = expressionParser.getSxData();
@@ -2207,13 +2207,16 @@ public class SxProductService extends BaseService {
                     List<Field> allSkuFields = new ArrayList<>();
                     recursiveGetFields(processFields, allSkuFields);
 
-                    String imageTemplate = resolveDict("资质图片模板",expressionParser,shopBean, user, null);
-                    if (StringUtils.isEmpty(imageTemplate)) {
-                        String err = "达尔文产品没有设值资质图片模板字典!";
-                        sxData.setErrorMessage(err);
-                        throw new BusinessException(err);
-                    }
-                    skuFieldService.setCodeImageTemplate(imageTemplate);
+                    // deleted by morse.lu 2016/08/25 start
+                    // 暂时画面写死已经上传到平台的url完整路径，所以先注了这段代码，以后改回成画面有上传按钮，只填写图片名，再恢复这段代码
+//                    String imageTemplate = resolveDict("资质图片模板",expressionParser,shopBean, user, null);
+//                    if (StringUtils.isEmpty(imageTemplate)) {
+//                        String err = "达尔文产品没有设值资质图片模板字典!";
+//                        sxData.setErrorMessage(err);
+//                        throw new BusinessException(err);
+//                    }
+//                    skuFieldService.setCodeImageTemplate(imageTemplate);
+                    // deleted by morse.lu 2016/08/25 end
 
                     try {
                         List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);

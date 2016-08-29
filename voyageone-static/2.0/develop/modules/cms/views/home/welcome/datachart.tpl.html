@@ -121,7 +121,7 @@
                                             <tbody>
                                             <tr ng-repeat="m in vm.sumData.listPlatformPriceSum">
                                                 <td class="mfb-xxt text-center">{{m.platformName}}</td>
-                                                <td class=" mfb-xxt text-center"><a ng-click="goSearchPage(180,{cartId:m.CMS_PLATFORM_priceSale_Equal_minus1.cartId,priceType:'priceSale',priceStart:-1,priceEnd:-1})">{{m.CMS_PLATFORM_priceSale_Equal_minus1.amountVal}}</a></td>
+                                                <td class=" mfb-xxt text-center"><a ng-click="goSearchPage(180,{cartId:m.CMS_PLATFORM_priceSale_Equal_minus1.cartId,priceType:'priceRetail',priceStart:-1,priceEnd:-1})">{{m.CMS_PLATFORM_priceSale_Equal_minus1.amountVal}}</a></td>
                                                 <td class="mfb-xxt text-center"><a ng-click="goSearchPage(20,{cartId:m.CMS_PLATFORM_Retail_Price_DOWN.cartId,priceChgFlg:'U'})">{{m.CMS_PLATFORM_Retail_Price_UP.amountVal}}</a></td>
                                                 <td class="mfb-xxt text-center"><a ng-click="goSearchPage(20,{cartId:m.CMS_PLATFORM_Retail_Price_DOWN.cartId,priceChgFlg:'D'})">{{m.CMS_PLATFORM_Retail_Price_DOWN.amountVal}}</a></td>
                                             </tr>
@@ -200,7 +200,7 @@
                                             <td class=" text-center"><a ng-click="goSearchPage(130,{cartId:m.CMS_PLATFORM_NO_ATTRIBUTE.cartId,propertyStatus:'0'})">{{m.CMS_PLATFORM_NO_ATTRIBUTE.amountVal}}</a></td>
                                             <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_READY.cartId,productStatus:{'Ready':true}})">{{m.CMS_PLATFORM_READY.amountVal}}</a></td>
                                             <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_WAITING_PUBLISH.cartId,productStatus:{'Approved':true},platformStatus:{'WaitingPublish':true}})">{{m.CMS_PLATFORM_WAITING_PUBLISH.amountVal}}</a></td>
-                                            <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_PUBLISH_SUCCESS.cartId,productStatus:{'Approved':true},platformStatus:{'InStock':true,'OnSale':true}})">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_PUBLISH_SUCCESS.cartId,hasErrorFlg:'1',productStatus:{'Approved':true},platformStatus:{'InStock':true,'OnSale':true}})">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</a></td>
                                             <td class=" text-center"><a ng-click="goSearchPage(150,{cartId:m.CMS_PLATFORM_PUBLISH_FAILD.cartId,hasErrorFlg:'2'})"><span class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</span></a></td>
                                             <td class=" text-center"><a href="#/channel/brand_mapping_list/{{m.CMS_BrandNoMatchCount.cartId}}"><span class="label label-danger">{{m.CMS_BrandNoMatchCount.amountVal}}</span></a></td>
                                             <td class=" text-center"><a ng-click="goSearchPage(170,{cartId:m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.cartId,hasErrorFlg:'3'})"><span class="label label-danger">{{m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.amountVal}}</span></a></td>

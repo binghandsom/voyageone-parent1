@@ -54,6 +54,7 @@ public interface VmsUrlConstants {
 
         interface FEED_SEARCH {
             String ROOT = "/vms/feed/feed_info_search/";
+            String INIT = "init";
             String SEARCH = "search";
         }
     }

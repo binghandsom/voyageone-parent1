@@ -9,6 +9,9 @@ define([
         function FeedInfoSearchController(feedInfoSearchService,popups) {
             this.feedInfoSearchService = feedInfoSearchService;
             this.feedInfoList = [];
+            this.collapse = false;
+            this.feedCategoryTree;
+            this.showAll = false;
             this.parentSku = "";
             this.name = "";
             this.category = "";
@@ -24,7 +27,11 @@ define([
 
         FeedInfoSearchController.prototype = {
             init: function () {
-                this.search();
+                var main = this;
+                main.feedInfoSearchService.init().then(function (res) {
+                    main.feedCategoryTree = res.feedCategoryTree;
+                    main.search();
+                })
             },
             getFeedInfoList: function () {
                 var main = this;
@@ -37,8 +44,16 @@ define([
                     "curr": main.pageOption.curr,
                     "size": main.pageOption.size
                 }).then(function (res) {
-                    main.feedInfoList = res.feedInfoList;
                     main.pageOption.total = res.total;
+                    main.feedInfoList = res.feedInfoList.map(function (item) {
+                        item.className = 'bg-default';
+                        item.subClassName = 'bg-sub-default';
+                        item.collapse = main.collapse;
+                        if (item.skus != undefined) {
+                            main.showAll = true;
+                        }
+                        return item;
+                    })
                 })
             },
 
@@ -51,6 +66,14 @@ define([
             },
             open: function (context) {
                 this.popups.openImagePreview(context);
+            },
+
+            toggleAll: function () {
+                var main = this;
+                var collapse = (main.collapse = !main.collapse);
+                main.feedInfoList.forEach(function (item) {
+                    item.collapse = collapse;
+                });
             }
         };
 
