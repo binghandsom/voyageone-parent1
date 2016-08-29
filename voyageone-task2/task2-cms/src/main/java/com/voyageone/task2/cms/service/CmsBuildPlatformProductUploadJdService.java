@@ -1069,22 +1069,26 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @param shop ShopBean 店铺信息
      * @param productColorMap Map<String, Object> 产品和颜色值Mapping关系表
      * @param skuLogicQtyMap Map<String, Integer> 所有SKU的逻辑库存列表
-     * @param cmsColorList List<String> 该类目对应的颜色SKU列表
-     * @param cmsSizeList List<String> 该类目对应的尺寸SKU列表
+     * @param cmsColors List<CmsMtPlatformSkusModel> 该类目对应的颜色SKU列表
+     * @param cmsSizes List<CmsMtPlatformSkusModel> 该类目对应的尺寸SKU列表
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
     private JdProductBean setJdProductSkuInfo(JdProductBean targetProductBean, SxData sxData,
                                               ShopBean shop, Map<String, Object> productColorMap,
                                               Map<String, Integer> skuLogicQtyMap,
-                                              List<CmsMtPlatformSkusModel> cmsColorList,
-                                              List<CmsMtPlatformSkusModel> cmsSizeList) throws BusinessException {
+                                              List<CmsMtPlatformSkusModel> cmsColors,
+                                              List<CmsMtPlatformSkusModel> cmsSizes) throws BusinessException {
         List<CmsBtProductModel> productList = sxData.getProductList();
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
 
         // 产品和颜色的Mapping表(因为后面上传SKU图片的时候也要用到，所以从外面传进来)
         // SKU尺寸和尺寸值的Mapping表(Map<上新用尺码, 平台取下来的尺码值value>)
         Map<String, Object> skuSizeMap = new HashMap<>();
+
+        // 匹配过的颜色和尺寸要删除，为了不改变外面的值，重新定义一个变量
+        List<CmsMtPlatformSkusModel> cmsColorList = cmsColors;
+        List<CmsMtPlatformSkusModel> cmsSizeList = cmsSizes;
 
         // 如果该平台类目颜色属性和尺寸信息都有的时候，则把每个product作为一种颜色
         if (cmsColorList.size() > 0 && cmsSizeList.size() > 0) {
@@ -1451,8 +1455,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @param wareId long 商品id
      * @param sxData SxData 产品对象
      * @param productColorMap Map<String Object> 产品和颜色值Mapping关系表
-     * @param cmsColorList List<String> 该类目对应的颜色SKU列表
-     * @param cmsSizeList List<String> 该类目对应的尺寸SKU列表
+     * @param cmsColorList List<CmsMtPlatformSkusModel> 该类目对应的颜色SKU列表
+     * @param cmsSizeList List<CmsMtPlatformSkusModel> 该类目对应的尺寸SKU列表
      * @return boolean 上传指定商品SKU图片是否成功
      */
     private boolean uploadJdProductUpdatePics(ShopBean shopProp, long wareId, SxData sxData,
