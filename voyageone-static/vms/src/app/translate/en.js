@@ -109,6 +109,7 @@ define(function () {
         "TXT_USER": "User",
         "TXT_READY_TO_PACKAGE": "Ready to package this order?",
         "TXT_CONFIRM_REVERT_SCANNED_SKU": "Confirm to revert scanning in this order?",
+
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
         "BTN_BACK": "BACK",
@@ -131,6 +132,7 @@ define(function () {
         "BTN_LABEL": "LABEL",
         "BTN_FINISH": "FINISH",
         "BTN_REVERT": "REVERT",
-        "BTN_PRINT_ORDER_LABEL":"PRINT ORDER LABEL"
+        "BTN_PRINT_ORDER_LABEL":"PRINT ORDER LABEL",
+        "BTN_PRINT": "PRINT"
     }
 });
