@@ -533,7 +533,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
                 // 更新商品是否成功
                 if (!StringUtils.isEmpty(retModified)) {
-                     // 更新该商品下所有产品的图片
+                    // 更新该商品下所有产品的图片
                     retStatus = uploadJdProductUpdatePics(shopProp, jdWareId, sxData, productColorMap,
                             cmsColorList, cmsSizeList);
                     if (!retStatus) {
@@ -864,7 +864,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @return Map<String, String> 京东商品共通属性
      */
     private Map<String, String> getJdCommonInfo(CmsMtPlatformCategorySchemaModel jdCommonSchema,
-                                                       ShopBean shopBean, ExpressionParser expressionParser) {
+                                                ShopBean shopBean, ExpressionParser expressionParser) {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得京东共通schema数据中的propsItem(XML字符串)
@@ -941,7 +941,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @return Map<String, String> 京东类目属性
      */
     private Map<String, String> getJdProductAttributes(CmsMtPlatformCategorySchemaModel platformSchemaData,
-                                           ShopBean shopBean, ExpressionParser expressionParser) {
+                                                       ShopBean shopBean, ExpressionParser expressionParser) {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得schema数据中的propsItem(XML字符串)
@@ -1366,7 +1366,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @return boolean 新增商品上传SKU图片是否成功
      */
     private boolean uploadJdProductAddPics(ShopBean shopProp, long wareId, SxData sxData,
-                                        Map<String, Object> productColorMap) {
+                                           Map<String, Object> productColorMap) {
         boolean retUploadAddPics = true;
         List<CmsBtProductModel> productList = sxData.getProductList();
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
