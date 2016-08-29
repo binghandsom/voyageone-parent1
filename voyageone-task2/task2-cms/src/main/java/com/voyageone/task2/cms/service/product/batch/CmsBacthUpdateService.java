@@ -1,5 +1,8 @@
 package com.voyageone.task2.cms.service.product.batch;
 
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
@@ -65,13 +68,23 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
      */
     private void updateHsCode(String propId, String propValue, List<String> codeList, String channleId, String userName, Boolean synPriceFlg) {
         String msg = "税号变更 " + propId + "=> " + propValue;
+        // 未配置自动同步的店铺，显示同步状况
+        if (synPriceFlg) {
+            msg += " (同步价格)";
+        } else {
+            CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channleId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+            if (autoApprovePrice == null || !"1".equals(autoApprovePrice.getConfigValue1())) {
+                msg += " (未同步最终售价)";
+            }
+        }
+        String msgTxt = msg;
         for (String prodCode : codeList) {
             try {
                 CmsBtProductModel newProduct = productService.getProductByCode(channleId, prodCode);
                 priceService.setPrice(newProduct, synPriceFlg);
                 newProduct.getPlatforms().forEach((s, platform) -> {
                     if (platform.getCartId() != 0) {
-                        productService.updateProductPlatform(channleId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.BatchUpdate, msg);
+                        productService.updateProductPlatform(channleId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.BatchUpdate, msgTxt);
                     }
                 });
             } catch (PriceCalculateException e) {
