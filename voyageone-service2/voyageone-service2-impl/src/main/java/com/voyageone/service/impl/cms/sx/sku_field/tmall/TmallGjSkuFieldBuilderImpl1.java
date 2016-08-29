@@ -1,7 +1,10 @@
 package com.voyageone.service.impl.cms.sx.sku_field.tmall;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
@@ -482,6 +485,21 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                     // 如果code长度大于60，那么用color
 //                    complexValue.setInputFieldValue(colorExtend_aliasnameField.getId(), sxProductBean.getCommon().getFields().getCode());
                     String alias = sxProductBean.getCommon().getFields().getCode();
+                    // added by morse.lu 2016/08/29 start
+                    // 通过配置表(cms_mt_channel_config)来决定用code，还是color，默认用code
+                    CmsChannelConfigBean aliasConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
+                            , CmsConstants.ChannelConfig.ALIAS
+                            , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.COLOR_ALIAS);
+                    if (aliasConfig != null) {
+                        String aliasPropName = aliasConfig.getConfigValue1(); // 目前配置的是code或者color
+                        if (!StringUtils.isEmpty(aliasPropName)) {
+                            String val = sxProductBean.getCommon().getFields().getStringAttribute(aliasPropName);
+                            if (!StringUtils.isEmpty(val)) {
+                                alias = val;
+                            }
+                        }
+                    }
+                    // added by morse.lu 2016/08/29 end
                     if (alias.length() > 60) {
                         alias = sxProductBean.getCommon().getFields().getColor();
                     }
