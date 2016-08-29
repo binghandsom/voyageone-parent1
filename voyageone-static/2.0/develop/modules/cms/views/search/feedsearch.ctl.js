@@ -227,7 +227,7 @@ define([
             $.download.post(cActions.cms.search.$feedSearchService.root + "/" + cActions.cms.search.$feedSearchService.download, {"fileName": fileName});
         };
 
-        $scope.openFeedCategoryMapping = function (popupNewCategory) {
+        $scope.openFeedCategoryMapping = function (popCategoryMul) {
             attributeService.getCatTree()
                 .then(function (res) {
                     if (!res.data.categoryTree || !res.data.categoryTree.length) {
@@ -239,14 +239,14 @@ define([
                         return $scope.vm.searchInfo.category.indexOf(item.catPath) > -1;
                     });
 
-                    return popupNewCategory({
+                    return popCategoryMul({
                         categories: res.data.categoryTree,
                         from:$scope.vm.feedCats,
                         divType:"-",
                         anyNode:true
                     }).then(function (context) {
                             $scope.vm.feedCats = context;
-                            $scope.vm.searchInfo.category = $scope.vm.catOpts = _.map(context,function(item){return item.catPath;});
+                            $scope.vm.searchInfo.category = _.map(context,function(item){return item.catPath;});
                         }
                     );
                 });
