@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.vms.feed;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt;
 import com.voyageone.service.model.vms.VmsBtFeedFileModel;
 import org.apache.commons.io.FileUtils;
@@ -81,7 +82,7 @@ public class FeedFileService extends BaseService {
     public void saveOnlineFile(String channelId, String fileName, InputStream inputStream) {
 
         // 取得Feed文件上传路径
-        String feedFilePath = com.voyageone.common.configs.Properties.readValue("vms.feed.online.upload");
+        String feedFilePath = Codes.getCodeName("VMS_PROPERTY", "vms.feed.online.upload");
         feedFilePath +=  "/" + channelId + "/";
         try {
             FileUtils.copyInputStreamToFile(inputStream, new File(feedFilePath  + fileName));

@@ -60,6 +60,13 @@ define([
                 "backdrop": 'static',
                 "size": 'lg'
             },
+            "categoryMul":{
+                "templateUrl": "views/pop/bulkUpdate/categoryMul.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/bulkUpdate/categoryMul.ctl",
+                "controller": 'popCategoryMulCtl as ctrl',
+                "backdrop": 'static',
+                "size": 'lg'
+            },
             "categoryNew": {
                 "templateUrl": "views/pop/bulkUpdate/masterCategoryNew.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/bulkUpdate/masterCategoryNew.ctl",
@@ -571,6 +578,15 @@ define([
          */
         $scope.popupNewCategory = function popupNewCategory(context) {
             return openModal(popActions.bulkUpdate.category, context);
+        };
+
+        /**
+         * 打开多选类目选择页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.popCategoryMul = function popCategoryMul(context){
+            return openModal(popActions.bulkUpdate.categoryMul, context);
         };
 
         /**

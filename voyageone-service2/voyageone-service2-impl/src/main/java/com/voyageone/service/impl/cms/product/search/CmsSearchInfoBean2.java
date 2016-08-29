@@ -31,7 +31,7 @@ public class CmsSearchInfoBean2 implements Serializable {
     private String createTimeStart;
     private String createTimeTo;
 
-    private String brand;
+    private List<String> brandList;
     private List<String> freeTags;
     private int freeTagType = 0;
     private String lockFlg;
@@ -248,12 +248,12 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.inventory = inventory;
     }
 
-    public String getBrand() {
-        return brand;
+    public List<String> getBrandList() {
+        return brandList;
     }
 
-    public void setBrand(String brand) {
-        this.brand = brand;
+    public void setBrandList(List<String> brandList) {
+        this.brandList = brandList;
     }
 
     public String[] getCodeList() {

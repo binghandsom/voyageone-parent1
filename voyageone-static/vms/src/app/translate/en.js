@@ -123,6 +123,8 @@ define(function () {
         "BTN_SEARCH": "SEARCH",
         "BTN_SHIPPED": "SHIP",
         "BTN_SUBMIT": "SUBMIT",
-        "BTN_UPLOAD": "UPLOAD"
+        "BTN_UPLOAD": "UPLOAD",
+        "BTN_YES": "YES",
+        "BTN_NO": "NO"
     }
 });
