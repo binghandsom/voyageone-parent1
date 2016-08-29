@@ -585,7 +585,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             Cell cell = FileUtils.cell(row, nowIdx, unlock);
             cell.setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty((String) codeImgMap.get(fields.getCode())));
             cell.setCellStyle(cs);
-//            sheet.setc
+
             Integer imgCnt = (Integer) codeImgMap.get(fields.getCode() + "_img_cnt");
             if (imgCnt != null && imgCnt > 1) {
                 row.setHeightInPoints(imgCnt * sheet.getDefaultRowHeightInPoints());
