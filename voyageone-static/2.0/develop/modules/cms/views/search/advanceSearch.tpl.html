@@ -18,7 +18,7 @@
                                             <div class="form-group"><!-- 查询brand品牌 -->
                                                 <label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
                                                 <div class="col-sm-8">
-                                                    <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.brand"
+                                                    <select multiple chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.brandList"
                                                             ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
                                                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     </select>

@@ -285,6 +285,8 @@ define([
                 _.forEach(selList, function (object) {
                     $scope.vm.searchInfo._selCodeList.push(object.code);
                 });
+            } else {
+                msg = '<br>将导出所有的商品记录，如需只导出部分商品，请回到一览画面选择指定商品。';
             }
 
             if (fileType == 1) {
