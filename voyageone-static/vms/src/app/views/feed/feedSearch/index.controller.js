@@ -6,7 +6,7 @@ define([
 ], function (vms) {
     vms.controller('FeedInfoSearchController', (function () {
 
-        function FeedInfoSearchController(feedInfoSearchService,popups) {
+        function FeedInfoSearchController(feedInfoSearchService, popups) {
             this.feedInfoSearchService = feedInfoSearchService;
             this.feedInfoList = [];
             this.collapse = false;
@@ -23,15 +23,42 @@ define([
                 fetch: this.getFeedInfoList.bind(this)
             };
             this.popups = popups;
+            this.categories = null;
+            this.selected = null;
+            this.selectedCat = {};
+            this.categoryPath = [];
+            this.divType = "-";
         }
 
         FeedInfoSearchController.prototype = {
             init: function () {
                 var main = this;
                 main.feedInfoSearchService.init().then(function (res) {
-                    main.feedCategoryTree = res.feedCategoryTree;
+                    main.categories = res.feedCategoryTree;
+                    main.categoryPath = [{level: 1, categories: main.categories}];
                     main.search();
-                })
+                });
+            },
+            openCategory: function (category, categoryItem) {
+                if (categoryItem.selectedCat == undefined) {
+                    categoryItem.selectedCat = [];
+                }
+                categoryItem.selectedCat = category.catName;
+
+                // 标记选中
+                this.selected = category;
+
+                // 查询当前选中的是第几级
+                var levelIdx = categoryItem.level - 1;
+
+                // 获取这一级别的数据
+                var pathItem = this.categoryPath[levelIdx + 1];
+                if (pathItem) {
+                    // 如果有数据,那么当前级别和后续级别都需要清空
+                    this.categoryPath.splice(levelIdx + 1);
+                }
+                if (!category.children || !category.children.length) return;
+                this.categoryPath.push({level: levelIdx + 2, categories: category.children});
             },
             getFeedInfoList: function () {
                 var main = this;
