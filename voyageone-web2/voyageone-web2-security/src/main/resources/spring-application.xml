@@ -2,7 +2,8 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns:util="http://www.springframework.org/schema/util"
-	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<!-- Root Context: defines shared resources visible to all other web components -->
 
@@ -110,28 +111,22 @@
 		<!-- 登录成功后要跳转的连接(本例中此属性用不到，因为登录成功后的处理逻辑在LoginController里硬编码) -->
 		<!-- <property name="successUrl" value="/" ></property> -->
 		<!-- 用户访问未对其授权的资源时，所显示的连接 -->
-		<property name="unauthorizedUrl" value="/"></property>
+		<!--<property name="unauthorizedUrl" value="/"></property>-->
 		<property name="filterChainDefinitionMap" ref="chainDefinitionSectionMetaSource" />
-		<!--<property name="filters">-->
-			<!--<util:map>-->
-				<!--<entry key="sysUser" value-ref="sysUserFilter"/>-->
-				<!--<entry key="kickout" value-ref="kickoutSessionControlFilter"/>-->
-			<!--</util:map>-->
-		<!--</property>-->
+		<property name="filters">
+			<util:map>
+				<entry key="perms" value-ref="permission"/>
+			</util:map>
+		</property>
 	</bean>
+
+	<bean id="permission" class="com.voyageone.security.shiro.filter.MyPermissionFilter"/>
 
 	<!--自定义filterChainDefinitionMap -->
 	<bean id="chainDefinitionSectionMetaSource" class="com.voyageone.security.shiro.ChainDefinitionSectionMetaSource">
 		<property name="filterChainDefinitions">
 			<value>
-				/components/** = anon
-				/libs/** = anon
-				/modules/** = anon
-				/static/** = anon
-				/login.html = anon
-				/login.js = anon
-				/channel.html = anon
-				/channel.js = anon
+				/core/** = anon
 			</value>
 		</property>
 	</bean>

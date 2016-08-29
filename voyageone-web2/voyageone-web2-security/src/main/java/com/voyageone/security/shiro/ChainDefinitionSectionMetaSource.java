@@ -33,7 +33,10 @@ public class ChainDefinitionSectionMetaSource implements FactoryBean<Ini.Section
 		// 循环Resource的url,逐个添加到section中。section就是filterChainDefinitionMap,
 		// 里面的键就是链接URL,值就是存在什么条件才能访问该链接
 
-		List<ComResourceModel> list = comResourceDao.selectList(new HashMap<>());
+		ComResourceModel model = new ComResourceModel();
+		model.setActive(1);
+		model.setResType(2);
+		List<ComResourceModel> list = comResourceDao.selectList(model);
 		for (ComResourceModel res : list) {
 			// 构成permission字符串
 			if (StringUtils.isNotEmpty(res.getResUrl()) && StringUtils.isNotEmpty(res.getResKey())) {
@@ -46,7 +49,7 @@ public class ChainDefinitionSectionMetaSource implements FactoryBean<Ini.Section
 		// 所有资源的访问权限，必须放在最后
 		/*section.put("/**", "authc");*/
 		/** 如果需要一个用户只能登录一处地方,,修改为 section.put("/**", "authc,kickout,sysUser,user"); **/
-		section.put("/cms/**", "authc, perms[cms]");
+		section.put("/**", "authc");
 		return section;
 	}
 

@@ -19,9 +19,9 @@ public interface AdminUrlConstants {
 			String ADD_CHANNEL = "addChannel";
 
 			String UPDATE_CHANNEL = "updateChannel";
-			
+			//for options
 			String GET_ALL_CHANNEL = "getAllChannel";
-
+			//for options
 			String GET_ALL_COMPANY = "getAllCompany";
 
 			String GENERATE_SECRET_KEY = "generateSecretKey";
