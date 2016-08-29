@@ -39,6 +39,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.*;
+import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
@@ -50,6 +51,7 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
+import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.service.model.cms.enums.Operation;
@@ -137,6 +139,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     private PriceService priceService;
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
+    @Autowired
+    private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
 
     // 每个channel的feed->master导入最大件数
     private final static int FEED_IMPORT_MAX_500 = 500;
@@ -859,6 +863,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //
 //                    }
                     // delete desmon 2016/07/01 end
+                    insertCmsBtFeedImportSize(channelId, cmsProduct);
 
                     $info("feed->master导入:更新成功:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
 //                    $info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
@@ -903,6 +908,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     setSellerCats(feed, cmsProduct);
 
                     productService.createProduct(channelId, cmsProduct, getTaskName());
+
+                    insertCmsBtFeedImportSize(channelId, cmsProduct);
 
                     $info("feed->master导入:新增成功:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
 //                    $info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
@@ -3654,6 +3661,18 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         // delete by desmond 2016/07/08 end
 
 
+    }
+
+    private void insertCmsBtFeedImportSize(String channelId, CmsBtProductModel cmsProduct) {
+        CmsBtFeedImportSizeModel cmsBtFeedImportSizeModel = new CmsBtFeedImportSizeModel();
+        cmsBtFeedImportSizeModel.setChannelId(channelId);
+        cmsBtFeedImportSizeModel.setBrandName(cmsProduct.getCommon().getFields().getBrand());
+        cmsBtFeedImportSizeModel.setProductType(cmsProduct.getCommon().getFields().getProductType());
+        cmsBtFeedImportSizeModel.setSizeType(cmsProduct.getCommon().getFields().getSizeType());
+        cmsProduct.getCommon().getSkus().forEach(sku -> {
+            cmsBtFeedImportSizeModel.setOriginalSize(sku.getSize());
+            cmsBtFeedImportSizeService.saveCmsBtFeedImportSizeModel(cmsBtFeedImportSizeModel, getTaskName());
+        });
     }
 
     private void copyAttributeFromMainProduct(String channelId, CmsBtProductModel_Common common, String mainProductCode) {
