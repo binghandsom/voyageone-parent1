@@ -1645,6 +1645,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 platformP0.setMainProductCode(common.getFields().getCode());
             } else {
                 platformP0.setMainProductCode(groupP0.getMainProductCode());
+
+                // 把主商品的几个状态复制过来 james 2016/08/29
+                copyAttributeFromMainProduct(feed.getChannelId(), common,groupP0.getMainProductCode());
             }
             platforms.put("P0", platformP0);
             // add desmond 2016/07/04 end
@@ -3651,6 +3654,27 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         // delete by desmond 2016/07/08 end
 
 
+    }
+
+    private void copyAttributeFromMainProduct(String channelId, CmsBtProductModel_Common common, String mainProductCode) {
+        CmsBtProductModel mainProduct = productService.getProductByCode(channelId, mainProductCode);
+        if(mainProduct != null){
+            common.getFields().setTranslateStatus(mainProduct.getCommon().getFields().getTranslateStatus());
+            common.getFields().setTranslateTime(mainProduct.getCommon().getFields().getTranslateTime());
+            common.getFields().setTranslator(mainProduct.getCommon().getFields().getTranslator());
+
+            common.getFields().setHsCodePrivate(mainProduct.getCommon().getFields().getHsCodePrivate());
+            common.getFields().setHsCodeSetter(mainProduct.getCommon().getFields().getHsCodeSetter());
+            common.getFields().setHsCodeStatus(mainProduct.getCommon().getFields().getHsCodeStatus());
+            common.getFields().setHsCodeSetTime(mainProduct.getCommon().getFields().getHsCodeSetTime());
+
+            common.getFields().setShortDesCn(mainProduct.getCommon().getFields().getShortDesCn());
+            common.getFields().setLongDesCn(mainProduct.getCommon().getFields().getLongDesCn());
+            common.getFields().setOriginalTitleCn(mainProduct.getCommon().getFields().getOriginalTitleCn());
+            common.getFields().setMaterialCn(mainProduct.getCommon().getFields().getMaterialCn());
+            common.getFields().setUsageCn(mainProduct.getCommon().getFields().getUsageCn());
+            common.getFields().setOrigin(mainProduct.getCommon().getFields().getOrigin());
+        }
     }
 
     /**
