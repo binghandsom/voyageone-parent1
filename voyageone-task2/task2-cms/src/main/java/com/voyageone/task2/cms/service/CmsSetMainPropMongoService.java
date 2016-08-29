@@ -3686,6 +3686,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             common.getFields().setHsCodeSetter(mainProduct.getCommon().getFields().getHsCodeSetter());
             common.getFields().setHsCodeStatus(mainProduct.getCommon().getFields().getHsCodeStatus());
             common.getFields().setHsCodeSetTime(mainProduct.getCommon().getFields().getHsCodeSetTime());
+            common.getFields().setHsCodeCrop(mainProduct.getCommon().getFields().getHsCodeCrop());
+            common.getFields().setHsCodeCross(mainProduct.getCommon().getFields().getHsCodeCross());
 
             common.getFields().setCategorySetTime(mainProduct.getCommon().getFields().getCategorySetTime());
             common.getFields().setCategoryStatus(mainProduct.getCommon().getFields().getCategoryStatus());
