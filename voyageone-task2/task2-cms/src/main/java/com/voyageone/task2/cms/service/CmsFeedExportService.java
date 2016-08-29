@@ -145,7 +145,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
         sheet = book.createSheet("sku");
         rowEn = sheet.createRow(0);
         rowCn = sheet.createRow(1);
-        for(int i=0;i<productHeadEn.length;i++){
+        for(int i=0;i<skuHeadEn.length;i++){
             ExcelUtils.setCellValue(rowEn, i, skuHeadEn[i], cellStyleEn);
             ExcelUtils.setCellValue(rowCn,i,skuHeadCn[i],cellStyleCn);
         }
