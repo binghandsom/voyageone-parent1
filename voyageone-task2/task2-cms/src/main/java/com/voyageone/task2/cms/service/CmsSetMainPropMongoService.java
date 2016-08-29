@@ -3658,21 +3658,23 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
     private void copyAttributeFromMainProduct(String channelId, CmsBtProductModel_Common common, String mainProductCode) {
         CmsBtProductModel mainProduct = productService.getProductByCode(channelId, mainProductCode);
-        common.getFields().setTranslateStatus(mainProduct.getCommon().getFields().getTranslateStatus());
-        common.getFields().setTranslateTime(mainProduct.getCommon().getFields().getTranslateTime());
-        common.getFields().setTranslator(mainProduct.getCommon().getFields().getTranslator());
+        if(mainProduct != null){
+            common.getFields().setTranslateStatus(mainProduct.getCommon().getFields().getTranslateStatus());
+            common.getFields().setTranslateTime(mainProduct.getCommon().getFields().getTranslateTime());
+            common.getFields().setTranslator(mainProduct.getCommon().getFields().getTranslator());
 
-        common.getFields().setHsCodePrivate(mainProduct.getCommon().getFields().getHsCodePrivate());
-        common.getFields().setHsCodeSetter(mainProduct.getCommon().getFields().getHsCodeSetter());
-        common.getFields().setHsCodeStatus(mainProduct.getCommon().getFields().getHsCodeStatus());
-        common.getFields().setHsCodeSetTime(mainProduct.getCommon().getFields().getHsCodeSetTime());
+            common.getFields().setHsCodePrivate(mainProduct.getCommon().getFields().getHsCodePrivate());
+            common.getFields().setHsCodeSetter(mainProduct.getCommon().getFields().getHsCodeSetter());
+            common.getFields().setHsCodeStatus(mainProduct.getCommon().getFields().getHsCodeStatus());
+            common.getFields().setHsCodeSetTime(mainProduct.getCommon().getFields().getHsCodeSetTime());
 
-        common.getFields().setShortDesCn(mainProduct.getCommon().getFields().getShortDesCn());
-        common.getFields().setLongDesCn(mainProduct.getCommon().getFields().getLongDesCn());
-        common.getFields().setOriginalTitleCn(mainProduct.getCommon().getFields().getOriginalTitleCn());
-        common.getFields().setMaterialCn(mainProduct.getCommon().getFields().getMaterialCn());
-        common.getFields().setUsageCn(mainProduct.getCommon().getFields().getUsageCn());
-        common.getFields().setOrigin(mainProduct.getCommon().getFields().getOrigin());
+            common.getFields().setShortDesCn(mainProduct.getCommon().getFields().getShortDesCn());
+            common.getFields().setLongDesCn(mainProduct.getCommon().getFields().getLongDesCn());
+            common.getFields().setOriginalTitleCn(mainProduct.getCommon().getFields().getOriginalTitleCn());
+            common.getFields().setMaterialCn(mainProduct.getCommon().getFields().getMaterialCn());
+            common.getFields().setUsageCn(mainProduct.getCommon().getFields().getUsageCn());
+            common.getFields().setOrigin(mainProduct.getCommon().getFields().getOrigin());
+        }
     }
 
     /**
