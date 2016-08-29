@@ -130,7 +130,10 @@ public class VmsConstants {
         String FEED_CSV_SPLIT_SYMBOL = "FEED_CSV_SPLIT_SYMBOL";
         // CSV文件编码
         String FEED_CSV_ENCODE = "FEED_CSV_ENCODE";
-
+        // 默认物流公司
+        String DEFAULT_DELIVERY_COMPANY = "DEFAULT_DELIVERY_COMPANY";
+        // 默认shipment命名格式
+        String DEFAULT_SHIPMENT_NAMING_CONVERTER = "DEFAULT_SHIPMENT_NAMING_CONVERTER";
     }
 
 }

@@ -18,6 +18,7 @@ define([
             this.originalShipment = context.shipment;
             this.statusList = context.statusList;
             this.shipment = angular.copy(context.shipment);
+            this.defaultDeliveryCompany = context.defaultDeliveryCompany;
             if (this.shipment) {
                 if (this.shipment.shippedDate) {
                     this.shipment.shippedDate = new Date(this.shipment.shippedDate);
@@ -40,6 +41,9 @@ define([
                         self.$uibModalInstance.close(self.originalShipment);
                     }
                 });
+            } else if (self.type == 'new') {
+                self.shipment.shippedDate = new Date();
+                self.shipment.expressCompany = self.defaultDeliveryCompany;
             }
             self.shipmentPopupService.init().then(function (data) {
                 self.expressCompanies = data.expressCompanies;

@@ -533,7 +533,17 @@
             `containerizer`       = NULL,
             `containerizing_time` = NULL
         WHERE `channel_id` = #{channelId, jdbcType=VARCHAR}
+        <choose>
+            <when test="shipmentId != null">
               AND `shipment_id` = #{shipmentId, jdbcType=VARCHAR}
+            </when>
+            <when test="consolidationOrderId != null">
+                AND `consolidation_order_id` = #{consolidationOrderId, jdbcType=VARCHAR}
+            </when>
+            <otherwise>
+                AND 1 = 2
+            </otherwise>
+        </choose>
               AND `status` = 1
     </update>
 </mapper>

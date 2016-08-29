@@ -1,5 +1,6 @@
 define([
-    'vms'
+    'vms',
+    'directives/angularBarcode.directive'
 ], function (vms) {
     vms.controller('OrderInfoController', (function () {
 
@@ -10,6 +11,10 @@ define([
             this.orderInfoService = orderInfoService;
             this.popups = popups;
             this.shipmentScanPopupService = shipmentScanPopupService;
+
+            this.barcodeOpts = {
+                display: true
+            };
 
             this.oneDay = 24 * 60 * 60 * 1000;
             this.twoDay = 2 * this.oneDay;
@@ -146,12 +151,12 @@ define([
         };
 
         OrderInfoController.prototype.afterDownload = function (responseContent, param, context) {
-                if (!responseContent) return;
-                var res = JSON.parse(responseContent);
-                if (res.message != '') {
-                    context.alert(res.message);
-                }
+            if (!responseContent) return;
+            var res = JSON.parse(responseContent);
+            if (res.message != '') {
+                context.alert(res.message);
             }
+        };
 
         OrderInfoController.prototype.toggleAll = function () {
             var self = this;
@@ -187,7 +192,8 @@ define([
                 shipment: self.currentShipment,
                 type: type,
                 pendingShipmentStatus: pendingShipmentStatus,
-                statusList: this.shipmentStatusList
+                statusList: this.shipmentStatusList,
+                defaultDeliveryCompany: this.channelConfigs.defaultDeliveryCompany
             };
 
             this.popups.openShipment(shipmentInfo).then(function (shipment) {
@@ -207,6 +213,17 @@ define([
                     self.init();
                 });
             });
+        };
+
+        OrderInfoController.prototype.printLabel = function (index) {
+            var canvas = $('#label' + index).find('canvas').get(0);
+            var popupWin = window.open('', '_blank', 'width=300,height=300');
+            popupWin.document.open();
+            var img = canvas.toDataURL("image/png");
+            popupWin.document.write('<img src="'+img+'"/>');
+            popupWin.document.close();
+            popupWin.print();
+            popupWin.close();
         };
 
         return OrderInfoController;
