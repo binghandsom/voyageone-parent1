@@ -12,6 +12,8 @@ import com.voyageone.service.model.com.TmOrderChannelModel;
 public class TmOrderChannelBean extends TmOrderChannelModel {
 	
 	private List<CtCartModel> carts;
+	
+	private List<TmOrderChannelConfigBean> channelConfig;
 
 	public List<CtCartModel> getCarts() {
 		return carts;
@@ -21,4 +23,12 @@ public class TmOrderChannelBean extends TmOrderChannelModel {
 		this.carts = carts;
 	}
 
+	public List<TmOrderChannelConfigBean> getChannelConfig() {
+		return channelConfig;
+	}
+
+	public void setChannelConfig(List<TmOrderChannelConfigBean> channelConfig) {
+		this.channelConfig = channelConfig;
+	}
+	
 }

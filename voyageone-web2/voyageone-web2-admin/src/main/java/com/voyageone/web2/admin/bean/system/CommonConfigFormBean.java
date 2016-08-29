@@ -30,6 +30,8 @@ public class CommonConfigFormBean extends AdminFormBean {
 	
 	private String comment;
 	
+	private String endTime;
+	
 	public Integer getSeq() {
 		return seq;
 	}
@@ -116,6 +118,14 @@ public class CommonConfigFormBean extends AdminFormBean {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
 	}
 	
 }

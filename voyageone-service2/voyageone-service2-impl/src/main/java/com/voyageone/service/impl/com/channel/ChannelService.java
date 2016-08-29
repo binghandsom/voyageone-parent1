@@ -59,7 +59,11 @@ public class ChannelService extends BaseService {
 		if (result == null) {
 			return null;
 		} else {
-			return result.get(0);
+			TmOrderChannelBean channel = result.get(0);
+			List<TmOrderChannelConfigBean> channelConfig = searchChannelConfigByPage(channelId, null, null, null, null)
+					.getResult();
+			channel.setChannelConfig(channelConfig);
+			return channel;
 		}
 	}
 	

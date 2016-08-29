@@ -303,7 +303,9 @@ public interface AdminUrlConstants {
 			
 			String GET_CHANNEL_SERIES = "getChannelSeries";
 
-			String GET_NEW_CHANNEL_SERIES = "getNewChannelSeries";
+			String HANDLE_CHANNEL_SERIES_SQL = "handleChannelSeriesSql";
+
+			String DOWNLOAD_OPEN_SHOP_SQL = "downloadOpenShopSql";
 			
 		}
 		
