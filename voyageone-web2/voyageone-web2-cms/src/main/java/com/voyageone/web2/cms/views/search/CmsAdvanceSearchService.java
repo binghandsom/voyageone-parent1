@@ -413,6 +413,7 @@ public class CmsAdvanceSearchService extends BaseAppService {
             sessionBean.put("_adv_search_customProps", cmsSessionBean.getAttribute("_adv_search_customProps"));
             sessionBean.put("_adv_search_commonProps", cmsSessionBean.getAttribute("_adv_search_commonProps"));
             sessionBean.put("_adv_search_selSalesType", cmsSessionBean.getAttribute("_adv_search_selSalesType"));
+            sessionBean.put("_adv_search_selBiDataList", cmsSessionBean.getAttribute("_adv_search_selBiDataList"));
             searchValue.put("_sessionBean", sessionBean);
             sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_FileDldJob, searchValue);
             return true;

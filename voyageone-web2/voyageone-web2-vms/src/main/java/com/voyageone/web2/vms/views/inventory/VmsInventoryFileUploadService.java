@@ -1,6 +1,7 @@
 package com.voyageone.web2.vms.views.inventory;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.impl.vms.feed.FeedFileService;
 import com.voyageone.service.model.vms.VmsBtFeedFileModel;
@@ -48,7 +49,7 @@ public class VmsInventoryFileUploadService extends BaseAppService {
 
             // 保存文件
             // 取得Feed文件上传路径
-            String inventoryFilePath = com.voyageone.common.configs.Properties.readValue("vms.inventory.upload");
+            String inventoryFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.inventory.upload");
             inventoryFilePath +=  "/" + channelId + "/";
             FileUtils.copyInputStreamToFile(inputStream, new File(inventoryFilePath  + fileName));
 
@@ -68,7 +69,7 @@ public class VmsInventoryFileUploadService extends BaseAppService {
     private void doSaveInventoryFileCheck(String channelId, MultipartFile uploadFile) {
 
         // 取得Inventory文件上传路径
-        String inventoryFilePath = com.voyageone.common.configs.Properties.readValue("vms.inventory.upload");
+        String inventoryFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.inventory.upload");
         inventoryFilePath +=  "/" + channelId + "/";
 
         // 目录下有文件存在的话不允许上传（FTP有上传的情况下）

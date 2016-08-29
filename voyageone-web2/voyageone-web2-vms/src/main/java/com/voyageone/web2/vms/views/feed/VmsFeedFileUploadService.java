@@ -1,6 +1,7 @@
 package com.voyageone.web2.vms.views.feed;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.impl.vms.feed.FeedFileService;
 import com.voyageone.service.model.vms.VmsBtFeedFileModel;
@@ -80,7 +81,7 @@ public class VmsFeedFileUploadService extends BaseAppService {
         }
 
         // 取得ftp侧 Feed文件上传路径
-        String feedFileFtpPath = com.voyageone.common.configs.Properties.readValue("vms.feed.ftp.upload");
+        String feedFileFtpPath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.feed.ftp.upload");
         feedFileFtpPath +=  "/" + channelId + "/feed/";
 
         // 目录下有文件存在的话不允许上传（FTP有上传的情况下）

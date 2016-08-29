@@ -6,7 +6,7 @@
         <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{'TXT_CATEGORY' | translate}}</h5>
     </div>
     <div class="modal-body wrapper">
-        <div class="category_ts" ng-if="ctrl.context.plateSchema != true && !ctrl.context.anyNode">
+        <div class="category_ts" ng-if="ctrl.context.plateSchema != true">
             <!--这里是Feed和主数据相互切换的-->
             <p>{{'TXT_FEED_OR_MASTER_CATEGORY_WITH_COLON' | translate}}{{ ctrl.context.from }}</p>
         </div>
@@ -23,9 +23,6 @@
                         <ul>
                             <li ng-repeat="category in categoryItem.categories | filter:search track by category.catId">
                                 <a href="javascript:void(0)" ng-click="ctrl.openCategory(category,categoryItem)" ng-class="{indexSelected:categoryItem.selectedCat == category.catName}">
-                                    <input type="checkbox" ng-click="ctrl.selectCat(category,$event)"
-                                           ng-if="ctrl.context.anyNode"
-                                           ng-checked="category.catPath == ctrl.selectObj[category.catId]">
                                     <span>{{:: category.catName }}</span>
                                     <span class="pull-right text-muted" ng-if="category.children && category.children.length">
                                         <i class="fa fa-fw fa-angle-right text"></i>

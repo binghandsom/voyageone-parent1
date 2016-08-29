@@ -69,7 +69,7 @@ public class HtDealUpdateDealEndTimeResponse extends BaseJMResponse {
             if (map.containsKey("is_Success") && "1".equals(map.get("is_Success"))) {
                 this.setIs_Success(true);
             } else {
-                this.setErrorMsg(this.body);
+                this.setErrorMsg(this.getRequestUrl()+this.body);
             }
         } catch (Exception ex) {
             logger.error("setBody ",ex);

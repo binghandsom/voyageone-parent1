@@ -334,9 +334,9 @@ public class CmsAdvSearchQueryService extends BaseService {
         }
 
         // 获取brand
-        if (StringUtils.isNotEmpty(searchValue.getBrand())) {
-            queryObject.addQuery("{'common.fields.brand':#}");
-            queryObject.addParameters(searchValue.getBrand());
+        if (searchValue.getBrandList() !=  null && searchValue.getBrandList().size() > 0) {
+            queryObject.addQuery("{'common.fields.brand':{$in:#}}");
+            queryObject.addParameters(searchValue.getBrandList());
         }
 
         // 获取free tag查询条件
