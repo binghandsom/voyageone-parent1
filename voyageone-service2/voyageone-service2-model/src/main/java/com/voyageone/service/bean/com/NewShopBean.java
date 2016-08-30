@@ -1,22 +1,12 @@
-package com.voyageone.web2.admin.bean.openshop;
+package com.voyageone.service.bean.com;
 
 import java.util.List;
-
-import com.voyageone.service.bean.com.ComMtTaskBean;
-import com.voyageone.service.bean.com.ComMtThirdPartyConfigBean;
-import com.voyageone.service.bean.com.ComMtTrackingInfoConfigBean;
-import com.voyageone.service.bean.com.ComMtValueChannelBean;
-import com.voyageone.service.bean.com.TmCarrierChannelBean;
-import com.voyageone.service.bean.com.TmChannelShopBean;
-import com.voyageone.service.bean.com.TmOrderChannelBean;
-import com.voyageone.service.bean.com.TmSmsConfigBean;
-import com.voyageone.service.bean.com.WmsMtStoreBean;
 
 /**
  * @author Wangtd
  * @since 2.0.0 2016/8/29
  */
-public class OpenShopFormBean {
+public class NewShopBean {
 	
 	private TmOrderChannelBean channel;
 	

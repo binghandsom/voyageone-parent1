@@ -20,7 +20,7 @@ define([
             this.selectRowsFactory = selectRowsFactory;
             this.storePageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
-            this.adminList = [];
+            this.adminRoleList = [];
             this.adminUserSelList = {selList: []};
             this.tempSelect = null;
             this.searchInfo = {
@@ -53,12 +53,32 @@ define([
                 self.adminRoleService.getAllRole().then(function (res) {
                     self.roleList = res.data;
                 });
-                self.search(1);
+                self.adminRoleService.init().then(function(res){
+                    self.adminRoleList = res.data.result;
+                    // 设置勾选框
+                    if (self.tempSelect == null) {
+                        self.tempSelect = new self.selectRowsFactory();
+                    } else {
+                        self.tempSelect.clearCurrPageRows();
+                        self.tempSelect.clearSelectedList();
+                    }
+                    _.forEach(self.adminRoleList, function (Info) {
+                        if (Info.updFlg != 8) {
+                            self.tempSelect.currPageRows({
+                                "id": Info.id,
+                                "code": Info.storeName,
+                                "orderChannelId": Info.orderChannelId
+                            });
+                        }
+                    });
+                    self.adminUserSelList = self.tempSelect.selectRowsInfo;
+                    // End 设置勾选框
+                });
             },
             search: function (page) {
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
-                self.adminUserService.init({
+                self.adminRoleService.init({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
                         'userAccount': self.searchInfo.userAccount,
@@ -69,7 +89,7 @@ define([
                         'application': self.searchInfo.application
                     })
                     .then(function (res) {
-                        self.adminList = res.data.result;
+                        self.adminRoleList = res.data.result;
                         self.storePageOption.total = res.data.count;
 
                         // 设置勾选框
@@ -79,12 +99,10 @@ define([
                             self.tempSelect.clearCurrPageRows();
                             self.tempSelect.clearSelectedList();
                         }
-                        _.forEach(self.adminList, function (Info) {
+                        _.forEach(self.adminRoleList, function (Info) {
                             if (Info.updFlg != 8) {
                                 self.tempSelect.currPageRows({
-                                    "id": Info.id,
-                                    "code": Info.storeName,
-                                    "orderChannelId": Info.orderChannelId
+                                    "id": Info.id
                                 });
                             }
                         });
@@ -104,21 +122,26 @@ define([
                     application: ''
                 }
             },
-            edit: function () {
+            edit: function (type) {
                 var self = this;
-                if (self.adminUserSelList.selList.length <= 0) {
-                    self.alert('TXT_MSG_NO_ROWS_SELECT');
-                    return;
+                if (type == 'add') {
+                    self.popups.openRole('add').then(function () {
+                        self.search(1);
+                    });
                 } else {
-                    _.forEach(self.adminList, function (Info) {
-                        if (Info.id == self.adminUserSelList.selList[0].id) {
-                            self.popups.openAddUser(Info).then(function () {
-                                self.search(1);
-                            });
-                        }
-                    })
+                    if (self.adminUserSelList.selList.length <= 0) {
+                        self.alert('TXT_MSG_NO_ROWS_SELECT');
+                        return;
+                    } else {
+                        _.forEach(self.adminRoleList, function (Info) {
+                            if (Info.id == self.adminUserSelList.selList[0].id) {
+                                self.popups.openRole(Info).then(function () {
+                                    self.search(1);
+                                });
+                            }
+                        })
+                    }
                 }
-
             },
             vieAuthority: function () {
                 var self = this;
@@ -126,7 +149,7 @@ define([
                     self.alert('TXT_MSG_NO_ROWS_SELECT');
                     return;
                 } else {
-                    _.forEach(self.adminList, function (Info) {
+                    _.forEach(self.adminRoleList, function (Info) {
                         if (Info.id == self.adminUserSelList.selList[0].id) {
                             self.popups.openUserAuthority(Info).then(function () {
                                 self.search(1);
@@ -140,37 +163,14 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.adminUserSelList.selList, function (delInfo) {
-                            delList.push({'orderChannelId': delInfo.orderChannelId, 'application': delInfo.id});
+                            delList.push(delInfo.id);
                         });
-                        self.adminUserService.deleteUser(delList).then(function (res) {
+                        self.adminRoleService.deleteRole(delList).then(function (res) {
                             self.search();
                         })
                     }
                 );
             },
-            getName: function (item) {
-                var self = this;
-                var orgNameList = [];
-                _.map(self.orgList, function (org) {
-                    if (org.id == item) {
-                        orgNameList.push(org.orgName);
-                    }
-                });
-                return orgNameList.join(',');
-            },
-            getActive: function (active) {
-                switch (active) {
-                    case 1:
-                        return '启用';
-                        break;
-                    case 0:
-                        return '禁用';
-                        break;
-                    case 2:
-                        return '锁定';
-                        break;
-                }
-            }
         };
         return RoleManagementController;
     })())

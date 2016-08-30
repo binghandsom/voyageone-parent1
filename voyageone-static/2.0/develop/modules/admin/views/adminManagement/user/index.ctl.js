@@ -18,7 +18,7 @@ define([
             this.channelService = channelService;
             this.adminRoleService = adminRoleService;
             this.selectRowsFactory = selectRowsFactory;
-            this.storePageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
+            this.pageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
             this.adminList = [];
             this.adminUserSelList = {selList: []};
@@ -30,7 +30,8 @@ define([
                 channelId: '',
                 orgId: '',
                 application: '',
-                pageInfo: this.storePageOption
+                storeId: '',
+                pageInfo: this.pageOption
             }
         }
 
@@ -53,12 +54,31 @@ define([
                 self.adminRoleService.getAllRole().then(function (res) {
                     self.roleList = res.data;
                 });
-                self.search(1);
+                self.adminUserService.init().then(function (res) {
+                    self.adminList = res.data.result;
+                    // 设置勾选框
+                    if (self.tempSelect == null) {
+                        self.tempSelect = new self.selectRowsFactory();
+                    } else {
+                        self.tempSelect.clearCurrPageRows();
+                        self.tempSelect.clearSelectedList();
+                    }
+                    _.forEach(self.adminList, function (Info) {
+                        if (Info.updFlg != 8) {
+                            self.tempSelect.currPageRows({
+                                "id": Info.id,
+                                "code": Info.storeName
+                            });
+                        }
+                    });
+                    self.adminUserSelList = self.tempSelect.selectRowsInfo;
+                    // End 设置勾选框
+                })
             },
             search: function (page) {
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
-                self.adminUserService.init({
+                self.adminUserService.searchUser({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
                         'userAccount': self.searchInfo.userAccount,
@@ -66,11 +86,12 @@ define([
                         'active': self.searchInfo.active,
                         'channelId': self.searchInfo.channelId,
                         'orgId': self.searchInfo.orgId,
-                        'application': self.searchInfo.application
+                        'application': self.searchInfo.application,
+                        'storeId': self.searchInfo.storeId
                     })
                     .then(function (res) {
                         self.adminList = res.data.result;
-                        self.storePageOption.total = res.data.count;
+                        self.pageOption.total = res.data.count;
 
                         // 设置勾选框
                         if (self.tempSelect == null) {
@@ -83,8 +104,7 @@ define([
                             if (Info.updFlg != 8) {
                                 self.tempSelect.currPageRows({
                                     "id": Info.id,
-                                    "code": Info.storeName,
-                                    "orderChannelId": Info.orderChannelId
+                                    "code": Info.storeName
                                 });
                             }
                         });
@@ -95,13 +115,14 @@ define([
             clear: function () {
                 var self = this;
                 self.searchInfo = {
-                    pageInfo: self.storePageOption,
+                    pageInfo: self.pageOption,
                     userAccount: '',
                     roleId: '',
                     active: '',
                     channelId: '',
                     orgId: '',
-                    application: ''
+                    application: '',
+                    storeId: ''
                 }
             },
             edit: function (type) {
@@ -145,13 +166,30 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.adminUserSelList.selList, function (delInfo) {
-                            delList.push({'orderChannelId': delInfo.orderChannelId, 'application': delInfo.id});
+                            delList.push({'id': delInfo.id});
                         });
                         self.adminUserService.deleteUser(delList).then(function (res) {
                             self.search();
                         })
                     }
                 );
+            },
+            resetPass: function () {
+                var self = this;
+                if (self.adminUserSelList.selList.length <= 0) {
+                    self.alert('TXT_MSG_NO_ROWS_SELECT');
+                    return;
+                } else {
+                    self.confirm('确认要重置密码吗？').then(function () {
+                        _.forEach(self.adminList, function (Info) {
+                            if (Info.id == self.adminUserSelList.selList[0].id) {
+                                self.adminUserService.resetPass(Info.userAccount).then(function (res) {
+                                    console.log(res);
+                                });
+                            }
+                        })
+                    })
+                }
             },
             getName: function (item) {
                 var self = this;

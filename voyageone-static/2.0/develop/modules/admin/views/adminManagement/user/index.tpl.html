@@ -97,9 +97,9 @@
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>
                     <button class="btn btn-default" ng-click="ctrl.edit()"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
-                    <button class="btn btn-default"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete()"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                     <button class="btn btn-default" ng-click="ctrl.vieAuthority()"><i class="fa fa-eye-slash"></i>&nbsp;查看权限</button>
-                    <button class="btn btn-default"><i class="fa fa-key"></i>&nbsp;重置密码</button>
+                    <button class="btn btn-default" ng-click="ctrl.resetPass()"><i class="fa fa-key"></i>&nbsp;重置密码</button>
                 </div>
             </div>
 
@@ -155,6 +155,6 @@
                 </tbody>
             </table>
         </div>
-        <vpagination config="ctrl.storePageOption" ng-if="ctrl.adminList.length>0"></vpagination>
+        <vpagination config="ctrl.pageOption" ng-if="ctrl.adminList.length>0"></vpagination>
     </div>
 </div>

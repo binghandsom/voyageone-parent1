@@ -55,30 +55,30 @@ define([
             },
             move: function (type) {
                 var self = this;
-                self.cartList = self.cartList ? self.cartList : [];
-                self.cartAllList = self.cartAllList ? self.cartAllList : [];
+                self.roleList = self.roleList ? self.roleList : [];
+                self.roleAllList = self.roleAllList ? self.roleAllList : [];
                 switch (type) {
                     case 'allInclude':
-                        _.extend(self.cartList, self.cartAllList);
-                        self.cartAllList = null;
+                        _.extend(self.roleList, self.roleAllList);
+                        self.roleAllList = null;
                         break;
                     case 'include':
-                        self.data = _.find(self.cartAllList, function (cart) {
-                            return cart.cartId == self.selectedCartId;
+                        self.data = _.find(self.roleAllList, function (role) {
+                            return role.roleId == self.selectedRoleId;
                         });
-                        self.cartList.push(self.data);
-                        self.cartAllList.splice(self.cartAllList.indexOf(self.data), 1);
+                        self.roleList.push(self.data);
+                        self.roleAllList.splice(self.roleAllList.indexOf(self.data), 1);
                         break;
                     case 'exclude':
-                        self.data = _.find(self.cartList, function (cart) {
-                            return cart.cartId == self.selectedCartId;
+                        self.data = _.find(self.roleList, function (role) {
+                            return role.roleId == self.selectedRoleId;
                         });
-                        self.cartAllList.push(self.data);
-                        self.cartList.splice(self.cartList.indexOf(self.data), 1);
+                        self.roleAllList.push(self.data);
+                        self.roleList.splice(self.roleList.indexOf(self.data), 1);
                         break;
                     case 'allExclude':
-                        _.extend(self.cartAllList, self.cartList);
-                        self.cartList = null;
+                        _.extend(self.roleAllList, self.roleList);
+                        self.roleList = null;
                         break;
                 }
             },
@@ -87,9 +87,17 @@ define([
             },
             save: function () {
                 var self = this;
+                var tempRoleList = [];
+                var tempRoleName = [];
                 var result = {};
+                // 设置roleIds
+                _.forEach(self.roleList, function (item) {
+                    tempRoleList.push(item.roleId);
+                    tempRoleName.push(item.roleName);
+                    _.extend(self.sourceData, {'roleId': tempRoleList.join(','),'roleName': tempRoleName.join(',')});
+                });
                 if (self.append == true) {
-                    self.adminUserService.addUser(self.sourceData).then(function (res) {
+                    self.adminRoleService.addRole(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
@@ -98,7 +106,7 @@ define([
                         self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.adminUserService.updateUser(self.sourceData).then(function (res) {
+                    self.adminRoleService.updateRole(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;

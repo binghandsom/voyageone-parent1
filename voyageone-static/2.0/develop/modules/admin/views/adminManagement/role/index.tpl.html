@@ -31,8 +31,8 @@
                                 <div class="row form-group"><!-- 角色类型 -->
                                     <label class="col-sm-3 control-label">{{'TXT_ROLE_TYPE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.active"
-                                                ng-options="active.active as active.value for active in ctrl.activeList">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.roleId"
+                                                ng-options="role for role in ctrl.roleList">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>
@@ -89,13 +89,14 @@
                     </label>
                     <button class="btn btn-default" ng-click=""><i class="fa fa-arrow-circle-right"></i>&nbsp;分配权限</button>
                     <button class="btn btn-default" ng-click=""><i class="fa fa-arrow-circle-right"></i>&nbsp;批量删除权限</button>
+                    <button class="btn btn-default" ng-click=""><i class="fa fa-arrow-circle-right"></i>&nbsp;批量增加权限</button>
                 </div>
             </div>
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
-                    <button class="btn btn-default" ng-click="openAddUser('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                    <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>
                     <button class="btn btn-default" ng-click="ctrl.edit()"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
-                    <button class="btn btn-default"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete()"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                 </div>
             </div>
 
@@ -110,10 +111,9 @@
                         </label>
                     </th>
                     <th class="text-center mfb-xt" translate="TXT_ROLE_NAME"></th>
-                    <th class="text-left mfb-xt" translate="TXT_CHANNEL"></th>
-                    <th class="text-left mfb-xt" translate="TXT_STORE"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_SYSTEM"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_SYSTEM"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_CHANNEL"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_STORE"></th>
+                    <th class="text-center mfb-xt" translate="TXT_SYSTEM"></th>
                     <th class="text-center mfb-xt" translate="TXT_ROLE_TYPE"></th>
                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
                     <th class="text-center mfb-xxt" translate="TXT_INSTRUCTION"></th>
@@ -123,9 +123,9 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td if-no-rows="ctrl.adminList.length||ctrl.adminList" colspan="11" style="padding: 0px"></td>
+                        <td if-no-rows="ctrl.adminRoleList.length||ctrl.adminRoleList" colspan="10" style="padding: 0px"></td>
                     </tr>
-                    <tr ng-repeat="list in ctrl.adminList">
+                    <tr ng-repeat="list in ctrl.adminRoleList">
                         <td class="text-left v-middle">
                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
                                 <input ng-model="ctrl.adminUserSelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
@@ -133,13 +133,12 @@
                                 <span class="fa fa-check"></span>
                             </label>
                         </td>
-                        <td class="text-center v-middle">{{list.userAccount}}</td>
-                        <td class="text-left v-middle">{{list.userName}}</td>
-                        <td class="text-left v-middle">{{list.email}}</td>
                         <td class="text-center v-middle">{{list.roleName}}</td>
-                        <td class="text-center v-middle">{{list.channelName}}</td>
+                        <td class="text-left v-middle">{{list.channelName}}</td>
                         <td class="text-left v-middle">{{list.storeName}}</td>
                         <td class="text-center v-middle">{{list.application}}</td>
+                        <td class="text-center v-middle">{{list.roleType}}</td>
+                        <td class="text-center v-middle">{{list.active?list.active==true?'启用':'禁用':''}}</td>
                         <td class="text-center v-middle">{{list.description}}</td>
                         <td class="text-left v-middle">{{list.modifier}}</td>
                         <td class="text-center v-middle">{{list.modified}}</td>
@@ -147,6 +146,6 @@
                 </tbody>
             </table>
         </div>
-        <vpagination config="ctrl.storePageOption" ng-if="ctrl.adminList.length>0"></vpagination>
+        <vpagination config="ctrl.storePageOption" ng-if="ctrl.adminRoleList.length>0"></vpagination>
     </div>
 </div>
