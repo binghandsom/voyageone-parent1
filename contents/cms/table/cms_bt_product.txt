@@ -140,6 +140,7 @@
 	* pIsMain
 	* pProductId
 	* pNumIId
+	* pPlatformMallId ->聚美商城的商品id
 	* pStatus
     * pReallyStatus ->产品在平台上的真实状态,edward,20160802
 	* pBrandId
