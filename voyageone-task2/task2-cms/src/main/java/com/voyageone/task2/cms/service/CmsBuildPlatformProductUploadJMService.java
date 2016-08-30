@@ -1325,7 +1325,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
      * @param product
      * @param shopBean
      */
-    private void uploadMall(CmsBtProductModel product, ShopBean shopBean, ExpressionParser expressionParser) throws Exception {
+    public void uploadMall(CmsBtProductModel product, ShopBean shopBean, ExpressionParser expressionParser) throws Exception {
         String mallId = product.getPlatform(CART_ID).getpPlatformMallId(); // 聚美Mall Id.
         if (StringUtils.isEmpty(mallId)) {
             // 新增
