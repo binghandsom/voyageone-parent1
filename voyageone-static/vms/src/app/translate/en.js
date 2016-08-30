@@ -112,8 +112,9 @@ define(function () {
         "TXT_SETTINGS": "Settings",
         "TXT_VENDOR_SETTINGS": "Vendor Settings",
         "TXT_DEFAULT_DELIVERY_COMPANY": "Default Delivery Company",
-        "TXT_NAMING_CONVERTER": "Naming Converter",
+        "TXT_NAMING_CONVERTER": "Shipment Naming Converter",
         "TXT_EMAIL_ADDRESS": "E-mail Address",
+        "TXT_DEMO": "Demo",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
@@ -138,6 +139,8 @@ define(function () {
         "BTN_FINISH": "FINISH",
         "BTN_REVERT": "REVERT",
         "BTN_PRINT_ORDER_LABEL":"PRINT ORDER LABEL",
-        "BTN_PRINT": "PRINT"
+        "BTN_PRINT": "PRINT",
+        "BTN_TEST": "TEST",
+        "BTN_SAVE": "SAVE"
     }
 });

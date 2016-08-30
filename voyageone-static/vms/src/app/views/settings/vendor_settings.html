@@ -12,21 +12,33 @@
     <form class="form-horizontal">
         <div class="form-group">
             <label for="defaultDeliveryCompany" class="col-md-3 control-label" translate="TXT_DEFAULT_DELIVERY_COMPANY"></label>
-            <div class="col-md-7">
+            <div class="col-md-8">
                 <select id="defaultDeliveryCompany" class="form-control" ng-model="ctrl.channelConfig.defaultDeliveryCompany" ng-options="option.value as option.name for option in ctrl.deliveryCompanyList"></select>
             </div>
         </div>
         <div class="form-group">
-            <label for="namingConverter" translate="TXT_NAMING_CONVERTER" class="col-md-3 control-label"></label>
-            <div class="col-md-7">
-                <input type="text" id="namingConverter" class="form-control" ng-model="ctrl.channelConfig.namingConverter">
+            <label for="emailAddress" translate="TXT_EMAIL_ADDRESS" class="col-md-3 control-label"></label>
+            <div class="col-md-8">
+                <input type="email" id="emailAddress" class="form-control" ng-model="ctrl.channelConfig.emailAddress" maxlength="50">
             </div>
         </div>
         <div class="form-group">
-            <label for="emailAddress" translate="TXT_EMAIL_ADDRESS" class="col-md-3 control-label"></label>
-            <div class="col-md-7">
-                <input type="email" id="emailAddress" class="form-control" ng-model="ctrl.channelConfig.emailAddress">
+            <label for="namingConverter" translate="TXT_NAMING_CONVERTER" class="col-md-3 control-label"></label>
+            <div class="col-md-4">
+                <input type="text" id="namingConverter" class="form-control" ng-model="ctrl.channelConfig.namingConverter" maxlength="50">
             </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <button ng-click="ctrl.testNaming()" class="btn btn-default" translate="BTN_TEST"></button>
+                    </div>
+                    <input type="text" class="form-control" ng-model="ctrl.testName" disabled>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="form-group">
+            <button class="btn btn-primary col-md-offset-8" ng-click="ctrl.save()" translate="BTN_SAVE"></button>
         </div>
     </form>
 </div>

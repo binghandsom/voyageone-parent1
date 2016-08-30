@@ -20,4 +20,11 @@ public class VmsChannelConfigDao extends BaseDao {
         return selectList("vms_mt_channel_config_getAll");
     }
 
+    public int updateConfig(VmsChannelConfigBean vmsChannelConfigBean) {
+        return update("vms_mt_channel_config_update", vmsChannelConfigBean);
+    }
+
+    public int insertConfig(VmsChannelConfigBean vmsChannelConfigBean) {
+        return insert("vms_mt_channel_config_insert", vmsChannelConfigBean);
+    }
 }

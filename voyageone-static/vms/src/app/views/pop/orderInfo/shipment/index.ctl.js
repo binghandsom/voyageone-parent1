@@ -3,7 +3,8 @@
  */
 define([
     'vms',
-    'underscore'
+    'underscore',
+    'moment'
 ], function (vms, underscore, moment) {
     vms.controller('NewShipmentController', (function () {
         function NewShipmentController(alert, notify, confirm, $translate, shipmentPopupService, context, $uibModalInstance, $filter) {
@@ -46,7 +47,7 @@ define([
                 self.shipment.shippedDate = new Date();
                 self.shipment.expressCompany = self.channelConfig.defaultDeliveryCompany;
                 if (self.channelConfig.namingConverter)
-                    self.shipment.shipmentName = self.filter('date')(new Date(), self.channelConfig.namingConverter);
+                    self.shipment.shipmentName = moment().format(self.channelConfig.namingConverter);
             }
             self.shipmentPopupService.init().then(function (data) {
                 self.expressCompanies = data.expressCompanies;
