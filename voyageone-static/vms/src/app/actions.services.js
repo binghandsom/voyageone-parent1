@@ -206,6 +206,9 @@ define(function (require) {
             scan: "scan",
             getInfo: "get_info",
             ship: "ship"
+        }),
+        vendorSettingsService: new CommonDataService('/vms/settings/vendor_settings', {
+
         })
     }
 });

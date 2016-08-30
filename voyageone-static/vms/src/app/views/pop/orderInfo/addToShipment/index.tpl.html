@@ -2,8 +2,8 @@
     <div class="modal-header">
         <h4 class="modal-title" id="myModalLabel"><i class="fa fa-tasks"></i>SKU List<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i></h4>
     </div>
-    <div class="center-block sr-only" style="width: 200px; height: 200px;">
-        <barcode id="label" type="code128b" string="{{ctrl.shipmentDetails.consolidationOrderId}}" options="barcodeOpts"></barcode>
+    <div class="center-block sr-only" style="width: 400px; height: 400px;">
+        <barcode id="label" type="code128b" string="{{ctrl.shipmentDetails.consolidationOrderId}}" options="ctrl.barcodeOpts"></barcode>
     </div>
     <div class="modal-body">
         <div class="panel-body" style="padding-left: 0; padding-right: 0">
@@ -20,7 +20,7 @@
                 </form>
             </div>
             <div class="col-sm-2" style="padding: 0;">
-                <button class="btn btn-success btn-sm" ng-click="ctrl.finishScanning()" ng-if="ctrl.finished && ctrl.printed" translate="BTN_FINISH"></button>
+                <button name="finishButton" class="btn btn-success btn-sm" ng-click="ctrl.finishScanning()" ng-if="ctrl.finished && ctrl.printed" translate="BTN_FINISH"></button>
                 <button class="btn btn-warning btn-sm pull-right" ng-click="ctrl.revertScanning()" ng-disabled="ctrl.scannedSkuList.length == 0" translate="BTN_REVERT"></button>
             </div>
         </div>

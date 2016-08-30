@@ -109,6 +109,8 @@ define(function () {
         "TXT_USER": "User",
         "TXT_READY_TO_PACKAGE": "Ready to package this order?",
         "TXT_CONFIRM_REVERT_SCANNED_SKU": "Confirm to revert scanning in this order?",
+        "TXT_SETTINGS": "Settings",
+        "TXT_VENDOR_SETTINGS": "Vendor Settings",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
