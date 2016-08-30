@@ -134,7 +134,18 @@ public class MybatisSqlHelper {
                     if (Date.class.isAssignableFrom(javaType)) {
                         strValue = String.valueOf(new Timestamp(((Date)value).getTime()));
                     }
-                    //其他，包含字符串和其他特殊类型
+
+                 //字符串
+                case CHAR:
+                case VARCHAR:
+                case LONGVARCHAR:
+                case CLOB:
+                case NVARCHAR:
+                case NCHAR:
+                case NCLOB:
+                    //mysql单引号转义
+                    strValue = strValue.replaceAll("'", "''");
+                //其他特殊类型
                 default:
                     strValue = "'" + strValue + "'";
             }
