@@ -42,21 +42,22 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest {
     @Test
     public void startupTest() {
 
+        // 天猫同购商品主图5张
+//        doCreateJson("天猫同购商品主图5张", false, doDict_天猫同购商品主图5张());
 
-//
+        // 天猫同购描述(详情页描述)
+//        doCreateJson("天猫同购描述", false, doDict_天猫同购描述());
+
+        doCreateJson("天猫同购无线描述", false, doDict_天猫同购无线描述());
+
+        // 属性图片模板
+
+        //
 //        // 聚美使用方法
 //        doCreateJson("聚美使用方法", false, doDict_聚美使用方法());
 //
 //        // 聚美实拍
 //        doCreateJson("聚美实拍", false, doDict_聚美实拍());
-
-        // 天猫同购商品主图5张
-        doCreateJson("天猫同购商品主图5张", false, doDict_天猫同购商品主图5张());
-
-        // 天猫同购描述(详情页描述)
-//        doCreateJson("天猫同购描述", false, doDict_天猫同购描述());
-
-        // 属性图片模板
 
     }
 
@@ -224,5 +225,148 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest {
 //        return ruleRoot;
 //
 //    }
+
+    private RuleExpression doDict_天猫同购无线描述() {
+        // 根字典
+        RuleExpression ruleRoot = new RuleExpression();
+        {
+            // start
+            String kv = "{\"wireless_desc\":{";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+//        {
+//            // K-V 模板
+//            String kv = "\"k1\":{\"k1-1\":\"v1\",\"k1-2\":\"v2\"},";
+//            TextWord word = new TextWord(kv);
+//            ruleRoot.addRuleWord(word);
+//
+//            <field id="xxx_enable" name="是否启用" type="singleCheck">
+//                <options>
+//                <option displayName="启用" value="true"/>
+//                <option displayName="不启用" value="false"/>
+//                </options>
+//            </field>
+//        }
+
+        {
+            // item_info 商品信息
+//            String kv = "\"item_info\":{\"item_info_enable\":\"true\"},";
+            String kv = "\"item_info\":{\"item_info_enable\":\"false\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // coupon 优惠
+//            String kv = "\"coupon\":{\"coupon_enable\":\"true\",\"coupon_id\":\"342115\"},";
+            String kv = "\"coupon\":{\"coupon_enable\":\"false\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // hot_recommanded 同店推荐
+//            <field id="hot_recommanded_id" name="选择模板" type="singleCheck">
+//                <options>
+//                <option displayName="商品推荐" value="520277"/>
+//                </options>
+//            </field>
+//            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"true\",\"hot_recommanded_id\":\"341911\"},";
+            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"false\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // shop_discount 店铺活动
+//            String kv = "\"shop_discount\":{\"shop_discount_enable\":\"true\",\"shop_discount_id\":\"342160\"},";
+            String kv = "\"shop_discount\":{\"shop_discount_enable\":\"false\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+//        {
+//            // user_define 自定义
+//            String kv = "\"user_define\":{\"user_define_enable\":\"true\",\"user_define_name\":\"xxx\",\"user_define_image_0\":\"xxx\",\"user_define_image_1\":\"xxx\"},";
+//            TextWord word = new TextWord(kv);
+//            ruleRoot.addRuleWord(word);
+//        }
+
+        // 图片全是DictWord(总共20张图片,但最后5张不用设置图片)
+        {
+            // item_picture 商品图片
+            String kv = "\"item_picture\":{\"item_picture_enable\":\"true\"";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+
+            // 5张无线商品图片
+            for (int i = 0; i < 5; i++) {
+                int j = i + 1;
+                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+                TextWord imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+
+                DictWord dictRoot = new DictWord();
+                dictRoot.setName("无线商品图片-" + j);
+                ruleRoot.addRuleWord(dictRoot);
+
+                imageStr = "\"}";
+                imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+            }
+
+            // 5张无线自定义图片
+            for (int i = 5; i < 10; i++) {
+
+                int j = i - 4;
+                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+                TextWord imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+
+                DictWord dictRoot = new DictWord();
+                dictRoot.setName("无线自定义图片-" + j);
+                ruleRoot.addRuleWord(dictRoot);
+
+                imageStr = "\"}";
+                imageWord = new TextWord(imageStr);
+                ruleRoot.addRuleWord(imageWord);
+            }
+
+//            // 5张无线固定图
+//            for (int i = 10; i < 15; i++) {
+//                // 5张无线商品图片
+//                int j = i - 9;
+//                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
+//                TextWord imageWord = new TextWord(imageStr);
+//                ruleRoot.addRuleWord(imageWord);
+//
+//                DictWord dictRoot = new DictWord();
+//                dictRoot.setName("无线固定图-" + j);
+//                ruleRoot.addRuleWord(dictRoot);
+//
+//                imageStr = "\"}";
+//                imageWord = new TextWord(imageStr);
+//                ruleRoot.addRuleWord(imageWord);
+//            }
+
+            // item_picture_image_15 ~ item_picture_image_19不用设置
+
+            // end
+            String endStr = "}";
+            TextWord endWord = new TextWord(endStr);
+            ruleRoot.addRuleWord(endWord);
+        }
+
+        {
+            // end
+            String kv = "}}";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        return ruleRoot;
+    }
 
 }
