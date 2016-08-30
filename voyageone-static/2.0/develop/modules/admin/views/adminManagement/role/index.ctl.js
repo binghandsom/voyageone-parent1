@@ -102,9 +102,7 @@ define([
                         _.forEach(self.adminRoleList, function (Info) {
                             if (Info.updFlg != 8) {
                                 self.tempSelect.currPageRows({
-                                    "id": Info.id,
-                                    "code": Info.storeName,
-                                    "orderChannelId": Info.orderChannelId
+                                    "id": Info.id
                                 });
                             }
                         });
@@ -165,9 +163,9 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.adminUserSelList.selList, function (delInfo) {
-                            delList.push({'orderChannelId': delInfo.orderChannelId, 'application': delInfo.id});
+                            delList.push(delInfo.id);
                         });
-                        self.adminUserService.deleteUser(delList).then(function (res) {
+                        self.adminRoleService.deleteRole(delList).then(function (res) {
                             self.search();
                         })
                     }

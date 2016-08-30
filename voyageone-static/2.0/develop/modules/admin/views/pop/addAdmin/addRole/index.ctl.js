@@ -25,6 +25,7 @@ define([
                     self.popType = '添加角色';
                     self.sourceData = {}
                 }
+                self.sourceData.active = self.sourceData.active ?  self.sourceData.active ? "1" : "0":'';
                 self.adminOrgService.getAllOrg().then(function (res) {
                     self.orgList = res.data;
                 });
@@ -57,7 +58,6 @@ define([
                         return;
                     });
                     if (self.popType == '添加角色') return;
-                    console.log(self.storeAllList)
                     return storeCall(self.storeAllList);
                 });
                 function storeCall(storeAllList) {
@@ -79,30 +79,30 @@ define([
             },
             channelMove: function (type) {
                 var self = this;
-                self.roleList = self.roleList ? self.roleList : [];
-                self.roleAllList = self.roleAllList ? self.roleAllList : [];
+                self.channelList = self.channelList ? self.channelList : [];
+                self.channelAllList = self.channelAllList ? self.channelAllList : [];
                 switch (type) {
                     case 'allInclude':
-                        _.extend(self.roleList, self.roleAllList);
-                        self.roleAllList = null;
+                        _.extend(self.channelList, self.channelAllList);
+                        self.channelAllList = null;
                         break;
                     case 'include':
-                        self.data = _.find(self.roleAllList, function (role) {
-                            return role.roleId == self.selectedRoleId;
+                        self.data = _.find(self.channelAllList, function (channel) {
+                            return channel.orderChannelId == self.selectedChannelId;
                         });
-                        self.roleList.push(self.data);
-                        self.roleAllList.splice(self.roleAllList.indexOf(self.data), 1);
+                        self.channelList.push(self.data);
+                        self.channelAllList.splice(self.channelAllList.indexOf(self.data), 1);
                         break;
                     case 'exclude':
-                        self.data = _.find(self.roleList, function (role) {
-                            return role.roleId == self.selectedRoleId;
+                        self.data = _.find(self.channelList, function (channel) {
+                            return channel.orderChannelId == self.selectedChannelId;
                         });
-                        self.roleAllList.push(self.data);
-                        self.roleList.splice(self.roleList.indexOf(self.data), 1);
+                        self.channelAllList.push(self.data);
+                        self.channelList.splice(self.channelList.indexOf(self.data), 1);
                         break;
                     case 'allExclude':
-                        _.extend(self.roleAllList, self.roleList);
-                        self.roleList = null;
+                        _.extend(self.channelAllList, self.channelList);
+                        self.channelList = null;
                         break;
                 }
             },
@@ -140,9 +140,24 @@ define([
             },
             save: function () {
                 var self = this;
+                var tempChannelId = [];
+                var tempChannelName = [];
+                var tempStoreId = [];
+                var tempStoreName = [];
+                _.forEach(self.channelList, function (item) {
+                    tempChannelId.push(item.orderChannelId);
+                    tempChannelName.push(item.channelName);
+                    _.extend(self.sourceData, {'channelId': tempChannelId.join(','),'channelName': tempChannelName.join(',')});
+                });
+                _.forEach(self.storeList, function (item) {
+                    tempStoreId.push(item.storeId);
+                    tempStoreName.push(item.storeName);
+                    _.extend(self.sourceData, {'storeId': tempStoreId.join(','),'storeName': tempStoreName.join(',')});
+                });
+                self.sourceData.active = self.sourceData.active == '1' ? true : false;
                 var result = {};
                 if (self.append == true) {
-                    self.adminUserService.addUser(self.sourceData).then(function (res) {
+                    self.adminRoleService.addRole(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
@@ -151,7 +166,7 @@ define([
                         self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.adminUserService.updateUser(self.sourceData).then(function (res) {
+                    self.adminRoleService.updateRole(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
