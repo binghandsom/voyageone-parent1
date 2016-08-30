@@ -61,6 +61,7 @@ public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMa
 
         return select(new JongoQuery(criteria)
                 .setProjection("{\"mappings\":0}")
+                .setSort("{\"modified\":-1}")
                 .setSkip(offset)
                 .setLimit(limit), channelId);
     }
