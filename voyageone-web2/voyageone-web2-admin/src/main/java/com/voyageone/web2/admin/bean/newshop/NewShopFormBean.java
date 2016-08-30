@@ -1,12 +1,24 @@
-package com.voyageone.service.bean.com;
+package com.voyageone.web2.admin.bean.newshop;
 
 import java.util.List;
+
+import com.voyageone.service.bean.com.ComMtTaskBean;
+import com.voyageone.service.bean.com.ComMtThirdPartyConfigBean;
+import com.voyageone.service.bean.com.ComMtTrackingInfoConfigBean;
+import com.voyageone.service.bean.com.ComMtValueChannelBean;
+import com.voyageone.service.bean.com.TmCarrierChannelBean;
+import com.voyageone.service.bean.com.TmChannelShopBean;
+import com.voyageone.service.bean.com.TmOrderChannelBean;
+import com.voyageone.service.bean.com.TmSmsConfigBean;
+import com.voyageone.service.bean.com.WmsMtStoreBean;
 
 /**
  * @author Wangtd
  * @since 2.0.0 2016/8/29
  */
-public class OpenShopBean {
+public class NewShopFormBean {
+	
+	private Long id;
 	
 	private TmOrderChannelBean channel;
 	
@@ -25,6 +37,14 @@ public class OpenShopBean {
 	private List<ComMtTrackingInfoConfigBean> cartTracking;
 	
 	private List<ComMtTaskBean> task;
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public TmOrderChannelBean getChannel() {
 		return channel;
