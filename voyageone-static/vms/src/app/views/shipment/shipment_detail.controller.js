@@ -129,11 +129,9 @@ define([
         };
 
         ShipmentDetailController.prototype.printList = function () {
-            var self = this;
-            if(self.channelConfigs.vendorOperateType == 'SKU')
-                $('#packagedSKUList').print();
-            else if (self.channelConfigs.vendorOperateType == 'ORDER')
-                $('#packagedOrderList').print();
+            $('#content').print({
+                noPrintSelector: ".no-print"
+            });
         };
 
         ShipmentDetailController.prototype.audioPlay = function (value) {

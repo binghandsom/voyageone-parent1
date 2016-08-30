@@ -17,6 +17,12 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.finished = context.waitingSkuList.length == 0;
             this.printed = false;
+            this.barcodeOpts = {
+                width:2.5,
+                height:120,
+                displayValue: true,
+                fontSize: 24
+            };
             setTimeout("angular.element(document.getElementsByName('barcodeInputBar')).focus()", 1500)
         }
 
@@ -44,9 +50,9 @@ define([
                 self.scannedSkuList = data.scannedSkuList;
                 self.waitingSkuList = data.waitingSkuList;
                 self.finished = data.finished;
+                if (self.finished) self.focusOn('printButton');
+                else self.focusOn('barcodeInputBar');
             });
-            if (self.finished) self.focusOnPrintButton();
-            else self.focusOnScanBar();
         };
 
         AddToShipmentController.prototype.finishScanning = function () {
@@ -61,7 +67,7 @@ define([
                     if (data.success > 0) self.$uibModalInstance.close(data.success);
                 })
             });
-            self.focusOnScanBar();
+            self.focusOn('barcodeInputBar');
         };
 
         AddToShipmentController.prototype.revertScanning = function () {
@@ -76,15 +82,11 @@ define([
                     if (data.success > 0) self.$uibModalInstance.close(data.success);
                 });
             });
-            self.focusOnScanBar();
+            self.focusOn('barcodeInputBar');
         };
 
-        AddToShipmentController.prototype.focusOnScanBar = function () {
-            angular.element(document.getElementsByName('barcodeInputBar')).focus();
-        };
-
-        AddToShipmentController.prototype.focusOnPrintButton = function () {
-            angular.element(document.getElementsByName('printButton')).focus();
+        AddToShipmentController.prototype.focusOn = function (elementName) {
+            angular.element(document.getElementsByName(elementName)).focus();
         };
 
         AddToShipmentController.prototype.audioPlay = function (value) {
@@ -110,12 +112,12 @@ define([
             var popupWin = window.open('', '_blank', 'width=300,height=300');
             popupWin.document.open();
             var img = canvas.toDataURL("image/png");
-            popupWin.document.write('<img src="'+img+'"/>');
+            popupWin.document.write('<div><strong style="font-size: 32px;">[Order' + ' No.] ' + self.shipmentDetails.consolidationOrderId+'</strong></div><hr><img src="'+img+'"/>');
             popupWin.document.close();
             popupWin.print();
             popupWin.close();
             self.printed = true;
-            self.focusOnScanBar();
+            self.focusOn('finishButton');
         };
 
         return AddToShipmentController;

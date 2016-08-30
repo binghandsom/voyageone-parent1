@@ -1,0 +1,19 @@
+<div class="breadcrumbs">
+    <div class="container">
+        <h4 class="pull-left" translate="TXT_VENDOR_SETTINGS"></h4>
+        <ul class="pull-right breadcrumb">
+            <li><a href="#/home" translate="TXT_HOME"></a></li>
+            <li class="active disabled" translate="TXT_SETTINGS"></li>
+            <li class="active selected" translate="TXT_VENDOR_SETTINGS"></li>
+        </ul>
+    </div>
+</div>
+<div class="container content">
+    <form>
+        <div class="form-group">
+            <label for="defaultDeliveryCompany" translate="TXT_DEFAULT_DELIVERY_COMPANY"></label>
+            <select id="defaultDeliveryCompany" class="form-control" ng-model="ctrl.data.defaultDeliveryCompany" ng-options="value as name for deliveryCompany in ctrl.deliveryCompanyList">
+            </select>
+        </div>
+    </form>
+</div>

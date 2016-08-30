@@ -9,8 +9,8 @@
     </div>
 </div>
 <div class="container content">
-    <div class="center-block sr-only" ng-repeat="item in ctrl.data" style="width: 200px; height: 200px;">
-        <barcode ng-attr-id="{{'label' + $index}}" type="code128b" string="{{item.consolidationOrderId}}" options="barcodeOpts"></barcode>
+    <div class="center-block sr-only" ng-repeat="item in ctrl.data" style="width: 400px; height: 400px;">
+        <barcode ng-attr-id="{{'label' + $index}}" type="code128b" string="{{item.consolidationOrderId}}" options="ctrl.barcodeOpts"></barcode>
     </div>
     <div class="panel panel-default">
         <div class="panel-body">

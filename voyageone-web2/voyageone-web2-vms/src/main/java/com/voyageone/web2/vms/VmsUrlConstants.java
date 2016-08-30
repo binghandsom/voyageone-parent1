@@ -29,7 +29,7 @@ public interface VmsUrlConstants {
             String INIT = "init";
             String SEARCH = "search";
         }
-        interface ShipmentDetail {
+        interface SHIPMENT_DETAIL {
             String ROOT = "/vms/shipment/shipment_detail";
             String INIT = "init";
             String SCAN = "scan";
@@ -65,6 +65,10 @@ public interface VmsUrlConstants {
             String DOWNLOAD_SAMPLE_INVENTORY_FILE = "downSampleInventoryFile";
             String UPLOAD_INVENTORY_FILE = "uploadInventoryFile";
         }
+    }
+
+    interface SETTINGS {
+        String ROOT = "/vms/settings/vendor_settings";
     }
 
     interface REPORT {
