@@ -87,9 +87,9 @@
                         <input type="checkbox" value="1" ng-model="vm._selall">
                         <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;检索结果全量&nbsp;
                     </label>
-                    <button class="btn btn-default" ng-click=""><i class="fa fa-arrow-circle-right"></i>&nbsp;分配权限</button>
-                    <button class="btn btn-default" ng-click=""><i class="fa fa-arrow-circle-right"></i>&nbsp;批量删除权限</button>
-                    <button class="btn btn-default" ng-click=""><i class="fa fa-arrow-circle-right"></i>&nbsp;批量增加权限</button>
+                    <button class="btn btn-default" ng-click="ctrl.authority('set')"><i class="fa fa-arrow-circle-right"></i>&nbsp;分配权限</button>
+                    <button class="btn btn-default" ng-click="ctrl.authority('delete')"><i class="fa fa-arrow-circle-right"></i>&nbsp;批量删除权限</button>
+                    <button class="btn btn-default" ng-click="ctrl.authority('add')"><i class="fa fa-arrow-circle-right"></i>&nbsp;批量增加权限</button>
                 </div>
             </div>
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">

@@ -35,7 +35,22 @@ define([
                 self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.adminOrgService.init().then(function (res) {
                     self.orgDataList = res.data.result;
-                    self.search(1);
+                    // 设置勾选框
+                    if (self.tempSelect == null) {
+                        self.tempSelect = new self.selectRowsFactory();
+                    } else {
+                        self.tempSelect.clearCurrPageRows();
+                        self.tempSelect.clearSelectedList();
+                    }
+                    _.forEach(self.orgDataList, function (Info, index) {
+                        if (Info.updFlg != 8) {
+                            self.tempSelect.currPageRows({
+                                "id": Info.id
+                            });
+                        }
+                    });
+                    self.adminOrgSelList = self.tempSelect.selectRowsInfo;
+                    // End 设置勾选框
                 })
             },
             search: function (page) {
@@ -60,11 +75,8 @@ define([
                         }
                         _.forEach(self.orgDataList, function (Info, index) {
                             if (Info.updFlg != 8) {
-                                _.extend(Info, {mainKey: index});
                                 self.tempSelect.currPageRows({
-                                    "id": Info.mainKey,
-                                    "orgName": Info.orgName,
-                                    "parentId": Info.parentId
+                                    "id": Info.id
                                 });
                             }
                         });
@@ -92,7 +104,7 @@ define([
                         return;
                     } else {
                         _.forEach(self.orgDataList, function (Info) {
-                            if (Info.mainKey == self.adminOrgSelList.selList[0].id) {
+                            if (Info.id == self.adminOrgSelList.selList[0].id) {
                                 self.popups.openOrg(Info).then(function () {
                                     self.search(1);
                                 });
@@ -106,7 +118,7 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.adminOrgSelList.selList, function (delInfo) {
-                            delList.push({'orgName': delInfo.orgName, 'parentId': delInfo.parentId});
+                            delList.push(delInfo.id);
                         });
                         self.adminOrgService.deleteOrg(delList).then(function (res) {
                             self.search(1);

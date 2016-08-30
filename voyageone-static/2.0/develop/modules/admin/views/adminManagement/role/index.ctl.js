@@ -53,7 +53,7 @@ define([
                 self.adminRoleService.getAllRole().then(function (res) {
                     self.roleList = res.data;
                 });
-                self.adminRoleService.init().then(function(res){
+                self.adminRoleService.init().then(function (res) {
                     self.adminRoleList = res.data.result;
                     // 设置勾选框
                     if (self.tempSelect == null) {
@@ -78,7 +78,7 @@ define([
             search: function (page) {
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
-                self.adminRoleService.init({
+                self.adminRoleService.searchRole({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
                         'userAccount': self.searchInfo.userAccount,
@@ -171,6 +171,26 @@ define([
                     }
                 );
             },
+            authority: function (type) {
+                var self = this;
+                switch (type) {
+                    case 'set':
+                        self.adminRoleService.setAuth().then(function (res) {
+                            console.log(res)
+                        });
+                        break;
+                    case 'delete':
+                        self.adminRoleService.removeAuth().then(function (res) {
+
+                        });
+                        break;
+                    case 'add':
+                        self.adminRoleService.addAuth().then(function (res) {
+
+                        });
+                        break;
+                }
+            }
         };
         return RoleManagementController;
     })())

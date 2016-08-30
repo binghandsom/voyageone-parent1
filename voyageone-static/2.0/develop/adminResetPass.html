@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LOGIN</title>
+    <link href="static/css/login.min.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="libs/angular-block-ui/0.2.1/angular-block-ui.min.css">
+    <script src="libs/angular.js/1.5.6/angular.js"></script>
+    <script src="libs/angular-ngStorage/ngStorage.js"></script>
+    <script src="libs/angular-block-ui/0.2.1/angular-block-ui.js"></script>
+    <script src="libs/require.js/2.2.0/require.js"></script>
+</head>
+<body>
+<div class="login-logo"><img src="static/img/voyage_one_logo_3.png"/></div>
+
+<div class="login">
+    <p class="step-email-info">请填写您需要找回的帐号,海外用户请点击</p>
+    <div class="pass-input-container clearfix" id="pass-auth-select">
+        <input type="text" class="pass-input pass-input-forgot pass-input-error" name="username" value="" id="account">
+        <label class="pass-input-label input-label-new1 w260" style="display: block;">请您输入用户名/邮箱/手机</label>
+    </div>
+    <div>
+        <input type="hidden" name="bdstoken" value="ae7ab51420512790667beab94cd68bd3">
+        <input type="hidden" name="tpl" value="mn">
+        <input type="hidden" name="index" value="">
+        <input type="hidden" name="countrycode" value="" id="countrycode">
+        <input type="submit" name="" value="下一步" class="pass-button-submit" id="submit">
+        <input type="hidden" value="" id="error">
+        <input type="hidden" value="" id="username">
+        <input type="hidden" value="" id="veritycode">
+        <input type="hidden" value="" id="bdErrMsg">
+    </div>
+</div>
+
+<script type="text/ng-template" id="msg.tpl.html">
+    <div class="loginSign" ng-show="errorMessage">{{errorMessage}}</div>
+</script>
+<script>
+    require(['adminLogin']);
+</script>
+</body>
+</html>

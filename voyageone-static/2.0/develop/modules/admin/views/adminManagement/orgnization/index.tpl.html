@@ -77,8 +77,8 @@
                     <tr ng-repeat="list in ctrl.orgDataList">
                         <td class="text-left v-middle">
                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                                <input ng-model="ctrl.adminOrgSelList.selFlag[list.mainKey]" type="checkbox" ng-controller="selectRowsCtrl"
-                                       ng-click="selectOne(list.mainKey, ctrl.adminOrgSelList)">
+                                <input ng-model="ctrl.adminOrgSelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
+                                       ng-click="selectOne(list.id, ctrl.adminOrgSelList)">
                                 <span class="fa fa-check"></span>
                             </label>
                         </td>
