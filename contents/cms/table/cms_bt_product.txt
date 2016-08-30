@@ -176,6 +176,7 @@
       * priceMsrp   ->各平台的MSRP售价
       * priceRetail ->各平台的销售指导价
       * confPriceRetail ->各平台确认后的销售指导价(double)
+      * priceMsrpFlg ->表示指导售价和建议售价的比较，(指导售价小于建议售价时，保存为"XD"; 指导售价大于建议售价时，保存为"XU";相等时清空其值)
 	  * priceSale   ->各平台的中国最终售价
 	  * priceChgFlg ->各平台的价格变更状态（U/D/XU/XD）
 	  * property

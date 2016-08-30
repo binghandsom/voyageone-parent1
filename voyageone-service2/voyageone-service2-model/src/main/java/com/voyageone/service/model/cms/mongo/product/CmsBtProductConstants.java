@@ -88,6 +88,8 @@ public interface CmsBtProductConstants {
         priceMsrp,
 		/* 品牌方MSRP售价(中国建议零售价)(共通/分平台) */
 		originalPriceMsrp,
+		/* 指导价和建议零售价比较状态(XD/XU/空格) */
+		priceMsrpFlg,
         /* 销售指导价(共通/分平台) */
         priceRetail,
 		/* 各平台最终零售价(分平台) */
