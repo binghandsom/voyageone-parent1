@@ -243,7 +243,49 @@ public class SizeChartService extends BaseService {
         //跟据尺码关系一览编辑详情编辑的数据更新数据库
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
-
+    public void  Update(String channelId, String userName, int sizeChartId, String sizeChartName, String finishFlag
+            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, long imageGroupId,
+                        String imageGroupName) {
+        CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId, channelId);
+        //更新者
+        cmsBtSizeChartModel.setModifier(userName);
+        //店铺渠道
+        cmsBtSizeChartModel.setChannelId(channelId);
+        //尺码自增键
+        cmsBtSizeChartModel.setSizeChartId(sizeChartId);
+        //尺码名称
+        cmsBtSizeChartModel.setSizeChartName(sizeChartName);
+        //是否编辑
+        cmsBtSizeChartModel.setFinish(finishFlag);
+        cmsBtSizeChartModel.setImageGroupId(imageGroupId);
+        cmsBtSizeChartModel.setImageGroupName(imageGroupName);
+        //产品品牌
+        if (brandNameList.isEmpty()) {
+            List<String> lst = new ArrayList<>();
+            lst.add(VALUE_ALL);
+            cmsBtSizeChartModel.setBrandName(lst);
+        } else {
+            cmsBtSizeChartModel.setBrandName(brandNameList);
+        }
+        //产品类型
+        if (productTypeList.isEmpty()) {
+            List<String> lst = new ArrayList<>();
+            lst.add(VALUE_ALL);
+            cmsBtSizeChartModel.setProductType(lst);
+        } else {
+            cmsBtSizeChartModel.setProductType(productTypeList);
+        }
+        //产品性别
+        if (sizeTypeList.isEmpty()) {
+            List<String> lst = new ArrayList<>();
+            lst.add(VALUE_ALL);
+            cmsBtSizeChartModel.setSizeType(lst);
+        } else {
+            cmsBtSizeChartModel.setSizeType(sizeTypeList);
+        }
+        //跟据尺码关系一览编辑详情编辑的数据更新数据库
+        cmsBtSizeChartDao.update(cmsBtSizeChartModel);
+    }
     /**
      * 尺码关系一览编辑详情编辑画面(编辑尺码表)
      */
