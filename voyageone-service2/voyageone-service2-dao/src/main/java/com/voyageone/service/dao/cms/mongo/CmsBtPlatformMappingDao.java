@@ -59,7 +59,10 @@ public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMa
         if (!StringUtils.isEmpty(categoryPath))
             criteria.and("categoryPath").is(categoryPath);
 
-        return select(new JongoQuery(criteria).setSkip(offset).setLimit(limit), channelId);
+        return select(new JongoQuery(criteria)
+                .setProjection("{\"mappings\":0}")
+                .setSkip(offset)
+                .setLimit(limit), channelId);
     }
 
     public long count(String channelId, Integer categoryType, Integer cartId, String categoryPath) {
