@@ -49,7 +49,7 @@ define([
                 orderType: 'client_sku'
             };
 
-            this.channelConfigs = {
+            this.channelConfig = {
                 vendorOperateType: 'SKU'
             };
             this.orderStatusList = [];
@@ -66,7 +66,7 @@ define([
                 //获取shipment状态
                 self.shipmentStatusList = data.shipmentStatusList;
                 // 记录用户的操作方式(sku/order)
-                self.channelConfigs = data.channelConfigs;
+                self.channelConfig = data.channelConfig;
 
                 self.search();
             });
@@ -102,9 +102,9 @@ define([
                             item.subClassName = 'bg-sub-gainsboro';
                         }
                         else if (item.status == '1') {
-                            if (self.channelConfigs.vendorOperateType == 'ORDER') {
+                            if (self.channelConfig.vendorOperateType == 'ORDER') {
                                 date = new Date(item.consolidationOrderTime);
-                            } else if (self.channelConfigs.vendorOperateType == 'SKU') {
+                            } else if (self.channelConfig.vendorOperateType == 'SKU') {
                                 date = new Date(item.consolidationOrderTime);
                             } else {
                                 self.alert('TXT_MISSING_REQUIRED_CHANNEL_CONFIG');
@@ -147,7 +147,7 @@ define([
 
         OrderInfoController.prototype.downloadPickingList = function () {
             var self = this;
-            // todo 这里没有做session验证 需要加回调
+            // todo 这里没有做session验证,需要加回调 vantis
             $.download.post('/vms/order/order_info/downloadPickingList', {"orderType": self.downloadInfo.orderType}, self.afterDownload, self);
         };
 
@@ -194,7 +194,7 @@ define([
                 type: type,
                 pendingShipmentStatus: pendingShipmentStatus,
                 statusList: this.shipmentStatusList,
-                defaultDeliveryCompany: this.channelConfigs.defaultDeliveryCompany
+                channelConfig: this.channelConfig
             };
 
             this.popups.openShipment(shipmentInfo).then(function (shipment) {

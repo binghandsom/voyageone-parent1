@@ -69,6 +69,7 @@ public interface VmsUrlConstants {
 
     interface SETTINGS {
         String ROOT = "/vms/settings/vendor_settings";
+        String INIT = "init";
     }
 
     interface REPORT {

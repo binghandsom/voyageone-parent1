@@ -11,11 +11,16 @@ define([
             this.notify = notify;
             this.confirm = confirm;
             this.vendorSettingsService = vendorSettingsService;
-            this.data = "";
+            this.channelConfig = {};
+            this.deliveryCompanyList = [];
         }
 
         VendorSettingsController.prototype.init = function () {
-
+            var self = this;
+            self.vendorSettingsService.init().then(function (data) {
+                self.channelConfig = data.channelConfig;
+                self.deliveryCompanyList = data.deliveryCompanyList;
+            });
         };
 
         return VendorSettingsController;

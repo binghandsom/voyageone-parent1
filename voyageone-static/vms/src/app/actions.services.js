@@ -208,7 +208,7 @@ define(function (require) {
             ship: "ship"
         }),
         vendorSettingsService: new CommonDataService('/vms/settings/vendor_settings', {
-
+            init: "init"
         })
     }
 });

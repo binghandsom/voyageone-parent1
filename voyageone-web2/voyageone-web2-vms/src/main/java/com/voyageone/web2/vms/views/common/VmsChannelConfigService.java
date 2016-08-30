@@ -34,6 +34,8 @@ public class VmsChannelConfigService {
 
         VmsChannelConfigBean defaultNamingConverter = VmsChannelConfigs.getConfigBean(user.getSelChannelId(),
                 VmsConstants.ChannelConfig.DEFAULT_SHIPMENT_NAMING_CONVERTER, VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
+        VmsChannelConfigBean emailAddress = VmsChannelConfigs.getConfigBean(user.getSelChannelId(),
+                VmsConstants.ChannelConfig.EMAIL_ADDRESS, VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
 
         // Missing required configures for this channel, please contact with the system administrator for help.
         if (null == vendorOperateType) throw new BusinessException("8000019");
@@ -44,6 +46,11 @@ public class VmsChannelConfigService {
             vmsChannelSettingBean.setSalePriceShow(salePriceShow.getConfigValue1());
         if (null != defaultDeliveryCompany)
             vmsChannelSettingBean.setDefaultDeliveryCompany(defaultDeliveryCompany.getConfigValue1());
+        if (null != defaultNamingConverter)
+            vmsChannelSettingBean.setNamingConverter(defaultNamingConverter.getConfigValue1());
+        if (null != emailAddress)
+            vmsChannelSettingBean.setEmailAddress(emailAddress.getConfigValue1());
+
         return vmsChannelSettingBean;
     }
 }

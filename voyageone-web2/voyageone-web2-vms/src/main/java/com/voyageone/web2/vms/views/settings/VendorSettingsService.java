@@ -1,5 +1,7 @@
 package com.voyageone.web2.vms.views.settings;
 
+import com.voyageone.web2.core.bean.UserSessionBean;
+import com.voyageone.web2.vms.bean.VmsChannelSettingBean;
 import org.springframework.stereotype.Service;
 
 /**
@@ -8,4 +10,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class VendorSettingsService {
+
+    public boolean save(UserSessionBean user, VmsChannelSettingBean vmsChannelSettingBean) {
+        return false;
+    }
 }

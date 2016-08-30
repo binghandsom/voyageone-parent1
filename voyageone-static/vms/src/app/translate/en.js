@@ -111,6 +111,9 @@ define(function () {
         "TXT_CONFIRM_REVERT_SCANNED_SKU": "Confirm to revert scanning in this order?",
         "TXT_SETTINGS": "Settings",
         "TXT_VENDOR_SETTINGS": "Vendor Settings",
+        "TXT_DEFAULT_DELIVERY_COMPANY": "Default Delivery Company",
+        "TXT_NAMING_CONVERTER": "Naming Converter",
+        "TXT_EMAIL_ADDRESS": "E-mail Address",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",

@@ -134,6 +134,8 @@ public class VmsConstants {
         String DEFAULT_DELIVERY_COMPANY = "DEFAULT_DELIVERY_COMPANY";
         // 默认shipment命名格式
         String DEFAULT_SHIPMENT_NAMING_CONVERTER = "DEFAULT_SHIPMENT_NAMING_CONVERTER";
+
+        String EMAIL_ADDRESS = "EMAIL_ADDRESS";
     }
 
 }
