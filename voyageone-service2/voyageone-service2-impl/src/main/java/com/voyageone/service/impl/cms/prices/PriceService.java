@@ -188,7 +188,7 @@ public class PriceService extends BaseService {
             if (originMsrp <= 0)
                 throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的 MSRP 不合法: %s", channelId, cartId, skuCodeValue, originMsrp);
 
-            setProductMsrp(sku, originMsrp, isAutoSyncPriceMsrp);
+            setProductMsrp(sku, originMsrp, isAutoSyncPriceMsrp, retailPrice);
         }
     }
 
@@ -308,6 +308,7 @@ public class PriceService extends BaseService {
             cart.getSkus().forEach(sku -> {
                 sku.put(priceRetail.name(), -1D);
                 sku.put(originalPriceMsrp.name(), 0D);
+                sku.put(priceMsrpFlg.name(), "");
                 resetPriceIfInvalid(sku, priceMsrp, -1D);
                 resetPriceIfInvalid(sku, priceSale, 0D);
             });
@@ -385,7 +386,7 @@ public class PriceService extends BaseService {
             if (originPriceMsrp <= 0)
                 throw new PriceCalculateException("为渠道 %s (%s) 的(SKU) %s 计算出的 MSRP 不合法: %s", channelId, cartId, skuCodeValue, originPriceMsrp);
 
-            setProductMsrp(platformSku, originPriceMsrp, isAutoSyncPriceMsrp);
+            setProductMsrp(platformSku, originPriceMsrp, isAutoSyncPriceMsrp, retailPrice);
         }
     }
 
@@ -503,8 +504,9 @@ public class PriceService extends BaseService {
      * @param skuInPlatform       商品的平台 sku 模型
      * @param originPriceMsrp     根据客户建议零售价计算的人民币建议零售价
      * @param isAutoSyncPriceMsrp 是否同步设置人民币建议零售价
+     * @param retailPrice         指导零售价
      */
-    private void setProductMsrp(BaseMongoMap<String, Object> skuInPlatform, Double originPriceMsrp, boolean isAutoSyncPriceMsrp) {
+    private void setProductMsrp(BaseMongoMap<String, Object> skuInPlatform, Double originPriceMsrp, boolean isAutoSyncPriceMsrp, Double retailPrice) {
 
         if (isAutoSyncPriceMsrp)
             skuInPlatform.put(priceMsrp.name(), originPriceMsrp);
@@ -514,6 +516,9 @@ public class PriceService extends BaseService {
             resetPriceIfInvalid(skuInPlatform, priceMsrp, originPriceMsrp);
 
         skuInPlatform.put(originalPriceMsrp.name(), originPriceMsrp);
+
+        // 获取
+        skuInPlatform.put(priceMsrpFlg.name(), compareRetailWithMsrpPrice(skuInPlatform, priceMsrp, retailPrice));
     }
 
     private boolean isAutoSyncPriceMsrp(String channelId) {
@@ -621,6 +626,23 @@ public class PriceService extends BaseService {
             input = new BigDecimal(input).setScale(2, RoundingMode.HALF_UP).doubleValue();
         }
         return input;
+    }
+
+    /**
+     * 比较中国指导售价和中国建议售价(中国建议售价 < 中国指导售价 : XU, 中国建议售价 > 中国知道售价 : XD, 相等 : 空字串)
+     * @param platformSku 平台 sku 模型
+     * @param commonField 价格字段名
+     * @param retailPrice   中国指导售价
+     * @return 表示指导售价和建议售价的比较
+     */
+    private String compareRetailWithMsrpPrice(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField, Double retailPrice) {
+        Double msrpPrice = getProductPrice(platformSku, commonField);
+        if (msrpPrice < retailPrice)
+            return "XU";
+        else if (msrpPrice > retailPrice)
+            return "XD";
+        else
+            return "";
     }
 
     /**

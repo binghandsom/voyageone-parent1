@@ -820,12 +820,6 @@ public class SxProductService extends BaseService {
                 }
 //            }
             // 2016/06/02 Update by desmond end
-            // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 START
-            if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
-                removeProductList.add(productModel);
-                continue;
-            }
-            // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 END
             // 2016/06/12 add desmond START
             if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
                 removeProductList.add(productModel);
@@ -959,7 +953,7 @@ public class SxProductService extends BaseService {
             // 没有对象
             // update by desmond 2016/07/12 start
 //            return null;
-            String errorMsg = "取得上新数据(SxData)失败! 在产品表中没找到groupId(" + groupId + ")对应的未lock且已Approved的产品";
+            String errorMsg = "取得上新数据(SxData)失败! 在产品表中没找到groupId(" + groupId + ")对应的未锁定且已审批的产品，请确保产品未被锁定且已完成审批";
             $error(errorMsg);
             sxData.setErrorMessage(errorMsg);
             return sxData;
@@ -2226,13 +2220,16 @@ public class SxProductService extends BaseService {
                     List<Field> allSkuFields = new ArrayList<>();
                     recursiveGetFields(processFields, allSkuFields);
 
-                    String imageTemplate = resolveDict("资质图片模板",expressionParser,shopBean, user, null);
-                    if (StringUtils.isEmpty(imageTemplate)) {
-                        String err = "达尔文产品没有设值资质图片模板字典!";
-                        sxData.setErrorMessage(err);
-                        throw new BusinessException(err);
-                    }
-                    skuFieldService.setCodeImageTemplate(imageTemplate);
+                    // deleted by morse.lu 2016/08/25 start
+                    // 暂时画面写死已经上传到平台的url完整路径，所以先注了这段代码，以后改回成画面有上传按钮，只填写图片名，再恢复这段代码
+//                    String imageTemplate = resolveDict("资质图片模板",expressionParser,shopBean, user, null);
+//                    if (StringUtils.isEmpty(imageTemplate)) {
+//                        String err = "达尔文产品没有设值资质图片模板字典!";
+//                        sxData.setErrorMessage(err);
+//                        throw new BusinessException(err);
+//                    }
+//                    skuFieldService.setCodeImageTemplate(imageTemplate);
+                    // deleted by morse.lu 2016/08/25 end
 
                     try {
                         List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);

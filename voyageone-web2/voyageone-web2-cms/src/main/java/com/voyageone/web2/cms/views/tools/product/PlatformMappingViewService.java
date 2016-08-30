@@ -238,7 +238,16 @@ class PlatformMappingViewService extends BaseAppService {
         if (fields == null || fields.isEmpty())
             return new ArrayList<>(0);
 
-        return fields.stream().map(f -> {
+        return fields.stream().filter(f -> {
+            switch (f.getType()) {
+                case MULTIINPUT:
+                case COMPLEX:
+                case MULTICOMPLEX:
+                case LABEL:
+                    return false;
+            }
+            return true;
+        }).map(f -> {
             Map<String, Object> jsObject = new HashMap<>();
             jsObject.put("value", f.getId());
             jsObject.put("label", f.getName());

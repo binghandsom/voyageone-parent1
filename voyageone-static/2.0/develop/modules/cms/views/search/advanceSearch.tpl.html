@@ -18,7 +18,7 @@
                                             <div class="form-group"><!-- 查询brand品牌 -->
                                                 <label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
                                                 <div class="col-sm-8">
-                                                    <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.brand"
+                                                    <select multiple chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.brandList"
                                                             ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
                                                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     </select>
@@ -165,15 +165,14 @@
                                             </div>
                                             <div class="form-group"><!-- 查询Feed类目 -->
                                                 <div class="col-sm-3 text-right">
-                                                    <button class="btn btn-pop btn-default" ng-click="openFeedCategoryMapping(popupNewCategory)">
+                                                    <button class="btn btn-pop btn-default" ng-click="openFeedCategoryMapping(popCategoryMul)">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_FEED_CATEGORY' |translate}}
                                                     </button>
                                                 </div>
                                                 <div class="col-sm-8">
                                                     <div class="input-group">
-                                                        <!--<input type="text" class="form-control" ng-model="vm.searchInfo.fCatPath" ng-readonly="true">-->
                                                         <select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.fCatPathList"
-                                                                 ng-options="cat as cat for cat in vm.fcatOpts"
+                                                                 ng-options="cat as cat for cat in vm.searchInfo.fCatPathList"
                                                                  width="'100%'">
                                                         </select>
                                                         <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('fCatPathList')"></button></span>
@@ -308,17 +307,15 @@
                                                     </label>
                                                 </div>
                                                 <div class="">
-                                                    <button class="btn btn-pop btn-default" ng-click="platformCategoryMapping(popupNewCategory)" ng-disabled="vm.searchInfo.pCatStatus">
+                                                    <button class="btn btn-pop btn-default" ng-click="platformCategoryMapping(popCategoryMul)" ng-disabled="vm.searchInfo.pCatStatus">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PLATFORM_CATEGORY' |translate}}
                                                     </button>
                                                 </div>
                                             </div>
                                             <div class="col-sm-7 m-t-sm">
                                                 <div class="input-group">
-
-                                                    <!--<input type="text" class="form-control" ng-model="vm.searchInfo.pCatPath" ng-disabled="vm.searchInfo.pCatStatus" ng-readonly="true">-->
                                                     <select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.pCatPathList"
-                                                             ng-options="cat as cat for cat in vm.catOpts"
+                                                             ng-options="cat as cat for cat in vm.searchInfo.pCatPathList"
                                                              width="'100%'">
                                                     </select>
                                                     <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('pCatPathList')"></button></span>

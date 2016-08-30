@@ -39,7 +39,7 @@ public class PriceServiceTest {
     @Test
     public void testSystemPriceSetter() throws Exception {
 
-        CmsBtProductModel product = productService.getProductById("017", 43082);
+        CmsBtProductModel product = productService.getProductById("017", 47955);
 
         List<BaseMongoMap<String, Object>> skus = product.getPlatform(27).getSkus();
 
@@ -54,7 +54,9 @@ public class PriceServiceTest {
                 add(sku1.getClientNetPrice().toString() + " -> " + sku.getStringAttribute(priceRetail.name()));
                 add(sku1.getClientMsrpPrice().toString() + " -> " + sku.getStringAttribute(originalPriceMsrp.name()));
                 add("     -> " + sku.getStringAttribute(priceMsrp.name()));
+                add("     -> " + sku.getStringAttribute(priceMsrpFlg.name()));
                 add("     -> " + sku.getStringAttribute(priceSale.name()));
+
             }
         }));
 
@@ -75,7 +77,8 @@ public class PriceServiceTest {
             System.out.println(String.format("%s, \t\t%s -> %s", "priceRetail", list.get(0), sku.getDoubleAttribute(priceRetail.name())));
             System.out.println(String.format("%s, \t%s -> %s", "originalPriceMsrp", list.get(1), sku.getDoubleAttribute(originalPriceMsrp.name())));
             System.out.println(String.format("%s, \t\t\t%s -> %s", "priceMsrp", list.get(2), sku.getDoubleAttribute(priceMsrp.name())));
-            System.out.println(String.format("%s, \t\t\t%s -> %s", "priceSale", list.get(3), sku.getDoubleAttribute(priceSale.name())));
+            System.out.println(String.format("%s, \t%s -> %s", "priceMsrpFlg", list.get(3), sku.getStringAttribute(priceMsrpFlg.name())));
+            System.out.println(String.format("%s, \t\t\t%s -> %s", "priceSale", list.get(4), sku.getDoubleAttribute(priceSale.name())));
         }
 
         System.out.println("\n\n");
@@ -95,6 +98,7 @@ public class PriceServiceTest {
                 add(sku.getDoubleAttribute(priceRetail.name()));
                 add(sku.getDoubleAttribute(originalPriceMsrp.name()));
                 add(sku.getDoubleAttribute(priceMsrp.name()));
+                add(sku.getDoubleAttribute(priceMsrpFlg.name()));
                 add(sku.getDoubleAttribute(priceSale.name()));
             }
         }));
@@ -116,7 +120,8 @@ public class PriceServiceTest {
             System.out.println(String.format("%s, \t\t%s -> %s", "priceRetail", doubleList.get(0), sku.getDoubleAttribute(priceRetail.name())));
             System.out.println(String.format("%s, \t%s -> %s", "originalPriceMsrp", doubleList.get(1), sku.getDoubleAttribute(originalPriceMsrp.name())));
             System.out.println(String.format("%s, \t\t\t%s -> %s", "priceMsrp", doubleList.get(2), sku.getDoubleAttribute(priceMsrp.name())));
-            System.out.println(String.format("%s, \t\t\t%s -> %s", "priceSale", doubleList.get(3), sku.getDoubleAttribute(priceSale.name())));
+            System.out.println(String.format("%s, \t\t\t%s -> %s", "priceMsrpFlg", doubleList.get(3), sku.getStringAttribute(priceMsrpFlg.name())));
+            System.out.println(String.format("%s, \t\t\t%s -> %s", "priceSale", doubleList.get(4), sku.getDoubleAttribute(priceSale.name())));
         }
 
         System.out.println("\n\n");

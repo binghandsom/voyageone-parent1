@@ -144,7 +144,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             errorMsg = "商品被Lock，如确实需要上传商品，请先解锁";
         }
         //6.0.2
-        else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() >= parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
+        else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() > parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
             errorMsg = "市场价必须大于团购价";
         }
         if(!StringUtils.isEmpty(errorMsg)) {
@@ -217,6 +217,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             model.setErrorMsg("");
             model.setActivityEnd(modelCmsBtJmPromotion.getActivityEnd());
             daoCmsBtJmPromotionProduct.update(model);
+            LOG.info("延期成功:"+parameter.cmsBtJmPromotionProductModel.getProductCode());
         }
     }
 
@@ -294,7 +295,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
         } catch (Exception ex) {
             parameter.cmsBtJmPromotionProductModel.setSynchStatus(3);
             parameter.cmsBtJmPromotionProductModel.setPriceStatus(0);
-            parameter.cmsBtJmPromotionProductModel.setDealEndTimeStatus(0);
+            if(parameter.cmsBtJmPromotionProductModel.getDealEndTimeStatus()!=2) {
+                parameter.cmsBtJmPromotionProductModel.setDealEndTimeStatus(0);
+            }
             throw ex;
         }
     }
@@ -414,9 +417,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
                         if (sellJmEndTime < jmActivityEndTime) {
                             //调用延迟Deal结束时间API
                             jmPromotionProduct.setDealEndTimeStatus(1);
+                            jmPromotionProduct.setActivityEnd(getDealByHashIDResponse.getEnd_time());
                             try {
                                 updateDealEndTime(parameter);//自动延期
-                                LOG.info("延期成功:"+parameter.cmsBtJmPromotionProductModel.getProductCode());
+
                             }
                             catch (Exception ex) {
                                 errorMsg+=ex.getMessage();

@@ -285,6 +285,8 @@ define([
                 _.forEach(selList, function (object) {
                     $scope.vm.searchInfo._selCodeList.push(object.code);
                 });
+            } else {
+                msg = '<br>将导出所有的商品记录，如需只导出部分商品，请回到一览画面选择指定商品。';
             }
 
             if (fileType == 1) {
@@ -600,8 +602,10 @@ define([
             $scope.vm.searchInfo.priceChgFlg = null;
             $scope.vm.searchInfo.priceDiffFlg = null;
             $scope.vm.searchInfo.propertyStatus = null;
+            $scope.vm.searchInfo.pCatPathList = [];
 
             $scope.vm.masterData.catList = [];
+
 
             if ($scope.vm.searchInfo.cartId == 0) {
                 $scope.vm._cart_display = 0;
@@ -841,7 +845,7 @@ define([
          * popup弹出选择平台数据类目
          * @param popupNewCategory
          */
-        function platformCategoryMapping(popupNewCategory) {
+        function platformCategoryMapping(popCategoryMul) {
             platformMappingService.getPlatformCategories({cartId: $scope.vm.searchInfo.cartId})
                 .then(function (res) {
                     if (!res.data || !res.data.length) {
@@ -857,15 +861,14 @@ define([
                         $scope.vm.adVanceCats = null;
                     }
 
-                    return popupNewCategory({
+                    return popCategoryMul({
                         from: $scope.vm.adVanceCats,
-                        categories: res.data,
-                        anyNode: true
+                        categories: res.data
                     });
                 })
                 .then(function (context) {
                     $scope.vm.adVanceCats = context;
-                    $scope.vm.searchInfo.pCatPathList = $scope.vm.catOpts = _.map(context, function (item) {
+                    $scope.vm.searchInfo.pCatPathList = _.map(context, function (item) {
                         return item.catPath;
                     });
                 });
@@ -892,7 +895,7 @@ define([
          * popup弹出选择feed类目数据
          * @param popupNewCategory
          */
-        function openFeedCategoryMapping(popupNewCategory) {
+        function openFeedCategoryMapping(popCategoryMul) {
             attributeService.getCatTree()
                 .then(function (res) {
                     if (!res.data.categoryTree || !res.data.categoryTree.length) {
@@ -908,14 +911,13 @@ define([
                         $scope.vm.feedCats = null;
                     }
 
-                    return popupNewCategory({
+                    return popCategoryMul({
                         categories: res.data.categoryTree,
                         from: $scope.vm.feedCats,
-                        divType: "-",
-                        anyNode: true
+                        divType: "-"
                     }).then(function (context) {
                         $scope.vm.feedCats = context;
-                        $scope.vm.searchInfo.fCatPathList = $scope.vm.fcatOpts = _.map(context, function (item) {
+                        $scope.vm.searchInfo.fCatPathList = _.map(context, function (item) {
                             return item.catPath;
                         });
                     });

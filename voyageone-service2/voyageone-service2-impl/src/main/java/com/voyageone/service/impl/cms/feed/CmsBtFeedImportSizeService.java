@@ -30,21 +30,21 @@ public class CmsBtFeedImportSizeService extends BaseService {
     }
 
     public int saveCmsBtFeedImportSizeModel(CmsBtFeedImportSizeModel model, String modifier) {
-        CmsBtFeedImportSizeModel oldModel = get(model.getChannelId(), model.getBrandName(), model.getProductType(), model.getSizeType(), model.getOriginalSize());
-        int result = 0;
-        if (oldModel == null) {
-            result = insert(model);
-            model.setCreated(new Date());
-            model.setCreater(modifier);
-            oldModel.setModifier(modifier);
-            oldModel.setModified(new Date());
-        } else {
-            //更新
-            result = update(oldModel);
-            oldModel.setModifier(modifier);
-            oldModel.setModified(new Date());
+        try {
+            CmsBtFeedImportSizeModel oldModel = get(model.getChannelId(), model.getBrandName(), model.getProductType(), model.getSizeType(), model.getOriginalSize());
+            int result = 0;
+            if (oldModel == null) {
+                model.setCreated(new Date());
+                model.setCreater(modifier);
+                model.setModifier(modifier);
+                model.setModified(new Date());
+                result = insert(model);
+            }
+            return result;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
-        return result;
     }
 
     public CmsBtFeedImportSizeModel get(String channelId, String brandName, String productType, String sizeType, String OriginalSize) {

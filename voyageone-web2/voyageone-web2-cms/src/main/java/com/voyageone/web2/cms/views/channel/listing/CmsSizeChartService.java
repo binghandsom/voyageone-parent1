@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.IntUtils;
 import com.voyageone.common.util.LongUtils;
 import com.voyageone.common.util.StringUtils;
@@ -105,7 +106,16 @@ public class CmsSizeChartService extends BaseAppService {
         //用户名称
         String userName =param.get("userName").toString();
         //取得自增键
-        int sizeChartId=(int) param.get("sizeChartId");
+        long imageGroupId = ConvertUtil.toLong(param.get("imageGroupId"));
+        int sizeChartId = ConvertUtil.toInt(param.get("sizeChartId"));
+        boolean   isDelImageGroup = ConvertUtil.toBoolean(param.get("isDelImageGroup"));
+
+        if (imageGroupId > 0) {
+            cmsBtSizeChartImageGroupService.delete(channelId, sizeChartId, imageGroupId);
+            if (isDelImageGroup) {
+                imageGroupService.logicDelete(String.valueOf(imageGroupId), userName);
+            }
+        }
         //逻辑删除选中的记录
         sizeChartService.sizeChartUpdate(sizeChartId,userName,channelId);
     }
@@ -121,18 +131,19 @@ public class CmsSizeChartService extends BaseAppService {
         String userName =param.get("userName").toString();
         //尺码名称
         String sizeChartName=(String) param.get("sizeChartName");
+
+        String finishFlag=(String) param.get("finishFlag");
         //产品品牌
         List<String> brandNameList=(List<String>) param.get("brandNameList");
         //产品类型
         List<String> productTypeList=(List<String>) param.get("productTypeList");
         //产品性别
         List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
+        int sizeChartId = ConvertUtil.toInt(param.get("sizeChartId"));
         // 必须输入check
         if (StringUtils.isEmpty(sizeChartName)) {
             throw new BusinessException("7000080");
         }
-
-
         long imageGroupId = 0;
         String imageGroupName = "";
         if (param.containsKey("imageGroupId")) {
@@ -141,8 +152,22 @@ public class CmsSizeChartService extends BaseAppService {
         if (param.containsKey("imageGroupName")&&param.get("imageGroupName")!=null) {
             imageGroupName = param.get("imageGroupName").toString();
         }
-//根据尺码关系一览编辑的数据插入数据库
-        CmsBtSizeChartModel model= sizeChartService.insert(channelId,userName,sizeChartName,brandNameList,productTypeList,sizeTypeList,imageGroupId,imageGroupName);
+        CmsBtSizeChartModel model=null;
+          if(sizeChartId>0) {
+              model = sizeChartService.getCmsBtSizeChartModel(sizeChartId, channelId);
+              if (model.getImageGroupId() != imageGroupId && model.getImageGroupId() > 0) {
+                  //删除尺码表 图片组关系表
+                  cmsBtSizeChartImageGroupService.delete(channelId, sizeChartId, model.getImageGroupId());
+              }
+              //更新
+              sizeChartService.Update(channelId,
+                      userName, sizeChartId, sizeChartName, finishFlag, brandNameList, productTypeList, sizeTypeList, imageGroupId, imageGroupName);
+          }
+          else {
+              //插入
+              model = sizeChartService.insert(channelId, userName, sizeChartName, brandNameList, productTypeList, sizeTypeList, imageGroupId, imageGroupName);
+          }
+        //根据尺码关系一览编辑的数据插入数据库
         if (imageGroupId > 0) {
             //更新组图
             CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.getImageGroupModel(String.valueOf(imageGroupId));

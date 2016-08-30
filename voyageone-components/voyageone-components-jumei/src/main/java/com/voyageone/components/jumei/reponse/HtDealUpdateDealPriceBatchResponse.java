@@ -135,7 +135,7 @@ public class HtDealUpdateDealPriceBatchResponse extends BaseJMResponse {
             if ("0".equals(this.error_code)) {
                 this.setIs_Success(true);
             } else {
-                this.setErrorMsg(UnicodeUtil.decodeUnicode(this.body));
+                this.setErrorMsg(this.getRequestUrl()+UnicodeUtil.decodeUnicode(this.body));
             }
         } catch (Exception ex) {
             logger.error("setBody ",ex);

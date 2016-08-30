@@ -47,8 +47,6 @@ define(['cms',
              * @type {String}
              */
             this.divType = ">";
-            this.catArrs = [];
-            this.selectObj = {};
         }
 
         PopCategoryController.prototype = {
@@ -56,30 +54,15 @@ define(['cms',
              * 初始化时,加载必需数据
              */
             init: function () {
-                var self = this;
-                self.categories = self.context.categories;
-                if (self.context.divType != undefined) {
-                    self.divType = self.context.divType;
+                this.categories = this.context.categories;
+                if (this.context.divType != undefined) {
+                    this.divType = this.context.divType;
                 }
 
                 // 每次加载,都初始化 TOP 为第一级
-                self.categoryPath = [{level: 1, categories: self.categories}];
+                this.categoryPath = [{level: 1, categories: this.categories}];
 
-                /**入口为feed搜索    要求可以选择任意节点catpath
-                 * context=>from    页面之前选中的节点
-                 * */
-                if (self.context.anyNode) {
-                    if (!self.context.from || self.context.from.length == 0)
-                        return;
-                    var from = self.catArrs =  angular.copy(self.context.from);
-                    angular.forEach(from, function (element) {
-                        var _element = {};
-                        _element[element.catId] = element.catPath;
-                        _.extend(self.selectObj, _element);
-                    });
-                    self.context.from = from[from.length - 1].catPath;
-                }
-                self.defaultCategroy();
+                this.defaultCategroy();
             },
             /**
              * 打开一个类目(选定一个类目)
@@ -128,44 +111,20 @@ define(['cms',
                     });
                 });
             },
-            selectCat: function (item, event) {
-                var _index = _.map(this.catArrs,function(item){
-                    return item.catPath;
-                }).indexOf(item.catPath);
-
-                if (_index < 0)
-                    this.catArrs.push({catId: item.catId, catPath: item.catPath});
-                else
-                    this.catArrs.splice(_index,1);
-
-                event.stopPropagation();
-            },
             ok: function () {
 
-                if (!this.context.anyNode) {
-                    if (!this.selected) {
-                        this.notify.danger(this.$translate.instant('TXT_MSG_NO_CATEGORY_SELECT'));
-                        return;
-                    }
-                } else {
-                    if (this.catArrs.length == 0) {
-                        this.notify.danger(this.$translate.instant('TXT_MSG_NO_CATEGORY_SELECT'));
-                        return;
-                    }
-
+                if (!this.selected) {
+                    this.notify.danger(this.$translate.instant('TXT_MSG_NO_CATEGORY_SELECT'));
+                    return;
                 }
 
-                if (!this.context.anyNode && this.selected.isParent === 1) {
+                if (this.selected.isParent === 1) {
                     this.notify.danger(this.$translate.instant('TXT_MSG_IS_NOT_CHILE_CATEGORY'));
                     return;
                 }
 
                 this.context.selected = this.selected;
-
-                if (this.context.anyNode)
-                    this.$uibModalInstance.close(this.catArrs);
-                else
-                    this.$uibModalInstance.close(this.context);
+                this.$uibModalInstance.close(this.context);
             },
             cancel: function () {
                 this.$uibModalInstance.dismiss();

@@ -23,7 +23,7 @@ import java.util.List;
 public class TbSaleService extends TbBase {
 
     /**
-     * 获取当前会话用户出售中的商品列表(上架时间在前一天)
+     * 获取当前会话用户出售中的商品列表(目前获取所有时间段，不作过滤，不考虑优化，下同)
      * 只返回 num_iid
      */
     public List<Item> getOnsaleProduct(String strOrderChannelId, String strCardId, Long lPageIndex, Long pageSize) throws ApiException {
@@ -34,9 +34,9 @@ public class TbSaleService extends TbBase {
         req.setPageSize(pageSize);
         req.setFields("num_iid");
 
-        String staDate = DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
-        req.setStartModified(DateTimeUtil.parse(staDate));
-        req.setEndModified(DateTimeUtilBeijing.getCurrentBeiJingDate());
+//        String staDate = DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
+//        req.setStartModified(DateTimeUtil.parse(staDate));
+//        req.setEndModified(DateTimeUtilBeijing.getCurrentBeiJingDate());
 
         ItemsOnsaleGetResponse response = reqTaobaoApi(shopInfo, req);
         if (response == null) {
@@ -48,7 +48,7 @@ public class TbSaleService extends TbBase {
     }
 
     /**
-     * 获取当前会话用户在库的商品列表(下架时间在前一天)
+     * 获取当前会话用户在库的商品列表
      * (包含所有库存分类状态：for_shelved(regular_shelved、never_on_shelf、off_shelf)、sold_out、violation_off_shelf)
      * 只返回 num_iid
      */
@@ -61,9 +61,9 @@ public class TbSaleService extends TbBase {
         req.setFields("num_iid");
         req.setBanner("for_shelved,sold_out,violation_off_shelf");
 
-        String staDate = DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
-        req.setStartModified(DateTimeUtil.parse(staDate));
-        req.setEndModified(DateTimeUtilBeijing.getCurrentBeiJingDate());
+//        String staDate = DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
+//        req.setStartModified(DateTimeUtil.parse(staDate));
+//        req.setEndModified(DateTimeUtilBeijing.getCurrentBeiJingDate());
 
         ItemsInventoryGetResponse response = reqTaobaoApi(shopInfo, req);
         if (response == null) {

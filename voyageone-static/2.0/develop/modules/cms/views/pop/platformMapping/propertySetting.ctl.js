@@ -1,7 +1,6 @@
-define([
-    'cms'
-], function (cms) {
+define(function (require) {
     'use strict';
+    var cms = require('cms');
     return cms.controller('propertySettingController', (function () {
 
         function PropertySettingController(context, $uibModalInstance, platformMappingService, $q, alert) {
@@ -107,6 +106,5 @@ define([
         };
 
         return PropertySettingController;
-
     })());
 });

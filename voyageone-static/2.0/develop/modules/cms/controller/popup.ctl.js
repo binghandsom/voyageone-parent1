@@ -60,6 +60,13 @@ define([
                 "backdrop": 'static',
                 "size": 'lg'
             },
+            "categoryMul":{
+                "templateUrl": "views/pop/bulkUpdate/categoryMul.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/bulkUpdate/categoryMul.ctl",
+                "controller": 'popCategoryMulCtl as ctrl',
+                "backdrop": 'static',
+                "size": 'lg'
+            },
             "categoryNew": {
                 "templateUrl": "views/pop/bulkUpdate/masterCategoryNew.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/bulkUpdate/masterCategoryNew.ctl",
@@ -423,6 +430,11 @@ define([
                     "templateUrl": "views/pop/store/listing/imagedetailadd.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/store/listing/imagedetailadd.ctl",
                     "controller": 'popImageDetailAddCtl'
+                },
+                "delConfirm": {
+                    "templateUrl": "views/pop/store/listing/delConfirm.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/store/listing/delConfirm.ctl",
+                    "controller": 'popDelConfirmCtl as ctrl'
                 }
             }
         },
@@ -571,6 +583,15 @@ define([
          */
         $scope.popupNewCategory = function popupNewCategory(context) {
             return openModal(popActions.bulkUpdate.category, context);
+        };
+
+        /**
+         * 打开多选类目选择页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.popCategoryMul = function popCategoryMul(context){
+            return openModal(popActions.bulkUpdate.categoryMul, context);
         };
 
         /**
@@ -975,6 +996,13 @@ define([
                     return data;
                 }
             }, true);
+        };
+
+        /**
+         * 图片和尺码表确认框
+         */
+        $scope.openTemplateConfirm = function openTemplateConfirm(context){
+            return openModal(popActions.store.listing.delConfirm, context);
         };
 
         /**

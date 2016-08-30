@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive'
 ], function () {
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage,$filter) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage, $filter) {
         $scope.vm = {
             searchInfo: {},
             feedPageOption: {curr: 1, total: 0, fetch: search},
@@ -168,8 +168,8 @@ define([
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 return;
             }
-            var notice = $scope.vm.searchInfo.isAll ? "您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>"+$scope.vm.feedPageOption.total + "</span></h3>" :
-                                                      "您未启动“检索结果全量”选中机制，本次操作对象为检索结果中的已被勾选产品。";
+            var notice = $scope.vm.searchInfo.isAll ? "您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>" + $scope.vm.feedPageOption.total + "</span></h3>" :
+                "您未启动“检索结果全量”选中机制，本次操作对象为检索结果中的已被勾选产品。";
             confirm(notice).then(function () {
                 $feedSearchService.updateFeedStatus({
                     'selList': selList,
@@ -194,9 +194,9 @@ define([
 
         function doExport() {
             var data;
-            if ($scope.vm.feedSelList.selList && $scope.vm.feedSelList.selList.length > 0){
+            if ($scope.vm.feedSelList.selList && $scope.vm.feedSelList.selList.length > 0) {
                 data = {"parameter": JSON.stringify($scope.vm.feedSelList.selList)}
-            }else{
+            } else {
                 data = {"parameter": JSON.stringify($scope.vm.searchInfo)}
             }
             $feedSearchService.doExport(data).then(function (data) {
@@ -217,7 +217,7 @@ define([
                 $scope.vm.exportList = res.data.exportList;
                 _.each($scope.vm.exportList, function (item) {
                     item.fileName = item.fileName.split(",");
-                })
+                });
                 $scope.vm.exportPageOption.total = res.data.exportListTotal;
             })
         }
@@ -227,7 +227,7 @@ define([
             $.download.post(cActions.cms.search.$feedSearchService.root + "/" + cActions.cms.search.$feedSearchService.download, {"fileName": fileName});
         };
 
-        $scope.openFeedCategoryMapping = function (popupNewCategory) {
+        $scope.openFeedCategoryMapping = function (popCategoryMul) {
             attributeService.getCatTree()
                 .then(function (res) {
                     if (!res.data.categoryTree || !res.data.categoryTree.length) {
@@ -235,29 +235,30 @@ define([
                         return null;
                     }
 
-                    $scope.vm.feedCats = _.filter($scope.vm.feedCats,function(item){
+                    $scope.vm.feedCats = _.filter($scope.vm.feedCats, function (item) {
                         return $scope.vm.searchInfo.category.indexOf(item.catPath) > -1;
                     });
 
-                    return popupNewCategory({
+                    return popCategoryMul({
                         categories: res.data.categoryTree,
-                        from:$scope.vm.feedCats,
-                        divType:"-",
-                        anyNode:true
+                        from: $scope.vm.feedCats,
+                        divType: "-"
                     }).then(function (context) {
                             $scope.vm.feedCats = context;
-                            $scope.vm.searchInfo.category = $scope.vm.catOpts = _.map(context,function(item){return item.catPath;});
+                            $scope.vm.searchInfo.category = _.map(context, function (item) {
+                                return item.catPath;
+                            });
                         }
                     );
                 });
         };
 
-        $scope.formatStrDate = function(item){
-            item.modified = $filter('date')(new Date(item.modified),'yyyy-MM-dd HH:mm:ss')
+        $scope.formatStrDate = function (item) {
+            item.modified = $filter('date')(new Date(item.modified), 'yyyy-MM-dd HH:mm:ss')
         }
 
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage','$filter'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage', '$filter'];
     return searchIndex;
 });

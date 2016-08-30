@@ -19,6 +19,7 @@ import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
@@ -51,6 +52,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     private PlatformMappingService platformMappingService;
     @Autowired
     private PlatformCategoryService platformCategoryService;
+    @Autowired
+    private SxProductService sxProductService;
 
     /**
      * 获取产品平台信息
@@ -103,7 +106,8 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 platformCart.setpCatId(mainPlatform.getpCatId());
             }
 
-            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), channelId, cartId, prodId, null, language));
+            if(platformCart.getFields() == null) platformCart.setFields(new BaseMongoMap<>());
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), channelId, cartId, prodId, language,null));
         }
         return platformCart;
     }
@@ -145,6 +149,12 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         mastData.put("groupId", cmsBtProductGroup.getGroupId());
         mastData.put("skus", cmsBtProduct.getCommon().getSkus());
         mastData.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(cmsBtProduct.getCommon().getFields().getCode()));
+        Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, cmsBtProduct.getCommon().getFields().getBrand(), cmsBtProduct.getCommon().getFields().getProductType(), cmsBtProduct.getCommon().getFields().getSizeType());
+        if (sizeMap != null && sizeMap.size() > 0) {
+            cmsBtProduct.getCommon().getSkus().forEach(sku -> {
+                sku.setAttribute("platformSize",sizeMap.get(sku.getSize()));
+            });
+        }
 
         // TODO 取得Sku的库存
         String skuChannelId = StringUtils.isEmpty(cmsBtProduct.getOrgChannelId()) ? channelId : cmsBtProduct.getOrgChannelId();
@@ -190,7 +200,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             }
         } else {
             platformCart = new CmsBtProductModel_Platform_Cart();
-            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language,catPath));
+            platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language, catPath));
 
             Map<String, Object> parm = new HashMap<>();
             parm.put("channelId", channelId);
@@ -340,13 +350,13 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         }
     }
 
-    private Map<String, List<Field>> getSchemaFields(BaseMongoMap<String, Object> fieldsValue, String catId, String channelId, Integer cartId, Long productId, String catPath, String language) {
+    private Map<String, List<Field>> getSchemaFields(BaseMongoMap<String, Object> fieldsValue, String catId, String channelId, Integer cartId, Long productId, String language, String catPath) {
         Map<String, List<Field>> fields = null;
 
         // 从mapping 来的默认值合并到商品属性中
         Map<String, Object> mppingFields = platformMappingService.getValueMap(channelId, productId, cartId, catPath);
 
-        setDefaultValue(fieldsValue,mppingFields);
+        setDefaultValue(fieldsValue, mppingFields);
 
         // JM的场合schema就一条
         if (cartId == Integer.parseInt(CartEnums.Cart.JM.getId())) {
@@ -410,23 +420,24 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
     /**
      * 从共同属性mapping来的属性合并
+     *
      * @param fieldMap
      * @param valueMap
      */
     public void setDefaultValue(Map<String, Object> fieldMap, Map<String, Object> valueMap) {
-        if(valueMap == null || valueMap.size() == 0) return;
+        if (valueMap == null || valueMap.size() == 0) return;
         valueMap.forEach((s, v) -> {
             Object o = fieldMap.get(s);
-            if(o == null){
-                fieldMap.put(s,v);
-            }else if(o instanceof List){
-                if(((List)o).size() == 0){
-                    fieldMap.put(s,v);
+            if (o == null) {
+                fieldMap.put(s, v);
+            } else if (o instanceof List) {
+                if (((List) o).size() == 0) {
+                    fieldMap.put(s, v);
                 }
-            }else if(o instanceof Map){
+            } else if (o instanceof Map) {
                 setDefaultValue((Map<String, Object>) o, (Map<String, Object>) v);
-            }else if(StringUtil.isEmpty((String) o)){
-                fieldMap.put(s,v);
+            } else if (StringUtil.isEmpty((String) o)) {
+                fieldMap.put(s, v);
             }
         });
     }
