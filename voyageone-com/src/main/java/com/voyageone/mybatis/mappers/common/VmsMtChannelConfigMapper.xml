@@ -23,7 +23,6 @@
             config_value1,
             config_value2,
             config_value3,
-            comment,
             created,
             creater,
             modified,
@@ -35,7 +34,6 @@
             #{configValue1, jdbcType=VARCHAR},
             #{configValue2, jdbcType=VARCHAR},
             #{configValue3, jdbcType=VARCHAR},
-            #{comment, jdbcType=VARCHAR},
             now(),
             #{creater, jdbcType=VARCHAR},
             now(),
@@ -43,7 +41,7 @@
         )
     </insert>
 
-    <update id="vms_mt_channel_config_updateValue"
+    <update id="vms_mt_channel_config_update"
             parameterType="com.voyageone.common.configs.beans.VmsChannelConfigBean">
         UPDATE voyageone_vms.vms_mt_channel_config
         SET config_value1 = #{configValue1, jdbcType=VARCHAR},

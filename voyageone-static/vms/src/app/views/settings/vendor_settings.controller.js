@@ -31,6 +31,18 @@ define([
             self.testName = moment().format(self.channelConfig.namingConverter);
         };
 
+        VendorSettingsController.prototype.save = function () {
+            var self = this;
+            self.vendorSettingsService.save(self.channelConfig).then(function (data) {
+                if (data.success > 0) {
+                    //todo
+                } else {
+                    //todo
+                }
+                self.init();
+            })
+        };
+
         return VendorSettingsController;
     }()))
 });

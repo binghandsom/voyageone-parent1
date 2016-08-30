@@ -10,6 +10,8 @@ import com.voyageone.web2.vms.views.common.VmsChannelConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.voyageone.web2.vms.VmsConstants.ChannelConfig.*;
+
 /**
  * vendor settings
  * Created by vantis on 16-8-30.
@@ -25,17 +27,39 @@ public class VmsVendorSettingsService {
     }
 
     public int save(UserSessionBean user, VmsChannelSettingBean vmsChannelSettingBean) {
-        VmsChannelConfigBean vmsChannelConfigBean = new VmsChannelConfigBean();
-        vmsChannelConfigBean.setChannelId(vmsChannelConfigBean.getChannelId());
-        vmsChannelConfigBean.setConfigKey(vmsChannelConfigBean.getConfigKey());
-        vmsChannelConfigBean.setConfigCode(VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
-        vmsChannelConfigBean.setConfigValue1(vmsChannelConfigBean.getConfigValue1());
-        vmsChannelConfigBean.setConfigValue2(vmsChannelConfigBean.getConfigValue2());
-        vmsChannelConfigBean.setConfigValue3(vmsChannelConfigBean.getConfigValue3());
-        vmsChannelConfigBean.setCreater(user.getUserName());
-        vmsChannelConfigBean.setModifier(user.getUserName());
-        int count = vmsChannelConfigService.insertOrUpdateConfig(vmsChannelConfigBean);
+
+        // Default Delivery Company
+        VmsChannelConfigBean defaultDeliveryCompanyConfig = new VmsChannelConfigBean();
+        defaultDeliveryCompanyConfig.setChannelId(user.getSelChannelId());
+        defaultDeliveryCompanyConfig.setConfigKey(DEFAULT_DELIVERY_COMPANY);
+        defaultDeliveryCompanyConfig.setConfigCode(VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
+        defaultDeliveryCompanyConfig.setConfigValue1(vmsChannelSettingBean.getDefaultDeliveryCompany());
+        defaultDeliveryCompanyConfig.setCreater(user.getUserName());
+        defaultDeliveryCompanyConfig.setModifier(user.getUserName());
+        int defaultDeliveryCompanyConfigCount = vmsChannelConfigService.insertOrUpdateConfig
+                (defaultDeliveryCompanyConfig);
+
+        // E-mail Address
+        VmsChannelConfigBean emailAddressConfig = new VmsChannelConfigBean();
+        emailAddressConfig.setChannelId(user.getSelChannelId());
+        emailAddressConfig.setConfigKey(EMAIL_ADDRESS);
+        emailAddressConfig.setConfigCode(VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
+        emailAddressConfig.setConfigValue1(vmsChannelSettingBean.getEmailAddress());
+        emailAddressConfig.setCreater(user.getUserName());
+        emailAddressConfig.setModifier(user.getUserName());
+        int emailAddressConfigCount = vmsChannelConfigService.insertOrUpdateConfig(emailAddressConfig);
+
+        // Shipment Naming Converter
+        VmsChannelConfigBean shipmentNamingConverterConfig = new VmsChannelConfigBean();
+        shipmentNamingConverterConfig.setChannelId(user.getSelChannelId());
+        shipmentNamingConverterConfig.setConfigKey(EMAIL_ADDRESS);
+        shipmentNamingConverterConfig.setConfigCode(VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
+        shipmentNamingConverterConfig.setConfigValue1(vmsChannelSettingBean.getEmailAddress());
+        shipmentNamingConverterConfig.setCreater(user.getUserName());
+        shipmentNamingConverterConfig.setModifier(user.getUserName());
+        int shipmentNamingConverterConfigCount = vmsChannelConfigService.insertOrUpdateConfig(emailAddressConfig);
+
         VmsChannelConfigs.reload();
-        return count;
+        return defaultDeliveryCompanyConfigCount + emailAddressConfigCount + shipmentNamingConverterConfigCount;
     }
 }
