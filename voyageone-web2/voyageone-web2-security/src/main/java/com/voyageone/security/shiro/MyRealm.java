@@ -87,11 +87,7 @@ public class MyRealm extends AuthorizingRealm {
 			// info.setRoles(user.getRolesName());
 			// 用户的角色对应的所有权限，如果只使用角色定义访问权限
 			for (ComResourceModel res : resList) {
-//				if(res.getResKey().equals("admin_searchChannelByPage"))
-//				{
-					info.addStringPermission(res.getResKey());
-//				}
-
+				info.addStringPermission(res.getResKey());
 			}
 			return info;
 		}

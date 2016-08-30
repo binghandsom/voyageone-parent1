@@ -65,7 +65,7 @@ public class ComUserService {
             throw new BusinessException("A003","user locked!", lae);
         } catch (ExcessiveAttemptsException e) {
             token.clear();
-            throw new BusinessException("A004", "too many fails, uer will be locked for 10 minutes.", e);
+            throw new BusinessException("A004", "too many fails, user will be locked for 10 minutes.", e);
 
         } catch (AuthenticationException e) {
             token.clear();
@@ -79,7 +79,7 @@ public class ComUserService {
         userModel.setUserAccount(account);
         userModel =comUserDao.selectOne(userModel);
 
-        if(userModel.getModifier() != account)
+        if(!userModel.getModifier().equals(account))
         {
             throw new BusinessException("A006", "need change password.", null);
         }
