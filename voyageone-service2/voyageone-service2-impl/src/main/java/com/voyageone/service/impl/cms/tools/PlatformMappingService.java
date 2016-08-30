@@ -204,7 +204,9 @@ public class PlatformMappingService extends BaseService {
                             break;
 
                         case EXPRESSION_TYPE_MASTER:
-                            valueBuilder.append(master.getStringAttribute(key));
+                            String masterValue = master.getStringAttribute(key);
+                            if (!StringUtils.isEmpty(masterValue))
+                                valueBuilder.append(masterValue);
                             break;
 
                         default:

@@ -4,7 +4,7 @@
 define([
     'modules/cms/controller/popup.ctl'
 ], function () {
-    function sizeChartController($scope,sizeChartService,confirm,notify,$translate) {
+    function sizeChartController($scope,sizeChartService,alert,notify,$translate,popups) {
         $scope.vm = {
             sizeChartList: [],
             searchInfo : {sizeChartName: "", finishFlag:"",brandNameList:[],productTypeList:[],startTime:"",endTime:"",sizeTypeList:[]},
@@ -51,17 +51,30 @@ define([
         /**
          * 删除尺码表操作
          */
-        $scope.deleteRow = function(sizeChartId){
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).then(function () {
-                sizeChartService.delete({sizeChartId: sizeChartId}).then(function () {
+        $scope.deleteRow = function(entity){
+            var chart = false;
+
+            if(entity.imageGroupId)
+                chart = true;
+
+            popups.openTemplateConfirm({
+                content:"是否同时删除尺码图?",
+                templateId:entity.sizeChartId,
+                imageGroupId:entity.imageGroupId,
+                sizeChartId:entity.sizeChartId,
+                from:"sizeChart",
+                chart:chart
+            }).then(function(context){
+                if(context === true){
                     notify.success ($translate.instant('TXT_MSG_DELETE_SUCCESS'));
                     search();
-                });
+                }
             });
+
         }
 
     }
 
-    sizeChartController.$inject = ['$scope', 'sizeChartService','confirm','notify','$translate'];
+    sizeChartController.$inject = ['$scope', 'sizeChartService','confirm','notify','$translate','popups'];
     return sizeChartController;
 });
