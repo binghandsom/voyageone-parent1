@@ -1219,7 +1219,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             }
             // 20160630 tom 防止code超长 END
             // 如果平台类目颜色和尺寸都存在的时候，颜色存在尺寸不存在的时候在后面SKU循环里面做
-            if (cmsColorList.size() > 0 && cmsSizeList.size() > 0) {
+            if ("1".equals(salePropStatus)) {
                 if (productColorMap.containsKey(objProduct.getCommon().getFields().getCode())) {
                     sbPropertyAlias.append(productColorMap.get(objProduct.getCommon().getFields().getCode())); // 产品CODE对应的颜色值ID
                     sbPropertyAlias.append(Separtor_Colon);         // ":"
