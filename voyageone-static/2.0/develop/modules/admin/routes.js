@@ -10,6 +10,12 @@ define(function () {
             "templateUrl": "views/adminManagement/user/index.tpl.html",
             "controllerUrl": "modules/admin/views/adminManagement/user/index.ctl",
             "controller": "UserManagementController as ctrl"
+        },//用户/权限-角色管理
+        "adminRoleManage": {
+            "hash": "/admin/roleManage",
+            "templateUrl": "views/adminManagement/role/index.tpl.html",
+            "controllerUrl": "modules/admin/views/adminManagement/role/index.ctl",
+            "controller": "RoleManagementController as ctrl"
         },//用户/权限-组织管理
         "adminOrgManage": {
             "hash": "/admin/orgManage",

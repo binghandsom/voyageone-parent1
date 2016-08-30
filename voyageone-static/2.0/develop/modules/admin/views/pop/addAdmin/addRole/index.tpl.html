@@ -1,0 +1,182 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-edit"></i>&nbsp;{{ctrl.popType}}</h5>
+    </div>
+    <div class="modal-body wrapper vbox">
+        <form role="form" class="form-horizontal" name="addForm" novalidate>
+            <div class="col-sm-4">
+                <div class="form-horizontal">
+                    <div class="row form-group"><!-- 角色名 -->
+                        <label class="col-sm-3 control-label">{{'TXT_ROLE_NAME' | translate}}</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" ng-model="ctrl.sourceData.roleName"/>
+                        </div>
+                    </div>
+                    <div class="row form-group"><!-- 状态 -->
+                        <label class="col-sm-3 control-label">{{'TXT_STATUS' | translate}}</label>
+                        <div class="col-sm-8">
+                            <label class="checkbox-inline c-radio">
+                                <input type="radio" name="active" value="1" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> 启用
+                            </label>
+                            <label class="checkbox-inline c-radio">
+                                <input type="radio" name="active" value="0" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> 禁用
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.active"></vo-message>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <div class="form-horizontal">
+                    <div class="row form-group"><!-- 角色类型 -->
+                        <label class="col-sm-2 control-label">{{'TXT_ROLE_TYPE' | translate}}</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-model="ctrl.sourceData.roleType"
+                                    ng-options="active.active as active.value for active in ctrl.activeList">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row form-group"><!-- 授权系统 -->
+                        <label class="col-sm-2 control-label">{{'TXT_ROLE_SYSTEM' | translate}}</label>
+                        <div class="col-sm-10">
+                            <label class="checkbox-inline c-checkbox">
+                                <input type="checkbox" ng-model="ctrl.sourceData.system"><span class="fa fa-check"></span>&nbsp;CMS
+                            </label>
+                            <label class="checkbox-inline c-checkbox">
+                                <input type="checkbox" ng-model="ctrl.sourceData.system"><span class="fa fa-check"></span>&nbsp;OMS
+                            </label>
+                            <label class="checkbox-inline c-checkbox">
+                                <input type="checkbox" ng-model="ctrl.sourceData.system"><span class="fa fa-check"></span>&nbsp;WMS
+                            </label>
+                            <label class="checkbox-inline c-checkbox" style="margin-left: 0">
+                                <input type="checkbox" ng-model="ctrl.sourceData.system"><span class="fa fa-check"></span>&nbsp;ADMIN
+                            </label>
+                            <div class="text-warnings" style="padding-left:0">
+                                <i class="icon fa fa-bell-o"></i>&nbsp;请在授权页面中编辑该角色的授权系统
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-horizontal">
+                    <div class="row form-group"><!-- 说明 -->
+                        <label class="col-sm-2 control-label">{{'TXT_INSTRUCTION' | translate}}</label>
+                        <div class="col-sm-10">
+                            <textarea rows="3" class="form-control" maxlength="100" ng-model="ctrl.sourceData.description"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="row form-group"><!-- 授权渠道 -->
+                    <label class="col-sm-1 control-label">{{'TXT_ROLE_CHANNEL' | translate}}</label>
+                    <label class="checkbox-inline c-radio">
+                        <input type="radio" name="channel" value="1" ng-model="ctrl.sourceData.channel"><span class="fa fa-check"></span> 所有渠道
+                    </label>
+                    <label class="checkbox-inline c-radio">
+                        <input type="radio" name="channel" value="0" ng-model="ctrl.sourceData.channel"><span class="fa fa-check"></span> 选择特定渠道
+                    </label>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-10 col-sm-offset-1">
+                        <div class="col-sm-5">
+                            <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label>
+                            <div class="column_overflow col-sm-12 m-t-sm" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
+                                <div class="col-sm-12">
+                                    <ul class="list-unstyled">
+                                        <li class="btn-block" ng-repeat="channel in ctrl.channelList" ng-style="{'background-color': ctrl.selectedChannelId==channel.orderChannelId? '#dcf3f9': 'white'}">
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected(channel)">{{channel.channelName}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="col-sm-5 text-center control-label vo_a_ce" >操作</label>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1 m-t-sm" ng-click="ctrl.channelMove('allInclude')"><i class="fa fa-angle-double-left"></i></button> </div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.channelMove('include')"><i class="fa fa-angle-left"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.channelMove('exclude')"><i class="fa fa-angle-right"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.channelMove('allExclude')"><i class="fa fa-angle-double-right"></i></button></div>
+                        </div>
+                        <div class="col-sm-5">
+                            <label class="col-sm-2 text-left control-label vo_a_ce" >{{'TXT_CHOOSE' | translate}}</label>
+                            <div class="col-sm-10 form-inline">
+                                <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:88.5%" ng-model="name">
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search.roleName = name"><i class="fa fa-search"></i></button>
+                            </div>
+                            <div class="column_overflow col-sm-12 m-t-xs" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
+                                <div class="col-sm-12">
+                                    <ul class="list-unstyled">
+                                        <li class="btn-block" ng-repeat="channel in ctrl.channelAllList| filter:search" ng-style="{'background-color': ctrl.selectedChannelId==channel.orderChannelId? '#dcf3f9': 'white'}">
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected(channel)">{{channel.channelName}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group"><!-- 授权仓库 -->
+                    <label class="col-sm-1 control-label">{{'TXT_ROLE_STORE' | translate}}</label>
+                    <label class="checkbox-inline c-radio">
+                        <input type="radio" name="store" value="1" ng-model="ctrl.sourceData.store"><span class="fa fa-check"></span> 所有已选渠道的关联仓库
+                    </label>
+                    <label class="checkbox-inline c-radio">
+                        <input type="radio" name="store" value="0" ng-model="ctrl.sourceData.store"><span class="fa fa-check"></span> 选择特定仓库
+                    </label>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-10 col-sm-offset-1">
+                        <div class="col-sm-5">
+                            <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label>
+                            <div class="column_overflow col-sm-12 m-t-sm" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
+                                <div class="col-sm-12">
+                                    <ul class="list-unstyled">
+                                        <li class="btn-block" ng-repeat="store in ctrl.storeList" ng-style="{'background-color': ctrl.selectedStoreId==store.storeId? '#dcf3f9': 'white'}">
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected(store)">{{store.storeName}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="col-sm-5 text-center control-label vo_a_ce" >操作</label>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1 m-t-sm" ng-click="ctrl.storeMove('allInclude')"><i class="fa fa-angle-double-left"></i></button> </div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.storeMove('include')"><i class="fa fa-angle-left"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.storeMove('exclude')"><i class="fa fa-angle-right"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.storeMove('allExclude')"><i class="fa fa-angle-double-right"></i></button></div>
+                        </div>
+                        <div class="col-sm-5">
+                            <label class="col-sm-2 text-left control-label vo_a_ce" >{{'TXT_CHOOSE' | translate}}</label>
+                            <div class="col-sm-10 form-inline">
+                                <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:88.5%" ng-model="storeName">
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="search.storeName = storeName"><i class="fa fa-search"></i></button>
+                            </div>
+                            <div class="column_overflow col-sm-12 m-t-xs" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
+                                <div class="col-sm-12">
+                                    <ul class="list-unstyled">
+                                        <li class="btn-block" ng-repeat="store in ctrl.storeAllList| filter:search" ng-style="{'background-color': ctrl.selectedStoreId==store.storeId? '#dcf3f9': 'white'}">
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected(store)">{{store.storeName}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled="addForm.$valid==false"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+    </div>
+</div>

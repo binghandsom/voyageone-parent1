@@ -1,8 +1,10 @@
 package com.voyageone.security.shiro;
 
 
-import com.voyageone.security.dao.ComUserDao;
-import com.voyageone.security.dao.ViewUserResDao;
+import com.voyageone.security.dao.*;
+import com.voyageone.security.model.ComResRoleModel;
+import com.voyageone.security.model.ComResourceModel;
+import com.voyageone.security.model.ComRoleConfigModel;
 import com.voyageone.security.model.ComUserModel;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -15,6 +17,7 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,12 @@ public class MyRealm extends AuthorizingRealm {
 	@Autowired
 	private ViewUserResDao viewUserResDao;
 
+	@Autowired
+	private ComRoleConfigDao comRoleConfigDao;
+
+	@Autowired
+	private ComResourceDao comResourceDao;
+
 	/**
 	 * 只有需要验证权限时才会调用, 授权查询回调函数, 进行鉴权但缓存中无用户的授权信息时调用.在配有缓存的情况下，只加载一次.
 	 */
@@ -38,12 +47,38 @@ public class MyRealm extends AuthorizingRealm {
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
 		String loginName = SecurityUtils.getSubject().getPrincipal().toString();
 		if (loginName != null) {
-			Integer userId = Integer.valueOf(SecurityUtils.getSubject().getSession().getAttribute("userSessionId").toString());
-			String  channelId = SecurityUtils.getSubject().getSession().getAttribute("channelId").toString();
-			Map queryMap =new HashMap<String, Object>();
-			queryMap.put("userId", userId);
-			queryMap.put("channelId", channelId);
-			List<Map<String, Object>> resources = viewUserResDao.selectResByUserChannel(queryMap);
+
+			//先检查用户是否有系统的全部权限
+			ComRoleConfigModel model = new ComRoleConfigModel();
+			model.setCfgName("all_permission");
+
+			List<ComRoleConfigModel> allPerApp = comRoleConfigDao.selectList(model);
+
+			List<ComResourceModel> resList = new ArrayList<>();
+
+			for(ComRoleConfigModel cfg : allPerApp)
+			{
+				String appName = cfg.getCfgVal1();
+
+				ComResourceModel resModel  = new ComResourceModel();
+				resModel.setActive(1);
+				resModel.setResType(2);
+				resModel.setApplication(appName);
+				List<ComResourceModel> list = comResourceDao.selectList(resModel);
+
+				resList.addAll(list);
+			}
+
+//			Map queryMap =new HashMap<String, Object>();
+//			Integer userId = Integer.valueOf(SecurityUtils.getSubject().getSession().getAttribute("userSessionId").toString());
+//			queryMap.put("userId", userId);
+//			Object  objChannelId = SecurityUtils.getSubject().getSession().getAttribute("channelId");
+//			if(objChannelId != null)
+//			{
+//				queryMap.put("channelId", objChannelId.toString());
+//			}
+//
+//			List<Map<String, Object>> resources = viewUserResDao.selectResByUserChannel(queryMap);
 			// 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
 			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 			// 用户的角色集合
@@ -51,8 +86,8 @@ public class MyRealm extends AuthorizingRealm {
 			// 用户的角色集合
 			// info.setRoles(user.getRolesName());
 			// 用户的角色对应的所有权限，如果只使用角色定义访问权限
-			for (Map res : resources) {
-				info.addStringPermission(res.get("res_key").toString());
+			for (ComResourceModel res : resList) {
+				info.addStringPermission(res.getResKey());
 			}
 			return info;
 		}

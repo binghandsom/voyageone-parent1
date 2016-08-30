@@ -13,6 +13,7 @@
         <include refid="Base_Column_List" />
         from com_organization t, com_organization t1
         <where >
+            t.`parent_id` = t1.`id`
             <if test="orgName != null" >
                and t.`org_name` like concat('%',#{orgName,jdbcType=VARCHAR}, '%')
             </if>

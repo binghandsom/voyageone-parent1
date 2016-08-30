@@ -14,11 +14,11 @@ public class AdminController extends BaseController {
 	/**
 	 * 目前没有权限验证，此方法只作测试用。
 	 */
-	@Override
-	public UserSessionBean getUser() {
-		UserSessionBean user = new UserSessionBean();
-		user.setUserName("developer");
-		return user;
-	}
+//	@Override
+//	public UserSessionBean getUser() {
+//		UserSessionBean user = new UserSessionBean();
+//		user.setUserName("developer");
+//		return user;
+//	}
 
 }
