@@ -97,6 +97,9 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
 
         try {
             sxProductService.constructMappingPlatformProps(fields, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, true);
+        } catch (BusinessException be) {
+            sxData.setErrorMessage(be.getMessage());
+            throw be;
         } catch (Exception e) {
             $error("商品类目设值失败! " + e.getMessage());
             sxData.setErrorMessage(e.getMessage());

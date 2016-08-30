@@ -1,9 +1,13 @@
 /**
  * @Date:    2015-11-16 18:48:29
  * @User:    Jonas
- * @Version: 0.2.1
+ * @Version: 2.4.0
  */
-angular.module("vo.services").service("$ajax", $Ajax).service("ajaxService", AjaxService);
+angular.module("vo.services").service("$ajax", $Ajax).service("ajaxService", AjaxService).config(['$httpProvider', function ($httpProvider) {
+    $httpProvider.defaults.headers.common = {
+        'X-Requested-With': 'XMLHttpRequest'
+    };
+}]);
 
 function $Ajax($http, blockUI, $q) {
     this.$http = $http;

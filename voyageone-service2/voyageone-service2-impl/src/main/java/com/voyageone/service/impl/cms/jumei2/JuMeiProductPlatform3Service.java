@@ -122,6 +122,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
                     cmsBtJmPromotionProductModel.setErrorMsg(cmsBtJmPromotionProductModel.getErrorMsg().substring(0, 600));
                 }
                 daoCmsBtJmPromotionProduct.update(cmsBtJmPromotionProductModel);
+
             } catch (Exception cex) {
                 LOG.error("JuMeiProductPlatform3Service.addProductAndDealByPromotionId", cex);
             }
@@ -143,7 +144,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             errorMsg = "商品被Lock，如确实需要上传商品，请先解锁";
         }
         //6.0.2
-        else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() >= parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
+        else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() > parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
             errorMsg = "市场价必须大于团购价";
         }
         if(!StringUtils.isEmpty(errorMsg)) {
@@ -216,6 +217,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             model.setErrorMsg("");
             model.setActivityEnd(modelCmsBtJmPromotion.getActivityEnd());
             daoCmsBtJmPromotionProduct.update(model);
+            LOG.info("延期成功:"+parameter.cmsBtJmPromotionProductModel.getProductCode());
         }
     }
 
@@ -293,7 +295,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
         } catch (Exception ex) {
             parameter.cmsBtJmPromotionProductModel.setSynchStatus(3);
             parameter.cmsBtJmPromotionProductModel.setPriceStatus(0);
-            parameter.cmsBtJmPromotionProductModel.setDealEndTimeStatus(0);
+            if(parameter.cmsBtJmPromotionProductModel.getDealEndTimeStatus()!=2) {
+                parameter.cmsBtJmPromotionProductModel.setDealEndTimeStatus(0);
+            }
             throw ex;
         }
     }
@@ -317,6 +321,8 @@ public class JuMeiProductPlatform3Service extends BaseService {
             long jmActivityEndTime = DateTimeUtilBeijing.toLocalTime(parameter.cmsBtJmPromotionModel.getActivityEnd());
             long sellJmEndTime = DateTimeUtilBeijing.toLocalTime(getDealByHashIDResponse.getEnd_time());
             long sellJmStartTime = DateTimeUtilBeijing.toLocalTime(getDealByHashIDResponse.getStart_time());
+            LOG.info("sellJmStartTime:"+getDealByHashIDResponse.getStart_time().toString());
+            LOG.info("sellJmEndTime:"+getDealByHashIDResponse.getEnd_time().toString());
             CmsBtJmPromotionModel sellJmPromotion = getCmsBtJmPromotionModelBySellHashId(response.getSell_hash_id());
             String sellJmPromotionName="";
                     if(sellJmPromotion!=null) {
@@ -388,9 +394,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
             {
                 if (!sellJmPromotion.getIsPromotionFullMinus())//在售专场为非满减专场
                 {
-                    if (DateTimeUtil.addDays(jmPromotion.getActivityEnd(), -4).getTime() >= getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间4天或以上 时
+                    if (DateTimeUtil.addDays(jmPromotion.getActivityStart(), -4).getTime() >= getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间4天或以上 时
                     {
-                        errorMsg = String.format("该商品已加入专场【sellJmPromotion.getName()】，并上传成功。请于【sellJmPromotion.getActivityEnd()】（年月日 时分秒）之后，再进行上传", sellJmPromotionName, DateTimeUtil.format(getDealByHashIDResponse.getEnd_time(), "yyyy-MM-dd HH:mm:ss"));
+                        errorMsg = String.format("该商品已加入专场%s，并上传成功。请于【%s】（年月日 时分秒）之后，再进行上传", sellJmPromotionName, DateTimeUtil.format(getDealByHashIDResponse.getEnd_time(), "yyyy-MM-dd HH:mm:ss"));
                         return errorMsg;
                     }
                 }
@@ -400,17 +406,26 @@ public class JuMeiProductPlatform3Service extends BaseService {
             {
                 if (!sellJmPromotion.getIsPromotionFullMinus())//在售专场为非满减专场
                 {
-                    if (DateTimeUtil.addDays(jmPromotion.getActivityEnd(), -4).getTime() < getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
+                    if (DateTimeUtil.addDays(jmPromotion.getActivityStart(), -4).getTime() < getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
                     {
                         //4.2.9.1
                         jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
+                        errorMsg = String.format("该商品已加入专场【%s】，并上传成功。当前专场引用了同一HashID，并进行了延期。该商品无预热。如需变更价格，请重新点击【重刷】/【批量同步价格】。操作将影响关联专场，请慎重。", sellJmPromotionName);
+
                         //4.2.9.2 新HashID替换MongoDB中，该商品的Origin HashID 参考步骤6.0.3
                         //4.2.9.2 //在售专场的结束时间小于当前专场结束时间
                         if (sellJmEndTime < jmActivityEndTime) {
                             //调用延迟Deal结束时间API
                             jmPromotionProduct.setDealEndTimeStatus(1);
+                            jmPromotionProduct.setActivityEnd(getDealByHashIDResponse.getEnd_time());
+                            try {
+                                updateDealEndTime(parameter);//自动延期
+
+                            }
+                            catch (Exception ex) {
+                                errorMsg+=ex.getMessage();
+                            }
                         }
-                        errorMsg = String.format("该商品已加入专场【%s】，并上传成功。当前专场引用了同一HashID，并进行了延期。该商品无预热。如需变更价格，请重新点击【重刷】/【批量同步价格】。操作将影响关联专场，请慎重。", sellJmPromotionName);
                         return errorMsg;
                     }
                 }

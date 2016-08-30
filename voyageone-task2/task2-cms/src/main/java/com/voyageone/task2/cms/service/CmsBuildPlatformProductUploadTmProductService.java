@@ -294,6 +294,9 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                 // 产品规格
                 MultiComplexField cspuListField = (MultiComplexField) field;
                 for (Field subField : cspuListField.getFields()) {
+                    if (subField.getType() != FieldTypeEnum.COMPLEX) {
+                        continue;
+                    }
                     ComplexField cspuField = (ComplexField) subField;
                     Map<String, Field> mapFields = cspuField.getFieldMap();
                     String[] barcodeXml = ((InputField) mapFields.get("barcode")).getDefaultValue().split(":"); // 3:090891203253  1:3607342551800 冒号前面不知道是什么
@@ -404,6 +407,9 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         try {
             // 取得所有field对应的属性值
             sxProductService.constructMappingPlatformProps(fieldList, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, false);
+        } catch (BusinessException be) {
+            sxData.setErrorMessage(be.getMessage());
+            throw be;
         } catch (Exception ex) {
             String errMsg = String.format("天猫新增产品时根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformCategoryId);
@@ -553,6 +559,9 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                 // 只把产品规格的field传进去设值
                 sxProductService.constructMappingPlatformProps(cspuListField, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, false);
             }
+        } catch (BusinessException be) {
+            sxData.setErrorMessage(be.getMessage());
+            throw be;
         } catch (Exception ex) {
             String errMsg = String.format("更新产品时,根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformProductId);

@@ -293,6 +293,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.get("_adv_search_customProps");
         List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.get("_adv_search_commonProps");
         List<Map<String, String>> salesProps = (List<Map<String, String>>) cmsSession.get("_adv_search_selSalesType");
+        List<Map<String, String>> bidatasProps = (List<Map<String, String>>) cmsSession.get("_adv_search_selBiDataList");
         Sheet sheet = book.getSheetAt(0);
         // 第一行，英文标题
         Row row = FileUtils.row(sheet, 0);
@@ -324,7 +325,6 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2((prop.get("propName"))));
             }
         }
-
         if (customProps != null) {
             for (Map<String, String> prop : customProps) {
                 FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")));
@@ -333,6 +333,11 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         }
         if (salesProps != null) {
             for (Map<String, String> prop : salesProps) {
+                FileUtils.cell(row, index++, style).setCellValue(prop.get("name"));
+            }
+        }
+        if (bidatasProps != null) {
+            for (Map<String, String> prop : bidatasProps) {
                 FileUtils.cell(row, index++, style).setCellValue(prop.get("name"));
             }
         }
@@ -369,7 +374,6 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2((prop.get("propName"))));
             }
         }
-
         if (customProps != null) {
             for (Map<String, String> prop : customProps) {
                 FileUtils.cell(row, index++, style).setCellValue(StringUtils.null2Space2(prop.get("feed_prop_translation")));
@@ -378,6 +382,11 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         }
         if (salesProps != null) {
             for (Map<String, String> prop : salesProps) {
+                FileUtils.cell(row, index++, style).setCellValue(prop.get("name"));
+            }
+        }
+        if (bidatasProps != null) {
+            for (Map<String, String> prop : bidatasProps) {
                 FileUtils.cell(row, index++, style).setCellValue(prop.get("name"));
             }
         }
@@ -479,6 +488,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         List<Map<String, String>> customProps = (List<Map<String, String>>) cmsSession.get("_adv_search_customProps");
         List<Map<String, String>> commonProps = (List<Map<String, String>>) cmsSession.get("_adv_search_commonProps");
         List<Map<String, Object>> salesProps = (List<Map<String, Object>>) cmsSession.get("_adv_search_selSalesType");
+        List<Map<String, Object>> bidatasProps = (List<Map<String, Object>>) cmsSession.get("_adv_search_selBiDataList");
         CellStyle unlock = FileUtils.createUnLockStyle(book);
 
         // 先取得各产品feed原图url
@@ -637,6 +647,19 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                         FileUtils.cell(row, index++, unlock).setCellValue("");
                     } else {
                         FileUtils.cell(row, index++, unlock).setCellValue(salesVal);
+                    }
+                }
+            }
+            if (bidatasProps != null) {
+                BaseMongoMap biData = item.getBi();
+                for (Map<String, Object> prop : bidatasProps) {
+                    String key = (String) prop.get("value");
+                    key = key.substring(3);
+                    Object salesVal = biData.getSubNode(key.split("\\."));
+                    if (salesVal == null) {
+                        FileUtils.cell(row, index++, unlock).setCellValue("");
+                    } else {
+                        FileUtils.cell(row, index++, unlock).setCellValue(salesVal.toString());
                     }
                 }
             }
