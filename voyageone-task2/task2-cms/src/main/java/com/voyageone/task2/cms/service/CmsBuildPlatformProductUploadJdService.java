@@ -282,7 +282,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
             // 没有lock并且已Approved的产品列表为空的时候,中止该产品的上新流程
             if (ListUtils.isNull(cmsBtProductList)) {
-                String errMsg = String.format("未lock并且已Approved产品列表为空");
+                String errMsg = String.format("未被锁定且已完成审批的产品列表为空");
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
@@ -310,7 +310,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 如果已Approved产品skuList为空，则把库存表里面所有的数据（几万条）数据全部查出来了，很花时间
             // 如果已Approved产品skuList为空，则中止该产品的上新流程
             if (strSkuCodeList.isEmpty()) {
-                String errMsg = String.format("已Approved产品sku列表为空");
+                String errMsg = String.format("已完成审批的产品sku列表为空");
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
