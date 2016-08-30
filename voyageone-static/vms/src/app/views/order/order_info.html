@@ -57,12 +57,14 @@
         </div>
     </div>
     <div class="row margin-bottom-10">
-        <div class="col-sm-6" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
+        <div class="col-sm-6">
             <button ng-if="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('new')" translate="BTN_NEW_SHIPMENT"></button>
-            <button ng-if="ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('end')" translate="BTN_END_SHIPMENT"></button>
+            <button ng-if="ctrl.currentShipment && ctrl.channelConfigs.vendorOperateType == 'ORDER'" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('end')" translate="BTN_END_SHIPMENT"></button>
             <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
                 <a ng-if="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
                 <label ng-if="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
+            <button class="btn btn-xs btn-info" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU' && ctrl.currentShipment"
+                    ng-click="ctrl.popAddToShipmentForSku()" translate="BTN_ADD_TO_SHIPMENT"></button>
         </div>
         <div class="col-sm-6" ng-if="!(ctrl.channelConfigs.vendorOperateType == 'ORDER')"></div>
         <div class="col-sm-6 text-right form-inline">
@@ -107,7 +109,7 @@
                             <button class="btn btn-xs btn-danger" ng-if="item.status == 1"
                                     ng-click="ctrl.cancelOrder(item)" translate="BTN_CANCEL"></button>
                             <button class="btn btn-xs btn-info" ng-if="item.status == 1"
-                                    ng-click="ctrl.popAddToShipment(item)" ng-disabled="!ctrl.currentShipment"
+                                    ng-click="ctrl.popAddToShipmentForOrder(item)" ng-disabled="!ctrl.currentShipment"
                                     translate="BTN_ADD_TO_SHIPMENT"></button>
                         </td>
                     </tr>

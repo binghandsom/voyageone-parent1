@@ -22,6 +22,12 @@ define([
             this.barcode = "";
 
             this.classTest = false;
+
+            this.fromUrl = "#/order/order_info";
+            var shipmentSessionSearchInfo = JSON.parse(sessionStorage.getItem('shipmentSearchInfo'));
+            if (shipmentSessionSearchInfo) {
+                this.fromUrl = "#/shipment/shipment_info"
+            }
         }
 
         ShipmentDetailController.prototype.init = function () {
@@ -115,7 +121,7 @@ define([
                     self.shipmentDetailService.ship(req).then(function (data) {
                         if (data.result.succeedSkuCount > 0) {
                             self.notify.success("TXT_SUCCESS");
-                            window.location.href = "#/shipment/shipment_info";
+                            window.location.href = self.fromUrl;
                         }
                     });
                 });

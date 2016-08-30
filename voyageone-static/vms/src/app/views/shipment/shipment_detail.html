@@ -1,10 +1,16 @@
 <div class="breadcrumbs" ng-init="ctrl.init()">
     <div class="container">
         <h4 class="pull-left" translate="TXT_SHIPMENT_DETAIL"></h4>
-        <ul class="pull-right breadcrumb">
+        <ul class="pull-right breadcrumb" ng-if="ctrl.fromUrl == '#/shipment/shipment_info'">
             <li><a href="#/home" translate="TXT_HOME"></a></li>
             <li class="active disabled" translate="TXT_SHIPMENT"></li>
             <li><a href="#/shipment/shipment_info" translate="TXT_SHIPMENT_INFO"></a></li>
+            <li class="active selected" translate="TXT_SHIPMENT_DETAIL"></li>
+        </ul>
+        <ul class="pull-right breadcrumb" ng-if="ctrl.fromUrl == '#/order/order_info'">
+            <li><a href="#/home" translate="TXT_HOME"></a></li>
+            <li class="active disabled" translate="TXT_ORDER"></li>
+            <li><a href="#/order/order_info" translate="TXT_ORDER_INFO"></a></li>
             <li class="active selected" translate="TXT_SHIPMENT_DETAIL"></li>
         </ul>
     </div>
@@ -23,7 +29,7 @@
             <div class="row">
                 <div class="form-group" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU'">
                     <div class="col-sm-4">
-                        <a class="btn btn-primary" ng-href="#/shipment/shipment_info"><i class="fa fa-mail-reply"></i>&nbsp;&nbsp;{{'BTN_BACK'
+                        <a class="btn btn-primary" ng-href="{{ctrl.fromUrl}}"><i class="fa fa-mail-reply"></i>&nbsp;&nbsp;{{'BTN_BACK'
                             | translate}}</a>
                     </div>
                     <div class="col-md-8">
@@ -109,7 +115,7 @@
     <div class="headline" style="margin-bottom: 12px;">
         <h2 TRANSLATE="TXT_SKU_LIST"></h2>
         <a ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'" class="btn btn-primary pull-right"
-           ng-href="#/shipment/shipment_info"><i class="fa fa-mail-reply"></i>&nbsp;&nbsp;{{'BTN_BACK' | translate}}</a>
+           ng-href="{{ctrl.fromUrl}}"><i class="fa fa-mail-reply"></i>&nbsp;&nbsp;{{'BTN_BACK' | translate}}</a>
     </div>
     <div class="panel panel-vo">
         <div class="panel-body" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU'">
