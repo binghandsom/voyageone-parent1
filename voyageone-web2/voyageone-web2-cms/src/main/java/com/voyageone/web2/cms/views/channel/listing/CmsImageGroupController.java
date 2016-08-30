@@ -75,7 +75,7 @@ ImageGroupService imageGroupService;
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP.DELETE_CHANNEL_IMAGE_GROUP)
     public AjaxResponse delete(@RequestBody Map<String, Object> param){
         param.put("userName", this.getUser().getUserName());
-        cmsImageGroupService.delete(param);
+        cmsImageGroupService.delete(param,this.getUser().getSelChannelId());
         return success(null);
     }
     @RequestMapping( CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP.GetNoMatchSizeImageGroupList)
