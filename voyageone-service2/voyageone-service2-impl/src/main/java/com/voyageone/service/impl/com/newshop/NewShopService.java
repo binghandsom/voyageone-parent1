@@ -206,8 +206,8 @@ public class NewShopService extends BaseService {
 		// 生成开店sql
 		List<String> sqls = new ArrayList<String>();
 		sqls.add("delimiter $$");
-		sqls.add("drop procedure if exists open_new_shop $$");
-		sqls.add("create procedure open_new_shop()");
+		sqls.add("drop procedure if exists proc_new_shop $$");
+		sqls.add("create procedure proc_new_shop()");
 		sqls.add("begin");
 		sqls.add("  declare errno integer default 0;");
 		sqls.add("  declare continue handler for sqlexception set errno = 1;");
@@ -280,7 +280,7 @@ public class NewShopService extends BaseService {
 		sqls.add("    rollback;");
 		sqls.add("  end if;");
 		sqls.add("end$$");
-		sqls.add("call open_new_shop() $$");
+		sqls.add("call proc_new_shop() $$");
 		sqls.add("delimiter ;");
 		
 		// 文件基本设置

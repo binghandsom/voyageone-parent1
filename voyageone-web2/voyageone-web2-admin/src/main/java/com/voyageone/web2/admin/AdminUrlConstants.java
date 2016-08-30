@@ -299,7 +299,7 @@ public interface AdminUrlConstants {
 		/** 开店信息 */
 		interface Self {
 			
-			String ROOT = "/admin/openshop/self";
+			String ROOT = "/admin/newshop/self";
 			
 			String GET_CHANNEL_SERIES = "getChannelSeries";
 
@@ -308,6 +308,8 @@ public interface AdminUrlConstants {
 			String DOWNLOAD_NEW_SHOP_SQL = "downloadNewShopSql";
 
 			String DELETE_NEW_SHOP = "deleteNewShop";
+
+			String SEARCH_NEW_SHOP_BY_PAGE = "searchNewShopByPage";
 			
 		}
 		

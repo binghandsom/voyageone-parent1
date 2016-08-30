@@ -50,9 +50,14 @@ public class NewShopController extends AdminController {
 	@RequestMapping(AdminUrlConstants.NewShop.Self.DOWNLOAD_NEW_SHOP_SQL)
 	public ResponseEntity<byte[]> downloadNewShopSql(@RequestParam Long newShopId) throws Exception {
 		File sqlFile = newShopService.downloadNewShopSql(newShopId, getUser().getUserName());
-		String downloadFileName = "open-shop-" + System.currentTimeMillis() + ".sql";
+		String downloadFileName = "new-shop-" + System.currentTimeMillis() + ".sql";
 		return genResponseEntityFromFile(downloadFileName, sqlFile.getPath());
 	}
+	
+	@RequestMapping(AdminUrlConstants.NewShop.Self.SEARCH_NEW_SHOP_BY_PAGE)
+	public AjaxResponse searchNewShopByPage(@RequestBody NewShopFormBean form) {
+		return success(true);
+	}	
 	
 	@RequestMapping(AdminUrlConstants.NewShop.Self.DELETE_NEW_SHOP)
 	public AjaxResponse deleteNewShop(@RequestBody Long newShopId) {

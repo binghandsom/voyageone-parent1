@@ -20,6 +20,14 @@ public class NewShopFormBean {
 	
 	private Long id;
 	
+	private String channelId;
+	
+	private String channelName;
+	
+	private String modifiedFrom;
+	
+	private String modifiedTo;
+	
 	private TmOrderChannelBean channel;
 	
 	private List<TmSmsConfigBean> sms;
@@ -44,6 +52,38 @@ public class NewShopFormBean {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public String getChannelId() {
+		return channelId;
+	}
+
+	public void setChannelId(String channelId) {
+		this.channelId = channelId;
+	}
+
+	public String getChannelName() {
+		return channelName;
+	}
+
+	public void setChannelName(String channelName) {
+		this.channelName = channelName;
+	}
+
+	public String getModifiedFrom() {
+		return modifiedFrom;
+	}
+
+	public void setModifiedFrom(String modifiedFrom) {
+		this.modifiedFrom = modifiedFrom;
+	}
+
+	public String getModifiedTo() {
+		return modifiedTo;
+	}
+
+	public void setModifiedTo(String modifiedTo) {
+		this.modifiedTo = modifiedTo;
 	}
 
 	public TmOrderChannelBean getChannel() {
