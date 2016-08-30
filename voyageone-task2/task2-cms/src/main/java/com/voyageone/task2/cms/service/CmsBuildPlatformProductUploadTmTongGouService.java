@@ -226,21 +226,21 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
 
             // 没有lock并且已Approved的产品列表为空的时候,中止该产品的上新流程
             if (ListUtils.isNull(cmsBtProductList)) {
-                String errMsg = String.format("未lock并且已Approved产品列表为空");
+                String errMsg = "未被锁定且已完成审批的产品列表为空";
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
 
             // 主产品取得结果判断
             if (mainProduct == null) {
-                String errMsg = String.format("取得主商品信息失败 [mainProduct=null]");
+                String errMsg = "取得主商品信息失败 [mainProduct=null]";
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
 
             // 如果产品没有common信息，数据异常不上新
             if (mainProduct.getCommon() == null || mainProduct.getCommon().getFields() == null) {
-                String errMsg = String.format("取得主商品common信息失败");
+                String errMsg = "取得主商品common信息失败";
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
@@ -252,7 +252,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             // 如果已Approved产品skuList为空，则中止该产品的上新流程
             // 如果已Approved产品skuList为空，则把库存表里面所有的数据（几万条）数据全部查出来了，很花时间
             if (ListUtils.isNull(strSkuCodeList)) {
-                String errMsg = String.format("已Approved产品sku列表为空");
+                String errMsg = "已完成审批的产品sku列表为空";
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
