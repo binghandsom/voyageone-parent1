@@ -193,7 +193,9 @@ define(function (require) {
         }),
         shipmentScanPopupService: new CommonDataService('/vms/popup/scan', {
             init: "init",
-            scanBarcode: "scanBarcode"
+            scanBarcode: "scan_barcode",
+            finishScanning: "finish_scanning",
+            revertScanning: "revert_scanning"
         }),
         shipmentInfoService: new CommonDataService('/vms/shipment/shipment_info', {
             init: "init",
