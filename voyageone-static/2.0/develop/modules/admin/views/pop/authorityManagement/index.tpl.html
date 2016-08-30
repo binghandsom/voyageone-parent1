@@ -40,8 +40,8 @@
             </div>
             <div class="col-sm-3">
                 <div class="form-horizontal">
-                    <div class="row form-group"><!-- 角色 -->
-                        <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
+                    <div class="row form-group"><!-- 角色名 -->
+                        <label class="col-sm-3 control-label">{{'TXT_ROLE_NAME' | translate}}</label>
                         <div class="col-sm-8">
                             <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.roleName"/>
                         </div>
@@ -53,7 +53,7 @@
                     <label class="col-sm-1 control-label">权限：</label>
                     <label class="col-sm-1 control-label">系统</label>
                     <div class="col-sm-3">
-                        <select class="form-control" ng-model="ctrl.sourceData.orgId" ng-options="org.id as org.orgName for org in ctrl.orgList">
+                        <select class="form-control" ng-model="ctrl.sourceData.application" ng-options="app for app in ctrl.appList">
                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>

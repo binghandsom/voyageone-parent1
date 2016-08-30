@@ -40,6 +40,9 @@ define(function () {
                     "updateUser": "updateUser",
                     "deleteUser": "deleteUser",
                     "showAuth": "showAuth",
+                    "resetPass":"resetPass",
+                    "editPass":"editPass",
+                    "forgetPass":"forgetPass",
                     "getAllApp": "getAllApp"
                 },
                 "adminRoleService": {

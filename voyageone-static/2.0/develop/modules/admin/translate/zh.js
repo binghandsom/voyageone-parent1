@@ -160,6 +160,9 @@ define(function () {
         "TXT_ROLE_MANAGEMENT":"角色管理",
         "TXT_ROLE_NAME":"角色名",
         "TXT_ROLE_TYPE":"角色类型",
+        "TXT_ROLE_SYSTEM":"授权系统",
+        "TXT_ROLE_CHANNEL":"授权渠道",
+        "TXT_ROLE_STORE":"授权仓库",
 
         /**按钮组*/
         "TXT_LOGOUT": "注销",
