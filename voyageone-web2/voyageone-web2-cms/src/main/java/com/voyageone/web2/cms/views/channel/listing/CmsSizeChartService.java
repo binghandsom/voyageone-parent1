@@ -106,7 +106,16 @@ public class CmsSizeChartService extends BaseAppService {
         //用户名称
         String userName =param.get("userName").toString();
         //取得自增键
-        int sizeChartId=(int) param.get("sizeChartId");
+        long imageGroupId = ConvertUtil.toLong(param.get("imageGroupId"));
+        int sizeChartId = ConvertUtil.toInt(param.get("sizeChartId"));
+        boolean   isDelImageGroup = ConvertUtil.toBoolean(param.get("  isDelImageGroup "));
+
+        if (imageGroupId > 0) {
+            cmsBtSizeChartImageGroupService.delete(channelId, sizeChartId, imageGroupId);
+            if (isDelImageGroup) {
+                imageGroupService.logicDelete(String.valueOf(imageGroupId), userName);
+            }
+        }
         //逻辑删除选中的记录
         sizeChartService.sizeChartUpdate(sizeChartId,userName,channelId);
     }

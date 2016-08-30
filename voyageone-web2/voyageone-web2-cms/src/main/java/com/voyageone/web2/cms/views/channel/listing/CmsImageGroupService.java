@@ -277,9 +277,17 @@ public class CmsImageGroupService extends BaseAppService {
      *
      * @param param 客户端参数
      */
-    public void delete(Map<String, Object> param) {
-        String userName = (String)param.get("userName");
-        String imageGroupId = String.valueOf(param.get("imageGroupId"));
-        imageGroupService.logicDelete(imageGroupId, userName);
+    public void delete(Map<String, Object> param,String channelId) {
+        boolean isDelSizeChart = ConvertUtil.toBoolean(param.get("isDelSizeChart "));
+        int sizeChartId = ConvertUtil.toInt(param.get("sizeChartId"));
+        long imageGroupId = ConvertUtil.toLong(param.get("imageGroupId"));
+        String userName = (String) param.get("userName");
+        if (sizeChartId > 0) {
+            cmsBtSizeChartImageGroupService.delete(channelId, sizeChartId, imageGroupId);
+            if (isDelSizeChart) {
+                sizeChartService.delete(sizeChartId, userName, channelId);
+            }
+        }
+        imageGroupService.logicDelete(String.valueOf(imageGroupId), userName);
     }
 }

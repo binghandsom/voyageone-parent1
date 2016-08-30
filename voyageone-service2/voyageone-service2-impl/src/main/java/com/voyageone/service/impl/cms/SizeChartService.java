@@ -144,7 +144,16 @@ public class SizeChartService extends BaseService {
         //尺码关系一览检索
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
-
+    //逻辑删除选中的记录
+    public void delete(int sizeChartId, String userName, String channelId) {
+        CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId, channelId);
+        //更新者
+        cmsBtSizeChartModel.setModifier(userName);
+        //标志位
+        cmsBtSizeChartModel.setActive(0);
+        //尺码关系一览检索
+        cmsBtSizeChartDao.update(cmsBtSizeChartModel);
+    }
     /**
      * 根据尺码关系一览编辑的数据插入数据库
      */
