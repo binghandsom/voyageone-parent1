@@ -17,21 +17,16 @@
         </foreach>
     </insert>
 
-    <!-- 取得产品的bi信息 -->
+    <!-- 取得(指定时间范围内)产品的bi信息 -->
     <select id="selectList" parameterType="Map" resultType="Map"><![CDATA[
-		select
-			num_iid, process_date, CAST(sum(pv) AS signed) pv, CAST(sum(uv) AS signed) uv, CAST(sum(cartNums) AS signed) cartNums, CAST(sum(collNums) AS signed) collNums
-        from
-			(
-			select a.num_iid, DATE_FORMAT(DATE_ADD(a.process_date, INTERVAL 8 HOUR), '%Y-%m-%d') AS process_date, a.pv, a.uv, a.product_cart_increment as cartNums, a.product_collector_number as collNums
-			from voyageone_bi_source.bi_bt_spider_product_${tableTitleName} a
-			where
-			a.cart_id = #{cartId}
-			and a.channel_id = #{channelId}
-			and (a.process_date <= convert_tz(concat(date_format(date_add(CURDATE(), interval -1 day),  '%Y-%m-%d'),' 23:59:59'), '+08:00', '+00:00')
-			and convert_tz(concat(date_format(date_add(CURDATE(), interval -90 day),  '%Y-%m-%d'),' 00:00:00'), '+08:00', '+00:00') <= a.process_date)
-			) bidata
-		group by num_iid, process_date limit #{oIdx},#{oLimit}
+        select
+            a.num_iid, CAST(sum(a.pv) AS signed) pv, CAST(sum(a.uv) AS signed) uv,
+            ifnull(CAST(sum(a.product_cart_increment) AS signed), 0) as cartNums, CAST(sum(a.product_collector_number) AS signed) as collNums
+        from voyageone_bi_source.bi_bt_spider_product_${channelId} a
+        where
+            a.cart_id = #{cartId}
+            and (#{staDate} <= a.process_date and a.process_date <= #{endDate})
+		group by num_iid limit #{oIdx},#{oLimit}
 	]]></select>
 
 </mapper>
