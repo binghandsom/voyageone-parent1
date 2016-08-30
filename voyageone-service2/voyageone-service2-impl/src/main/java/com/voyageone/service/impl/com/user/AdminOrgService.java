@@ -42,7 +42,7 @@ public class AdminOrgService extends BaseService {
 
         List<ComOrganizationModel> result = new ArrayList<>();
 
-        result = getChildTreeObjects(orgList, 0 , " ", result);
+        result = getChildTreeObjects(orgList, 0 , "-", result);
 
 //        Map resultMap = result.stream().collect(Collectors.toMap(ComOrganizationModel:: getId ,ComOrganizationModel:: getOrgName ));
 
