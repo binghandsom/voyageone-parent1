@@ -279,15 +279,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 throw new BusinessException("获取主产品天猫同购平台设置信息(包含SKU，Schema属性值等信息)失败");
             }
 
-            // 取得天猫国际官网同购共通Schema(用于设定商品标题，长宽高重量等共通属性)
-//            String catId = "2";          // 类目shema表中京东共通属性的catId为"2"
-//            // 取得平台类目schema信息
-//            CmsMtPlatformCategorySchemaModel jdCommonSchema = platformCategoryService.getPlatformCatSchema(catId, cartId);
-//            if (jdCommonSchema == null) {
-//                $error(String.format("获取天猫国际官网同购共通schema信息失败 [类目Id:%s] [CartId:%s]", catId, cartId));
-//                throw new BusinessException("获取天猫国际官网同购共通schema信息失败 [类目(" + catId + ":天猫国际官网同购共通)]");
-//            }
-
             // 获取字典表cms_mt_platform_dict(根据channel_id)上传图片的规格等信息
             List<CmsMtPlatformDictModel> cmsMtPlatformDictModelList = dictService.getModesByChannelCartId(channelId, cartId);
             if (cmsMtPlatformDictModelList == null || cmsMtPlatformDictModelList.size() == 0) {
@@ -311,13 +302,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             // 转换成XML格式(root元素为<itemRule>)
             String productInfoXml = "";
             if (ListUtils.notNull(itemFieldList))
-                productInfoXml = SchemaWriter.writeRuleXmlString(itemFieldList);
+                productInfoXml = SchemaWriter.writeParamXmlString(itemFieldList);
 
             // 测试用输入XML内容
-            $info(productInfoXml);
-
-            // 返回结果是否成功状态
-//            boolean retStatus = false;
+            $debug(productInfoXml);
 
             // 判断新增商品还是更新商品
             // 只要numIId不为空，则为更新商品
@@ -357,12 +345,12 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                     CmsConstants.PlatformStatus.InStock, "", getTaskName());
 
             // 正常结束
-            $info(String.format("天猫官网同购商品上新成功！[ChannelId:%s] [CartId:%s] [GroupId:%s]",
-                    channelId, cartId, groupId));
+            $info(String.format("天猫官网同购商品上新成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s]",
+                    channelId, cartId, groupId, numIId));
         } catch (Exception ex) {
             // 异常结束时
-            String errMsg = String.format(" 天猫同购上新异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s]",
-                    channelId, cartId, groupId);
+            String errMsg = String.format(" 天猫官网同购上新异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s]",
+                    channelId, cartId, groupId, numIId);
             $error(errMsg);
             ex.printStackTrace();
             if (sxData == null) {
@@ -430,6 +418,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             // common英文长标题
             valTitle = mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn");
         }
+//        productInfoMap.put("title", "测试请不要拍 " + valTitle);
         productInfoMap.put("title", valTitle);
 
         // 类目(必填)
@@ -549,63 +538,13 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         productInfoMap.put("logistics", gson.toJson(paramLogistics));
 
         // skus(必填)
+        // cms_mt_channel_condition_config表中入关方式(cross_border_report)
+        // 设置成true跨境申报后，商品的每个SKU必须带有HSCODE才可以上架，
+        // 如果设置成false邮关申报后，商品不需要设置HSCODE
+        String crossBorderRreportFlg = getValueFromPageOrCondition("extends_cross_border_report", "", mainProductPlatformCart, sxData, shopProp);
         // 采用Ⅲ有SKU,且有不同图案，颜色的设置方式
         List<BaseMongoMap<String, Object>> targetSkuList = getSkus(sxData.getCartId(), productList, skuList,
-                priceConfigValue, skuLogicQtyMap, expressionParser, shopProp);
-//        List<BaseMongoMap<String, Object>> targetSkuList = new ArrayList<>();
-//        // 循环productList设置颜色和尺码等信息到sku列表
-//        for (CmsBtProductModel product : productList) {
-//            if (product.getCommon() == null
-//                    || product.getCommon().getFields() == null
-//                    || product.getPlatform(sxData.getCartId()) == null
-//                    || ListUtils.isNull(product.getPlatform(sxData.getCartId()).getSkus())) {
-//                continue;
-//            }
-//
-//            // 取得海关报关税号code(10位数字)  (例："9404909000,变形枕,个")
-//            String hscode = "";
-//            String hsCodePrivate = product.getCommon().getFields().getHsCodePrivate();
-//            if (!StringUtils.isEmpty(hsCodePrivate)) {
-//                if (hsCodePrivate.contains(",")) {
-//                    hscode = hsCodePrivate.substring(0, hsCodePrivate.indexOf(","));
-//                } else {
-//                    hscode = hsCodePrivate;
-//                }
-//            }
-//
-//            // 在根据skuCode循环
-//            for (BaseMongoMap<String, Object> sku : product.getPlatform(sxData.getCartId()).getSkus()) {
-//                String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
-//                BaseMongoMap<String, Object> skuMap = new BaseMongoMap<>();
-//                // 销售属性map(颜色，尺寸)
-//                BaseMongoMap<String, Object> saleProp = new BaseMongoMap<>();
-//                // 商品特质英文（颜色/口味/香型等）
-//                saleProp.put("color", product.getCommon().getFields().getCodeDiff());
-//                // 根据skuCode从skuList中取得common.sku和PXX.sku合并之后的sku
-//                BaseMongoMap<String, Object> mergedSku = skuList.stream()
-//                                       .filter(s -> s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()).equals(skuCode))
-//                                       .findFirst()
-//                                       .get();
-//                // 尺寸
-//                saleProp.put("size", mergedSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
-//                // 追加销售属性
-//                skuMap.put("sale_prop", saleProp);
-//
-//                // 价格(根据cms_mt_channel_config表中的配置有可能是从priceRetail或者priceMsrp中取得价格)
-//                skuMap.put("price", mergedSku.getStringAttribute(priceConfigValue));
-//                // outer_id
-//                skuMap.put("outer_id", skuCode);
-//                // 库存
-//                skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
-//                // 与颜色尺寸这个销售属性关联的图片
-//                skuMap.put("image", "");
-//                // 海关报关的税号
-//                skuMap.put("hscode", hscode);
-//
-//                targetSkuList.add(skuMap);
-//            }
-//
-//        }
+                priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
         productInfoMap.put("skus", gson.toJson(targetSkuList));
 
 
@@ -673,7 +612,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         paramExtends.put("hot_sale", getValueFromPageOrCondition("extends_hot_sale", "", mainProductPlatformCart, sxData, shopProp));
         // 在官网是否是新品(非必填) 表示是否在官网是新品，true表示新品，false表示非新品，不填写默认为非新品
         paramExtends.put("new_goods", getValueFromPageOrCondition("extends_new_goods", "", mainProductPlatformCart, sxData, shopProp));
-        // 跨境申报/邮关(必填)     true表示跨境申报，false表示邮关申报
+        // 入关方式 跨境申报/邮关(必填)     true表示跨境申报，false表示邮关申报
         // 根据中国海关4月8日的最新规定，天猫国际的商品必须设置入关方式，入关方式有2种：
         // 1.跨境申报，即每单交易都向海关申报，单单交税；
         // 2.邮关申报，即通过万国邮联的方式快递包裹，有几率抽检；
@@ -683,7 +622,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         productInfoMap.put("extends", gson.toJson(paramExtends));
 
         // 无线描述(选填)
-//        Map<String, Object> paramWirelessDesc = new HashMap<>();
         // 解析cms_mt_platform_dict表中的数据字典
         productInfoMap.put("wireless_desc", getValueByDict("天猫同购无线描述", expressionParser, shopProp));
 
@@ -882,13 +820,14 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
      * @param skuLogicQtyMap Map<String, Integer> SKU逻辑库存
      * @param expressionParser 解析子
      * @param shopProp ShopBean 店铺信息
+     * @param crossBorderRreportFlg String 入关方式(true表示跨境申报，false表示邮关申报)
      * @return List<BaseMongoMap<String, Object>> 天猫同购上新用skus列表
      */
     private List<BaseMongoMap<String, Object>> getSkus(Integer cartId, List<CmsBtProductModel> productList,
                                                        List<BaseMongoMap<String, Object>> skuList,
                                                        String priceConfigValue, Map<String, Integer> skuLogicQtyMap,
                                                        ExpressionParser expressionParser,
-                                                       ShopBean shopProp) {
+                                                       ShopBean shopProp, String crossBorderRreportFlg) {
         List<BaseMongoMap<String, Object>> targetSkuList = new ArrayList<>();
         // 循环productList设置颜色和尺码等信息到sku列表
         for (CmsBtProductModel product : productList) {
@@ -901,12 +840,15 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
 
             // 取得海关报关税号code(10位数字)  (例："9404909000,变形枕,个")
             String hscode = "";
-            String hsCodePrivate = product.getCommon().getFields().getHsCodePrivate();
-            if (!StringUtils.isEmpty(hsCodePrivate)) {
-                if (hsCodePrivate.contains(Separtor_Coma)) {
-                    hscode = hsCodePrivate.substring(0, hsCodePrivate.indexOf(Separtor_Coma));
-                } else {
-                    hscode = hsCodePrivate;
+            // 只有当入关方式(true表示跨境申报)时，才需要设置海关报关税号hscode;false表示邮关申报时，不需要设置海关报关税号hscode
+            if ("true".equalsIgnoreCase(crossBorderRreportFlg)) {
+                String hsCodePrivate = product.getCommon().getFields().getHsCodePrivate();
+                if (!StringUtils.isEmpty(hsCodePrivate)) {
+                    if (hsCodePrivate.contains(Separtor_Coma)) {
+                        hscode = hsCodePrivate.substring(0, hsCodePrivate.indexOf(Separtor_Coma));
+                    } else {
+                        hscode = hsCodePrivate;
+                    }
                 }
             }
 
@@ -936,8 +878,11 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
                 // 与颜色尺寸这个销售属性关联的图片
                 skuMap.put("image", getValueByDict("属性图片模板", expressionParser, shopProp));
-                // 海关报关的税号
-                skuMap.put("hscode", hscode);
+                // 只有当入关方式(true表示跨境申报)时，才需要设置海关报关税号hscode;false表示邮关申报时，不需要设置海关报关税号hscode
+                if ("true".equalsIgnoreCase(crossBorderRreportFlg)) {
+                    // 海关报关的税号
+                    skuMap.put("hscode", hscode);
+                }
 
                 targetSkuList.add(skuMap);
             }
