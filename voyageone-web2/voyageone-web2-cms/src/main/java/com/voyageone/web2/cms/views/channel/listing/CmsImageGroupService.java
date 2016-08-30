@@ -6,7 +6,9 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.IntUtils;
+import com.voyageone.common.util.LongUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtImageGroupBean;
 import com.voyageone.service.impl.cms.CmsBtSizeChartImageGroupService;
@@ -198,6 +200,7 @@ public class CmsImageGroupService extends BaseAppService {
      * @param param 客户端参数
      */
     public void save(Map<String, Object> param) {
+        long imageGroupId = LongUtils.parseLong(param.get("imageGroupId"));
         String channelId = (String) param.get("channelId");
         String userName = (String) param.get("userName");
         String cartId = (String) param.get("platform");
@@ -207,22 +210,11 @@ public class CmsImageGroupService extends BaseAppService {
         List<String> brandNameList = (List<String>) param.get("brandName");
         List<String> productTypeList = (List<String>) param.get("productType");
         List<String> sizeTypeList = (List<String>) param.get("sizeType");
-        int sizeChartId = 0;
-        String sizeChartName = "";
-        if (param.containsKey("sizeChartId")) {
-            sizeChartId = IntUtils.parseInt(param.get("sizeChartId"));
-        }
-        if (param.containsKey("sizeChartName")&&param.get("sizeChartName")!=null) {
-            sizeChartName = param.get("sizeChartName").toString();
-        }
-        // 必须输入check
-        if (StringUtils.isEmpty(cartId) || StringUtils.isEmpty(imageGroupName)
-                || StringUtils.isEmpty(imageType) || StringUtils.isEmpty(viewType)) {
-            // 请输入必填项目
-            throw new BusinessException("7000080");
-        }
-        CmsBtImageGroupModel model = imageGroupService.save(channelId, userName, cartId, imageGroupName, imageType, viewType,
-                brandNameList, productTypeList, sizeTypeList, sizeChartId, sizeChartName);
+        int sizeChartId = ConvertUtil.toInt(param.get("sizeChartId"));;
+        String sizeChartName = ConvertUtil.toString( param.get("sizeChartName"));
+
+        CmsBtImageGroupModel model = saveCmsBtImageGroupModel(imageGroupId, channelId, userName, cartId, imageGroupName, imageType, viewType, brandNameList, productTypeList, sizeTypeList, sizeChartId, sizeChartName);
+
 
         if (sizeChartId > 0) {
             //更新尺码表
@@ -235,7 +227,7 @@ public class CmsImageGroupService extends BaseAppService {
 
         } else if (!StringUtils.isEmpty(sizeChartName)) {
             //新增尺码表
-            CmsBtSizeChartModel cmsBtSizeChartModel = sizeChartService.insert(channelId, userName, sizeChartName, brandNameList, productTypeList, sizeTypeList,model.getImageGroupId(),model.getImageGroupName());
+            CmsBtSizeChartModel cmsBtSizeChartModel = sizeChartService.insert(channelId, userName, sizeChartName, brandNameList, productTypeList, sizeTypeList, model.getImageGroupId(), model.getImageGroupName());
             sizeChartId = cmsBtSizeChartModel.getSizeChartId();
             model.setSizeChartId(cmsBtSizeChartModel.getSizeChartId());
             model.setSizeChartName(cmsBtSizeChartModel.getSizeChartName());
@@ -247,14 +239,55 @@ public class CmsImageGroupService extends BaseAppService {
         }
     }
 
+    private CmsBtImageGroupModel saveCmsBtImageGroupModel(long imageGroupId, String channelId, String userName, String cartId, String imageGroupName, String imageType, String viewType, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, int sizeChartId, String sizeChartName) {
+        // 必须输入check
+        if (StringUtils.isEmpty(cartId) || StringUtils.isEmpty(imageGroupName)
+                || StringUtils.isEmpty(imageType) || StringUtils.isEmpty(viewType)) {
+            // 请输入必填项目
+            throw new BusinessException("7000080");
+        }
+        CmsBtImageGroupModel model = null;
+        if (imageGroupId > 0) {
+            // 如果存在图片那么平台不能变更
+            model = imageGroupService.getImageGroupModel(String.valueOf(imageGroupId));
+            if (model != null && model.getImage() != null
+                    && model.getImage().size() > 0
+                    && model.getCartId() != Integer.parseInt(cartId)) {
+                // 图片已经存在，不能修改平台
+                throw new BusinessException("7000088");
+            }
+            if (sizeChartId != model.getSizeChartId() && model.getSizeChartId() > 0) {
+                //删除尺码图和尺码表关联关系
+                cmsBtSizeChartImageGroupService.delete(model.getChannelId(), model.getSizeChartId(), model.getImageGroupId());
+            }
+            //更新
+            imageGroupService.update(userName, String.valueOf(imageGroupId), cartId, imageGroupName, imageType, viewType,
+                    brandNameList, productTypeList, sizeTypeList);
+
+        } else {
+            //新增
+            model = imageGroupService.save(channelId, userName, cartId, imageGroupName, imageType, viewType,
+                    brandNameList, productTypeList, sizeTypeList, sizeChartId, sizeChartName);
+        }
+        return model;
+    }
+
     /**
      * 逻辑删除ImageGroup信息
      *
      * @param param 客户端参数
      */
-    public void delete(Map<String, Object> param) {
-        String userName = (String)param.get("userName");
-        String imageGroupId = String.valueOf(param.get("imageGroupId"));
-        imageGroupService.logicDelete(imageGroupId, userName);
+    public void delete(Map<String, Object> param,String channelId) {
+        boolean isDelSizeChart = ConvertUtil.toBoolean(param.get("isDelSizeChart "));
+        int sizeChartId = ConvertUtil.toInt(param.get("sizeChartId"));
+        long imageGroupId = ConvertUtil.toLong(param.get("imageGroupId"));
+        String userName = (String) param.get("userName");
+        if (sizeChartId > 0) {
+            cmsBtSizeChartImageGroupService.delete(channelId, sizeChartId, imageGroupId);
+            if (isDelSizeChart) {
+                sizeChartService.delete(sizeChartId, userName, channelId);
+            }
+        }
+        imageGroupService.logicDelete(String.valueOf(imageGroupId), userName);
     }
 }

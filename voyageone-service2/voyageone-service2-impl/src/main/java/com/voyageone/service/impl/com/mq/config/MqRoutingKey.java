@@ -65,5 +65,8 @@ public class MqRoutingKey {
      * 高级检索-批处理
      */
     public static final String CMS_TASK_AdvSearch_AsynProcessJob = "voyageone_cms_task_AdvSearch_AsynProcessJob_queue";
-
+    /**
+     * 高级检索-取得产品的bi信息
+     */
+    public static final String CMS_TASK_AdvSearch_GetBIDataJob = "voyageone_cms_task_AdvSearch_GetBIDataJob_queue";
 }

@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ExcelUtils;
+import com.voyageone.common.util.FileZipTools;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.bi.BiVtSalesProductService;
@@ -22,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -119,6 +121,7 @@ public class DataServiceTB extends OpenApiBaseService {
     }
 
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public boolean saveProductFileData(Map<String, Object> shopInfo, String fileName, MultipartFile multipartFile) {
         //check
         if (shopInfo == null || shopInfo.isEmpty()) {
@@ -140,27 +143,58 @@ public class DataServiceTB extends OpenApiBaseService {
         //result Data
         List<String> listColumns = new ArrayList<>();
         List<List<String>> listValues = new ArrayList<>();
+
+        boolean isRemoveTempFile = false;
+        String tempFielDir = null;
+
+        // save excel file
+        String newFileName = saveTBExcelFile(channelId, cartId, eCommId, fileName, multipartFile);
+        $info("saveProductFileData file:" + newFileName);
         if (eCommId == 1 || eCommId == 4) {
             // TM / TG
-            // save excel file
-            String newFileName = saveTBExcelFile(channelId, cartId, eCommId, fileName, multipartFile);
-
-            $info("saveProductFileData file:" + newFileName);
-
             // pares Excel File
             listValues = paresTBExcelFile(channelId, cartId, eCommId, newFileName, listColumns);
 
-        //} else if (eCommId == 5 || eCommId == 7) {
+        } else if (eCommId == 5 || eCommId == 7) {
             // JD / JG
-            //paresJDUrlData(shopId, eCommId, jsonData, listColumns, listValues);
+            logger.info("saveProductFileData file:" + fileName);
+
+            //upzip file
+            File zipFile = new File(newFileName);
+            String zipSaveFileDir = newFileName.replaceAll("\\.zip", "");
+            FileZipTools.unzip(zipFile, zipSaveFileDir, "GBK");
+
+            String excelFileName = zipSaveFileDir + "/" + fileName.replaceAll("\\.zip", ".xls");
+
+            // pares Excel File
+            listValues = paresJDExcelFile(channelId, cartId, excelFileName, listColumns);
+
+            isRemoveTempFile = true;
+            tempFielDir = zipSaveFileDir;
         }
 
         //saveListData
         int insertRowCount = vtSalesProductService.saveListData(channelId, listColumns, listValues);
+
+        // remove tmp dir
+        if (isRemoveTempFile && tempFielDir != null && !"".equals(tempFielDir.trim())) {
+            File tempFilDirFile = new File(tempFielDir);
+            if (tempFilDirFile.isDirectory()) {
+                String[] children = tempFilDirFile.list();
+                if (children != null) {
+                    for (String file : children) {
+                        (new File(tempFielDir, file)).delete();
+                    }
+                }
+                tempFilDirFile.delete();
+            }
+        }
+
         $info("saveProductFileData insertRowCount:" + insertRowCount);
         return true;
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private String saveTBExcelFile(String channelId, String cartId, int eCommId, String fileName, MultipartFile multipartFile) {
         //定义上传路径
         String path = Properties.readValue(ExcelHeaderEnum.BI_TB_PRODUCT_IMPORT_PATH);
@@ -170,14 +204,20 @@ public class DataServiceTB extends OpenApiBaseService {
             localPath.mkdir();
         }
 
-        String deviceStr = "unknow";
-        try (InputStream a = multipartFile.getInputStream();
-            Workbook wb = WorkbookFactory.create(a)) {
-            Sheet sheet = wb.getSheetAt(0);
-            ExcelHeaderEnum.Device device = getDevice(sheet);
-            deviceStr = device.getCnName();
-        } catch (Exception e) {
-            $warn("Read Excel Error", e);
+        String deviceStr = "0";
+        // set Type
+        if (eCommId == 1 || eCommId == 4) {
+            // TM / TG
+            try (InputStream a = multipartFile.getInputStream();
+                 Workbook wb = WorkbookFactory.create(a)) {
+                Sheet sheet = wb.getSheetAt(0);
+                ExcelHeaderEnum.Device device = getTBDevice(sheet);
+                deviceStr = device.getCnName();
+            } catch (Exception e) {
+                logger.warn("Read Excel Error", e);
+            }
+            //} else if (eCommId == 5 || eCommId == 7) {
+            // JD / JG
         }
 
         //重命名上传后的文件名
@@ -198,7 +238,7 @@ public class DataServiceTB extends OpenApiBaseService {
         return newFileName;
     }
 
-    private List<List<String>> paresTBExcelFile(String channelId, String cartId, int eCommId, String newFileName, List<String> listColumns) {
+    private List<List<String>> paresTBExcelFile(String channelId, String cartId, int eCommId, String fileName, List<String> listColumns) {
         List<List<String>> models = new ArrayList<>();
 
         // add static column
@@ -206,7 +246,7 @@ public class DataServiceTB extends OpenApiBaseService {
         listColumns.add("channel_id");
         listColumns.add("process_date");
 
-        try (InputStream a = new FileInputStream(newFileName);
+        try (InputStream a = new FileInputStream(fileName);
              Workbook wb = WorkbookFactory.create(a)) {
 
             Sheet sheet = wb.getSheetAt(0);
@@ -217,7 +257,7 @@ public class DataServiceTB extends OpenApiBaseService {
 
             ExcelHeaderEnum.Device device = null;
             try {
-                device = getDevice(sheet);
+                device = getTBDevice(sheet);
             } catch (RuntimeException re) {
                 $warn(re.getMessage());
             }
@@ -295,7 +335,7 @@ public class DataServiceTB extends OpenApiBaseService {
         return models;
     }
 
-    private ExcelHeaderEnum.Device getDevice(Sheet sheet) {
+    private ExcelHeaderEnum.Device getTBDevice(Sheet sheet) {
         Row deviceRow = sheet.getRow(4);
         if (deviceRow == null) {
             throw new RuntimeException("device not found.");
@@ -304,6 +344,124 @@ public class DataServiceTB extends OpenApiBaseService {
         if (StringUtils.isEmpty(deviceRowValue)) {
             throw new RuntimeException("device not found.");
         }
+        ExcelHeaderEnum.Device device = ExcelHeaderEnum.Device.valueOfCnName(deviceRowValue);
+        if (device == null) {
+            throw new RuntimeException(String.format("device[%s] not found.", deviceRowValue));
+        }
+        return device;
+    }
+
+    private List<List<String>> paresJDExcelFile(String channelId, String cartId, String fileName, List<String> listColumns) {
+        List<List<String>> models = new ArrayList<>();
+
+        // add static column
+        listColumns.add("cart_id");
+        listColumns.add("channel_id");
+        listColumns.add("process_date");
+
+        File excelFile = new File(fileName);
+        try (InputStream a = new FileInputStream(excelFile);
+             Workbook wb = WorkbookFactory.create(a)) {
+
+            Sheet sheet = wb.getSheetAt(0);
+
+            String processDate = excelFile.getName().substring(0, 8);
+
+            ExcelHeaderEnum.Device device = null;
+            try {
+                device = getJDDevice(fileName);
+            } catch (RuntimeException re) {
+                logger.warn(re.getMessage());
+            }
+
+            if (device == null) {
+                return models;
+            }
+
+            Row headRow = sheet.getRow(0);
+
+            Map<Integer, ExcelHeaderEnum.JDProductColumnDef> headIndexMap = new LinkedHashMap<>();
+            // add other column
+            for (int i = 0; i < headRow.getPhysicalNumberOfCells(); i++) {
+                Cell headCell = headRow.getCell(i);
+                String cnName = ExcelUtils.getString(headCell);
+                if (cnName == null || "".equals(cnName.trim())) {
+                    continue;
+                }
+                ExcelHeaderEnum.JDProductColumnDef productColumnDef = ExcelHeaderEnum.JDProductColumnDef.valueOfCnName(cnName);
+                if (productColumnDef == null) {
+                    continue;
+                }
+
+                String columnName;
+                switch (device) {
+                    case pc:
+                        columnName = productColumnDef.getColumnPc();
+                        break;
+                    case mobile:
+                        columnName = productColumnDef.getColumnMobile();
+                        break;
+                    case all:
+                        columnName = productColumnDef.getColumn();
+                        break;
+                    default:
+                        columnName = null;
+                }
+                if (columnName != null) {
+                    listColumns.add(columnName);
+                    headIndexMap.put(i, productColumnDef);
+                }
+            }
+
+            for (int i = 2; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                String firstRowValue = ExcelUtils.getString(row, 0);
+
+                if (StringUtils.isEmpty(firstRowValue)) {
+                    continue;
+                }
+
+                List<String> model = new ArrayList<>();
+
+                // add static column value
+                model.add(cartId);
+                model.add(channelId);
+                model.add(processDate);
+
+                // add other column value
+                for (Map.Entry<Integer, ExcelHeaderEnum.JDProductColumnDef> entry : headIndexMap.entrySet()) {
+                    int index = entry.getKey();
+                    ExcelHeaderEnum.JDProductColumnDef productColumnDef = entry.getValue();
+                    String value = ExcelUtils.getString(row, index);
+                    if (value == null) {
+                        value = "0";
+                    }
+                    value = value.replace("%", "");
+                    if (productColumnDef.isRate()) {
+                        value = String.valueOf(Double.parseDouble(value) * 100);
+                    }
+                    model.add(value);
+                }
+
+                models.add(model);
+            }
+
+        } catch (IOException | InvalidFormatException e) {
+            throw new RuntimeException("Read Excel Error", e);
+        }
+        return models;
+    }
+
+    private ExcelHeaderEnum.Device getJDDevice(String name) {
+        String deviceRowValue = null;
+        if (name.indexOf("整体") > 0) {
+            deviceRowValue = "所有终端";
+        } else if (name.indexOf("PC端") > 0) {
+            deviceRowValue = "pc端";
+        } else if (name.indexOf("移动端") > 0) {
+            deviceRowValue = "无线端";
+        }
+
         ExcelHeaderEnum.Device device = ExcelHeaderEnum.Device.valueOfCnName(deviceRowValue);
         if (device == null) {
             throw new RuntimeException(String.format("device[%s] not found.", deviceRowValue));

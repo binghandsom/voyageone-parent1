@@ -118,6 +118,14 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         setStringAttribute("pNumIId", pNumIId);
     }
 
+    //pPlatformMallId
+    public String getpPlatformMallId() {
+        return getStringAttribute("pPlatformMallId");
+    }
+    public void setpPlatformMallId(String pPlatformMallId) {
+        setStringAttribute("pPlatformMallId", pPlatformMallId);
+    }
+
     //pStatus
     public CmsConstants.PlatformStatus getpStatus() {
         String pStatus = getStringAttribute("pStatus");
