@@ -953,7 +953,7 @@ public class SxProductService extends BaseService {
             // 没有对象
             // update by desmond 2016/07/12 start
 //            return null;
-            String errorMsg = "取得上新数据(SxData)失败! 在产品表中没找到groupId(" + groupId + ")对应的未lock且已Approved的产品";
+            String errorMsg = "取得上新数据(SxData)失败! 在产品表中没找到groupId(" + groupId + ")对应的未锁定且已审批的产品，请确保产品未被锁定且已完成审批";
             $error(errorMsg);
             sxData.setErrorMessage(errorMsg);
             return sxData;
