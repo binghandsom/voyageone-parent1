@@ -896,6 +896,15 @@ public class ProductService extends BaseService {
         }
         platformModel.getSkus().forEach(sku -> {
             sku.setAttribute("priceDiffFlg", productSkuService.getPriceDiffFlg(channelId, sku));
+            Double msrp = sku.getDoubleAttribute("priceMsrp");
+            Double priceRetail = sku.getDoubleAttribute("priceRetail");
+            if( msrp.compareTo(priceRetail) > 0){
+                sku.setAttribute("priceMsrpFlg","XU");
+            }else if( msrp.compareTo(priceRetail) < 0){
+                sku.setAttribute("priceMsrpFlg","XD");
+            }else{
+                sku.setAttribute("priceMsrpFlg","");
+            }
         });
 
         HashMap<String, Object> queryMap = new HashMap<>();

@@ -120,6 +120,8 @@ public final class ExcelUtils {
             cell.setCellValue((RichTextString) value);
         }else if(value instanceof Boolean){
             cell.setCellValue((Boolean) value);
+        }else if(value instanceof Integer){
+            cell.setCellValue((Integer) value);
         }
     }
 }

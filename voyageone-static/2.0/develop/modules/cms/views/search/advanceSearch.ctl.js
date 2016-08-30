@@ -602,8 +602,10 @@ define([
             $scope.vm.searchInfo.priceChgFlg = null;
             $scope.vm.searchInfo.priceDiffFlg = null;
             $scope.vm.searchInfo.propertyStatus = null;
+            $scope.vm.searchInfo.pCatPathList = [];
 
             $scope.vm.masterData.catList = [];
+
 
             if ($scope.vm.searchInfo.cartId == 0) {
                 $scope.vm._cart_display = 0;

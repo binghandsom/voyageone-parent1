@@ -17,5 +17,16 @@
         </foreach>
     </insert>
 
+    <!-- 取得(指定时间范围内)产品的bi信息 -->
+    <select id="selectList" parameterType="Map" resultType="Map"><![CDATA[
+        select
+            a.num_iid, CAST(sum(a.pv) AS signed) pv, CAST(sum(a.uv) AS signed) uv,
+            ifnull(CAST(sum(a.product_cart_increment) AS signed), 0) as cartNums, CAST(sum(a.product_collector_number) AS signed) as collNums
+        from voyageone_bi_source.bi_bt_spider_product_${channelId} a
+        where
+            a.cart_id = #{cartId}
+            and (#{staDate} <= a.process_date and a.process_date <= #{endDate})
+		group by num_iid limit #{oIdx},#{oLimit}
+	]]></select>
 
 </mapper>

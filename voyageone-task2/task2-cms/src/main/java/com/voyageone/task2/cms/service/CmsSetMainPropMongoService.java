@@ -3686,13 +3686,18 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             common.getFields().setHsCodeSetter(mainProduct.getCommon().getFields().getHsCodeSetter());
             common.getFields().setHsCodeStatus(mainProduct.getCommon().getFields().getHsCodeStatus());
             common.getFields().setHsCodeSetTime(mainProduct.getCommon().getFields().getHsCodeSetTime());
+            common.getFields().setHsCodeCrop(mainProduct.getCommon().getFields().getHsCodeCrop());
+            common.getFields().setHsCodeCross(mainProduct.getCommon().getFields().getHsCodeCross());
+
+            common.getFields().setCategorySetTime(mainProduct.getCommon().getFields().getCategorySetTime());
+            common.getFields().setCategoryStatus(mainProduct.getCommon().getFields().getCategoryStatus());
+            common.getFields().setCategorySetter(mainProduct.getCommon().getFields().getCategorySetter());
 
             common.getFields().setShortDesCn(mainProduct.getCommon().getFields().getShortDesCn());
             common.getFields().setLongDesCn(mainProduct.getCommon().getFields().getLongDesCn());
             common.getFields().setOriginalTitleCn(mainProduct.getCommon().getFields().getOriginalTitleCn());
             common.getFields().setMaterialCn(mainProduct.getCommon().getFields().getMaterialCn());
             common.getFields().setUsageCn(mainProduct.getCommon().getFields().getUsageCn());
-            common.getFields().setOrigin(mainProduct.getCommon().getFields().getOrigin());
         }
     }
 

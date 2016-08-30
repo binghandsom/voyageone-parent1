@@ -47,4 +47,11 @@ public class CmsBtSizeChartImageGroupService extends BaseService {
             dao.insert(model);
         }
     }
+
+    public void delete(String channelId, int SizeChartId, long cmsBtImageGroupId) {
+        CmsBtSizeChartImageGroupModel model = get(channelId, SizeChartId, cmsBtImageGroupId);
+        if (model != null) {
+            dao.delete(model.getId());
+        }
+    }
 }
