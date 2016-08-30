@@ -84,6 +84,7 @@ public class MybatisSqlHelperTest {
     public void testInsert() throws Exception {
         // 执行结果
         CmsBtBusinessLogModel model = cmsBtBusinessLogDao.select(6807);
+        model.setErrorMsg("fjls'fslfjlks'''fjslfjds'");
 
         // get SQL
         String sql = MybatisSqlHelper.getMapperSql(CmsBtBusinessLogDao.class, "insert", model);
