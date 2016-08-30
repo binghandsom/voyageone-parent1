@@ -294,18 +294,22 @@ public interface AdminUrlConstants {
 		
 	}
 	
-	interface OpenShop {
+	interface NewShop {
 		
 		/** 开店信息 */
 		interface Self {
 			
-			String ROOT = "/admin/openshop/self";
+			String ROOT = "/admin/newshop/self";
 			
 			String GET_CHANNEL_SERIES = "getChannelSeries";
 
-			String HANDLE_CHANNEL_SERIES_SQL = "handleChannelSeriesSql";
+			String SAVE_CHANNEL_SERIES = "saveChannelSeries";
 
-			String DOWNLOAD_OPEN_SHOP_SQL = "downloadOpenShopSql";
+			String DOWNLOAD_NEW_SHOP_SQL = "downloadNewShopSql";
+
+			String DELETE_NEW_SHOP = "deleteNewShop";
+
+			String SEARCH_NEW_SHOP_BY_PAGE = "searchNewShopByPage";
 			
 		}
 		

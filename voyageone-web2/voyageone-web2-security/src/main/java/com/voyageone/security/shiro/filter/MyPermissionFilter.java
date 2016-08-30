@@ -25,11 +25,13 @@ public class MyPermissionFilter extends PermissionsAuthorizationFilter {
         if (subject.getPrincipal() == null) {
             saveRequest(request);
             //跳转到登录页面,返回json消息
+            String loginUrl = this.getUnauthorizedUrl();
             response.setCharacterEncoding("UTF-8");
             Map<String, String> resultMap = new HashMap<>();
 
             resultMap.put("code", "A001");
             resultMap.put("message", "user not login!");
+            resultMap.put("redirectTo", loginUrl);
 
             PrintWriter out = response.getWriter();
             out.println(JacksonUtil.bean2Json(resultMap));
