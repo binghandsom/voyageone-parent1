@@ -1,7 +1,6 @@
 package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
-import com.google.gson.Gson;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -16,6 +15,7 @@ import com.voyageone.common.masterdate.schema.factory.SchemaWriter;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbSimpleItemService;
@@ -392,7 +392,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                                                  Map<String, Integer> skuLogicQtyMap, List<String> tmTonggouFeedAttrList) throws BusinessException {
         // 上新产品信息保存map
         BaseMongoMap<String, String> productInfoMap = new BaseMongoMap<>();
-        Gson gson = new Gson();
 
         CmsBtProductModel mainProduct = sxData.getMainProduct();
         CmsBtFeedInfoModel feedInfo = sxData.getCmsBtFeedInfoModel();
@@ -431,7 +430,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             // 画面上输入的platform获得授权的叶子类目ID (格式：<value>{"cat_id":"50012036"}</value>)
             Map<String, Object> paramCategory = new HashMap<>();
             paramCategory.put("cat_id", mainProductPlatformCart.getpCatId());
-            valCategory = gson.toJson(paramCategory);
+            valCategory = JacksonUtil.bean2Json(paramCategory);
         } else if (feedInfo != null && !StringUtils.isEmpty(feedInfo.getCategory())) {
             // 使用商家自有系统类目路径
             // feed_info表的category（将中杠【-】替换为：【&gt;】(>)） (格式：<value>man&gt;sports&gt;socks</value>)
@@ -475,7 +474,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 });
             }
 
-            valProperty = gson.toJson(paramProperty);
+            valProperty = JacksonUtil.bean2Json(paramProperty);
         }
         productInfoMap.put("property", valProperty);
 
@@ -535,7 +534,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         // 货源地
         paramLogistics.put("start_from", getValueFromPageOrCondition("logistics_start_from", "", mainProductPlatformCart, sxData, shopProp));
 
-        productInfoMap.put("logistics", gson.toJson(paramLogistics));
+        productInfoMap.put("logistics", JacksonUtil.bean2Json(paramLogistics));
 
         // skus(必填)
         // cms_mt_channel_condition_config表中入关方式(cross_border_report)
@@ -545,7 +544,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         // 采用Ⅲ有SKU,且有不同图案，颜色的设置方式
         List<BaseMongoMap<String, Object>> targetSkuList = getSkus(sxData.getCartId(), productList, skuList,
                 priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
-        productInfoMap.put("skus", gson.toJson(targetSkuList));
+        productInfoMap.put("skus", JacksonUtil.bean2Json(targetSkuList));
 
 
         // 扩展(部分必填)
@@ -619,7 +618,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         // 说明：设置成跨境申报后，商品的每个SKU必须带有HSCODE才可以上架，设置成邮关申报后，商品不需要设置HSCODE
         paramExtends.put("cross_border_report", getValueFromPageOrCondition("extends_cross_border_report", "", mainProductPlatformCart, sxData, shopProp));
 
-        productInfoMap.put("extends", gson.toJson(paramExtends));
+        productInfoMap.put("extends", JacksonUtil.bean2Json(paramExtends));
 
         // 无线描述(选填)
         // 解析cms_mt_platform_dict表中的数据字典
