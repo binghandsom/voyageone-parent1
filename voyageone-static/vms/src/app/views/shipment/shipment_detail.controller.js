@@ -18,7 +18,7 @@ define([
             this.orderStatusList = [];
             this.expressCompanies = [];
             this.scannedSkuList = [];
-            this.channelConfigs = {};
+            this.channelConfig = {};
             this.barcode = "";
 
             this.classTest = false;
@@ -31,7 +31,7 @@ define([
                 return;
             }
             self.shipmentDetailService.init(self.shipmentId).then(function (data) {
-                self.channelConfigs = data.channelConfigs;
+                self.channelConfig = data.channelConfig;
                 self.shipmentStatusList = data.shipmentStatusList;
                 self.orderStatusList = data.orderStatusList;
                 self.expressCompanies = data.expressCompanies;

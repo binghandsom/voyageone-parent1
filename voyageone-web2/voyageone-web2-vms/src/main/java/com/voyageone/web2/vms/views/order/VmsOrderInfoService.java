@@ -389,7 +389,7 @@ public class VmsOrderInfoService extends BaseService {
         try {
             orderSearchParams = MapUtil.toMap(orderSearchInfoBean);
         } catch (IllegalAccessException e) {
-            throw new BusinessException("WRONG SEARCH PARAMETERS.", e);
+            throw new BusinessException("8000037", e);
         }
 
         orderSearchParams.put("channelId", user.getSelChannel().getId());
@@ -584,7 +584,7 @@ public class VmsOrderInfoService extends BaseService {
         if (scannedCount == currentOrderInfo.size())
             return orderDetailService.updateOrderStatus(user.getSelChannelId(), scanInfoBean.getConsolidationOrderId()
                     , STATUS_VALUE.PRODUCT_STATUS.PACKAGE, user.getUserName());
-        throw new BusinessException("Order not ready"); // TODO: Order not ready. vantis
+        throw new BusinessException("8000038");
     }
 
     /**
@@ -614,7 +614,7 @@ public class VmsOrderInfoService extends BaseService {
         if (scannedCount == 0)
             return orderDetailService.removeSkuOrderId(user.getSelChannelId(), orderId);
         // TODO: 16-8-29 取消订单内sku的扫描状态 vantis
-        throw new BusinessException("Order changed."); //todo: skus' status not good vantis
+        throw new BusinessException("8000039");
     }
 
     /**

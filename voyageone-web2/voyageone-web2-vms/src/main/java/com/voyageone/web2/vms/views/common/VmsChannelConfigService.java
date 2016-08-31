@@ -3,9 +3,11 @@ package com.voyageone.web2.vms.views.common;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.VmsChannelConfigBean;
+import com.voyageone.common.configs.dao.VmsChannelConfigDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
 import com.voyageone.web2.vms.bean.VmsChannelSettingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,6 +16,13 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class VmsChannelConfigService {
+
+    VmsChannelConfigDao vmsChannelConfigDao;
+
+    @Autowired
+    public VmsChannelConfigService(VmsChannelConfigDao vmsChannelConfigDao) {
+        this.vmsChannelConfigDao = vmsChannelConfigDao;
+    }
 
     /**
      * 读取channel相应配置
@@ -34,6 +43,8 @@ public class VmsChannelConfigService {
 
         VmsChannelConfigBean defaultNamingConverter = VmsChannelConfigs.getConfigBean(user.getSelChannelId(),
                 VmsConstants.ChannelConfig.DEFAULT_SHIPMENT_NAMING_CONVERTER, VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
+        VmsChannelConfigBean emailAddress = VmsChannelConfigs.getConfigBean(user.getSelChannelId(),
+                VmsConstants.ChannelConfig.EMAIL_ADDRESS, VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
 
         // Missing required configures for this channel, please contact with the system administrator for help.
         if (null == vendorOperateType) throw new BusinessException("8000019");
@@ -44,6 +55,19 @@ public class VmsChannelConfigService {
             vmsChannelSettingBean.setSalePriceShow(salePriceShow.getConfigValue1());
         if (null != defaultDeliveryCompany)
             vmsChannelSettingBean.setDefaultDeliveryCompany(defaultDeliveryCompany.getConfigValue1());
+        if (null != defaultNamingConverter)
+            vmsChannelSettingBean.setNamingConverter(defaultNamingConverter.getConfigValue1());
+        if (null != emailAddress)
+            vmsChannelSettingBean.setEmailAddress(emailAddress.getConfigValue1());
+
         return vmsChannelSettingBean;
+    }
+
+    public int insertOrUpdateConfig(VmsChannelConfigBean vmsChannelConfigBean) {
+        if (null == VmsChannelConfigs.getConfigBean(vmsChannelConfigBean.getChannelId(),
+                vmsChannelConfigBean.getConfigKey(), VmsConstants.ChannelConfig.COMMON_CONFIG_CODE)) {
+            return vmsChannelConfigDao.insertConfig(vmsChannelConfigBean);
+        }
+        return vmsChannelConfigDao.updateConfig(vmsChannelConfigBean);
     }
 }

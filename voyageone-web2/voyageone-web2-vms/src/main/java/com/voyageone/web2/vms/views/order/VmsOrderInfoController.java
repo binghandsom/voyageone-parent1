@@ -46,7 +46,7 @@ public class VmsOrderInfoController extends BaseController {
     @RequestMapping(ORDER.ORDER_INFO.INIT)
     public AjaxResponse init() {
         Map<String, Object> initialInfo = new HashMap<>();
-        initialInfo.put("channelConfigs", vmsChannelConfigService.getChannelConfigs(this.getUser()));
+        initialInfo.put("channelConfig", vmsChannelConfigService.getChannelConfigs(this.getUser()));
         initialInfo.put("orderStatusList", vmsOrderInfoService.getAllOrderStatusesList());
         initialInfo.put("shipmentStatusList", shipmentService.getAllStatus());
         initialInfo.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));

@@ -45,14 +45,14 @@
         </div>
     </div>
     <div class="row margin-bottom-10">
-        <div class="col-sm-6" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
+        <div class="col-sm-6" ng-if="ctrl.channelConfig.vendorOperateType == 'ORDER'">
             <button ng-if="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('new')" translate="BTN_NEW_SHIPMENT"></button>
             <button ng-if="ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('end')" translate="BTN_END_SHIPMENT"></button>
             <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
                 <a ng-if="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
                 <label ng-if="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
         </div>
-        <div class="col-sm-6" ng-if="!(ctrl.channelConfigs.vendorOperateType == 'ORDER')"></div>
+        <div class="col-sm-6" ng-if="!(ctrl.channelConfig.vendorOperateType == 'ORDER')"></div>
         <div class="col-sm-6 text-right form-inline">
             <select id="select_order" class="form-control" ng-model="ctrl.downloadInfo.orderType">
                 <option value="client_sku" translate="TXT_ORDER_BY_SKU"></option>
@@ -61,7 +61,7 @@
             <button class="btn btn-primary btn-sm" ng-click="ctrl.downloadPickingList()" translate="BTN_DOWNLOAD_PICKING_LIST"></button>
         </div>
     </div>
-    <div class="panel panel-vo" ng-if="ctrl.channelConfigs.vendorOperateType == 'ORDER'">
+    <div class="panel panel-vo" ng-if="ctrl.channelConfig.vendorOperateType == 'ORDER'">
         <div class="panel-body">
             <div class="table-responsive" if-no-rows="ctrl.data">
                 <table class="table table-vo">
@@ -74,7 +74,7 @@
                         <th class="td-2" translate="TXT_NAME"></th>
                         <th class="td-1" translate="TXT_STATUS"></th>
                         <th class="td-1" translate="TXT_VO_PRICE"></th>
-                        <th class="td-1" ng-if="ctrl.channelConfigs.salePriceShow == '1'" translate="TXT_SALE_PRICE"></th>
+                        <th class="td-1" ng-if="ctrl.channelConfig.salePriceShow == '1'" translate="TXT_SALE_PRICE"></th>
                         <th class="td-2-5" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
@@ -89,7 +89,7 @@
                         <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
                         <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{ctrl.getStatusName(item.status)}}</strong></td>
                         <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>${{item.totalVoPrice}}</strong></td>
-                        <td class="v-middle" ng-if="ctrl.channelConfigs.salePriceShow == '1'" ng-click="item.collapse = !item.collapse"><strong>¥{{item.totalRetailPrice}}</strong>
+                        <td class="v-middle" ng-if="ctrl.channelConfig.salePriceShow == '1'" ng-click="item.collapse = !item.collapse"><strong>¥{{item.totalRetailPrice}}</strong>
                         </td>
                         <td class="v-middle">
                             <button class="btn btn-xs btn-danger" ng-if="item.status == 1" ng-click="ctrl.cancelOrder(item)" translate="BTN_CANCEL"></button>
@@ -109,7 +109,7 @@
                         </td>
                         <td class="v-middle">{{ctrl.getStatusName(detail.status)}}</td>
                         <td class="v-middle">${{detail.voPrice}}</td>
-                        <td class="v-middle" ng-if="ctrl.channelConfigs.salePriceShow == '1'">¥{{detail.salePrice}}</td>
+                        <td class="v-middle" ng-if="ctrl.channelConfig.salePriceShow == '1'">¥{{detail.salePrice}}</td>
                         <td class="v-middle"></td>
                     </tr>
                     </tbody>
@@ -121,7 +121,7 @@
             </div>
         </div>
     </div>
-    <div class="panel panel-vo" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU'">
+    <div class="panel panel-vo" ng-if="ctrl.channelConfig.vendorOperateType == 'SKU'">
         <div class="panel-body">
             <div class="table-responsive" if-no-rows="ctrl.data">
                 <table class="table table-fixed table-vo">
@@ -134,7 +134,7 @@
                         <th class="td-3" translate="TXT_NAME"></th>
                         <th class="td-1" translate="TXT_STATUS"></th>
                         <th class="td-1" translate="TXT_VO_PRICE"></th>
-                        <th ng-if="ctrl.channelConfigs.salePriceShow == '1'" class="td-1" translate="TXT_SALE_PRICE"></th>
+                        <th ng-if="ctrl.channelConfig.salePriceShow == '1'" class="td-1" translate="TXT_SALE_PRICE"></th>
                         <th class="td-1-5" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
@@ -151,7 +151,7 @@
                         </td>
                         <td class="v-middle">{{ctrl.getStatusName(item.status)}}</td>
                         <td class="v-middle">${{item.voPrice}}</td>
-                        <td class="v-middle" ng-if="ctrl.channelConfigs.salePriceShow == '1'">¥{{item.salePrice}}</td>
+                        <td class="v-middle" ng-if="ctrl.channelConfig.salePriceShow == '1'">¥{{item.salePrice}}</td>
                         <td class="v-middle">
                             <button ng-if="item.status == 1" class="btn btn-xs btn-warning" ng-click="ctrl.cancelSku(item)" translate="BTN_CANCEL"></button>
                         </td>
