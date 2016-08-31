@@ -77,11 +77,11 @@ public class AdminUserService extends BaseService {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("userAccount", userAccount);
         params.put("active", active);
-        params.put("channelId", channelId);
+        params.put("channelId", "".equals(channelId) ? null : channelId);
         params.put("storeId", storeId);
         params.put("orgId", orgId);
         params.put("roleId", roleId);
-        params.put("application", application);
+        params.put("application", "".equals(application) ? null : application);
 
         boolean needPage = false;
 
