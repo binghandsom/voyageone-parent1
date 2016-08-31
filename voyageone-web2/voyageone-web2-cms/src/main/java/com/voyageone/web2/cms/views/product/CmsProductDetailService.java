@@ -32,6 +32,7 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
+import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
@@ -91,6 +92,9 @@ public class CmsProductDetailService extends BaseAppService {
 
     @Autowired
     private ImsBtProductDao imsBtProductDao;
+
+    @Autowired
+    private CmsBtPriceConfirmLogService cmsBtPriceConfirmLogService;
 
     @Autowired
     private PriceService priceService;
@@ -654,10 +658,12 @@ public class CmsProductDetailService extends BaseAppService {
                 e.printStackTrace();
             }
             newProduct.getPlatforms().forEach((s, platform) -> {
-                if(platform.getCartId() != 0){
-                    productService.updateProductPlatform(channelId,prodId,platform,modifier,false, EnumProductOperationType.WebEdit, "税号变更");
+                if (platform.getCartId() != 0) {
+                    productService.updateProductPlatform(channelId, prodId, platform, modifier, false, EnumProductOperationType.WebEdit, "税号变更");
+                    cmsBtPriceConfirmLogService.addConfirmed(channelId, newProduct.getCommon().getFields().getCode(), platform, modifier);
                 }
             });
+
         }
 
 
