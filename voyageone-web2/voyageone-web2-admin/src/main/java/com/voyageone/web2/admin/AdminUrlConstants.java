@@ -369,6 +369,9 @@ public interface AdminUrlConstants {
 
 			//for dropdown list options
 			String GET_ALL_ROLE = "getAllRole";
+
+			//for dropdown list options
+			String GET_ALL_ROLE_TYPE = "getAllRole";
 		}
 
 		/** 组织信息 */

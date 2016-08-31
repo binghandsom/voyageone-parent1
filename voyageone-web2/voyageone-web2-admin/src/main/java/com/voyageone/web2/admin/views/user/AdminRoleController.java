@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -117,6 +118,16 @@ public class AdminRoleController extends AdminController {
     @RequestMapping(AdminUrlConstants.User.Role.GET_ALL_ROLE)
     public AjaxResponse getAllRole()  {
         return success(adminRoleService.getAllRole());
+    }
+
+    @RequestMapping(AdminUrlConstants.User.Role.GET_ALL_ROLE_TYPE)
+    public AjaxResponse getAllRoleType()  {
+        List<Map<String, Object>> list = new ArrayList<>();
+        list.add(new HashMap(){{put("1", "IT管理员");} });
+        list.add(new HashMap(){{put("2", "运营人员");} });
+        list.add(new HashMap(){{put("3", "客服人员");} });
+        list.add(new HashMap(){{put("4", "财务人员");} });
+        return success(list);
     }
 
 }
