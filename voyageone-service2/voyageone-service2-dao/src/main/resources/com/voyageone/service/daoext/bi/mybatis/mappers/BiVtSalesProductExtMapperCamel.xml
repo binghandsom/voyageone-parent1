@@ -17,6 +17,10 @@
         </foreach>
     </insert>
 
+    <insert id="deleteWithList" parameterType="Map" useGeneratedKeys="true">
+        DELETE FROM voyageone_bi_source.bi_bt_spider_product_${tableTitleName} where cart_id=#{cartId} and channel_id=#{channelId} and process_date=#{processDate}
+    </insert>
+
     <!-- 取得(指定时间范围内)产品的bi信息 -->
     <select id="selectList" parameterType="Map" resultType="Map"><![CDATA[
         select

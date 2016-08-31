@@ -621,20 +621,20 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 
     public List<ExcelColumn> getProductImportColumn() {
         List<ExcelColumn> list = new ArrayList<>();
-        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_product", "商品代码",true));
+        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_product", "商品代码",false));
         list.add(new ExcelColumn("appId", "cms_bt_jm_promotion_product", "APP端模块ID",true));
         list.add(new ExcelColumn("pcId", "cms_bt_jm_promotion_product", "PC端模块ID",true));
         list.add(new ExcelColumn("limit", "cms_bt_jm_promotion_product", "Deal每人限购",true));
-        list.add(new ExcelColumn("promotionTag", "cms_bt_jm_promotion_product", "专场标签（以|分隔）",true));
+        list.add(new ExcelColumn("promotionTag", "cms_bt_jm_promotion_product", "专场标签（以|分隔）",false));
         return list;
     }
 
     public List<ExcelColumn> getSkuImportColumn() {
         List<ExcelColumn> list = new ArrayList<>();
-        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_sku", "商品代码",true));
-        list.add(new ExcelColumn("skuCode", "cms_bt_jm_promotion_sku", "规格代码",true));
-        list.add(new ExcelColumn("dealPrice", "cms_bt_jm_promotion_sku", "团购价",true));
-        list.add(new ExcelColumn("marketPrice", "cms_bt_jm_promotion_sku", "市场价",true));
+        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_sku", "商品代码",false));
+        list.add(new ExcelColumn("skuCode", "cms_bt_jm_promotion_sku", "规格代码",false));
+        list.add(new ExcelColumn("dealPrice", "cms_bt_jm_promotion_sku", "团购价",false));
+        list.add(new ExcelColumn("marketPrice", "cms_bt_jm_promotion_sku", "市场价",false));
         return list;
     }
 

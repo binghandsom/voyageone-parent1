@@ -3553,7 +3553,8 @@ public class SxProductService extends BaseService {
      */
     public void insertSxWorkLoad(CmsBtProductModel productModel, String modifier) {
         productModel.getPlatforms().forEach( (cartId, platform) -> {
-            if ("Approved".equals(platform.getStatus())) {
+            if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())
+                    && (StringUtils.isEmpty(productModel.getLock()) || "0".equals(productModel.getLock()))) {
                 insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier);
             }
         });
