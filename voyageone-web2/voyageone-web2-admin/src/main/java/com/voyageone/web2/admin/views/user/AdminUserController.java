@@ -55,7 +55,7 @@ public class AdminUserController extends AdminController {
     }
 
     @RequestMapping(AdminUrlConstants.User.Self.INIT)
-    public AjaxResponse init(@RequestBody UserFormBean form)  {
+    public AjaxResponse init()  {
         // 检索用户信息
         PageModel<AdminUserBean> userPage = adminUserService.searchUser(null, null, null, null, null,null,null, 1, DEFAULT_PAGE_SIZE);
 
