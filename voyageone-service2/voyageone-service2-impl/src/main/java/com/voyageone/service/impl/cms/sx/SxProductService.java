@@ -3547,6 +3547,19 @@ public class SxProductService extends BaseService {
     }
 
     /**
+     * 插入上新表的唯一一个正式的统一入口 (单个产品的场合)
+     * @param productModel  产品数据
+     * @param modifier      修改者
+     */
+    public void insertSxWorkLoad(CmsBtProductModel productModel, String modifier) {
+        productModel.getPlatforms().forEach( (cartId, platform) -> {
+            if ("Approved".equals(platform.getStatus())) {
+                insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier);
+            }
+        });
+    }
+
+    /**
      * 插入上新表的唯一一个正式的统一入口 (单个code的场合)
      * @param channelId channel id
      * @param code code

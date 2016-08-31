@@ -15,6 +15,7 @@ import com.voyageone.components.ftp.bean.FtpFileBean;
 import com.voyageone.components.ftp.service.BaseFtpComponent;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
@@ -52,6 +53,8 @@ public class ImageUploadService extends AbstractFileMonitoService {
     private BusinessLogService businessLogService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private SxProductService sxProductService;
 
     @Override
     protected String getTaskName() {
@@ -416,7 +419,7 @@ public class ImageUploadService extends AbstractFileMonitoService {
      * @param model model
      */
     private void approvedOperator(CmsBtProductModel model) {
-        productService.insertSxWorkLoad(model.getChannelId(), model, MODIFIER);
+        sxProductService.insertSxWorkLoad(model, MODIFIER);
     }
 
 
