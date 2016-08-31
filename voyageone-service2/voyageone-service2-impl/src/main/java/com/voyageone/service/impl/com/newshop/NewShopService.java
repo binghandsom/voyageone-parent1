@@ -2,6 +2,9 @@ package com.voyageone.service.impl.com.newshop;
 
 import java.beans.PropertyDescriptor;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.voyageone.base.dao.mysql.MybatisSqlHelper;
+import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.JacksonUtil;
@@ -30,6 +34,7 @@ import com.voyageone.service.bean.com.CtStoreConfigBean;
 import com.voyageone.service.bean.com.NewShopBean;
 import com.voyageone.service.bean.com.TmChannelShopBean;
 import com.voyageone.service.bean.com.TmOrderChannelBean;
+import com.voyageone.service.bean.com.TmTaskControlBean;
 import com.voyageone.service.bean.com.WmsMtStoreBean;
 import com.voyageone.service.dao.com.ComMtTaskDao;
 import com.voyageone.service.dao.com.ComMtThirdPartyConfigDao;
@@ -45,6 +50,7 @@ import com.voyageone.service.dao.com.TmOrderChannelDao;
 import com.voyageone.service.dao.com.TmSmsConfigDao;
 import com.voyageone.service.dao.com.TmTaskControlDao;
 import com.voyageone.service.dao.com.WmsMtStoreDao;
+import com.voyageone.service.daoext.com.TmNewShopDataDaoExt;
 import com.voyageone.service.impl.AdminProperty;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.cart.CartShopService;
@@ -56,7 +62,11 @@ import com.voyageone.service.impl.com.channel.SmsConfigService;
 import com.voyageone.service.impl.com.channel.ThirdPartyConfigService;
 import com.voyageone.service.impl.com.store.StoreService;
 import com.voyageone.service.impl.com.task.TaskService;
+import com.voyageone.service.model.com.PageModel;
 import com.voyageone.service.model.com.TmNewShopDataModel;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 
 /**
  * @author Wangtd
@@ -65,8 +75,13 @@ import com.voyageone.service.model.com.TmNewShopDataModel;
 @Service
 public class NewShopService extends BaseService {
 	
+	private static final String SELECT_SQL_COLUMN_REGEX = "(select )[\\w`,\\(\\) ]+( from)";
+	
 	@Autowired
 	private TmNewShopDataDao newShopDao;
+	
+	@Autowired
+	private TmNewShopDataDaoExt newShopDaoExt;
 	
 	@Autowired
 	private ChannelService channelService;
@@ -203,43 +218,29 @@ public class NewShopService extends BaseService {
 		seqOverrides.put("seq", null);
 		Map<String, Object> idOverrides = (Map<String, Object>) overrides.clone();
 		idOverrides.put("id", null);
-		// 生成开店sql
-		List<String> sqls = new ArrayList<String>();
-		sqls.add("delimiter $$");
-		sqls.add("drop procedure if exists proc_new_shop $$");
-		sqls.add("create procedure proc_new_shop()");
-		sqls.add("begin");
-		sqls.add("  declare errno integer default 0;");
-		sqls.add("  declare continue handler for sqlexception set errno = 1;");
-		sqls.add("  set autocommit = 0;");
+		// 开店sql模板参数
+		Map<String, Object> sqlParams = new HashMap<String, Object>();
 		// 渠道信息
-		sqls.add("  /* tm_order_channel */");
-		sqls.addAll(getInsertMapperSql(TmOrderChannelDao.class, channel, overrides));
+		sqlParams.put("channel", getInsertMapperSql(TmOrderChannelDao.class, channel, overrides).get(0));
 		// 渠道配置信息
-		sqls.add("  /* tm_order_channel_config */");
-		sqls.addAll(getInsertMapperSql(TmOrderChannelConfigDao.class, channel.getChannelConfig(), overrides));
+		sqlParams.put("channelConfig", getInsertMapperSql(TmOrderChannelConfigDao.class, channel.getChannelConfig(), overrides));
 		// 短信配置信息
-		sqls.add("  /* tm_sms_config */");
-		sqls.addAll(getInsertMapperSql(TmSmsConfigDao.class, bean.getSms(), seqOverrides));
+		sqlParams.put("sms", getInsertMapperSql(TmSmsConfigDao.class, bean.getSms(), seqOverrides));
 		// 第三方配置信息
-		sqls.add("  /* com_mt_third_party_config */");
-		sqls.addAll(getInsertMapperSql(ComMtThirdPartyConfigDao.class, bean.getThirdParty(), seqOverrides));
+		sqlParams.put("thirdParty", getInsertMapperSql(ComMtThirdPartyConfigDao.class, bean.getThirdParty(), seqOverrides));
 		// 快递配置信息
-		sqls.add("  /* tm_carrier_channel */");
-		sqls.addAll(getInsertMapperSql(TmCarrierChannelDao.class, bean.getCarrier(), overrides));
+		sqlParams.put("carrier", getInsertMapperSql(TmCarrierChannelDao.class, bean.getCarrier(), overrides));
 		// 类型属性配置信息
-		sqls.add("  /* com_mt_value_channel */");
-		sqls.addAll(getInsertMapperSql(ComMtValueChannelDao.class, bean.getChannelAttr(), idOverrides));
+		sqlParams.put("channelAttr", getInsertMapperSql(ComMtValueChannelDao.class, bean.getChannelAttr(), idOverrides));
 		// 仓库和配置信息
 		if (CollectionUtils.isNotEmpty(bean.getStore())) {
 			Map<String, Object> storeIdOverrides = (Map<String, Object>) overrides.clone();
 			storeIdOverrides.put("storeId", null);
+			List<Object> storeParams = new ArrayList<Object>();
 			for (WmsMtStoreBean store : bean.getStore()) {
-				sqls.add("  /* wms_mt_store */");
-				sqls.addAll(getInsertMapperSql(WmsMtStoreDao.class, store, storeIdOverrides));
+				Map<String, Object> storeParam = new HashMap<String, Object>();
+				storeParam.put("sql", getInsertMapperSql(WmsMtStoreDao.class, store, storeIdOverrides).get(0));
 				if (CollectionUtils.isNotEmpty(store.getStoreConfig())) {
-					sqls.add("  /* ct_store_config */");
-					sqls.add("  select last_insert_id() into @last_store_id;");
 					// 设置自动生成的主键
 					List<Map<String, Object>> storeConfig = new ArrayList<Map<String, Object>>();
 					for (CtStoreConfigBean item : store.getStoreConfig()) {
@@ -247,63 +248,113 @@ public class NewShopService extends BaseService {
 						storeConfigMap.put("storeId", "@last_store_id");
 						storeConfig.add(storeConfigMap);
 					}
-					sqls.addAll(getInsertMapperSql(CtStoreConfigDao.class, storeConfig, overrides));
+					storeParam.put("config", getInsertMapperSql(CtStoreConfigDao.class, storeConfig, overrides));
 				}
-			}	
+				storeParams.add(storeParam);
+			}
+			sqlParams.put("store", storeParams);
 		}
 		// 渠道Cart和配置信息
 		if (CollectionUtils.isNotEmpty(bean.getCartShop())) {
+			List<Object> cartShopParams = new ArrayList<Object>();
 			for (TmChannelShopBean cartShop : bean.getCartShop()) {
-				sqls.add("  /* tm_channel_shop */");
-				sqls.addAll(getInsertMapperSql(TmChannelShopDao.class, cartShop, overrides));
-				sqls.add("  /* tm_channel_shop_config */");
-				sqls.addAll(getInsertMapperSql(TmChannelShopConfigDao.class, cartShop.getCartShopConfig(), overrides));
+				Map<String, Object> cartShopParam = new HashMap<String, Object>();
+				cartShopParam.put("sql", getInsertMapperSql(TmChannelShopDao.class, cartShop, overrides).get(0));
+				cartShopParam.put("config", getInsertMapperSql(TmChannelShopConfigDao.class, cartShop.getCartShopConfig(), overrides));
+				cartShopParams.add(cartShopParam);
 			}
+			sqlParams.put("cartShop", cartShopParams);
 		}
 		// Cart物流信息
-		sqls.add("  /* com_mt_tracking_info_config */");
-		sqls.addAll(getInsertMapperSql(ComMtTrackingInfoConfigDao.class, bean.getCartTracking(), seqOverrides));
+		sqlParams.put("cartTracking", getInsertMapperSql(ComMtTrackingInfoConfigDao.class, bean.getCartTracking(), seqOverrides));
 		// 任务信息
 		if (CollectionUtils.isNotEmpty(bean.getTask())) {
-			Map<String, Object> taskIdOverrides = (Map<String, Object>) overrides.clone();
-			taskIdOverrides.put("taskId", null);
+			List<Object> taskParams = new ArrayList<Object>();
+			// 任务信息参数
+			Map<String, Object> taskSelectParams = new HashMap<String, Object>();
+			Map<String, Object> taskInsertOverrides = (Map<String, Object>) overrides.clone();
+			taskInsertOverrides.put("taskId", null);
+			Map<String, Object> taskUpdateOverrides = (Map<String, Object>) overrides.clone();
+			taskUpdateOverrides.put("taskId", "@task_id");
+			// 任务配置参数
+			Map<String, Object> taskConfigSqlParams = new HashMap<String, Object>();
 			for (ComMtTaskBean task : bean.getTask()) {
-				sqls.add("  /* com_mt_task */");
-				sqls.addAll(getInsertMapperSql(ComMtTaskDao.class, task, taskIdOverrides));
-				sqls.add("  /* tm_task_control */");
-				sqls.addAll(getInsertMapperSql(TmTaskControlDao.class, task.getTaskConfig(), overrides));
+				Map<String, Object> taskParam = new HashMap<String, Object>();
+				// 任务信息的动态添加与更新
+				taskSelectParams.put("taskType", task.getTaskType());
+				taskSelectParams.put("taskName", task.getTaskName());
+				String taskSql = getSelectMapperSql(ComMtTaskDao.class, taskSelectParams, "selectOne", null).get(0);
+				taskParam.put("select", replacteSqlColumns(taskSql, "task_id into @task_id"));
+				taskParam.put("insert", getInsertMapperSql(ComMtTaskDao.class, task, taskInsertOverrides).get(0));
+				taskParam.put("update", getUpdateMapperSql(ComMtTaskDao.class, task, taskUpdateOverrides).get(0));
+				// 任务配置信息的动态添加与更新
+				List<Object> taskConfigParams = new ArrayList<Object>();
+				for (TmTaskControlBean taskConfig : task.getTaskConfig()) {
+					Map<String, Object> taskConfigParam = new HashMap<String, Object>();
+					taskConfigSqlParams.put("taskId", taskConfig.getTaskId());
+					taskConfigSqlParams.put("cfgName", taskConfig.getCfgName());
+					taskConfigSqlParams.put("cfgVal1", taskConfig.getCfgVal1());
+					taskConfigSqlParams.put("cfgVal2", taskConfig.getCfgVal2());
+					String taskConfigSql = getSelectMapperSql(TmTaskControlDao.class, taskConfigSqlParams, "select", overrides).get(0);
+					taskConfigParam.put("select", replacteSqlColumns(taskConfigSql, "task_id into @task_cfg_id"));
+					taskConfigParam.put("insert", getInsertMapperSql(TmTaskControlDao.class, taskConfig, overrides).get(0));
+					taskConfigParams.add(taskConfigParam);
+				}
+				taskParam.put("config", taskConfigParams);
+				taskParams.add(taskParam);
 			}
+			sqlParams.put("task", taskParams);
 		}
-		sqls.add("  if errno = 0 then");
-		sqls.add("    commit;");
-		sqls.add("  else");
-		sqls.add("    rollback;");
-		sqls.add("  end if;");
-		sqls.add("end$$");
-		sqls.add("call proc_new_shop() $$");
-		sqls.add("delimiter ;");
 		
 		// 文件基本设置
 		String sqlPath = Properties.readValue(AdminProperty.Props.ADMIN_SQL_PATH);
 		String sqlFileName = UUID.randomUUID().toString() + ".sql";
 		File sqlFile = new File(sqlPath, sqlFileName);
-		// 保存sql文件
-		FileUtils.writeLines(sqlFile, sqls);
+		// 生成开店的sql文件
+		try (
+			Writer output = new OutputStreamWriter(new FileOutputStream(sqlFile));
+		) {
+			FileUtils.forceMkdir(new File(sqlPath));
+			renderConfigTemplate(AdminProperty.Tpls.PROC_NEW_SHOP_SQL, sqlParams, output);
+		} 
 		
 		return sqlFile;
 	}
+	
+	protected void renderConfigTemplate(String ftlName, Object dataModel, Writer out) throws Exception {
+		Configuration config = new Configuration();
+		config.setClassForTemplateLoading(getClass(), "/config/");
+		Template template = config.getTemplate(ftlName);
+		template.process(dataModel, out);
+	}
+	
+	protected List<String> getInsertMapperSql(Class<?> clazz, Object model, Map<String, Object> overrides) {
+		return getMyBatisMapperSql(clazz, model, "insert", overrides);
+	}
+
+	protected List<String> getSelectMapperSql(Class<?> clazz, Object model, String sqlKey, Map<String, Object> overrides) {
+		return getMyBatisMapperSql(clazz, model, sqlKey, overrides);
+	}
+
+	protected List<String> getUpdateMapperSql(Class<?> clazz, Object model, Map<String, Object> overrides) {
+		return getMyBatisMapperSql(clazz, model, "update", overrides);
+	}
+	
+	private String replacteSqlColumns(String sql, String columns) {
+		return sql.replaceFirst(SELECT_SQL_COLUMN_REGEX, "$1" + columns + "$2");
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private List<String> getInsertMapperSql(Class<?> clazz, Object model, Map<String, Object> overrides) {
+	private List<String> getMyBatisMapperSql(Class<?> clazz, Object model, String sqlKey, Map<String, Object> overrides) {
 		if (model == null) {
 			return Collections.emptyList();
 		} else if (List.class.isAssignableFrom(model.getClass())) {
 			// List的简单对象
 			List target = (List) model;
 			if (CollectionUtils.isNotEmpty(target)) {
-				List<String> sqls = new ArrayList<String>();
+				List<String> sqls = new ArrayList<String>(target.size());
 				for (int i = 0; i < target.size(); i++) {
-					sqls.addAll(getInsertMapperSql(clazz, target.get(i), overrides));
+					sqls.addAll(getMyBatisMapperSql(clazz, target.get(i), sqlKey, overrides));
 				}
 				return sqls;
 			}
@@ -324,9 +375,9 @@ public class NewShopService extends BaseService {
 					for (String keyName : overrides.keySet()) {
 						try {
 							PropertyDescriptor propDesc = new PropertyDescriptor(keyName, model.getClass());
-							Method writter = propDesc.getWriteMethod();
-							if (writter != null) {
-								writter.invoke(model, overrides.get(keyName));
+							Method writer = propDesc.getWriteMethod();
+							if (writer != null) {
+								writer.invoke(model, overrides.get(keyName));
 							}
 						} catch (Exception e) {
 							logger.debug("覆盖对象属性失败，" + e.getMessage());
@@ -334,7 +385,7 @@ public class NewShopService extends BaseService {
 					}
 				}
 			}
-			return Arrays.asList("  " + MybatisSqlHelper.getMapperSql(clazz, "insert", model) + ";");
+			return Arrays.asList(MybatisSqlHelper.getMapperSql(clazz, sqlKey, model));
 		}
 	}
 
@@ -342,6 +393,31 @@ public class NewShopService extends BaseService {
 		if (newShopDao.delete(newShopId) <= 0) {
 			throw new BusinessException("删除开新店信息失败");
 		}
+	}
+
+	public TmNewShopDataModel getNewShopById(Long newShopId) {
+		return newShopDao.select(newShopId);
+	}
+
+	public PageModel<TmNewShopDataModel> searchNewShopByPage(String channelId, String channelName, String modifiedFrom,
+			String modifiedTo, Integer pageNum, Integer pageSize) {
+		PageModel<TmNewShopDataModel> pageModel = new PageModel<TmNewShopDataModel>();
+		// 设置查询参数
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("channelId", channelId);
+		params.put("channelName", channelName);
+		params.put("modifiedFrom", modifiedFrom);
+		params.put("modifiedTo", modifiedTo);
+		
+		// 判断查询结果是否分页
+		if (pageNum != null && pageSize != null) {
+			pageModel.setCount(newShopDaoExt.selectNewShopCount(params));
+			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
+		}
+		// 查询开店脚本信息
+		pageModel.setResult(newShopDaoExt.selectNewShopByPage(params));
+		
+		return pageModel;
 	}
 	
 }

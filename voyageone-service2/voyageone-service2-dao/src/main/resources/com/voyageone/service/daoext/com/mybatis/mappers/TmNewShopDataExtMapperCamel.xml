@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.com.TmNewShopDataDaoExt">
+
+	<resultMap id="newShopModelMap" type="com.voyageone.service.model.com.TmNewShopDataModel" />
+	
+	<sql id="selectNewShopFilter">
+		<where>
+            <if test="channelId != null and channelId != ''" >
+                and channel_id like concat('%', #{channelId}, '%')
+            </if>
+            <if test="channelName != null and channelName != ''" >
+                and channel_name like concat('%', #{channelName}, '%')
+            </if>
+            <if test="modifiedFrom != null and modifiedFrom != ''" >
+                and modified >= #{modifiedFrom}
+            </if>
+            <if test="modifiedTo != null and modifiedTo != ''" >
+            <![CDATA[
+                and modified <= #{modifiedTo}
+            ]]>
+            </if>
+        </where>
+	</sql>
+    
+    <select id="selectNewShopByPage" resultMap="newShopModelMap">
+    	select id, channel_id, channel_name, created, creater, modified, modifier 
+    	from tm_new_shop_data
+    	<include refid="selectNewShopFilter"/>
+    	order by modified desc
+    </select>
+    
+    <select id="selectNewShopCount" resultType="integer">
+    	select count(0) from tm_new_shop_data
+    	<include refid="selectNewShopFilter"/>
+    </select>
+
+</mapper>

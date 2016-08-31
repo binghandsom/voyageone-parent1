@@ -46,12 +46,14 @@ public class StoreController extends AdminController {
 	
 	@SuppressWarnings("serial")
 	@RequestMapping(AdminUrlConstants.Store.Self.GET_ALL_STORE)
-	public AjaxResponse getAllStore() {
-		List<WmsMtStoreModel> stores = storeService.getAllStore();
+	public AjaxResponse getAllStore(@RequestBody(required = false) String channelId) {
+		List<WmsMtStoreBean> stores = storeService.getAllStore(channelId);
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		stores.stream().forEach(item -> result.add(new HashMap<String, Object>() {{
 			put("storeId", item.getStoreId());
 			put("storeName", item.getStoreName());
+			put("channelId", item.getOrderChannelId());
+			put("channelName", item.getChannelName());
 		}}));
 		return success(result);
 	}
