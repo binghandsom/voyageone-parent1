@@ -1,13 +1,26 @@
-define([
-    'cms',
-    'modules/cms/enums/Carts'
-], function (cms, carts) {
+define(function (require) {
     'use strict';
+    var cms = require('cms'),
+        _ = require('underscore'),
+        ruleTypes = require('modules/cms/enums/RuleTypes'),
+        valueTypes = require('modules/cms/enums/ValueTypes'),
+        carts = require('modules/cms/enums/Carts');
     return cms.controller('propertyMappingController', (function () {
 
         function PropertyMappingController(context, $uibModalInstance, popups, platformMappingService) {
             var self = this;
 
+            var fieldValueType = context.fieldValueType,
+                isMultiLine = false;
+
+            switch (fieldValueType) {
+                case valueTypes.TEXTAREA:
+                case valueTypes.HTML:
+                    isMultiLine = true;
+                    break;
+            }
+
+            self.isMultiLine = isMultiLine;
             self.context = context;
             self.uibModalInstance = $uibModalInstance;
             self.popups = popups;
@@ -39,26 +52,28 @@ define([
             },
             init: function () {
                 var self = this,
-                    expressionListJson = self.context.value,
-                    expressionList,
-                    platformMappingService = self.platformMappingService;
+                    context = self.context,
+                    expressionListJson = context.value,
+                    expressionList;
 
-                if (self.context.cartId)
-                    self.context.cartName = carts.valueOf(+self.context.cartId).desc;
+                if (context.cartId)
+                    context.cartName = carts.valueOf(+context.cartId).desc;
 
                 if (expressionListJson)
-                    expressionList = angular.fromJson(self.context.value);
+                    expressionList = angular.fromJson(context.value);
                 else
                     expressionList = [];
 
                 self.valueArr = expressionList;
             },
             openPpPropertySetting: function () {
-                var self = this;
+                var self = this,
+                    context = self.context;
+
                 self.popups.openPropertySetting({
-                    cartPath: self.context.cartPath,
-                    cartName: self.context.cartName,
-                    name: self.context.name
+                    cartPath: context.cartPath,
+                    cartName: context.cartName,
+                    name: context.name
                 }).then(function (context) {
                     self.valueArr.push(context);
                 });
@@ -75,11 +90,12 @@ define([
                 this.valueArr.splice(index, 1, tmp[0]);
             },
             update: function (item) {
-                var self = this;
+                var self = this,
+                    context = self.context;
                 _.extend(item, {
-                    cartPath: self.context.cartPath,
-                    cartName: self.context.cartName,
-                    name: self.context.name
+                    cartPath: context.cartPath,
+                    cartName: context.cartName,
+                    name: context.name
                 });
                 self.popups.openPropertySetting(item).then(function (context) {
                     item.type = context.type;
@@ -110,10 +126,15 @@ define([
                         return self.mastOpts[item.value];
                 }
                 return item.value;
+            },
+            getValueType: function () {
+                var valueTypeRule = _.find(this.context.rules, function (rule) {
+                    return rule.name === ruleTypes.VALUE_TYPE_RULE;
+                });
+                return valueTypeRule ? valueTypeRule.value : null;
             }
         };
 
         return PropertyMappingController;
-
     })());
 });

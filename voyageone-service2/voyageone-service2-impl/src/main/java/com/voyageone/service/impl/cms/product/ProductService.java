@@ -899,9 +899,9 @@ public class ProductService extends BaseService {
             Double msrp = sku.getDoubleAttribute("priceMsrp");
             Double priceRetail = sku.getDoubleAttribute("priceRetail");
             if( msrp.compareTo(priceRetail) > 0){
-                sku.setAttribute("priceMsrpFlg","XU");
-            }else if( msrp.compareTo(priceRetail) < 0){
                 sku.setAttribute("priceMsrpFlg","XD");
+            }else if( msrp.compareTo(priceRetail) < 0){
+                sku.setAttribute("priceMsrpFlg","XU");
             }else{
                 sku.setAttribute("priceMsrpFlg","");
             }

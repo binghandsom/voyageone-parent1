@@ -106,6 +106,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 platformCart.setpCatId(mainPlatform.getpCatId());
             }
 
+            if(platformCart.getFields() == null) platformCart.setFields(new BaseMongoMap<>());
             platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), channelId, cartId, prodId, language,null));
         }
         return platformCart;
