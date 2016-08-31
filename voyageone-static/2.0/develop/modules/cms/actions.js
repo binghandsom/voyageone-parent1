@@ -561,7 +561,7 @@ define(function () {
                 },
                 getFeedCustomProps: {
                     url: "getFeedCustomProps",
-                    cache: CACHE.LOCAL,
+                    cache: CACHE.SESSION,
                     cacheWith: [KEY.CHANNEL]
                 },
                 // 原 platform mapping 的功能已删除
