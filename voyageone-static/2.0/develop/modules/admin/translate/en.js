@@ -172,6 +172,17 @@ define(function () {
         "TXT_UPPER_MENU": "上级菜单",
         "TXT_RES_TYPE": "资源类型",
 
+        "TXT_LOG_SEARCH": "日志查询",
+        "TXT_LOGIN_LOG": "登录日志",
+        "TXT_ACT_LOG": "操作日志",
+        "TXT_IP_ADDRESS": "IP地址",
+        "TXT_LOGED_IN_TIME": "登录时间",
+        "TXT_METHOD": "方法",
+        "TXT_START_TIME": "开始时间",
+        "TXT_WASTE_TIME": "耗时(ms)",
+        "TXT_REQUEST_PARAMETER": "请求参数",
+        "TXT_RESPONSE": "返回结果",
+
         /**按钮组*/
         "TXT_LOGOUT": "注销",
         "BTN_CANCEL": "取消",

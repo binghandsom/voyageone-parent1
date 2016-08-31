@@ -1,0 +1,140 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-navicon"></i>&nbsp;{{'TXT_ACT_LOG'|translate}}</h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group"><!-- 账号 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_ACCOUNT' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="ctrl.searchInfo.userAccount"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group"><!-- 开始时间 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_START_TIME' | translate}}</label>
+                                    <div class="col-sm-9 form-inline">
+                                        <div class="col-sm-5 input-group">
+                                            <input type="text" class="form-control" uib-datepicker-popup
+                                                   ng-model="vm.searchInfo.publishTimeStart" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                                   date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.publishTimeTo" is-open="datePicker3" close-text="Close"/>
+													  <span class="input-group-btn">
+														<button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
+													  </span>
+                                        </div>
+                                        &nbsp;~&nbsp;
+                                        <div class="col-sm-5 input-group">
+                                            <input type="text" class="form-control" uib-datepicker-popup
+                                                   ng-model="vm.searchInfo.publishTimeTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                                   date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.publishTimeStart" is-open="datePicker4" close-text="Close"/>
+													  <span class="input-group-btn">
+														<button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
+													  </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group"><!-- URL -->
+                                    <label class="col-sm-3 control-label">{{'TXT_URL' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="ctrl.searchInfo.userAccount"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group"><!-- 系统 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_SYSTEM' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.orgId">
+                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="{{org.id}}" ng-repeat="org in ctrl.orgList">&nbsp;{{org.orgName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group"><!-- 方法 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_METHOD' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="ctrl.searchInfo.userAccount"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group"><!-- IP地址 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_IP_ADDRESS' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="ctrl.searchInfo.userAccount"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 text-center m-b-xs">
+                            <div class="form-horizontal form-inline">
+                                <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;重置</button>
+                                <button class="btn btn-vo" ng-click="ctrl.search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-body-new">
+            <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
+                <div class="form-group m-t-sm m-r-xs">
+                    <button class="btn btn-default" ng-click="ctrl.viewDetail('')" ng-disabled="ctrl.channelSelList.selList.length > 1"><i class="fa fa-eye-slash"></i>&nbsp;参数详情</button>
+                 </div>
+            </div>
+            <table class="table table-hover-new table-hover table_main">
+                <thead>
+                <tr>
+                    <th class="text-left mfb-xt" ng-controller="selectRowsCtrl" style="padding-left: 0;padding-right: 0;">
+                        <label class="checkbox-inline c-checkbox" style="height: 15px;">
+                            <input type="checkbox" ng-click="selectAll(ctrl.adminUserSelList)"
+                                   ng-checked="isAllSelected(ctrl.adminUserSelList)" >
+                            <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                        </label>
+                    </th>
+                    <th class="text-center mfb-xt" translate="TXT_ACCOUNT"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_SYSTEM"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_URL"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_METHOD"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_IP_ADDRESS"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_START_TIME"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_WASTE_TIME"></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td if-no-rows="ctrl.adminList.length||ctrl.adminList" colspan="8" style="padding: 0px"></td>
+                    </tr>
+                    <tr ng-repeat="list in ctrl.adminList">
+                        <td class="text-left v-middle">
+                            <label class="checkbox-inline c-checkbox" style="padding-top:4px">
+                                <input ng-model="ctrl.adminUserSelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
+                                       ng-click="selectOne(list.id, ctrl.adminUserSelList)">
+                                <span class="fa fa-check"></span>
+                            </label>
+                        </td>
+                        <td class="text-center v-middle">{{list.userAccount}}</td>
+                        <td class="text-left v-middle">{{list.userName}}</td>
+                        <td class="text-left v-middle">{{list.email}}</td>
+                        <td class="text-center v-middle">{{list.roleName}}</td>
+                        <td class="text-left v-middle">{{list.userName}}</td>
+                        <td class="text-left v-middle">{{list.email}}</td>
+                        <td class="text-center v-middle">{{list.roleName}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <vpagination config="ctrl.pageOption" ng-if="ctrl.adminList.length>0"></vpagination>
+    </div>
+</div>
