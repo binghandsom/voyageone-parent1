@@ -33,7 +33,7 @@
             </if>
 
             <if test="storeId != null and storeId != ''" >
-                and concat(',', store_id, ',')  like concat('%,', #{storeId}, ',%')
+                and concat(',', store_id, ',')  like concat('%,', #{storeId}, ',%') or concat(',', store_id, ',')  like '%,ALL,%'
             </if>
 
             <if test="application != null and application != ''" >
