@@ -24,6 +24,9 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
     private BigDecimal clientPromotionPrice = BigDecimal.ZERO;
     @JsonProperty("salePrice")
     private BigDecimal retailPrice = BigDecimal.ZERO;
+    private String attribute1;
+    private String attribute2;
+    private String attribute3;
 
     public String getReservationId() {
         return reservationId;
@@ -115,6 +118,30 @@ public class SubOrderInfoBean extends AbstractSubOrderInfoBean {
     @JsonIgnore
     public void setRetailPrice(BigDecimal retailPrice) {
         this.retailPrice = retailPrice;
+    }
+
+    public String getAttribute1() {
+        return attribute1;
+    }
+
+    public void setAttribute1(String attribute1) {
+        this.attribute1 = attribute1;
+    }
+
+    public String getAttribute2() {
+        return attribute2;
+    }
+
+    public void setAttribute2(String attribute2) {
+        this.attribute2 = attribute2;
+    }
+
+    public String getAttribute3() {
+        return attribute3;
+    }
+
+    public void setAttribute3(String attribute3) {
+        this.attribute3 = attribute3;
     }
 
     // TODO: 16-7-7 暂未想好后续处理 未做订单信息验证 vantis

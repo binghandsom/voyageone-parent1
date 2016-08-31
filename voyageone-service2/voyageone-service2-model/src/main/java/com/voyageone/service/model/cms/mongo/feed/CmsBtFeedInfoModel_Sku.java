@@ -1,6 +1,8 @@
 package com.voyageone.service.model.cms.mongo.feed;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by james.li on 2015/11/27.
@@ -22,6 +24,7 @@ public class CmsBtFeedInfoModel_Sku {
     private String weightOrg;
     private String weightOrgUnit;
     private String weightCalc;
+    private Map<String, String> attribute = new HashMap<>();
     public Double getPriceCurrent() {
         return priceCurrent;
     }
@@ -152,4 +155,11 @@ public class CmsBtFeedInfoModel_Sku {
         this.weightCalc = weightCalc;
     }
 
+    public Map<String, String> getAttribute() {
+        return attribute;
+    }
+
+    public void setAttribute(Map<String, String> attribute) {
+        this.attribute = attribute;
+    }
 }

@@ -9,7 +9,6 @@ package com.voyageone.service.dao.vms;
 
 import com.voyageone.service.model.vms.VmsBtOrderLogModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository

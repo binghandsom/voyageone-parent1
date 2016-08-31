@@ -1,12 +1,16 @@
 package com.voyageone.web2.openapi.vms.service;
 
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.vms.order.OrderDetailService;
 import com.voyageone.service.impl.vms.shipment.ShipmentService;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.openapi.OpenApiBaseService;
@@ -35,6 +39,8 @@ public class VmsOrderService extends OpenApiBaseService {
     private OrderDetailService orderDetailService;
     @Autowired
     private ShipmentService shipmentService;
+    @Autowired
+    private FeedInfoService feedInfoService;
 
     public String getClassName() {
         return "VmsOrderService";
@@ -86,6 +92,7 @@ public class VmsOrderService extends OpenApiBaseService {
                 model.setStatus(VmsConstants.STATUS_VALUE.PRODUCT_STATUS.OPEN);
                 model.setCreater(getClassName());
                 model.setModifier(getClassName());
+                setDynamicAttribute((String) item.get("channelId"), (String) item.get("clientSku"), model);
                 orderDetailService.insertOrderInfo(model);
                 $info("addOrderInfo: reservationId = " + (String) item.get("reservationId") + ", channelId = " + (String) item.get("channelId"));
             }
@@ -93,6 +100,69 @@ public class VmsOrderService extends OpenApiBaseService {
 
         $info("/vms/order/addOrderInfo is end");
         return response;
+    }
+
+
+    /**
+     * 设定用户指定的动态Attribute
+     * @param channelId 渠道id
+     * @param clientSku SKU
+     * @param model VmsBtOrderDetailModel
+     *
+     */
+    private void setDynamicAttribute(String channelId, String clientSku,  VmsBtOrderDetailModel model) {
+        VmsChannelConfigBean vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(channelId,
+                VmsConstants.ChannelConfig.ADDITIONAL_ATTRIBUTES, VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
+        if (vmsChannelConfigBean != null) {
+            JongoQuery queryObject = new JongoQuery();
+            queryObject.setQuery("{\"skus.clientSku\":\"" + clientSku + "\"}");
+            List<CmsBtFeedInfoModel> feeds = feedInfoService.getList(channelId, queryObject);
+            if (feeds != null && feeds.size() > 0) {
+                String value = vmsChannelConfigBean.getConfigValue1();
+                String[] dynamicAttributes = value.split(",");
+                // 目前最多支持3个动态属性
+                int to = dynamicAttributes.length;
+                if (to > 3) {
+                    to = 3;
+                }
+                for (int i = 0; i < to; i++) {
+                    String attributeValue = "";
+                    String[] attributeGroup = dynamicAttributes[i].split("\\.");
+                    if (attributeGroup != null && attributeGroup.length == 2) {
+                        // 取得sku中Attribute的场合
+                        if ("sku".equals(attributeGroup[0].toLowerCase())) {
+                            CmsBtFeedInfoModel_Sku skuModel = null;
+                            for (CmsBtFeedInfoModel_Sku sku : feeds.get(0).getSkus()) {
+                                if (clientSku.equals(sku.getClientSku())) {
+                                    skuModel = sku;
+                                    break;
+                                }
+                            }
+                            if (skuModel != null && skuModel.getAttribute() != null) {
+                                attributeValue = skuModel.getAttribute().get(attributeGroup[1]);
+                            }
+                        } else {
+                            // 取得code中Attribute的场合
+                            if (feeds.get(0).getAttribute() != null) {
+                                List<String> attributeList = feeds.get(0).getAttribute().get(attributeGroup[1]);
+                                if (attributeList != null && attributeList.size() > 0) {
+                                    attributeValue = attributeList.get(0);
+                                }
+                            }
+                        }
+                    }
+                    if (StringUtils.isEmpty(attributeValue)) {
+                        if (i == 0) {
+                            model.setAttribute1(attributeValue);
+                        } else if (i == 1) {
+                            model.setAttribute2(attributeValue);
+                        } else if (i == 2) {
+                            model.setAttribute3(attributeValue);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
