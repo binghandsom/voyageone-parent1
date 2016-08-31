@@ -47,12 +47,19 @@ public class AdminOrgController extends AdminController {
 
         ComOrganizationModel model = new ComOrganizationModel();
 
-        BeanUtils.populate(model, requestBean);
+        Integer active =null;
+        try {
+            active = Integer.valueOf(requestBean.get("active").toString());
+        }
+        catch (Exception e)
+        {
+        }
+        String orgName = requestBean.get("orgName").toString();
 
         Integer  pageNum = (Integer) requestBean.getOrDefault("pageNum", 1);
         Integer  pageSize = (Integer) requestBean.getOrDefault("pageSize", DEFAULT_PAGE_SIZE);
 
-       PageModel<AdminOrgBean> result = adminOrgService.searchOrg(model, pageNum, pageSize );
+       PageModel<AdminOrgBean> result = adminOrgService.searchOrg(orgName, active, pageNum, pageSize );
 
         return success(result);
     }
