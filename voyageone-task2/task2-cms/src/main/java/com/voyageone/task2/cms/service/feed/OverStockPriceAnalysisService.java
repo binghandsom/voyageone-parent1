@@ -150,7 +150,7 @@ public class OverStockPriceAnalysisService extends BaseTaskService {
                         for (BaseMongoMap<String, Object> sku : cart.getSkus()) {
                             if (sku.getStringAttribute("skuCode").equalsIgnoreCase(cmsZzFeedOverstockPriceModel.getSkuCode())) {
                                 sku.setAttribute("priceSale", Double.parseDouble(cmsZzFeedOverstockPriceModel.getFinalRmbPrice()));
-                                productService.updateProductPlatform(OverStock.getId(), cmsBtProductModel.getProdId(), cart, getTaskName(), false, "价格导入");
+                                productService.updateProductPlatform(OverStock.getId(), cmsBtProductModel.getProdId(), cart, getTaskName(), false);
                                 break;
                             }
                         }
