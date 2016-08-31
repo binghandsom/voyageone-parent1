@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popSizeChartCtl', function ($scope, context, sizeChartService, imageGroupService) {
+    angularAMD.controller('popSizeChartCtl', function ($scope, context, sizeChartService, imageGroupService,$uibModalInstance) {
         $scope.vm = {
             saveInfo: {sizeChartName: "", brandNameList: [], productTypeList: [], sizeTypeList: []}
         };
@@ -22,6 +22,16 @@ define([
             imageGroupService.getNoMatchSizeImageGroupList().then(function (res) {
                 $scope.noMathOpt = res.data;
             });
+
+            if ($scope.dropdown.from === 'detail') {
+                var saveInfo = $scope.vm.saveInfo,
+                    dropdown = $scope.dropdown;
+
+                saveInfo.sizeChartName = dropdown.saveInfo.sizeChartName;
+                saveInfo.brandNameList = dropdown.saveInfo.brandName;
+                saveInfo.productTypeList = dropdown.saveInfo.productType;
+                saveInfo.sizeTypeList = dropdown.saveInfo.sizeType;
+            }
         };
 
         $scope.save = function () {
@@ -32,6 +42,11 @@ define([
                 upEntity = _.extend($scope.vm.saveInfo, _sizeChart);
             else
                 upEntity = _.extend($scope.vm.saveInfo, {imageGroupName: _sizeChart});
+
+            if($scope.dropdown.from === 'detail'){
+                $uibModalInstance.close(upEntity);
+                return;
+            }
 
             sizeChartService.editSave(upEntity).then(function () {
                 $scope.$close();

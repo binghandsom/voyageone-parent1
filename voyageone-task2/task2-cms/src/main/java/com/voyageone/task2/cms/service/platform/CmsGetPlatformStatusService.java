@@ -16,6 +16,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.components.jd.service.JdSaleService;
+import com.voyageone.components.jumei.service.JumeiSaleService;
 import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.task2.base.BaseTaskService;
@@ -44,6 +45,8 @@ public class CmsGetPlatformStatusService extends BaseTaskService {
     private TbSaleService tbSaleService;
     @Autowired
     private JdSaleService jdSaleService;
+    @Autowired
+    private JumeiSaleService jmSaleService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -201,6 +204,27 @@ public class CmsGetPlatformStatusService extends BaseTaskService {
 
             } else if (PlatFormEnums.PlatForm.JM.getId().equals(shopObj.getPlatform_id())) {
                 // 从聚美获取商品上下架状态
+                List<String> numIIdList = null;
+                int pageIdx = 1;
+                do {
+                    // 查询上架
+                    numIIdList = jmSaleService.getOnListProduct(channelId, cartIdStr, pageIdx, 50);
+                    pageIdx ++;
+                    if (numIIdList != null && numIIdList.size() > 0) {
+                        savePlatfromSts(channelId, cartId, numIIdList, CmsConstants.PlatformStatus.OnSale.name());
+                    }
+                } while (numIIdList != null && numIIdList.size() == 50);
+
+                pageIdx = 1;
+                do {
+                    // 查询下架
+                    numIIdList = jmSaleService.getDeListProduct(channelId, cartIdStr, pageIdx, 50);
+                    pageIdx ++;
+
+                    if (numIIdList != null && numIIdList.size() > 0) {
+                        savePlatfromSts(channelId, cartId, numIIdList, CmsConstants.PlatformStatus.InStock.name());
+                    }
+                } while (numIIdList != null && numIIdList.size() == 50);
 
             } else {
                 $warn("CmsGetPlatformStatusService 缺少店铺信息 未知平台 [ChannelId:%s] [CartId:%s]", channelId, cartId);
