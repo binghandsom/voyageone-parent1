@@ -36,7 +36,7 @@ public class AdminOrgServiceTest {
     @Test
     public void testSearchOrg() throws Exception {
 
-        System.out.println(JacksonUtil.bean2Json(adminOrgService.searchOrg(new ComOrganizationModel(), 1, 10)));
+        System.out.println(JacksonUtil.bean2Json(adminOrgService.searchOrg(null,null, 1, 10)));
     }
 
     @Test

@@ -371,7 +371,7 @@ public interface AdminUrlConstants {
 			String GET_ALL_ROLE = "getAllRole";
 
 			//for dropdown list options
-			String GET_ALL_ROLE_TYPE = "getAllRole";
+			String GET_ALL_ROLE_TYPE = "getAllRoleType";
 		}
 
 		/** 组织信息 */
