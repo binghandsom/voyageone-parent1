@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.sx;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.impl.cms.product.ProductService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,13 @@ public class SxProductServiceTest {
 
     @Autowired
     private SxProductService sxProductService;
+    @Autowired
+    private ProductService productService;
+
+    @Test
+    public void insertSxWorkLoadTest_WithProductModel() throws Exception {
+        sxProductService.insertSxWorkLoad(productService.getProductById("010", 5944), "tester");
+    }
 
     @Test
     public void insertSxWorkLoadTest() throws Exception {

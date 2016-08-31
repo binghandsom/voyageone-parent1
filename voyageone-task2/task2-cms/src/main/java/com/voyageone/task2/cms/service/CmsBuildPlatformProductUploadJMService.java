@@ -698,8 +698,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
             saveWorkload(work, WORK_LOAD_SUCCESS);
 
-            // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
-            sxProductService.clearBusinessLog(sxData, getTaskName());
+//            // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
+//            sxProductService.clearBusinessLog(sxData, getTaskName());
 
             $info("保存workload成功！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
 
@@ -737,8 +737,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             // 上新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
             productGroupService.updateUploadErrorStatus(sxData.getPlatform(), sxData.getErrorMessage());
 
-            // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
-            sxProductService.clearBusinessLog(sxData, getTaskName());
+//            // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
+//            sxProductService.clearBusinessLog(sxData, getTaskName());
+
+            // 插入错误消息
             sxProductService.insertBusinessLog(sxData, getTaskName());
             //保存workload
             saveWorkload(work, WORK_LOAD_FAIL);
