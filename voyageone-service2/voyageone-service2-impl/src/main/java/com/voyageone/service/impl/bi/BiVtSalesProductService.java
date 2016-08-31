@@ -68,4 +68,11 @@ public class BiVtSalesProductService extends BaseService {
         return result;
     }
 
+    public void deleteDatas(String tableTitleName, Map<String, Object> dataKeyMap) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("tableTitleName", tableTitleName);
+        param.putAll(dataKeyMap);
+        vtSalesExt.deleteWithList(param);
+    }
+
 }
