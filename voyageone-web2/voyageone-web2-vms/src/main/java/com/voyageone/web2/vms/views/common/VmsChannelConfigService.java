@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.configs.dao.VmsChannelConfigDao;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
 import com.voyageone.web2.vms.bean.VmsChannelSettingBean;
@@ -74,7 +75,17 @@ public class VmsChannelConfigService {
                     // 按点分割一个属性
                     String[] contents = attributeKey1.split("\\.");
                     if (contents != null && contents.length == 2) {
-                        attributeKeysList.add(contents[1]);
+                        // 首字母大写
+                        String title = contents[1];
+                        if (!StringUtils.isEmpty(title)) {
+                            if (title.length() == 1) {
+                                title = title.toUpperCase();
+                            } else {
+                                title = title.substring(0, 1).toUpperCase()
+                                        .concat(title.substring(1).toLowerCase());
+                            }
+                        }
+                        attributeKeysList.add(title);
                     }
                 }
             }

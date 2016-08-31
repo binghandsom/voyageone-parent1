@@ -189,28 +189,6 @@ define([
             return currentStatus.name;
         };
 
-        OrderInfoController.prototype.getAttributeKey = function (attribute) {
-            return attribute.replace(/(\w)/,function(v){return v.toUpperCase()});
-        };
-
-        OrderInfoController.prototype.getAttributeClass = function (index) {
-            if (this.channelConfig.additionalAttributesClass[index]) {
-                return this.channelConfig.additionalAttributesClass[index];
-            } else {
-                return "td-1";
-            }
-        };
-
-        OrderInfoController.prototype.getAttributeValue = function (deteail, index) {
-           if (index == 0) {
-               return deteail.attribute1;
-           } else if (index == 1) {
-               return deteail.attribute2;
-           } else if (index == 2) {
-               return deteail.attribute3;
-           }
-        };
-
         OrderInfoController.prototype.popShipment = function (type) {
             var self = this;
             //1:Open；3：Shipped；4：Arrived；5：Recevied；6：Receive with Error
