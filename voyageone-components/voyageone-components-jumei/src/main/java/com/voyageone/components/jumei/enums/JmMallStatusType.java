@@ -7,8 +7,8 @@ package com.voyageone.components.jumei.enums;
  * @version 2.5.0
  */
 public enum JmMallStatusType {
-    ToInStock("display"),          // 下架
-    ToOnSale("hidden"),         // 上架
+    ToInStock("hidden"),       // 下架
+    ToOnSale("display"),       // 上架
     ;
 
     private String val;
