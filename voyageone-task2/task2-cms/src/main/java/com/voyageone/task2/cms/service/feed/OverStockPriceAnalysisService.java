@@ -133,6 +133,7 @@ public class OverStockPriceAnalysisService extends BaseTaskService {
 
     private void updateMastPrice(CmsZzFeedOverstockPriceModel cmsZzFeedOverstockPriceModel) {
         CmsBtProductModel cmsBtProductModel = productService.getProductBySku(OverStock.getId(), cmsZzFeedOverstockPriceModel.getSkuCode());
+        $info("code:"+cmsBtProductModel.getCommon().getFields().getCode());
         if (cmsBtProductModel != null) {
             CmsBtProductModel_Common common = cmsBtProductModel.getCommon();
             for (CmsBtProductModel_Sku sku : common.getSkus()) {
