@@ -3,12 +3,15 @@ package com.voyageone.components.jumei;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.components.jumei.bean.HtMallUpdateInfo;
-import com.voyageone.components.jumei.reponse.*;
-import com.voyageone.components.jumei.request.*;
+import com.voyageone.components.jumei.reponse.HtMallAddResponse;
+import com.voyageone.components.jumei.reponse.HtMallSkuPriceUpdateResponse;
+import com.voyageone.components.jumei.reponse.HtMallUpdateResponse;
+import com.voyageone.components.jumei.request.HtMallAddRequest;
+import com.voyageone.components.jumei.request.HtMallSkuPriceUpdateRequest;
+import com.voyageone.components.jumei.request.HtMallUpdateRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 聚美商城
