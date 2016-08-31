@@ -46,7 +46,9 @@
         UPDATE voyageone_vms.vms_mt_channel_config
         SET config_value1 = #{configValue1, jdbcType=VARCHAR},
             config_value2 = #{configValue2, jdbcType=VARCHAR},
-            config_value3 = #{configValue3, jdbcType=VARCHAR}
+            config_value3 = #{configValue3, jdbcType=VARCHAR},
+            modified = now(),
+            modifier = #{modifier, jdbcType=VARCHAR}
         WHERE channel_id = #{channelId, jdbcType=VARCHAR}
               AND config_key = #{configKey, jdbcType=VARCHAR}
               AND config_code = #{configCode, jdbcType=VARCHAR}

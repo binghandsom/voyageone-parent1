@@ -42,11 +42,11 @@ define([
                 consolidationOrderId: "",
                 sku: "",
                 orderDateFrom: "",
-                orderDateTo: ""
-            };
-
-            this.downloadInfo = {
-                orderType: 'client_sku'
+                orderDateTo: "",
+                sortParamBean: {
+                    columnName: "consolidation_order_time",
+                    direction: "ASC"
+                }
             };
 
             this.channelConfig = {
@@ -74,22 +74,7 @@ define([
 
         OrderInfoController.prototype.search = function () {
             var self = this;
-            if (self.orderDateFrom === undefined || self.orderDateTo === undefined) {
-                self.alert("TXT_PLEASE_INPUT_A_VALID_DATE");
-                return;
-            } else if (self.orderDateFrom) {
-                self.searchInfo.orderDateFrom = self.orderDateFrom;
-            } else self.searchInfo.orderDateFrom = undefined;
-            if (self.orderDateTo) {
-                var date = angular.copy(self.orderDateTo);
-                date.setDate(date.getDate() + 1);
-                self.searchInfo.orderDateTo = date;
-            } else {
-                self.searchInfo.orderDateTo = undefined;
-            }
-
-            self.searchInfo.curr = self.pageInfo.curr;
-            self.searchInfo.size = self.pageInfo.size;
+            self.manageSearchInfo();
             self.orderInfoService.search(self.searchInfo).then(function (data) {
                 self.pageInfo.total = data.orderInfo.total;
                 self.data = data.orderInfo.orderList.map(function (item) {
@@ -147,8 +132,8 @@ define([
 
         OrderInfoController.prototype.downloadPickingList = function () {
             var self = this;
-            // todo 这里没有做session验证,需要加回调 vantis
-            $.download.post('/vms/order/order_info/downloadPickingList', {"orderType": self.downloadInfo.orderType}, self.afterDownload, self);
+            self.manageSearchInfo();
+            $.download.post('/vms/order/order_info/downloadPickingList', {"searchInfo": JSON.stringify(self.searchInfo)}, self.afterDownload, self);
         };
 
         OrderInfoController.prototype.afterDownload = function (responseContent, param, context) {
@@ -226,6 +211,38 @@ define([
             popupWin.document.close();
             popupWin.print();
             popupWin.close();
+        };
+
+        OrderInfoController.prototype.manageSearchInfo = function () {
+            var self = this;
+            if (self.orderDateFrom === undefined || self.orderDateTo === undefined) {
+                self.alert("TXT_PLEASE_INPUT_A_VALID_DATE");
+                return;
+            } else if (self.orderDateFrom) {
+                self.searchInfo.orderDateFrom = self.orderDateFrom;
+            } else self.searchInfo.orderDateFrom = undefined;
+            if (self.orderDateTo) {
+                var date = angular.copy(self.orderDateTo);
+                date.setDate(date.getDate() + 1);
+                self.searchInfo.orderDateTo = date;
+            } else {
+                self.searchInfo.orderDateTo = undefined;
+            }
+            self.searchInfo.curr = self.pageInfo.curr;
+            self.searchInfo.size = self.pageInfo.size;
+        };
+
+        OrderInfoController.prototype.changeSearchOrder = function (columnName) {
+            var self = this;
+            if (columnName == self.searchInfo.sortParamBean.columnName) {
+                if ('ASC' == self.searchInfo.sortParamBean.direction)
+                    self.searchInfo.sortParamBean.direction = 'DESC';
+                else self.searchInfo.sortParamBean.direction = 'ASC';
+            } else {
+                self.searchInfo.sortParamBean.columnName = columnName;
+                self.searchInfo.sortParamBean.direction = 'ASC';
+            }
+            self.search();
         };
 
         return OrderInfoController;

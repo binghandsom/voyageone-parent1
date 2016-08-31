@@ -115,6 +115,7 @@ define(function () {
         "TXT_NAMING_CONVERTER": "Shipment Naming Converter",
         "TXT_EMAIL_ADDRESS": "E-mail Address",
         "TXT_DEMO": "Demo",
+        "TXT_FAILED_TRY_AGAIN": "Failed, please try again.",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
@@ -142,6 +143,7 @@ define(function () {
         "BTN_PRINT": "PRINT",
         "BTN_TEST": "TEST",
         "BTN_SAVE": "SAVE",
-        "BTN_PREVIEW": "PREVIEW"
+        "BTN_PREVIEW": "PREVIEW",
+        "BTN_DOWNLOAD": "DOWNLOAD"
     }
 });

@@ -37,10 +37,10 @@ define([
         VendorSettingsController.prototype.save = function () {
             var self = this;
             self.vendorSettingsService.save(self.channelConfig).then(function (data) {
-                if (data.success > 0) {
-                    //todo
+                if (data.success >= 3) {
+                    self.notify.success('TXT_SUCCESS');
                 } else {
-                    //todo
+                    self.alert('TXT_FAILED_TRY_AGAIN');
                 }
                 self.init();
             })

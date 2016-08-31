@@ -1,5 +1,8 @@
 package com.voyageone.web2.vms.views.order;
 
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.MapUtil;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.vms.bean.order.DownloadInfoBean;
@@ -58,7 +61,8 @@ public class VmsOrderInfoController extends BaseController {
         Map<String, Object> orderInfo = new HashMap<>();
         Date date = new Date();
         orderInfo.put("orderInfo", vmsOrderInfoService.getOrderInfo(this.getUser(), orderSearchInfoBean));
-        $debug("this action takes totally " + String.valueOf(new Date().getTime() - date.getTime()) + " milliseconds.");
+        $debug("this action: /vms/order/order_info/search takes totally "
+                + String.valueOf(new Date().getTime() - date.getTime()) + " milliseconds.");
         return success(orderInfo);
     }
 
@@ -80,9 +84,9 @@ public class VmsOrderInfoController extends BaseController {
     @RequestMapping(ORDER.ORDER_INFO.DOWNLOAD_PICKING_LIST)
     public ResponseEntity<byte[]> downloadPickingList(@RequestParam Map<String, Object> downloadParams) throws
             IOException {
-        DownloadInfoBean downloadInfoBean = new DownloadInfoBean();
-        downloadInfoBean.setOrderType(downloadParams.get("orderType").toString());
+        OrderSearchInfoBean orderSearchInfoBean = JacksonUtil.json2Bean(downloadParams.get("searchInfo").toString(),
+                OrderSearchInfoBean.class);
         return genResponseEntityFromBytes(PICKING_LIST + new Date().getTime() + XLSX,
-                vmsOrderInfoService.getExcelBytes(this.getUser(), downloadInfoBean));
+                vmsOrderInfoService.getExcelBytes(this.getUser(), orderSearchInfoBean));
     }
 }

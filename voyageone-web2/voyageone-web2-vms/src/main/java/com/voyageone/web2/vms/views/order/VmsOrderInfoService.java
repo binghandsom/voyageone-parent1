@@ -91,10 +91,15 @@ public class VmsOrderInfoService extends BaseService {
      */
     public OrderInfoBean getOrderInfo(UserSessionBean user, OrderSearchInfoBean orderSearchInfoBean) {
         SortParamBean sortParamBean = new SortParamBean();
-        sortParamBean.setColumnName(CONSOLIDATION_ORDER_TIME);
-        sortParamBean.setDirection((null != orderSearchInfoBean.getStatus()
-                && orderSearchInfoBean.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN) ?
-                Order.Direction.ASC : Order.Direction.DESC));
+        if (null == orderSearchInfoBean.getSortParamBean()) {
+            sortParamBean.setColumnName(CONSOLIDATION_ORDER_TIME);
+            sortParamBean.setDirection((null != orderSearchInfoBean.getStatus()
+                    && orderSearchInfoBean.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN) ?
+                    Order.Direction.ASC : Order.Direction.DESC));
+        } else {
+            sortParamBean.setColumnName(orderSearchInfoBean.getSortParamBean().getColumnName());
+            sortParamBean.setDirection(orderSearchInfoBean.getSortParamBean().getDirection());
+        }
         OrderInfoBean orderInfoBean = new OrderInfoBean();
         orderInfoBean.setTotal(this.getTotalOrderNum(user, orderSearchInfoBean, sortParamBean));
         orderInfoBean.setOrderList(this.getOrders(user, orderSearchInfoBean, sortParamBean));
@@ -161,28 +166,33 @@ public class VmsOrderInfoService extends BaseService {
     /**
      * 生成下载Excel拣货单
      *
-     * @param user             当前用户
-     * @param downloadInfoBean 下载信息(排序信息)
+     * @param user                当前用户
+     * @param orderSearchInfoBean 搜索信息
      * @return 拣货单Excel
      * @throws IOException
      */
-    public byte[] getExcelBytes(UserSessionBean user, DownloadInfoBean downloadInfoBean) throws IOException {
+    public byte[] getExcelBytes(UserSessionBean user, OrderSearchInfoBean orderSearchInfoBean) throws IOException {
 
+        List<VmsBtOrderDetailModel> orderDetailList;
         // 搜索条件
-        Map<String, Object> selectParams = new HashMap<String, Object>() {{
-            put("channelId", user.getSelChannel().getId());
-            put("status", STATUS_VALUE.PRODUCT_STATUS.OPEN);
-        }};
+        Map<String, Object> selectParams = new HashMap<>();
+        selectParams.put("channelId", user.getSelChannelId());
+        selectParams.put("status", orderSearchInfoBean.getStatus());
+        selectParams.put("orderDateFrom", orderSearchInfoBean.getOrderDateFrom());
+        selectParams.put("orderDateTo", orderSearchInfoBean.getOrderDateTo());
 
-        $debug("Getting pickingList data...");
-        Map<String, Object> sortedSelectParams = MySqlPageHelper.build(selectParams)
-                .addSort(downloadInfoBean.getOrderType(), Order.Direction.ASC)
-                .toMap();
+        if (null != orderSearchInfoBean.getSortParamBean()) {
+            selectParams = MySqlPageHelper.build(selectParams)
+                    .addSort(orderSearchInfoBean.getSortParamBean().getColumnName(),
+                            orderSearchInfoBean.getSortParamBean().getDirection())
+                    .toMap();
+        } else {
+            selectParams = MySqlPageHelper.build(selectParams)
+                    .addSort("client_sku", Order.Direction.ASC)
+                    .toMap();
+        }
 
-        // 获取订单信息
-        List<VmsBtOrderDetailModel> orderDetailList =
-                orderDetailService.select(sortedSelectParams);
-        $debug("pickingList data: " + orderDetailList.size() + " in total.");
+        orderDetailList = orderDetailService.select(selectParams);
 
         // 生成Excel
         $debug("Creating Excel...");
@@ -224,12 +234,6 @@ public class VmsOrderInfoService extends BaseService {
         int skuCellNumber = 0;
         int descriptionCellNumber = 1;
         int orderIdCellNumber = 2;
-
-        // 设置内容
-        if (PICKING_LIST_ORDER_TYPE.ORDER.equals(downloadInfoBean.getOrderType())) {
-            skuCellNumber = 2;
-            orderIdCellNumber = 0;
-        }
 
         Cell titleRowCell0 = titleRow.createCell(skuCellNumber);
         titleRowCell0.setCellValue("SKU");
