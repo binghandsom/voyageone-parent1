@@ -108,7 +108,7 @@ public class CmsSizeChartService extends BaseAppService {
         //取得自增键
         long imageGroupId = ConvertUtil.toLong(param.get("imageGroupId"));
         int sizeChartId = ConvertUtil.toInt(param.get("sizeChartId"));
-        boolean   isDelImageGroup = ConvertUtil.toBoolean(param.get("  isDelImageGroup "));
+        boolean   isDelImageGroup = ConvertUtil.toBoolean(param.get("isDelImageGroup"));
 
         if (imageGroupId > 0) {
             cmsBtSizeChartImageGroupService.delete(channelId, sizeChartId, imageGroupId);

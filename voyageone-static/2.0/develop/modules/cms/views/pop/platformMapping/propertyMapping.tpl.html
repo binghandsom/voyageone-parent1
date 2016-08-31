@@ -51,7 +51,7 @@
                             <td class="mfb-xt text-center">{{ctrl.TYPE[item.type]}}</td>
                             <td class="mfb-xt text-center">{{ctrl.formatValue(item)}}</td>
                             <td class="mfb-xxt text-center">
-                                    <label>
+                                    <label ng-if="ctrl.isMultiLine">
                                         <input name="{{item.$id}}" type="radio" value="<br>" ng-model="item.append">&nbsp;换行
                                     </label>&nbsp;
                                     <label>

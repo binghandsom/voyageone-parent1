@@ -11,9 +11,8 @@ define([
 ], function (cms) {
     cms.controller('attributeDetailController', (function () {
 
-        function AttributeDetailController($routeParams, alert, notify, popups, menuService, $sessionStorage,
-                                           $localStorage, $productDetailService, platformMappingService) {
-
+        function AttributeDetailController($scope, $routeParams, alert, notify, popups, menuService,
+                                           $productDetailService, platformMappingService) {
             var self = this;
 
             self.platformMappingFrontId = $routeParams.upEntity;
@@ -22,35 +21,49 @@ define([
             self.$productDetailService = $productDetailService;
             self.platformMappingService = platformMappingService;
             self.menuService = menuService;
-            self.$sessionStorage = $sessionStorage;
-            self.$localStorage = $localStorage;
+            self.$scope = $scope;
             self.alert = alert;
         }
 
         AttributeDetailController.prototype.init = function () {
 
             var self = this,
-                menuService = self.menuService,
-                $sessionStorage = self.$sessionStorage,
-                $localStorage = self.$localStorage,
-                platformMappingFrontId = self.platformMappingFrontId,
-                alert = self.alert;
+                platformMappingFrontId = self.platformMappingFrontId;
 
-            var platformMapping = $localStorage[platformMappingFrontId];
-
-            if (platformMapping) {
-                $sessionStorage[platformMappingFrontId] = platformMapping;
-                delete $localStorage[platformMappingFrontId];
-            } else {
-                platformMapping = $sessionStorage[platformMappingFrontId];
+            // 没有就直接加载
+            if (!platformMappingFrontId) {
+                self.searchInfo = {};
+                self.loadCartListAndTryGet();
+                return;
             }
 
-            if (platformMappingFrontId && !platformMapping)
-                alert("没有找到你要编辑的内容, 将进行新建操作");
+            // 否则, 需要去 local storage 里加载数据
+            // 如果没有, 需要去 session 里加载
+            // 如果有, 需要把数据转移到 session 中
+            // 如果最终都没有, 就直接尝试加载
+            var platformMapping, platformMappingJson = localStorage.getItem(platformMappingFrontId);
 
-            self.searchInfo = platformMapping || {};
+            if (platformMappingJson) {
+                sessionStorage.setItem(platformMappingFrontId, platformMappingJson);
+                localStorage.removeItem(platformMappingFrontId);
+                platformMapping = angular.fromJson(platformMappingJson);
+            } else {
+                platformMappingJson = sessionStorage.getItem(platformMappingFrontId);
+                platformMapping = angular.fromJson(platformMappingJson);
+            }
+
+            self.searchInfo = platformMapping;
+
+            self.loadCartListAndTryGet();
+        };
+
+        AttributeDetailController.prototype.loadCartListAndTryGet = function () {
+
+            var self = this,
+                menuService = self.menuService;
 
             menuService.getPlatformType().then(function (resp) {
+                // 过滤并转换加载的数据, 以便不修改原始数据
                 self.platformTypes = _.map(resp, function (cart) {
                     return {name: cart.name, value: +cart.value};
                 }).filter(function (cart) {

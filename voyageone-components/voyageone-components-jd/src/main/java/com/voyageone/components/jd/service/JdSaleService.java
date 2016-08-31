@@ -25,7 +25,7 @@ import java.util.List;
 public class JdSaleService extends JdBase {
 
     /**
-     * 获取上架/在售状态的产品列表(上架时间在前一天)
+     * 获取上架/在售状态的产品列表(目前获取所有时间段，不作过滤，不考虑优化，下同)
      * 只返回 ware_id (即num_iid)
      */
     public List<Ware> getOnListProduct(String strOrderChannelId, String strCardId, String strPageIndex, String pageSize) throws JdException {
@@ -35,8 +35,8 @@ public class JdSaleService extends JdBase {
         request.setPage(strPageIndex);
         request.setPageSize(pageSize);
         request.setFields("ware_id");
-        request.setStartModified(DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00");
-        request.setEndModified(DateTimeUtil.format(DateTimeUtilBeijing.getCurrentBeiJingDate(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+//        request.setStartModified(DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00");
+//        request.setEndModified(DateTimeUtil.format(DateTimeUtilBeijing.getCurrentBeiJingDate(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
 
         WareListingGetResponse response = reqApi(shopInfo, request);
         if (response == null) {
@@ -48,7 +48,7 @@ public class JdSaleService extends JdBase {
     }
 
     /**
-     * 获取下架/在库状态的产品列表(下架时间在前一天)
+     * 获取下架/在库状态的产品列表
      * 只返回wareId(即num_iid)
      */
     public List<Ware> getDeListProduct(String strOrderChannelId, String strCardId, String strPageIndex, String pageSize) throws JdException {
@@ -58,8 +58,8 @@ public class JdSaleService extends JdBase {
         request.setPage(strPageIndex);
         request.setPageSize(pageSize);
         request.setFields("ware_id");
-        request.setStartModified(DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00");
-        request.setEndModified(DateTimeUtil.format(DateTimeUtilBeijing.getCurrentBeiJingDate(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+//        request.setStartModified(DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00");
+//        request.setEndModified(DateTimeUtil.format(DateTimeUtilBeijing.getCurrentBeiJingDate(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
 
         WareDelistingGetResponse response = reqApi(shopInfo, request);
         if (response == null) {

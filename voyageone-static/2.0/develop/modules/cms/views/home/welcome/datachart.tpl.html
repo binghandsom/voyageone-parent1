@@ -100,7 +100,7 @@
                 </div>
             </div>
             <div class="col-sm-12">
-                <div class="col-sm-4">
+                <div class="col-sm-5">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;指导售价变化状态</h3>
@@ -116,6 +116,7 @@
                                                 <th class="mfb-xxt text-center">无法计算</th>
                                                 <th class="mfb-xxt text-center">指导售价涨价数</th>
                                                 <th class="mfb-xxt text-center">指导售价降价数</th>
+                                                <th class="mfb-xxx text-center">比中国建议零售价高数</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -124,6 +125,7 @@
                                                 <td class=" mfb-xxt text-center"><a ng-click="goSearchPage(180,{cartId:m.CMS_PLATFORM_priceSale_Equal_minus1.cartId,priceType:'priceRetail',priceStart:-1,priceEnd:-1})">{{m.CMS_PLATFORM_priceSale_Equal_minus1.amountVal}}</a></td>
                                                 <td class="mfb-xxt text-center"><a ng-click="goSearchPage(20,{cartId:m.CMS_PLATFORM_Retail_Price_DOWN.cartId,priceChgFlg:'U'})">{{m.CMS_PLATFORM_Retail_Price_UP.amountVal}}</a></td>
                                                 <td class="mfb-xxt text-center"><a ng-click="goSearchPage(20,{cartId:m.CMS_PLATFORM_Retail_Price_DOWN.cartId,priceChgFlg:'D'})">{{m.CMS_PLATFORM_Retail_Price_DOWN.amountVal}}</a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="goSearchPage(20,{cartId:m.CMS_PLATFORM_MSRP_LESS_THAN_RETAIL_PRICE.cartId,priceChgFlg:'XU'})">{{m.CMS_PLATFORM_MSRP_LESS_THAN_RETAIL_PRICE.amountVal}}</a></td>
                                             </tr>
                                             </tbody>
                                         </table>
