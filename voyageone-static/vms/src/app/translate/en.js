@@ -116,6 +116,7 @@ define(function () {
         "TXT_EMAIL_ADDRESS": "E-mail Address",
         "TXT_DEMO": "Demo",
         "TXT_FAILED_TRY_AGAIN": "Failed, please try again.",
+        "TXT_ORDER_BY": "Order by: ",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",

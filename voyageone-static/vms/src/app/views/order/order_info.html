@@ -47,7 +47,7 @@
     <div class="row margin-bottom-10">
         <div class="col-sm-6">
             <button ng-if="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('new')" translate="BTN_NEW_SHIPMENT"></button>
-            <button ng-if="ctrl.currentShipment && ctrl.channelConfigs.vendorOperateType == 'ORDER'" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('end')" translate="BTN_END_SHIPMENT"></button>
+            <button ng-if="ctrl.currentShipment && ctrl.channelConfig.vendorOperateType == 'ORDER'" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('end')" translate="BTN_END_SHIPMENT"></button>
             <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
                 <a ng-if="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
                 <label ng-if="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
@@ -56,6 +56,12 @@
         </div>
         <div class="col-sm-6" ng-if="!(ctrl.channelConfig.vendorOperateType == 'ORDER')"></div>
         <div class="col-sm-6 text-right form-inline">
+            <label class="control-label" translate="TXT_ORDER_BY"></label>
+            <select id="select_order" class="form-control" ng-model="ctrl.sortParamBeanForDownload.columnName" ng-if="ctrl.channelConfig.vendorOperateType == 'ORDER'">
+                <option value="client_sku" translate="TXT_SKU"></option>
+                <option value="consolidation_order_id" translate="TXT_ORDER_ID"></option>
+                <option ng-attr-value="{{'attribute' + ($index + 1)}}" ng-repeat="value in ctrl.channelConfig.additionalAttributes">{{value}} </option>
+            </select>
             <button class="btn btn-primary btn-sm" ng-click="ctrl.downloadPickingList()" translate="BTN_DOWNLOAD"></button>
         </div>
     </div>

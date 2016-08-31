@@ -49,6 +49,11 @@ define([
                 }
             };
 
+            this.sortParamBeanForDownload  = {
+                columnName: "consolidation_order_id",
+                direction: "ASC"
+            };
+
             this.channelConfig = {
                 vendorOperateType: 'SKU'
             };
@@ -142,7 +147,10 @@ define([
         OrderInfoController.prototype.downloadPickingList = function () {
             var self = this;
             self.manageSearchInfo();
-            $.download.post('/vms/order/order_info/downloadPickingList', {"searchInfo": JSON.stringify(self.searchInfo)}, self.afterDownload, self);
+            var req = angular.copy(self.searchInfo);
+            if ('ORDER' == self.channelConfig.vendorOperateType)
+                req.sortParamBean = self.sortParamBeanForDownload;
+            $.download.post('/vms/order/order_info/downloadPickingList', {"searchInfo": JSON.stringify(req)}, self.afterDownload, self);
         };
 
         OrderInfoController.prototype.afterDownload = function (responseContent, param, context) {
