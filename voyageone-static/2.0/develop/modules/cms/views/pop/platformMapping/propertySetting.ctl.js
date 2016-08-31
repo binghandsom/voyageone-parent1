@@ -89,8 +89,8 @@ define(function (require) {
                     return;
                 }
 
-                if (self.cat !== "FIXED" && !self.value) {
-                    self.alert("全数据属性名称 没有选择!");
+                if (!self.value) {
+                    self.alert("没有选择属性, 或没有填写固定值!");
                     return;
                 }
 
