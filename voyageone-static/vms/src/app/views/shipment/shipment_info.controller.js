@@ -37,7 +37,7 @@ define([
             var self = this;
             self.shipmentInfoService.init().then(function (data) {
                 self.shipmentStatusList = data.shipmentStatusList;
-                self.channelConfigs = data.channelConfigs;
+                self.channelConfig = data.channelConfig;
                 var sessionSearchInfo = JSON.parse(sessionStorage.getItem('shipmentSearchInfo'));
                 if (sessionSearchInfo) {
                     self.searchInfo = sessionSearchInfo;

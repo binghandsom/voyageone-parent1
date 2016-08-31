@@ -8,6 +8,8 @@ public class VmsChannelSettingBean {
     private String vendorOperateType;
     private String salePriceShow = "0";
     private String defaultDeliveryCompany;
+    private String namingConverter;
+    private String emailAddress;
 
     public String getVendorOperateType() {
         return vendorOperateType;
@@ -31,5 +33,21 @@ public class VmsChannelSettingBean {
 
     public void setDefaultDeliveryCompany(String defaultDeliveryCompany) {
         this.defaultDeliveryCompany = defaultDeliveryCompany;
+    }
+
+    public String getNamingConverter() {
+        return namingConverter;
+    }
+
+    public void setNamingConverter(String namingConverter) {
+        this.namingConverter = namingConverter;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 }
