@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.com.store;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +39,8 @@ public class StoreService extends BaseService {
 	@Autowired
 	private WmsMtStoreDaoExt storeDaoExt;
 
-	public List<WmsMtStoreModel> getAllStore() {
-		return storeDao.selectList(Collections.emptyMap());
+	public List<WmsMtStoreBean> getAllStore(String channelId) {
+		return storeDaoExt.selecAllStore(channelId);
 	}
 	
 	public List<WmsMtStoreBean> searchStoreAndConfigByChannelId(String channelId) {

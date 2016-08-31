@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.NewShopBean;
 import com.voyageone.service.impl.com.newshop.NewShopService;
+import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.model.com.TmNewShopDataModel;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.newshop.NewShopFormBean;
@@ -56,8 +58,21 @@ public class NewShopController extends AdminController {
 	
 	@RequestMapping(AdminUrlConstants.NewShop.Self.SEARCH_NEW_SHOP_BY_PAGE)
 	public AjaxResponse searchNewShopByPage(@RequestBody NewShopFormBean form) {
-		return success(true);
-	}	
+		// 验证参数
+		Preconditions.checkNotNull(form.getPageNum());
+		Preconditions.checkNotNull(form.getPageSize());
+		// 检索短信配置信息
+		PageModel<TmNewShopDataModel> smsConfigPage = newShopService.searchNewShopByPage(form.getChannelId(),
+				form.getChannelName(), form.getModifiedFrom(), form.getModifiedTo(),
+				form.getPageNum(), form.getPageSize());
+		
+		return success(smsConfigPage);
+	}
+	
+	@RequestMapping(AdminUrlConstants.NewShop.Self.GET_NEW_SHOP_BY_ID)
+	public AjaxResponse getNewShopById(@RequestBody Long newShopId) {
+		return success(newShopService.getNewShopById(newShopId));
+	}
 	
 	@RequestMapping(AdminUrlConstants.NewShop.Self.DELETE_NEW_SHOP)
 	public AjaxResponse deleteNewShop(@RequestBody Long newShopId) {

@@ -3,6 +3,7 @@ package com.voyageone.service.daoext.com;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.voyageone.service.bean.com.CtStoreConfigBean;
@@ -24,6 +25,8 @@ public interface WmsMtStoreDaoExt {
 	List<CtStoreConfigBean> selectStoreConfigByPage(Map<String, Object> params);
 
 	List<String> selectIdsByChannel(List<String> ids);
+
+	List<WmsMtStoreBean> selecAllStore(@Param("orderChannelId") String channelId);
 
 
 }

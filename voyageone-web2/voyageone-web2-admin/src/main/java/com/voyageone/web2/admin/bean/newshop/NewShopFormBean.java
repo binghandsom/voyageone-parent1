@@ -11,12 +11,13 @@ import com.voyageone.service.bean.com.TmChannelShopBean;
 import com.voyageone.service.bean.com.TmOrderChannelBean;
 import com.voyageone.service.bean.com.TmSmsConfigBean;
 import com.voyageone.service.bean.com.WmsMtStoreBean;
+import com.voyageone.web2.admin.bean.AdminFormBean;
 
 /**
  * @author Wangtd
  * @since 2.0.0 2016/8/29
  */
-public class NewShopFormBean {
+public class NewShopFormBean extends AdminFormBean {
 	
 	private Long id;
 	

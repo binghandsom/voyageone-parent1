@@ -9,6 +9,13 @@ public interface AdminProperty {
 	interface Props {
 		
 		String ADMIN_SQL_PATH = "admin.sql.path";
+		
+	}
+	
+	interface Tpls {
+		
+		String PROC_NEW_SHOP_SQL = "proc_new_shop_sql.ftl";
+		
 	}
 
 }

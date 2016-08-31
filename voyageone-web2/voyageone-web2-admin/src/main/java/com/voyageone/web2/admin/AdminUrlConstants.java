@@ -310,6 +310,8 @@ public interface AdminUrlConstants {
 			String DELETE_NEW_SHOP = "deleteNewShop";
 
 			String SEARCH_NEW_SHOP_BY_PAGE = "searchNewShopByPage";
+
+			String GET_NEW_SHOP_BY_ID = "getNewShopById";
 			
 		}
 		
