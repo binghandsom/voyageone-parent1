@@ -54,6 +54,7 @@ define([
                 });
                 self.adminRoleService.init().then(function (res) {
                     self.adminRoleList = res.data.result;
+                    self.storePageOption.total = res.data.count;
                     // 设置勾选框
                     if (self.tempSelect == null) {
                         self.tempSelect = new self.selectRowsFactory();

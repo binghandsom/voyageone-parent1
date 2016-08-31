@@ -55,6 +55,7 @@ define([
                 });
                 self.adminUserService.init().then(function (res) {
                     self.adminList = res.data.result;
+                    self.pageOption.total = res.data.count;
                     // 设置勾选框
                     if (self.tempSelect == null) {
                         self.tempSelect = new self.selectRowsFactory();
