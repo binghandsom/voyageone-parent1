@@ -112,6 +112,18 @@ define(function () {
             "templateUrl": "views/systemManagement/codeAttr.tpl.html",
             "controllerUrl": "modules/admin/views/systemManagement/codeAttr.ctl",
             "controller": "CodeAttributeController as ctrl"
+        },//系统配置管理
+        "logLoginConfig": {
+            "hash": "/log/loginLog",
+            "templateUrl": "views/log/loginLog/index.tpl.html",
+            "controllerUrl": "modules/admin/views/log/loginLog/index.ctl",
+            "controller": "LoginLogManagementController as ctrl"
+        },//操作日志
+        "logCActionConfig": {
+            "hash": "/log/actionLog",
+            "templateUrl": "views/log/actionLog/index.tpl.html",
+            "controllerUrl": "modules/admin/views/log/actionLog/index.ctl",
+            "controller": "ActionLogManagementController as ctrl"
         }
     };
 });

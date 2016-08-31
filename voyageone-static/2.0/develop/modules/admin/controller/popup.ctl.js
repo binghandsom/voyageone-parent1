@@ -136,6 +136,13 @@ define([
             "controller": 'AddCodeController as ctrl',
             "size": 'md'
         },
+
+        "logDetail": {
+            "templateUrl": "views/pop/viewLog/index.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/viewLog/index.ctl",
+            "controller": 'ViewLogController as ctrl',
+            "size": 'lg'
+        }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
         function openModal(config, context, contextIsResolve) {
 
@@ -266,7 +273,6 @@ define([
             return openModal(popActions.addTask, context);
         };
 
-
         /**
          * 打开系统配置页面--类型信息页面的添加页面
          */
@@ -284,6 +290,12 @@ define([
          */
         $scope.openTypeCode = function openTypeCode(context) {
             return openModal(popActions.addSystemCode, context);
+        };
+        /**
+         * 打开日志查询页面--操作日志的日志详情页面
+         */
+        $scope.openLogDetail = function openLogDetail(context) {
+            return openModal(popActions.logDetail, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {

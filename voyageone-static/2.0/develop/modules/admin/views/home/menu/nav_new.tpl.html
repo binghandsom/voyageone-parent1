@@ -203,5 +203,37 @@
             </li>
         </ul>
     </li>
+    <!-- 日志管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_LOG_SEARCH"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_LOG_SEARCH"></span>
+                </a>
+            </li>
+            <!-- 登录日志 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/log/loginLog">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_LOGIN_LOG"></span>
+                </a>
+            </li>
+            <!-- 操作日志 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/log/actionLog">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_ACT_LOG"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
 </ul>
 <!--end-->
