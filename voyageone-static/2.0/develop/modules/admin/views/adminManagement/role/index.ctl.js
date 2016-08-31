@@ -24,11 +24,11 @@ define([
             this.adminUserSelList = {selList: []};
             this.tempSelect = null;
             this.searchInfo = {
-                userAccount: '',
-                roleId: '',
+                roleName: '',
+                roleType: '',
                 active: '',
                 channelId: '',
-                orgId: '',
+                storeId: '',
                 application: '',
                 pageInfo: this.storePageOption
             }
@@ -80,11 +80,11 @@ define([
                 self.adminRoleService.searchRole({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
-                        'userAccount': self.searchInfo.userAccount,
-                        'roleId': self.searchInfo.roleId,
+                        'roleName': self.searchInfo.roleName,
+                        'roleType': self.searchInfo.roleType,
                         'active': self.searchInfo.active,
                         'channelId': self.searchInfo.channelId,
-                        'orgId': self.searchInfo.orgId,
+                        'storeId': self.searchInfo.storeId,
                         'application': self.searchInfo.application
                     })
                     .then(function (res) {
@@ -113,11 +113,11 @@ define([
                 var self = this;
                 self.searchInfo = {
                     pageInfo: self.storePageOption,
-                    userAccount: '',
-                    roleId: '',
+                    roleName: '',
+                    roleType: '',
                     active: '',
                     channelId: '',
-                    orgId: '',
+                    storeId: '',
                     application: ''
                 }
             },

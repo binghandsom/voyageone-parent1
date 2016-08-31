@@ -25,7 +25,7 @@ define([
             this.tempSelect = null;
             this.searchInfo = {
                 userAccount: '',
-                roleId: '',
+                roleName: '',
                 active: '',
                 channelId: '',
                 orgId: '',
@@ -81,7 +81,7 @@ define([
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
                         'userAccount': self.searchInfo.userAccount,
-                        'roleId': self.searchInfo.roleId,
+                        'roleName': self.searchInfo.roleName,
                         'active': self.searchInfo.active,
                         'channelId': self.searchInfo.channelId,
                         'orgId': self.searchInfo.orgId,
@@ -116,7 +116,7 @@ define([
                 self.searchInfo = {
                     pageInfo: self.pageOption,
                     userAccount: '',
-                    roleId: '',
+                    roleName: '',
                     active: '',
                     channelId: '',
                     orgId: '',
