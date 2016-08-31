@@ -317,7 +317,10 @@ public class PriceService extends BaseService {
         }
 
         // 公式参数: 税率
-        Double taxRate = feeTaxService.getTaxRate(hsCode);
+        Double taxRate = feeTaxService.getTaxRate(hsCode, shippingType);
+
+        if (taxRate == null)
+            throw new IllegalPriceConfigException("没有找到发货方式 %s 可用的税率 ( %s ) 配置", shippingType, hsCode);
 
         // 进入计算阶段
         SystemPriceCalculator systemPriceCalculator = new SystemPriceCalculator()
@@ -636,7 +639,12 @@ public class PriceService extends BaseService {
      * @return 表示指导售价和建议售价的比较
      */
     private String compareRetailWithMsrpPrice(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField, Double retailPrice) {
+
         Double msrpPrice = getProductPrice(platformSku, commonField);
+
+        if (msrpPrice == null)
+            return "";
+
         if (msrpPrice < retailPrice)
             return "XU";
         else if (msrpPrice > retailPrice)
