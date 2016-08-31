@@ -38,17 +38,14 @@
             </div>
             <div class="row form-group">
                 <div class="col-sm-8 col-sm-offset-3">
-                    <button class="btn btn-info col-sm-12">提交</button>
+                    <button class="btn btn-info col-sm-12" ng-click="submit()">提交</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script type="text/ng-template" id="msg.tpl.html">
-    <div class="loginSign" ng-show="errorMessage">{{errorMessage}}</div>
-</script>
 <script>
-    require(['adminLogin']);
+    require(['adminResetPass']);
 </script>
 </body>
 </html>
