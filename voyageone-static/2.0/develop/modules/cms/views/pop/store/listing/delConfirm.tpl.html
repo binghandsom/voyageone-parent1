@@ -1,0 +1,35 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title">
+            <i class="fa fa-check-square-o  "></i>&nbsp;&nbsp;{{'TXT_CONFIRM' | translate}}
+        </h5>
+    </div>
+    <div class="modal-body wrapper">
+        <div class="container-fluid">
+            <div class="row" ng-if="!ctrl.context.chart">
+                <div class="col-md-4">
+                    <strong>您确认删除吗？</strong>
+                </div>
+            </div>
+            <div class="row" ng-if="ctrl.context.chart">
+                <div class="col-md-4">
+                    <strong>{{ctrl.context.content}}</strong>
+                </div>
+                <div class="col-md-6">
+                    <label>
+                        <input type="radio" name="isDel" value="1" ng-model="ctrl.context.flag">&nbsp;<strong>yes</strong>
+                    </label>&emsp;
+                    <label>
+                        <input type="radio" name="isDel" value="0" ng-model="ctrl.context.flag">&nbsp;<strong>no</strong>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_CANCEL'|translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.confirm()"><i class="fa fa-save"></i> {{'TXT_CONFIRM'|translate}}</button>
+    </div>
+</div>

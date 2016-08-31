@@ -2,7 +2,6 @@ package com.voyageone.components.jumei.reponse;
 
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.JacksonUtil;
-import org.hibernate.validator.internal.util.logging.Log_$logger;
 
 import java.io.IOException;
 import java.util.Date;

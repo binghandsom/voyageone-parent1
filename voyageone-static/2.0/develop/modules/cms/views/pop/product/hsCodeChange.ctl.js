@@ -19,30 +19,37 @@ define([
             }
         }
 
-        HsCodeChange.prototype = {
-            init:function(){
-                var self = this;
+        HsCodeChange.prototype.init = function(){
+            var self = this;
 
-                self.productDetailService.hsCodeChg({prodId:self.context.prodId,hsCode:self.context.hsCodeNew}).then(function(res){
-                    _.each(res.data, function(element,key){
-                        var _hsObject = {cartId:key,cartInfo:carts.valueOf(+key)};
-                        _.each(element,function(element,key){
-                            _.extend(_hsObject,{skuCode:key,prideOld:element[0],priceNew:element[1]});
-                        });
-                        self.vm.result.push(_hsObject);
+            self.productDetailService.hsCodeChg({prodId:self.context.prodId,hsCode:self.context.hsCodeNew}).then(function(res){
+                _.each(res.data, function(element,key){
+                    var _hsObject = {cartId:key,cartInfo:carts.valueOf(+key)};
+                    _.each(element,function(element,key){
+                        _.extend(_hsObject,{skuCode:key,prideOld:element[0],priceNew:element[1]});
                     });
-
-                },function(res){
-                    /**错误处理*/
-                    if(res.displayType != 1)
-                        self.uibModalInstance.close("error");
-                    else
-                        self.uibModalInstance.close();
+                    self.vm.result.push(_hsObject);
                 });
-            },
-            update:function(mark){
-                this.uibModalInstance.close(mark);
-            }
+
+                //判断税号价格是否改变
+                var isHsChange = _.every(self.vm.result,function(element){
+                    return element.prideOld == element.priceNew;
+                });
+
+                if(isHsChange)
+                    self.uibModalInstance.close("equal");
+
+            },function(res){
+                /**错误处理*/
+                if(res.displayType != 1)
+                    self.uibModalInstance.close("error");
+                else
+                    self.uibModalInstance.close();
+            });
+        };
+
+        HsCodeChange.prototype.update = function(mark){
+            this.uibModalInstance.close(mark);
         };
 
         return HsCodeChange;

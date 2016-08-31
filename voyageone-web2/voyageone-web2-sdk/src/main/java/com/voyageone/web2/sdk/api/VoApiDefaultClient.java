@@ -1,10 +1,10 @@
 package com.voyageone.web2.sdk.api;
 
-import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.sdk.api.exception.ApiException;
-import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+import com.voyageone.web2.sdk.api.request.AccessTokenRequest;
+import com.voyageone.web2.sdk.api.response.AccessTokenResponse;
+import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -21,142 +21,158 @@ import java.net.URI;
  */
 public class VoApiDefaultClient implements VoApiClient {
 
-	private static final String APP_KEY = "app_key";
-	private static final String TIMESTAMP = "timestamp";
-	private static final String SIGN = "sign";
-	private static final String SIGN_EXTEND = "voyage_sign_";
-	private static final String SESSION = "session";
+    private static final String TIMESTAMP = "timestamp";
 
-	private String serverUrl;
-	private String appKey;
-	private String appSecret;
-	private String signMethod = VoApiConstants.SIGN_METHOD_MD5;
+    private static final String ACCESS_TOKEN = "oauth_token";
 
-	private int connectTimeout = 3000;//3秒
-	private int readTimeout = 6000;//60秒
-	private boolean needCheckRequest = true; // 是否在客户端校验请求
-	private boolean needEnableParser = true; // 是否对响应结果进行解释
-	private boolean useGzipEncoding = false; // 是否启用响应GZIP压缩
+    private String serverUrl;
+
+    private static String accessTokenUri = "/accessToken";
+
+    private String clientId;
+    private String clientSecret;
+    private String grantType = "password";
+
+    private String accessToken;
 
 
-	protected RestTemplate restTemplate;
+    private int connectTimeout = 3000;//3秒
+    private int readTimeout = 6000;//60秒
 
-	public VoApiDefaultClient(RestTemplate restTemplate, String serverUrl) {
-		this.restTemplate = restTemplate;
-		this.serverUrl = serverUrl;
-		setRestTemplate();
-	}
+    private boolean needCheckAccessToken = true; // 是否校验AccessToken
+    private boolean needCheckRequest = true; // 是否在客户端校验请求
+    private boolean needEnableParser = true; // 是否对响应结果进行解释
+    private boolean useGzipEncoding = false; // 是否启用响应GZIP压缩
 
-	public VoApiDefaultClient(RestTemplate restTemplate, String serverUrl, int connectTimeout, int readTimeout) {
-		this.restTemplate = restTemplate;
-		this.serverUrl = serverUrl;
-		this.connectTimeout = connectTimeout;
-		this.readTimeout = readTimeout;
-		setRestTemplate();
-	}
+    private RestTemplate restTemplate;
 
-	private void setRestTemplate() {
-		ClientHttpRequestFactory rf = restTemplate.getRequestFactory();
-		if (rf instanceof SimpleClientHttpRequestFactory) {
-			SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = (SimpleClientHttpRequestFactory)rf;
-			simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
-			simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
-		} else if (rf instanceof HttpComponentsClientHttpRequestFactory) {
-			HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = (HttpComponentsClientHttpRequestFactory)rf;
-			httpComponentsClientHttpRequestFactory.setConnectTimeout(connectTimeout);
-			httpComponentsClientHttpRequestFactory.setReadTimeout(readTimeout);
-		}
-	}
+    public VoApiDefaultClient(RestTemplate restTemplate, String serverUrl) {
+        this.restTemplate = restTemplate;
+        this.serverUrl = serverUrl;
+        setRestTemplate();
+    }
 
-	@Override
-	public <T extends VoApiResponse> T execute(VoApiRequest<T> request) throws ApiException {
-		return execute(request, null);
-	}
+    public VoApiDefaultClient(RestTemplate restTemplate, String serverUrl, int connectTimeout, int readTimeout) {
+        this.restTemplate = restTemplate;
+        this.serverUrl = serverUrl;
+        this.connectTimeout = connectTimeout;
+        this.readTimeout = readTimeout;
+        setRestTemplate();
+    }
 
-	public <T extends VoApiResponse> T execute(VoApiRequest<T> request, String session) throws ApiException {
-		return _execute(request, session);
-	}
+    private void setRestTemplate() {
+        ClientHttpRequestFactory rf = restTemplate.getRequestFactory();
+        if (rf instanceof SimpleClientHttpRequestFactory) {
+            SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = (SimpleClientHttpRequestFactory) rf;
+            simpleClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+            simpleClientHttpRequestFactory.setReadTimeout(readTimeout);
+        } else if (rf instanceof HttpComponentsClientHttpRequestFactory) {
+            HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory = (HttpComponentsClientHttpRequestFactory) rf;
+            httpComponentsClientHttpRequestFactory.setConnectTimeout(connectTimeout);
+            httpComponentsClientHttpRequestFactory.setReadTimeout(readTimeout);
+        }
+    }
 
-	private <T extends VoApiResponse> T _execute(VoApiRequest<T> request, String session) throws ApiException {
-		if (this.needCheckRequest) {
-//			try {
-			request.check();
-//			} catch (ApiRuleException e) {
-//				T localResponse = null;
-//				try {
-//					localResponse = request.getResponseClass().newInstance();
-//				} catch (Exception xe) {
-//					throw new ApiException(xe);
-//				}
-//				localResponse.setCode(e.getErrCode());
-//				localResponse.setMessage(e.getErrMsg());
-//				return localResponse;
-//			}
-		}
+    @Override
+    public <T extends VoApiResponse> T execute(VoApiRequest<T> request) throws ApiException {
+        T result;
+        try {
+            result = doPost(request);
+        } catch (ApiException ae) {
+            // invalid token.
+            if (VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70099.getErrorCode().equals(ae.getErrCode())) {
+                accessToken = getRemoteAccessToken();
+                result = doPost(request);
+            } else {
+                throw ae;
+            }
+        }
+        return result;
+    }
 
-		return doPost(request, session);
-	}
+    /**
+     * URI 取得
+     */
+    private URI getURI(VoApiRequest request) {
+        StringBuilder reqUrl = new StringBuilder(serverUrl);
+        reqUrl.append(request.getApiURLPath());
 
-	/**
-	 * URI 取得
-	 * @return URI
-	 */
-	private URI getURI(VoApiRequest request) {
-		StringBuilder reqUrl = new StringBuilder(serverUrl);
-		reqUrl.append(request.getApiURLPath());
+        if (reqUrl.indexOf("?") != -1) {
+            reqUrl.append("&");
+        } else {
+            reqUrl.append("?");
+        }
+        reqUrl.append(TIMESTAMP + "=").append(request.getTimestamp());
 
-		if(reqUrl.indexOf("?") != -1){
-			reqUrl.append("&");
-		} else {
-			reqUrl.append("?");
-		}
-		reqUrl.append(TIMESTAMP + "=").append(request.getTimestamp());
+        // CheckAccessToken
+        if (needCheckAccessToken) {
+            if (accessToken == null) {
+                // get accessToken
+                accessToken = getRemoteAccessToken();
+                // check accessToken
+                if (accessToken == null || "".equals(accessToken)) {
+                    VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70091;
+                    throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+                }
+            }
+        }
 
-		//appSecret appKey
-		if (appKey != null && appSecret != null) {
-			reqUrl.append("&");
-			reqUrl.append(APP_KEY + "=").append(appKey);
-			reqUrl.append("&");
-			String sign = MD5.getMD5(SIGN_EXTEND + appKey + "__" + appSecret);
-			reqUrl.append(SIGN + "=").append(sign);
-		}
+        //ACCESS_TOKEN
+        if (accessToken != null) {
+            reqUrl.append("&");
+            reqUrl.append(ACCESS_TOKEN).append("=").append(accessToken);
+        }
 
-		return URI.create(reqUrl.toString());
-	}
+        return URI.create(reqUrl.toString());
+    }
 
+    private <T extends VoApiResponse> T doPost(VoApiRequest<T> request) throws ApiException {
+        URI uri = getURI(request);
+        RequestEntity<VoApiRequest<T>> requestEntity = new RequestEntity<>(request, request.getHeaders(), request.getHttpMethod(), uri);
+        return doPost(requestEntity, request.getResponseClass());
+    }
 
+    private <T extends VoApiResponse> T doPost(RequestEntity<VoApiRequest<T>> requestEntity, Class<T> responseClass) throws ApiException {
+        ResponseEntity<T> responseEntity = restTemplate.exchange(requestEntity, responseClass);
+        T responseBody = responseEntity.getBody();
+        if (responseBody == null) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
+            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+        }
 
-	public <T extends VoApiResponse> T doPost(VoApiRequest<T> request, String session) throws ApiException {
+        String code = responseBody.getCode();
+        if (code == null) {
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70002;
+            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+        }
 
-		URI uri = getURI(request);
+        if (!"0".equals(code)) {
+            throw new ApiException(code, responseBody.getMessage());
+        }
 
-		RequestEntity<VoApiRequest<T>> requestEntity = new RequestEntity<>(request, request.getHeaders(), request.getHttpMethod(), uri);
-		ResponseEntity<T> responseEntity = restTemplate.exchange(requestEntity, request.getResponseClass());
-		T responseBody = responseEntity.getBody();
-		if (responseBody == null) {
-			VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70001;
-			throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-		}
+        return responseBody;
+    }
 
-		String code = responseBody.getCode();
-		if (code == null) {
-			VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70002;
-			throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
-		}
+    @SuppressWarnings("unchecked")
+    private String getRemoteAccessToken() {
+        AccessTokenRequest accessTokenRequest = new AccessTokenRequest(accessTokenUri, clientId, clientSecret, grantType);
+        // Create Url
+        String reqUrl = serverUrl + accessTokenRequest.getApiURLPath() + "&" + TIMESTAMP + "=" + DateTimeUtil.getNowTimeStampLong();
+        URI uri = URI.create(reqUrl);
+        // send url
+        RequestEntity requestEntity = new RequestEntity<>(HttpMethod.POST, uri);
+        AccessTokenResponse accessTokenResponse = doPost(requestEntity, accessTokenRequest.getResponseClass());
+        // get url
+        return accessTokenResponse.getAccess_token();
+    }
 
-		if (!"0".equals(code)) {
-			throw new ApiException(code, responseBody.getMessage());
-		}
+    public boolean isNeedCheckAccessToken() {
+        return needCheckAccessToken;
+    }
 
-		return responseBody;
-	}
-
-	/**
-	 * 是否在客户端校验请求参数。
-	 */
-	public void setNeedCheckRequest(boolean needCheckRequest) {
-		this.needCheckRequest = needCheckRequest;
-	}
+    public void setNeedCheckAccessToken(boolean needCheckAccessToken) {
+        this.needCheckAccessToken = needCheckAccessToken;
+    }
 
 //	/**
 //	 * 是否把响应字符串解释为对象。
@@ -193,80 +209,102 @@ public class VoApiDefaultClient implements VoApiClient {
 //		this.useGzipEncoding = useGzipEncoding;
 //	}
 
+    public String getClientId() {
+        return clientId;
+    }
 
-	public String getServerUrl() {
-		return serverUrl;
-	}
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
-	public void setServerUrl(String serverUrl) {
-		this.serverUrl = serverUrl;
-	}
+    public String getClientSecret() {
+        return clientSecret;
+    }
 
-	public String getAppKey() {
-		return appKey;
-	}
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
 
-	public void setAppKey(String appKey) {
-		this.appKey = appKey;
-	}
+    public String getGrantType() {
+        return grantType;
+    }
 
-	public String getAppSecret() {
-		return appSecret;
-	}
+    public void setGrantType(String grantType) {
+        this.grantType = grantType;
+    }
 
-	public void setAppSecret(String appSecret) {
-		this.appSecret = appSecret;
-	}
+    public String getAccessToken() {
+        return accessToken;
+    }
 
-	public String getSignMethod() {
-		return signMethod;
-	}
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 
-	public void setSignMethod(String signMethod) {
-		this.signMethod = signMethod;
-	}
+    public String getServerUrl() {
+        return serverUrl;
+    }
 
-	public int getConnectTimeout() {
-		return connectTimeout;
-	}
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
+    }
 
-	public void setConnectTimeout(int connectTimeout) {
-		this.connectTimeout = connectTimeout;
-	}
+    public String getAccessTokenUri() {
+        return accessTokenUri;
+    }
 
-	public int getReadTimeout() {
-		return readTimeout;
-	}
+    public void setAccessTokenUri(String accessTokenUri) {
+        this.accessTokenUri = accessTokenUri;
+    }
 
-	public void setReadTimeout(int readTimeout) {
-		this.readTimeout = readTimeout;
-	}
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
 
-	public boolean isNeedCheckRequest() {
-		return needCheckRequest;
-	}
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
 
-	public boolean isNeedEnableParser() {
-		return needEnableParser;
-	}
+    public int getReadTimeout() {
+        return readTimeout;
+    }
 
-	public void setNeedEnableParser(boolean needEnableParser) {
-		this.needEnableParser = needEnableParser;
-	}
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
 
-	public boolean isUseGzipEncoding() {
-		return useGzipEncoding;
-	}
+    public boolean isNeedCheckRequest() {
+        return needCheckRequest;
+    }
 
-	public void setUseGzipEncoding(boolean useGzipEncoding) {
-		this.useGzipEncoding = useGzipEncoding;
-	}
+    /**
+     * 是否在客户端校验请求参数。
+     */
+    public void setNeedCheckRequest(boolean needCheckRequest) {
+        this.needCheckRequest = needCheckRequest;
+    }
 
-	public RestTemplate getRestTemplate() {
-		return restTemplate;
-	}
+    public boolean isNeedEnableParser() {
+        return needEnableParser;
+    }
 
-	public void setRestTemplate(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
-	}
+    public void setNeedEnableParser(boolean needEnableParser) {
+        this.needEnableParser = needEnableParser;
+    }
+
+    public boolean isUseGzipEncoding() {
+        return useGzipEncoding;
+    }
+
+    public void setUseGzipEncoding(boolean useGzipEncoding) {
+        this.useGzipEncoding = useGzipEncoding;
+    }
+
+    public RestTemplate getRestTemplate() {
+        return restTemplate;
+    }
+
+    public void setRestTemplate(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 }

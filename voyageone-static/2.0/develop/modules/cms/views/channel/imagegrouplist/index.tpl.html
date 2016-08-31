@@ -130,7 +130,13 @@
                             <td class="mfb-xxx text-center">{{imageGroup.modified}}</td>
                             <td class="mfb-xxt text-center">
                                 <a href="#/channel/imagegrouplist/detail/{{imageGroup.imageGroupId}}" class="btn btn-success btn-xs" target="_blank" title="{{'BTN_SET' | translate}}" ><i class="fa fa-cog"></i></a>
-                                <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-click="ctrl.delete(imageGroup.imageGroupId)"><i class="fa  fa-trash-o"></i></button>
+                                <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-click="ctrl.delete(imageGroup)"><i class="fa  fa-trash-o"></i></button>
+                                <a href="#/channel/sizechart/detail/{{imageGroup.sizeChartId}}"
+                                   class="btn btn-info btn-xs"
+                                   target="_blank" title="前往尺码表"
+                                   ng-if="imageGroup.sizeChartId">
+                                    <i class="fa fa-table"></i>
+                                </a>
                             </td>
                         </tr>
                         </tbody>

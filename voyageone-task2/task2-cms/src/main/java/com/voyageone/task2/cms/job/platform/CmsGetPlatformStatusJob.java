@@ -1,8 +1,8 @@
-package com.voyageone.task2.cms.job.product;
+package com.voyageone.task2.cms.job.platform;
 
 import com.voyageone.task2.base.BaseTaskJob;
 import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.cms.service.product.CmsGetPlatformStatusService;
+import com.voyageone.task2.cms.service.platform.CmsGetPlatformStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

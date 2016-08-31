@@ -18,7 +18,7 @@
                                             <div class="form-group"><!-- 查询brand品牌 -->
                                                 <label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
                                                 <div class="col-sm-8">
-                                                    <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.brand"
+                                                    <select multiple chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.brandList"
                                                             ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
                                                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                     </select>
@@ -165,14 +165,17 @@
                                             </div>
                                             <div class="form-group"><!-- 查询Feed类目 -->
                                                 <div class="col-sm-3 text-right">
-                                                    <button class="btn btn-pop btn-default" ng-click="openFeedCategoryMapping(popupNewCategory)">
+                                                    <button class="btn btn-pop btn-default" ng-click="openFeedCategoryMapping(popCategoryMul)">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_FEED_CATEGORY' |translate}}
                                                     </button>
                                                 </div>
                                                 <div class="col-sm-8">
                                                     <div class="input-group">
-                                                        <input type="text" class="form-control" ng-model="vm.searchInfo.fCatPath" ng-readonly="true">
-                                                        <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('fCatPath')"></button></span>
+                                                        <select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.fCatPathList"
+                                                                 ng-options="cat as cat for cat in vm.searchInfo.fCatPathList"
+                                                                 width="'100%'">
+                                                        </select>
+                                                        <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('fCatPathList')"></button></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -240,7 +243,7 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="form-group" ng-if="vm._cart_display&&vm.searchInfo.cartId!=27">
+                                        <div class="form-group">
                                             <label class="col-sm-3 control-label">实际平台状态</label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-checkbox">
@@ -255,8 +258,11 @@
                                             <label class="col-sm-3 control-label">错误管理状态</label>
                                             <div class="col-sm-7">
                                                 <div>
-                                                    <select class="form-control" ng-model="vm.searchInfo.hasErrorFlg" ng-options="errItem.id as errItem.txt for errItem in vm._errFlgList">
+                                                    <select class="form-control" ng-model="vm.searchInfo.hasErrorFlg">
                                                         <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                        <option value="1">错误管理内无错误记录</option>
+                                                        <option value="2">错误管理内有错误记录</option>
+                                                        <option value="3">商品平台状态与实际相异</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -304,15 +310,18 @@
                                                     </label>
                                                 </div>
                                                 <div class="">
-                                                    <button class="btn btn-pop btn-default" ng-click="platformCategoryMapping(popupNewCategory)" ng-disabled="vm.searchInfo.pCatStatus">
+                                                    <button class="btn btn-pop btn-default" ng-click="platformCategoryMapping(popCategoryMul)" ng-disabled="vm.searchInfo.pCatStatus">
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_PLATFORM_CATEGORY' |translate}}
                                                     </button>
                                                 </div>
                                             </div>
                                             <div class="col-sm-7 m-t-sm">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" ng-model="vm.searchInfo.pCatPath" ng-disabled="vm.searchInfo.pCatStatus" ng-readonly="true">
-                                                    <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('pCatStatus')"></button></span>
+                                                    <select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.pCatPathList"
+                                                             ng-options="cat as cat for cat in vm.searchInfo.pCatPathList"
+                                                             width="'100%'">
+                                                    </select>
+                                                    <span class="input-group-btn"><button class="btn btn-default" type="button" translate="BTN_RESET" ng-click="dismiss('pCatPathList')"></button></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -406,6 +415,8 @@
                                                         <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                         <option value="U">指导售价涨价</option>
                                                         <option value="D">指导售价降价</option>
+                                                        <option value="XD">比中国建议售价低</option>
+                                                        <option value="XU">比中国建议售价高</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -421,8 +432,6 @@
                                                         <option value="4">向上击穿警告</option>
                                                         <option value="5">向下击穿警告</option>
                                                         <option value="1">等于指导售价</option>
-                                                        <option value="6">比中国建议售价低</option>
-                                                        <option value="7">比中国建议售价高</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -607,6 +616,9 @@
                                     <a href="javascript:void(0)" ng-click="$parent.openBulkUpdate(openFieldEdit)"> {{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</a>
                                 </li>
                                 <li>
+                                    <a href="javascript:void(0)" ng-click="cfmRetailPrice(null)">全店铺指导价变更确认</a>
+                                </li>
+                                <li>
                                     <a href="javascript:void(0)" ng-click="_openPutOnOff(openPutOnOff)">{{'TXT_ALL_PUT_ON|OFF'|translate}}</a>
                                 </li>
                                 <li>
@@ -635,7 +647,10 @@
                                 <li ng-if="vm.masterData.autoApprovePrice!=1">
                                     <a href="javascript:void(0)" ng-click="toopenSalePrice(openSalePrice,cartBean.value)">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>
                                 </li>
-                                <li ng-if="cartBean.value!=27&&cartBean.cartType!=3">
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="cfmRetailPrice(cartBean)">指导价变更确认</a>
+                                </li>
+                                <li ng-if="cartBean.cartType!=3">
                                     <a href="javascript:void(0)" ng-click="_openPutOnOff(openPutOnOff,cartBean.value)">{{'TXT_PUT_ON/PUT_OFF'|translate}}</a>
                                 </li>
                                 <li class="dropdown-submenu" ng-if="vm.masterData.promotionMap[cartBean.value].length > 0 &&cartBean.cartType!=3">
@@ -755,7 +770,7 @@
                                                     popover-html="showInfo({{productInfo.priceRetail}})"
                                                     popover-title="{{'TXT_PRICE' | translate}}" type="button"
                                                     popover-placement="left" class="btn btn-default btn-xs">
-                                                {{productInfo._retailPriceCol.pVal}}<label ng-if="productInfo._retailPriceCol.pFlg" class="text-u-red font-bold" style="margin-bottom:0px">&nbsp;!</label>
+                                                {{productInfo._retailPriceCol.pVal}}<label ng-if="productInfo._retailPriceCol.pTxt" ng-class="productInfo._retailPriceCol.cssTxt" style="margin-bottom:0px">&nbsp;{{productInfo._retailPriceCol.pTxt}}</label>
                                             </button>
                                         </td>
                                         <td class="text-center" style="display:inline-block;width:170px;">
@@ -781,13 +796,11 @@
                                                 <div class="table_main">
                                                     <ul ng-if="productInfo.groupBean.publishTime">
                                                         <li>{{'TXT_PUBLISH_TIME' | translate}}</li>
-                                                        <!--<li><span>{{groupInfo.publishDate}}</span></li>-->
                                                         <li><span>{{productInfo.groupBean.publishTime.substring(0, 19)}}</span>
                                                         </li>
                                                     </ul>
                                                     <ul ng-if="!productInfo.groupBean.publishTime">
                                                         <li>{{'TXT_CREATE_TIME' | translate}}</li>
-                                                        <!--<li><span>{{productInfo.publishDate}}</span></li>-->
                                                         <li><span>{{productInfo.created.substring(0, 19)}}</span></li>
                                                     </ul>
                                                 </div>
@@ -812,7 +825,7 @@
                             <vpagination config="vm.productPageOption"></vpagination>
                         </div>
                     </uib-tab>
-                    <uib-tab ng-click="vm.currTab = 'group'">
+                    <uib-tab ng-click="firstShowGroupList()">
                         <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
                         <div class="table-responsive box-body">
                             <table class="table-hover-new vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff;min-width: 100%" width="{{vm.tblWidth}}">
@@ -899,8 +912,6 @@
                                                     popover-placement="left" class="btn btn-default btn-xs">
                                                 {{groupInfo.groupBean.priceSale[0]}}
                                             </button>
-                                            <label ng-if="groupInfo._grpProdChgInfo == 1"
-                                                   style="color:red;font-size: 16px;font-weight:bolder">&nbsp;!</label>
                                         </td>
                                         <td class="text-left" style="display:inline-block;width:150px;">
                                             {{groupInfo.common.fields.brand}}
@@ -922,13 +933,11 @@
                                                 <div class="table_main">
                                                     <ul ng-if="groupInfo.groupBean.publishTime">
                                                         <li>{{'TXT_PUBLISH_TIME' | translate}}</li>
-                                                        <!--<li><span>{{groupInfo.publishDate}}</span></li>-->
                                                         <li><span>{{groupInfo.groupBean.publishTime.substring(0,19)}}</span>
                                                         </li>
                                                     </ul>
                                                     <ul ng-if="!groupInfo.groupBean.publishTime">
                                                         <li>{{'TXT_CREATE_TIME' | translate}}</li>
-                                                        <!--<li><span>{{groupInfo.publishDate}}</span></li>-->
                                                         <li><span>{{groupInfo.created.substring(0,19)}}</span></li>
                                                     </ul>
                                                 </div>

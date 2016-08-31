@@ -74,10 +74,6 @@ public class PlatformMappingService extends BaseService {
         return true;
     }
 
-    public Map<String, Object> getValueMap(String channelId, Long productId, int cartId) {
-        return getValueMap(channelId, productId, cartId, null);
-    }
-
     public Map<String, Object> getValueMap(String channelId, Long productId, int cartId, String categoryPath) {
 
         // 查询需要用到的平台类目也在商品中获取
@@ -147,6 +143,7 @@ public class PlatformMappingService extends BaseService {
             this.master = common.getFields();
         }
 
+        @SuppressWarnings("unchecked")
         private void fillValueMap(Map<String, Object> valueMap, Map<String, CmsBtPlatformMappingModel.FieldMapping> mappingMap) {
 
             // 循环所有配置
@@ -157,12 +154,21 @@ public class PlatformMappingService extends BaseService {
 
                 Map<String, CmsBtPlatformMappingModel.FieldMapping> childrenMapping = mapping.getChildren();
 
+                String fieldId = mapping.getFieldId();
+
                 // 先看当前这个 mapping 有没有子字段匹配
                 // 有的话, 说明是 complex
                 // 那么整一个嵌套的 map 即可
                 if (childrenMapping != null && !childrenMapping.isEmpty()) {
 
-                    Map<String, Object> childrenValue = new HashMap<>();
+                    Object childrenValueObject = valueMap.get(fieldId);
+
+                    Map<String, Object> childrenValue;
+
+                    if (childrenValueObject == null || !(childrenValueObject instanceof Map))
+                        childrenValue = new HashMap<>();
+                    else
+                        childrenValue = (Map<String, Object>) childrenValueObject;
 
                     fillValueMap(childrenValue, childrenMapping);
 
@@ -186,15 +192,21 @@ public class PlatformMappingService extends BaseService {
                     switch (expression.getType()) {
 
                         case EXPRESSION_TYPE_FEED_CN:
-                            valueBuilder.append(String.valueOf(cnAtts.get(key)));
+                            Object cnFeedValue = cnAtts.get(key);
+                            if (cnFeedValue != null)
+                                valueBuilder.append(String.valueOf(cnFeedValue));
                             break;
 
                         case EXPRESSION_TYPE_FEED_ORG:
-                            valueBuilder.append(String.valueOf(orgAtts.get(key)));
+                            Object orgFeedValue = orgAtts.get(key);
+                            if (orgFeedValue != null)
+                                valueBuilder.append(String.valueOf(orgFeedValue));
                             break;
 
                         case EXPRESSION_TYPE_MASTER:
-                            valueBuilder.append(master.getStringAttribute(key));
+                            String masterValue = master.getStringAttribute(key);
+                            if (!StringUtils.isEmpty(masterValue))
+                                valueBuilder.append(masterValue);
                             break;
 
                         default:

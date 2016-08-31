@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.bi.BiVmColumnDaoExt">
+
+    <!-- 设定vm_column检索条件 -->
+    <sql id="vm_column_condition">
+        <where>
+            <if test="ecommId != null and ecommId != '' ">
+                and ecomm_id = #{ecommId}
+            </if>
+            <if test="columnWebName != null and columnWebName != '' ">
+                and column_web_name = #{columnWebName}
+            </if>
+            <if test="columnWebType != null and columnWebType != '' ">
+                and column_web_type = #{columnWebType}
+            </if>
+            <if test="corTableName != null and corTableName != '' ">
+                and cor_table_name = #{corTableName}
+            </if>
+            <if test="corColumnTableName != null and corColumnTableName != '' ">
+                and cor_column_table_name = #{corColumnTableName}
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectList"  resultType="com.voyageone.service.model.util.MapModel">
+        select
+            ecomm_id,
+            column_web_name,
+            column_web_type,
+            cor_table_name,
+            cor_column_table_name
+        from voyageone_bi_source.bi_vm_source_column
+        <include refid="vm_column_condition"/>
+        order by order_num
+    </select>
+
+
+</mapper>
