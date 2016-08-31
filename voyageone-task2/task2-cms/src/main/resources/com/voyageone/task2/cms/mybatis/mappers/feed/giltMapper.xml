@@ -56,6 +56,8 @@
         <result column="attributes_style_name" property="attributes_style_name" />
         <result column="attributes_material_value" property="attributes_material_value" />
         <result column="attributes_size_size_chart_id" property="attributes_size_size_chart_id" />
+        <result column="material" property="material"/>
+        <result column="usage_en" property="usageEn"/>
         <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
             <result column="i_sku" property="sku" />
             <result column="i_size" property="size" />
@@ -66,6 +68,9 @@
             <result column="price_net" property="priceNet" />
             <result column="price_client_retail" property="priceClientRetail" />
             <result column="price_client_msrp" property="priceClientMsrp" />
+            <result column="quantity" property="qty" />
+            <result column="weight_org" property="weightOrg" />
+            <result column="weight_org_unit" property="weightOrgUnit" />
         </collection>
         <collection property="image" javaType="ArrayList" ofType="String" >
             <result column="image" property="image" />
@@ -109,6 +114,12 @@
         attributes_style_name,
         attributes_material_value,
         attributes_size_size_chart_id
+        ,${quantity} as quantity
+        ,${material} as material
+        ,${usage_en} as usageEn
+        ,${weight_org} as weight_org
+        ,${weight_org_unit} as weight_org_unit
+        ,${weight_calc} as weightCalc
         from
         ${tableName}
         ${keyword}
