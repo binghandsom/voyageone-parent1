@@ -10,7 +10,7 @@
                 and id = #{id}
             </if>
 
-            <if test="userAccount != null and account != ''" >
+            <if test="userAccount != null and userAccount != ''" >
                 and (
                 user_account like concat('%', #{userAccount}, '%') or user_name like concat('%', #{userAccount}, '%')
                 )
@@ -21,11 +21,11 @@
             </if>
 
             <if test="orgId != null" >
-                and orgId = #{orgId}
+                and org_id = #{orgId}
             </if>
 
             <if test="roleId != null" >
-                and roleId = #{roleId}
+                and role_id = #{roleId}
             </if>
 
             <if test="channelId != null and channelId != ''" >
@@ -46,33 +46,36 @@
 
 	
 	<select id="selectUserByPage" resultMap="comUserMap">
-        SELECT t1.*,  GROUP_CONCAT( DISTINCT re.application) as application from
+        SELECT * FROM
         (
-        SELECT t.id, t.user_name, t.user_account, t.password, t.credential_salt, t.org_id, org_name, t.description,email,
-        t.active,t.created,t.creater,t.modified,t.modifier, t.role_id,t.role_name,
-        MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE 0 END ) channel_id,
-        MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE 0 END ) store_id
-        FROM
+            SELECT t1.*, GROUP_CONCAT( DISTINCT re.application) as application from
+            (
+            SELECT t.id, t.user_name, t.user_account, t.password, t.credential_salt, t.org_id, org_name, t.description,email,
+            t.active,t.created,t.creater,t.modified,t.modifier, t.role_id,t.role_name,
+            MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE 0 END ) channel_id,
+            MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE 0 END ) store_id
+            FROM
 
-        (select u.id, u.user_name, u.user_account, u.password, u.credential_salt, u.org_id, org.org_name, u.description,u.email,
-        u.active,u.created,u.creater,u.modified,u.modifier, GROUP_CONCAT(DISTINCT ur.role_id) as role_id,  GROUP_CONCAT(DISTINCT r.role_name) as role_name,
-        rc.cfg_name, GROUP_CONCAT( DISTINCT rc.cfg_val1) as cfg_val1
+            (select u.id, u.user_name, u.user_account, u.password, u.credential_salt, u.org_id, org.org_name, u.description,u.email,
+            u.active,u.created,u.creater,u.modified,u.modifier, GROUP_CONCAT(DISTINCT ur.role_id) as role_id, GROUP_CONCAT(DISTINCT r.role_name) as role_name,
+            rc.cfg_name, GROUP_CONCAT( DISTINCT rc.cfg_val1) as cfg_val1
 
-        from com_user u, com_user_role ur, com_role r, com_role_config rc , com_organization org, Synship.wms_mt_store st, Synship.tm_order_channel ch
-        where u.id = ur.user_id and ur.role_id = rc.role_id and u.org_id = org.id
-          and ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id  or rc.cfg_val1='ALL')) or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id) or rc.cfg_val1='ALL') )
-          and u.active  &lt;&gt; 0
-          and r.active = 1
-          and st.active = 1
-          and ch.active = 1
-          and org.active = 1
-        GROUP BY id, rc.cfg_name) t
+            from com_user u, com_user_role ur, com_role r, com_role_config rc , com_organization org, Synship.wms_mt_store st, Synship.tm_order_channel ch
+            where u.id = ur.user_id and ur.role_id = rc.role_id and u.org_id = org.id
+            and ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id or rc.cfg_val1='ALL')) or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id) or rc.cfg_val1='ALL') )
+            and u.active &lt;&gt; 0
+            and r.active = 1
+            and st.active = 1
+            and ch.active = 1
+            and org.active = 1
+            GROUP BY id, rc.cfg_name) t
 
-        GROUP BY t.id
-        )t1, com_resource re, com_res_role rr, Synship.ct_application ap
-        WHERE re.application = ap.application AND rr.role_id = t1.role_id AND re.id = rr.res_id AND re.res_type = 0
-        And re.active = 1 AND ap.active =1
-        GROUP BY t1.id
+            GROUP BY t.id
+            )t1, com_resource re, com_res_role rr, Synship.ct_application ap
+            WHERE re.application = ap.application AND rr.role_id = t1.role_id AND re.id = rr.res_id AND re.res_type = 0
+            And re.active = 1 AND ap.active =1
+            GROUP BY t1.id
+        )t2
         <include refid="selectUserFilter"/>
 	</select>
 	
