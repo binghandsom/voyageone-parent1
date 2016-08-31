@@ -43,7 +43,7 @@ public class AdminOrgServiceTest {
     public void testAddOrg() throws Exception {
         ComOrganizationModel model = new ComOrganizationModel();
 
-        model.setActive(true);
+        model.setActive(1);
         model.setOrgName("6677788");
         model.setWeight(1);
         model.setParentId(1);
@@ -56,7 +56,7 @@ public class AdminOrgServiceTest {
     public void testUpdateOrg() throws Exception {
         ComOrganizationModel model = new ComOrganizationModel();
         model.setId(7);
-        model.setActive(true);
+        model.setActive(1);
         model.setOrgName("554433");
         model.setWeight(1);
         model.setParentId(2);

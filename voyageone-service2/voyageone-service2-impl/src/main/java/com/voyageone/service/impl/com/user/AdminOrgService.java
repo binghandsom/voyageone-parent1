@@ -153,7 +153,7 @@ public class AdminOrgService extends BaseService {
         for (Integer id : orgIds) {
             ComOrganizationModel model = new ComOrganizationModel();
             model.setId(id);
-            model.setActive(false);
+            model.setActive(0);
             model.setModifier(username);
             if (!(comOrganizationDao.update(model) > 0)) {
                 throw new BusinessException("禁用组织信息失败");
