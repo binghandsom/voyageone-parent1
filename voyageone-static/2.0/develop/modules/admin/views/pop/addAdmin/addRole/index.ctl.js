@@ -25,7 +25,6 @@ define([
                     self.popType = '添加角色';
                     self.sourceData = {}
                 }
-                self.sourceData.active = self.sourceData.active ?  self.sourceData.active ? "1" : "0":'';
                 self.adminOrgService.getAllOrg().then(function (res) {
                     self.orgList = res.data;
                 });
@@ -154,7 +153,6 @@ define([
                     tempStoreName.push(item.storeName);
                     _.extend(self.sourceData, {'storeId': tempStoreId.join(','),'storeName': tempStoreName.join(',')});
                 });
-                self.sourceData.active = self.sourceData.active == '1' ? true : false;
                 var result = {};
                 if (self.append == true) {
                     self.adminRoleService.addRole(self.sourceData).then(function (res) {

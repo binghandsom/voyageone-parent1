@@ -17,7 +17,6 @@ define([
         AddOrgController.prototype = {
             init: function () {
                 var self = this;
-                self.sourceData.active = self.sourceData.active ?  self.sourceData.active ? "1" : "0":'';
                 if (self.sourceData == 'add') {
                     self.popType = '添加组织';
                     self.sourceData = {}
@@ -33,7 +32,6 @@ define([
             save: function () {
                 var self = this;
                 var result = {};
-                self.sourceData.active = self.sourceData.active == '1' ? true : false;
                 if (self.append == true) {
                     self.adminOrgService.addOrg(self.sourceData).then(function (res) {
                         if (res.data == false) {
