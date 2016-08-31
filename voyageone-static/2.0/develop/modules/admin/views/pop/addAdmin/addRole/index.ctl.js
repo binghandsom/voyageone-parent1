@@ -28,6 +28,9 @@ define([
                 self.adminOrgService.getAllOrg().then(function (res) {
                     self.orgList = res.data;
                 });
+                self.adminUserService.getAllApp().then(function (res) {
+                    self.appList = res.data;
+                });
                 self.channelService.getAllChannel().then(function (res) {
                     self.allList = res.data;
                     self.channelAllList = [];
@@ -42,7 +45,10 @@ define([
                     _.forEach(self.channelList, function (item, index) {
                         _.map(channelAllList, function (channel) {
                             if (channel.channelName == item) {
-                                self.channelList[index] = {'orderChannelId': channel.orderChannelId, 'channelName': item}
+                                self.channelList[index] = {
+                                    'orderChannelId': channel.orderChannelId,
+                                    'channelName': item
+                                }
                             }
                             return self.channelList;
                         })
@@ -139,20 +145,33 @@ define([
             },
             save: function () {
                 var self = this;
-                var tempChannelId = [];
-                var tempChannelName = [];
-                var tempStoreId = [];
-                var tempStoreName = [];
-                _.forEach(self.channelList, function (item) {
-                    tempChannelId.push(item.orderChannelId);
-                    tempChannelName.push(item.channelName);
-                    _.extend(self.sourceData, {'channelId': tempChannelId.join(','),'channelName': tempChannelName.join(',')});
-                });
-                _.forEach(self.storeList, function (item) {
-                    tempStoreId.push(item.storeId);
-                    tempStoreName.push(item.storeName);
-                    _.extend(self.sourceData, {'storeId': tempStoreId.join(','),'storeName': tempStoreName.join(',')});
-                });
+                if (self.sourceData.allChannel == '1' || self.sourceData.allStore == '1') {
+                    self.sourceData.channelId = '';
+                    self.sourceData.channelName = '';
+                    self.sourceData.storeId = '';
+                    self.sourceData.storeName = '';
+                } else {
+                    var tempChannelId = [];
+                    var tempChannelName = [];
+                    var tempStoreId = [];
+                    var tempStoreName = [];
+                    _.forEach(self.channelList, function (item) {
+                        tempChannelId.push(item.orderChannelId);
+                        tempChannelName.push(item.channelName);
+                        _.extend(self.sourceData, {
+                            'channelId': tempChannelId.join(','),
+                            'channelName': tempChannelName.join(',')
+                        });
+                    });
+                    _.forEach(self.storeList, function (item) {
+                        tempStoreId.push(item.storeId);
+                        tempStoreName.push(item.storeName);
+                        _.extend(self.sourceData, {
+                            'storeId': tempStoreId.join(','),
+                            'storeName': tempStoreName.join(',')
+                        });
+                    });
+                }
                 var result = {};
                 if (self.append == true) {
                     self.adminRoleService.addRole(self.sourceData).then(function (res) {

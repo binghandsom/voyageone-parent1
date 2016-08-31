@@ -47,16 +47,16 @@
                         <label class="col-sm-2 control-label">{{'TXT_ROLE_SYSTEM' | translate}}</label>
                         <div class="col-sm-10">
                             <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" ng-model="ctrl.sourceData.system"><span class="fa fa-check"></span>&nbsp;CMS
+                                <input type="checkbox" ng-model="ctrl.sourceData.application" ng-checked="ctrl.sourceData.application=='cms'"><span class="fa fa-check"></span>&nbsp;CMS
                             </label>
                             <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" ng-model="ctrl.sourceData.system"><span class="fa fa-check"></span>&nbsp;OMS
+                                <input type="checkbox" ng-model="ctrl.sourceData.application" ng-checked="ctrl.sourceData.application=='oms'"><span class="fa fa-check"></span>&nbsp;OMS
                             </label>
                             <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" ng-model="ctrl.sourceData.system"><span class="fa fa-check"></span>&nbsp;WMS
+                                <input type="checkbox" ng-model="ctrl.sourceData.application" ng-checked="ctrl.sourceData.application=='wms'"><span class="fa fa-check"></span>&nbsp;WMS
                             </label>
                             <label class="checkbox-inline c-checkbox" style="margin-left: 0">
-                                <input type="checkbox" ng-model="ctrl.sourceData.system"><span class="fa fa-check"></span>&nbsp;ADMIN
+                                <input type="checkbox" ng-model="ctrl.sourceData.application" ng-checked="ctrl.sourceData.application=='admin'"><span class="fa fa-check"></span>&nbsp;ADMIN
                             </label>
                             <div class="text-warnings" style="padding-left:0">
                                 <i class="icon fa fa-bell-o"></i>&nbsp;请在授权页面中编辑该角色的授权系统
@@ -79,13 +79,13 @@
                 <div class="row form-group"><!-- 授权渠道 -->
                     <label class="col-sm-1 control-label">{{'TXT_ROLE_CHANNEL' | translate}}</label>
                     <label class="checkbox-inline c-radio">
-                        <input type="radio" name="channel" value="1" ng-model="ctrl.sourceData.channel"><span class="fa fa-check"></span> 所有渠道
+                        <input type="radio" name="allChannel" value="1" ng-model="ctrl.sourceData.allChannel"><span class="fa fa-check"></span> 所有渠道
                     </label>
                     <label class="checkbox-inline c-radio">
-                        <input type="radio" name="channel" value="0" ng-model="ctrl.sourceData.channel"><span class="fa fa-check"></span> 选择特定渠道
+                        <input type="radio" name="allChannel" value="0" ng-model="ctrl.sourceData.allChannel"><span class="fa fa-check"></span> 选择特定渠道
                     </label>
                 </div>
-                <div class="row form-group">
+                <div class="row form-group" ng-if="ctrl.sourceData.allChannel=='0'">
                     <div class="col-sm-10 col-sm-offset-1">
                         <div class="col-sm-5">
                             <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label>
@@ -127,13 +127,13 @@
                 <div class="row form-group"><!-- 授权仓库 -->
                     <label class="col-sm-1 control-label">{{'TXT_ROLE_STORE' | translate}}</label>
                     <label class="checkbox-inline c-radio">
-                        <input type="radio" name="store" value="1" ng-model="ctrl.sourceData.store"><span class="fa fa-check"></span> 所有已选渠道的关联仓库
+                        <input type="radio" name="allStore" value="1" ng-model="ctrl.sourceData.allStore"><span class="fa fa-check"></span> 所有已选渠道的关联仓库
                     </label>
                     <label class="checkbox-inline c-radio">
-                        <input type="radio" name="store" value="0" ng-model="ctrl.sourceData.store"><span class="fa fa-check"></span> 选择特定仓库
+                        <input type="radio" name="allStore" value="0" ng-model="ctrl.sourceData.allStore"><span class="fa fa-check"></span> 选择特定仓库
                     </label>
                 </div>
-                <div class="row form-group">
+                <div class="row form-group" ng-if="ctrl.sourceData.allStore=='0'">
                     <div class="col-sm-10 col-sm-offset-1">
                         <div class="col-sm-5">
                             <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label>

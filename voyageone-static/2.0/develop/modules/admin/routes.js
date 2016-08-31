@@ -22,6 +22,12 @@ define(function () {
             "templateUrl": "views/adminManagement/orgnization/index.tpl.html",
             "controllerUrl": "modules/admin/views/adminManagement/orgnization/index.ctl",
             "controller": "OrgManagementController as ctrl"
+        },//用户/权限-资源管理
+        "adminResManage": {
+            "hash": "/admin/resManage",
+            "templateUrl": "views/adminManagement/resource/index.tpl.html",
+            "controllerUrl": "modules/admin/views/adminManagement/resource/index.ctl",
+            "controller": "ResManagementController as ctrl"
         },//渠道-渠道信息管理
         "channelInfoManage": {
             "hash": "/channel/channelInfoManage",
