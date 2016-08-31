@@ -16,10 +16,10 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.jd.service.JdWareService;
+import com.voyageone.components.jd.service.JdSaleService;
 import com.voyageone.components.jumei.reponse.HtMallStatusUpdateBatchResponse;
-import com.voyageone.components.jumei.service.JumeiWareService;
-import com.voyageone.components.tmall.service.TbItemService;
+import com.voyageone.components.jumei.service.JumeiSaleService;
+import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -55,11 +55,11 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
-    private TbItemService tbItemService;
+    private TbSaleService tbSaleService;
     @Autowired
-    private JdWareService jdWareService;
+    private JdSaleService jdSaleService;
     @Autowired
-    private JumeiWareService jmWareService;
+    private JumeiSaleService jmSaleService;
     @Autowired
     private MongoSequenceService sequenceService;
 
@@ -246,7 +246,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     // 天猫国际上下架
                     if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
                         // 上架
-                        ItemUpdateListingResponse response = tbItemService.doWareUpdateListing(shopProp, numIId);
+                        ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId);
                         if (response == null) {
                             errMsg = "调用淘宝商品上架API失败";
                         } else {
@@ -259,7 +259,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
 
                     } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
                         // 下架
-                        ItemUpdateDelistingResponse response = tbItemService.doWareUpdateDelisting(shopProp, numIId);
+                        ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shopProp, numIId);
                         if (response == null) {
                             errMsg = "调用淘宝商品下架API失败";
                         } else {
@@ -275,7 +275,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     // 京东国际上下架
                     if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
                         // 上架
-                        WareUpdateListingResponse response = jdWareService.doWareUpdateListing(shopProp, numIId);
+                        WareUpdateListingResponse response = jdSaleService.doWareUpdateListing(shopProp, numIId);
                         if (response == null) {
                             errMsg = "调用京东商品上架API失败";
                         } else {
@@ -288,7 +288,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
 
                     } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
                         // 下架
-                        WareUpdateDelistingResponse response = jdWareService.doWareUpdateDelisting(shopProp, numIId);
+                        WareUpdateDelistingResponse response = jdSaleService.doWareUpdateDelisting(shopProp, numIId);
                         if (response == null) {
                             errMsg = "调用京东商品下架API失败";
                         } else {
@@ -304,7 +304,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     // 聚美上下架
                     if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
                         // 上架
-                        HtMallStatusUpdateBatchResponse response = jmWareService.doWareUpdateListing(shopProp, numIId);
+                        HtMallStatusUpdateBatchResponse response = jmSaleService.doWareUpdateListing(shopProp, numIId);
                         if (response == null) {
                             errMsg = "调用聚美商品上架API失败";
                         } else {
@@ -317,7 +317,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
 
                     } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
                         // 下架
-                        HtMallStatusUpdateBatchResponse response = jmWareService.doWareUpdateDelisting(shopProp, numIId);
+                        HtMallStatusUpdateBatchResponse response = jmSaleService.doWareUpdateDelisting(shopProp, numIId);
                         if (response == null) {
                             errMsg = "调用聚美商品下架API失败";
                         } else {
