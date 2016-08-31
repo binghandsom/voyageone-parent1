@@ -92,6 +92,8 @@ public interface CmsBtProductConstants {
 		priceMsrpFlg,
         /* 销售指导价(共通/分平台) */
         priceRetail,
+		/* 确认指导价 */
+		confPriceRetail,
 		/* 各平台最终零售价(分平台) */
 		priceSale,
 		/* 指导售价变化状态（U99%/D99%）(分平台) */
