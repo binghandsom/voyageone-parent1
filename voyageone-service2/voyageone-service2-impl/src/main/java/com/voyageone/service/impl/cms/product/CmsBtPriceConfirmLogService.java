@@ -40,7 +40,7 @@ public class CmsBtPriceConfirmLogService extends BaseService {
         this.priceConfirmLogDao = priceConfirmLogDao;
     }
 
-    public void addConfirmed(String channelId, CmsBtProductModel_Platform_Cart platformCart, String username) {
+    public void addConfirmed(String channelId, String code, CmsBtProductModel_Platform_Cart platformCart, String username) {
         for (BaseMongoMap<String, Object> sku: platformCart.getSkus()) {
             String skuCode = sku.getStringAttribute(Platform_SKU_COM.skuCode.name());
             addConfirmed(skuCode, sku.getDoubleAttribute(Platform_SKU_COM.priceRetail.name()), username);
