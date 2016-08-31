@@ -37,7 +37,6 @@ define([
         RoleManagementController.prototype = {
             init: function () {
                 var self = this;
-                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.storeService.getAllStore().then(function (res) {
                     self.storeList = res.data;
                 });

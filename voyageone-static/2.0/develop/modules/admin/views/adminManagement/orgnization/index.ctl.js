@@ -32,7 +32,6 @@ define([
         OrgManagementController.prototype = {
             init: function () {
                 var self = this;
-                self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.adminOrgService.init().then(function (res) {
                     self.orgDataList = res.data.result;
                     // 设置勾选框
