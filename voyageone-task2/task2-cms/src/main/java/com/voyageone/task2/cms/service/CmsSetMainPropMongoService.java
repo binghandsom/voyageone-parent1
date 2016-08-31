@@ -956,20 +956,25 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // 自动上新标志位 = 1:(自动上新) 并且 商品的状态是非lock，已Approved的场合
                 // Add desmond 2016/07/01 start
-                if ("1".equals(sxFlg) && "0".equals(cmsProduct.getLock())) {
-                    // 遍历主数据product里的sku,看看有没有
-                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
-                        // P0（主数据）平台跳过
-                        if (entry.getValue().getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
-                            continue;
-                        }
-
-                        // 该平台已经Approved过的才插入workload表
-                        if (CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(entry.getValue().getStatus())) {
-                            sxProductService.insertSxWorkLoad(channelId, cmsProduct.getCommon().getFields().getCode(), entry.getValue().getCartId(), getTaskName());
-                        }
-                    }
+                if ("1".equals(sxFlg)) {
+                    // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
+                    sxProductService.insertSxWorkLoad(cmsProduct, getTaskName());
                 }
+//                if ("1".equals(sxFlg) && !"1".equals(cmsProduct.getLock())) {
+//                    // 遍历主数据product里的sku,看看有没有
+//                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
+//                        // P0（主数据）平台跳过
+//                        if (entry.getValue().getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
+//                            continue;
+//                        }
+//
+//                        // 该平台已经Approved过的才插入workload表
+//                        if (CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(entry.getValue().getStatus())) {
+//                            sxProductService.insertSxWorkLoad(channelId, cmsProduct.getCommon().getFields().getCode(), entry.getValue().getCartId(), getTaskName());
+//                        }
+//                    }
+//                }
+
                 // Add desmond 2016/07/01 end
                 // jeff 2016/04 change end
 

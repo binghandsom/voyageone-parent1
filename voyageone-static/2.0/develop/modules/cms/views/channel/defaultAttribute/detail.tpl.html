@@ -11,7 +11,7 @@
                             <div class="form-group">
                                 <label class="col-sm-4 control-label" translate="TXT_CART_NAME"></label>
                                 <div class="col-sm-7">
-                                    <select class="form-control" ng-change="ctrl.tryGet()" ng-model="ctrl.searchInfo.cartId" ng-options="option.value as option.name for option in ctrl.platformTypes" ng-disabled="ctrl.searchJson">
+                                    <select class="form-control" ng-change="ctrl.tryGetCart()" ng-model="ctrl.searchInfo.cartId" ng-options="option.value as option.name for option in ctrl.platformTypes" ng-disabled="ctrl.platformMappingFrontId">
                                     </select>
                                 </div>
                             </div>
@@ -25,10 +25,10 @@
                                         <label class="control-label" translate="TXT_PLATFORM_CATEGORY"></label>
                                         <span>&nbsp;</span>
                                         <label>
-                                            <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType" ng-change="ctrl.tryGet()" ng-disabled="ctrl.searchJson">&nbsp;全类目
+                                            <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType" ng-change="ctrl.tryGetCategory()" ng-disabled="ctrl.platformMappingFrontId">&nbsp;全类目
                                         </label>&emsp;
                                         <label>
-                                            <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType" ng-change="ctrl.tryGet()" ng-disabled="ctrl.searchJson">&nbsp;选择类目
+                                            <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType" ng-change="ctrl.tryGetCategory()" ng-disabled="ctrl.platformMappingFrontId">&nbsp;选择类目
                                         </label>
                                     </div>
                                 </div>
@@ -36,7 +36,7 @@
                             <div class="col-sm-6">
                                 <div class="form-horizontal">
                                     <div class="row">
-                                        <button class="col-sm-3 btn btn-default" ng-click="ctrl.openCategorySelector()" ng-disabled="!ctrl.searchInfo.cartId || ctrl.searchInfo.categoryType != '2' || ctrl.searchJson">
+                                        <button class="col-sm-3 btn btn-default" ng-click="ctrl.openCategorySelector()" ng-disabled="!ctrl.searchInfo.cartId || ctrl.searchInfo.categoryType != '2' || ctrl.platformMappingFrontId">
                                             <i class="fa  fa-th-list"></i>&nbsp;<span translate="TXT_PLATFORM_CATEGORY"></span>
                                         </button>
                                         <div class="col-sm-7">

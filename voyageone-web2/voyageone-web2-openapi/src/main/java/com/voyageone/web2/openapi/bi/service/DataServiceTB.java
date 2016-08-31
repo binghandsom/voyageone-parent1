@@ -22,10 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class DataServiceTB extends OpenApiBaseService {
@@ -143,6 +140,7 @@ public class DataServiceTB extends OpenApiBaseService {
         //result Data
         List<String> listColumns = new ArrayList<>();
         List<List<String>> listValues = new ArrayList<>();
+        Map<String, Object> deleteDataKeyMap = new HashMap<>();
 
         boolean isRemoveTempFile = false;
         String tempFielDir = null;
@@ -153,13 +151,13 @@ public class DataServiceTB extends OpenApiBaseService {
         if (eCommId == 1 || eCommId == 4) {
             // TM / TG
             // pares Excel File
-            listValues = paresTBExcelFile(channelId, cartId, eCommId, newFileName, listColumns);
+            listValues = paresTBExcelFile(channelId, cartId, eCommId, newFileName, listColumns, deleteDataKeyMap);
 
         } else if (eCommId == 5 || eCommId == 7) {
             // JD / JG
             logger.info("saveProductFileData file:" + fileName);
 
-            //upzip file
+            //upZip file
             File zipFile = new File(newFileName);
             String zipSaveFileDir = newFileName.replaceAll("\\.zip", "");
             FileZipTools.unzip(zipFile, zipSaveFileDir, "GBK");
@@ -167,12 +165,16 @@ public class DataServiceTB extends OpenApiBaseService {
             String excelFileName = zipSaveFileDir + "/" + fileName.replaceAll("\\.zip", ".xls");
 
             // pares Excel File
-            listValues = paresJDExcelFile(channelId, cartId, excelFileName, listColumns);
+            listValues = paresJDExcelFile(channelId, cartId, excelFileName, listColumns, deleteDataKeyMap);
 
             isRemoveTempFile = true;
             tempFielDir = zipSaveFileDir;
         }
 
+        // delete old data
+        if (deleteDataKeyMap.size() > 0) {
+            vtSalesProductService.deleteDatas(channelId, deleteDataKeyMap);
+        }
         //saveListData
         int insertRowCount = vtSalesProductService.saveListData(channelId, listColumns, listValues);
 
@@ -238,7 +240,7 @@ public class DataServiceTB extends OpenApiBaseService {
         return newFileName;
     }
 
-    private List<List<String>> paresTBExcelFile(String channelId, String cartId, int eCommId, String fileName, List<String> listColumns) {
+    private List<List<String>> paresTBExcelFile(String channelId, String cartId, int eCommId, String fileName, List<String> listColumns, Map<String, Object> deleteDataKeyMap) {
         List<List<String>> models = new ArrayList<>();
 
         // add static column
@@ -264,6 +266,11 @@ public class DataServiceTB extends OpenApiBaseService {
 
             if (device == null) {
                 return models;
+            }
+            if (device == ExcelHeaderEnum.Device.all) {
+                deleteDataKeyMap.put("channelId", channelId);
+                deleteDataKeyMap.put("cartId", cartId);
+                deleteDataKeyMap.put("processDate", Integer.parseInt(processDate));
             }
 
             Row headRow = sheet.getRow(3);
@@ -351,7 +358,7 @@ public class DataServiceTB extends OpenApiBaseService {
         return device;
     }
 
-    private List<List<String>> paresJDExcelFile(String channelId, String cartId, String fileName, List<String> listColumns) {
+    private List<List<String>> paresJDExcelFile(String channelId, String cartId, String fileName, List<String> listColumns, Map<String, Object> deleteDataKeyMap) {
         List<List<String>> models = new ArrayList<>();
 
         // add static column
@@ -376,6 +383,11 @@ public class DataServiceTB extends OpenApiBaseService {
 
             if (device == null) {
                 return models;
+            }
+            if (device == ExcelHeaderEnum.Device.all) {
+                deleteDataKeyMap.put("channelId", channelId);
+                deleteDataKeyMap.put("cartId", cartId);
+                deleteDataKeyMap.put("processDate", Integer.parseInt(processDate));
             }
 
             Row headRow = sheet.getRow(0);
