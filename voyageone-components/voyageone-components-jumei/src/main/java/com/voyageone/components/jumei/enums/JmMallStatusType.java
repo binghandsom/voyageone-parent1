@@ -20,4 +20,14 @@ public enum JmMallStatusType {
     public String getVal() {
         return val;
     }
+
+    public static JmMallStatusType valueOf(Object name) {
+        for (JmMallStatusType statusType : JmMallStatusType.values()) {
+            if (statusType.name().equals(name.toString())) {
+                return statusType;
+            }
+        }
+
+        return null;
+    }
 }
