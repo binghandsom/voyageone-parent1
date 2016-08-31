@@ -14,28 +14,18 @@
         <div class="panel-body">
             <div class="form-inline">
                 <!-- Category -->
-                <label class="control-label col-sm-1" translate="TXT_CATEGORY" style="margin-top: 15px;"></label>
-                <div class="category_drag">
-                    <ul class="nav navbar-nav" style="float: none">
-                        <li uib-dropdown is-open="menu.open" ng-mouseenter="menu.open = true;" ng-mouseleave="menu.open = false;" ng-repeat="categoryItem in ctrl.categoryPath">
-                            <a href="javascript:void(0)" class="dropdown-toggle-arr" uib-dropdown-toggle>{{$index+1 }}级类目</a>
-                            <ul class="dropdown-menu" uib-dropdown-menu>
-                                <li ng-repeat="category in categoryItem.categories">
-                                    <a href="javascript:void(0)" ng-click="ctrl.openCategory(category,categoryItem)"
-                                       ng-class="{indexSelected:categoryItem.selectedCat == category.catName}">
-                                        <span>{{:: category.catName }}</span>
-                                        <span class="pull-right text-muted" ng-if="category.children && category.children.length">
-                                            <i class="fa fa-fw fa-angle-right text"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-                <div class="category_ts">
-                    <p>已选<span> {{ ctrl.selected.catPath }} </span></p>
-                </div>
+                <nav class="navbar navbar-default" role="navigation">
+                    <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+                        <ul class="nav navbar-nav">
+                            <li uib-dropdown>
+                                <a href="#" uib-dropdown-toggle translate="TXT_CATEGORY">
+                                    <b class='caret'></b>
+                                </a>
+                                <tree tree='ctrl.tree'></tree>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
             </div>
             <div class="form-inline">
                 <div class="form-group">
