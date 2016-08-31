@@ -1,9 +1,8 @@
-package com.voyageone.task2.cms.service.product;
+package com.voyageone.task2.cms.service.platform;
 
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Before;

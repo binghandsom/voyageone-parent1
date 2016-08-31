@@ -618,15 +618,6 @@ define([
                 // 如果是minimall店铺或者是聚美平台，则不显示店铺内分类
                 $scope.vm._mmmcart_display = 0;
             }
-            if (cartObj.value == 27) {
-                // 如果是聚美平台
-                $scope.vm._errFlgList = [{'id': '1', 'txt': '错误管理内无错误记录'}, {'id': '2', 'txt': '错误管理内有错误记录'}];
-            } else {
-                $scope.vm._errFlgList = [{'id': '1', 'txt': '错误管理内无错误记录'}, {'id': '2', 'txt': '错误管理内有错误记录'}, {
-                    'id': '3',
-                    'txt': '商品平台状态与实际相异'
-                }];
-            }
             sellerCatService.getCat({"cartId": $scope.vm.searchInfo.cartId, "isTree": false})
                 .then(function (resp) {
                     $scope.vm.masterData.catList = resp.data.catTree;
