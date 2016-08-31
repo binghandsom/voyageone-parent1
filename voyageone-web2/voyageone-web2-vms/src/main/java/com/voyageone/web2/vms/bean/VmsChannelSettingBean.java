@@ -1,5 +1,8 @@
 package com.voyageone.web2.vms.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 渠道配置
  * Created by vantis on 16-7-7.
@@ -10,6 +13,8 @@ public class VmsChannelSettingBean {
     private String defaultDeliveryCompany;
     private String namingConverter;
     private String emailAddress;
+    private List<String> additionalAttributes;
+    private List<String> additionalAttributesClass;
 
     public String getVendorOperateType() {
         return vendorOperateType;
@@ -49,5 +54,21 @@ public class VmsChannelSettingBean {
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    public List<String> getAdditionalAttributes() {
+        return additionalAttributes;
+    }
+
+    public void setAdditionalAttributes(List<String> additionalAttributes) {
+        this.additionalAttributes = additionalAttributes;
+    }
+
+    public List<String> getAdditionalAttributesClass() {
+        return additionalAttributesClass;
+    }
+
+    public void setAdditionalAttributesClass(List<String> additionalAttributesClass) {
+        this.additionalAttributesClass = additionalAttributesClass;
     }
 }

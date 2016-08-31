@@ -114,6 +114,10 @@ public class VmsShipmentService {
         Map<String, Object> shipmentSearchParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel().getId());
             put("status", VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.OPEN);
+            if (STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU.equals(
+                    vmsChannelConfigService.getChannelConfigs(user).getVendorOperateType())) {
+                put("creater", user.getUserName());
+            }
         }};
         List<VmsBtShipmentModel> vmsBtShipmentModelList = shipmentService.select(shipmentSearchParams);
         if (null == vmsBtShipmentModelList || vmsBtShipmentModelList.size() == 0) return null;

@@ -134,7 +134,9 @@ public class VmsConstants {
         String DEFAULT_DELIVERY_COMPANY = "DEFAULT_DELIVERY_COMPANY";
         // 默认shipment命名格式
         String DEFAULT_SHIPMENT_NAMING_CONVERTER = "DEFAULT_SHIPMENT_NAMING_CONVERTER";
-
+        // 客户定义的显示在order画面和拣货列表中的特定属性,多个用逗号分开
+        String ADDITIONAL_ATTRIBUTES = "ADDITIONAL_ATTRIBUTES";
+        // 客户Email地址
         String EMAIL_ADDRESS = "EMAIL_ADDRESS";
     }
 

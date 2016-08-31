@@ -45,12 +45,14 @@
         </div>
     </div>
     <div class="row margin-bottom-10">
-        <div class="col-sm-6" ng-if="ctrl.channelConfig.vendorOperateType == 'ORDER'">
+        <div class="col-sm-6">
             <button ng-if="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('new')" translate="BTN_NEW_SHIPMENT"></button>
-            <button ng-if="ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('end')" translate="BTN_END_SHIPMENT"></button>
+            <button ng-if="ctrl.currentShipment && ctrl.channelConfigs.vendorOperateType == 'ORDER'" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('end')" translate="BTN_END_SHIPMENT"></button>
             <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
                 <a ng-if="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
                 <label ng-if="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
+            <button class="btn btn-xs btn-info" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU' && ctrl.currentShipment"
+                    ng-click="ctrl.popAddToShipmentForSku()" translate="BTN_ADD_TO_SHIPMENT"></button>
         </div>
         <div class="col-sm-6" ng-if="!(ctrl.channelConfig.vendorOperateType == 'ORDER')"></div>
         <div class="col-sm-6 text-right form-inline">
@@ -99,6 +101,14 @@
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'retail_price' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'retail_price' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
                         </th>
+                        <th ng-repeat="attribute in ctrl.channelConfig.additionalAttributes"
+                            ng-class="::ctrl.channelConfig.additionalAttributesClass[$index]"
+                            ng-click="ctrl.changeSearchOrder('attribute' + $index)">
+                            {{attribute}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + $index && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + $index && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+
                         <th class="td-2-5" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
@@ -115,9 +125,10 @@
                         <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>${{item.totalVoPrice}}</strong></td>
                         <td class="v-middle" ng-if="ctrl.channelConfig.salePriceShow == '1'" ng-click="item.collapse = !item.collapse"><strong>¥{{item.totalRetailPrice}}</strong>
                         </td>
+                        <td ng-repeat="attribute in ctrl.channelConfig.additionalAttributes" class="v-middle" ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
                         <td class="v-middle">
                             <button class="btn btn-xs btn-danger" ng-if="item.status == 1" ng-click="ctrl.cancelOrder(item)" translate="BTN_CANCEL"></button>
-                            <button class="btn btn-xs btn-info" ng-if="item.status == 1" ng-click="ctrl.popAddToShipment(item)" ng-disabled="!ctrl.currentShipment" translate="BTN_ADD_TO_SHIPMENT"></button>
+                            <button class="btn btn-xs btn-info" ng-if="item.status == 1" ng-click="ctrl.popAddToShipmentForOrder(item)" ng-disabled="!ctrl.currentShipment" translate="BTN_ADD_TO_SHIPMENT"></button>
                             <button class="btn btn-xs btn-primary" ng-click="ctrl.printLabel($index)" ng-if="item.status == 2 || item.status ==3" translate="BTN_LABEL"></button>
                         </td>
 
@@ -134,6 +145,7 @@
                         <td class="v-middle">{{ctrl.getStatusName(detail.status)}}</td>
                         <td class="v-middle">${{detail.voPrice}}</td>
                         <td class="v-middle" ng-if="ctrl.channelConfig.salePriceShow == '1'">¥{{detail.salePrice}}</td>
+                        <td ng-repeat="attribute in ctrl.channelConfig.additionalAttributes" class="v-middle">{{detail["attribute" + ($index + 1)]}}</td>
                         <td class="v-middle"></td>
                     </tr>
                     </tbody>
@@ -187,6 +199,13 @@
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'retail_price' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'retail_price' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
                         </th>
+                        <th ng-repeat="attribute in ctrl.channelConfig.additionalAttributes"
+                            ng-class="::ctrl.channelConfig.additionalAttributesClass[$index]"
+                            ng-click="ctrl.changeSearchOrder('attribute' + $index)">
+                            {{attribute}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + $index && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                        <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + $index && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
                         <th class="td-1-5" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
@@ -204,6 +223,7 @@
                         <td class="v-middle">{{ctrl.getStatusName(item.status)}}</td>
                         <td class="v-middle">${{item.voPrice}}</td>
                         <td class="v-middle" ng-if="ctrl.channelConfig.salePriceShow == '1'">¥{{item.salePrice}}</td>
+                        <td ng-repeat="attribute in ctrl.channelConfig.additionalAttributes" class="v-middle">{{item["attribute" + ($index + 1)]}}</td>
                         <td class="v-middle">
                             <button ng-if="item.status == 1" class="btn btn-xs btn-warning" ng-click="ctrl.cancelSku(item)" translate="BTN_CANCEL"></button>
                         </td>

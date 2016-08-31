@@ -68,6 +68,14 @@ define([
                 // 记录用户的操作方式(sku/order)
                 self.channelConfig = data.channelConfig;
 
+                var sessionSearchInfo = JSON.parse(sessionStorage.getItem('orderSearchInfo'));
+                if (sessionSearchInfo) {
+                    self.searchInfo = sessionSearchInfo;
+                    if (sessionSearchInfo.orderDateFrom)
+                        self.orderDateFrom = new Date(sessionSearchInfo.orderDateFrom);
+                    if (sessionSearchInfo.orderDateTo)
+                        self.orderDateTo = new Date(sessionSearchInfo.orderDateTo);
+                }
                 self.search();
             });
         };
@@ -184,10 +192,19 @@ define([
 
             this.popups.openShipment(shipmentInfo).then(function (shipment) {
                 self.currentShipment = shipment;
+                if (type == "new") {
+                    var url = '#/shipment/shipment_info/shipment_detail/' + shipment.id;
+                    location.href = url;
+                }
             });
         };
 
-        OrderInfoController.prototype.popAddToShipment = function (item) {
+        OrderInfoController.prototype.popAddToShipmentForSku = function () {
+            var url = '#/shipment/shipment_info/shipment_detail/' + this.currentShipment.id;
+            location.href = url;
+        }
+
+        OrderInfoController.prototype.popAddToShipmentForOrder = function (item) {
             var self = this;
             self.scanPopupInitialInfo = {
                 "shipment": self.currentShipment,
@@ -230,6 +247,7 @@ define([
             }
             self.searchInfo.curr = self.pageInfo.curr;
             self.searchInfo.size = self.pageInfo.size;
+            sessionStorage.setItem('orderSearchInfo', JSON.stringify(self.searchInfo));
         };
 
         OrderInfoController.prototype.changeSearchOrder = function (columnName) {

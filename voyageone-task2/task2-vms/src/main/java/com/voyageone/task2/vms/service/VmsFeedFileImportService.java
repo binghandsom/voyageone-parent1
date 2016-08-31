@@ -528,7 +528,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             // AttributeKey
 
             Map<String, List<String>> attributeMap = new HashMap<>();
-            makeAttributeMap(attributeMap, codeModel);
+            makeAttributeMap(attributeMap, codeModel, "code");
 
 
             // 如果这行Code是Sku的话还需要CheckSku
@@ -649,6 +649,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     skuModel.setPriceNet(new BigDecimal(codeModel.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                     skuModel.setPriceMsrp(skuModel.getPriceClientMsrp());
                     skuModel.setPriceCurrent(skuModel.getPriceClientRetail());
+                    Map<String, String> skuAttributeMap = new HashMap<>();
+                    makeAttributeMap(skuAttributeMap, codeModel, "sku");
+                    skuModel.setAttribute(skuAttributeMap);
                     skusModel.add(skuModel);
                 } else {
                     for (VmsBtFeedInfoTempModel skuTemp : skuModels) {
@@ -675,7 +678,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         skuModel.setPriceNet(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                         skuModel.setPriceMsrp(skuModel.getPriceClientMsrp());
                         skuModel.setPriceCurrent(skuModel.getPriceClientRetail());
-
+                        Map<String, String> skuAttributeMap = new HashMap<>();
+                        makeAttributeMap(skuAttributeMap, skuTemp, "sku");
+                        skuModel.setAttribute(skuAttributeMap);
                         skusModel.add(skuModel);
                     }
                 }
@@ -689,11 +694,12 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
          *
          * @param attributeMap 做出的AttributeMap
          * @param codeModel VmsBtFeedInfoTempModel
+         * @param flag 'code' or 'sku'
          *
          * @return 可变主题对应Attribute的序号和内容
          *
          */
-        private void makeAttributeMap(Map<String, List<String>> attributeMap, VmsBtFeedInfoTempModel codeModel) {
+        private void makeAttributeMap(Map attributeMap, VmsBtFeedInfoTempModel codeModel, String flag) {
             String attributeKey1 = codeModel.getAttributeKey1();
             String attributeKey2 = codeModel.getAttributeKey2();
             String attributeKey3 = codeModel.getAttributeKey3();
@@ -736,64 +742,144 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             String attributeValue19 = codeModel.getAttributeValue19();
             String attributeValue20 = codeModel.getAttributeValue20();
             if (!StringUtils.isEmpty(attributeKey1)) {
-                attributeMap.put(attributeKey1, new ArrayList<String>() {{this.add(attributeValue1);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey1, new ArrayList<String>() {{this.add(attributeValue1);}});
+                } else {
+                    attributeMap.put(attributeKey1, attributeValue1);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey2)) {
-                attributeMap.put(attributeKey2, new ArrayList<String>() {{this.add(attributeValue2);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey2, new ArrayList<String>() {{this.add(attributeValue2);}});
+                } else {
+                    attributeMap.put(attributeKey2, attributeValue2);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey3)) {
-                attributeMap.put(attributeKey3, new ArrayList<String>() {{this.add(attributeValue3);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey3, new ArrayList<String>() {{this.add(attributeValue3);}});
+                } else {
+                    attributeMap.put(attributeKey3, attributeValue3);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey4)) {
-                attributeMap.put(attributeKey4, new ArrayList<String>() {{this.add(attributeValue4);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey4, new ArrayList<String>() {{this.add(attributeValue4);}});
+                } else {
+                    attributeMap.put(attributeKey4, attributeValue4);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey5)) {
-                attributeMap.put(attributeKey5, new ArrayList<String>() {{this.add(attributeValue5);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey5, new ArrayList<String>() {{this.add(attributeValue5);}});
+                } else {
+                    attributeMap.put(attributeKey5, attributeValue5);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey6)) {
-                attributeMap.put(attributeKey6, new ArrayList<String>() {{this.add(attributeValue6);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey6, new ArrayList<String>() {{this.add(attributeValue6);}});
+                } else {
+                    attributeMap.put(attributeKey6, attributeValue6);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey7)) {
-                attributeMap.put(attributeKey7, new ArrayList<String>() {{this.add(attributeValue7);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey7, new ArrayList<String>() {{this.add(attributeValue7);}});
+                } else {
+                    attributeMap.put(attributeKey7, attributeValue7);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey8)) {
-                attributeMap.put(attributeKey8, new ArrayList<String>() {{this.add(attributeValue8);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey8, new ArrayList<String>() {{this.add(attributeValue8);}});
+                } else {
+                    attributeMap.put(attributeKey8, attributeValue8);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey9)) {
-                attributeMap.put(attributeKey9, new ArrayList<String>() {{this.add(attributeValue9);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey9, new ArrayList<String>() {{this.add(attributeValue9);}});
+                } else {
+                    attributeMap.put(attributeKey9, attributeValue9);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey10)) {
-                attributeMap.put(attributeKey10, new ArrayList<String>() {{this.add(attributeValue10);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey10, new ArrayList<String>() {{this.add(attributeValue10);}});
+                } else {
+                    attributeMap.put(attributeKey10, attributeValue10);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey11)) {
-                attributeMap.put(attributeKey11, new ArrayList<String>() {{this.add(attributeValue11);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey11, new ArrayList<String>() {{this.add(attributeValue11);}});
+                } else {
+                    attributeMap.put(attributeKey11, attributeValue11);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey12)) {
-                attributeMap.put(attributeKey12, new ArrayList<String>() {{this.add(attributeValue12);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey12, new ArrayList<String>() {{this.add(attributeValue12);}});
+                } else {
+                    attributeMap.put(attributeKey12, attributeValue12);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey13)) {
-                attributeMap.put(attributeKey13, new ArrayList<String>() {{this.add(attributeValue13);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey13, new ArrayList<String>() {{this.add(attributeValue13);}});
+                } else {
+                    attributeMap.put(attributeKey13, attributeValue13);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey14)) {
-                attributeMap.put(attributeKey14, new ArrayList<String>() {{this.add(attributeValue14);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey14, new ArrayList<String>() {{this.add(attributeValue14);}});
+                } else {
+                    attributeMap.put(attributeKey14, attributeValue14);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey15)) {
-                attributeMap.put(attributeKey15, new ArrayList<String>() {{this.add(attributeValue15);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey15, new ArrayList<String>() {{this.add(attributeValue15);}});
+                } else {
+                    attributeMap.put(attributeKey15, attributeValue15);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey16)) {
-                attributeMap.put(attributeKey16, new ArrayList<String>() {{this.add(attributeValue16);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey16, new ArrayList<String>() {{this.add(attributeValue16);}});
+                } else {
+                    attributeMap.put(attributeKey16, attributeValue16);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey17)) {
-                attributeMap.put(attributeKey17, new ArrayList<String>() {{this.add(attributeValue17);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey17, new ArrayList<String>() {{this.add(attributeValue17);}});
+                } else {
+                    attributeMap.put(attributeKey17, attributeValue17);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey18)) {
-                attributeMap.put(attributeKey18, new ArrayList<String>() {{this.add(attributeValue18);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey18, new ArrayList<String>() {{this.add(attributeValue18);}});
+                } else {
+                    attributeMap.put(attributeKey18, attributeValue18);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey19)) {
-                attributeMap.put(attributeKey19, new ArrayList<String>() {{this.add(attributeValue19);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey19, new ArrayList<String>() {{this.add(attributeValue19);}});
+                } else {
+                    attributeMap.put(attributeKey19, attributeValue19);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey20)) {
-                attributeMap.put(attributeKey20, new ArrayList<String>() {{this.add(attributeValue20);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey20, new ArrayList<String>() {{this.add(attributeValue20);}});
+                } else {
+                    attributeMap.put(attributeKey20, attributeValue20);
+                }
             }
         }
 

@@ -48,9 +48,9 @@ public class VmsInventoryFileUploadService extends BaseAppService {
             String fileName = "Inventory_" + channelId + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
 
             // 保存文件
-            // 取得Feed文件上传路径
+            // 取得Inventory文件上传路径
             String inventoryFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.inventory.upload");
-            inventoryFilePath +=  "/" + channelId + "/";
+            inventoryFilePath +=  "/" + channelId + "/inventory/";
             FileUtils.copyInputStreamToFile(inputStream, new File(inventoryFilePath  + fileName));
 
         } catch (Exception ex) {
@@ -70,7 +70,7 @@ public class VmsInventoryFileUploadService extends BaseAppService {
 
         // 取得Inventory文件上传路径
         String inventoryFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.inventory.upload");
-        inventoryFilePath +=  "/" + channelId + "/";
+        inventoryFilePath +=  "/" + channelId + "/inventory/";
 
         // 目录下有文件存在的话不允许上传（FTP有上传的情况下）
         File root = new File(inventoryFilePath);

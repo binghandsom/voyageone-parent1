@@ -109,6 +109,8 @@ public class VmsConstants {
 
         // 是订单级别的操作还是SKU级别的操作
         String VENDOR_OPERATE_TYPE = "VENDOR_OPERATE_TYPE";
+        // 客户定义的显示在order画面和拣货列表中的特定属性,多个用逗号分开
+        String ADDITIONAL_ATTRIBUTES = "ADDITIONAL_ATTRIBUTES";
         // CSV分隔符
         String FEED_CSV_SPLIT_SYMBOL = "FEED_CSV_SPLIT_SYMBOL";
         // CSV文件编码
