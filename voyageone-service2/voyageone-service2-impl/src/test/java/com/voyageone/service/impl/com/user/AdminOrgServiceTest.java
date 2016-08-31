@@ -28,6 +28,8 @@ public class AdminOrgServiceTest {
     @Test
     public void testGetAllOrg() throws Exception {
 
+        String s = String.valueOf(null);
+
         List<Map<String, Object> > result = adminOrgService.getAllOrg();
 
         System.out.println(JacksonUtil.bean2Json(result));
