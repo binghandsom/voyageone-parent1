@@ -54,6 +54,7 @@ define([
             };
             this.orderStatusList = [];
             this.data = [];
+            this.currentShipment = undefined;
         }
 
         OrderInfoController.prototype.init = function () {

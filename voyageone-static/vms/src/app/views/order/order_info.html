@@ -51,7 +51,7 @@
             <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
                 <a ng-if="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
                 <label ng-if="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
-            <button class="btn btn-xs btn-info" ng-if="ctrl.channelConfigs.vendorOperateType == 'SKU' && ctrl.currentShipment"
+            <button class="btn btn-xs btn-info" ng-if="ctrl.channelConfig.vendorOperateType == 'SKU' && ctrl.currentShipment"
                     ng-click="ctrl.popAddToShipmentForSku()" translate="BTN_ADD_TO_SHIPMENT"></button>
         </div>
         <div class="col-sm-6" ng-if="!(ctrl.channelConfig.vendorOperateType == 'ORDER')"></div>
@@ -102,11 +102,10 @@
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'retail_price' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
                         </th>
                         <th ng-repeat="attribute in ctrl.channelConfig.additionalAttributes"
-                            ng-class="::ctrl.channelConfig.additionalAttributesClass[$index]"
-                            ng-click="ctrl.changeSearchOrder('attribute' + $index)">
+                            ng-class="::ctrl.channelConfig.additionalAttributesClass[$index]">
                             {{attribute}}
-                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + $index && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
-                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + $index && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + ($index + 1) && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + ($index + 1) && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
                         </th>
 
                         <th class="td-2-5" translate="TXT_ACTION"></th>
@@ -201,10 +200,10 @@
                         </th>
                         <th ng-repeat="attribute in ctrl.channelConfig.additionalAttributes"
                             ng-class="::ctrl.channelConfig.additionalAttributesClass[$index]"
-                            ng-click="ctrl.changeSearchOrder('attribute' + $index)">
+                            ng-click="ctrl.changeSearchOrder('attribute' + ($index + 1))">
                             {{attribute}}
-                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + $index && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
-                        <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + $index && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + ($index + 1) && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                        <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + ($index + 1) && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
                         </th>
                         <th class="td-1-5" translate="TXT_ACTION"></th>
                     </tr>
