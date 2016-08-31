@@ -352,10 +352,21 @@ public class FeedInfoService extends BaseService {
         }
 
         // 获取status
-        String status = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("status"));
-        if (status != null) {
-            result.append("{").append(MongoUtils.splicingValue("updFlg", NumberUtils.toInt(status, -1)));
-            result.append("},");
+//        String status = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("status"));
+//        if (status != null) {
+//            result.append("{").append(MongoUtils.splicingValue("updFlg", NumberUtils.toInt(status, -1)));
+//            result.append("},");
+//        }
+        if (searchValue.get("status") != null) {
+            List<Integer> statuss = (List<Integer>) searchValue.get("status");
+            if (!statuss.isEmpty()) {
+                List<String> orSearch = new ArrayList<>();
+                for (Integer status : statuss) {
+                    orSearch.add(MongoUtils.splicingValue("updFlg", status));
+                }
+                result.append("{").append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
+                result.append("},");
+            }
         }
 
         //
