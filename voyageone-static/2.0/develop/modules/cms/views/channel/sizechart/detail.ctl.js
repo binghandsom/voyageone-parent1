@@ -17,12 +17,7 @@ define([
 
         $scope.initialize  = function () {
             getItemById();
-            sizeChartService.init().then(function(resp){
-                $scope.vm.brandNameList = resp.data.brandNameList == null?[]:resp.data.brandNameList;
-                $scope.vm.productTypeList = resp.data.productTypeList == null?[]:resp.data.productTypeList;
-                $scope.vm.sizeTypeList = resp.data.sizeTypeList == null?[]:resp.data.sizeTypeList;
-            });
-
+            init();
         };
 
         function getItemById(){
@@ -33,6 +28,14 @@ define([
                     item.usual = item.usual != "0";
                     return item;
                 });
+            });
+        }
+
+        function init(){
+            sizeChartService.init().then(function(resp){
+                $scope.vm.brandNameList = resp.data.brandNameList == null?[]:resp.data.brandNameList;
+                $scope.vm.productTypeList = resp.data.productTypeList == null?[]:resp.data.productTypeList;
+                $scope.vm.sizeTypeList = resp.data.sizeTypeList == null?[]:resp.data.sizeTypeList;
             });
         }
 
@@ -143,6 +146,10 @@ define([
             $scope.vm.importList.push(obj);
         };
 
+        /**刷新操作*/
+        $scope.refresh = function(){
+            init();
+        }
     }
 
     sizeDetailController.$inject = ['$scope','$routeParams','sizeChartService','sizeChartDetailService','alert','notify','$translate'];
