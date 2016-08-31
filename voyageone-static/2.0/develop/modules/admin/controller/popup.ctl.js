@@ -47,6 +47,12 @@ define([
             "controller": 'AddRoleController as ctrl',
             "size": 'lg'
         },
+        "addRes": {
+            "templateUrl": "views/pop/addAdmin/addRes/index.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addAdmin/addRes/index.ctl",
+            "controller": 'AddResController as ctrl',
+            "size": 'lg'
+        },
 
         "addChannel": {
             "templateUrl": "views/pop/addChannel/index.tpl.html",
@@ -185,6 +191,13 @@ define([
          */
         $scope.openRole= function openRole(context) {
             return openModal(popActions.addRole, context);
+        };
+
+        /**
+         * 打开用户/权限页面--菜单资源管理页面的新增页面
+         */
+        $scope.openRes= function openRes(context) {
+            return openModal(popActions.addRes, context);
         };
         /**
          * 打开渠道配置页面--渠道信息页面的添加页面

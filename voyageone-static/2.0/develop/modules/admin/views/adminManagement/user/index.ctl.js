@@ -183,7 +183,7 @@ define([
                     self.confirm('确认要重置密码吗？').then(function () {
                         _.forEach(self.adminList, function (Info) {
                             if (Info.id == self.adminUserSelList.selList[0].id) {
-                                self.adminUserService.resetPass(Info.userAccount).then(function (res) {
+                                self.adminUserService.resetPass({'userAccount':Info.userAccount}).then(function (res) {
                                     console.log(res);
                                 });
                             }
