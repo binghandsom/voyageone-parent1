@@ -71,13 +71,14 @@
                 <table class="table table-vo">
                     <thead>
                     <tr>
-                        <th class="text-right" style="width: 30px" ng-click="ctrl.toggleAll()"><i ng-class="{'fa fa-plus': ctrl.collapse, 'fa fa-minus':!ctrl.collapse}"></i></th>
-                        <th class="td-1-5" ng-click="ctrl.changeSearchOrder('consolidation_order_id')">
+                        <th class="text-right" style="width: 30px;" ng-click="ctrl.toggleAll()"><i
+                                ng-class="{'fa fa-plus': ctrl.collapse, 'fa fa-minus':!ctrl.collapse}"></i></th>
+                        <th class="td-1-5 vo-hover" ng-click="ctrl.changeSearchOrder('consolidation_order_id')">
                             {{'TXT_ORDER_ID' | translate}}
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_id' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_id' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
                         </th>
-                        <th class="td-2" ng-click="ctrl.changeSearchOrder('consolidation_order_time')">
+                        <th class="td-2 vo-hover" ng-click="ctrl.changeSearchOrder('consolidation_order_time')">
                             {{'TXT_ORDER_DATE' | translate}}
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_time' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_time' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
@@ -169,32 +170,32 @@
                     <thead>
                     <tr>
                         <!--<th class="text-right" style="width: 30px" ng-click="ctrl.toggleAll()" ng-bind="ctrl.collapse ? '+' : '-'"></th>-->
-                        <th class="td-1-5"  ng-click="ctrl.changeSearchOrder('consolidation_order_id')">
+                        <th class="td-1-5 vo-hover"  ng-click="ctrl.changeSearchOrder('consolidation_order_id')">
                             {{'TXT_ORDER_ID' | translate}}
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_id' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_id' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
                         </th>
-                        <th class="td-1-5"  ng-click="ctrl.changeSearchOrder('consolidation_order_time')">
+                        <th class="td-1-5 vo-hover"  ng-click="ctrl.changeSearchOrder('consolidation_order_time')">
                             {{'TXT_ORDER_DATE' | translate}}
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_time' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_time' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
                         </th>
-                        <th class="td-1-5"  ng-click="ctrl.changeSearchOrder('client_sku')">
+                        <th class="td-1-5 vo-hover"  ng-click="ctrl.changeSearchOrder('client_sku')">
                             {{'TXT_SKU' | translate}}
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'client_sku' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'client_sku' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
                         </th>
-                        <th class="td-3"  ng-click="ctrl.changeSearchOrder('name')">
+                        <th class="td-3 vo-hover"  ng-click="ctrl.changeSearchOrder('name')">
                             {{'TXT_NAME' | translate}}
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'name' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'name' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
                         </th>
-                        <th class="td-1"  ng-click="ctrl.changeSearchOrder('status')">
+                        <th class="td-1 vo-hover"  ng-click="ctrl.changeSearchOrder('status')">
                             {{'TXT_STATUS' | translate}}
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'status' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'status' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
                         </th>
-                        <th class="td-1"  ng-click="ctrl.changeSearchOrder('client_promotion_price')">
+                        <th class="td-1 vo-hover"  ng-click="ctrl.changeSearchOrder('client_promotion_price')">
                             {{'TXT_VO_PRICE' | translate}}
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'client_promotion_price' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'client_promotion_price' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
@@ -205,7 +206,7 @@
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'retail_price' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
                         </th>
                         <th ng-repeat="attribute in ctrl.channelConfig.additionalAttributes"
-                            ng-class="::ctrl.channelConfig.additionalAttributesClass[$index]"
+                            ng-class="::ctrl.channelConfig.additionalAttributesClass[$index] + ' vo-hover'"
                             ng-click="ctrl.changeSearchOrder('attribute' + ($index + 1))">
                             {{attribute}}
                             <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + ($index + 1) && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>

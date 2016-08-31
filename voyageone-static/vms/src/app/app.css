@@ -255,6 +255,9 @@ input::-webkit-clear-button {
   background-color: #339be6;
   color: white;
 }
+.table-vo thead th.vo-hover:hover {
+  background-color: #226795;
+}
 .table {
   margin-bottom: 0;
 }
