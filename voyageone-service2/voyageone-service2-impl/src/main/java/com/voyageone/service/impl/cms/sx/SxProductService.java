@@ -342,6 +342,25 @@ public class SxProductService extends BaseService {
     }
 
     /**
+     * cms_bt_business_log对应的以前的错误清一下,即把status更新成1:已解决
+     *
+     * @param channelId String 渠道id
+     * @param cartId Integer 平台id
+     * @param groupId Long GroupId
+     * @param model String feed model
+     * @param code String 产品code
+     * @param modifier String 更新者
+     */
+    public void clearBusinessLog(String channelId, Integer cartId, Long groupId,
+                                 String model, String code, String modifier) {
+        // 逻辑删除cms_bt_business_log表以前的错误信息
+        int effectCnt = businessLogService.updateFinishStatusByCondition(channelId, cartId,
+                LongUtils.toString(groupId), model, code, modifier);
+        $debug("cms_bt_business_log表以前的错误信息逻辑删除件数：%d件 [ChannelId:%s] [CatId:%d] [GroupId:%s] [Code:%s]",
+                effectCnt, channelId, cartId, LongUtils.toString(groupId), code);
+    }
+
+    /**
      * 回写ims_bt_product表
      *
      * @param sxData 上新数据
@@ -3409,8 +3428,8 @@ public class SxProductService extends BaseService {
             return;
         }
 
-        // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
-        clearBusinessLog(sxData, modifier);
+//        // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
+//        clearBusinessLog(sxData, modifier);
 
         // 上新成功时
         if (uploadStatus) {
@@ -3528,6 +3547,20 @@ public class SxProductService extends BaseService {
     }
 
     /**
+     * 插入上新表的唯一一个正式的统一入口 (单个产品的场合)
+     * @param productModel  产品数据
+     * @param modifier      修改者
+     */
+    public void insertSxWorkLoad(CmsBtProductModel productModel, String modifier) {
+        productModel.getPlatforms().forEach( (cartId, platform) -> {
+            if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())
+                    && (StringUtils.isEmpty(productModel.getLock()) || "0".equals(productModel.getLock()))) {
+                insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier);
+            }
+        });
+    }
+
+    /**
      * 插入上新表的唯一一个正式的统一入口 (单个code的场合)
      * @param channelId channel id
      * @param code code
@@ -3634,6 +3667,11 @@ public class SxProductService extends BaseService {
                 // 最后插入一次数据库
                 iCnt += sxWorkloadDao.insertSxWorkloadModels(modelListFaster);
             }
+
+            // 逻辑删除cms_bt_business_log中以前的错误,即把status更新成1:已解决
+            modelList.forEach(p -> {
+                clearBusinessLog(p.getChannelId(), p.getCartId(), p.getGroupId(), null, null, p.getModifier());
+            });
         }
         $debug("insertSxWorkLoad 新增SxWorkload结果 " + iCnt);
     }

@@ -83,6 +83,9 @@ public class PlatformSchemaService extends BaseService {
             platformCategorySchemaModel = platformCategoryService.getPlatformSchemaByCategoryPath(categoryPath, cartId);
         }
 
+        if (platformCategorySchemaModel == null)
+            return null;
+
         return getFieldListMap(platformCategorySchemaModel, channelId, language);
     }
 

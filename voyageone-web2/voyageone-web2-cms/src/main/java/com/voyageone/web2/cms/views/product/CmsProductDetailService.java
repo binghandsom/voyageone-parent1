@@ -437,7 +437,7 @@ public class CmsProductDetailService extends BaseAppService {
 //        if (newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
 
         // 插入上新程序
-        productService.insertSxWorkLoad(channelId, newProduct, userName);
+        sxProductService.insertSxWorkLoad(newProduct, userName);
 
 //        }
 

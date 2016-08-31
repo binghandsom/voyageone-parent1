@@ -40,11 +40,9 @@ import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
-import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -534,64 +532,6 @@ public class ProductService extends BaseService {
         }
     }
 
-    // jeff 2016/04 change start
-    public void insertSxWorkLoad(String channelId, CmsBtProductModel cmsProduct, String modifier) {
-        List<Integer> carts = cmsProduct.getCartIdList();
-        if (carts != null && !carts.isEmpty()) {
-            // 根据商品code获取其所有group信息(所有平台)
-            List<CmsBtProductGroupModel> groups = cmsBtProductGroupDao.select("{\"productCodes\": \"" + cmsProduct.getCommon().getFields().getCode() + "\"}", channelId);
-            Map<Integer, Long> platformsMap = new BaseMongoMap<>();
-            groups.forEach(g -> platformsMap.put(g.getCartId(), g.getGroupId()));
-//            Map<Integer, Long> platformsMap = groups.stream().collect(toMap(CmsBtProductGroupModel::getCartId, CmsBtProductGroupModel::getGroupId));
-
-            // 获取所有的可上新的平台group信息
-            List<CmsBtSxWorkloadModel> models = new ArrayList<>();
-
-            for (Integer cartInfo : carts) {
-                // Add desmond 2016/07/01 start
-                // 由于2016/07/08版本的最新Product中product.Fields.status移到分平台product.platforms.P23.status下面去了
-                // 所以是否Approved的判断只能移到insertSxWorkLoad()方法里面去做，当一个商品的所有product都没有Approved，则不插入sx_workload表
-                if (cmsProduct.getPlatform(cartInfo) != null
-                        && !CmsConstants.ProductStatus.Approved.name().equals(cmsProduct.getPlatform(cartInfo).getStatus())) {
-                    continue;
-                }
-                // Add desmond 2016/07/01 end
-
-                CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-                model.setChannelId(channelId);
-                if (platformsMap.get(cartInfo) != null) {
-                    model.setGroupId(platformsMap.get(cartInfo));
-                } else {
-                    CmsBtProductGroupModel newGroup;
-                    try {
-                        newGroup = (CmsBtProductGroupModel) BeanUtils.cloneBean(groups.get(0));
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                    newGroup.set_id(null);
-                    newGroup.setChannelId(channelId);
-                    newGroup.setNumIId(null);
-                    newGroup.setCartId(cartInfo);
-                    newGroup.setGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
-                    cmsBtProductGroupDao.insert(newGroup);
-                    model.setGroupId(newGroup.getGroupId());
-                }
-                model.setCartId(cartInfo);
-                model.setPublishStatus(0);
-                model.setCreater(modifier);
-                model.setModifier(modifier);
-                models.add(model);
-            }
-
-            // TODO: 16/5/13 如果sxworkload表已经同样的未上新的数据,是否就不需要再插入该条数据了
-            if (!models.isEmpty()) {
-                int rslt = cmsBtSxWorkloadDaoExt.insertSxWorkloadModels(models);
-                $debug("insertSxWorkLoad 新增SxWorkload结果 " + rslt);
-            }
-        }
-    }
-    // jeff 2016/04 change end
-
     /**
      * get the product info from wms's request
      */
@@ -983,8 +923,7 @@ public class ProductService extends BaseService {
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
         // 更新workLoad表
-        CmsBtProductModel productModel = getProductById(channelId, prodId);
-        insertSxWorkLoad(channelId, productModel, modifier);
+        sxProductService.insertSxWorkLoad(getProductById(channelId, prodId), modifier);
 
         insertProductHistory(channelId, prodId);
 
@@ -1234,7 +1173,8 @@ public class ProductService extends BaseService {
         updateMap.put("$set", rsMap);
 
         cmsBtProductDao.update(channelId, queryMap, updateMap);
-        insertSxWorkLoad(channelId, getProductById(channelId, prodId), modifier);
+        // 更新workLoad表
+        sxProductService.insertSxWorkLoad(getProductById(channelId, prodId), modifier);
         insertProductHistory(channelId, prodId);
         return modified;
     }

@@ -203,7 +203,6 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             sxProductService.updateProductGroupNumIIdStatus(sxData, numIId, getTaskName());
             // 回写ims_bt_product表(numIId)
             sxProductService.updateImsBtProduct(sxData, getTaskName());
-            sxProductService.clearBusinessLog(sxData, getTaskName());
             // 回写workload表   (成功1)
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
 
@@ -229,7 +228,6 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             }
             // 回写workload表   (失败2)
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
-            sxProductService.clearBusinessLog(sxData, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
             return;

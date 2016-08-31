@@ -135,6 +135,10 @@ class PlatformMappingViewService extends BaseAppService {
                 product = SchemaJsonReader.readJsonForList(productFieldMapList);
         } else {
             Map<String, List<Field>> fieldListMap = platformSchemaService.getFieldsByCategoryPath(categoryPath, channelId, cartId, lang);
+
+            if (fieldListMap == null || fieldListMap.isEmpty())
+                return null;
+
             item = fieldListMap.get(PlatformSchemaService.KEY_ITEM);
             product = fieldListMap.get(PlatformSchemaService.KEY_PRODUCT);
         }
