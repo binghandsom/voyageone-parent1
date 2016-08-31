@@ -243,7 +243,7 @@
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="form-group" ng-if="vm._cart_display&&vm.searchInfo.cartId!=27">
+                                        <div class="form-group">
                                             <label class="col-sm-3 control-label">实际平台状态</label>
                                             <div class="col-sm-8">
                                                 <label class="checkbox-inline c-checkbox">
@@ -258,8 +258,11 @@
                                             <label class="col-sm-3 control-label">错误管理状态</label>
                                             <div class="col-sm-7">
                                                 <div>
-                                                    <select class="form-control" ng-model="vm.searchInfo.hasErrorFlg" ng-options="errItem.id as errItem.txt for errItem in vm._errFlgList">
+                                                    <select class="form-control" ng-model="vm.searchInfo.hasErrorFlg">
                                                         <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                        <option value="1">错误管理内无错误记录</option>
+                                                        <option value="2">错误管理内有错误记录</option>
+                                                        <option value="3">商品平台状态与实际相异</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -647,7 +650,7 @@
                                 <li>
                                     <a href="javascript:void(0)" ng-click="cfmRetailPrice(cartBean)">指导价变更确认</a>
                                 </li>
-                                <li ng-if="cartBean.value!=27&&cartBean.cartType!=3">
+                                <li ng-if="cartBean.cartType!=3">
                                     <a href="javascript:void(0)" ng-click="_openPutOnOff(openPutOnOff,cartBean.value)">{{'TXT_PUT_ON/PUT_OFF'|translate}}</a>
                                 </li>
                                 <li class="dropdown-submenu" ng-if="vm.masterData.promotionMap[cartBean.value].length > 0 &&cartBean.cartType!=3">

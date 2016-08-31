@@ -9,4 +9,15 @@ public class LongUtils {
         if (StringUtils.isEmpty(value.toString())) return 0;
         return Long.parseLong(value.toString());
     }
+
+    public static String toString(Long value) {
+        return toString(value, "");
+    }
+
+    public static String toString(Long value, String defaultValue) {
+        if(value == null) {
+            return defaultValue;
+        }
+        return Long.toString(value);
+    }
 }

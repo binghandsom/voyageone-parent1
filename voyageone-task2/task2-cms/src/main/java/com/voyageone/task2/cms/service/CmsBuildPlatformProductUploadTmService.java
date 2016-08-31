@@ -426,7 +426,6 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             }
             // 回写workload表   (失败2)
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
-            sxProductService.clearBusinessLog(sxData, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
             // modified by morse.lu 2016/06/06 start
@@ -441,7 +440,6 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             sxData.setErrorMessage("达尔文产品更新成功,请等待审核通过,再重新Approve上新商品.");
             // 回写workload表  (审核中4)
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.review, getTaskName());
-            sxProductService.clearBusinessLog(sxData, getTaskName());
             // 回写详细错误信息表(cms_bt_business_log)
             sxProductService.insertBusinessLog(sxData, getTaskName());
             return;
@@ -471,7 +469,6 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                     // 更新特价宝
                     updateTeJiaBaoPromotion(sxData);
 
-                    sxProductService.clearBusinessLog(sxData, getTaskName());
                     // 回写workload表   (成功1)
                     sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
                     // delete by morse.lu 2016/06/06 start
@@ -505,7 +502,6 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                 }
                 // 回写workload表   (失败2)
                 sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
-                sxProductService.clearBusinessLog(sxData, getTaskName());
                 // 回写详细错误信息表(cms_bt_business_log)
                 sxProductService.insertBusinessLog(sxData, getTaskName());
                 // modified by morse.lu 2016/06/06 start

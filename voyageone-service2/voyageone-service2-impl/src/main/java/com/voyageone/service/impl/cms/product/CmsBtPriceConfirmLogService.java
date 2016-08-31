@@ -1,9 +1,13 @@
 package com.voyageone.service.impl.cms.product;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtPriceConfirmLogDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceConfirmLogModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +40,15 @@ public class CmsBtPriceConfirmLogService extends BaseService {
         this.priceConfirmLogDao = priceConfirmLogDao;
     }
 
-    public boolean addConfirmed(String skuCode, String floatingRate, Double currentRetailPrice, String username) {
-        return add(skuCode, STATUS_CONFIRMED, floatingRate, currentRetailPrice, currentRetailPrice, username);
+    public void addConfirmed(String channelId, String code, CmsBtProductModel_Platform_Cart platformCart, String username) {
+        for (BaseMongoMap<String, Object> sku: platformCart.getSkus()) {
+            String skuCode = sku.getStringAttribute(Platform_SKU_COM.skuCode.name());
+            addConfirmed(skuCode, sku.getDoubleAttribute(Platform_SKU_COM.priceRetail.name()), username);
+        }
+    }
+
+    public boolean addConfirmed(String skuCode, Double currentRetailPrice, String username) {
+        return add(skuCode, STATUS_CONFIRMED, "0%", currentRetailPrice, currentRetailPrice, username);
     }
 
     public boolean addUnConfirmed(String skuCode, String floatingRate, Double currentRetailPrice, Double currentConfirmPrice, String username) {

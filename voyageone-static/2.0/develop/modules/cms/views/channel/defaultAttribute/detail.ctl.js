@@ -11,7 +11,7 @@ define([
 ], function (cms) {
     cms.controller('attributeDetailController', (function () {
 
-        function AttributeDetailController($scope, $routeParams, alert, notify, popups, menuService,
+        function AttributeDetailController($scope, $routeParams, alert, notify, popups, confirm, menuService,
                                            $productDetailService, platformMappingService) {
             var self = this;
 
@@ -23,6 +23,7 @@ define([
             self.menuService = menuService;
             self.$scope = $scope;
             self.alert = alert;
+            self.confirm = confirm;
         }
 
         AttributeDetailController.prototype.init = function () {
@@ -79,6 +80,44 @@ define([
             });
         };
 
+        AttributeDetailController.prototype.tryGetCart = function () {
+            var self = this,
+                searchInfo = self.searchInfo;
+
+            if (!self.fields) {
+                self.tryGet();
+                return;
+            }
+
+            self.confirm('切换平台, 会清空您<strong>未保存</strong>的所有内容。确认要切换么?').then(function () {
+                if (searchInfo.categoryType == 1) {
+                    self.tryGet();
+                    return;
+                }
+                self.fields = null;
+                searchInfo.categoryPath = null;
+                searchInfo.categoryId = null;
+            }, function () {
+                searchInfo.cartId = self.lastCartId;
+            });
+        };
+
+        AttributeDetailController.prototype.tryGetCategory = function () {
+            var self = this,
+                searchInfo = self.searchInfo;
+
+            if (!self.fields) {
+                self.tryGet();
+                return;
+            }
+
+            self.confirm('切换类目, 会清空您<strong>未保存</strong>的所有内容。确认要切换么?').then(function () {
+                self.tryGet();
+            }, function () {
+                searchInfo.categoryType = self.lastCategoryType;
+            });
+        };
+
         AttributeDetailController.prototype.tryGet = function () {
 
             var self = this,
@@ -96,6 +135,9 @@ define([
 
             self.categoryTitle = (self.searchInfo.categoryType == 1) ? "全类目" : self.searchInfo.categoryPath;
 
+            self.lastCartId = searchInfo.cartId;
+            self.lastCategoryType = searchInfo.categoryType;
+
             self.$get();
         };
 
@@ -104,15 +146,22 @@ define([
             var self = this,
                 platformMappingService = self.platformMappingService;
 
-            platformMappingService.get(self.searchInfo).then(function (res) {
-                self.modified = res.data.modified;
-                self.fields = res.data.schema;
+            platformMappingService.get(self.searchInfo).then(function (resp) {
+                var data = resp.data;
+                if (!data) {
+                    self.modified = null;
+                    self.fields = null;
+                    return;
+                }
+                self.modified = data.modified;
+                self.fields = data.schema;
             });
         };
 
         AttributeDetailController.prototype.openCategorySelector = function () {
 
             var self = this,
+                searchInfo = self.searchInfo,
                 $productDetailService = self.$productDetailService;
 
             $productDetailService.getPlatformCategories({cartId: self.searchInfo.cartId}).then(function (resp) {
@@ -129,9 +178,24 @@ define([
                     categories: categoryList,
                     divType: ">"
                 }).then(function (context) {
-                    self.searchInfo.categoryPath = context.selected.catPath;
-                    self.searchInfo.categoryId = context.selected.catId;
-                    self.tryGet();
+
+                    var selected = context.selected;
+
+                    if (searchInfo.categoryPath === selected.catPath)
+                        return;
+
+                    if (!self.fields) {
+                        searchInfo.categoryPath = selected.catPath;
+                        searchInfo.categoryId = selected.catId;
+                        self.tryGet();
+                        return;
+                    }
+
+                    self.confirm('切换类目, 会清空您<strong>未保存</strong>的所有内容。确认要切换么?').then(function () {
+                        searchInfo.categoryPath = selected.catPath;
+                        searchInfo.categoryId = selected.catId;
+                        self.tryGet();
+                    });
                 });
             });
         };
