@@ -141,6 +141,7 @@ define(function () {
         "BTN_PRINT_ORDER_LABEL":"PRINT ORDER LABEL",
         "BTN_PRINT": "PRINT",
         "BTN_TEST": "TEST",
-        "BTN_SAVE": "SAVE"
+        "BTN_SAVE": "SAVE",
+        "BTN_PREVIEW": "PREVIEW"
     }
 });

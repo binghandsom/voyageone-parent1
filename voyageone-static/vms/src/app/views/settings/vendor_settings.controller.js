@@ -15,6 +15,7 @@ define([
             this.channelConfig = {};
             this.deliveryCompanyList = [];
             this.testName = "";
+            this.ruleTableShow = false;
         }
 
         VendorSettingsController.prototype.init = function () {
@@ -28,7 +29,9 @@ define([
 
         VendorSettingsController.prototype.testNaming = function () {
             var self = this;
-            self.testName = moment().format(self.channelConfig.namingConverter);
+            if (self.channelConfig.namingConverter)
+                self.testName = moment().format(self.channelConfig.namingConverter);
+            else self.testName = "";
         };
 
         VendorSettingsController.prototype.save = function () {

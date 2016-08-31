@@ -52,12 +52,12 @@ public class VmsVendorSettingsService {
         // Shipment Naming Converter
         VmsChannelConfigBean shipmentNamingConverterConfig = new VmsChannelConfigBean();
         shipmentNamingConverterConfig.setChannelId(user.getSelChannelId());
-        shipmentNamingConverterConfig.setConfigKey(EMAIL_ADDRESS);
+        shipmentNamingConverterConfig.setConfigKey(DEFAULT_SHIPMENT_NAMING_CONVERTER);
         shipmentNamingConverterConfig.setConfigCode(VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
-        shipmentNamingConverterConfig.setConfigValue1(vmsChannelSettingBean.getEmailAddress());
+        shipmentNamingConverterConfig.setConfigValue1(vmsChannelSettingBean.getNamingConverter());
         shipmentNamingConverterConfig.setCreater(user.getUserName());
         shipmentNamingConverterConfig.setModifier(user.getUserName());
-        int shipmentNamingConverterConfigCount = vmsChannelConfigService.insertOrUpdateConfig(emailAddressConfig);
+        int shipmentNamingConverterConfigCount = vmsChannelConfigService.insertOrUpdateConfig(shipmentNamingConverterConfig);
 
         VmsChannelConfigs.reload();
         return defaultDeliveryCompanyConfigCount + emailAddressConfigCount + shipmentNamingConverterConfigCount;
