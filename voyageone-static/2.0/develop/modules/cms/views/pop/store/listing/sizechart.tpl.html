@@ -19,10 +19,10 @@
                     <label class="col-sm-4 control-label">{{'TXT_SIZE_IMAGE' | translate}}</label>
                     <div class="col-sm-6">
                         <label>
-                            <input name="sizeChart" type="radio" value="setting" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;无对应尺码对照表
+                            <input name="sizeChart" type="radio" value="setting" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;无对应尺码对照图
                         </label>
                         <label>
-                            <input name="sizeChart" type="radio" value="match" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;匹配现有尺码对照表
+                            <input name="sizeChart" type="radio" value="match" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;匹配现有尺码对照图
                             <select class="form-control col-md-offset-2 m-t-xs"
                                     ng-model="vm.sizeChart"
                                     ng-options = "optItem as optItem.imageGroupName for optItem in noMathOpt"
@@ -30,7 +30,7 @@
                             </select>
                         </label>
                         <label>
-                            <input name="sizeChart" type="radio"  value="new" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;新建对应尺码对照表
+                            <input name="sizeChart" type="radio"  value="new" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;新建对应尺码对照图
                             <input type="text" class="form-control col-md-offset-2 m-t-xs" ng-model="vm.sizeChart" ng-if = "chartType == 'new'">
                         </label>
                     </div>
