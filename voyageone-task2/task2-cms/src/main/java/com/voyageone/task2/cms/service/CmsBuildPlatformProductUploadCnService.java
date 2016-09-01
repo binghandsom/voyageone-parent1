@@ -218,9 +218,10 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
             // 上传产品失败，后面商品也不用上传，直接回写workload表   (失败2)
             if (ex instanceof BusinessException) {
+                $error(ex.getMessage());
                 sxData.setErrorMessage(((BusinessException) ex).getMessage());
             } else {
-                String errMsg = String.format("天猫平台产品匹配或上传产品时异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [%s]",
+                String errMsg = String.format("产品匹配或上传产品时异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [%s]",
                         channelId, cartId, groupId, ex.getMessage());
                 $error(errMsg);
                 ex.printStackTrace();
