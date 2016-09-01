@@ -6,6 +6,6 @@
     </delete>
 
     <delete id="deleteByCmsBtImageGroupId">
-            delete from cms_bt_size_chart_image_group where channel_Id=#{channelId} cms_bt_image_group_id=#{cmsBtImageGroupId}
+            delete from cms_bt_size_chart_image_group where channel_Id=#{channelId} and cms_bt_image_group_id=#{cmsBtImageGroupId}
     </delete>
 </mapper>
