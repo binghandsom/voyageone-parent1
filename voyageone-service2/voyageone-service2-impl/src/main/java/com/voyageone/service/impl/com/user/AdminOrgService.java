@@ -56,17 +56,19 @@ public class AdminOrgService extends BaseService {
 
     public PageModel<AdminOrgBean>  searchOrg(Integer pageNum, Integer pageSize)
     {
-        return searchOrg(new ComOrganizationModel(), pageNum, pageSize);
+        return searchOrg(null, null, pageNum, pageSize);
     }
 
-    public PageModel<AdminOrgBean>  searchOrg(ComOrganizationModel model, Integer pageNum, Integer pageSize)
+    public PageModel<AdminOrgBean>  searchOrg(String orgName ,Integer active, Integer pageNum, Integer pageSize)
     {
         PageModel<AdminOrgBean> pageModel = new PageModel<>();
 
         // 判断查询结果是否分页
         boolean needPage = false;
         Map<String,Object> newMap = new HashMap<>();
-        BeanUtils.copyProperties(model, newMap);
+
+        newMap.put("orgName", orgName);
+        newMap.put("active", active);
 
         if (pageNum != null && pageSize != null) {
             needPage = true;

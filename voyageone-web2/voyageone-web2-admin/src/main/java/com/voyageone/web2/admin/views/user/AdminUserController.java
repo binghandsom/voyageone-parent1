@@ -133,7 +133,6 @@ public class AdminUserController extends AdminController {
     public AjaxResponse showAuth(@RequestBody Integer userId)  {
         // 验证参数
         Preconditions.checkNotNull(userId);
-
         return success(true);
     }
 
