@@ -38,8 +38,8 @@ public class CartController extends AdminController {
 	
 	@SuppressWarnings("serial")
 	@RequestMapping(AdminUrlConstants.Cart.Self.GET_ALL_CART)
-	public AjaxResponse getAllCart() {
-		List<CtCartModel> carts = cartService.getAllCart();
+	public AjaxResponse getAllCart(@RequestBody(required = false) String channelId) {
+		List<CtCartModel> carts = cartService.getAllCart(channelId);
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
 		carts.stream().forEach(item -> result.add(new HashMap<String, Object>() {{
 			put("cartId", item.getCartId());

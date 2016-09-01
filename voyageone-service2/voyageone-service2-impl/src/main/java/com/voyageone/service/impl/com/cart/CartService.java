@@ -1,11 +1,15 @@
 package com.voyageone.service.impl.com.cart;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +18,10 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.dao.com.CtCartDao;
 import com.voyageone.service.daoext.com.CtCartDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.com.channel.ChannelService;
 import com.voyageone.service.model.com.CtCartModel;
 import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.model.com.TmOrderChannelModel;
 
 /**
  * @author Wangtd
@@ -29,9 +35,22 @@ public class CartService extends BaseService {
 	
 	@Autowired
 	private CtCartDaoExt cartDaoExt;
+	
+	@Resource(name = "AdminChannelService")
+	private ChannelService channelService;
 
-	public List<CtCartModel> getAllCart() {
-		return cartDao.selectList(Collections.emptyMap());
+	public List<CtCartModel> getAllCart(String channelId) {
+		if (StringUtils.isBlank(channelId)) {
+			return cartDao.selectList(Collections.emptyMap());
+		} else {
+			TmOrderChannelModel channel = channelService.searchChannelByChannelId(channelId);
+			if (channel != null) {
+				if (StringUtils.isNotBlank(channel.getCartIds())) {
+					return getCartByIds(Arrays.asList(channel.getCartIds().split(",")));
+				}
+			}
+		}
+		return Collections.emptyList();
 	}
 
 	public List<CtCartModel> getCartByIds(List<String> cartIds) {

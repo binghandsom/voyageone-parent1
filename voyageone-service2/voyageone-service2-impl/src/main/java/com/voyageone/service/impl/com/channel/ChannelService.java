@@ -54,7 +54,11 @@ public class ChannelService extends BaseService {
 		return channelDao.selectList(Collections.emptyMap());
 	}
 	
-	public TmOrderChannelBean searchChannelByChannelId(String channelId) {
+	public TmOrderChannelModel searchChannelByChannelId(String channelId) {
+		return channelDao.select(channelId);
+	}
+	
+	public TmOrderChannelBean searchChannelAndConfigByChannelId(String channelId) {
 		List<TmOrderChannelBean> result = searchChannelByPage(channelId, null, null, null, null, null).getResult();
 		if (result == null) {
 			return null;
