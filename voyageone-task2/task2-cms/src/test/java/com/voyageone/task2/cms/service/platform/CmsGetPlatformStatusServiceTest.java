@@ -25,7 +25,7 @@ import java.util.Map;
 public class CmsGetPlatformStatusServiceTest {
 
     @Autowired
-    CmsGetPlatformStatusService targetService;
+    private CmsGetPlatformStatusService targetService;
 
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_ShopConfigs.toString();
 
@@ -34,6 +34,7 @@ public class CmsGetPlatformStatusServiceTest {
         // 准备参数
         Shops.reload();
         Map<String, ShopBean> shopBeanMap = new HashMap<>();
+
         // tmall
         ShopBean bean1 = new ShopBean();
         bean1.setCart_id("23");
@@ -42,6 +43,7 @@ public class CmsGetPlatformStatusServiceTest {
         bean1.setApp_url("http://gw.api.taobao.com/router/rest");
 
         shopBeanMap.put(buildKey(bean1.getCart_id(), bean1.getOrder_channel_id()), bean1);
+
         // jingdong
         ShopBean bean2 = new ShopBean();
         bean2.setCart_id("28");
@@ -50,6 +52,16 @@ public class CmsGetPlatformStatusServiceTest {
         bean2.setApp_url("https://api.jd.com/routerjson");
 
         shopBeanMap.put(buildKey(bean2.getCart_id(), bean2.getOrder_channel_id()), bean2);
+
+        // jumei
+        ShopBean bean3 = new ShopBean();
+        bean3.setCart_id("27");
+        bean3.setPlatform_id("4");
+        bean3.setOrder_channel_id("010");
+        bean3.setApp_url("http://openapi.ext.jmrd.com:8823");
+
+        shopBeanMap.put(buildKey(bean3.getCart_id(), bean3.getOrder_channel_id()), bean3);
+
         CacheHelper.reFreshSSB(KEY, shopBeanMap);
     }
 
@@ -100,6 +112,34 @@ public class CmsGetPlatformStatusServiceTest {
         param3.setTask_id("CmsGetPlatformStatusJob");
         param3.setCfg_name("cart_id");
         param3.setCfg_val1("28");
+        paramList.add(param3);
+
+        try {
+            targetService.onStartup(paramList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testJMPlatform() {
+        List<TaskControlBean> paramList = new ArrayList<>();
+        TaskControlBean param = new TaskControlBean();
+        param.setTask_id("CmsGetPlatformStatusJob");
+        param.setCfg_name("run_flg");
+        param.setCfg_val1("1");
+        paramList.add(param);
+
+        TaskControlBean param2 = new TaskControlBean();
+        param2.setTask_id("CmsGetPlatformStatusJob");
+        param2.setCfg_name("channel_id");
+        param2.setCfg_val1("010");
+        paramList.add(param2);
+
+        TaskControlBean param3 = new TaskControlBean();
+        param3.setTask_id("CmsGetPlatformStatusJob");
+        param3.setCfg_name("cart_id");
+        param3.setCfg_val1("27");
         paramList.add(param3);
 
         try {
