@@ -245,6 +245,15 @@ public class VmsOrderInfoService extends BaseService {
         Cell titleRowCell2 = titleRow.createCell(orderIdCellNumber);
         titleRowCell2.setCellValue("OrderID");
         titleRowCell2.setCellStyle(titleRowCellStyle);
+        // 动态属性
+        List<String> attributes = vmsChannelConfigService.getChannelConfig(user).getAdditionalAttributes();
+        if (attributes != null && attributes.size() > 0) {
+            for(int i = 1;i <= attributes.size();i++) {
+                Cell titleRowCellAttribute = titleRow.createCell(orderIdCellNumber + i);
+                titleRowCellAttribute.setCellValue(attributes.get(i - 1));
+                titleRowCellAttribute.setCellStyle(titleRowCellStyle);
+            }
+        }
 
         // 设置数据行
         for (int i = 0; i < orderDetailList.size(); i++) {
@@ -261,12 +270,31 @@ public class VmsOrderInfoService extends BaseService {
             Cell orderIdCell = dataRow.createCell(orderIdCellNumber);
             orderIdCell.setCellValue(vmsBtOrderDetailModel.getConsolidationOrderId());
             orderIdCell.setCellStyle(defaultRowCellStyle);
+
+            if (attributes != null && attributes.size() > 0) {
+                for(int j = 1;j <= attributes.size();j++) {
+                    Cell attributeCell = dataRow.createCell(orderIdCellNumber + j);
+                    if (j == 1) {
+                        attributeCell.setCellValue(vmsBtOrderDetailModel.getAttribute1() == null ? "" : vmsBtOrderDetailModel.getAttribute1());
+                    } else if (j == 2) {
+                        attributeCell.setCellValue(vmsBtOrderDetailModel.getAttribute2() == null ? "" : vmsBtOrderDetailModel.getAttribute2());
+                    } else if (j == 3) {
+                        attributeCell.setCellValue(vmsBtOrderDetailModel.getAttribute3() == null ? "" : vmsBtOrderDetailModel.getAttribute3());
+                    }
+                    attributeCell.setCellStyle(defaultRowCellStyle);
+                }
+            }
         }
 
         // 整理宽度
         sheet.autoSizeColumn(skuCellNumber);
         sheet.autoSizeColumn(descriptionCellNumber);
         sheet.autoSizeColumn(orderIdCellNumber);
+        if (attributes != null && attributes.size() > 0) {
+            for(int i = 1;i <= attributes.size();i++) {
+                sheet.autoSizeColumn(orderIdCellNumber + i);
+            }
+        }
 
         // 设定首行冻结
         sheet.createFreezePane(0, 1, 0, 1);
@@ -688,10 +716,11 @@ public class VmsOrderInfoService extends BaseService {
         // 确认shipment状态
         VmsBtShipmentModel shipment = shipmentService.select(scanInfoBean.getShipment().getId());
         if (!user.getSelChannelId().equals(shipment.getChannelId())) throw new BusinessException("8000030");
-        if (!STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(shipment.getStatus())) throw new BusinessException(("8000025"));
+        // SKU级别扫描的情况下，加上即使状态是shipped的shipment也能够继续扫描
+        // if (!STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(shipment.getStatus())) throw new BusinessException(("8000025"));
 
         return orderDetailService.scanInSku(user.getSelChannelId(), user.getUserName(),
-                scanInfoBean.getBarcode(), scanInfoBean.getShipment().getId());
+                scanInfoBean.getBarcode(), scanInfoBean.getShipment().getId(), shipment.getStatus());
     }
 
     /**

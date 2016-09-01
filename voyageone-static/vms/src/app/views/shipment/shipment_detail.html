@@ -33,9 +33,9 @@
                     </div>
                     <div class="col-md-8 no-print">
                         <div class="form-group input-group">
-                            <input name="barcodeInputBar" type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}" ng-model="ctrl.barcode" ng-keyup="ctrl.scanKeyUp($event)" ng-autofocus="true" ng-disabled="ctrl.shipment.status != 1">
+                            <input name="barcodeInputBar" type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}" ng-model="ctrl.barcode" ng-keyup="ctrl.scanKeyUp($event)" ng-autofocus="true" ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3">
                             <span class="input-group-btn">
-                                <button id="scan" class="btn btn-info" type="button" ng-click="ctrl.scan()" translate="BTN_SCAN" ng-disabled="ctrl.shipment.status != 1 || !ctrl.barcode"></button>
+                                <button id="scan" class="btn btn-info" type="button" ng-click="ctrl.scan()" translate="BTN_SCAN" ng-disabled="ctrl.shipment.status != 1  && ctrl.shipment.status != 3 || !ctrl.barcode"></button>
                             </span>
                         </div>
                     </div>

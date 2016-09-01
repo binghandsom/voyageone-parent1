@@ -128,21 +128,32 @@ public class FeedToCmsService extends BaseService {
                 CmsBtFeedInfoModel befproduct = feedInfoService.getProductByCode(channelId, product.getCode());
                 if (befproduct != null) {
                     product.set_id(befproduct.get_id());
-                    //把之前的sku（新的product中没有的sku）保存到新的product的sku中
-                    for (CmsBtFeedInfoModel_Sku skuModel : befproduct.getSkus()) {
-                        if (!product.getSkus().contains(skuModel)) {
-                            product.getSkus().add(skuModel);
+                    // Vms客户导入的情况下，sku以新的为准（老的舍弃）
+                    if (isVmsUpdate) {
+                        if (product.getSkus().size() != befproduct.getSkus().size()) {
                             insertLog = true;
-                        } else {
-                            // 改条数据已经需要跟新主数据了 后面价格也不需要比了
-                            if (!insertLog) {
-                                CmsBtFeedInfoModel_Sku item = product.getSkus().get(product.getSkus().indexOf(skuModel));
-                                if (item.getPriceClientMsrp().compareTo(skuModel.getPriceClientMsrp()) != 0
-                                        || item.getPriceClientRetail().compareTo(skuModel.getPriceClientRetail()) != 0
-                                        || item.getPriceMsrp().compareTo(skuModel.getPriceMsrp()) != 0
-                                        || item.getPriceNet().compareTo(skuModel.getPriceNet()) != 0
-                                        || item.getPriceCurrent().compareTo(skuModel.getPriceCurrent()) != 0) {
-                                    insertLog = true;
+                        }
+                    }
+                    if (!insertLog) {
+                        //把之前的sku（新的product中没有的sku）保存到新的product的sku中
+                        for (CmsBtFeedInfoModel_Sku skuModel : befproduct.getSkus()) {
+                            if (!product.getSkus().contains(skuModel)) {
+                                if (!isVmsUpdate) {
+                                    // Vms系统以新的sku为准
+                                    product.getSkus().add(skuModel);
+                                }
+                                insertLog = true;
+                            } else {
+                                // 改条数据已经需要跟新主数据了 后面价格也不需要比了
+                                if (!insertLog) {
+                                    CmsBtFeedInfoModel_Sku item = product.getSkus().get(product.getSkus().indexOf(skuModel));
+                                    if (item.getPriceClientMsrp().compareTo(skuModel.getPriceClientMsrp()) != 0
+                                            || item.getPriceClientRetail().compareTo(skuModel.getPriceClientRetail()) != 0
+                                            || item.getPriceMsrp().compareTo(skuModel.getPriceMsrp()) != 0
+                                            || item.getPriceNet().compareTo(skuModel.getPriceNet()) != 0
+                                            || item.getPriceCurrent().compareTo(skuModel.getPriceCurrent()) != 0) {
+                                        insertLog = true;
+                                    }
                                 }
                             }
                         }

@@ -1,6 +1,7 @@
 package com.voyageone.task2.vms.service;
 
 import com.csvreader.CsvReader;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
@@ -15,6 +16,7 @@ import com.voyageone.service.bean.com.MessageBean;
 import com.voyageone.service.dao.vms.VmsBtFeedInfoTempDao;
 import com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt;
 import com.voyageone.service.daoext.vms.VmsBtFeedInfoTempDaoExt;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -125,6 +127,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
     @Autowired
     private FeedToCmsService feedToCmsService;
+
+    @Autowired
+    private FeedInfoService feedInfoService;
 
     @Autowired
     protected TransactionRunner transactionRunner;
@@ -1032,6 +1037,16 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
             // 是否有错误
             boolean errorFlg = false;
+
+            // 如果sku在feedInfo表中存在，那么parent id是不能变更的
+            JongoQuery queryObject = new JongoQuery();
+            queryObject.setQuery("{\"skus.clientSku\":\"" + codeModel.getSku() + "\"}");
+            List<CmsBtFeedInfoModel> feeds = feedInfoService.getList(channel.getOrder_channel_id(), queryObject);
+            if (feeds.size() > 0 && !feeds.get(0).getCode().equals(codeModel.getParentId())) {
+                // The parent-id can not be changed from %s to %s.
+                addErrorMessage(errorList, "8000007", new Object[]{feeds.get(0).getCode(), codeModel.getParentId()}, codeModel.getSku(), columnMap.get(PARENT_ID));
+                errorFlg = true;
+            }
 
             // product-id
             String productId = codeModel.getProductId();
