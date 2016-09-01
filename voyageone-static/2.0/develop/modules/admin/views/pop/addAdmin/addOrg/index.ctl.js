@@ -32,8 +32,15 @@ define([
             save: function () {
                 var self = this;
                 var result = {};
+                var para = {
+                    'id': self.sourceData.id,
+                    'orgName': self.sourceData.orgName,
+                    'parentId': self.sourceData.parentId,
+                    'weight': self.sourceData.weight,
+                    'active': self.sourceData.active
+                };
                 if (self.append == true) {
-                    self.adminOrgService.addOrg(self.sourceData).then(function (res) {
+                    self.adminOrgService.addOrg(para).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
@@ -42,7 +49,7 @@ define([
                         self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.adminOrgService.updateOrg(self.sourceData).then(function (res) {
+                    self.adminOrgService.updateOrg(para).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;

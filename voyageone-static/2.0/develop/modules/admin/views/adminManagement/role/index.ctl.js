@@ -8,13 +8,12 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('RoleManagementController', (function () {
-        function RoleManagementController(popups, alert, confirm, adminUserService, storeService, adminOrgService, channelService, adminRoleService, selectRowsFactory) {
+        function RoleManagementController(popups, alert, confirm, adminUserService, storeService, channelService, adminRoleService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
             this.adminUserService = adminUserService;
             this.storeService = storeService;
-            this.adminOrgService = adminOrgService;
             this.channelService = channelService;
             this.adminRoleService = adminRoleService;
             this.selectRowsFactory = selectRowsFactory;
@@ -40,8 +39,8 @@ define([
                 self.storeService.getAllStore().then(function (res) {
                     self.storeList = res.data;
                 });
-                self.adminOrgService.getAllOrg().then(function (res) {
-                    self.orgList = res.data;
+                self.adminRoleService.getAllRoleType().then(function (res) {
+                    self.roleTypeList = res.data;
                 });
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelList = res.data;
