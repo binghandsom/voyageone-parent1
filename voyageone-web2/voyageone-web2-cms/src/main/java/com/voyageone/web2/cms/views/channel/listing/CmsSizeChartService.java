@@ -102,22 +102,15 @@ public class CmsSizeChartService extends BaseAppService {
      * @param param
      * @return data
      */
-    public void sizeChartUpdate(String channelId,Map param) {
+    public void sizeChartDelete(String channelId,Map param) {
         //用户名称
-        String userName =param.get("userName").toString();
+        String userName = param.get("userName").toString();
         //取得自增键
-        long imageGroupId = ConvertUtil.toLong(param.get("imageGroupId"));
         int sizeChartId = ConvertUtil.toInt(param.get("sizeChartId"));
-        boolean   isDelImageGroup = ConvertUtil.toBoolean(param.get("isDelImageGroup"));
-
-        if (imageGroupId > 0) {
-            cmsBtSizeChartImageGroupService.delete(channelId, sizeChartId, imageGroupId);
-            if (isDelImageGroup) {
-                imageGroupService.logicDelete(String.valueOf(imageGroupId), userName);
-            }
-        }
         //逻辑删除选中的记录
-        sizeChartService.sizeChartUpdate(sizeChartId,userName,channelId);
+        sizeChartService.sizeChartUpdate(sizeChartId, userName, channelId);
+        //删除尺码表组图关系
+        cmsBtSizeChartImageGroupService.deleteByCmsBtSizeChartId(channelId, sizeChartId);
     }
 
     /**
@@ -128,70 +121,60 @@ public class CmsSizeChartService extends BaseAppService {
      */
     public void sizeChartEditInsert(String channelId,Map param) {
         //用户名称
-        String userName =param.get("userName").toString();
+        String userName = param.get("userName").toString();
         //尺码名称
-        String sizeChartName=(String) param.get("sizeChartName");
+        String sizeChartName = (String) param.get("sizeChartName");
 
-        String finishFlag=(String) param.get("finishFlag");
+        String finishFlag = (String) param.get("finishFlag");
         //产品品牌
-        List<String> brandNameList=(List<String>) param.get("brandNameList");
+        List<String> brandNameList = (List<String>) param.get("brandNameList");
         //产品类型
-        List<String> productTypeList=(List<String>) param.get("productTypeList");
+        List<String> productTypeList = (List<String>) param.get("productTypeList");
         //产品性别
-        List<String> sizeTypeList=(List<String>) param.get("sizeTypeList");
+        List<String> sizeTypeList = (List<String>) param.get("sizeTypeList");
+        List<Map<String, Object>> listImageGroup = (List<Map<String, Object>>) param.get("listImageGroup");//[{cartId:0,imageGroupName:"22",imageGroupId:1}]
+
         int sizeChartId = ConvertUtil.toInt(param.get("sizeChartId"));
         // 必须输入check
         if (StringUtils.isEmpty(sizeChartName)) {
             throw new BusinessException("7000080");
         }
-        long imageGroupId = 0;
-        String imageGroupName = "";
-        if (param.containsKey("imageGroupId")) {
-            imageGroupId = LongUtils.parseLong(param.get("imageGroupId"));
+        CmsBtSizeChartModel model = null;
+        if (sizeChartId > 0) {
+            model = sizeChartService.getCmsBtSizeChartModel(sizeChartId, channelId);
+            //删除尺码表 图片组关系表
+            cmsBtSizeChartImageGroupService.deleteByCmsBtSizeChartId(channelId, sizeChartId);
+            //更新
+            sizeChartService.Update(channelId,
+                    userName, sizeChartId, sizeChartName, finishFlag, brandNameList, productTypeList, sizeTypeList);
+        } else {
+            //插入
+            model = sizeChartService.insert(channelId, userName, sizeChartName, brandNameList, productTypeList, sizeTypeList);
         }
-        if (param.containsKey("imageGroupName")&&param.get("imageGroupName")!=null) {
-            imageGroupName = param.get("imageGroupName").toString();
-        }
-        CmsBtSizeChartModel model=null;
-          if(sizeChartId>0) {
-              model = sizeChartService.getCmsBtSizeChartModel(sizeChartId, channelId);
-              if (model.getImageGroupId() != imageGroupId && model.getImageGroupId() > 0) {
-                  //删除尺码表 图片组关系表
-                  cmsBtSizeChartImageGroupService.delete(channelId, sizeChartId, model.getImageGroupId());
-              }
-              //更新
-              sizeChartService.Update(channelId,
-                      userName, sizeChartId, sizeChartName, finishFlag, brandNameList, productTypeList, sizeTypeList, imageGroupId, imageGroupName);
-          }
-          else {
-              //插入
-              model = sizeChartService.insert(channelId, userName, sizeChartName, brandNameList, productTypeList, sizeTypeList, imageGroupId, imageGroupName);
-          }
-        //根据尺码关系一览编辑的数据插入数据库
-        if (imageGroupId > 0) {
-            //更新组图
-            CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.getImageGroupModel(String.valueOf(imageGroupId));
-            cmsBtImageGroupModel.setBrandName(brandNameList);
-            cmsBtImageGroupModel.setProductType(productTypeList);
-            cmsBtImageGroupModel.setSizeType(sizeTypeList);
-            cmsBtImageGroupModel.setModifier(userName);
-            cmsBtImageGroupModel.setSizeChartId(model.getSizeChartId());
-            cmsBtImageGroupModel.setSizeChartName(model.getSizeChartName());
-            imageGroupService.update(cmsBtImageGroupModel);
-        } else if (!StringUtils.isEmpty(imageGroupName)) {
-            //新增组图
-            CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.save(channelId, userName,null,imageGroupName,null,null,brandNameList,productTypeList,sizeTypeList,model.getSizeChartId(),model.getSizeChartName());
-            imageGroupId = cmsBtImageGroupModel.getImageGroupId();
-            model.setImageGroupId(cmsBtImageGroupModel.getImageGroupId());
-            model.setImageGroupName(cmsBtImageGroupModel.getImageGroupName());
-            sizeChartService.update(model);
-        }
-        if (imageGroupId > 0) {
-            //保存 尺码表 图片组关系表
-            cmsBtSizeChartImageGroupService.save(channelId,model.getSizeChartId(),imageGroupId, userName);
+        for (Map<String, Object> mapImageGroup : listImageGroup) {//[{cartId:0,imageGroupName:"22",imageGroupId:1}]
+            long imageGroupId = ConvertUtil.toLong(mapImageGroup.get("imageGroupId"));
+            String imageGroupName = ConvertUtil.toString(mapImageGroup.get("imageGroupName"));
+            int imageGroup_CartId = ConvertUtil.toInt(mapImageGroup.get("cartId"));
+            //根据尺码关系一览编辑的数据插入数据库
+            if (imageGroupId > 0) {
+                //更新组图
+                CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.getImageGroupModel(String.valueOf(imageGroupId));
+                cmsBtImageGroupModel.setBrandName(brandNameList);
+                cmsBtImageGroupModel.setProductType(productTypeList);
+                cmsBtImageGroupModel.setSizeType(sizeTypeList);
+                cmsBtImageGroupModel.setModifier(userName);
+                imageGroupService.update(cmsBtImageGroupModel);
+            } else if (!StringUtils.isEmpty(imageGroupName)) {
+                //新增组图
+                CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.save(channelId, userName, null, imageGroupName, null, null, brandNameList, productTypeList, sizeTypeList,model.getSizeChartId(),model.getSizeChartName());
+                imageGroupId = cmsBtImageGroupModel.getImageGroupId();
+            }
+            if (imageGroupId > 0) {
+                //保存 尺码表 图片组关系表
+                cmsBtSizeChartImageGroupService.save(channelId, imageGroup_CartId, model.getSizeChartId(), imageGroupId, userName);
+            }
         }
     }
-
     /**
      * 尺码关系一览编辑详情编辑画面
      * @param channelId

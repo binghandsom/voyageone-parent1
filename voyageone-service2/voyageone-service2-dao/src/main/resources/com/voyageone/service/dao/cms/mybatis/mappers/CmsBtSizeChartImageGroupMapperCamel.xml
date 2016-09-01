@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtSizeChartImageGroupDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtSizeChartImageGroupModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `cms_bt_size_chart_Id`, `cms_bt_image_group_id`, `creater`, `modifier`, 
-        `created`, `modified`
+        `id`, `channel_id`, `cart_id`, `cms_bt_size_chart_Id`, `cms_bt_image_group_id`, `creater`, 
+        `modifier`, `created`, `modified`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -19,6 +19,9 @@
         <set >
             <if test="channelId != null" >
                 `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
             </if>
             <if test="cmsBtSizeChartId != null" >
                 `cms_bt_size_chart_Id` = #{cmsBtSizeChartId,jdbcType=INTEGER},
@@ -58,6 +61,9 @@
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
             <if test="cmsBtSizeChartId != null" >
                 and `cms_bt_size_chart_Id` = #{cmsBtSizeChartId,jdbcType=INTEGER}
             </if>
@@ -88,6 +94,9 @@
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
             <if test="cmsBtSizeChartId != null" >
                 and `cms_bt_size_chart_Id` = #{cmsBtSizeChartId,jdbcType=INTEGER}
             </if>
@@ -114,6 +123,9 @@
         <where >
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
             <if test="cmsBtSizeChartId != null" >
                 and `cms_bt_size_chart_Id` = #{cmsBtSizeChartId,jdbcType=INTEGER}
@@ -142,6 +154,9 @@
             <if test="channelId != null" >
                 `channel_id`,
             </if>
+            <if test="cartId != null" >
+                `cart_id`,
+            </if>
             <if test="cmsBtSizeChartId != null" >
                 `cms_bt_size_chart_Id`,
             </if>
@@ -163,6 +178,9 @@
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
                 #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
             </if>
             <if test="cmsBtSizeChartId != null" >
                 #{cmsBtSizeChartId,jdbcType=INTEGER},

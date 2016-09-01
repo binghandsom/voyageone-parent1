@@ -34,7 +34,7 @@ define([
                 var self = this;
 
                 if (self.imageType == 2) {
-                    self.sizeChartService.getNoMatchList().then(function (res) {
+                    self.sizeChartService.getNoMatchList({cartId:self.platform}).then(function (res) {
                         self.noMathOpt = res.data;
                     });
                 } else {
@@ -42,27 +42,31 @@ define([
                 }
             },
             save: function () {
-                var self = this;
+                var self = this,
+                    listSizeChart;
 
-                var upEntity = {
+                if(self.sizeChart){
+                    if(_.isObject(self.sizeChart)){
+                        listSizeChart = self.sizeChart;
+                    }else{
+                        listSizeChart = [{sizeChartName:self.sizeChart , sizeChartId: 0 }]
+                    }
+                }
+
+                var upEntity = _.extend(listSizeChart,{
                     "platform": self.platform,
                     "imageGroupName": self.imageGroupName,
                     "viewType": self.viewType,
                     "imageType": self.imageType,
                     "brandName": self.brandName,
                     "productType": self.productType,
-                    "sizeType": self.sizeType
-                };
+                    "sizeType" : self.sizeType
+                });
 
                 if(self.parent.from === 'detail'){
                     self.$uibModalInstance.close(upEntity);
                     return;
                 }
-
-                if (_.isObject(self.sizeChart))
-                    _.extend(upEntity, self.sizeChart);
-                else
-                    _.extend(upEntity, {sizeChartName: self.sizeChart});
 
                 self.imageGroupService.save(upEntity).then(function () {
                     self.notify.success('TXT_MSG_UPDATE_SUCCESS');

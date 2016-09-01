@@ -5,7 +5,6 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtPriceConfirmLogDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceConfirmLogModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,32 +40,47 @@ public class CmsBtPriceConfirmLogService extends BaseService {
     }
 
     public void addConfirmed(String channelId, String code, CmsBtProductModel_Platform_Cart platformCart, String username) {
-        for (BaseMongoMap<String, Object> sku: platformCart.getSkus()) {
-            String skuCode = sku.getStringAttribute(Platform_SKU_COM.skuCode.name());
-            addConfirmed(skuCode, sku.getDoubleAttribute(Platform_SKU_COM.priceRetail.name()), username);
-        }
+        int cartId = platformCart.getCartId();
+        for (BaseMongoMap<String, Object> skuModel: platformCart.getSkus())
+            addSkuWithStatus(channelId, cartId, code, skuModel, STATUS_CONFIRMED, username);
     }
 
-    public boolean addConfirmed(String skuCode, Double currentRetailPrice, String username) {
-        return add(skuCode, STATUS_CONFIRMED, "0%", currentRetailPrice, currentRetailPrice, username);
+    void addUnConfirmed(String channelId, int cartId, String code, BaseMongoMap<String, Object> skuModel, String username) {
+        addSkuWithStatus(channelId, cartId, code, skuModel, STATUS_UNCONFIRMED, username);
     }
 
-    public boolean addUnConfirmed(String skuCode, String floatingRate, Double currentRetailPrice, Double currentConfirmPrice, String username) {
-        return add(skuCode, STATUS_UNCONFIRMED, floatingRate, currentRetailPrice, currentConfirmPrice, username);
+    private void addSkuWithStatus(String channelId, int cartId, String code, BaseMongoMap<String, Object> skuModel, int status, String username) {
+
+        CmsBtPriceConfirmLogModel priceConfirmLogModel = new CmsBtPriceConfirmLogModel();
+
+        priceConfirmLogModel.setChannelId(channelId);
+        priceConfirmLogModel.setCartId(cartId);
+        priceConfirmLogModel.setCode(code);
+
+        setSkuInfo(priceConfirmLogModel, skuModel);
+
+        priceConfirmLogModel.setStatus(status);
+
+        addByUser(priceConfirmLogModel, username);
     }
 
-    private boolean add(String skuCode, int status, String floatingRate, Double currentRetailPrice, Double currentConfirmPrice, String username) {
+    private boolean addByUser(CmsBtPriceConfirmLogModel priceConfirmLogModel, String username) {
+        priceConfirmLogModel.setCreater(username);
+        priceConfirmLogModel.setModifier(username);
+        return add(priceConfirmLogModel);
+    }
+
+    private boolean add(CmsBtPriceConfirmLogModel priceConfirmLogModel) {
         Date now = DateTimeUtil.getDate();
-        CmsBtPriceConfirmLogModel newRecord = new CmsBtPriceConfirmLogModel();
-        newRecord.setSkuCode(skuCode);
-        newRecord.setStatus(status);
-        newRecord.setFloatingRate(floatingRate);
-        newRecord.setCurrentRetailPrice(currentRetailPrice);
-        newRecord.setCurrentConfirmPrice(currentConfirmPrice);
-        newRecord.setCreater(username);
-        newRecord.setCreated(now);
-        newRecord.setModifier(username);
-        newRecord.setModified(now);
-        return priceConfirmLogDao.insert(newRecord) > 0;
+        priceConfirmLogModel.setCreated(now);
+        priceConfirmLogModel.setModified(now);
+        return priceConfirmLogDao.insert(priceConfirmLogModel) > 0;
+    }
+
+    private void setSkuInfo(CmsBtPriceConfirmLogModel priceConfirmLogModel, BaseMongoMap<String, Object> sku) {
+        priceConfirmLogModel.setSkuCode(sku.getStringAttribute(Platform_SKU_COM.skuCode.name()));
+        priceConfirmLogModel.setFloatingRate(sku.getStringAttribute(Platform_SKU_COM.priceChgFlg.name()));
+        priceConfirmLogModel.setCurrentRetailPrice(sku.getDoubleAttribute(Platform_SKU_COM.priceRetail.name()));
+        priceConfirmLogModel.setCurrentConfirmPrice(sku.getDoubleAttribute(Platform_SKU_COM.confPriceRetail.name()));
     }
 }

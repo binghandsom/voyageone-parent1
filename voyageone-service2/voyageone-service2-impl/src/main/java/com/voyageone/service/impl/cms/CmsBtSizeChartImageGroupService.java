@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.dao.cms.CmsBtSizeChartImageGroupDao;
+import com.voyageone.service.daoext.cms.CmsBtSizeChartImageGroupDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtSizeChartImageGroupModel;
 import org.apache.commons.collections.map.HashedMap;
@@ -18,6 +19,8 @@ import java.util.Map;
 public class CmsBtSizeChartImageGroupService extends BaseService {
     @Autowired
     CmsBtSizeChartImageGroupDao dao;
+    @Autowired
+    CmsBtSizeChartImageGroupDaoExt daoExt;
 
     public List<CmsBtSizeChartImageGroupModel> getList(String channelId) {
         Map<String, Object> map = new HashedMap();
@@ -25,19 +28,21 @@ public class CmsBtSizeChartImageGroupService extends BaseService {
         return dao.selectList(map);
     }
 
-    public CmsBtSizeChartImageGroupModel get(String channelId, int cmsBtSizeChartId, long cmsBtImageGroupId) {
+    public CmsBtSizeChartImageGroupModel get(String channelId, int cartId,int cmsBtSizeChartId, long cmsBtImageGroupId) {
         Map<String, Object> map = new HashedMap();
         map.put("cmsBtSizeChartId", cmsBtSizeChartId);
         map.put("cmsBtImageGroupId", cmsBtImageGroupId);
         map.put("channelId", channelId);
+        map.put("cartId", cartId);
         return dao.selectOne(map);
     }
 
-    public void save(String channelId, int cmsBtSizeChartId, long cmsBtImageGroupId, String userName) {
-        CmsBtSizeChartImageGroupModel model = get(channelId, cmsBtSizeChartId, cmsBtImageGroupId);
+    public void save(String channelId,int cartId, int cmsBtSizeChartId, long cmsBtImageGroupId, String userName) {
+        CmsBtSizeChartImageGroupModel model = get(channelId,cartId, cmsBtSizeChartId, cmsBtImageGroupId);
         if (model == null) {// 不存在新增
             model = new CmsBtSizeChartImageGroupModel();
             model.setChannelId(channelId);
+            model.setCartId(cartId);
             model.setCmsBtImageGroupId(cmsBtImageGroupId);
             model.setCmsBtSizeChartId(cmsBtSizeChartId);
             model.setCreater(userName);
@@ -47,11 +52,10 @@ public class CmsBtSizeChartImageGroupService extends BaseService {
             dao.insert(model);
         }
     }
-
-    public void delete(String channelId, int SizeChartId, long cmsBtImageGroupId) {
-        CmsBtSizeChartImageGroupModel model = get(channelId, SizeChartId, cmsBtImageGroupId);
-        if (model != null) {
-            dao.delete(model.getId());
-        }
+    public int deleteByCmsBtSizeChartId(String channelId,int cmsBtSizeChartId) {
+        return daoExt.deleteByCmsBtSizeChartId(channelId,cmsBtSizeChartId);
+    }
+    public int deleteByCmsBtImageGroupId(String channelId,long cmsBtImageGroupId) {
+        return daoExt.deleteByCmsBtImageGroupId(channelId,cmsBtImageGroupId);
     }
 }

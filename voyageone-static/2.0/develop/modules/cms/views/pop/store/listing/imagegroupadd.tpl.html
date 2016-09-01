@@ -5,28 +5,43 @@
         <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{'TXT_IMAGE_GROUP_ADD' | translate}}</h5>
     </div>
     <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal">
+        <form role="form" class="form-horizontal" name="ctrl.imageForm">
             <div class="form-group">
                 <label class="col-sm-4 control-label vo_reqfield">{{'TXT_PLATFORM' | translate}}</label>
                 <div class="col-sm-6">
-                    <select class="form-control" ng-model="ctrl.platform"
-                        ng-options="platform.value as platform.name for platform in ctrl.platformList">
+                    <select class="form-control" ng-model="ctrl.platform" name="platform"
+                        ng-options="platform.value as platform.name for platform in ctrl.platformList"
+                        required>
                         <option value="">Select...</option>
                     </select>
                 </div>
                 <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
+
+            <div class="form-group">
+                <div class="col-md-7 col-md-offset-4">
+                    <vo-message target="ctrl.imageForm.platform"></vo-message>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="col-sm-4 control-label vo_reqfield">{{'TXT_IMAGE_GROUP_NAME' | translate}}</label>
                 <div class="col-sm-6">
-                    <input class="form-control" ng-model="ctrl.imageGroupName" />
+                    <input class="form-control"  name="imageGroupName" ng-model="ctrl.imageGroupName" required/>
                 </div>
                 <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
+
+            <div class="form-group">
+                <div class="col-md-7 col-md-offset-4">
+                    <vo-message target="ctrl.imageForm.imageGroupName"></vo-message>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="col-sm-4 control-label vo_reqfield">{{'TXT_VIEW_TYPE' | translate}}</label>
                 <div class="col-sm-6">
-                    <select class="form-control" ng-model="ctrl.viewType">
+                    <select class="form-control" name="viewType" ng-model="ctrl.viewType" required>
                         <option value="">Select...</option>
                         <option value="1">PC</option>
                         <option value="2">APP</option>
@@ -34,10 +49,17 @@
                 </div>
                 <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
+
+            <div class="form-group">
+                <div class="col-md-7 col-md-offset-4">
+                    <vo-message target="ctrl.imageForm.viewType"></vo-message>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="col-sm-4 control-label vo_reqfield">{{'TXT_IMAGE_TYPE' | translate}}</label>
                 <div class="col-sm-6">
-                    <select class="form-control" ng-model="ctrl.imageType"
+                    <select class="form-control" name="imageType" ng-model="ctrl.imageType" required
                             ng-options="imageType.value as imageType.name for imageType in ctrl.imageTypeList"
                             ng-change="ctrl.getNoMatchList()">
                         <option value="">Select...</option>
@@ -46,24 +68,57 @@
                 <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
             <div class="form-group" ng-if="ctrl.noMathOpt">
-                <div class="col-sm-6 col-sm-offset-4">
-                    <label>
-                        <input name="sizeChart" type="radio" value="setting" ng-model="ctrl.chartType" ng-click="ctrl.sizeChart = null">&emsp;无对应尺码对照表
-                    </label>
-                    <label>
-                        <input name="sizeChart" type="radio" value="match" ng-model="ctrl.chartType" ng-click="ctrl.sizeChart = null">&emsp;匹配现有尺码对照表
-                        <select class="form-control col-md-offset-2 m-t-xs"
-                                ng-model="ctrl.sizeChart"
-                                ng-options = "optItem as optItem.sizeChartName for optItem in ctrl.noMathOpt"
-                                ng-if = "ctrl.chartType == 'match'">
-                        </select>
-                    </label>
-                    <label>
-                        <input name="sizeChart" type="radio" value="new" ng-model="ctrl.chartType" ng-click="ctrl.sizeChart = null">&emsp;新建对应尺码对照表
-                        <input type="text" class="form-control col-md-offset-2 m-t-xs" ng-model="ctrl.sizeChart" ng-if = "ctrl.chartType == 'new'">
-                    </label>
+                <div class="col-sm-8 col-sm-offset-4">
+                    <div>
+                        <input name="sizeChart" type="radio" value="setting" ng-model="ctrl.chartType" ng-click="ctrl.sizeChart = null">&emsp;
+                        <strong>无对应尺码对照表</strong>
+                    </div>
+                    <div>
+                        <input name="sizeChart" type="radio" value="match" ng-model="ctrl.chartType" ng-click="ctrl.sizeChart = null">&emsp;
+                        <strong>匹配现有尺码对照表</strong>
+                            <ng-form name="chartForm" ng-if = "ctrl.chartType == 'match'">
+                                <div class="row">
+                                    <div class="col-md-6 m-t-xs col-md-offset-1">
+                                        <select class="form-control"
+                                                ng-model="ctrl.sizeChart" name="sizeChart" required
+                                                ng-options = "optItem as optItem.sizeChartName for optItem in ctrl.noMathOpt">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-md-offset-1">
+                                        <vo-message target="chartForm.sizeChart"></vo-message>
+                                    </div>
+                                </div>
+                            </ng-form>
+                    </div>
+                    <div>
+                        <input name="sizeChart" type="radio" value="new" ng-model="ctrl.chartType" ng-click="ctrl.sizeChart = null">&emsp;
+                        <strong>新建对应尺码对照表</strong>
+                        <div class="col-md-7 col-md-offset-1">
+                            <ng-form name="chartForm" ng-if = "ctrl.chartType == 'new'">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control m-t-xs" name="sizeChart" ng-model="ctrl.sizeChart" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <vo-message target="chartForm.sizeChart"></vo-message>
+                                    </div>
+                                </div>
+                            </ng-form>
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <div class="form-group">
+                <div class="col-md-7 col-md-offset-4">
+                    <vo-message target="ctrl.imageForm.imageType"></vo-message>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="col-sm-4 control-label">{{'TXT_RELATED_BRAND_NAME' | translate}}</label>
                 <div class="col-sm-8">
@@ -86,12 +141,12 @@
                     <select multiple chosen class="form-control" width="'240px'" ng-model="ctrl.sizeType"
                             ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList">
                     </select>
-                </div>
+            </div>
             </div>
         </form>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-        <button class="btn btn-vo" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled="ctrl.imageForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
     </div>
 </div><!-- .vo_modal -->
