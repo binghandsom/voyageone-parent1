@@ -11,6 +11,7 @@ import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
+import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
@@ -591,7 +592,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue("1");
+            ((SingleCheckField) field).setValue("1");
         }
         {
             // UrlKey orgChannelId + "-" + cms product id
@@ -644,9 +645,9 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
             CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
             if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
-                ((InputField) field).setValue("1");
+                ((SingleCheckField) field).setValue("1");
             } else if (platformActive == CmsConstants.PlatformActive.ToInStock) {
-                ((InputField) field).setValue("0");
+                ((SingleCheckField) field).setValue("0");
             } else {
                 throw new BusinessException("PlatformActive must be Onsale or Instock, but now it is " + platformActive);
             }
