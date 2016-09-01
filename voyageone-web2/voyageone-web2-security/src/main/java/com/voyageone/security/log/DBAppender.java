@@ -23,6 +23,8 @@ public class DBAppender extends AppenderSkeleton {
         ComLogModel model = new ComLogModel();
         try {
             BeanUtils.populate(model,  record);
+            model.setRequest(JacksonUtil.bean2Json(record.get("request")));
+            model.setResponse(JacksonUtil.bean2Json(record.get("response")));
 
             ComLogDao comLogDao = SpringContext.getBean(ComLogDao.class);
             comLogDao.insert(model);

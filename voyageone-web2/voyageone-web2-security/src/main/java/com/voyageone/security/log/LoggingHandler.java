@@ -37,6 +37,7 @@ public class LoggingHandler {
     }
 
     @Around("controller() && !getXXX() && !searchXXX() && !initXXX()")
+//    @Around("controller()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
 
         long start = System.currentTimeMillis();
@@ -54,7 +55,7 @@ public class LoggingHandler {
         map.put("ip", ip);
         map.put("url", url);
         map.put("action", clsAndMethod);
-        map.put("request", arguments == null ? "" : arguments);
+        map.put("request", (arguments == null || arguments.length ==0) ? null : arguments[0] == null ? null :arguments[0] );
         map.put("creater", user);
         try {
 //            HttpSession session = request.getSession();
