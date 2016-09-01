@@ -91,6 +91,13 @@ define([
                 return;
             }
 
+            var hasTag = _.every(getTagList(),function(element){
+                return element.tagName;
+            });
+
+            if(!hasTag)
+                return;
+
             var _upEntity = angular.copy($scope.editModel);
 
             _upEntity.tagList= _.filter( _upEntity.tagList, function(tag){ return tag.tagName != "";});
