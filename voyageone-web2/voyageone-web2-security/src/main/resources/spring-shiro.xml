@@ -82,6 +82,7 @@
 		<property name="filterChainDefinitions">
 			<value>
 				/core/** = anon
+				/admin/user/self/forgetPass = anon
 			</value>
 		</property>
 	</bean>

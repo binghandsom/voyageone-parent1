@@ -342,6 +342,7 @@ public interface AdminUrlConstants {
 
 			String FORGET_PASS = "forgetPass";
 
+			String GET_USER_BY_TOKEN = "getUserByToken";
 			//for dropdown list options
 			String GET_ALL_APP = "getAllApp";
 		}
