@@ -1,5 +1,5 @@
 <div class="vo_modal" ng-init="initialize()">
-    <form role="form" class="form-horizontal" ng-submit="save()">
+    <form role="form" class="form-horizontal" name="sizeForm">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                     aria-hidden="true"><i class="fa fa-close"></i></span></button>
@@ -12,11 +12,10 @@
                     <div class="col-sm-6">
                         <input class="form-control" ng-model="vm.saveInfo.sizeChartName" required/>
                     </div>
-                    <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
                 </div>
 
                 <div class="form-group">
-                    <label class="col-sm-4 control-label">{{'TXT_SIZE_IMAGE' | translate}}</label>
+                    <label class="col-sm-4 control-label vo_reqfield">{{'TXT_SIZE_IMAGE' | translate}}</label>
                     <div class="col-sm-6">
                         <label>
                             <input name="sizeChart" type="radio" value="setting" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;无对应尺码对照图
@@ -63,7 +62,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_CLOSE' | translate}}</button>
-            <button type="submit" class="btn btn-vo"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+            <button type="button" class="btn btn-vo" ng-click="save()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
         </div>
     </form>
 </div><!-- .vo_modal -->
