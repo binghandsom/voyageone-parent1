@@ -12,6 +12,7 @@ import com.voyageone.service.bean.cms.task.CmsBtSizeChartBean;
 import com.voyageone.service.impl.cms.CmsBtSizeChartImageGroupService;
 import com.voyageone.service.impl.cms.ImageGroupService;
 import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.model.cms.CmsBtSizeChartImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import com.voyageone.web2.base.BaseAppService;
@@ -278,5 +279,20 @@ public class CmsSizeChartService extends BaseAppService {
             }
         }
         bean.setSizeTypeTrans(sizeTypeTrans);
+    }
+    public List<Map<String,Object>> getListImageGroupBySizeChartId(String channelId,int sizeChartId) {
+        List<CmsBtSizeChartImageGroupModel> list = cmsBtSizeChartImageGroupService.getListByCmsBtSizeChartId(channelId, sizeChartId);
+        List<Map<String, Object>> listImageGroup = new ArrayList<>();
+        CmsBtImageGroupModel groupModel = null;
+        Map<String, Object> map = new HashMap<>();
+        for (CmsBtSizeChartImageGroupModel m : list) {
+            groupModel = imageGroupService.getImageGroupModel(String.valueOf(m.getCmsBtImageGroupId()));
+            if(groupModel!=null) {
+                map.put("imageGroupName", groupModel.getImageGroupName());
+                map.put("imageGroupId", groupModel.getImageGroupId());
+                map.put("cartId", m.getCartId());
+            }
+        }
+        return listImageGroup;
     }
 }

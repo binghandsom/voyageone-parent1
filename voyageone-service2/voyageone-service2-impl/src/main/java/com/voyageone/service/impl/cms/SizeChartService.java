@@ -345,4 +345,7 @@ public class SizeChartService extends BaseService {
     {
         cmsBtSizeChartDao.update(model);
     }
+
+
+
 }

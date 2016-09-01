@@ -519,7 +519,8 @@ define(function () {
                         "search": "sizeChartSearch",
                         "delete": "sizeChartDelete",
                         "editSave": "sizeChartEditSave",
-                        "getNoMatchList":"getNoMatchList"
+                        "getNoMatchList":"getNoMatchList",
+                        "getListImageGroupBySizeChartId":"getListImageGroupBySizeChartId"
                     }
                 },
                 "sizeChartDetail": {

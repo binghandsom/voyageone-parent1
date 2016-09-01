@@ -531,4 +531,6 @@ public class ImageGroupService extends BaseService {
     {
         cmsBtImageGroupDao.update(model);
     }
+
+
 }
