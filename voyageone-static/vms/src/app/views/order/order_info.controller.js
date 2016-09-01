@@ -12,9 +12,9 @@ define([
             this.popups = popups;
             this.shipmentScanPopupService = shipmentScanPopupService;
             this.barcodeOpts = {
-                width: 16,
-                height: 600,
-                displayValue: true,
+                width: 32,
+                height: 1200,
+                displayValue: false,
                 fontSize: 96
             };
             this.oneDay = 24 * 60 * 60 * 1000;
@@ -235,7 +235,7 @@ define([
             var img = canvas.toDataURL("image/png");
             popupWin.document.write('<div style="float: left;border: solid 1px black; padding: 2px;margin: 2px;"><div>' +
                 '<strong style="font-size: 20px;">[Order  No.] ' + self.data[index].consolidationOrderId + '</strong>' +
-                '</div><hr><img width="300px" src="' + img + '"/></div>');
+                '</div><hr><img width="300px" height="150px" src="' + img + '"/></div>');
             popupWin.document.close();
             popupWin.print();
             popupWin.close();

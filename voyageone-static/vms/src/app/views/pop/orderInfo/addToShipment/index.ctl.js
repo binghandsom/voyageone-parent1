@@ -18,9 +18,9 @@ define([
             this.finished = context.waitingSkuList.length == 0;
             this.printed = false;
             this.barcodeOpts = {
-                width: 16,
-                height: 600,
-                displayValue: true,
+                width: 32,
+                height: 1200,
+                displayValue: false,
                 fontSize: 96
             };
             setTimeout("angular.element(document.getElementsByName('barcodeInputBar')).focus()", 1500)
@@ -112,11 +112,12 @@ define([
             var popupWin = window.open('', '_blank', 'width=600,height=300');
             popupWin.document.open();
             var img = canvas.toDataURL("image/png");
-            popupWin.document.write('<div style="float: left;border: solid 1px black; padding: 2px;margin: 2px;"><div>' +
-                '<strong style="font-size: 20px;">[Order  No.] ' + self.shipmentDetails.consolidationOrderId+'</strong></div><hr><img width="300px" src="'+img+'"/></div>');
+            popupWin.document.write('<div style="float: left;border: solid 1px black;padding: 2px;margin: 2px;"><div>' +
+                '<strong style="font-size: 20px;">[Order  No.] ' + self.shipmentDetails.consolidationOrderId+'</strong></div>' +
+                '<hr><img width="300px" height="150px" src="'+img+'"/></div>');
             popupWin.document.close();
             popupWin.print();
-            // popupWin.close();
+            popupWin.close();
             self.printed = true;
             self.focusOn('finishButton');
         };
