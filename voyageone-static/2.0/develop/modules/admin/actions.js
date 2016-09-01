@@ -40,9 +40,9 @@ define(function () {
                     "updateUser": "updateUser",
                     "deleteUser": "deleteUser",
                     "showAuth": "showAuth",
-                    "resetPass":"resetPass",
-                    "editPass":"editPass",
-                    "forgetPass":"forgetPass",
+                    "resetPass": "resetPass",
+                    "editPass": "editPass",
+                    "forgetPass": "forgetPass",
                     "getAllApp": "getAllApp"
                 },
                 "adminRoleService": {
@@ -55,7 +55,8 @@ define(function () {
                     "setAuth": "setAuth",
                     "addAuth": "addAuth",
                     "removeAuth": "removeAuth",
-                    "getAllRole": "getAllRole"
+                    "getAllRole": "getAllRole",
+                    "getAllRoleType": "getAllRoleType"
                 },
                 "adminOrgService": {
                     "root": "/admin/user/org",

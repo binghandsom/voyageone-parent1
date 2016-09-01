@@ -41,8 +41,8 @@
                                 <div class="row form-group"><!-- 仓库 -->
                                     <label class="col-sm-3 control-label">{{'TXT_STORE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.storeId">
-                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.storeId">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                             <option value="{{store.storeId}}" ng-repeat="store in ctrl.storeList">&nbsp;{{store.storeName}}</option>
                                         </select>
                                     </div>
