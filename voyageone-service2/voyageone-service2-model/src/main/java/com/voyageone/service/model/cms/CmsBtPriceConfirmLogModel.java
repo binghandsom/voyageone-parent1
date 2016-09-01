@@ -13,6 +13,12 @@ import com.voyageone.base.dao.mysql.BaseModel;
  * 价格确认历史
  */
 public class CmsBtPriceConfirmLogModel extends BaseModel {
+    protected String channelId;
+
+    protected Integer cartId;
+
+    protected String code;
+
     protected String skuCode;
 
     /**
@@ -34,6 +40,30 @@ public class CmsBtPriceConfirmLogModel extends BaseModel {
      * 当前确认价格
      */
     protected Double currentConfirmPrice;
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId == null ? null : channelId.trim();
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code == null ? null : code.trim();
+    }
 
     public String getSkuCode() {
         return skuCode;
