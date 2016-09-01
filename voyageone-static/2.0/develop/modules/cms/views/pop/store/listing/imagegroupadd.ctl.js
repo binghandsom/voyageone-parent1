@@ -67,6 +67,7 @@ define([
                     "imageType": self.imageType,
                     "brandName": self.brandName,
                     "productType": self.productType,
+                    "sizeType" : self.sizeType,
                     listSizeChart:listSizeChart
                 };
 

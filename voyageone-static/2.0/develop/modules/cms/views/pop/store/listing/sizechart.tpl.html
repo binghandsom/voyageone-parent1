@@ -10,15 +10,26 @@
                 <div class="form-group">
                     <label class="col-sm-4 control-label vo_reqfield">{{'TXT_SIZE_CHART_NAME' | translate}}</label>
                     <div class="col-sm-6">
-                        <input class="form-control" ng-model="vm.saveInfo.sizeChartName" required/>
+                        <input class="form-control" name="sizeChartName" ng-model="vm.saveInfo.sizeChartName" required/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-7 col-md-offset-4">
+                        <vo-message target="sizeForm.sizeChartName"></vo-message>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="col-sm-4 control-label vo_reqfield">{{'TXT_SIZE_IMAGE' | translate}}</label>
                     <div class="col-sm-6">
+                        <input type="hidden" name="chartType" ng-required="!chartType">
                         <label>
-                            <input name="sizeChart" type="radio" value="setting" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;无对应尺码对照图
+                            <input name="sizeChart" type="radio" value="setting" ng-model="chartType"
+                                ng-click="vm.sizeChart = null"
+                                ng-required = ""
+                            >
+                            &emsp;无对应尺码对照图
                         </label>
                         <label>
                             <input name="sizeChart" type="radio" value="match" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;匹配现有尺码对照图
@@ -32,6 +43,12 @@
                             <input name="sizeChart" type="radio"  value="new" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;新建对应尺码对照图
                             <input type="text" class="form-control col-md-offset-2 m-t-xs" ng-model="vm.sizeChart" ng-if = "chartType == 'new'">
                         </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-7 col-md-offset-4">
+                        <vo-message target="sizeForm.chartType"></vo-message>
                     </div>
                 </div>
 
