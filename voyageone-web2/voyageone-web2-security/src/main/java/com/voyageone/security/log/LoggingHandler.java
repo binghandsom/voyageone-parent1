@@ -1,6 +1,7 @@
 package com.voyageone.security.log;
 
 import com.voyageone.common.util.JacksonUtil;
+import org.apache.log4j.MDC;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -49,27 +50,30 @@ public class LoggingHandler {
         String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
         String methodName = joinPoint.getSignature().getName();
         String clsAndMethod =  className + "." + methodName;
-        Map<String, Object> map = new HashMap<>();
-        map.put("application", application);
-        map.put("ip", ip);
-        map.put("url", url);
-        map.put("action", clsAndMethod);
-        map.put("request", arguments == null ? "" : arguments);
-        map.put("creater", user);
+//        Map<String, Object> map = new HashMap<>();
+        MDC.put("application", application);
+        MDC.put("ip", ip);
+        MDC.put("url", url);
+        MDC.put("action", clsAndMethod);
+        Object ObjRequest = (arguments == null || arguments.length ==0) ? null : arguments[0] == null ? null :arguments[0] ;
+        if(ObjRequest!= null) {
+            MDC.put("request", ObjRequest);
+        }
+        MDC.put("creater", user);
         try {
 //            HttpSession session = request.getSession();
             Object result = joinPoint.proceed();
             long elapsedTime = System.currentTimeMillis() - start;
-            map.put("response", result);
-            map.put("executionTime", elapsedTime);
+            MDC.put("response", result);
+            MDC.put("executionTime", elapsedTime);
 
-            log.info(JacksonUtil.bean2Json(map));
+            log.info(JacksonUtil.bean2Json("write"));
 
             return result;
         } catch (Exception e) {
-            map.put("response", e.getStackTrace());
-            map.put("executionTime", 0);
-            log.error(JacksonUtil.bean2Json(map));
+            MDC.put("response", e.getStackTrace());
+            MDC.put("executionTime", 0);
+            log.error(JacksonUtil.bean2Json("write"));
             throw e;
         }
     }
