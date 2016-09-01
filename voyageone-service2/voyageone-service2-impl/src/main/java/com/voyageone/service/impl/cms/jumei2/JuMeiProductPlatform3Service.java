@@ -334,8 +334,19 @@ public class JuMeiProductPlatform3Service extends BaseService {
                     }
             if(sellJmPromotion==null)
             {
-                errorMsg = String.format("该商品已加入专场【%s】，并上传成功.由于系统查不到该专场，请于专场【%s】结束后，再进行上传", sellJmPromotionName, sellJmPromotionName);
-                return errorMsg;
+                if (sellJmStartTime == jmActivityStartTime)//开始时间相等
+                {
+                    jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
+                    if (sellJmEndTime < jmActivityEndTime)//【sell_hash_id】的结束时间小于当前专场结束时间的场合
+                    {//调用延迟Deal结束时间API
+                        jmPromotionProduct.setDealEndTimeStatus(1);//设置为待延期
+                    }
+                    errorMsg = String.format("该商品已加入专场【%s】，并上传成功。介于开始时间相同，并进行了延期。如需变更价格，请重新点击【重刷】/【批量同步价格】。操作将影响关联专场，请慎重", sell_hash_id);
+                    return errorMsg;
+                } else {
+                    errorMsg = String.format("存在不属于任何专场的有效聚美【%s】，开始时间【%s】，结束时间【%s】，请确认其所属专场，并告知技术部以进行数据处理。", sell_hash_id, getDealByHashIDResponse.getStart_time(), getDealByHashIDResponse.getEnd_time());
+                    return errorMsg;
+                }
             }
             if (jmPromotion.getIsPromotionFullMinus())//当前专场为 满减专场
             { //4.2.3
