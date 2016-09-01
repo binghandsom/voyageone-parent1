@@ -13,7 +13,10 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_NAME' | translate}}</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" ng-model="vm.saveInfo.sizeChartName">
+                                        <!--<input type="text" class="form-control" ng-model="vm.saveInfo.sizeChartName">-->
+                                        <button title="{{'TXT_EDIT'|translate}}" class="btn btn-default btn-pop btn-xs" ng-click="openSizeDetails()">
+                                            &nbsp;<i class="fa fa-pencil"></i>&nbsp;{{vm.saveInfo.sizeChartName}}
+                                        </button>
                                     </div>
                                 </div>
                                 <div class="form-group">

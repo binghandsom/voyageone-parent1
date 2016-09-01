@@ -87,7 +87,7 @@ public class PriceServiceTest {
     @Test
     public void testFormulaPriceSetter() throws Exception {
 
-        CmsBtProductModel product = productService.getProductById("010", 9303);
+        CmsBtProductModel product = productService.getProductById("012", 2524592);
 
         List<BaseMongoMap<String, Object>> skus = product.getPlatform(23).getSkus();
 
@@ -120,8 +120,10 @@ public class PriceServiceTest {
             System.out.println(String.format("%s, \t\t%s -> %s", "priceRetail", doubleList.get(0), sku.getDoubleAttribute(priceRetail.name())));
             System.out.println(String.format("%s, \t%s -> %s", "originalPriceMsrp", doubleList.get(1), sku.getDoubleAttribute(originalPriceMsrp.name())));
             System.out.println(String.format("%s, \t\t\t%s -> %s", "priceMsrp", doubleList.get(2), sku.getDoubleAttribute(priceMsrp.name())));
-            System.out.println(String.format("%s, \t\t\t%s -> %s", "priceMsrpFlg", doubleList.get(3), sku.getStringAttribute(priceMsrpFlg.name())));
+            System.out.println(String.format("%s, \t\t%s -> %s", "priceMsrpFlg", doubleList.get(3), sku.getStringAttribute(priceMsrpFlg.name())));
             System.out.println(String.format("%s, \t\t\t%s -> %s", "priceSale", doubleList.get(4), sku.getDoubleAttribute(priceSale.name())));
+
+            System.out.println("\n\n");
         }
 
         System.out.println("\n\n");

@@ -50,6 +50,7 @@ define([
             },
             searchBrands: function (page) {
                 var self = this;
+                if(!self.searchInfo.selectedCart) return;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
                 var params = {
                     'cartId': self.searchInfo.selectedCart,

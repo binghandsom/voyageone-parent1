@@ -991,7 +991,7 @@ define([
          * 新增店铺管理-Listing-imagegroup页,add操作弹出
          * */
         $scope.openImgGroupAdd = function openImgGroupAdd(data) {
-            openModal(popActions.store.listing.imagegroupadd, {
+            return openModal(popActions.store.listing.imagegroupadd, {
                 data: function () {
                     return data;
                 }
