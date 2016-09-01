@@ -403,6 +403,10 @@ define(function () {
                     page: 'page',
                     export: 'export'
                 },
+                priceConfirmLogService: {
+                    root: '/cms/price/confirm',
+                    page: 'page'
+                },
                 statusHistoryService: {
                     root: "/cms/product/statushistory",
                     getPage: "getPage"
@@ -519,7 +523,8 @@ define(function () {
                         "search": "sizeChartSearch",
                         "delete": "sizeChartDelete",
                         "editSave": "sizeChartEditSave",
-                        "getNoMatchList":"getNoMatchList"
+                        "getNoMatchList":"getNoMatchList",
+                        "getListImageGroupBySizeChartId":"getListImageGroupBySizeChartId"
                     }
                 },
                 "sizeChartDetail": {

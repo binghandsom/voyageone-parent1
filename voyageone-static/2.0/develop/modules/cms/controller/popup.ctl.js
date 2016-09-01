@@ -239,6 +239,12 @@ define([
                 "controller": "PriceLogPopupController as ctrl",
                 "size": "lg"
             },
+            price_confirm: {
+                templateUrl: "views/pop/history/price.confirm.log.tpl.html",
+                controllerUrl: "modules/cms/views/pop/history/price.confirm.log.controller",
+                controller: "PriceConfirmLogController as ctrl",
+                size: "lg"
+            },
             "promotion": {
                 "templateUrl": "views/pop/history/promotion.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/history/promotion.ctl",
@@ -774,6 +780,17 @@ define([
          */
         $scope.openHistoryPrice = function openHistoryPrice(code, skuList, selectedSku, selectedCart) {
             return openModal(popActions.history.price, {
+                skuList: skuList,
+                code: code,
+                selected: {
+                    sku: selectedSku,
+                    cart: selectedCart
+                }
+            });
+        };
+
+        $scope.openHistoryPriceConfirm = function openHistoryPriceConfirm(code, skuList, selectedSku, selectedCart) {
+            return openModal(popActions.history.price_confirm, {
                 skuList: skuList,
                 code: code,
                 selected: {

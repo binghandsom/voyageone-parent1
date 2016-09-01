@@ -792,7 +792,11 @@ define(function () {
         "TXT_DEFAULT_MAPPING": "平台默认属性设置",
         "TXT_DEFAULT_PLATEFORM_MAPPING": "平台类目属性匹配",
         "TXT_DEFAULT_SETTING":"新建默认设置",
-        "TXT_UPDATER":"更新人"
+        "TXT_UPDATER":"更新人",
 
+        "TXT_PRICE_CONFIRM_HISTORY": "价格确认历史一览",
+        "TXT_CONFIRM_STATUS": "确认状态",
+        "TXT_CONFIRM_PRICE": "确认指导价",
+        "TXT_FLOATING_RATE": "价格波动"
     };
 });

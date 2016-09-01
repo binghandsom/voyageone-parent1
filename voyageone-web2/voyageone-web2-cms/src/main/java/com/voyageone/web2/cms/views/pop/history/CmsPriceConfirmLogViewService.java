@@ -28,7 +28,10 @@ class CmsPriceConfirmLogViewService extends BaseAppService {
         this.priceConfirmLogDao = priceConfirmLogDao;
     }
 
-    Map<String, Object> getPage(String skuCode, String code, int cartId, String channelId, int pageNumber, int limit) {
+    Map<String, Object> getPage(String skuCode, String code, String cartId, String channelId, int pageNumber, int limit) {
+
+        if (cartId.equals(""))
+            cartId = null;
 
         MySqlPageHelper.PageBoundsMap pageBoundsMap = MySqlPageHelper.build(
                 "channelId", channelId,

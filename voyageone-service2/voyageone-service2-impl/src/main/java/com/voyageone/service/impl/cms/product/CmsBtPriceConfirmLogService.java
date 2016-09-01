@@ -79,7 +79,12 @@ public class CmsBtPriceConfirmLogService extends BaseService {
 
     private void setSkuInfo(CmsBtPriceConfirmLogModel priceConfirmLogModel, BaseMongoMap<String, Object> sku) {
         priceConfirmLogModel.setSkuCode(sku.getStringAttribute(Platform_SKU_COM.skuCode.name()));
-        priceConfirmLogModel.setFloatingRate(sku.getStringAttribute(Platform_SKU_COM.priceChgFlg.name()));
+
+        String floatingRate = sku.getStringAttribute(Platform_SKU_COM.priceChgFlg.name());
+        if (floatingRate == null)
+            floatingRate = "";
+
+        priceConfirmLogModel.setFloatingRate(floatingRate);
         priceConfirmLogModel.setCurrentRetailPrice(sku.getDoubleAttribute(Platform_SKU_COM.priceRetail.name()));
         priceConfirmLogModel.setCurrentConfirmPrice(sku.getDoubleAttribute(Platform_SKU_COM.confPriceRetail.name()));
     }

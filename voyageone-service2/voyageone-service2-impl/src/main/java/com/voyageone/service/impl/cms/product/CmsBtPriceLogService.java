@@ -87,7 +87,7 @@ public class CmsBtPriceLogService extends BaseService {
             BaseMongoMap<String, Object> skuModel = getSku(newLog.getSku(), cartId, channelId);
             Double confirmPrice = skuModel.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.confPriceRetail.name());
             // 检查价格，是否需要记录未确认
-            if (!newLog.getRetailPrice().equals(confirmPrice))
+            if (newLog.getRetailPrice() >= 0 && !newLog.getRetailPrice().equals(confirmPrice))
                 priceConfirmLogService.addUnConfirmed(channelId, cartId, newLog.getCode(), skuModel, newLog.getCreater());
         }
 
@@ -176,7 +176,7 @@ public class CmsBtPriceLogService extends BaseService {
 
         Double confirmPrice = cartSku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.confPriceRetail.name());
 
-        if (!newLog.getRetailPrice().equals(confirmPrice))
+        if (newLog.getRetailPrice() >= 0 && !newLog.getRetailPrice().equals(confirmPrice))
             priceConfirmLogService.addUnConfirmed(channelId, cartId, newLog.getCode(), cartSku, newLog.getCreater());
     }
 

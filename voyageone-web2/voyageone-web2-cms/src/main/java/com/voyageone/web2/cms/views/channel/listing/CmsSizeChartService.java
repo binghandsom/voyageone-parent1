@@ -12,6 +12,7 @@ import com.voyageone.service.bean.cms.task.CmsBtSizeChartBean;
 import com.voyageone.service.impl.cms.CmsBtSizeChartImageGroupService;
 import com.voyageone.service.impl.cms.ImageGroupService;
 import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.model.cms.CmsBtSizeChartImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import com.voyageone.web2.base.BaseAppService;
@@ -139,6 +140,11 @@ public class CmsSizeChartService extends BaseAppService {
         if (StringUtils.isEmpty(sizeChartName)) {
             throw new BusinessException("7000080");
         }
+        if(sizeChartService.EXISTSName(sizeChartName, sizeChartId))
+        {
+            //名称已经存在
+            throw new BusinessException("4000009");
+        }
         CmsBtSizeChartModel model = null;
         if (sizeChartId > 0) {
             model = sizeChartService.getCmsBtSizeChartModel(sizeChartId, channelId);
@@ -166,7 +172,7 @@ public class CmsSizeChartService extends BaseAppService {
                 imageGroupService.update(cmsBtImageGroupModel);
             } else if (!StringUtils.isEmpty(imageGroupName)) {
                 //新增组图
-                CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.save(channelId, userName, null, imageGroupName, null, null, brandNameList, productTypeList, sizeTypeList,model.getSizeChartId(),model.getSizeChartName());
+                CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.save(channelId, userName, String.valueOf(imageGroup_CartId), imageGroupName, null, null, brandNameList, productTypeList, sizeTypeList, model.getSizeChartId(), model.getSizeChartName());
                 imageGroupId = cmsBtImageGroupModel.getImageGroupId();
             }
             if (imageGroupId > 0) {
@@ -278,5 +284,22 @@ public class CmsSizeChartService extends BaseAppService {
             }
         }
         bean.setSizeTypeTrans(sizeTypeTrans);
+    }
+    public List<Map<String,Object>> getListImageGroupBySizeChartId(String channelId,int sizeChartId) {
+        List<CmsBtSizeChartImageGroupModel> list = cmsBtSizeChartImageGroupService.getListByCmsBtSizeChartId(channelId, sizeChartId);
+        List<Map<String, Object>> listImageGroup = new ArrayList<>();
+        CmsBtImageGroupModel groupModel = null;
+        Map<String, Object> map=null;
+        for (CmsBtSizeChartImageGroupModel m : list) {
+            map = new HashMap<>();
+            groupModel = imageGroupService.getImageGroupModel(String.valueOf(m.getCmsBtImageGroupId()));
+            if(groupModel!=null) {
+                map.put("imageGroupName", groupModel.getImageGroupName());
+                map.put("imageGroupId", groupModel.getImageGroupId());
+                map.put("cartId", m.getCartId());
+                listImageGroup.add(map);
+            }
+        }
+        return listImageGroup;
     }
 }
