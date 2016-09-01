@@ -77,22 +77,16 @@
                         <input name="sizeChart" type="radio" value="match" ng-model="ctrl.chartType" ng-click="ctrl.sizeChart = null">&emsp;
                         <strong>匹配现有尺码对照表</strong>
                             <ng-form name="chartForm" ng-if = "ctrl.chartType == 'match'">
-                                <div class="row" ng-repeat="cartSize in ctrl.noMathOpt">
-                                    <label class="col-md-3 control-label">
-                                        <span class="label label-info v-bottom">{{cartSize.cartName}}</span>
-                                    </label>
-                                    <div class="col-md-6 m-t-xs">
+                                <div class="row">
+                                    <div class="col-md-6 m-t-xs col-md-offset-1">
                                         <select class="form-control"
-                                                ng-model="ctrl.sizeChart[cartSize.cartName]" name="sizeChart" ng-required = "!ctrl.sizeChart"
-                                                ng-options = "optItem as optItem.sizeChartName for optItem in cartSize.sizeList">
+                                                ng-model="ctrl.sizeChart" name="sizeChart" required
+                                                ng-options = "optItem as optItem.sizeChartName for optItem in ctrl.noMathOpt">
                                         </select>
                                     </div>
                                 </div>
-                                <div class="text-warnings">
-                                    <i class="icon fa fa-bell-o"></i>&nbsp;请至少配置一个平台的尺码表
-                                </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 col-md-offset-1">
                                         <vo-message target="chartForm.sizeChart"></vo-message>
                                     </div>
                                 </div>
