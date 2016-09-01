@@ -23,7 +23,6 @@ import java.util.List;
 @Service
 public class CnSchemaService extends ComponentBase {
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-    private static final String XML_UPDATETYPE = "<root updateType=\"%d\">";
 
     /**
      * 全量库存更新
@@ -73,11 +72,13 @@ public class CnSchemaService extends ComponentBase {
     private String writeXmlString(List<List<Field>> multiFields, CnUpdateType updateType, String rootName, String multiPropName) {
         StringBuffer sb = new StringBuffer("");
         sb.append(XML_HEADER);
-        sb.append(String.format(XML_UPDATETYPE, updateType.val())); // <root>
 
-        Element root = XmlUtils.createRootElement(rootName);
+        Element type = XmlUtils.createRootElement("root"); // <root updateType="%d">
+        type.addAttribute("updateType", String.valueOf(updateType.val()));
+
+        Element root = XmlUtils.appendElement(type, rootName); // 例：<Categories>，<Configurable>，<Simple>
         for (List<Field> listField : multiFields) {
-            Element multiProp = XmlUtils.appendElement(root, multiPropName);
+            Element multiProp = XmlUtils.appendElement(root, multiPropName); // 例：<Category>，<Product>
 
             for (Field field : listField) {
                 Element valueNode = XmlUtils.appendElement(multiProp, field.getId());
@@ -96,9 +97,7 @@ public class CnSchemaService extends ComponentBase {
                 }
             }
         }
-        sb.append(XmlUtils.nodeToString(root));
-
-        sb.append("</root>"); // </root>
+        sb.append(XmlUtils.nodeToString(type));
 
         return sb.toString();
     }
