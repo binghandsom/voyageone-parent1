@@ -33,6 +33,7 @@ public class CmsPlatformActiveLogServiceTest {
         // 准备参数
         Shops.reload();
         Map<String, ShopBean> shopBeanMap = new HashMap<>();
+
         // tmall
         ShopBean bean1 = new ShopBean();
         bean1.setCart_id("23");
@@ -49,6 +50,16 @@ public class CmsPlatformActiveLogServiceTest {
         bean2.setApp_url("https://api.jd.com/routerjson");
 
         shopBeanMap.put(buildKey(bean2.getCart_id(), bean2.getOrder_channel_id()), bean2);
+
+        // jumei
+        ShopBean bean3 = new ShopBean();
+        bean3.setCart_id("27");
+        bean3.setPlatform_id("4");
+        bean3.setOrder_channel_id("010");
+        bean3.setApp_url("https://api.jd.com/routerjson");
+
+        shopBeanMap.put(buildKey(bean3.getCart_id(), bean3.getOrder_channel_id()), bean3);
+
         CacheHelper.reFreshSSB(KEY, shopBeanMap);
     }
 
