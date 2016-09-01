@@ -60,7 +60,7 @@ public class ImageGroupService extends BaseService {
      * @param sizeTypeList    相关尺码列表
      */
     public CmsBtImageGroupModel save(String channelId, String userName, String cartId, String imageGroupName, String imageType, String viewType,
-                     List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList,int sizeChartId,String sizeChartName) {
+                     List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         CmsBtImageGroupModel model = new CmsBtImageGroupModel();
         model.setChannelId(channelId);
         model.setCreater(userName);
@@ -76,8 +76,6 @@ public class ImageGroupService extends BaseService {
         if(viewType!=null) {
             model.setViewType(Integer.parseInt(viewType));
         }
-        model.setSizeChartId(sizeChartId);
-        model.setSizeChartName(sizeChartName);
         // 什么都不选的情况下，要设置成"All"
         if (brandNameList.isEmpty()) {
             List<String> lst = new ArrayList<>();
