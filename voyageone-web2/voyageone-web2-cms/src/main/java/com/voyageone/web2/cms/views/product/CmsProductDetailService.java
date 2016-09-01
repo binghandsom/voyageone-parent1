@@ -660,7 +660,7 @@ public class CmsProductDetailService extends BaseAppService {
             newProduct.getPlatforms().forEach((s, platform) -> {
                 if (platform.getCartId() != 0) {
                     productService.updateProductPlatform(channelId, prodId, platform, modifier, false, EnumProductOperationType.WebEdit, "税号变更");
-                    cmsBtPriceConfirmLogService.addConfirmed(channelId, newProduct.getCommon().getFields().getCode(), platform, modifier);
+//                    cmsBtPriceConfirmLogService.addConfirmed(channelId, newProduct.getCommon().getFields().getCode(), platform, modifier);
                 }
             });
 
