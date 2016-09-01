@@ -4,10 +4,12 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.masterdate.schema.field.SingleCheckField;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.masterdate.schema.utils.XmlUtils;
 import com.voyageone.components.ComponentBase;
 import com.voyageone.components.cn.enums.CnConstants;
 import com.voyageone.components.cn.enums.CnUpdateType;
+import org.dom4j.Element;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,7 +23,6 @@ import java.util.List;
 @Service
 public class CnSchemaService extends ComponentBase {
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-    private static final String XML_UPDATETYPE = "<root updateType=\"%d\">";
 
     /**
      * 全量库存更新
@@ -71,47 +72,34 @@ public class CnSchemaService extends ComponentBase {
     private String writeXmlString(List<List<Field>> multiFields, CnUpdateType updateType, String rootName, String multiPropName) {
         StringBuffer sb = new StringBuffer("");
         sb.append(XML_HEADER);
-        sb.append(String.format(XML_UPDATETYPE, updateType.val())); // <root>
-        sb.append(toXml(rootName, false)); // 例：<Categories>，<Configurable>，<Simple>
 
+        Element type = XmlUtils.createRootElement("root"); // <root updateType="%d">
+        type.addAttribute("updateType", String.valueOf(updateType.val()));
+
+        Element root = XmlUtils.appendElement(type, rootName); // 例：<Categories>，<Configurable>，<Simple>
         for (List<Field> listField : multiFields) {
-            sb.append(toXml(multiPropName, false)); // 例：<Category>，<Product>
+            Element multiProp = XmlUtils.appendElement(root, multiPropName); // 例：<Category>，<Product>
 
             for (Field field : listField) {
+                Element valueNode = XmlUtils.appendElement(multiProp, field.getId());
+
+                String value = null;
                 FieldTypeEnum fieldType = field.getType();
                 if (fieldType == FieldTypeEnum.INPUT) {
-                    InputField inputField = (InputField) field;
-                    sb.append(toXmlWithValue(inputField.getId(), inputField.getValue()));
+                    value = ((InputField) field).getValue();
                 } else if (fieldType == FieldTypeEnum.SINGLECHECK) {
-                    SingleCheckField singleCheckField = (SingleCheckField) field;
-                    sb.append(toXmlWithValue(singleCheckField.getId(), singleCheckField.getValue().getValue()));
+                    value = ((SingleCheckField) field).getValue().getValue();
                 } else {
                     logger.warn("独立域名不支持input,singleCheck以外的类型!");
                 }
+                if(!StringUtil.isEmpty(value)) {
+                    valueNode.setText(value);
+                }
             }
-
-            sb.append(toXml(multiPropName, true)); // </Category>，</Product>
         }
-
-        sb.append(toXml(rootName, true)); // </Categories>，</Configurable>，</Simple>
-        sb.append(toXml("root", true)); // </root>
+        sb.append(XmlUtils.nodeToString(type));
 
         return sb.toString();
     }
 
-    private String toXml(String id, boolean isEnd) {
-        if (isEnd) {
-            return "</" + id + ">";
-        } else {
-            return "<" + id + ">";
-        }
-    }
-
-    private String toXmlWithValue(String id, Object value) {
-        if (value == null || StringUtils.isEmpty(value.toString())) {
-            return "<" + id + "/>";
-        } else {
-            return toXml(id, false) + value.toString() + toXml(id, true);
-        }
-    }
 }

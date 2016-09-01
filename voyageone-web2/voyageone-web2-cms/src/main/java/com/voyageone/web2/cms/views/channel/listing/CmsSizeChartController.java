@@ -77,8 +77,8 @@ public class CmsSizeChartController extends CmsController {
     }
 
     @RequestMapping(value = CmsUrlConstants.CHANNEL.LISTING.SIZE_CHART.GetNoMatchList)
-    public AjaxResponse getNoMatchList() {
+    public AjaxResponse getNoMatchList(@RequestBody Map<String,Object> map) {
         String channelId = this.getUser().getSelChannelId();
-        return success(sizeChartService.getNoMatchList(channelId,this.getLang()));
+        return success(sizeChartService.getNoMatchList(channelId,map.get("cartId").toString(),this.getLang()));
     }
 }

@@ -17,6 +17,6 @@ public class SizeChartServiceTest {
     @Test
     public  void  test()
     {
-        Map<String, List<Map<String, Object>>>  map=service.getNoMatchList("010","en");
+       List<Map<String, Object>>  map=service.getNoMatchList("010","","en");
     }
 }

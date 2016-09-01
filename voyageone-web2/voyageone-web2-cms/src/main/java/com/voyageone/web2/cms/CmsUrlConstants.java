@@ -479,6 +479,13 @@ public interface CmsUrlConstants {
             String EXPORT = "export";
         }
 
+        interface PRICE_CONFIRM {
+
+            String ROOT = "/cms/price/confirm";
+
+            String PAGE = "page";
+        }
+
         interface PROMOTION {
 
             String ROOT = "/cms/pop/history_promotion/";

@@ -28,7 +28,7 @@ import java.util.Map;
  * Created by jonas on 16/7/4.
  *
  * @author jonas
- * @version 2.2.0
+ * @version 2.5.0
  * @since 2.2.0
  */
 @Service
