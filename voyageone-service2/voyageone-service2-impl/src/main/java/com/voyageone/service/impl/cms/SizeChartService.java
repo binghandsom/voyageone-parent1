@@ -37,6 +37,7 @@ public class SizeChartService extends BaseService {
     private MongoSequenceService commSequenceMongoService;
     @Autowired
     CmsBtSizeChartImageGroupService cmsBtSizeChartImageGroupService;
+
     /**
      * 按照填写的条件去数据库检索记录
      */
@@ -147,6 +148,7 @@ public class SizeChartService extends BaseService {
         //尺码关系一览检索
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
+
     //逻辑删除选中的记录
     public void delete(int sizeChartId, String userName, String channelId) {
         CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId, channelId);
@@ -157,6 +159,7 @@ public class SizeChartService extends BaseService {
         //尺码关系一览检索
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
+
     /**
      * 根据尺码关系一览编辑的数据插入数据库
      */
@@ -252,7 +255,8 @@ public class SizeChartService extends BaseService {
         //跟据尺码关系一览编辑详情编辑的数据更新数据库
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
-    public void  Update(String channelId, String userName, int sizeChartId, String sizeChartName, String finishFlag
+
+    public void Update(String channelId, String userName, int sizeChartId, String sizeChartName, String finishFlag
             , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId, channelId);
         //更新者
@@ -292,6 +296,7 @@ public class SizeChartService extends BaseService {
         //跟据尺码关系一览编辑详情编辑的数据更新数据库
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
+
     /**
      * 尺码关系一览编辑详情编辑画面(编辑尺码表)
      */
@@ -305,8 +310,9 @@ public class SizeChartService extends BaseService {
         //跟据尺码关系一览编辑详情编辑的数据更新数据库
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
-   //获取未匹配尺码表
-    public  List<Map<String, Object>> getNoMatchList(String channelId,String cartId,String lang) {
+
+    //获取未匹配尺码表
+    public List<Map<String, Object>> getNoMatchList(String channelId, String cartId, String lang) {
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"channelId\":\"" + channelId + "\"}");
         queryObject.setProjection("{'sizeChartId':1,'sizeChartName':1,'_id':0}");
@@ -341,8 +347,12 @@ public class SizeChartService extends BaseService {
         queryObject.setQuery("{\"sizeChartId\":" + sizeChartId + "},{\"channelId\":" + channelId + "},{\"active\":1}");
         return cmsBtSizeChartDao.selectOneWithQuery(queryObject);
     }
-    public  void  update(CmsBtSizeChartModel model)
-    {
+    public void update(CmsBtSizeChartModel model) {
         cmsBtSizeChartDao.update(model);
+    }
+
+    public boolean EXISTSName(String sizeChartName, long sizeChartId) {
+        long count = cmsBtSizeChartDao.countByQuery("{\"sizeChartName\":\"" + sizeChartName + "\"" + ",\"imageGroupId\": { $ne:" + sizeChartId + "}}");
+        return count > 0;
     }
 }

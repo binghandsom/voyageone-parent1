@@ -20,7 +20,9 @@ define([
 
             /**获取未匹配的尺码图组*/
             imageGroupService.getNoMatchSizeImageGroupList().then(function (res) {
-                $scope.noMathOpt = res.data;
+                $scope.noMathOpt = _.map(res.data,function(value,key){
+                    return {cartName:key,imgList:value};
+                });
             });
 
             if ($scope.dropdown.from === 'detail') {
@@ -31,17 +33,31 @@ define([
                 saveInfo.brandNameList = dropdown.saveInfo.brandName;
                 saveInfo.productTypeList = dropdown.saveInfo.productType;
                 saveInfo.sizeTypeList = dropdown.saveInfo.sizeType;
+
+                sizeChartService.getListImageGroupBySizeChartId({sizeChartId:dropdown.saveInfo.sizeChartId}).then(function(res){
+                    console.log("res",res);
+                });
             }
         };
 
         $scope.save = function () {
             var _sizeChart = $scope.vm.sizeChart,
+                listImageGroup,
                 upEntity;
 
-            if (_.isObject(_sizeChart))
-                upEntity = _.extend($scope.vm.saveInfo, _sizeChart);
-            else
-                upEntity = _.extend($scope.vm.saveInfo, {imageGroupName: _sizeChart});
+            if(_sizeChart){
+                if(_.isObject(_sizeChart)){
+                    listImageGroup = _.map(_sizeChart,function(value){
+                        return value;
+                    });
+                }else{
+                    listImageGroup = {sizeChartName: _sizeChart, sizeChartId: 0};
+                }
+            }else{
+                listImageGroup = [];
+            }
+
+            upEntity = _.extend($scope.vm.saveInfo, {listImageGroup:listImageGroup});
 
             if($scope.dropdown.from === 'detail'){
                 $uibModalInstance.close(upEntity);

@@ -12,7 +12,8 @@ define([
             importList: [],
             brandNameList: [],
             productTypeList: [],
-            sizeTypeList: []
+            sizeTypeList: [],
+            sizeChartId:+$routeParams.sizeChartId
         };
 
         $scope.initialize = function () {
@@ -21,7 +22,7 @@ define([
         };
 
         function getItemById() {
-            sizeChartDetailService.init({sizeChartId: Number($routeParams.sizeChartId)}).then(function (resp) {
+            sizeChartDetailService.init({sizeChartId: $scope.vm.sizeChartId}).then(function (resp) {
                 var item = $scope.vm.saveInfo = resp.data.sizeChartList[0];
                 $scope.vm.originCondition = angular.copy(resp.data.sizeChartList[0]);
                 $scope.vm.importList = _.map(item.sizeMap == null ? [] : item.sizeMap, function (item) {

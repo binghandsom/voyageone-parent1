@@ -28,7 +28,7 @@ public class CmsBtSizeChartImageGroupService extends BaseService {
         return dao.selectList(map);
     }
 
-    public CmsBtSizeChartImageGroupModel get(String channelId, int cartId,int cmsBtSizeChartId, long cmsBtImageGroupId) {
+    public CmsBtSizeChartImageGroupModel get(String channelId, int cartId, int cmsBtSizeChartId, long cmsBtImageGroupId) {
         Map<String, Object> map = new HashedMap();
         map.put("cmsBtSizeChartId", cmsBtSizeChartId);
         map.put("cmsBtImageGroupId", cmsBtImageGroupId);
@@ -37,8 +37,8 @@ public class CmsBtSizeChartImageGroupService extends BaseService {
         return dao.selectOne(map);
     }
 
-    public void save(String channelId,int cartId, int cmsBtSizeChartId, long cmsBtImageGroupId, String userName) {
-        CmsBtSizeChartImageGroupModel model = get(channelId,cartId, cmsBtSizeChartId, cmsBtImageGroupId);
+    public void save(String channelId, int cartId, int cmsBtSizeChartId, long cmsBtImageGroupId, String userName) {
+        CmsBtSizeChartImageGroupModel model = get(channelId, cartId, cmsBtSizeChartId, cmsBtImageGroupId);
         if (model == null) {// 不存在新增
             model = new CmsBtSizeChartImageGroupModel();
             model.setChannelId(channelId);
@@ -52,10 +52,19 @@ public class CmsBtSizeChartImageGroupService extends BaseService {
             dao.insert(model);
         }
     }
-    public int deleteByCmsBtSizeChartId(String channelId,int cmsBtSizeChartId) {
-        return daoExt.deleteByCmsBtSizeChartId(channelId,cmsBtSizeChartId);
+
+    public int deleteByCmsBtSizeChartId(String channelId, int cmsBtSizeChartId) {
+        return daoExt.deleteByCmsBtSizeChartId(channelId, cmsBtSizeChartId);
     }
-    public int deleteByCmsBtImageGroupId(String channelId,long cmsBtImageGroupId) {
-        return daoExt.deleteByCmsBtImageGroupId(channelId,cmsBtImageGroupId);
+
+    public int deleteByCmsBtImageGroupId(String channelId, long cmsBtImageGroupId) {
+        return daoExt.deleteByCmsBtImageGroupId(channelId, cmsBtImageGroupId);
+    }
+
+    public List<CmsBtSizeChartImageGroupModel> getListByCmsBtSizeChartId(String channelId, int cmsBtSizeChartId) {
+        Map<String, Object> map = new HashedMap();
+        map.put("channelId", channelId);
+        map.put("cmsBtSizeChartId", cmsBtSizeChartId);
+        return dao.selectList(map);
     }
 }

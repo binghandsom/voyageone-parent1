@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
+import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -77,8 +79,15 @@ public class CmsSizeChartController extends CmsController {
     }
 
     @RequestMapping(value = CmsUrlConstants.CHANNEL.LISTING.SIZE_CHART.GetNoMatchList)
-    public AjaxResponse getNoMatchList(@RequestBody Map<String,Object> map) {
+    public AjaxResponse getNoMatchList(@RequestBody Map<String, Object> map) {
         String channelId = this.getUser().getSelChannelId();
-        return success(sizeChartService.getNoMatchList(channelId,map.get("cartId").toString(),this.getLang()));
+        return success(sizeChartService.getNoMatchList(channelId, map.get("cartId").toString(), this.getLang()));
+    }
+
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.LISTING.SIZE_CHART.GetListImageGroupBySizeChartId)
+    public AjaxResponse getListImageGroupBySizeChartId(@RequestBody Map<String, Object> map) {
+        // String channelId, int sizeChartId
+        String channelId = this.getUser().getSelChannelId();
+        return success(cmsSizeChartService.getListImageGroupBySizeChartId(channelId, ConvertUtil.toInt(map.get("sizeChartId"))));
     }
 }

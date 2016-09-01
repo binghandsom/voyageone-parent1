@@ -678,6 +678,7 @@ public interface CmsUrlConstants {
                 String SEARCH_SIZE_CHART = "sizeChartSearch";
                 String SAVE_EDIT_SIZE_CHART = "sizeChartEditSave";
                 String GetNoMatchList="getNoMatchList";
+                String GetListImageGroupBySizeChartId="getListImageGroupBySizeChartId";
             }
 
             interface SIZE_CHART_DETAIL {
