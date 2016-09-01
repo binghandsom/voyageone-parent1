@@ -5,7 +5,6 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtPriceConfirmLogDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceConfirmLogModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +45,7 @@ public class CmsBtPriceConfirmLogService extends BaseService {
             addSkuWithStatus(channelId, cartId, code, skuModel, STATUS_CONFIRMED, username);
     }
 
-    public void addUnConfirmed(String channelId, int cartId, String code, BaseMongoMap<String, Object> skuModel, String username) {
+    void addUnConfirmed(String channelId, int cartId, String code, BaseMongoMap<String, Object> skuModel, String username) {
         addSkuWithStatus(channelId, cartId, code, skuModel, STATUS_UNCONFIRMED, username);
     }
 
