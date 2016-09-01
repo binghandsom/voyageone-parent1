@@ -10,6 +10,8 @@ public interface BiVtSalesProductExt {
 
     int insertWithList(Map<String, Object> mapColumnValue);
 
+    int deleteWithList(Map<String, Object> mapColumnValue);
+
     /*
      * 取得指定时间范围内的产品的bi信息 (目前只取：浏览量 访客数 加购件数 收藏人数)
      */

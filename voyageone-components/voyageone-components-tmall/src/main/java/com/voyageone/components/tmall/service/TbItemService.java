@@ -1,8 +1,12 @@
 package com.voyageone.components.tmall.service;
 
 import com.taobao.api.ApiException;
-import com.taobao.api.request.*;
-import com.taobao.api.response.*;
+import com.taobao.api.request.ItemSkusGetRequest;
+import com.taobao.api.request.TmallItemSchemaUpdateRequest;
+import com.taobao.api.request.TmallItemUpdateSchemaGetRequest;
+import com.taobao.api.response.ItemSkusGetResponse;
+import com.taobao.api.response.TmallItemSchemaUpdateResponse;
+import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
@@ -11,7 +15,6 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.tmall.TbBase;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -86,43 +89,5 @@ public class TbItemService extends TbBase {
         return reqTaobaoApi(shopBean, req);
     }
 
-    /**
-     * 商品上架
-     */
-    public ItemUpdateListingResponse doWareUpdateListing(ShopBean shopBean, String numIid) {
-        logger.info("商品上架 " + numIid);
-        ItemUpdateListingRequest request = new ItemUpdateListingRequest ();
-        request.setNumIid(NumberUtils.toLong(numIid));
-        request.setNum(1L);
-        ItemUpdateListingResponse response = null;
-
-        try {
-            response = reqTaobaoApi(shopBean, request);
-        } catch (ApiException apiExp) {
-            logger.error("调用淘宝API商品上架时API出错", apiExp);
-        } catch (Exception exp) {
-            logger.error("调用淘宝API商品上架时出错", exp);
-        }
-        return response;
-    }
-
-    /**
-     * 商品下架
-     */
-    public ItemUpdateDelistingResponse doWareUpdateDelisting(ShopBean shopBean, String numIid) {
-        logger.info("商品下架 " + numIid);
-        ItemUpdateDelistingRequest request = new ItemUpdateDelistingRequest();
-        request.setNumIid(NumberUtils.toLong(numIid));
-        ItemUpdateDelistingResponse response = null;
-
-        try {
-            response = reqTaobaoApi(shopBean, request);
-        } catch (ApiException apiExp) {
-            logger.error("调用淘宝API商品下架时API出错", apiExp);
-        } catch (Exception exp) {
-            logger.error("调用淘宝API商品下架时出错", exp);
-        }
-        return response;
-    }
 }
 

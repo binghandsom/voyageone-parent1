@@ -19,13 +19,13 @@ define([
             this.productTypeList = data.productTypeList;
             this.sizeTypeList = data.sizeTypeList;
             this.$uibModalInstance = $uibModalInstance;
-            this.platform = "";
-            this.imageGroupName = "";
-            this.viewType = "";
-            this.imageType = "";
-            this.brandName = [];
-            this.productType = [];
-            this.sizeType = [];
+            this.platform = data.platform ? data.platform : "";
+            this.imageGroupName = data.imageGroupName;
+            this.viewType = data.viewType ? data.viewType : "";
+            this.imageType = data.imageType ? data.imageType : "";
+            this.brandName = data.brandName ? data.brandName : [];
+            this.productType = data.productType ? data.productType : [];
+            this.sizeType = data.sizeType ? data.sizeType : [];
         }
 
         PopImageGroupAddCtl.prototype = {
@@ -53,6 +53,11 @@ define([
                     "productType": self.productType,
                     "sizeType": self.sizeType
                 };
+
+                if(self.parent.from === 'detail'){
+                    self.$uibModalInstance.close(upEntity);
+                    return;
+                }
 
                 if (_.isObject(self.sizeChart))
                     _.extend(upEntity, self.sizeChart);

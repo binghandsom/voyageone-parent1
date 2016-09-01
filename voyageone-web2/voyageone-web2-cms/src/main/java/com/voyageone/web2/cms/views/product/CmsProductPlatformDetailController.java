@@ -5,9 +5,11 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -36,6 +38,9 @@ public class CmsProductPlatformDetailController extends CmsController {
 
     @Autowired
     private PlatformCategoryService platformCategoryService;
+
+    @Autowired
+    private CmsBtPriceConfirmLogService cmsBtPriceConfirmLogService;
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_PLATFORM)
     public AjaxResponse doGetProductPlatform(@RequestBody Map params) {
@@ -120,12 +125,20 @@ public class CmsProductPlatformDetailController extends CmsController {
         return success(result);
     }
 
-    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PLATFORM_CATEGORIES)
-    public AjaxResponse getPlatformCategories(@RequestBody Map<String, Integer> params) {
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.PriceConfirm)
+    public AjaxResponse getPlatformCategories(@RequestBody Map<String, Object> params) {
 
-        Integer cartId = params.get("cartId");
+        String productCode = String.valueOf(params.get("productCode"));
 
-        return success(cmsProductPlatformDetailService.getPlatformCategories(getUser(), cartId));
+        String channelId = getUser().getSelChannelId();
+
+        Map<String, Object> result = new HashMap<>();
+
+        Map<String, Object> platform = (Map<String, Object>) params.get("platform");
+
+        CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
+        cmsBtPriceConfirmLogService.addConfirmed(getUser().getSelChannelId(),productCode,platformModel,getUser().getUserName());
+        return success(true);
     }
 }
 

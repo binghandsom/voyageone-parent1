@@ -21,6 +21,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.bean.JdProductBean;
+import com.voyageone.components.jd.service.JdSaleService;
 import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -121,6 +122,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
     private ConditionPropValueRepo conditionPropValueRepo;
     @Autowired
     private JdWareService jdWareService;
+    @Autowired
+    private JdSaleService jdSaleService;
     @Autowired
     private CmsMtPlatformSkusService cmcMtPlatformSkusService;
     @Autowired
@@ -2000,10 +2003,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         // platformActive平台上新状态类型(ToOnSale/ToInStock)
         if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
             // platformActive是(ToOnSale)时，执行商品上架操作
-            updateListingResult = jdWareService.doWareUpdateListing(shop, wareId, updateFlg);
+            updateListingResult = jdSaleService.doWareUpdateListing(shop, wareId, updateFlg);
         } else {
             // platformActive是(ToInStock)时，执行商品下架操作
-            updateListingResult = jdWareService.doWareUpdateDelisting(shop, wareId, updateFlg);
+            updateListingResult = jdSaleService.doWareUpdateDelisting(shop, wareId, updateFlg);
         }
 
         return updateListingResult;
