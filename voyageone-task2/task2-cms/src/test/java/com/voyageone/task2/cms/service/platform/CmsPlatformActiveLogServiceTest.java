@@ -24,7 +24,7 @@ import java.util.Map;
 public class CmsPlatformActiveLogServiceTest {
 
     @Autowired
-    CmsPlatformActiveLogService targetService;
+    private CmsPlatformActiveLogService targetService;
 
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_ShopConfigs.toString();
 
@@ -52,6 +52,7 @@ public class CmsPlatformActiveLogServiceTest {
         CacheHelper.reFreshSSB(KEY, shopBeanMap);
     }
 
+    // 测试tmall上架
     @Test
     public void testTMPlatformToOnsale() {
         // 发送请求到MQ,插入操作历史记录
@@ -69,6 +70,7 @@ public class CmsPlatformActiveLogServiceTest {
         }
     }
 
+    // 测试tmall下架
     @Test
     public void testTMPlatformToInstock() {
         // 发送请求到MQ,插入操作历史记录
@@ -86,6 +88,7 @@ public class CmsPlatformActiveLogServiceTest {
         }
     }
 
+    // 测试jindong上架
     @Test
     public void testJDPlatformToOnsale() {
         // 发送请求到MQ,插入操作历史记录
@@ -103,12 +106,49 @@ public class CmsPlatformActiveLogServiceTest {
         }
     }
 
+    // 测试jindong下架
     @Test
     public void testJDPlatformToInstock() {
         // 发送请求到MQ,插入操作历史记录
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", "928");
         logParams.put("cartIdList", new ArrayList(Arrays.asList(28)));
+        logParams.put("activeStatus", "ToInStock");
+        logParams.put("creater", "will2");
+        logParams.put("comment", "高级检索 批量上下架");
+        logParams.put("codeList", new ArrayList(Arrays.asList("VN-04OJJPV")));
+        try {
+            targetService.onStartup(logParams);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 测试jumei上架
+    @Test
+    public void testJMPlatformToOnsale() {
+        // 发送请求到MQ,插入操作历史记录
+        Map<String, Object> logParams = new HashMap<>(6);
+        logParams.put("channelId", "010");
+        logParams.put("cartIdList", new ArrayList(Arrays.asList(27)));
+        logParams.put("activeStatus", "ToOnSale");
+        logParams.put("creater", "will2");
+        logParams.put("comment", "高级检索 批量上下架");
+        logParams.put("codeList", new ArrayList(Arrays.asList("VN-04OJJPV")));
+        try {
+            targetService.onStartup(logParams);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 测试jumei下架
+    @Test
+    public void testJMPlatformToInstock() {
+        // 发送请求到MQ,插入操作历史记录
+        Map<String, Object> logParams = new HashMap<>(6);
+        logParams.put("channelId", "010");
+        logParams.put("cartIdList", new ArrayList(Arrays.asList(27)));
         logParams.put("activeStatus", "ToInStock");
         logParams.put("creater", "will2");
         logParams.put("comment", "高级检索 批量上下架");

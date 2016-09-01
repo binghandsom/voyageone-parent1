@@ -25,7 +25,7 @@ import java.util.Map;
 public class CmsGetPlatformStatusServiceTest {
 
     @Autowired
-    CmsGetPlatformStatusService targetService;
+    private CmsGetPlatformStatusService targetService;
 
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_ShopConfigs.toString();
 
@@ -100,6 +100,34 @@ public class CmsGetPlatformStatusServiceTest {
         param3.setTask_id("CmsGetPlatformStatusJob");
         param3.setCfg_name("cart_id");
         param3.setCfg_val1("28");
+        paramList.add(param3);
+
+        try {
+            targetService.onStartup(paramList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testJMPlatform() {
+        List<TaskControlBean> paramList = new ArrayList<>();
+        TaskControlBean param = new TaskControlBean();
+        param.setTask_id("CmsGetPlatformStatusJob");
+        param.setCfg_name("run_flg");
+        param.setCfg_val1("1");
+        paramList.add(param);
+
+        TaskControlBean param2 = new TaskControlBean();
+        param2.setTask_id("CmsGetPlatformStatusJob");
+        param2.setCfg_name("channel_id");
+        param2.setCfg_val1("010");
+        paramList.add(param2);
+
+        TaskControlBean param3 = new TaskControlBean();
+        param3.setTask_id("CmsGetPlatformStatusJob");
+        param3.setCfg_name("cart_id");
+        param3.setCfg_val1("27");
         paramList.add(param3);
 
         try {
