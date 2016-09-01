@@ -97,7 +97,7 @@ define([
                     _.extend(self.sourceData, {'roleId': tempRoleList.join(','),'roleName': tempRoleName.join(',')});
                 });
                 if (self.append == true) {
-                    self.adminRoleService.addRole(self.sourceData).then(function (res) {
+                    self.adminUserService.addUser(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
@@ -106,7 +106,7 @@ define([
                         self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.adminRoleService.updateRole(self.sourceData).then(function (res) {
+                    self.adminUserService.updateUser(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;

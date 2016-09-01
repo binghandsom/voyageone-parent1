@@ -203,6 +203,38 @@
             </li>
         </ul>
     </li>
+    <!-- 开新店管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_NEW_SHOP_MANAGEMENT"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_NEW_SHOP_MANAGEMENT"></span>
+                </a>
+            </li>
+            <!-- 向导式开新店 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/newShop/guide">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_NEWSHOP_GUIDE_TYPE"></span>
+                </a>
+            </li>
+            <!-- 开新店脚本历史 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/log/history">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_NEWSHOP_HISTORY"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
     <!-- 日志管理 -->
     <li  ng-if="!$root.isTranslator">
         <a class="auto">

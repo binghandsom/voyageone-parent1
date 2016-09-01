@@ -182,6 +182,9 @@ define(function () {
         "TXT_WASTE_TIME": "耗时(ms)",
         "TXT_REQUEST_PARAMETER": "请求参数",
         "TXT_RESPONSE": "返回结果",
+        "TXT_NEW_SHOP_MANAGEMENT":"开新店管理",
+        "TXT_NEWSHOP_GUIDE_TYPE":"向导式开新店",
+        "TXT_NEWSHOP_HISTORY":"开新店脚本历史",
 
         /**按钮组*/
         "TXT_LOGOUT": "注销",

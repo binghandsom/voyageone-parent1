@@ -124,6 +124,18 @@ define(function () {
             "templateUrl": "views/log/actionLog/index.tpl.html",
             "controllerUrl": "modules/admin/views/log/actionLog/index.ctl",
             "controller": "ActionLogManagementController as ctrl"
+        },//向导式开新店
+        "newShopGuideConfig": {
+            "hash": "/newShop/guide",
+            "templateUrl": "views/newShopManagement/guide/index.tpl.html",
+            "controllerUrl": "modules/admin/views/newShopManagement/guide/index.ctl",
+            "controller": "GuideConfigController as ctrl"
+        },
+        "newShopHistoryConfig": {
+            "hash": "/newShop/history",
+            "templateUrl": "views/newShopManagement/history/index.tpl.html",
+            "controllerUrl": "modules/admin/views/newShopManagement/history/index.ctl",
+            "controller": "HistoryConfigController as ctrl"
         }
     };
 });
