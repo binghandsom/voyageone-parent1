@@ -37,6 +37,7 @@ public class LoggingHandler {
     }
 
     @Around("controller() && !getXXX() && !searchXXX() && !initXXX()")
+
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
 
         long start = System.currentTimeMillis();
