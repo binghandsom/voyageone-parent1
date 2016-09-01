@@ -20,7 +20,9 @@ define([
 
             /**获取未匹配的尺码图组*/
             imageGroupService.getNoMatchSizeImageGroupList().then(function (res) {
-                $scope.noMathOpt = res.data;
+                $scope.noMathOpt = _.map(res.data,function(value,key){
+                    return {cartName:key,imgList:value};
+                });
             });
 
             if ($scope.dropdown.from === 'detail') {
@@ -38,7 +40,7 @@ define([
             var _sizeChart = $scope.vm.sizeChart,
                 upEntity;
 
-            if (_.isObject(_sizeChart))
+/*            if (_.isObject(_sizeChart))
                 upEntity = _.extend($scope.vm.saveInfo, _sizeChart);
             else
                 upEntity = _.extend($scope.vm.saveInfo, {imageGroupName: _sizeChart});
@@ -51,7 +53,7 @@ define([
             sizeChartService.editSave(upEntity).then(function () {
                 $scope.$close();
                 context.search();
-            });
+            });*/
         }
 
     });

@@ -53,16 +53,15 @@ define([
                     }
                 }
 
-                var upEntity = {
+                var upEntity = _.extend(listSizeChart,{
                     "platform": self.platform,
                     "imageGroupName": self.imageGroupName,
                     "viewType": self.viewType,
                     "imageType": self.imageType,
                     "brandName": self.brandName,
                     "productType": self.productType,
-                    "sizeType" : self.sizeType,
-                    listSizeChart:listSizeChart
-                };
+                    "sizeType" : self.sizeType
+                });
 
                 if(self.parent.from === 'detail'){
                     self.$uibModalInstance.close(upEntity);
