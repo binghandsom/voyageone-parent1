@@ -138,7 +138,9 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
 
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
             TbPictureService tbPictureService = new TbPictureService();
+            System.out.println("TOM-15");
             PictureUploadResponse response = tbPictureService.uploadPicture(shopBean, img, "desc", "0");
+            System.out.println("TOM-16");
 
             if (!StringUtils.isEmpty(response.getPicture().getPicturePath())) {
                 return  response.getPicture().getPicturePath();
@@ -196,15 +198,21 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
 //            Font f = new Font(font, Font.BOLD, fontSize);
 
             URL baseUrl = CustomWordModuleGetDescImage.class.getResource(".");
-
+            System.out.println("TOM-1" + baseUrl.getPath() + "xxx2.ttc");
             File file = new File(baseUrl.getPath() + "xxx2.ttc");
+            System.out.println("TOM-2");
 //            File file = new File(baseUrl.getPath() + "SimSun-ExtB.ttf");
             try {
+                System.out.println("TOM-3");
                 FileInputStream aixing = new FileInputStream(file);
+                System.out.println("TOM-4");
                 Font dynamicFont = Font.createFont(Font.TRUETYPE_FONT, aixing);
+                System.out.println("TOM-5");
 //                Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, 18.0f);
                 Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, 18.0f);
+                System.out.println("TOM-6");
                 aixing.close();
+                System.out.println("TOM-7");
 
                 // 设置位置
                 if (nowLine == 0) {
@@ -215,6 +223,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
 
                 // 消除锯齿
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                System.out.println("TOM-8");
 
                 // 设置颜色
                 try {
@@ -225,22 +234,28 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
                     e.printStackTrace();
                 }
 
+                System.out.println("TOM-9");
                 // 写字
                 g2d.setFont(dynamicFontPt);
                 GlyphVector v = dynamicFontPt.createGlyphVector(g2d.getFontMetrics().getFontRenderContext(), text);
                 Shape shape = v.getOutline();
                 g2d.fill(shape);
 
+                System.out.println("TOM-10");
 //                g2d.drawString(text, 10, dynamicFontPt.getSize() + 10);
 
             } catch (FileNotFoundException e) {
+                System.out.println("TOM-11");
                 e.printStackTrace();
             } catch (FontFormatException e) {
+                System.out.println("TOM-12");
                 e.printStackTrace();
             } catch (IOException e) {
+                System.out.println("TOM-13");
                 e.printStackTrace();
             }
 
+            System.out.println("TOM-14");
 
         }
 
