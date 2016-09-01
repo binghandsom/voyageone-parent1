@@ -1,7 +1,6 @@
 package com.voyageone.service.impl.cms.sx.word;
 
 import com.taobao.api.response.PictureUploadResponse;
-import com.taobao.top.schema.rule.Rule;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
@@ -17,6 +16,7 @@ import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.net.URL;
 
 /**
  * Created by tom.zhu on 16-8-26.
@@ -31,7 +31,6 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
 
     @Override
     public String parse(CustomWord customWord, ExpressionParser expressionParser, SxProductService sxProductService, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
-        String font = "SansSerif"; // 固定字体名字
 
         //user param
         CustomModuleUserParamGetDescImage customModuleUserParamGetDescImage = ((CustomWordValueGetDescImage) customWord.getValue()).getUserParam();
@@ -135,7 +134,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         txtDesc = txtDesc.replaceAll("<br>", "\n");
 
         // 制作图片
-        byte[] img = doCreateImage(txtDesc, width, startX, startY, sectionSize, fontSize, oneLineBit, font);
+        byte[] img = doCreateImage(txtDesc, width, startX, startY, sectionSize, fontSize, oneLineBit);
 
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
             TbPictureService tbPictureService = new TbPictureService();
@@ -149,7 +148,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         return "";
     }
 
-    private byte[] doCreateImage(String txtDesc, int width, int startX, int startY, int sectionSize, int fontSize, int oneLineBit, String font) {
+    private byte[] doCreateImage(String txtDesc, int width, int startX, int startY, int sectionSize, int fontSize, int oneLineBit) {
 
         int height;
         String[] split = getChangedString(txtDesc, oneLineBit).split("\n");
@@ -175,7 +174,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
 
         // 画字
         for (int i = 0; i < split.length; i++) {
-            doDrawText(g2d, split[i], i, font, fontSize, startX, startY, sectionSize);
+            doDrawText(g2d, split[i], i, fontSize, startX, startY, sectionSize);
         }
 
         // 图片输出
@@ -192,33 +191,56 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         return null;
     }
 
-    private static void doDrawText(Graphics2D g2d, String text, int nowLine, String font, int fontSize, int startX, int startY, int sectionSize) {
+    private static void doDrawText(Graphics2D g2d, String text, int nowLine, int fontSize, int startX, int startY, int sectionSize) {
         {
-            Font f = new Font(font, Font.BOLD, fontSize);
+//            Font f = new Font(font, Font.BOLD, fontSize);
 
-            // 设置位置
-            if (nowLine == 0) {
-                g2d.translate(startX, startY);
-            } else {
-                g2d.translate(0, fontSize + sectionSize);
-            }
+            URL baseUrl = CustomWordModuleGetDescImage.class.getResource(".");
 
-            // 消除锯齿
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            // 设置颜色
+            File file = new File(baseUrl.getPath() + "xxx2.ttc");
+//            File file = new File(baseUrl.getPath() + "SimSun-ExtB.ttf");
             try {
-                Field field = Color.class.getField("black");
-                Color color = (Color)field.get(null);
-                g2d.setColor(color);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
+                FileInputStream aixing = new FileInputStream(file);
+                Font dynamicFont = Font.createFont(Font.TRUETYPE_FONT, aixing);
+//                Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, 18.0f);
+                Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, 18.0f);
+                aixing.close();
+
+                // 设置位置
+                if (nowLine == 0) {
+                    g2d.translate(startX, startY);
+                } else {
+                    g2d.translate(0, fontSize + sectionSize);
+                }
+
+                // 消除锯齿
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                // 设置颜色
+                try {
+                    Field field = Color.class.getField("black");
+                    Color color = (Color)field.get(null);
+                    g2d.setColor(color);
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+                // 写字
+                g2d.setFont(dynamicFontPt);
+                GlyphVector v = dynamicFontPt.createGlyphVector(g2d.getFontMetrics().getFontRenderContext(), text);
+                Shape shape = v.getOutline();
+                g2d.fill(shape);
+
+//                g2d.drawString(text, 10, dynamicFontPt.getSize() + 10);
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (FontFormatException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            // 写字
-            GlyphVector v = f.createGlyphVector(g2d.getFontMetrics().getFontRenderContext(), text);
-            Shape shape = v.getOutline();
-            g2d.fill(shape);
 
         }
 
