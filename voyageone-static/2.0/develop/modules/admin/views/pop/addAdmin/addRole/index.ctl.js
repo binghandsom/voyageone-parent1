@@ -21,6 +21,9 @@ define([
         AddRoleController.prototype = {
             init: function () {
                 var self = this;
+                self.adminRoleService.getAllRoleType().then(function (res) {
+                    self.roleTypeList = res.data;
+                });
                 if (self.sourceData == 'add') {
                     self.popType = '添加角色';
                     self.sourceData = {}
@@ -250,7 +253,7 @@ define([
                     var tempStoreName = [];
                     _.forEach(self.channelList, function (item) {
                         tempChannelId.push(item.orderChannelId);
-                        tempChannelName.push(item.channelName);
+                        tempChannelName.push(item.name);
                         _.extend(self.sourceData, {
                             'channelId': tempChannelId.join(','),
                             'channelName': tempChannelName.join(',')
