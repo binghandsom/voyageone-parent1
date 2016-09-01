@@ -113,7 +113,7 @@ public class NewShopService extends BaseService {
 	public Map<String, Object> getChannelSeries(String channelId) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		// 渠道信息
-		TmOrderChannelBean channel = channelService.searchChannelByChannelId(channelId);
+		TmOrderChannelBean channel = channelService.searchChannelAndConfigByChannelId(channelId);
 		if (channel == null) {
 			throw new BusinessException("选择复制的渠道信息不存在");
 		}
