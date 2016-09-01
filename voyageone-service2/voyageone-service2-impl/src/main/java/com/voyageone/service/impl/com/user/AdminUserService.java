@@ -300,7 +300,7 @@ public class AdminUserService extends BaseService {
 
     public Map<Integer, Object>  getAllApp()
     {
-       List<CtApplicationModel> list = ctApplicationDao.selectList(Collections.EMPTY_MAP);
+       List<CtApplicationModel> list = ctApplicationDao.selectList(new HashMap<String, Object>(){{put("active", 1);}});
 
         Map<Integer, Object> result = list.stream().collect(Collectors.toMap(CtApplicationModel::getId, CtApplicationModel::getApplication));
 
@@ -324,6 +324,7 @@ public class AdminUserService extends BaseService {
         sb.append("<p>").append("亲爱的").append(model.getUserAccount()).append(":</p>");
         sb.append("<p>").append("我们收到您的密码重置请求，点击下面链接重置你的密码:").append("</p>");
         sb.append("<p>").append("<a href=").append("www.baidu.com/").append(token).append(">").append("www.baidu.com/").append(token).append("</a>").append("</p>");
+        sb.append("<p>").append("</p>");
         sb.append("<p>").append("此邮件24小时内有效，如果你忽略这条信息，密码将不进行更改").append("</p>");
 
         return sb.toString();

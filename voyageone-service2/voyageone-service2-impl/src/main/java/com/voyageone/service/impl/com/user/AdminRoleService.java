@@ -49,7 +49,7 @@ public class AdminRoleService extends BaseService {
 
     public Map<Integer, String> getAllRole()
     {
-        List<ComRoleModel> roleList = comRoleDao.selectList(Collections.EMPTY_MAP);
+        List<ComRoleModel> roleList = comRoleDao.selectList(new HashMap<String, Object>(){{put("active", 1);}});
 
 
         Map resultMap = roleList.stream().collect(Collectors.toMap(ComRoleModel:: getId ,ComRoleModel:: getRoleName ));

@@ -38,7 +38,7 @@ public class AdminOrgService extends BaseService {
      */
     public List<Map<String, Object>> getAllOrg()
     {
-        List<ComOrganizationModel> orgList = comOrganizationDao.selectList(new HashMap<>());
+        List<ComOrganizationModel> orgList = comOrganizationDao.selectList(new HashMap<String, Object>(){{put("active", 1);}});
 
         List<ComOrganizationModel> result = new ArrayList<>();
 
