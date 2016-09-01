@@ -42,6 +42,7 @@ import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -728,6 +729,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
                 if(StringUtils.isNullOrBlank2(e.getMessage())) {
                     sxData.setErrorMessage("聚美上新出现不可预知的错误，请跟管理员联系 " + e.getStackTrace()[0].toString());
+                    e.printStackTrace();
                 }
                 else
                 {
@@ -765,7 +767,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         htDealUpdateRequest.setJumei_hash_id(hashId);
         HtDealUpdate_DealInfo dealInfo = new HtDealUpdate_DealInfo();
         String shippingId = Codes.getCode("JUMEI", channelId);
-        dealInfo.setShipping_system_id(Integer.valueOf(shippingId));
+        dealInfo.setShipping_system_id(NumberUtils.toInt(shippingId));
         dealInfo.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
         dealInfo.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
         dealInfo.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
@@ -976,8 +978,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         BaseMongoMap<String, Object> jmFields = jmCart.getFields();
 
         bean.setProduct_spec_number(fields.getCode());
-        bean.setCategory_v3_4_id(Integer.valueOf(jmCart.getpCatId()));
-        bean.setBrand_id(Integer.valueOf(jmCart.getpBrandId()));
+        // update by desmond 2016/09/01 start
+//        bean.setCategory_v3_4_id(Integer.valueOf(jmCart.getpCatId()));
+        bean.setCategory_v3_4_id(NumberUtils.toInt(jmCart.getpCatId()));
+//        bean.setBrand_id(Integer.valueOf(jmCart.getpBrandId()));
+        bean.setBrand_id(NumberUtils.toInt(jmCart.getpBrandId()));
+        // update by desmond 2016/09/01 end
         bean.setName(jmFields.getStringAttribute("productNameCn") + " " +  special_symbol.matcher(productCode).replaceAll("-"));
         bean.setForeign_language_name(jmFields.getStringAttribute("productNameEn"));
         //白底方图
@@ -994,7 +1000,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         deal.setUser_purchase_limit(jmFields.getIntAttribute("userPurchaseLimit"));
 
         String shippingId = Codes.getCode("JUMEI", channelId);
-        deal.setShipping_system_id(Integer.valueOf(shippingId));
+        deal.setShipping_system_id(NumberUtils.toInt(shippingId));
 
 
         String jmDetailTemplate = getTemplate("聚美详情", expressionParser, shopProp);
@@ -1348,7 +1354,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             HtMallUpdateInfo mallUpdateInfo = new HtMallUpdateInfo();
             mallUpdateInfo.setJumeiMallId(mallId);
             HtMallUpdateInfo.UpdateDataInfo updateDataInfo = mallUpdateInfo.getUpdateDataInfo();
-            updateDataInfo.setShippingSystemId(Integer.valueOf(Codes.getCode("JUMEI", product.getChannelId())));
+            updateDataInfo.setShippingSystemId(NumberUtils.toInt(Codes.getCode("JUMEI", product.getChannelId())));
             updateDataInfo.setProductLongName(jmFields.getStringAttribute("productLongName"));
             updateDataInfo.setProductMediumName(jmFields.getStringAttribute("productMediumName"));
             updateDataInfo.setProductShortName(jmFields.getStringAttribute("productShortName"));
