@@ -127,9 +127,33 @@ define(function () {
         },//向导式开新店
         "newShopGuideConfig": {
             "hash": "/newShop/guide",
-            "templateUrl": "views/newShopManagement/guide/index.tpl.html",
-            "controllerUrl": "modules/admin/views/newShopManagement/guide/index.ctl",
+            "templateUrl": "views/newShopManagement/guide/channelInfo.tpl.html",
+            "controllerUrl": "modules/admin/views/newShopManagement/guide/channelInfo.ctl",
             "controller": "GuideConfigController as ctrl"
+        },
+        "newShopGuideChannelInfoConfig": {
+            "hash": "/newShop/guide/channelConfig",
+            "templateUrl": "views/newShopManagement/guide/channelConfig.tpl.html",
+            "controllerUrl": "modules/admin/views/newShopManagement/guide/channelConfig.ctl",
+            "controller": "GuideChannelCogInfoController as ctrl"
+        },
+        "newShopGuideStoreInfo": {
+            "hash": "/newShop/guide/storeInfo",
+            "templateUrl": "views/newShopManagement/guide/storeInfo.tpl.html",
+            "controllerUrl": "modules/admin/views/newShopManagement/guide/storeInfo.ctl",
+            "controller": "GuideChannelInfoController as ctrl"
+        },
+        "newShopGuideCartSet": {
+            "hash": "/newShop/guide/cartSet",
+            "templateUrl": "views/newShopManagement/guide/cartSet.tpl.html",
+            "controllerUrl": "modules/admin/views/newShopManagement/guide/cartSet.ctl",
+            "controller": "GuideCartSetController as ctrl"
+        },
+        "newShopGuideBatchJob": {
+            "hash": "/newShop/guide/batchJob",
+            "templateUrl": "views/newShopManagement/guide/batchJob.tpl.html",
+            "controllerUrl": "modules/admin/views/newShopManagement/guide/batchJob.ctl",
+            "controller": "GuideBatchJobController as ctrl"
         },
         "newShopHistoryConfig": {
             "hash": "/newShop/history",

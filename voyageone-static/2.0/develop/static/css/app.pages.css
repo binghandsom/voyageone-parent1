@@ -856,11 +856,61 @@ schema .ng-invalid.focus-error {
 }
 
 /**默认属性设置*/
-.default-attr .nav{
+.default-attr .nav {
     position: fixed;
     width: 100px;
-    margin-left:25px;
+    margin-left: 25px;
     cursor: pointer;
     border-width: 2px;
     border-style: dotted;
+}
+
+#form-container {
+    background: #2f2f2f;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+#form-container .page-header {
+    background: #151515;
+    margin: 0;
+    padding: 30px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+/* numbered buttons */
+#status-buttons {
+    border-bottom: 2px solid #fc963b;
+}
+#step-buttons{
+    border-top: 2px solid #fc963b;
+    padding: 14px;
+}
+#status-buttons a {
+    display: inline-block;
+    font-size: 13px;
+    margin-right: 48px;
+    text-align: center;
+}
+
+#status-buttons a:hover {
+    text-decoration: none;
+}
+
+/* we will style the span as the circled number */
+#status-buttons span {
+    display: inline-block;
+    height: 30px;
+    margin: 0 auto 10px;
+    padding-top: 5px;
+    width: 30px;
+    border-radius: 50%;
+}
+#status-buttons span  {
+    background: #fff;
+}
+/* active buttons turn light green-blue*/
+#status-buttons a.active span {
+    background: #fc963b;
 }

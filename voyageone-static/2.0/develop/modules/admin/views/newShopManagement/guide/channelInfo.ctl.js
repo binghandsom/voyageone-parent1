@@ -118,5 +118,5 @@ define([
             }
         };
         return GuideConfigController;
-    })())
+    })());
 });
