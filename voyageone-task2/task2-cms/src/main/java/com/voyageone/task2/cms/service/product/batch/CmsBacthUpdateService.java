@@ -1,9 +1,13 @@
 package com.voyageone.task2.cms.service.product.batch;
 
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.logger.VOAbsLoggable;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
@@ -78,6 +82,7 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
             }
         }
         String msgTxt = msg;
+        boolean isUpdFlg = false;
         for (String prodCode : codeList) {
             try {
                 CmsBtProductModel newProduct = productService.getProductByCode(channleId, prodCode);
@@ -87,6 +92,43 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
                         productService.updateProductPlatform(channleId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.BatchUpdate, msgTxt);
                     }
                 });
+
+                // 确认指导价变更
+                List<Integer> cartList = newProduct.getCartIdList();
+                for (Integer cartVal : cartList) {
+                    TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53_A, channleId, cartVal.toString());
+                    if (cartObj == null) {
+                        $error("该商品的平台数据错误 code=%s, channelid=%s, cartid=%d", prodCode, channleId, cartVal);
+                        continue;
+                    }
+
+                    isUpdFlg = false;
+                    List<BaseMongoMap<String, Object>> skuList = newProduct.getPlatform(cartVal).getSkus();
+                    for (BaseMongoMap skuObj : skuList) {
+                        Boolean isSaleFlg = (Boolean) skuObj.get("isSale");
+                        String chgFlg = StringUtils.trimToEmpty(skuObj.getStringAttribute("priceChgFlg"));
+                        if ((chgFlg.startsWith("U") || chgFlg.startsWith("D")) && isSaleFlg) {
+                            // 指导价有变更
+                            skuObj.put("priceChgFlg", "0");
+                            skuObj.put("confPriceRetail", skuObj.getDoubleAttribute("priceRetail"));
+                            isUpdFlg = true;
+                        }
+                    }
+
+                    // 更新产品的信息
+                    if (isUpdFlg) {
+                        JongoUpdate updObj = new JongoUpdate();
+                        updObj.setQuery("{'common.fields.code':#}");
+                        updObj.setQueryParameters(prodCode);
+                        updObj.setUpdate("{$set:{'platforms.P" + cartVal + ".skus':#,'modified':#,'modifier':#}}");
+                        updObj.setUpdateParameters(skuList, DateTimeUtil.getNowTimeStamp(), userName);
+
+                        WriteResult rs = productService.updateFirstProduct(updObj, channleId);
+                        if (rs != null) {
+                            $debug("指导价变更批量确认 code=%s, channelId=%s 执行结果=%s", prodCode, channleId, rs.toString());
+                        }
+                    }
+                }
             } catch (PriceCalculateException e) {
                 $error(String.format("高级检索 批量更新 价格计算错误 channleid=%s, prodcode=%s", channleId, prodCode), e);
                 continue;
