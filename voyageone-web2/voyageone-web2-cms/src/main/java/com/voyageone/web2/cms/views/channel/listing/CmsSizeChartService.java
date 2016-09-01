@@ -139,8 +139,6 @@ public class CmsSizeChartService extends BaseAppService {
         if (StringUtils.isEmpty(sizeChartName)) {
             throw new BusinessException("7000080");
         }
-
-
         CmsBtSizeChartModel model = null;
         if (sizeChartId > 0) {
             model = sizeChartService.getCmsBtSizeChartModel(sizeChartId, channelId);
@@ -170,7 +168,6 @@ public class CmsSizeChartService extends BaseAppService {
                 //新增组图
                 CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.save(channelId, userName, null, imageGroupName, null, null, brandNameList, productTypeList, sizeTypeList);
                 imageGroupId = cmsBtImageGroupModel.getImageGroupId();
-
             }
             if (imageGroupId > 0) {
                 //保存 尺码表 图片组关系表
