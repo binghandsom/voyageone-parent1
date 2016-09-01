@@ -291,6 +291,7 @@ public class CmsSizeChartService extends BaseAppService {
                 map.put("imageGroupName", groupModel.getImageGroupName());
                 map.put("imageGroupId", groupModel.getImageGroupId());
                 map.put("cartId", m.getCartId());
+                listImageGroup.add(map);
             }
         }
         return listImageGroup;
