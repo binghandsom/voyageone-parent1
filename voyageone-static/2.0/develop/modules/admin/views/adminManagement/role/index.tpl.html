@@ -34,7 +34,7 @@
                                     <div class="col-sm-8">
                                         <select class="form-control" ng-model="ctrl.searchInfo.roleType">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{role}}" ng-repeat="role in ctrl.roleList">&nbsp;{{role}}</option>
+                                            <option value="{{roleType.id}}" ng-repeat="roleType in ctrl.roleTypeList">&nbsp;{{roleType.name}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -54,8 +54,8 @@
                                 <div class="row form-group"><!-- 渠道 -->
                                     <label class="col-sm-3 control-label">{{'TXT_CHANNEL' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.channelId">
-                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.channelId">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                             <option value="{{channel.orderChannelId}}" ng-repeat="channel in ctrl.channelList">&nbsp;{{channel.name}}</option>
                                         </select>
                                     </div>

@@ -25,13 +25,32 @@ define([
                 self.channelService.getAllCompany().then(function (res) {
                     self.companyAllList = res.data;
                 });
-                self.AdminCartService.getAllCart().then(function (res) {
-                    self.cartAllList = res.data
-                });
-                if (!self.sourceData.cartIds) return;
-                self.AdminCartService.getCartByIds({'cartIds': self.sourceData.cartIds}).then(function (res) {
-                    self.cartList = res.data;
-                })
+                if (!self.sourceData.cartIds) {
+                    self.cartList = [];
+                    callback();
+                } else {
+                    self.AdminCartService.getCartByIds({'cartIds': self.sourceData.cartIds}).then(function (res) {
+                        self.cartList = res.data;
+                        callback();
+                    });
+                }
+                function callback() {
+                    self.AdminCartService.getAllCart().then(function (res) {
+                        self.cartAllList = [];
+                        if (self.cartList.length == 0) {
+                            self.cartAllList = res.data;
+                            return;
+                        } else {
+                            self.cartAllList = res.data;
+                            _.forEach(self.cartList, function (item) {
+                                self.data = _.find(self.cartAllList, function (cart) {
+                                    return cart.cartId == item.cartId;
+                                });
+                                self.cartAllList.splice(self.cartAllList.indexOf(self.data), 1);
+                            });
+                        }
+                    });
+                }
             },
             generate: function (type) {
                 var self = this;
@@ -49,15 +68,46 @@ define([
                 var self = this;
                 self.selectedCartId = item.cartId;
             },
+            search: function (item) {
+                var self = this;
+                self.allList = [];
+                _.filter(self.cartAllList, function (data) {
+                    if (data.name.toUpperCase().indexOf(item.toUpperCase()) > -1) {
+                        self.allList.push(data)
+                    }
+                });
+                self.cartAllList = self.allList;
+            },
             move: function (type) {
                 var self = this;
+                self.AdminCartService.getAllCart().then(function (res) {
+                    self.cartAllListCopy = res.data;
+                });
                 self.cartList = self.cartList ? self.cartList : [];
                 self.cartAllList = self.cartAllList ? self.cartAllList : [];
                 switch (type) {
-                    case 'allInclude':
-                        _.extend(self.cartList, self.cartAllList);
-                        self.cartAllList = null;
+                    case '':
+                        self.cartAllList = self.cartAllListCopy;
+                        _.forEach(self.cartList, function (item) {
+                            var index = self.cartAllList.indexOf(item.cartId);
+                            if (index >= 0) {
+                                self.cartAllList.splice(index, 1);
+                            }
+                        });
                         break;
+                    case 'allInclude':
+                        if (self.allList) {
+                            self.cartAllList = self.allList;
+                            _.extend(self.cartList, self.cartAllList);
+                            self.cartAllList = [];
+                            break;
+                        } else {
+                            _.forEach(self.cartAllList, function (item) {
+                                self.cartList.push(item);
+                            });
+                            self.cartAllList = [];
+                            break;
+                        }
                     case 'include':
                         self.data = _.find(self.cartAllList, function (cart) {
                             return cart.cartId == self.selectedCartId;
@@ -73,8 +123,10 @@ define([
                         self.cartList.splice(self.cartList.indexOf(self.data), 1);
                         break;
                     case 'allExclude':
-                        _.extend(self.cartAllList, self.cartList);
-                        self.cartList = null;
+                        _.forEach(self.cartList, function (item) {
+                            self.cartAllList.push(item);
+                        });
+                        self.cartList = [];
                         break;
                 }
             },
@@ -88,7 +140,7 @@ define([
                 var result = {};
                 _.forEach(self.cartList, function (item) {
                     tempCartList.push(item.cartId);
-                    _.extend(self.sourceData, {'cartIds': tempCartList.join(','),'companyId':self.companyId});
+                    _.extend(self.sourceData, {'cartIds': tempCartList.join(','), 'companyId': self.companyId});
                 });
                 if (self.append == true) {
                     self.channelService.addChannel(self.sourceData).then(function (res) {
@@ -96,7 +148,7 @@ define([
                             self.confirm(res.data.message);
                             return;
                         }
-                        _.extend(result,{'res':'success','sourceData':self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
@@ -105,7 +157,7 @@ define([
                             self.confirm(res.data.message);
                             return;
                         }
-                        _.extend(result,{'res':'success','sourceData':self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
                 }

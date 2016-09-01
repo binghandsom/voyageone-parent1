@@ -46,6 +46,23 @@ define([
                             return self.roleList;
                         })
                     });
+                    callback(roleAllList);
+                }
+
+                function callback(roleAllList) {
+                    self.roleAllList = [];
+                    if (self.roleList.length == 0) {
+                        self.roleAllList = roleAllList;
+                        return;
+                    } else {
+                        self.roleAllList = roleAllList;
+                        _.forEach(self.roleList, function (item) {
+                            self.data = _.find(self.roleAllList, function (role) {
+                                return role.roleId == item.roleId;
+                            });
+                            self.roleAllList.splice(self.roleAllList.indexOf(self.data), 1);
+                        });
+                    }
                 }
 
             },
@@ -53,15 +70,50 @@ define([
                 var self = this;
                 self.selectedRoleId = item.roleId;
             },
+            search: function (item) {
+                var self = this;
+                self.allList = [];
+                _.filter(self.roleAllList, function (data) {
+                    if (data.roleName.toUpperCase().indexOf(item.toUpperCase()) > -1) {
+                        self.allList.push(data)
+                    }
+                });
+                self.roleAllList = self.allList;
+            },
             move: function (type) {
                 var self = this;
+                self.adminRoleService.getAllRole().then(function (res) {
+                    self.ttroleList = res.data;
+                    self.roleAllListCopy = [];
+                    for (var item in self.ttroleList) {
+                        self.roleAllListCopy.push({'roleId': item, 'roleName': self.ttroleList[item]});
+                    }
+                });
                 self.roleList = self.roleList ? self.roleList : [];
                 self.roleAllList = self.roleAllList ? self.roleAllList : [];
                 switch (type) {
-                    case 'allInclude':
-                        _.extend(self.roleList, self.roleAllList);
-                        self.roleAllList = null;
+                    case '':
+                        self.roleAllList = self.roleAllListCopy;
+                        _.forEach(self.roleList, function (item) {
+                            self.data = _.find(self.roleAllList, function (role) {
+                                return role.roleId == item.roleId;
+                            });
+                            self.roleAllList.splice(self.roleAllList.indexOf(self.data), 1);
+                        });
                         break;
+                    case 'allInclude':
+                        if (self.allList) {
+                            self.roleAllList = self.allList;
+                            _.extend(self.roleList, self.roleAllList);
+                            self.roleAllList = [];
+                            break;
+                        } else {
+                            _.forEach(self.roleAllList, function (item) {
+                                self.roleList.push(item);
+                            });
+                            self.roleAllList = [];
+                            break;
+                        }
                     case 'include':
                         self.data = _.find(self.roleAllList, function (role) {
                             return role.roleId == self.selectedRoleId;
@@ -77,8 +129,10 @@ define([
                         self.roleList.splice(self.roleList.indexOf(self.data), 1);
                         break;
                     case 'allExclude':
-                        _.extend(self.roleAllList, self.roleList);
-                        self.roleList = null;
+                        _.forEach(self.roleList, function (item) {
+                            self.roleAllList.push(item);
+                        });
+                        self.roleList = [];
                         break;
                 }
             },
@@ -94,7 +148,7 @@ define([
                 _.forEach(self.roleList, function (item) {
                     tempRoleList.push(item.roleId);
                     tempRoleName.push(item.roleName);
-                    _.extend(self.sourceData, {'roleId': tempRoleList.join(','),'roleName': tempRoleName.join(',')});
+                    _.extend(self.sourceData, {'roleId': tempRoleList.join(','), 'roleName': tempRoleName.join(',')});
                 });
                 if (self.append == true) {
                     self.adminUserService.addUser(self.sourceData).then(function (res) {

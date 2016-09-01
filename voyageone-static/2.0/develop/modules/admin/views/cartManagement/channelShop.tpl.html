@@ -14,14 +14,15 @@
                                     <div class="col-sm-8">
                                         <select search-contains="true" chosen width="'100%'" class="form-control"
                                                 ng-model="ctrl.searchInfo.orderChannelId"
-                                                ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelAllList">
+                                                ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelAllList"
+                                                ng-change="ctrl.changeCartList(ctrl.searchInfo.orderChannelId)">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-3" ng-if="ctrl.searchInfo.orderChannelId">
                             <div class="form-horizontal">
                                 <div class="row form-group">
                                     <label class="col-sm-3 control-label">{{'TXT_NAME_CART' | translate}}</label>
