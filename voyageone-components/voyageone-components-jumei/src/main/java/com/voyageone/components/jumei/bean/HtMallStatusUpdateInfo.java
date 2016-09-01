@@ -8,15 +8,15 @@ package com.voyageone.components.jumei.bean;
  */
 public class HtMallStatusUpdateInfo {
 
-    private String jumeiMallId;  // 聚美Mall Id.
+    private String jumei_mall_id;  // 聚美Mall Id.
     private String status;  // 状态  display:显示,hidden:隐藏,forbidden:黑名单
 
-    public String getJumeiMallId() {
-        return jumeiMallId;
+    public String getJumei_mall_id() {
+        return jumei_mall_id;
     }
 
-    public void setJumeiMallId(String jumeiMallId) {
-        this.jumeiMallId = jumeiMallId;
+    public void setJumei_mall_id(String jumei_mall_id) {
+        this.jumei_mall_id = jumei_mall_id;
     }
 
     public String getStatus() {

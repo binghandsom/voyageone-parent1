@@ -45,7 +45,7 @@ public class JumeiSaleService extends JmBase {
     private HtMallStatusUpdateBatchResponse doWareUpdate(ShopBean shopBean, String mallId, String opeType) {
         List<HtMallStatusUpdateInfo> goodsJson = new ArrayList<>();
         HtMallStatusUpdateInfo mallStatusUpdateInfo = new HtMallStatusUpdateInfo();
-        mallStatusUpdateInfo.setJumeiMallId(mallId);
+        mallStatusUpdateInfo.setJumei_mall_id(mallId);
         mallStatusUpdateInfo.setStatus(opeType);
         goodsJson.add(mallStatusUpdateInfo);
 
