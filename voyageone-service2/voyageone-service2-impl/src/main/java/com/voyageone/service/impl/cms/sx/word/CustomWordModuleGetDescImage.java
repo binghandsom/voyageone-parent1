@@ -31,7 +31,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
 
     @Override
     public String parse(CustomWord customWord, ExpressionParser expressionParser, SxProductService sxProductService, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
-        String font = "SimSun"; // 固定字体名字
+        String font = "SansSerif"; // 固定字体名字
 
         //user param
         CustomModuleUserParamGetDescImage customModuleUserParamGetDescImage = ((CustomWordValueGetDescImage) customWord.getValue()).getUserParam();
@@ -137,17 +137,16 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         // 制作图片
         byte[] img = doCreateImage(txtDesc, width, startX, startY, sectionSize, fontSize, oneLineBit, font);
 
-        String result = "";
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
             TbPictureService tbPictureService = new TbPictureService();
             PictureUploadResponse response = tbPictureService.uploadPicture(shopBean, img, "desc", "0");
 
             if (!StringUtils.isEmpty(response.getPicture().getPicturePath())) {
-                return  result;
+                return  response.getPicture().getPicturePath();
             }
         }
 
-        return result;
+        return "";
     }
 
     private byte[] doCreateImage(String txtDesc, int width, int startX, int startY, int sectionSize, int fontSize, int oneLineBit, String font) {
