@@ -35,14 +35,30 @@ define([
 
                 if (self.imageType == 2) {
                     self.sizeChartService.getNoMatchList().then(function (res) {
-                        self.noMathOpt = res.data;
+                        console.log(res);
+                        self.noMathOpt = _.map(res.data,function(value,key){
+                            return {cartName:key,sizeList:value};
+                        });
                     });
                 } else {
                     self.noMathOpt = null;
                 }
             },
             save: function () {
-                var self = this;
+                var self = this,
+                    listSizeChart;
+
+                if(self.sizeChart){
+                    if(_.isObject(self.sizeChart)){
+                        listSizeChart = _.map(self.sizeChart,function(value){
+                            return value;
+                        });
+                    }else{
+                        listSizeChart = [{ cartId: self.platform, sizeChartName:self.sizeChart , sizeChartId: 0 }]
+                    }
+                }else{
+                    listSizeChart = [];
+                }
 
                 var upEntity = {
                     "platform": self.platform,
@@ -51,18 +67,13 @@ define([
                     "imageType": self.imageType,
                     "brandName": self.brandName,
                     "productType": self.productType,
-                    "sizeType": self.sizeType
+                    listSizeChart:listSizeChart
                 };
 
                 if(self.parent.from === 'detail'){
                     self.$uibModalInstance.close(upEntity);
                     return;
                 }
-
-                if (_.isObject(self.sizeChart))
-                    _.extend(upEntity, self.sizeChart);
-                else
-                    _.extend(upEntity, {sizeChartName: self.sizeChart});
 
                 self.imageGroupService.save(upEntity).then(function () {
                     self.notify.success('TXT_MSG_UPDATE_SUCCESS');
