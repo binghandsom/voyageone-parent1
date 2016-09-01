@@ -289,8 +289,9 @@ public class CmsSizeChartService extends BaseAppService {
         List<CmsBtSizeChartImageGroupModel> list = cmsBtSizeChartImageGroupService.getListByCmsBtSizeChartId(channelId, sizeChartId);
         List<Map<String, Object>> listImageGroup = new ArrayList<>();
         CmsBtImageGroupModel groupModel = null;
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map=null;
         for (CmsBtSizeChartImageGroupModel m : list) {
+            map = new HashMap<>();
             groupModel = imageGroupService.getImageGroupModel(String.valueOf(m.getCmsBtImageGroupId()));
             if(groupModel!=null) {
                 map.put("imageGroupName", groupModel.getImageGroupName());

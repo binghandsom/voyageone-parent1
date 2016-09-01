@@ -19,6 +19,6 @@ public class CmsSizeChartServiceTest {
     CmsSizeChartService service;
     @Test
     public void getListImageGroupBySizeChartId() {
-        List<Map<String,Object>> list=service.getListImageGroupBySizeChartId("010",80);
+        List<Map<String,Object>> list=service.getListImageGroupBySizeChartId("010",321);
     }
 }
