@@ -166,7 +166,7 @@ public class CmsSizeChartService extends BaseAppService {
                 imageGroupService.update(cmsBtImageGroupModel);
             } else if (!StringUtils.isEmpty(imageGroupName)) {
                 //新增组图
-                CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.save(channelId, userName, null, imageGroupName, null, null, brandNameList, productTypeList, sizeTypeList,model.getSizeChartId(),model.getSizeChartName());
+                CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.save(channelId, userName, String.valueOf(imageGroup_CartId), imageGroupName, null, null, brandNameList, productTypeList, sizeTypeList, model.getSizeChartId(), model.getSizeChartName());
                 imageGroupId = cmsBtImageGroupModel.getImageGroupId();
             }
             if (imageGroupId > 0) {
