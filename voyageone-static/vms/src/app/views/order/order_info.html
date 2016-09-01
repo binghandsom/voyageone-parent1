@@ -56,7 +56,7 @@
         </div>
         <div class="col-sm-6" ng-if="!(ctrl.channelConfig.vendorOperateType == 'ORDER')"></div>
         <div class="col-sm-6 text-right form-inline">
-            <label class="control-label" translate="TXT_ORDER_BY"></label>
+            <label class="control-label" ng-if="ctrl.channelConfig.vendorOperateType == 'ORDER'" translate="TXT_ORDER_BY"></label>
             <select id="select_order" class="form-control" ng-model="ctrl.sortParamBeanForDownload.columnName" ng-if="ctrl.channelConfig.vendorOperateType == 'ORDER'">
                 <option value="client_sku" translate="TXT_SKU"></option>
                 <option value="consolidation_order_id" translate="TXT_ORDER_ID"></option>
