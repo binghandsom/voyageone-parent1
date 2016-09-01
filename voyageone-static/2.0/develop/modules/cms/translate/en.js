@@ -450,7 +450,7 @@ define(function () {
         "TXT_MSG_CONFIRM_FROWARD_PARENT_CATEGORY": "如果您继承父类目,以前设置的属性将会被替换点.<br>您确定要执行这个操作吗?",
         "TXT_MSG_NO_FIND_FORWARD_CATEGORY": "没有可继承的父类目.",
         "TXT_MSG_DELETE_ITEM": "您确定要删除这条数据吗?",
-        "TXT_MSG_STARTUP_ITEM": "您确定要全部启动吗?",
+        "TXT_MSG_STARTUP_ITEM": "您确定要启动吗?",
         "TXT_MSG_DELETE_SUCCESS": "删除操作成功",
         "TXT_MSG_DELETE_FAIL": "删除操作失败.",
         "TXT_MSG_ADD_ITEM": "您确定要更新这条数据吗?",

@@ -34,11 +34,8 @@ define([
                 var self = this;
 
                 if (self.imageType == 2) {
-                    self.sizeChartService.getNoMatchList().then(function (res) {
-                        console.log(res);
-                        self.noMathOpt = _.map(res.data,function(value,key){
-                            return {cartName:key,sizeList:value};
-                        });
+                    self.sizeChartService.getNoMatchList({cartId:self.platform}).then(function (res) {
+                        self.noMathOpt = res.data;
                     });
                 } else {
                     self.noMathOpt = null;
@@ -50,14 +47,10 @@ define([
 
                 if(self.sizeChart){
                     if(_.isObject(self.sizeChart)){
-                        listSizeChart = _.map(self.sizeChart,function(value){
-                            return value;
-                        });
+                        listSizeChart = self.sizeChart;
                     }else{
-                        listSizeChart = [{ cartId: self.platform, sizeChartName:self.sizeChart , sizeChartId: 0 }]
+                        listSizeChart = [{sizeChartName:self.sizeChart , sizeChartId: 0 }]
                     }
-                }else{
-                    listSizeChart = [];
                 }
 
                 var upEntity = {
