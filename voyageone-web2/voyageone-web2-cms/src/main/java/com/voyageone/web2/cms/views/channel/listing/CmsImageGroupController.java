@@ -81,6 +81,6 @@ ImageGroupService imageGroupService;
     @RequestMapping( CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP.GetNoMatchSizeImageGroupList)
     public AjaxResponse getNoMatchSizeImageGroupList() {
         String channelId = this.getUser().getSelChannelId();
-        return success(imageGroupService.getNoMatchSizeImageGroupList(channelId));
+        return success(imageGroupService.getNoMatchSizeImageGroupList(channelId,this.getLang()));
     }
 }
