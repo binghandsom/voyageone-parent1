@@ -246,7 +246,7 @@ public class CmsImageGroupService extends BaseAppService {
             // 请输入必填项目
             throw new BusinessException("7000080");
         }
-        if(imageGroupService.EXISTSName(imageGroupName, imageGroupId))
+        if(imageGroupService.EXISTSName(channelId,ConvertUtil.toInt(cartId),imageGroupName, imageGroupId))
         {
             //名称已经存在
             throw new BusinessException("4000009");

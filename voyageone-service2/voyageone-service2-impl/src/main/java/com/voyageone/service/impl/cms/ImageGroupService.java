@@ -531,8 +531,8 @@ public class ImageGroupService extends BaseService {
     {
         cmsBtImageGroupDao.update(model);
     }
-    public boolean EXISTSName(String imageGroupName, long imageGroupId) {
-        long count = cmsBtImageGroupDao.countByQuery("{\"imageGroupName\":\"" + imageGroupName + "\"" + ",\"imageGroupId\": { $ne:" + imageGroupId + "}}");
+    public boolean EXISTSName(String channelId,int cartId ,String imageGroupName, long imageGroupId) {
+        long count = cmsBtImageGroupDao.countByQuery("{\"channelId\":\"" + channelId + "\""+",\"cartId\":" + cartId +",\"imageGroupName\":\"" + imageGroupName + "\"" + ",\"imageGroupId\": { $ne:" + imageGroupId + "}}");
         return count > 0;
     }
 
