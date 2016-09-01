@@ -30,8 +30,9 @@ define([
 
         PopImageGroupAddCtl.prototype = {
             init: function () {
-                var self = this,
-                    imageGroupInfo = self.parent.imageGroupInfo;
+                var self = this;
+
+                self.imageGroupInfo = self.parent.imageGroupInfo;
 
                 if (imageGroupInfo.sizeChartId > 0) {
                     self.selectedSize = {
@@ -73,6 +74,7 @@ define([
                 }
 
                 var upEntity = _.extend({
+                    "imageGroupId":self.imageGroupInfo?self.imageGroupInfo.imageGroupId:0,
                     "platform": self.platform,
                     "imageGroupName": self.imageGroupName,
                     "viewType": self.viewType,
