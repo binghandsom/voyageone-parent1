@@ -7,7 +7,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
     cms.controller("imageGroupController", (function () {
-        function ImageGroupController( imageGroupService, confirm, alert, notify,popups) {
+        function ImageGroupController(imageGroupService, confirm, alert, notify, popups) {
             this.confirm = confirm;
             this.alert = alert;
             this.notify = notify;
@@ -49,15 +49,15 @@ define([
             getImageGroupList: function () {
                 var main = this;
                 main.imageGroupService.search({
-                    "platformList" : main.platformList,
-                    "imageType" : main.imageType,
-                    "beginModified" : main.beginModified,
-                    "endModified" : main.endModified,
-                    "brandName" : main.brandName,
-                    "productType" : main.productType,
-                    "sizeType" : main.sizeType,
-                    "curr" : main.pageOption.curr,
-                    "size" : main.pageOption.size
+                    "platformList": main.platformList,
+                    "imageType": main.imageType,
+                    "beginModified": main.beginModified,
+                    "endModified": main.endModified,
+                    "brandName": main.brandName,
+                    "productType": main.productType,
+                    "sizeType": main.sizeType,
+                    "curr": main.pageOption.curr,
+                    "size": main.pageOption.size
                 }).then(function (res) {
                     main.imageGroupList = res.data.imageGroupList;
                     main.pageOption.total = res.data.total;
@@ -79,28 +79,19 @@ define([
                 });
             },
             delete: function (entity) {
-                var self = this,
-                    popups = self.popups,
-                    chart = false;
+                var self = this;
 
-                if(entity.sizeChartId)
-                    chart = true;
-
-                popups.openTemplateConfirm({
-                    content:"是否同时删除尺码表?",
-                    imageGroupId:entity.imageGroupId,
-                    sizeChartId:entity.sizeChartId,
-                    chart:chart,
-                    from:"image"
-                }).then(function(context){
-                    if(context === true){
+                self.confirm('TXT_MSG_DO_DELETE').then(function () {
+                    self.imageGroupService.delete({
+                        imageGroupId: entity.imageGroupId
+                    }).then(function () {
                         self.notify.success('TXT_MSG_DELETE_SUCCESS');
                         self.search();
-                    }else{
+                    }, function (err) {
                         if (err.displayType == null) {
                             self.alert('TXT_MSG_DELETE_FAIL');
                         }
-                    }
+                    })
                 });
 
             }

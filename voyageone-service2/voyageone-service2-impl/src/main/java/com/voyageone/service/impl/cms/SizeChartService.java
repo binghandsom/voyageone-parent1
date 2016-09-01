@@ -161,8 +161,7 @@ public class SizeChartService extends BaseService {
      * 根据尺码关系一览编辑的数据插入数据库
      */
     public CmsBtSizeChartModel insert(String channelId, String userName, String sizeChartName
-            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, long imageGroupId,
-                                              String imageGroupName) {
+            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         //取得数据Model
         CmsBtSizeChartModel cmsBtSizeChartModel = new CmsBtSizeChartModel();
         //更新者
@@ -171,8 +170,6 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartModel.setCreater(userName);
         //店铺渠道
         cmsBtSizeChartModel.setChannelId(channelId);
-        cmsBtSizeChartModel.setImageGroupId(imageGroupId);
-        cmsBtSizeChartModel.setImageGroupName(imageGroupName);
         //尺码表自增键取得
         Long sizeChartId = commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_SIZE_CHART_ID);
         //尺码自增键
@@ -256,8 +253,7 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
     public void  Update(String channelId, String userName, int sizeChartId, String sizeChartName, String finishFlag
-            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, long imageGroupId,
-                        String imageGroupName) {
+            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId, channelId);
         //更新者
         cmsBtSizeChartModel.setModifier(userName);
@@ -269,8 +265,6 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartModel.setSizeChartName(sizeChartName);
         //是否编辑
         cmsBtSizeChartModel.setFinish(finishFlag);
-        cmsBtSizeChartModel.setImageGroupId(imageGroupId);
-        cmsBtSizeChartModel.setImageGroupName(imageGroupName);
         //产品品牌
         if (brandNameList.isEmpty()) {
             List<String> lst = new ArrayList<>();
