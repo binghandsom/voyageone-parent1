@@ -2,6 +2,7 @@ package com.voyageone.web2.admin.views.user;
 
 import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.AdminUserBean;
+import com.voyageone.service.impl.com.user.AdminResService;
 import com.voyageone.service.impl.com.user.AdminUserService;
 import com.voyageone.service.model.com.PageModel;
 import com.voyageone.web2.admin.AdminController;
@@ -9,10 +10,7 @@ import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.user.UserFormBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -30,6 +28,9 @@ public class AdminUserController extends AdminController {
 
     @Autowired
     AdminUserService adminUserService;
+
+    @Autowired
+    AdminResService adminResService;
 
     @RequestMapping(AdminUrlConstants.User.Self.SEARCH_USER)
     public AjaxResponse searchUser(@RequestBody UserFormBean form) {
@@ -112,12 +113,17 @@ public class AdminUserController extends AdminController {
         return success(true);
     }
 
+    @RequestMapping(AdminUrlConstants.User.Self.GET_USER_BY_TOKEN)
+    public AjaxResponse getUserByToken(@RequestBody  Map requestMap)  {
+        String token = requestMap.get("token").toString();
+        return success(adminUserService.getUserByToken(token));
+    }
+
     @RequestMapping(AdminUrlConstants.User.Self.EDIT_PASS)
-    public AjaxResponse editPass(@RequestBody Map requestMap)  {
-        // 验证参数
-        Integer userId = (Integer) requestMap.get("id");
-        String username = getUser().getUserName();
-        adminUserService.restPass(userId, DEFAULT_PASS ,username);
+    public AjaxResponse editPass(@RequestBody  Map requestMap)  {
+        String token = requestMap.get("token").toString();
+        String pass = requestMap.get("password").toString();
+        adminUserService.restPass(token, pass);
         return success(true);
     }
 
@@ -131,10 +137,10 @@ public class AdminUserController extends AdminController {
 
 
     @RequestMapping(AdminUrlConstants.User.Self.GET_AUTH)
-    public AjaxResponse showAuth(@RequestBody Integer userId)  {
+    public AjaxResponse getAuth(@RequestBody Integer userId)  {
         // 验证参数
         Preconditions.checkNotNull(userId);
-        return success(true);
+        return success(adminResService.showUserAuth(userId));
     }
 
     @RequestMapping(AdminUrlConstants.User.Self.GET_ALL_APP)

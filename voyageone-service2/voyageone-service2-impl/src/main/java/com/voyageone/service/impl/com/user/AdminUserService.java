@@ -6,6 +6,8 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.mail.Mail;
+import com.voyageone.security.dao.ComUserTokenDao;
+import com.voyageone.security.model.ComUserTokenModel;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.security.dao.ComUserDao;
 import com.voyageone.security.dao.ComUserRoleDao;
@@ -19,6 +21,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.CtApplicationModel;
 import com.voyageone.service.model.com.PageModel;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.crypto.RandomNumberGenerator;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.SimpleHash;
@@ -55,6 +58,9 @@ public class AdminUserService extends BaseService {
 
     @Autowired
     CtApplicationDao ctApplicationDao;
+
+    @Autowired
+    ComUserTokenDao comUserTokenDao;
 
     /**
      * 检索用户
@@ -262,13 +268,63 @@ public class AdminUserService extends BaseService {
 
 
     @VOTransactional
+    public void restPass (String token, String pass) {
+        ComUserTokenModel model = getComUserTokenModel(token);
+        ComUserModel user = new ComUserModel();
+        user.setUserAccount(model.getUserAccount());
+        user = comUserDao.selectOne(user);
+
+        user.setActive(1);
+        user.setPassword(pass);
+        user.setModifier(model.getUserAccount());
+        user.setModified(new Date());
+        encryptPassword(user);
+        comUserDao.update(user);
+        comUserTokenDao.delete(model.getId());
+    }
+
+    public Map getUserByToken(String token)
+    {
+        ComUserTokenModel model = getComUserTokenModel(token);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("userAccount",  model.getUserAccount());
+        return  result;
+    }
+
+    private ComUserTokenModel getComUserTokenModel(String token) {
+        if(StringUtils.isEmpty(token))
+            throw new BusinessException("A007", "Bad Request Token.");
+
+        ComUserTokenModel model = new ComUserTokenModel();
+        model.setToken(token);
+        model = comUserTokenDao.selectOne(model);
+
+        if(model == null)
+        {
+            throw new BusinessException("A007", "Bad Request Token.");
+        }
+
+        Date modified = model.getModified();
+        Date now = new Date();
+
+        if (now.getTime() - modified.getTime() > 1000*3600*24)
+        {
+            comUserTokenDao.delete(model.getId());
+            throw new BusinessException("A008", "Token Expired");
+        }
+        return model;
+    }
+
+
+    @VOTransactional
     public void restPass (List<Integer> userIds, String pass, String username) {
         for (Integer id : userIds) {
             restPass(id, pass, username);
         }
     }
 
-    public void restPass(Integer userId, String pass, String username) {
+    private void restPass(Integer userId, String pass, String username) {
         ComUserModel model = new ComUserModel();
         model.setId(userId);
         model.setPassword(pass);
@@ -289,9 +345,15 @@ public class AdminUserService extends BaseService {
         }
 
         String email = user.getEmail();
+        String token = UUID.randomUUID().toString().replaceAll("-","");
+        ComUserTokenModel tokenModel = new  ComUserTokenModel();
+        tokenModel.setToken(token);
+        tokenModel.setUserAccount(user.getUserAccount());
+
+        comUserTokenDao.insert(tokenModel);
 
         try {
-            Mail.send(email, "重置密码", getMailContent(model, "353FTWTWRT"));
+            Mail.send(email, "重置密码", getMailContent(model, token));
         } catch (MessagingException e) {
             e.printStackTrace();
         }

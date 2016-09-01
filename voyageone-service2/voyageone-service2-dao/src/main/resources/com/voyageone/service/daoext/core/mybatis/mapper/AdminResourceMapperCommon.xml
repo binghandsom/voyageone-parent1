@@ -5,7 +5,7 @@
     </resultMap>
 
     <select id="selectResByUser" resultMap="comResourceBeanMap" >
-        SELECT id, res_name , res_key, res_type, parent_id, res_url, `level`, icon , active ,
+        SELECT id, res_name , res_key, res_type, parent_id, res_url,icon , active ,
         description, created, creater, modified, modifier, application, channel_id, user_id
         from view_user_res
         WHERE active = 1

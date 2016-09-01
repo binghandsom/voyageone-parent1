@@ -23,6 +23,9 @@ public class AdminUserServiceTest {
     @Autowired
     AdminUserService adminUserService;
 
+    @Autowired
+    AdminResService adminResService;
+
     @Test
     public void testSearchUserByPage() throws Exception {
 
@@ -80,9 +83,9 @@ public class AdminUserServiceTest {
     @Test
     public void testShowAuth() throws Exception {
 
-//        Map result = adminUserService.showAuth(1);
+        Map result = adminResService.showUserAuth(1);
 
-//        System.out.println(JacksonUtil.bean2Json(result));
+        System.out.println(JacksonUtil.bean2Json(result));
     }
 
     @Test
@@ -96,4 +99,19 @@ public class AdminUserServiceTest {
         adminUserService.forgetPass("admin");
 
     }
+
+    @Test
+    public void testRestPass() throws Exception {
+        adminUserService.restPass("0c357cc3f9454477944fc968f9ab36ec", "123456");
+
+    }
+
+    @Test
+    public void testGetUserByToken() throws Exception {
+
+       Map result = adminUserService.getUserByToken("0c357cc3f9454477944fc968f9ab36ec");
+        System.out.println(JacksonUtil.bean2Json(result));
+
+    }
+
 }
