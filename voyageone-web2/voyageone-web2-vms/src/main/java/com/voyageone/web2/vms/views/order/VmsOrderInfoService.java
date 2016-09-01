@@ -716,10 +716,11 @@ public class VmsOrderInfoService extends BaseService {
         // 确认shipment状态
         VmsBtShipmentModel shipment = shipmentService.select(scanInfoBean.getShipment().getId());
         if (!user.getSelChannelId().equals(shipment.getChannelId())) throw new BusinessException("8000030");
-        if (!STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(shipment.getStatus())) throw new BusinessException(("8000025"));
+        // SKU级别扫描的情况下，加上即使状态是shipped的shipment也能够继续扫描
+        // if (!STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(shipment.getStatus())) throw new BusinessException(("8000025"));
 
         return orderDetailService.scanInSku(user.getSelChannelId(), user.getUserName(),
-                scanInfoBean.getBarcode(), scanInfoBean.getShipment().getId());
+                scanInfoBean.getBarcode(), scanInfoBean.getShipment().getId(), shipment.getStatus());
     }
 
     /**
