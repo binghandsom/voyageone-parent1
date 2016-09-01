@@ -18,10 +18,10 @@
                     <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
                         <ul class="nav navbar-nav">
                             <li uib-dropdown>
-                                <a href="#" uib-dropdown-toggle translate="TXT_CATEGORY">
+                                <a href="#" uib-dropdown-toggle translate="TXT_CATEGORY" style="padding: 0 20px;">{{leaf.children.length}}
                                     <b class='caret'></b>
                                 </a>
-                                <tree tree='ctrl.tree'></tree>
+                                <tree tree='ctrl.categories'></tree>
                             </li>
                         </ul>
                     </div>

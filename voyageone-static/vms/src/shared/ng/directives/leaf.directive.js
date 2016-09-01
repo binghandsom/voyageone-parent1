@@ -1,24 +1,26 @@
-angular.module("vo.directives").directive("leaf", function($compile) {
+angular.module("vo.directives").directive("leaf", function ($compile) {
     return {
         restrict: "E",
         replace: true,
         scope: {
             leaf: "="
         },
-        //templateUrl: 'tree-li.html',
-        template: '<li ng-class="{divider: leaf.name == \'divider\'}">'
-                    +'<a ng-if="leaf.name !== \'divider\'">{{leaf.name}}</a>'
-                   +'</li>',
-        link: function(scope, element) {
-            if (angular.isArray(scope.leaf.subtree)) {
-                element.append("<tree tree='leaf.subtree'></tree>");
+        template: '<li><a>{{leaf.catName}}</a></li>',
+        link: function (scope, element) {
+            if (angular.isArray(scope.leaf.children)) {
+                element.append("<tree ng-if='leaf.children.length>0' tree='leaf.children'></tree>");
                 element.addClass('dropdown-submenu');
                 $compile(element.contents())(scope);
-            } else {
-                element.bind('click', function() {
-                    alert("You have clicked on " + scope.leaf.name);
+                element.bind('click', function (event) {
+                    window.xx = event;
+                    event.stopPropagation();
+                    var para=document.createElement("span");
+                    var node=document.createTextNode("已选择:"+scope.leaf.catName);
+                    para.appendChild(node);
+                    var element=document.getElementsByClassName("nav")[1];
+                    element.appendChild(para);
                 });
-
+            } else {
             }
         }
     };

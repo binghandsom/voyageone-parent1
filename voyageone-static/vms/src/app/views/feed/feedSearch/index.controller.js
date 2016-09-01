@@ -33,36 +33,9 @@ define([
         FeedInfoSearchController.prototype = {
             init: function () {
                 var main = this;
-                main.tree = [{
-                    name: "Bob",
-                    link: "#",
-                    subtree: [{
-                        name: "Ann",
-                        link: "#"
-                    }]
-                }, {
-                    name: "Jon",
-                    link: "#",
-                    subtree: [{
-                        name: "Mary",
-                        link: "#"
-                    }]
-                }, {
-                    name: "divider",
-                    link: "#"
-                }, {
-                    name: "Another person",
-                    link: "#"
-                }, {
-                    name: "divider",
-                    link: "#"
-                },{
-                    name: "Again another person",
-                    link: "#"
-                }];
                 main.feedInfoSearchService.init().then(function (res) {
                     main.categories = res.feedCategoryTree;
-                    // main.tree = res.feedCategoryTree;
+                    console.log(main.categories);
                     main.categoryPath = [{level: 1, categories: main.categories}];
                     main.search();
                 });
@@ -135,36 +108,4 @@ define([
         return FeedInfoSearchController;
 
     }()));
-    // vms.directive("tree", (function() {
-    //     return {
-    //         restrict: "E",
-    //         replace: true,
-    //         scope: {
-    //             tree: '='
-    //         },
-    //         template: '<ul class="dropdown-menu"> <leaf ng-repeat="leaf in this.tree" leaf="leaf"></leaf> </ul>'
-    //     };
-    // })());
-    // vms.directive("leaf", (function($compile) {
-    //     return {
-    //         restrict: "E",
-    //         replace: true,
-    //         scope: {
-    //             leaf: "="
-    //         },
-    //         template: '<li ng-class="{divider: leaf.name == "divider"}"><a ng-if="leaf.name != "divider"">{{leaf.name}}</a></li>',
-    //         link: function(scope, element, attrs) {
-    //             if (angular.isArray(scope.leaf.subtree)) {
-    //                 element.append("<tree tree='leaf.subtree'></tree>");
-    //                 element.addClass('dropdown-submenu');
-    //                 $compile(element.contents())(scope);
-    //             } else {
-    //                 element.bind('click', function() {
-    //                     alert("You have clicked on " + scope.leaf.name);
-    //                 });
-    //
-    //             }
-    //         }
-    //     };
-    // })());
 });
