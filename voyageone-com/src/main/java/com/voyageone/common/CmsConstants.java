@@ -122,6 +122,10 @@ public class CmsConstants {
         String PRICE_TEJIABAO_OPEN = ".tejiabao_open";
         String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
 
+        // 别名相关
+        String ALIAS = "ALIAS";
+        String COLOR_ALIAS = ".color_alias";
+
         String FEED_SEARCH_SORT = "FEED_SEARCH_SORT";
 
         // App端启用开关(用于控制所有平台的)

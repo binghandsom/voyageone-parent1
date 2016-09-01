@@ -1854,11 +1854,11 @@
             <if test="attribute169value != null" >
                 Attribute169Value,
             </if>
-            <if test="attribute170name != null" >
-                Attribute170Name,
+            <if test="msrp != null" >
+                msrp,
             </if>
-            <if test="attribute170value != null" >
-                Attribute170Value,
+            <if test="voyageOnePrice != null" >
+                VoyageOnePrice,
             </if>
         </trim>
 
@@ -2913,11 +2913,11 @@
             <if test="attribute169value != null" >
                 #{attribute169value,jdbcType=LONGVARCHAR},
             </if>
-            <if test="attribute170name != null" >
-                #{attribute170name,jdbcType=LONGVARCHAR},
+            <if test="msrp != null" >
+                #{msrp,jdbcType=LONGVARCHAR},
             </if>
-            <if test="attribute170value != null" >
-                #{attribute170value,jdbcType=LONGVARCHAR},
+            <if test="voyageOnePrice != null" >
+                #{voyageOnePrice,jdbcType=LONGVARCHAR},
             </if>
         </trim>
     </insert>

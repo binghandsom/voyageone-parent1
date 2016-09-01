@@ -89,6 +89,16 @@ public class CmsFeedSearchService extends BaseAppService {
     }
 
     /**
+     * 获取当前页的product列表Cnt
+     * @param searchValue
+     * @param userInfo
+     * @return
+     */
+    public long getFeedCnt(Map<String, Object> searchValue, UserSessionBean userInfo) {
+        return feedInfoService.getCnt(userInfo.getSelChannelId(), searchValue);
+    }
+
+    /**
      * 获取当前页的FEED信息
      * @param searchValue
      * @param userInfo
@@ -104,16 +114,6 @@ public class CmsFeedSearchService extends BaseAppService {
         queryObject.setSkip((pageNum - 1) * pageSize);
         queryObject.setLimit(pageSize);
         return feedInfoService.getList(userInfo.getSelChannelId(), queryObject);
-    }
-
-    /**
-     * 获取当前页的product列表Cnt
-     * @param searchValue
-     * @param userInfo
-     * @return
-     */
-    public long getFeedCnt(Map<String, Object> searchValue, UserSessionBean userInfo) {
-        return feedInfoService.getCnt(userInfo.getSelChannelId(), searchValue);
     }
 
 

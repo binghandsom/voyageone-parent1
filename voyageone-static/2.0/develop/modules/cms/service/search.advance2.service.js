@@ -29,9 +29,9 @@ define([
         function search(data, groupPagination, productPagination) {
             var defer = $q.defer();
             data = resetSearchInfo(data);
-            // 设置groupPage
-            data.groupPageNum = groupPagination.curr;
-            data.groupPageSize = groupPagination.size;
+            //// 设置groupPage
+            //data.groupPageNum = groupPagination.curr;
+            //data.groupPageSize = groupPagination.size;
             // 设置productPage
             data.productPageNum = productPagination.curr;
             data.productPageSize = productPagination.size;
@@ -42,7 +42,7 @@ define([
                 tempGroupSelect = new selectRowsFactory();
                 tempProductSelect = new selectRowsFactory();
                 // 获取group列表
-                _resetGroupList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, res.data.selBiDataList, data);
+                //_resetGroupList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, res.data.selBiDataList, data);
                 // 获取product列表
                 _resetProductList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, res.data.selBiDataList, data);
 
@@ -70,7 +70,7 @@ define([
             var defer = $q.defer();
 
             $searchAdvanceService2.getGroupList(resetGroupPagination(data, pagination)).then(function (res) {
-                _resetGroupList(res.data, commonProps, customProps, selSalesTypes, selBiDataList);
+                _resetGroupList(res.data, commonProps, customProps, selSalesTypes, selBiDataList, data);
                 defer.resolve (res);
             });
             return defer.promise;
@@ -84,7 +84,7 @@ define([
         function getProductList(data, pagination, list, commonProps, customProps, selSalesTypes, selBiDataList) {
             var defer = $q.defer();
             $searchAdvanceService2.getProductList(resetProductPagination(data, pagination)).then(function (res) {
-                _resetProductList(res.data, commonProps, customProps, selSalesTypes, selBiDataList);
+                _resetProductList(res.data, commonProps, customProps, selSalesTypes, selBiDataList, data);
                 defer.resolve (res);
             });
             return defer.promise;
@@ -288,9 +288,6 @@ define([
                 groupInfo.groupBean.timeDetail = _setTimeDetail(groupInfo);
 
                 groupInfo.grpImgList = data.grpImgList[index];
-
-                groupInfo._grpProdChgInfo = data.grpProdChgInfoList[index];
-
             });
             data.groupSelList = tempGroupSelect.selectRowsInfo;
 
@@ -414,9 +411,7 @@ define([
                 // 设置time detail
                 productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
 
-                productInfo._prodChgInfo = data.prodChgInfoList[index];
                 productInfo._prodOrgChaName = data.prodOrgChaNameList[index];
-
             });
             data.productSelList = tempProductSelect.selectRowsInfo;
 
@@ -479,6 +474,9 @@ define([
          * @private
          */
         function _setGroupPriceSale(object, searchParam) {
+            object._grpPriceInfoList = object._grpPriceInfoList.sort(function (a, b) {
+                return a.cartId > b.cartId;
+            });
             return _setPriceSale(object._grpPriceInfoList, searchParam, 'priceSaleSt', 'priceSaleEd');
         }
 
@@ -525,8 +523,17 @@ define([
                 // 当是中国指导价时，要有价格变化提示
                 if (stakey == 'pPriceRetailSt' && data.skus) {
                     for (idx in data.skus) {
-                        if (data.skus[idx].priceChgFlg && (data.skus[idx].priceChgFlg.indexOf('U') == 0 || data.skus[idx].priceChgFlg.indexOf('D') == 0)) {
-                            priceItem += '<label class="text-u-red font-bold">&nbsp;!</label>'
+                        if (data.skus[idx].priceChgFlg) {
+                            var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
+                            var downFlg = data.skus[idx].priceChgFlg.indexOf('D');
+                            var cssTxt = 'class="text-u-red font-bold"';
+                            if (upFlg == 0) {
+                                // 涨价
+                                priceItem += '<label ' + cssTxt + '>&nbsp;(↑' + data.skus[idx].priceChgFlg.substring(upFlg + 1) + ')</label>'
+                            } else if (downFlg == 0) {
+                                // 降价
+                                priceItem += '<label ' + cssTxt + '>&nbsp;(↓' + data.skus[idx].priceChgFlg.substring(downFlg + 1) + ')</label>'
+                            }
                             break;
                         }
                     }
@@ -543,7 +550,7 @@ define([
         }
 
         function _setRetailPriceCol(object, searchParam) {
-            var fstLine = {'pVal':'', 'pFlg':false};
+            var fstLine = { 'pVal': '', 'pTxt': '', 'cssTxt': '' };
             if (object == null || object == undefined) {
                 return fstLine;
             }
@@ -579,17 +586,27 @@ define([
                         priceItem += $filter('number')(data['pPriceRetailEd'], 2);
                     }
                 }
-                fstLine.pVal = priceItem;
 
                 // 当是中国指导价时，要有价格变化提示
                 if (data.skus) {
                     for (idx in data.skus) {
-                        if (data.skus[idx].priceChgFlg && (data.skus[idx].priceChgFlg.indexOf('U') == 0 || data.skus[idx].priceChgFlg.indexOf('D') == 0)) {
-                            fstLine.pFlg = true;
+                        if (data.skus[idx].priceChgFlg) {
+                            var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
+                            var downFlg = data.skus[idx].priceChgFlg.indexOf('D');
+
+                            fstLine.cssTxt = 'text-u-red font-bold';
+                            if (upFlg == 0) {
+                                // 涨价
+                                fstLine.pTxt = '(↑' + data.skus[idx].priceChgFlg.substring(upFlg + 1) + ')'
+                            } else if (downFlg == 0) {
+                                // 降价
+                                fstLine.pTxt = '(↓' + data.skus[idx].priceChgFlg.substring(downFlg + 1) + ')'
+                            }
                             break;
                         }
                     }
                 }
+                fstLine.pVal = priceItem;
                 if (fstCode == 0) {
                     // 未选择平台
                     break;

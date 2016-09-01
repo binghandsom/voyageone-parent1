@@ -90,9 +90,9 @@ define(function (require) {
                 pageIndex: paging.curr - 1,
                 pageRowCount: paging.size,
                 parameters: {
-                    "cartId": !searchInfo.cartId ? null : +searchInfo.cartId,
-                    "categoryType": +searchInfo.categoryType,
-                    "categoryPath": searchInfo.categoryPath
+                    cartId: !searchInfo.cartId ? null : +searchInfo.cartId,
+                    categoryType: +searchInfo.categoryType,
+                    categoryPath: searchInfo.categoryPath
                 }
             }).then(function (resp) {
                 paging.total = resp.data.total;
@@ -115,13 +115,14 @@ define(function (require) {
             });
         };
 
-        DefaultAttributeController.prototype.editItem = function (item) {
-            var _item = angular.copy(item);
-            window.open("#/channel/default_attribute_detail/" + JSON.stringify(_item).replace(/\//g, "✓"));
+        DefaultAttributeController.prototype.create = function () {
+            open("#/channel/default_attribute_detail/");
         };
 
-        DefaultAttributeController.prototype.getMappingCategoryPath = function (entity) {
-            return !entity.categoryPath ? ('全类目(' + this.cartMap[entity.cartId] + ')') : entity.categoryPath;
+        DefaultAttributeController.prototype.editItem = function (item) {
+            var id = item._id;
+            localStorage.setItem(id, angular.toJson(item));
+            open("#/channel/default_attribute_detail/" + id);
         };
 
         return DefaultAttributeController;

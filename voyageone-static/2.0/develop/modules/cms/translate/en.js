@@ -380,6 +380,7 @@ define(function () {
         "TXT_MAIN_PRODUCT": "主商品",
         "TXT_GET_TASK_COUNT": "获取任务数量",
         "TXT_PRODUCT_NAME_WITH_LONG_DESCRIPTION": "产品标题 / 长描述",
+        "TXT_ACTIVITY_DISCOUNT": "促销活动",
         "TXT_LONG_TITLE_WITH_LONG_DESCRIPTION": "长标题中文",
         "TXT_MID_TITLE_WITH_SHORT_DESCRIPTION": "中标题 / 长描述中文",
         "TXT_SHORT_TITLE_WITH_MORE_SHORT_DESCRIPTION": "短标题标题 / 短描述中文",
@@ -496,6 +497,7 @@ define(function () {
         "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您还有未完成的翻译项目, 请完成后再获取新的任务!",
         "TXT_MSG_ACTIVITIES": "请选择对应的活动!",
         "TXT_MSG_TAG": "请正确选择和填写标签!",
+        "TXT_ADD_TAG": "请至少添加一个标签!",
         "TXT_MSG_TAG_EDITOR": "标签编辑页!",
         "TXT_MSG_TAG_PATH": "标签路径!",
         "TXT_MSG_TAG_NAME": "标签名",
@@ -532,7 +534,6 @@ define(function () {
         "TXT_FeedStatus_Error": "导入失败",
         "TXT_FeedStatus_NotImport": "不导入",
         "TXT_FeedStatus_DateError": "Feed数据异常错误",
-
 
         "BTN_CREATE_TASK": "新建任务",
         "BTN_CREATE_BEAT_TASK": "新建价格披露任务",
@@ -614,6 +615,7 @@ define(function () {
         "TXT_PAGER_SIZE": "每页显示",
         /**尺码表*/
         "TXT_SIZE_CHART": "尺码表",
+        "TXT_SIZE_IMAGE": "尺码图",
         "TXT_SIZE_CHART_DETAIL": "尺码表明细",
         "TXT_SIZE_CHART_ADD": "新增尺码表",
         "TXT_SIZE_CHART_IMPORT": "导入尺码表",

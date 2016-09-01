@@ -286,6 +286,9 @@ public class JdWareService extends JdBase {
                     // switch字符串不能为null
                     if (!StringUtils.isEmpty(response.getCode())) {
                         switch (response.getCode()) {
+                            case "11000003":
+                                // 11000003:参数太长
+                                errMsg += " 可能是该产品Sku属性中size的最大长度超过25位了，请设置小于25位的容量/尺码值";
                             case "11000012":
                                 // 11000012:参数包含非法字符
                                 errMsg += " 可能是因为尺寸或颜色中包含特殊字符，比如逗号等";

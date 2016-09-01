@@ -234,8 +234,14 @@ public class CmsAdvSearchQueryService extends BaseService {
 
             // 查询价格变动(指导售价)
             if (StringUtils.isNotEmpty(searchValue.getPriceChgFlg())) {
-                queryObject.addQuery("{'platforms.P#.skus.priceChgFlg':{'$regex':'^" + searchValue.getPriceChgFlg() + "'}}");
-                queryObject.addParameters(cartId);
+                if (searchValue.getPriceChgFlg().startsWith("X")) {
+                    // 比较指导售价和建议售价的大小
+                    queryObject.addQuery("{'platforms.P#.skus.priceMsrpFlg':{'$regex':'^" + searchValue.getPriceChgFlg() + "'}}");
+                    queryObject.addParameters(cartId);
+                } else {
+                    queryObject.addQuery("{'platforms.P#.skus.priceChgFlg':{'$regex':'^" + searchValue.getPriceChgFlg() + "'}}");
+                    queryObject.addParameters(cartId);
+                }
             }
 
             // 查询价格比较（最终售价）
@@ -328,9 +334,9 @@ public class CmsAdvSearchQueryService extends BaseService {
         }
 
         // 获取brand
-        if (StringUtils.isNotEmpty(searchValue.getBrand())) {
-            queryObject.addQuery("{'common.fields.brand':#}");
-            queryObject.addParameters(searchValue.getBrand());
+        if (searchValue.getBrandList() !=  null && searchValue.getBrandList().size() > 0) {
+            queryObject.addQuery("{'common.fields.brand':{$in:#}}");
+            queryObject.addParameters(searchValue.getBrandList());
         }
 
         // 获取free tag查询条件
