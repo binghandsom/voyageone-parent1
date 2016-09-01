@@ -86,6 +86,8 @@ public class CmsFieldEditService extends BaseAppService {
     private MqSender sender;
     @Autowired
     private CommCacheService commCacheService;
+    @Autowired
+    private CmsBtPriceConfirmLogService priceConfirmLogService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -1076,8 +1078,8 @@ public class CmsFieldEditService extends BaseAppService {
                         $debug(String.format("指导价变更批量确认 channelId=%s 执行结果=%s", userInfo.getSelChannelId(), rs.toString()));
                     }
 
-                    // TODO--保存确认历史
-
+                    // 保存确认历史
+                    priceConfirmLogService.addConfirmed(userInfo.getSelChannelId(), prodCode, prodObj.getPlatformNotNull(cartIdVal), userInfo.getUserName());
                 }
             }
 

@@ -67,7 +67,7 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         String catPath = (String) params.get("catPath");
 
-        result.put("platform", cmsProductPlatformDetailService.changePlatformCategory(channelId, prodId, cartId, catId,catPath, getLang()));
+        result.put("platform", cmsProductPlatformDetailService.changePlatformCategory(channelId, prodId, cartId, catId, catPath, getLang()));
 
         return success(result);
     }
@@ -124,9 +124,16 @@ public class CmsProductPlatformDetailController extends CmsController {
         result.put("platform", cmsProductPlatformDetailService.copyPropertyFromMainProduct(getUser().getSelChannelId(), prodId, cartId, getLang()));
         return success(result);
     }
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PLATFORM_CATEGORIES)
+    public AjaxResponse getPlatformCategories(@RequestBody Map<String, Integer> params) {
+
+        Integer cartId = params.get("cartId");
+
+        return success(cmsProductPlatformDetailService.getPlatformCategories(getUser(), cartId));
+    }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.PriceConfirm)
-    public AjaxResponse getPlatformCategories(@RequestBody Map<String, Object> params) {
+    public AjaxResponse priceConfirm(@RequestBody Map<String, Object> params) {
 
         String productCode = String.valueOf(params.get("productCode"));
 
