@@ -71,6 +71,9 @@ public class AdminOrgController extends AdminController {
 
         BeanUtils.populate(model, requestBean);
 
+        String username = getUser().getUserName();
+        model.setCreater(username);
+
         adminOrgService.addOrg(model);
 
         return success(true);
@@ -82,6 +85,9 @@ public class AdminOrgController extends AdminController {
         ComOrganizationModel model = new ComOrganizationModel();
 
         BeanUtils.populate(model, requestBean);
+
+        String username = getUser().getUserName();
+        model.setCreater(username);
 
         adminOrgService.updateOrg(model);
 

@@ -123,10 +123,10 @@ public class AdminRoleController extends AdminController {
     @RequestMapping(AdminUrlConstants.User.Role.GET_ALL_ROLE_TYPE)
     public AjaxResponse getAllRoleType()  {
         List<Map<String, Object>> list = new ArrayList<>();
-        list.add(new HashMap(){{put("1", "IT管理员");} });
-        list.add(new HashMap(){{put("2", "运营人员");} });
-        list.add(new HashMap(){{put("3", "客服人员");} });
-        list.add(new HashMap(){{put("4", "财务人员");} });
+        list.add(new HashMap(){{put("id", 1); put("name", "IT管理员"); } });
+        list.add(new HashMap(){{put("id", 2);put("name", "运营人员"); } });
+        list.add(new HashMap(){{put("id", 3);put("name", "客服人员"); } });
+        list.add(new HashMap(){{put("id", 4); put("name", "财务人员");  } });
         return success(list);
     }
 

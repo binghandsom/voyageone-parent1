@@ -101,7 +101,14 @@ public class AdminOrgService extends BaseService {
             throw new BusinessException("组织名称在系统中已存在。");
         }
 
-        ComOrganizationModel parent = comOrganizationDao.select(model.getParentId());
+        ComOrganizationModel parent = null;
+        if(model.getParentId() != null) {
+            parent = comOrganizationDao.select(model.getParentId());
+        }
+        else
+        {
+            model.setParentId(0);
+        }
 
         if(model.getWeight() == null) {
             map.clear();
