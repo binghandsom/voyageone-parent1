@@ -11,9 +11,9 @@
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
-        from com_organization t, com_organization t1
+        from com_organization t
+        LEFT  JOIN com_organization t1 ON  t.`parent_id` = t1.`id`
         <where >
-            t.`parent_id` = t1.`id`
             <if test="orgName != null" >
                and t.`org_name` like concat('%',#{orgName,jdbcType=VARCHAR}, '%')
             </if>
