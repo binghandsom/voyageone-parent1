@@ -23,6 +23,9 @@ public class AdminUserServiceTest {
     @Autowired
     AdminUserService adminUserService;
 
+    @Autowired
+    AdminResService adminResService;
+
     @Test
     public void testSearchUserByPage() throws Exception {
 
@@ -80,9 +83,9 @@ public class AdminUserServiceTest {
     @Test
     public void testShowAuth() throws Exception {
 
-//        Map result = adminUserService.showAuth(1);
+        Map result = adminResService.showUserAuth(1);
 
-//        System.out.println(JacksonUtil.bean2Json(result));
+        System.out.println(JacksonUtil.bean2Json(result));
     }
 
     @Test

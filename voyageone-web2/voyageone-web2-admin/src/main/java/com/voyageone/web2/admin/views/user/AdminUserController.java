@@ -2,6 +2,7 @@ package com.voyageone.web2.admin.views.user;
 
 import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.AdminUserBean;
+import com.voyageone.service.impl.com.user.AdminResService;
 import com.voyageone.service.impl.com.user.AdminUserService;
 import com.voyageone.service.model.com.PageModel;
 import com.voyageone.web2.admin.AdminController;
@@ -27,6 +28,9 @@ public class AdminUserController extends AdminController {
 
     @Autowired
     AdminUserService adminUserService;
+
+    @Autowired
+    AdminResService adminResService;
 
     @RequestMapping(AdminUrlConstants.User.Self.SEARCH_USER)
     public AjaxResponse searchUser(@RequestBody UserFormBean form) {
@@ -133,10 +137,10 @@ public class AdminUserController extends AdminController {
 
 
     @RequestMapping(AdminUrlConstants.User.Self.GET_AUTH)
-    public AjaxResponse showAuth(@RequestBody Integer userId)  {
+    public AjaxResponse getAuth(@RequestBody Integer userId)  {
         // 验证参数
         Preconditions.checkNotNull(userId);
-        return success(true);
+        return success(adminResService.showUserAuth(userId));
     }
 
     @RequestMapping(AdminUrlConstants.User.Self.GET_ALL_APP)
