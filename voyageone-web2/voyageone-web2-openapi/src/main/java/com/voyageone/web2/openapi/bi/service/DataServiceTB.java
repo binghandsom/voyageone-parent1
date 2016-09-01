@@ -9,6 +9,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.bi.BiVtSalesProductService;
 import com.voyageone.service.impl.bi.BiVtSalesShopService;
+import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.web2.openapi.OpenApiBaseService;
 import com.voyageone.web2.openapi.bi.constants.ExcelHeaderEnum;
 import org.apache.commons.beanutils.BeanUtilsBean;
@@ -58,15 +59,18 @@ public class DataServiceTB extends OpenApiBaseService {
         int eCommId = (int) shopInfo.get("ecommId");
         //cartId
         String cartId = (String) shopInfo.get("ecommCode");
-
+        CartType cartType = CartType.getCartById(Integer.parseInt(cartId));
+        if (cartType == CartType.USJOI_JGJ || cartType == CartType.USJOI_JGY) {
+            eCommId = 7;
+        }
 
         //result Data
         List<String> listColumns = new ArrayList<>();
         List<List<String>> listValues = new ArrayList<>();
-        if (eCommId == 1 || eCommId == 4) {
+        if (cartType == CartType.TMALL || cartType == CartType.TMALLG) {
             // TM / TG
             paresTMUrlData(channelId, cartId, eCommId, jsonData, listColumns, listValues);
-        } else if (eCommId == 5 || eCommId == 7) {
+        } else if (cartType == CartType.JINGDONG || cartType == CartType.JINGDONGG || cartType == CartType.USJOI_JGJ || cartType == CartType.USJOI_JGY) {
             // JD / JG
             paresJDUrlData(channelId, cartId, eCommId, jsonData, listColumns, listValues);
         }
@@ -132,10 +136,9 @@ public class DataServiceTB extends OpenApiBaseService {
         }
         //channelId
         String channelId = (String) shopInfo.get("channelCode");
-        //eCommId
-        int eCommId = (int) shopInfo.get("ecommId");
         //cartId
         String cartId = (String) shopInfo.get("ecommCode");
+        CartType cartType = CartType.getCartById(Integer.parseInt(cartId));
 
         //result Data
         List<String> listColumns = new ArrayList<>();
@@ -146,14 +149,14 @@ public class DataServiceTB extends OpenApiBaseService {
         String tempFielDir = null;
 
         // save excel file
-        String newFileName = saveTBExcelFile(channelId, cartId, eCommId, fileName, multipartFile);
+        String newFileName = saveTBExcelFile(channelId, cartType, fileName, multipartFile);
         $info("saveProductFileData file:" + newFileName);
-        if (eCommId == 1 || eCommId == 4) {
+        if (cartType == CartType.TMALL || cartType == CartType.TMALLG) {
             // TM / TG
             // pares Excel File
-            listValues = paresTBExcelFile(channelId, cartId, eCommId, newFileName, listColumns, deleteDataKeyMap);
+            listValues = paresTBExcelFile(channelId, cartId, newFileName, listColumns, deleteDataKeyMap);
 
-        } else if (eCommId == 5 || eCommId == 7) {
+        } else if (cartType == CartType.JINGDONG || cartType == CartType.JINGDONGG || cartType == CartType.USJOI_JGJ || cartType == CartType.USJOI_JGY) {
             // JD / JG
             logger.info("saveProductFileData file:" + fileName);
 
@@ -197,7 +200,7 @@ public class DataServiceTB extends OpenApiBaseService {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private String saveTBExcelFile(String channelId, String cartId, int eCommId, String fileName, MultipartFile multipartFile) {
+    private String saveTBExcelFile(String channelId, CartType cartType, String fileName, MultipartFile multipartFile) {
         //定义上传路径
         String path = Properties.readValue(ExcelHeaderEnum.BI_TB_PRODUCT_IMPORT_PATH);
         String newPath = path + "/" + channelId + "/";
@@ -208,7 +211,7 @@ public class DataServiceTB extends OpenApiBaseService {
 
         String deviceStr = "0";
         // set Type
-        if (eCommId == 1 || eCommId == 4) {
+        if (cartType == CartType.TMALL || cartType == CartType.TMALLG) {
             // TM / TG
             try (InputStream a = multipartFile.getInputStream();
                  Workbook wb = WorkbookFactory.create(a)) {
@@ -218,12 +221,10 @@ public class DataServiceTB extends OpenApiBaseService {
             } catch (Exception e) {
                 logger.warn("Read Excel Error", e);
             }
-            //} else if (eCommId == 5 || eCommId == 7) {
-            // JD / JG
         }
 
         //重命名上传后的文件名
-        String newFileName = newPath + channelId + '_' + cartId + "_" + deviceStr + "_" + fileName;
+        String newFileName = newPath + channelId + '_' + cartType.getCartId() + "_" + deviceStr + "_" + fileName;
         // new Local File
         File localFile = new File(newFileName);
         // delete File
@@ -240,7 +241,7 @@ public class DataServiceTB extends OpenApiBaseService {
         return newFileName;
     }
 
-    private List<List<String>> paresTBExcelFile(String channelId, String cartId, int eCommId, String fileName, List<String> listColumns, Map<String, Object> deleteDataKeyMap) {
+    private List<List<String>> paresTBExcelFile(String channelId, String cartId, String fileName, List<String> listColumns, Map<String, Object> deleteDataKeyMap) {
         List<List<String>> models = new ArrayList<>();
 
         // add static column

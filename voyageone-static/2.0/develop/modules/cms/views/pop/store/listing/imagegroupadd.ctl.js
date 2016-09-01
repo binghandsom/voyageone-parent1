@@ -29,13 +29,33 @@ define([
         }
 
         PopImageGroupAddCtl.prototype = {
+            init: function () {
+                var self = this;
+
+                self.imageGroupInfo = self.parent.imageGroupInfo;
+
+                if (imageGroupInfo.sizeChartId > 0) {
+                    self.selectedSize = {
+                        cartId: self.platform,
+                        sizeChartName: imageGroupInfo.sizeChartName,
+                        sizeChartId: imageGroupInfo.sizeChartId
+                };
+
+                    self.chartType = "match";
+                    self.sizeChart = self.selectedSize;
+                }
+
+                self.getNoMatchList();
+            },
             getNoMatchList: function () {
                 /**当为尺码图时获取未匹配尺码*/
                 var self = this;
 
                 if (self.imageType == 2) {
-                    self.sizeChartService.getNoMatchList({cartId:self.platform}).then(function (res) {
+                    self.sizeChartService.getNoMatchList({cartId: self.platform}).then(function (res) {
                         self.noMathOpt = res.data;
+                        if(self.selectedSize)
+                            self.noMathOpt.push(self.selectedSize);
                     });
                 } else {
                     self.noMathOpt = null;
@@ -45,28 +65,24 @@ define([
                 var self = this,
                     listSizeChart;
 
-                if(self.sizeChart){
-                    if(_.isObject(self.sizeChart)){
+                if (self.sizeChart) {
+                    if (_.isObject(self.sizeChart)) {
                         listSizeChart = self.sizeChart;
-                    }else{
-                        listSizeChart = [{sizeChartName:self.sizeChart , sizeChartId: 0 }]
+                    } else {
+                        listSizeChart = [{sizeChartName: self.sizeChart, sizeChartId: 0}]
                     }
                 }
 
-                var upEntity = _.extend(listSizeChart,{
+                var upEntity = _.extend({
+                    "imageGroupId":self.imageGroupInfo?self.imageGroupInfo.imageGroupId:0,
                     "platform": self.platform,
                     "imageGroupName": self.imageGroupName,
                     "viewType": self.viewType,
                     "imageType": self.imageType,
                     "brandName": self.brandName,
                     "productType": self.productType,
-                    "sizeType" : self.sizeType
-                });
-
-                if(self.parent.from === 'detail'){
-                    self.$uibModalInstance.close(upEntity);
-                    return;
-                }
+                    "sizeType": self.sizeType
+                },listSizeChart);
 
                 self.imageGroupService.save(upEntity).then(function () {
                     self.notify.success('TXT_MSG_UPDATE_SUCCESS');

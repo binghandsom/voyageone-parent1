@@ -140,6 +140,11 @@ public class CmsSizeChartService extends BaseAppService {
         if (StringUtils.isEmpty(sizeChartName)) {
             throw new BusinessException("7000080");
         }
+        if(sizeChartService.EXISTSName(sizeChartName, sizeChartId))
+        {
+            //名称已经存在
+            throw new BusinessException("4000009");
+        }
         CmsBtSizeChartModel model = null;
         if (sizeChartId > 0) {
             model = sizeChartService.getCmsBtSizeChartModel(sizeChartId, channelId);
@@ -284,13 +289,15 @@ public class CmsSizeChartService extends BaseAppService {
         List<CmsBtSizeChartImageGroupModel> list = cmsBtSizeChartImageGroupService.getListByCmsBtSizeChartId(channelId, sizeChartId);
         List<Map<String, Object>> listImageGroup = new ArrayList<>();
         CmsBtImageGroupModel groupModel = null;
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map=null;
         for (CmsBtSizeChartImageGroupModel m : list) {
+            map = new HashMap<>();
             groupModel = imageGroupService.getImageGroupModel(String.valueOf(m.getCmsBtImageGroupId()));
             if(groupModel!=null) {
                 map.put("imageGroupName", groupModel.getImageGroupName());
                 map.put("imageGroupId", groupModel.getImageGroupId());
                 map.put("cartId", m.getCartId());
+                listImageGroup.add(map);
             }
         }
         return listImageGroup;

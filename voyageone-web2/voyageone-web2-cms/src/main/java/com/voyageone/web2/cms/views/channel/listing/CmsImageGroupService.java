@@ -246,6 +246,11 @@ public class CmsImageGroupService extends BaseAppService {
             // 请输入必填项目
             throw new BusinessException("7000080");
         }
+        if(imageGroupService.EXISTSName(channelId,ConvertUtil.toInt(cartId),imageGroupName, imageGroupId))
+        {
+            //名称已经存在
+            throw new BusinessException("4000009");
+        }
         CmsBtImageGroupModel model = null;
         if (imageGroupId > 0) {
             // 如果存在图片那么平台不能变更
