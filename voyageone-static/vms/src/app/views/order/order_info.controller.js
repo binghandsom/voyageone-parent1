@@ -12,8 +12,8 @@ define([
             this.popups = popups;
             this.shipmentScanPopupService = shipmentScanPopupService;
             this.barcodeOpts = {
-                width:2.5,
-                height:120,
+                width: 2.5,
+                height: 120,
                 displayValue: true,
                 fontSize: 24
             };
@@ -49,7 +49,7 @@ define([
                 }
             };
 
-            this.sortParamBeanForDownload  = {
+            this.sortParamBeanForDownload = {
                 columnName: "consolidation_order_id",
                 direction: "ASC"
             };
@@ -230,10 +230,12 @@ define([
         OrderInfoController.prototype.printLabel = function (index) {
             var self = this;
             var canvas = $('#label' + index).find('canvas').get(0);
-            var popupWin = window.open('', '_blank', 'width=300,height=300');
+            var popupWin = window.open('', '_blank', 'width=600,height=300');
             popupWin.document.open();
             var img = canvas.toDataURL("image/png");
-            popupWin.document.write('<div><strong style="font-size: 32px;">[Order' + ' No.] ' + self.data[index].consolidationOrderId+'</strong></div><hr><img src="'+img+'"/>');
+            popupWin.document.write('<div style="float: left;border: solid 1px black; padding: 2px;margin: 2px;"><div>' +
+                '<strong style="font-size: 32px;">[Order  No.] ' + self.data[index].consolidationOrderId + '</strong>' +
+                '</div><hr><img src="' + img + '"/></div>');
             popupWin.document.close();
             popupWin.print();
             popupWin.close();
