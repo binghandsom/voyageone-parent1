@@ -33,6 +33,10 @@ define([
                 saveInfo.brandNameList = dropdown.saveInfo.brandName;
                 saveInfo.productTypeList = dropdown.saveInfo.productType;
                 saveInfo.sizeTypeList = dropdown.saveInfo.sizeType;
+
+                sizeChartService.getListImageGroupBySizeChartId({sizeChartId:dropdown.saveInfo.sizeChartId}).then(function(res){
+                    console.log("res",res);
+                });
             }
         };
 

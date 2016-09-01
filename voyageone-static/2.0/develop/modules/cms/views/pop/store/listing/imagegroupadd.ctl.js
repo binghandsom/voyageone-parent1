@@ -38,7 +38,7 @@ define([
                         cartId: self.platform,
                         sizeChartName: imageGroupInfo.sizeChartName,
                         sizeChartId: imageGroupInfo.sizeChartId
-                    };
+                };
 
                     self.chartType = "match";
                     self.sizeChart = self.selectedSize;
@@ -72,7 +72,7 @@ define([
                     }
                 }
 
-                var upEntity = _.extend(listSizeChart, {
+                var upEntity = _.extend({
                     "platform": self.platform,
                     "imageGroupName": self.imageGroupName,
                     "viewType": self.viewType,
@@ -80,7 +80,7 @@ define([
                     "brandName": self.brandName,
                     "productType": self.productType,
                     "sizeType": self.sizeType
-                });
+                },listSizeChart);
 
                 self.imageGroupService.save(upEntity).then(function () {
                     self.notify.success('TXT_MSG_UPDATE_SUCCESS');
