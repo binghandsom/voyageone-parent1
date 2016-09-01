@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.asserts.Assert;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.BaseService;
@@ -262,9 +263,14 @@ public class PriceService extends BaseService {
         //ShippingType存在cms_mt_channel_config里
         CmsChannelConfigBean shippingTypeConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE, String.valueOf(cartId));
 
-        if (shippingTypeConfig == null) {
+        if (shippingTypeConfig == null)
+            // 去除平台, 只查渠道级别
             shippingTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE);
-        }
+
+        // 还是没有
+        if (shippingTypeConfig == null)
+            // 那就渠道取顶级, 查最低级配置
+            shippingTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(ChannelConfigEnums.Channel.NONE.getId(), CmsConstants.ChannelConfig.SHIPPING_TYPE);
 
         String shippingType;
 
