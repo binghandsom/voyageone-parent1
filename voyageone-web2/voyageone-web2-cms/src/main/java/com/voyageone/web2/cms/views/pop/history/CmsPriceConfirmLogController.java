@@ -34,8 +34,8 @@ public class CmsPriceConfirmLogController extends CmsController {
 
         String skuCode = (String) params.get("skuCode");
         String code = (String) params.get("code");
-        int cartId = (int) params.get("cartId");
-        String channelId = (String) params.get("channelId");
+        String cartId = (String) params.get("cartId");
+        String channelId = getUser().getSelChannelId();
         int pageNumber = (int) params.get("pageNumber");
         int limit = (int) params.get("limit");
 
