@@ -54,13 +54,12 @@
             <ul>
                 <li>Add [] around plain text.
                     <p><code>[TestName]</code> -> <code>TestName</code></p>
-                    <p><code>[YYYY-MM-DD]</code> -> <code>YYYY-MM-DD</code></p>
+                    <p><code>[YYYYMMDD_HHmmss]</code> -> <code>YYYYMMDD_HHmmss</code></p>
                 </li>
                 <li>
                     <p> We takes a string of tokens and replaces them with their corresponding values. </p>
-                    <p><code>YYYY-MM-DD</code> -> <code>2016-08-31</code></p>
-                    <p><code>YYYY-MM-DD HH:mm:ss</code> -> <code>2016-08-31 10:20:20</code></p>
-                    <p><code>[ShipmentTestName_]YYYY-MM-DD</code> -> <code>ShipmentTestName_2016-08-31</code></p>
+                    <p><code>YYYYMMDD_HHmmss</code> -> <code>2016-08-31 10:20:20</code></p>
+                    <p><code>[Shipment_]YYYYMMDD_HHmmss</code> -> <code>Shipment_20160831_102020</code></p>
                     <p><a ng-click="ctrl.ruleTableShow = !ctrl.ruleTableShow">More details...</a> </p>
                 </li>
             </ul>

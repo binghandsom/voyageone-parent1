@@ -60,7 +60,7 @@
                         <th class="v-middle td-1 text-center" translate="TXT_IMAGE"></th>
                         <th class="v-middle td-3 text-left" translate="TXT_NAME"></th>
                         <th class="v-middle td-3 text-left" translate="TXT_CATEGORY"></th>
-                        <th class="v-middle td-1 text-left" translate="TXT_SKU"></th>
+                        <th class="v-middle td-1-2-5 text-left" translate="TXT_SKU"></th>
                         <th class="v-middle td-1 text-left" translate="TXT_VO_PRICE"></th>
                         <th class="v-middle td-1 text-center" translate="TXT_SKU_NUMBER"></th>
                     </tr>
@@ -70,9 +70,9 @@
                         <td class="text-right v-middle" ng-click="feedInfo.collapse = !feedInfo.collapse"  ng-if="ctrl.showAll"><i ng-if="feedInfo.skus.length > 1" ng-class="{'fa fa-plus': feedInfo.collapse, 'fa fa-minus':!feedInfo.collapse}"></i>
                         </td>
                         <td class="v-middle text-center"><img class="thumb-md" ng-src="{{feedInfo.image}}" ng-click="ctrl.open(feedInfo.image)"></td>
-                        <td class="v-middle text-left" ng-click="feedInfo.collapse = !feedInfo.collapse">{{feedInfo.name}}</td>
-                        <td class="v-middle text-left" ng-click="feedInfo.collapse = !feedInfo.collapse">{{feedInfo.category}}</td>
-                        <td class="v-middle text-left" ng-click="feedInfo.collapse = !feedInfo.collapse">{{feedInfo.code}}</td>
+                        <td class="v-middle word-wrap text-left" ng-click="feedInfo.collapse = !feedInfo.collapse">{{feedInfo.name}}</td>
+                        <td class="v-middle word-wrap text-left" ng-click="feedInfo.collapse = !feedInfo.collapse">{{feedInfo.category}}</td>
+                        <td class="v-middle word-wrap text-left" ng-click="feedInfo.collapse = !feedInfo.collapse">{{feedInfo.code}}</td>
                         <td class="v-middle text-left" ng-click="feedInfo.collapse = !feedInfo.collapse" ng-if="feedInfo.minVoPrice == feedInfo.maxVoPrice">{{feedInfo.maxVoPrice | currency:'$':2}}</td>
                         <td class="v-middle text-left" ng-click="feedInfo.collapse = !feedInfo.collapse" ng-if="feedInfo.minVoPrice != feedInfo.maxVoPrice">{{feedInfo.minVoPrice | currency:'$':2}}~{{feedInfo.maxVoPrice | currency:'$':2}}</td>
                         <td class="v-middle text-center" ng-click="feedInfo.collapse = !feedInfo.collapse">{{feedInfo.skuNum}}</td>
@@ -82,7 +82,7 @@
                         <td class="v-middle text-center"></td>
                         <td class="v-middle"></td>
                         <td class="v-middle"></td>
-                        <td class="v-middle">{{skuInfo.sku}}</td>
+                        <td class="v-middle word-wrap">{{skuInfo.sku}}</td>
                         <td class="v-middle">{{skuInfo.voPrice | currency:'$':2}}</td>
                         <td class="v-middle text-center"></td>
                     </tr>
