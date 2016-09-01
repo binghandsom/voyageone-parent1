@@ -287,13 +287,13 @@ public class JdWareService extends JdBase {
                         switch (response.getCode()) {
                             case "11000003":
                                 // 11000003:参数太长
-                                errMsg += " 可能是该产品Sku属性中size的最大长度超过25位了，请设置小于25位的容量/尺码值";
+                                errMsg += " 可能是因为该Group下某些产品Sku属性中size的最大长度超过25位了，请设置小于25位的容量/尺码值";
                             case "11000012":
                                 // 11000012:参数包含非法字符
-                                errMsg += " 可能是因为尺寸或颜色中包含特殊字符，比如逗号等";
+                                errMsg += " 可能是因为该Group下某些产品尺寸或颜色中包含特殊字符，比如逗号等";
                             case "11000019":
                                 // 11000019:非法的参数，不允许或者不能识别
-                                errMsg += " 可能是该产品Sku属性中的容量/尺码没有设置";
+                                errMsg += " 可能是因为该Group下某些产品的Sku属性中的容量/尺码没有设置";
                             default:
                                 errMsg += "";
                         }
