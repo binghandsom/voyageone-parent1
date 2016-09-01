@@ -36,6 +36,7 @@ define([
                 self.sizeTypeList = data.sizeTypeList;
                 self.imageTypeList = data.imageTypeList;
 
+                self.imageGroupInfo = data.imageGroupInfo;
                 self.platform = data.imageGroupInfo.cartId + "";
                 self.cartId = data.imageGroupInfo.cartId + "";
                 self.brandName = data.imageGroupInfo.brandName;
@@ -63,37 +64,10 @@ define([
             var self = this;
 
             self.from = "detail";
-            self.popups.openImgGroupAdd(self).then(function (context) {
-                self.platform = context.platform;
-                self.imageGroupName = context.imageGroupName;
-                self.viewType = context.viewType;
-                self.imageType = context.imageType;
-                self.brandName = context.brandName;
-                self.productType = context.productType;
-                self.sizeType = context.sizeType;
+            self.popups.openImgGroupAdd(self).then(function () {
+                self.refresh();
             });
 
-        };
-
-        ImageGroupDetailController.prototype.save = function () {
-            var self = this;
-            self.imageGroupDetailService.save({
-                "imageGroupId": self.imageGroupId,
-                "platform": self.platform,
-                "brandName": self.brandName,
-                "productType": self.productType,
-                "sizeType": self.sizeType,
-                "imageGroupName": self.imageGroupName,
-                "imageType": self.imageType,
-                "viewType": self.viewType
-            }).then(function () {
-                self.notify.success('TXT_MSG_UPDATE_SUCCESS');
-                self.cartId = self.platform;
-            }, function (err) {
-                if (err.displayType == null) {
-                    self.alert('TXT_MSG_UPDATE_FAIL');
-                }
-            });
         };
 
         ImageGroupDetailController.prototype.refresh = function (originUrl) {
