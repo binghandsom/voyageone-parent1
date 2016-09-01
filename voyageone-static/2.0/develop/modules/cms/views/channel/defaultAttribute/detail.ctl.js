@@ -11,21 +11,63 @@ define([
 ], function (cms) {
     cms.controller('attributeDetailController', (function () {
 
-        function AttributeDetailController($routeParams, notify, popups, menuService, $productDetailService, platformMappingService) {
-
+        function AttributeDetailController($scope, $routeParams, alert, notify, popups, confirm, menuService,
+                                           $productDetailService, platformMappingService) {
             var self = this;
-            self.searchJson = $routeParams.upEntity ? $routeParams.upEntity.replace(/✓/g,"/") : null;
-            self.searchInfo = self.searchJson ? angular.fromJson(self.searchJson) : {};
 
+            self.platformMappingFrontId = $routeParams.upEntity;
             self.popups = popups;
             self.notify = notify;
             self.$productDetailService = $productDetailService;
             self.platformMappingService = platformMappingService;
+            self.menuService = menuService;
+            self.$scope = $scope;
+            self.alert = alert;
+            self.confirm = confirm;
+        }
+
+        AttributeDetailController.prototype.init = function () {
+
+            var self = this,
+                platformMappingFrontId = self.platformMappingFrontId;
+
+            // 没有就直接加载
+            if (!platformMappingFrontId) {
+                self.searchInfo = {};
+                self.loadCartListAndTryGet();
+                return;
+            }
+
+            // 否则, 需要去 local storage 里加载数据
+            // 如果没有, 需要去 session 里加载
+            // 如果有, 需要把数据转移到 session 中
+            // 如果最终都没有, 就直接尝试加载
+            var platformMapping, platformMappingJson = localStorage.getItem(platformMappingFrontId);
+
+            if (platformMappingJson) {
+                sessionStorage.setItem(platformMappingFrontId, platformMappingJson);
+                localStorage.removeItem(platformMappingFrontId);
+                platformMapping = angular.fromJson(platformMappingJson);
+            } else {
+                platformMappingJson = sessionStorage.getItem(platformMappingFrontId);
+                platformMapping = angular.fromJson(platformMappingJson);
+            }
+
+            self.searchInfo = platformMapping;
+
+            self.loadCartListAndTryGet();
+        };
+
+        AttributeDetailController.prototype.loadCartListAndTryGet = function () {
+
+            var self = this,
+                menuService = self.menuService;
 
             menuService.getPlatformType().then(function (resp) {
+                // 过滤并转换加载的数据, 以便不修改原始数据
                 self.platformTypes = _.map(resp, function (cart) {
                     return {name: cart.name, value: +cart.value};
-                }).filter(function(cart){
+                }).filter(function (cart) {
                     return cart.value != 0 && cart.value != 1
                 });
 
@@ -36,7 +78,45 @@ define([
 
                 self.tryGet();
             });
-        }
+        };
+
+        AttributeDetailController.prototype.tryGetCart = function () {
+            var self = this,
+                searchInfo = self.searchInfo;
+
+            if (!self.fields) {
+                self.tryGet();
+                return;
+            }
+
+            self.confirm('切换平台, 会清空您<strong>未保存</strong>的所有内容。确认要切换么?').then(function () {
+                if (searchInfo.categoryType == 1) {
+                    self.tryGet();
+                    return;
+                }
+                self.fields = null;
+                searchInfo.categoryPath = null;
+                searchInfo.categoryId = null;
+            }, function () {
+                searchInfo.cartId = self.lastCartId;
+            });
+        };
+
+        AttributeDetailController.prototype.tryGetCategory = function () {
+            var self = this,
+                searchInfo = self.searchInfo;
+
+            if (!self.fields) {
+                self.tryGet();
+                return;
+            }
+
+            self.confirm('切换类目, 会清空您<strong>未保存</strong>的所有内容。确认要切换么?').then(function () {
+                self.tryGet();
+            }, function () {
+                searchInfo.categoryType = self.lastCategoryType;
+            });
+        };
 
         AttributeDetailController.prototype.tryGet = function () {
 
@@ -55,6 +135,9 @@ define([
 
             self.categoryTitle = (self.searchInfo.categoryType == 1) ? "全类目" : self.searchInfo.categoryPath;
 
+            self.lastCartId = searchInfo.cartId;
+            self.lastCategoryType = searchInfo.categoryType;
+
             self.$get();
         };
 
@@ -63,18 +146,25 @@ define([
             var self = this,
                 platformMappingService = self.platformMappingService;
 
-            platformMappingService.get(self.searchInfo).then(function (res) {
-                self.modified = res.data.modified;
-                self.fields = res.data.schema;
+            platformMappingService.get(self.searchInfo).then(function (resp) {
+                var data = resp.data;
+                if (!data) {
+                    self.modified = null;
+                    self.fields = null;
+                    return;
+                }
+                self.modified = data.modified;
+                self.fields = data.schema;
             });
         };
 
         AttributeDetailController.prototype.openCategorySelector = function () {
 
             var self = this,
+                searchInfo = self.searchInfo,
                 $productDetailService = self.$productDetailService;
 
-            $productDetailService.getPlatformCategories({cartId:self.searchInfo.cartId}).then(function (resp) {
+            $productDetailService.getPlatformCategories({cartId: self.searchInfo.cartId}).then(function (resp) {
 
                 var categoryList = resp.data;
 
@@ -88,9 +178,24 @@ define([
                     categories: categoryList,
                     divType: ">"
                 }).then(function (context) {
-                    self.searchInfo.categoryPath = context.selected.catPath;
-                    self.searchInfo.categoryId = context.selected.catId;
-                    self.tryGet();
+
+                    var selected = context.selected;
+
+                    if (searchInfo.categoryPath === selected.catPath)
+                        return;
+
+                    if (!self.fields) {
+                        searchInfo.categoryPath = selected.catPath;
+                        searchInfo.categoryId = selected.catId;
+                        self.tryGet();
+                        return;
+                    }
+
+                    self.confirm('切换类目, 会清空您<strong>未保存</strong>的所有内容。确认要切换么?').then(function () {
+                        searchInfo.categoryPath = selected.catPath;
+                        searchInfo.categoryId = selected.catId;
+                        self.tryGet();
+                    });
                 });
             });
         };
@@ -114,7 +219,7 @@ define([
             });
         };
 
-        AttributeDetailController.prototype.close = function (){
+        AttributeDetailController.prototype.close = function () {
             window.opener.focus();
             window.close();
         };

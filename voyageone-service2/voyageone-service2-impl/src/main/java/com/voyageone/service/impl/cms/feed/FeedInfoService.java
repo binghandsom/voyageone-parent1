@@ -276,18 +276,12 @@ public class FeedInfoService extends BaseService {
         // 获取category
         if(searchValue.get("category") != null){
 
-//            List<String> categorys = (List<String>) searchValue.get("category");
-//            if (!categorys.isEmpty()) {
-//                List<String> orSearch = new ArrayList<>();
-//                Object[] newcategorys = categorys.stream().map(s -> "'/^" + s + "/'").collect(Collectors.toList()).toArray();
-//                result.append("{").append(MongoUtils.splicingValue("category", newcategorys,"$in"));
-//                result.append("},");
-//            }
-//
-            String category = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("category"));
-            if (category != null) {
-                result.append("{").append(MongoUtils.splicingValue("category", category));
-                result.append("},");
+            List<String> categorys = (List<String>) searchValue.get("category");
+
+            if (!categorys.isEmpty()) {
+                StringBuffer categoryQuery = new StringBuffer();
+                categorys.forEach(s -> categoryQuery.append("^" + s + "|"));
+                result.append("{\"category\":{$regex: \"" + categoryQuery.toString().substring(0, categoryQuery.length() -1) + "\"}},");
             }
         }
 

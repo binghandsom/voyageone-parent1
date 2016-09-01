@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
+import com.voyageone.service.impl.cms.ImageGroupService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -19,7 +20,8 @@ public class CmsImageGroupController extends CmsController {
 
     @Autowired
     private CmsImageGroupService cmsImageGroupService;
-
+@Autowired
+ImageGroupService imageGroupService;
     /**
      *  初始化
      *
@@ -73,7 +75,12 @@ public class CmsImageGroupController extends CmsController {
     @RequestMapping(CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP.DELETE_CHANNEL_IMAGE_GROUP)
     public AjaxResponse delete(@RequestBody Map<String, Object> param){
         param.put("userName", this.getUser().getUserName());
-        cmsImageGroupService.delete(param);
+        cmsImageGroupService.delete(param,this.getUser().getSelChannelId());
         return success(null);
+    }
+    @RequestMapping( CmsUrlConstants.CHANNEL.CHANNEL_IMAGE_GROUP.GetNoMatchSizeImageGroupList)
+    public AjaxResponse getNoMatchSizeImageGroupList() {
+        String channelId = this.getUser().getSelChannelId();
+        return success(imageGroupService.getNoMatchSizeImageGroupList(channelId));
     }
 }

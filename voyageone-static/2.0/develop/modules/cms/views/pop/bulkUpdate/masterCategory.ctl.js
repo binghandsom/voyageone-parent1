@@ -6,7 +6,7 @@
  * @Author piao
  * @Date 2016-7-7
  * @Description 添加了默认选中和选中背景
-                divtype："-"：为feed类目的分隔符， ">"：为主类目的分隔符
+ divtype："-"：为feed类目的分隔符， ">"：为主类目的分隔符
  */
 
 define(['cms',
@@ -92,16 +92,16 @@ define(['cms',
             },
             defaultCategroy: function () {
                 // 默认选中
-                if(!this.context.from)
+                if (!this.context.from)
                     return;
 
-                var self = this,str = this.context.from+"";
+                var self = this, str = this.context.from + "";
                 var arrayCat = str.split(self.divType);
                 angular.forEach(arrayCat, function (item1, index) {
                     _.filter(self.categoryPath[index].categories, function (item2) {
                         if (item2.catName == item1) {
                             self.categoryPath[index].selectedCat = item1;
-                            if (item2.children.length != 0){
+                            if (item2.children.length != 0) {
                                 self.categoryPath.push({level: index + 2, categories: item2.children});
                             }
                             else

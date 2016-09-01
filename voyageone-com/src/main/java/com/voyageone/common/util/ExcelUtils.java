@@ -63,9 +63,23 @@ public final class ExcelUtils {
      */
     public static String getString(Row row, int index, String numberFormat) {
         Cell cell = row.getCell(index);
+        return getString(cell, numberFormat);
+    }
 
+    /**
+     * 从 Cell，获取字符串值
+     * @return 字符串值
+     */
+    public static String getString(Cell cell) {
+        return getString(cell, null);
+    }
+    /**
+     * 从 Cell，获取字符串值
+     * @param numberFormat 对原值为数字时的，数字格式化格式
+     * @return 字符串值
+     */
+    public static String getString(Cell cell, String numberFormat) {
         if (cell == null) return null;
-
         switch (cell.getCellType()) {
             case Cell.CELL_TYPE_NUMERIC:
                 double val = cell.getNumericCellValue();
@@ -106,6 +120,8 @@ public final class ExcelUtils {
             cell.setCellValue((RichTextString) value);
         }else if(value instanceof Boolean){
             cell.setCellValue((Boolean) value);
+        }else if(value instanceof Integer){
+            cell.setCellValue((Integer) value);
         }
     }
 }

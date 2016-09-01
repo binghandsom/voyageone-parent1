@@ -39,6 +39,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.*;
+import com.voyageone.service.impl.cms.feed.CmsBtFeedImportSizeService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
@@ -50,6 +51,7 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
+import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.enums.MappingPropType;
 import com.voyageone.service.model.cms.enums.Operation;
@@ -137,6 +139,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     private PriceService priceService;
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
+    @Autowired
+    private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
 
     // 每个channel的feed->master导入最大件数
     private final static int FEED_IMPORT_MAX_500 = 500;
@@ -859,6 +863,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //
 //                    }
                     // delete desmon 2016/07/01 end
+                    insertCmsBtFeedImportSize(channelId, cmsProduct);
 
                     $info("feed->master导入:更新成功:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
 //                    $info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
@@ -903,6 +908,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     setSellerCats(feed, cmsProduct);
 
                     productService.createProduct(channelId, cmsProduct, getTaskName());
+
+                    insertCmsBtFeedImportSize(channelId, cmsProduct);
 
                     $info("feed->master导入:新增成功:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
 //                    $info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getCommon().getFields().getCode());
@@ -949,20 +956,25 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // 自动上新标志位 = 1:(自动上新) 并且 商品的状态是非lock，已Approved的场合
                 // Add desmond 2016/07/01 start
-                if ("1".equals(sxFlg) && "0".equals(cmsProduct.getLock())) {
-                    // 遍历主数据product里的sku,看看有没有
-                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
-                        // P0（主数据）平台跳过
-                        if (entry.getValue().getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
-                            continue;
-                        }
-
-                        // 该平台已经Approved过的才插入workload表
-                        if (CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(entry.getValue().getStatus())) {
-                            sxProductService.insertSxWorkLoad(channelId, cmsProduct.getCommon().getFields().getCode(), entry.getValue().getCartId(), getTaskName());
-                        }
-                    }
+                if ("1".equals(sxFlg)) {
+                    // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
+                    sxProductService.insertSxWorkLoad(cmsProduct, getTaskName());
                 }
+//                if ("1".equals(sxFlg) && !"1".equals(cmsProduct.getLock())) {
+//                    // 遍历主数据product里的sku,看看有没有
+//                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
+//                        // P0（主数据）平台跳过
+//                        if (entry.getValue().getCartId() < CmsConstants.ACTIVE_CARTID_MIN) {
+//                            continue;
+//                        }
+//
+//                        // 该平台已经Approved过的才插入workload表
+//                        if (CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(entry.getValue().getStatus())) {
+//                            sxProductService.insertSxWorkLoad(channelId, cmsProduct.getCommon().getFields().getCode(), entry.getValue().getCartId(), getTaskName());
+//                        }
+//                    }
+//                }
+
                 // Add desmond 2016/07/01 end
                 // jeff 2016/04 change end
 
@@ -1645,6 +1657,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 platformP0.setMainProductCode(common.getFields().getCode());
             } else {
                 platformP0.setMainProductCode(groupP0.getMainProductCode());
+
+                // 把主商品的几个状态复制过来 james 2016/08/29
+                copyAttributeFromMainProduct(feed.getChannelId(), common,groupP0.getMainProductCode());
             }
             platforms.put("P0", platformP0);
             // add desmond 2016/07/04 end
@@ -1745,9 +1760,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // cartId
                 platform.setCartId(Integer.parseInt(typeChannelBean.getValue()));
                 // 设定是否主商品
-                // 如果是聚美的话，那么就是一个Code对应一个Group
+                // 如果是聚美或者独立官网的话，那么就是一个Code对应一个Group
                 CmsBtProductGroupModel group = null;
-                if (!CartEnums.Cart.JM.getId().equals(typeChannelBean.getValue())) {
+                if (!CartEnums.Cart.JM.getId().equals(typeChannelBean.getValue())
+                            && !CartEnums.Cart.CN.getId().equals(typeChannelBean.getValue())) {
                     group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), typeChannelBean.getValue());
                 }
                 if (group == null) {
@@ -2510,8 +2526,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // group对象
                 CmsBtProductGroupModel group = null;
-                // 如果是聚美的话，那么就是一个Code对应一个Group
-                if (!CartEnums.Cart.JM.getId().equals(shop.getValue())) {
+                // 如果是聚美或者独立官网的时候，是一个Code对应一个Group,其他的平台都是几个Code对应一个Group
+                if (!CartEnums.Cart.JM.getId().equals(shop.getValue())
+                        && !CartEnums.Cart.CN.getId().equals(shop.getValue())) {
+                    // 取得product.model对应的group信息
                     group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
                 }
 
@@ -3133,7 +3151,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 设置platform.PXX.skus里面的价格
             try {
-                priceService.setPrice(cmsProduct);
+                priceService.setPrice(cmsProduct, false);
             } catch (IllegalPriceConfigException ie) {
                 // 渠道级别价格计算配置错误, 停止后面的feed->master导入，避免报几百条一样的错误信息
                 String errMsg = String.format("feed->master导入:共通配置异常终止:发现渠道级别的价格计算配置错误，后面的feed导入不做了，" +
@@ -3648,6 +3666,44 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         // delete by desmond 2016/07/08 end
 
 
+    }
+
+    private void insertCmsBtFeedImportSize(String channelId, CmsBtProductModel cmsProduct) {
+        CmsBtFeedImportSizeModel cmsBtFeedImportSizeModel = new CmsBtFeedImportSizeModel();
+        cmsBtFeedImportSizeModel.setChannelId(channelId);
+        cmsBtFeedImportSizeModel.setBrandName(cmsProduct.getCommon().getFields().getBrand());
+        cmsBtFeedImportSizeModel.setProductType(cmsProduct.getCommon().getFields().getProductType());
+        cmsBtFeedImportSizeModel.setSizeType(cmsProduct.getCommon().getFields().getSizeType());
+        cmsProduct.getCommon().getSkus().forEach(sku -> {
+            cmsBtFeedImportSizeModel.setOriginalSize(sku.getSize());
+            cmsBtFeedImportSizeService.saveCmsBtFeedImportSizeModel(cmsBtFeedImportSizeModel, getTaskName());
+        });
+    }
+
+    private void copyAttributeFromMainProduct(String channelId, CmsBtProductModel_Common common, String mainProductCode) {
+        CmsBtProductModel mainProduct = productService.getProductByCode(channelId, mainProductCode);
+        if(mainProduct != null){
+            common.getFields().setTranslateStatus(mainProduct.getCommon().getFields().getTranslateStatus());
+            common.getFields().setTranslateTime(mainProduct.getCommon().getFields().getTranslateTime());
+            common.getFields().setTranslator(mainProduct.getCommon().getFields().getTranslator());
+
+            common.getFields().setHsCodePrivate(mainProduct.getCommon().getFields().getHsCodePrivate());
+            common.getFields().setHsCodeSetter(mainProduct.getCommon().getFields().getHsCodeSetter());
+            common.getFields().setHsCodeStatus(mainProduct.getCommon().getFields().getHsCodeStatus());
+            common.getFields().setHsCodeSetTime(mainProduct.getCommon().getFields().getHsCodeSetTime());
+            common.getFields().setHsCodeCrop(mainProduct.getCommon().getFields().getHsCodeCrop());
+            common.getFields().setHsCodeCross(mainProduct.getCommon().getFields().getHsCodeCross());
+
+            common.getFields().setCategorySetTime(mainProduct.getCommon().getFields().getCategorySetTime());
+            common.getFields().setCategoryStatus(mainProduct.getCommon().getFields().getCategoryStatus());
+            common.getFields().setCategorySetter(mainProduct.getCommon().getFields().getCategorySetter());
+
+            common.getFields().setShortDesCn(mainProduct.getCommon().getFields().getShortDesCn());
+            common.getFields().setLongDesCn(mainProduct.getCommon().getFields().getLongDesCn());
+            common.getFields().setOriginalTitleCn(mainProduct.getCommon().getFields().getOriginalTitleCn());
+            common.getFields().setMaterialCn(mainProduct.getCommon().getFields().getMaterialCn());
+            common.getFields().setUsageCn(mainProduct.getCommon().getFields().getUsageCn());
+        }
     }
 
     /**

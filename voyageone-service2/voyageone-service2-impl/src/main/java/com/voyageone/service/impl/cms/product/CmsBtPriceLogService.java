@@ -24,8 +24,9 @@ import java.util.Map;
 
 /**
  * 不干别的就记录商品价格变动
- * Created by jonasvlag on 16/7/4.
+ * Created by jonas on 16/7/4.
  *
+ * @author jonas
  * @version 2.2.0
  * @since 2.2.0
  */

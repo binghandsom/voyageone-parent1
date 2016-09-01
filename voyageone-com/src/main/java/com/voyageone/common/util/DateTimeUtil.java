@@ -247,6 +247,11 @@ public final class DateTimeUtil {
      */
     public static final String DATE_TIME_FORMAT_10 = "yyMMdd";
     /**
+     * 缺省的日期时间显示格式：MMddyyyy
+     */
+    public static final String DATE_TIME_FORMAT_11 = "MM/dd/yyyy";
+
+    /**
      * 私有构造方法，禁止对该类进行实例化
      */
     private DateTimeUtil() {

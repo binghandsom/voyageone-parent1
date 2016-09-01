@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -13,10 +14,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.jumei.JumeiHtDealService;
-import com.voyageone.components.jumei.JumeiHtProductService;
-import com.voyageone.components.jumei.JumeiHtSkuService;
-import com.voyageone.components.jumei.JumeiHtSpuService;
+import com.voyageone.components.jumei.*;
 import com.voyageone.components.jumei.bean.*;
 import com.voyageone.components.jumei.reponse.*;
 import com.voyageone.components.jumei.request.*;
@@ -31,6 +29,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -129,6 +128,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    BusinessLogService businessLogService;
+
+    @Autowired
+    private JumeiHtMallService jumeiHtMallService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -324,6 +329,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         new BusinessException(errorMsg);
                     }
 
+                    // added by morse.lu 2016/08/30 start
+                    uploadMall(product, shop, expressionParser);
+                    // added by morse.lu 2016/08/30 end
                 }
                 //如果上新成功之后没取到jmHashId,spuno,skuno，或者JM中已经有该商品了，则调用一次聚美获取商品的API取得商品信息，补全本地库的内容
                 else if(jmApiErrorNoHashId ||
@@ -399,6 +407,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
                         productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
 
+                        // added by morse.lu 2016/08/30 start
+                        uploadMall(product, shop, expressionParser);
+                        // added by morse.lu 2016/08/30 end
                     }
                     else
                     {
@@ -670,6 +681,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 sxData.getPlatform().setModifier(getTaskName());
 
                 productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
+
+                // added by morse.lu 2016/08/30 start
+                uploadMall(product, shop, expressionParser);
+                // added by morse.lu 2016/08/30 end
             }
 
             //保存workload
@@ -682,6 +697,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             }
 
             saveWorkload(work, WORK_LOAD_SUCCESS);
+
+//            // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
+//            sxProductService.clearBusinessLog(sxData, getTaskName());
+
             $info("保存workload成功！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
 
         }
@@ -700,6 +719,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 sxData.setGroupId(work.getGroupId());
             }
 
+            if (e instanceof BusinessException && StringUtils.isEmpty(sxData.getErrorMessage())) {
+                sxData.setErrorMessage(e.getMessage());
+            }
+
             //保存错误log
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
@@ -714,6 +737,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             // 上新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
             productGroupService.updateUploadErrorStatus(sxData.getPlatform(), sxData.getErrorMessage());
 
+//            // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
+//            sxProductService.clearBusinessLog(sxData, getTaskName());
+
+            // 插入错误消息
             sxProductService.insertBusinessLog(sxData, getTaskName());
             //保存workload
             saveWorkload(work, WORK_LOAD_FAIL);
@@ -1292,5 +1319,102 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         String result = barcode + "vo" + channelId + skuCode;
 
         return result.substring(0, result.length() >= 50 ? 50 : result.length());
+    }
+
+    /**
+     * 上到聚美商城去
+     *
+     * @param product
+     * @param shopBean
+     */
+    public void uploadMall(CmsBtProductModel product, ShopBean shopBean, ExpressionParser expressionParser) throws Exception {
+        // 20160901 tom 这一版本暂时不发布, 等聚美正式发布API之后, 再把这段内容放开 START
+//        String mallId = product.getPlatform(CART_ID).getpPlatformMallId(); // 聚美Mall Id.
+//        if (StringUtils.isEmpty(mallId)) {
+//            // 新增
+//            StringBuffer sb = new StringBuffer("");
+//            mallId = jumeiHtMallService.addMall(shopBean, product.getPlatform(CART_ID).getpNumIId(), sb);
+//
+//            if (StringUtils.isEmpty(mallId) || sb.length() > 0) {
+//                // 上传失败
+//                throw new BusinessException("添加商品到聚美商城失败!" + sb.toString());
+//            } else {
+//                // 成功，回写mallId
+//                updateMallId(product, mallId);
+//            }
+//        } else {
+//            // 变更
+//            BaseMongoMap<String, Object> jmFields = product.getPlatform(CART_ID).getFields();
+//
+//            HtMallUpdateInfo mallUpdateInfo = new HtMallUpdateInfo();
+//            mallUpdateInfo.setJumeiMallId(mallId);
+//            HtMallUpdateInfo.UpdateDataInfo updateDataInfo = mallUpdateInfo.getUpdateDataInfo();
+//            updateDataInfo.setShippingSystemId(Integer.valueOf(Codes.getCode("JUMEI", product.getChannelId())));
+//            updateDataInfo.setProductLongName(jmFields.getStringAttribute("productLongName"));
+//            updateDataInfo.setProductMediumName(jmFields.getStringAttribute("productMediumName"));
+//            updateDataInfo.setProductShortName(jmFields.getStringAttribute("productShortName"));
+//            updateDataInfo.setBeforeDate(jmFields.getStringAttribute("beforeDate"));
+//            updateDataInfo.setSuitPeople(jmFields.getStringAttribute("suitPeople"));
+//            updateDataInfo.setSpecialExplain(jmFields.getStringAttribute("specialExplain"));
+//            updateDataInfo.setSearchMetaTextCustom(jmFields.getStringAttribute("searchMetaTextCustom"));
+//            updateDataInfo.setDescriptionProperties(getTemplate("聚美详情", expressionParser, shopBean));
+//            updateDataInfo.setDescriptionUsage(getTemplate("聚美使用方法", expressionParser, shopBean));
+//            updateDataInfo.setDescriptionImages(getTemplate("聚美实拍", expressionParser, shopBean));
+//
+//            StringBuffer sb = new StringBuffer("");
+//            boolean isSuccess = jumeiHtMallService.updateMall(shopBean, mallUpdateInfo, sb);
+//            if (!isSuccess) {
+//                // 上传失败
+//                throw new BusinessException("聚美商城的商品更新失败!" + sb.toString());
+//            }
+//        }
+//
+//        // 更新价格
+//        List<HtMallSkuPriceUpdateInfo> updateData = new ArrayList<>();
+//        List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+//        for (BaseMongoMap<String, Object> sku : skuList) {
+//            HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
+//            skuInfo.setJumeiSkuNo(sku.getStringAttribute("jmSkuNo"));
+//            skuInfo.setMarketPrice(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+//            skuInfo.setMallPrice(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+//            updateData.add(skuInfo);
+//        }
+//
+//        StringBuffer sb = new StringBuffer("");
+//        boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(shopBean, updateData, sb);
+//        if (!isSuccess) {
+//            // 价格更新失败throw出去
+//            throw new BusinessException("聚美商城的商品价格更新失败!" + sb.toString());
+//        }
+        // 20160901 tom 这一版本暂时不发布, 等聚美正式发布API之后, 再把这段内容放开 END
+    }
+
+    /**
+     * 回写Mall Id 到product表和group表
+     * @param product
+     * @param mallId 聚美Mall Id
+     */
+    private void updateMallId(CmsBtProductModel product, String mallId) {
+        String channelId = product.getChannelId();
+        String code = product.getCommon().getFields().getCode();
+
+        JongoUpdate updateProductQuery = new JongoUpdate();
+        updateProductQuery.setQuery("{\"common.fields.code\": #}");
+        updateProductQuery.setQueryParameters(code);
+
+        updateProductQuery.setUpdate("{$set:{\"platforms.P"+ CART_ID +".pPlatformMallId\": #}}");
+        updateProductQuery.setUpdateParameters(mallId);
+
+        cmsBtProductDao.updateFirst(updateProductQuery, channelId);
+
+
+        JongoUpdate updateGroupQuery = new JongoUpdate();
+        updateGroupQuery.setQuery("{\"cartId\": #, \"productCodes\": #}");
+        updateGroupQuery.setQueryParameters(CART_ID, code);
+
+        updateGroupQuery.setUpdate("{$set:{\"platformMallId\": #}}");
+        updateGroupQuery.setUpdateParameters(mallId);
+
+        cmsBtProductGroupDao.updateFirst(updateGroupQuery, channelId);
     }
 }

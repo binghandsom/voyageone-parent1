@@ -13,6 +13,7 @@ public class DefaultCustomRuleModules {
         customWordModules = new HashSet<>();
         customWordModules.add(new CustomWordModuleGetAllImages());
         customWordModules.add(new CustomWordModuleGetMainPropductImages());
+        customWordModules.add(new CustomWordModuleGetDescImage());
         customWordModules.add(new CustomWordModuleImageWithParam());
         customWordModules.add(new CustomWordModuleGetPaddingImageKey());
         customWordModules.add(new CustomWordModuleIf());

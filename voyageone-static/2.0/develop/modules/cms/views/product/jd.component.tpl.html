@@ -36,7 +36,7 @@
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;商品修改历史
                                             </a>
                                         </li>
-                                        <li ng-if="cartInfo.value!=27">
+                                        <li>
                                             <a href="javascript:void(0)" ng-click="openHistoryPutOnOff(vm.mastData.productCode,cartInfo.value)">
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;上下架历史
                                             </a>
@@ -302,11 +302,12 @@
                                         <th class="text-center">skuCode</th>
                                         <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
                                         <th class="text-center">size</th>
-                                        <th class="text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
+                                        <th class="text-center">platform size</th>
+                                        <th class="mfb-xxx text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
                                         <th class="text-center">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
                                         <th class="text-center">容量/尺码</th>
                                         <th class="text-center" ng-if="cartInfo.value == 27">规格</th>
-                                        <th class="text-center">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
+                                        <th class="mfb-xxx text-center">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
                                         <th class="text-center">{{"TXT_BAR_CODE"|translate}}</th>
                                     </tr>
                                 </thead>
@@ -322,7 +323,8 @@
                                         <td class="text-center v-middle">{{entity.skuCode}}</td>
                                         <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].qty}}</td>
                                         <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].size}}</td>
-                                        <td class="text-center v-middle">
+                                        <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].platformSize}}</td>
+                                        <td class="mfb-xxx text-center v-middle">
                                             <label class="col-sm-3 control-label vo_reqfield"></label>
                                             <input class="form-control ng-number" type="number" ng-model="entity.priceMsrp" scale="15,2" required>
                                         </td>
@@ -335,7 +337,7 @@
                                                 <option value="MS">中小样</option>
                                             </select>
                                         </td>
-                                        <td class="text-center v-middle">
+                                        <td class="mfb-xxx text-center v-middle">
                                             <label class="col-sm-3 control-label vo_reqfield"></label>
                                             <input class="form-control ng-number" type="number" ng-model="entity.priceSale" ng-disabled="productInfo.autoApprovePrice.configValue1 == '1'"  scale="15,2" required></td>
                                         <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].barcode}}</td>

@@ -2,7 +2,7 @@
  *@description 默认属性schema 产品shema简化版
  *              1.不解析multicomplex
  *              2.如有默认值，忽略掉
- *              3.存在依赖，直接洗disabled和required
+ *              3.存在依赖，只解析disabled和required
  */
 
 define([
@@ -1000,7 +1000,7 @@ define([
                                     });
 
                                     options.unshift(nullValueObj = {
-                                        displayName: '',
+                                        displayName: 'Select...',
                                         value: null
                                     });
 
@@ -1013,10 +1013,11 @@ define([
                                 // 最终保存到 $scope 上, 供页面绑定使用
                                 scope.$options = options;
 
-                                innerElement = angular.element('<select class="form-control">');
+                                innerElement = angular.element('<select class="form-control" chosen>');
                                 innerElement.attr('ng-options', 'option.value as option.displayName for option in $options');
                                 innerElement.attr('name', name);
                                 innerElement.attr('ng-model', 'field.value.value');
+                                innerElement.attr('width', '"100%"');
                                 innerElement.attr('title', field.name || field.id);
 
                                 bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');

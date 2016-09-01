@@ -5,13 +5,17 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtSizeChartImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModelSizeMap;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by gjl on 2016/5/6.
@@ -28,7 +32,8 @@ public class SizeChartService extends BaseService {
     private CmsBtSizeChartDao cmsBtSizeChartDao;
     @Autowired
     private MongoSequenceService commSequenceMongoService;
-
+    @Autowired
+    CmsBtSizeChartImageGroupService cmsBtSizeChartImageGroupService;
     /**
      * 按照填写的条件去数据库检索记录
      */
@@ -139,12 +144,22 @@ public class SizeChartService extends BaseService {
         //尺码关系一览检索
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
-
+    //逻辑删除选中的记录
+    public void delete(int sizeChartId, String userName, String channelId) {
+        CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId, channelId);
+        //更新者
+        cmsBtSizeChartModel.setModifier(userName);
+        //标志位
+        cmsBtSizeChartModel.setActive(0);
+        //尺码关系一览检索
+        cmsBtSizeChartDao.update(cmsBtSizeChartModel);
+    }
     /**
      * 根据尺码关系一览编辑的数据插入数据库
      */
-    public void insert(String channelId, String userName, String sizeChartName
-            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+    public CmsBtSizeChartModel insert(String channelId, String userName, String sizeChartName
+            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, long imageGroupId,
+                                              String imageGroupName) {
         //取得数据Model
         CmsBtSizeChartModel cmsBtSizeChartModel = new CmsBtSizeChartModel();
         //更新者
@@ -153,6 +168,8 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartModel.setCreater(userName);
         //店铺渠道
         cmsBtSizeChartModel.setChannelId(channelId);
+        cmsBtSizeChartModel.setImageGroupId(imageGroupId);
+        cmsBtSizeChartModel.setImageGroupName(imageGroupName);
         //尺码表自增键取得
         Long sizeChartId = commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_SIZE_CHART_ID);
         //尺码自增键
@@ -189,6 +206,7 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartModel.setActive(1);
         //根据尺码关系一览编辑的数据插入数据库
         cmsBtSizeChartDao.insert(cmsBtSizeChartModel);
+        return cmsBtSizeChartModel;
     }
 
     /**
@@ -234,7 +252,49 @@ public class SizeChartService extends BaseService {
         //跟据尺码关系一览编辑详情编辑的数据更新数据库
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
-
+    public void  Update(String channelId, String userName, int sizeChartId, String sizeChartName, String finishFlag
+            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, long imageGroupId,
+                        String imageGroupName) {
+        CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId, channelId);
+        //更新者
+        cmsBtSizeChartModel.setModifier(userName);
+        //店铺渠道
+        cmsBtSizeChartModel.setChannelId(channelId);
+        //尺码自增键
+        cmsBtSizeChartModel.setSizeChartId(sizeChartId);
+        //尺码名称
+        cmsBtSizeChartModel.setSizeChartName(sizeChartName);
+        //是否编辑
+        cmsBtSizeChartModel.setFinish(finishFlag);
+        cmsBtSizeChartModel.setImageGroupId(imageGroupId);
+        cmsBtSizeChartModel.setImageGroupName(imageGroupName);
+        //产品品牌
+        if (brandNameList.isEmpty()) {
+            List<String> lst = new ArrayList<>();
+            lst.add(VALUE_ALL);
+            cmsBtSizeChartModel.setBrandName(lst);
+        } else {
+            cmsBtSizeChartModel.setBrandName(brandNameList);
+        }
+        //产品类型
+        if (productTypeList.isEmpty()) {
+            List<String> lst = new ArrayList<>();
+            lst.add(VALUE_ALL);
+            cmsBtSizeChartModel.setProductType(lst);
+        } else {
+            cmsBtSizeChartModel.setProductType(productTypeList);
+        }
+        //产品性别
+        if (sizeTypeList.isEmpty()) {
+            List<String> lst = new ArrayList<>();
+            lst.add(VALUE_ALL);
+            cmsBtSizeChartModel.setSizeType(lst);
+        } else {
+            cmsBtSizeChartModel.setSizeType(sizeTypeList);
+        }
+        //跟据尺码关系一览编辑详情编辑的数据更新数据库
+        cmsBtSizeChartDao.update(cmsBtSizeChartModel);
+    }
     /**
      * 尺码关系一览编辑详情编辑画面(编辑尺码表)
      */
@@ -248,6 +308,30 @@ public class SizeChartService extends BaseService {
         //跟据尺码关系一览编辑详情编辑的数据更新数据库
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
+   //获取未匹配尺码表
+    public List<Map<String,Object>> getNoMatchList(String channelId) {
+        JongoQuery queryObject = new JongoQuery();
+        queryObject.setQuery("{\"channelId\":\"" + channelId + "\"}");
+        queryObject.setProjection("{'sizeChartId':1,'sizeChartName':1,'_id':0}");
+        List<CmsBtSizeChartModel> grpList = cmsBtSizeChartDao.select(queryObject);
+
+        HashSet<Integer> hsSizeChart = new HashSet<>();
+        List<CmsBtSizeChartImageGroupModel> listCmsBtSizeChartImageGroup = cmsBtSizeChartImageGroupService.getList(channelId);
+        listCmsBtSizeChartImageGroup.forEach((o) -> {
+            hsSizeChart.add(o.getCmsBtSizeChartId());
+        });
+        List<Map<String, Object>> list = new ArrayList<>();
+        grpList.forEach((o) -> {
+            if (!hsSizeChart.contains(o.getSizeChartId()))//未匹配
+            {
+                Map<String, Object> map = new HashedMap();
+                map.put("sizeChartId", o.getSizeChartId());
+                map.put("sizeChartName", o.getSizeChartName());
+                list.add(map);
+            }
+        });
+        return list;
+    }
 
     /**
      * 根据sizeChartId取得sizeChartInfo
@@ -256,5 +340,9 @@ public class SizeChartService extends BaseService {
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"sizeChartId\":" + sizeChartId + "},{\"channelId\":" + channelId + "},{\"active\":1}");
         return cmsBtSizeChartDao.selectOneWithQuery(queryObject);
+    }
+    public  void  update(CmsBtSizeChartModel model)
+    {
+        cmsBtSizeChartDao.update(model);
     }
 }

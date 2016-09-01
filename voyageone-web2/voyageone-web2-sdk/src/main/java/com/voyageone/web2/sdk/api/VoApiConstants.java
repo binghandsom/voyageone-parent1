@@ -8,16 +8,7 @@ package com.voyageone.web2.sdk.api;
  * @since 2.0.0
  */
 public class VoApiConstants {
-    /** TOP默认时间格式 **/
-//    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-//
-//    /** TOP Date默认时区 **/
-//    public static final String DATE_TIMEZONE = "GMT+8";
-//
-//    /** UTF-8字符集 **/
-//    public static final String CHARSET_UTF8 = "UTF-8";
-//
-//    /** GBK字符集 **/
+    /** GBK字符集 **/
     public static final String CHARSET_GBK = "GBK";
 
     /** TOP JSON 应格式 */
@@ -32,19 +23,6 @@ public class VoApiConstants {
 
     /** SDK版本号 */
     public static final String SDK_VERSION = "voyageone-web2-sdk-2.0.0";
-
-//    /** 响应编码 */
-//    public static final String ACCEPT_ENCODING = "Accept-Encoding";
-//    public static final String CONTENT_ENCODING = "Content-Encoding";
-//    public static final String CONTENT_ENCODING_GZIP = "gzip";
-
-//    /** 返回的错误码 */
-//    public static final String ERROR_RESPONSE = "error_response";
-//    public static final String ERROR_CODE = "code";
-//    public static final String ERROR_MSG = "msg";
-//    public static final String ERROR_SUB_CODE = "sub_code";
-//    public static final String ERROR_SUB_MSG = "sub_msg";
-
 
     public enum VoApiErrorCodeEnum {
         ERROR_CODE_70000("70000", "Unknow Error!"),
@@ -61,12 +39,15 @@ public class VoApiConstants {
         ERROR_CODE_70010("70010", "tag is not allowed to delete in use"),
 
         ERROR_CODE_70011("70011", "product has been update, not update!"),
+
+        ERROR_CODE_70091("70011", "accessToken is null"),
+        ERROR_CODE_70099("70099", "invalid token."),
         ;
 
         private final String errorCode;
         private final String errorMsg;
 
-        private VoApiErrorCodeEnum(String errorCode, String errorMsg) {
+        VoApiErrorCodeEnum(String errorCode, String errorMsg) {
             this.errorCode = errorCode;
             this.errorMsg = errorMsg;
         }

@@ -7,10 +7,11 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
     cms.controller("imageGroupController", (function () {
-        function ImageGroupController( imageGroupService, confirm, alert, notify) {
+        function ImageGroupController( imageGroupService, confirm, alert, notify,popups) {
             this.confirm = confirm;
             this.alert = alert;
             this.notify = notify;
+            this.popups = popups;
             this.platformList = [];
             this.imageTypeList = [];
             this.imageType = "";
@@ -77,20 +78,31 @@ define([
                     platform.show = false;
                 });
             },
-            delete: function (imageGroupId) {
-                var main = this;
-                main.confirm('TXT_MSG_DO_DELETE').then(function () {
-                    main.imageGroupService.delete({
-                        "imageGroupId" : imageGroupId
-                    }).then(function (res) {
-                        main.notify.success('TXT_MSG_DELETE_SUCCESS');
-                        main.search();
-                    }, function (err) {
+            delete: function (entity) {
+                var self = this,
+                    popups = self.popups,
+                    chart = false;
+
+                if(entity.sizeChartId)
+                    chart = true;
+
+                popups.openTemplateConfirm({
+                    content:"是否同时删除尺码表?",
+                    imageGroupId:entity.imageGroupId,
+                    sizeChartId:entity.sizeChartId,
+                    chart:chart,
+                    from:"image"
+                }).then(function(context){
+                    if(context === true){
+                        self.notify.success('TXT_MSG_DELETE_SUCCESS');
+                        self.search();
+                    }else{
                         if (err.displayType == null) {
-                            main.alert('TXT_MSG_DELETE_FAIL');
+                            self.alert('TXT_MSG_DELETE_FAIL');
                         }
-                    })
-                })
+                    }
+                });
+
             }
         };
 
