@@ -6,6 +6,7 @@ import com.voyageone.security.dao.ComLogDao;
 import com.voyageone.security.model.ComLogModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.MDC;
 import org.apache.log4j.spi.LoggingEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,13 +19,23 @@ import java.util.Map;
 public class DBAppender extends AppenderSkeleton {
     @Override
     protected void append(LoggingEvent loggingEvent)  {
-        String  msg = loggingEvent.getMessage().toString();
-        Map<String, Object> record = JacksonUtil.jsonToMap(msg);
-        ComLogModel model = new ComLogModel();
+//        String  msg = loggingEvent.getMessage().toString();
+//        Map<String, Object> record = JacksonUtil.jsonToMap(msg);
         try {
-            BeanUtils.populate(model,  record);
-            model.setRequest(JacksonUtil.bean2Json(record.get("request")));
-            model.setResponse(JacksonUtil.bean2Json(record.get("response")));
+            ComLogModel model = new ComLogModel();
+//            BeanUtils.populate(model,  record);
+//            model.setRequest(JacksonUtil.bean2Json(record.get("request")));
+//            model.setResponse(JacksonUtil.bean2Json(record.get("response")));
+
+
+            model.setApplication(loggingEvent.getMDC("application").toString());
+            model.setIp(loggingEvent.getMDC("ip").toString());
+            model.setUrl(loggingEvent.getMDC("url").toString());
+            model.setAction(loggingEvent.getMDC("action").toString());
+            model.setCreater(loggingEvent.getMDC("creater").toString());
+            model.setExecutionTime(Integer.valueOf(loggingEvent.getMDC("executionTime").toString()));
+            model.setRequest(JacksonUtil.bean2Json(loggingEvent.getMDC("request")));
+            model.setResponse(JacksonUtil.bean2Json(loggingEvent.getMDC("response")));
 
             ComLogDao comLogDao = SpringContext.getBean(ComLogDao.class);
             comLogDao.insert(model);
