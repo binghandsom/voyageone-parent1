@@ -13,7 +13,7 @@
                     <div class="col-md-8">
                         <input id="shipmentName" name="shipmentName" type="text" class="form-control"
                                ng-model="ctrl.shipment.shipmentName" required maxlength="30"
-                               ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3" autofocus>
+                               ng-disabled="ctrl.shipment.status != 1 && ctrl.shipment.status != 3" ng-autofocus="">
                     </div>
                 </div>
                 <div ng-class="{'form-group':true, 'has-error': !shipmentForm.shipmentStatus.$valid}">

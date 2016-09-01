@@ -40,7 +40,7 @@ public class VmsVendorSettingsController extends BaseController {
     @RequestMapping(SETTINGS.INIT)
     public AjaxResponse init() {
         Map<String, Object> result = new HashMap<>();
-        result.put("channelConfig", vmsChannelConfigService.getChannelConfigs(this.getUser()));
+        result.put("channelConfig", vmsChannelConfigService.getChannelConfig(this.getUser()));
         result.put("deliveryCompanyList", vmsShipmentService.getAllExpressCompanies());
         return success(result);
     }

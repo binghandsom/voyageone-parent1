@@ -1,11 +1,8 @@
 package com.voyageone.web2.vms.views.order;
 
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.JsonUtil;
-import com.voyageone.common.util.MapUtil;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.vms.bean.order.DownloadInfoBean;
 import com.voyageone.web2.vms.bean.order.OrderSearchInfoBean;
 import com.voyageone.service.bean.vms.order.PlatformSubOrderInfoBean;
 import com.voyageone.service.bean.vms.order.SubOrderInfoBean;
@@ -49,7 +46,7 @@ public class VmsOrderInfoController extends BaseController {
     @RequestMapping(ORDER.ORDER_INFO.INIT)
     public AjaxResponse init() {
         Map<String, Object> initialInfo = new HashMap<>();
-        initialInfo.put("channelConfig", vmsChannelConfigService.getChannelConfigs(this.getUser()));
+        initialInfo.put("channelConfig", vmsChannelConfigService.getChannelConfig(this.getUser()));
         initialInfo.put("orderStatusList", vmsOrderInfoService.getAllOrderStatusesList());
         initialInfo.put("shipmentStatusList", shipmentService.getAllStatus());
         initialInfo.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));

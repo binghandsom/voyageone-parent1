@@ -43,7 +43,7 @@ public class VmsShipmentDetailController extends BaseController {
         result.put("orderStatusList", vmsOrderInfoService.getAllOrderStatusesList());
         result.put("shipmentStatusList", vmsShipmentService.getAllStatus());
         result.put("expressCompanies", vmsShipmentService.getAllExpressCompanies());
-        result.put("channelConfigs", vmsChannelConfigService.getChannelConfigs(this.getUser()));
+        result.put("channelConfig", vmsChannelConfigService.getChannelConfig(this.getUser()));
         return success(result);
     }
 

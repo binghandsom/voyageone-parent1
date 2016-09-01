@@ -115,7 +115,7 @@ public class VmsShipmentService {
             put("channelId", user.getSelChannel().getId());
             put("status", VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.OPEN);
             if (STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU.equals(
-                    vmsChannelConfigService.getChannelConfigs(user).getVendorOperateType())) {
+                    vmsChannelConfigService.getChannelConfig(user).getVendorOperateType())) {
                 put("creater", user.getUserName());
             }
         }};
@@ -135,7 +135,7 @@ public class VmsShipmentService {
 
         // 对于ORDER级别的channel 要确认是否已有活动的shipment
         if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(
-                vmsChannelConfigService.getChannelConfigs(user).getVendorOperateType())
+                vmsChannelConfigService.getChannelConfig(user).getVendorOperateType())
                 && null != this.getCurrentShipment(user)) throw new BusinessException("8000022");
 
         VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel() {{
@@ -224,7 +224,7 @@ public class VmsShipmentService {
         if (this.shipmentIsEmpty(user, shipmentBean)) throw new BusinessException("8000032");
 
         // order级别的关闭
-        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(vmsChannelConfigService.getChannelConfigs(user)
+        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(vmsChannelConfigService.getChannelConfig(user)
                 .getVendorOperateType())) {
             shipmentBean.setChannelId(user.getSelChannelId());
 

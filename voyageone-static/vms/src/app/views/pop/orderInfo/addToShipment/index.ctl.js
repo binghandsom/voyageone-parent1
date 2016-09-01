@@ -18,10 +18,10 @@ define([
             this.finished = context.waitingSkuList.length == 0;
             this.printed = false;
             this.barcodeOpts = {
-                width:2.5,
-                height:120,
-                displayValue: true,
-                fontSize: 24
+                width: 32,
+                height: 1200,
+                displayValue: false,
+                fontSize: 96
             };
             setTimeout("angular.element(document.getElementsByName('barcodeInputBar')).focus()", 1500)
         }
@@ -109,10 +109,12 @@ define([
         AddToShipmentController.prototype.printLabel = function () {
             var self = this;
             var canvas = $('#label').find('canvas').get(0);
-            var popupWin = window.open('', '_blank', 'width=300,height=300');
+            var popupWin = window.open('', '_blank', 'width=600,height=300');
             popupWin.document.open();
             var img = canvas.toDataURL("image/png");
-            popupWin.document.write('<div><strong style="font-size: 32px;">[Order' + ' No.] ' + self.shipmentDetails.consolidationOrderId+'</strong></div><hr><img src="'+img+'"/>');
+            popupWin.document.write('<div style="float: left;border: solid 1px black;padding: 2px;margin: 2px;"><div>' +
+                '<strong style="font-size: 20px;">[Order  No.] ' + self.shipmentDetails.consolidationOrderId+'</strong></div>' +
+                '<hr><img width="300px" height="150px" src="'+img+'"/></div>');
             popupWin.document.close();
             popupWin.print();
             popupWin.close();
