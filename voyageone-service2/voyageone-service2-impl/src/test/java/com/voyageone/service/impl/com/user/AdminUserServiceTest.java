@@ -96,4 +96,19 @@ public class AdminUserServiceTest {
         adminUserService.forgetPass("admin");
 
     }
+
+    @Test
+    public void testRestPass() throws Exception {
+        adminUserService.restPass("0c357cc3f9454477944fc968f9ab36ec", "123456");
+
+    }
+
+    @Test
+    public void testGetUserByToken() throws Exception {
+
+       Map result = adminUserService.getUserByToken("0c357cc3f9454477944fc968f9ab36ec");
+        System.out.println(JacksonUtil.bean2Json(result));
+
+    }
+
 }

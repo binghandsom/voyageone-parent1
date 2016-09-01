@@ -276,6 +276,8 @@ public class AdminUserService extends BaseService {
 
         user.setActive(1);
         user.setPassword(pass);
+        user.setModifier(model.getUserAccount());
+        user.setModified(new Date());
         encryptPassword(user);
         comUserDao.update(user);
         comUserTokenDao.delete(model.getId());

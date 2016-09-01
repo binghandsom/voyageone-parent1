@@ -83,6 +83,8 @@
 			<value>
 				/core/** = anon
 				/admin/user/self/forgetPass = anon
+				/admin/user/self/editPass = anon
+				/admin/user/self/getUserByToken = anon
 			</value>
 		</property>
 	</bean>
