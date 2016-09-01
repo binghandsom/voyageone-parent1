@@ -72,6 +72,7 @@ public class AdminUserController extends AdminController {
         Preconditions.checkNotNull(bean.getRoleId());
 
         String username = getUser().getUserName();
+        bean.setPassword(DEFAULT_PASS);
         adminUserService.addUser(bean, username);
         return success(true);
     }

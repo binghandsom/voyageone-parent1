@@ -60,7 +60,7 @@ public class AdminRoleBean extends ComRoleModel {
             if ("ALL".equals(cId)) {
                 channelList.add(cId);
             } else {
-                channelList.add(Channels.getChannel(cId).getName());
+                channelList.add("("+ cId + ")" + Channels.getChannel(cId).getName());
             }
         }
 
@@ -80,7 +80,7 @@ public class AdminRoleBean extends ComRoleModel {
             if ("ALL".equals(sId)) {
                 storeList.add(sId);
             } else {
-                storeList.add(Stores.getStore(Long.valueOf(sId)).getStore_name());
+                storeList.add("("+ Stores.getStore(Long.valueOf(sId)).getOrder_channel_id() + ")" + Stores.getStore(Long.valueOf(sId)).getStore_name());
             }
         }
 
