@@ -19,24 +19,9 @@ public class CmsBtSizeChartModel extends BaseMongoModel {
     private List<CmsBtSizeChartModelSizeMap> sizeMap = new ArrayList<>();
     private int active;
 
-    public long getImageGroupId() {
-        return imageGroupId;
-    }
 
-    public void setImageGroupId(long imageGroupId) {
-        this.imageGroupId = imageGroupId;
-    }
 
-    public String getImageGroupName() {
-        return imageGroupName;
-    }
 
-    public void setImageGroupName(String imageGroupName) {
-        this.imageGroupName = imageGroupName;
-    }
-
-    long imageGroupId ;
-    String imageGroupName ;
     public String getChannelId() {
         return channelId;
     }

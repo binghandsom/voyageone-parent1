@@ -56,7 +56,7 @@ public class CmsSizeChartController extends CmsController {
         //创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         //逻辑删除选中的记录
-        cmsSizeChartService.sizeChartUpdate(channelId, param);
+        cmsSizeChartService.sizeChartDelete(channelId, param);
         //返回数据的类型
         return success(param);
     }
@@ -79,6 +79,6 @@ public class CmsSizeChartController extends CmsController {
     @RequestMapping(value = CmsUrlConstants.CHANNEL.LISTING.SIZE_CHART.GetNoMatchList)
     public AjaxResponse getNoMatchList() {
         String channelId = this.getUser().getSelChannelId();
-        return success(sizeChartService.getNoMatchList(channelId));
+        return success(sizeChartService.getNoMatchList(channelId,this.getLang()));
     }
 }

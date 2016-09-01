@@ -1,6 +1,9 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
@@ -158,8 +161,7 @@ public class SizeChartService extends BaseService {
      * 根据尺码关系一览编辑的数据插入数据库
      */
     public CmsBtSizeChartModel insert(String channelId, String userName, String sizeChartName
-            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, long imageGroupId,
-                                              String imageGroupName) {
+            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         //取得数据Model
         CmsBtSizeChartModel cmsBtSizeChartModel = new CmsBtSizeChartModel();
         //更新者
@@ -168,8 +170,6 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartModel.setCreater(userName);
         //店铺渠道
         cmsBtSizeChartModel.setChannelId(channelId);
-        cmsBtSizeChartModel.setImageGroupId(imageGroupId);
-        cmsBtSizeChartModel.setImageGroupName(imageGroupName);
         //尺码表自增键取得
         Long sizeChartId = commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_SIZE_CHART_ID);
         //尺码自增键
@@ -253,8 +253,7 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
     public void  Update(String channelId, String userName, int sizeChartId, String sizeChartName, String finishFlag
-            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, long imageGroupId,
-                        String imageGroupName) {
+            , List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
         CmsBtSizeChartModel cmsBtSizeChartModel = getCmsBtSizeChartModel(sizeChartId, channelId);
         //更新者
         cmsBtSizeChartModel.setModifier(userName);
@@ -266,8 +265,6 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartModel.setSizeChartName(sizeChartName);
         //是否编辑
         cmsBtSizeChartModel.setFinish(finishFlag);
-        cmsBtSizeChartModel.setImageGroupId(imageGroupId);
-        cmsBtSizeChartModel.setImageGroupName(imageGroupName);
         //产品品牌
         if (brandNameList.isEmpty()) {
             List<String> lst = new ArrayList<>();
@@ -309,28 +306,36 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
    //获取未匹配尺码表
-    public List<Map<String,Object>> getNoMatchList(String channelId) {
+    public Map<String, List<Map<String, Object>>> getNoMatchList(String channelId,String lang) {
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"channelId\":\"" + channelId + "\"}");
         queryObject.setProjection("{'sizeChartId':1,'sizeChartName':1,'_id':0}");
         List<CmsBtSizeChartModel> grpList = cmsBtSizeChartDao.select(queryObject);
 
-        HashSet<Integer> hsSizeChart = new HashSet<>();
+        HashSet<String> hsSizeChart = new HashSet<>();//所有平台尺码
         List<CmsBtSizeChartImageGroupModel> listCmsBtSizeChartImageGroup = cmsBtSizeChartImageGroupService.getList(channelId);
         listCmsBtSizeChartImageGroup.forEach((o) -> {
-            hsSizeChart.add(o.getCmsBtSizeChartId());
+            hsSizeChart.add(o.getCmsBtSizeChartId() + "" + o.getCartId());
         });
-        List<Map<String, Object>> list = new ArrayList<>();
+
+        List<TypeChannelBean> listCart =  TypeChannels.getTypeListSkuCarts(channelId, "A",lang); //TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, lang);
+        Map<String, List<Map<String, Object>>> mapResult = new HashedMap();
+        listCart.forEach(o -> {
+            mapResult.put(o.getName(), new ArrayList<Map<String, Object>>());
+        });
         grpList.forEach((o) -> {
-            if (!hsSizeChart.contains(o.getSizeChartId()))//未匹配
-            {
-                Map<String, Object> map = new HashedMap();
-                map.put("sizeChartId", o.getSizeChartId());
-                map.put("sizeChartName", o.getSizeChartName());
-                list.add(map);
+            for (TypeChannelBean cart : listCart) {
+                if (!hsSizeChart.contains(o.getSizeChartId() + "" + cart.getValue()))//未匹配
+                {
+                    Map<String, Object> map = new HashedMap();
+                    map.put("sizeChartId", o.getSizeChartId());
+                    map.put("sizeChartName", o.getSizeChartName());
+                    map.put("cartId", cart.getValue());
+                    mapResult.get(cart.getName()).add(map);
+                }
             }
         });
-        return list;
+        return mapResult;
     }
 
     /**

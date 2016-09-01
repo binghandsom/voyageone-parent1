@@ -41,28 +41,28 @@ public class CmsBtPriceConfirmLogService extends BaseService {
     }
 
     public void addConfirmed(String channelId, String code, CmsBtProductModel_Platform_Cart platformCart, String username) {
-        addCodeWithStatus(channelId, code, platformCart, username, STATUS_CONFIRMED);
+        int cartId = platformCart.getCartId();
+        for (BaseMongoMap<String, Object> skuModel: platformCart.getSkus())
+            addSkuWithStatus(channelId, cartId, code, skuModel, STATUS_CONFIRMED, username);
     }
 
-    public void addUnConfirmed(String channelId, String code, CmsBtProductModel_Platform_Cart platformCart, String username) {
-        addCodeWithStatus(channelId, code, platformCart, username, STATUS_UNCONFIRMED);
+    public void addUnConfirmed(String channelId, int cartId, String code, BaseMongoMap<String, Object> skuModel, String username) {
+        addSkuWithStatus(channelId, cartId, code, skuModel, STATUS_UNCONFIRMED, username);
     }
 
-    private void addCodeWithStatus(String channelId, String code, CmsBtProductModel_Platform_Cart platformCart, String username, int status) {
-        for (BaseMongoMap<String, Object> sku: platformCart.getSkus()) {
+    private void addSkuWithStatus(String channelId, int cartId, String code, BaseMongoMap<String, Object> skuModel, int status, String username) {
 
-            CmsBtPriceConfirmLogModel priceConfirmLogModel = new CmsBtPriceConfirmLogModel();
+        CmsBtPriceConfirmLogModel priceConfirmLogModel = new CmsBtPriceConfirmLogModel();
 
-            priceConfirmLogModel.setChannelId(channelId);
-            priceConfirmLogModel.setCartId(platformCart.getCartId());
-            priceConfirmLogModel.setCode(code);
+        priceConfirmLogModel.setChannelId(channelId);
+        priceConfirmLogModel.setCartId(cartId);
+        priceConfirmLogModel.setCode(code);
 
-            setSkuInfo(priceConfirmLogModel, sku);
+        setSkuInfo(priceConfirmLogModel, skuModel);
 
-            priceConfirmLogModel.setStatus(status);
+        priceConfirmLogModel.setStatus(status);
 
-            addByUser(priceConfirmLogModel, username);
-        }
+        addByUser(priceConfirmLogModel, username);
     }
 
     private boolean addByUser(CmsBtPriceConfirmLogModel priceConfirmLogModel, String username) {

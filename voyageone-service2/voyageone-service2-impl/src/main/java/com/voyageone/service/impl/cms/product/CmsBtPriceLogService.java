@@ -12,6 +12,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -37,13 +38,17 @@ public class CmsBtPriceLogService extends BaseService {
     private final CmsBtPriceLogDaoExt priceLogDaoExt;
     private final CmsBtProductDao productDao;
     private final MqSender sender;
+    private final CmsBtPriceConfirmLogService priceConfirmLogService;
 
     @Autowired
-    public CmsBtPriceLogService(CmsBtPriceLogDao priceLogDao, CmsBtPriceLogDaoExt priceLogDaoExt, CmsBtProductDao productDao, MqSender sender) {
+    public CmsBtPriceLogService(CmsBtPriceLogDao priceLogDao, CmsBtPriceLogDaoExt priceLogDaoExt,
+                                CmsBtProductDao productDao, MqSender sender,
+                                CmsBtPriceConfirmLogService priceConfirmLogService) {
         this.priceLogDao = priceLogDao;
         this.priceLogDaoExt = priceLogDaoExt;
         this.productDao = productDao;
         this.sender = sender;
+        this.priceConfirmLogService = priceConfirmLogService;
     }
 
     public List<CmsBtPriceLogModel> getList(String sku, String code, String cartId, String channelId) {
@@ -71,10 +76,21 @@ public class CmsBtPriceLogService extends BaseService {
         }
         int rs = priceLogDaoExt.insertCmsBtPriceLogList(paramList);
 
-        // 向Mq发送消息同步sku,code,group价格范围
-        for (CmsBtPriceLogModel newLog : paramList) {
+        for (CmsBtPriceLogModel newLog : paramList)
+            // 向Mq发送消息同步sku,code,group价格范围
             sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(newLog)));
+
+        // 先做完所有价格范围同步的请求后，再开始处理是否记录未确认价格的操作
+        for (CmsBtPriceLogModel newLog : paramList) {
+            String channelId = newLog.getChannelId();
+            int cartId = newLog.getCartId();
+            BaseMongoMap<String, Object> skuModel = getSku(newLog.getSku(), cartId, channelId);
+            Double confirmPrice = skuModel.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.confPriceRetail.name());
+            // 检查价格，是否需要记录未确认
+            if (!newLog.getRetailPrice().equals(confirmPrice))
+                priceConfirmLogService.addUnConfirmed(channelId, cartId, newLog.getCode(), skuModel, newLog.getCreater());
         }
+
         return rs;
     }
 
@@ -153,11 +169,15 @@ public class CmsBtPriceLogService extends BaseService {
             return;
 
         CmsBtPriceLogModel newLog = makeLog(sku, cartId, channelId, productModel, commonSku, cartSku, username, comment);
-        int rs = priceLogDao.insert(newLog);
-        $debug(String.format("价格变更历史 结果=%d sku=%s, channelid=%s, cartid=%d", rs, sku, channelId, cartId));
+        priceLogDao.insert(newLog);
 
         // 向Mq发送消息同步sku,code,group价格范围
         sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+
+        Double confirmPrice = cartSku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.confPriceRetail.name());
+
+        if (!newLog.getRetailPrice().equals(confirmPrice))
+            priceConfirmLogService.addUnConfirmed(channelId, cartId, newLog.getCode(), cartSku, newLog.getCreater());
     }
 
     private CmsBtPriceLogModel makeLog(String sku, Integer cartId, String channelId, CmsBtProductModel productModel, CmsBtProductModel_Sku commonSku, BaseMongoMap<String, Object> platformSku, String username, String comment) {
@@ -222,6 +242,30 @@ public class CmsBtPriceLogService extends BaseService {
 
     private Double tryGetPrice(Double fromPrice) {
         return fromPrice == null ? 0d : fromPrice;
+    }
+
+    /**
+     * db.getCollection('cms_bt_product_c010').find({"platforms.P23.skus.skuCode": "DMC015700"}, {"platforms.P23.skus.$": 1})
+     */
+    private BaseMongoMap<String, Object> getSku(String sku, int cartId, String channelId) {
+
+        // 理论上该方法获取数据时，都应该获取到数据
+        // 所以查询之后的获取，统统断言不检查 null
+
+        String query = String.format("{\"platforms.P%s.skus.skuCode\": #}", cartId);
+        String projection = String.format("{\"platforms.P%s.skus.$\": 1}", cartId);
+
+        List<CmsBtProductModel> productModelList = productDao.select(new JongoQuery()
+                .setQuery(query)
+                .setProjection(projection)
+                .addParameters(sku),
+                channelId);
+
+        CmsBtProductModel productModel = productModelList.get(0);
+
+        CmsBtProductModel_Platform_Cart platform_cart = productModel.getPlatform(cartId);
+
+        return platform_cart.getSkus().get(0);
     }
 
     private CmsBtProductModel getProduct(String sku, String channelId) {

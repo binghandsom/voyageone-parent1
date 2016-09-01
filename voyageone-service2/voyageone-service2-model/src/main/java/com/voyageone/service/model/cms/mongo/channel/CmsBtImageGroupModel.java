@@ -23,24 +23,6 @@ public class CmsBtImageGroupModel extends BaseMongoModel {
     private List<String> sizeType;
     private List<CmsBtImageGroupModel_Image> image;
     private Integer active;
-private int sizeChartId;
-    private String sizeChartName;
-
-    public int getSizeChartId() {
-        return sizeChartId;
-    }
-
-    public void setSizeChartId(int sizeChartId) {
-        this.sizeChartId = sizeChartId;
-    }
-
-    public String getSizeChartName() {
-        return sizeChartName;
-    }
-
-    public void setSizeChartName(String sizeChartName) {
-        this.sizeChartName = sizeChartName;
-    }
 
     public String getChannelId() {
         return channelId;
