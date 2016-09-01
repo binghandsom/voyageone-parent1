@@ -511,7 +511,7 @@ public class ImageGroupService extends BaseService {
         List<TypeChannelBean> listCart =  TypeChannels.getTypeListSkuCarts(channelId, "A",lang); //TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, lang);
         Map<String, List<Map<String, Object>>> mapResult = new HashedMap();
         listCart.forEach(o -> {
-            mapResult.put(o.getName(), new ArrayList<Map<String, Object>>());
+            mapResult.put(o.getValue(), new ArrayList<Map<String, Object>>());
         });
         grpList.forEach((o) -> {
             for (TypeChannelBean cart : listCart) {
@@ -521,7 +521,7 @@ public class ImageGroupService extends BaseService {
                     map.put("imageGroupId", o.getImageGroupId());
                     map.put("imageGroupName", o.getImageGroupName());
                     map.put("cartId", cart.getValue());
-                    mapResult.get(cart.getName()).add(map);
+                    mapResult.get(cart.getValue()).add(map);
                 }
             }
         });
