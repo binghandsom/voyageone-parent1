@@ -15,7 +15,8 @@
                                     ng-model="ctrl.sourceData.orderChannelId"
                                     name="orderChannelId" required
                                     ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList"
-                                    ng-disabled="ctrl.popType == '编辑'">
+                                    ng-disabled="ctrl.popType == '编辑'"
+                                    ng-change="ctrl.changeStore(ctrl.sourceData.orderChannelId)">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
@@ -121,7 +122,7 @@
                     <div class="form-group"><!-- 主仓库名 -->
                         <label class="col-sm-4 control-label">{{'TXT_MAIN_STORE_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.sourceData.parentStoreId"
+                            <select class="form-control" ng-model="ctrl.sourceData.parentStoreId" ng-disabled="!ctrl.sourceData.orderChannelId"
                                     ng-options="store.storeId as store.storeName for store in ctrl.storeAllList">
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>

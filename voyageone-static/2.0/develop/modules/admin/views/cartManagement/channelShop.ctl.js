@@ -35,10 +35,13 @@ define([
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
-                self.AdminCartService.getAllCart().then(function (res) {
+                self.search();
+            },
+            changeCartList:function(channel){
+                var self = this;
+                self.AdminCartService.getAllCart(channel).then(function (res) {
                     self.cartAllList = res.data;
                 });
-                self.search();
             },
             search: function (page) {
                 var self = this;

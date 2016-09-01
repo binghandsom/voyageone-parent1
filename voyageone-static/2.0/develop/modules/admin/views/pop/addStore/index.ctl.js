@@ -26,9 +26,13 @@ define([
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelList = res.data;
                 });
-                self.storeService.getAllStore().then(function (res) {
+            },
+            changeStore:function(value){
+              var self = this;
+                self.storeService.getAllStore(value).then(function (res) {
                     self.storeAllList = res.data;
                 });
+
             },
             cancel: function () {
                 this.$uibModalInstance.close();

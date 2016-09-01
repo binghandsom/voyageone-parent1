@@ -29,9 +29,13 @@ define([
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
-                self.AdminCartService.getAllCart().then(function (res) {
+            },
+            changeCartList:function(){
+                var self = this;
+                self.AdminCartService.getAllCart(self.sourceData.orderChannelId).then(function (res) {
                     self.cartAllList = res.data;
                 });
+
             },
             cancel: function () {
                 this.$uibModalInstance.close();

@@ -36,7 +36,7 @@ define([
         RoleManagementController.prototype = {
             init: function () {
                 var self = this;
-                self.storeService.getAllStore().then(function (res) {
+                self.storeService.getAllStore(null).then(function (res) {
                     self.storeList = res.data;
                 });
                 self.adminRoleService.getAllRoleType().then(function (res) {
