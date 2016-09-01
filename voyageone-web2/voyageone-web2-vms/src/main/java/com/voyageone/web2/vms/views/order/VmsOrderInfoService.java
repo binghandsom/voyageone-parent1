@@ -246,7 +246,7 @@ public class VmsOrderInfoService extends BaseService {
         titleRowCell2.setCellValue("OrderID");
         titleRowCell2.setCellStyle(titleRowCellStyle);
         // 动态属性
-        List<String> attributes = vmsChannelConfigService.getChannelConfigs(user).getAdditionalAttributes();
+        List<String> attributes = vmsChannelConfigService.getChannelConfig(user).getAdditionalAttributes();
         if (attributes != null && attributes.size() > 0) {
             for(int i = 1;i <= attributes.size();i++) {
                 Cell titleRowCellAttribute = titleRow.createCell(orderIdCellNumber + i);
