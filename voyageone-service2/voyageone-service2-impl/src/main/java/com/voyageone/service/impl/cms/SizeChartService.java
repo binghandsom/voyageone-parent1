@@ -306,7 +306,7 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
    //获取未匹配尺码表
-    public Map<String, List<Map<String, Object>>> getNoMatchList(String channelId,String lang) {
+    public  List<Map<String, Object>> getNoMatchList(String channelId,String cartId,String lang) {
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"channelId\":\"" + channelId + "\"}");
         queryObject.setProjection("{'sizeChartId':1,'sizeChartName':1,'_id':0}");
@@ -318,24 +318,19 @@ public class SizeChartService extends BaseService {
             hsSizeChart.add(o.getCmsBtSizeChartId() + "" + o.getCartId());
         });
 
-        List<TypeChannelBean> listCart =  TypeChannels.getTypeListSkuCarts(channelId, "A",lang); //TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, lang);
-        Map<String, List<Map<String, Object>>> mapResult = new HashedMap();
-        listCart.forEach(o -> {
-            mapResult.put(o.getName(), new ArrayList<Map<String, Object>>());
-        });
+        List<Map<String, Object>> resultList = new ArrayList<>();
         grpList.forEach((o) -> {
-            for (TypeChannelBean cart : listCart) {
-                if (!hsSizeChart.contains(o.getSizeChartId() + "" + cart.getValue()))//未匹配
-                {
-                    Map<String, Object> map = new HashedMap();
-                    map.put("sizeChartId", o.getSizeChartId());
-                    map.put("sizeChartName", o.getSizeChartName());
-                    map.put("cartId", cart.getValue());
-                    mapResult.get(cart.getName()).add(map);
-                }
+
+            if (!hsSizeChart.contains(o.getSizeChartId() + "" + cartId))//未匹配
+            {
+                Map<String, Object> map = new HashedMap();
+                map.put("sizeChartId", o.getSizeChartId());
+                map.put("sizeChartName", o.getSizeChartName());
+                map.put("cartId", cartId);
+                resultList.add(map);
             }
         });
-        return mapResult;
+        return resultList;
     }
 
     /**

@@ -60,11 +60,13 @@ public class ImageGroupService extends BaseService {
      * @param sizeTypeList    相关尺码列表
      */
     public CmsBtImageGroupModel save(String channelId, String userName, String cartId, String imageGroupName, String imageType, String viewType,
-                     List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+                     List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList,int sizeChartId,String sizeChartName) {
         CmsBtImageGroupModel model = new CmsBtImageGroupModel();
         model.setChannelId(channelId);
         model.setCreater(userName);
         model.setModifier(userName);
+        model.setSizeChartId(sizeChartId);
+        model.setSizeChartName(sizeChartName);
         if(cartId!=null) {
             model.setCartId(Integer.parseInt(cartId));
         }
@@ -142,7 +144,7 @@ public class ImageGroupService extends BaseService {
      * @param sizeTypeList    相关尺码列表
      */
     public void update(String userName, String imageGroupId, String cartId, String imageGroupName, String imageType, String viewType,
-                       List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+                       List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList,int sizeChartId,String sizeChartName) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
             model.setModifier(userName);
@@ -150,6 +152,8 @@ public class ImageGroupService extends BaseService {
             model.setImageGroupName(imageGroupName);
             model.setImageType(Integer.parseInt(imageType));
             model.setViewType(Integer.parseInt(viewType));
+            model.setSizeChartId(sizeChartId);
+            model.setSizeChartName(sizeChartName);
             if (brandNameList.isEmpty()) {
                 List<String> lst = new ArrayList<>();
                 lst.add("All");
