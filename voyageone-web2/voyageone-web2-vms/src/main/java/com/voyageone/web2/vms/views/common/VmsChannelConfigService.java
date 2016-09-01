@@ -34,7 +34,7 @@ public class VmsChannelConfigService {
      * @param user 当前用户
      * @return 当前用户所选择channel的配置
      */
-    public VmsChannelSettingBean getChannelConfigs(UserSessionBean user) {
+    public VmsChannelSettingBean getChannelConfig(UserSessionBean user) {
 
         VmsChannelConfigBean vendorOperateType = VmsChannelConfigs.getConfigBean(user.getSelChannelId(),
                 VmsConstants.ChannelConfig.VENDOR_OPERATE_TYPE, VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
