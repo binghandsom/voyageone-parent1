@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtPriceConfirmLogDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPriceConfirmLogModel" />
     <sql id="Base_Column_List" >
-        `id`, `sku_code`, `status`, `floating_rate`, `current_retail_price`, `current_confirm_price`, 
-        `created`, `creater`, `modified`, `modifier`
+        `id`, `channel_id`, `cart_id`, `code`, `sku_code`, `status`, `floating_rate`, `current_retail_price`, 
+        `current_confirm_price`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -17,6 +17,15 @@
     <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtPriceConfirmLogModel" >
         update cms_bt_price_confirm_log
         <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="code != null" >
+                `code` = #{code,jdbcType=VARCHAR},
+            </if>
             <if test="skuCode != null" >
                 `sku_code` = #{skuCode,jdbcType=VARCHAR},
             </if>
@@ -61,6 +70,15 @@
         <include refid="Base_Column_List" />
         from cms_bt_price_confirm_log
         <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
             <if test="skuCode != null" >
                 and `sku_code` = #{skuCode,jdbcType=VARCHAR}
             </if>
@@ -97,6 +115,15 @@
         <include refid="Base_Column_List" />
         from cms_bt_price_confirm_log
         <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
             <if test="skuCode != null" >
                 and `sku_code` = #{skuCode,jdbcType=VARCHAR}
             </if>
@@ -130,6 +157,15 @@
     <select id="selectCount" resultType="java.lang.Integer" >
         select count(*) from cms_bt_price_confirm_log
         <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
             <if test="skuCode != null" >
                 and `sku_code` = #{skuCode,jdbcType=VARCHAR}
             </if>
@@ -163,6 +199,15 @@
     <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtPriceConfirmLogModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_bt_price_confirm_log
         <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="cartId != null" >
+                `cart_id`,
+            </if>
+            <if test="code != null" >
+                `code`,
+            </if>
             <if test="skuCode != null" >
                 `sku_code`,
             </if>
@@ -191,6 +236,15 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="code != null" >
+                #{code,jdbcType=VARCHAR},
+            </if>
             <if test="skuCode != null" >
                 #{skuCode,jdbcType=VARCHAR},
             </if>

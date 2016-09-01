@@ -17,6 +17,6 @@ public class ImageGroupServiceTest {
     @Test
     public  void  testGetNoMatchSizeImageGroupList()
     {
-        List<Map<String,Object>> list= service.getNoMatchSizeImageGroupList("010");
+        Map<String,List<Map<String,Object>>> list= service.getNoMatchSizeImageGroupList("010","en");
     }
 }

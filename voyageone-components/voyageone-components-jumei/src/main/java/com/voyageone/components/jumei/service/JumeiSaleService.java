@@ -99,7 +99,7 @@ public class JumeiSaleService extends JmBase {
             if (prodInfos == null || prodInfos.isEmpty()) {
                 return null;
             }
-            List<String> numIIdList = prodInfos.stream().map(tmItem -> (String) tmItem.get("jumei_product_id")).collect(Collectors.toList());
+            List<String> numIIdList = prodInfos.stream().map(tmItem -> (String) tmItem.get("jumei_mall_id")).collect(Collectors.toList());
             return numIIdList;
         } catch (Exception e) {
             logger.error("调用API时发生异常! ", e);

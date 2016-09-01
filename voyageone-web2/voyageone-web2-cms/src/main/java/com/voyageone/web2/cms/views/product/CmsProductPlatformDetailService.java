@@ -182,7 +182,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);
         if (platformCart != null) {
-
+            if(platformCart.getFields() == null) platformCart.setFields(new BaseMongoMap<>());
             platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language, catPath));
             platformCart.setpCatId(catId);
             // platform 品牌名
@@ -200,6 +200,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             }
         } else {
             platformCart = new CmsBtProductModel_Platform_Cart();
+            if(platformCart.getFields() == null) platformCart.setFields(new BaseMongoMap<>());
             platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language, catPath));
 
             Map<String, Object> parm = new HashMap<>();
@@ -388,7 +389,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
 
         platform.setpCatId(mainPlatform.getpCatId());
         platform.setpCatPath(mainPlatform.getpCatPath());
-
+        if(platform.getFields() == null) platform.setFields(new BaseMongoMap<>());
         mainPlatform.getFields().forEach((s, o) -> {
             if (platform.getFields().containsKey(s)) {
                 if (StringUtils.isEmpty(platform.getFields().get(s).toString())) {
