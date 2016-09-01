@@ -70,8 +70,6 @@ define([
                     listSizeChart:listSizeChart
                 };
 
-                console.log(upEntity);
-
                 if(self.parent.from === 'detail'){
                     self.$uibModalInstance.close(upEntity);
                     return;
