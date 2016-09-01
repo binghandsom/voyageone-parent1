@@ -27,10 +27,8 @@ import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
-import com.voyageone.service.impl.cms.CmsMtPlatformSkusService;
-import com.voyageone.service.impl.cms.DictService;
-import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.cms.PlatformProductUploadService;
+import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
+import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -132,6 +130,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
     private ProductService productService;
     @Autowired
     private ProductGroupService productGroupService;
+    @Autowired
+    private CmsBtPlatformActiveLogDao cmsBtPlatformActiveLogDao;
+    @Autowired
+    private MongoSequenceService sequenceService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -609,7 +611,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             String errMsg = String.format("京东单个商品新增或更新信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
                     channelId, cartId, groupId, jdWareId);
             $error(errMsg);
-            ex.printStackTrace();
+
             if (sxData == null) {
                 // 回写详细错误信息表(cms_bt_business_log)用
                 sxData = new SxData();
@@ -623,6 +625,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 // nullpoint错误的处理
                 if(StringUtils.isNullOrBlank2(ex.getMessage())) {
                     sxData.setErrorMessage(shopProp.getShop_name() + "上新时出现不可预知的错误，请跟管理员联系. " + ex.getStackTrace()[0].toString());
+                    ex.printStackTrace();
                 } else {
                     sxData.setErrorMessage(shopProp.getShop_name() + " " +ex.getMessage());
                 }
@@ -2009,7 +2012,57 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             updateListingResult = jdSaleService.doWareUpdateDelisting(shop, wareId, updateFlg);
         }
 
+        // 插入mongoDB上下架履历表cms_bt_platform_active_log_cXXX
+        insertPlatformActiveLog(sxData, wareId, updateListingResult);
+
         return updateListingResult;
+    }
+
+    /**
+     * 记录商品上架/下架处理履历表cms_bt_platform_active_log_cXXX
+     *
+     * @param sxData SxData 上新数据
+     * @param wareId long 商品id
+     * @param updateListingResult boolean 上下架是否成功
+     */
+    public void insertPlatformActiveLog(SxData sxData, long wareId, boolean updateListingResult) {
+        CmsBtPlatformActiveLogModel platformActiveLogModel = new CmsBtPlatformActiveLogModel();
+
+        platformActiveLogModel.setChannelId(sxData.getChannelId());
+        platformActiveLogModel.setGroupId(sxData.getGroupId());
+        platformActiveLogModel.setCartId(sxData.getCartId());
+        platformActiveLogModel.setNumIId(Long.toString(wareId));
+        platformActiveLogModel.setProdCode(sxData.getMainProduct().getCommon().getFields().getCode());
+        platformActiveLogModel.setResult(updateListingResult ? "1" : "2"); // 1:上/下架成功 2:上/下架失败 3:不满足上下架条件
+        String strComment = "";
+        String strFailComment = "";
+        String platformStatus = "";
+        // platformActive平台上新状态类型(ToOnSale/ToInStock)
+        if (CmsConstants.PlatformActive.ToInStock.equals(sxData.getPlatform().getPlatformActive())) {
+            strComment = "下架处理";
+            strFailComment = "调用京东下架API失败";
+            platformStatus = CmsConstants.PlatformStatus.InStock.name();
+        } else if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
+            strComment = "上架处理";
+            strFailComment = "调用京东上架API失败";
+            platformStatus = CmsConstants.PlatformStatus.OnSale.name();
+        }
+        if (!updateListingResult) {
+            // 上下架失败的时候，设为老的状态
+            platformStatus = sxData.getPlatform().getPlatformStatus() != null ?
+                    sxData.getPlatform().getPlatformStatus().name() : "";
+        }
+        platformActiveLogModel.setComment("京东上新结束之后商品" + strComment);
+        platformActiveLogModel.setFailedComment(updateListingResult ? "" : strFailComment);
+        platformActiveLogModel.setPlatformStatus(platformStatus);
+        platformActiveLogModel.setActiveStatus(sxData.getPlatform().getPlatformActive().name());
+        platformActiveLogModel.setMainProdCode(sxData.getMainProduct().getCommon().getFields().getCode());
+        long batchNo = sequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID);
+        platformActiveLogModel.setBatchNo(batchNo);
+        platformActiveLogModel.setCreater(getTaskName());
+        platformActiveLogModel.setModifier(getTaskName());
+
+        cmsBtPlatformActiveLogDao.insert(platformActiveLogModel);
     }
 
     /**
