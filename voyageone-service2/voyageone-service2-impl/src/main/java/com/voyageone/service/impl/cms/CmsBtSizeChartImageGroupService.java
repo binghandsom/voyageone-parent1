@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.dao.cms.CmsBtSizeChartImageGroupDao;
+import com.voyageone.service.daoext.cms.CmsBtSizeChartImageGroupDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtSizeChartImageGroupModel;
 import org.apache.commons.collections.map.HashedMap;
@@ -18,6 +19,8 @@ import java.util.Map;
 public class CmsBtSizeChartImageGroupService extends BaseService {
     @Autowired
     CmsBtSizeChartImageGroupDao dao;
+    @Autowired
+    CmsBtSizeChartImageGroupDaoExt daoExt;
 
     public List<CmsBtSizeChartImageGroupModel> getList(String channelId) {
         Map<String, Object> map = new HashedMap();
@@ -47,11 +50,10 @@ public class CmsBtSizeChartImageGroupService extends BaseService {
             dao.insert(model);
         }
     }
-
-    public void delete(String channelId, int SizeChartId, long cmsBtImageGroupId) {
-        CmsBtSizeChartImageGroupModel model = get(channelId, SizeChartId, cmsBtImageGroupId);
-        if (model != null) {
-            dao.delete(model.getId());
-        }
+    public int deleteByCmsBtSizeChartId(String channelId,int cmsBtSizeChartId) {
+        return daoExt.deleteByCmsBtSizeChartId(channelId,cmsBtSizeChartId);
+    }
+    public int deleteByCmsBtImageGroupId(String channelId,long cmsBtImageGroupId) {
+        return daoExt.deleteByCmsBtImageGroupId(channelId,cmsBtImageGroupId);
     }
 }

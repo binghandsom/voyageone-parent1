@@ -1,6 +1,9 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
@@ -309,28 +312,36 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartDao.update(cmsBtSizeChartModel);
     }
    //获取未匹配尺码表
-    public List<Map<String,Object>> getNoMatchList(String channelId) {
+    public Map<String, List<Map<String, Object>>> getNoMatchList(String channelId,String lang) {
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"channelId\":\"" + channelId + "\"}");
         queryObject.setProjection("{'sizeChartId':1,'sizeChartName':1,'_id':0}");
         List<CmsBtSizeChartModel> grpList = cmsBtSizeChartDao.select(queryObject);
 
-        HashSet<Integer> hsSizeChart = new HashSet<>();
+        HashSet<String> hsSizeChart = new HashSet<>();//所有平台尺码
         List<CmsBtSizeChartImageGroupModel> listCmsBtSizeChartImageGroup = cmsBtSizeChartImageGroupService.getList(channelId);
         listCmsBtSizeChartImageGroup.forEach((o) -> {
-            hsSizeChart.add(o.getCmsBtSizeChartId());
+            hsSizeChart.add(o.getCmsBtSizeChartId() + "" + o.getCartId());
         });
-        List<Map<String, Object>> list = new ArrayList<>();
+
+        List<TypeChannelBean> listCart =  TypeChannels.getTypeListSkuCarts(channelId, "A",lang); //TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, lang);
+        Map<String, List<Map<String, Object>>> mapResult = new HashedMap();
+        listCart.forEach(o -> {
+            mapResult.put(o.getName(), new ArrayList<Map<String, Object>>());
+        });
         grpList.forEach((o) -> {
-            if (!hsSizeChart.contains(o.getSizeChartId()))//未匹配
-            {
-                Map<String, Object> map = new HashedMap();
-                map.put("sizeChartId", o.getSizeChartId());
-                map.put("sizeChartName", o.getSizeChartName());
-                list.add(map);
+            for (TypeChannelBean cart : listCart) {
+                if (!hsSizeChart.contains(o.getSizeChartId() + "" + cart.getValue()))//未匹配
+                {
+                    Map<String, Object> map = new HashedMap();
+                    map.put("sizeChartId", o.getSizeChartId());
+                    map.put("sizeChartName", o.getSizeChartName());
+                    map.put("cartId", cart.getValue());
+                    mapResult.get(cart.getName()).add(map);
+                }
             }
         });
-        return list;
+        return mapResult;
     }
 
     /**

@@ -102,22 +102,15 @@ public class CmsSizeChartService extends BaseAppService {
      * @param param
      * @return data
      */
-    public void sizeChartUpdate(String channelId,Map param) {
+    public void sizeChartDelete(String channelId,Map param) {
         //用户名称
-        String userName =param.get("userName").toString();
+        String userName = param.get("userName").toString();
         //取得自增键
-        long imageGroupId = ConvertUtil.toLong(param.get("imageGroupId"));
         int sizeChartId = ConvertUtil.toInt(param.get("sizeChartId"));
-        boolean   isDelImageGroup = ConvertUtil.toBoolean(param.get("isDelImageGroup"));
-
-        if (imageGroupId > 0) {
-            cmsBtSizeChartImageGroupService.delete(channelId, sizeChartId, imageGroupId);
-            if (isDelImageGroup) {
-                imageGroupService.logicDelete(String.valueOf(imageGroupId), userName);
-            }
-        }
         //逻辑删除选中的记录
-        sizeChartService.sizeChartUpdate(sizeChartId,userName,channelId);
+        sizeChartService.sizeChartUpdate(sizeChartId, userName, channelId);
+        //删除尺码表组图关系
+        cmsBtSizeChartImageGroupService.deleteByCmsBtSizeChartId(channelId, sizeChartId);
     }
 
     /**
@@ -157,7 +150,7 @@ public class CmsSizeChartService extends BaseAppService {
               model = sizeChartService.getCmsBtSizeChartModel(sizeChartId, channelId);
               if (model.getImageGroupId() != imageGroupId && model.getImageGroupId() > 0) {
                   //删除尺码表 图片组关系表
-                  cmsBtSizeChartImageGroupService.delete(channelId, sizeChartId, model.getImageGroupId());
+                  cmsBtSizeChartImageGroupService.deleteByCmsBtSizeChartId(channelId, sizeChartId);
               }
               //更新
               sizeChartService.Update(channelId,

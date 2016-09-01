@@ -258,7 +258,7 @@ public class CmsImageGroupService extends BaseAppService {
             }
             if (sizeChartId != model.getSizeChartId() && model.getSizeChartId() > 0) {
                 //删除尺码图和尺码表关联关系
-                cmsBtSizeChartImageGroupService.delete(model.getChannelId(), model.getSizeChartId(), model.getImageGroupId());
+                cmsBtSizeChartImageGroupService.deleteByCmsBtImageGroupId(model.getChannelId(), model.getImageGroupId());
             }
             //更新
             imageGroupService.update(userName, String.valueOf(imageGroupId), cartId, imageGroupName, imageType, viewType,
@@ -278,16 +278,10 @@ public class CmsImageGroupService extends BaseAppService {
      * @param param 客户端参数
      */
     public void delete(Map<String, Object> param,String channelId) {
-        boolean isDelSizeChart = ConvertUtil.toBoolean(param.get("isDelSizeChart"));
-        int sizeChartId = ConvertUtil.toInt(param.get("sizeChartId"));
         long imageGroupId = ConvertUtil.toLong(param.get("imageGroupId"));
         String userName = (String) param.get("userName");
-        if (sizeChartId > 0) {
-            cmsBtSizeChartImageGroupService.delete(channelId, sizeChartId, imageGroupId);
-            if (isDelSizeChart) {
-                sizeChartService.delete(sizeChartId, userName, channelId);
-            }
-        }
         imageGroupService.logicDelete(String.valueOf(imageGroupId), userName);
+        //删除尺码表组图关系
+        cmsBtSizeChartImageGroupService.deleteByCmsBtImageGroupId(channelId, imageGroupId);
     }
 }
