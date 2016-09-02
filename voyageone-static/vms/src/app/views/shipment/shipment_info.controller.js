@@ -63,18 +63,19 @@ define([
             } else self.searchInfo.shippedDateTo = undefined;
             self.searchInfo.curr = curr;
             self.searchInfo.size = self.pageInfo.size;
-            sessionStorage.setItem('shipmentSearchInfo', JSON.stringify(self.searchInfo));
+            var req = angular.copy(self.searchInfo);
             if (self.shippedDateTo) {
                 var date = angular.copy(self.shippedDateTo);
                 date.setDate(date.getDate() + 1);
-                self.searchInfo.shippedDateTo = date;
+                req.shippedDateTo = date;
             } else {
-                self.searchInfo.shippedDateTo = undefined;
+                req.shippedDateTo = undefined;
             }
-            self.shipmentInfoService.search(self.searchInfo).then(function (data) {
+            self.shipmentInfoService.search(req).then(function (data) {
                 self.pageInfo.total = data.shipmentInfo.total;
                 self.data = data.shipmentInfo.shipmentList;
-            })
+            });
+            sessionStorage.setItem('shipmentSearchInfo', JSON.stringify(self.searchInfo));
         };
 
         ShipmentInfoController.prototype.popShipment = function (shipment, type) {
