@@ -140,7 +140,7 @@ public class CmsSizeChartService extends BaseAppService {
         if (StringUtils.isEmpty(sizeChartName)) {
             throw new BusinessException("7000080");
         }
-        if (sizeChartService.EXISTSName(sizeChartName, sizeChartId)) {
+        if (sizeChartService.EXISTSName(channelId,sizeChartName, sizeChartId)) {
             //名称已经存在
             throw new BusinessException("4000009");
         }

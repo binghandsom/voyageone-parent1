@@ -227,7 +227,7 @@ public class CmsImageGroupService extends BaseAppService {
 
         } else if (!StringUtils.isEmpty(sizeChartName)) {
             //新增尺码表
-            if(sizeChartService.EXISTSName(sizeChartName,0L))
+            if(sizeChartService.EXISTSName(channelId,sizeChartName,0L))
             {
                 //名称已经存在
                 throw new BusinessException("尺码表名称重复");
