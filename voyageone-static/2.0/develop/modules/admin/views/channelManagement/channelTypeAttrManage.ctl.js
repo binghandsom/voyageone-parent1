@@ -91,7 +91,7 @@ define([
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openAddChannelType(channelInfo).then(function () {
+                    self.popups.openAddChannelType('add').then(function () {
                         self.search(1);
                     });
                 } else {
