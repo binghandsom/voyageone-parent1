@@ -41,49 +41,64 @@
                     <button class="btn btn-default" ng-click="ctrl.delete()"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                 </div>
             </div>
-
-            <table class="table table-hover-new table-hover table_main">
-                <thead>
-                <tr>
-                    <th class="text-left mfb-xt" ng-controller="selectRowsCtrl" style="padding-left: 0;padding-right: 0;">
-                        <label class="checkbox-inline c-checkbox" style="height: 15px;">
-                            <input type="checkbox" ng-click="selectAll(ctrl.adminOrgSelList)"
-                                   ng-checked="isAllSelected(ctrl.adminOrgSelList)" >
-                            <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
-                        </label>
-                    </th>
-                    <th class="text-center mfb-xxt" translate="TXT_ORG_NAME"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_UPPER_ORG"></th>
-                    <th class="text-left mfb-xt" translate="TXT_STATUS"></th>
-                    <th class="text-center mfb-xt" translate="TXT_SORT_PRE"></th>
-                    <th class="text-center mfb-xt" translate="TXT_SORT_PRE"></th>
-                    <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
-                </tr>
-                </thead>
-                <tbody>
+            <div class="" ng-controller="treeTable">
+                <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
+                    <thead>
                     <tr>
-                        <td if-no-rows="ctrl.orgDataList.length||ctrl.orgDataList" colspan="8" style="padding: 0px"></td>
+                        <th class="text-left mfb-xt cell-input" ng-controller="selectRowsCtrl" style="padding: 5px;">
+                            <label class="checkbox-inline c-checkbox" style="height: 15px;">
+                                <input type="checkbox" ng-click="selectAll(ctrl.resSelList)"
+                                       ng-checked="isAllSelected(ctrl.resSelList)" >
+                                <span class="fa fa-check"></span>
+                            </label>
+                        </th>
+                        <th class="text-left mfb-xxst" translate="TXT_MENU_NAME"></th>
+                        <th class="text-left mfb-xxt" translate="TXT_MENU_KEY"></th>
+                        <th class="cell-members text-center mfb-xxt" translate="TXT_URL"></th>
+                        <th class="text-center mfb-xxt" translate="TXT_SYSTEM"></th>
+                        <th class="text-center mfb-xxst" translate="TXT_TYPE"></th>
+                        <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
+                        <th class="text-center mfb-xxt" translate="TXT_INSTRUCTION"></th>
+                        <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
+                        <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
                     </tr>
-                    <tr ng-repeat="list in ctrl.orgDataList">
-                        <td class="text-left v-middle">
+                    </thead>
+                    <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-repeat="item in ctrl.resList"></tbody>
+                </table>
+
+                <script id="table_tree.html" type="text/ng-template">
+                    <tr ng-class="{parent: item.children}" ng-init="parentScope = $parent.$parent; initCheckbox(item, parentScope.item)">
+                        <td class="text-left v-middle cell-input">
                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                                <input ng-model="ctrl.adminOrgSelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
-                                       ng-click="selectOne(list.id, ctrl.adminOrgSelList)">
+                                <input ng-model="ctrl.resSelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
+                                       ng-click="selectOne(item.id, ctrl.resSelList)">
                                 <span class="fa fa-check"></span>
                             </label>
                         </td>
-                        <td class="text-center v-middle">{{list.orgName}}</td>
-                        <td class="text-left v-middle">{{list.parentName}}</td>
-                        <td class="text-left v-middle">{{list.active?list.active=='1'?'启用':'禁用':''}}</td>
-                        <td class="text-center v-middle">{{list.weight}}</td>
-                        <td class="text-center v-middle">{{list.weight}}</td>
-                        <td class="text-center v-middle">{{list.modifier}}</td>
-                        <td class="text-center v-middle">{{list.modified}}</td>
+                        <td class="cell-name text-left" ng-click="item.opened = !item.opened" style="width: 238px;">
+                            <div ng-class="{'indent': item.children.length>0}" style="padding-left: {{15*level}}px"></div>
+                            {{item.resName}}
+                        </td>
+                        <td class="text-left">{{item.resKey}}</td>
+                        <td class="text-center">{{item.resUrl}}</td>
+                        <td class="text-center">{{item.application}}</td>
+                        <td class="text-center">{{ctrl.getResType(item.resType)}}</td>
+                        <td class="text-center">{{item.active!=null?item.active==1?'启用':'禁用':''}}</td>
+                        <td class="text-center">{{item.description}}</td>
+                        <td class="text-center">{{item.modifier}}</td>
+                        <td class="text-center">{{item.modified}}</td>
                     </tr>
-                </tbody>
-            </table>
+                    <tr class="children" ng-if="item.children&&item.children.length>0">
+                        <td colspan="10">
+                            <table style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
+                                <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-init="level = level + 1" ng-repeat="item in item.children"></tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </script>
+
+            </div>
         </div>
-        <vpagination config="ctrl.pageOption" ng-if="ctrl.orgDataList.length>0"></vpagination>
+        <vpagination config="ctrl.pageOption" ng-if="ctrl.resList.length>0"></vpagination>
     </div>
 </div>
