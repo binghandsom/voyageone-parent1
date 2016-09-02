@@ -31,38 +31,38 @@ public class CmsGetPlatformStatusServiceTest {
 
     @Before
     public void setUp() {
-        // 准备参数
-        Shops.reload();
-        Map<String, ShopBean> shopBeanMap = new HashMap<>();
-
-        // tmall
-        ShopBean bean1 = new ShopBean();
-        bean1.setCart_id("23");
-        bean1.setPlatform_id("1");
-        bean1.setOrder_channel_id("010");
-        bean1.setApp_url("http://gw.api.taobao.com/router/rest");
-
-        shopBeanMap.put(buildKey(bean1.getCart_id(), bean1.getOrder_channel_id()), bean1);
-
-        // jingdong
-        ShopBean bean2 = new ShopBean();
-        bean2.setCart_id("28");
-        bean2.setPlatform_id("2");
-        bean2.setOrder_channel_id("928");
-        bean2.setApp_url("https://api.jd.com/routerjson");
-
-        shopBeanMap.put(buildKey(bean2.getCart_id(), bean2.getOrder_channel_id()), bean2);
-
-        // jumei
-        ShopBean bean3 = new ShopBean();
-        bean3.setCart_id("27");
-        bean3.setPlatform_id("4");
-        bean3.setOrder_channel_id("010");
-        bean3.setApp_url("http://openapi.ext.jmrd.com:8823");
-
-        shopBeanMap.put(buildKey(bean3.getCart_id(), bean3.getOrder_channel_id()), bean3);
-
-        CacheHelper.reFreshSSB(KEY, shopBeanMap);
+//        // 准备参数
+//        Shops.reload();
+//        Map<String, ShopBean> shopBeanMap = new HashMap<>();
+//
+//        // tmall
+//        ShopBean bean1 = new ShopBean();
+//        bean1.setCart_id("23");
+//        bean1.setPlatform_id("1");
+//        bean1.setOrder_channel_id("010");
+//        bean1.setApp_url("http://gw.api.taobao.com/router/rest");
+//
+//        shopBeanMap.put(buildKey(bean1.getCart_id(), bean1.getOrder_channel_id()), bean1);
+//
+//        // jingdong
+//        ShopBean bean2 = new ShopBean();
+//        bean2.setCart_id("28");
+//        bean2.setPlatform_id("2");
+//        bean2.setOrder_channel_id("928");
+//        bean2.setApp_url("https://api.jd.com/routerjson");
+//
+//        shopBeanMap.put(buildKey(bean2.getCart_id(), bean2.getOrder_channel_id()), bean2);
+//
+//        // jumei
+//        ShopBean bean3 = new ShopBean();
+//        bean3.setCart_id("27");
+//        bean3.setPlatform_id("4");
+//        bean3.setOrder_channel_id("010");
+//        bean3.setApp_url("http://openapi.ext.jmrd.com:8823");
+//
+//        shopBeanMap.put(buildKey(bean3.getCart_id(), bean3.getOrder_channel_id()), bean3);
+//
+//        CacheHelper.reFreshSSB(KEY, shopBeanMap);
     }
 
     @Test
@@ -144,6 +144,15 @@ public class CmsGetPlatformStatusServiceTest {
 
         try {
             targetService.onStartup(paramList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testAllChannel() {
+        try {
+            targetService.onStartup(null);
         } catch (Exception e) {
             e.printStackTrace();
         }

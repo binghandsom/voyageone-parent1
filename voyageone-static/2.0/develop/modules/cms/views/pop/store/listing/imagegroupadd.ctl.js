@@ -66,6 +66,24 @@ define([
                     self.noMathOpt = null;
                 }
             },
+            radioChange:function(){
+                var self = this;
+
+                if(self.sizeChart)
+                    self.chartOrg = self.sizeChart;
+
+                switch(self.chartType){
+                    case 'setting':
+                        self.sizeChart = null;
+                        break;
+                    case 'match':
+                        self.sizeChart = self.chartOrg;
+                        break;
+                    case 'new':
+                        self.sizeChart = "";
+                        break;
+                }
+            },
             save: function () {
                 var self = this,
                     listSizeChart;
@@ -74,7 +92,7 @@ define([
                     if (_.isObject(self.sizeChart)) {
                         listSizeChart = self.sizeChart;
                     } else {
-                        listSizeChart = [{sizeChartName: self.sizeChart, sizeChartId: 0}]
+                        listSizeChart = {sizeChartName: self.sizeChart, sizeChartId: 0};
                     }
                 }
 

@@ -684,13 +684,13 @@ public class JdWareService extends JdBase {
         throw new BusinessException("通过URL取得图片失败. url:" + url);
     }
 
-    /**
-     * 将图片流转为图片文件
-     *
-     * @param ins InputStream  图片流
-     * @param file File  图片文件（返回值）
-     * @return 无
-     */
+//    /**
+//     * 将图片流转为图片文件
+//     *
+//     * @param ins InputStream  图片流
+//     * @param file File  图片文件（返回值）
+//     * @return 无
+//     */
 //    public static void inputstreamToFile(InputStream ins, File file) {
 //        try {
 //            OutputStream os = new FileOutputStream(file);
@@ -888,5 +888,39 @@ public class JdWareService extends JdBase {
 //
 //        return retReturnCode;
 //    }
+
+    /**
+     * 取得商品的类目id
+     * 虽然API参数wareIds支持一次传多个商品，但本方法只传一个
+     * 暂时做成，如果API调用失败等错误发生，不throw，只返回null
+     *
+     * @param shop
+     * @param wareId 商品id(单个)
+     * @return 类目id
+     */
+    public String getJdProductCatId(ShopBean shop, String wareId) {
+        String catId = null;
+        String field = "cid";
+        WareListRequest request = new WareListRequest();
+        request.setWareIds(wareId);
+        request.setFields(field);
+
+        try {
+            WareListResponse response = reqApi(shop, request);
+            if ("0".equals(response.getCode())) {
+                // API调用成功
+                if (response.getWareList() != null && response.getWareList().size() > 0) {
+                    catId = String.valueOf(response.getWareList().get(0).getCategoryId());
+                }
+            } else {
+                logger.error("调用京东API取得商品信息失败[wareId:" + wareId + "]! " + response.getZhDesc());
+            }
+
+        } catch (Exception e) {
+            logger.error("调用京东API取得商品信息失败[wareId:" + wareId + "]! ");
+        }
+
+        return catId;
+    }
 
 }

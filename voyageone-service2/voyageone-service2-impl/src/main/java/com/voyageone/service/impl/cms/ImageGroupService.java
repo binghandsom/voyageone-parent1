@@ -499,7 +499,7 @@ public class ImageGroupService extends BaseService {
     public Map<String,List<Map<String,Object>>> getNoMatchSizeImageGroupList(String channelId,String lang) {
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"channelId\":\"" + channelId + "\",\"imageType\":2,\"active\":1}");
-        queryObject.setProjection("{'imageGroupId':1,'imageGroupName':1,'_id':0}");
+        queryObject.setProjection("{'imageGroupId':1,'cartId':1,'imageGroupName':1,'_id':0}");
         List<CmsBtImageGroupModel> grpList = cmsBtImageGroupDao.select(queryObject);
 
         HashSet<String> hsSizeChart = new HashSet<>();//所有平台尺码
@@ -514,16 +514,18 @@ public class ImageGroupService extends BaseService {
             mapResult.put(o.getValue(), new ArrayList<Map<String, Object>>());
         });
         grpList.forEach((o) -> {
-            for (TypeChannelBean cart : listCart) {
-                if (!hsSizeChart.contains(o.getImageGroupId() + "" + cart.getValue()))//未匹配
+            //for (TypeChannelBean cart : listCart) {
+                if (!hsSizeChart.contains(o.getImageGroupId() + "" + o.getCartId()))//未匹配
                 {
                     Map<String, Object> map = new HashedMap();
                     map.put("imageGroupId", o.getImageGroupId());
                     map.put("imageGroupName", o.getImageGroupName());
-                    map.put("cartId", cart.getValue());
-                    mapResult.get(cart.getValue()).add(map);
+                    map.put("cartId", o.getCartId());
+                    if(mapResult.containsKey(String.valueOf(o.getCartId()))) {
+                        mapResult.get(String.valueOf(o.getCartId())).add(map);
+                    }
                 }
-            }
+            //}
         });
         return mapResult;
     }
