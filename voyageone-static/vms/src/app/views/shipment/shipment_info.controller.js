@@ -41,6 +41,9 @@ define([
                 var sessionSearchInfo = JSON.parse(sessionStorage.getItem('shipmentSearchInfo'));
                 if (sessionSearchInfo) {
                     self.searchInfo = sessionSearchInfo;
+                    self.pageInfo.curr = self.searchInfo.curr;
+                    self.pageInfo.total = self.searchInfo.total;
+                    self.pageInfo.size = self.searchInfo.size;
                     if (sessionSearchInfo.shippedDateFrom)
                         self.shippedDateFrom = new Date(sessionSearchInfo.shippedDateFrom);
                     if (sessionSearchInfo.shippedDateTo)

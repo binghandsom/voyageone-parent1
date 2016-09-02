@@ -77,6 +77,9 @@ define([
                 var sessionSearchInfo = JSON.parse(sessionStorage.getItem('orderSearchInfo'));
                 if (sessionSearchInfo) {
                     self.searchInfo = sessionSearchInfo;
+                    self.pageInfo.curr = self.searchInfo.curr;
+                    self.pageInfo.total = self.searchInfo.total;
+                    self.pageInfo.size = self.searchInfo.size;
                     if (sessionSearchInfo.orderDateFrom)
                         self.orderDateFrom = new Date(sessionSearchInfo.orderDateFrom);
                     if (sessionSearchInfo.orderDateTo)
