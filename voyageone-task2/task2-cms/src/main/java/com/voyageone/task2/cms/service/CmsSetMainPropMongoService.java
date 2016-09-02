@@ -143,7 +143,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
 
     // 每个channel的feed->master导入最大件数
-    private final static int FEED_IMPORT_MAX_1000 = 1000;
+    private final static int FEED_IMPORT_MAX_500 = 500;
 
     @Override
     public SubSystem getSubSystem() {
@@ -356,7 +356,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             JongoQuery queryObject = new JongoQuery();
             queryObject.setQuery(query);
             queryObject.setSort(sort);
-            queryObject.setLimit(feedImportMax == 0 ? FEED_IMPORT_MAX_1000 : feedImportMax);   // 默认为每次最大1000件
+            queryObject.setLimit(feedImportMax == 0 ? FEED_IMPORT_MAX_500 : feedImportMax);   // 默认为每次最大1000件
             List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
 
             // 共通配置信息存在的时候才进行feed->master导入
