@@ -38,22 +38,6 @@ public class LoggingHandler {
     protected void initXXX() {
     }
 
-    private String getApp(String url)
-    {
-        if(StringUtils.isEmpty(url))
-            return "";
-
-        String [] a = url.split("/+");
-
-        for (String str : a) {
-            if(!StringUtils.isEmpty(url))
-            {
-                return str;
-            }
-        }
-        return "";
-    }
-
     @Around("controller() && !getXXX() && !searchXXX() && !initXXX()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
 
@@ -93,6 +77,22 @@ public class LoggingHandler {
             log.error(JacksonUtil.bean2Json("write"));
             throw e;
         }
+    }
+
+    private String getApp(String url)
+    {
+        if(StringUtils.isEmpty(url))
+            return "";
+
+        String [] a = url.split("/+");
+
+        for (String str : a) {
+            if(!StringUtils.isEmpty(url))
+            {
+                return str;
+            }
+        }
+        return "";
     }
 
 }

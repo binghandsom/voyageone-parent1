@@ -362,10 +362,17 @@ public class AdminUserService extends BaseService {
 
     public Map<Integer, Object>  getAllApp()
     {
-       List<CtApplicationModel> list = ctApplicationDao.selectList(new HashMap<String, Object>(){{put("active", 1);}});
+//       List<CtApplicationModel> list = ctApplicationDao.selectList(new HashMap<String, Object>(){{put("active", 1);}});
+//
+//        Map<Integer, Object> result = list.stream().collect(Collectors.toMap(CtApplicationModel::getId, CtApplicationModel::getApplication));
 
-        Map<Integer, Object> result = list.stream().collect(Collectors.toMap(CtApplicationModel::getId, CtApplicationModel::getApplication));
+        List<Map<String, Object>> list = adminUserDaoExt.selectAllApp();
 
+        Map<Integer, Object> result = new HashMap<>();
+
+        for (Map m: list) {
+            result.put(Integer.valueOf(m.get("id").toString()) , m.get("application"));
+        }
         return result;
     }
 

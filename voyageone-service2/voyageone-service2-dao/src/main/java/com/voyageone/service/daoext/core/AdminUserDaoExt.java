@@ -17,5 +17,7 @@ public interface AdminUserDaoExt {
 
     Integer selectUserCount(Map<String, Object> params);
 
+    List<Map<String, Object>> selectAllApp();
+
 
 }
