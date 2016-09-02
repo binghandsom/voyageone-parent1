@@ -2,9 +2,10 @@
  * Created by tony-piao on 2016/5/5.
  */
 define([
-    'modules/cms/controller/popup.ctl'
-], function () {
-    function sizeChartController($scope, sizeChartService, alert, notify, $translate, popups) {
+    'modules/cms/controller/popup.ctl',
+    'modules/cms/enums/Carts'
+], function (popup,carts) {
+    function sizeChartController($scope, sizeChartService, alert, notify, $translate) {
         $scope.vm = {
             sizeChartList: [],
             searchInfo: {
@@ -25,6 +26,7 @@ define([
 
         $scope.initialize = function () {
             sizeChartService.init().then(function (resp) {
+                $scope.carts = carts;
                 $scope.vm.brandNameList = resp.data.brandNameList;
                 $scope.vm.productTypeList = resp.data.productTypeList;
                 $scope.vm.sizeTypeList = resp.data.sizeTypeList;
@@ -64,6 +66,13 @@ define([
             };
         };
 
+        $scope.imageGroup = function(sizeChartId){
+            sizeChartService.getListImageGroupBySizeChartId({sizeChartId: sizeChartId}).then(function (res) {
+                console.log(res.data);
+                $scope.imageGroups = res.data;
+            });
+        };
+
         /**
          * 删除尺码表操作
          */
@@ -82,6 +91,6 @@ define([
 
     }
 
-    sizeChartController.$inject = ['$scope', 'sizeChartService', 'confirm', 'notify', '$translate', 'popups'];
+    sizeChartController.$inject = ['$scope', 'sizeChartService', 'confirm', 'notify', '$translate'];
     return sizeChartController;
 });

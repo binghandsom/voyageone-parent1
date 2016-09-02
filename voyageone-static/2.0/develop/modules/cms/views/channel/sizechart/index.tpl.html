@@ -107,6 +107,7 @@
                                 <th class="mfb-xxt text-left">{{'TXT_RELATED_SIZE_TYPE' | translate}}</th>
                                 <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_FINISH' | translate}}</th>
                                 <th class="mfb-xxs text-center">{{'TXT_SIZE_CHART_UPDATE_TIME' | translate}}</th>
+                                <th class="mfb-xs text-center">尺码图</th>
                                 <th class="mfb-xxt text-center">{{'TXT_ACTION' | translate}}</th>
                             </tr>
                         </thead>
@@ -122,15 +123,22 @@
                                             <td class="mfb-xxt text-left">{{chartInfo.sizeTypeTrans.join(' , ')}}</td>
                                             <td class="mfb-xxt text-left">{{chartInfo.finish == true?"yes":"no"}}</td>
                                             <td class="mfb-xxs text-center">{{chartInfo.modified}}</td>
+                                            <td class="mfb-xs text-center">
+                                                <div class="btn-group" uib-dropdown>
+                                                    <button type="button" class="btn btn-default" uib-dropdown-toggle ng-click="imageGroup(chartInfo.sizeChartId)">
+                                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;尺码图&nbsp;<span class="caret"></span>
+                                                    </button>
+                                                    <ul uib-dropdown-menu ng-if="imageGroups.length">
+                                                        <li ng-repeat="image in imageGroups" class="text-center">
+                                                            <a href="#/channel/imagegrouplist/detail/{{image.imageGroupId}}" target="_blank">{{carts.valueOf(image.cartId).desc}}:{{image.imageGroupName}}</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                            </td>
                                             <td class="mfb-xxt text-center">
                                                 <a title="{{'BTN_SET'|translate}}" href="#/channel/sizechart/detail/{{chartInfo.sizeChartId}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>
                                                 <a title="{{'BTN_DELETE'|translate}}" href="javascript:void(0)" class="btn btn-danger btn-xs" ng-click="deleteRow(chartInfo)"><i class="fa  fa-trash-o"></i></a>
-<!--                                                <a href="#/channel/imagegrouplist/detail/{{chartInfo.imageGroupId}}"
-                                                   class="btn btn-info btn-xs"
-                                                   target="_blank" title="前往尺码图"
-                                                   ng-if="chartInfo.imageGroupId">
-                                                    <i class="fa fa-table"></i>
-                                                </a>-->
                                             </td>
                                         </tr>
                                 </tbody>
