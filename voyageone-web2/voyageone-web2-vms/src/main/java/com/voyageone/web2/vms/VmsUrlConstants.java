@@ -29,7 +29,7 @@ public interface VmsUrlConstants {
             String INIT = "init";
             String SEARCH = "search";
         }
-        interface ShipmentDetail {
+        interface SHIPMENT_DETAIL {
             String ROOT = "/vms/shipment/shipment_detail";
             String INIT = "init";
             String SCAN = "scan";
@@ -54,6 +54,7 @@ public interface VmsUrlConstants {
 
         interface FEED_SEARCH {
             String ROOT = "/vms/feed/feed_info_search/";
+            String INIT = "init";
             String SEARCH = "search";
         }
     }
@@ -64,6 +65,12 @@ public interface VmsUrlConstants {
             String DOWNLOAD_SAMPLE_INVENTORY_FILE = "downSampleInventoryFile";
             String UPLOAD_INVENTORY_FILE = "uploadInventoryFile";
         }
+    }
+
+    interface SETTINGS {
+        String ROOT = "/vms/settings/vendor_settings";
+        String INIT = "init";
+        String SAVE = "save";
     }
 
     interface REPORT {
@@ -92,7 +99,9 @@ public interface VmsUrlConstants {
         interface SCAN {
             String ROOT = "vms/popup/scan";
             String INIT = "init";
-            String SCAN_BARCODE = "scanBarcode";
+            String SCAN_BARCODE = "scan_barcode";
+            String FINISH_SCANNING = "finish_scanning";
+            String REVERT_SCANNING = "revert_scanning";
         }
     }
 }

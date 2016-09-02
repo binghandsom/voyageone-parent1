@@ -163,6 +163,7 @@ define(function (require) {
             search: "search"
         }),
         feedInfoSearchService: new CommonDataService('/vms/feed/feed_info_search', {
+            init: "init",
             search: "search"
         }),
 
@@ -192,7 +193,9 @@ define(function (require) {
         }),
         shipmentScanPopupService: new CommonDataService('/vms/popup/scan', {
             init: "init",
-            scanBarcode: "scanBarcode"
+            scanBarcode: "scan_barcode",
+            finishScanning: "finish_scanning",
+            revertScanning: "revert_scanning"
         }),
         shipmentInfoService: new CommonDataService('/vms/shipment/shipment_info', {
             init: "init",
@@ -203,6 +206,10 @@ define(function (require) {
             scan: "scan",
             getInfo: "get_info",
             ship: "ship"
+        }),
+        vendorSettingsService: new CommonDataService('/vms/settings/vendor_settings', {
+            init: "init",
+            save: "save"
         })
     }
 });

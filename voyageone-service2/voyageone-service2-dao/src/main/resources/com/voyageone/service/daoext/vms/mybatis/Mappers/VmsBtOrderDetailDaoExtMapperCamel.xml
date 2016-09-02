@@ -7,7 +7,8 @@
         `order_id`, `order_time`, `cart_id`, `client_sku`, `barcode`, `name`, `status`, `shipment_id`,
         `shipment_time`, `containerizing_time`, `containerizer`, `cancel_time`, `canceler`,
         `received_time`, `receiver`, `client_msrp`, `client_net_price`, `client_retail_price`,
-        `client_promotion_price`, `retail_price`, `created`, `creater`, `modified`, `modifier`
+        `client_promotion_price`, `retail_price`, `attribute1`, `attribute2`, `attribute3`,
+        `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <!-- select -->
@@ -99,6 +100,15 @@
             </if>
             <if test="retailPrice != null">
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="attribute1 != null" >
+                and `attribute1` = #{attribute1,jdbcType=VARCHAR},
+            </if>
+            <if test="attribute2 != null" >
+                and `attribute2` = #{attribute2,jdbcType=VARCHAR},
+            </if>
+            <if test="attribute3 != null" >
+                and `attribute3` = #{attribute3,jdbcType=VARCHAR},
             </if>
             <if test="created != null">
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -197,6 +207,15 @@
             </if>
             <if test="retailPrice != null">
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="attribute1 != null" >
+                and `attribute1` = #{attribute1,jdbcType=VARCHAR},
+            </if>
+            <if test="attribute2 != null" >
+                and `attribute2` = #{attribute2,jdbcType=VARCHAR},
+            </if>
+            <if test="attribute3 != null" >
+                and `attribute3` = #{attribute3,jdbcType=VARCHAR},
             </if>
             <if test="created != null">
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -332,6 +351,15 @@
             <if test="retailPrice != null">
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
+            <if test="attribute1 != null" >
+                and `attribute1` = #{attribute1,jdbcType=VARCHAR},
+            </if>
+            <if test="attribute2 != null" >
+                and `attribute2` = #{attribute2,jdbcType=VARCHAR},
+            </if>
+            <if test="attribute3 != null" >
+                and `attribute3` = #{attribute3,jdbcType=VARCHAR},
+            </if>
             <if test="created != null">
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -427,6 +455,15 @@
             </if>
             <if test="retailPrice != null">
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
+            </if>
+            <if test="attribute1 != null" >
+                and `attribute1` = #{attribute1,jdbcType=VARCHAR},
+            </if>
+            <if test="attribute2 != null" >
+                and `attribute2` = #{attribute2,jdbcType=VARCHAR},
+            </if>
+            <if test="attribute3 != null" >
+                and `attribute3` = #{attribute3,jdbcType=VARCHAR},
             </if>
             <if test="created != null">
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -533,7 +570,17 @@
             `containerizer`       = NULL,
             `containerizing_time` = NULL
         WHERE `channel_id` = #{channelId, jdbcType=VARCHAR}
+        <choose>
+            <when test="shipmentId != null">
               AND `shipment_id` = #{shipmentId, jdbcType=VARCHAR}
+            </when>
+            <when test="consolidationOrderId != null">
+                AND `consolidation_order_id` = #{consolidationOrderId, jdbcType=VARCHAR}
+            </when>
+            <otherwise>
+                AND 1 = 2
+            </otherwise>
+        </choose>
               AND `status` = 1
     </update>
 </mapper>

@@ -2,7 +2,7 @@ package com.voyageone.web2.vms.bean.order;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.web2.vms.VmsConstants;
-import org.springframework.format.annotation.DateTimeFormat;
+import com.voyageone.web2.vms.bean.SortParamBean;
 
 import java.util.Date;
 
@@ -18,6 +18,7 @@ public class OrderSearchInfoBean {
     private String sku;
     private int size = DEFAULT_PAGE_SIZE;
     private int curr = 1;
+    private SortParamBean sortParamBean;
 
     private Date orderDateFrom = null;
 
@@ -53,17 +54,16 @@ public class OrderSearchInfoBean {
         return orderDateFrom;
     }
 
-    public void setOrderDateFrom(long orderDateFrom) {
-        this.orderDateFrom = new Date(orderDateFrom);
+    public void setOrderDateFrom(Date orderDateFrom) {
+        this.orderDateFrom = orderDateFrom;
     }
 
     public Date getOrderDateTo() {
         return orderDateTo;
     }
 
-    public void setOrderDateTo(Long orderDateTo) {
-        if (null != orderDateTo)
-            this.orderDateTo = new Date(orderDateTo);
+    public void setOrderDateTo(Date orderDateTo) {
+        this.orderDateTo = orderDateTo;
     }
 
     public int getSize() {
@@ -81,4 +81,14 @@ public class OrderSearchInfoBean {
     public void setCurr(int curr) {
         this.curr = curr;
     }
+
+    public SortParamBean getSortParamBean() {
+        return sortParamBean;
+    }
+
+    public void setSortParamBean(SortParamBean sortParamBean) {
+        this.sortParamBean = sortParamBean;
+    }
+
+
 }

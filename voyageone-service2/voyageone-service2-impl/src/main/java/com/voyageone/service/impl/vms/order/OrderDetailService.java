@@ -288,7 +288,7 @@ public class OrderDetailService extends BaseService {
         return vmsBtOrderDetailDao.selectList(modifiedParams);
     }
 
-    public int scanInSku(String channelId, String userName, String barcode, int shipmentId) {
+    public int scanInSku(String channelId, String userName, String barcode, int shipmentId, String shipmentStatus) {
 
         // 查找该channel下 扫描barcode对应的SKU(状态必须为OPEN)
         Map<String, Object> params = new HashMap<String, Object>() {{
@@ -312,7 +312,11 @@ public class OrderDetailService extends BaseService {
                 put("reservationId", vmsBtOrderDetailModel.getReservationId());
                 put("containerizer", userName);
                 put("shipmentId", new Integer(shipmentId));
-                put("status", STATUS_PACKAGED);
+                if (STATUS_SHIPPED.equals(shipmentStatus)) {
+                    put("status", STATUS_SHIPPED);
+                } else {
+                    put("status", STATUS_PACKAGED);
+                }
             }};
 
             count = vmsBtOrderDetailDaoExt.updateOrderStatus(updateParams);
@@ -345,6 +349,14 @@ public class OrderDetailService extends BaseService {
         Map<String, Object> params = new HashMap<String, Object>() {{
             put("channelId", channelId);
             put("shipmentId", shipmentId);
+        }};
+        return vmsBtOrderDetailDaoExt.cancelOrderShipmentStatus(params);
+    }
+
+    public int removeSkuOrderId(String channelId, String consolidationOrderId) {
+        Map<String, Object> params = new HashMap<String, Object>() {{
+            put("channelId", channelId);
+            put("consolidationOrderId", consolidationOrderId);
         }};
         return vmsBtOrderDetailDaoExt.cancelOrderShipmentStatus(params);
     }

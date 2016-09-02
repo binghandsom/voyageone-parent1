@@ -126,16 +126,16 @@ public class MenuService extends BaseAppService {
         Map<String, String> feedFileUpload = new HashMap<>();
         feedFileUpload.put("name", "Product Feed Upload");
         feedFileUpload.put("url", "#/feed/product_feed_upload");
+        feedMenuItems.add(feedFileUpload);
         // Feed->Feed Import Result
         Map<String, String> feedImportResult = new HashMap<>();
         feedImportResult.put("name", "Product Feed Import Status");
         feedImportResult.put("url", "#/feed/product_feed_import_status");
+        feedMenuItems.add(feedImportResult);
         // Feed->Feed Info Search
         Map<String, String> feedInfoSearch = new HashMap<>();
         feedInfoSearch.put("name", "Product Feed Search");
         feedInfoSearch.put("url", "#/feed/product_feed_search");
-        feedMenuItems.add(feedFileUpload);
-        feedMenuItems.add(feedImportResult);
         feedMenuItems.add(feedInfoSearch);
         feedMenu.put("items", feedMenuItems);
 
@@ -184,12 +184,25 @@ public class MenuService extends BaseAppService {
         shipmentMenuItems.add(shipmentInfo);
         shipmentMenu.put("items", shipmentMenuItems);
 
+        // Settings
+        Map<String, Object> settingsMenu = new HashMap<>();
+        settingsMenu.put("name", "Settings");
+        List<Map<String, String>> settingsItems = new ArrayList<>();
+        // Settings->Vendor Settings
+        Map<String, String> vendorSettings = new HashMap<>();
+        vendorSettings.put("name", "Vendor Settings");
+        vendorSettings.put("url", "#/settings/vendor_settings");
+        settingsItems.add(vendorSettings);
+        settingsMenu.put("items", settingsItems);
+
+
         // TODO 在这里加Menu权限控制
         menuList.add(feedMenu);
         menuList.add(orderMenu);
         menuList.add(reportsMenu);
         menuList.add(inventoryMenu);
         menuList.add(shipmentMenu);
+        menuList.add(settingsMenu);
 
         return menuList;
     }

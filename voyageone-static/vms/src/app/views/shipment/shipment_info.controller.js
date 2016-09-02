@@ -37,10 +37,13 @@ define([
             var self = this;
             self.shipmentInfoService.init().then(function (data) {
                 self.shipmentStatusList = data.shipmentStatusList;
-                self.channelConfigs = data.channelConfigs;
+                self.channelConfig = data.channelConfig;
                 var sessionSearchInfo = JSON.parse(sessionStorage.getItem('shipmentSearchInfo'));
                 if (sessionSearchInfo) {
                     self.searchInfo = sessionSearchInfo;
+                    self.pageInfo.curr = self.searchInfo.curr;
+                    self.pageInfo.total = self.searchInfo.total;
+                    self.pageInfo.size = self.searchInfo.size;
                     if (sessionSearchInfo.shippedDateFrom)
                         self.shippedDateFrom = new Date(sessionSearchInfo.shippedDateFrom);
                     if (sessionSearchInfo.shippedDateTo)
@@ -58,20 +61,21 @@ define([
             if (self.shippedDateTo) {
                 self.searchInfo.shippedDateTo = self.shippedDateTo;
             } else self.searchInfo.shippedDateTo = undefined;
-            self.searchInfo.curr = curr;
-            self.searchInfo.size = self.pageInfo.size;
-            sessionStorage.setItem('shipmentSearchInfo', JSON.stringify(self.searchInfo));
+            self.pageInfo.curr = self.searchInfo.curr = curr;
+            self.pageInfo.size = self.searchInfo.size = self.pageInfo.size;
+            var req = angular.copy(self.searchInfo);
             if (self.shippedDateTo) {
                 var date = angular.copy(self.shippedDateTo);
                 date.setDate(date.getDate() + 1);
-                self.searchInfo.shippedDateTo = date;
+                req.shippedDateTo = date;
             } else {
-                self.searchInfo.shippedDateTo = undefined;
+                req.shippedDateTo = undefined;
             }
-            self.shipmentInfoService.search(self.searchInfo).then(function (data) {
+            self.shipmentInfoService.search(req).then(function (data) {
                 self.pageInfo.total = data.shipmentInfo.total;
                 self.data = data.shipmentInfo.shipmentList;
-            })
+            });
+            sessionStorage.setItem('shipmentSearchInfo', JSON.stringify(self.searchInfo));
         };
 
         ShipmentInfoController.prototype.popShipment = function (shipment, type) {

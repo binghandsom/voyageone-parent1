@@ -106,6 +106,17 @@ define(function () {
         "TXT_VO_PRICE": "VO Price",
         "TXT_WELCOME": "Welcome",
         "TXT_YEAR_MONTH": "Year-Month",
+        "TXT_USER": "User",
+        "TXT_CONFIRM_ORDER_PACKAGED": "Confirm to package this order?",
+        "TXT_CONFIRM_REVERT_SCANNED_SKU": "Confirm to clear all scanned SKUs in this order?",
+        "TXT_SETTINGS": "Settings",
+        "TXT_VENDOR_SETTINGS": "Vendor Settings",
+        "TXT_DEFAULT_DELIVERY_COMPANY": "Default Delivery Company",
+        "TXT_NAMING_CONVERTER": "Shipment Naming Converter",
+        "TXT_EMAIL_ADDRESS": "E-mail Address",
+        "TXT_DEMO": "Demo",
+        "TXT_FAILED_TRY_AGAIN": "Failed, please try again.",
+        "TXT_ORDER_BY": "Order by: ",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
@@ -125,6 +136,16 @@ define(function () {
         "BTN_SUBMIT": "SUBMIT",
         "BTN_UPLOAD": "UPLOAD",
         "BTN_YES": "YES",
-        "BTN_NO": "NO"
+        "BTN_NO": "NO",
+        "BTN_LABEL": "LABEL",
+        "BTN_FINISH": "FINISH",
+        "BTN_REVERT": "REVERT",
+        "BTN_PRINT_ORDER_LABEL":"PRINT ORDER LABEL",
+        "BTN_PRINT": "PRINT",
+        "BTN_TEST": "TEST",
+        "BTN_SAVE": "SAVE",
+        "BTN_PREVIEW": "PREVIEW",
+        "BTN_DOWNLOAD": "DOWNLOAD",
+        "BTN_CLEAR": "CLEAR"
     }
 });

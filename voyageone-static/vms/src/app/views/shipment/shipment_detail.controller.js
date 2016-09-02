@@ -18,10 +18,16 @@ define([
             this.orderStatusList = [];
             this.expressCompanies = [];
             this.scannedSkuList = [];
-            this.channelConfigs = {};
+            this.channelConfig = {};
             this.barcode = "";
 
             this.classTest = false;
+
+            this.fromUrl = "#/order/order_info";
+            var shipmentSessionSearchInfo = JSON.parse(sessionStorage.getItem('shipmentSearchInfo'));
+            if (shipmentSessionSearchInfo) {
+                this.fromUrl = "#/shipment/shipment_info"
+            }
         }
 
         ShipmentDetailController.prototype.init = function () {
@@ -31,7 +37,7 @@ define([
                 return;
             }
             self.shipmentDetailService.init(self.shipmentId).then(function (data) {
-                self.channelConfigs = data.channelConfigs;
+                self.channelConfig = data.channelConfig;
                 self.shipmentStatusList = data.shipmentStatusList;
                 self.orderStatusList = data.orderStatusList;
                 self.expressCompanies = data.expressCompanies;
@@ -115,10 +121,16 @@ define([
                     self.shipmentDetailService.ship(req).then(function (data) {
                         if (data.result.succeedSkuCount > 0) {
                             self.notify.success("TXT_SUCCESS");
-                            window.location.href = "#/shipment/shipment_info";
+                            window.location.href = self.fromUrl;
                         }
                     });
                 });
+            });
+        };
+
+        ShipmentDetailController.prototype.printList = function () {
+            $('#content').print({
+                noPrintSelector: ".no-print"
             });
         };
 
@@ -134,7 +146,7 @@ define([
 
         ShipmentDetailController.prototype.scanKeyUp = function (event) {
             var self = this;
-            if (self.shipment.status != 1 || !self.barcode) return;
+            if (!self.barcode) return;
             if (event.keyCode == 13) {
                 self.scan();
             }

@@ -1,92 +1,78 @@
 <div class="modal-content modal-blue">
     <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel"><i class="fa fa-tasks"></i>SKU List<i class="fa fa-close pull-right" ng-click="$dismiss()"></i></h4>
+        <h4 class="modal-title" id="myModalLabel"><i class="fa fa-tasks"></i>SKU List<i class="fa fa-close pull-right fa-lg" ng-click="$dismiss()"></i></h4>
+    </div>
+    <div class="center-block sr-only" style="width: 200px; height: 200px;">
+        <barcode id="label" type="code128b" string="{{ctrl.shipmentDetails.consolidationOrderId}}" options="ctrl.barcodeOpts"></barcode>
     </div>
     <div class="modal-body">
-        <div class="col-sm-10 col-sm-offset-2 m-b-sm">
-            <div class="form-inline">
-                <div class="form-group">
-                    <label class="control-label" translate="TXT_SHIPMENT_NAME"></label>
-                    <input id="Shipment_Name" type="text" class="form-control input-sm" ng-model="::ctrl.shipmentDetails.shipment.shipmentName" disabled>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" translate="TXT_ORDER_ID"></label>
-                    <input id="Order_ID" type="text" class="form-control input-sm" ng-model="::ctrl.shipmentDetails.consolidationOrderId" disabled>
-                </div>
+        <div class="panel-body" style="padding-left: 0; padding-right: 0">
+            <div class="col-sm-8 col-sm-offset-1">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label class="control-label" translate="TXT_SHIPMENT"></label>
+                        <input id="Shipment_Name" type="text" class="form-control input-sm" ng-model="::ctrl.shipmentDetails.shipment.shipmentName" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" translate="TXT_ORDER_ID"></label>
+                        <input id="Order_ID" type="text" class="form-control input-sm" ng-model="::ctrl.shipmentDetails.consolidationOrderId" disabled>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-2" style="padding: 0;">
+                <button name="finishButton" class="btn btn-success btn-sm" ng-click="ctrl.finishScanning()" ng-if="ctrl.finished && ctrl.printed" translate="BTN_FINISH"></button>
+                <button class="btn btn-warning btn-sm pull-right" ng-click="ctrl.revertScanning()" ng-disabled="ctrl.scannedSkuList.length == 0" translate="BTN_CLEAR"></button>
             </div>
         </div>
-        <div class="row">
-            <audio id="warningAudio">
-                <source src="../assets/media/warning.mp3">
-                Sorry, audio is not supported in your browser.
-            </audio>
-            <audio id="successAudio">
-                <source src="../assets/media/success.mp3">
-                Sorry, audio is not supported in your browser.
-            </audio>
-            <uib-tabset>
-              <uib-tab heading="{{'TXT_SCANNED' | translate }} {{'(' + ctrl.scannedSkuList.length + ')'}}"
-                       ng-click="ctrl.focusOnScanBar()">
-                    <table class="table table-striped table-hover" style="min-width: 0px">
-                        <thead>
-                        <tr>
-                            <th class="text-center" translate="TXT_NO_"></th>
-                            <th class="text-left" translate="TXT_BARCODE"></th>
-                            <th class="text-left" translate="TXT_SKU"></th>
-                            <th class="text-left" translate="TXT_NAME"></th>
-                            <th class="text-left" translate="TXT_CONTAINERIZING_TIME"></th>
-                            <th class="text-left" translate="TXT_CONTAINERIZING_USER"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="item in ctrl.scannedSkuList">
-                            <td class="text-center">{{ctrl.scannedSkuList.length - $index}}</td>
-                            <td class="text-left">{{item.barcode}}</td>
-                            <td class="text-left">{{item.clientSku}}</td>
-                            <td class="text-left v-middle">
-                                <span ng-if="item.name.length <= 30">{{item.name}}</span>
-                                <span ng-if="item.name.length > 30" uib-tooltip="{{item.name}}"
-                                      tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name | stringCutter:true:30:' ...'}}</span>
-                            </td>
-                            <td class="text-left">{{item.containerizingTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                            <td class="text-left">{{item.containerizer}}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </uib-tab>
-                <uib-tab heading="{{'TXT_PENDING'| translate }} {{'(' + ctrl.waitingSkuList.length + ')'}}"
-                         ng-click="ctrl.focusOnScanBar()">
-                    <table class="table table-striped table-hover" style="min-width: 0px">
-                        <thead>
-                        <tr>
-                            <th class="text-center" translate="TXT_NO_"></th>
-                            <th class="text-left" translate="TXT_SKU"></th>
-                            <th class="text-left" translate="TXT_NAME"></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="item in ctrl.waitingSkuList">
-                            <td class="text-center">{{$index + 1}}</td>
-                            <td class="text-left">{{item.clientSku}}</td>
-                            <td class="text-left v-middle">
-                                <span ng-if="item.name.length <= 100">{{item.name}}</span>
-                                <span ng-if="item.name.length > 100" uib-tooltip="{{item.name}}"
-                                      tooltip-trigger="mouseenter" tooltip-placement="top">
-                                    {{item.name | stringCutter:true:100:' ...'}}
-                                </span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </uib-tab>
-                <div class="col-sm-6 col-sm-offset-4 input-group m-t-sm">
-                    <input name="barcodeInputBar" type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}" ng-model="ctrl.barcode"
-                           ng-keyup="ctrl.scanKeyUp($event)" autofocus>
-                    <span class="input-group-btn">
-                        <button id="scanBarcodeButton" class="btn btn-info" type="button" ng-click="ctrl.scan(ctrl.barcode)" translate="BTN_SCAN" ng-disabled="!ctrl.barcode"></button>
-                    </span>
-                </div>
-            </uib-tabset>
+        <hr>
+        <div class="col-sm-10 col-sm-offset-1 input-group" ng-if="!ctrl.finished">
+            <input name="barcodeInputBar" type="text" class="form-control" ng-attr-placeholder="{{'TXT_BARCODE' | translate}}" ng-model="ctrl.barcode" ng-keyup="ctrl.scanKeyUp($event)" autofocus>
+            <span class="input-group-btn">
+                    <button id="scanBarcodeButton" class="btn btn-info" type="button" ng-click="ctrl.scan(ctrl.barcode)" translate="BTN_SCAN" ng-disabled="!ctrl.barcode"> </button>
+            </span>
         </div>
+        <div class="col-sm-10 col-sm-offset-1 input-group" ng-if="ctrl.finished">
+            <div class="form-group">
+                <button name="printButton" class="btn btn-primary btn-block" ng-click="ctrl.printLabel()" translate="BTN_PRINT_ORDER_LABEL" autofocus></button>
+            </div>
+        </div>
+        <audio id="warningAudio">
+            <source src="../assets/media/warning.mp3">
+            Sorry, audio is not supported in your browser.
+        </audio>
+        <audio id="successAudio">
+            <source src="../assets/media/success.mp3">
+            Sorry, audio is not supported in your browser.
+        </audio>
+        <table class="table table-striped table-hover" style="min-width: 0px">
+            <thead>
+            <tr>
+                <th class="text-left" translate="TXT_SKU"></th>
+                <th class="text-left" translate="TXT_NAME"></th>
+                <th class="text-left" translate="TXT_CONTAINERIZING_TIME"></th>
+                <th class="text-left" translate="TXT_USER"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in ctrl.waitingSkuList">
+                <td class="text-left">{{item.clientSku}}</td>
+                <td class="text-left v-middle">
+                    <span ng-if="item.name.length <= 30">{{item.name}}</span>
+                    <span ng-if="item.name.length > 30" uib-tooltip="{{item.name}}" tooltip-trigger="mouseenter" tooltip-placement="top"> {{item.name | stringCutter:true:30:' ...'}} </span>
+                </td>
+                <td class="text-left">{{item.containerizingTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td class="text-left">{{item.containerizer}}</td>
+            </tr>
+            <tr class="success" ng-repeat="item in ctrl.scannedSkuList">
+                <td class="text-left">{{item.clientSku}}</td>
+                <td class="text-left v-middle">
+                    <span ng-if="item.name.length <= 30">{{item.name}}</span>
+                    <span ng-if="item.name.length > 30" uib-tooltip="{{item.name}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name | stringCutter:true:30:' ...'}}</span>
+                </td>
+                <td class="text-left">{{item.containerizingTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td class="text-left">{{item.containerizer}}</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>

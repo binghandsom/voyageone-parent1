@@ -3,10 +3,11 @@
  */
 define([
     'vms',
-    'underscore'
-], function (vms) {
+    'underscore',
+    'moment'
+], function (vms, underscore, moment) {
     vms.controller('NewShipmentController', (function () {
-        function NewShipmentController(alert, notify, confirm, $translate, shipmentPopupService, context, $uibModalInstance) {
+        function NewShipmentController(alert, notify, confirm, $translate, shipmentPopupService, context, $uibModalInstance, $filter) {
             this.$translate = $translate;
             this.alert = alert;
             this.notify = notify;
@@ -18,6 +19,8 @@ define([
             this.originalShipment = context.shipment;
             this.statusList = context.statusList;
             this.shipment = angular.copy(context.shipment);
+            this.channelConfig = context.channelConfig;
+            this.filter = $filter;
             if (this.shipment) {
                 if (this.shipment.shippedDate) {
                     this.shipment.shippedDate = new Date(this.shipment.shippedDate);
@@ -40,6 +43,11 @@ define([
                         self.$uibModalInstance.close(self.originalShipment);
                     }
                 });
+            } else if (self.type == 'new') {
+                self.shipment.shippedDate = new Date();
+                self.shipment.expressCompany = self.channelConfig.defaultDeliveryCompany;
+                if (self.channelConfig.namingConverter)
+                    self.shipment.shipmentName = moment().format(self.channelConfig.namingConverter);
             }
             self.shipmentPopupService.init().then(function (data) {
                 self.expressCompanies = data.expressCompanies;

@@ -1,6 +1,7 @@
 package com.voyageone.task2.vms.service;
 
 import com.csvreader.CsvReader;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
@@ -15,6 +16,7 @@ import com.voyageone.service.bean.com.MessageBean;
 import com.voyageone.service.dao.vms.VmsBtFeedInfoTempDao;
 import com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt;
 import com.voyageone.service.daoext.vms.VmsBtFeedInfoTempDaoExt;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -125,6 +127,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
     @Autowired
     private FeedToCmsService feedToCmsService;
+
+    @Autowired
+    private FeedInfoService feedInfoService;
 
     @Autowired
     protected TransactionRunner transactionRunner;
@@ -528,7 +533,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             // AttributeKey
 
             Map<String, List<String>> attributeMap = new HashMap<>();
-            makeAttributeMap(attributeMap, codeModel);
+            makeAttributeMap(attributeMap, codeModel, "code");
 
 
             // 如果这行Code是Sku的话还需要CheckSku
@@ -649,6 +654,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     skuModel.setPriceNet(new BigDecimal(codeModel.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                     skuModel.setPriceMsrp(skuModel.getPriceClientMsrp());
                     skuModel.setPriceCurrent(skuModel.getPriceClientRetail());
+                    Map<String, String> skuAttributeMap = new HashMap<>();
+                    makeAttributeMap(skuAttributeMap, codeModel, "sku");
+                    skuModel.setAttribute(skuAttributeMap);
                     skusModel.add(skuModel);
                 } else {
                     for (VmsBtFeedInfoTempModel skuTemp : skuModels) {
@@ -675,7 +683,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         skuModel.setPriceNet(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                         skuModel.setPriceMsrp(skuModel.getPriceClientMsrp());
                         skuModel.setPriceCurrent(skuModel.getPriceClientRetail());
-
+                        Map<String, String> skuAttributeMap = new HashMap<>();
+                        makeAttributeMap(skuAttributeMap, skuTemp, "sku");
+                        skuModel.setAttribute(skuAttributeMap);
                         skusModel.add(skuModel);
                     }
                 }
@@ -689,11 +699,12 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
          *
          * @param attributeMap 做出的AttributeMap
          * @param codeModel VmsBtFeedInfoTempModel
+         * @param flag 'code' or 'sku'
          *
          * @return 可变主题对应Attribute的序号和内容
          *
          */
-        private void makeAttributeMap(Map<String, List<String>> attributeMap, VmsBtFeedInfoTempModel codeModel) {
+        private void makeAttributeMap(Map attributeMap, VmsBtFeedInfoTempModel codeModel, String flag) {
             String attributeKey1 = codeModel.getAttributeKey1();
             String attributeKey2 = codeModel.getAttributeKey2();
             String attributeKey3 = codeModel.getAttributeKey3();
@@ -736,64 +747,144 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             String attributeValue19 = codeModel.getAttributeValue19();
             String attributeValue20 = codeModel.getAttributeValue20();
             if (!StringUtils.isEmpty(attributeKey1)) {
-                attributeMap.put(attributeKey1, new ArrayList<String>() {{this.add(attributeValue1);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey1, new ArrayList<String>() {{this.add(attributeValue1);}});
+                } else {
+                    attributeMap.put(attributeKey1, attributeValue1);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey2)) {
-                attributeMap.put(attributeKey2, new ArrayList<String>() {{this.add(attributeValue2);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey2, new ArrayList<String>() {{this.add(attributeValue2);}});
+                } else {
+                    attributeMap.put(attributeKey2, attributeValue2);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey3)) {
-                attributeMap.put(attributeKey3, new ArrayList<String>() {{this.add(attributeValue3);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey3, new ArrayList<String>() {{this.add(attributeValue3);}});
+                } else {
+                    attributeMap.put(attributeKey3, attributeValue3);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey4)) {
-                attributeMap.put(attributeKey4, new ArrayList<String>() {{this.add(attributeValue4);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey4, new ArrayList<String>() {{this.add(attributeValue4);}});
+                } else {
+                    attributeMap.put(attributeKey4, attributeValue4);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey5)) {
-                attributeMap.put(attributeKey5, new ArrayList<String>() {{this.add(attributeValue5);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey5, new ArrayList<String>() {{this.add(attributeValue5);}});
+                } else {
+                    attributeMap.put(attributeKey5, attributeValue5);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey6)) {
-                attributeMap.put(attributeKey6, new ArrayList<String>() {{this.add(attributeValue6);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey6, new ArrayList<String>() {{this.add(attributeValue6);}});
+                } else {
+                    attributeMap.put(attributeKey6, attributeValue6);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey7)) {
-                attributeMap.put(attributeKey7, new ArrayList<String>() {{this.add(attributeValue7);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey7, new ArrayList<String>() {{this.add(attributeValue7);}});
+                } else {
+                    attributeMap.put(attributeKey7, attributeValue7);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey8)) {
-                attributeMap.put(attributeKey8, new ArrayList<String>() {{this.add(attributeValue8);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey8, new ArrayList<String>() {{this.add(attributeValue8);}});
+                } else {
+                    attributeMap.put(attributeKey8, attributeValue8);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey9)) {
-                attributeMap.put(attributeKey9, new ArrayList<String>() {{this.add(attributeValue9);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey9, new ArrayList<String>() {{this.add(attributeValue9);}});
+                } else {
+                    attributeMap.put(attributeKey9, attributeValue9);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey10)) {
-                attributeMap.put(attributeKey10, new ArrayList<String>() {{this.add(attributeValue10);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey10, new ArrayList<String>() {{this.add(attributeValue10);}});
+                } else {
+                    attributeMap.put(attributeKey10, attributeValue10);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey11)) {
-                attributeMap.put(attributeKey11, new ArrayList<String>() {{this.add(attributeValue11);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey11, new ArrayList<String>() {{this.add(attributeValue11);}});
+                } else {
+                    attributeMap.put(attributeKey11, attributeValue11);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey12)) {
-                attributeMap.put(attributeKey12, new ArrayList<String>() {{this.add(attributeValue12);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey12, new ArrayList<String>() {{this.add(attributeValue12);}});
+                } else {
+                    attributeMap.put(attributeKey12, attributeValue12);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey13)) {
-                attributeMap.put(attributeKey13, new ArrayList<String>() {{this.add(attributeValue13);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey13, new ArrayList<String>() {{this.add(attributeValue13);}});
+                } else {
+                    attributeMap.put(attributeKey13, attributeValue13);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey14)) {
-                attributeMap.put(attributeKey14, new ArrayList<String>() {{this.add(attributeValue14);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey14, new ArrayList<String>() {{this.add(attributeValue14);}});
+                } else {
+                    attributeMap.put(attributeKey14, attributeValue14);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey15)) {
-                attributeMap.put(attributeKey15, new ArrayList<String>() {{this.add(attributeValue15);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey15, new ArrayList<String>() {{this.add(attributeValue15);}});
+                } else {
+                    attributeMap.put(attributeKey15, attributeValue15);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey16)) {
-                attributeMap.put(attributeKey16, new ArrayList<String>() {{this.add(attributeValue16);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey16, new ArrayList<String>() {{this.add(attributeValue16);}});
+                } else {
+                    attributeMap.put(attributeKey16, attributeValue16);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey17)) {
-                attributeMap.put(attributeKey17, new ArrayList<String>() {{this.add(attributeValue17);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey17, new ArrayList<String>() {{this.add(attributeValue17);}});
+                } else {
+                    attributeMap.put(attributeKey17, attributeValue17);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey18)) {
-                attributeMap.put(attributeKey18, new ArrayList<String>() {{this.add(attributeValue18);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey18, new ArrayList<String>() {{this.add(attributeValue18);}});
+                } else {
+                    attributeMap.put(attributeKey18, attributeValue18);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey19)) {
-                attributeMap.put(attributeKey19, new ArrayList<String>() {{this.add(attributeValue19);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey19, new ArrayList<String>() {{this.add(attributeValue19);}});
+                } else {
+                    attributeMap.put(attributeKey19, attributeValue19);
+                }
             }
             if (!StringUtils.isEmpty(attributeKey20)) {
-                attributeMap.put(attributeKey20, new ArrayList<String>() {{this.add(attributeValue20);}});
+                if ("code".equals(flag)) {
+                    attributeMap.put(attributeKey20, new ArrayList<String>() {{this.add(attributeValue20);}});
+                } else {
+                    attributeMap.put(attributeKey20, attributeValue20);
+                }
             }
         }
 
@@ -809,124 +900,125 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             Map<String, String> returnMap = new HashMap<>();
             // 可变主题
             String variationTheme = skuModel.getVariationTheme();
+            variationTheme = variationTheme.toLowerCase();
 
             // AttributeKey
             String attributeKey1 = skuModel.getAttributeKey1();
-            if (variationTheme.equals(attributeKey1)) {
+            if (variationTheme.equals(attributeKey1.toLowerCase())) {
                 returnMap.put("AttributeNum", "1");
                 returnMap.put("Value", skuModel.getAttributeValue1());
                 return returnMap;
             }
             String attributeKey2 = skuModel.getAttributeKey2();
-            if (variationTheme.equals(attributeKey2)) {
+            if (variationTheme.equals(attributeKey2.toLowerCase())) {
                 returnMap.put("AttributeNum", "2");
                 returnMap.put("Value", skuModel.getAttributeValue2());
                 return returnMap;
             }
             String attributeKey3 = skuModel.getAttributeKey3();
-            if (variationTheme.equals(attributeKey3)) {
+            if (variationTheme.equals(attributeKey3.toLowerCase())) {
                 returnMap.put("AttributeNum", "3");
                 returnMap.put("Value", skuModel.getAttributeValue3());
                 return returnMap;
             }
             String attributeKey4 = skuModel.getAttributeKey4();
-            if (variationTheme.equals(attributeKey4)) {
+            if (variationTheme.equals(attributeKey4.toLowerCase())) {
                 returnMap.put("AttributeNum", "4");
                 returnMap.put("Value", skuModel.getAttributeValue4());
                 return returnMap;
             }
             String attributeKey5 = skuModel.getAttributeKey5();
-            if (variationTheme.equals(attributeKey5)) {
+            if (variationTheme.equals(attributeKey5.toLowerCase())) {
                 returnMap.put("AttributeNum", "5");
                 returnMap.put("Value", skuModel.getAttributeValue5());
                 return returnMap;
             }
             String attributeKey6 = skuModel.getAttributeKey6();
-            if (variationTheme.equals(attributeKey6)) {
+            if (variationTheme.equals(attributeKey6.toLowerCase())) {
                 returnMap.put("AttributeNum", "6");
                 returnMap.put("Value", skuModel.getAttributeValue6());
                 return returnMap;
             }
             String attributeKey7 = skuModel.getAttributeKey7();
-            if (variationTheme.equals(attributeKey7)) {
+            if (variationTheme.equals(attributeKey7.toLowerCase())) {
                 returnMap.put("AttributeNum", "7");
                 returnMap.put("Value", skuModel.getAttributeValue7());
                 return returnMap;
             }
             String attributeKey8 = skuModel.getAttributeKey8();
-            if (variationTheme.equals(attributeKey8)) {
+            if (variationTheme.equals(attributeKey8.toLowerCase())) {
                 returnMap.put("AttributeNum", "8");
                 returnMap.put("Value", skuModel.getAttributeValue8());
                 return returnMap;
             }
             String attributeKey9 = skuModel.getAttributeKey9();
-            if (variationTheme.equals(attributeKey9)) {
+            if (variationTheme.equals(attributeKey9.toLowerCase())) {
                 returnMap.put("AttributeNum", "9");
                 returnMap.put("Value", skuModel.getAttributeValue9());
                 return returnMap;
             }
             String attributeKey10 = skuModel.getAttributeKey10();
-            if (variationTheme.equals(attributeKey10)) {
+            if (variationTheme.equals(attributeKey10.toLowerCase())) {
                 returnMap.put("AttributeNum", "10");
                 returnMap.put("Value", skuModel.getAttributeValue10());
                 return returnMap;
             }
             String attributeKey11 = skuModel.getAttributeKey11();
-            if (variationTheme.equals(attributeKey11)) {
+            if (variationTheme.equals(attributeKey11.toLowerCase())) {
                 returnMap.put("AttributeNum", "11");
                 returnMap.put("Value", skuModel.getAttributeValue11());
                 return returnMap;
             }
             String attributeKey12 = skuModel.getAttributeKey12();
-            if (variationTheme.equals(attributeKey12)) {
+            if (variationTheme.equals(attributeKey12.toLowerCase())) {
                 returnMap.put("AttributeNum", "12");
                 returnMap.put("Value", skuModel.getAttributeValue12());
                 return returnMap;
             }
             String attributeKey13 = skuModel.getAttributeKey13();
-            if (variationTheme.equals(attributeKey13)) {
+            if (variationTheme.equals(attributeKey13.toLowerCase())) {
                 returnMap.put("AttributeNum", "13");
                 returnMap.put("Value", skuModel.getAttributeValue13());
                 return returnMap;
             }
             String attributeKey14 = skuModel.getAttributeKey14();
-            if (variationTheme.equals(attributeKey14)) {
+            if (variationTheme.equals(attributeKey14.toLowerCase())) {
                 returnMap.put("AttributeNum", "14");
                 returnMap.put("Value", skuModel.getAttributeValue14());
                 return returnMap;
             }
             String attributeKey15 = skuModel.getAttributeKey15();
-            if (variationTheme.equals(attributeKey15)) {
+            if (variationTheme.equals(attributeKey15.toLowerCase())) {
                 returnMap.put("AttributeNum", "15");
                 returnMap.put("Value", skuModel.getAttributeValue15());
                 return returnMap;
             }
             String attributeKey16 = skuModel.getAttributeKey16();
-            if (variationTheme.equals(attributeKey16)) {
+            if (variationTheme.equals(attributeKey16.toLowerCase())) {
                 returnMap.put("AttributeNum", "16");
                 returnMap.put("Value", skuModel.getAttributeValue16());
                 return returnMap;
             }
             String attributeKey17 = skuModel.getAttributeKey17();
-            if (variationTheme.equals(attributeKey17)) {
+            if (variationTheme.equals(attributeKey17.toLowerCase())) {
                 returnMap.put("AttributeNum", "17");
                 returnMap.put("Value", skuModel.getAttributeValue17());
                 return returnMap;
             }
             String attributeKey18 = skuModel.getAttributeKey18();
-            if (variationTheme.equals(attributeKey18)) {
+            if (variationTheme.equals(attributeKey18.toLowerCase())) {
                 returnMap.put("AttributeNum", "18");
                 returnMap.put("Value", skuModel.getAttributeValue18());
                 return returnMap;
             }
             String attributeKey19 = skuModel.getAttributeKey19();
-            if (variationTheme.equals(attributeKey19)) {
+            if (variationTheme.equals(attributeKey19.toLowerCase())) {
                 returnMap.put("AttributeNum", "19");
                 returnMap.put("Value", skuModel.getAttributeValue19());
                 return returnMap;
             }
             String attributeKey20 = skuModel.getAttributeKey20();
-            if (variationTheme.equals(attributeKey20)) {
+            if (variationTheme.equals(attributeKey20.toLowerCase())) {
                 returnMap.put("AttributeNum", "20");
                 returnMap.put("Value", skuModel.getAttributeValue20());
                 return returnMap;
@@ -946,6 +1038,16 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
             // 是否有错误
             boolean errorFlg = false;
+
+            // 如果sku在feedInfo表中存在，那么parent id是不能变更的
+            JongoQuery queryObject = new JongoQuery();
+            queryObject.setQuery("{\"skus.clientSku\":\"" + codeModel.getSku() + "\"}");
+            List<CmsBtFeedInfoModel> feeds = feedInfoService.getList(channel.getOrder_channel_id(), queryObject);
+            if (feeds.size() > 0 && !feeds.get(0).getCode().equals(codeModel.getParentId())) {
+                // The parent-id can not be changed from %s to %s.
+                addErrorMessage(errorList, "8000007", new Object[]{feeds.get(0).getCode(), codeModel.getParentId()}, codeModel.getSku(), columnMap.get(PARENT_ID));
+                errorFlg = true;
+            }
 
             // product-id
             String productId = codeModel.getProductId();
@@ -1058,7 +1160,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     } else {
                         for (Map.Entry<Object, String> entry : columnMap.entrySet()) {
                             // 列名与VoyageOneFeedTemplate定义的列名不匹配
-                            if (!entry.getValue().equals(headers[(int)entry.getKey()])) {
+                            if (!entry.getValue().equals(headers[(int)entry.getKey()].trim())) {
                                 checkHeader = false;
                                 break;
                             }
@@ -1129,6 +1231,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
                         // price
                         item = reader.get(i++);
+                        item = item.replaceAll("\\$", "");
                         if (item.getBytes().length > 128) {
                             addErrorMessage(error, "8000011", new Object[]{columnMap.get(PRICE)}, sku, columnMap.get(PRICE));
                         }
@@ -1136,6 +1239,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
                         // msrp
                         item = reader.get(i++);
+                        item = item.replaceAll("\\$", "");
                         if (item.getBytes().length > 128) {
                             addErrorMessage(error, "8000011", new Object[]{columnMap.get(MSRP)}, sku, columnMap.get(MSRP));
                         }
@@ -1520,7 +1624,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                             + String.valueOf(error.get("message"))  + "\r\n");
                 }
                 if (writeHeader) {
-                    String header = "row,column,message\r\n";
+                    String header = "sku,column,message\r\n";
                     byte[] headerInBytes = header.getBytes();
                     outputStream.write(headerInBytes);
                 }
