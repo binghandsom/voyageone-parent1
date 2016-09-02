@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.jumei.JumeiHtMallService;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -32,6 +33,8 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
     @Autowired
     CmsBuildPlatformProductUploadJMService cmsBuildPlatformProductUploadJMService;
+    @Autowired
+    private JumeiHtMallService jumeiHtMallService;
 
 
     @Autowired
@@ -157,7 +160,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
         for (CmsBtProductGroupModel groupModel : listGroup) {
             if (!StringUtils.isEmpty(groupModel.getPlatformMallId())) {
-                // 上传过，不再处理，注掉这段if的话，就支持更新了
+                // 上传过，不再处理，注掉这段if的话，就支持更新了(但是注意uploadMall方法最后两个参数，null的话，不支持追加sku)
                 continue;
             }
             if (StringUtils.isEmpty(groupModel.getPlatformPid()) || StringUtils.isEmpty(groupModel.getNumIId())) {
@@ -194,7 +197,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
             }
 
             try {
-                cmsBuildPlatformProductUploadJMService.uploadMall(product, shop, expressionParser);
+                cmsBuildPlatformProductUploadJMService.uploadMall(product, shop, expressionParser, null, null);
             } catch (Exception e) {
                 System.out.println("GroupId [" + groupId + "] 上传聚美商城失败!" + e.getMessage());
             }

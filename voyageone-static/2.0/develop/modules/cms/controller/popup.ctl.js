@@ -239,6 +239,12 @@ define([
                 "controller": "PriceLogPopupController as ctrl",
                 "size": "lg"
             },
+            price_confirm: {
+                templateUrl: "views/pop/history/price.confirm.log.tpl.html",
+                controllerUrl: "modules/cms/views/pop/history/price.confirm.log.controller",
+                controller: "PriceConfirmLogController as ctrl",
+                size: "lg"
+            },
             "promotion": {
                 "templateUrl": "views/pop/history/promotion.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/history/promotion.ctl",
@@ -463,6 +469,11 @@ define([
                 "templateUrl": "views/pop/product/hsCodeChange.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/hsCodeChange.ctl",
                 "controller": 'HsCodeChangeController as ctrl'
+            },
+            "approveConfirm":{
+                "templateUrl": "views/pop/product/approveConfirm.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/approveConfirm.ctl",
+                "controller": 'ApproveConfirmController as ctrl'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -783,6 +794,17 @@ define([
             });
         };
 
+        $scope.openHistoryPriceConfirm = function openHistoryPriceConfirm(code, skuList, selectedSku, selectedCart) {
+            return openModal(popActions.history.price_confirm, {
+                skuList: skuList,
+                code: code,
+                selected: {
+                    sku: selectedSku,
+                    cart: selectedCart
+                }
+            });
+        };
+
         /**
          * 打开promotion页面
          * @type {openPromotion}
@@ -991,7 +1013,7 @@ define([
          * 新增店铺管理-Listing-imagegroup页,add操作弹出
          * */
         $scope.openImgGroupAdd = function openImgGroupAdd(data) {
-            openModal(popActions.store.listing.imagegroupadd, {
+            return openModal(popActions.store.listing.imagegroupadd, {
                 data: function () {
                     return data;
                 }
@@ -1154,6 +1176,11 @@ define([
         /**属性编辑*/
         $scope.openPropertySetting = function openPropertySetting(context){
             return openModal(popActions.platformMapping.propertySetting,context);
+        };
+
+        /**上新价格确认*/
+        $scope.openApproveConfirm = function openApproveConfirm(context){
+            return openModal(popActions.product.approveConfirm,context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {

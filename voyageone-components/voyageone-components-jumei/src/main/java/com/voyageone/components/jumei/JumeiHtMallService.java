@@ -1,12 +1,15 @@
 package com.voyageone.components.jumei;
 
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.components.jumei.bean.HtMallSkuAddInfo;
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.components.jumei.bean.HtMallUpdateInfo;
 import com.voyageone.components.jumei.reponse.HtMallAddResponse;
+import com.voyageone.components.jumei.reponse.HtMallSkuAddResponse;
 import com.voyageone.components.jumei.reponse.HtMallSkuPriceUpdateResponse;
 import com.voyageone.components.jumei.reponse.HtMallUpdateResponse;
 import com.voyageone.components.jumei.request.HtMallAddRequest;
+import com.voyageone.components.jumei.request.HtMallSkuAddRequest;
 import com.voyageone.components.jumei.request.HtMallSkuPriceUpdateRequest;
 import com.voyageone.components.jumei.request.HtMallUpdateRequest;
 import org.springframework.stereotype.Service;
@@ -79,6 +82,28 @@ public class JumeiHtMallService extends JmBase {
         request.setUpdateData(updateData);
         String reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
         HtMallSkuPriceUpdateResponse response = new HtMallSkuPriceUpdateResponse();
+        response.setBody(reqResult);
+        if (!response.isSuccess()) {
+            failCause.append(response.getErrorMsg());
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * 商城商品追加sku[MALL]
+     *
+     * @param shopBean 店铺信息
+     * @param mallSkuAddInfo 更新内容
+     * @param failCause 用于保存错误信息
+     * @return 是否更新成功
+     */
+    public boolean addMallSku(ShopBean shopBean, HtMallSkuAddInfo mallSkuAddInfo, StringBuffer failCause) throws Exception {
+        HtMallSkuAddRequest request = new HtMallSkuAddRequest();
+        request.setMallSkuAddInfo(mallSkuAddInfo);
+        String reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
+        HtMallSkuAddResponse response = new HtMallSkuAddResponse();
         response.setBody(reqResult);
         if (!response.isSuccess()) {
             failCause.append(response.getErrorMsg());

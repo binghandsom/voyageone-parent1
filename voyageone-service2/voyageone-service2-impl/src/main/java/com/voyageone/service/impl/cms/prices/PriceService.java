@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.asserts.Assert;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.BaseService;
@@ -262,9 +263,14 @@ public class PriceService extends BaseService {
         //ShippingType存在cms_mt_channel_config里
         CmsChannelConfigBean shippingTypeConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE, String.valueOf(cartId));
 
-        if (shippingTypeConfig == null) {
+        if (shippingTypeConfig == null)
+            // 去除平台, 只查渠道级别
             shippingTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.SHIPPING_TYPE);
-        }
+
+        // 还是没有
+        if (shippingTypeConfig == null)
+            // 那就渠道取顶级, 查最低级配置
+            shippingTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(ChannelConfigEnums.Channel.NONE.getId(), CmsConstants.ChannelConfig.SHIPPING_TYPE);
 
         String shippingType;
 
@@ -317,7 +323,10 @@ public class PriceService extends BaseService {
         }
 
         // 公式参数: 税率
-        Double taxRate = feeTaxService.getTaxRate(hsCode);
+        Double taxRate = feeTaxService.getTaxRate(hsCode, shippingType);
+
+        if (taxRate == null)
+            throw new IllegalPriceConfigException("没有找到发货方式 %s 可用的税率 ( %s ) 配置", shippingType, hsCode);
 
         // 进入计算阶段
         SystemPriceCalculator systemPriceCalculator = new SystemPriceCalculator()
@@ -636,7 +645,12 @@ public class PriceService extends BaseService {
      * @return 表示指导售价和建议售价的比较
      */
     private String compareRetailWithMsrpPrice(BaseMongoMap<String, Object> platformSku, CmsBtProductConstants.Platform_SKU_COM commonField, Double retailPrice) {
+
         Double msrpPrice = getProductPrice(platformSku, commonField);
+
+        if (msrpPrice == null)
+            return "";
+
         if (msrpPrice < retailPrice)
             return "XU";
         else if (msrpPrice > retailPrice)

@@ -130,7 +130,7 @@ public class CmsImageGroupDetailService extends BaseAppService {
         }
 
         imageGroupService.update(userName, imageGroupId, cartId, imageGroupName, imageType, viewType,
-                brandNameList, productTypeList, sizeTypeList);
+                brandNameList, productTypeList, sizeTypeList,model.getSizeChartId(),model.getSizeChartName());
     }
 
     /**

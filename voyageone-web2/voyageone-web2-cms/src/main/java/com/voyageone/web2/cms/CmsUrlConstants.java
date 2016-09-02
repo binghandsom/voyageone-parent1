@@ -479,6 +479,13 @@ public interface CmsUrlConstants {
             String EXPORT = "export";
         }
 
+        interface PRICE_CONFIRM {
+
+            String ROOT = "/cms/price/confirm";
+
+            String PAGE = "page";
+        }
+
         interface PROMOTION {
 
             String ROOT = "/cms/pop/history_promotion/";
@@ -545,6 +552,7 @@ public interface CmsUrlConstants {
             String CopyProperty = "copyProperty";
             String CopyCommonProperty = "copyCommonProperty";
             String GET_PLATFORM_CATEGORIES = "getPlatformCategories";
+            String PriceConfirm = "priceConfirm";
         }
 
         interface HISTORY {
@@ -670,6 +678,7 @@ public interface CmsUrlConstants {
                 String SEARCH_SIZE_CHART = "sizeChartSearch";
                 String SAVE_EDIT_SIZE_CHART = "sizeChartEditSave";
                 String GetNoMatchList="getNoMatchList";
+                String GetListImageGroupBySizeChartId="getListImageGroupBySizeChartId";
             }
 
             interface SIZE_CHART_DETAIL {
