@@ -41,7 +41,7 @@ public class AdminLogController extends AdminController {
         Integer  pageNum = (Integer) requestBean.getOrDefault("pageNum", 1);
         Integer  pageSize = (Integer) requestBean.getOrDefault("pageSize", DEFAULT_PAGE_SIZE);
         Long startTime =  (Long)requestBean.get("startTime");
-        Long endTime =  (Long)requestBean.get("startTime");
+        Long endTime =  (Long)requestBean.get("endTime");
 
         return  success(adminLogService.searchLog(model, startTime, endTime, pageNum, pageSize));
     }

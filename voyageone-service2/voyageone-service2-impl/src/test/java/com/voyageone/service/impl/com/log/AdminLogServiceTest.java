@@ -32,7 +32,7 @@ public class AdminLogServiceTest {
 
     @Test
     public void testGetLog() throws Exception {
-        System.out.println(JacksonUtil.bean2Json(adminLogService.getLog(25)));
+        System.out.println(JacksonUtil.bean2Json(adminLogService.getLog(489)));
 
     }
 }
