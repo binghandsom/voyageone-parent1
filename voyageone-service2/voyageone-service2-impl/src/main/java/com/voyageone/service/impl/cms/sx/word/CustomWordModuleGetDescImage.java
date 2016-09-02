@@ -24,6 +24,7 @@ import java.net.URL;
 public class CustomWordModuleGetDescImage extends CustomWordModule {
 
     public final static String moduleName = "GetDescImage";
+	private static Font dynamicFont;
 
     public CustomWordModuleGetDescImage() {
         super(moduleName);
@@ -31,7 +32,6 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
 
     @Override
     public String parse(CustomWord customWord, ExpressionParser expressionParser, SxProductService sxProductService, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
-        $info("TOM-0-1");
 
         //user param
         CustomModuleUserParamGetDescImage customModuleUserParamGetDescImage = ((CustomWordValueGetDescImage) customWord.getValue()).getUserParam();
@@ -42,9 +42,8 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         int startX = 30;        // 起始位置x
         int startY = 30;        // 起始位置y
         int sectionSize = 5;    // 行间距
-        int fontSize = 20;      // 文字大小
+        float fontSize = 18f;      // 文字大小
         int oneLineBit = 70;    // 一行的英文单词数
-        $info("TOM-0-2");
 
         {
             // 数据来源字段名称
@@ -113,7 +112,6 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
                 }
             }
         }
-        $info("TOM-0-3");
 
         // 获取需要设定的文本
         //   文字来源是指定字段名 (默认从platforms.Pxx.fields下面获取, 如果没有, 则从common.fields下面获取)
@@ -136,16 +134,12 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         txtDesc = txtDesc.replaceAll("<br />", "\n");
         txtDesc = txtDesc.replaceAll("<br>", "\n");
 
-        $info("TOM-0-4");
         // 制作图片
         byte[] img = doCreateImage(txtDesc, width, startX, startY, sectionSize, fontSize, oneLineBit);
-        $info("TOM-0-5");
 
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
             TbPictureService tbPictureService = new TbPictureService();
-            $info("TOM-15");
             PictureUploadResponse response = tbPictureService.uploadPicture(shopBean, img, "desc", "0");
-            $info("TOM-16");
 
             if (!StringUtils.isEmpty(response.getPicture().getPicturePath())) {
                 return  response.getPicture().getPicturePath();
@@ -155,23 +149,18 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         return "";
     }
 
-    private byte[] doCreateImage(String txtDesc, int width, int startX, int startY, int sectionSize, int fontSize, int oneLineBit) {
+    private byte[] doCreateImage(String txtDesc, int width, int startX, int startY, int sectionSize, float fontSize, int oneLineBit) {
 
         int height;
-		$info("TOM-0-4-1");
         String[] split = getChangedString(txtDesc, oneLineBit).split("\n");
-		$info("TOM-0-4-2");
-        height = startY + (fontSize + sectionSize) * split.length;
+        height = startY + ((int)fontSize + sectionSize) * split.length;
 
-		$info("TOM-0-4-3");
         BufferedImage tag = new BufferedImage(
                 width,
                 height,
                 BufferedImage.TYPE_INT_RGB);
 
-		$info("TOM-0-4-4");
         Graphics2D g2d = tag.createGraphics();
-		$info("TOM-0-4-5");
         try {
             Field field = Color.class.getField("white");
             Color color = (Color)field.get(null);
@@ -180,102 +169,85 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
                     width,
                     height
             );
-			$info("TOM-0-4-6");
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
-		$info("TOM-0-4-7");
         // 画字
         for (int i = 0; i < split.length; i++) {
             doDrawText(g2d, split[i], i, fontSize, startX, startY, sectionSize);
         }
 
-		$info("TOM-0-4-8");
         // 图片输出
         try {
             // 写图片
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ImageIO.write(tag, "jpg", byteArrayOutputStream);
 
-			$info("TOM-0-4-9");
             return byteArrayOutputStream.toByteArray();
         } catch (IOException e1) {
             e1.printStackTrace();
         }
 
-		$info("TOM-0-4-10");
         return null;
     }
 
-    private void doDrawText(Graphics2D g2d, String text, int nowLine, int fontSize, int startX, int startY, int sectionSize) {
+    private void getFont(){
+		URL fontFangsong = this.getClass().getResource("/config/job/cms/font/Fangsong.ttf");
+
+		File file = new File(fontFangsong.getPath());
+		try {
+			FileInputStream aixing = new FileInputStream(file);
+			dynamicFont = Font.createFont(Font.TRUETYPE_FONT, aixing);
+			aixing.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (FontFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+    private void doDrawText(Graphics2D g2d, String text, int nowLine, float fontSize, int startX, int startY, int sectionSize) {
         {
 //            Font f = new Font(font, Font.BOLD, fontSize);
 
-			$info("TOM-1-0");
-//            URL baseUrl = CustomWordModuleGetDescImage.class.getResource(".");
-			URL baseUrl = this.getClass().getResource("/config/job/cms/font/Fangsong.ttf");
+			if (dynamicFont == null) {
+				getFont();
+			}
 
-            $info("TOM-1--1" + baseUrl.getPath());
-            $info("TOM-1--2" + baseUrl.getFile());
-//            File file = new File("/usr/task/voyageone/script/Fangsong.ttf");
-            File file = new File(baseUrl.getPath());
-            $info("TOM-2");
-//            File file = new File(baseUrl.getPath() + "SimSun-ExtB.ttf");
-            try {
-                $info("TOM-3");
-                FileInputStream aixing = new FileInputStream(file);
-                $info("TOM-4");
-                Font dynamicFont = Font.createFont(Font.TRUETYPE_FONT, aixing);
-                $info("TOM-5");
-//                Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, 18.0f);
-                Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, 18.0f);
-                $info("TOM-6");
-                aixing.close();
-                $info("TOM-7");
+			Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, fontSize);
 
-                // 设置位置
-                if (nowLine == 0) {
-                    g2d.translate(startX, startY);
-                } else {
-                    g2d.translate(0, fontSize + sectionSize);
-                }
+			// 设置位置
+			if (nowLine == 0) {
+				g2d.translate(startX, startY);
+			} else {
+				g2d.translate(0, fontSize + sectionSize);
+			}
 
-                // 消除锯齿
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                $info("TOM-8");
+			// 消除锯齿
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                // 设置颜色
-                try {
-                    Field field = Color.class.getField("black");
-                    Color color = (Color)field.get(null);
-                    g2d.setColor(color);
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+			// 设置颜色
+			try {
+				Field field = Color.class.getField("black");
+				Color color = (Color)field.get(null);
+				g2d.setColor(color);
+			} catch (NoSuchFieldException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
 
-                $info("TOM-9");
-                // 写字
-                g2d.setFont(dynamicFontPt);
-                GlyphVector v = dynamicFontPt.createGlyphVector(g2d.getFontMetrics().getFontRenderContext(), text);
-                Shape shape = v.getOutline();
-                g2d.fill(shape);
+			// 写字
+			g2d.setFont(dynamicFontPt);
+			GlyphVector v = dynamicFontPt.createGlyphVector(g2d.getFontMetrics().getFontRenderContext(), text);
+			Shape shape = v.getOutline();
+			g2d.fill(shape);
 
-                $info("TOM-10");
-//                g2d.drawString(text, 10, dynamicFontPt.getSize() + 10);
+//            g2d.drawString(text, 10, dynamicFontPt.getSize() + 10);
 
-            } catch (FileNotFoundException e) {
-                $info("TOM-11");
-                e.printStackTrace();
-            } catch (FontFormatException e) {
-                $info("TOM-12");
-                e.printStackTrace();
-            } catch (IOException e) {
-                $info("TOM-13");
-                e.printStackTrace();
-            }
 
-            $info("TOM-14");
 
         }
 
