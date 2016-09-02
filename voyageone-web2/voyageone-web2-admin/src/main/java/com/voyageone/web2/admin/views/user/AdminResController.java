@@ -39,8 +39,11 @@ public class AdminResController extends AdminController {
     public AjaxResponse searchRes(@RequestBody Map requestBean) {
 
         String application = requestBean.getOrDefault("application", "").toString();
+        Integer  pageNum = (Integer) requestBean.getOrDefault("pageNum", 1);
+        Integer  pageSize = (Integer) requestBean.getOrDefault("pageSize", DEFAULT_PAGE_SIZE);
+
         Map<String, Object> response = new HashMap<>();
-        response.put("treeList", adminResService.searchRes(application));
+        response.put("treeList", adminResService.searchRes(application, pageNum, pageSize));
 
         return success(response);
     }
@@ -48,7 +51,7 @@ public class AdminResController extends AdminController {
     @RequestMapping(AdminUrlConstants.User.Res.INIT)
     public AjaxResponse init() {
         Map<String, Object> response = new HashMap<>();
-        response.put("treeList", adminResService.searchRes(null));
+        response.put("treeList", adminResService.searchRes(null, 1, DEFAULT_PAGE_SIZE));
 
         return success(response);
     }
