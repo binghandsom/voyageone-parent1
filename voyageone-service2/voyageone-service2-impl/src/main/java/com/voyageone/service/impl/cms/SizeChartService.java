@@ -314,7 +314,7 @@ public class SizeChartService extends BaseService {
     //获取未匹配尺码表
     public List<Map<String, Object>> getNoMatchList(String channelId, String cartId, String lang) {
         JongoQuery queryObject = new JongoQuery();
-        queryObject.setQuery("{\"channelId\":\"" + channelId + "\"}");
+        queryObject.setQuery("{\"channelId\":\"" + channelId + "\",\"active\":1}");
         queryObject.setProjection("{'sizeChartId':1,'sizeChartName':1,'_id':0}");
         List<CmsBtSizeChartModel> grpList = cmsBtSizeChartDao.select(queryObject);
 
