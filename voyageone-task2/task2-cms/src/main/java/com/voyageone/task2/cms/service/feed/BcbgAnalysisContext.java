@@ -39,6 +39,10 @@ class BcbgAnalysisContext {
         sku.setBarcode(bcbgBean.getEAN11());
         sku.setClientSku(bcbgBean.getMATNR());
         sku.setImage(bcbgBean.getStyleBean().getProductImgURLs());
+        sku.setWeightCalc("4");
+        sku.setWeightOrgUnit("lb");
+        sku.setWeightOrg("4");
+
         setPrices(bcbgBean, sku);
 
         CmsBtFeedInfoModel code = getProduct(bcbgBean);
