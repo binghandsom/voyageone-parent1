@@ -74,7 +74,7 @@ define([
                     if (_.isObject(self.sizeChart)) {
                         listSizeChart = self.sizeChart;
                     } else {
-                        listSizeChart = [{sizeChartName: self.sizeChart, sizeChartId: 0}]
+                        listSizeChart = {sizeChartName: self.sizeChart, sizeChartId: 0};
                     }
                 }
 
