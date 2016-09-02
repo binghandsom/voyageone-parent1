@@ -158,15 +158,20 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
     private byte[] doCreateImage(String txtDesc, int width, int startX, int startY, int sectionSize, int fontSize, int oneLineBit) {
 
         int height;
+		$info("TOM-0-4-1");
         String[] split = getChangedString(txtDesc, oneLineBit).split("\n");
+		$info("TOM-0-4-2");
         height = startY + (fontSize + sectionSize) * split.length;
 
+		$info("TOM-0-4-3");
         BufferedImage tag = new BufferedImage(
                 width,
                 height,
                 BufferedImage.TYPE_INT_RGB);
 
+		$info("TOM-0-4-4");
         Graphics2D g2d = tag.createGraphics();
+		$info("TOM-0-4-5");
         try {
             Field field = Color.class.getField("white");
             Color color = (Color)field.get(null);
@@ -175,26 +180,31 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
                     width,
                     height
             );
+			$info("TOM-0-4-6");
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
+		$info("TOM-0-4-7");
         // 画字
         for (int i = 0; i < split.length; i++) {
             doDrawText(g2d, split[i], i, fontSize, startX, startY, sectionSize);
         }
 
+		$info("TOM-0-4-8");
         // 图片输出
         try {
             // 写图片
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             ImageIO.write(tag, "jpg", byteArrayOutputStream);
 
+			$info("TOM-0-4-9");
             return byteArrayOutputStream.toByteArray();
         } catch (IOException e1) {
             e1.printStackTrace();
         }
 
+		$info("TOM-0-4-10");
         return null;
     }
 
@@ -202,6 +212,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         {
 //            Font f = new Font(font, Font.BOLD, fontSize);
 
+			$info("TOM-1-0");
             URL baseUrl = CustomWordModuleGetDescImage.class.getResource(".");
             $info("TOM-1" + baseUrl.getPath() + "Fangsong.ttf");
             File file = new File(baseUrl.getPath() + "Fangsong.ttf");
