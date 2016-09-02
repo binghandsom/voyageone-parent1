@@ -900,124 +900,125 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             Map<String, String> returnMap = new HashMap<>();
             // 可变主题
             String variationTheme = skuModel.getVariationTheme();
+            variationTheme = variationTheme.toLowerCase();
 
             // AttributeKey
             String attributeKey1 = skuModel.getAttributeKey1();
-            if (variationTheme.equals(attributeKey1)) {
+            if (variationTheme.equals(attributeKey1.toLowerCase())) {
                 returnMap.put("AttributeNum", "1");
                 returnMap.put("Value", skuModel.getAttributeValue1());
                 return returnMap;
             }
             String attributeKey2 = skuModel.getAttributeKey2();
-            if (variationTheme.equals(attributeKey2)) {
+            if (variationTheme.equals(attributeKey2.toLowerCase())) {
                 returnMap.put("AttributeNum", "2");
                 returnMap.put("Value", skuModel.getAttributeValue2());
                 return returnMap;
             }
             String attributeKey3 = skuModel.getAttributeKey3();
-            if (variationTheme.equals(attributeKey3)) {
+            if (variationTheme.equals(attributeKey3.toLowerCase())) {
                 returnMap.put("AttributeNum", "3");
                 returnMap.put("Value", skuModel.getAttributeValue3());
                 return returnMap;
             }
             String attributeKey4 = skuModel.getAttributeKey4();
-            if (variationTheme.equals(attributeKey4)) {
+            if (variationTheme.equals(attributeKey4.toLowerCase())) {
                 returnMap.put("AttributeNum", "4");
                 returnMap.put("Value", skuModel.getAttributeValue4());
                 return returnMap;
             }
             String attributeKey5 = skuModel.getAttributeKey5();
-            if (variationTheme.equals(attributeKey5)) {
+            if (variationTheme.equals(attributeKey5.toLowerCase())) {
                 returnMap.put("AttributeNum", "5");
                 returnMap.put("Value", skuModel.getAttributeValue5());
                 return returnMap;
             }
             String attributeKey6 = skuModel.getAttributeKey6();
-            if (variationTheme.equals(attributeKey6)) {
+            if (variationTheme.equals(attributeKey6.toLowerCase())) {
                 returnMap.put("AttributeNum", "6");
                 returnMap.put("Value", skuModel.getAttributeValue6());
                 return returnMap;
             }
             String attributeKey7 = skuModel.getAttributeKey7();
-            if (variationTheme.equals(attributeKey7)) {
+            if (variationTheme.equals(attributeKey7.toLowerCase())) {
                 returnMap.put("AttributeNum", "7");
                 returnMap.put("Value", skuModel.getAttributeValue7());
                 return returnMap;
             }
             String attributeKey8 = skuModel.getAttributeKey8();
-            if (variationTheme.equals(attributeKey8)) {
+            if (variationTheme.equals(attributeKey8.toLowerCase())) {
                 returnMap.put("AttributeNum", "8");
                 returnMap.put("Value", skuModel.getAttributeValue8());
                 return returnMap;
             }
             String attributeKey9 = skuModel.getAttributeKey9();
-            if (variationTheme.equals(attributeKey9)) {
+            if (variationTheme.equals(attributeKey9.toLowerCase())) {
                 returnMap.put("AttributeNum", "9");
                 returnMap.put("Value", skuModel.getAttributeValue9());
                 return returnMap;
             }
             String attributeKey10 = skuModel.getAttributeKey10();
-            if (variationTheme.equals(attributeKey10)) {
+            if (variationTheme.equals(attributeKey10.toLowerCase())) {
                 returnMap.put("AttributeNum", "10");
                 returnMap.put("Value", skuModel.getAttributeValue10());
                 return returnMap;
             }
             String attributeKey11 = skuModel.getAttributeKey11();
-            if (variationTheme.equals(attributeKey11)) {
+            if (variationTheme.equals(attributeKey11.toLowerCase())) {
                 returnMap.put("AttributeNum", "11");
                 returnMap.put("Value", skuModel.getAttributeValue11());
                 return returnMap;
             }
             String attributeKey12 = skuModel.getAttributeKey12();
-            if (variationTheme.equals(attributeKey12)) {
+            if (variationTheme.equals(attributeKey12.toLowerCase())) {
                 returnMap.put("AttributeNum", "12");
                 returnMap.put("Value", skuModel.getAttributeValue12());
                 return returnMap;
             }
             String attributeKey13 = skuModel.getAttributeKey13();
-            if (variationTheme.equals(attributeKey13)) {
+            if (variationTheme.equals(attributeKey13.toLowerCase())) {
                 returnMap.put("AttributeNum", "13");
                 returnMap.put("Value", skuModel.getAttributeValue13());
                 return returnMap;
             }
             String attributeKey14 = skuModel.getAttributeKey14();
-            if (variationTheme.equals(attributeKey14)) {
+            if (variationTheme.equals(attributeKey14.toLowerCase())) {
                 returnMap.put("AttributeNum", "14");
                 returnMap.put("Value", skuModel.getAttributeValue14());
                 return returnMap;
             }
             String attributeKey15 = skuModel.getAttributeKey15();
-            if (variationTheme.equals(attributeKey15)) {
+            if (variationTheme.equals(attributeKey15.toLowerCase())) {
                 returnMap.put("AttributeNum", "15");
                 returnMap.put("Value", skuModel.getAttributeValue15());
                 return returnMap;
             }
             String attributeKey16 = skuModel.getAttributeKey16();
-            if (variationTheme.equals(attributeKey16)) {
+            if (variationTheme.equals(attributeKey16.toLowerCase())) {
                 returnMap.put("AttributeNum", "16");
                 returnMap.put("Value", skuModel.getAttributeValue16());
                 return returnMap;
             }
             String attributeKey17 = skuModel.getAttributeKey17();
-            if (variationTheme.equals(attributeKey17)) {
+            if (variationTheme.equals(attributeKey17.toLowerCase())) {
                 returnMap.put("AttributeNum", "17");
                 returnMap.put("Value", skuModel.getAttributeValue17());
                 return returnMap;
             }
             String attributeKey18 = skuModel.getAttributeKey18();
-            if (variationTheme.equals(attributeKey18)) {
+            if (variationTheme.equals(attributeKey18.toLowerCase())) {
                 returnMap.put("AttributeNum", "18");
                 returnMap.put("Value", skuModel.getAttributeValue18());
                 return returnMap;
             }
             String attributeKey19 = skuModel.getAttributeKey19();
-            if (variationTheme.equals(attributeKey19)) {
+            if (variationTheme.equals(attributeKey19.toLowerCase())) {
                 returnMap.put("AttributeNum", "19");
                 returnMap.put("Value", skuModel.getAttributeValue19());
                 return returnMap;
             }
             String attributeKey20 = skuModel.getAttributeKey20();
-            if (variationTheme.equals(attributeKey20)) {
+            if (variationTheme.equals(attributeKey20.toLowerCase())) {
                 returnMap.put("AttributeNum", "20");
                 returnMap.put("Value", skuModel.getAttributeValue20());
                 return returnMap;
@@ -1159,7 +1160,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     } else {
                         for (Map.Entry<Object, String> entry : columnMap.entrySet()) {
                             // 列名与VoyageOneFeedTemplate定义的列名不匹配
-                            if (!entry.getValue().equals(headers[(int)entry.getKey()])) {
+                            if (!entry.getValue().equals(headers[(int)entry.getKey()].trim())) {
                                 checkHeader = false;
                                 break;
                             }
@@ -1230,6 +1231,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
                         // price
                         item = reader.get(i++);
+                        item = item.replaceAll("\\$", "");
                         if (item.getBytes().length > 128) {
                             addErrorMessage(error, "8000011", new Object[]{columnMap.get(PRICE)}, sku, columnMap.get(PRICE));
                         }
@@ -1237,6 +1239,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
                         // msrp
                         item = reader.get(i++);
+                        item = item.replaceAll("\\$", "");
                         if (item.getBytes().length > 128) {
                             addErrorMessage(error, "8000011", new Object[]{columnMap.get(MSRP)}, sku, columnMap.get(MSRP));
                         }
@@ -1621,7 +1624,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                             + String.valueOf(error.get("message"))  + "\r\n");
                 }
                 if (writeHeader) {
-                    String header = "row,column,message\r\n";
+                    String header = "sku,column,message\r\n";
                     byte[] headerInBytes = header.getBytes();
                     outputStream.write(headerInBytes);
                 }
