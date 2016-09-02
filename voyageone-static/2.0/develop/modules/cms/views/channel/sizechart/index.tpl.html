@@ -129,8 +129,8 @@
                                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;尺码图&nbsp;<span class="caret"></span>
                                                     </button>
                                                     <ul uib-dropdown-menu ng-if="imageGroups.length">
-                                                        <li ng-repeat="image in imageGroups" class="text-center">
-                                                            <a href="#/channel/imagegrouplist/detail/{{image.imageGroupId}}" target="_blank">{{carts.valueOf(image.cartId).desc}}:{{image.imageGroupName}}</a>
+                                                        <li ng-repeat="image in imageGroups" class="text-left">
+                                                            <a href="#/channel/imagegrouplist/detail/{{image.imageGroupId}}" style="text-decoration: none" target="_blank">{{carts.valueOf(image.cartId).desc}}:{{image.imageGroupName}}</a>
                                                         </li>
                                                     </ul>
                                                 </div>

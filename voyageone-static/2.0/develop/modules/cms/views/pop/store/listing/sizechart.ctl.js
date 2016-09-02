@@ -31,6 +31,7 @@ define([
                     var saveInfo = $scope.vm.saveInfo,
                         dropdown = $scope.dropdown;
 
+                    saveInfo.sizeChartId = dropdown.saveInfo.sizeChartId;
                     saveInfo.sizeChartName = dropdown.saveInfo.sizeChartName;
                     saveInfo.brandNameList = dropdown.saveInfo.brandName;
                     saveInfo.productTypeList = dropdown.saveInfo.productType;
@@ -73,11 +74,6 @@ define([
             }
 
             upEntity = _.extend($scope.vm.saveInfo, {listImageGroup: listImageGroup});
-
-            if ($scope.dropdown.from === 'detail') {
-                $uibModalInstance.close(upEntity);
-                return;
-            }
 
             sizeChartService.editSave(upEntity).then(function () {
                 $scope.$close();
