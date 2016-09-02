@@ -24,7 +24,7 @@ import java.net.URL;
 public class CustomWordModuleGetDescImage extends CustomWordModule {
 
     public final static String moduleName = "GetDescImage";
-	private static Font dynamicFont;
+//	private static Font dynamicFont;
 
     public CustomWordModuleGetDescImage() {
         super(moduleName);
@@ -192,33 +192,33 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         return null;
     }
 
-    private void getFont(){
-		URL fontFangsong = this.getClass().getResource("/config/job/cms/font/Fangsong.ttf");
-
-		File file = new File(fontFangsong.getPath());
-		try {
-			FileInputStream aixing = new FileInputStream(file);
-			dynamicFont = Font.createFont(Font.TRUETYPE_FONT, aixing);
-			aixing.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (FontFormatException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
+//    private void getFont(){
+//		URL fontFangsong = this.getClass().getResource("/config/job/cms/font/Fangsong.ttf");
+//
+//		File file = new File(fontFangsong.getPath());
+//		try {
+//			FileInputStream aixing = new FileInputStream(file);
+//			dynamicFont = Font.createFont(Font.TRUETYPE_FONT, aixing);
+//			aixing.close();
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (FontFormatException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//
+//	}
 
     private void doDrawText(Graphics2D g2d, String text, int nowLine, float fontSize, int startX, int startY, int sectionSize) {
         {
-//            Font f = new Font(font, Font.BOLD, fontSize);
+			Font dynamicFontPt = new Font("FangSong", Font.BOLD, (int)fontSize);
 
-			if (dynamicFont == null) {
-				getFont();
-			}
-
-			Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, fontSize);
+//			if (dynamicFont == null) {
+//				getFont();
+//			}
+//
+//			Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, fontSize);
 
 			// 设置位置
 			if (nowLine == 0) {
