@@ -352,7 +352,7 @@ public class SizeChartService extends BaseService {
     }
 
     public boolean EXISTSName(String sizeChartName, long sizeChartId) {
-        long count = cmsBtSizeChartDao.countByQuery("{\"sizeChartName\":\"" + sizeChartName + "\"" + ",\"imageGroupId\": { $ne:" + sizeChartId + "}}");
+        long count = cmsBtSizeChartDao.countByQuery("{\"sizeChartName\":\"" + sizeChartName + "\"" + ",\"sizeChartId\": { $ne:" + sizeChartId + "}}");
         return count > 0;
     }
 }
