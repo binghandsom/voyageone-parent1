@@ -13,6 +13,7 @@ import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModelSizeMap;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -351,8 +352,11 @@ public class SizeChartService extends BaseService {
         cmsBtSizeChartDao.update(model);
     }
 
-    public boolean EXISTSName(String sizeChartName, long sizeChartId) {
-        long count = cmsBtSizeChartDao.countByQuery("{\"sizeChartName\":\"" + sizeChartName + "\"" + ",\"sizeChartId\": { $ne:" + sizeChartId + "}}");
+    public boolean EXISTSName(String channelId, String sizeChartName, long sizeChartId) {
+        JongoQuery query = new JongoQuery().setQuery(new Criteria("sizeChartName").is(sizeChartName).and("sizeChartId").ne(sizeChartId).and("channelId").is(channelId));
+      // List<CmsBtProductModel> products = cmsBtProductDao.select(query, "010");
+       // long count = cmsBtSizeChartDao.countByQuery("{\"sizeChartName\":\"" + sizeChartName + "\"" + ",\"sizeChartId\": { $ne:" + sizeChartId + "}}");
+         long count = cmsBtSizeChartDao.countByQuery(query.getQuery());
         return count > 0;
     }
 }

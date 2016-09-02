@@ -42,7 +42,7 @@ define([
                         cartId: self.platform,
                         sizeChartName: self.imageGroupInfo.sizeChartName,
                         sizeChartId: self.imageGroupInfo.sizeChartId
-                };
+                    };
 
                     self.chartType = "match";
                     self.sizeChart = self.selectedSize;

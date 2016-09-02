@@ -44,8 +44,8 @@ define([
                 self.sizeType = data.imageGroupInfo.sizeType;
                 self.imageGroupName = data.imageGroupInfo.imageGroupName;
 
-                self.imageType = data.imageGroupInfo.imageType + "";
-                self.viewType = data.imageGroupInfo.viewType + "";
+                self.imageType = data.imageGroupInfo.imageType ? data.imageGroupInfo.imageType + "" : null;
+                self.viewType = data.imageGroupInfo.viewType ? data.imageGroupInfo.viewType + "" : null;
 
                 self.search();
             })

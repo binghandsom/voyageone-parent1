@@ -38,7 +38,7 @@ define([
                     saveInfo.sizeTypeList = dropdown.saveInfo.sizeType;
 
                     sizeChartService.getListImageGroupBySizeChartId({sizeChartId: dropdown.saveInfo.sizeChartId}).then(function (res) {
-                        if (res) {
+                        if (res.data.length > 0) {
                             $scope.chartType = "match";
                             $scope.vm.sizeChart = {};
 
@@ -49,6 +49,8 @@ define([
 
                                 $scope.vm.sizeChart[+element.cartId] = element;
                             });
+                        }else{
+                            $scope.chartType = "setting";
                         }
                     });
                 }
