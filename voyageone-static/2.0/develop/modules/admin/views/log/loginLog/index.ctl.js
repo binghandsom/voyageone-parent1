@@ -60,8 +60,10 @@ define([
             search: function (page) {
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
-                if (self.searchInfo.startTime != '' || self.searchInfo.endTime != '') {
+                if (self.searchInfo.startTime != '' ) {
                     var startTime = self.searchInfo.startTime.getTime();
+                }
+                if (self.searchInfo.endTime != '') {
                     var endTime = self.searchInfo.endTime.getTime();
                 }
                 self.adminLoginLogService.searchLog({
