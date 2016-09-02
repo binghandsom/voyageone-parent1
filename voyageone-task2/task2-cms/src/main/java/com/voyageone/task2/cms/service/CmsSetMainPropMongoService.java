@@ -3683,6 +3683,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     private void copyAttributeFromMainProduct(String channelId, CmsBtProductModel_Common common, String mainProductCode) {
         CmsBtProductModel mainProduct = productService.getProductByCode(channelId, mainProductCode);
         if(mainProduct != null){
+            common.setCatId(mainProduct.getCommon().getCatId());
+            common.setCatPath(mainProduct.getCommon().getCatPath());
+
             common.getFields().setTranslateStatus(mainProduct.getCommon().getFields().getTranslateStatus());
             common.getFields().setTranslateTime(mainProduct.getCommon().getFields().getTranslateTime());
             common.getFields().setTranslator(mainProduct.getCommon().getFields().getTranslator());
