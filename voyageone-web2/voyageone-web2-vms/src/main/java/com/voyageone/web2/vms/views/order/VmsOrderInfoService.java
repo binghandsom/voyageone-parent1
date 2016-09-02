@@ -191,7 +191,7 @@ public class VmsOrderInfoService extends BaseService {
                     .toMap();
         }
 
-        orderDetailList = orderDetailService.select(selectParams);
+        orderDetailList = orderDetailService.selectOrderList(selectParams);
 
         // 生成Excel
         $debug("Creating Excel...");

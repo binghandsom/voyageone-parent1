@@ -18,12 +18,18 @@
                 <div class="form-group">
                     <label class="control-label m-l-sm" translate="TXT_ORDER_ID"></label>
                     <input id="ORDER_ID" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.consolidationOrderId" enter-click="#searchButton">
+                </div>
+                <div class="form-group">
                     <label class="control-label m-l-sm" translate="TXT_SKU"></label>
                     <input id="SKU" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.sku" enter-click="#searchButton">
+                </div>
+                <div class="form-group">
                     <label class="control-label m-l-sm" translate="TXT_STATUS"></label>
                     <select name="SKU_STATUS" id="select" class="form-control input-sm" ng-model="ctrl.searchInfo.status" ng-options="orderStatus.value as orderStatus.name for orderStatus in ctrl.orderStatusList">
                         <option value="" translate="TXT_ALL"></option>
                     </select>
+                </div>
+                <div class="form-group">
                     <label class="control-label" translate="TXT_ORDER_DATE"></label>
                     <span class="input-group">
                         <input name="activityStart" class="form-control input-sm" ng-attr-title="{{'TXT_FROM' | translate}}" type="date" ng-model="ctrl.orderDateFrom" uib-datepicker-popup datepicker-options="{maxDate:ctrl.orderDateTo}" is-open="datepicker3">
