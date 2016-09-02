@@ -80,16 +80,12 @@ define([
 
         /**尺码修改popup*/
         $scope.openSizeDetails = function () {
-            var self = this,
-                saveInfo = $scope.vm.saveInfo;
+            var self = this;
 
             self.vm.from = "detail";
 
-            popups.openSizeChartAdd(self.vm).then(function (context) {
-                saveInfo.sizeChartName = context.sizeChartName;
-                saveInfo.brandName = context.brandNameList;
-                saveInfo.productType = context.productTypeList;
-                saveInfo.sizeType = context.sizeTypeList;
+            popups.openSizeChartAdd(self.vm).then(function () {
+                $scope.init();
             });
         };
 

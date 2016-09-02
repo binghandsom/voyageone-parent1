@@ -32,9 +32,12 @@ define([
             init: function () {
                 var self = this;
 
+                if(self.parent.from !== 'detail')
+                    return;
+
                 self.imageGroupInfo = self.parent.imageGroupInfo;
 
-                if (imageGroupInfo.sizeChartId > 0) {
+                if (self.imageGroupInfo.sizeChartId > 0) {
                     self.selectedSize = {
                         cartId: self.platform,
                         sizeChartName: imageGroupInfo.sizeChartName,
@@ -43,6 +46,8 @@ define([
 
                     self.chartType = "match";
                     self.sizeChart = self.selectedSize;
+                }else{
+                    self.chartType = "setting";
                 }
 
                 self.getNoMatchList();
