@@ -61,8 +61,8 @@ define([
             if (self.shippedDateTo) {
                 self.searchInfo.shippedDateTo = self.shippedDateTo;
             } else self.searchInfo.shippedDateTo = undefined;
-            self.searchInfo.curr = curr;
-            self.searchInfo.size = self.pageInfo.size;
+            self.pageInfo.curr = self.searchInfo.curr = curr;
+            self.pageInfo.size = self.searchInfo.size = self.pageInfo.size;
             var req = angular.copy(self.searchInfo);
             if (self.shippedDateTo) {
                 var date = angular.copy(self.shippedDateTo);
