@@ -111,6 +111,13 @@ public class CmsSizeChartService extends BaseAppService {
         //逻辑删除选中的记录
         sizeChartService.sizeChartUpdate(sizeChartId, userName, channelId);
         //删除尺码表组图关系
+        List<CmsBtSizeChartImageGroupModel> listCmsBtSizeChartImageGroupModel = cmsBtSizeChartImageGroupService.getListByCmsBtSizeChartId(channelId, sizeChartId);
+        for (CmsBtSizeChartImageGroupModel model : listCmsBtSizeChartImageGroupModel) {
+            CmsBtImageGroupModel imageGroupModel = imageGroupService.getImageGroupModel(String.valueOf(model.getCmsBtImageGroupId()));
+            imageGroupModel.setSizeChartName("");
+            imageGroupModel.setSizeChartId(0);
+            imageGroupService.update(imageGroupModel);
+        }
         cmsBtSizeChartImageGroupService.deleteByCmsBtSizeChartId(channelId, sizeChartId);
     }
 
