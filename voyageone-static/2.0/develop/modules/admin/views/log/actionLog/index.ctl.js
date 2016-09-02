@@ -110,21 +110,13 @@ define([
             },
             viewDetail: function () {
                 var self = this;
-                self.popups.openLogDetail().then(function () {
-                    self.search(1);
-                });
-                // if (self.actionLogSelList.selList.length <= 0) {
-                //     self.alert('TXT_MSG_NO_ROWS_SELECT');
-                //     return;
-                // } else {
-                //     _.forEach(self.adminList, function (Info) {
-                //         if (Info.id == self.actionLogSelList.selList[0].id) {
-                //             self.popups.openLogDetail(Info).then(function () {
-                //                 self.search(1);
-                //             });
-                //         }
-                //     })
-                // }
+                _.forEach(self.adminList, function (Info) {
+                    if (Info.id == self.actionLogSelList.selList[0].id) {
+                        self.popups.openLogDetail(Info).then(function () {
+                            self.search(1);
+                        });
+                    }
+                })
             }
         };
         return ActionLogManagementController;

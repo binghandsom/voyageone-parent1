@@ -12,13 +12,13 @@
                         <div class="row form-group"><!-- 账号 -->
                             <label class="col-sm-3 control-label">{{'TXT_ACCOUNT' | translate}}</label>
                             <div class="col-sm-8">
-                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.orgName"/>
+                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.modifier"/>
                             </div>
                         </div>
                         <div class="row form-group"><!-- IP地址 -->
                             <label class="col-sm-3 control-label">{{'TXT_IP_ADDRESS' | translate}}</label>
                             <div class="col-sm-8">
-                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.orgName"/>
+                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.ip"/>
                             </div>
                         </div>
                     </div>
@@ -26,13 +26,13 @@
                         <div class="row form-group"><!-- URL -->
                             <label class="col-sm-3 control-label">{{'TXT_URL' | translate}}</label>
                             <div class="col-sm-8">
-                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.orgName"/>
+                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.url"/>
                             </div>
                         </div>
                         <div class="row form-group"><!-- 开始时间 -->
                             <label class="col-sm-3 control-label">{{'TXT_START_TIME' | translate}}</label>
                             <div class="col-sm-8">
-                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.orgName"/>
+                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.created"/>
                             </div>
                         </div>
                     </div>
@@ -40,13 +40,13 @@
                         <div class="row form-group"><!-- 方法 -->
                             <label class="col-sm-3 control-label">{{'TXT_METHOD' | translate}}</label>
                             <div class="col-sm-8">
-                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.orgName"/>
+                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.action"/>
                             </div>
                         </div>
                         <div class="row form-group"><!-- 耗时(ms) -->
                             <label class="col-sm-3 control-label">{{'TXT_WASTE_TIME' | translate}}</label>
                             <div class="col-sm-8">
-                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.orgName"/>
+                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.executionTime"/>
                             </div>
                         </div>
                     </div>
@@ -55,11 +55,11 @@
                             <uib-tabset class="tab-container vo_nav-tabs">
                                 <uib-tab >
                                     <tab-heading>{{'TXT_REQUEST_PARAMETER'|translate}}</tab-heading>
-                                    <textarea name="req" cols="30" rows="20" class="form-control"></textarea>
+                                    <textarea name="req" cols="30" rows="20" class="form-control" ng-model="ctrl.sourceData.request"></textarea>
                                 </uib-tab>
                                 <uib-tab >
                                     <tab-heading>{{'TXT_RESPONSE'|translate}}</tab-heading>
-                                    <textarea name="res" cols="30" rows="20" class="form-control"></textarea>
+                                    <textarea name="res" cols="30" rows="20" class="form-control" ng-model="ctrl.sourceData.response"></textarea>
                                 </uib-tab>
                             </uib-tabset>
                         </div>

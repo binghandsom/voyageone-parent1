@@ -90,7 +90,7 @@
         <div class="box-body-new">
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
-                    <button class="btn btn-default" ng-click="ctrl.viewDetail('')" ng-disabled="ctrl.channelSelList.selList.length > 1"><i class="fa fa-eye-slash"></i>&nbsp;参数详情</button>
+                    <button class="btn btn-default" ng-click="ctrl.viewDetail('')" ng-disabled="ctrl.actionLogSelList.selList.length<=0||ctrl.actionLogSelList.selList.length > 1"><i class="fa fa-eye-slash"></i>&nbsp;参数详情</button>
                  </div>
             </div>
             <table class="table table-hover-new table-hover table_main">
