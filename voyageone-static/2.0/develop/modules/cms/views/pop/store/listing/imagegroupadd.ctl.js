@@ -40,8 +40,8 @@ define([
                 if (self.imageGroupInfo.sizeChartId > 0) {
                     self.selectedSize = {
                         cartId: self.platform,
-                        sizeChartName: imageGroupInfo.sizeChartName,
-                        sizeChartId: imageGroupInfo.sizeChartId
+                        sizeChartName: self.imageGroupInfo.sizeChartName,
+                        sizeChartId: self.imageGroupInfo.sizeChartId
                 };
 
                     self.chartType = "match";

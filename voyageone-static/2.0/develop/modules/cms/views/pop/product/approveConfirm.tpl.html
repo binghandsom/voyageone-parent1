@@ -8,23 +8,20 @@
     </div>
     <div class="modal-body wrapper">
         <div class="container-fluid">
-            <div class="row" ng-if="!ctrl.context.chart">
-                <div class="col-md-4">
-                    <strong>您确认删除吗？</strong>
+            <div class="row" ng-if="!ctrl.equal">
+                <div class="col-md-10">
+                    <div class="col-md-1">
+                        <label>
+                            <input type="checkbox" ng-model="ctrl.flag">
+                        </label>
+                    </div>
+                    <div class="col-md-8">
+                        <strong class="text-u-red">已确认当前的中国指导价【确认请打钩】</strong>
+                    </div>
                 </div>
             </div>
-            <div class="row" ng-if="ctrl.context.chart">
-                <div class="col-md-4">
-                    <strong>{{ctrl.context.content}}</strong>
-                </div>
-                <div class="col-md-6">
-                    <label>
-                        <input type="radio" name="isDel" value="1" ng-model="ctrl.context.flag">&nbsp;<strong>yes</strong>
-                    </label>&emsp;
-                    <label>
-                        <input type="radio" name="isDel" value="0" ng-model="ctrl.context.flag">&nbsp;<strong>no</strong>
-                    </label>
-                </div>
+            <div class="row" ng-if="ctrl.equal">
+                <h4>您确定Approve这个商品吗？<br>选择Yes将会在相应销售平台进行发布。选择No，处理将会停止</h4>
             </div>
         </div>
     </div>

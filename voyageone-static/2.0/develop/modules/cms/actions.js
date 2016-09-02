@@ -112,6 +112,7 @@ define(function () {
                     "hsCodeChg": "hsCodeChg",
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
+                    priceConfirm:"priceConfirm",
                     getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL}
                 },
                 "productHistoryLogService": {
@@ -385,6 +386,9 @@ define(function () {
                 "$addToPromotionService": {
                     "root": "/cms/pop/add_to_promotion",
                     "getPromotionTags": "getPromotionTags",
+
+
+
                     "addToPromotion": "addToPromotion",
                     "checkPromotionTags": "checkPromotionTags"
                 },

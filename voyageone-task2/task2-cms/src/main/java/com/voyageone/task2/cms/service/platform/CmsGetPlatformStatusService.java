@@ -96,7 +96,7 @@ public class CmsGetPlatformStatusService extends BaseTaskService {
             // 对每个店铺进行处理
             if (StringUtils.trimToNull(shopObj.getApp_url()) == null) {
                 $warn("CmsGetPlatformStatusService 店铺数据不完整！ channelId=%s, cartId=%s", channelId, cartIdStr);
-                return;
+                continue;
             }
             channelId = shopObj.getOrder_channel_id();
             cartIdStr = shopObj.getCart_id();
@@ -200,7 +200,6 @@ public class CmsGetPlatformStatusService extends BaseTaskService {
                         savePlatfromSts(channelId, cartId, numIIdList, CmsConstants.PlatformStatus.InStock.name());
                     }
                 } while (jdList != null && jdList.size() == 100);
-
 
             } else if (PlatFormEnums.PlatForm.JM.getId().equals(shopObj.getPlatform_id())) {
                 // 从聚美获取商品上下架状态

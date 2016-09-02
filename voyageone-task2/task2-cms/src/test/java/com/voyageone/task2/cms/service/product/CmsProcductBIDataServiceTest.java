@@ -22,8 +22,8 @@ public class CmsProcductBIDataServiceTest {
     @Test
     public void testTMPlatform() {
         Map<String, Object> sqlParams = new HashMap<>(2);
-        sqlParams.put("channelId", "008");
-        sqlParams.put("cartId", 23);
+        sqlParams.put("channelId", "929");
+        sqlParams.put("cartId", 29);
 
         try {
             targetService.onStartup(sqlParams);
