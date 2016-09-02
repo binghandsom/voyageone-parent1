@@ -65,7 +65,7 @@ define([
 
             self.from = "detail";
             self.popups.openImgGroupAdd(self).then(function () {
-                self.refresh();
+                self.init();
             });
 
         };

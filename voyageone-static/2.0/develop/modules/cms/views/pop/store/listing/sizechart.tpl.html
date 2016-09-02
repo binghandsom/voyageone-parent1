@@ -36,11 +36,11 @@
                             <ng-form name="imageForm" ng-if = "chartType == 'match'">
                                 <div class="row" ng-repeat="cartSize in noMathOpt">
                                     <label class="col-md-3 control-label">
-                                        <span class="label label-info v-bottom">{{cartSize.cartName}}</span>
+                                        <span class="label label-info v-bottom">{{carts.valueOf(cartSize.cartId).desc}}</span>
                                     </label>
                                     <div class="col-md-6 m-t-xs">
                                         <select class="form-control"
-                                                ng-model="vm.sizeChart[cartSize.cartName]" name="sizeChart" ng-required = "!vm.sizeChart"
+                                                ng-model="vm.sizeChart[cartSize.cartId]" name="sizeChart" ng-required = "!vm.sizeChart"
                                                 ng-options = "optItem as optItem.imageGroupName for optItem in cartSize.imgList">
                                         </select>
                                     </div>
