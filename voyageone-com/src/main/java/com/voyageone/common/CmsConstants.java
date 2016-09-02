@@ -145,6 +145,9 @@ public class CmsConstants {
 
         // 新建product时是否自动设置PC端自拍商品图images6(1:自动设置  空，0:不设置)
         String AUTO_SET_IMAGES6_FLG = "AUTO_SET_IMAGES6_FLG";
+
+        // 该店铺每次feed-master导入最大件数
+        String FEED_IMPORT_MAX = "FEED_IMPORT_MAX";
     }
 
     public interface DataAmount {
