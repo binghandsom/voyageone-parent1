@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -28,6 +29,7 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -134,6 +136,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
     private CmsBtPlatformActiveLogDao cmsBtPlatformActiveLogDao;
     @Autowired
     private MongoSequenceService sequenceService;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -530,6 +534,22 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
             } else {
                 // 更新商品的时候
+                // added by morse.lu 2016/09/02 start
+                // 取一下最新的jd上的商品信息，可能catId被jd的管理员改掉了，就不能上了，如果改了，回写下表(pCatId,pCatPath)
+                String jdCatId = jdWareService.getJdProductCatId(shopProp, String.valueOf(jdWareId));
+                if (!StringUtils.isEmpty(jdCatId)) {
+                    if (!jdCatId.equals(platformCategoryId)) {
+                        // 不一样
+                        // 回写
+                        // 这一版回写完还是会直接尝试上新
+                        updateCategory(channelId, cartId, mainProduct.getCommon().getFields().getCode(), jdCatId);
+                    }
+                } else {
+                    // 有错误，没取到
+                    // 先不管，继续做下去吧
+                }
+                // added by morse.lu 2016/09/02 end
+
                 // 设置更新用商品beanSKU属性 (更新用商品bean，共通属性前面已经设置)
                 jdProductBean = setJdProductSkuInfo(jdProductBean, sxData, shopProp, productColorMap,
                         skuLogicQtyMap, cmsColorList, cmsSizeList, salePropStatus);
@@ -619,6 +639,11 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 sxData.setCartId(cartId);
                 sxData.setGroupId(groupId);
                 sxData.setErrorMessage(shopProp.getShop_name() + " 取得上新用的商品数据信息异常！请跟管理员联系 [上新数据为null]");
+            }
+            if (ex instanceof BusinessException) {
+                if (StringUtils.isEmpty(sxData.getErrorMessage())) {
+                    sxData.setErrorMessage(((BusinessException)ex).getMessage());
+                }
             }
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
@@ -2092,4 +2117,23 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         return salePropStatus;
     }
 
+    /**
+     * 回写pCatId,pCatPath
+     */
+    public void updateCategory(String channelId, int cartId, String code, String catId) {
+        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchema = platformCategoryService.getPlatformCatSchema(catId, cartId);
+        if (cmsMtPlatformCategorySchema == null) {
+            throw new BusinessException(String.format("获取平台类目信息失败 [平台类目Id:%s] [CartId:%s]", catId, cartId));
+        }
+
+        JongoUpdate updateProductQuery = new JongoUpdate();
+        updateProductQuery.setQuery("{\"common.fields.code\": #}");
+        updateProductQuery.setQueryParameters(code);
+
+        updateProductQuery.setUpdate("{$set:{\"platforms.P"+ cartId +".pCatId\": #, \"platforms.P"+ cartId +".pCatPath\": #}}");
+        updateProductQuery.setUpdateParameters(catId, cmsMtPlatformCategorySchema.getCatFullPath());
+
+        cmsBtProductDao.updateFirst(updateProductQuery, channelId);
+
+    }
 }
