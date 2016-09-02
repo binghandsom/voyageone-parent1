@@ -494,6 +494,9 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                 // 上传商品失败，回写workload表   (失败2)
                 String errMsg = String.format("天猫平台新增或更新商品时异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformProductId:%s]",
                         channelId, cartId, groupId, platformProductId);
+                if (!StringUtils.isEmpty(ex.getMessage())) {
+                    errMsg = errMsg + ex.getMessage();
+                }
                 $error(errMsg);
                 ex.printStackTrace();
                 // 如果上新数据中的errorMessage为空
