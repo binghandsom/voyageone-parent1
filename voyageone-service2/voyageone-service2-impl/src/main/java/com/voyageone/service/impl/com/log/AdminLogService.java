@@ -9,10 +9,12 @@ import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.daoext.core.AdminLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.PageModel;
+import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,10 +44,25 @@ public class AdminLogService  extends BaseService {
 
         // 判断查询结果是否分页
         boolean needPage = false;
-        Map<String,Object> newMap = new HashMap<>();
-        BeanUtils.copyProperties(params, newMap);
-        newMap.put("startTime", startTime);
-        newMap.put("endTime", endTime);
+        Map<String, Object> beanMap = new BeanMap(params);
+        Map<String, Object> newMap = new HashMap<>();
+
+        Date start = null;
+        Date end = null;
+
+        if(startTime != null)
+        {
+            start = new Date(startTime);
+        }
+
+        if(endTime != null)
+        {
+            end = new Date(endTime);
+        }
+
+        newMap.put("startTime", start);
+        newMap.put("endTime", end);
+        newMap.putAll(beanMap);
 
         if (pageNum != null && pageSize != null) {
             needPage = true;

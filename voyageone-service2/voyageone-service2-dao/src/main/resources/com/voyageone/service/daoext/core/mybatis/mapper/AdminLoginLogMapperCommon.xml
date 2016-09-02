@@ -16,7 +16,7 @@
                 and `ip` like concat('%', #{ip,jdbcType=VARCHAR}, '%')
             </if>
 
-            <if test="creater != null" >
+            <if test="modifier != null &amp;&amp; modifier != ''" >
                 and `modifier` like concat('%', #{modifier,jdbcType=VARCHAR}, '%')
             </if>
 
