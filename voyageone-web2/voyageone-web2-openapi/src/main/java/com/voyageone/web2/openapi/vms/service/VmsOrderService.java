@@ -151,7 +151,7 @@ public class VmsOrderService extends OpenApiBaseService {
                             }
                         }
                     }
-                    if (StringUtils.isEmpty(attributeValue)) {
+                    if (!StringUtils.isEmpty(attributeValue)) {
                         if (i == 0) {
                             model.setAttribute1(attributeValue);
                         } else if (i == 1) {
