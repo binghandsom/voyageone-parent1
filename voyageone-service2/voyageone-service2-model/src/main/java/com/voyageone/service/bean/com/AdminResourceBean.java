@@ -20,7 +20,17 @@ public class AdminResourceBean extends ComResourceModel {
     @JsonIgnore
     private Integer cnt;
 
-    private  int selected;
+    private String parentName;
+
+    private  Integer selected;
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
 
     private List<AdminResourceBean> children;
 
@@ -51,11 +61,11 @@ public class AdminResourceBean extends ComResourceModel {
     }
 
 
-    public int getSelected() {
+    public Integer getSelected() {
         return selected;
     }
 
-    public void setSelected(int selected) {
+    public void setSelected(Integer selected) {
         this.selected = selected;
     }
 

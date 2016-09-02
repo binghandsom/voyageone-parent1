@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -42,7 +43,7 @@ public class AdminResService extends BaseService {
      * @param app
      * @return
      */
-    public List<AdminResourceBean> searchRes(String app)
+    public List<AdminResourceBean> searchRes(String app, Integer pageNum, Integer pageSize)
     {
         Map<String, Object> map = new HashMap<>();
         if(!StringUtils.isNullOrBlank2(app))
@@ -53,15 +54,25 @@ public class AdminResService extends BaseService {
         map = MySqlPageHelper.build(map).addSort("res_type", Order.Direction.ASC).addSort("weight", Order.Direction.ASC).toMap();
 
         List<ComResourceModel> list  = comResourceDao.selectList(map);
+
+        Map<Integer, String> mameMap =  list.stream().collect(Collectors.toMap(ComResourceModel :: getId , ComResourceModel:: getResName));
         List<AdminResourceBean> beanList = new ArrayList<>();
 
         for(ComResourceModel model : list)
         {
             AdminResourceBean bean = new AdminResourceBean() ;
             BeanUtils.copyProperties(model, bean);
+            if(bean.getParentId() != 0) {
+                bean.setParentName(mameMap.get(bean.getParentId()));
+            }
+            else {
+                bean.setParentName("");
+            }
             beanList.add(bean);
         }
-        return convert2Tree(beanList);
+        List<AdminResourceBean> all = convert2Tree(beanList);
+
+        return (all.stream().skip((pageNum - 1) * pageSize).limit(pageSize).collect(Collectors.toList()));
     }
 
 
@@ -161,7 +172,7 @@ public class AdminResService extends BaseService {
     private List<AdminResourceBean> findRoots(List<AdminResourceBean> allNodes) {
         List<AdminResourceBean> results = new ArrayList<>();
         for (AdminResourceBean node : allNodes) {
-            if (node.getParentId() == 0) {
+            if (node.getParentId() == 0 || node.getResType() < 2) {
                 results.add(node);
             }
         }
