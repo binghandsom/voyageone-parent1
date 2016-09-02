@@ -204,7 +204,7 @@ define([
 
             this.popups.openShipment(shipmentInfo).then(function (shipment) {
                 self.currentShipment = shipment;
-                if (type == "new") {
+                if (type == "new" && self.channelConfig.vendorOperateType == 'SKU') {
                     var url = '#/shipment/shipment_info/shipment_detail/' + shipment.id;
                     location.href = url;
                 }
