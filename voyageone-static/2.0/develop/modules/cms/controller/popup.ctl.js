@@ -469,6 +469,11 @@ define([
                 "templateUrl": "views/pop/product/hsCodeChange.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/hsCodeChange.ctl",
                 "controller": 'HsCodeChangeController as ctrl'
+            },
+            "approveConfirm":{
+                "templateUrl": "views/pop/product/approveConfirm.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/approveConfirm.ctl",
+                "controller": 'ApproveConfirmController as ctrl'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -1171,6 +1176,11 @@ define([
         /**属性编辑*/
         $scope.openPropertySetting = function openPropertySetting(context){
             return openModal(popActions.platformMapping.propertySetting,context);
+        };
+
+        /**上新价格确认*/
+        $scope.openApproveConfirm = function openApproveConfirm(context){
+            return openModal(popActions.product.approveConfirm,context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {

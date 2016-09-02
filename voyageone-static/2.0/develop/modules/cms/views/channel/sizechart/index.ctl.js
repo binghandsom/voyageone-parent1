@@ -5,7 +5,7 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/enums/Carts'
 ], function (popup,carts) {
-    function sizeChartController($scope, sizeChartService, alert, notify, $translate) {
+    function sizeChartController($scope, sizeChartService, confirm, notify, $translate) {
         $scope.vm = {
             sizeChartList: [],
             searchInfo: {
