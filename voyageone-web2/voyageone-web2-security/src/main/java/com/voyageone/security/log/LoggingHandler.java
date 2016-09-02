@@ -1,7 +1,9 @@
 package com.voyageone.security.log;
 
 import com.voyageone.common.util.JacksonUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.MDC;
+import org.apache.shiro.SecurityUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -13,8 +15,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
+
 
 @Aspect
 @Component
@@ -44,8 +45,8 @@ public class LoggingHandler {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         String ip = request.getRemoteAddr();
         String url = request.getRequestURI();
-        String application = "admin";
-        String user = "admin";
+        String application = getApp(url);
+        String user = SecurityUtils.getSubject().getPrincipal().toString();
         Object[] arguments = joinPoint.getArgs();
         String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
         String methodName = joinPoint.getSignature().getName();
@@ -76,6 +77,22 @@ public class LoggingHandler {
             log.error(JacksonUtil.bean2Json("write"));
             throw e;
         }
+    }
+
+    private String getApp(String url)
+    {
+        if(StringUtils.isEmpty(url))
+            return "";
+
+        String [] a = url.split("/+");
+
+        for (String str : a) {
+            if(!StringUtils.isEmpty(url))
+            {
+                return str;
+            }
+        }
+        return "";
     }
 
 }

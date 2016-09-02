@@ -7,85 +7,45 @@
         `created`, `creater` , `modified`, `modifier`
     </sql>
 
+    <sql id="selectLogFilter">
+        <where >
+            <if test="application != null &amp;&amp; application != ''" >
+                and `application` = #{application,jdbcType=VARCHAR}
+            </if>
+            <if test="ip != null &amp;&amp; ip != ''" >
+                and `ip` like concat('%', #{ip,jdbcType=VARCHAR}, '%')
+            </if>
+
+            <if test="url != null" >
+                and `url` like concat('%', #{url,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="action != null" >
+                and `action` like concat('%', #{action,jdbcType=VARCHAR}, '%')
+            </if>
+
+            <if test="modifier != null &amp;&amp; modifier != '' " >
+                and `modifier` like concat('%', #{modifier,jdbcType=VARCHAR}, '%')
+            </if>
+
+            <if test="startTime != null" >
+                and `modified` &gt;= #{startTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null" >
+                and `modified` &lt; #{endTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </sql>
+
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
         from com_log
-        <where >
-            <if test="application != null" >
-                and `application` = #{application,jdbcType=VARCHAR}
-            </if>
-            <if test="ip != null" >
-                and `ip` = #{ip,jdbcType=VARCHAR}
-            </if>
-            <if test="url != null" >
-                and `url` = #{url,jdbcType=VARCHAR}
-            </if>
-            <if test="action != null" >
-                and `action` = #{action,jdbcType=VARCHAR}
-            </if>
-            <if test="request != null" >
-                and `request` = #{request,jdbcType=VARCHAR}
-            </if>
-            <if test="response != null" >
-                and `response` = #{response,jdbcType=VARCHAR}
-            </if>
-            <if test="executionTime != null" >
-                and `execution_time` = #{executionTime,jdbcType=INTEGER}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-
-            <if test="startTime != null" >
-                and `created` &gt;= #{startTime,jdbcType=VARCHAR}
-            </if>
-            <if test="endTime != null" >
-                and `created` &lt; #{endTime,jdbcType=VARCHAR}
-            </if>
-        </where>
+        <include refid="selectLogFilter" />
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" >
         select count(*) from com_log
-        <where >
-            <if test="application != null" >
-                and `application` = #{application,jdbcType=VARCHAR}
-            </if>
-            <if test="ip != null" >
-                and `ip` = #{ip,jdbcType=VARCHAR}
-            </if>
-            <if test="url != null" >
-                and `url` = #{url,jdbcType=VARCHAR}
-            </if>
-            <if test="action != null" >
-                and `action` = #{action,jdbcType=VARCHAR}
-            </if>
-            <if test="request != null" >
-                and `request` = #{request,jdbcType=VARCHAR}
-            </if>
-            <if test="response != null" >
-                and `response` = #{response,jdbcType=VARCHAR}
-            </if>
-            <if test="executionTime != null" >
-                and `execution_time` = #{executionTime,jdbcType=INTEGER}
-            </if>
-            <if test="created != null" >
-                and `created` = #{created,jdbcType=TIMESTAMP}
-            </if>
-            <if test="creater != null" >
-                and `creater` = #{creater,jdbcType=VARCHAR}
-            </if>
-            <if test="startTime != null" >
-                and `created` &gt;= #{startTime,jdbcType=VARCHAR}
-            </if>
-            <if test="endTime != null" >
-                and `created` &lt; #{endTime,jdbcType=VARCHAR}
-            </if>
-        </where>
+        <include refid="selectLogFilter" />
     </select>
 
 

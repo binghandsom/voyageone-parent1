@@ -31,8 +31,6 @@ public class MyRealm extends AuthorizingRealm {
 	@Autowired
 	private ComUserDao comUserDao;
 
-	@Autowired
-	private ViewUserResDao viewUserResDao;
 
 	@Autowired
 	private ComRoleConfigDao comRoleConfigDao;

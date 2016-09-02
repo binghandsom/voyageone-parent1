@@ -118,4 +118,11 @@
 	</select>
 
 
+    <select id="selectAllApp" resultType="java.util.Map">
+        SELECT ap.id, re.application from com_resource re, Synship.ct_application ap
+        WHERE re.res_key = ap.application
+        AND re.active = 1 AND ap.active = 1
+    </select>
+
+
 </mapper>

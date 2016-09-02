@@ -25,6 +25,7 @@ public class AdminLogServiceTest {
 
     @Test
     public void testSearchLog() throws Exception {
+
         PageModel<ComLogModel> result = adminLogService.searchLog(new ComLogModel(), 10000L, null, 1, 10);
         System.out.println(JacksonUtil.bean2Json(result));
 

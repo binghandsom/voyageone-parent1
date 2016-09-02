@@ -87,7 +87,7 @@ public class ComUserService {
         ComLoginLogModel model = new ComLoginLogModel();
         model.setApplication("admin");
         model.setCreater(account);
-        model.setIp("");
+        model.setIp(user.getSession().getHost());
 
         comLoginLogDao.insert(model);
     }
