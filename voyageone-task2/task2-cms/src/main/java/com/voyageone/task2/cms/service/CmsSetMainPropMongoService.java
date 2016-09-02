@@ -342,9 +342,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
             CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
 
-            // 该店铺配置的每次feed->master导入最大件数(最大5000件，没有设置返回0)
-            int feedImportMax = getFeedImportMax(channelId);
-
             // 查找当前渠道,所有等待反映到主数据的商品
 //            CmsBtFeedInfoModel feedInfo = feedInfoService.getProductByCode(channelId, "36/G05");
 //            List<CmsBtFeedInfoModel> feedList = new ArrayList<>();
@@ -356,7 +353,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             JongoQuery queryObject = new JongoQuery();
             queryObject.setQuery(query);
             queryObject.setSort(sort);
-            queryObject.setLimit(feedImportMax == 0 ? FEED_IMPORT_MAX_500 : feedImportMax);   // 默认为每次最大1000件
+            queryObject.setLimit(getFeedImportMax(channelId));   // 默认为每次最大500件
             List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
 
             // 共通配置信息存在的时候才进行feed->master导入
@@ -3906,22 +3903,22 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         }
     }
 
-
     /**
-     * 从cms_mt_channel_config表中取得该channel每次feed->master导入的最大件数(最大5000件)
+     * 从cms_mt_channel_config表中取得该channel每次feed->master导入的最大件数(最大2000件)
      *
      * @param channelId String 渠道id
-     * @return int 该渠道配置的每次feed-master导入最大件数(最大5000件)
+     * @return int 该渠道配置的每次feed-master导入最大件数(最大2000件)
      */
     private int getFeedImportMax(String channelId) {
 
-        int feedImportMax = 0;
+        // 默认为每次最多500件
+        int feedImportMax = FEED_IMPORT_MAX_500;
 
-        // 该店铺每次feed-master导入最大件数(FEED_IMPORT_MAX)(最大5000件)
+        // 该店铺每次feed-master导入最大件数(FEED_IMPORT_MAX)(最大2000件)
         CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.FEED_IMPORT_MAX);
         if (autoApprovePrice != null && !StringUtils.isEmpty(autoApprovePrice.getConfigValue1())) {
-            if (NumberUtils.toInt(autoApprovePrice.getConfigValue1()) >= 5000) {
-                feedImportMax = 5000;
+            if (NumberUtils.toInt(autoApprovePrice.getConfigValue1()) >= 2000) {
+                feedImportMax = 2000;
             } else {
                 feedImportMax = NumberUtils.toInt(autoApprovePrice.getConfigValue1());
             }
