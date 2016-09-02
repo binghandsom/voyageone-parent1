@@ -46,7 +46,7 @@ public class AdminResController extends AdminController {
     }
 
     @RequestMapping(AdminUrlConstants.User.Res.INIT)
-    public AjaxResponse init(@RequestBody Map requestBean) {
+    public AjaxResponse init() {
         Map<String, Object> response = new HashMap<>();
         response.put("treeList", adminResService.searchRes(null));
 

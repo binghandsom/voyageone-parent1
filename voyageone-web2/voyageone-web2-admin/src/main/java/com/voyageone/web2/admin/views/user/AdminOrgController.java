@@ -45,8 +45,6 @@ public class AdminOrgController extends AdminController {
     @RequestMapping(AdminUrlConstants.User.Org.SEARCH_ORG)
     public AjaxResponse searchOrg(@RequestBody Map requestBean) throws Exception {
 
-        ComOrganizationModel model = new ComOrganizationModel();
-
         Integer active =null;
         try {
             active = Integer.valueOf(requestBean.get("active").toString());

@@ -30,7 +30,7 @@ public class AdminResServiceTest {
     @Test
     public void testSearchRes() throws Exception {
 
-        List<AdminResourceBean> result = adminResService.searchRes("cms");
+        List<AdminResourceBean> result = adminResService.searchRes("admin");
 
         System.out.println(JacksonUtil.bean2Json(result));
     }
