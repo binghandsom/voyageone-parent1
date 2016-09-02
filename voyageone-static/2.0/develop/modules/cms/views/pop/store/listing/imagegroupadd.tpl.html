@@ -70,11 +70,11 @@
             <div class="form-group" ng-if="ctrl.noMathOpt">
                 <div class="col-sm-8 col-sm-offset-4">
                     <div>
-                        <input name="sizeChart" type="radio" value="setting" ng-model="ctrl.chartType" ng-click="ctrl.sizeChart = null">&emsp;
+                        <input name="sizeChart" type="radio" value="setting" ng-model="ctrl.chartType" ng-click="ctrl.radioChange()">&emsp;
                         <strong>无对应尺码对照表</strong>
                     </div>
                     <div>
-                        <input name="sizeChart" type="radio" value="match" ng-model="ctrl.chartType" ng-click="ctrl.sizeChart = null">&emsp;
+                        <input name="sizeChart" type="radio" value="match" ng-model="ctrl.chartType" ng-click="ctrl.radioChange()">&emsp;
                         <strong>匹配现有尺码对照表</strong>
                             <ng-form name="chartForm" ng-if = "ctrl.chartType == 'match'">
                                 <div class="row">
@@ -82,6 +82,7 @@
                                         <select class="form-control"
                                                 ng-model="ctrl.sizeChart" name="sizeChart" required
                                                 ng-options = "optItem as optItem.sizeChartName for optItem in ctrl.noMathOpt">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -93,7 +94,7 @@
                             </ng-form>
                     </div>
                     <div>
-                        <input name="sizeChart" type="radio" value="new" ng-model="ctrl.chartType" ng-click="ctrl.sizeChart = null">&emsp;
+                        <input name="sizeChart" type="radio" value="new" ng-model="ctrl.chartType" ng-click="ctrl.radioChange()">&emsp;
                         <strong>新建对应尺码对照表</strong>
                         <div class="col-md-7 col-md-offset-1">
                             <ng-form name="chartForm" ng-if = "ctrl.chartType == 'new'">

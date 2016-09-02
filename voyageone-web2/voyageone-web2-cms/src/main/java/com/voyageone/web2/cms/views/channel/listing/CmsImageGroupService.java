@@ -227,6 +227,11 @@ public class CmsImageGroupService extends BaseAppService {
 
         } else if (!StringUtils.isEmpty(sizeChartName)) {
             //新增尺码表
+            if(sizeChartService.EXISTSName(channelId,sizeChartName,0L))
+            {
+                //名称已经存在
+                throw new BusinessException("尺码表名称重复");
+            }
             CmsBtSizeChartModel cmsBtSizeChartModel = sizeChartService.insert(channelId, userName, sizeChartName, brandNameList, productTypeList, sizeTypeList);
             sizeChartId = cmsBtSizeChartModel.getSizeChartId();
             model.setSizeChartId(cmsBtSizeChartModel.getSizeChartId());

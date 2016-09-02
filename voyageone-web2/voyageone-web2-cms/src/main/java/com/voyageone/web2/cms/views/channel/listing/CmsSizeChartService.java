@@ -140,8 +140,7 @@ public class CmsSizeChartService extends BaseAppService {
         if (StringUtils.isEmpty(sizeChartName)) {
             throw new BusinessException("7000080");
         }
-        if(sizeChartService.EXISTSName(sizeChartName, sizeChartId))
-        {
+        if (sizeChartService.EXISTSName(channelId,sizeChartName, sizeChartId)) {
             //名称已经存在
             throw new BusinessException("4000009");
         }
@@ -171,6 +170,10 @@ public class CmsSizeChartService extends BaseAppService {
                 cmsBtImageGroupModel.setModifier(userName);
                 imageGroupService.update(cmsBtImageGroupModel);
             } else if (!StringUtils.isEmpty(imageGroupName)) {
+                if (imageGroupService.EXISTSName(channelId, imageGroup_CartId, imageGroupName, 0)) {
+                    //名称已经存在
+                    throw new BusinessException("组图名称重复");
+                }
                 //新增组图
                 CmsBtImageGroupModel cmsBtImageGroupModel = imageGroupService.save(channelId, userName, String.valueOf(imageGroup_CartId), imageGroupName, null, null, brandNameList, productTypeList, sizeTypeList, model.getSizeChartId(), model.getSizeChartName());
                 imageGroupId = cmsBtImageGroupModel.getImageGroupId();

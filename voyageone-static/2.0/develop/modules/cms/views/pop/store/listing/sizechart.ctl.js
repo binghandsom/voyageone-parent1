@@ -56,6 +56,24 @@ define([
 
         };
 
+        $scope.radioChange = function(){
+
+            if($scope.vm.sizeChart)
+                $scope.chartOrg = $scope.vm.sizeChart;
+
+            switch($scope.chartType){
+                case 'setting':
+                    $scope.vm.sizeChart = null;
+                    break;
+                case 'match':
+                    $scope.vm.sizeChart = $scope.chartOrg;
+                    break;
+                case 'new':
+                    $scope.vm.sizeChart = "";
+                    break;
+            }
+        };
+
         $scope.save = function () {
             var _sizeChart = $scope.vm.sizeChart,
                 listImageGroup = [],

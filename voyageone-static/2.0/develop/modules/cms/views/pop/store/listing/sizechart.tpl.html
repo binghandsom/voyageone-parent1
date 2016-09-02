@@ -25,12 +25,11 @@
                     <div class="col-sm-8">
                         <input type="hidden" name="chartType" ng-required="!chartType" ng-model="chartType">
                         <div>
-                            <input name="sizeChart" type="radio" value="setting" ng-model="chartType"
-                                ng-click="vm.sizeChart = null">
+                            <input name="sizeChart" type="radio" value="setting" ng-model="chartType" ng-click="radioChange()">
                             &emsp;<strong>无对应尺码对照图</strong>
                         </div>
                         <div>
-                            <input name="sizeChart" type="radio" value="match" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;
+                            <input name="sizeChart" type="radio" value="match" ng-model="chartType" ng-click="radioChange()">&emsp;
                             <strong>匹配现有尺码对照图</strong>
 
                             <ng-form name="imageForm" ng-if = "chartType == 'match'">
@@ -42,6 +41,7 @@
                                         <select class="form-control"
                                                 ng-model="vm.sizeChart[cartSize.cartId]" name="sizeChart" ng-required = "!vm.sizeChart"
                                                 ng-options = "optItem as optItem.imageGroupName for optItem in cartSize.imgList">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -57,7 +57,7 @@
 
                         </div>
                         <div>
-                            <input name="sizeChart" type="radio"  value="new" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;
+                            <input name="sizeChart" type="radio"  value="new" ng-model="chartType" ng-click="radioChange()">&emsp;
                             <strong>新建对应尺码对照图</strong>
                             <div class="col-md-7 col-md-offset-1">
                                 <ng-form name="imageForm" ng-if = "chartType == 'new'">

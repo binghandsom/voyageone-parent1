@@ -34,10 +34,10 @@ public class HtProductGetByStatusRequest implements BaseJMRequest {
         Map<String, Object> params = new HashMap<>();
         params.put("status", status);
         if (page != null) {
-            params.put("page", page);
+            params.put("page", page.toString());
         }
         if (pageSize != null) {
-            params.put("pageSize", pageSize);
+            params.put("pageSize", pageSize.toString());
         }
         return params;
     }
