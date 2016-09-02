@@ -8,15 +8,6 @@ define([
     'modules/admin/controller/popup.ctl',
     'modules/admin/controller/treeTable.ctrl'
 ], function (admin) {
-    function flatTree(categories, parent) {
-        return categories.reduce(function (map, curr) {
-            curr.parent = parent;
-            map[curr.id] = curr;
-            if (curr.children && curr.children.length)
-                map = angular.extend(map, flatTree(curr.children, curr));
-            return map;
-        }, {});
-    }
     admin.controller('ResManagementController', (function () {
         function ResManagementController(popups, alert, confirm, adminResService, adminUserService, selectRowsFactory) {
             this.popups = popups;
@@ -46,7 +37,6 @@ define([
                 self.adminResService.init().then(function (res) {
                     self.resList = res.data.treeList;
                     self.pageOption.total = res.data.count;
-                    var mapResList = flatTree(self.resList);
 
                     // 设置勾选框
                     if (self.tempSelect == null) {
@@ -55,7 +45,7 @@ define([
                         self.tempSelect.clearCurrPageRows();
                         self.tempSelect.clearSelectedList();
                     }
-                    _.forEach(mapResList, function (Info) {
+                    _.forEach(self.resList, function (Info) {
                         if (Info.updFlg != 8) {
                             self.tempSelect.currPageRows({
                                 "id": Info.id

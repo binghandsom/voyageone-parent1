@@ -45,12 +45,8 @@
                 <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
                     <thead>
                     <tr>
-                        <th class="text-left mfb-xt cell-input" ng-controller="selectRowsCtrl" style="padding: 5px;">
-                            <label class="checkbox-inline c-checkbox" style="height: 15px;">
-                                <input type="checkbox" ng-click="selectAll(ctrl.resSelList)"
-                                       ng-checked="isAllSelected(ctrl.resSelList)" >
-                                <span class="fa fa-check"></span>
-                            </label>
+                        <th class="cell-input" style="padding: 5px;">
+                            <input ng-checked="(ctrl.resList | selected).length == ctrl.resList.length" ng-click="toggleAllCheckboxes($event)" type="checkbox" />
                         </th>
                         <th class="text-left mfb-xxst" translate="TXT_MENU_NAME"></th>
                         <th class="text-left mfb-xxt" translate="TXT_MENU_KEY"></th>
@@ -68,12 +64,9 @@
 
                 <script id="table_tree.html" type="text/ng-template">
                     <tr ng-class="{parent: item.children}" ng-init="parentScope = $parent.$parent; initCheckbox(item, parentScope.item)">
-                        <td class="text-left v-middle cell-input">
-                            <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                                <input ng-model="ctrl.resSelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
-                                       ng-click="selectOne(item.id, ctrl.resSelList)">
-                                <span class="fa fa-check"></span>
-                            </label>
+
+                        <td class="cell-input" style="padding: 4px;">
+                            <input ng-change="toggleCheckbox(item, parentScope)" ng-model="item.selected" type="checkbox" />
                         </td>
                         <td class="cell-name text-left" ng-click="item.opened = !item.opened" style="width: 238px;">
                             <div ng-class="{'indent': item.children.length>0}" style="padding-left: {{15*level}}px"></div>

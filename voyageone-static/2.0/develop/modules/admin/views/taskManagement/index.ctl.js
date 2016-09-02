@@ -94,7 +94,7 @@ define([
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openTask(Info).then(function () {
+                    self.popups.openTask('add').then(function () {
                         self.search(1);
                     });
                 } else {
