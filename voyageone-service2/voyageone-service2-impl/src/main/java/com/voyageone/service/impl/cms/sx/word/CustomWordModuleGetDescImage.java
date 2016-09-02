@@ -203,8 +203,8 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
 //            Font f = new Font(font, Font.BOLD, fontSize);
 
             URL baseUrl = CustomWordModuleGetDescImage.class.getResource(".");
-            $info("TOM-1" + baseUrl.getPath() + "xxx2.ttc");
-            File file = new File(baseUrl.getPath() + "xxx2.ttc");
+            $info("TOM-1" + baseUrl.getPath() + "Fangsong.ttf");
+            File file = new File(baseUrl.getPath() + "Fangsong.ttf");
             $info("TOM-2");
 //            File file = new File(baseUrl.getPath() + "SimSun-ExtB.ttf");
             try {
