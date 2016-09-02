@@ -6,13 +6,14 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('GuideConfigController', (function () {
-        function GuideConfigController(popups, alert, confirm, channelService, carrierConfigService, selectRowsFactory) {
+        function GuideConfigController(popups, alert, confirm, channelService, carrierConfigService, newShopService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
             this.selectRowsFactory = selectRowsFactory;
             this.channelService = channelService;
             this.carrierConfigService = carrierConfigService;
+            this.newShopService = newShopService;
             this.channelPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.carrierList = [];
             this.carrierSelList = {selList: []};
@@ -32,6 +33,9 @@ define([
                 self.activeList = [{active: true, value: '启用'}, {active: false, value: '禁用'}];
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
+                });
+                self.newShopService.getChannelSeries().then(function (res) {
+                    console.log(res);
                 });
                 self.search();
             },

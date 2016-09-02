@@ -227,6 +227,25 @@ define(function () {
                     "stopTask": "stopTask"
                 }
             },
+            "newShop": {
+                /** 开店信息 */
+                "newShopService": {
+                    "root": "/admin/newshop/self",
+                    "getChannelSeries": "getChannelSeries",
+                    "saveChannelSeries": "saveChannelSeries",
+                    "downloadNewShopSql": "downloadNewShopSql",
+                    "deleteNewShop": "deleteNewShop",
+                    "searchNewShopByPage": "searchNewShopByPage",
+                    "getNewShopById": "getNewShopById"
+                },
+                /** 操作日志 */
+                "adminLogService": {
+                    "root": "/admin/log/action",
+                    "init": "init",
+                    "searchLog": "searchLog",
+                    "getLogDetail": "getLogDetail"
+                }
+            },
             "log": {
                 /** 登录日志 */
                 "adminLoginLogService": {

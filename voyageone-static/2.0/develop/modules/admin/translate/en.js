@@ -50,6 +50,7 @@ define(function () {
 
         /**第三方配置信息管理*/
         "TXT_CHANNEL_THIRD_PARTY_CONFIG": "第三方配置信息管理",
+        "TXT_THIRD_COG_INFO": "第三方配置信息",
 
         /**短信配置管理*/
         "TXT_CHANNEL_SMS_CONFIG": "短信配置管理",
@@ -58,9 +59,11 @@ define(function () {
         "TXT_CHANNEL_SMS_CODE": "短信码",
         "TXT_CHANNEL_SMS_DESC": "短信描述",
         "TXT_CHANNEL_SNS_DEL_TARGET": "删除标识",
+        "TXT_SMS_COG_INFO": "短信配置信息",
 
         /**快递信息管理*/
         "TXT_CHANNEL_CARRIER_MANAGEMENT": "快递信息管理",
+        "TXT_CARRIER_COG_INFO": "快递配置信息",
         "TXT_CHANNEL_CARRIER_NAME": "快递名",
         "TXT_CHANNEL_CARRIER_ISEBUY": "使用快递100",
         "TXT_CHANNEL_CARRIER_ISEBUY_ID": "使用快递100标识",
@@ -138,6 +141,7 @@ define(function () {
         "TXT_CODE_NAME": "Code名",
         "TXT_CODE_DESC": "Code描述",
         "TXT_CODE_ID": "Code ID",
+        "TXT_TYPE_ATTR_COG_INFO": "类型属性配置信息",
 
         /**权限管理一览*/
         "TXT_USER_ADMIN": "用户 / 权限管理",
@@ -182,9 +186,9 @@ define(function () {
         "TXT_WASTE_TIME": "耗时(ms)",
         "TXT_REQUEST_PARAMETER": "请求参数",
         "TXT_RESPONSE": "返回结果",
-        "TXT_NEW_SHOP_MANAGEMENT":"开新店管理",
-        "TXT_NEWSHOP_GUIDE_TYPE":"向导式开新店",
-        "TXT_NEWSHOP_HISTORY":"开新店脚本历史",
+        "TXT_NEW_SHOP_MANAGEMENT": "开新店管理",
+        "TXT_NEWSHOP_GUIDE_TYPE": "向导式开新店",
+        "TXT_NEWSHOP_HISTORY": "开新店脚本历史",
 
         /**按钮组*/
         "TXT_LOGOUT": "注销",
@@ -208,8 +212,7 @@ define(function () {
         "TXT_ITEMS": "件数",
         "TXT_MSG_NO_DATE": "当前数据为空...",
 
-        
-        
+
         /**确认框*/
         "TXT_CONFIRM": "确认",
         "TXT_POP_ADD": "添加",

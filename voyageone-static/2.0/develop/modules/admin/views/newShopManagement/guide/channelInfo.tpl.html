@@ -17,6 +17,23 @@
                     </div>
                     <div class="col-sm-12 wrapper">
                         <form role="form" class="form-horizontal" name="addForm" novalidate>
+                            <div class="col-sm-12 m-b-sm" style="border-bottom: 3px solid #efefef;">
+                                <div class="col-sm-8 col-sm-offset-2">
+                                    <div class="form-horizontal">
+                                        <div class="row form-group">
+                                            <label class="col-sm-2 control-label">渠道名(模板)</label>
+                                            <div class="col-sm-6">
+                                                <input type="text" maxlength="3" class="form-control" ng-model="ctrl.sourceData.orderChannelId"
+                                                   name="channelId" required/>
+                                            </div>
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input type="checkbox" name="active" value="1" ng-model="ctrl.sourceData.copy"><span class="fa fa-check"></span> 复制渠道信息
+                                            </label>
+                                            <button class="btn btn-info">复制</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-sm-4">
                                 <div class="form-horizontal">
                                     <div class="row form-group">
@@ -46,15 +63,19 @@
                                         </div>
                                     </div>
                                     <div class="row form-group">
-                                        <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_NAME' | translate}}</label>
+                                        <label class="col-sm-3 control-label">{{'TXT_STATUS' | translate}}</label>
                                         <div class="col-sm-8">
-                                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.name"/>
+                                            <label class="checkbox-inline c-radio">
+                                                <input type="radio" name="status" value="1" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> {{'BTN_ACTIVE'|translate}}
+                                            </label>
+                                            <label class="checkbox-inline c-radio">
+                                                <input type="radio" name="status" value="0" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> {{'BTN_INACTIVE'|translate}}
+                                            </label>
                                         </div>
-                                    </div>
-                                    <div class="row form-group">
-                                        <label class="col-sm-3 control-label">{{'TXT_CART_FULL_NAME' | translate}}</label>
-                                        <div class="col-sm-8">
-                                            <input class="form-control" ng-model="ctrl.sourceData.fullName"/>
+                                        <div class="row form-group">
+                                            <div class="col-sm-8 col-sm-offset-3">
+                                                <vo-message target="addForm.status"></vo-message>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -90,32 +111,7 @@
                             <div class="col-sm-4">
                                 <div class="form-horizontal">
                                     <div class="row form-group">
-                                        <label class="col-sm-2 control-label">{{'TXT_STATUS' | translate}}</label>
-                                        <div class="col-sm-4">
-                                            <label class="checkbox-inline c-radio">
-                                                <input type="radio" name="status" value="1" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> {{'BTN_ACTIVE'|translate}}
-                                            </label>
-                                            <label class="checkbox-inline c-radio">
-                                                <input type="radio" name="status" value="0" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> {{'BTN_INACTIVE'|translate}}
-                                            </label>
-                                        </div>
                                         <label class="col-sm-3 control-label">{{'TXT_CART_IS_USJOI' | translate}}</label>
-                                        <div class="col-sm-3">
-                                            <label class="checkbox-inline c-radio">
-                                                <input type="radio" name="isUsjoi" value="1" ng-model="ctrl.sourceData.isUsjoi"><span class="fa fa-check"></span> 是
-                                            </label>
-                                            <label class="checkbox-inline c-radio">
-                                                <input type="radio" name="isUsjoi" value="0" ng-model="ctrl.sourceData.isUsjoi"><span class="fa fa-check"></span> 否
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="row form-group">
-                                        <div class="col-sm-4 col-sm-offset-2">
-                                            <vo-message target="addForm.status"></vo-message>
-                                        </div>
-                                    </div>
-                                    <div class="row form-group">
-                                        <label class="col-sm-4 control-label">{{'TXT_CART_IS_USJOI' | translate}}</label>
                                         <div class="col-sm-8">
                                             <label class="checkbox-inline c-radio">
                                                 <input type="radio" name="isUsjoi" value="1" ng-model="ctrl.sourceData.isUsjoi"><span class="fa fa-check"></span> 是
@@ -123,6 +119,18 @@
                                             <label class="checkbox-inline c-radio">
                                                 <input type="radio" name="isUsjoi" value="0" ng-model="ctrl.sourceData.isUsjoi"><span class="fa fa-check"></span> 否
                                             </label>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_NAME' | translate}}</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" maxlength="20" class="form-control" ng-model="ctrl.sourceData.name"/>
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <label class="col-sm-3 control-label">{{'TXT_CART_FULL_NAME' | translate}}</label>
+                                        <div class="col-sm-8">
+                                            <input class="form-control" ng-model="ctrl.sourceData.fullName"/>
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -134,30 +142,76 @@
                                 </div>
                             </div>
                             <div class="col-sm-12">
-                                <div class="row form-group">
-                                    <label class="col-sm-1 control-label">{{'TXT_SECRET_KEY' | translate}}</label>
-                                    <div class="col-sm-9">
-                                        <input class="form-control" ng-model="ctrl.sourceData.screctKey"
-                                               readonly name="screctKey" required/>
+                                <div class="col-sm-6">
+                                    <div class="row form-group">
+                                        <label class="col-sm-2 control-label vo_a_ce" >{{'TXT_SESSION_KEY' | translate}}</label>
+                                        <div class="col-sm-8">
+                                            <input class="form-control" ng-model="ctrl.sourceData.sessionKey"
+                                                   readonly name="sessionKey" required/>
+                                        </div>
+                                        <button class="btn btn-info btn-pop col-sm-1" ng-click="ctrl.generate()">生成</button>
                                     </div>
-                                    <button class="btn btn-info btn-pop col-sm-1" ng-click="ctrl.generate('secretKey')">生成</button>
-                                </div>
-                                <div class="row form-group">
-                                    <div class="col-sm-9 col-sm-offset-1">
-                                        <vo-message target="addForm.screctKey"></vo-message>
+                                    <div class="row form-group">
+                                        <div class="col-sm-8 col-sm-offset-2">
+                                            <vo-message target="addForm.sessionKey"></vo-message>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="row form-group">
-                                    <label class="col-sm-1 control-label vo_a_ce" >{{'TXT_SESSION_KEY' | translate}}</label>
-                                    <div class="col-sm-9">
-                                        <input class="form-control" ng-model="ctrl.sourceData.sessionKey"
-                                               readonly name="sessionKey" required/>
+                                <div class="col-sm-6">
+                                    <div class="row form-group">
+                                        <label class="col-sm-2 control-label">{{'TXT_SECRET_KEY' | translate}}</label>
+                                        <div class="col-sm-8">
+                                            <input class="form-control" ng-model="ctrl.sourceData.screctKey"
+                                                   readonly name="screctKey" required/>
+                                        </div>
+                                        <button class="btn btn-info btn-pop col-sm-1" ng-click="ctrl.generate('secretKey')">生成</button>
                                     </div>
-                                    <button class="btn btn-info btn-pop col-sm-1" ng-click="ctrl.generate()">生成</button>
+                                    <div class="row form-group">
+                                        <div class="col-sm-8 col-sm-offset-2">
+                                            <vo-message target="addForm.screctKey"></vo-message>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="row form-group">
-                                    <div class="col-sm-9 col-sm-offset-1">
-                                        <vo-message target="addForm.sessionKey"></vo-message>
+                                <div class="row form-group" >
+                                    <div class="col-sm-1 text-right">
+                                        <label class="control-label">渠道店铺：</label>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <div class="col-sm-5">
+                                            <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label>
+                                            <div class="column_overflow col-sm-12 m-t-sm" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
+                                                <div class="col-sm-12">
+                                                    <ul class="list-unstyled">
+                                                        <li class="btn-block" ng-repeat="channel in ctrl.channelList" ng-style="{'background-color': ctrl.selectedChannelId==channel.orderChannelId? '#dcf3f9': 'white'}">
+                                                            <a href="javascript:void(0)" ng-click="ctrl.selected(channel)">{{channel.name}}</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <label class="col-sm-5 text-center control-label vo_a_ce" >操作</label>
+                                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1 m-t-sm" ng-click="ctrl.channelMove('allInclude')"><i class="fa fa-angle-double-left"></i></button> </div>
+                                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.channelMove('include')"><i class="fa fa-angle-left"></i></button></div>
+                                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.channelMove('exclude')"><i class="fa fa-angle-right"></i></button></div>
+                                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.channelMove('allExclude')"><i class="fa fa-angle-double-right"></i></button></div>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <label class="col-sm-2 text-left control-label vo_a_ce" >{{'TXT_CHOOSE' | translate}}</label>
+                                            <div class="col-sm-10 form-inline">
+                                                <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:88.5%" ng-model="name" ng-change="ctrl.channelMove(name?name:'')">
+                                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search({'type':'channel','value':name})" ng-disabled="!name"><i class="fa fa-search"></i></button>
+                                            </div>
+                                            <div class="column_overflow col-sm-12 m-t-xs" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
+                                                <div class="col-sm-12">
+                                                    <ul class="list-unstyled">
+                                                        <li class="btn-block" ng-repeat="channel in ctrl.channelAllList" ng-style="{'background-color': ctrl.selectedChannelId==channel.orderChannelId? '#dcf3f9': 'white'}">
+                                                            <a href="javascript:void(0)" ng-click="ctrl.selected(channel)">{{channel.name}}</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
