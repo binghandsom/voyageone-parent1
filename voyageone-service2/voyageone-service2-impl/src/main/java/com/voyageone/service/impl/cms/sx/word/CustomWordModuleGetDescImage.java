@@ -24,6 +24,7 @@ import java.net.URL;
 public class CustomWordModuleGetDescImage extends CustomWordModule {
 
     public final static String moduleName = "GetDescImage";
+	private static Font dynamicFont;
 
     public CustomWordModuleGetDescImage() {
         super(moduleName);
@@ -41,7 +42,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         int startX = 30;        // 起始位置x
         int startY = 30;        // 起始位置y
         int sectionSize = 5;    // 行间距
-        int fontSize = 20;      // 文字大小
+        float fontSize = 18f;      // 文字大小
         int oneLineBit = 70;    // 一行的英文单词数
 
         {
@@ -148,11 +149,11 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         return "";
     }
 
-    private byte[] doCreateImage(String txtDesc, int width, int startX, int startY, int sectionSize, int fontSize, int oneLineBit) {
+    private byte[] doCreateImage(String txtDesc, int width, int startX, int startY, int sectionSize, float fontSize, int oneLineBit) {
 
         int height;
         String[] split = getChangedString(txtDesc, oneLineBit).split("\n");
-        height = startY + (fontSize + sectionSize) * split.length;
+        height = startY + ((int)fontSize + sectionSize) * split.length;
 
         BufferedImage tag = new BufferedImage(
                 width,
@@ -191,56 +192,61 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         return null;
     }
 
-    private void doDrawText(Graphics2D g2d, String text, int nowLine, int fontSize, int startX, int startY, int sectionSize) {
+    private void getFont(){
+		URL fontFangsong = this.getClass().getResource("/config/job/cms/font/Fangsong.ttf");
+
+		File file = new File(fontFangsong.getPath());
+		try {
+			FileInputStream aixing = new FileInputStream(file);
+			dynamicFont = Font.createFont(Font.TRUETYPE_FONT, aixing);
+			aixing.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (FontFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+    private void doDrawText(Graphics2D g2d, String text, int nowLine, float fontSize, int startX, int startY, int sectionSize) {
         {
 //            Font f = new Font(font, Font.BOLD, fontSize);
 
-//            URL fontFangsong = this.getClass().getResource("/config/job/cms/font/Fangsong.ttf");
-            // 上面这行是真的, 下面这行是为了不想读取成功, 故意写一个不存在的文件
-            URL fontFangsong = this.getClass().getResource("/config/job/cms/font/xxx.ttf");
+			if (dynamicFont == null) {
+				getFont();
+			}
 
-//            File file = new File("/usr/task/voyageone/script/Fangsong.ttf");
-            File file = new File(fontFangsong.getPath());
-            try {
-                FileInputStream aixing = new FileInputStream(file);
-                Font dynamicFont = Font.createFont(Font.TRUETYPE_FONT, aixing);
-                Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, 18.0f);
-                aixing.close();
+			Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, fontSize);
 
-                // 设置位置
-                if (nowLine == 0) {
-                    g2d.translate(startX, startY);
-                } else {
-                    g2d.translate(0, fontSize + sectionSize);
-                }
+			// 设置位置
+			if (nowLine == 0) {
+				g2d.translate(startX, startY);
+			} else {
+				g2d.translate(0, fontSize + sectionSize);
+			}
 
-                // 消除锯齿
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			// 消除锯齿
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                // 设置颜色
-                try {
-                    Field field = Color.class.getField("black");
-                    Color color = (Color)field.get(null);
-                    g2d.setColor(color);
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+			// 设置颜色
+			try {
+				Field field = Color.class.getField("black");
+				Color color = (Color)field.get(null);
+				g2d.setColor(color);
+			} catch (NoSuchFieldException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
 
-                // 写字
-                g2d.setFont(dynamicFontPt);
-                GlyphVector v = dynamicFontPt.createGlyphVector(g2d.getFontMetrics().getFontRenderContext(), text);
-                Shape shape = v.getOutline();
-                g2d.fill(shape);
+			// 写字
+			g2d.setFont(dynamicFontPt);
+			GlyphVector v = dynamicFontPt.createGlyphVector(g2d.getFontMetrics().getFontRenderContext(), text);
+			Shape shape = v.getOutline();
+			g2d.fill(shape);
 
-//                g2d.drawString(text, 10, dynamicFontPt.getSize() + 10);
+//            g2d.drawString(text, 10, dynamicFontPt.getSize() + 10);
 
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (FontFormatException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
 
         }
