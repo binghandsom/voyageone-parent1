@@ -226,6 +226,21 @@ define(function () {
                     "startTask": "startTask",
                     "stopTask": "stopTask"
                 }
+            },
+            "log": {
+                /** 登录日志 */
+                "adminLoginLogService": {
+                    "root": "/admin/log/login",
+                    "init": "init",
+                    "searchLog": "searchLog"
+                },
+                /** 操作日志 */
+                "adminLogService": {
+                    "root": "/admin/log/action",
+                    "init": "init",
+                    "searchLog": "searchLog",
+                    "getLogDetail": "getLogDetail"
+                }
             }
         }
     };
