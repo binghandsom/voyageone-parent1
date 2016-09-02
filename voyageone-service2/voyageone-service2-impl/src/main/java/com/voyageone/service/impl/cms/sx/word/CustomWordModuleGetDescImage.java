@@ -215,20 +215,23 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
 			$info("TOM-1-0");
 //            URL baseUrl = CustomWordModuleGetDescImage.class.getResource(".");
 			URL baseUrl = this.getClass().getResource("Fangsong.ttf");
-			$info("TOM-1" + baseUrl.getPath());
-            File file = new File(baseUrl.getPath());
+
+			InputStream is = this.getClass().getResourceAsStream("Fangsong.ttf");
+
+//			$info("TOM-1" + baseUrl.getPath());
+//            File file = new File(baseUrl.getPath());
             $info("TOM-2");
 //            File file = new File(baseUrl.getPath() + "SimSun-ExtB.ttf");
             try {
                 $info("TOM-3");
-                FileInputStream aixing = new FileInputStream(file);
+//                FileInputStream aixing = new FileInputStream(file);
                 $info("TOM-4");
-                Font dynamicFont = Font.createFont(Font.TRUETYPE_FONT, aixing);
+                Font dynamicFont = Font.createFont(Font.TRUETYPE_FONT, is);
                 $info("TOM-5");
 //                Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, 18.0f);
                 Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, 18.0f);
                 $info("TOM-6");
-                aixing.close();
+                is.close();
                 $info("TOM-7");
 
                 // 设置位置
