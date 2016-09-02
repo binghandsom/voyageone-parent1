@@ -31,6 +31,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
 
     @Override
     public String parse(CustomWord customWord, ExpressionParser expressionParser, SxProductService sxProductService, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
+        $info("TOM-0-1");
 
         //user param
         CustomModuleUserParamGetDescImage customModuleUserParamGetDescImage = ((CustomWordValueGetDescImage) customWord.getValue()).getUserParam();
@@ -43,6 +44,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         int sectionSize = 5;    // 行间距
         int fontSize = 20;      // 文字大小
         int oneLineBit = 70;    // 一行的英文单词数
+        $info("TOM-0-2");
 
         {
             // 数据来源字段名称
@@ -111,6 +113,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
                 }
             }
         }
+        $info("TOM-0-3");
 
         // 获取需要设定的文本
         //   文字来源是指定字段名 (默认从platforms.Pxx.fields下面获取, 如果没有, 则从common.fields下面获取)
@@ -133,8 +136,10 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         txtDesc = txtDesc.replaceAll("<br />", "\n");
         txtDesc = txtDesc.replaceAll("<br>", "\n");
 
+        $info("TOM-0-4");
         // 制作图片
         byte[] img = doCreateImage(txtDesc, width, startX, startY, sectionSize, fontSize, oneLineBit);
+        $info("TOM-0-5");
 
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
             TbPictureService tbPictureService = new TbPictureService();
