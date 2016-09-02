@@ -1,14 +1,18 @@
 package com.voyageone.task2.cms.service.product;
 
 import com.mongodb.BulkWriteResult;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.bi.BiVtSalesProductExt;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -58,25 +62,28 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
         sqlParams.put("oLimit", PAGE_LIMIT);
 
         BulkJongoUpdateList bulkUpdList = new BulkJongoUpdateList(PAGE_LIMIT, cmsBtProductDao, channelId);
-        long oIdx = 0;
-        List<Map<String, Object>> biData = null;
-        BulkWriteResult rs = null;
+        // 必须判断是否是usjoi店铺，如果是，则在更新usjoi店铺中的商品信息时，同时要更新原始店铺中的商品信息
+        boolean isUsJoi = Channels.isUsJoi(channelId);
+        Map<String, String> orgChannelIdMap = null;
+        if (isUsJoi) {
+            orgChannelIdMap = new HashMap<>();
+        }
 
         // 先统计昨天的数据
         sqlParams.put("staDate", lastDayVal);
-        setBiData(bulkUpdList, sqlParams, 1);
+        setBiData(bulkUpdList, sqlParams, 1, isUsJoi, orgChannelIdMap);
 
         // 再统计最近7天的数据
         lastDay = DateTimeUtil.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -7);
         int staDayVal = NumberUtils.toInt(DateTimeUtil.format(lastDay, DateTimeUtil.DATE_TIME_FORMAT_3));
         sqlParams.put("staDate", staDayVal);
-        setBiData(bulkUpdList, sqlParams, 7);
+        setBiData(bulkUpdList, sqlParams, 7, isUsJoi, orgChannelIdMap);
 
         // 再统计最近30天的数据
         lastDay = DateTimeUtil.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -30);
         staDayVal = NumberUtils.toInt(DateTimeUtil.format(lastDay, DateTimeUtil.DATE_TIME_FORMAT_3));
         sqlParams.put("staDate", staDayVal);
-        setBiData(bulkUpdList, sqlParams, 30);
+        setBiData(bulkUpdList, sqlParams, 30, isUsJoi, orgChannelIdMap);
 
         $info("CmsProcductBIDataService 结束");
     }
@@ -84,12 +91,16 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
     /*
      * 查询并保存BI数据
      */
-    private void setBiData(BulkJongoUpdateList bulkUpdList, Map<String, Object> sqlParams, int opeType) {
+    private void setBiData(BulkJongoUpdateList bulkUpdList, Map<String, Object> sqlParams, int opeType, boolean isUsJoi, Map<String, String> orgChannelIdMap) {
         long oIdx = 0;
         List<Map<String, Object>> biData = null;
         BulkWriteResult rs = null;
+        Map<String, BulkJongoUpdateList> bulkUpdListMap = null;
+        if (isUsJoi) {
+            bulkUpdListMap = new HashMap<>();
+        }
+        String channelId = (String) sqlParams.get("channelId");
         Integer cartId = (Integer) sqlParams.get("cartId");
-
         do {
             sqlParams.put("oIdx", oIdx * PAGE_LIMIT);
             biData = biDataDao.selectList(sqlParams);
@@ -113,6 +124,30 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
                 if (rs != null) {
                     $debug(String.format("更新product sqlParams=%s 执行结果1=%s", sqlParams.toString(), rs.toString()));
                 }
+
+                // 若是usjoi店铺，根据numiid和cartid取得原始channelid
+                if (isUsJoi) {
+                    String orgChannelId = getOrgChannelId(numIid, cartId, channelId, orgChannelIdMap);
+                    if (orgChannelId == null) {
+                        continue;
+                    }
+                    BulkJongoUpdateList orgUpdList = bulkUpdListMap.get(orgChannelId);
+                    if (orgUpdList == null) {
+                        orgUpdList = new BulkJongoUpdateList(PAGE_LIMIT, cmsBtProductDao, orgChannelId);
+                        bulkUpdListMap.put(orgChannelId, orgUpdList);
+                    }
+                    // 批量更新
+                    JongoUpdate updObj2 = new JongoUpdate();
+                    updObj2.setQuery("{'platforms.P#.pNumIId':#,'platforms.P#.status':'Approved'}");
+                    updObj2.setQueryParameters(channelId, numIid, channelId);
+                    updObj2.setUpdate("{$set:{'bi.sum#.pv.cartId#':#,'bi.sum#.uv.cartId#':#, 'bi.sum#.gwc.cartId#':#,'bi.sum#.scs.cartId#':#, 'modified':#,'modifier':#}}");
+                    updObj2.setUpdateParameters(opeType, channelId, orderObj.get("pv"), opeType, channelId, orderObj.get("uv"), opeType, channelId, orderObj.get("cartNums"), opeType, channelId, orderObj.get("collNums"), DateTimeUtil.getNowTimeStamp(), MqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
+
+                    rs = orgUpdList.addBulkJongo(updObj2);
+                    if (rs != null) {
+                        $debug(String.format("更新product orgChannelId=%s, sqlParams=%s 执行结果1=%s", orgChannelId, sqlParams.toString(), rs.toString()));
+                    }
+                }
             }
         } while (biData.size() == PAGE_LIMIT);
 
@@ -120,5 +155,44 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
         if (rs != null) {
             $debug(String.format("更新product sqlParams=%s 执行结果2=%s", sqlParams.toString(), rs.toString()));
         }
+
+        if (bulkUpdListMap != null) {
+            for (Map.Entry<String, BulkJongoUpdateList> entry : bulkUpdListMap.entrySet()) {
+                rs = entry.getValue().execute();
+                if (rs != null) {
+                    $debug(String.format("更新product orgChannelId=%s, sqlParams=%s 执行结果2=%s", entry.getKey(), sqlParams.toString(), rs.toString()));
+                }
+            }
+        }
+    }
+
+    /*
+     * 根据numiid和cartid取得原始channelid
+     */
+    private String getOrgChannelId(String numIid, int cartId, String channelId, Map<String, String> orgChannelIdMap) {
+        String orgChannelId = null;
+        String orgKey = cartId + CacheKeyEnums.SKIP + numIid;
+        orgChannelId = orgChannelIdMap.get(orgKey);
+        if (orgChannelId != null) {
+            return orgChannelId;
+        }
+
+        JongoQuery queryObj = new JongoQuery();
+        queryObj.setQuery("{'platforms.P#.pNumIId':#}");
+        queryObj.setParameters(cartId, numIid);
+        queryObj.setProjection("{'orgChannelId':1}");
+
+        CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
+        if (prodObj == null) {
+            $error("查询原始channelid无结果 numiid=%s, cartid=%d, channelid=%s", numIid, cartId, channelId);
+            return null;
+        }
+        orgChannelId = StringUtils.trimToNull(prodObj.getOrgChannelId());
+        if (orgChannelId == null) {
+            $error("原始channelid未设置 numiid=%s, cartid=%d, channelid=%s", numIid, cartId, channelId);
+        } else {
+            orgChannelIdMap.put(orgKey, orgChannelId);
+        }
+        return orgChannelId;
     }
 }

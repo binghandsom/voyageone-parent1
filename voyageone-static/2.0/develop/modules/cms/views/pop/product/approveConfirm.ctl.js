@@ -7,18 +7,29 @@ define([
 
     cms.controller("ApproveConfirmController", (function () {
 
-        function ApproveConfirm($uibModalInstance,context, notify ,imageGroupService,sizeChartService) {
+        function ApproveConfirm(context,$uibModalInstance) {
             this.$uibModalInstance = $uibModalInstance;
             this.context = context;
-            this.notify = notify;
-            this.imageGroupService = imageGroupService;
-            this.sizeChartService = sizeChartService;
+            this.flag = false;
         }
 
         ApproveConfirm.prototype.init = function () {
-            this.context.flag = false;
+            var self = this;
+
+            if(!self.context)
+                return;
+
+            if(!self.context[0])
+                return;
+
+            if(angular.equals(self.context[0].priceRetail,self.context[0].confPriceRetail)){
+                self.equal = true;
+            }
         };
 
+       ApproveConfirm.prototype.confirm = function(){
+            this.$uibModalInstance.close(this.flag);
+       };
 
         return ApproveConfirm;
     })());
