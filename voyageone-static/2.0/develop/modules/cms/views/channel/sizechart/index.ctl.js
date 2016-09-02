@@ -5,7 +5,7 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/enums/Carts'
 ], function (popup,carts) {
-    function sizeChartController($scope, sizeChartService, alert, notify, $translate) {
+    function sizeChartController($scope, sizeChartService, confirm, notify, $translate) {
         $scope.vm = {
             sizeChartList: [],
             searchInfo: {
@@ -66,10 +66,9 @@ define([
             };
         };
 
-        $scope.imageGroup = function(sizeChartId){
-            sizeChartService.getListImageGroupBySizeChartId({sizeChartId: sizeChartId}).then(function (res) {
-                console.log(res.data);
-                $scope.imageGroups = res.data;
+        $scope.imageGroup = function(item){
+            sizeChartService.getListImageGroupBySizeChartId({sizeChartId: item.sizeChartId}).then(function (res) {
+                item.imageGroups = res.data;
             });
         };
 

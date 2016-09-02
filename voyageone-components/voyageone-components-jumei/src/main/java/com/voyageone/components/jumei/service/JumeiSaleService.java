@@ -96,6 +96,8 @@ public class JumeiSaleService extends JmBase {
             HtProductGetByStatusResponse response = new HtProductGetByStatusResponse();
             response.setBody(reqResult);
             List<Map<String, Object>> prodInfos = response.getProdInfos();
+            Object[] objs = { statusType, shopBean.getOrder_channel_id(), shopBean.getCart_id(), prodInfos == null ? "total=" + "空" : prodInfos.size() };
+            logger.info("get{}ProductList调用结果 channelid={}, cartid={}, 结果={}", objs);
             if (prodInfos == null || prodInfos.isEmpty()) {
                 return null;
             }

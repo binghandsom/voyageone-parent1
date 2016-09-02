@@ -1425,6 +1425,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         for (BaseMongoMap<String, Object> sku : skuList) {
             String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
             if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
+                // 不是新追加的
                 HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
                 skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
                 skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
@@ -1433,11 +1434,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             }
         }
 
-        StringBuffer sb = new StringBuffer("");
-        boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(shopBean, updateData, sb);
-        if (!isSuccess) {
-            // 价格更新失败throw出去
-            throw new BusinessException("聚美商城的商品价格更新失败!" + sb.toString());
+        if (!updateData.isEmpty()) {
+            StringBuffer sb = new StringBuffer("");
+            boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(shopBean, updateData, sb);
+            if (!isSuccess) {
+                // 价格更新失败throw出去
+                throw new BusinessException("聚美商城的商品价格更新失败!" + sb.toString());
+            }
         }
     }
 

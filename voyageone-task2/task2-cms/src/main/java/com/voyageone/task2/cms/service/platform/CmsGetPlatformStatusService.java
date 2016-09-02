@@ -201,7 +201,6 @@ public class CmsGetPlatformStatusService extends BaseTaskService {
                     }
                 } while (jdList != null && jdList.size() == 100);
 
-
             } else if (PlatFormEnums.PlatForm.JM.getId().equals(shopObj.getPlatform_id())) {
                 // 从聚美获取商品上下架状态
                 List<String> numIIdList = null;

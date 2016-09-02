@@ -58,7 +58,7 @@ define([
 
         $scope.save = function () {
             var _sizeChart = $scope.vm.sizeChart,
-                listImageGroup,
+                listImageGroup = [],
                 upEntity;
 
             if (_sizeChart) {
@@ -67,10 +67,10 @@ define([
                         return value;
                     });
                 } else {
-                    listImageGroup = {sizeChartName: _sizeChart, sizeChartId: 0};
+                    angular.forEach( $scope.noMathOpt,function (element) {
+                        listImageGroup.push({cartId:element.cartId,imageGroupName: _sizeChart, imageGroupId: 0});
+                    });
                 }
-            } else {
-                listImageGroup = [];
             }
 
             upEntity = _.extend($scope.vm.saveInfo, {listImageGroup: listImageGroup});

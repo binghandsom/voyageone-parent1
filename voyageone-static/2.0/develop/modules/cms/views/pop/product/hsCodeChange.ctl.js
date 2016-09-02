@@ -4,9 +4,8 @@
  */
 
 define([
-    'cms',
-    'modules/cms/enums/Carts'
-], function (cms,carts) {
+    'cms'
+], function (cms) {
     'use strict';
     return cms.controller('HsCodeChangeController', (function () {
 
@@ -20,32 +19,7 @@ define([
         }
 
         HsCodeChange.prototype.init = function(){
-            var self = this;
-
-            self.productDetailService.hsCodeChg({prodId:self.context.prodId,hsCode:self.context.hsCodeNew}).then(function(res){
-                _.each(res.data, function(element,key){
-                    var _hsObject = {cartId:key,cartInfo:carts.valueOf(+key)};
-                    _.each(element,function(element,key){
-                        _.extend(_hsObject,{skuCode:key,prideOld:element[0],priceNew:element[1]});
-                    });
-                    self.vm.result.push(_hsObject);
-                });
-
-                //判断税号价格是否改变
-                var isHsChange = _.every(self.vm.result,function(element){
-                    return element.prideOld == element.priceNew;
-                });
-
-                if(isHsChange)
-                    self.uibModalInstance.close("equal");
-
-            },function(res){
-                /**错误处理*/
-                if(res.displayType != 1)
-                    self.uibModalInstance.close("error");
-                else
-                    self.uibModalInstance.close();
-            });
+            this.vm.result = this.context.results;
         };
 
         HsCodeChange.prototype.update = function(mark){
