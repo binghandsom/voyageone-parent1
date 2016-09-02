@@ -107,8 +107,8 @@ define(function () {
         "TXT_WELCOME": "Welcome",
         "TXT_YEAR_MONTH": "Year-Month",
         "TXT_USER": "User",
-        "TXT_READY_TO_PACKAGE": "Ready to package this order?",
-        "TXT_CONFIRM_REVERT_SCANNED_SKU": "Confirm to revert scanning in this order?",
+        "TXT_CONFIRM_ORDER_PACKAGED": "Confirm to package this order?",
+        "TXT_CONFIRM_REVERT_SCANNED_SKU": "Confirm to clear all scanned SKUs in this order?",
         "TXT_SETTINGS": "Settings",
         "TXT_VENDOR_SETTINGS": "Vendor Settings",
         "TXT_DEFAULT_DELIVERY_COMPANY": "Default Delivery Company",
@@ -145,6 +145,7 @@ define(function () {
         "BTN_TEST": "TEST",
         "BTN_SAVE": "SAVE",
         "BTN_PREVIEW": "PREVIEW",
-        "BTN_DOWNLOAD": "DOWNLOAD"
+        "BTN_DOWNLOAD": "DOWNLOAD",
+        "BTN_CLEAR": "CLEAR"
     }
 });

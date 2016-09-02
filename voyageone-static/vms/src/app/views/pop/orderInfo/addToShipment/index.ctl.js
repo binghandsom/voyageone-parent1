@@ -62,7 +62,7 @@ define([
                 "shipment": self.shipmentDetails.shipment,
                 "consolidationOrderId": self.shipmentDetails.consolidationOrderId
             };
-            self.confirm('TXT_READY_TO_PACKAGE').then(function () {
+            self.confirm('TXT_CONFIRM_ORDER_PACKAGED').then(function () {
                 self.shipmentScanPopupService.finishScanning(req).then(function (data) {
                     if (data.success > 0) self.$uibModalInstance.close(data.success);
                 })
