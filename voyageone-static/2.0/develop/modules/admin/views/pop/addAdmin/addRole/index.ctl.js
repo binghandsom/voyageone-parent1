@@ -16,6 +16,8 @@ define([
             this.popType = '修改角色';
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
+            this.sourceData.allChannel = this.sourceData !== 'add' ? (this.sourceData.channelId.indexOf('ALL') > -1 ? '1' : '') : '';
+            this.sourceData.allStore = this.sourceData !== 'add' ? (this.sourceData.storeId.indexOf('ALL') > -1 ? '1' : '') : '';
         }
 
         AddRoleController.prototype = {
@@ -28,6 +30,23 @@ define([
                     self.popType = '添加角色';
                     self.sourceData = {}
                 }
+                var appList = self.sourceData.application.split(',');
+                _.forEach(appList, function (app) {
+                    switch (app) {
+                        case'cms':
+                            return self.sourceData.application == 'cms';
+                            break;
+                        case'oms':
+                            return self.sourceData.application == 'oms';
+                            break;
+                        case'wms':
+                            return self.sourceData.application == 'wms';
+                            break;
+                        case'admin':
+                            return self.sourceData.application == 'admin';
+                            break;
+                    }
+                });
                 self.adminOrgService.getAllOrg().then(function (res) {
                     self.orgList = res.data;
                 });
@@ -42,13 +61,13 @@ define([
                 });
                 function call(channelAllList) {
                     var channelAllListCopy = angular.copy(channelAllList);
-                    self.channelList = self.sourceData.channelName.split(',');
+                    self.channelList = self.sourceData.channelId.split(',');
                     _.forEach(self.channelList, function (item, index) {
                         _.map(channelAllList, function (channel) {
-                            if (channel.name == item) {
+                            if (channel.orderChannelId == item) {
                                 self.channelList[index] = {
-                                    'orderChannelId': channel.orderChannelId,
-                                    'name': item
+                                    'orderChannelId': item,
+                                    'name': channel.name
                                 }
                             }
                             return self.channelList;
@@ -80,11 +99,11 @@ define([
                 });
                 function storeCall(storeAllList) {
                     var storeAllListCopy = angular.copy(storeAllList);
-                    self.storeList = self.sourceData.storeName.split(',');
+                    self.storeList = self.sourceData.storeId.split(',');
                     _.forEach(self.storeList, function (item, index) {
                         _.map(storeAllList, function (store) {
-                            if (store.storeName == item) {
-                                self.storeList[index] = {'storeId': store.storeId, 'storeName': item}
+                            if (store.storeId == item) {
+                                self.storeList[index] = {'storeId': item, 'storeName': store.storeName}
                             }
                             return self.storeList;
                         });
@@ -242,30 +261,16 @@ define([
             save: function () {
                 var self = this;
                 if (self.sourceData.allChannel == '1' || self.sourceData.allStore == '1') {
-                    self.sourceData.channelId = '';
-                    self.sourceData.channelName = '';
-                    self.sourceData.storeId = '';
-                    self.sourceData.storeName = '';
+                    self.sourceData.channelId = [];
+                    self.sourceData.storeId = [];
                 } else {
-                    var tempChannelId = [];
-                    var tempChannelName = [];
-                    var tempStoreId = [];
-                    var tempStoreName = [];
+                    self.sourceData.channelId = [];
                     _.forEach(self.channelList, function (item) {
-                        tempChannelId.push(item.orderChannelId);
-                        tempChannelName.push(item.name);
-                        _.extend(self.sourceData, {
-                            'channelId': tempChannelId.join(','),
-                            'channelName': tempChannelName.join(',')
-                        });
+                        self.sourceData.channelId.push(item.orderChannelId);
                     });
+                    self.sourceData.storeId = [];
                     _.forEach(self.storeList, function (item) {
-                        tempStoreId.push(item.storeId);
-                        tempStoreName.push(item.storeName);
-                        _.extend(self.sourceData, {
-                            'storeId': tempStoreId.join(','),
-                            'storeName': tempStoreName.join(',')
-                        });
+                        self.sourceData.storeId.push(item.storeId);
                     });
                 }
                 var result = {};

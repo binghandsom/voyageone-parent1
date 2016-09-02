@@ -37,11 +37,11 @@ define([
                     return call(self.roleAllList);
                 });
                 function call(roleAllList) {
-                    self.roleList = self.sourceData.roleName.split(',');
+                    self.roleList = self.sourceData.roleId.split(',');
                     _.forEach(self.roleList, function (item, index) {
                         _.map(roleAllList, function (role) {
-                            if (role.roleName == item) {
-                                self.roleList[index] = {'roleId': role.roleId, 'roleName': item}
+                            if (role.roleId == item) {
+                                self.roleList[index] = {'roleId':item, 'roleName':  role.roleName}
                             }
                             return self.roleList;
                         })
