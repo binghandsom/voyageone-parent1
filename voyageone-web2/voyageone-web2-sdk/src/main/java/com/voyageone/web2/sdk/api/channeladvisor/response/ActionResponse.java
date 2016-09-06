@@ -1,9 +1,9 @@
-package com.voyageone.web2.sdk.api.ca.response;
+package com.voyageone.web2.sdk.api.channeladvisor.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.web2.sdk.api.ca.enums.ResponseStatusEnum;
-import com.voyageone.web2.sdk.api.ca.exception.ErrorModel;
+import com.voyageone.web2.sdk.api.channeladvisor.enums.ResponseStatusEnum;
+import com.voyageone.web2.sdk.api.channeladvisor.exception.ErrorModel;
 
 import java.util.List;
 

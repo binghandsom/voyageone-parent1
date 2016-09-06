@@ -1,4 +1,4 @@
-package com.voyageone.web2.sdk.api.ca.domain;
+package com.voyageone.web2.sdk.api.channeladvisor.domain;
 
 /**
  * @author aooer 2016/9/6.

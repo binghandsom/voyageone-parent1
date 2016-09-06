@@ -1,4 +1,4 @@
-package com.voyageone.web2.sdk.api.ca.enums;
+package com.voyageone.web2.sdk.api.channeladvisor.enums;
 
 import com.voyageone.common.util.StringUtils;
 

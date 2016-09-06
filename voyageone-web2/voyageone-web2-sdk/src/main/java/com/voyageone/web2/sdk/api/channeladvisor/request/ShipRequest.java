@@ -1,8 +1,7 @@
 
-package com.voyageone.web2.sdk.api.ca.request;
+package com.voyageone.web2.sdk.api.channeladvisor.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.voyageone.common.util.JacksonUtil;
 
 import java.util.Map;
 

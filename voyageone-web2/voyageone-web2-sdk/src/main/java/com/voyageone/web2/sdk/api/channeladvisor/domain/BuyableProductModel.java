@@ -1,7 +1,7 @@
-package com.voyageone.web2.sdk.api.ca.domain;
+package com.voyageone.web2.sdk.api.channeladvisor.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.voyageone.web2.sdk.api.ca.enums.ListingStatusEnum;
+import com.voyageone.web2.sdk.api.channeladvisor.enums.ListingStatusEnum;
 
 import java.util.List;
 

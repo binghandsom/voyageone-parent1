@@ -1,7 +1,7 @@
-package com.voyageone.web2.sdk.api.ca.exception;
+package com.voyageone.web2.sdk.api.channeladvisor.exception;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.voyageone.web2.sdk.api.ca.enums.ErrorIDEnum;
+import com.voyageone.web2.sdk.api.channeladvisor.enums.ErrorIDEnum;
 
 /**
  * @author aooer 2016/9/6.

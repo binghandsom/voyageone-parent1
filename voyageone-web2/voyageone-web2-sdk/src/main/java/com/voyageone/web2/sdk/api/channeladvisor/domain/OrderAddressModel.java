@@ -1,4 +1,4 @@
-package com.voyageone.web2.sdk.api.ca.domain;
+package com.voyageone.web2.sdk.api.channeladvisor.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
