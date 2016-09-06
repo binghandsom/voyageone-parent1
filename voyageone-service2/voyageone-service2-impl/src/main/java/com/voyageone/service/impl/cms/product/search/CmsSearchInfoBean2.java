@@ -32,6 +32,7 @@ public class CmsSearchInfoBean2 implements Serializable {
     private String createTimeTo;
 
     private List<String> brandList;
+    private int brandSelType = 0;
     private List<String> freeTags;
     private int freeTagType = 0;
     private String lockFlg;
@@ -254,6 +255,14 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     public void setBrandList(List<String> brandList) {
         this.brandList = brandList;
+    }
+
+    public int getBrandSelType() {
+        return brandSelType;
+    }
+
+    public void setBrandSelType(int brandSelType) {
+        this.brandSelType = brandSelType;
     }
 
     public String[] getCodeList() {

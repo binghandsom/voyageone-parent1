@@ -13,7 +13,8 @@ define([
             cartList: context.cartList,
             _optStatus: false,
             priceTypeId: 0,
-            isRoundUp: true
+            isRoundUp: true,
+            skuUpdType: 1
         };
 
         $scope.save = function () {
@@ -50,6 +51,7 @@ define([
             } else {
                 $scope.vm.property.isRoundUp = '0';
             }
+            $scope.vm.property.skuUpdType = parseInt($scope.vm.skuUpdType);
             confirm($translate.instant('TXT_BULK_SETSALEPRICE')).then(function(){
                 _setProductFields($scope.vm.property);
             });
