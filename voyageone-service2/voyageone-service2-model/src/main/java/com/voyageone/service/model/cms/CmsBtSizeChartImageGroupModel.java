@@ -15,6 +15,8 @@ import com.voyageone.base.dao.mysql.BaseModel;
 public class CmsBtSizeChartImageGroupModel extends BaseModel {
     protected String channelId;
 
+    protected Integer cartId;
+
     /**
      * 尺码表
      */
@@ -31,6 +33,14 @@ public class CmsBtSizeChartImageGroupModel extends BaseModel {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId == null ? null : channelId.trim();
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
     public Integer getCmsBtSizeChartId() {

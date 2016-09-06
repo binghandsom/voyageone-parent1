@@ -194,16 +194,16 @@ class UtilResolveData {
             }
         }
 
-        List<String> timeValueDataList;
+        List timeValueDataList;
         if (strKey.contains("pcResultData")) {
             Map<String, Object> timeDataMap = (Map<String, Object>) searchData.get("Time");
-            timeValueDataList = (List<String>) timeDataMap.get("value");
+            timeValueDataList = (List) timeDataMap.get("value");
         } else if (strKey.contains("mobileResultData")) {
             Map<String, Object> timeDataMap = (Map<String, Object>) searchData.get("TimeSeg");
-            timeValueDataList = (List<String>) timeDataMap.get("value");
+            timeValueDataList = (List) timeDataMap.get("value");
         } else {
             Map<String, Object> timeDataMap = (Map<String, Object>) searchData.get("Time");
-            timeValueDataList = (List<String>) timeDataMap.get("value");
+            timeValueDataList = (List) timeDataMap.get("value");
         }
 
         String lastKey = keyArr[keyArr.length - 1];
@@ -231,9 +231,10 @@ class UtilResolveData {
                     //已获得的值字符串
                     List<String> valuesJD = listValues.get(i);
                     boolean isFind = false;
-                    for (String aTimeValueDataList : timeValueDataList) {
+                    for (Object aTimeValueData : timeValueDataList) {
+                        String aTimeValueDataStr = String.valueOf(aTimeValueData);
                         String strValueDate = valuesJD.get(0);
-                        if (strValueDate.equals(aTimeValueDataList)) {
+                        if (strValueDate.equals(aTimeValueDataStr)) {
                             String valueStr = String.valueOf(dataList.get(i));
                             BigDecimal bdValue = new BigDecimal(valueStr);
                             valuesJD.add(bdValue.toPlainString());

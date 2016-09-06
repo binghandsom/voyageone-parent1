@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
+import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -56,7 +58,7 @@ public class CmsSizeChartController extends CmsController {
         //创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         //逻辑删除选中的记录
-        cmsSizeChartService.sizeChartUpdate(channelId, param);
+        cmsSizeChartService.sizeChartDelete(channelId, param);
         //返回数据的类型
         return success(param);
     }
@@ -77,8 +79,15 @@ public class CmsSizeChartController extends CmsController {
     }
 
     @RequestMapping(value = CmsUrlConstants.CHANNEL.LISTING.SIZE_CHART.GetNoMatchList)
-    public AjaxResponse getNoMatchList() {
+    public AjaxResponse getNoMatchList(@RequestBody Map<String, Object> map) {
         String channelId = this.getUser().getSelChannelId();
-        return success(sizeChartService.getNoMatchList(channelId));
+        return success(sizeChartService.getNoMatchList(channelId, map.get("cartId").toString(), this.getLang()));
+    }
+
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.LISTING.SIZE_CHART.GetListImageGroupBySizeChartId)
+    public AjaxResponse getListImageGroupBySizeChartId(@RequestBody Map<String, Object> map) {
+        // String channelId, int sizeChartId
+        String channelId = this.getUser().getSelChannelId();
+        return success(cmsSizeChartService.getListImageGroupBySizeChartId(channelId, ConvertUtil.toInt(map.get("sizeChartId"))));
     }
 }

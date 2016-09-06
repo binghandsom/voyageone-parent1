@@ -4,8 +4,9 @@
  */
 define([
     'cms',
+    'modules/cms/enums/Carts',
     'modules/cms/directives/platFormStatus.directive'
-], function (cms) {
+], function (cms,carts) {
     cms.directive("masterSchema", function (productDetailService, $rootScope, systemCategoryService, alert, notify, confirm) {
         return {
             restrict: "E",
@@ -178,23 +179,48 @@ define([
 
                     if (!angular.equals(_hscOde.split(",")[0], _orgHsCode.split(",")[0])) {
 
-                        var _prehsCode = angular.copy(_orgHsCode);
+                        var _prehsCode = angular.copy(_orgHsCode),
+                            results=  [];
 
-                        openHsCodeChange({
+                        productDetailService.hsCodeChg({
                             prodId: scope.productInfo.productId,
-                            hsCodeOld: _prehsCode,
-                            hsCodeNew: _hscOde
-                        }).then(function (context) {
-                            if (context === 'confirm') {
-                                callSaveProduct(true);
-                            } else if (context === 'equal') {
-                                callSaveProduct();
+                            hsCode: _hscOde
+                        }).then(function (res) {
+                            _.each(res.data, function (element, key) {
+                                var _hsObject = {cartId: key, cartInfo: carts.valueOf(+key)};
+                                _.each(element, function (element, key) {
+                                    _.extend(_hsObject, {skuCode: key, prideOld: element[0], priceNew: element[1]});
+                                });
+                                results.push(_hsObject);
+                            });
+
+                            //判断税号价格是否改变
+                            var isHsChange = _.every(results, function (element) {
+                                return element.prideOld == element.priceNew;
+                            });
+
+                            if (!isHsChange) {
+                                openHsCodeChange({
+                                    prodId: scope.productInfo.productId,
+                                    hsCodeOld: _prehsCode,
+                                    hsCodeNew: _hscOde,
+                                    results:results
+                                }).then(function (context) {
+                                    if (context === 'confirm') {
+                                        callSaveProduct(true);
+                                    } else {
+                                        hsCode.value.value = _prehsCode;
+                                    }
+                                });
                             } else {
-                                if (context === 'error')
-                                    alert("价格计算失败，可能价格公式不合法，请联系IT人员，税号还原为变更前。");
-                                hsCode.value.value = _prehsCode;
+                                callSaveProduct();
                             }
+
+                        }, function (res) {
+                            if (res.displayType != 1)
+                                alert("价格计算失败，可能价格公式不合法，请联系IT人员，税号还原为变更前。");
                         });
+
                     } else {
                         callSaveProduct();
                     }

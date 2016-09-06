@@ -337,6 +337,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             String channelId = this.channel.getOrder_channel_id();
 
+            // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
+            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
+            // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
+            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+
             // 查找当前渠道,所有等待反映到主数据的商品
 //            CmsBtFeedInfoModel feedInfo = feedInfoService.getProductByCode(channelId, "36/G05");
 //            List<CmsBtFeedInfoModel> feedList = new ArrayList<>();
@@ -348,15 +353,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             JongoQuery queryObject = new JongoQuery();
             queryObject.setQuery(query);
             queryObject.setSort(sort);
-            queryObject.setLimit(FEED_IMPORT_MAX_500);   // 默认为每次最大500件
+            queryObject.setLimit(getFeedImportMax(channelId));   // 默认为每次最大500件
             List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channelId, queryObject);
 
             // 共通配置信息存在的时候才进行feed->master导入
             if (ListUtils.notNull(feedList)) {
-                // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
-                CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
-                // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
-                CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
                 // 从synship.com_mt_value_channel表中取得品牌，产品分类，使用人群等mapping信息
                 getTypeChannelMappingInfo();
                 // --------------------------------------------------------------------------------------------
@@ -3683,6 +3684,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     private void copyAttributeFromMainProduct(String channelId, CmsBtProductModel_Common common, String mainProductCode) {
         CmsBtProductModel mainProduct = productService.getProductByCode(channelId, mainProductCode);
         if(mainProduct != null){
+            common.setCatId(mainProduct.getCommon().getCatId());
+            common.setCatPath(mainProduct.getCommon().getCatPath());
+
             common.getFields().setTranslateStatus(mainProduct.getCommon().getFields().getTranslateStatus());
             common.getFields().setTranslateTime(mainProduct.getCommon().getFields().getTranslateTime());
             common.getFields().setTranslator(mainProduct.getCommon().getFields().getTranslator());
@@ -3897,6 +3901,30 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 sellerCatList.add(sellerCatFromDict);
             }
         }
+    }
+
+    /**
+     * 从cms_mt_channel_config表中取得该channel每次feed->master导入的最大件数(最大2000件)
+     *
+     * @param channelId String 渠道id
+     * @return int 该渠道配置的每次feed-master导入最大件数(最大2000件)
+     */
+    private int getFeedImportMax(String channelId) {
+
+        // 默认为每次最多500件
+        int feedImportMax = FEED_IMPORT_MAX_500;
+
+        // 该店铺每次feed-master导入最大件数(FEED_IMPORT_MAX)(最大2000件)
+        CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.FEED_IMPORT_MAX);
+        if (autoApprovePrice != null && !StringUtils.isEmpty(autoApprovePrice.getConfigValue1())) {
+            if (NumberUtils.toInt(autoApprovePrice.getConfigValue1()) >= 2000) {
+                feedImportMax = 2000;
+            } else {
+                feedImportMax = NumberUtils.toInt(autoApprovePrice.getConfigValue1());
+            }
+        }
+
+        return feedImportMax;
     }
 
 }

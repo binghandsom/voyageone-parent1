@@ -11,6 +11,7 @@ import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
+import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
@@ -218,9 +219,10 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
             // 上传产品失败，后面商品也不用上传，直接回写workload表   (失败2)
             if (ex instanceof BusinessException) {
+                $error(ex.getMessage());
                 sxData.setErrorMessage(((BusinessException) ex).getMessage());
             } else {
-                String errMsg = String.format("天猫平台产品匹配或上传产品时异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [%s]",
+                String errMsg = String.format("产品匹配或上传产品时异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [%s]",
                         channelId, cartId, groupId, ex.getMessage());
                 $error(errMsg);
                 ex.printStackTrace();
@@ -590,7 +592,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue("1");
+            ((SingleCheckField) field).setValue("1");
         }
         {
             // UrlKey orgChannelId + "-" + cms product id
@@ -643,9 +645,9 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
             CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
             if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
-                ((InputField) field).setValue("1");
+                ((SingleCheckField) field).setValue("1");
             } else if (platformActive == CmsConstants.PlatformActive.ToInStock) {
-                ((InputField) field).setValue("0");
+                ((SingleCheckField) field).setValue("0");
             } else {
                 throw new BusinessException("PlatformActive must be Onsale or Instock, but now it is " + platformActive);
             }

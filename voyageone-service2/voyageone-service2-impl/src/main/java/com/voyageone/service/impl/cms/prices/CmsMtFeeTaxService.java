@@ -35,11 +35,9 @@ public class CmsMtFeeTaxService extends BaseService {
      * @param hsCode 税号
      * @return 关税税率
      */
-    public Double getTaxRate(String hsCode) {
+    public Double getTaxRate(String hsCode, String shippingType) {
 
-        Assert.hasText(hsCode).elseThrowDefaultWithTitle("hsCode (CmsMtFeeTaxService.getTaxRate)");
-
-        Map<String, Object> queryMap = MapUtil.toMap("hsCode", hsCode);
+        Map<String, Object> queryMap = MapUtil.toMap("hsCode", hsCode, "shippingType", shippingType);
 
         CmsMtFeeTaxModel feeTaxModel = cmsMtFeeTaxDao.selectOne(queryMap);
 

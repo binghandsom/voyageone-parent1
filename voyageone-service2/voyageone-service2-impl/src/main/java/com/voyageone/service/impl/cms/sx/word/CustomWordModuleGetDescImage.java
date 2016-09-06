@@ -1,7 +1,6 @@
 package com.voyageone.service.impl.cms.sx.word;
 
 import com.taobao.api.response.PictureUploadResponse;
-import com.taobao.top.schema.rule.Rule;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
@@ -17,6 +16,7 @@ import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.net.URL;
 
 /**
  * Created by tom.zhu on 16-8-26.
@@ -24,6 +24,7 @@ import java.lang.reflect.Field;
 public class CustomWordModuleGetDescImage extends CustomWordModule {
 
     public final static String moduleName = "GetDescImage";
+//	private static Font dynamicFont;
 
     public CustomWordModuleGetDescImage() {
         super(moduleName);
@@ -31,7 +32,6 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
 
     @Override
     public String parse(CustomWord customWord, ExpressionParser expressionParser, SxProductService sxProductService, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
-        String font = "SimSun"; // 固定字体名字
 
         //user param
         CustomModuleUserParamGetDescImage customModuleUserParamGetDescImage = ((CustomWordValueGetDescImage) customWord.getValue()).getUserParam();
@@ -42,7 +42,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         int startX = 30;        // 起始位置x
         int startY = 30;        // 起始位置y
         int sectionSize = 5;    // 行间距
-        int fontSize = 20;      // 文字大小
+        float fontSize = 18f;      // 文字大小
         int oneLineBit = 70;    // 一行的英文单词数
 
         {
@@ -135,26 +135,25 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         txtDesc = txtDesc.replaceAll("<br>", "\n");
 
         // 制作图片
-        byte[] img = doCreateImage(txtDesc, width, startX, startY, sectionSize, fontSize, oneLineBit, font);
+        byte[] img = doCreateImage(txtDesc, width, startX, startY, sectionSize, fontSize, oneLineBit);
 
-        String result = "";
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
             TbPictureService tbPictureService = new TbPictureService();
             PictureUploadResponse response = tbPictureService.uploadPicture(shopBean, img, "desc", "0");
 
             if (!StringUtils.isEmpty(response.getPicture().getPicturePath())) {
-                return  result;
+                return  response.getPicture().getPicturePath();
             }
         }
 
-        return result;
+        return "";
     }
 
-    private byte[] doCreateImage(String txtDesc, int width, int startX, int startY, int sectionSize, int fontSize, int oneLineBit, String font) {
+    private byte[] doCreateImage(String txtDesc, int width, int startX, int startY, int sectionSize, float fontSize, int oneLineBit) {
 
         int height;
         String[] split = getChangedString(txtDesc, oneLineBit).split("\n");
-        height = startY + (fontSize + sectionSize) * split.length;
+        height = startY + ((int)fontSize + sectionSize) * split.length;
 
         BufferedImage tag = new BufferedImage(
                 width,
@@ -176,7 +175,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
 
         // 画字
         for (int i = 0; i < split.length; i++) {
-            doDrawText(g2d, split[i], i, font, fontSize, startX, startY, sectionSize);
+            doDrawText(g2d, split[i], i, fontSize, startX, startY, sectionSize);
         }
 
         // 图片输出
@@ -193,33 +192,62 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         return null;
     }
 
-    private static void doDrawText(Graphics2D g2d, String text, int nowLine, String font, int fontSize, int startX, int startY, int sectionSize) {
+//    private void getFont(){
+//		URL fontFangsong = this.getClass().getResource("/config/job/cms/font/Fangsong.ttf");
+//
+//		File file = new File(fontFangsong.getPath());
+//		try {
+//			FileInputStream aixing = new FileInputStream(file);
+//			dynamicFont = Font.createFont(Font.TRUETYPE_FONT, aixing);
+//			aixing.close();
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (FontFormatException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//
+//	}
+
+    private void doDrawText(Graphics2D g2d, String text, int nowLine, float fontSize, int startX, int startY, int sectionSize) {
         {
-            Font f = new Font(font, Font.BOLD, fontSize);
+			Font dynamicFontPt = new Font("FangSong", Font.BOLD, (int)fontSize);
 
-            // 设置位置
-            if (nowLine == 0) {
-                g2d.translate(startX, startY);
-            } else {
-                g2d.translate(0, fontSize + sectionSize);
-            }
+//			if (dynamicFont == null) {
+//				getFont();
+//			}
+//
+//			Font dynamicFontPt = dynamicFont.deriveFont(Font.BOLD, fontSize);
 
-            // 消除锯齿
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			// 设置位置
+			if (nowLine == 0) {
+				g2d.translate(startX, startY);
+			} else {
+				g2d.translate(0, fontSize + sectionSize);
+			}
 
-            // 设置颜色
-            try {
-                Field field = Color.class.getField("black");
-                Color color = (Color)field.get(null);
-                g2d.setColor(color);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
+			// 消除锯齿
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // 写字
-            GlyphVector v = f.createGlyphVector(g2d.getFontMetrics().getFontRenderContext(), text);
-            Shape shape = v.getOutline();
-            g2d.fill(shape);
+			// 设置颜色
+			try {
+				Field field = Color.class.getField("black");
+				Color color = (Color)field.get(null);
+				g2d.setColor(color);
+			} catch (NoSuchFieldException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+
+			// 写字
+			g2d.setFont(dynamicFontPt);
+			GlyphVector v = dynamicFontPt.createGlyphVector(g2d.getFontMetrics().getFontRenderContext(), text);
+			Shape shape = v.getOutline();
+			g2d.fill(shape);
+
+//            g2d.drawString(text, 10, dynamicFontPt.getSize() + 10);
+
+
 
         }
 

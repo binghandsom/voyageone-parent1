@@ -152,18 +152,10 @@
     }
 
     /**
-     * 获取规则的依赖条件
-     */
-    function getDependExpressList(rule) {
-        var depends = rule.dependGroup;
-        return (depends ? depends.dependExpressList : null);
-    }
-
-    /**
      * 规则是否包含依赖条件
      */
     function hasDepend(rule) {
-        var dependExpressList = getDependExpressList(rule);
+        var dependExpressList = (rule && rule.dependGroup) ? rule.dependGroup.dependExpressList : null;
         return !!dependExpressList && !!dependExpressList.length;
     }
 
@@ -563,6 +555,10 @@
 
     /**
      * @class 为 multiComplex 字段的 values 提供包装
+     *
+     * 因为 multi complex 字段可以有多个 complex value，而每个 complex value 包含多个 field value
+     * 所以需要提供一个包装，最主要的是，提供对无值 field 的支持。因为有可能服务器端传递的 complex value 中不包含完整的 fields
+     * 这里可以参见 copyFrom 方法
      */
     function ComplexValue(fields) {
         // 生成 id 用来标记缓存
@@ -637,7 +633,15 @@
      */
     function DependentRule(rule, field, schema) {
 
-        this.dependExpressList = getDependExpressList(rule).map(function (dependExpress) {
+        var dependGroup = rule.dependGroup,
+            dependExpressList = dependGroup.dependExpressList,
+            operator = dependGroup.operator;
+
+        // Debug 信息
+        this.$key = '$Depend' + random();
+
+        this.checker = operator === "or" ? any : all;
+        this.dependExpressList = dependExpressList.map(function (dependExpress) {
 
             var field = searchField(dependExpress.fieldId, schema);
 
@@ -662,8 +666,7 @@
 
         // 如果这里直接把 field 存在 this 上, 就会造成递归访问, 无法将数据 JSON 化
         // 所以需要通过第三方存储来保存相互的关系
-        this.$fieldId = field.id;
-        DependentRule.fieldCache[field.id] = field;
+        DependentRule.fieldCache[(this.$fieldId = field.$name || field.id)] = field;
     }
 
     DependentRule.fieldCache = {};
@@ -679,7 +682,7 @@
             currentField = DependentRule.fieldCache[self.$fieldId],
             forceFail = false;
 
-        var result = all(dependExpressList, function (express) {
+        var result = self.checker(dependExpressList, function (express) {
 
             // 每一个表达式的计算, 都只支持简单处理
             // 如果后续需要, 请继续扩展
@@ -787,11 +790,14 @@
             disabledExpression,
             fieldElement,
             fieldScope;
+
         // 2016-07-08 11:11:54
         // 增加对 isDisplay 属性的支持
         // 当该属性为字符串 0 时, 不处理该字段, 否则其他任何值都处理
         if (field.isDisplay == "0")
             return;
+
+        field.$name = 'Field' + random();
 
         rules = getRules(field, schema);
         disableRule = rules.disableRule;
@@ -986,8 +992,6 @@
             };
 
             SchemaFieldController.prototype.setField = function (field) {
-                if (field)
-                    field.$name = 'f' + random();
                 this.field = field;
             };
 

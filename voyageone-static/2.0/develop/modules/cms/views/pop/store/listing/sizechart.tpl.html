@@ -1,5 +1,5 @@
 <div class="vo_modal" ng-init="initialize()">
-    <form role="form" class="form-horizontal" ng-submit="save()">
+    <form role="form" class="form-horizontal" name="sizeForm">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                     aria-hidden="true"><i class="fa fa-close"></i></span></button>
@@ -10,29 +10,76 @@
                 <div class="form-group">
                     <label class="col-sm-4 control-label vo_reqfield">{{'TXT_SIZE_CHART_NAME' | translate}}</label>
                     <div class="col-sm-6">
-                        <input class="form-control" ng-model="vm.saveInfo.sizeChartName" required/>
+                        <input class="form-control" name="sizeChartName" ng-model="vm.saveInfo.sizeChartName" required/>
                     </div>
-                    <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
                 </div>
 
                 <div class="form-group">
-                    <label class="col-sm-4 control-label">{{'TXT_SIZE_IMAGE' | translate}}</label>
-                    <div class="col-sm-6">
-                        <label>
-                            <input name="sizeChart" type="radio" value="setting" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;无对应尺码对照图
-                        </label>
-                        <label>
-                            <input name="sizeChart" type="radio" value="match" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;匹配现有尺码对照图
-                            <select class="form-control col-md-offset-2 m-t-xs"
-                                    ng-model="vm.sizeChart"
-                                    ng-options = "optItem as optItem.imageGroupName for optItem in noMathOpt"
-                                    ng-if = "chartType == 'match'">
-                            </select>
-                        </label>
-                        <label>
-                            <input name="sizeChart" type="radio"  value="new" ng-model="chartType" ng-click="vm.sizeChart = null">&emsp;新建对应尺码对照图
-                            <input type="text" class="form-control col-md-offset-2 m-t-xs" ng-model="vm.sizeChart" ng-if = "chartType == 'new'">
-                        </label>
+                    <div class="col-md-7 col-md-offset-4">
+                        <vo-message target="sizeForm.sizeChartName"></vo-message>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-4 control-label vo_reqfield">{{'TXT_SIZE_IMAGE' | translate}}</label>
+                    <div class="col-sm-8">
+                        <input type="hidden" name="chartType" ng-required="!chartType" ng-model="chartType">
+                        <div>
+                            <input name="sizeChart" type="radio" value="setting" ng-model="chartType" ng-click="radioChange()">
+                            &emsp;<strong>无对应尺码对照图</strong>
+                        </div>
+                        <div>
+                            <input name="sizeChart" type="radio" value="match" ng-model="chartType" ng-click="radioChange()">&emsp;
+                            <strong>匹配现有尺码对照图</strong>
+
+                            <ng-form name="imageForm" ng-if = "chartType == 'match'">
+                                <div class="row" ng-repeat="cartSize in noMathOpt">
+                                    <label class="col-md-3 control-label">
+                                        <span class="label label-info v-bottom">{{carts.valueOf(cartSize.cartId).desc}}</span>
+                                    </label>
+                                    <div class="col-md-6 m-t-xs">
+                                        <select class="form-control"
+                                                ng-model="vm.sizeChart[cartSize.cartId]" name="sizeChart" ng-required = "!vm.sizeChart"
+                                                ng-options = "optItem as optItem.imageGroupName for optItem in cartSize.imgList">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="text-warnings">
+                                    <i class="icon fa fa-bell-o"></i>&nbsp;请至少配置一个平台的尺码表
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <vo-message target="imageForm.sizeChart"></vo-message>
+                                    </div>
+                                </div>
+                            </ng-form>
+
+                        </div>
+                        <div>
+                            <input name="sizeChart" type="radio"  value="new" ng-model="chartType" ng-click="radioChange()">&emsp;
+                            <strong>新建对应尺码对照图</strong>
+                            <div class="col-md-7 col-md-offset-1">
+                                <ng-form name="imageForm" ng-if = "chartType == 'new'">
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" name="sizeChart" ng-model="vm.sizeChart" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <vo-message target="imageForm.sizeChart"></vo-message>
+                                        </div>
+                                    </div>
+                                </ng-form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-7 col-md-offset-4">
+                        <vo-message target="sizeForm.chartType"></vo-message>
                     </div>
                 </div>
 
@@ -63,7 +110,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_CLOSE' | translate}}</button>
-            <button type="submit" class="btn btn-vo"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+            <button type="button" class="btn btn-vo" ng-click="save()" ng-disabled="sizeForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
         </div>
     </form>
 </div><!-- .vo_modal -->

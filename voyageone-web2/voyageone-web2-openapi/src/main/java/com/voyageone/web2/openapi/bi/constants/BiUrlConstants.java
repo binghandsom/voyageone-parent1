@@ -15,6 +15,7 @@ public interface BiUrlConstants {
             String CHECK_URL_LIST = "check";
             String SAVE_SHOP_URL_DATA = "saveShopUrlData";
             String SAVE_PRODUCT_FILE_DATA = "saveProductFileData";
+            String SAVE_SHOP_FINISH = "saveShopFinish";
         }
     }
 }

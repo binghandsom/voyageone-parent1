@@ -7,6 +7,7 @@ define([
     'modules/cms/directives/keyValue.directive'
 ], function () {
     function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage, $filter) {
+        $scope.status={};
         $scope.vm = {
             searchInfo: {},
             feedPageOption: {curr: 1, total: 0, fetch: search},
@@ -63,6 +64,7 @@ define([
          */
         function clear() {
             $scope.vm.searchInfo = {};
+            $scope.status={};
             // 默认设置成第一页
             $scope.vm.feedPageOption.curr = 1;
         }
@@ -96,6 +98,13 @@ define([
                 $scope.vm.feedPageOption.curr = 1;
                 tempFeedSelect = null;
             }
+            $scope.vm.searchInfo.status=null;
+            _.each($scope.status,function(value,key){
+                if(value === true){
+                    if(!$scope.vm.searchInfo.status) $scope.vm.searchInfo.status=[];
+                    $scope.vm.searchInfo.status.push( +key);
+                }
+            });
             $scope.vm.feedPageOption.curr = !page ? $scope.vm.feedPageOption.curr : page;
             $scope.vm.searchInfo.pageNum = $scope.vm.feedPageOption.curr;
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;

@@ -389,13 +389,17 @@ public class Tmall_010_Jewelry_DictTest {
 				{
 					RuleExpression ruleExpressionField = new RuleExpression();
 					ruleExpressionField.addRuleWord(new TextWord("longDesEn"));
-					CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, null, null);
+					RuleExpression ruleExpressionOneLineBit = new RuleExpression();
+					ruleExpressionOneLineBit.addRuleWord(new TextWord("60"));
+					CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, null, ruleExpressionOneLineBit);
 					do处理无线端20张图片(1, ruleRoot, new CustomWord(img));
 				}
 				{
 					RuleExpression ruleExpressionField = new RuleExpression();
 					ruleExpressionField.addRuleWord(new TextWord("longDesCn"));
-					CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, null, null);
+					RuleExpression ruleExpressionOneLineBit = new RuleExpression();
+					ruleExpressionOneLineBit.addRuleWord(new TextWord("70"));
+					CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, null, ruleExpressionOneLineBit);
 					do处理无线端20张图片(2, ruleRoot, new CustomWord(img));
 				}
 			}

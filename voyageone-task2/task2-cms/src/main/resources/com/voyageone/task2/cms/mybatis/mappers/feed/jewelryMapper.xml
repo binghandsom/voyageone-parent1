@@ -207,6 +207,8 @@
         <result column="Attribute96Value" property="Attribute96Value" />
         <result column="Attribute97Value" property="Attribute97Value" />
         <result column="Attribute98Value" property="Attribute98Value" />
+        <result column="material" property="material"/>
+        <result column="usage_en" property="usageEn"/>
         <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
             <result column="i_sku" property="sku" />
             <result column="i_size" property="size" />
@@ -218,6 +220,8 @@
             <result column="price_client_retail" property="priceClientRetail" />
             <result column="price_client_msrp" property="priceClientMsrp" />
             <result column="quantity" property="qty" />
+            <result column="weight_org" property="weightOrg" />
+            <result column="weight_org_unit" property="weightOrgUnit" />
         </collection>
         <collection property="image" javaType="ArrayList" ofType="String" >
             <result column="image" property="image" />
@@ -258,6 +262,11 @@
         <if test="quantity != null">
             ,${quantity} as quantity
         </if>
+        ,${material} as material
+        ,${usage_en} as usageEn
+        ,${weight_org} as weight_org
+        ,${weight_org_unit} as weight_org_unit
+        ,${weight_calc} as weightCalc
         ,Attribute1Name,
         Attribute2Name,
         Attribute3Name,

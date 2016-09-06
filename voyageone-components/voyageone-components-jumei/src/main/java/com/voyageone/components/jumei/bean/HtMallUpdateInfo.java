@@ -19,106 +19,106 @@ public class HtMallUpdateInfo {
     private UpdateDataInfo updateDataInfo;
 
     public class UpdateDataInfo {
-        private Integer shippingSystemId; // 发货仓库
-        private String productLongName; // 产品长标题
-        private String productMediumName; // 产品中标题
-        private String productShortName; // 产品短标题
-        private String beforeDate; // 保质期限
-        private String suitPeople; // 适用人群
-        private String specialExplain; // 特殊说明
-        private String searchMetaTextCustom; // 自定义搜索词
-        private String descriptionProperties; // 本单详情
-        private String descriptionUsage; // 使用方法
-        private String descriptionImages; // 商品实拍
+        private Integer shipping_system_id; // 发货仓库
+        private String product_long_name; // 产品长标题
+        private String product_medium_name; // 产品中标题
+        private String product_short_name; // 产品短标题
+        private String before_date; // 保质期限
+        private String suit_people; // 适用人群
+        private String special_explain; // 特殊说明
+        private String search_meta_text_custom; // 自定义搜索词
+        private String description_properties; // 本单详情
+        private String description_usage; // 使用方法
+        private String description_images; // 商品实拍
 
         private UpdateDataInfo(){}
 
-        public Integer getShippingSystemId() {
-            return shippingSystemId;
+        public Integer getShipping_system_id() {
+            return shipping_system_id;
         }
 
-        public void setShippingSystemId(Integer shippingSystemId) {
-            this.shippingSystemId = shippingSystemId;
+        public void setShipping_system_id(Integer shipping_system_id) {
+            this.shipping_system_id = shipping_system_id;
         }
 
-        public String getProductLongName() {
-            return productLongName;
+        public String getProduct_long_name() {
+            return product_long_name;
         }
 
-        public void setProductLongName(String productLongName) {
-            this.productLongName = productLongName;
+        public void setProduct_long_name(String product_long_name) {
+            this.product_long_name = product_long_name;
         }
 
-        public String getProductMediumName() {
-            return productMediumName;
+        public String getProduct_medium_name() {
+            return product_medium_name;
         }
 
-        public void setProductMediumName(String productMediumName) {
-            this.productMediumName = productMediumName;
+        public void setProduct_medium_name(String product_medium_name) {
+            this.product_medium_name = product_medium_name;
         }
 
-        public String getProductShortName() {
-            return productShortName;
+        public String getProduct_short_name() {
+            return product_short_name;
         }
 
-        public void setProductShortName(String productShortName) {
-            this.productShortName = productShortName;
+        public void setProduct_short_name(String product_short_name) {
+            this.product_short_name = product_short_name;
         }
 
-        public String getBeforeDate() {
-            return beforeDate;
+        public String getBefore_date() {
+            return before_date;
         }
 
-        public void setBeforeDate(String beforeDate) {
-            this.beforeDate = beforeDate;
+        public void setBefore_date(String before_date) {
+            this.before_date = before_date;
         }
 
-        public String getSuitPeople() {
-            return suitPeople;
+        public String getSuit_people() {
+            return suit_people;
         }
 
-        public void setSuitPeople(String suitPeople) {
-            this.suitPeople = suitPeople;
+        public void setSuit_people(String suit_people) {
+            this.suit_people = suit_people;
         }
 
-        public String getSpecialExplain() {
-            return specialExplain;
+        public String getSpecial_explain() {
+            return special_explain;
         }
 
-        public void setSpecialExplain(String specialExplain) {
-            this.specialExplain = specialExplain;
+        public void setSpecial_explain(String special_explain) {
+            this.special_explain = special_explain;
         }
 
-        public String getSearchMetaTextCustom() {
-            return searchMetaTextCustom;
+        public String getSearch_meta_text_custom() {
+            return search_meta_text_custom;
         }
 
-        public void setSearchMetaTextCustom(String searchMetaTextCustom) {
-            this.searchMetaTextCustom = searchMetaTextCustom;
+        public void setSearch_meta_text_custom(String search_meta_text_custom) {
+            this.search_meta_text_custom = search_meta_text_custom;
         }
 
-        public String getDescriptionProperties() {
-            return descriptionProperties;
+        public String getDescription_properties() {
+            return description_properties;
         }
 
-        public void setDescriptionProperties(String descriptionProperties) {
-            this.descriptionProperties = descriptionProperties;
+        public void setDescription_properties(String description_properties) {
+            this.description_properties = description_properties;
         }
 
-        public String getDescriptionUsage() {
-            return descriptionUsage;
+        public String getDescription_usage() {
+            return description_usage;
         }
 
-        public void setDescriptionUsage(String descriptionUsage) {
-            this.descriptionUsage = descriptionUsage;
+        public void setDescription_usage(String description_usage) {
+            this.description_usage = description_usage;
         }
 
-        public String getDescriptionImages() {
-            return descriptionImages;
+        public String getDescription_images() {
+            return description_images;
         }
 
-        public void setDescriptionImages(String descriptionImages) {
-            this.descriptionImages = descriptionImages;
+        public void setDescription_images(String description_images) {
+            this.description_images = description_images;
         }
     }
 

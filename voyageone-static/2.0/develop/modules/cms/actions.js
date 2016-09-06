@@ -112,6 +112,7 @@ define(function () {
                     "hsCodeChg": "hsCodeChg",
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
+                    priceConfirm:"priceConfirm",
                     getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL}
                 },
                 "productHistoryLogService": {
@@ -385,6 +386,9 @@ define(function () {
                 "$addToPromotionService": {
                     "root": "/cms/pop/add_to_promotion",
                     "getPromotionTags": "getPromotionTags",
+
+
+
                     "addToPromotion": "addToPromotion",
                     "checkPromotionTags": "checkPromotionTags"
                 },
@@ -402,6 +406,10 @@ define(function () {
                     root: '/cms/price/log',
                     page: 'page',
                     export: 'export'
+                },
+                priceConfirmLogService: {
+                    root: '/cms/price/confirm',
+                    page: 'page'
                 },
                 statusHistoryService: {
                     root: "/cms/product/statushistory",
@@ -519,7 +527,8 @@ define(function () {
                         "search": "sizeChartSearch",
                         "delete": "sizeChartDelete",
                         "editSave": "sizeChartEditSave",
-                        "getNoMatchList":"getNoMatchList"
+                        "getNoMatchList":"getNoMatchList",
+                        "getListImageGroupBySizeChartId":"getListImageGroupBySizeChartId"
                     }
                 },
                 "sizeChartDetail": {

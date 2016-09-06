@@ -105,8 +105,10 @@ public class GiltInsert extends BaseTaskService {
                     feeds.forEach(feedBean -> {
                         if (!StringUtil.isEmpty(feedBean.getCfg_val1())) {
                             List<String> values = new ArrayList<>();
-                            values.add((String) temp.get(feedBean.getCfg_val1()));
-                            attribute.put(feedBean.getCfg_val1(), values);
+                            if (temp.get(feedBean.getCfg_val1()) != null && !StringUtil.isEmpty(temp.get(feedBean.getCfg_val1()).toString())){
+                                values.add((String) temp.get(feedBean.getCfg_val1()));
+                                attribute.put(feedBean.getCfg_val1(), values);
+                            }
                         }
                     });
                 }

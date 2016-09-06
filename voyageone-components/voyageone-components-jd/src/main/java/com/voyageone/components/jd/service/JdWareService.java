@@ -5,7 +5,6 @@ import com.jd.open.api.sdk.request.ware.*;
 import com.jd.open.api.sdk.response.ware.*;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.JdBase;
@@ -288,13 +287,13 @@ public class JdWareService extends JdBase {
                         switch (response.getCode()) {
                             case "11000003":
                                 // 11000003:参数太长
-                                errMsg += " 可能是该产品Sku属性中size的最大长度超过25位了，请设置小于25位的容量/尺码值";
+                                errMsg += " 可能是因为该Group下某些产品Sku属性中size的最大长度超过25位了，请设置小于25位的容量/尺码值";
                             case "11000012":
                                 // 11000012:参数包含非法字符
-                                errMsg += " 可能是因为尺寸或颜色中包含特殊字符，比如逗号等";
+                                errMsg += " 可能是因为该Group下某些产品尺寸或颜色中包含特殊字符，比如逗号等";
                             case "11000019":
                                 // 11000019:非法的参数，不允许或者不能识别
-                                errMsg += " 可能是该产品Sku属性中的容量/尺码没有设置";
+                                errMsg += " 可能是因为该Group下某些产品的Sku属性中的容量/尺码没有设置";
                             default:
                                 errMsg += "";
                         }
@@ -668,122 +667,6 @@ public class JdWareService extends JdBase {
     }
 
     /**
-     * 商品上架
-     */
-    public WareUpdateListingResponse doWareUpdateListing(ShopBean shop, String wareId)  {
-        WareUpdateListingRequest request = new WareUpdateListingRequest();
-        // 商品id(必须)
-        request.setWareId(wareId);
-        // 流水号（无实际意义，不重复即可）
-        request.setTradeNo(DateTimeUtil.getNowTimeStamp());
-
-        // 调用京东商品上架API(360buy.ware.update.listing)
-        WareUpdateListingResponse response = reqApi(shop, request);
-        return response;
-    }
-
-    /**
-     * 商品上架
-     *
-     * @param shop ShopBean  店铺信息
-     * @param wareId String  京东商品id
-     * @param updateFlg boolean 新增/更新商品flg
-     * @return boolean  商品上架结果
-     */
-    public boolean doWareUpdateListing(ShopBean shop, long wareId, boolean updateFlg) throws BusinessException {
-        String errMsg = updateFlg ? "更新商品成功之后上架操作失败" : "新增商品成功之后上架操作失败";
-
-        WareUpdateListingRequest request = new WareUpdateListingRequest();
-        // 商品id(必须)
-        request.setWareId(String.valueOf(wareId));
-        // 流水号（无实际意义，不重复即可）
-        request.setTradeNo(DateTimeUtil.getNowTimeStamp());
-
-        try {
-            // 调用京东商品上架API(360buy.ware.update.listing)
-            WareUpdateListingResponse response = reqApi(shop, request);
-
-            if (response != null) {
-                // 京东返回正常的场合
-                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
-                    // 返回商品上架成功
-                    return true;
-                } else {
-                    // 京东返回失败的场合
-                    throw new BusinessException(response.getZhDesc());
-                }
-            }
-        } catch (Exception ex) {
-            logger.error("调用京东API商品上架操作失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
-                    + shop.getCart_id() + ",ware_id:" + wareId + ",errorMsg:" + ex.getMessage());
-
-            throw new BusinessException(errMsg + "[商品ID:" + wareId + "] " + ex.getMessage());
-        }
-
-        logger.error("调用京东API商品上架操作失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
-                + shop.getCart_id() + ",ware_id:" + wareId + ",errorMsg:" + ",response=null");
-        return false;
-    }
-
-    /**
-     * 商品下架
-     */
-    public WareUpdateDelistingResponse doWareUpdateDelisting(ShopBean shop, String wareId) {
-        WareUpdateDelistingRequest request = new WareUpdateDelistingRequest();
-        // 商品id(必须)
-        request.setWareId(wareId);
-        // 流水号（无实际意义，不重复即可）
-        request.setTradeNo(DateTimeUtil.getNowTimeStamp());
-
-        // 调用京东商品下架API(360buy.ware.update.delisting)
-        WareUpdateDelistingResponse response = reqApi(shop, request);
-        return response;
-    }
-
-    /**
-     * 商品下架
-     *
-     * @param shop ShopBean  店铺信息
-     * @param wareId String  京东商品id
-     * @param updateFlg boolean 新增/更新商品flg
-     * @return boolean  商品下架结果
-     */
-    public boolean doWareUpdateDelisting(ShopBean shop, long wareId, boolean updateFlg) throws BusinessException {
-        String errMsg = updateFlg ? "更新商品成功之后下架操作失败" : "新增商品成功之后下架操作失败";
-
-        WareUpdateDelistingRequest request = new WareUpdateDelistingRequest();
-        // 商品id(必须)
-        request.setWareId(String.valueOf(wareId));
-        // 流水号（无实际意义，不重复即可）
-        request.setTradeNo(DateTimeUtil.getNowTimeStamp());
-
-        try {
-            // 调用京东商品下架API(360buy.ware.update.delisting)
-            WareUpdateDelistingResponse response = reqApi(shop, request);
-
-            if (response != null) {
-                // 京东返回正常的场合
-                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
-                    // 返回商品下架成功
-                    return true;
-                } else {
-                    // 京东返回失败的场合
-                    throw new BusinessException(response.getZhDesc());
-                }
-            }
-        } catch (Exception ex) {
-            logger.error("调用京东API商品下架操作失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
-                    + shop.getCart_id() + ",ware_id:" + wareId + ",errorMsg:" + ex.getMessage());
-
-            throw new BusinessException(errMsg + "[商品ID:" + wareId + "] " + ex.getMessage());
-        }
-
-        logger.error("调用京东API商品下架操作失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
-                + shop.getCart_id() + ",ware_id:" + wareId + ",errorMsg:" + ",response=null");
-        return false;
-    }
-
-    /**
      * 获取网络图片流，遇错重试
      *
      * @param url   imgUrl
@@ -801,13 +684,13 @@ public class JdWareService extends JdBase {
         throw new BusinessException("通过URL取得图片失败. url:" + url);
     }
 
-    /**
-     * 将图片流转为图片文件
-     *
-     * @param ins InputStream  图片流
-     * @param file File  图片文件（返回值）
-     * @return 无
-     */
+//    /**
+//     * 将图片流转为图片文件
+//     *
+//     * @param ins InputStream  图片流
+//     * @param file File  图片文件（返回值）
+//     * @return 无
+//     */
 //    public static void inputstreamToFile(InputStream ins, File file) {
 //        try {
 //            OutputStream os = new FileOutputStream(file);
@@ -1005,5 +888,39 @@ public class JdWareService extends JdBase {
 //
 //        return retReturnCode;
 //    }
+
+    /**
+     * 取得商品的类目id
+     * 虽然API参数wareIds支持一次传多个商品，但本方法只传一个
+     * 暂时做成，如果API调用失败等错误发生，不throw，只返回null
+     *
+     * @param shop
+     * @param wareId 商品id(单个)
+     * @return 类目id
+     */
+    public String getJdProductCatId(ShopBean shop, String wareId) {
+        String catId = null;
+        String field = "cid";
+        WareListRequest request = new WareListRequest();
+        request.setWareIds(wareId);
+        request.setFields(field);
+
+        try {
+            WareListResponse response = reqApi(shop, request);
+            if ("0".equals(response.getCode())) {
+                // API调用成功
+                if (response.getWareList() != null && response.getWareList().size() > 0) {
+                    catId = String.valueOf(response.getWareList().get(0).getCategoryId());
+                }
+            } else {
+                logger.error("调用京东API取得商品信息失败[wareId:" + wareId + "]! " + response.getZhDesc());
+            }
+
+        } catch (Exception e) {
+            logger.error("调用京东API取得商品信息失败[wareId:" + wareId + "]! ");
+        }
+
+        return catId;
+    }
 
 }
