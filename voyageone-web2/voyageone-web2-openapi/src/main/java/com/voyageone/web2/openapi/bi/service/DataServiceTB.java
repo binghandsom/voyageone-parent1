@@ -9,7 +9,6 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.bi.BiVtSalesProductService;
 import com.voyageone.service.impl.bi.BiVtSalesShopService;
-import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.web2.openapi.OpenApiBaseService;
 import com.voyageone.web2.openapi.bi.constants.ExcelHeaderEnum;
 import org.apache.commons.beanutils.BeanUtilsBean;
@@ -59,18 +58,18 @@ public class DataServiceTB extends OpenApiBaseService {
         int eCommId = (int) shopInfo.get("ecommId");
         //cartId
         String cartId = (String) shopInfo.get("ecommCode");
-        CartType cartType = CartType.getCartById(Integer.parseInt(cartId));
-        if (cartType == CartType.USJOI_JGJ || cartType == CartType.USJOI_JGY) {
-            eCommId = 7;
-        }
+        int iCartId = Integer.parseInt(cartId);
 
         //result Data
         List<String> listColumns = new ArrayList<>();
         List<List<String>> listValues = new ArrayList<>();
-        if (cartType == CartType.TMALL || cartType == CartType.TMALLG) {
+        if (iCartId == 20 || iCartId == 21 || iCartId == 23) {
             // TM / TG
             paresTMUrlData(channelId, cartId, eCommId, jsonData, listColumns, listValues);
-        } else if (cartType == CartType.JINGDONG || cartType == CartType.JINGDONGG || cartType == CartType.USJOI_JGJ || cartType == CartType.USJOI_JGY) {
+        } else if (iCartId == 24 || iCartId == 26 || iCartId == 28 || iCartId == 29) {
+            if (iCartId == 28 || iCartId == 29) {
+                eCommId = 7;
+            }
             // JD / JG
             paresJDUrlData(channelId, cartId, eCommId, jsonData, listColumns, listValues);
         }
@@ -124,6 +123,8 @@ public class DataServiceTB extends OpenApiBaseService {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public boolean saveProductFileData(Map<String, Object> shopInfo, String fileName, MultipartFile multipartFile) {
+        $info("saveProductFileData shopInfo:" + JacksonUtil.bean2Json(shopInfo));
+        $info("saveProductFileData shopInfo:" + fileName);
         //check
         if (shopInfo == null || shopInfo.isEmpty()) {
             throw new RuntimeException("shopItem not found.");
@@ -138,7 +139,7 @@ public class DataServiceTB extends OpenApiBaseService {
         String channelId = (String) shopInfo.get("channelCode");
         //cartId
         String cartId = (String) shopInfo.get("ecommCode");
-        CartType cartType = CartType.getCartById(Integer.parseInt(cartId));
+        int iCartId = Integer.parseInt(cartId);
 
         //result Data
         List<String> listColumns = new ArrayList<>();
@@ -149,17 +150,15 @@ public class DataServiceTB extends OpenApiBaseService {
         String tempFielDir = null;
 
         // save excel file
-        String newFileName = saveTBExcelFile(channelId, cartType, fileName, multipartFile);
+        String newFileName = saveTBExcelFile(channelId, iCartId, fileName, multipartFile);
         $info("saveProductFileData file:" + newFileName);
-        if (cartType == CartType.TMALL || cartType == CartType.TMALLG) {
+        if (iCartId == 20 || iCartId == 21 || iCartId == 23) {
             // TM / TG
             // pares Excel File
             listValues = paresTBExcelFile(channelId, cartId, newFileName, listColumns, deleteDataKeyMap);
 
-        } else if (cartType == CartType.JINGDONG || cartType == CartType.JINGDONGG || cartType == CartType.USJOI_JGJ || cartType == CartType.USJOI_JGY) {
+        } else if (iCartId == 24 || iCartId == 26 || iCartId == 28 || iCartId == 29) {
             // JD / JG
-            logger.info("saveProductFileData file:" + fileName);
-
             //upZip file
             File zipFile = new File(newFileName);
             String zipSaveFileDir = newFileName.replaceAll("\\.zip", "");
@@ -200,7 +199,7 @@ public class DataServiceTB extends OpenApiBaseService {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private String saveTBExcelFile(String channelId, CartType cartType, String fileName, MultipartFile multipartFile) {
+    private String saveTBExcelFile(String channelId, int iCartId, String fileName, MultipartFile multipartFile) {
         //定义上传路径
         String path = Properties.readValue(ExcelHeaderEnum.BI_TB_PRODUCT_IMPORT_PATH);
         String newPath = path + "/" + channelId + "/";
@@ -211,7 +210,7 @@ public class DataServiceTB extends OpenApiBaseService {
 
         String deviceStr = "0";
         // set Type
-        if (cartType == CartType.TMALL || cartType == CartType.TMALLG) {
+        if (iCartId == 20 || iCartId == 21 || iCartId == 23) {
             // TM / TG
             try (InputStream a = multipartFile.getInputStream();
                  Workbook wb = WorkbookFactory.create(a)) {
@@ -219,12 +218,12 @@ public class DataServiceTB extends OpenApiBaseService {
                 ExcelHeaderEnum.Device device = getTBDevice(sheet);
                 deviceStr = device.getCnName();
             } catch (Exception e) {
-                logger.warn("Read Excel Error", e);
+                $warn("Read Excel Error", e);
             }
         }
 
         //重命名上传后的文件名
-        String newFileName = newPath + channelId + '_' + cartType.getCartId() + "_" + deviceStr + "_" + fileName;
+        String newFileName = newPath + channelId + '_' + iCartId + "_" + deviceStr + "_" + fileName;
         // new Local File
         File localFile = new File(newFileName);
         // delete File
@@ -262,7 +261,7 @@ public class DataServiceTB extends OpenApiBaseService {
             try {
                 device = getTBDevice(sheet);
             } catch (RuntimeException re) {
-                $warn(re.getMessage());
+                $warn("getTBDevice error:", re);
             }
 
             if (device == null) {
@@ -379,7 +378,7 @@ public class DataServiceTB extends OpenApiBaseService {
             try {
                 device = getJDDevice(fileName);
             } catch (RuntimeException re) {
-                logger.warn(re.getMessage());
+                $warn("getJDDevice error:", re);
             }
 
             if (device == null) {
