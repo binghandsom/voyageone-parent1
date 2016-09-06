@@ -1,0 +1,45 @@
+package com.voyageone.web2.sdk.api.ca.exception;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.voyageone.web2.sdk.api.ca.enums.ErrorIDEnum;
+
+/**
+ * @author aooer 2016/9/6.
+ * @version 2.0.0
+ * @since 2.0.0
+ */
+public class ErrorModel {
+
+    @JsonProperty("ID")
+    private ErrorIDEnum id;
+
+    @JsonProperty("ErrorCode")
+    private String errorCode;
+
+    @JsonProperty("Message")
+    private String message;
+
+    public ErrorIDEnum getId() {
+        return id;
+    }
+
+    public void setId(ErrorIDEnum id) {
+        this.id = id;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}
