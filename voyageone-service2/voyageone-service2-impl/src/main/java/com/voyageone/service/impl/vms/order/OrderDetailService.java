@@ -449,4 +449,12 @@ public class OrderDetailService extends BaseService {
         }};
         return vmsBtOrderDetailDaoExt.countSku(params);
     }
+
+    public Date getLatestPrintedTime(String channelId, Integer shipmentId) {
+        return vmsBtOrderDetailDaoExt.getLatestPrintedTIme(new HashMap<String, Object>() {{
+                                                               put("channelId", channelId);
+                                                               put("shipmentId", shipmentId);
+                                                           }}
+        );
+    }
 }

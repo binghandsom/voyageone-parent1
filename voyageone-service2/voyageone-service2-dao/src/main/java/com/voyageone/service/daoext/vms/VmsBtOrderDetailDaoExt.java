@@ -3,6 +3,7 @@ package com.voyageone.service.daoext.vms;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,4 +31,5 @@ public interface VmsBtOrderDetailDaoExt {
 
     int countSku(Map<String, Object> params);
 
+    Date getLatestPrintedTIme(Map<String, Object> params);
 }

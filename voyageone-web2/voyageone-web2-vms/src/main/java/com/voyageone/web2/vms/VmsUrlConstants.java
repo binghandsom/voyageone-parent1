@@ -28,6 +28,7 @@ public interface VmsUrlConstants {
             String ROOT = "/vms/shipment/shipment_info/";
             String INIT = "init";
             String SEARCH = "search";
+            String IS_PRINTED = "is_printed";
         }
         interface SHIPMENT_DETAIL {
             String ROOT = "/vms/shipment/shipment_detail";
@@ -35,6 +36,7 @@ public interface VmsUrlConstants {
             String SCAN = "scan";
             String SHIP = "ship";
             String GET_INFO = "get_info";
+            String PRINTED = "printed";
         }
     }
 

@@ -122,6 +122,9 @@ define(function () {
         "TXT_SCANNED_SUCCESSFULLY": "Scanned successfully",
         "TXT_SHIPMENT_MODIFIED_SUCCESSFULLY": "Shipment modified successfully",
         "TXT_SETTINGS_SAVED": "Settings saved",
+        "TXT_PRINTED": "Printed",
+        "TXT_NO": "No",
+        "TXT_YES": "Yes",
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
