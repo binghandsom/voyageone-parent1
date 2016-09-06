@@ -35,7 +35,7 @@ define([
                     });
                 }
                 function callback() {
-                    self.AdminCartService.getAllCart().then(function (res) {
+                    self.AdminCartService.getAllCart(null).then(function (res) {
                         self.cartAllList = [];
                         if (self.cartList.length == 0) {
                             self.cartAllList = res.data;
@@ -80,7 +80,7 @@ define([
             },
             move: function (type) {
                 var self = this;
-                self.AdminCartService.getAllCart().then(function (res) {
+                self.AdminCartService.getAllCart(null).then(function (res) {
                     self.cartAllListCopy = res.data;
                 });
                 self.cartList = self.cartList ? self.cartList : [];
