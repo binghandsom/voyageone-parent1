@@ -105,9 +105,7 @@ public class AdminResController extends AdminController {
 
         String application = requestBean.getOrDefault("application", "").toString();
 
-
-
-        return success(true);
+        return success(adminResService.getMenu(application, username));
     }
 
 
