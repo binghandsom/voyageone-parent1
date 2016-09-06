@@ -359,6 +359,46 @@ public class AdminUserService extends BaseService {
         }
     }
 
+    public List<AdminResourceBean>  showUserAuth(String userAccount, String application) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("userAccount", userAccount);
+
+        ComUserModel user = comUserDao.selectOne(map);
+        if (user == null) {
+            throw new BusinessException("用户不存在。");
+        }
+
+        map.put("application", application);
+
+        List<AdminResourceBean> resList = adminResourceDaoExt.selectResByUser(map);
+//        Set<Integer> resIds = resList.stream().map(AdminResourceBean::getId).collect(Collectors.toSet());
+
+//        resList = markSelected(resList, resIds);
+
+//        Map<String, AdminResourceBean> treeMap = resList.stream().collect(Collectors.toMap(AdminResourceBean::getResKey, (p) -> p));
+
+//        result.put("treeMap", treeMap);
+        return resList;
+    }
+
+    private List<AdminResourceBean> markSelected(List<AdminResourceBean> allRes, Set<Integer> resIds) {
+        if (resIds == null || resIds.size() == 0)
+            return allRes;
+
+        for (AdminResourceBean bean : allRes) {
+            if (resIds.contains(bean.getId())) {
+                bean.setSelected(1);
+            } else {
+                bean.setSelected(0);
+            }
+
+            if (bean.getChildren() != null && bean.getChildren().size() > 0) {
+                markSelected(bean.getChildren(), resIds);
+            }
+        }
+        return allRes;
+    }
+
 
     public Map<Integer, Object>  getAllApp()
     {
