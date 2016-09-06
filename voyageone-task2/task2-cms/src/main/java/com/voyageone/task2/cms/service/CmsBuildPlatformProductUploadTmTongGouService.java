@@ -365,9 +365,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
                 // nullpoint错误的处理
                 if(StringUtils.isNullOrBlank2(ex.getMessage())) {
+                    ex.printStackTrace();
                     sxData.setErrorMessage(shopProp.getShop_name() + " 天猫同购上新时出现不可预知的错误，请跟管理员联系! "
                             + ex.getStackTrace()[0].toString());
-                    ex.printStackTrace();
                 } else {
                     sxData.setErrorMessage(shopProp.getShop_name() + " " +ex.getMessage());
                 }
