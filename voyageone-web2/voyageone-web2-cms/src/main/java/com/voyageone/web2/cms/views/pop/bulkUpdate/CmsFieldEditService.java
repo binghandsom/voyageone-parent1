@@ -725,6 +725,11 @@ public class CmsFieldEditService extends BaseAppService {
         String optionType = StringUtils.trimToNull((String) params.get("optionType"));
         String priceValue = StringUtils.trimToNull((String) params.get("priceValue"));
         boolean isRoundUp = "1".equals((String) params.get("isRoundUp")) ? true : false;
+        // 商品内，SKU统一最高价:1 商品内，SKU统一最低价:2  商品内，SKU价格不统一:3
+        Integer skuUpdType = (Integer) params.get("skuUpdType");
+        if (skuUpdType == null) {
+            skuUpdType = 0;
+        }
 
         // 阀值
         CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
@@ -752,6 +757,32 @@ public class CmsFieldEditService extends BaseAppService {
             List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
             String prodCode = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
 
+            // 先取出最高价/最低价
+            Double maxPriceSale = null;
+            if (priceType != null) {
+                if (skuUpdType == 1) {
+                    // 统一最高价
+                    for (BaseMongoMap skuObj : skuList) {
+                        double befPriceSale = skuObj.getDoubleAttribute(priceType);
+                        if (maxPriceSale == null) {
+                            maxPriceSale = befPriceSale;
+                        } else if (maxPriceSale < befPriceSale) {
+                            maxPriceSale = befPriceSale;
+                        }
+                    }
+                } else if (skuUpdType == 2) {
+                    // 统一最低价
+                    for (BaseMongoMap skuObj : skuList) {
+                        double befPriceSale = skuObj.getDoubleAttribute(priceType);
+                        if (maxPriceSale == null) {
+                            maxPriceSale = befPriceSale;
+                        } else if (maxPriceSale > befPriceSale) {
+                            maxPriceSale = befPriceSale;
+                        }
+                    }
+                }
+            }
+
             for (BaseMongoMap skuObj : skuList) {
                 skuCode = skuObj.getStringAttribute("skuCode");
                 if (StringUtils.isEmpty(skuCode)) {
@@ -772,7 +803,12 @@ public class CmsFieldEditService extends BaseAppService {
                     }
                     rs = getFinalSalePrice(null, optionType, priceValue, isRoundUp);
                 } else {
-                    Object basePrice = skuObj.getAttribute(priceType);
+                    Object basePrice = null;
+                    if (maxPriceSale == null) {
+                        basePrice = skuObj.getAttribute(priceType);
+                    } else {
+                        basePrice = maxPriceSale;
+                    }
                     if (basePrice != null) {
                         BigDecimal baseVal = new BigDecimal(basePrice.toString());
                         rs = getFinalSalePrice(baseVal, optionType, priceValue, isRoundUp);
