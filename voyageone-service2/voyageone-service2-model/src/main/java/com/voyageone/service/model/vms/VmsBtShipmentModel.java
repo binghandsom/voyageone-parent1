@@ -69,6 +69,11 @@ public class VmsBtShipmentModel extends BaseModel {
      */
     protected String receiver;
 
+    /**
+     *  明细内容的打印时间
+     */
+    protected Date detailPrintTime;
+
     public String getChannelId() {
         return channelId;
     }
@@ -155,5 +160,13 @@ public class VmsBtShipmentModel extends BaseModel {
 
     public void setReceiver(String receiver) {
         this.receiver = receiver == null ? null : receiver.trim();
+    }
+
+    public Date getDetailPrintTime() {
+        return detailPrintTime;
+    }
+
+    public void setDetailPrintTime(Date detailPrintTime) {
+        this.detailPrintTime = detailPrintTime;
     }
 }
