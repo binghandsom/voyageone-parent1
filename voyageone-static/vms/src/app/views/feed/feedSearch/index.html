@@ -18,7 +18,7 @@
                     <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
                         <ul class="nav navbar-nav">
                             <li uib-dropdown>
-                                <a href="#" uib-dropdown-toggle translate="TXT_CATEGORY" style="padding: 0 20px;">{{leaf.children.length}}
+                                <a href="#" uib-dropdown-toggle translate="TXT_CATEGORY" style="padding: 0 20px;" ng-change="ctrl.deleCat(ctrl.aa)" ng-model="ctrl.aa">
                                     <b class='caret'></b>
                                 </a>
                                 <tree tree='ctrl.categories'></tree>

@@ -4,6 +4,10 @@
 define([
     'vms'
 ], function (vms) {
+    function deleteCat(value){
+        var target = document.getElementsByClassName('selectedCat');
+
+    };
     vms.controller('FeedInfoSearchController', (function () {
 
         function FeedInfoSearchController(feedInfoSearchService, popups) {
@@ -33,33 +37,20 @@ define([
         FeedInfoSearchController.prototype = {
             init: function () {
                 var main = this;
+                main.t = [{
+                    catName: "Jon－Sofia－Soifa",
+                    link: "#",
+                    children: [{
+                        catName: "on－Sofia－Soi",
+                        link: "#"
+                    }]
+                }];
                 main.feedInfoSearchService.init().then(function (res) {
                     main.categories = res.feedCategoryTree;
-                    console.log(main.categories);
+                    // console.log(main.categories);
                     main.categoryPath = [{level: 1, categories: main.categories}];
                     main.search();
                 });
-            },
-            openCategory: function (category, categoryItem) {
-                if (categoryItem.selectedCat == undefined) {
-                    categoryItem.selectedCat = [];
-                }
-                categoryItem.selectedCat = category.catName;
-
-                // 标记选中
-                this.selected = category;
-
-                // 查询当前选中的是第几级
-                var levelIdx = categoryItem.level - 1;
-
-                // 获取这一级别的数据
-                var pathItem = this.categoryPath[levelIdx + 1];
-                if (pathItem) {
-                    // 如果有数据,那么当前级别和后续级别都需要清空
-                    this.categoryPath.splice(levelIdx + 1);
-                }
-                if (!category.children || !category.children.length) return;
-                this.categoryPath.push({level: levelIdx + 2, categories: category.children});
             },
             getFeedInfoList: function () {
                 var main = this;
@@ -83,6 +74,12 @@ define([
                         return item;
                     })
                 })
+            },
+
+            deleCat:function(value){
+              var self = this;
+                console.log(value);
+                deleteCat(value);
             },
 
             search: function () {
