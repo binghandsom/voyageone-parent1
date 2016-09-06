@@ -352,7 +352,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             String errMsg = String.format(" 天猫官网同购上新异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s]",
                     channelId, cartId, groupId, numIId);
             $error(errMsg);
-            ex.printStackTrace();
+
             if (sxData == null) {
                 // 回写详细错误信息表(cms_bt_business_log)用
                 sxData = new SxData();
@@ -367,6 +367,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 if(StringUtils.isNullOrBlank2(ex.getMessage())) {
                     sxData.setErrorMessage(shopProp.getShop_name() + " 天猫同购上新时出现不可预知的错误，请跟管理员联系! "
                             + ex.getStackTrace()[0].toString());
+                    ex.printStackTrace();
                 } else {
                     sxData.setErrorMessage(shopProp.getShop_name() + " " +ex.getMessage());
                 }
