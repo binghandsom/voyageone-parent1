@@ -568,7 +568,9 @@
         UPDATE vms_bt_order_detail
         SET `shipment_id`         = NULL,
             `containerizer`       = NULL,
-            `containerizing_time` = NULL
+            `containerizing_time` = NULL,
+            `modified`            = now(),
+            `modifier`            = #{modifier, jdbcType=VARCHAR}
         WHERE `channel_id` = #{channelId, jdbcType=VARCHAR}
         <choose>
             <when test="shipmentId != null">

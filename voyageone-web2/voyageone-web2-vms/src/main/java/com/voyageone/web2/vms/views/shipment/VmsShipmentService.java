@@ -121,7 +121,12 @@ public class VmsShipmentService {
         }};
         List<VmsBtShipmentModel> vmsBtShipmentModelList = shipmentService.select(shipmentSearchParams);
         if (null == vmsBtShipmentModelList || vmsBtShipmentModelList.size() == 0) return null;
-        return ShipmentBean.getInstance(vmsBtShipmentModelList.get(0));
+        ShipmentBean shipmentBean = ShipmentBean.getInstance(vmsBtShipmentModelList.get(0));
+        shipmentBean.setOrderTotal(orderDetailService.countOrderWithShipment(shipmentBean.getChannelId(),
+                shipmentBean.getId()));
+        shipmentBean.setSkuTotal(orderDetailService.countSkuWithShipment(shipmentBean.getChannelId(),
+                shipmentBean.getId()));
+        return shipmentBean;
     }
 
     /**
@@ -229,7 +234,8 @@ public class VmsShipmentService {
             shipmentBean.setChannelId(user.getSelChannelId());
 
             // 去除当前shipment中没有完整扫描的订单
-            int canceledSkuCount = orderDetailService.removeSkuShipmentId(user.getSelChannelId(), shipmentBean.getId());
+            int canceledSkuCount = orderDetailService.removeSkuShipmentId(user.getSelChannelId(),
+                    shipmentBean.getId(), user.getUserName());
 
             // 更新shipment下的sku
             int succeedSkuCount = orderDetailService.updateOrderStatusWithShipmentId(user.getSelChannelId(), shipmentBean
@@ -287,6 +293,7 @@ public class VmsShipmentService {
 
     /**
      * 防止特殊字符对DB操作的影响
+     *
      * @param param 待修改内容
      * @return 修改好的内容=。=
      */

@@ -51,17 +51,24 @@
         </div>
     </div>
     <div class="row margin-bottom-10">
-        <div class="col-sm-6">
+        <div class="col-sm-9">
             <button ng-if="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('new')" translate="BTN_NEW_SHIPMENT"></button>
             <button ng-if="ctrl.currentShipment && ctrl.channelConfig.vendorOperateType == 'ORDER'" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('end')" translate="BTN_END_SHIPMENT"></button>
             <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
-                <a ng-if="ctrl.currentShipment" href="javascript:void(0)" ng-click="ctrl.popShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
-                <label ng-if="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label></label> </span>
+                <a ng-if="ctrl.currentShipment" ng-click="ctrl.popShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
+                <span ng-if="ctrl.currentShipment">
+                    -
+                    {{ctrl.currentShipment.orderTotal}}
+                    {{'TXT_ORDERS' | translate}}/{{ctrl.currentShipment.skuTotal}} {{'TXT_SKUS' | translate}}
+                    {{'TXT_SCANNED' | translate}}
+                </span>
+                <label ng-if="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label>
+            </span>
             <button class="btn btn-xs btn-info" ng-if="ctrl.channelConfig.vendorOperateType == 'SKU' && ctrl.currentShipment"
-                    ng-click="ctrl.popAddToShipmentForSku()" translate="BTN_ADD_TO_SHIPMENT"></button>
+                    ng-click="ctrl.popAddToShipmentForSku()" translate="BTN_SCAN"></button>
         </div>
-        <div class="col-sm-6" ng-if="!(ctrl.channelConfig.vendorOperateType == 'ORDER')"></div>
-        <div class="col-sm-6 text-right form-inline">
+        <div class="col-sm-3" ng-if="!(ctrl.channelConfig.vendorOperateType == 'ORDER')"></div>
+        <div class="col-sm-3 text-right form-inline">
             <label class="control-label" ng-if="ctrl.channelConfig.vendorOperateType == 'ORDER'" translate="TXT_ORDER_BY"></label>
             <select id="select_order" class="form-control" ng-model="ctrl.sortParamBeanForDownload.columnName" ng-if="ctrl.channelConfig.vendorOperateType == 'ORDER'">
                 <option value="client_sku" translate="TXT_SKU"></option>

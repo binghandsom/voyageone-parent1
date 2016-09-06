@@ -36,8 +36,8 @@ public class OrderDetailService extends BaseService {
     private VmsBtOrderLogDao vmsBtOrderLogDao;
 
     @Autowired
-    public OrderDetailService(VmsBtOrderDetailDaoExt vmsBtOrderDetailDaoExt, VmsBtOrderDetailDao
-            vmsBtOrderDetailDao, VmsBtOrderLogDao vmsBtOrderLogDao) {
+    public OrderDetailService(VmsBtOrderDetailDaoExt vmsBtOrderDetailDaoExt,
+                              VmsBtOrderDetailDao vmsBtOrderDetailDao, VmsBtOrderLogDao vmsBtOrderLogDao) {
         this.vmsBtOrderDetailDaoExt = vmsBtOrderDetailDaoExt;
         this.vmsBtOrderDetailDao = vmsBtOrderDetailDao;
         this.vmsBtOrderLogDao = vmsBtOrderLogDao;
@@ -311,7 +311,8 @@ public class OrderDetailService extends BaseService {
                 put("channelId", channelId);
                 put("reservationId", vmsBtOrderDetailModel.getReservationId());
                 put("containerizer", userName);
-                put("shipmentId", new Integer(shipmentId));
+                put("modifier", userName);
+                put("shipmentId", shipmentId);
                 if (STATUS_SHIPPED.equals(shipmentStatus)) {
                     put("status", STATUS_SHIPPED);
                 } else {
@@ -339,24 +340,27 @@ public class OrderDetailService extends BaseService {
             put("consolidationOrderId", orderId);
             put("status", STATUS_OPEN);// Open
             put("containerizer", userName);
+            put("modifier", userName);
             put("shipmentId", shipmentId);
         }};
 
         return vmsBtOrderDetailDaoExt.updateShipmentStatusInOrder(params);
     }
 
-    public int removeSkuShipmentId(String channelId, Integer shipmentId) {
+    public int removeSkuShipmentId(String channelId, Integer shipmentId, String userName) {
         Map<String, Object> params = new HashMap<String, Object>() {{
             put("channelId", channelId);
             put("shipmentId", shipmentId);
+            put("modifier", userName);
         }};
         return vmsBtOrderDetailDaoExt.cancelOrderShipmentStatus(params);
     }
 
-    public int removeSkuOrderId(String channelId, String consolidationOrderId) {
+    public int removeSkuOrderId(String channelId, String consolidationOrderId, String userName) {
         Map<String, Object> params = new HashMap<String, Object>() {{
             put("channelId", channelId);
             put("consolidationOrderId", consolidationOrderId);
+            put("modifier", userName);
         }};
         return vmsBtOrderDetailDaoExt.cancelOrderShipmentStatus(params);
     }
