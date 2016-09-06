@@ -1,6 +1,7 @@
-package com.voyageone.web2.sdk.api.channeladvisor.domain;
+package com.voyageone.web2.sdk.api.channeladvisor.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.voyageone.web2.sdk.api.channeladvisor.domain.OrderItemCancellationModel;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class OrderCancellationModel {
+public class OrderCancellationRequest {
 
     @JsonProperty("OrderId")
     private String orderId;

@@ -16,4 +16,14 @@ public interface UrlConstants {
         String UPDATE_QUANTITY_PRICE = "products/quantityprice";
         String UPDATE_STATUS = "products/status";
     }
+
+    interface ORDERS {
+        String ROOT = "/rest/channeladvisor";
+        String GET_ORDERS = "orders";
+        String GET_ORDER = "orders/{id}";
+        String ACKNOWLEDGE_ORDER = "orders/{id}/acknowledge";
+        String SHIP_ORDER = "orders/{id}/ship";
+        String CANCEL_ORDER = "orders/{id}/cancel";
+        String REFUND_ORDER = "orders/{id}/refund";
+    }
 }
