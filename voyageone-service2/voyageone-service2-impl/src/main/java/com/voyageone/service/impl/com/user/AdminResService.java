@@ -4,11 +4,11 @@ import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.dao.ComUserDao;
+import com.voyageone.security.model.ComResourceModel;
 import com.voyageone.security.model.ComUserModel;
 import com.voyageone.service.bean.com.AdminResourceBean;
-import com.voyageone.security.dao.ComResourceDao;
-import com.voyageone.security.model.ComResourceModel;
 import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.service.impl.BaseService;
 import org.apache.commons.collections.CollectionUtils;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -38,34 +37,30 @@ public class AdminResService extends BaseService {
 
 
     /**
-     *查找菜单资源
+     * 查找菜单资源
      *
      * @param app
      * @return
      */
-    public List<AdminResourceBean> searchRes(String app, Integer pageNum, Integer pageSize)
-    {
+    public List<AdminResourceBean> searchRes(String app, Integer pageNum, Integer pageSize) {
         Map<String, Object> map = new HashMap<>();
-        if(!StringUtils.isNullOrBlank2(app))
-        {
+        if (!StringUtils.isNullOrBlank2(app)) {
             map.put("application", app);
         }
 
         map = MySqlPageHelper.build(map).addSort("res_type", Order.Direction.ASC).addSort("weight", Order.Direction.ASC).toMap();
 
-        List<ComResourceModel> list  = comResourceDao.selectList(map);
+        List<ComResourceModel> list = comResourceDao.selectList(map);
 
-        Map<Integer, String> mameMap =  list.stream().collect(Collectors.toMap(ComResourceModel :: getId , ComResourceModel:: getResName));
+        Map<Integer, String> mameMap = list.stream().collect(Collectors.toMap(ComResourceModel::getId, ComResourceModel::getResName));
         List<AdminResourceBean> beanList = new ArrayList<>();
 
-        for(ComResourceModel model : list)
-        {
-            AdminResourceBean bean = new AdminResourceBean() ;
+        for (ComResourceModel model : list) {
+            AdminResourceBean bean = new AdminResourceBean();
             BeanUtils.copyProperties(model, bean);
-            if(bean.getParentId() != 0) {
+            if (bean.getParentId() != 0) {
                 bean.setParentName(mameMap.get(bean.getParentId()));
-            }
-            else {
+            } else {
                 bean.setParentName("");
             }
             beanList.add(bean);
@@ -77,42 +72,37 @@ public class AdminResService extends BaseService {
 
 
     /**
-     *
      * @param model
      */
-    public void addRes(ComResourceModel model)
-    {
+    public void addRes(ComResourceModel model) {
         //检查resKey唯一性，resName唯一性
         Map map = new HashMap<>();
-        map.put("resKey" , model.getResKey());
+        map.put("resKey", model.getResKey());
 
-        if(comResourceDao.selectCount(map) > 0)
-        {
+        if (comResourceDao.selectCount(map) > 0) {
             throw new BusinessException("菜单Key在系统中已存在。");
         }
         map.clear();
-        map.put("resName" , model.getResName());
+        map.put("resName", model.getResName());
 
-        if(comResourceDao.selectCount(map) > 0)
-        {
+        if (comResourceDao.selectCount(map) > 0) {
             throw new BusinessException("菜单名称在系统中已存在。");
         }
 
         ComResourceModel parent = comResourceDao.select(model.getParentId());
 
 
-        if(model.getWeight() == null) {
+        if (model.getWeight() == null) {
             map.clear();
-            map.put("parentId" , model.getParentId());
+            map.put("parentId", model.getParentId());
             List<ComResourceModel> siblings = comResourceDao.selectList(map);
             int weight = siblings.stream().mapToInt(ComResourceModel::getWeight).max().getAsInt();
             model.setWeight(++weight);
         }
 
-        if(parent != null) {
+        if (parent != null) {
             model.setParentIds(parent.getParentIds() + "," + parent.getId());
-        }else
-        {
+        } else {
             model.setParentIds("0");
         }
 
@@ -120,36 +110,45 @@ public class AdminResService extends BaseService {
     }
 
 
-
-    public void updateRes(ComResourceModel model)
-    {
+    public void updateRes(ComResourceModel model) {
         //检查resName唯一性
         Map map = new HashMap<>();
-        map.put("resName" , model.getResName());
+        map.put("resName", model.getResName());
 
-        if(comResourceDao.selectCount(map) > 0)
-        {
+        if (comResourceDao.selectCount(map) > 0) {
             throw new BusinessException("菜单名称在系统中已存在。");
         }
 
         ComResourceModel parent = comResourceDao.select(model.getParentId());
 
 
-        if(model.getWeight() == null) {
+        if (model.getWeight() == null) {
             map.clear();
-            map.put("parentId" , model.getParentId());
+            map.put("parentId", model.getParentId());
             List<ComResourceModel> siblings = comResourceDao.selectList(map);
             int weight = siblings.stream().mapToInt(ComResourceModel::getWeight).max().getAsInt();
             model.setWeight(++weight);
         }
-        if(parent != null) {
+        if (parent != null) {
             model.setParentIds(parent.getParentIds() + "," + parent.getId());
-        }else
-        {
+        } else {
             model.setParentIds("0");
         }
 
         comResourceDao.update(model);
+    }
+
+    public List<AdminResourceBean> getMenu(String app, String user) {
+        Map map = new HashMap<>();
+        map.put("application", app);
+        map.put("userAccount", user);
+        List<AdminResourceBean> list = convert2Tree(adminResourceDaoExt.selectMenu(map));
+
+        if (list != null && list.size() > 0 && list.get(0) != null && list.get(0).getChildren() != null && list.get(0).getChildren().size() != 0) {
+            return list.get(0).getChildren();
+        } else {
+            return Collections.EMPTY_LIST;
+        }
     }
 
 
@@ -172,7 +171,7 @@ public class AdminResService extends BaseService {
     private List<AdminResourceBean> findRoots(List<AdminResourceBean> allNodes) {
         List<AdminResourceBean> results = new ArrayList<>();
         for (AdminResourceBean node : allNodes) {
-            if (node.getParentId() == 0 || node.getResType() < 2) {
+            if (node.getParentId() == 0) {
                 results.add(node);
             }
         }
@@ -187,7 +186,7 @@ public class AdminResService extends BaseService {
         List<AdminResourceBean> children = new ArrayList<>();
 
         for (AdminResourceBean node : allNodes) {
-            if (node.getParentId()  == root.getId() ) {
+            if (node.getParentId() == root.getId()) {
                 children.add(node);
             }
         }
@@ -196,7 +195,7 @@ public class AdminResService extends BaseService {
         List<AdminResourceBean> notChildren = (List<AdminResourceBean>) CollectionUtils.subtract(allNodes, children);
 
         for (AdminResourceBean child : children) {
-            List<AdminResourceBean> tmpChildren = findChildren(child, notChildren );
+            List<AdminResourceBean> tmpChildren = findChildren(child, notChildren);
             child.setChildren(tmpChildren);
         }
         return children;
@@ -213,48 +212,6 @@ public class AdminResService extends BaseService {
             }
         }
     }
-
-    public Map<String, Object> showUserAuth(Integer userId) {
-        ComUserModel user = comUserDao.select(userId);
-        if (user == null) {
-            throw new BusinessException("用户不存在。");
-        }
-
-        Map<String, Object> result = new HashMap<>();
-
-
-        List<AdminResourceBean> resList = adminResourceDaoExt.selectResByUser(userId);
-        Set<Integer> resIds = resList.stream().map(AdminResourceBean::getId).collect(Collectors.toSet());
-
-//        List<AdminResourceBean> allRes = searchRes(null);
-
-        resList = markSelected(resList, resIds);
-
-        Map<String, AdminResourceBean> treeMap = resList.stream().collect(Collectors.toMap(AdminResourceBean::getResKey, (p) -> p));
-
-        result.put("treeMap", treeMap);
-        return result;
-    }
-
-    private List<AdminResourceBean>  markSelected(List<AdminResourceBean> allRes, Set<Integer> resIds) {
-        if (resIds == null || resIds.size() == 0)
-            return  allRes;
-
-        for (AdminResourceBean bean : allRes) {
-            if (resIds.contains(bean.getId())) {
-                bean.setSelected(1);
-            } else {
-                bean.setSelected(0);
-            }
-
-            if (bean.getChildren() != null && bean.getChildren().size() > 0) {
-                markSelected(bean.getChildren(), resIds);
-            }
-        }
-        return  allRes;
-    }
-
-
 
 
 }

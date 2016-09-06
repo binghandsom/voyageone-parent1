@@ -343,6 +343,7 @@ public interface AdminUrlConstants {
 			String FORGET_PASS = "forgetPass";
 
 			String GET_USER_BY_TOKEN = "getUserByToken";
+
 			//for dropdown list options
 			String GET_ALL_APP = "getAllApp";
 		}
@@ -408,6 +409,8 @@ public interface AdminUrlConstants {
 			String UPDATE_RES = "updateRes";
 
 			String DELETE_RES = "deleteRes";
+
+			String GET_MENU = "getMenu";
 
 		}
 

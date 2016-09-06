@@ -130,4 +130,37 @@ public class AdminRoleController extends AdminController {
         return success(list);
     }
 
+
+    @RequestMapping(AdminUrlConstants.User.Role.SET_AUTH)
+    public AjaxResponse setAuth(@RequestBody Map requestMap)  {
+
+        List<Integer>  roleIds = (List<Integer>) requestMap.get("roleIds");
+        List<Integer>  resIds = (List<Integer>) requestMap.get("resIds");
+        List<String>  apps = (List<String>) requestMap.get("apps");
+        String username = getUser().getUserName();
+        adminRoleService.setAuth(apps, roleIds, resIds, username);
+        return success(true);
+    }
+
+    @RequestMapping(AdminUrlConstants.User.Role.ADD_AUTH)
+    public AjaxResponse addAuth(@RequestBody Map requestMap)  {
+
+        List<Integer>  roleIds = (List<Integer>) requestMap.get("roleIds");
+        List<Integer>  resIds = (List<Integer>) requestMap.get("resIds");
+        String username = getUser().getUserName();
+        adminRoleService.addAuth(roleIds, resIds, username);
+        return success(true);
+    }
+
+
+    @RequestMapping(AdminUrlConstants.User.Role.REMOVE_AUTH)
+    public AjaxResponse removeAuth(@RequestBody Map requestMap)  {
+
+        List<Integer>  roleIds = (List<Integer>) requestMap.get("roleIds");
+        List<Integer>  resIds = (List<Integer>) requestMap.get("resIds");
+        String username = getUser().getUserName();
+        adminRoleService.removeAuth(roleIds, resIds, username);
+        return success(true);
+    }
+
 }

@@ -137,14 +137,17 @@ public class AdminUserController extends AdminController {
 
 
     @RequestMapping(AdminUrlConstants.User.Self.GET_AUTH)
-    public AjaxResponse getAuth(@RequestBody Integer userId)  {
+    public AjaxResponse getAuth(@RequestBody Map requestMap)  {
         // 验证参数
-        Preconditions.checkNotNull(userId);
-        return success(adminResService.showUserAuth(userId));
+        String userAccount = requestMap.get("userAccount").toString();
+        String application = requestMap.get("application").toString();
+
+        return success(adminUserService.showUserAuth(application, userAccount));
     }
 
     @RequestMapping(AdminUrlConstants.User.Self.GET_ALL_APP)
     public AjaxResponse getAllApp()  {
         return success(adminUserService.getAllApp());
     }
+
 }

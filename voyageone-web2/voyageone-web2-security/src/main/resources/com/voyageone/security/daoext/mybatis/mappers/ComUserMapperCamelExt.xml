@@ -9,7 +9,7 @@
         <result column="company" property="companyName"/>
         <collection property="apps" javaType="List" ofType="Map">
             <result column="application" property="application"/>
-            <result column="applicationId" property="applicationId"></result>
+            <result column="applicationId" property="applicationId"/>
         </collection>
     </resultMap>
 
