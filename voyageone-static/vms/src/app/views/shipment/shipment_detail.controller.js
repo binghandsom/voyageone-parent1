@@ -129,9 +129,12 @@ define([
         };
 
         ShipmentDetailController.prototype.printList = function () {
+            var self = this;
             $('#content').print({
                 noPrintSelector: ".no-print"
             });
+
+            self.shipmentDetailService.printed(self.shipment);
         };
 
         ShipmentDetailController.prototype.audioPlay = function (value) {

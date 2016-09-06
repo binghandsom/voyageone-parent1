@@ -115,6 +115,11 @@ define([
             return currentStatus.name;
         };
 
+        ShipmentInfoController.prototype.isPrinted = function (item) {
+            var self = this;
+            return item.printed ? 'TXT_YES' : 'TXT_NO';
+        };
+
         ShipmentInfoController.prototype.configTitle = function (title, model) {
             if (model) return title;
             return '';
