@@ -16,13 +16,18 @@
                         </div>
                     </div>
                     <div class="col-sm-12 wrapper">
-                        <div class="panel-group"><!-- 短信配置信息 -->
-                            <div class="panel panel-default">
-                                <div class="panel-heading" style="background-color: #0a0a09">
-                                    <h4 class="panel-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SMS_COG_INFO' | translate}}</h4>
+                        <uib-tabset class="">
+                            <!---------------------------------------------------短信配置信息---------------------------------------------->
+                            <uib-tab>
+                                <tab-heading><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SMS_COG_INFO' | translate}}</tab-heading>
+                                <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
+                                    <div class="form-group m-t-sm m-r-xs">
+                                        <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                                        <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.channelSmsSelList.selList.length <= 0||ctrl.channelSmsSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                                        <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelSmsSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                                    </div>
                                 </div>
-                                <div class="container-fluid m-t-xs m-b-xs">
-                                    <table class="table table-hover-new table-hover table_main">
+                                <table class="table table-hover-new table-hover table_main">
                                         <thead>
                                         <tr>
                                             <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
@@ -44,9 +49,9 @@
                                         </thead>
                                         <tbody>
                                         <tr>
-                                            <td if-no-rows="ctrl.channelList.length||ctrl.channelList" colspan="9" style="padding: 0px"></td>
+                                            <td if-no-rows="ctrl.channelSmsList.length||ctrl.channelSmsList" colspan="9" style="padding: 0px"></td>
                                         </tr>
-                                        <tr ng-repeat="list in ctrl.channelList">
+                                        <tr ng-repeat="list in ctrl.channelSmsList">
                                             <td class="text-left v-middle">
                                                 <label class="checkbox-inline c-checkbox" style="padding-top:4px">
                                                     <input ng-model="ctrl.channelSmsSelList.selFlag[list.seq]" type="checkbox" ng-controller="selectRowsCtrl"
@@ -65,39 +70,161 @@
                                         </tr>
                                         </tbody>
                                     </table>
+                            </uib-tab>
+                            <!---------------------------------------------------第三方配置信息---------------------------------------------->
+                            <uib-tab>
+                                <tab-heading><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_THIRD_COG_INFO' | translate}}</tab-heading>
+                                <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
+                                    <div class="form-group m-t-sm m-r-xs">
+                                        <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                                        <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.channelThirdSelList.selList.length <= 0||ctrl.channelThirdSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                                        <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelThirdSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="panel-group"><!-- 第三方配置信息 -->
-                            <div class="panel panel-default">
-                                <div class="panel-heading" style="background-color: #0a0a09">
-                                    <h4 class="panel-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_THIRD_COG_INFO' | translate}}</h4>
+                                <table class="table table-hover-new table-hover table_main" style="table-layout: fixed">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-left mfb-xxt" ng-controller="selectRowsCtrl">
+                                            <label class="checkbox-inline c-checkbox" style="height: 15px;">
+                                                <input type="checkbox" ng-click="selectAll(ctrl.channelThirdSelList)"
+                                                       ng-checked="isAllSelected(ctrl.channelThirdSelList)" >
+                                                <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                            </label>
+                                        </th>
+                                        <th class="text-center mfb-xxt" translate="TXT_CART_CHANNEL_NAME"></th>
+                                        <th class="text-left mfb-xxt" translate="TXT_PROPERTY_NAME"></th>
+                                        <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}1</th>
+                                        <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}2</th>
+                                        <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}3</th>
+                                        <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}4</th>
+                                        <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}5</th>
+                                        <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}6</th>
+                                        <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
+                                        <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
+                                        <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                                        <th class="text-center mfb-xxt" translate="TXT_UPDATER"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td if-no-rows="ctrl.channelThirdList.length||ctrl.channelThirdList" colspan="13" style="padding: 0px"></td>
+                                    </tr>
+                                    <tr ng-repeat="list in ctrl.channelThirdList">
+                                        <td class="text-left v-middle">
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input ng-model="ctrl.channelThirdSelList.selFlag[list.seq]" type="checkbox" ng-controller="selectRowsCtrl"
+                                                       ng-click="selectOne(list.seq, ctrl.channelThirdSelList)">
+                                                <span class="fa fa-check"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-center v-middle">{{list.channelName}}</td>
+                                        <td class="text-left v-middle">
+                                            <span class="v-middle" ng-if="list.propName.length <= 15">{{list.propName}}</span>
+                        <span class="v-middle" ng-if="list.propName.length > 15" uib-tooltip="{{list.propName}}"
+                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propName | stringCutter:true:15:' ...'}}</span>
+                                        </td>
+                                        <td class="text-left v-middle">
+                                            <span class="v-middle" ng-if="list.propVal1.length <= 15">{{list.propVal1}}</span>
+                        <span class="v-middle" ng-if="list.propVal1.length > 15" uib-tooltip="{{list.propVal1}}"
+                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal1 | stringCutter:true:15:' ...'}}</span>
+                                        </td>
+                                        <td class="text-center v-middle">
+                                            <span class="v-middle" ng-if="list.propVal2.length <= 15">{{list.propVal2}}</span>
+                        <span class="v-middle" ng-if="list.propVal2.length > 15" uib-tooltip="{{list.propVal2}}"
+                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal2 | stringCutter:true:15:' ...'}}</span>
+                                        </td>
+                                        <td class="text-center v-middle">
+                                            <span class="v-middle" ng-if="list.propVal3.length <= 15">{{list.propVal3}}</span>
+                        <span class="v-middle" ng-if="list.propVal3.length > 15" uib-tooltip="{{list.propVal3}}"
+                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal3 | stringCutter:true:15:' ...'}}</span>
+                                        </td>
+                                        <td class="text-center v-middle">
+                                            <span class="v-middle" ng-if="list.propVal4.length <= 15">{{list.propVal4}}</span>
+                        <span class="v-middle" ng-if="list.propVal4.length > 15" uib-tooltip="{{list.propVal4}}"
+                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal4 | stringCutter:true:15:' ...'}}</span>
+                                        </td>
+                                        <td class="text-center v-middle">
+                                            <span class="v-middle" ng-if="list.propVal5.length <= 15">{{list.propVal5}}</span>
+                        <span class="v-middle" ng-if="list.propVal5.length > 15" uib-tooltip="{{list.propVal5}}"
+                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal5 | stringCutter:true:15:' ...'}}</span>
+                                        </td>
+                                        <td class="text-center v-middle">
+                                            <span class="v-middle" ng-if="list.propVal6.length <= 15">{{list.propVal6}}</span>
+                        <span class="v-middle" ng-if="list.propVal6.length > 15" uib-tooltip="{{list.propVal6}}"
+                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal6 | stringCutter:true:15:' ...'}}</span>
+                                        </td>
+                                        <td class="text-center v-middle">
+                                            <span class="v-middle" ng-if="list.comment.length <= 15">{{list.comment}}</span>
+                        <span class="v-middle" ng-if="list.comment.length > 15" uib-tooltip="{{list.comment}}"
+                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.comment | stringCutter:true:15:' ...'}}</span>
+                                        </td>
+                                        <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
+                                        <td class="text-left v-middle">{{list.modified}}</td>
+                                        <td class="text-center v-middle">{{list.modifier}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </uib-tab>
+                            <!---------------------------------------------------快递配置信息---------------------------------------------->
+                            <uib-tab>
+                                <tab-heading><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CARRIER_COG_INFO' | translate}}</tab-heading>
+                                <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
+                                    <div class="form-group m-t-sm m-r-xs">
+                                        <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                                        <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.carrierSelList.selList.length <= 0||ctrl.carrierSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                                        <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.carrierSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                                    </div>
                                 </div>
-                                <div class="container-fluid m-t-xs m-b-xs">
-                                    jopj
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel-group"><!-- 快递配置信息 -->
-                            <div class="panel panel-default">
-                                <div class="panel-heading" style="background-color: #0a0a09">
-                                    <h4 class="panel-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CARRIER_COG_INFO' | translate}}</h4>
-                                </div>
-                                <div class="container-fluid m-t-xs m-b-xs">
-                                    jopj
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel-group"><!-- 类型属性配置信息 -->
-                            <div class="panel panel-default">
-                                <div class="panel-heading" style="background-color: #0a0a09">
-                                    <h4 class="panel-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TYPE_ATTR_COG_INFO' | translate}}</h4>
-                                </div>
-                                <div class="container-fluid m-t-xs m-b-xs">
-                                    jopj
-                                </div>
-                            </div>
-                        </div>
+                                <table class="table table-hover-new table-hover table_main" style="table-layout: fixed">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
+                                            <label class="checkbox-inline c-checkbox" style="height: 15px;">
+                                                <input type="checkbox" ng-click="selectAll(ctrl.carrierSelList)"
+                                                       ng-checked="isAllSelected(ctrl.carrierSelList)" >
+                                                <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                            </label>
+                                        </th>
+                                        <th class="text-center mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
+                                        <th class="text-center mfb-xt" translate="TXT_CHANNEL_CARRIER_NAME"></th>
+                                        <th class="text-center mfb-xxt" translate="TXT_CHANNEL_CARRIER_ISEBUY_ID"></th>
+                                        <th class="text-center mfb-xxt" translate="TXT_CHANNEL_CARRIER_DELETE_ALLOW"></th>
+                                        <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
+                                        <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
+                                        <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                                        <th class="text-center mfb-xxt" translate="TXT_UPDATER"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td if-no-rows="ctrl.carrierList.length||ctrl.carrierList" colspan="9" style="padding: 0px"></td>
+                                    </tr>
+                                    <tr ng-repeat="list in ctrl.carrierList">
+                                        <td class="text-left v-middle">
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input ng-model="ctrl.carrierSelList.selFlag[list.mainKey]" type="checkbox" ng-controller="selectRowsCtrl"
+                                                       ng-click="selectOne(list.mainKey, ctrl.carrierSelList)">
+                                                <span class="fa fa-check"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-center v-middle">{{list.channelName}}</td>
+                                        <td class="text-center v-middle">{{list.carrier}}</td>
+                                        <td class="text-center v-middle">{{list.usekd100Flg?list.usekd100Flg=='0'?'否':'是':''}}</td>
+                                        <td class="text-center v-middle">{{list.allowDeleteFlg?list.allowDeleteFlg=='0'?'禁止':'允许':''}}</td>
+                                        <td class="text-center v-middle">{{list.comments}}</td>
+                                        <td class="text-center v-middle">{{list.active?list.active==true?'启用':'禁用':''}}</td>
+                                        <td class="text-center v-middle">{{list.modified}}</td>
+                                        <td class="text-center v-middle">{{list.modifier}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </uib-tab>
+                            <!---------------------------------------------------类型属性配置信息---------------------------------------------->
+                            <uib-tab>
+                                <tab-heading><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TYPE_ATTR_COG_INFO' | translate}}</tab-heading>
+                                    ae
+                            </uib-tab>
+                        </uib-tabset>
                     </div>
                     <div class="col-sm-12">
                         <div id="step-buttons" class="text-center">

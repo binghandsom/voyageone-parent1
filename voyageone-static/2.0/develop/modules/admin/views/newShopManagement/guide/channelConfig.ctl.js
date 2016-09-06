@@ -9,45 +9,69 @@ define([
         function GuideChannelCogInfoController(smsConfigService, selectRowsFactory) {
             this.selectRowsFactory = selectRowsFactory;
             this.smsConfigService = smsConfigService;
-            this.channelPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
-
+            this.context = JSON.parse(window.sessionStorage.getItem('channelCogInfo'));
         }
 
         GuideChannelCogInfoController.prototype = {
             init: function () {
                 var self = this;
-                self.smsConfigService.searchSmsConfigByPage({
-                        'pageNum': self.searchInfo.pageInfo.curr,
-                        'pageSize': self.searchInfo.pageInfo.size,
-                        'orderChannelId': self.searchInfo.orderChannelId,
-                        'smsType': self.searchInfo.smsType,
-                        'content': self.searchInfo.content,
-                        'active': self.searchInfo.active,
-                        'smsCode': self.searchInfo.smsCode
-                    })
-                    .then(function (res) {
-                        self.channelList = res.data.result;
-                        self.channelPageOption.total = res.data.count;
-
-                        // 设置勾选框
-                        if (self.tempChannelSelect == null) {
-                            self.tempChannelSelect = new self.selectRowsFactory();
-                        } else {
-                            self.tempChannelSelect.clearCurrPageRows();
-                            self.tempChannelSelect.clearSelectedList();
-                        }
-                        _.forEach(self.channelList, function (Info) {
-                            if (Info.updFlg != 8) {
-                                self.tempChannelSelect.currPageRows({
-                                    "id": Info.seq,
-                                    "code": Info.smsType
-                                });
-                            }
+                //SMS 配置
+                self.channelSmsList = self.context.sms;
+                // 设置勾选框
+                if (self.tempChannelSmsSelect == null) {
+                    self.tempChannelSmsSelect = new self.selectRowsFactory();
+                } else {
+                    self.tempChannelSmsSelect.clearCurrPageRows();
+                    self.tempChannelSmsSelect.clearSelectedList();
+                }
+                _.forEach(self.channelSmsList, function (Info) {
+                    if (Info.updFlg != 8) {
+                        self.tempChannelSmsSelect.currPageRows({
+                            "id": Info.seq
                         });
-                        self.channelSmsSelList = self.tempChannelSelect.selectRowsInfo;
-                    })
+                    }
+                });
+                self.channelSmsSelList = self.tempChannelSmsSelect.selectRowsInfo;
+
+                //第三方配置
+                self.channelThirdList = self.context.thirdParty;
+                // 设置勾选框
+                if (self.tempChannelThirdSelect == null) {
+                    self.tempChannelThirdSelect = new self.selectRowsFactory();
+                } else {
+                    self.tempChannelThirdSelect.clearCurrPageRows();
+                    self.tempChannelThirdSelect.clearSelectedList();
+                }
+                _.forEach(self.channelThirdList, function (Info) {
+                    if (Info.updFlg != 8) {
+                        self.tempChannelThirdSelect.currPageRows({
+                            "id": Info.seq
+                        });
+                    }
+                });
+                self.channelThirdSelList = self.tempChannelThirdSelect.selectRowsInfo;
+
+                //快递
+                self.carrierList = self.context.carrier;
+                // 设置勾选框
+                if (self.tempChannelCarrierSelect == null) {
+                    self.tempChannelCarrierSelect = new self.selectRowsFactory();
+                } else {
+                    self.tempChannelCarrierSelect.clearCurrPageRows();
+                    self.tempChannelCarrierSelect.clearSelectedList();
+                }
+                _.forEach(self.carrierList, function (channelInfo, index) {
+                    if (channelInfo.updFlg != 8) {
+                        _.extend(channelInfo, {"mainKey": index});
+                        self.tempChannelCarrierSelect.currPageRows({
+                            "id": channelInfo.mainKey
+                        });
+                    }
+                });
+                self.carrierSelList = self.tempChannelCarrierSelect.selectRowsInfo;
             }
-        }
+
+        };
         return GuideChannelCogInfoController;
     })())
 });

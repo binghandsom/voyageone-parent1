@@ -6,11 +6,10 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('GuideConfigController', (function () {
-        function GuideConfigController(popups, alert, confirm, channelService, newShopService, AdminCartService, selectRowsFactory) {
+        function GuideConfigController(popups, alert, confirm, channelService, newShopService, AdminCartService) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
-            this.selectRowsFactory = selectRowsFactory;
             this.channelService = channelService;
             this.newShopService = newShopService;
             this.AdminCartService = AdminCartService;
@@ -18,10 +17,7 @@ define([
             this.carrierSelList = {selList: []};
             this.tempChannelSelect = null;
             this.searchInfo = {
-                orderChannelId: '',
-                carrier: '',
-                usekd100Flg: '',
-                active: ''
+                orderChannelId: ''
             };
         }
 
@@ -124,7 +120,9 @@ define([
                     case 'allInclude':
                         if (self.allList) {
                             self.cartAllList = self.allList;
-                            _.extend(self.cartList, self.cartAllList);
+                            _.forEach(self.cartAllList, function (item) {
+                                self.cartList.push(item);
+                            });
                             self.cartAllList = [];
                             break;
                         } else {
@@ -156,51 +154,25 @@ define([
                         break;
                 }
             },
-            clear: function () {
+            config: function (type) {
                 var self = this;
-                self.searchInfo = {
-                    pageInfo: this.channelPageOption,
-                    orderChannelId: '',
-                    carrier: '',
-                    active: '',
-                    usekd100Flg: ''
-                }
-            },
-            edit: function (type) {
-                var self = this;
-                if (type == 'add') {
-                    self.popups.openChannelCarrier('add').then(function () {
-                        self.search(1);
-                    });
+                if (!self.searchInfo.orderChannelId) {
+                    self.popups.openConfig({'configType': type, 'isReadOnly': true});
+                    return;
                 } else {
-                    if (self.carrierSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.resList, function (Info) {
-                            if (Info.mainKey == self.carrierSelList.selList[0].id) {
-                                self.popups.openChannelCarrier(Info).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
-                    }
-                }
+                    var channelInfo = {
+                        'orderChannelId': self.resList.channel.orderChannelId,
+                        'configType': type,
+                        'isReadOnly': true
+                    };
+                    self.popups.openConfig(channelInfo);
 
+                }
             },
-            delete: function () {
+            next: function () {
                 var self = this;
-                self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
-                        var delList = [];
-                        _.forEach(self.carrierSelList.selList, function (delInfo) {
-                            delList.push({'orderChannelId': delInfo.orderChannelId, 'carrier': delInfo.code});
-                        });
-                        self.carrierConfigService.deleteCarrierConfig(delList).then(function (res) {
-                            if (res.data.success == false)self.confirm(res.data.message);
-                            self.search(1);
-                        })
-                    }
-                );
+                window.sessionStorage.setItem('channelCogInfo', JSON.stringify(self.resList));
+                window.location.href = "#/newShop/guide/channelConfig";
             }
         };
         return GuideConfigController;
