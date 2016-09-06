@@ -34,10 +34,10 @@ public class TbSimpleItemService extends TbBase {
 
         TmallItemSimpleschemaAddResponse response = reqTaobaoApi(shopBean, request);
 
-        // 调用淘宝API未成功或者errCode不为空的时候
-        if (!response.isSuccess() || !StringUtils.isEmpty(response.getErrorCode())) {
-            logger.error("addSimpleItem [Msg = " + response.getMsg() + "] [SubMsg = " + response.getSubMsg() + "]");
-            return "ERROR:"+ response.getErrorCode() + ":" + response.getMsg();
+        // 调用淘宝API未成功或者subCode不为空的时候(errorCode是英文错误，subCode是中文错误)
+        if (!response.isSuccess() || !StringUtils.isEmpty(response.getSubCode())) {
+            logger.error("addSimpleItem [SubMsg = " + response.getSubMsg() + "]");
+            return "ERROR:"+ response.getErrorCode() + ":" + response.getSubCode() + ":" + response.getSubMsg();
         }
 
         return response.getResult();
@@ -63,10 +63,10 @@ public class TbSimpleItemService extends TbBase {
 
         TmallItemSimpleschemaUpdateResponse response = reqTaobaoApi(shopBean, request);
 
-        // 调用淘宝API未成功或者errCode不为空的时候
+        // 调用淘宝API未成功或者subCode不为空的时候(errorCode是英文错误，subCode是中文错误)
         if (!response.isSuccess() || !StringUtils.isEmpty(response.getErrorCode())) {
-            logger.error("updateSimpleItem [Msg = " + response.getMsg() + "] [SubMsg = " + response.getSubMsg() + "]");
-            return "ERROR:"+ response.getErrorCode() + ":" + response.getMsg();
+            logger.error("updateSimpleItem [SubMsg = " + response.getSubMsg() + "]");
+            return "ERROR:"+ response.getErrorCode() + ":" + response.getSubCode() + ":" + response.getSubMsg();
         }
 
         return response.getUpdateItemResult();
