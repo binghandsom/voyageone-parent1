@@ -89,8 +89,14 @@ define([
                     case '':
                         self.cartAllList = self.cartAllListCopy;
                         _.forEach(self.cartList, function (item) {
-                            var index = self.cartAllList.indexOf(item.cartId);
-                            if (index >= 0) {
+                            var index = -1;
+                            _.forEach(self.cartAllList, function (e, i) {
+                                if (e.cartId == item.cartId) {
+                                    index = i;
+                                    return;
+                                }
+                            });
+                            if (index > -1) {
                                 self.cartAllList.splice(index, 1);
                             }
                         });
@@ -98,7 +104,9 @@ define([
                     case 'allInclude':
                         if (self.allList) {
                             self.cartAllList = self.allList;
-                            _.extend(self.cartList, self.cartAllList);
+                            _.forEach(self.cartAllList, function (item) {
+                                self.cartList.push(item);
+                            });
                             self.cartAllList = [];
                             break;
                         } else {
