@@ -55,4 +55,14 @@ public class AdminResServiceTest {
         adminResService.addRes(model);
 
     }
+
+    @Test
+    public void testGetMenu() throws Exception {
+        Map map = new HashMap();
+        map.put("application", "admin");
+        map.put("userAccount", "admin");
+
+        List<AdminResourceBean> result = adminResService.getMenu("admin","admin");
+        System.out.println(JacksonUtil.bean2Json(result));
+    }
 }

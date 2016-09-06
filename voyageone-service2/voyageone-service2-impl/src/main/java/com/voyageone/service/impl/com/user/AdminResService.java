@@ -70,7 +70,7 @@ public class AdminResService extends BaseService {
             }
             beanList.add(bean);
         }
-        List<AdminResourceBean> all = convert2Tree(beanList);
+        List<AdminResourceBean> all = convert2Tree(beanList, true);
 
         return (all.stream().skip((pageNum - 1) * pageSize).limit(pageSize).collect(Collectors.toList()));
     }
@@ -152,12 +152,29 @@ public class AdminResService extends BaseService {
         comResourceDao.update(model);
     }
 
+    public List<AdminResourceBean> getMenu(String app, String user)
+    {
+        Map map = new HashMap<>();
+        map.put("application", app);
+        map.put("userAccount", user);
+        List<AdminResourceBean> list =  convert2Tree(adminResourceDaoExt.selectMenu(map), false);
+
+        if(list != null && list.size() > 0 && list.get(0) != null && list.get(0).getChildren() != null && list.get(0).getChildren().size() !=0 )
+        {
+            return list.get(0).getChildren();
+        }
+        else
+        {
+            return Collections.EMPTY_LIST;
+        }
+    }
+
 
     /**
      * 将资源列转成一组树
      */
-    private List<AdminResourceBean> convert2Tree(List<AdminResourceBean> resList) {
-        List<AdminResourceBean> roots = findRoots(resList);
+    private List<AdminResourceBean> convert2Tree(List<AdminResourceBean> resList, boolean isExpanded) {
+        List<AdminResourceBean> roots = findRoots(resList , isExpanded);
         List<AdminResourceBean> notRoots = (List<AdminResourceBean>) CollectionUtils.subtract(resList, roots);
         for (AdminResourceBean root : roots) {
             List<AdminResourceBean> children = findChildren(root, notRoots);
@@ -169,11 +186,19 @@ public class AdminResService extends BaseService {
     /**
      * 查找所有根节点
      */
-    private List<AdminResourceBean> findRoots(List<AdminResourceBean> allNodes) {
+    private List<AdminResourceBean> findRoots(List<AdminResourceBean> allNodes, boolean isExpanded) {
         List<AdminResourceBean> results = new ArrayList<>();
         for (AdminResourceBean node : allNodes) {
-            if (node.getParentId() == 0 || node.getResType() < 2) {
-                results.add(node);
+            if(isExpanded) {
+                if (node.getParentId() == 0 || node.getResType() < 2) {
+                    results.add(node);
+                }
+            }
+            else
+            {
+                if (node.getParentId() == 0) {
+                    results.add(node);
+                }
             }
         }
         return results;

@@ -147,4 +147,5 @@ public class AdminUserController extends AdminController {
     public AjaxResponse getAllApp()  {
         return success(adminUserService.getAllApp());
     }
+
 }
