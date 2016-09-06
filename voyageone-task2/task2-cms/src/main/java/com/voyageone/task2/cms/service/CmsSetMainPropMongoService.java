@@ -343,6 +343,25 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
             CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
 
+
+            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许approve这个sku到平台上去售卖渠道cartId
+            typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(channelId, "A", "en"); // 取得允许Approve的数据
+            if (ListUtils.isNull(typeChannelBeanListApprove)) {
+                String errMsg = String.format("feed->master导入:共通配置异常终止:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息(用于生成product分平台信息) [ChannelId=%s A en]", channelId);
+                $error(errMsg);
+                showChannelErrorResult(channelId, resultMap);
+                return;
+            }
+
+            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个需要展示的cart
+            typeChannelBeanListDisplay = TypeChannels.getTypeListSkuCarts(channelId, "D", "en"); // 取得展示用数据
+            if (ListUtils.isNull(typeChannelBeanListDisplay)) {
+                String errMsg = String.format("feed->master导入:共通配置异常终止:在com_mt_value_channel表中没有找到当前Channel需要展示的Cart信息(用于生成productGroup信息) [ChannelId=%s D en]", channelId);
+                $error(errMsg);
+                showChannelErrorResult(channelId, resultMap);
+                return;
+            }
+
             // 查找当前渠道,所有等待反映到主数据的商品
 //            CmsBtFeedInfoModel feedInfo = feedInfoService.getProductByCode(channelId, "36/G05");
 //            List<CmsBtFeedInfoModel> feedList = new ArrayList<>();
@@ -444,6 +463,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
         }
 
+        private void showChannelErrorResult(String channelId, Map<String, String> resultMap) {
+            // 如果是共通配置没有或者价格计算时抛出整个Channel的配置没有的错误时，后面的feed导入就不用做了，免得报出几百条同样的错误
+            String resultInfo = channelId + " " + channel.getFull_name() + " 产品导入结果 [渠道级别共通属性错误,该渠道下" +
+                    "所有的feed都不做导入了，请修改好后重新导入]";
+            // 将该channel的feed->master导入信息加入map，供channel导入线程全部完成一起显示
+            resultMap.put(channelId, resultInfo);
+            $info(channel.getOrder_channel_id() + " " + channel.getFull_name() + " 产品导入主数据结束");
+        }
+
         /**
          * 将商品从feed导入主数据
          *
@@ -471,21 +499,21 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 通过Code查找到的产品
             CmsBtProductModel oldCmsProduct = null;
 
-            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许approve这个sku到平台上去售卖渠道cartId
-            typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(channelId, "A", "en"); // 取得允许Approve的数据
-            if (ListUtils.isNull(typeChannelBeanListApprove)) {
-                String errMsg = String.format("feed->master导入:共通配置异常终止:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息(用于生成product分平台信息) [ChannelId=%s A en]", channelId);
-                $error(errMsg);
-                throw new CommonConfigNotFoundException(errMsg);
-            }
-
-            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个需要展示的cart
-            typeChannelBeanListDisplay = TypeChannels.getTypeListSkuCarts(channelId, "D", "en"); // 取得展示用数据
-            if (ListUtils.isNull(typeChannelBeanListDisplay)) {
-                String errMsg = String.format("feed->master导入:共通配置异常终止:在com_mt_value_channel表中没有找到当前Channel需要展示的Cart信息(用于生成productGroup信息) [ChannelId=%s D en]", channelId);
-                $error(errMsg);
-                throw new CommonConfigNotFoundException(errMsg);
-            }
+//            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许approve这个sku到平台上去售卖渠道cartId
+//            typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(channelId, "A", "en"); // 取得允许Approve的数据
+//            if (ListUtils.isNull(typeChannelBeanListApprove)) {
+//                String errMsg = String.format("feed->master导入:共通配置异常终止:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息(用于生成product分平台信息) [ChannelId=%s A en]", channelId);
+//                $error(errMsg);
+//                throw new CommonConfigNotFoundException(errMsg);
+//            }
+//
+//            // 从synship.com_mt_value_channel表中获取当前channel, 有多少个需要展示的cart
+//            typeChannelBeanListDisplay = TypeChannels.getTypeListSkuCarts(channelId, "D", "en"); // 取得展示用数据
+//            if (ListUtils.isNull(typeChannelBeanListDisplay)) {
+//                String errMsg = String.format("feed->master导入:共通配置异常终止:在com_mt_value_channel表中没有找到当前Channel需要展示的Cart信息(用于生成productGroup信息) [ChannelId=%s D en]", channelId);
+//                $error(errMsg);
+//                throw new CommonConfigNotFoundException(errMsg);
+//            }
 
             // jeff 2016/05 change start
             List<CmsBtFeedInfoModel> feedList = new ArrayList<>();
