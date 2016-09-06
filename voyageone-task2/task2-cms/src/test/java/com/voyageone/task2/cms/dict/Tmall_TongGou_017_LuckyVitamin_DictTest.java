@@ -229,9 +229,10 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest {
     private RuleExpression doDict_天猫同购无线描述() {
         // 根字典
         RuleExpression ruleRoot = new RuleExpression();
+
         {
             // start
-            String kv = "{\"wireless_desc\":{";
+            String kv = "{";
             TextWord word = new TextWord(kv);
             ruleRoot.addRuleWord(word);
         }
@@ -251,17 +252,9 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest {
 //        }
 
         {
-            // item_info 商品信息
-//            String kv = "\"item_info\":{\"item_info_enable\":\"true\"},";
-            String kv = "\"item_info\":{\"item_info_enable\":\"false\"},";
-            TextWord word = new TextWord(kv);
-            ruleRoot.addRuleWord(word);
-        }
-
-        {
             // coupon 优惠
-//            String kv = "\"coupon\":{\"coupon_enable\":\"true\",\"coupon_id\":\"342115\"},";
-            String kv = "\"coupon\":{\"coupon_enable\":\"false\"},";
+//            String kv = "\"coupon\":{\"enable\":\"true\",\"coupon_id\":\"342115\"},";
+            String kv = "\"coupon\":{\"enable\":\"false\"},";
             TextWord word = new TextWord(kv);
             ruleRoot.addRuleWord(word);
         }
@@ -273,16 +266,16 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest {
 //                <option displayName="商品推荐" value="520277"/>
 //                </options>
 //            </field>
-//            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"true\",\"hot_recommanded_id\":\"341911\"},";
-            String kv = "\"hot_recommanded\":{\"hot_recommanded_enable\":\"false\"},";
+//            String kv = "\"hot_recommanded\":{\"enable\":\"true\",\"hot_recommanded_id\":\"341911\"},";
+            String kv = "\"hot_recommanded\":{\"enable\":\"false\"},";
             TextWord word = new TextWord(kv);
             ruleRoot.addRuleWord(word);
         }
 
         {
             // shop_discount 店铺活动
-//            String kv = "\"shop_discount\":{\"shop_discount_enable\":\"true\",\"shop_discount_id\":\"342160\"},";
-            String kv = "\"shop_discount\":{\"shop_discount_enable\":\"false\"},";
+//            String kv = "\"shop_discount\":{\"enable\":\"true\",\"shop_discount_id\":\"342160\"},";
+            String kv = "\"shop_discount\":{\"enable\":\"false\"},";
             TextWord word = new TextWord(kv);
             ruleRoot.addRuleWord(word);
         }
@@ -297,42 +290,62 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest {
         // 图片全是DictWord(总共20张图片,但最后5张不用设置图片)
         {
             // item_picture 商品图片
-            String kv = "\"item_picture\":{\"item_picture_enable\":\"true\"";
-            TextWord word = new TextWord(kv);
-            ruleRoot.addRuleWord(word);
-
-            // 5张无线商品图片
-            for (int i = 0; i < 5; i++) {
-                int j = i + 1;
-                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
-                TextWord imageWord = new TextWord(imageStr);
-                ruleRoot.addRuleWord(imageWord);
-
-                DictWord dictRoot = new DictWord();
-                dictRoot.setName("无线商品图片-" + j);
-                ruleRoot.addRuleWord(dictRoot);
-
-                imageStr = "\"}";
-                imageWord = new TextWord(imageStr);
-                ruleRoot.addRuleWord(imageWord);
+            {
+                String kv = "\"item_picture\":{\"order\": \"6\",\"enable\":\"true\",";
+                TextWord word = new TextWord(kv);
+                ruleRoot.addRuleWord(word);
             }
 
-            // 5张无线自定义图片
-            for (int i = 5; i < 10; i++) {
-
-                int j = i - 4;
-                String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
-                TextWord imageWord = new TextWord(imageStr);
-                ruleRoot.addRuleWord(imageWord);
-
-                DictWord dictRoot = new DictWord();
-                dictRoot.setName("无线自定义图片-" + j);
-                ruleRoot.addRuleWord(dictRoot);
-
-                imageStr = "\"}";
-                imageWord = new TextWord(imageStr);
-                ruleRoot.addRuleWord(imageWord);
+            {
+                TextWord word = new TextWord("\"content\":[");
+                ruleRoot.addRuleWord(word);
             }
+
+            {
+                // 5张无线商品图片
+                for (int i = 0; i < 5; i++) {
+                    int j = i + 1;
+                    String imageStr = ", {\"img\":\"";
+                    if (i == 0) {
+                        imageStr = "{\"img\":\"";
+                    }
+
+                    TextWord imageWord = new TextWord(imageStr);
+                    ruleRoot.addRuleWord(imageWord);
+
+                    DictWord dictRoot = new DictWord();
+                    dictRoot.setName("无线商品图片-" + j);
+                    ruleRoot.addRuleWord(dictRoot);
+
+                    imageStr = "\"}";
+                    imageWord = new TextWord(imageStr);
+                    ruleRoot.addRuleWord(imageWord);
+                }
+
+                // 5张无线自定义图片
+                for (int i = 5; i < 10; i++) {
+
+                    int j = i - 4;
+                    String imageStr = ", {\"img\":\"";
+                    TextWord imageWord = new TextWord(imageStr);
+                    ruleRoot.addRuleWord(imageWord);
+
+                    DictWord dictRoot = new DictWord();
+                    dictRoot.setName("无线自定义图片-" + j);
+                    ruleRoot.addRuleWord(dictRoot);
+
+                    imageStr = "\"}";
+                    imageWord = new TextWord(imageStr);
+                    ruleRoot.addRuleWord(imageWord);
+                }
+            }
+
+            {
+                TextWord word = new TextWord("]");
+                ruleRoot.addRuleWord(word);
+            }
+
+
 
 //            // 5张无线固定图
 //            for (int i = 10; i < 15; i++) {
@@ -361,7 +374,7 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest {
 
         {
             // end
-            String kv = "}}";
+            String kv = "}";
             TextWord word = new TextWord(kv);
             ruleRoot.addRuleWord(word);
         }
