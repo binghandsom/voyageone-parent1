@@ -141,7 +141,7 @@
                         <td class="text-left v-middle">{{list.channelName}}</td>
                         <td class="text-left v-middle">{{list.storeName}}</td>
                         <td class="text-center v-middle">{{list.application}}</td>
-                        <td class="text-center v-middle">{{list.roleType}}</td>
+                        <td class="text-center v-middle">{{ctrl.getRoleType(list.roleType)}}</td>
                         <td class="text-center v-middle">{{list.active?list.active=='1'?'启用':'禁用':''}}</td>
                         <td class="text-center v-middle">{{list.description}}</td>
                         <td class="text-left v-middle">{{list.modifier}}</td>

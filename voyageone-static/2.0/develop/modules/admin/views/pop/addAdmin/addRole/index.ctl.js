@@ -16,8 +16,9 @@ define([
             this.popType = '修改角色';
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
-            this.sourceData.allChannel = this.sourceData !== 'add' ? (this.sourceData.channelId.indexOf('ALL') > -1 ? '1' : '') : '';
-            this.sourceData.allStore = this.sourceData !== 'add' ? (this.sourceData.storeId.indexOf('ALL') > -1 ? '1' : '') : '';
+            this.sourceData.allChannel = this.sourceData !== 'add' ? (this.sourceData.channelId != null ? this.sourceData.channelId.indexOf('ALL') > -1 ? '1' : '' : '') : '';
+            this.sourceData.allStore = this.sourceData !== 'add' ? (this.sourceData.storeId != null ? this.sourceData.storeId.indexOf('ALL') > -1 ? '1' : '' : '') : '';
+            this.sourceData.roleType = this.sourceData.roleType + '';
         }
 
         AddRoleController.prototype = {
@@ -30,23 +31,6 @@ define([
                     self.popType = '添加角色';
                     self.sourceData = {}
                 }
-                var appList = self.sourceData.application.split(',');
-                _.forEach(appList, function (app) {
-                    switch (app) {
-                        case'cms':
-                            return self.sourceData.application == 'cms';
-                            break;
-                        case'oms':
-                            return self.sourceData.application == 'oms';
-                            break;
-                        case'wms':
-                            return self.sourceData.application == 'wms';
-                            break;
-                        case'admin':
-                            return self.sourceData.application == 'admin';
-                            break;
-                    }
-                });
                 self.adminOrgService.getAllOrg().then(function (res) {
                     self.orgList = res.data;
                 });
@@ -54,7 +38,7 @@ define([
                     self.appList = res.data;
                 });
 
-                self.channelService.getAllChannel().then(function (res) {
+                self.channelService.getAllChannel(null).then(function (res) {
                     self.channelAllList = res.data;
                     if (self.popType == '添加角色') return;
                     return call(self.channelAllList);
@@ -125,7 +109,25 @@ define([
                             self.storeAllList.splice(self.storeAllList.indexOf(self.data), 1);
                         });
                     }
-                }
+                };
+                if (self.sourceData.application == null)return;
+                var appList = self.sourceData.application.split(',');
+                _.forEach(appList, function (app) {
+                    switch (app) {
+                        case'cms':
+                            return self.sourceData.application == 'cms';
+                            break;
+                        case'oms':
+                            return self.sourceData.application == 'oms';
+                            break;
+                        case'wms':
+                            return self.sourceData.application == 'wms';
+                            break;
+                        case'admin':
+                            return self.sourceData.application == 'admin';
+                            break;
+                    }
+                });
             },
             selected: function (item) {
                 var self = this;
@@ -139,7 +141,7 @@ define([
                 switch (item.type) {
                     case'channel':
                         _.filter(self.channelAllList, function (data) {
-                            if (data.channelName.toUpperCase().indexOf(item.value.toUpperCase()) > -1) {
+                            if (data.name.toUpperCase().indexOf(item.value.toUpperCase()) > -1) {
                                 self.channelTempAllList.push(data)
                             }
                         });
@@ -166,14 +168,22 @@ define([
                     case '':
                         self.channelAllList = self.channelAllListCopy;
                         _.forEach(self.channelList, function (item) {
-                            var index = self.channelAllList.indexOf(item.orderChannelId);
-                            if (index >= 0) self.channelAllList.splice(index, 1);
+                            var index = -1;
+                            _.forEach(self.channelAllList, function (allItem, i) {
+                                if (allItem.orderChannelId == item.orderChannelId) {
+                                    index = i;
+                                    return;
+                                }
+                            });
+                            if (index > -1) self.channelAllList.splice(index, 1);
                         });
                         break;
                     case 'allInclude':
                         if (self.channelTempAllList) {
                             self.channelAllList = self.channelTempAllList;
-                            _.extend(self.channelList, self.channelAllList);
+                            _.forEach(self.channelAllList, function (item) {
+                                self.channelList.push(item);
+                            });
                             self.channelAllList = [];
                             break;
                         } else {
@@ -216,14 +226,22 @@ define([
                     case '':
                         self.storeAllList = self.storeAllListCopy;
                         _.forEach(self.storeList, function (item) {
-                            var index = self.storeAllList.indexOf(item.storeId);
-                            if (index >= 0) self.storeAllList.splice(index, 1);
+                            var index = -1;
+                            _.forEach(self.storeAllList, function (allItem, i) {
+                                if (allItem.storeId == item.storeId) {
+                                    index = i;
+                                    return;
+                                }
+                            });
+                            if (index > -1) self.storeAllList.splice(index, 1);
                         });
                         break;
                     case 'allInclude':
                         if (self.storeTempAllList) {
                             self.storeAllList = self.storeTempAllList;
-                            _.extend(self.storeList, self.storeAllList);
+                            _.forEach(self.storeAllList, function (item) {
+                                self.storeList.push(item);
+                            });
                             self.storeAllList = [];
                             break;
                         } else {

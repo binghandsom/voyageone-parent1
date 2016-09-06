@@ -104,7 +104,9 @@ define([
                     case 'allInclude':
                         if (self.allList) {
                             self.roleAllList = self.allList;
-                            _.extend(self.roleList, self.roleAllList);
+                            _.forEach(self.roleAllList, function (item) {
+                                self.roleList.push(item);
+                            });
                             self.roleAllList = [];
                             break;
                         } else {

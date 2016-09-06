@@ -189,6 +189,22 @@ define([
                         });
                         break;
                 }
+            },
+            getRoleType: function (type) {
+                switch (type) {
+                    case 1:
+                        return 'IT管理员';
+                        break;
+                    case 2:
+                        return '运营人员';
+                        break;
+                    case 3:
+                        return '客服人员';
+                        break;
+                    case 4:
+                        return '财务人员';
+                        break;
+                }
             }
         };
         return RoleManagementController;
