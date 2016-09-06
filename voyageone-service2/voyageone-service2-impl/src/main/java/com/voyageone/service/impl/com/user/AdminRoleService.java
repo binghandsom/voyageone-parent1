@@ -7,7 +7,10 @@ import com.voyageone.security.dao.ComResRoleDao;
 import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.dao.ComRoleConfigDao;
 import com.voyageone.security.dao.ComRoleDao;
-import com.voyageone.security.model.*;
+import com.voyageone.security.model.ComResRoleModel;
+import com.voyageone.security.model.ComResourceModel;
+import com.voyageone.security.model.ComRoleConfigModel;
+import com.voyageone.security.model.ComRoleModel;
 import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.daoext.com.WmsMtStoreDaoExt;
 import com.voyageone.service.daoext.core.AdminRoleDaoExt;
@@ -47,14 +50,15 @@ public class AdminRoleService extends BaseService {
     ComResRoleDao comResRoleDao;
 
 
-    public Map<Integer, String> getAllRole()
-    {
-        List<ComRoleModel> roleList = comRoleDao.selectList(new HashMap<String, Object>(){{put("active", 1);}});
+    public Map<Integer, String> getAllRole() {
+        List<ComRoleModel> roleList = comRoleDao.selectList(new HashMap<String, Object>() {{
+            put("active", 1);
+        }});
 
 
-        Map resultMap = roleList.stream().collect(Collectors.toMap(ComRoleModel:: getId ,ComRoleModel:: getRoleName ));
+        Map resultMap = roleList.stream().collect(Collectors.toMap(ComRoleModel::getId, ComRoleModel::getRoleName));
 
-        return  resultMap;
+        return resultMap;
     }
 
     /**
@@ -140,7 +144,7 @@ public class AdminRoleService extends BaseService {
         //修改授权仓库
         if ("1".equals(allStore)) {
             //查找是否有ALL的记录,没有则新增
-            insertIgnoreConfig(roleId, "store_id" , "ALL");
+            insertIgnoreConfig(roleId, "store_id", "ALL");
         } else {
             updateConfig(channelIds, roleId, "channel_id");
         }
@@ -166,7 +170,7 @@ public class AdminRoleService extends BaseService {
         comRoleConfigDao.insert(record);
     }
 
-    private void updateConfig(List<String> channelIds, Integer roleId, String configName) {
+    private void updateConfig(List<String> values, Integer roleId, String configName) {
         //查找所有授权渠道的记录
         ComRoleConfigModel comRoleConfigModel = new ComRoleConfigModel();
         comRoleConfigModel.setRoleId(roleId);
@@ -177,11 +181,11 @@ public class AdminRoleService extends BaseService {
         List<String> deleteList = new ArrayList<>();
         List<String> remainList = new ArrayList<>();
         if (confList == null && confList.size() == 0) {
-            addList = channelIds;
+            addList = values;
         } else {
             List<String> conf = confList.stream().map(ComRoleConfigModel::getCfgVal1).collect(Collectors.toList());
-            remainList = (List<String>) CollectionUtils.intersection(channelIds, conf);
-            addList = (List<String>) CollectionUtils.subtract(channelIds, remainList);
+            remainList = (List<String>) CollectionUtils.intersection(values, conf);
+            addList = (List<String>) CollectionUtils.subtract(values, remainList);
             deleteList = (List<String>) CollectionUtils.subtract(conf, remainList);
         }
 
@@ -192,7 +196,6 @@ public class AdminRoleService extends BaseService {
         }
 
         //删除老项目
-
         for (String chnId : deleteList) {
             Integer id = confList.stream().filter(w -> w.getCfgVal1().equals(chnId)).findFirst().get().getId();
             comRoleConfigDao.delete(id);
@@ -282,4 +285,80 @@ public class AdminRoleService extends BaseService {
             }
         }
     }
+
+    public void addAuth(List<Integer> roleIds, List<Integer> resIds, String username) {
+        for (Integer roleId : roleIds) {
+            //添加新项目
+            for(Integer resId : resIds)
+            {
+                ComResRoleModel model = new ComResRoleModel();
+                model.setRoleId(roleId);
+                model.setResId(resId);
+
+                if(comResRoleDao.selectCount(model) == 0)
+                {
+                    model.setCreater(username);
+                    comResRoleDao.insert(model);
+                }
+            }
+        }
+    }
+
+    public void removeAuth(List<Integer> roleIds, List<Integer> resIds, String username) {
+        for (Integer roleId : roleIds) {
+            //删除项目
+            for(Integer resId : resIds)
+            {
+                ComResRoleModel model = new ComResRoleModel();
+                model.setRoleId(roleId);
+                model.setResId(resId);
+
+                ComResRoleModel old = comResRoleDao.selectOne(model);
+
+                if(old != null)
+                {
+                    comResRoleDao.delete(old.getId());
+                }
+            }
+        }
+    }
+
+
+
+    public void setAuth(List<String> apps, List<Integer> roleIds, List<Integer> resIds, String username) {
+
+        for (Integer roleId : roleIds) {
+            updateConfig(apps, roleId, "all_permission");
+
+            //查询该角色的所有权限
+            ComResRoleModel model1 = new ComResRoleModel();
+            model1.setRoleId(roleId);
+            List<ComResRoleModel> olds = comResRoleDao.selectList(model1);
+
+            //删除不需要的项目
+            for(ComResRoleModel old : olds )
+            {
+                if(resIds.stream().filter(w -> w.equals(old.getResId())).count() == 0)
+                {
+                    comResRoleDao.delete(model1.getId());
+                }
+            }
+
+            //添加新项目
+            for(Integer resId : resIds)
+            {
+                ComResRoleModel model = new ComResRoleModel();
+                model.setRoleId(roleId);
+                model.setResId(resId);
+
+                if(comResRoleDao.selectCount(model) == 0)
+                {
+                    model.setCreater(username);
+                    comResRoleDao.insert(model);
+                }
+            }
+        }
+    }
+
+
 }

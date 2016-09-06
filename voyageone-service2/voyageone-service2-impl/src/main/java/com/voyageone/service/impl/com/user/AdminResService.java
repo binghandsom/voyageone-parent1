@@ -251,8 +251,6 @@ public class AdminResService extends BaseService {
         List<AdminResourceBean> resList = adminResourceDaoExt.selectResByUser(userId);
         Set<Integer> resIds = resList.stream().map(AdminResourceBean::getId).collect(Collectors.toSet());
 
-//        List<AdminResourceBean> allRes = searchRes(null);
-
         resList = markSelected(resList, resIds);
 
         Map<String, AdminResourceBean> treeMap = resList.stream().collect(Collectors.toMap(AdminResourceBean::getResKey, (p) -> p));
