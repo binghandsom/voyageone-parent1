@@ -52,10 +52,11 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         workload.setId(762584);
         workload.setChannelId(channelId);
         workload.setCartId(cartId);
-        workload.setGroupId(Long.parseLong("110022"));
+        workload.setGroupId(Long.parseLong("110022"));  // code:SCL020400
         workload.setPublishStatus(0);
+        workload.setModifier("SYSTEM");
 
-//       // for test only===============CategorySchemaTest======================================
+        // for test only=============================================================
 //        ShopBean shopProp = Shops.getShop("010", "30");
 //        if (shopProp == null) {
 //            return;
@@ -64,14 +65,12 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         shopProp.setOrder_channel_id(channelId);
         shopProp.setCart_id(String.valueOf(cartId));
         shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
-        shopProp.setAppKey("xxx");
-        shopProp.setAppSecret("xxx");
-        shopProp.setSessionKey("xxx");
-        // platformid一定要设成京东，否则默认为天猫（1）的话，expressionParser.parse里面会上传照片到天猫空间，出现异常
+        shopProp.setAppKey("999999");
+        shopProp.setAppSecret("aaa");
+        shopProp.setSessionKey("bbb");
+        // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
         shopProp.setPlatform_id("1");
-//        // for test only==============================================================
-
-//        ShopBean shopProp = Shops.getShop("010", "30");
+        // for test only==============================================================
 
         // 从cms_bt_tm_tonggou_feed_attr表中取得该渠道，平台对应的天猫官网同购允许上传的feed attribute属性，如果为空则全部上传
         Map<String, String> paramMap = new HashMap<>();
