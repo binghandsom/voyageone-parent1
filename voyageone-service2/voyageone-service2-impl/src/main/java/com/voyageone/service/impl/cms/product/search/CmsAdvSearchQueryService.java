@@ -334,14 +334,19 @@ public class CmsAdvSearchQueryService extends BaseService {
         }
 
         // 获取brand
-        if (searchValue.getBrandList() !=  null && searchValue.getBrandList().size() > 0) {
-            queryObject.addQuery("{'common.fields.brand':{$in:#}}");
-            queryObject.addParameters(searchValue.getBrandList());
+        if (searchValue.getBrandList() !=  null && searchValue.getBrandList().size() > 0 && searchValue.getBrandSelType() > 0) {
+            if (searchValue.getBrandSelType() == 1) {
+                queryObject.addQuery("{'common.fields.brand':{$in:#}}");
+                queryObject.addParameters(searchValue.getBrandList());
+            } else if (searchValue.getBrandSelType() == 2) {
+                // 不在指定范围
+                queryObject.addQuery("{'common.fields.brand':{$nin:#}}");
+                queryObject.addParameters(searchValue.getBrandList());
+            }
         }
 
         // 获取free tag查询条件
         if (searchValue.getFreeTags() != null && searchValue.getFreeTags().size() > 0 && searchValue.getFreeTagType() > 0) {
-            Object para = searchValue.getFreeTags();
             if (searchValue.getFreeTagType() == 1) {
                 queryObject.addQuery("{'freeTags':{$in:#}}");
                 queryObject.addParameters(searchValue.getFreeTags());
