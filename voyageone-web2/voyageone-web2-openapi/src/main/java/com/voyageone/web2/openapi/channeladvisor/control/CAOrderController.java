@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping(
-        value = UrlConstants.ORDERS.ROOT
+        value = UrlConstants.ROOT
 )
-public class OrderController extends OpenApiBaseController {
+public class CAOrderController extends OpenApiBaseController {
 
     @RequestMapping(value = UrlConstants.ORDERS.GET_ORDERS, method = RequestMethod.GET)
     public ActionResponse getOrders(@RequestParam String status, @RequestParam String limit) {

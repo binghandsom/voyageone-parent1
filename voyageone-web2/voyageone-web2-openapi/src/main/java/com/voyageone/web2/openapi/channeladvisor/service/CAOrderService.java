@@ -8,5 +8,5 @@ import org.springframework.stereotype.Service;
  * @since 2.0.0
  */
 @Service
-public class OrderService {
+public class CAOrderService {
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 对access_token进行检测
+ * 对access_token进行认证
  *
  * @author chuanyu.liang
  * @version 2.0.0, 16/8/14

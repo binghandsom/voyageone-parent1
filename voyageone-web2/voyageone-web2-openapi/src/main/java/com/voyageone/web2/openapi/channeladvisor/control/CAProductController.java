@@ -3,7 +3,7 @@ package com.voyageone.web2.openapi.channeladvisor.control;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.openapi.OpenApiBaseController;
 import com.voyageone.web2.openapi.channeladvisor.constants.UrlConstants;
-import com.voyageone.web2.openapi.channeladvisor.service.ProductService;
+import com.voyageone.web2.openapi.channeladvisor.service.CAProductService;
 import com.voyageone.web2.sdk.api.channeladvisor.request.ProductGroupRequest;
 import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +26,12 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping(
-        value = UrlConstants.PRODUCTS.ROOT
+        value = UrlConstants.ROOT
 )
-public class ProductController extends OpenApiBaseController {
+public class CAProductController extends OpenApiBaseController {
 
     @Autowired
-    private ProductService productService;
+    private CAProductService productService;
 
     @RequestMapping(value = UrlConstants.PRODUCTS.GET_PRODUCTS, method = RequestMethod.GET)
     public ActionResponse getProducts(HttpServletRequest request) {

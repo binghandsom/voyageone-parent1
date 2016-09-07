@@ -11,8 +11,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service("channeladvisorProductService")
-public class ProductService {
+@Service
+public class CAProductService {
 
     public ActionResponse getProducts(String groupFields, String buyableFields) {
         ActionResponse response = new ActionResponse();

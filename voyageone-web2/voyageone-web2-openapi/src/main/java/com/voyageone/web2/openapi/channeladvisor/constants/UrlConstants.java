@@ -9,8 +9,9 @@ package com.voyageone.web2.openapi.channeladvisor.constants;
  */
 public interface UrlConstants {
 
+    String ROOT = "/rest/channeladvisor";
+
     interface PRODUCTS {
-        String ROOT = "/rest/channeladvisor";
         String GET_PRODUCTS = "products";
         String UPDATE_PRODUCTS = "products";
         String UPDATE_QUANTITY_PRICE = "products/quantityprice";
@@ -18,7 +19,6 @@ public interface UrlConstants {
     }
 
     interface ORDERS {
-        String ROOT = "/rest/channeladvisor";
         String GET_ORDERS = "orders";
         String GET_ORDER = "orders/{id}";
         String ACKNOWLEDGE_ORDER = "orders/{id}/acknowledge";
