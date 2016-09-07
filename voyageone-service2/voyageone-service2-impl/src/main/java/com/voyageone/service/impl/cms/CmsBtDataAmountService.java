@@ -115,7 +115,7 @@ public class CmsBtDataAmountService {
         }
         //master platform品牌黑名单统计
         int count = cmsBtBrandBlockService.getBrandCount(channelId, String.valueOf(cartId), 2);
-        saveCmsBtDataAmount(channelId, 0, EnumPlatformInfoSum.CMS_PLATFORM_Brand_block, count);
+        saveCmsBtDataAmount(channelId, cartId, EnumPlatformInfoSum.CMS_PLATFORM_Brand_block, count);
     }
     //获取品牌未匹配数量
     private  void sumBrandNoMatch(String channelId, int cartId) {
