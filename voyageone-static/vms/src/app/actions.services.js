@@ -172,7 +172,9 @@ define(function (require) {
             search: "search",
             cancelOrder: "cancelOrder",
             cancelSku: "cancelSku",
-            downloadPickingList: "downloadPickingList"
+            downloadPickingList: "downloadPickingList",
+            reopenOrder: "reopen_order",
+            reopenSku: "reopen_sku"
         }),
 
         financialReportService: new CommonDataService('/vms/report/financial_report', {

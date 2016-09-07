@@ -126,6 +126,11 @@ define(function () {
         "TXT_PRINTED": "Printed",
         "TXT_NO": "No",
         "TXT_YES": "Yes",
+        "TXT_ORDER_REOPENED": "Order reopened",
+        "TXT_CONFIRM_TO_REOPEN_THIS_ORDER": "Confirm to reopen this order?",
+        "TXT_CONFIRM_TO_REOPEN_THIS_SKU": "Confirm to reopen this SKU?",
+        "TXT_SKU_REOPENED": "SKU reopened",
+
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
@@ -155,6 +160,7 @@ define(function () {
         "BTN_SAVE": "SAVE",
         "BTN_PREVIEW": "PREVIEW",
         "BTN_DOWNLOAD": "DOWNLOAD",
-        "BTN_CLEAR": "CLEAR"
+        "BTN_CLEAR": "CLEAR",
+        "BTN_REOPEN": "REOPEN"
     }
 });
