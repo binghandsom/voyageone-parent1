@@ -62,7 +62,7 @@
                                 </li>
                                 <li>
                                     <div class="right data-priority-1"
-                                         ng-click="jump('/feed/product_list',{status:'8'})">
+                                         ng-click="jumpBlackBrand('0|1|0')">
                                         <strong>{{vm.sumData.feedSum.CMS_FEED_feedBrand_block.amountVal}}</strong>
                                         黑名单品牌数
                                     </div>
@@ -103,7 +103,7 @@
                                 </li>
                                 <li>
                                     <div class="right data-priority-2"
-                                         ng-click="goSearchPage(10,{transStsFlg:'0'})">
+                                         ng-click="jumpBlackBrand('1|1|0')">
                                         <strong>{{vm.sumData.masterSum.CMS_MASTER_Brand_block.amountVal}}</strong>
                                         黑名单品牌数
                                     </div>
@@ -221,7 +221,7 @@
                                             <td class=" text-center"><a href="#/channel/brand_mapping_list/{{m.CMS_BrandNoMatchCount.cartId}}"><span class="label label-danger">{{m.CMS_BrandNoMatchCount.amountVal}}</span></a></td>
                                             <td class=" text-center"><a ng-click="goSearchPage(170,{cartId:m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.cartId,hasErrorFlg:'3'})"><span class="label label-danger">{{m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.amountVal}}</span></a></td>
 
-                                            <td class=" text-center"><a href="#/channel/brand_mapping_list/{{m.CMS_BrandNoMatchCount.cartId}}"><span class="label label-danger">{{m.CMS_PLATFORM_Brand_block.amountVal}}</span></a></td>
+                                            <td class=" text-center"><a href="javascript:jumpBlackBrand('2|1|{{m.CMS_PLATFORM_Brand_block.cartId}}')"><span class="label label-danger">{{m.CMS_PLATFORM_Brand_block.amountVal}}</span></a></td>
                                         </tr>
                                         </tbody>
                                     </table>

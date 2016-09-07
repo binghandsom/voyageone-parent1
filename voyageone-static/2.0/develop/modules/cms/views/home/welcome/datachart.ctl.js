@@ -16,7 +16,16 @@ define([
             $sessionStorage.feedSearch = param;
             $location.path(url);
         }
+        $scope.jumpBlackBrand=function(params) {
+// /marketing/black-brand/:params
+//             参数格式：type|status|cart
+//             type: 0/1/2 = feed/master/platform
+//             status: 0/1 = 未加入/已加入
 
+            var url="/marketing/black-brand/"+params;
+            //"/marketing/black-brand/0|1|0";
+            $location.path(url);
+        }
         /**
          * search by input value.
          */
