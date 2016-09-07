@@ -20,20 +20,24 @@ import java.util.Map;
 @Service
 public class ValueChannelService extends BaseViewService {
 
-    @Autowired
-    private ComMtValueChannelDao comMtValueChannelDao;
+    private final ComMtValueChannelDao comMtValueChannelDao;
 
-    public boolean addHsCodes(String channelId, List<String> hsCodeList, Integer typeId, String modifier) {
+    @Autowired
+    public ValueChannelService(ComMtValueChannelDao comMtValueChannelDao) {
+        this.comMtValueChannelDao = comMtValueChannelDao;
+    }
+
+    boolean addHsCodes(String channelId, List<String> hsCodeList, Integer typeId, String modifier) {
 
         hsCodeList.forEach(s -> {
-            if(!StringUtil.isEmpty(s.trim())){
-                Map<String,Object> map = new HashMap<String, Object>();
-                map.put("channelId",channelId);
-                map.put("typeId",typeId);
-                map.put("name",s);
-                map.put("value",s);
+            if (!StringUtil.isEmpty(s.trim())) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("channelId", channelId);
+                map.put("typeId", typeId);
+                map.put("name", s);
+                map.put("value", s);
                 int cnt = comMtValueChannelDao.selectCount(map);
-                if(cnt == 0){
+                if (cnt == 0) {
                     ComMtValueChannelModel comMtValueChannelModel = new ComMtValueChannelModel();
                     comMtValueChannelModel.setChannelId(channelId);
                     comMtValueChannelModel.setLangId("cn");
