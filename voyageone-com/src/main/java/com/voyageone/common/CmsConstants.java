@@ -148,6 +148,9 @@ public class CmsConstants {
 
         // 该店铺每次feed-master导入最大件数
         String FEED_IMPORT_MAX = "FEED_IMPORT_MAX";
+
+        // feed增加状态属性
+        String AUTO_SET_FEED_IMPORT_FLG = "AUTO_SET_FEED_IMPORT_FLG";
     }
 
     public interface DataAmount {

@@ -1,5 +1,6 @@
 package com.voyageone.service.bean.cms.CmsBtDataAmount;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,7 +14,8 @@ public enum EnumFeedSum implements IEnumDataAmountSum {
     CMS_FEED_STATUS_NOT_IMPORT("CMS_FEED_STATUS_NOT_IMPORT", "{'updFlg':3}", "/feed/product_list", "", "不导入数"),
     CMS_FEED_STATUS_IMPORT_FAILD("CMS_FEED_STATUS_IMPORT_FAILD", "{'updFlg':2}", "/feed/product_list", "", "导入失败数"),
     CMS_FEED_DATA_ERROR("CMS_FEED_DATA_ERROR", "{'updFlg':8}", "/feed/product_list", "", "Feed数据错误数"),
-    CMS_FEED_STATUS_WAITING_FOR_IMPORT("CMS_FEED_STATUS_WAITING_FOR_IMPORT", "{'updFlg':0}", "/feed/product_list", "", "等待导入数");
+    CMS_FEED_STATUS_WAITING_FOR_IMPORT("CMS_FEED_STATUS_WAITING_FOR_IMPORT", "{'updFlg':0}", "/feed/product_list", "", "等待导入数"),
+    CMS_FEED_feedBrand_block("CMS_FEED_feedBrand_block", "", "", "", "黑名单数量",1);
     EnumFeedSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;
         this.strQuery = strQuery;
@@ -21,12 +23,29 @@ public enum EnumFeedSum implements IEnumDataAmountSum {
         this.linkParameter = linkParameter;
         this.comment = comment;
     }
-
+    EnumFeedSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment,int sumType) {
+        this.amountName = amountName;
+        this.strQuery = strQuery;
+        this.linkUrl = linkUrl;
+        this.linkParameter = linkParameter;
+        this.comment = comment;
+        this.sumType=sumType;
+    }
     private String amountName;//
     private String strQuery;//查询条件
     private String linkUrl;//链接地址
     private String linkParameter;// 链接参数
     private String comment;//备注
+
+    public int getSumType() {
+        return sumType;
+    }
+
+    public void setSumType(int sumType) {
+        this.sumType = sumType;
+    }
+
+    private int sumType;//0:feed表统计  1：cms_bt_brand_block 黑名单表统计
 
     public int getDataAmountTypeId() {
         return dataAmountTypeId;
@@ -68,8 +87,15 @@ public enum EnumFeedSum implements IEnumDataAmountSum {
         this.comment = comment;
     }
 
-    public static List<EnumFeedSum> getList() {
-        List<EnumFeedSum> list = Arrays.asList(EnumFeedSum.values());
+    public static List<EnumFeedSum> getList(int sumType) {
+        List<EnumFeedSum> list =new ArrayList<>();
+        for (EnumFeedSum enumFeedSum : EnumFeedSum.values()) {
+            if(enumFeedSum.getSumType()==sumType)
+            {
+                list.add(enumFeedSum);
+            }
+        }
+
         return list;
     }
 }
