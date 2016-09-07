@@ -2,9 +2,9 @@ package com.voyageone.web2.openapi.channeladvisor.control;
 
 import com.voyageone.web2.openapi.OpenApiBaseController;
 import com.voyageone.web2.openapi.channeladvisor.constants.UrlConstants;
-import com.voyageone.web2.sdk.api.VoApiResponse;
 import com.voyageone.web2.sdk.api.channeladvisor.request.OrderCancellationRequest;
 import com.voyageone.web2.sdk.api.channeladvisor.request.ShipRequest;
+import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController extends OpenApiBaseController {
 
     @RequestMapping(value = UrlConstants.ORDERS.GET_ORDERS, method = RequestMethod.GET)
-    public VoApiResponse getOrders(@RequestParam String status, @RequestParam String limit) {
+    public ActionResponse getOrders(@RequestParam String status, @RequestParam String limit) {
 
         //check param
 
@@ -32,7 +32,7 @@ public class OrderController extends OpenApiBaseController {
     }
 
     @RequestMapping(value = UrlConstants.ORDERS.GET_ORDER, method = RequestMethod.GET)
-    public VoApiResponse getOrderById(@PathVariable String id) {
+    public ActionResponse getOrderById(@PathVariable String id) {
 
         //check param
 
@@ -43,7 +43,7 @@ public class OrderController extends OpenApiBaseController {
     }
 
     @RequestMapping(value = UrlConstants.ORDERS.ACKNOWLEDGE_ORDER, method = RequestMethod.POST)
-    public VoApiResponse acknowledgeOrder(@PathVariable String id) {
+    public ActionResponse acknowledgeOrder(@PathVariable String id) {
 
         //check param
 
@@ -54,7 +54,7 @@ public class OrderController extends OpenApiBaseController {
     }
 
     @RequestMapping(value = UrlConstants.ORDERS.SHIP_ORDER, method = RequestMethod.POST)
-    public VoApiResponse shipOrder(@PathVariable String id, @RequestBody ShipRequest request) {
+    public ActionResponse shipOrder(@PathVariable String id, @RequestBody ShipRequest request) {
 
         //check param
 
@@ -65,7 +65,7 @@ public class OrderController extends OpenApiBaseController {
     }
 
     @RequestMapping(value = UrlConstants.ORDERS.CANCEL_ORDER, method = RequestMethod.POST)
-    public VoApiResponse cancelOrder(@PathVariable String id, @RequestBody OrderCancellationRequest request) {
+    public ActionResponse cancelOrder(@PathVariable String id, @RequestBody OrderCancellationRequest request) {
 
         //check param
 
@@ -76,7 +76,7 @@ public class OrderController extends OpenApiBaseController {
     }
 
     @RequestMapping(value = UrlConstants.ORDERS.REFUND_ORDER, method = RequestMethod.POST)
-    public VoApiResponse refundOrder(@PathVariable String id, @RequestBody OrderCancellationRequest request) {
+    public ActionResponse refundOrder(@PathVariable String id, @RequestBody OrderCancellationRequest request) {
         //check param
 
         // call service
