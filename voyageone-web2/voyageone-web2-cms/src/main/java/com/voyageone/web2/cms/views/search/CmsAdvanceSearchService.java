@@ -18,7 +18,6 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
@@ -54,8 +53,6 @@ public class CmsAdvanceSearchService extends BaseAppService {
 
     @Autowired
     private PromotionService promotionService;
-    @Autowired
-    private ChannelCategoryService channelCategoryService;
     @Autowired
     private CommonPropService commonPropService;
     @Autowired
@@ -115,9 +112,6 @@ public class CmsAdvanceSearchService extends BaseAppService {
             sortList.add(keySumMap);
         }
         masterData.put("sortList", sortList);
-
-        // 获取category list
-        masterData.put("categoryList", channelCategoryService.getAllCategoriesByChannelId(userInfo.getSelChannelId()));
 
         // 店铺(cart/平台)列表
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language);

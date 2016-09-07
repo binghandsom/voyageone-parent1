@@ -95,7 +95,7 @@ define([
                 "templateUrl": "views/pop/bulkUpdate/salePrice.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/bulkUpdate/salePrice.ctl",
                 "controller": 'popSalePriceCtl',
-                "size": 'md'
+                "size": '600'
             },
             "updateProductApproval": {
                 "templateUrl": "views/pop/bulkUpdate/updateProductApproval.tpl.html",
