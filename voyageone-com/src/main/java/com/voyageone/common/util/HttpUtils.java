@@ -19,6 +19,8 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.security.KeyStore;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * HttpUtils
@@ -46,7 +48,7 @@ public class HttpUtils {
             }
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw  e;
+            throw e;
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -133,14 +135,25 @@ public class HttpUtils {
         return null;
     }
 
-
     public static String post(String url, String jsonBody, String accept, String token) throws Exception {
+        Map<String, String> header = new HashMap<>();
+        // setHeader Accept
+        header.put("Accept", StringUtils.isEmpty(accept) ? "application/json" : accept);
+        // setHeader Authorization
+        if (!StringUtils.isEmpty(token)) header.put("Authorization", "Bearer " + token);
+
+        return post(url, jsonBody, header);
+    }
+
+    public static String post(String url, String jsonBody, Map<String, String> header) throws Exception {
         HttpPost post = new HttpPost(new URI(url));
 
-        // setHeader Accept
-        post.setHeader("Accept", StringUtils.isEmpty(accept) ? "application/json" : accept);
-        // setHeader Authorization
-        if (!StringUtils.isEmpty(token)) post.setHeader("Authorization", "Bearer " + token);
+        // setHeader
+        if (header != null && !header.isEmpty()) {
+            for (Map.Entry<String, String> entry : header.entrySet()) {
+                post.setHeader(entry.getKey(), entry.getValue());
+            }
+        }
 
         //setBody
         post.setEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
@@ -165,12 +178,16 @@ public class HttpUtils {
         return sb.toString();
     }
 
-    public static String targetGet(String url, String jsonBody, String accept, String token) throws Exception {
+    public static String get(String url, Map<String, String> header) throws Exception {
         HttpGet get = new HttpGet(new URI(url));
-        // setHeader Accept
-        get.setHeader("Accept", StringUtils.isEmpty(accept) ? "application/json" : accept);
-        // setHeader Authorization
-        if (!StringUtils.isEmpty(token)) get.setHeader("Authorization", "Bearer " + token);
+
+        // setHeader
+        if (header != null && !header.isEmpty()) {
+            for (Map.Entry<String, String> entry : header.entrySet()) {
+                get.setHeader(entry.getKey(), entry.getValue());
+            }
+        }
+
         //post request
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpResponse response = httpclient.execute(get);
@@ -247,7 +264,7 @@ public class HttpUtils {
         String line;
 
         try {
-	            /*post向服务器请求数据*/
+                /*post向服务器请求数据*/
             HttpPatch request = new HttpPatch(url);
             StringEntity se = new StringEntity(jsonParam);
             request.setEntity(se);
@@ -764,12 +781,12 @@ public class HttpUtils {
     public static InputStream getInputStream(String urlString) throws IOException {
 //        urlString = getFinalURL(urlString);
         URL url = new URL(urlString);
-        HttpURLConnection con = (HttpURLConnection)  url.openConnection();
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setConnectTimeout(60000);
         con.setReadTimeout(60000);
         if (con.getResponseCode() == 301 || con.getResponseCode() == 302) {
             return getInputStream(con.getHeaderField("Location"));
-        }else{
+        } else {
             return url.openStream();
         }
     }
