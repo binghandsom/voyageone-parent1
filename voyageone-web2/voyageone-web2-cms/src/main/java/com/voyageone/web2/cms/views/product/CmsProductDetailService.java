@@ -43,9 +43,8 @@ import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM;
 import com.voyageone.service.model.ims.ImsBtProductModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
@@ -66,7 +65,7 @@ import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstant
  * Created by lewis on 15-12-16.
  */
 @Service
-public class CmsProductDetailService extends BaseAppService {
+public class CmsProductDetailService extends BaseViewService {
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
     private static final String COMPLETE_STATUS = "1";

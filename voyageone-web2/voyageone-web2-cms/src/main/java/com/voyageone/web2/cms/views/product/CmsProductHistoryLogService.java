@@ -5,7 +5,7 @@ import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Types;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
 import com.voyageone.service.model.cms.mongo.product.CmsBtPlatformActiveLogModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.Map;
  * @author jiangjusheng
  */
 @Service
-public class CmsProductHistoryLogService extends BaseAppService {
+public class CmsProductHistoryLogService extends BaseViewService {
 
     @Autowired
     private CmsBtPlatformActiveLogDao platformActiveLogDao;

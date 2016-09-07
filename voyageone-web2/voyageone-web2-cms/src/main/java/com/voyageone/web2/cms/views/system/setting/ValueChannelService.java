@@ -2,11 +2,10 @@ package com.voyageone.web2.cms.views.system.setting;
 
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.com.ComMtValueChannelDao;
 import com.voyageone.service.model.com.ComMtValueChannelModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class ValueChannelService extends BaseAppService {
+public class ValueChannelService extends BaseViewService {
 
     @Autowired
     private ComMtValueChannelDao comMtValueChannelDao;
