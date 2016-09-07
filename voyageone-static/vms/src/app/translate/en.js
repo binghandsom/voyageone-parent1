@@ -16,6 +16,7 @@ define(function () {
         "TXT_CONFIRM_SHIPPED": "Confirm to ship?",
         "TXT_CONFIRM_TO_CANCEL_ORDER": "Confirm to cancel this order?",
         "TXT_CONFIRM_TO_CANCEL_SKU": "Confirm to cancel this SKU?",
+        "TXT_CONTENT": "Content",
         "TXT_CONTAINERIZING_TIME": "Scanned Time",
         "TXT_CONTAINERIZING_USER": "Scanned User",
         "TXT_CURRENT_SHIPMENT": "Current Shipment",

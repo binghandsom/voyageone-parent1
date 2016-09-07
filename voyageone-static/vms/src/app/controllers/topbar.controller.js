@@ -8,6 +8,13 @@ define(function () {
             this.$window = $window;
             this.userService = userService;
             this.menuService = menuService;
+            this.timezone = '';
+            var timezoneTemp = -(new Date().getTimezoneOffset() / 60);
+            if (timezoneTemp >= 0) {
+                this.timezone = '+' + timezoneTemp;
+            } else {
+                this.timezone = timezoneTemp;
+            }
 
             var main = this;
             menuService.getVendorMenuHeaderInfo().then(function (res) {
