@@ -449,7 +449,10 @@ define([
 
                     var brandField = searchField("品牌", product);
 
-                    if (!brandField && !brandField.value.value)
+                    if (!brandField)
+                        return;
+
+                    if (!brandField.value.value)
                         brandField.value.value = brandId;
                 }
 
