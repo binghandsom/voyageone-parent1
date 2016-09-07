@@ -334,7 +334,7 @@ public interface AdminUrlConstants {
 
 			String DELETE_USER = "deleteUser";
 
-			String GET_AUTH = "getAuth";
+			String GET_AUTH_BY_USER = "getAuthByUser";
 
 			String RESET_PASS = "resetPass";
 
@@ -368,6 +368,8 @@ public interface AdminUrlConstants {
 			String ADD_AUTH = "addAuth";
 
 			String REMOVE_AUTH = "removeAuth";
+
+			String GET_AUTH_BY_ROLES = "getAuthByRoles";
 
 			//for dropdown list options
 			String GET_ALL_ROLE = "getAllRole";

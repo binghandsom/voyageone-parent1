@@ -17,9 +17,6 @@ public class AdminResourceBean extends ComResourceModel {
     @JsonIgnore
     private Integer userId;
 
-    @JsonIgnore
-    private Integer cnt;
-
     private String parentName;
 
     private  Integer selected;
@@ -62,18 +59,11 @@ public class AdminResourceBean extends ComResourceModel {
 
 
     public Integer getSelected() {
-        return selected;
+        return selected == null ? 0 : selected;
     }
 
     public void setSelected(Integer selected) {
         this.selected = selected;
     }
 
-    public Integer getCnt() {
-        return cnt;
-    }
-
-    public void setCnt(Integer cnt) {
-        this.cnt = cnt;
-    }
 }

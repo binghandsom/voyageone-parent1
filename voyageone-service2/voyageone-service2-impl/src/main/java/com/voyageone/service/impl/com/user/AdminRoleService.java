@@ -11,12 +11,15 @@ import com.voyageone.security.model.ComResRoleModel;
 import com.voyageone.security.model.ComResourceModel;
 import com.voyageone.security.model.ComRoleConfigModel;
 import com.voyageone.security.model.ComRoleModel;
+import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.daoext.com.WmsMtStoreDaoExt;
+import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.service.daoext.core.AdminRoleDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.PageModel;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +51,9 @@ public class AdminRoleService extends BaseService {
 
     @Autowired
     ComResRoleDao comResRoleDao;
+
+    @Autowired
+    AdminResourceDaoExt adminResourceDaoExt;
 
 
     public Map<Integer, String> getAllRole() {
@@ -361,4 +367,83 @@ public class AdminRoleService extends BaseService {
     }
 
 
+    public List<AdminResourceBean> getAuthByRoles( List<Integer> roleIds, String  app) {
+        List<AdminResourceBean>  list = adminResourceDaoExt.selectResByRoles(roleIds, app);
+
+        Integer roleCnt = roleIds.size();
+
+        for(AdminResourceBean bean : list)
+        {
+            if(list.stream().filter(w -> w.getId().equals(bean.getId())).count() == roleCnt)
+            {
+                bean.setSelected(1);
+            }
+            else
+            {
+                bean.setSelected(2);
+            }
+        }
+
+        //取所有的资源
+        List<AdminResourceBean>  all = adminResourceDaoExt.selectRes(app);
+
+        for(AdminResourceBean bean : all)
+        {
+            if(list.stream().filter(w -> w.getId().equals(bean.getId())).count() > 0)
+            {
+                AdminResourceBean one =list.stream().filter(w -> w.getId().equals(bean.getId())).findFirst().get();
+                bean.setSelected(one.getSelected());
+            }
+        }
+        return convert2Tree(all);
+    }
+
+    /**
+     * 将资源列转成一组树
+     */
+    private List<AdminResourceBean> convert2Tree(List<AdminResourceBean> resList) {
+        List<AdminResourceBean> roots = findRoots(resList);
+        List<AdminResourceBean> notRoots = (List<AdminResourceBean>) CollectionUtils.subtract(resList, roots);
+        for (AdminResourceBean root : roots) {
+            List<AdminResourceBean> children = findChildren(root, notRoots);
+            root.setChildren(children);
+        }
+        return roots;
+    }
+
+    /**
+     * 查找所有根节点
+     */
+    private List<AdminResourceBean> findRoots(List<AdminResourceBean> allNodes) {
+        List<AdminResourceBean> results = new ArrayList<>();
+        for (AdminResourceBean node : allNodes) {
+            if (node.getParentId() == 0) {
+                results.add(node);
+            }
+        }
+        return results;
+    }
+
+
+    /**
+     * 查找所有子节点
+     */
+    private List<AdminResourceBean> findChildren(AdminResourceBean root, List<AdminResourceBean> allNodes) {
+        List<AdminResourceBean> children = new ArrayList<>();
+
+        for (AdminResourceBean node : allNodes) {
+            if (node.getParentId() == root.getId()) {
+                children.add(node);
+            }
+        }
+        root.setChildren(children);
+
+        List<AdminResourceBean> notChildren = (List<AdminResourceBean>) CollectionUtils.subtract(allNodes, children);
+
+        for (AdminResourceBean child : children) {
+            List<AdminResourceBean> tmpChildren = findChildren(child, notChildren);
+            child.setChildren(tmpChildren);
+        }
+        return children;
+    }
 }

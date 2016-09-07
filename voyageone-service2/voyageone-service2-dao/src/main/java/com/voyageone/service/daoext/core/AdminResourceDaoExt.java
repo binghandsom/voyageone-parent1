@@ -1,6 +1,7 @@
 package com.voyageone.service.daoext.core;
 
 import com.voyageone.service.bean.com.AdminResourceBean;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -9,8 +10,10 @@ import java.util.List;
 public interface AdminResourceDaoExt {
     List<AdminResourceBean> selectResByUser(Object map);
 
-    List<AdminResourceBean> selectResByRoles(List<Integer> list);
+    List<AdminResourceBean> selectResByRoles(@Param("roleIds")List<Integer> list, @Param("application") String app);
 
     List<AdminResourceBean> selectMenu(Object map);
+
+    List<AdminResourceBean> selectRes(@Param("application") String app);
 
 }

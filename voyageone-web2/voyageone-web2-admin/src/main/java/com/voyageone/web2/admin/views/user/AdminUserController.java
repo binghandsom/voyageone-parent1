@@ -136,7 +136,7 @@ public class AdminUserController extends AdminController {
     }
 
 
-    @RequestMapping(AdminUrlConstants.User.Self.GET_AUTH)
+    @RequestMapping(AdminUrlConstants.User.Self.GET_AUTH_BY_USER)
     public AjaxResponse getAuth(@RequestBody Map requestMap)  {
         // 验证参数
         String userAccount = requestMap.get("userAccount").toString();
