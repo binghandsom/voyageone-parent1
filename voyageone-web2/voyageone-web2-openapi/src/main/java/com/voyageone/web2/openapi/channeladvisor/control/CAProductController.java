@@ -71,7 +71,7 @@ public class CAProductController extends OpenApiBaseController {
      * @param request request
      * @return response
      */
-    @RequestMapping(value = CAUrlConstants.PRODUCTS.UPDATE_STATUS, method = RequestMethod.GET)
+    @RequestMapping(value = CAUrlConstants.PRODUCTS.UPDATE_STATUS, method = RequestMethod.POST)
     public ActionResponse updateStatus(@RequestBody List<ProductGroupRequest> request) {
         return productService.updateStatus(request);
     }

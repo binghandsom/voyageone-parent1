@@ -1,5 +1,6 @@
 package com.voyageone.web2.openapi.channeladvisor.service.impl;
 
+import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseService;
@@ -46,25 +47,22 @@ public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProd
     public ActionResponse updateProducts(List<ProductGroupRequest> request) {
         if (CollectionUtils.isEmpty(request)) ;
         // TODO: 2016/9/7 空值处理 logger或其他
-        String jsonData = "{\"ResponseBody\":[{\"SellerSKU\":\"REBEL X-WING\",\"BuyableProductResults\":[{\"RequestResult\":\"Success\",\"SellerSKU\":\"REBEL X-WING\",\"MarketPlaceItemID\":\"REBEL X-WING\",\"URL\":\"http://your-url.com/products/REBEL X-WING\",\"Errors\":null}],\"Errors\":null},{\"SellerSKU\":\"LIGHTSABER\",\"BuyableProductResults\":[{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_RED_MED\",\"MarketPlaceItemID\":\"LIGHTSABER_RED_MED\",\"URL\":\"http://your-url.com/products/LIGHTSABER_RED_MED\",\"Errors\":null},{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_RED_LG\",\"MarketPlaceItemID\":\"LIGHTSABER_RED_LG\",\"URL\":\"http://your-url.com/products/LIGHTSABER_RED_LG\",\"Errors\":null},{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_BLUE_MED\",\"MarketPlaceItemID\":\"LIGHTSABER_BLUE_MED\",\"URL\":\"http://your-url.com/products/LIGHTSABER_BLUE_MED\",\"Errors\":null},{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_BLUE_LG\",\"MarketPlaceItemID\":\"LIGHTSABER_BLUE_LG\",\"URL\":\"http://your-url.com/products/LIGHTSABER_BLUE_LG\",\"Errors\":null}],\"Errors\":null}],\"Status\":\"Complete\",\"PendingUri\":null,\"Errors\":[]}";
         // TODO: 2016/9/7 获取jsonbody 响应 mock response
-        return JacksonUtil.json2Bean(jsonData, ActionResponse.class);
+        return JacksonUtil.json2Bean(Properties.readValue("updateProducts"), ActionResponse.class);
     }
 
     public ActionResponse updateQuantityPrice(List<ProductGroupRequest> request) {
         if (CollectionUtils.isEmpty(request)) ;
         // TODO: 2016/9/7 空值处理 logger或其他
-        String jsonData = "{\"ResponseBody\":[{\"SellerSKU\":\"REBEL X-WING\",\"BuyableProductResults\":[{\"RequestResult\":\"Success\",\"SellerSKU\":\"REBEL X-WING\",\"MarketPlaceItemID\":\"REBEL X-WING\",\"URL\":\"http://your-url.com/products/REBEL X-WING\",\"Errors\":null}],\"Errors\":null},{\"SellerSKU\":\"LIGHTSABER\",\"BuyableProductResults\":[{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_RED_MED\",\"MarketPlaceItemID\":\"LIGHTSABER_RED_MED\",\"URL\":\"http://your-url.com/products/LIGHTSABER_RED_MED\",\"Errors\":null},{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_RED_LG\",\"MarketPlaceItemID\":\"LIGHTSABER_RED_LG\",\"URL\":\"http://your-url.com/products/LIGHTSABER_RED_LG\",\"Errors\":null},{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_BLUE_MED\",\"MarketPlaceItemID\":\"LIGHTSABER_BLUE_MED\",\"URL\":\"http://your-url.com/products/LIGHTSABER_BLUE_MED\",\"Errors\":null},{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_BLUE_LG\",\"MarketPlaceItemID\":\"LIGHTSABER_BLUE_LG\",\"URL\":\"http://your-url.com/products/LIGHTSABER_BLUE_LG\",\"Errors\":null}],\"Errors\":null}],\"Status\":\"Complete\",\"PendingUri\":null,\"Errors\":[]}";
         // TODO: 2016/9/7 获取jsonbody 响应 mock response
-        return JacksonUtil.json2Bean(jsonData, ActionResponse.class);
+        return JacksonUtil.json2Bean(Properties.readValue("updateQuantityPrice"), ActionResponse.class);
     }
 
     public ActionResponse updateStatus(List<ProductGroupRequest> request) {
         if (CollectionUtils.isEmpty(request)) ;
         // TODO: 2016/9/7 空值处理 logger或其他
-        String jsonData = "{\"ResponseBody\":[{\"SellerSKU\":\"REBEL X-WING\",\"BuyableProductResults\":[{\"RequestResult\":\"Success\",\"SellerSKU\":\"REBEL X-WING\",\"MarketPlaceItemID\":null,\"URL\":null,\"Errors\":[]}],\"Errors\":[]},{\"SellerSKU\":\"LIGHTSABER_RED_MED\",\"BuyableProductResults\":[{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_RED_MED\",\"MarketPlaceItemID\":null,\"URL\":null,\"Errors\":[]}],\"Errors\":[]},{\"SellerSKU\":\"LIGHTSABER_RED_LG\",\"BuyableProductResults\":[{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_RED_LG\",\"MarketPlaceItemID\":null,\"URL\":null,\"Errors\":[]}],\"Errors\":[]},{\"SellerSKU\":\"LIGHTSABER_BLUE_MED\",\"BuyableProductResults\":[{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_BLUE_MED\",\"MarketPlaceItemID\":null,\"URL\":null,\"Errors\":[]}],\"Errors\":[]},{\"SellerSKU\":\"LIGHTSABER_BLUE_LG\",\"BuyableProductResults\":[{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_BLUE_LG\",\"MarketPlaceItemID\":null,\"URL\":null,\"Errors\":[]}],\"Errors\":[]}],\"Status\":\"Complete\",\"PendingUri\":null,\"Errors\":[]}";
         // TODO: 2016/9/7 获取jsonbody 响应 mock response
-        return JacksonUtil.json2Bean(jsonData, ActionResponse.class);
+        return JacksonUtil.json2Bean(Properties.readValue("updateStatus"), ActionResponse.class);
     }
 
 }
