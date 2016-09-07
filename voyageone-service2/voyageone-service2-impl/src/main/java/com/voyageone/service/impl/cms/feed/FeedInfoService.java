@@ -130,7 +130,6 @@ public class FeedInfoService extends BaseService {
         }
 
         // 获取价格
-        // 获取查询的价格区间下限
         Double priceSta = null;
         Double priceEnd =  null;
        if(searchValue.get("priceStart") != null){
@@ -155,6 +154,35 @@ public class FeedInfoService extends BaseService {
                     result.append(",");
                 }
                 result.append(MongoUtils.splicingValue("$lte", priceEnd));
+            }
+            result.append("}}}},");
+        }
+
+        // 获取库存
+        Integer qtySta = null;
+        Integer qtyEnd =  null;
+        if(searchValue.get("qtyStart") != null){
+            if (StringUtils.isNumeric(String.valueOf(searchValue.get("qtyStart")))) {
+                qtySta = Integer.parseInt(String.valueOf(searchValue.get("qtyStart")));
+            }
+        }
+
+        if(searchValue.get("qtyEnd") != null){
+            if (StringUtils.isNumeric(String.valueOf(searchValue.get("qtyEnd")))) {
+                qtyEnd = Integer.parseInt(String.valueOf(searchValue.get("qtyEnd")));
+            }
+        }
+
+        if (qtySta != null || qtyEnd != null) {
+            result.append("{\"skus\":{$elemMatch:{\"qty\":{");
+            if (qtySta != null) {
+                result.append(MongoUtils.splicingValue("$gte", qtySta));
+            }
+            if (qtyEnd != null) {
+                if (qtySta != null) {
+                    result.append(",");
+                }
+                result.append(MongoUtils.splicingValue("$lte", qtyEnd));
             }
             result.append("}}}},");
         }

@@ -21,6 +21,8 @@ define([
             this.category = "";
             this.priceStart = "";
             this.priceEnd = "";
+            this.qtyStart = "";
+            this.qtyEnd = "";
             this.pageOption = {
                 curr: 1,
                 total: 0,
@@ -66,6 +68,8 @@ define([
                     "category": self.category,
                     "priceStart": self.priceStart,
                     "priceEnd": self.priceEnd,
+                    "qtyStart": self.qtyStart,
+                    "qtyEnd": self.qtyEnd,
                     "curr": self.pageOption.curr,
                     "size": self.pageOption.size
                 }).then(function (res) {

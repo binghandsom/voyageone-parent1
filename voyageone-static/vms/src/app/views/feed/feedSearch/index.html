@@ -42,7 +42,13 @@
                     <label class="control-label" translate="TXT_VO_PRICE"></label>
                     <input id="startPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceStart" enter-click="#searchButton">
                     <span>~</span>
-                    <input id="endPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceEnd" enter-click="#searchButton">
+                    <input id="endPrice" type="number" class="form-control input-sm m-r-sm" ng-model="ctrl.priceEnd" enter-click="#searchButton">
+                    <!-- Inventory -->
+                    <label class="control-label" translate="TXT_INVENTORY"></label>
+                    <input id="startQty" type="number" class="form-control input-sm" ng-model="ctrl.qtyStart" enter-click="#searchButton">
+                    <span>~</span>
+                    <input id="endQty" type="number" class="form-control input-sm" ng-model="ctrl.qtyEnd" enter-click="#searchButton">
+
                 </div>
                 <div class="pull-right">
                     <button id="searchButton" class="btn btn-primary btn-sm" ng-click="ctrl.search()" translate="BTN_SEARCH"></button>
@@ -75,16 +81,16 @@
                         <td class="v-middle word-wrap text-left" ng-click="feedInfo.collapse = !feedInfo.collapse">{{feedInfo.code}}</td>
                         <td class="v-middle text-left" ng-click="feedInfo.collapse = !feedInfo.collapse" ng-if="feedInfo.minVoPrice == feedInfo.maxVoPrice">{{feedInfo.maxVoPrice | currency:'$':2}}</td>
                         <td class="v-middle text-left" ng-click="feedInfo.collapse = !feedInfo.collapse" ng-if="feedInfo.minVoPrice != feedInfo.maxVoPrice">{{feedInfo.minVoPrice | currency:'$':2}}~{{feedInfo.maxVoPrice | currency:'$':2}}</td>
-                        <td class="v-middle text-center" ng-click="feedInfo.collapse = !feedInfo.collapse"></td>
+                        <td class="v-middle text-center" ng-click="feedInfo.collapse = !feedInfo.collapse">{{feedInfo.qtyTotal}}</td>
                     </tr>
                     <tr ng-if="!feedInfo.collapse" ng-class="::feedInfo.subClassName" ng-repeat="skuInfo in feedInfo.skus" ng-repeat-end>
                         <td class="text-right v-middle"></td>
                         <td class="v-middle text-center"></td>
                         <td class="v-middle"></td>
-                        <td class="v-middle"></td>
+                        <td class="v-middle">{{skuInfo.variationTheme}}:{{skuInfo.size}}; weight:{{skuInfo.weight}}</td>
                         <td class="v-middle word-wrap">{{skuInfo.sku}}</td>
                         <td class="v-middle">{{skuInfo.voPrice | currency:'$':2}}</td>
-                        <td class="v-middle text-center"></td>
+                        <td class="v-middle text-center">{{skuInfo.qty}}</td>
                     </tr>
                     </tbody>
                 </table>
