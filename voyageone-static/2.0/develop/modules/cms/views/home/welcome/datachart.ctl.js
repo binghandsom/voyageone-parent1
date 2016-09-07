@@ -21,9 +21,7 @@ define([
 //             参数格式：type|status|cart
 //             type: 0/1/2 = feed/master/platform
 //             status: 0/1 = 未加入/已加入
-
-            var url="/marketing/black-brand/"+params;
-            //"/marketing/black-brand/0|1|0";
+            var url = "/marketing/black-brand/" + params;
             $location.path(url);
         }
         /**
@@ -33,7 +31,6 @@ define([
             $sessionStorage.feedSearch = value;
             $location.path(cRoutes.search_advance_param.url + "4/" + bizType + '/0/0');
         }
-
     }
     dController.$inject = ['$scope', '$menuService', '$location', 'cRoutes', '$sessionStorage'];
     return dController;
