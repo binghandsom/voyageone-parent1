@@ -5,5 +5,5 @@ package com.voyageone.web2.sdk.api.channeladvisor.domain;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class EmptyObject {
+public class EmptyObject extends CABaseModel {
 }

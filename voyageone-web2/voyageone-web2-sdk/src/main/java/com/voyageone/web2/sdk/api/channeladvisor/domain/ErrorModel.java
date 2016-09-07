@@ -1,4 +1,4 @@
-package com.voyageone.web2.sdk.api.channeladvisor.exception;
+package com.voyageone.web2.sdk.api.channeladvisor.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.web2.sdk.api.channeladvisor.enums.ErrorIDEnum;

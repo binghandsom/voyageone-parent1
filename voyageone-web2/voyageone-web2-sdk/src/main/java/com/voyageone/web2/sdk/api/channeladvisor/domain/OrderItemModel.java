@@ -2,14 +2,12 @@ package com.voyageone.web2.sdk.api.channeladvisor.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.math.BigDecimal;
-
 /**
  * @author aooer 2016/9/6.
  * @version 2.0.0
  * @since 2.0.0
  */
-public class OrderItemModel {
+public class OrderItemModel extends CABaseModel {
 
     @JsonProperty("ID")
     private String id;
@@ -18,10 +16,10 @@ public class OrderItemModel {
     private String sellerSku;
 
     @JsonProperty("Quantity")
-    private int quantity;
+    private Integer quantity;
 
     @JsonProperty("UnitPrice")
-    private BigDecimal unitPrice;
+    private Double unitPrice;
 
     public String getId() {
         return id;
@@ -39,19 +37,19 @@ public class OrderItemModel {
         this.sellerSku = sellerSku;
     }
 
-    public BigDecimal getUnitPrice() {
+    public Double getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(BigDecimal unitPrice) {
+    public void setUnitPrice(Double unitPrice) {
         this.unitPrice = unitPrice;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 }

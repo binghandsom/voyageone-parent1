@@ -10,7 +10,7 @@ import java.util.List;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class BuyableProductModel {
+public class BuyableProductModel extends CABaseModel {
 
     @JsonProperty("ListingStatus")
     private ListingStatusEnum listingStatus;

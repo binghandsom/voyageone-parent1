@@ -1,8 +1,10 @@
-package com.voyageone.web2.sdk.api.channeladvisor.response;
+package com.voyageone.web2.sdk.api.channeladvisor.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.voyageone.web2.sdk.api.channeladvisor.exception.ErrorModel;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,10 +12,10 @@ import java.util.List;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class ProductGroupResult {
+public class ProductGroupResultModel extends CABaseModel {
 
     @JsonProperty("BuyableProductResults")
-    private List<BuyableProductResult> BuyableProductResults;
+    private List<BuyableProductResultModel> BuyableProductResults;
 
     @JsonProperty("SellerSKU")
     private String sellerSKU;
@@ -24,11 +26,11 @@ public class ProductGroupResult {
     @JsonProperty("HasErrors")
     private boolean hasErrors;
 
-    public List<BuyableProductResult> getBuyableProductResults() {
+    public List<BuyableProductResultModel> getBuyableProductResults() {
         return BuyableProductResults;
     }
 
-    public void setBuyableProductResults(List<BuyableProductResult> buyableProductResults) {
+    public void setBuyableProductResults(List<BuyableProductResultModel> buyableProductResults) {
         BuyableProductResults = buyableProductResults;
     }
 
@@ -48,11 +50,25 @@ public class ProductGroupResult {
         this.errors = errors;
     }
 
+    @JsonIgnore
+    public void addError(ErrorModel error) {
+        if (this.errors == null) {
+            this.errors = new ArrayList<>();
+        }
+        this.errors.add(error);
+    }
+
     public boolean isHasErrors() {
-        return hasErrors;
+        return CollectionUtils.isEmpty(errors);
     }
 
     public void setHasErrors(boolean hasErrors) {
         this.hasErrors = hasErrors;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean hasErrors() {
+        return CollectionUtils.isEmpty(errors);
     }
 }

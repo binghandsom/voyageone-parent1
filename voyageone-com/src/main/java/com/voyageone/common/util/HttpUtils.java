@@ -178,7 +178,7 @@ public class HttpUtils {
         return sb.toString();
     }
 
-    public static String get(String url, Map<String, String> header) throws Exception {
+    public static String getHttp(String url, Map<String, String> header) throws Exception {
         HttpGet get = new HttpGet(new URI(url));
 
         // setHeader

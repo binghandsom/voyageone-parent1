@@ -9,7 +9,7 @@ import java.util.Date;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class OrderItemFulfillmentModel {
+public class OrderItemFulfillmentModel extends CABaseModel {
 
     @JsonProperty("OrderItemID")
     private String orderItemID;
@@ -87,4 +87,5 @@ public class OrderItemFulfillmentModel {
     public void setTrackingNumber(String trackingNumber) {
         this.trackingNumber = trackingNumber;
     }
+
 }

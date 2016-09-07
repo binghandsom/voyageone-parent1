@@ -1,5 +1,6 @@
 package com.voyageone.web2.sdk.api.channeladvisor.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.web2.sdk.api.channeladvisor.enums.OrderStatusEnum;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class OrderModel {
+public class OrderModel extends CABaseModel {
 
     @JsonProperty("Currency")
     private String currency;
@@ -32,28 +33,28 @@ public class OrderModel {
     private String requestedShippingMethod;
 
     @JsonProperty("TotalFees")
-    private double rotalFees;
+    private Double rotalFees;
 
     @JsonProperty("TotalGiftOptionPrice")
-    private double totalGiftOptionPrice;
+    private Double totalGiftOptionPrice;
 
     @JsonProperty("TotalGiftOptionTaxPrice")
-    private double totalGiftOptionTaxPrice;
+    private Double totalGiftOptionTaxPrice;
 
     @JsonProperty("TotalPrice")
-    private double totalPrice;
+    private Double totalPrice;
 
     @JsonProperty("TotalTaxPrice")
-    private double totalTaxPrice;
+    private Double totalTaxPrice;
 
     @JsonProperty("TotalShippingPrice")
-    private double totalShippingPrice;
+    private Double totalShippingPrice;
 
     @JsonProperty("TotalShippingTaxPrice")
-    private double totalShippingTaxPrice;
+    private Double totalShippingTaxPrice;
 
     @JsonProperty("VatInclusive")
-    private boolean vatInclusive;
+    private Boolean vatInclusive;
 
     @JsonProperty("BuyerAddress")
     private OrderAddressModel buyerAddress;
@@ -116,67 +117,67 @@ public class OrderModel {
         this.requestedShippingMethod = requestedShippingMethod;
     }
 
-    public double getRotalFees() {
+    public Double getRotalFees() {
         return rotalFees;
     }
 
-    public void setRotalFees(double rotalFees) {
+    public void setRotalFees(Double rotalFees) {
         this.rotalFees = rotalFees;
     }
 
-    public double getTotalGiftOptionPrice() {
+    public Double getTotalGiftOptionPrice() {
         return totalGiftOptionPrice;
     }
 
-    public void setTotalGiftOptionPrice(double totalGiftOptionPrice) {
+    public void setTotalGiftOptionPrice(Double totalGiftOptionPrice) {
         this.totalGiftOptionPrice = totalGiftOptionPrice;
     }
 
-    public double getTotalGiftOptionTaxPrice() {
+    public Double getTotalGiftOptionTaxPrice() {
         return totalGiftOptionTaxPrice;
     }
 
-    public void setTotalGiftOptionTaxPrice(double totalGiftOptionTaxPrice) {
+    public void setTotalGiftOptionTaxPrice(Double totalGiftOptionTaxPrice) {
         this.totalGiftOptionTaxPrice = totalGiftOptionTaxPrice;
     }
 
-    public double getTotalPrice() {
+    public Double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(double totalPrice) {
+    public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
     }
 
-    public double getTotalTaxPrice() {
+    public Double getTotalTaxPrice() {
         return totalTaxPrice;
     }
 
-    public void setTotalTaxPrice(double totalTaxPrice) {
+    public void setTotalTaxPrice(Double totalTaxPrice) {
         this.totalTaxPrice = totalTaxPrice;
     }
 
-    public double getTotalShippingPrice() {
+    public Double getTotalShippingPrice() {
         return totalShippingPrice;
     }
 
-    public void setTotalShippingPrice(double totalShippingPrice) {
+    public void setTotalShippingPrice(Double totalShippingPrice) {
         this.totalShippingPrice = totalShippingPrice;
     }
 
-    public double getTotalShippingTaxPrice() {
+    public Double getTotalShippingTaxPrice() {
         return totalShippingTaxPrice;
     }
 
-    public void setTotalShippingTaxPrice(double totalShippingTaxPrice) {
+    public void setTotalShippingTaxPrice(Double totalShippingTaxPrice) {
         this.totalShippingTaxPrice = totalShippingTaxPrice;
     }
 
-    public boolean isVatInclusive() {
+    public Boolean isVatInclusive() {
         return vatInclusive;
     }
 
-    public void setVatInclusive(boolean vatInclusive) {
+    public void setVatInclusive(Boolean vatInclusive) {
         this.vatInclusive = vatInclusive;
     }
 
@@ -211,4 +212,5 @@ public class OrderModel {
     public void setShippingLabelURL(String shippingLabelURL) {
         this.shippingLabelURL = shippingLabelURL;
     }
+
 }

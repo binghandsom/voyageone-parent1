@@ -21,6 +21,21 @@ public enum ListingStatusEnum {
         this.code = code;
     }
 
+    public int getCode() {
+        return this.code;
+    }
+
+    /**
+     * 提供一个获取枚举的方法，能够根据数字获取枚举
+     *
+     * @param code code
+     * @return 枚举
+     */
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    public static ListingStatusEnum getInstance(int code) {
+        return Arrays.stream(ListingStatusEnum.values()).filter(e -> e.code == code).findFirst().get();
+    }
+
     /**
      * 提供一个获取枚举的方法，能够根据数字或者字符串获取枚举
      *
@@ -28,6 +43,6 @@ public enum ListingStatusEnum {
      * @return 枚举
      */
     public static ListingStatusEnum getInstance(String value) {
-        return StringUtils.isDigit(value) ? Arrays.asList(ListingStatusEnum.values()).stream().filter(e -> e.code == Integer.parseInt(value)).findFirst().get() : ListingStatusEnum.valueOf(value);
+        return StringUtils.isDigit(value) ? getInstance(Integer.parseInt(value)) : null;
     }
 }

@@ -17,7 +17,7 @@ public enum ErrorIDEnum {
 
     SystemFailure(3000, ""),
 
-    SystemUnavailable(3001, ""),
+    SystemUnavailable(3001, "The API is currently down for maintenance."),
 
     RateLimitExceeded(3002, ""),
 
@@ -43,7 +43,7 @@ public enum ErrorIDEnum {
 
     ProductPendingReview(5200, ""),
 
-    OrderNotFound(6000, ""),
+    OrderNotFound(6000, "order id not found."),
 
     InvalidOrder(6001, ""),
 
@@ -91,7 +91,7 @@ public enum ErrorIDEnum {
 
 
     /**
-     * 提供一个获取枚举的方法，能够根据数字或者字符串获取枚举
+     * 提供一个获取枚举的方法，能够根据数字获取枚举
      *
      * @param code code
      * @return 枚举
@@ -107,8 +107,7 @@ public enum ErrorIDEnum {
      * @param value value
      * @return 枚举
      */
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public static ErrorIDEnum getInstance(String value) {
-        return StringUtils.isDigit(value) ? Arrays.stream(ErrorIDEnum.values()).filter(e -> e.code == Integer.parseInt(value)).findFirst().get() : ErrorIDEnum.valueOf(value);
+        return StringUtils.isDigit(value) ? getInstance(Integer.parseInt(value)) : null;
     }
 }

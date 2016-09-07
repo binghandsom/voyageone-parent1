@@ -1,12 +1,12 @@
 package com.voyageone.web2.sdk.api.channeladvisor.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.web2.sdk.api.channeladvisor.enums.ResponseStatusEnum;
-import com.voyageone.web2.sdk.api.channeladvisor.exception.ErrorModel;
+import com.voyageone.web2.sdk.api.channeladvisor.domain.ErrorModel;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -55,6 +55,7 @@ public class ActionResponse {
         this.errors = errors;
     }
 
+    @JsonIgnore
     public void addError(ErrorModel error) {
         if (this.errors == null) {
             this.errors = new ArrayList<>();
@@ -63,7 +64,7 @@ public class ActionResponse {
     }
 
     public boolean isHasErrors() {
-        return hasErrors;
+        return CollectionUtils.isEmpty(errors);
     }
 
     public void setHasErrors(boolean hasErrors) {
@@ -78,15 +79,4 @@ public class ActionResponse {
         this.responseBody = responseBody;
     }
 
-    public static ActionResponse createEmpty(boolean isHasErrors) {
-        ActionResponse result = new ActionResponse();
-
-        result.setResponseBody(new HashMap());
-        result.setStatus(ResponseStatusEnum.Complete);
-        result.setPendingUri(null);
-        result.setErrors(new ArrayList<>());
-        result.setHasErrors(isHasErrors);
-
-        return result;
-    }
 }

@@ -9,7 +9,7 @@ import java.util.List;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class OrderFulfillmentModel {
+public class OrderFulfillmentModel extends CABaseModel {
 
     @JsonProperty("ID")
     private String id;
@@ -32,4 +32,5 @@ public class OrderFulfillmentModel {
     public void setItems(List<OrderItemFulfillmentModel> items) {
         this.items = items;
     }
+
 }

@@ -1,8 +1,6 @@
 package com.voyageone.web2.sdk.api.channeladvisor.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.voyageone.web2.sdk.api.channeladvisor.domain.BuyableProductModel;
-import com.voyageone.web2.sdk.api.channeladvisor.domain.FieldModel;
 
 import java.util.List;
 
@@ -11,7 +9,7 @@ import java.util.List;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class ProductGroupModel {
+public class ProductGroupModel extends CABaseModel {
 
     @JsonProperty("BuyableProducts")
     private List<BuyableProductModel> buyableProducts;
@@ -45,4 +43,5 @@ public class ProductGroupModel {
     public void setFields(List<FieldModel> fields) {
         this.fields = fields;
     }
+
 }

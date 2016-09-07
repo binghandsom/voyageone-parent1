@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class OrderAddressModel {
+public class OrderAddressModel extends CABaseModel {
 
     @JsonProperty("EmailAddress")
     private String emailAddress;
@@ -151,4 +151,5 @@ public class OrderAddressModel {
     public void setNameSuffix(String nameSuffix) {
         this.nameSuffix = nameSuffix;
     }
+
 }

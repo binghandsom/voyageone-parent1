@@ -10,7 +10,6 @@ import java.util.Arrays;
  * @since 2.0.0
  */
 public enum ResponseStatusEnum {
-
     AsyncResponsePending(0),
     Complete(1),
     CompleteWithErrors(2),
@@ -22,6 +21,21 @@ public enum ResponseStatusEnum {
         this.code = code;
     }
 
+    public int getCode() {
+        return this.code;
+    }
+
+    /**
+     * 提供一个获取枚举的方法，能够根据数字获取枚举
+     *
+     * @param code code
+     * @return 枚举
+     */
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    public static ResponseStatusEnum getInstance(int code) {
+        return Arrays.stream(ResponseStatusEnum.values()).filter(e -> e.code == code).findFirst().get();
+    }
+
     /**
      * 提供一个获取枚举的方法，能够根据数字或者字符串获取枚举
      *
@@ -29,6 +43,6 @@ public enum ResponseStatusEnum {
      * @return 枚举
      */
     public static ResponseStatusEnum getInstance(String value) {
-        return StringUtils.isDigit(value) ? Arrays.asList(ResponseStatusEnum.values()).stream().filter(e -> e.code == Integer.parseInt(value)).findFirst().get() : ResponseStatusEnum.valueOf(value);
+        return StringUtils.isDigit(value) ? getInstance(Integer.parseInt(value)) : null;
     }
 }

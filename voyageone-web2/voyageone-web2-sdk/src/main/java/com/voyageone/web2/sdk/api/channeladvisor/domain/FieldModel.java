@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class FieldModel {
+public class FieldModel extends CABaseModel {
 
     @JsonProperty("Name")
     private String name;

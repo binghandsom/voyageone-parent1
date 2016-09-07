@@ -24,6 +24,22 @@ public enum OrderStatusEnum {
         this.code = code;
     }
 
+
+    public int getCode() {
+        return this.code;
+    }
+
+    /**
+     * 提供一个获取枚举的方法，能够根据数字获取枚举
+     *
+     * @param code code
+     * @return 枚举
+     */
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    public static OrderStatusEnum getInstance(int code) {
+        return Arrays.stream(OrderStatusEnum.values()).filter(e -> e.code == code).findFirst().get();
+    }
+
     /**
      * 提供一个获取枚举的方法，能够根据数字或者字符串获取枚举
      *
@@ -31,6 +47,6 @@ public enum OrderStatusEnum {
      * @return 枚举
      */
     public static OrderStatusEnum getInstance(String value) {
-        return StringUtils.isDigit(value) ? Arrays.asList(OrderStatusEnum.values()).stream().filter(e -> e.code == Integer.parseInt(value)).findFirst().get() : OrderStatusEnum.valueOf(value);
+        return StringUtils.isDigit(value) ? getInstance(Integer.parseInt(value)) : null;
     }
 }

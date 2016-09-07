@@ -8,7 +8,7 @@ import com.voyageone.web2.sdk.api.channeladvisor.enums.CancellationReasonEnum;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class OrderItemCancellationModel {
+public class OrderItemCancellationModel extends CABaseModel {
 
     @JsonProperty("ID")
     private String id;
@@ -17,7 +17,7 @@ public class OrderItemCancellationModel {
     private String sellerSku;
 
     @JsonProperty("Quantity")
-    private int quantity;
+    private Integer quantity;
 
     @JsonProperty("Reason")
     private CancellationReasonEnum reason;
@@ -54,5 +54,4 @@ public class OrderItemCancellationModel {
     public void setReason(CancellationReasonEnum reason) {
         this.reason = reason;
     }
-
 }

@@ -28,6 +28,21 @@ public enum CancellationReasonEnum {
         this.code = code;
     }
 
+    public int getCode() {
+        return this.code;
+    }
+
+    /**
+     * 提供一个获取枚举的方法，能够根据数字获取枚举
+     *
+     * @param code code
+     * @return 枚举
+     */
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    public static CancellationReasonEnum getInstance(int code) {
+        return Arrays.stream(CancellationReasonEnum.values()).filter(e -> e.code == code).findFirst().get();
+    }
+
     /**
      * 提供一个获取枚举的方法，能够根据数字或者字符串获取枚举
      *
@@ -35,7 +50,7 @@ public enum CancellationReasonEnum {
      * @return 枚举
      */
     public static CancellationReasonEnum getInstance(String value) {
-        return StringUtils.isDigit(value) ? Arrays.asList(CancellationReasonEnum.values()).stream().filter(e -> e.code == Integer.parseInt(value)).findFirst().get() : CancellationReasonEnum.valueOf(value);
+        return StringUtils.isDigit(value) ? getInstance(Integer.parseInt(value)) : null;
     }
 
 }
