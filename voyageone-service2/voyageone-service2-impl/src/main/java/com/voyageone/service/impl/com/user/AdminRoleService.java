@@ -55,6 +55,10 @@ public class AdminRoleService extends BaseService {
     @Autowired
     AdminResourceDaoExt adminResourceDaoExt;
 
+    @Autowired
+    AdminUserService adminUserService;
+
+
 
     public Map<Integer, String> getAllRole() {
         List<ComRoleModel> roleList = comRoleDao.selectList(new HashMap<String, Object>() {{
@@ -364,6 +368,40 @@ public class AdminRoleService extends BaseService {
                 }
             }
         }
+    }
+
+
+    public List<Map<String, Object>> getAllPermConfig( List<Integer> roleIds) {
+
+        List<Map> list = adminResourceDaoExt.selectAllPermConfig(roleIds);
+
+        Integer roleCnt = roleIds.size();
+
+
+        List<Map<String, Object>> all = adminUserService.getAllApp();
+
+        for(Map map : all)
+        {
+            if(list.stream().filter(w -> w.get("application").equals(map.get("application"))).count() > 0)
+            {
+                if(list.stream().filter(w -> w.get("application").equals(map.get("application"))).count()  == roleCnt)
+                {
+                    map.put("selected", 1);
+                }
+                else
+                {
+                    map.put("selected", 2);
+                }
+            }
+            else
+            {
+                map.put("selected", 0);
+            }
+        }
+
+        return all;
+
+
     }
 
 

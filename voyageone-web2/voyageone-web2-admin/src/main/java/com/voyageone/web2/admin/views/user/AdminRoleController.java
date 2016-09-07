@@ -186,8 +186,12 @@ public class AdminRoleController extends AdminController {
 
         String application = requestMap.getOrDefault("application", "").toString();
 
-        List<AdminResourceBean> result = adminRoleService.getAuthByRoles(roleIds, application);
+        List<AdminResourceBean> res = adminRoleService.getAuthByRoles(roleIds, application);
+        List<Map<String, Object>> perms = adminRoleService.getAllPermConfig(roleIds);
 
+        Map<String, Object> result = new HashMap<>();
+        result.put("res", res);
+        result.put("perms", perms);
         return success(result);
     }
 

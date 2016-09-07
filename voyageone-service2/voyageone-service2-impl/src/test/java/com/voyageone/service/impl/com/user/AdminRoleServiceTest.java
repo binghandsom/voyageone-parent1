@@ -109,4 +109,15 @@ public class AdminRoleServiceTest {
 
 
     }
+
+    @Test
+    public void testGetAllPermConfig() throws Exception {
+        List<Integer> roles = new ArrayList<>();
+
+        roles.add(4);
+
+        List<Map<String, Object>> result =  adminRoleService.getAllPermConfig(roles);
+
+        System.out.println(JacksonUtil.bean2Json(result));
+    }
 }

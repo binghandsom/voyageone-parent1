@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface AdminResourceDaoExt {
@@ -15,5 +16,7 @@ public interface AdminResourceDaoExt {
     List<AdminResourceBean> selectMenu(Object map);
 
     List<AdminResourceBean> selectRes(@Param("application") String app);
+
+    List<Map> selectAllPermConfig(@Param("roleIds")List<Integer> list);
 
 }
