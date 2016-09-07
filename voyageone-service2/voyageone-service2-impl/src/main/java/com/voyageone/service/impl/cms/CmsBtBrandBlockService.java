@@ -30,7 +30,7 @@ public class CmsBtBrandBlockService extends BaseService {
         this.btBrandBlockDao = btBrandBlockDao;
     }
 
-    public boolean isBlocked(String channelId, int cartIt, String feedBrand, int masterBrandId, String platformBrand) {
+    public boolean isBlocked(String channelId, int cartIt, String feedBrand, String masterBrandId, String platformBrand) {
         // TODO 后续实现
         return false;
     }

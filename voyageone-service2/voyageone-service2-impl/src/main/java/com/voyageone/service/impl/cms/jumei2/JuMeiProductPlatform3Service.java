@@ -143,14 +143,17 @@ public class JuMeiProductPlatform3Service extends BaseService {
     }
     //所有api调用前check
     public void api_beforeCheck(UpdateJmParameter parameter) {
+        String errorMsg = "";
         String platformBrand = parameter.platform.getpBrandId();
         String masterBrand = parameter.cmsBtProductModel.getCommon().getFields().getBrand();
         CmsBtFeedInfoModel cmsBtFeedInfoModel= feedInfoService.getProductByCode(parameter.cmsBtProductModel.getChannelId(),parameter.cmsBtProductModel.getCommon().getFields().getCode());
        String feedBrand=cmsBtFeedInfoModel.getBrand();
-        //CmsBtBrandBlockService.isBlocked(parameter.cmsBtProductModel.getChannelId(),27,feedBrand,)
-        String errorMsg = "";
+        if(CmsBtBrandBlockService.isBlocked(parameter.cmsBtProductModel.getChannelId(),27,feedBrand,masterBrand,platformBrand))
+        {
+            errorMsg="该商品品牌已加入黑名单,不能再售";
+        }
         // 6.0.1
-        if ("1".equalsIgnoreCase(parameter.cmsBtProductModel.getLock()))//1:lock, 0:unLock
+       else if ("1".equalsIgnoreCase(parameter.cmsBtProductModel.getLock()))//1:lock, 0:unLock
         {
             errorMsg = "商品被Lock，如确实需要上传商品，请先解锁";
         }
