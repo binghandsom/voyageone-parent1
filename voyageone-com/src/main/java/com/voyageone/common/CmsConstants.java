@@ -141,6 +141,9 @@ public class CmsConstants {
 
         // 新建product时是否自动设置PC端自拍商品图images6(1:自动设置  空，0:不设置)
         String AUTO_SET_IMAGES6_FLG = "AUTO_SET_IMAGES6_FLG";
+
+        // feed增加状态属性
+        String AUTO_SET_FEED_IMPORT_FLG = "AUTO_SET_FEED_IMPORT_FLG";
     }
 
     public interface DataAmount {
