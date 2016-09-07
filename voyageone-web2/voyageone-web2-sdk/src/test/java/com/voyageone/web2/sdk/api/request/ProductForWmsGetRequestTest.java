@@ -1,5 +1,6 @@
 package com.voyageone.web2.sdk.api.request;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.response.ProductForWmsGetResponse;
 import org.junit.Test;
@@ -31,6 +32,6 @@ public class ProductForWmsGetRequestTest {
         //SDK取得Product 数据
         ProductForWmsGetResponse response = voApiClient.execute(requestModel);
 
-        System.out.println(response);
+        System.out.println(JacksonUtil.bean2Json(response));
     }
 }

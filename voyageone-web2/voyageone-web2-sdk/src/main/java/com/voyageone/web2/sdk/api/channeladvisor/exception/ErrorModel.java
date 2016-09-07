@@ -19,6 +19,18 @@ public class ErrorModel {
     @JsonProperty("Message")
     private String message;
 
+    public ErrorModel(ErrorIDEnum errorIDEnum, String message) {
+        this.id = errorIDEnum;
+        this.errorCode = String.valueOf(errorIDEnum.getCode());
+        this.message = message;
+    }
+
+    public ErrorModel(ErrorIDEnum errorIDEnum, String errorCode, String message) {
+        this.id = errorIDEnum;
+        this.errorCode = errorCode;
+        this.message = message;
+    }
+
     public ErrorIDEnum getId() {
         return id;
     }

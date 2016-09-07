@@ -1,13 +1,13 @@
 package com.voyageone.web2.openapi.channeladvisor.constants;
 
 /**
- * 定义所有 BI API 的地址定义
+ * 定义所有 ChannelAdvisor API 的地址定义
  *
  * @author chuanyu.liang, 16/08/25
  * @version 2.0.0
  * @since 2.0.0
  */
-public interface UrlConstants {
+public interface CAUrlConstants {
 
     String ROOT = "/rest/channeladvisor";
 

@@ -1,6 +1,6 @@
 package com.voyageone.web2.openapi.channeladvisor.control;
 
-import com.voyageone.web2.openapi.channeladvisor.constants.UrlConstants;
+import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
 
 /**
  * @author aooer 2016/9/7.
@@ -14,7 +14,7 @@ public class ProductControllerTest {
     public static void main(String[] args) {
 
         //获取产品
-        String url=BASE_URL+ UrlConstants.PRODUCTS.GET_PRODUCTS;
+        String url=BASE_URL+ CAUrlConstants.PRODUCTS.GET_PRODUCTS;
 
 
 

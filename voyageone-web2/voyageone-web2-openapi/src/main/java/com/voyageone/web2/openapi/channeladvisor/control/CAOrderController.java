@@ -1,7 +1,7 @@
 package com.voyageone.web2.openapi.channeladvisor.control;
 
-import com.voyageone.web2.openapi.OpenApiBaseController;
-import com.voyageone.web2.openapi.channeladvisor.constants.UrlConstants;
+import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseController;
+import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
 import com.voyageone.web2.sdk.api.channeladvisor.request.OrderCancellationRequest;
 import com.voyageone.web2.sdk.api.channeladvisor.request.ShipRequest;
 import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping(
-        value = UrlConstants.ROOT
+        value = CAUrlConstants.ROOT
 )
-public class CAOrderController extends OpenApiBaseController {
+public class CAOrderController extends CAOpenApiBaseController {
 
-    @RequestMapping(value = UrlConstants.ORDERS.GET_ORDERS, method = RequestMethod.GET)
+    @RequestMapping(value = CAUrlConstants.ORDERS.GET_ORDERS, method = RequestMethod.GET)
     public ActionResponse getOrders(@RequestParam String status, @RequestParam String limit) {
 
         //check param
@@ -31,7 +31,7 @@ public class CAOrderController extends OpenApiBaseController {
         return null;
     }
 
-    @RequestMapping(value = UrlConstants.ORDERS.GET_ORDER, method = RequestMethod.GET)
+    @RequestMapping(value = CAUrlConstants.ORDERS.GET_ORDER, method = RequestMethod.GET)
     public ActionResponse getOrderById(@PathVariable String id) {
 
         //check param
@@ -42,7 +42,7 @@ public class CAOrderController extends OpenApiBaseController {
         return null;
     }
 
-    @RequestMapping(value = UrlConstants.ORDERS.ACKNOWLEDGE_ORDER, method = RequestMethod.POST)
+    @RequestMapping(value = CAUrlConstants.ORDERS.ACKNOWLEDGE_ORDER, method = RequestMethod.POST)
     public ActionResponse acknowledgeOrder(@PathVariable String id) {
 
         //check param
@@ -53,7 +53,7 @@ public class CAOrderController extends OpenApiBaseController {
         return null;
     }
 
-    @RequestMapping(value = UrlConstants.ORDERS.SHIP_ORDER, method = RequestMethod.POST)
+    @RequestMapping(value = CAUrlConstants.ORDERS.SHIP_ORDER, method = RequestMethod.POST)
     public ActionResponse shipOrder(@PathVariable String id, @RequestBody ShipRequest request) {
 
         //check param
@@ -64,7 +64,7 @@ public class CAOrderController extends OpenApiBaseController {
         return null;
     }
 
-    @RequestMapping(value = UrlConstants.ORDERS.CANCEL_ORDER, method = RequestMethod.POST)
+    @RequestMapping(value = CAUrlConstants.ORDERS.CANCEL_ORDER, method = RequestMethod.POST)
     public ActionResponse cancelOrder(@PathVariable String id, @RequestBody OrderCancellationRequest request) {
 
         //check param
@@ -75,7 +75,7 @@ public class CAOrderController extends OpenApiBaseController {
         return null;
     }
 
-    @RequestMapping(value = UrlConstants.ORDERS.REFUND_ORDER, method = RequestMethod.POST)
+    @RequestMapping(value = CAUrlConstants.ORDERS.REFUND_ORDER, method = RequestMethod.POST)
     public ActionResponse refundOrder(@PathVariable String id, @RequestBody OrderCancellationRequest request) {
         //check param
 

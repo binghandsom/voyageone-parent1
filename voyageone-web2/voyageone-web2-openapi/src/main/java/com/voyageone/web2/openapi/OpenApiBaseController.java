@@ -3,6 +3,7 @@ package com.voyageone.web2.openapi;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
 import com.voyageone.common.logger.VOAbsLoggable;
+import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.response.SimpleResponse;
@@ -37,23 +38,28 @@ public abstract class OpenApiBaseController extends VOAbsLoggable {
      */
     private VoApiResponse buildError(HttpServletRequest request, Exception exception) {
         String code;
-        String message = exception.getMessage();
-        message = StringUtils.isEmpty(message) ? exception.getClass().getName() : message;
+        String message;
 
         if (exception instanceof ApiException) {
             ApiException apiException = (ApiException)exception;
             code = apiException.getErrCode();
+            message = apiException.getErrMsg();
         } else if (exception instanceof BusinessException) {
             BusinessException businessException = (BusinessException)exception;
             code = businessException.getCode();
+            message = businessException.getMessage();
         } else if (exception instanceof SystemException) {
             SystemException systemException = (SystemException)exception;
             code = systemException.getCode();
+            message = systemException.getMessage();
         } else {
-            code = "5";
+            code = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70000.getErrorCode();
+            message = exception.getMessage();
         }
 
-        return new VoApiResponse(code, message);
+        String messageNew = StringUtils.isEmpty(message) ? exception.getClass().getName() : message;
+
+        return new VoApiResponse(code, messageNew);
     }
 
 

@@ -1,8 +1,8 @@
 package com.voyageone.web2.openapi.channeladvisor.control;
 
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.web2.openapi.OpenApiBaseController;
-import com.voyageone.web2.openapi.channeladvisor.constants.UrlConstants;
+import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseController;
+import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
 import com.voyageone.web2.openapi.channeladvisor.service.CAProductService;
 import com.voyageone.web2.sdk.api.channeladvisor.request.ProductGroupRequest;
 import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
@@ -26,19 +26,19 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping(
-        value = UrlConstants.ROOT
+        value = CAUrlConstants.ROOT
 )
-public class CAProductController extends OpenApiBaseController {
+public class CAProductController extends CAOpenApiBaseController {
 
     @Autowired
     private CAProductService productService;
 
-    @RequestMapping(value = UrlConstants.PRODUCTS.GET_PRODUCTS, method = RequestMethod.GET)
+    @RequestMapping(value = CAUrlConstants.PRODUCTS.GET_PRODUCTS, method = RequestMethod.GET)
     public ActionResponse getProducts(HttpServletRequest request) {
         return productService.getProducts(request.getParameter("groupFields"),request.getParameter("buyableFields"));
     }
 
-    @RequestMapping(value = UrlConstants.PRODUCTS.UPDATE_PRODUCTS, method = RequestMethod.POST)
+    @RequestMapping(value = CAUrlConstants.PRODUCTS.UPDATE_PRODUCTS, method = RequestMethod.POST)
     public ActionResponse updateProducts(@RequestBody ProductGroupRequest request) {
 
 
@@ -52,7 +52,7 @@ public class CAProductController extends OpenApiBaseController {
         return JacksonUtil.json2Bean(jsonData,ActionResponse.class);
     }
 
-    @RequestMapping(value = UrlConstants.PRODUCTS.UPDATE_QUANTITY_PRICE, method = RequestMethod.POST)
+    @RequestMapping(value = CAUrlConstants.PRODUCTS.UPDATE_QUANTITY_PRICE, method = RequestMethod.POST)
     public ActionResponse updateQuantityPrice(@RequestBody ProductGroupRequest request) {
 
 
@@ -64,7 +64,7 @@ public class CAProductController extends OpenApiBaseController {
         return null;
     }
 
-    @RequestMapping(value = UrlConstants.PRODUCTS.UPDATE_STATUS, method = RequestMethod.GET)
+    @RequestMapping(value = CAUrlConstants.PRODUCTS.UPDATE_STATUS, method = RequestMethod.GET)
     public ActionResponse updateStatus(@RequestBody ProductGroupRequest request) {
 
 

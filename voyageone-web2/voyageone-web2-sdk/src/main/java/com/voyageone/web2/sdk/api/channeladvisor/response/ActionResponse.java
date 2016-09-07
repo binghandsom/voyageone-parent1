@@ -1,10 +1,12 @@
 package com.voyageone.web2.sdk.api.channeladvisor.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.sdk.api.channeladvisor.enums.ResponseStatusEnum;
 import com.voyageone.web2.sdk.api.channeladvisor.exception.ErrorModel;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -13,17 +15,6 @@ import java.util.List;
  * @since 2.0.0
  */
 public class ActionResponse {
-
-    public static void main(String[] args) {
-        ActionResponse response=new ActionResponse();
-        response.setHasErrors(true);
-        response.setPendingUri("Http://xxx.com/api");
-        response.setStatus(ResponseStatusEnum.Complete);
-
-        System.out.println(JacksonUtil.bean2Json(response));
-
-
-    }
 
     @JsonProperty("Status")
     private ResponseStatusEnum status;
@@ -64,6 +55,13 @@ public class ActionResponse {
         this.errors = errors;
     }
 
+    public void addError(ErrorModel error) {
+        if (this.errors == null) {
+            this.errors = new ArrayList<>();
+        }
+        this.errors.add(error);
+    }
+
     public boolean isHasErrors() {
         return hasErrors;
     }
@@ -78,5 +76,17 @@ public class ActionResponse {
 
     public void setResponseBody(Object responseBody) {
         this.responseBody = responseBody;
+    }
+
+    public static ActionResponse createEmpty(boolean isHasErrors) {
+        ActionResponse result = new ActionResponse();
+
+        result.setResponseBody(new HashMap());
+        result.setStatus(ResponseStatusEnum.Complete);
+        result.setPendingUri(null);
+        result.setErrors(new ArrayList<>());
+        result.setHasErrors(isHasErrors);
+
+        return result;
     }
 }
