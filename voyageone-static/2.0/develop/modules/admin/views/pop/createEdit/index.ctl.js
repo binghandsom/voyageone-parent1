@@ -52,6 +52,10 @@ define([
                 var result = {};
                 switch (self.configType) {
                     case 'Channel':
+                        if (self.sourceData.isReadOnly == true) {
+                            self.$uibModalInstance.close(self.sourceData);
+                            return;
+                        }
                         if (self.append == true) {
                             self.channelService.addChannelConfig(self.sourceData).then(function (res) {
                                 _.extend(result, {'res': 'success', 'sourceData': self.sourceData});

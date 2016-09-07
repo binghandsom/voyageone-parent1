@@ -25,26 +25,26 @@
                     <div class="row form-group">
                         <label class="col-sm-3 control-label">{{ctrl.getConfigType(ctrl.searchInfo.configType)}}名</label>
                         <div class="col-sm-8" ng-if="ctrl.searchInfo.configType=='Channel'">
-                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.orderChannelId"
+                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.orderChannelId" ng-disabled="ctrl.sourceData.isReadOnly == true"
                                     ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList" ng-change="ctrl.search(1)">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
                         <div class="col-sm-8" ng-if="ctrl.searchInfo.configType=='Store'">
-                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.storeId"
+                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.storeId" ng-disabled="ctrl.sourceData.isReadOnly == true"
                                     ng-options="store.storeId as store.storeName for store in ctrl.storeList" ng-change="ctrl.search(1)">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
                         <div class="col-sm-8" ng-if="ctrl.searchInfo.configType=='Task'">
-                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.taskId"
+                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.taskId" ng-disabled="ctrl.sourceData.isReadOnly == true"
                                     ng-options="task.taskId as task.taskName for task in ctrl.taskList" ng-change="ctrl.search(1)">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
                         <div class="col-sm-8" ng-if="ctrl.searchInfo.configType=='Shop'">
                             <select search-contains="true" chosen width="'100%'" class="form-control"
-                                    ng-model="ctrl.searchInfo.cartId"
+                                    ng-model="ctrl.searchInfo.cartId" ng-disabled="ctrl.sourceData.isReadOnly == true"
                                     ng-options="cart.cartId as cart.name for cart in ctrl.cartAllList">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>

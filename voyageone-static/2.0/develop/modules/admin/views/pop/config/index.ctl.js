@@ -16,7 +16,13 @@ define([
             this.AdminCartService = AdminCartService;
             this.cartShopService = cartShopService;
             this.selectRowsFactory = selectRowsFactory;
-            this.configPageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
+
+            var self = this;
+            this.configPageOption = {
+                curr: 1, size: 10, total: 0, fetch: function (page) {
+                    self.search(page)
+                }
+            };
             this.configSelList = {selList: []};
             this.tempConfigSelect = null;
             this.searchInfo = {
@@ -61,7 +67,7 @@ define([
                 }
                 self.search(1);
             },
-            search: function (page) {
+            search: function (page, item) {
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
                 self.configInfo = {};
@@ -87,9 +93,14 @@ define([
                                 'cfgVal1': configInfo.cfgVal1
                             };
                         };
-                        self.channelService.searchChannelConfigByPage(data).then(function (res) {
+                        if (self.sourceData.isReadOnly == true) {
+                            res = self.getConfigPaginationData(item ? item : self.sourceData.sourceData.channel.channelConfig);
                             callback(res, selectKey);
-                        });
+                        } else {
+                            self.channelService.searchChannelConfigByPage(data).then(function (res) {
+                                callback(res, selectKey);
+                            });
+                        }
                         break;
                     case 'Store':
                         var selectKey = function (configInfo) {
@@ -138,8 +149,8 @@ define([
                         break;
                 }
                 function callback(res, selectKey) {
-                    self.cfgList = res.data.result;
-                    self.configPageOption.total = res.data.count;
+                    self.cfgList = res.data ? res.data.result : res;
+                    self.configPageOption.total = res.data ? res.data.count : self.cfgList.length;
 
                     if (self.tempConfigSelect == null) {
                         self.tempConfigSelect = new self.selectRowsFactory();
@@ -180,9 +191,19 @@ define([
                         self.list = _.filter(self.channelList, function (listItem) {
                             return listItem.orderChannelId == item.orderChannelId;
                         });
-                        _.extend(item, {'channelName': self.list[0].name, 'configType': self.searchInfo.configType});
+                        _.extend(item, {
+                            'channelName': self.list[0].name,
+                            'configType': self.searchInfo.configType,
+                            'isReadOnly': self.sourceData.isReadOnly
+                        });
                         self.popups.openCreateEdit(item).then(function (res) {
-                            if (res.res == 'success') self.search();
+                            if (res.res == 'success') {
+                                self.search();
+                            } else {
+                                var list = self.sourceData.sourceData.channel.channelConfig;
+                                list.push(res);
+                                self.search(1, list);
+                            }
                         });
                         break;
                     case 'Store':
@@ -193,7 +214,11 @@ define([
                         self.list = _.filter(self.storeList, function (listItem) {
                             return listItem.storeId == item.storeId;
                         });
-                        _.extend(item, {'shortName': self.list[0].storeName, 'configType': self.searchInfo.configType});
+                        _.extend(item, {
+                            'shortName': self.list[0].storeName,
+                            'configType': self.searchInfo.configType,
+                            'isReadOnly': self.sourceData.isReadOnly
+                        });
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search();
                         });
@@ -206,7 +231,11 @@ define([
                         self.list = _.filter(self.taskList, function (listItem) {
                             return listItem.taskId == item.taskId;
                         });
-                        _.extend(item, {'taskName': self.list[0].taskName, 'configType': self.searchInfo.configType});
+                        _.extend(item, {
+                            'taskName': self.list[0].taskName,
+                            'configType': self.searchInfo.configType,
+                            'isReadOnly': self.sourceData.isReadOnly
+                        });
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search();
                         });
@@ -225,7 +254,8 @@ define([
                         _.extend(item, {
                             'channelName': self.channelLlist[0].name,
                             'cartName': self.cartList[0].name,
-                            'configType': self.searchInfo.configType
+                            'configType': self.searchInfo.configType,
+                            'isReadOnly': self.sourceData.isReadOnly
                         });
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search(1);
@@ -237,7 +267,10 @@ define([
                 var self = this;
                 _.forEach(self.cfgList, function (cfgInfo) {
                     if (cfgInfo.mainKey == self.configSelList.selList[0].id) {
-                        _.extend(cfgInfo, {'configType': self.searchInfo.configType});
+                        _.extend(cfgInfo, {
+                            'configType': self.searchInfo.configType,
+                            'isReadOnly': self.sourceData.isReadOnly
+                        });
                         self.popups.openCreateEdit(cfgInfo).then(function () {
                             self.search(1);
                         });
@@ -255,10 +288,23 @@ define([
                     });
                     switch (self.searchInfo.configType) {
                         case 'Channel':
-                            self.channelService.deleteChannelConfig(delList).then(function (res) {
-                                if (res.data == false)self.alert(res.data.message);
-                                self.search(1);
-                            });
+                            if (self.sourceData.isReadOnly == true) {
+                                _.forEach(delList, function (item) {
+                                    var source = self.sourceData.sourceData.channel.channelConfig;
+                                    var data = _.find(source, function (sItem) {
+                                        return sItem.orderChannelId = item.orderChannelId;
+                                    });
+                                    if (source.indexOf(data) > -1) {
+                                        source.splice(source.indexOf(data), 1);
+                                        self.search(1);
+                                    }
+                                })
+                            } else {
+                                self.channelService.deleteChannelConfig(delList).then(function (res) {
+                                    if (res.data == false)self.alert(res.data.message);
+                                    self.search(1);
+                                });
+                            }
                             break;
                         case 'Store':
                             self.storeService.deleteStoreConfig(delList).then(function (res) {
@@ -299,6 +345,40 @@ define([
                         return "港口";
                         break;
                 }
+            },
+            getConfigPaginationData: function (data) {
+                var self = this;
+                var res = {
+                    data: {count: data.length, result: []}
+                };
+                var pageNum = self.searchInfo.pageInfo.curr,
+                    pageSize = self.searchInfo.pageInfo.size;
+                if (res.data.count > 0) {
+                    var filterFn = function (e) {
+                        if (e.cfgName != null && e.cfgName.indexOf(self.searchInfo.cfgName) == -1) {
+                            return false;
+                        } else if ((e.cfgVal1 != null && e.cfgVal1.indexOf(self.searchInfo.cfgVal) == -1)
+                            && (e.cfgVal2 != null && e.cfgVal2.indexOf(self.searchInfo.cfgVal) == -1)) {
+                            return false;
+                        }
+                        return true;
+                    };
+                    res.data.count = 0;
+                    _.forEach(data, function (e, i) {
+                        if (filterFn(e, i)) {
+                            res.data.count++;
+                            res.data.result.push(e);
+                        }
+                    });
+                }
+                var result = [];
+                _.forEach(res.data.result, function (e, i) {
+                    if (i >= pageSize * (pageNum - 1) && i < pageSize * pageNum) {
+                        result.push(e);
+                    }
+                });
+                res.data.result = result;
+                return res;
             }
         };
         return ConfigController;

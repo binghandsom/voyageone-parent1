@@ -7,7 +7,7 @@ define(['components/dist/voyageone.angular.com'], function () {
         'voyageone.angular'
     ]).controller('resetPassController', function ($scope, adminUserService) {
         $scope.submit = function () {
-            adminUserService.editPass().then(function (res) {
+            adminUserService.forgetPass().then(function (res) {
                 console.log(res);
             })
         }

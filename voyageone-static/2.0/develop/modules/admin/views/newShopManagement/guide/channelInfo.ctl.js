@@ -63,8 +63,11 @@ define([
                                 }
                             });
                         }
+                        self.alert('复制成功！');
                     } else {
+                        self.resListCopy = res.data;
                         self.resList = {};
+                        self.alert('复制成功！');
                     }
                 })
             },
@@ -161,9 +164,10 @@ define([
                     return;
                 } else {
                     var channelInfo = {
-                        'orderChannelId': self.resList.channel.orderChannelId,
+                        'orderChannelId': self.autoCopy == true ? self.resList.channel.orderChannelId : self.resListCopy.channel.orderChannelId,
                         'configType': type,
-                        'isReadOnly': true
+                        'isReadOnly': true,
+                        'sourceData': self.autoCopy == true ? self.resList : self.resListCopy
                     };
                     self.popups.openConfig(channelInfo);
 
@@ -171,7 +175,11 @@ define([
             },
             next: function () {
                 var self = this;
-                window.sessionStorage.setItem('channelCogInfo', JSON.stringify(self.resList));
+                if (self.autoCopy == true) {
+                    window.sessionStorage.setItem('channelCogInfo', JSON.stringify(self.resList));
+                } else {
+                    window.sessionStorage.setItem('channelCogInfo', JSON.stringify(self.resListCopy));
+                }
                 window.location.href = "#/newShop/guide/channelConfig";
             }
         };
