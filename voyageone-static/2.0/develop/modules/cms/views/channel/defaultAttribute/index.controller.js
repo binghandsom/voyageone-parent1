@@ -2,12 +2,7 @@
  * @description 平台默认属性设置一览
  * @date 2016-8-11
  */
-define(function (require) {
-
-    require('modules/cms/controller/popup.ctl');
-
-    var _ = require('underscore');
-    var cms = require('cms');
+define(['cms', 'underscore', 'modules/cms/controller/popup.ctl'], function (cms, _) {
 
     cms.controller('DefaultAttributeController', (function () {
 

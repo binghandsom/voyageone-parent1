@@ -39,3 +39,7 @@ small,
     color: #ffffff;
     padding: 8px;
 }
+
+.modal-600 {
+    width: 600px;
+}

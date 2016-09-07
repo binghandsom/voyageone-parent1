@@ -26,7 +26,8 @@ define([
                 catgoryList: [],
                 cidValue: [],
                 promotionTagType: 1,
-                freeTagType: 1
+                freeTagType: 1,
+                brandSelType: 1
             },
             _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
@@ -158,6 +159,7 @@ define([
                 cidValue: [],
                 promotionTagType: 1,
                 freeTagType: 1,
+                brandSelType: 1,
                 shopCatStatus: null,
                 inventory: '',
                 salesStart: null,
