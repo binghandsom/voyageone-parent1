@@ -354,6 +354,12 @@ define(function () {
             "templateUrl": "views/tools/reprice/re.price.tpl.html",
             "controllerUrl": "modules/cms/views/tools/reprice/re.price.controller",
             "controller": "RePriceController as ctrl"
+        },
+        "black-brand": {
+            "hash": "/marketing/black-brand",
+            "templateUrl": "views/channel/black_brand/list.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/black_brand/list.controller",
+            "controller": "BlackBrandListController as ctrl"
         }
     };
 });
