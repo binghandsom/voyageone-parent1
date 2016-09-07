@@ -1,12 +1,9 @@
 define([
     'underscore'
 ], function () {
-    function dController($scope, $menuService, $location, cRoutes, $sessionStorage , alert) {
+    function dController($scope, $menuService, $location, cRoutes, $sessionStorage) {
         $scope.vm = {sumData: {}};
         $scope.init = function () {
-
-            alert("首页<span class='text-u-red'>【每小时刷新一次】</span>，如与其它反馈有些许差异，请稍后重新确认。");
-
             $menuService.getHomeSumData().then(function (res) {
                 $scope.vm.sumData = res.data;
             });
@@ -27,7 +24,7 @@ define([
 
     }
 
-    dController.$inject = ['$scope', '$menuService', '$location', 'cRoutes', '$sessionStorage','alert'];
+    dController.$inject = ['$scope', '$menuService', '$location', 'cRoutes', '$sessionStorage'];
 
     return dController;
 });
