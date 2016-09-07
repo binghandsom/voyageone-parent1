@@ -153,7 +153,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             errorMsg="该商品品牌已加入黑名单,不能再售";
         }
         // 6.0.1
-       else if ("1".equalsIgnoreCase(parameter.cmsBtProductModel.getLock()))//1:lock, 0:unLock
+        else if ("1".equalsIgnoreCase(parameter.cmsBtProductModel.getLock()))//1:lock, 0:unLock
         {
             errorMsg = "商品被Lock，如确实需要上传商品，请先解锁";
         }
