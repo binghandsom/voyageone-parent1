@@ -205,16 +205,14 @@ define([
             this.popups.openShipment(shipmentInfo).then(function (shipment) {
                 self.currentShipment = shipment;
                 if (type == "new" && self.channelConfig.vendorOperateType == 'SKU') {
-                    var url = '#/shipment/shipment_info/shipment_detail/' + shipment.id;
-                    location.href = url;
+                    location.href = '#/shipment/shipment_info/shipment_detail/' + shipment.id;
                 }
             });
         };
 
         OrderInfoController.prototype.popAddToShipmentForSku = function () {
-            var url = '#/shipment/shipment_info/shipment_detail/' + this.currentShipment.id;
-            location.href = url;
-        }
+            location.href = '#/shipment/shipment_info/shipment_detail/' + this.currentShipment.id;
+        };
 
         OrderInfoController.prototype.popAddToShipmentForOrder = function (item) {
             var self = this;

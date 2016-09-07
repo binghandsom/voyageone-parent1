@@ -486,6 +486,12 @@
         </where>
     </select>
 
+    <select id="getLatestPrintedTIme" parameterType="HashMap">
+      SELECT `containerizing_time` FROM voyageone_vms.vms_bt_order_detail
+        WHERE shipment_id = #{shipmentId, jdbcType=INTEGER}
+        ORDER BY containerizing_time DESC LIMIT 1;
+    </select>
+
     <!-- update -->
     <update id="updateOrderStatus" parameterType="HashMap">
         update vms_bt_order_detail set `status` = #{status, jdbcType=VARCHAR}
@@ -568,7 +574,9 @@
         UPDATE vms_bt_order_detail
         SET `shipment_id`         = NULL,
             `containerizer`       = NULL,
-            `containerizing_time` = NULL
+            `containerizing_time` = NULL,
+            `modified`            = now(),
+            `modifier`            = #{modifier, jdbcType=VARCHAR}
         WHERE `channel_id` = #{channelId, jdbcType=VARCHAR}
         <choose>
             <when test="shipmentId != null">

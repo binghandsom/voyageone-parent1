@@ -11,12 +11,14 @@ angular.module("vo.directives").directive("leaf", function ($compile) {
                 element.append("<tree ng-if='leaf.children.length>0' tree='leaf.children'></tree>");
                 element.addClass('dropdown-submenu');
                 $compile(element.contents())(scope);
-                element.bind('click', function (event) {
+            }
+
+            element.bind('click', function (event) {
                     event.stopPropagation();
                     var paraSpan = document.createElement("span");
                     paraSpan.innerHTML="<label class='selectedCat' title = '点击取消选择' ng-click='ctrl.deleCat()'><i class='fa fa-close'></i>&nbsp;&nbsp;</label>";
 
-                    var node = document.createTextNode("已选择:" + scope.leaf.catPath.replace("-", "/"));
+                    var node = document.createTextNode("已选择:" + scope.leaf.catPath.replace(/-/g, "/"));
                     paraSpan.appendChild(node);
 
                     var navElement = document.getElementsByClassName("nav")[1];
@@ -24,6 +26,5 @@ angular.module("vo.directives").directive("leaf", function ($compile) {
                     navElement.appendChild(paraSpan);
                 });
             }
-        }
     };
 });

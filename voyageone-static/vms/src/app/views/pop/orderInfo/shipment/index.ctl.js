@@ -75,7 +75,7 @@ define([
                 }
 
                 self.shipmentPopupService.submit(req).then(function (data) {
-                    self.notify.success("TXT_SUCCESS");
+                    self.notify.success("TXT_SHIPMENT_MODIFIED_SUCCESSFULLY");
                     self.$uibModalInstance.close(data.currentShipment);
                 });
             });
@@ -100,7 +100,7 @@ define([
                             self.shipment = data.currentShipment;
                             if (self.shipment)
                                 self.shipmentExisted = true;
-                            self.notify.success("TXT_SUCCESS");
+                            self.notify.success("TXT_SHIPPED");
                             self.$uibModalInstance.close(self.shipment);
                         });
                     } else {
@@ -119,7 +119,7 @@ define([
                                     if (self.shipment.shippedDateTimestamp)
                                         self.shipment.shippedDate = new Date(self.shipment.shippedDateTimestamp);
                                 }
-                                self.notify.success("TXT_SUCCESS");
+                                self.notify.success("TXT_SHIPPED");
                                 self.$uibModalInstance.close(self.shipment);
                             });
                         })

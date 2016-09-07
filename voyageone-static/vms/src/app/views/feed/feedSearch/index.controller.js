@@ -32,12 +32,13 @@ define([
             this.selectedCat = {};
             this.categoryPath = [];
             this.divType = "-";
+            this.searchCats = [];
         }
 
         FeedInfoSearchController.prototype = {
             init: function () {
-                var main = this;
-                main.t = [{
+                var self = this;
+                self.rr = [{
                     catName: "Jon－Sofia－Soifa",
                     link: "#",
                     children: [{
@@ -45,31 +46,36 @@ define([
                         link: "#"
                     }]
                 }];
-                main.feedInfoSearchService.init().then(function (res) {
-                    main.categories = res.feedCategoryTree;
-                    // console.log(main.categories);
-                    main.categoryPath = [{level: 1, categories: main.categories}];
-                    main.search();
+                // for (var i = 0; i < self.categories.length; i++) {
+                //     self.replaceScore(self.categories[i]);
+                // }
+                self.feedInfoSearchService.init().then(function (res) {
+                    self.categories = res.feedCategoryTree;
+                    for (var i = 0; i < self.categories.length; i++) {
+                        self.replaceScore(self.categories[i]);
+                    }
+                    self.categoryPath = [{level: 1, categories: self.categories}];
+                    self.search();
                 });
             },
             getFeedInfoList: function () {
-                var main = this;
-                main.feedInfoSearchService.search({
-                    "code": main.parentSku,
-                    "name": main.name,
-                    "category": main.category,
-                    "priceStart": main.priceStart,
-                    "priceEnd": main.priceEnd,
-                    "curr": main.pageOption.curr,
-                    "size": main.pageOption.size
+                var self = this;
+                self.feedInfoSearchService.search({
+                    "code": self.parentSku,
+                    "name": self.name,
+                    "category": self.category,
+                    "priceStart": self.priceStart,
+                    "priceEnd": self.priceEnd,
+                    "curr": self.pageOption.curr,
+                    "size": self.pageOption.size
                 }).then(function (res) {
-                    main.pageOption.total = res.total;
-                    main.feedInfoList = res.feedInfoList.map(function (item) {
+                    self.pageOption.total = res.total;
+                    self.feedInfoList = res.feedInfoList.map(function (item) {
                         item.className = 'bg-default';
                         item.subClassName = 'bg-sub-default';
-                        item.collapse = main.collapse;
+                        item.collapse = self.collapse;
                         if (item.skus != undefined) {
-                            main.showAll = true;
+                            self.showAll = true;
                         }
                         return item;
                     })
@@ -94,12 +100,23 @@ define([
             },
 
             toggleAll: function () {
-                var main = this;
-                var collapse = (main.collapse = !main.collapse);
-                main.feedInfoList.forEach(function (item) {
+                var self = this;
+                var collapse = (self.collapse = !self.collapse);
+                self.feedInfoList.forEach(function (item) {
                     item.collapse = collapse;
                 });
+            },
+
+            replaceScore: function (category) {
+                var self = this;
+                category.catName = category.catName.replace(/－/g, '-');
+                if (category.children) {
+                    for (var i = 0; i < category.children.length; i++) {
+                        self.replaceScore(category.children[i]);
+                    }
+                }
             }
+
         };
 
         return FeedInfoSearchController;

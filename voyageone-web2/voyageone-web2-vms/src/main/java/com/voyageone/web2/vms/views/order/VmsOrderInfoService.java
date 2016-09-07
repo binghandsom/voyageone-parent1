@@ -643,7 +643,7 @@ public class VmsOrderInfoService extends BaseService {
                         && !vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
                 .count();
         if (scannedCount == 0)
-            return orderDetailService.removeSkuOrderId(user.getSelChannelId(), orderId);
+            return orderDetailService.removeSkuOrderId(user.getSelChannelId(), orderId, user.getUserName());
         // TODO: 16-8-29 取消订单内sku的扫描状态 vantis
         throw new BusinessException("8000039");
     }
