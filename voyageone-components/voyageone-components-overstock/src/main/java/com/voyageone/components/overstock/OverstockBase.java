@@ -7,7 +7,6 @@ import com.overstock.mp.mpc.externalclient.api.Result;
 import com.overstock.mp.mpc.externalclient.model.EventStatusType;
 import com.overstock.mp.mpc.externalclient.model.EventTypeType;
 import com.overstock.mp.mpc.externalclient.model.EventsType;
-import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.components.ComponentBase;
 import org.springframework.util.StringUtils;
 
@@ -47,13 +46,11 @@ public abstract class OverstockBase extends ComponentBase {
      * @return key
      */
     private String getV(String key) {
-////        if (key.equals("api_url")) return "https://mpc-sandbox.test.overstock.com/api/v1";
-//        if (key.equals("api_url")) return "https://mpc-sandbox.overstock.com/api/v1";
-//        if (key.equals("api_username")) return "voyageone";
-////        if (key.equals("api_password")) return "&zbrbqroxxl1Vtj";
-//        if (key.equals("api_password")) return "password";
-//        if (key.equals("api_channelkey")) return "VOYAGEONE";
-        return ThirdPartyConfigs.getVal1("024", key);
+        if (key.equals("api_url")) {return "https://mpc.overstock.com/api/v1";}
+        if (key.equals("api_username")) {return "voyageone";}
+
+        if (key.equals("api_password")) {return "njs7mzaYhyjknzf$";}
+        if (key.equals("api_channelkey")) {return "VOYAGEONE";}else {return null;}
     }
 
     /**
