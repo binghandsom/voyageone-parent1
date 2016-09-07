@@ -491,7 +491,7 @@ public class UploadToUSJoiService extends BaseTaskService {
             // delete by desmond 2016/09/06 start
             // 因为productService.updateProductPlatform()里面已经调用了记录价格变动履历的方法，所以这里不要再重新记录价格变动履历了
             // 记录商品价格变动履历,并向Mq发送消息同步sku,code,group价格范围
-//            addPriceHistoryAndSyncPriceScope(usJoiChannelId, targetProductList);
+//          addPriceHistoryAndSyncPriceScope(usJoiChannelId, targetProductList);
             // delete by desmond 2016/09/06 end
 
             // 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
