@@ -16,12 +16,70 @@
                         </div>
                     </div>
                     <div class="col-sm-12 wrapper">
-                        sf
+                        <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
+                            <div class="form-group m-t-sm m-r-xs">
+                                <button class="btn btn-default" ng-click="ctrl.config('Store')" ng-disabled="ctrl.channelSelList.selList.length > 1"><i class="fa fa-cog"></i>&nbsp;配置</button>
+                                <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                                <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.storeSelList.selList.length <= 0||ctrl.storeSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                                <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.storeSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                            </div>
+                        </div>
+                        <div class="scroll-y changeableHeight">
+                            <table class="table table-hover-new table-hover table_main">
+                                <thead>
+                                <tr>
+                                    <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
+                                        <label class="checkbox-inline c-checkbox" style="height: 15px;">
+                                            <input type="checkbox" ng-click="selectAll(ctrl.storeSelList)"
+                                                   ng-checked="isAllSelected(ctrl.storeSelList)" >
+                                            <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                        </label>
+                                    </th>
+                                    <th class="text-center mfb-xt" translate="TXT_CHANNEL_NAME"></th>
+                                    <th class="text-left mfb-xt" translate="TXT_STORE_NAME"></th>
+                                    <th class="text-left mfb-xt" translate="TXT_MAIN_STORE_NAME"></th>
+                                    <th class="text-center mfb-xxt" translate="TXT_STORE_TYPE"></th>
+                                    <th class="text-center mfb-xxt" translate="TXT_SALE_STATE"></th>
+                                    <th class="text-center mfb-xxt" translate="TXT_STORE_MANAGE_STATE"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_STORE_REMAINED"></th>
+                                    <th class="text-center mfb-xt" translate="TXT_COMMENTS"></th>
+                                    <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                                    <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td if-no-rows="ctrl.storeList.length||ctrl.storeList" colspan="9" style="padding: 0px"></td>
+                                </tr>
+                                <tr ng-repeat="list in ctrl.storeList">
+                                    <td class="text-left v-middle">
+                                        <label class="checkbox-inline c-checkbox" style="padding-top:4px">
+                                            <input ng-model="ctrl.storeSelList.selFlag[list.storeId]" type="checkbox" ng-controller="selectRowsCtrl"
+                                                   ng-click="selectOne(list.storeId, ctrl.storeSelList)">
+                                            <span class="fa fa-check"></span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center v-middle">{{list.channelName}}</td>
+                                    <td class="text-left v-middle">{{list.storeName}}</td>
+                                    <td class="text-left v-middle">{{list.storeArea}}</td>
+                                    <td class="text-center v-middle">{{ctrl.getStoreType(list.storeType)}}</td>
+                                    <td class="text-center v-middle">{{list.isSale?list.isSale=='1'?'在售':'不在售':''}}</td>
+                                    <td class="text-center v-middle">{{list.inventoryManager?list.inventoryManager=='1' ? '管理':'不管理':''}}</td>
+                                    <td class="text-left v-middle">{{ctrl.getInventoryHold(list.inventoryHold)}}</td>
+                                    <td class="text-center v-middle">{{list.modifier}}</td>
+                                    <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
+                                    <td class="text-left v-middle">{{list.modified}}</td>
+                                    <td class="text-center v-middle">{{list.modifier}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="col-sm-12">
                         <div id="step-buttons" class="text-center">
-                            <a class="btn btn-success btn-pop" href="#/newShop/guide/channelConfig"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;上一步</a>
-                            <a class="btn btn-success btn-pop" href="#/newShop/guide/cartSet">下一步&nbsp;&nbsp;<i class="fa fa-arrow-right"></i></a>
+                            <button class="btn btn-success btn-pop" href="#/newShop/guide/channelConfig"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;上一步</button>
+                            <button class="btn btn-success btn-pop" ng-click="ctrl.next()">下一步&nbsp;&nbsp;<i class="fa fa-arrow-right"></i></button>
                         </div>
                     </div>
                 </div>

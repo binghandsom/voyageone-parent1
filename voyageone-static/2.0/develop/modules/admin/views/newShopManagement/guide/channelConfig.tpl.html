@@ -27,7 +27,8 @@
                                         <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelSmsSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                                     </div>
                                 </div>
-                                <table class="table table-hover-new table-hover table_main">
+                                <div class="scroll-y changeableHeight">
+                                    <table class="table table-hover-new table-hover table_main">
                                         <thead>
                                         <tr>
                                             <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
@@ -70,6 +71,7 @@
                                         </tr>
                                         </tbody>
                                     </table>
+                                </div>
                             </uib-tab>
                             <!---------------------------------------------------第三方配置信息---------------------------------------------->
                             <uib-tab>
@@ -81,7 +83,8 @@
                                         <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelThirdSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                                     </div>
                                 </div>
-                                <table class="table table-hover-new table-hover table_main" style="table-layout: fixed">
+                                <div class="scroll-y changeableHeight">
+                                    <table class="table table-hover-new table-hover table_main" style="table-layout: fixed">
                                     <thead>
                                     <tr>
                                         <th class="text-left mfb-xxt" ng-controller="selectRowsCtrl">
@@ -164,6 +167,7 @@
                                     </tr>
                                     </tbody>
                                 </table>
+                                </div>
                             </uib-tab>
                             <!---------------------------------------------------快递配置信息---------------------------------------------->
                             <uib-tab>
@@ -175,7 +179,8 @@
                                         <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.carrierSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                                     </div>
                                 </div>
-                                <table class="table table-hover-new table-hover table_main" style="table-layout: fixed">
+                                <div class="scroll-y changeableHeight">
+                                    <table class="table table-hover-new table-hover table_main" style="table-layout: fixed">
                                     <thead>
                                     <tr>
                                         <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
@@ -218,18 +223,74 @@
                                     </tr>
                                     </tbody>
                                 </table>
+                                </div>
                             </uib-tab>
                             <!---------------------------------------------------类型属性配置信息---------------------------------------------->
                             <uib-tab>
                                 <tab-heading><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TYPE_ATTR_COG_INFO' | translate}}</tab-heading>
-                                    ae
+                                <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
+                                    <div class="form-group m-t-sm m-r-xs">
+                                        <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                                        <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.channelTypeSelList.selList.length <= 0||ctrl.channelTypeSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                                        <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelTypeSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                                    </div>
+                                </div>
+                                <div class="scroll-y changeableHeight">
+                                    <table class="table table-hover-new table-hover table_main">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
+                                            <label class="checkbox-inline c-checkbox" style="height: 15px;">
+                                                <input type="checkbox" ng-click="selectAll(ctrl.channelTypeSelList)"
+                                                       ng-checked="isAllSelected(ctrl.channelTypeSelList)" >
+                                                <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                            </label>
+                                        </th>
+                                        <th class="text-center mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
+                                        <th class="text-left mfb-xt" translate="TXT_CHANNEL_TYPE_NAME"></th>
+                                        <th class="text-left mfb-xxt" translate="TXT_PROPERTY_NAME"></th>
+                                        <th class="text-center mfb-xxt" translate="TXT_PROPERTY_VALUE"></th>
+                                        <th class="text-center mfb-xxt">{{'TXT_CHANNEL_ADD_NAME'|translate}}1</th>
+                                        <th class="text-center mfb-xxt">{{'TXT_CHANNEL_ADD_NAME'|translate}}2</th>
+                                        <th class="text-center mfb-xxt" translate="TXT_CHANNEL_LANGUAGE_TYPE"></th>
+                                        <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
+                                        <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                                        <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td if-no-rows="ctrl.channelTypeList.length||ctrl.channelTypeList" colspan="11" style="padding: 0px"></td>
+                                    </tr>
+                                    <tr ng-repeat="list in ctrl.channelTypeList">
+                                        <td class="text-left v-middle">
+                                            <label class="checkbox-inline c-checkbox" style="padding-top:4px">
+                                                <input ng-model="ctrl.channelTypeSelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
+                                                       ng-click="selectOne(list.id, ctrl.channelTypeSelList)">
+                                                <span class="fa fa-check"></span>
+                                            </label>
+                                        </td>
+                                        <td class="text-center v-middle">{{list.channelName}}</td>
+                                        <td class="text-left v-middle">{{list.typeName}}</td>
+                                        <td class="text-left v-middle">{{list.name}}</td>
+                                        <td class="text-center v-middle">{{list.value}}</td>
+                                        <td class="text-center v-middle">{{list.addName1}}</td>
+                                        <td class="text-center v-middle">{{list.addName2}}</td>
+                                        <td class="text-center v-middle">{{list.langId?list.langId=='en'?'英文':'中文':''}}</td>
+                                        <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
+                                        <td class="text-left v-middle">{{list.modified}}</td>
+                                        <td class="text-center v-middle">{{list.modifier}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                </div>
                             </uib-tab>
                         </uib-tabset>
                     </div>
                     <div class="col-sm-12">
                         <div id="step-buttons" class="text-center">
-                            <a class="btn btn-success btn-pop" href="#/newShop/guide"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;上一步</a>
-                            <a class="btn btn-success btn-pop" href="#/newShop/guide/storeInfo">下一步&nbsp;&nbsp;<i class="fa fa-arrow-right"></i></a>
+                            <button class="btn btn-success btn-pop" href="#/newShop/guide"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;上一步</button>
+                            <button class="btn btn-success btn-pop" ng-click="ctrl.next()">下一步&nbsp;&nbsp;<i class="fa fa-arrow-right"></i></button>
                         </div>
                     </div>
                 </div>

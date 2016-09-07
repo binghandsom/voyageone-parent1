@@ -34,3 +34,7 @@ ul[uib-datepicker-popup-wrap] button {
      max-height:80px;
      display: inline-block;
  }
+.changeableHeight{
+    max-height: 580px;
+    width:100%;
+}

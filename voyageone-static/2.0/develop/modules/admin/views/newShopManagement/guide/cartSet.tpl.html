@@ -16,12 +16,130 @@
                         </div>
                     </div>
                     <div class="col-sm-12 wrapper">
-                        sf
+                        <uib-tabset>
+                        <!---------------------------------------------------渠道Cart信息---------------------------------------------->
+                        <uib-tab>
+                            <tab-heading><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CART_CHANNEL_SHOP' | translate}}</tab-heading>
+                            <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
+                                <div class="form-group m-t-sm m-r-xs">
+                                    <button class="btn btn-default" ng-click="ctrl.config('Shop')" ng-disabled="ctrl.cartShopSelList.selList.length > 1"><i class="fa fa-cog"></i>&nbsp;配置</button>
+                                    <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.cartShopSelList.selList.length <= 0||ctrl.cartShopSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.cartShopSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                                </div>
+                            </div>
+                            <div class="scroll-y changeableHeight">
+                                <table class="table table-hover-new table-hover table_main">
+                                <thead>
+                                <tr>
+                                    <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
+                                        <label class="checkbox-inline c-checkbox" style="height: 15px;">
+                                            <input type="checkbox" ng-click="selectAll(ctrl.cartShopSelList)"
+                                                   ng-checked="isAllSelected(ctrl.cartShopSelList)" >
+                                            <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                        </label>
+                                    </th>
+                                    <th class="text-center mfb-xt" translate="TXT_CHANNEL_NAME"></th>
+                                    <th class="text-left mfb-xt" translate="TXT_NAME_CART"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_SHOP_NAME"></th>
+                                    <th class="text-center mfb-xxt" translate="TXT_APP_URL"></th>
+                                    <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
+                                    <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                                    <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td if-no-rows="ctrl.cartShopList.length||ctrl.cartShopList" colspan="9" style="padding: 0px"></td>
+                                </tr>
+                                <tr ng-repeat="list in ctrl.cartShopList">
+                                    <td class="text-left v-middle">
+                                        <label class="checkbox-inline c-checkbox" style="padding-top:4px">
+                                            <input ng-model="ctrl.cartShopSelList.selFlag[list.cartId]" type="checkbox" ng-controller="selectRowsCtrl"
+                                                   ng-click="selectOne(list.cartId, ctrl.cartShopSelList)">
+                                            <span class="fa fa-check"></span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center v-middle">{{list.channelName}}</td>
+                                    <td class="text-left v-middle">{{list.cartName}}</td>
+                                    <td class="text-left v-middle">{{list.shopName}}</td>
+                                    <td class="text-center v-middle">{{list.appUrl}}</td>
+                                    <td class="text-center v-middle">{{list.comment}}</td>
+                                    <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
+                                    <td class="text-left v-middle">{{list.modified}}</td>
+                                    <td class="text-center v-middle">{{list.modifier}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            </div>
+                        </uib-tab>
+                        <!---------------------------------------------------Cart物流信息---------------------------------------------->
+                        <uib-tab>
+                            <tab-heading><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CART_TRACKING_INFO' | translate}}</tab-heading>
+                            <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
+                                <div class="form-group m-t-sm m-r-xs">
+                                    <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.cartTrackingSelList.selList.length <= 0||ctrl.cartTrackingSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.cartTrackingSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                                </div>
+                            </div>
+                            <div class="scroll-y changeableHeight">
+                                <table class="table table-hover-new table-hover table_main">
+                        <thead>
+                        <tr>
+                            <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
+                                <label class="checkbox-inline c-checkbox" style="height: 15px;">
+                                    <input type="checkbox" ng-click="selectAll(ctrl.cartTrackingSelList)"
+                                           ng-checked="isAllSelected(ctrl.cartTrackingSelList)" >
+                                    <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                </label>
+                            </th>
+                            <th class="text-center mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
+                            <th class="text-center mfb-xt" translate="TXT_CART_SHOP_NAME"></th>
+                            <th class="text-center mfb-xt" translate="TXT_TRACKING_STATE"></th>
+                            <th class="text-center mfb-xxt" translate="TXT_TRACKING_INFO"></th>
+                            <th class="text-center mfb-xt" translate="TXT_TRACKING_LOCATION"></th>
+                            <th class="text-center mfb-xt" translate="TXT_IS_DISPLAY"></th>
+                            <th class="text-center mfb-xxt" translate="TXT_TRACKING_IS_EXPAND"></th>
+                            <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
+                            <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                            <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td if-no-rows="ctrl.cartTrackingList.length||ctrl.cartTrackingList" colspan="11" style="padding: 0px"></td>
+                        </tr>
+                        <tr ng-repeat="list in ctrl.cartTrackingList">
+                            <td class="text-left v-middle">
+                                <label class="checkbox-inline c-checkbox" style="padding-top:4px">
+                                    <input ng-model="ctrl.cartTrackingSelList.selFlag[list.seq]" type="checkbox" ng-controller="selectRowsCtrl"
+                                           ng-click="selectOne(list.seq, ctrl.cartTrackingSelList)">
+                                    <span class="fa fa-check"></span>
+                                </label>
+                            </td>
+                            <td class="text-center v-middle">{{list.channelName}}</td>
+                            <td class="text-center v-middle">{{list.cartName}}</td>
+                            <td class="text-center v-middle">{{list.trackingStatus}}</td>
+                            <td class="text-left v-middle">{{list.trackingInfo}}</td>
+                            <td class="text-center v-middle">{{list.location}}</td>
+                            <td class="text-center v-middle">{{list.displayFlg?list.displayFlg=='1'?'显示':'隐藏':''}}</td>
+                            <td class="text-center v-middle">{{list.trackingSpreadFlg =='1'?'取得运单号路由信息':''}}</td>
+                            <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
+                            <td class="text-left v-middle">{{list.modified}}</td>
+                            <td class="text-center v-middle">{{list.modifier}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                            </div>
+                        </uib-tab>
+                        </uib-tabset>
                     </div>
                     <div class="col-sm-12">
                         <div id="step-buttons" class="text-center">
-                            <a class="btn btn-success btn-pop" href="#/newShop/guide/storeInfo"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;上一步</a>
-                            <a class="btn btn-success btn-pop" href="#/newShop/guide/batchJob">下一步&nbsp;&nbsp;<i class="fa fa-arrow-right"></i></a>
+                            <button class="btn btn-success btn-pop" href="#/newShop/guide/storeInfo"><i class="fa fa-arrow-left"></i>&nbsp;&nbsp;上一步</button>
+                            <button class="btn btn-success btn-pop" ng-click="ctrl.next()">下一步&nbsp;&nbsp;<i class="fa fa-arrow-right"></i></button>
                         </div>
                     </div>
                 </div>
