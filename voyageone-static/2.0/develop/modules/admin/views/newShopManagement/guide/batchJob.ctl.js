@@ -6,15 +6,15 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('GuideBatchJobController', (function () {
-        function GuideBatchJobController(popups, alert, confirm, selectRowsFactory) {
+        function GuideBatchJobController(popups, alert, confirm, selectRowsFactory, newShopService) {
             this.context = JSON.parse(window.sessionStorage.getItem('cartInfo'));
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
             this.selectRowsFactory = selectRowsFactory;
+            this.newShopService = newShopService;
             this.tempTaskSelect = null;
             this.taskSelList = {selList: []};
-
         }
 
         GuideBatchJobController.prototype = {
@@ -38,6 +38,13 @@ define([
                 });
                 self.taskSelList = self.tempTaskSelect.selectRowsInfo;
                 // End 设置勾选框
+            },
+            complete: function () {
+                var self = this;
+                self.confirm('您确定要提交全部新店的数据吗？').then(function () {
+                    self.newShopService.saveChannelSeries().then(function (res) {
+                    })
+                })
             }
         };
         return GuideBatchJobController;
