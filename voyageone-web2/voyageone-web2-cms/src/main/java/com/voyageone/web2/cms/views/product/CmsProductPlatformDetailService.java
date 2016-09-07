@@ -14,6 +14,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
@@ -45,13 +46,13 @@ public class CmsProductPlatformDetailService extends BaseAppService {
     @Autowired
     private ProductGroupService productGroupService;
     @Autowired
-    private CmsMtBrandService cmsMtBrandService;
-    @Autowired
     private PlatformSchemaService platformSchemaService;
     @Autowired
     private PlatformMappingService platformMappingService;
     @Autowired
     private PlatformCategoryService platformCategoryService;
+    @Autowired
+    private CmsMtBrandService cmsMtBrandService;
     @Autowired
     private SxProductService sxProductService;
 
@@ -72,7 +73,7 @@ public class CmsProductPlatformDetailService extends BaseAppService {
         }
 
         // platform 品牌名
-        if (StringUtil.isEmpty(platformCart.getpBrandId()) || StringUtil.isEmpty(platformCart.getpBrandName())) {
+//        if (StringUtil.isEmpty(platformCart.getpBrandId()) || StringUtil.isEmpty(platformCart.getpBrandName())) {
             if (cartId != CartEnums.Cart.USJGJ.getValue()
                     && cartId != CartEnums.Cart.USJGY.getValue()
                     && cartId != CartEnums.Cart.USJGT.getValue()) {
@@ -81,15 +82,12 @@ public class CmsProductPlatformDetailService extends BaseAppService {
                 parm.put("cartId", cartId);
                 parm.put("cmsBrand", cmsBtProduct.getCommon().getFields().getBrand());
                 parm.put("active", 1);
-                CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandService.getModelByMap(parm);
+                CmsMtBrandsMappingBean cmsMtBrandsMappingModel = cmsMtBrandService.getModelByMap(parm);
                 if (cmsMtBrandsMappingModel != null) {
                     platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
-                    platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
+                    platformCart.setpBrandName(cmsMtBrandsMappingModel.getpBrand());
                 }
-            } else {
-                platformCart.setpBrandName(cmsBtProduct.getCommon().getFields().getBrand());
             }
-        }
 
         if (cartId != CartEnums.Cart.USJGJ.getValue()
                 && cartId != CartEnums.Cart.USJGY.getValue()
@@ -186,18 +184,18 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), catId, channelId, cartId, prodId, language, catPath));
             platformCart.setpCatId(catId);
             // platform 品牌名
-            if (StringUtil.isEmpty(platformCart.getpBrandId()) || StringUtil.isEmpty(platformCart.getpBrandName())) {
+//            if (StringUtil.isEmpty(platformCart.getpBrandId()) || StringUtil.isEmpty(platformCart.getpBrandName())) {
                 Map<String, Object> parm = new HashMap<>();
                 parm.put("channelId", channelId);
                 parm.put("cartId", cartId);
                 parm.put("cmsBrand", cmsBtProduct.getCommon().getFields().getBrand());
                 parm.put("active", 1);
-                CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandService.getModelByMap(parm);
+                CmsMtBrandsMappingBean cmsMtBrandsMappingModel = cmsMtBrandService.getModelByMap(parm);
                 if (cmsMtBrandsMappingModel != null) {
                     platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
-                    platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
+                    platformCart.setpBrandName(cmsMtBrandsMappingModel.getpBrand());
                 }
-            }
+//            }
         } else {
             platformCart = new CmsBtProductModel_Platform_Cart();
             if(platformCart.getFields() == null) platformCart.setFields(new BaseMongoMap<>());
@@ -208,10 +206,10 @@ public class CmsProductPlatformDetailService extends BaseAppService {
             parm.put("cartId", cartId);
             parm.put("cmsBrand", cmsBtProduct.getCommon().getFields().getBrand());
             parm.put("active", 1);
-            CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandService.getModelByMap(parm);
+            CmsMtBrandsMappingBean cmsMtBrandsMappingModel = cmsMtBrandService.getModelByMap(parm);
             if (cmsMtBrandsMappingModel != null) {
                 platformCart.setpBrandId(cmsMtBrandsMappingModel.getBrandId());
-                platformCart.setpBrandName(cmsMtBrandsMappingModel.getCmsBrand());
+                platformCart.setpBrandName(cmsMtBrandsMappingModel.getpBrand());
             }
             platformCart.setpCatId(catId);
         }

@@ -82,7 +82,20 @@
                    {{vm._typeText}}&nbsp;&nbsp;{{vm._opeText}}&nbsp;&nbsp;{{vm.priceValue}}
                 </div>
             </div>
-            <div style="margin-left:40px;margin-top:20px;color:red">
+            <div class="form-group" ng-if="vm.priceType">
+                <div style="margin-left:60px;margin-top:15px">
+                    <label class="checkbox-inline c-radio">
+                        <input type="radio" value="1" ng-model="vm.skuUpdType"><span class="fa fa-check"></span> 商品内，SKU统一最高价
+                    </label>
+                    <label class="checkbox-inline c-radio">
+                        <input type="radio" value="2" ng-model="vm.skuUpdType"><span class="fa fa-check"></span> 商品内，SKU统一最低价
+                    </label>
+                    <label class="checkbox-inline c-radio">
+                        <input type="radio" value="3" ng-model="vm.skuUpdType"><span class="fa fa-check"></span> 商品内，SKU价格不统一
+                    </label>
+                </div>
+            </div>
+            <div style="margin-left:120px;margin-top:20px;color:red">
                 <span>最终售价的计算结果在以下情况下不更新：</span><br><span>1.低于指导价不更新</span><br><span>2.超过阈值不更新</span>
             </div>
         </form>

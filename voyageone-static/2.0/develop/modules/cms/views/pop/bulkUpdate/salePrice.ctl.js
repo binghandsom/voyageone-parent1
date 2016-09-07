@@ -13,7 +13,8 @@ define([
             cartList: context.cartList,
             _optStatus: false,
             priceTypeId: 0,
-            isRoundUp: true
+            isRoundUp: true,
+            skuUpdType: 1
         };
 
         $scope.save = function () {
@@ -50,6 +51,7 @@ define([
             } else {
                 $scope.vm.property.isRoundUp = '0';
             }
+            $scope.vm.property.skuUpdType = parseInt($scope.vm.skuUpdType);
             confirm($translate.instant('TXT_BULK_SETSALEPRICE')).then(function(){
                 _setProductFields($scope.vm.property);
             });
@@ -165,12 +167,14 @@ define([
                 $scope.vm._opeText = '';
                 $scope.vm._typeText = '';
                 $scope.vm.priceInputFlg = true;
+                $scope.vm.skuUpdType = "0";
             } else {
                 $scope.vm._optStatus = false;
                 $scope.vm.optType = '';
                 $scope.vm._opeText = '';
                 $scope.vm._typeText = $translate.instant(typeTxt);
                 $scope.vm.priceInputFlg = false;
+                $scope.vm.skuUpdType = "1";
             }
         };
     });

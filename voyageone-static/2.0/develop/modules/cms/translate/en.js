@@ -104,7 +104,7 @@ define(function () {
         "TXT_PRODUCT_STATUS": "商品状态",
         "TXT_PLATFORM_STATUS": "商品平台状态",
         "TXT_FEED_STATUS": "Feed 状态",
-        "TXT_MSRP_PRICE": "官方售价",
+        "TXT_MSRP_PRICE": "建议售价",
         "TXT_CREATE_TIME": "创建时间",
         "TXT_PUBLISH_TIME": "发布时间",
         "TXT_INVENTORY": "库存",
