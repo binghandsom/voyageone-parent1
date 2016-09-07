@@ -167,12 +167,14 @@ define([
                 $scope.vm._opeText = '';
                 $scope.vm._typeText = '';
                 $scope.vm.priceInputFlg = true;
+                $scope.vm.skuUpdType = "0";
             } else {
                 $scope.vm._optStatus = false;
                 $scope.vm.optType = '';
                 $scope.vm._opeText = '';
                 $scope.vm._typeText = $translate.instant(typeTxt);
                 $scope.vm.priceInputFlg = false;
+                $scope.vm.skuUpdType = "1";
             }
         };
     });
