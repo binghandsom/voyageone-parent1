@@ -3,12 +3,13 @@ angular.module("vo.directives").directive("leaf", function ($compile) {
         restrict: "E",
         replace: true,
         scope: {
-            leaf: "="
+            leaf: "=",
+            result: "="
         },
         template: '<li><a>{{leaf.catName}}</a></li>',
         link: function (scope, element) {
             if (angular.isArray(scope.leaf.children) && scope.leaf.children.length > 0) {
-                element.append("<tree ng-if='leaf.children.length>0' tree='leaf.children'></tree>");
+                element.append("<tree ng-if='leaf.children.length>0' tree='leaf.children' result='result'></tree>");
                 element.addClass('dropdown-submenu');
                 $compile(element.contents())(scope);
             }
@@ -24,6 +25,7 @@ angular.module("vo.directives").directive("leaf", function ($compile) {
                     var navElement = document.getElementsByClassName("nav")[1];
                     navElement.firstElementChild.className = "dropdown";
                     navElement.appendChild(paraSpan);
+                    scope.result.push(scope.leaf.catPath.replace(/-/g, "/"));
                 });
             }
     };
