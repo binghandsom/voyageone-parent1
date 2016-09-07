@@ -21,11 +21,14 @@ import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.BaseService;
 //import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 //import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductAddPlatformService;
+import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.jumei.JMShopBeanService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +62,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
     @Autowired
     ProductService productService;
+    @Autowired
+    FeedInfoService feedInfoService;
+    @Autowired
+    CmsBtBrandBlockService CmsBtBrandBlockService;
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
 
     public void updateJmByPromotionId(int promotionId) throws Exception {
@@ -136,7 +143,11 @@ public class JuMeiProductPlatform3Service extends BaseService {
     }
     //所有api调用前check
     public void api_beforeCheck(UpdateJmParameter parameter) {
-
+        String platformBrand = parameter.platform.getpBrandId();
+        String masterBrand = parameter.cmsBtProductModel.getCommon().getFields().getBrand();
+        CmsBtFeedInfoModel cmsBtFeedInfoModel= feedInfoService.getProductByCode(parameter.cmsBtProductModel.getChannelId(),parameter.cmsBtProductModel.getCommon().getFields().getCode());
+       String feedBrand=cmsBtFeedInfoModel.getBrand();
+        //CmsBtBrandBlockService.isBlocked(parameter.cmsBtProductModel.getChannelId(),27,feedBrand,)
         String errorMsg = "";
         // 6.0.1
         if ("1".equalsIgnoreCase(parameter.cmsBtProductModel.getLock()))//1:lock, 0:unLock
@@ -148,9 +159,8 @@ public class JuMeiProductPlatform3Service extends BaseService {
         else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() > parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
             errorMsg = "市场价必须大于团购价";
         }
-        if(!StringUtils.isEmpty(errorMsg)) {
-            if(parameter.cmsBtJmPromotionProductModel.getSynchStatus()!=2)
-            {
+        if (!StringUtils.isEmpty(errorMsg)) {
+            if (parameter.cmsBtJmPromotionProductModel.getSynchStatus() != 2) {
                 parameter.cmsBtJmPromotionProductModel.setSynchStatus(3);
             }
             throw new BusinessException(errorMsg);
