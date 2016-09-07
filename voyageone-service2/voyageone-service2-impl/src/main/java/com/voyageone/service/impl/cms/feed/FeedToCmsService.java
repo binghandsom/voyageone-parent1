@@ -180,6 +180,8 @@ public class FeedToCmsService extends BaseService {
                     //flag 1导入
                     CmsChannelConfigBean isImportFeedTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SET_FEED_IMPORT_FLG);
                     if(isImportFeedTypeConfig != null &&"1".equals(isImportFeedTypeConfig.getConfigValue1())){
+                        insertLog = true;
+                        product.setCreater(modifier);
                         product.setUpdFlg(0);
                     }else{
                         insertLog = true;
