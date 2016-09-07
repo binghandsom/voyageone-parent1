@@ -67,7 +67,12 @@ public class AdminResService extends BaseService {
         }
         List<AdminResourceBean> all = convert2Tree(beanList);
 
-        return (all.stream().skip((pageNum - 1) * pageSize).limit(pageSize).collect(Collectors.toList()));
+
+        List<AdminResourceBean> result =  new ArrayList<>();
+
+        result = convert2List(all, result);
+
+        return (result.stream().skip((pageNum - 1) * pageSize).limit(pageSize).collect(Collectors.toList()));
     }
 
 
@@ -150,6 +155,31 @@ public class AdminResService extends BaseService {
             return Collections.EMPTY_LIST;
         }
     }
+
+
+    /**
+     * 把树拆成列表
+     * 为了列表页翻页展示用
+     */
+    private List<AdminResourceBean> convert2List(List<AdminResourceBean> resList,List<AdminResourceBean> result) {
+        for (AdminResourceBean bean : resList) {
+
+            if(bean.getResType() == 1)
+            {
+                result.add(bean);
+            }
+
+            if (bean.getChildren() != null && bean.getChildren().size() > 0) {
+                convert2List(bean.getChildren(), result);
+                if(bean.getChildren().get(0).getResType() == 1)
+                {
+                    bean.setChildren(Collections.EMPTY_LIST);
+                }
+            }
+        }
+        return result;
+    }
+
 
 
     /**
