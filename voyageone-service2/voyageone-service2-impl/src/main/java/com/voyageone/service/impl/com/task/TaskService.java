@@ -59,7 +59,7 @@ public class TaskService extends BaseService {
 	}
 	
 	public List<ComMtTaskBean> searchTaskByChannelId(String channelId) {
-		List<ComMtTaskBean> tasks = taskDaoExt.searchTaskByChannelId(CHANNEL_ID_NAME, channelId);
+		List<ComMtTaskBean> tasks = taskDaoExt.searchTaskByChannelId(CHANNEL_ID_NAME, RUN_FLG_NAME, channelId);
 		if (CollectionUtils.isNotEmpty(tasks)) {
 			tasks.forEach(task -> {
 				task.setTaskConfig(searchTaskConfigByPage(String.valueOf(task.getTaskId()),
