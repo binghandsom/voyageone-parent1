@@ -144,11 +144,11 @@ public class JuMeiProductPlatform3Service extends BaseService {
     //所有api调用前check
     public void api_beforeCheck(UpdateJmParameter parameter) {
         String errorMsg = "";
-        String platformBrand = parameter.platform.getpBrandId();
+        String platformBrandId = parameter.platform.getpBrandId();
         String masterBrand = parameter.cmsBtProductModel.getCommon().getFields().getBrand();
         CmsBtFeedInfoModel cmsBtFeedInfoModel= feedInfoService.getProductByCode(parameter.cmsBtProductModel.getChannelId(),parameter.cmsBtProductModel.getCommon().getFields().getCode());
        String feedBrand=cmsBtFeedInfoModel.getBrand();
-        if(CmsBtBrandBlockService.isBlocked(parameter.cmsBtProductModel.getChannelId(),27,feedBrand,masterBrand,platformBrand))
+        if(CmsBtBrandBlockService.isBlocked(parameter.cmsBtProductModel.getChannelId(),27,feedBrand,masterBrand,platformBrandId))
         {
             errorMsg="该商品品牌已加入黑名单,不能再售";
         }

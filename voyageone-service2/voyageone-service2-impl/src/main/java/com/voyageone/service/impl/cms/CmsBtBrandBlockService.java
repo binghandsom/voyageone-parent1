@@ -21,10 +21,6 @@ import java.util.Map;
  */
 @Service
 public class CmsBtBrandBlockService extends BaseService {
-
-    private final CmsBtBrandBlockDao btBrandBlockDao;
-    @Autowired
-    CmsBtBrandBlockDaoExt cmsBtBrandBlockDaoExt;
     private final static int BRAND_TYPE_FEED = 0;
     private final static int BRAND_TYPE_MASTER = 1;
     private final static int BRAND_TYPE_PLATFORM = 2;
@@ -36,10 +32,7 @@ public class CmsBtBrandBlockService extends BaseService {
         this.brandBlockDao = brandBlockDao;
     }
 
-    public boolean isBlocked(String channelId, int cartIt, String feedBrand, String masterBrandId, String platformBrand) {
-        // TODO 后续实现
-        return false;
-    public boolean isBlocked(String channelId, int cartId, String feedBrand, String masterBrand, int platformBrandId) {
+    public boolean isBlocked(String channelId, int cartId, String feedBrand, String masterBrand, String platformBrandId) {
 
         int count = brandBlockDao.selectCount(MapUtil.toMap("channelId", channelId,
                 "cartId", cartId,
@@ -70,6 +63,6 @@ public class CmsBtBrandBlockService extends BaseService {
         map.put("channelId", channelId);
         map.put("cartId", cartId);
         map.put("type", type);
-        return cmsBtBrandBlockDaoExt.selectCount(map);
+        return brandBlockDao.selectCount(map);
     }
 }
