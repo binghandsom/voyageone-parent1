@@ -77,10 +77,11 @@
 	</select>
 	
 	<select id="searchTaskByChannelId" resultMap="taskBeanMap">
-		select cmt.task_id, cmt.task_type, cmt.task_name, cmt.task_comment, cmt.task_freq, ttc.cfg_val1 as run_flg,
+		select cmt.task_id, cmt.task_type, cmt.task_name, cmt.task_comment, cmt.task_freq, ttcx.cfg_val1 as run_flg,
 			cmt.created, cmt.creater, cmt.modified, cmt.modifier 
 		from com_mt_task cmt join tm_task_control ttc on ttc.task_id = cmt.task_name
-		where ttc.cfg_name = #{cfgName} and ttc.cfg_val1 = #{channelId}
+			left join tm_task_control ttcx on ttcx.task_id = ttc.task_id and ttcx.cfg_name = #{runCfgName}
+		where ttc.cfg_name = #{channelCfgName} and ttc.cfg_val1 = #{orderChannelId}
 	</select>
 
 </mapper>

@@ -27,6 +27,7 @@ public interface ComMtTaskDaoExt {
 
 	TmTaskControlModel selectTaskConfig(Map<String, Object> params);
 
-	List<ComMtTaskBean> searchTaskByChannelId(@Param("cfgName") String cfgName, @Param("channelId") String channelId);
+	List<ComMtTaskBean> searchTaskByChannelId(@Param("channelCfgName") String channelCfgName,
+			@Param("runCfgName") String runCfgName, @Param("orderChannelId") String channelId);
 
 }

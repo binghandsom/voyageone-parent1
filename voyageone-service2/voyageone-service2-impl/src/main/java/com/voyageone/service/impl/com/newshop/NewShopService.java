@@ -380,7 +380,7 @@ public class NewShopService extends BaseService {
 								writer.invoke(model, overrides.get(keyName));
 							}
 						} catch (Exception e) {
-							logger.debug("覆盖对象属性失败，" + e.getMessage());
+							logger.debug("忽略覆盖对象属性时的失败，" + e.getMessage());
 						}
 					}
 				}
