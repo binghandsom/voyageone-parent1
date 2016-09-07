@@ -23,10 +23,10 @@ define([
                 self.brandMappingService.searchCustBrands({'cartId': self.platformData.cartId}).then(function (res) {
                     self.custBrandList = res.data.custBrandList;
 
-                    if(!self.platformData.pBrandId)
+                    if (!self.platformData.pBrandId)
                         return;
 
-                    var _brandId = _.find(self.custBrandList,function(element){
+                    var _brandId = _.find(self.custBrandList, function (element) {
                         return element.brandId = self.platformData.pBrandId;
                     });
 
