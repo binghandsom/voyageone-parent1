@@ -212,7 +212,9 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
 
     private void doDrawText(Graphics2D g2d, String text, int nowLine, float fontSize, int startX, int startY, int sectionSize) {
         {
-			Font dynamicFontPt = new Font("FangSong", Font.BOLD, (int)fontSize);
+//			Font dynamicFontPt = new Font("FangSong", Font.BOLD, (int)fontSize); // 仿宋
+            Font dynamicFontPt = new Font("Noto Sans CJK", Font.PLAIN, (int)fontSize); // 思源黑体
+//            Font dynamicFontPt = new Font("Source Han Sans CN", Font.PLAIN, (int)fontSize); // 思源黑体(梁兄说暂时不支持, 除非升级OS版本)
 
 //			if (dynamicFont == null) {
 //				getFont();
