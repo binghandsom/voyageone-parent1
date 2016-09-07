@@ -389,17 +389,21 @@ public class Tmall_010_Jewelry_DictTest {
 				{
 					RuleExpression ruleExpressionField = new RuleExpression();
 					ruleExpressionField.addRuleWord(new TextWord("longDesEn"));
+					RuleExpression ruleExpressionFontSize = new RuleExpression();
+					ruleExpressionFontSize.addRuleWord(new TextWord("23"));
 					RuleExpression ruleExpressionOneLineBit = new RuleExpression();
-					ruleExpressionOneLineBit.addRuleWord(new TextWord("60"));
-					CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, null, ruleExpressionOneLineBit);
+					ruleExpressionOneLineBit.addRuleWord(new TextWord("63"));
+					CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, ruleExpressionFontSize, ruleExpressionOneLineBit);
 					do处理无线端20张图片(1, ruleRoot, new CustomWord(img));
 				}
 				{
 					RuleExpression ruleExpressionField = new RuleExpression();
 					ruleExpressionField.addRuleWord(new TextWord("longDesCn"));
+					RuleExpression ruleExpressionFontSize = new RuleExpression();
+					ruleExpressionFontSize.addRuleWord(new TextWord("23"));
 					RuleExpression ruleExpressionOneLineBit = new RuleExpression();
-					ruleExpressionOneLineBit.addRuleWord(new TextWord("70"));
-					CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, null, ruleExpressionOneLineBit);
+					ruleExpressionOneLineBit.addRuleWord(new TextWord("60"));
+					CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, ruleExpressionFontSize, ruleExpressionOneLineBit);
 					do处理无线端20张图片(2, ruleRoot, new CustomWord(img));
 				}
 			}
@@ -407,8 +411,8 @@ public class Tmall_010_Jewelry_DictTest {
 			{
 				// 参数图(一张)
 				// 测试临时
-				String strImgJiage = "https://img.alicdn.com/imgextra/i3/2641101981/TB24I4SXF6AQeBjSZFFXXaiFpXa_!!2641101981.jpg";
-				do处理无线端20张图片(3, ruleRoot, new TextWord(strImgJiage));
+//				String strImgJiage = "https://img.alicdn.com/imgextra/i3/2641101981/TB24I4SXF6AQeBjSZFFXXaiFpXa_!!2641101981.jpg";
+//				do处理无线端20张图片(3, ruleRoot, new TextWord(strImgJiage));
 			}
 
 			{
