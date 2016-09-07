@@ -98,12 +98,12 @@ public class CmsBtDataAmountService {
 
     // 4.各平台信息
     private void sumPlatInfo(String channelId, int cartId) {
-        List<EnumPlatformInfoSum> list = EnumPlatformInfoSum.getList();
+        List<EnumPlatformInfoSum> list = EnumPlatformInfoSum.getList(0);
         CmsBtDataAmountModel model = null;
         for (EnumPlatformInfoSum enumFeed : list) {
             String strQuery = "";
             if (enumFeed.getFunFormat() != null) {
-                QueryStrFormatParam param=new QueryStrFormatParam();
+                QueryStrFormatParam param = new QueryStrFormatParam();
                 param.setCartId(cartId);
                 param.setQueryStr(enumFeed.getStrQuery());
                 strQuery = enumFeed.getFunFormat().apply(param);
@@ -113,6 +113,9 @@ public class CmsBtDataAmountService {
             long count = daoCmsBtProduct.countByQuery(strQuery, channelId);
             saveCmsBtDataAmount(channelId, cartId, enumFeed, count);
         }
+        //master platform品牌黑名单统计
+        int count = cmsBtBrandBlockService.getBrandCount(channelId, String.valueOf(cartId), 2);
+        saveCmsBtDataAmount(channelId, 0, EnumPlatformInfoSum.CMS_PLATFORM_Brand_block, count);
     }
     //获取品牌未匹配数量
     private  void sumBrandNoMatch(String channelId, int cartId) {
