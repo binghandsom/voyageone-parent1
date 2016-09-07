@@ -444,9 +444,12 @@ define([
                     if (!product)
                         return;
 
+                    if (scope.cartInfo.value != 23)
+                        return;
+
                     var brandField = searchField("品牌", product);
 
-                    if (!brandField.value.value)
+                    if (!brandField && !brandField.value.value)
                         brandField.value.value = brandId;
                 }
 

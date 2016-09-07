@@ -230,7 +230,7 @@
                                 <button class="col-md-2 btn btn-default"
                                         ng-controller="popupCtrl"
                                         ng-click="choseBrand(openPlatformMappingSetting)"
-                                        ng-disabled="false">
+                                        ng-disabled="vm.platform.pBrandName">
                                     <span>{{cartInfo.name}}&nbsp;{{"TXT_BRAND" | translate}}</span>
                                 </button>
                                 <div class="col-md-8">
