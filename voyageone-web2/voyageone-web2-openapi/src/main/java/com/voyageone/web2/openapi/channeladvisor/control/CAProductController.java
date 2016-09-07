@@ -1,19 +1,18 @@
 package com.voyageone.web2.openapi.channeladvisor.control;
 
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseController;
+import com.voyageone.web2.openapi.OpenApiBaseController;
 import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
 import com.voyageone.web2.openapi.channeladvisor.service.CAProductService;
 import com.voyageone.web2.sdk.api.channeladvisor.request.ProductGroupRequest;
 import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 /**
@@ -28,52 +27,53 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(
         value = CAUrlConstants.ROOT
 )
-public class CAProductController extends CAOpenApiBaseController {
+public class CAProductController extends OpenApiBaseController {
 
     @Autowired
     private CAProductService productService;
 
+    /**
+     * 批量获取产品
+     *
+     * @param request request
+     * @return response
+     */
     @RequestMapping(value = CAUrlConstants.PRODUCTS.GET_PRODUCTS, method = RequestMethod.GET)
     public ActionResponse getProducts(HttpServletRequest request) {
-        return productService.getProducts(request.getParameter("groupFields"),request.getParameter("buyableFields"));
+        return productService.getProducts(request.getParameter("groupFields"), request.getParameter("buyableFields"));
     }
 
+    /**
+     * 批量添加或者更新产品
+     *
+     * @param request request
+     * @return response
+     */
     @RequestMapping(value = CAUrlConstants.PRODUCTS.UPDATE_PRODUCTS, method = RequestMethod.POST)
-    public ActionResponse updateProducts(@RequestBody ProductGroupRequest request) {
-
-
-        //check param
-        if(CollectionUtils.isEmpty(request.getBuyableProducts()))
-            ;// TODO: 2016/9/7 非空校验
-            // if()
-        // call service
-
-        String jsonData="{\"ResponseBody\":[{\"SellerSKU\":\"REBEL X-WING\",\"BuyableProductResults\":[{\"RequestResult\":\"Success\",\"SellerSKU\":\"REBEL X-WING\",\"MarketPlaceItemID\":\"REBEL X-WING\",\"URL\":\"http://your-url.com/products/REBEL X-WING\",\"Errors\":null}],\"Errors\":null},{\"SellerSKU\":\"LIGHTSABER\",\"BuyableProductResults\":[{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_RED_MED\",\"MarketPlaceItemID\":\"LIGHTSABER_RED_MED\",\"URL\":\"http://your-url.com/products/LIGHTSABER_RED_MED\",\"Errors\":null},{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_RED_LG\",\"MarketPlaceItemID\":\"LIGHTSABER_RED_LG\",\"URL\":\"http://your-url.com/products/LIGHTSABER_RED_LG\",\"Errors\":null},{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_BLUE_MED\",\"MarketPlaceItemID\":\"LIGHTSABER_BLUE_MED\",\"URL\":\"http://your-url.com/products/LIGHTSABER_BLUE_MED\",\"Errors\":null},{\"RequestResult\":\"Success\",\"SellerSKU\":\"LIGHTSABER_BLUE_LG\",\"MarketPlaceItemID\":\"LIGHTSABER_BLUE_LG\",\"URL\":\"http://your-url.com/products/LIGHTSABER_BLUE_LG\",\"Errors\":null}],\"Errors\":null}],\"Status\":\"Complete\",\"PendingUri\":null,\"Errors\":[]}";
-        return JacksonUtil.json2Bean(jsonData,ActionResponse.class);
+    public ActionResponse updateProducts(@RequestBody List<ProductGroupRequest> request) {
+        return productService.updateProducts(request);
     }
 
+    /**
+     * 批量更新数量或者价格
+     *
+     * @param request request
+     * @return response
+     */
     @RequestMapping(value = CAUrlConstants.PRODUCTS.UPDATE_QUANTITY_PRICE, method = RequestMethod.POST)
-    public ActionResponse updateQuantityPrice(@RequestBody ProductGroupRequest request) {
-
-
-        //check param
-
-        // call service
-
-
-        return null;
+    public ActionResponse updateQuantityPrice(@RequestBody List<ProductGroupRequest> request) {
+        return productService.updateQuantityPrice(request);
     }
 
+    /**
+     * 批量更新状态
+     *
+     * @param request request
+     * @return response
+     */
     @RequestMapping(value = CAUrlConstants.PRODUCTS.UPDATE_STATUS, method = RequestMethod.GET)
-    public ActionResponse updateStatus(@RequestBody ProductGroupRequest request) {
-
-
-        //check param
-
-        // call service
-
-
-        return null;
+    public ActionResponse updateStatus(@RequestBody List<ProductGroupRequest> request) {
+        return productService.updateStatus(request);
     }
 
 }

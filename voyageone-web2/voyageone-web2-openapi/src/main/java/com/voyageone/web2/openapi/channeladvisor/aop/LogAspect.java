@@ -32,7 +32,7 @@ public class LogAspect extends VOAbsLoggable {
     @Around(POINT_CUT)
     public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
         ServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        $info(JacksonUtil.bean2Json(request.getParameterMap()));
+        $info(pjp.getSignature().getName()+":::"+JacksonUtil.bean2Json(request.getParameterMap()));
         return pjp.proceed();
     }
 
