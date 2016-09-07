@@ -251,7 +251,7 @@ define([
                 }
 
                 /**
-                 * 更新操作
+                 * @description 更新操作
                  * @param mark:记录是否为ready状态,temporary:暂存
                  */
                 function saveProduct(mark) {
