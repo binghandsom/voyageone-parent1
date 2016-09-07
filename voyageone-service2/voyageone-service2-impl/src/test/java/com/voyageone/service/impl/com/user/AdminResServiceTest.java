@@ -3,6 +3,7 @@ package com.voyageone.service.impl.com.user;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.security.model.ComResourceModel;
+import com.voyageone.service.model.com.PageModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +31,7 @@ public class AdminResServiceTest {
     @Test
     public void testSearchRes() throws Exception {
 
-        List<AdminResourceBean> result = adminResService.searchRes("admin", 1, 2);
+        PageModel<AdminResourceBean> result = adminResService.searchRes("admin", 1, 10);
 
         System.out.println(JacksonUtil.bean2Json(result));
     }
