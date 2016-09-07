@@ -25,7 +25,9 @@ public class CmsBtDataAmountService {
     CmsBtDataAmountDao dao;
     @Autowired
     CmsBtDataAmountDaoExt daoExt;
-
+    @Autowired
+    CmsBtBrandBlockService cmsBtBrandBlockService;
+    //String feedBrand, int masterBrandId, String platformBrand
     public void sumByChannelId(String channelId) {
         //1.汇总FEED信息
         sumCmsBtFeedInfo(channelId);
@@ -50,22 +52,29 @@ public class CmsBtDataAmountService {
 
     //1.FEED信息
     private void sumCmsBtFeedInfo(String channelId) {
-        List<EnumFeedSum> list = EnumFeedSum.getList();
+        //CmsBtFeedInfo表统计项
+        List<EnumFeedSum> list = EnumFeedSum.getList(0);
         CmsBtDataAmountModel model = null;
         for (EnumFeedSum enumFeed : list) {
             long count = daoCmsBtFeedInfo.countByQuery(enumFeed.getStrQuery(), channelId);
             saveCmsBtDataAmount(channelId, 0, enumFeed, count);
         }
+        //feed品牌黑名单统计
+        int count = cmsBtBrandBlockService.getBrandCount(channelId, null, 0);
+        saveCmsBtDataAmount(channelId, 0, EnumFeedSum.CMS_FEED_feedBrand_block, count);
     }
 
     // 2.主数据编辑信息
     private void sumMaster(String channelId) {
-        List<EnumMasterSum> list = EnumMasterSum.getList();
+        List<EnumMasterSum> list = EnumMasterSum.getList(0);
         CmsBtDataAmountModel model = null;
         for (EnumMasterSum enumFeed : list) {
             long count = daoCmsBtProduct.countByQuery(enumFeed.getStrQuery(), channelId);
             saveCmsBtDataAmount(channelId, 0, enumFeed, count);
         }
+        //master品牌黑名单统计
+        int count = cmsBtBrandBlockService.getBrandCount(channelId, null, 1);
+        saveCmsBtDataAmount(channelId, 0, EnumMasterSum.CMS_MASTER_Brand_block, count);
     }
 
     // 3.价格信息
