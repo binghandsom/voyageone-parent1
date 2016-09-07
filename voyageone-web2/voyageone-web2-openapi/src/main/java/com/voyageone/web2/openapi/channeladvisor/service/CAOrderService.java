@@ -1,5 +1,6 @@
 package com.voyageone.web2.openapi.channeladvisor.service;
 
+import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -8,5 +9,5 @@ import org.springframework.stereotype.Service;
  * @since 2.0.0
  */
 @Service
-public class CAOrderService {
+public class CAOrderService extends CAOpenApiBaseService {
 }

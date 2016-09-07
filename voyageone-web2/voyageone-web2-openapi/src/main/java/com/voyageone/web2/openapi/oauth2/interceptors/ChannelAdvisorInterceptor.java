@@ -45,7 +45,7 @@ class ChannelAdvisorInterceptor {
         }
 
         // 检查客户端客户端id, 安全KEY是否正确
-        if (!oAuthService.checkClientSecret(sellerID, sellerToken)) {
+        if (oAuthService.getClientSecretAndSetCurrentThread(sellerID, sellerToken) == null) {
             //4001 (InvalidToken)	Authorization failed. Invalid SellerToken
             throw new CAApiException(ErrorIDEnum.InvalidToken);
         }

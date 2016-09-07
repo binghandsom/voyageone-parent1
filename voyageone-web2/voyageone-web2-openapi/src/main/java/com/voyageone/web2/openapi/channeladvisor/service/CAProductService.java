@@ -1,6 +1,7 @@
 package com.voyageone.web2.openapi.channeladvisor.service;
 
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseService;
 import com.voyageone.web2.sdk.api.channeladvisor.domain.ProductGroupModel;
 import com.voyageone.web2.sdk.api.channeladvisor.enums.ResponseStatusEnum;
 import com.voyageone.web2.sdk.api.channeladvisor.exception.ErrorModel;
@@ -12,9 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CAProductService {
+public class CAProductService extends CAOpenApiBaseService {
 
     public ActionResponse getProducts(String groupFields, String buyableFields) {
+
+        System.out.println(getClientChannelId());
+
         ActionResponse response = new ActionResponse();
 
         List<ProductGroupModel> models = new ArrayList<>();
