@@ -6,10 +6,11 @@ angular.module("vo.directives").directive("tree", function() {
         restrict: "E",
         replace: true,
         scope: {
-            tree: '='
+            tree: '=',
+            result: '='
         },
         template: '<ul class="dropdown-menu">'
-                  +'<leaf ng-repeat="leaf in tree" leaf="leaf"></leaf>'
+                  +'<leaf ng-repeat="leaf in tree" leaf="leaf" result="result"></leaf>'
                   +'</ul>'
     };
 });
