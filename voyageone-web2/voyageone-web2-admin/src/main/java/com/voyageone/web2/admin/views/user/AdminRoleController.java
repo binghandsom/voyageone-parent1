@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.security.model.ComResourceModel;
 import com.voyageone.security.model.ComRoleModel;
+import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.impl.com.user.AdminRoleService;
 import com.voyageone.service.model.com.PageModel;
@@ -136,7 +137,7 @@ public class AdminRoleController extends AdminController {
 
         List<Integer>  roleIds = (List<Integer>) requestMap.get("roleIds");
         List<Integer>  resIds = (List<Integer>) requestMap.get("resIds");
-        List<String>  apps = (List<String>) requestMap.get("apps");
+        List<String>  apps = (List<String>) requestMap.get("applications");
         String username = getUser().getUserName();
         adminRoleService.setAuth(apps, roleIds, resIds, username);
         return success(true);
@@ -161,6 +162,37 @@ public class AdminRoleController extends AdminController {
         String username = getUser().getUserName();
         adminRoleService.removeAuth(roleIds, resIds, username);
         return success(true);
+    }
+
+    @RequestMapping(AdminUrlConstants.User.Role.GET_AUTH_BY_ROLES)
+    public AjaxResponse getAuthByRoles(@RequestBody Map requestMap)  {
+        List<Integer>  roleIds = (List<Integer>) requestMap.get("roleIds");
+        if(roleIds.size() ==0)
+        {
+            UserFormBean form = (UserFormBean)requestMap.get("form");
+            String roleName = form.getRoleName();
+            Integer roleType = form.getRoleType();
+            String channelId = form.getChannelId();
+            Integer active = form.getActive();
+            Integer storeId = form.getStoreId();
+            String application = form.getApplication();
+
+            List<AdminRoleBean> result  = adminRoleService.searchRole(roleName, roleType, channelId,  active, storeId, application , null, null ).getResult();
+            if(result != null && result.size() >0)
+            {
+                result.stream().forEach(w -> roleIds.add(w.getId()));
+            }
+        }
+
+        String application = requestMap.getOrDefault("application", "").toString();
+
+        List<AdminResourceBean> res = adminRoleService.getAuthByRoles(roleIds, application);
+        List<Map<String, Object>> perms = adminRoleService.getAllPermConfig(roleIds);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("res", res);
+        result.put("perms", perms);
+        return success(result);
     }
 
 }

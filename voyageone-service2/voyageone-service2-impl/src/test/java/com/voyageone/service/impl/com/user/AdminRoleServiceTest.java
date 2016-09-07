@@ -2,6 +2,7 @@ package com.voyageone.service.impl.com.user;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.security.model.ComRoleModel;
+import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.bean.com.AdminUserBean;
 import com.voyageone.service.dao.com.ComMtTypeDao;
@@ -93,5 +94,30 @@ public class AdminRoleServiceTest {
 
         adminRoleService.updateRole(model, applications, channelIds, StoreIds , "0", "0");
 
+    }
+
+    @Test
+    public void testGetAuthByRoles() throws Exception {
+        List<Integer> roles = new ArrayList<>();
+
+        roles.add(4);
+
+        List<AdminResourceBean> result =  adminRoleService.getAuthByRoles(roles, "admin");
+
+        System.out.println(JacksonUtil.bean2Json(result));
+
+
+
+    }
+
+    @Test
+    public void testGetAllPermConfig() throws Exception {
+        List<Integer> roles = new ArrayList<>();
+
+        roles.add(4);
+
+        List<Map<String, Object>> result =  adminRoleService.getAllPermConfig(roles);
+
+        System.out.println(JacksonUtil.bean2Json(result));
     }
 }

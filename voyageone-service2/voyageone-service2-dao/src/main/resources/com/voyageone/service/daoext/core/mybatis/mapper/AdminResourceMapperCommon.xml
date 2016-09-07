@@ -24,16 +24,25 @@
     </select>
 
     <select id="selectResByRoles" resultMap="comResourceBeanMap" >
-        SELECT id, res_name , res_key, res_type, parent_id, res_url, `level`, icon , active ,
-        description, created, creater, modified, modifier, application, channel_id, COUNT (DISTINCT role_id) as cnt
-        from view_user_res
-        WHERE active = 1
-        AND
-        where `role_id` in
-        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+        SELECT re.*, r.id as role_id from com_resource re, com_res_role rr, com_role r
+        where r.id in
+        <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
             #{item}
         </foreach>
-        GROUP BY res_key
+        AND application = #{application}
+        AND
+        re.active =1 AND r.active =1
+        AND re.id = rr.res_id AND rr.role_id = r.id
+        GROUP BY re.id, r.id
+    </select>
+
+
+    <select id="selectRes" resultMap="comResourceBeanMap" >
+        SELECT re.* from com_resource re
+        where
+        application = #{application}
+        AND
+        re.active =1
     </select>
 
     <select id="selectMenu" resultMap="comResourceBeanMap" >
@@ -54,6 +63,16 @@
             GROUP BY re.id, u.user_account
             )t
             WHERE user_account =  #{userAccount} AND application = #{application} AND res_type &lt; 2
+    </select>
+
+    <select id="selectAllPermConfig" resultType="java.util.Map">
+        SELECT r.id, rc.cfg_val1 as application FROM com_role r , com_role_config rc
+        WHERE r.id in
+        <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        AND rc.role_id = r.id AND r.active = 1 AND rc.cfg_name = 'all_permission'
+        GROUP BY r.id , rc.cfg_val1
     </select>
 
 
