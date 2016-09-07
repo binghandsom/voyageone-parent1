@@ -397,6 +397,7 @@ define([
                  */
                 function pageAnchor(area, speed) {
                     var offsetTop = 0;
+
                     if (area != 'master') {
                         offsetTop = element.find("#" + area).offset().top;
                     }
