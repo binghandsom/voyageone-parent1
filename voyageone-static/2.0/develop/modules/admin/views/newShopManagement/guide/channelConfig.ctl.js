@@ -69,6 +69,30 @@ define([
                     }
                 });
                 self.carrierSelList = self.tempChannelCarrierSelect.selectRowsInfo;
+
+                //类型属性信息
+                self.channelTypeList = self.context.channelAttr;
+
+                // 设置勾选框
+                if (self.tempChannelTypeSelect == null) {
+                    self.tempChannelTypeSelect = new self.selectRowsFactory();
+                } else {
+                    self.tempChannelTypeSelect.clearCurrPageRows();
+                    self.tempChannelTypeSelect.clearSelectedList();
+                }
+                _.forEach(self.channelTypeList, function (channelInfo) {
+                    if (channelInfo.updFlg != 8) {
+                        self.tempChannelTypeSelect.currPageRows({
+                            "id": channelInfo.id
+                        });
+                    }
+                });
+                self.channelTypeSelList = self.tempChannelTypeSelect.selectRowsInfo;
+            },
+            next: function () {
+                var self = this;
+                window.sessionStorage.setItem('storeInfo', JSON.stringify(self.context));
+                window.location.href = "#/newShop/guide/storeInfo";
             }
 
         };

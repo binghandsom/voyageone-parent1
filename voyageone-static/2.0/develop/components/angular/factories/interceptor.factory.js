@@ -14,6 +14,7 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
     var MSG_MANYFAILS = "A004";
     var MSG_MISSAUTHENTICATION = "A005";
     var MSG_CHANGEPASS = "A006";
+    var MSG_LOGINAGAIN = "A001";
 
     /**
      * 对系统自动跳转的响应,执行跳转
@@ -63,6 +64,14 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
         location.href = "/adminResetPass.html";
         return true;
     }
+    function adminReLogin(res) {
+        if (res.code != MSG_LOGINAGAIN) {
+            return false;
+        }
+        // 密码输入错误,默认跳转到重置密码界面
+        location.href = "/adminLogin.html";
+        return true;
+    }
 
     /**
      * 处理位置的异常
@@ -88,7 +97,7 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
         response: function (res) {
             var result = res.data;
             // 特殊处理部分内容
-            if (autoRedirect(result) || sessionTimeout(result) || adminSessionTimeout(result) || adminResetPassword(result)) {
+            if (autoRedirect(result) || sessionTimeout(result) || adminSessionTimeout(result) || adminResetPassword(result)||adminReLogin(result)) {
                 return res;
             }
             unknownException(res);
