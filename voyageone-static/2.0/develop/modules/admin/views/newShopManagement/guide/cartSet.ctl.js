@@ -12,7 +12,7 @@ define([
             this.cartTrackingSelList = {selList: []};
             this.tempShopSelect = null;
             this.tempTrackingSelect = null;
-            this.context = JSON.parse(window.sessionStorage.getItem('cartInfo'));
+            this.context = JSON.parse(window.sessionStorage.getItem('valueBean'));
 
         }
 
@@ -60,8 +60,6 @@ define([
                 // End 设置勾选框
             },
             next: function () {
-                var self = this;
-                window.sessionStorage.setItem('batchJob', JSON.stringify(self.context));
                 window.location.href = "#/newShop/guide/batchJob";
             }
         };

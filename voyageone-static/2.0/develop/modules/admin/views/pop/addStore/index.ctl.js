@@ -7,7 +7,8 @@ define([
     admin.controller('AddStoreController', (function () {
         function AddStoreController(context, channelService, storeService, $uibModalInstance) {
             this.sourceData = context ? context : {};
-            this.append = context == 'add' ? true : false;
+            this.append = context == 'add' || context.kind == 'add' ? true : false;
+            this.readOnly = context.isReadOnly == true ? true : false;
             this.channelService = channelService;
             this.storeService = storeService;
             this.popType = '编辑';
@@ -18,17 +19,21 @@ define([
         AddStoreController.prototype = {
             init: function () {
                 var self = this;
-                if (self.sourceData == 'add') {
+                if (self.sourceData == 'add'||self.sourceData.kind == 'add') {
                     self.popType = '添加';
-                    self.sourceData = {}
+                    if (self.sourceData.isReadOnly !== true) {
+                        self.sourceData = {};
+                    } else {
+                        self.sourceData = self.sourceData;
+                    }
                 }
-                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "0" : "1" : '';
+                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "1" : "0" : '';
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelList = res.data;
                 });
             },
-            changeStore:function(value){
-              var self = this;
+            changeStore: function (value) {
+                var self = this;
                 self.storeService.getAllStore(value).then(function (res) {
                     self.storeAllList = res.data;
                 });
@@ -40,7 +45,11 @@ define([
             save: function () {
                 var self = this;
                 var result = {};
-                self.sourceData.active = self.sourceData.active == '0' ? true : false;
+                self.sourceData.active = self.sourceData.active == '1' ? true : false;
+                if (self.readOnly == true) {
+                    self.$uibModalInstance.close(self.sourceData);
+                    return;
+                }
                 if (self.append == true) {
                     if (self.sourceData.remainNum)
                         self.sourceData.inventoryHold = self.sourceData.inventoryHold + ',' + self.sourceData.remainNum;

@@ -7,7 +7,7 @@ define([
 ], function (admin) {
     admin.controller('GuideBatchJobController', (function () {
         function GuideBatchJobController(popups, alert, confirm, selectRowsFactory, newShopService) {
-            this.context = JSON.parse(window.sessionStorage.getItem('cartInfo'));
+            this.context = JSON.parse(window.sessionStorage.getItem('valueBean'));
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;

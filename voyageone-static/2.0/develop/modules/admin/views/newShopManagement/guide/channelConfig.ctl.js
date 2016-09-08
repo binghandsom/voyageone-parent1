@@ -10,7 +10,7 @@ define([
             this.selectRowsFactory = selectRowsFactory;
             this.popups = popups;
             this.smsConfigService = smsConfigService;
-            this.context = JSON.parse(window.sessionStorage.getItem('channelCogInfo'));
+            this.context = JSON.parse(window.sessionStorage.getItem('valueBean'));
         }
 
         GuideChannelCogInfoController.prototype = {
@@ -275,7 +275,6 @@ define([
                 }
 
                 synchronizeChannelSeries(self.context);
-                window.sessionStorage.setItem('storeInfo', JSON.stringify(self.context));
 
                 window.location.href = "#/newShop/guide/storeInfo";
             }

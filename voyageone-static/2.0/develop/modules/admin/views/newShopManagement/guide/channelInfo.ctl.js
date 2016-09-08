@@ -223,11 +223,11 @@ define([
 
                 if (self.autoCopy == true) {
                     synchronizeChannelSeries(self.resListCopy);
-                    window.sessionStorage.setItem('channelCogInfo', JSON.stringify(self.resListCopy));
+                    window.sessionStorage.setItem('valueBean', JSON.stringify(self.resListCopy));
                 } else {
                     _.extend(self.resListCopy.channel, self.resList);
                     synchronizeChannelSeries(self.resListCopy);
-                    window.sessionStorage.setItem('channelCogInfo', JSON.stringify(self.resListCopy));
+                    window.sessionStorage.setItem('valueBean', JSON.stringify(self.resListCopy));
                 }
                 window.location.href = "#/newShop/guide/channelConfig";
             }

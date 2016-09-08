@@ -15,7 +15,7 @@
                                     ng-model="ctrl.sourceData.orderChannelId"
                                     name="orderChannelId" required
                                     ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList"
-                                    ng-disabled="ctrl.popType == '编辑'"
+                                    ng-disabled="ctrl.popType == '编辑'||ctrl.sourceData.isReadOnly == true"
                                     ng-change="ctrl.changeStore(ctrl.sourceData.orderChannelId)">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>

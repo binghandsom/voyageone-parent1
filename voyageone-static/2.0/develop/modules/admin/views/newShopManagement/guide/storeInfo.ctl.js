@@ -9,7 +9,7 @@ define([
         function GuideChannelInfoController(selectRowsFactory, popups) {
             this.selectRowsFactory = selectRowsFactory;
             this.popups = popups;
-            this.context = JSON.parse(window.sessionStorage.getItem('storeInfo'));
+            this.context = JSON.parse(window.sessionStorage.getItem('valueBean'));
             this.storeList = [];
             this.storeSelList = {selList: []};
             this.tempSelect = null;
@@ -52,45 +52,51 @@ define([
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openStoreAdd('add').then(function () {
-                        self.search(1);
-                    });
-                } else {
-                    if (self.storeSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.storeList, function (Info) {
-                            if (Info.storeId == self.storeSelList.selList[0].id) {
-                                Info['areaId'] = Info['areaId'] + '';
-                                var copyData = Info.inventoryHold.split(",");
-                                Info.inventoryHold = copyData[0];
-                                Info.remainNum = copyData[1];
-                                self.popups.openStoreAdd(Info).then(function () {
-                                    self.search(1);
-                                });
-                            }
+                    self.popups.openStoreAdd({
+                            'kind': 'add', 'isReadOnly': true,
+                            'orderChannelId': self.storeList[0].orderChannelId,
+                            'channelName': self.storeList[0].channelName
                         })
-                    }
+                        .then(function (res) {
+                            var list = self.storeList;
+                            list.push(res);
+                            self.init();
+                        });
+                } else {
+                    _.forEach(self.storeList, function (Info) {
+                        if (Info.storeId == self.storeSelList.selList[0].id) {
+                            Info['areaId'] = Info['areaId'] + '';
+                            var copyData = Info.inventoryHold.split(",");
+                            Info.inventoryHold = copyData[0];
+                            Info.remainNum = copyData[1];
+                            Info.isReadOnly = true;
+                            self.popups.openStoreAdd(Info).then(function () {
+                                self.init();
+                            });
+                        }
+                    })
                 }
 
             },
             delete: function () {
                 var self = this;
-                self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
-                        var delList = [];
-                        _.forEach(self.storeSelList.selList, function (delInfo) {
-                            delList.push({'orderChannelId': delInfo.orderChannelId, 'storeId': delInfo.id});
+                var delList = [];
+                _.forEach(self.storeSelList.selList, function (delInfo) {
+                    delList.push({'orderChannelId': self.storeList[0].orderChannelId, 'storeId': delInfo.id});
+                });
+                _.forEach(delList, function (item) {
+                        var source = self.storeList;
+                        var data = _.find(source, function (sItem) {
+                            return sItem.storeId == item.storeId;
                         });
-                        self.storeService.deleteStore(delList).then(function (res) {
-                            self.search();
-                        })
+                        if (source.indexOf(data) > -1) {
+                            source.splice(source.indexOf(data), 1);
+                            self.init();
+                        }
                     }
                 );
             },
             next: function () {
-                var self = this;
-                window.sessionStorage.setItem('cartInfo', JSON.stringify(self.context));
                 window.location.href = "#/newShop/guide/cartSet";
             }
         };
