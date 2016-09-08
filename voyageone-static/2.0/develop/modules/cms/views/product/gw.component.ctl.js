@@ -32,7 +32,7 @@ define([
                 };
 
                 initialize();
-                scope.jdCategoryMapping = jdCategoryMapping;
+                scope.categoryMapping = categoryMapping;
                 scope.openSellerCat = openSellerCat;
                 scope.openSwitchMainPop = openSwitchMainPop;
                 scope.openOffLinePop = openOffLinePop;
@@ -103,7 +103,7 @@ define([
                  * @param productInfo
                  * @param popupNewCategory popup实例
                  */
-                function jdCategoryMapping(popupNewCategory) {
+                function categoryMapping(popupNewCategory) {
 
                     if (scope.vm.status == 'Approved') {
                         alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
