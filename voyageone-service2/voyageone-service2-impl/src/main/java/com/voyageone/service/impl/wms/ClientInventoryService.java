@@ -7,10 +7,8 @@ import com.voyageone.common.configs.beans.StoreBean;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.service.bean.wms.ItemDetailsBean;
 import com.voyageone.service.dao.wms.WmsBtClientInventoryDao;
-import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.dao.wms.WmsBtItemDetailsDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,11 +47,12 @@ public class ClientInventoryService extends BaseService {
             param.put("storeId", storeID);
             param.put("itemCode", items.get(0).getItemcode());
             param.put("sku", items.get(0).getSku());
-            param.put("size", items.get(0).getSize());
+            param.put("sizeColumn", items.get(0).getSize());
             param.put("barcode", items.get(0).getBarcode());
             param.put("synFlg", "0");
             param.put("simFlg", "0");
-            param.put("active", "1");
+            param.put("active", 1);
+            param.put("creater", "ClientInventoryService");
             wmsBtClientInventoryDao.insertClientInventory(param);
         }
     }

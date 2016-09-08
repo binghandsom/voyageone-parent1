@@ -138,7 +138,7 @@ public class FeedToCmsService extends BaseService {
                     if (isVmsUpdate) {
                         VmsChannelConfigBean vmsUpdateInventory = VmsChannelConfigs.getConfigBean(channelId,"UPDATE_INVENTORY", "0");
                         if (vmsUpdateInventory == null || "1".equals(vmsUpdateInventory.getConfigValue1())) {
-                            // 库存更新
+                            // 库存同步
                             for (CmsBtFeedInfoModel_Sku skuModelNew : product.getSkus()) {
                                 clientInventoryService.insertClientInventory(channelId, skuModelNew.getClientSku(), skuModelNew.getQty());
                             }
@@ -227,6 +227,9 @@ public class FeedToCmsService extends BaseService {
                 attributeMtDataMake(attributeMtData, product);
                 succeedProduct.add(product);
             } catch (Exception e) {
+                if (isVmsUpdate) {
+                    throw e;
+                }
                 e.printStackTrace();
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                 $error(e.getMessage(), e);
