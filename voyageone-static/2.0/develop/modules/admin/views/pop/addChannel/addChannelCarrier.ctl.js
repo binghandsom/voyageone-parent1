@@ -7,7 +7,8 @@ define([
     admin.controller('AddChannelCarrierController', (function () {
         function AddChannelCarrierController(context, channelService, popups, carrierConfigService, $uibModalInstance) {
             this.sourceData = context ? context : {};
-            this.append = context == 'add' ? true : false;
+            this.append = context == 'add' || context.kind == 'add' ? true : false;
+            this.readOnly = context.isReadOnly == true ? true : false;
             this.popups = popups;
             this.channelService = channelService;
             this.carrierConfigService = carrierConfigService;
@@ -18,9 +19,13 @@ define([
         AddChannelCarrierController.prototype = {
             init: function () {
                 var self = this;
-                if (self.sourceData == 'add') {
+                if (self.sourceData == 'add' || self.sourceData.kind == 'add') {
                     self.popType = '添加';
-                    self.sourceData = {}
+                    if (self.sourceData.isReadOnly !== true) {
+                        self.sourceData = {};
+                    } else {
+                        self.sourceData = self.sourceData;
+                    }
                 }
                 self.sourceData.active = self.sourceData.active ?  self.sourceData.active ? "0" : "1":'';
                 self.channelService.getAllChannel().then(function (res) {
@@ -36,6 +41,11 @@ define([
             save: function () {
                 var self = this;
                 var result = {};
+                if (self.readOnly == true) {
+                    self.sourceData.active = self.sourceData.active == '0' ? true : false;
+                    self.$uibModalInstance.close(self.sourceData);
+                    return;
+                }
                 self.sourceData.active = self.sourceData.active == '0' ? true : false;
                 if (self.append == true) {
                     self.carrierConfigService.addCarrierConfig(self.sourceData).then(function (res) {
