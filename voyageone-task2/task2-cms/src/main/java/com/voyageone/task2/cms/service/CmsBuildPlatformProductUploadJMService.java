@@ -1396,6 +1396,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             // 追加sku
             if (ListUtils.notNull(addSkuList)) {
                 List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+                List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
+                skuList = mergeSkuAttr(skuList, commonSkus);
                 for (BaseMongoMap<String, Object> sku : skuList) {
                     String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
                     if (addSkuList.contains(skuCode)) {
@@ -1413,11 +1415,21 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
 
                         sb.setLength(0);
-                        isSuccess = jumeiHtMallService.addMallSku(shopBean, mallSkuAddInfo, sb);
-                        if (!isSuccess) {
+                        String jumeiSkuNo = jumeiHtMallService.addMallSku(shopBean, mallSkuAddInfo, sb);
+                        if (StringUtils.isEmpty(jumeiSkuNo) || sb.length() > 0) {
                             // 价格更新失败throw出去
                             throw new BusinessException("聚美商城追加sku失败!" + sb.toString());
                         }
+
+                        // 回写
+                        String sizeStr = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
+                        CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(product.getChannelId(), product.getCommon().getFields().getCode(), sku, sizeStr);
+                        cmsBtJmSkuModel.setJmSpuNo(sku.getStringAttribute("jmSpuNo"));
+                        cmsBtJmSkuModel.setJmSkuNo(jumeiSkuNo);
+                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+
+                        sku.setStringAttribute("jmSkuNo", jumeiSkuNo);
+                        saveProductPlatform(product.getChannelId(), product);
                     }
                 }
             }
