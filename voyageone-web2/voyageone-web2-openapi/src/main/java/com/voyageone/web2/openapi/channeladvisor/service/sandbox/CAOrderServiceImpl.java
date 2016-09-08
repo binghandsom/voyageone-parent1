@@ -28,14 +28,6 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
     private JsonResourcesService resourcesService;
 
     public ActionResponse getOrders(String status, String limit) {
-        /* 用来限制查询订单的状态，默认任何状态 */
-        if (StringUtils.isEmpty(status)) ;
-        // TODO: 2016/9/7 空值处理 logger或其他
-        /* 用来限制查询订单的条数，默认全部条数 */
-        if (StringUtils.isEmpty(limit)) ;
-
-        // TODO: 2016/9/7 空值处理 logger或其他
-        // TODO: 2016/9/7 获取jsonbody 响应 mock response
 
         List<OrderModel> responseBody = resourcesService.getResourceDataList(this.getClass().getName(), "getOrders", OrderModel.class);
 
