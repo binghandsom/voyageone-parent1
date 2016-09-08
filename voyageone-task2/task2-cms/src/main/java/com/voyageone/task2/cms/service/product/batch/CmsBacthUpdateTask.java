@@ -24,6 +24,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA;
+
 /**
  * 高级检索业务的批量更新
  *
@@ -31,7 +34,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsBacthUpdateService extends VOAbsLoggable {
+public class CmsBacthUpdateTask extends VOAbsLoggable {
 
     @Autowired
     private ProductService productService;
@@ -73,35 +76,45 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
     /*
      * 税号变更
      */
-    private void updateHsCode(String propId, String propValue, List<String> codeList, String channleId, String userName, Boolean synPriceFlg) {
+    private void updateHsCode(String propId, String propValue, List<String> codeList, String channelId, String userName, Boolean synPriceFlg) {
         String msg = "税号变更 " + propId + "=> " + propValue;
         // 未配置自动同步的店铺，显示同步状况
         if (synPriceFlg) {
             msg += " (同步价格)";
         } else {
-            CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channleId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+            CmsChannelConfigBean autoApprovePrice = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
             if (autoApprovePrice == null || !"1".equals(autoApprovePrice.getConfigValue1())) {
                 msg += " (未同步最终售价)";
             }
         }
+
+        CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, PRICE_CALCULATOR);
+        if (priceCalculatorConfig != null) {
+            String priceCalculator = StringUtils.trimToNull(priceCalculatorConfig.getConfigValue1());
+            if (priceCalculator != null && priceCalculator.equals(PRICE_CALCULATOR_FORMULA)) {
+                // 使用价格公式，不变更指导价
+
+            }
+        }
+
         String msgTxt = msg;
         boolean isUpdFlg = false;
         for (String prodCode : codeList) {
             try {
-                CmsBtProductModel newProduct = productService.getProductByCode(channleId, prodCode);
+                CmsBtProductModel newProduct = productService.getProductByCode(channelId, prodCode);
                 priceService.setPrice(newProduct, synPriceFlg);
                 newProduct.getPlatforms().forEach((s, platform) -> {
                     if (platform.getCartId() != 0) {
-                        productService.updateProductPlatform(channleId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.BatchUpdate, msgTxt);
+                        productService.updateProductPlatform(channelId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.BatchUpdate, msgTxt);
                     }
                 });
 
                 // 确认指导价变更
                 List<Integer> cartList = newProduct.getCartIdList();
                 for (Integer cartVal : cartList) {
-                    TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53_A, channleId, cartVal.toString());
+                    TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53_A, channelId, cartVal.toString());
                     if (cartObj == null) {
-                        $error("该商品的平台数据错误 code=%s, channelid=%s, cartid=%d", prodCode, channleId, cartVal);
+                        $error("该商品的平台数据错误 code=%s, channelid=%s, cartid=%d", prodCode, channelId, cartVal);
                         continue;
                     }
 
@@ -126,20 +139,20 @@ public class CmsBacthUpdateService extends VOAbsLoggable {
                         updObj.setUpdate("{$set:{'platforms.P" + cartVal + ".skus':#,'modified':#,'modifier':#}}");
                         updObj.setUpdateParameters(skuList, DateTimeUtil.getNowTimeStamp(), userName);
 
-                        WriteResult rs = productService.updateFirstProduct(updObj, channleId);
+                        WriteResult rs = productService.updateFirstProduct(updObj, channelId);
                         if (rs != null) {
-                            $debug("指导价变更批量确认 code=%s, channelId=%s 执行结果=%s", prodCode, channleId, rs.toString());
+                            $debug("指导价变更批量确认 code=%s, channelId=%s 执行结果=%s", prodCode, channelId, rs.toString());
                         }
                     }
                 }
             } catch (PriceCalculateException e) {
-                $error(String.format("高级检索 批量更新 价格计算错误 channleid=%s, prodcode=%s", channleId, prodCode), e);
+                $error(String.format("高级检索 批量更新 价格计算错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
                 continue;
             } catch (IllegalPriceConfigException e) {
-                $error(String.format("高级检索 批量更新 配置错误 channleid=%s, prodcode=%s", channleId, prodCode), e);
+                $error(String.format("高级检索 批量更新 配置错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
                 continue;
             } catch (Throwable e) {
-                $error(String.format("高级检索 批量更新 未知错误 channleid=%s, prodcode=%s", channleId, prodCode), e);
+                $error(String.format("高级检索 批量更新 未知错误 channleid=%s, prodcode=%s", channelId, prodCode), e);
                 continue;
             }
         }

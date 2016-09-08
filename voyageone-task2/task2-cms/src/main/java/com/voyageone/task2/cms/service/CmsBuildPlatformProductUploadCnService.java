@@ -179,7 +179,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             }
 
             // 平台类目schema信息
-            CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = platformCategoryService.getPlatformCatSchema("0", cartId);
+            CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = platformCategoryService.getPlatformCatSchema("1", cartId);
             if (cmsMtPlatformCategorySchemaModel == null) {
                 String errMsg = String.format("获取平台类目schema信息失败！[PlatformCategoryId:%s] [CartId:%s]", "0", cartId);
                 $error(errMsg);
