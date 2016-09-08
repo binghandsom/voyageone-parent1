@@ -12,10 +12,10 @@ import com.voyageone.service.model.vms.VmsBtOrderLogModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
 
 /**
  * service about product's status
@@ -303,7 +303,9 @@ public class OrderDetailService extends BaseService {
                 .addSort("consolidation_order_time", Order.Direction.ASC)
                 .limit(1)
                 .toMap();
-        VmsBtOrderDetailModel vmsBtOrderDetailModel = vmsBtOrderDetailDao.selectOne(sortedParams);
+        List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = vmsBtOrderDetailDao.selectList(sortedParams);
+        VmsBtOrderDetailModel vmsBtOrderDetailModel = (null != vmsBtOrderDetailModelList
+                && vmsBtOrderDetailModelList.size() > 0) ? vmsBtOrderDetailModelList.get(0) : null;
 
         // 若有 则更新状态 置入shipment信息
         if (null != vmsBtOrderDetailModel) {
@@ -457,5 +459,13 @@ public class OrderDetailService extends BaseService {
                                                                put("shipmentId", shipmentId);
                                                            }}
         );
+    }
+
+    public int clearOrderCancelInfo(String channelId, String consolidationOrderId) {
+        return vmsBtOrderDetailDaoExt.clearOrderCancelInfo(channelId, consolidationOrderId);
+    }
+
+    public int clearSkuCancelInfo(String channelId, String reservationId) {
+        return vmsBtOrderDetailDaoExt.clearSkuCancelInfo(channelId, reservationId);
     }
 }
