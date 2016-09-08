@@ -32,6 +32,11 @@ public class AdminUserController extends AdminController {
     @Autowired
     AdminResService adminResService;
 
+    /**
+     * 检索用户
+     * @param form
+     * @return
+     */
     @RequestMapping(AdminUrlConstants.User.Self.SEARCH_USER)
     public AjaxResponse searchUser(@RequestBody UserFormBean form) {
         int pageNum = 1;
@@ -55,6 +60,10 @@ public class AdminUserController extends AdminController {
         return success(userPage);
     }
 
+    /**
+     * 初始化页面
+     * @return
+     */
     @RequestMapping(AdminUrlConstants.User.Self.INIT)
     public AjaxResponse init()  {
         // 检索用户信息
@@ -63,6 +72,11 @@ public class AdminUserController extends AdminController {
         return success(userPage);
     }
 
+    /**
+     * 添加用户
+     * @param bean
+     * @return
+     */
     @RequestMapping(AdminUrlConstants.User.Self.ADD_USER)
     public AjaxResponse addUser(@RequestBody AdminUserBean bean){
         // 验证参数
@@ -79,6 +93,11 @@ public class AdminUserController extends AdminController {
     }
 
 
+    /**
+     * 修改用户
+     * @param bean
+     * @return
+     */
     @RequestMapping(AdminUrlConstants.User.Self.UPDATE_USER)
     public AjaxResponse updateUser(@RequestBody AdminUserBean bean)  {
         // 验证参数
@@ -95,6 +114,12 @@ public class AdminUserController extends AdminController {
     }
 
 
+    /**
+     * 软删除用户
+     *
+     * @param bean
+     * @return
+     */
     @RequestMapping(AdminUrlConstants.User.Self.DELETE_USER)
     public AjaxResponse deleteUser(@RequestBody List<Integer> bean)  {
         // 验证参数
@@ -104,6 +129,13 @@ public class AdminUserController extends AdminController {
         return success(true);
     }
 
+
+    /**
+     * 重置密码
+     *
+     * @param bean
+     * @return
+     */
     @RequestMapping(AdminUrlConstants.User.Self.RESET_PASS)
     public AjaxResponse restPass(@RequestBody List<Integer> bean)  {
         // 验证参数
@@ -113,12 +145,25 @@ public class AdminUserController extends AdminController {
         return success(true);
     }
 
+
+    /**
+     * 根据Token查询用户
+     *
+     * @param requestMap
+     * @return
+     */
     @RequestMapping(AdminUrlConstants.User.Self.GET_USER_BY_TOKEN)
     public AjaxResponse getUserByToken(@RequestBody  Map requestMap)  {
         String token = requestMap.get("token").toString();
         return success(adminUserService.getUserByToken(token));
     }
 
+
+    /**
+     * 修改密码
+     * @param requestMap
+     * @return
+     */
     @RequestMapping(AdminUrlConstants.User.Self.EDIT_PASS)
     public AjaxResponse editPass(@RequestBody  Map requestMap)  {
         String token = requestMap.get("token").toString();
@@ -127,6 +172,12 @@ public class AdminUserController extends AdminController {
         return success(true);
     }
 
+    /**
+     * 忘记密码
+     *
+     * @param requestMap
+     * @return
+     */
     @RequestMapping(AdminUrlConstants.User.Self.FORGET_PASS)
     public AjaxResponse forgetPass(@RequestBody Map requestMap)  {
 
@@ -136,6 +187,12 @@ public class AdminUserController extends AdminController {
     }
 
 
+    /**
+     * 显示用户的菜单权限
+     *
+     * @param requestMap
+     * @return
+     */
     @RequestMapping(AdminUrlConstants.User.Self.GET_AUTH_BY_USER)
     public AjaxResponse getAuth(@RequestBody Map requestMap)  {
         // 验证参数
@@ -145,6 +202,12 @@ public class AdminUserController extends AdminController {
         return success(adminUserService.showUserAuth(application, userAccount));
     }
 
+
+    /**
+     * 取所有可用的系统
+     *
+     * @return
+     */
     @RequestMapping(AdminUrlConstants.User.Self.GET_ALL_APP)
     public AjaxResponse getAllApp()  {
         return success(adminUserService.getAllApp());
