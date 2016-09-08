@@ -21,21 +21,21 @@
           modified,
           modifier)
           value(
-          #{channelId},
-          #{clientSku},
-          #{qty},
-          #{storeId},
-          #{itemCode},
-          #{sku},
-          #{size},
-          #{barcode},
-          #{synFlg},
-          #{simFlg},
-          #{active},
+          #{channelId,jdbcType=VARCHAR},
+          #{clientSku,jdbcType=VARCHAR},
+          #{qty,jdbcType=INTEGER},
+          #{storeId,jdbcType=BIGINT},
+          #{itemCode,jdbcType=VARCHAR},
+          #{sku,jdbcType=VARCHAR},
+          #{sizeColumn,jdbcType=VARCHAR},
+          #{barcode,jdbcType=VARCHAR},
+          #{synFlg,jdbcType=VARCHAR},
+          #{simFlg,jdbcType=VARCHAR},
+          #{active,jdbcType=INTEGER},
           now(),
-          #{creater},
+          #{creater,jdbcType=VARCHAR},
           now(),
-          #{creater}
+          #{creater,jdbcType=VARCHAR}
           )
   </insert>
 

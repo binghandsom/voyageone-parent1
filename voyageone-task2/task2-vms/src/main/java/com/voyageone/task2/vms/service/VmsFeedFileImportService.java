@@ -417,7 +417,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         clientInventoryService.updateClientInventorySynFlag(channel.getOrder_channel_id());
                     }
                 }
-            } catch (IOException ex) {
+            } catch (Exception ex) {
+                ex.printStackTrace();
                 $error(ex.getMessage());
                 throw ex;
             }

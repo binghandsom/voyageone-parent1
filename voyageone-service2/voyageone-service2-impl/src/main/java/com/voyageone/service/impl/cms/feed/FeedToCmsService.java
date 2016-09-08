@@ -227,6 +227,9 @@ public class FeedToCmsService extends BaseService {
                 attributeMtDataMake(attributeMtData, product);
                 succeedProduct.add(product);
             } catch (Exception e) {
+                if (isVmsUpdate) {
+                    throw e;
+                }
                 e.printStackTrace();
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                 $error(e.getMessage(), e);
