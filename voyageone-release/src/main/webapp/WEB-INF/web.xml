@@ -48,6 +48,6 @@
 
     <context-param>
         <param-name>spring.profiles.active</param-name>
-        <param-value>sandbox</param-value>
+        <param-value>product</param-value>
     </context-param>
 </web-app>
