@@ -42,18 +42,12 @@ public class AdminResController extends AdminController {
         Integer  pageNum = (Integer) requestBean.getOrDefault("pageNum", 1);
         Integer  pageSize = (Integer) requestBean.getOrDefault("pageSize", DEFAULT_PAGE_SIZE);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("treeList", adminResService.searchRes(application, pageNum, pageSize));
-
-        return success(response);
+        return success(adminResService.searchRes(application, pageNum, pageSize));
     }
 
     @RequestMapping(AdminUrlConstants.User.Res.INIT)
     public AjaxResponse init() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("treeList", adminResService.searchRes(null, 1, DEFAULT_PAGE_SIZE));
-
-        return success(response);
+        return success(adminResService.searchRes(null, 1, DEFAULT_PAGE_SIZE));
     }
 
     @RequestMapping(AdminUrlConstants.User.Res.ADD_RES)
@@ -65,11 +59,10 @@ public class AdminResController extends AdminController {
 
         model.setCreater(getUser().getUserName());
 
-        Map<String, Object> response = new HashMap<>();
 
         adminResService.addRes(model);
 
-        return success(response);
+        return success(true);
     }
 
     @RequestMapping(AdminUrlConstants.User.Res.UPDATE_RES)
