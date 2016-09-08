@@ -148,7 +148,7 @@ public class JumeiHtMallService extends JmBase {
      * @param failCause 用于保存错误信息
      * @return 是否更新成功
      */
-    public boolean addMallSku(ShopBean shopBean, HtMallSkuAddInfo mallSkuAddInfo, StringBuffer failCause) throws Exception {
+    public String addMallSku(ShopBean shopBean, HtMallSkuAddInfo mallSkuAddInfo, StringBuffer failCause) throws Exception {
         HtMallSkuAddRequest request = new HtMallSkuAddRequest();
         request.setMallSkuAddInfo(mallSkuAddInfo);
         String reqResult;
@@ -165,9 +165,9 @@ public class JumeiHtMallService extends JmBase {
         response.setBody(reqResult);
         if (!response.isSuccess()) {
             failCause.append(response.getErrorMsg());
-            return false;
+            return null;
         } else {
-            return true;
+            return response.getJumeiSkuNo();
         }
     }
 
