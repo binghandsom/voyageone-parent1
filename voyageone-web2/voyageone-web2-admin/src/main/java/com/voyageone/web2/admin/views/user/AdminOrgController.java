@@ -30,18 +30,34 @@ public class AdminOrgController extends AdminController {
     @Autowired
     AdminOrgService adminOrgService;
 
+    /**
+     * 取所有组织
+     * @return
+     */
     @RequestMapping(AdminUrlConstants.User.Org.GET_ALL_ORG)
     public AjaxResponse getAllOrg()  {
         return  success(adminOrgService.getAllOrg());
     }
 
 
+    /**
+     * 初始化页面
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(AdminUrlConstants.User.Org.INIT)
     public AjaxResponse init() throws Exception {
         PageModel<AdminOrgBean> result = adminOrgService.searchOrg(1, DEFAULT_PAGE_SIZE );
         return success(result);
     }
 
+    /**
+     * 检索
+     *
+     * @param requestBean
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(AdminUrlConstants.User.Org.SEARCH_ORG)
     public AjaxResponse searchOrg(@RequestBody Map requestBean) throws Exception {
 
@@ -62,6 +78,14 @@ public class AdminOrgController extends AdminController {
         return success(result);
     }
 
+
+    /**
+     * 添加组织
+     *
+     * @param requestBean
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(AdminUrlConstants.User.Org.ADD_ORG)
     public AjaxResponse addOrg(@RequestBody Map requestBean) throws Exception {
 
@@ -77,6 +101,14 @@ public class AdminOrgController extends AdminController {
         return success(true);
     }
 
+
+    /**
+     * 更新组织
+     *
+     * @param requestBean
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(AdminUrlConstants.User.Org.UPDATE_ORG)
     public AjaxResponse updateOrg(@RequestBody Map requestBean) throws Exception {
 
@@ -92,6 +124,13 @@ public class AdminOrgController extends AdminController {
         return success(true);
     }
 
+    /**
+     * 软删除组织
+     *
+     * @param bean
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(AdminUrlConstants.User.Org.DELETE_ORG)
     public AjaxResponse deleteOrg(@RequestBody List<Integer> bean) throws Exception {
 
