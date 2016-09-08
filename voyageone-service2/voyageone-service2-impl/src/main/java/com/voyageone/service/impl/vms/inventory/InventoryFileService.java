@@ -1,20 +1,11 @@
 package com.voyageone.service.impl.vms.inventory;
 
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.Codes;
 import com.voyageone.service.dao.vms.VmsBtInventoryFileDao;
-import com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt;
-import com.voyageone.service.model.vms.VmsBtFeedFileModel;
-import com.voyageone.service.model.vms.VmsBtInventoryFileModel;
-import org.apache.commons.io.FileUtils;
-import com.voyageone.service.dao.vms.VmsBtFeedFileDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.vms.VmsBtInventoryFileModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,5 +45,19 @@ public class InventoryFileService extends BaseService {
         vmsBtInventoryFileDao.insert(model);
         return model.getId();
 
+    }
+
+    /**
+     * 根据状态从vms_bt_inventory_file表取得InventoryFile信息
+     *
+     * @param channelId   渠道
+     * @param status      状态
+     * @return FeedFile列表
+     */
+    public List<VmsBtInventoryFileModel> getInventoryFileInfoByStatus(String channelId, String status) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("channelId", channelId);
+        param.put("status", status);
+        return vmsBtInventoryFileDao.selectList(param);
     }
 }

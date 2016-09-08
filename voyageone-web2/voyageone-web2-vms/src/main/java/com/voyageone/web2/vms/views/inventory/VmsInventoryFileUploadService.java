@@ -3,9 +3,8 @@ package com.voyageone.web2.vms.views.inventory;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.impl.vms.feed.FeedFileService;
 import com.voyageone.service.impl.vms.inventory.InventoryFileService;
-import com.voyageone.service.model.vms.VmsBtFeedFileModel;
+import com.voyageone.service.model.vms.VmsBtInventoryFileModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.vms.VmsConstants;
 import org.apache.commons.io.FileUtils;
@@ -75,6 +74,15 @@ public class VmsInventoryFileUploadService extends BaseAppService {
      * @param uploadFile 上传的InventoryFile文件
      */
     private void doSaveInventoryFileCheck(String channelId, MultipartFile uploadFile) {
+
+        // vms_bt_inventory_file表存在状态为1：等待上传或者2：上传中的数据那么不允许上传
+        List<VmsBtInventoryFileModel> waitingImportModels = inventoryFileService.getInventoryFileInfoByStatus(channelId, VmsConstants.InventoryFileStatus.WAITING_IMPORT);
+        List<VmsBtInventoryFileModel> importingModels = inventoryFileService.getInventoryFileInfoByStatus(channelId, VmsConstants.InventoryFileStatus.IMPORTING);
+        if (waitingImportModels.size() > 0 || importingModels.size() > 0) {
+            // Have Feed file is processing, please upload later.
+            throw new BusinessException("8000013", new Object[]{"inventory&price"});
+        }
+
 
         // 取得Inventory文件Ftp的上传路径
         String inventoryFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.inventory.ftp.upload");
