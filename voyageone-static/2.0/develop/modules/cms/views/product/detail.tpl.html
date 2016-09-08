@@ -46,7 +46,7 @@
             </uib-tab>
 
             <!---------------------------------------------------平台产品详情页面------------------------------------------->
-            <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter: ctrl.cartIdFilter"
+            <uib-tab ng-repeat="platformType in ctrl.platformTypes"
                      ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
                 <tab-heading>{{platformType.name}}详情</tab-heading>
 

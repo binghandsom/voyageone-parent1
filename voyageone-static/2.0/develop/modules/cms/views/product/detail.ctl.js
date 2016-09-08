@@ -25,7 +25,6 @@ define([
             this.menuService = menuService;
             this.productDetailService = productDetailService;
             this.confirm = confirm;
-            this.defaultCartId = 0;
             this.platformTypes = null;
             this.product = {
                 productId: $routeParams.productId,
@@ -44,7 +43,9 @@ define([
         ProductDetailController.prototype.initialize = function () {
             var self = this;
             self.menuService.getPlatformType().then(function (resp) {
-                self.platformTypes = resp;
+                self.platformTypes = _.filter(resp, function (element) {
+                    return element.value > 20;
+                });
             });
 
             self.menuService.getCmsConfig().then(function (resp) {
@@ -52,11 +53,6 @@ define([
             });
 
             this.defaultCartId = this.routeParams.cartId != null ? this.routeParams.cartId : 0;
-        };
-
-        /**平台过滤器*/
-        ProductDetailController.prototype.cartIdFilter = function (item) {
-            return item.value > 20;
         };
 
         /**锁定操作*/

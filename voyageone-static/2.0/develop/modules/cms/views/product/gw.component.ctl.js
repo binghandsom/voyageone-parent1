@@ -219,6 +219,9 @@ define([
                     var mainBrand = scope.productInfo.masterField.brand,
                         platform = scope.vm.platform;
 
+                    if(!platform.pBrandId)
+                        return;
+
                     openPlatformMappingSetting({
                         cartId: scope.cartInfo.value,
                         cartName: scope.cartInfo.name,
