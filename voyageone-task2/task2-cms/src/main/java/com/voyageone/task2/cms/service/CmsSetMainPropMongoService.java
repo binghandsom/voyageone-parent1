@@ -3250,7 +3250,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 $error(errMsg);
                 throw new CommonConfigNotFoundException(errMsg);
             } catch (Exception ex) {
-                String errMsg = String.format("feed->master导入:异常终止:调用共通函数计算产品价格时出错 [ErrMsg= ", channelId, feed.getCode());
+                String errMsg = "feed->master导入:异常终止:调用共通函数计算产品价格时出错 [ErrMsg= ";
                 if (StringUtils.isNullOrBlank2(ex.getMessage())) {
                     errMsg += ex.getStackTrace()[0].toString() + "]";
                 } else {
