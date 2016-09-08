@@ -17,7 +17,7 @@
             </if>
 
             <if test="roleType != null" >
-                and roleType = #{active}
+                and role_type = #{roleType}
             </if>
 
             <if test="active != null" >
