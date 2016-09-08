@@ -18,6 +18,7 @@ import com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt;
 import com.voyageone.service.daoext.vms.VmsBtFeedInfoTempDaoExt;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
+import com.voyageone.service.impl.wms.ClientInventoryService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.vms.VmsBtFeedFileModel;
@@ -130,6 +131,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
     @Autowired
     private FeedInfoService feedInfoService;
+
+    @Autowired
+    private ClientInventoryService clientInventoryService;
 
     @Autowired
     protected TransactionRunner transactionRunner;
@@ -406,6 +410,12 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_COMPLETED);
                     feedFileModel.setModifier(getTaskName());
                     vmsBtFeedFileDaoExt.updateErrorInfo(feedFileModel);
+                    VmsChannelConfigBean vmsUpdateInventory = VmsChannelConfigs.getConfigBean(channel.getOrder_channel_id(),VmsConstants.ChannelConfig.UPDATE_INVENTORY,
+                            VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
+                    if (vmsUpdateInventory == null || "1".equals(vmsUpdateInventory.getConfigValue1())) {
+                        // 库存同步
+                        clientInventoryService.updateClientInventorySynFlag(channel.getOrder_channel_id());
+                    }
                 }
             } catch (IOException ex) {
                 $error(ex.getMessage());
@@ -1634,10 +1644,10 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     outputStream.write(contentInBytes);
                 }
                 // 加一个尾
-                if (successCnt > 0) {
-                    String footer = "\"The above data have errors, other data have been imported successfully.\"\r\n";
-                    outputStream.write(footer.getBytes());
-                }
+//                if (successCnt > 0) {
+//                    String footer = "\"The above data have errors, other data have been imported successfully.\"\r\n";
+//                    outputStream.write(footer.getBytes());
+//                }
                 outputStream.flush();
                 outputStream.close();
             }

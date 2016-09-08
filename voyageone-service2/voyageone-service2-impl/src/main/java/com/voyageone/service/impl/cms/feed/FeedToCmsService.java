@@ -7,11 +7,14 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.configs.VmsChannelConfigs;
+import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
+import com.voyageone.service.impl.wms.ClientInventoryService;
 import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -51,6 +54,9 @@ public class FeedToCmsService extends BaseService {
 
     @Autowired
     private FeedCategoryAttributeService feedCategoryAttributeService;
+
+    @Autowired
+    private ClientInventoryService clientInventoryService;
 
 //    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
 //    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
@@ -128,8 +134,16 @@ public class FeedToCmsService extends BaseService {
                 CmsBtFeedInfoModel befproduct = feedInfoService.getProductByCode(channelId, product.getCode());
                 if (befproduct != null) {
                     product.set_id(befproduct.get_id());
-                    // Vms客户导入的情况下，sku以新的为准（老的舍弃）
+                    // Vms客户导入的情况下，
                     if (isVmsUpdate) {
+                        VmsChannelConfigBean vmsUpdateInventory = VmsChannelConfigs.getConfigBean(channelId,"UPDATE_INVENTORY", "0");
+                        if (vmsUpdateInventory == null || "1".equals(vmsUpdateInventory.getConfigValue1())) {
+                            // 库存更新
+                            for (CmsBtFeedInfoModel_Sku skuModelNew : product.getSkus()) {
+                                clientInventoryService.insertClientInventory(channelId, skuModelNew.getClientSku(), skuModelNew.getQty());
+                            }
+                        }
+                        // sku以新的为准（老的舍弃）
                         if (product.getSkus().size() != befproduct.getSkus().size()) {
                             insertLog = true;
                         }
