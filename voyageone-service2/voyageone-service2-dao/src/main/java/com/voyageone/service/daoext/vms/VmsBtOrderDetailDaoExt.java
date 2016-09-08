@@ -32,4 +32,8 @@ public interface VmsBtOrderDetailDaoExt {
     int countSku(Map<String, Object> params);
 
     Date getLatestPrintedTIme(Map<String, Object> params);
+
+    int clearOrderCancelInfo(String channelId, String consolidationOrderId);
+
+    int clearSkuCancelInfo(String channelId, String reservationId);
 }
