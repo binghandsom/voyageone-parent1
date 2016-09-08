@@ -6,10 +6,10 @@ define([
     'cms',
     'modules/cms/enums/Carts'
 ], function (cms, carts) {
-    cms.directive("jdSchema", function (productDetailService, $translate, notify, confirm, $q, $compile, alert, popups) {
+    cms.directive("gwSchema", function (productDetailService, $translate, notify, confirm, $q, $compile, alert, popups) {
         return {
             restrict: "E",
-            templateUrl: "views/product/jd.component.tpl.html",
+            templateUrl: "views/product/gw.component.tpl.html",
             /**独立的scope对象*/
             scope: {
                 productInfo: "=productInfo",
@@ -32,7 +32,7 @@ define([
                 };
 
                 initialize();
-                scope.jdCategoryMapping = jdCategoryMapping;
+                scope.categoryMapping = categoryMapping;
                 scope.openSellerCat = openSellerCat;
                 scope.openSwitchMainPop = openSwitchMainPop;
                 scope.openOffLinePop = openOffLinePop;
@@ -103,7 +103,7 @@ define([
                  * @param productInfo
                  * @param popupNewCategory popup实例
                  */
-                function jdCategoryMapping(popupNewCategory) {
+                function categoryMapping(popupNewCategory) {
 
                     if (scope.vm.status == 'Approved') {
                         alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
@@ -261,18 +261,6 @@ define([
                         return;
                     }
 
-                    if (mark == "ready") {
-                        if (!validSchema()) {
-                            alert("请输入必填属性，或者输入的属性格式不正确");
-                            return;
-                        }
-                    }
-
-                    var statusCount = 0;
-                    for (var attr in scope.vm.checkFlag) {
-                        statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
-                    }
-
                     if (scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null) {
                         alert("请先确认是否在后台申请过相应品牌");
                         return;
@@ -282,7 +270,7 @@ define([
 
                     switch (scope.vm.status) {
                         case "Pending":
-                            scope.vm.status = statusCount == 4 ? "Ready" : scope.vm.status;
+                            scope.vm.status = scope.vm.checkFlag.tax ? "Ready" : scope.vm.status;
                             break;
                         case "Ready":
                             scope.vm.status = "Approved";
@@ -295,12 +283,8 @@ define([
                         return;
                     }
 
-                    /**构造调用接口上行参数*/
-                    if (scope.vm.checkFlag.attribute == 1)
-                        scope.vm.platform.pAttributeStatus = "1";
-                    else
-                        scope.vm.platform.pAttributeStatus = "0";
 
+                    scope.vm.platform.pAttributeStatus = "1";
                     scope.vm.platform.status = scope.vm.status;
                     scope.vm.platform.sellerCats = scope.vm.sellerCats;
                     scope.vm.platform.cartId = +scope.cartInfo.value;
@@ -378,10 +362,6 @@ define([
                                 scope.vm.status = scope.vm.preStatus;
                         });
                     });
-                }
-
-                function validSchema() {
-                    return scope.vm.platform == null || scope.vm.platform.schemaFields == null ? false : scope.schemaForm.$valid && scope.skuForm.$valid;
                 }
 
                 function selectAll() {

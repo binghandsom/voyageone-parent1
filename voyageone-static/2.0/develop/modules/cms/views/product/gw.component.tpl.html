@@ -79,28 +79,9 @@
                                 <!----------------------------------check 状态------------------------------------------>
                                 <ul class="nav nav-pills">
                                     <li>
-                                        <span ng-class = "{tagFlag:vm.checkFlag.translate != 1}">{{'TXT_TRANSSTS_ATTRIBUTE' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="vm.checkFlag.translate == 1"></i>
-                                            <i class="fa fa-times" ng-if="vm.checkFlag.translate != 1"></i>
-                                        </span>
-                                    </li>
-                                    <li>
                                         <span ng-class = "{tagFlag:vm.checkFlag.tax != 1}">{{'TXT_HS_CODE_STATUS' | translate}}&emsp;
                                             <i class="fa fa-check" ng-if="vm.checkFlag.tax == 1"></i>
                                             <i class="fa fa-times" ng-if="vm.checkFlag.tax != 1"></i>
-                                        </span>
-                                    </li>
-                                    <li>
-                                        <span ng-class = "{tagFlag:vm.checkFlag.category != 1}">{{'TXT_PLATFORM_CATEGORY' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="vm.checkFlag.category == 1"></i>
-                                            <i class="fa fa-times" ng-if="vm.checkFlag.category != 1"></i>
-                                        </span>
-                                    </li>
-                                    <!-----------------------------添加聚焦提示------------------------>
-                                    <li ng-click="focusError()" ng-style="{ cursor:!validSchema() ? 'pointer' : 'default' }">
-                                        <span ng-class = "{tagFlag:!validSchema()}">{{'TXT_ATTRIBUTE' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="vm.checkFlag.attribute = validSchema()"></i>
-                                            <i class="fa fa-times" ng-if="!validSchema()"></i>
                                         </span>
                                     </li>
                                 </ul>
@@ -114,15 +95,19 @@
                         <div class="col-md-4">
                             <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
                             <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Pending'">
-                                <button class="btn btn-vo" ng-click="saveProduct('ready')" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
-                                                                                        vm.checkFlag.category != 1 || vm.checkFlag.attribute == false || !vm.platform.pBrandName"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready</button>
+                                <button class="btn btn-vo" ng-click="saveProduct('ready')" ng-disabled="vm.checkFlag.tax != 1">
+                                    <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready
+                                </button>
                             </div>
                             <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Pending'">
-                                <button class="btn btn-vo" ng-click="saveProduct('temporary')" ng-disabled="vm.checkFlag.category != 1"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
+                                <button class="btn btn-vo" ng-click="saveProduct('temporary')">
+                                    <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存
+                                </button>
                             </div>
                             <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Ready' || vm.status == 'Approved'">
-                                <button class="btn btn-vo" ng-click="saveProduct()" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
-                                                                                        vm.checkFlag.category != 1 || vm.checkFlag.attribute == false"><i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
+                                <button class="btn btn-vo" ng-click="saveProduct()" ng-disabled="vm.checkFlag.tax != 1">
+                                    <i class="glyphicon glyphicon-floppy-disk"></i>Approved
+                                </button>
                             </div>
                             <div class="pull-right text-warnings" style="padding-left:0px">
                                 <i class="icon fa fa-bell-o"></i>&nbsp;【Save】按钮，用于数据临时保存；【Ready】/【Approve】按钮，用于数据正式保存并确认，设计产品状态变更，将启动必填属性检查机制，一旦检查发现异常，保存即失败。
@@ -171,7 +156,7 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <button class="col-md-2 btn btn-default" ng-controller="popupCtrl" ng-click="jdCategoryMapping(popupNewCategory)" ng-disabled = "vm.mastData.isMain!= true || (cartInfo.value == 27 && vm.status == 'Approved') "><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
+                                <button class="col-md-2 btn btn-default" ng-controller="popupCtrl" ng-click="categoryMapping(popupNewCategory)"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                                 </button>
                                 <div class="col-md-8">
                                     <input class="form-control"  ng-model="vm.platform.pCatPath" disabled>
@@ -181,7 +166,7 @@
                                 </div>
                             </div>
                             <div class="row form-group" ng-if="cartInfo.value != 27">
-                                <button class="col-md-2 btn btn-default ng-binding"  ng-controller="popupCtrl" ng-click="openSellerCat(openAddChannelCategoryEdit)"><span>{{cartInfo.name}}&nbsp;店铺内分类</span>
+                                <button class="col-md-2 btn btn-default"  ng-controller="popupCtrl" ng-click="openSellerCat(openAddChannelCategoryEdit)"><span>{{cartInfo.name}}&nbsp;店铺内分类</span>
                                 </button>
                                 <div class="col-md-8">
                                     <div class="panel panel-default">
@@ -320,7 +305,7 @@
                                     <tr>
                                         <td if-no-rows="vm.platform.skus == null || vm.platform.skus.length == 0 ? 0 : vm.platform.skus.length" colspan="10" style="padding: 0px"></td>
                                     </tr>
-                                    <tr ng-repeat="entity in vm.platform.skus" ng-if="vm.platform.skus.length > 0" ng-init="entity.property = entity.property == null?'OTHER' : entity.property ">
+                                    <tr ng-repeat="entity in vm.platform.skus" class="ng-scope" ng-if="vm.platform.skus.length > 0" ng-init="entity.property = entity.property == null?'OTHER' : entity.property ">
                                         <td class="text-center v-middle">
                                             <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value != 27">
                                             <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved' && entity.isSale == true">

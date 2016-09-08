@@ -7,18 +7,18 @@
 
 define([
     'cms',
-    'underscore',
     'modules/cms/controller/popup.ctl',
     'modules/cms/service/product.detail.service',
     './jd.component.ctl',
     './feed.component.ctl',
     './master.component.ctl',
-    './jgj.component.ctl'
+    './jgj.component.ctl',
+    './gw.component.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {
 
-        function ProductDetailController($scope,$routeParams, $translate, menuService,productDetailService,confirm) {
+        function ProductDetailController($scope, $routeParams, $translate, menuService, productDetailService, confirm) {
             this.scope = $scope;
             this.routeParams = $routeParams;
             this.translate = $translate;
@@ -28,60 +28,60 @@ define([
             this.defaultCartId = 0;
             this.platformTypes = null;
             this.product = {
-                productId : $routeParams.productId,
-                masterField:null,
+                productId: $routeParams.productId,
+                masterField: null,
                 translateStatus: 0,
                 hsCodeStatus: 0,
-                checkFlag:null,
-                masterCategory:null,
-                lockStatus:null,
-                feedInfo:null,
-                autoApprovePrice:null
+                checkFlag: null,
+                masterCategory: null,
+                lockStatus: null,
+                feedInfo: null,
+                autoApprovePrice: null
             };
         }
 
-        ProductDetailController.prototype = {
+        /**获取初始化数据*/
+        ProductDetailController.prototype.initialize = function () {
+            var self = this;
+            self.menuService.getPlatformType().then(function (resp) {
+                self.platformTypes = resp;
+            });
 
-            // 获取初始化数据
-            initialize: function () {
-                var self = this;
-                self.menuService.getPlatformType().then(function(resp){
-                    self.platformTypes = resp;
+            self.menuService.getCmsConfig().then(function (resp) {
+                self.product.autoApprovePrice = resp.autoApprovePrice[0];
+            });
+
+            this.defaultCartId = this.routeParams.cartId != null ? this.routeParams.cartId : 31;
+        };
+
+        /**平台过滤器*/
+        ProductDetailController.prototype.cartIdFilter = function (item) {
+            return item.value > 20;
+        };
+
+        /**锁定操作*/
+        ProductDetailController.prototype.lockProduct = function (domId) {
+            var self = this,
+                message = self.product.lockStatus ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
+
+            this.confirm(message).then(function () {
+
+                var lock = self.product.lockStatus ? "1" : "0";
+
+                self.productDetailService.updateLock({
+                    prodId: self.product.productId,
+                    lock: lock
+                }).then(function () {
+                    var notice = self.product.lockStatus ? "商品已锁定" : "商品已接触锁定";
+                    $("#".concat(domId)).notify(notice, {className: "success", position: "right"});
                 });
 
-                self.menuService.getCmsConfig().then(function(resp){
-                    self.product.autoApprovePrice = resp.autoApprovePrice[0];
-                });
-
-                this.defaultCartId =  this.routeParams.cartId != null ? this.routeParams.cartId:0;
-            },
-            cartIdFilter:function(item){
-                return item.value > 20 && item.value < 900;
-            },
-            cartIdFilter2:function(item){
-                return item.value >= 900;
-            },
-            lockProduct: function (domId) {
-                var self = this;
-                var message = self.product.lockStatus ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
-                this.confirm(message).then(function () {
-
-                    var lock = self.product.lockStatus ? "1" : "0";
-
-                    self.productDetailService.updateLock({
-                        prodId: self.product.productId,
-                        lock: lock
-                    }).then(function () {
-                        var notice = self.product.lockStatus ? "商品已锁定" : "商品已接触锁定";
-                        $("#".concat(domId)).notify(notice, {className: "success", position: "right"});
-                    });
-
-                }, function () {
-                    self.product.lockStatus = false;
-                });
-            }
+            }, function () {
+                self.product.lockStatus = false;
+            });
         };
 
         return ProductDetailController
+
     })());
 });
