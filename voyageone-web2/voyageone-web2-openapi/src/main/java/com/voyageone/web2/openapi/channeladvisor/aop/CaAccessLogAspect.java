@@ -109,6 +109,7 @@ public class CaAccessLogAspect {
                 resResult = JacksonUtil.bean2Json(responseObj);
             }
 
+            boolean isNeedIssueLog = false;
             if (exception != null) {
                 if (exception instanceof CAApiException) {
                     ActionResponse actionResponse = ResponseUtils.buildError(exception);
@@ -117,8 +118,8 @@ public class CaAccessLogAspect {
                 } else {
                     resStatus = "exception";
                     resException = CommonUtil.getExceptionSimpleContent(exception);
-                    // Insert issueLog
-                    issueLog.log(exception, ErrorType.WSDL, SubSystem.VMS, format("<p>出现未处理异常: [ %s ]</p>%s", accessUri, resException));
+
+                    isNeedIssueLog = true;
                 }
             }
 
@@ -128,6 +129,11 @@ public class CaAccessLogAspect {
             model.setResException(resException);
 
             apiClientAccessLogService.saveLog(model);
+
+            if (isNeedIssueLog) {
+                // Insert issueLog
+                issueLog.log(exception, ErrorType.WSDL, SubSystem.VMS, format("<p>[CA API]出现未处理异常: [ logID:%s url:%s ]</p>%s", model.getId(), accessUri, resException));
+            }
 
         } catch (Exception e) {
             log.error("CaAccessLogAspect_saveLogToDB:", e);
