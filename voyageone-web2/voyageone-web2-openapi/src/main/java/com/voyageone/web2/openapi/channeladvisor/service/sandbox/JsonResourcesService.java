@@ -21,7 +21,13 @@ class JsonResourcesService implements ResourceLoaderAware {
         this.resourceLoader = resourceLoader;
     }
 
-    <T> List<T> getResourceData(String className, String methodName, Class<T> resultClass) {
+    <T> T getResourceDataModel(String className, String methodName, Class<T> resultClass) {
+        String location = "classpath:" + className.replaceAll("\\.", "/") + "_" + methodName + ".json";
+        String dataStr = getResourceData(location);
+        return JacksonUtil.json2Bean(dataStr, resultClass);
+    }
+
+    <T> List<T> getResourceDataList(String className, String methodName, Class<T> resultClass) {
         String location = "classpath:" + className.replaceAll("\\.", "/") + "_" + methodName + ".json";
         String dataStr = getResourceData(location);
         return JacksonUtil.jsonToBeanList(dataStr, resultClass);
