@@ -486,7 +486,7 @@
         </where>
     </select>
 
-    <select id="getLatestPrintedTIme" parameterType="HashMap">
+    <select id="getLatestPrintedTIme" parameterType="HashMap" resultType="java.util.Date">
       SELECT `containerizing_time` FROM voyageone_vms.vms_bt_order_detail
         WHERE shipment_id = #{shipmentId, jdbcType=INTEGER}
         ORDER BY containerizing_time DESC LIMIT 1;

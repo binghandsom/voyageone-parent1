@@ -772,4 +772,62 @@ public class VmsOrderInfoService extends BaseService {
                 .distinct()
                 .count();
     }
+
+    /**
+     * 重新打开订单
+     *
+     * @param user 当前用户
+     * @param item 被取消订单
+     * @return 重新打开的条目数
+     */
+    public int reopenOrder(UserSessionBean user, PlatformSubOrderInfoBean item) {
+
+        // 检查订单状态
+        Map<String, Object> checkParam = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannel().getId());
+            put("consolidationOrderId", item.getConsolidationOrderId());
+        }};
+
+        List<VmsBtOrderDetailModel> invalidOrderModelList = orderDetailService.selectOrderList(checkParam)
+                .stream()
+                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus()
+                        .equals(STATUS_VALUE.PRODUCT_STATUS.CANCEL))
+                .collect(Collectors.toList());
+
+        if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
+            throw new BusinessException("8000009");
+
+        // 检测通过 进行状态变更
+        return orderDetailService.updateOrderStatus(user.getSelChannelId(), item.getConsolidationOrderId(), STATUS_VALUE
+                .PRODUCT_STATUS.OPEN, user.getUserName());
+    }
+
+    /**
+     * 重新打开sku
+     *
+     * @param user 当前用户
+     * @param item 需要取消的对象
+     * @return 重新打开的条数
+     */
+    public int reopenSku(UserSessionBean user, SubOrderInfoBean item) {
+
+        // 检查sku状态
+        Map<String, Object> checkParam = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannel().getId());
+            put("reservationId", item.getReservationId());
+        }};
+
+        List<VmsBtOrderDetailModel> invalidOrderModelList = orderDetailService.selectOrderList(checkParam).stream()
+                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus()
+                        .equals(STATUS_VALUE.PRODUCT_STATUS.CANCEL))
+                .collect(Collectors.toList());
+
+        if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
+            throw new BusinessException("8000027");
+
+        // 检测通过 进行状态变更
+        return orderDetailService.updateReservationStatus(user.getSelChannelId(), item.getReservationId(),
+                STATUS_VALUE.PRODUCT_STATUS.OPEN, user.getUserName());
+    }
+
 }

@@ -126,9 +126,11 @@ public class VmsShipmentService {
                 shipmentBean.getId()));
         shipmentBean.setSkuTotal(orderDetailService.countSkuWithShipment(shipmentBean.getChannelId(),
                 shipmentBean.getId()));
-        shipmentBean.setPrinted(null != shipmentBean.getDetailPrintTime()
-                && orderDetailService.getLatestPrintedTime(user.getSelChannelId(), shipmentBean.getId())
-                .before(shipmentBean.getDetailPrintTime()));
+        Date detailPrintTime = shipmentBean.getDetailPrintTime();
+        Date latestPrintedTime = orderDetailService.getLatestPrintedTime(user.getSelChannelId(),
+                shipmentBean.getId());
+        shipmentBean.setPrinted(null != detailPrintTime && null != latestPrintedTime
+                && latestPrintedTime.before(detailPrintTime));
         return shipmentBean;
     }
 
@@ -141,7 +143,7 @@ public class VmsShipmentService {
      */
     public int create(UserSessionBean user, ShipmentBean shipmentBean) {
 
-        // 对于ORDER级别的channel 要确认是否已有活动的shipment
+        // 对于 ORDER 级别的channel 要确认是否已有活动的 shipment
         if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(
                 vmsChannelConfigService.getChannelConfig(user).getVendorOperateType())
                 && null != this.getCurrentShipment(user)) throw new BusinessException("8000022");
@@ -193,9 +195,11 @@ public class VmsShipmentService {
                             shipmentBean.getId()));
                     shipmentBean.setSkuTotal(orderDetailService.countSkuWithShipment(shipmentBean.getChannelId(),
                             shipmentBean.getId()));
-                    shipmentBean.setPrinted(null != shipmentBean.getDetailPrintTime()
-                            && orderDetailService.getLatestPrintedTime(user.getSelChannelId(), shipmentBean.getId())
-                            .before(shipmentBean.getDetailPrintTime()));
+                    Date detailPrintTime = shipmentBean.getDetailPrintTime();
+                    Date latestPrintedTime = orderDetailService.getLatestPrintedTime(user.getSelChannelId(),
+                            shipmentBean.getId());
+                    shipmentBean.setPrinted(null != detailPrintTime && null != latestPrintedTime
+                            && latestPrintedTime.before(detailPrintTime));
                     return shipmentBean;
                 })
                 .collect(Collectors.toList()));

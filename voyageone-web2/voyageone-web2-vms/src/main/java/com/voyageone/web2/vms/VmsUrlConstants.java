@@ -20,6 +20,8 @@ public interface VmsUrlConstants {
             String CANCEL_ORDER = "cancelOrder";
             String CANCEL_SKU = "cancelSku";
             String DOWNLOAD_PICKING_LIST = "downloadPickingList";
+            String REOPEN_ORDER = "reopen_order";
+            String REOPEN_SKU = "reopen_sku";
         }
     }
 
