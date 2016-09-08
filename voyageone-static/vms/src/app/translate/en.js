@@ -39,7 +39,7 @@ define(function () {
         "TXT_IMAGE": "Image",
         "TXT_IMAGE_PREVIEW":"Image Preview",
         "TXT_INVENTORY": "Inventory",
-        "TXT_INVENTORY_FEED_UPLOAD": "Inventory Feed Upload",
+        "TXT_INVENTORY_PRICE_FEED_UPLOAD": "Inventory&Price Feed Upload",
         "TXT_ITEM_NOT_FOUND": "Barcode can not be found in this order, please check and try again later.",
         "TXT_ITEM_NOT_FOUND_SKU": "Barcode can not be found in OPEN orders, please check and try again later.",
         "TXT_ITEMS": "Items",

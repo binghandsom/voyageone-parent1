@@ -315,6 +315,7 @@ public class OrderDetailService extends BaseService {
                 put("shipmentId", shipmentId);
                 if (STATUS_SHIPPED.equals(shipmentStatus)) {
                     put("status", STATUS_SHIPPED);
+                    put("shipmentTime", new Date());
                 } else {
                     put("status", STATUS_PACKAGED);
                 }
