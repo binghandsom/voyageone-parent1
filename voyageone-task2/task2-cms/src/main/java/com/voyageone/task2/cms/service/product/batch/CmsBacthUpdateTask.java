@@ -31,7 +31,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsBacthUpdateService extends VOAbsLoggable {
+public class CmsBacthUpdateTask extends VOAbsLoggable {
 
     @Autowired
     private ProductService productService;

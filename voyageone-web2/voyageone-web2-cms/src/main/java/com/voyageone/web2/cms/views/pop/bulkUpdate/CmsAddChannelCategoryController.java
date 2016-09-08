@@ -17,15 +17,17 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = CmsUrlConstants.POP.ADD_TO_CHANNEL_CATEGORY.ROOT,method = RequestMethod.POST)
 public class CmsAddChannelCategoryController  extends CmsController {
+
     @Autowired
     private  CmsAddChannelCategoryService cmsAddChannelCategoryService;
+
     /**
      * 店铺内分类达标初始化
      * @param params
      * @return params
      */
     @RequestMapping(CmsUrlConstants.POP.ADD_TO_CHANNEL_CATEGORY.GET_CHANNEL_CATEGORY_INFO)
-    public AjaxResponse init (@RequestBody Map<String, Object> params){
+    public AjaxResponse init (@RequestBody Map<String, Object> params) {
         //取得channelId
         params.put("channelId", this.getUser().getSelChannelId());
         params.put("userName", this.getUser().getUserName());
@@ -34,17 +36,17 @@ public class CmsAddChannelCategoryController  extends CmsController {
     }
 
     /**
-     * 店铺内分类达标保存
+     * 保存店铺内分类
      * @param params
      * @return params
      */
     @RequestMapping(CmsUrlConstants.POP.ADD_TO_CHANNEL_CATEGORY.SAVE_CHANNEL_CATEGORY_INFO)
-    public AjaxResponse save (@RequestBody Map<String, Object> params){
+    public AjaxResponse save (@RequestBody Map<String, Object> params) {
         //公司平台销售渠道
         params.put("channelId", this.getUser().getSelChannelId());
         //创建者/更新者用
         params.put("userName", this.getUser().getUserName());
-        Map<String, Object> resultMap = cmsAddChannelCategoryService.saveChannelCategory(params, getCmsSession());
-        return success(resultMap);
+        cmsAddChannelCategoryService.saveChannelCategory(params, getCmsSession());
+        return success(null);
     }
 }
