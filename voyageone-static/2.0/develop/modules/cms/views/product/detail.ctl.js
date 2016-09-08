@@ -51,7 +51,7 @@ define([
                 self.product.autoApprovePrice = resp.autoApprovePrice[0];
             });
 
-            this.defaultCartId = this.routeParams.cartId != null ? this.routeParams.cartId : 0;
+            this.defaultCartId = this.routeParams.cartId != null ? this.routeParams.cartId : 31;
         };
 
         /**平台过滤器*/
