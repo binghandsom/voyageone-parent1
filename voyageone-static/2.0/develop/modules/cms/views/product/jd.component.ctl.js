@@ -76,7 +76,7 @@ define([
                         scope.vm.platform = platform = resp.data.platform;
 
                         if (platform) {
-                            scope.vm.status = platform.status == null ? scope.vm.status : status;
+                            scope.vm.status = platform.status == null ? scope.vm.status : platform.status;
                             scope.vm.checkFlag.category = platform.pCatPath == null ? 0 : 1;
                             scope.vm.platform.pStatus = platform.pStatus == null ? "WaitingPublish" : platform.pStatus;
                             scope.vm.sellerCats = platform.sellerCats == null ? [] : platform.sellerCats;
