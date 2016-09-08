@@ -292,7 +292,7 @@ define([
                                 _.forEach(delList, function (item) {
                                     var source = self.sourceData.sourceData.channel.channelConfig;
                                     var data = _.find(source, function (sItem) {
-                                        return sItem.orderChannelId = item.orderChannelId;
+                                        return sItem.orderChannelId == item.orderChannelId;
                                     });
                                     if (source.indexOf(data) > -1) {
                                         source.splice(source.indexOf(data), 1);

@@ -221,8 +221,8 @@
                     </div>
                     <div class="col-sm-12">
                         <div id="step-buttons" class="text-center">
-                            <button class="btn btn-default btn-pop" ng-click="ctrl.config('Channel')"><i class="fa fa-cog"></i>&nbsp;&nbsp;配置</button>
-                            <button class="btn btn-success btn-pop" ng-click="ctrl.next()">下一步&nbsp;&nbsp;<i class="fa fa-arrow-right"></i></button>
+                            <button class="btn btn-default btn-pop" ng-click="ctrl.config('Channel')" ng-if="ctrl.display"><i class="fa fa-cog"></i>&nbsp;&nbsp;配置</button>
+                            <button class="btn btn-success btn-pop" ng-click="ctrl.next()" ng-if="ctrl.display" ng-disabled="addForm.$valid==false">下一步&nbsp;&nbsp;<i class="fa fa-arrow-right"></i></button>
                         </div>
                     </div>
                 </div>

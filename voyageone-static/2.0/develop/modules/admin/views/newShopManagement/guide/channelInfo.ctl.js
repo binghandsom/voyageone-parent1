@@ -16,9 +16,24 @@ define([
             this.resList = [];
             this.carrierSelList = {selList: []};
             this.tempChannelSelect = null;
-            this.searchInfo = {
-                orderChannelId: ''
+            this.display = false;
+            this.infoList = {
+                companyId: '',
+                orderChannelId: '',
+                active: null,
+                sendName: '',
+                sendTel: '',
+                sendZip: '',
+                sendAddress: '',
+                isUsjoi: null,
+                name: '',
+                fullName: '',
+                imgUrl: '',
+                cartIds: ''
             };
+            this.sessionKey = '';
+            this.screctKey = '';
+
         }
 
         GuideConfigController.prototype = {
@@ -51,7 +66,6 @@ define([
                                 self.cartAllList = [];
                                 if (self.cartList.length == 0) {
                                     self.cartAllList = res.data;
-                                    return;
                                 } else {
                                     self.cartAllList = res.data;
                                     _.forEach(self.cartList, function (item) {
@@ -63,11 +77,31 @@ define([
                                 }
                             });
                         }
-                        self.alert('复制成功！');
+
+                        self.alert('渠道信息复制成功！').then(function () {
+                            self.display = true;
+                        });
                     } else {
                         self.resListCopy = res.data;
-                        self.resList = {};
-                        self.alert('复制成功！');
+                        self.resList = self.infoList;
+                        self.cartList = [];
+                        self.AdminCartService.getAllCart(null).then(function (res) {
+                            self.cartAllList = [];
+                            if (self.cartList.length == 0) {
+                                self.cartAllList = res.data;
+                            } else {
+                                self.cartAllList = res.data;
+                                _.forEach(self.cartList, function (item) {
+                                    self.data = _.find(self.cartAllList, function (cart) {
+                                        return cart.cartId == item.cartId;
+                                    });
+                                    self.cartAllList.splice(self.cartAllList.indexOf(self.data), 1);
+                                });
+                            }
+                        });
+                        self.alert('渠道信息复制成功！').then(function () {
+                            self.display = true;
+                        });
                     }
                 })
             },
@@ -112,7 +146,6 @@ define([
                             _.forEach(self.cartAllList, function (e, i) {
                                 if (e.cartId == item.cartId) {
                                     index = i;
-                                    return;
                                 }
                             });
                             if (index > -1) {
@@ -159,25 +192,40 @@ define([
             },
             config: function (type) {
                 var self = this;
-                if (!self.searchInfo.orderChannelId) {
-                    self.popups.openConfig({'configType': type, 'isReadOnly': true});
-                    return;
-                } else {
-                    var channelInfo = {
-                        'orderChannelId': self.autoCopy == true ? self.resList.channel.orderChannelId : self.resListCopy.channel.orderChannelId,
-                        'configType': type,
-                        'isReadOnly': true,
-                        'sourceData': self.autoCopy == true ? self.resList : self.resListCopy
-                    };
-                    self.popups.openConfig(channelInfo);
-
-                }
+                var channelInfo = {
+                    'orderChannelId': self.autoCopy == true ? self.resList.channel.orderChannelId : self.resListCopy.channel.orderChannelId,
+                    'configType': type,
+                    'isReadOnly': true,
+                    'sourceData': self.autoCopy == true ? self.resList : self.resListCopy
+                };
+                self.popups.openConfig(channelInfo);
             },
             next: function () {
                 var self = this;
+                function synchronizeChannelSeries(data) {
+                    var channel = data.channel;
+                    var callback = function (item) {
+                        item.orderChannelId = channel.orderChannelId;
+                        item.channelId = channel.orderChannelId;
+                        item.channelName = channel.name;
+                    };
+                    _.forEach(channel.channelConfig, callback);
+                    _.forEach(data.sms, callback);
+                    _.forEach(data.thirdParty, callback);
+                    _.forEach(data.carrier, callback);
+                    _.forEach(data.channelAttr, callback);
+                    _.forEach(data.store, callback);
+                    _.forEach(data.cartShop, callback);
+                    _.forEach(data.cartShop.cartShopConfig, callback);
+                    _.forEach(data.cartTracking, callback);
+                }
+
                 if (self.autoCopy == true) {
+                    synchronizeChannelSeries(self.resList);
                     window.sessionStorage.setItem('channelCogInfo', JSON.stringify(self.resList));
                 } else {
+                    _.extend(self.resListCopy, self.resList);
+                    synchronizeChannelSeries(self.resListCopy);
                     window.sessionStorage.setItem('channelCogInfo', JSON.stringify(self.resListCopy));
                 }
                 window.location.href = "#/newShop/guide/channelConfig";

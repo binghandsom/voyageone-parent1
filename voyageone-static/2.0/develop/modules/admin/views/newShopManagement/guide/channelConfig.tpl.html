@@ -22,9 +22,9 @@
                                 <tab-heading><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SMS_COG_INFO' | translate}}</tab-heading>
                                 <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                                     <div class="form-group m-t-sm m-r-xs">
-                                        <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
-                                        <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.channelSmsSelList.selList.length <= 0||ctrl.channelSmsSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
-                                        <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelSmsSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                                        <button class="btn btn-default" ng-click="ctrl.edit({'type':'Sms','kind':'add'})"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                                        <button class="btn btn-default" ng-click="ctrl.edit({'type':'Sms','kind':'edit'})" ng-disabled="ctrl.channelSmsSelList.selList.length <= 0||ctrl.channelSmsSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                                        <button class="btn btn-default" ng-click="ctrl.delete({'type':'Sms'})" ng-disabled="ctrl.channelSmsSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;删除</button>
                                     </div>
                                 </div>
                                 <div class="scroll-y changeableHeight">
@@ -78,9 +78,9 @@
                                 <tab-heading><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_THIRD_COG_INFO' | translate}}</tab-heading>
                                 <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                                     <div class="form-group m-t-sm m-r-xs">
-                                        <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
-                                        <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.channelThirdSelList.selList.length <= 0||ctrl.channelThirdSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
-                                        <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelThirdSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                                        <button class="btn btn-default" ng-click="ctrl.edit({'type':'Third','kind':'add'})"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                                        <button class="btn btn-default" ng-click="ctrl.edit({'type':'Third','kind':'edit'})" ng-disabled="ctrl.channelThirdSelList.selList.length <= 0||ctrl.channelThirdSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                                        <button class="btn btn-default" ng-click="ctrl.delete({'type':'Third'})" ng-disabled="ctrl.channelThirdSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;删除</button>
                                     </div>
                                 </div>
                                 <div class="scroll-y changeableHeight">
@@ -174,9 +174,9 @@
                                 <tab-heading><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CARRIER_COG_INFO' | translate}}</tab-heading>
                                 <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                                     <div class="form-group m-t-sm m-r-xs">
-                                        <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
-                                        <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.carrierSelList.selList.length <= 0||ctrl.carrierSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
-                                        <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.carrierSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                                        <button class="btn btn-default" ng-click="ctrl.edit({'type':'Carrier','kind':'add'})"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                                        <button class="btn btn-default" ng-click="ctrl.edit({'type':'Carrier','kind':'edit'})" ng-disabled="ctrl.carrierSelList.selList.length <= 0||ctrl.carrierSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                                        <button class="btn btn-default" ng-click="ctrl.delete({'type':'Carrier'})" ng-disabled="ctrl.carrierSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;删除</button>
                                     </div>
                                 </div>
                                 <div class="scroll-y changeableHeight">
@@ -230,9 +230,9 @@
                                 <tab-heading><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_TYPE_ATTR_COG_INFO' | translate}}</tab-heading>
                                 <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                                     <div class="form-group m-t-sm m-r-xs">
-                                        <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
-                                        <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.channelTypeSelList.selList.length <= 0||ctrl.channelTypeSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
-                                        <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelTypeSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                                        <button class="btn btn-default" ng-click="ctrl.edit({'type':'TypeAttr','kind':'add'})"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                                        <button class="btn btn-default" ng-click="ctrl.edit({'type':'TypeAttr','kind':'edit'})" ng-disabled="ctrl.channelTypeSelList.selList.length <= 0||ctrl.channelTypeSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                                        <button class="btn btn-default" ng-click="ctrl.delete({'type':'TypeAttr'})" ng-disabled="ctrl.channelTypeSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;删除</button>
                                     </div>
                                 </div>
                                 <div class="scroll-y changeableHeight">

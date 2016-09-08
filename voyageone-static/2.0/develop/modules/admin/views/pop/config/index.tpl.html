@@ -74,7 +74,7 @@
             </div>
             <div class="col-sm-12 text-center m-b-xs">
                 <div class="form-horizontal form-inline">
-                    <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;重置</button>
+                    <button class="btn btn-default" ng-click="ctrl.clear()" ng-if="ctrl.sourceData.isReadOnly!==true;"><i class="fa fa-remove"></i>&nbsp;重置</button>
                     <button class="btn btn-vo" ng-click="ctrl.search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>
                 </div>
             </div>
