@@ -69,6 +69,10 @@ define([
                         }
                         break;
                     case 'Store':
+                        if (self.sourceData.isReadOnly == true) {
+                            self.$uibModalInstance.close(self.sourceData);
+                            return;
+                        }
                         if (self.append == true) {
                             self.storeService.addStoreConfig(self.sourceData).then(function (res) {
                                 _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
@@ -82,12 +86,20 @@ define([
                         }
                         break;
                     case 'Task':
+                        if (self.sourceData.isReadOnly == true) {
+                            self.$uibModalInstance.close(self.sourceData);
+                            return;
+                        }
                         self.taskService.addTaskConfig(self.sourceData).then(function (res) {
                             _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                             self.$uibModalInstance.close(result);
                         });
                         break;
                     case 'Shop':
+                        if (self.sourceData.isReadOnly == true) {
+                            self.$uibModalInstance.close(self.sourceData);
+                            return;
+                        }
                         if (self.append == true) {
                             self.cartShopService.addCartShopConfig(self.sourceData).then(function (res) {
                                 _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
