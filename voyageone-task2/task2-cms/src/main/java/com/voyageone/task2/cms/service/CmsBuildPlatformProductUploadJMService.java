@@ -1357,6 +1357,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 //            mallId = jumeiHtMallService.addMall(shopBean, product.getPlatform(CART_ID).getpNumIId(), sb);
 //
 //            if (StringUtils.isEmpty(mallId) || sb.length() > 0) {
+//                if (!StringUtils.isEmpty(mallId)) {
+//                    // add成功并生成了mallId,只是有别的错误，也回写mallId
+//                    updateMallId(product, mallId);
+//                }
 //                // 上传失败
 //                throw new BusinessException("添加商品到聚美商城失败!" + sb.toString());
 //            } else {

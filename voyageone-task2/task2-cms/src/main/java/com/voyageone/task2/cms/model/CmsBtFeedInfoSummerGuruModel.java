@@ -13,6 +13,8 @@ public class CmsBtFeedInfoSummerGuruModel extends CmsBtFeedInfoModel {
   private String relationshipName;
   private String condition;
   private String conditionNotes;
+  private String title;
+
 
   public String getMaterial() {
     return material;
@@ -52,5 +54,13 @@ public class CmsBtFeedInfoSummerGuruModel extends CmsBtFeedInfoModel {
 
   public void setConditionNotes(String conditionNotes) {
     this.conditionNotes = conditionNotes;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
   }
 }
