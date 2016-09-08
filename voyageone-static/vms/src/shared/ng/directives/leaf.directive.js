@@ -11,10 +11,9 @@ angular.module("vo.directives").directive("leaf", function ($compile) {
             if (angular.isArray(scope.leaf.children) && scope.leaf.children.length > 0) {
                 element.append("<tree ng-if='leaf.children.length>0' tree='leaf.children' result='result'></tree>");
                 element.addClass('dropdown-submenu');
-                $compile(element.contents())(scope);
             }
 
-            element.bind('click', function (event) {
+            element.bind('mouseup', function (event) {
                 event.stopPropagation();
                 var paraSpan = document.createElement("span");
                 paraSpan.innerHTML = "<label class='selectedCat' title = '点击取消选择' ng-click='ctrl.deleCat()'><i class='fa fa-close'></i>&nbsp;&nbsp;</label>";
@@ -27,6 +26,7 @@ angular.module("vo.directives").directive("leaf", function ($compile) {
                 navElement.appendChild(paraSpan);
                 scope.result.push(scope.leaf.catPath.replace(/-/g, "/"));
             });
+            $compile(element.contents())(scope);
         }
     };
 });
