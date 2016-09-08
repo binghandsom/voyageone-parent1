@@ -12,6 +12,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -169,6 +170,22 @@ public class AdminUserController extends AdminController {
         String token = requestMap.get("token").toString();
         String pass = requestMap.get("password").toString();
         adminUserService.restPass(token, pass);
+        return success(true);
+    }
+
+    /**
+     * 强制用户修改密码
+     * @param requestMap
+     * @return
+     */
+    @RequestMapping(AdminUrlConstants.User.Self.MODIFY_PASS)
+    public AjaxResponse modifyPass(@RequestBody  Map requestMap)  {
+        String pass = requestMap.get("password").toString();
+        String username = getUser().getUserName();
+        List<Integer> list = new ArrayList<>();
+        Integer userId = getUser().getUserId();
+        list.add(userId);
+        adminUserService.restPass(list, pass ,username);
         return success(true);
     }
 
