@@ -37,7 +37,6 @@ define([
                 scope.openSwitchMainPop = openSwitchMainPop;
                 scope.openOffLinePop = openOffLinePop;
                 scope.saveProduct = saveProduct;
-                scope.validSchema = validSchema;
                 scope.selectAll = selectAll;
                 scope.pageAnchor = pageAnchor;
                 scope.allSkuSale = allSkuSale;
@@ -90,11 +89,10 @@ define([
                         if (platform.schemaFields && platform.schemaFields.product)
                             initBrand(platform.schemaFields.product, platform.pBrandId);
 
+                        scope.vm.productUrl = carts.valueOf(+scope.cartInfo.value).pUrl;
                     }, function (resp) {
                         scope.vm.noMaterMsg = resp.message.indexOf("Server Exception") >= 0 ? null : resp.message;
                     });
-
-                    scope.vm.productUrl = carts.valueOf(+scope.cartInfo.value).pUrl;
 
                 }
 

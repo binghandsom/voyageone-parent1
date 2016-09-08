@@ -99,11 +99,11 @@
                                     <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready
                                 </button>
                             </div>
-                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Pending'">
+<!--                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Pending'">
                                 <button class="btn btn-vo" ng-click="saveProduct('temporary')">
                                     <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存
                                 </button>
-                            </div>
+                            </div>-->
                             <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Ready' || vm.status == 'Approved'">
                                 <button class="btn btn-vo" ng-click="saveProduct()" ng-disabled="vm.checkFlag.tax != 1">
                                     <i class="glyphicon glyphicon-floppy-disk"></i>Approved
