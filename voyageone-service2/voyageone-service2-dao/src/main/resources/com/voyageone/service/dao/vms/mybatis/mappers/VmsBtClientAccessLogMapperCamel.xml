@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.vms.VmsBtClientAccessLogDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtClientAccessLogModel" />
+    <sql id="Base_Column_List" >
+        `id`, `seller_id`, `access_uri`, `access_param`, `response_status`, `response_result`, 
+        `created`, `creater`, `modified`, `modifier`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_client_access_log
+        where `id` = #{id,jdbcType=BIGINT}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.vms.VmsBtClientAccessLogModel" >
+        update vms_bt_client_access_log
+        <set >
+            <if test="sellerId != null" >
+                `seller_id` = #{sellerId,jdbcType=VARCHAR},
+            </if>
+            <if test="accessUri != null" >
+                `access_uri` = #{accessUri,jdbcType=VARCHAR},
+            </if>
+            <if test="accessParam != null" >
+                `access_param` = #{accessParam,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="responseStatus != null" >
+                `response_status` = #{responseStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="responseResult != null" >
+                `response_result` = #{responseResult,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=BIGINT}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Long" >
+        delete from vms_bt_client_access_log
+        where `id` = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_client_access_log
+        <where >
+            <if test="sellerId != null" >
+                and `seller_id` = #{sellerId,jdbcType=VARCHAR}
+            </if>
+            <if test="accessUri != null" >
+                and `access_uri` = #{accessUri,jdbcType=VARCHAR}
+            </if>
+            <if test="accessParam != null" >
+                and `access_param` = #{accessParam,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="responseStatus != null" >
+                and `response_status` = #{responseStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="responseResult != null" >
+                and `response_result` = #{responseResult,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_client_access_log
+        <where >
+            <if test="sellerId != null" >
+                and `seller_id` = #{sellerId,jdbcType=VARCHAR}
+            </if>
+            <if test="accessUri != null" >
+                and `access_uri` = #{accessUri,jdbcType=VARCHAR}
+            </if>
+            <if test="accessParam != null" >
+                and `access_param` = #{accessParam,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="responseStatus != null" >
+                and `response_status` = #{responseStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="responseResult != null" >
+                and `response_result` = #{responseResult,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from vms_bt_client_access_log
+        <where >
+            <if test="sellerId != null" >
+                and `seller_id` = #{sellerId,jdbcType=VARCHAR}
+            </if>
+            <if test="accessUri != null" >
+                and `access_uri` = #{accessUri,jdbcType=VARCHAR}
+            </if>
+            <if test="accessParam != null" >
+                and `access_param` = #{accessParam,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="responseStatus != null" >
+                and `response_status` = #{responseStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="responseResult != null" >
+                and `response_result` = #{responseResult,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.vms.VmsBtClientAccessLogModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into vms_bt_client_access_log
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="sellerId != null" >
+                `seller_id`,
+            </if>
+            <if test="accessUri != null" >
+                `access_uri`,
+            </if>
+            <if test="accessParam != null" >
+                `access_param`,
+            </if>
+            <if test="responseStatus != null" >
+                `response_status`,
+            </if>
+            <if test="responseResult != null" >
+                `response_result`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="sellerId != null" >
+                #{sellerId,jdbcType=VARCHAR},
+            </if>
+            <if test="accessUri != null" >
+                #{accessUri,jdbcType=VARCHAR},
+            </if>
+            <if test="accessParam != null" >
+                #{accessParam,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="responseStatus != null" >
+                #{responseStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="responseResult != null" >
+                #{responseResult,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>
