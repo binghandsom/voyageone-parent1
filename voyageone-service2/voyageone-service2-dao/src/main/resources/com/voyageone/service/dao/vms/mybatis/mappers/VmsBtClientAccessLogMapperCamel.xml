@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.vms.VmsBtClientAccessLogDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtClientAccessLogModel" />
     <sql id="Base_Column_List" >
-        `id`, `seller_id`, `access_uri`, `access_param`, `response_status`, `response_result`, 
+        `id`, `seller_id`, `access_uri`, `access_param`, `res_status`, `res_result`, `res_exception`, 
         `created`, `creater`, `modified`, `modifier`
     </sql>
 
@@ -26,11 +26,14 @@
             <if test="accessParam != null" >
                 `access_param` = #{accessParam,jdbcType=LONGVARCHAR},
             </if>
-            <if test="responseStatus != null" >
-                `response_status` = #{responseStatus,jdbcType=VARCHAR},
+            <if test="resStatus != null" >
+                `res_status` = #{resStatus,jdbcType=VARCHAR},
             </if>
-            <if test="responseResult != null" >
-                `response_result` = #{responseResult,jdbcType=LONGVARCHAR},
+            <if test="resResult != null" >
+                `res_result` = #{resResult,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="resException != null" >
+                `res_exception` = #{resException,jdbcType=LONGVARCHAR},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -70,11 +73,14 @@
             <if test="accessParam != null" >
                 and `access_param` = #{accessParam,jdbcType=LONGVARCHAR}
             </if>
-            <if test="responseStatus != null" >
-                and `response_status` = #{responseStatus,jdbcType=VARCHAR}
+            <if test="resStatus != null" >
+                and `res_status` = #{resStatus,jdbcType=VARCHAR}
             </if>
-            <if test="responseResult != null" >
-                and `response_result` = #{responseResult,jdbcType=LONGVARCHAR}
+            <if test="resResult != null" >
+                and `res_result` = #{resResult,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="resException != null" >
+                and `res_exception` = #{resException,jdbcType=LONGVARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -106,11 +112,14 @@
             <if test="accessParam != null" >
                 and `access_param` = #{accessParam,jdbcType=LONGVARCHAR}
             </if>
-            <if test="responseStatus != null" >
-                and `response_status` = #{responseStatus,jdbcType=VARCHAR}
+            <if test="resStatus != null" >
+                and `res_status` = #{resStatus,jdbcType=VARCHAR}
             </if>
-            <if test="responseResult != null" >
-                and `response_result` = #{responseResult,jdbcType=LONGVARCHAR}
+            <if test="resResult != null" >
+                and `res_result` = #{resResult,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="resException != null" >
+                and `res_exception` = #{resException,jdbcType=LONGVARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -139,11 +148,14 @@
             <if test="accessParam != null" >
                 and `access_param` = #{accessParam,jdbcType=LONGVARCHAR}
             </if>
-            <if test="responseStatus != null" >
-                and `response_status` = #{responseStatus,jdbcType=VARCHAR}
+            <if test="resStatus != null" >
+                and `res_status` = #{resStatus,jdbcType=VARCHAR}
             </if>
-            <if test="responseResult != null" >
-                and `response_result` = #{responseResult,jdbcType=LONGVARCHAR}
+            <if test="resResult != null" >
+                and `res_result` = #{resResult,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="resException != null" >
+                and `res_exception` = #{resException,jdbcType=LONGVARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -172,11 +184,14 @@
             <if test="accessParam != null" >
                 `access_param`,
             </if>
-            <if test="responseStatus != null" >
-                `response_status`,
+            <if test="resStatus != null" >
+                `res_status`,
             </if>
-            <if test="responseResult != null" >
-                `response_result`,
+            <if test="resResult != null" >
+                `res_result`,
+            </if>
+            <if test="resException != null" >
+                `res_exception`,
             </if>
             `created`,
             <if test="creater != null" >
@@ -200,11 +215,14 @@
             <if test="accessParam != null" >
                 #{accessParam,jdbcType=LONGVARCHAR},
             </if>
-            <if test="responseStatus != null" >
-                #{responseStatus,jdbcType=VARCHAR},
+            <if test="resStatus != null" >
+                #{resStatus,jdbcType=VARCHAR},
             </if>
-            <if test="responseResult != null" >
-                #{responseResult,jdbcType=LONGVARCHAR},
+            <if test="resResult != null" >
+                #{resResult,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="resException != null" >
+                #{resException,jdbcType=LONGVARCHAR},
             </if>
             <if test="created == null" >
                 now(),
