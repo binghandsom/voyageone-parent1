@@ -29,10 +29,10 @@ define([
                 name: '',
                 fullName: '',
                 imgUrl: '',
-                cartIds: ''
+                cartIds: '',
+                sessionKey : '',
+                screctKey:''
             };
-            this.sessionKey = '';
-            this.screctKey = '';
 
         }
 
@@ -51,12 +51,13 @@ define([
                 var self = this;
                 self.newShopService.getChannelSeries(channelId).then(function (res) {
                     if (self.autoCopy == true) {
-                        self.resList = res.data;
-                        if (!self.resList.channel.cartIds) {
+                        self.resListCopy = res.data;
+                        self.resList = res.data.channel;
+                        if (!self.resList.cartIds) {
                             self.cartList = [];
                             callback();
                         } else {
-                            self.AdminCartService.getCartByIds({'cartIds': self.resList.channel.cartIds}).then(function (res) {
+                            self.AdminCartService.getCartByIds({'cartIds': self.resList.cartIds}).then(function (res) {
                                 self.cartList = res.data;
                                 callback();
                             });
@@ -221,10 +222,10 @@ define([
                 }
 
                 if (self.autoCopy == true) {
-                    synchronizeChannelSeries(self.resList);
-                    window.sessionStorage.setItem('channelCogInfo', JSON.stringify(self.resList));
+                    synchronizeChannelSeries(self.resListCopy);
+                    window.sessionStorage.setItem('channelCogInfo', JSON.stringify(self.resListCopy));
                 } else {
-                    _.extend(self.resListCopy, self.resList);
+                    _.extend(self.resListCopy.channel, self.resList);
                     synchronizeChannelSeries(self.resListCopy);
                     window.sessionStorage.setItem('channelCogInfo', JSON.stringify(self.resListCopy));
                 }

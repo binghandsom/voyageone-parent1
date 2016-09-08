@@ -40,6 +40,7 @@ define([
         ConfigController.prototype = {
             init: function () {
                 var self = this;
+                self.storeCfgList = [];
                 switch (self.searchInfo.configType) {
                     case 'Channel':
                         self.channelService.getAllChannel().then(function (res) {
@@ -47,20 +48,31 @@ define([
                         });
                         break;
                     case 'Store':
-                        self.storeService.getAllStore().then(function (res) {
-                            self.storeList = res.data;
-                        });
+                        if (self.sourceData.isReadOnly == true) {
+                            self.storeList = self.sourceData.sourceData;
+                            _.forEach(self.sourceData.sourceData, function (item) {
+                                _.forEach(item.storeConfig, function (storeConfig) {
+                                    self.storeCfgList.push(storeConfig);
+                                });
+                            });
+                        } else {
+                            self.storeService.getAllStore(null).then(function (res) {
+                                self.storeList = res.data;
+                            });
+                        }
                         break;
-                    case 'Task':
+                    case
+                    'Task':
                         self.taskService.getAllTask().then(function (res) {
                             self.taskList = res.data;
                         });
                         break;
-                    case 'Shop':
+                    case
+                    'Shop':
                         self.channelService.getAllChannel().then(function (res) {
                             self.channelAllList = res.data;
                         });
-                        self.AdminCartService.getAllCart().then(function (res) {
+                        self.AdminCartService.getAllCart(null).then(function (res) {
                             self.cartAllList = res.data;
                         });
                         break;
@@ -112,9 +124,21 @@ define([
                                 'cfgVal1': configInfo.cfgVal1
                             };
                         };
-                        self.storeService.searchStoreConfigByPage(data).then(function (res) {
+                        if (self.sourceData.isReadOnly == true) {
+                            res = self.getConfigPaginationData(item ? item : self.storeCfgList, function (e) {
+                                if (self.searchInfo.storeId != null && self.searchInfo.storeId != '') {
+                                    if (e.storeId != null && e.storeId != self.searchInfo.storeId) {
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            });
                             callback(res, selectKey);
-                        });
+                        } else {
+                            self.storeService.searchStoreConfigByPage(data).then(function (res) {
+                                callback(res, selectKey);
+                            });
+                        }
                         break;
                     case 'Task':
                         var selectKey = function (configInfo) {
@@ -217,10 +241,17 @@ define([
                         _.extend(item, {
                             'shortName': self.list[0].storeName,
                             'configType': self.searchInfo.configType,
-                            'isReadOnly': self.sourceData.isReadOnly
+                            'isReadOnly': self.sourceData.isReadOnly,
+                            'storeName': self.list[0].storeName
                         });
                         self.popups.openCreateEdit(item).then(function (res) {
-                            if (res.res == 'success') self.search();
+                            if (res.res == 'success') {
+                                self.search();
+                            } else {
+                                var list = self.storeCfgList;
+                                list.push(res);
+                                self.search(1, list);
+                            }
                         });
                         break;
                     case 'Task':
@@ -307,10 +338,23 @@ define([
                             }
                             break;
                         case 'Store':
-                            self.storeService.deleteStoreConfig(delList).then(function (res) {
-                                if (res.data == false)self.alert(res.data.message);
-                                self.search(1);
-                            });
+                            if (self.sourceData.isReadOnly == true) {
+                                _.forEach(delList, function (item) {
+                                    var source = self.storeCfgList;
+                                    var data = _.find(source, function (sItem) {
+                                        return sItem.storeId == item.storeId;
+                                    });
+                                    if (source.indexOf(data) > -1) {
+                                        source.splice(source.indexOf(data), 1);
+                                        self.search(1);
+                                    }
+                                })
+                            } else {
+                                self.storeService.deleteStoreConfig(delList).then(function (res) {
+                                    if (res.data == false)self.alert(res.data.message);
+                                    self.search(1);
+                                });
+                            }
                             break;
                         case 'Task':
                             self.taskService.deleteTaskConfig(delList).then(function (res) {
@@ -346,7 +390,7 @@ define([
                         break;
                 }
             },
-            getConfigPaginationData: function (data) {
+            getConfigPaginationData: function (data, filterFn) {
                 var self = this;
                 var res = {
                     data: {count: data.length, result: []}
@@ -354,18 +398,22 @@ define([
                 var pageNum = self.searchInfo.pageInfo.curr,
                     pageSize = self.searchInfo.pageInfo.size;
                 if (res.data.count > 0) {
-                    var filterFn = function (e) {
+                    var unionFilterFn = function (e) {
                         if (e.cfgName != null && e.cfgName.indexOf(self.searchInfo.cfgName) == -1) {
                             return false;
                         } else if ((e.cfgVal1 != null && e.cfgVal1.indexOf(self.searchInfo.cfgVal) == -1)
                             && (e.cfgVal2 != null && e.cfgVal2.indexOf(self.searchInfo.cfgVal) == -1)) {
                             return false;
+                        } else if (typeof filterFn === "function") {
+                            if (filterFn(e) === false) {
+                                return false;
+                            }
                         }
                         return true;
                     };
                     res.data.count = 0;
                     _.forEach(data, function (e, i) {
-                        if (filterFn(e, i)) {
+                        if (unionFilterFn(e, i)) {
                             res.data.count++;
                             res.data.result.push(e);
                         }
