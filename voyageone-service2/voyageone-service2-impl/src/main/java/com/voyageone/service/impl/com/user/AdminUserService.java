@@ -371,33 +371,10 @@ public class AdminUserService extends BaseService {
         map.put("application", application);
 
         List<AdminResourceBean> resList = adminResourceDaoExt.selectResByUser(map);
-//        Set<Integer> resIds = resList.stream().map(AdminResourceBean::getId).collect(Collectors.toSet());
 
-//        resList = markSelected(resList, resIds);
-
-//        Map<String, AdminResourceBean> treeMap = resList.stream().collect(Collectors.toMap(AdminResourceBean::getResKey, (p) -> p));
-
-//        result.put("treeMap", treeMap);
-        return resList;
+        return convert2Tree(resList);
     }
 
-    private List<AdminResourceBean> markSelected(List<AdminResourceBean> allRes, Set<Integer> resIds) {
-        if (resIds == null || resIds.size() == 0)
-            return allRes;
-
-        for (AdminResourceBean bean : allRes) {
-            if (resIds.contains(bean.getId())) {
-                bean.setSelected(1);
-            } else {
-                bean.setSelected(0);
-            }
-
-            if (bean.getChildren() != null && bean.getChildren().size() > 0) {
-                markSelected(bean.getChildren(), resIds);
-            }
-        }
-        return allRes;
-    }
 
 
     public List<Map<String, Object>>  getAllApp()
@@ -429,6 +406,54 @@ public class AdminUserService extends BaseService {
         return sb.toString();
     }
 
+    /**
+     * 将资源列转成一组树
+     */
+    private List<AdminResourceBean> convert2Tree(List<AdminResourceBean> resList) {
+        List<AdminResourceBean> roots = findRoots(resList);
+        List<AdminResourceBean> notRoots = (List<AdminResourceBean>) CollectionUtils.subtract(resList, roots);
+        for (AdminResourceBean root : roots) {
+            List<AdminResourceBean> children = findChildren(root, notRoots);
+            root.setChildren(children);
+        }
+        return roots;
+    }
+
+    /**
+     * 查找所有根节点
+     */
+    private List<AdminResourceBean> findRoots(List<AdminResourceBean> allNodes) {
+        List<AdminResourceBean> results = new ArrayList<>();
+        for (AdminResourceBean node : allNodes) {
+            if (node.getParentId() == 0) {
+                results.add(node);
+            }
+        }
+        return results;
+    }
+
+
+    /**
+     * 查找所有子节点
+     */
+    private List<AdminResourceBean> findChildren(AdminResourceBean root, List<AdminResourceBean> allNodes) {
+        List<AdminResourceBean> children = new ArrayList<>();
+
+        for (AdminResourceBean node : allNodes) {
+            if (node.getParentId() == root.getId()) {
+                children.add(node);
+            }
+        }
+        root.setChildren(children);
+
+        List<AdminResourceBean> notChildren = (List<AdminResourceBean>) CollectionUtils.subtract(allNodes, children);
+
+        for (AdminResourceBean child : children) {
+            List<AdminResourceBean> tmpChildren = findChildren(child, notChildren);
+            child.setChildren(tmpChildren);
+        }
+        return children;
+    }
 
 
 
