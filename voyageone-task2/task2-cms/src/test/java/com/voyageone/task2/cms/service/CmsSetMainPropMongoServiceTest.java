@@ -41,7 +41,7 @@ public class CmsSetMainPropMongoServiceTest {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("010");
+        taskControlBean.setCfg_val1("019");
         taskControlList.add(taskControlBean);
 
 
@@ -73,10 +73,8 @@ public class CmsSetMainPropMongoServiceTest {
         Map<String, String> resultMap = new HashMap<>();
         // 获取是否跳过mapping check
         boolean bln_skip_mapping_check = true;
-        // 获取前一次的价格强制击穿时间
-        String priceBreakTime = "";
         // 主逻辑
-        CmsSetMainPropMongoService.setMainProp mainProp = cmsSetMainPropMongoService.new setMainProp(orderChannelID, bln_skip_mapping_check, priceBreakTime);
+        CmsSetMainPropMongoService.setMainProp mainProp = cmsSetMainPropMongoService.new setMainProp(orderChannelID, bln_skip_mapping_check);
         mainProp.doRun(resultMap);
 
         System.out.println("=================feed->master导入  最终结果=====================");
