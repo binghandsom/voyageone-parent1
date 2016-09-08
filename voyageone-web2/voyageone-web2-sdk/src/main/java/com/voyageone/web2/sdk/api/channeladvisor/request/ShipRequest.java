@@ -1,8 +1,10 @@
 
 package com.voyageone.web2.sdk.api.channeladvisor.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -13,7 +15,8 @@ import java.util.Map;
 public class ShipRequest {
 
     @JsonProperty("ShippedDateUtc")
-    private String shippedDateUtc;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSSXXX", timezone = "UTC")
+    private Date shippedDateUtc;
 
     @JsonProperty("TrackingNumber")
     private String trackingNumber;
@@ -27,11 +30,11 @@ public class ShipRequest {
     @JsonProperty("Items")
     private Map<String,Integer> items;
 
-    public String getShippedDateUtc() {
+    public Date getShippedDateUtc() {
         return shippedDateUtc;
     }
 
-    public void setShippedDateUtc(String shippedDateUtc) {
+    public void setShippedDateUtc(Date shippedDateUtc) {
         this.shippedDateUtc = shippedDateUtc;
     }
 
