@@ -3,7 +3,6 @@ package com.voyageone.common.configs.Enums;
 /**
  * Created by Jack on 6/6/2017.
  */
-
 public class CartEnums {
     /**
      * 对应 ct_cart 表中存在的配置名称
@@ -60,9 +59,14 @@ public class CartEnums {
 		JGY("29"),
 
 		/**
-		 * 天猫MiniMall
+		 * Tmall 官网同购
 		 */
-		TMM("30"),
+		TT("30"),
+
+		/**
+		 * Tmall USJoi官网同购
+		 */
+		TTUS("31"),
 
 		/**
 		 * USJOI测试
@@ -113,7 +117,9 @@ public class CartEnums {
 				case "29":
 					return JGY;
 				case "30":
-					return TMM;
+					return TT;
+				case "31":
+					return TTUS;
 				case "928":
 					return USJGJ;
 				case "929":

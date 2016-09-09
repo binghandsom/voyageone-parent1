@@ -1082,7 +1082,7 @@ public class CmsFieldEditService extends BaseAppService {
         for (Integer cartIdVal : cartList) {
             qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartIdVal + ".skus.0':{$exists:true}}");
             qryObj.setParameters(productCodes);
-            qryObj.setProjection("{'common.fields.code':1,'platforms.P" + cartIdVal + ".skus':1,'platforms.P" + cartIdVal + ".status':1,'_id':0}");
+            qryObj.setProjection("{'common.fields.code':1,'platforms.P" + cartIdVal + ".skus':1,'platforms.P" + cartIdVal + ".cartId':1,'_id':0}");
 
             List<String> newCodeList = new ArrayList<>();
             boolean isUpdFlg = false;
