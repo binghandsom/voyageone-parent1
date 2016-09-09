@@ -20,7 +20,10 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.util.*;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
@@ -73,7 +76,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * feed->master导入服务
@@ -197,8 +199,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
         $info("=================feed->master导入  最终结果=====================");
         resultMap.entrySet().stream()
-                            .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
-                            .forEach(p ->  $info(p.getValue()));
+                .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
+                .forEach(p ->  $info(p.getValue()));
         $info("=================feed->master导入  主线程结束====================");
 
         // 线程
@@ -911,8 +913,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         // 更新价格相关项目
                         cmsProduct = doSetPrice(channelId, feed, cmsProduct);
 
-                        // 记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
-                        addPriceUpdateHistory(cmsProduct);
+                        // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
+                        int updCnt = productService.updateProductFeedToMaster(channelId, cmsProduct, getTaskName(), strProcName);
+                        if (updCnt == 0) {
+                            // 有出错, 跳过
+                            String errMsg = strProcName + ":更新:编辑商品的时候排他错误:" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
 
                         // 插入上新表，可用于向USJOI主店同步价格变更
                         // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
@@ -987,7 +995,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     weightCalculate(cmsProduct);
 
                     // productService.updateProduct(channelId, requestModel);
-                    int updCnt = productService.updateProductFeedToMaster(channelId, cmsProduct, getTaskName());
+                    // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
+                    int updCnt = productService.updateProductFeedToMaster(channelId, cmsProduct, getTaskName(), "feed->master导入");
                     if (updCnt == 0) {
                         // 有出错, 跳过
                         String errMsg = "feed->master导入:更新:编辑商品的时候排他错误:" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
@@ -1077,14 +1086,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // 生成productGroup数据
                 doSetGroup(feed);
-
-                // 更新价格履历
-                // productPriceLogService.insertPriceLog(channelId, productPriceBean, productPriceBeanBefore, "Feed导入Master价格更新", getTaskName());
-
-                // add by desmond 2016/07/05 start
-                // 记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
-                addPriceUpdateHistory(cmsProduct);
-                // add by desmond 2016/07/05 end
 
                 // Update desmond 2016/09/06 start
                 // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
@@ -3764,17 +3765,17 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         // delete by desmond 2016/07/08 end
 
 
-        private void addPriceUpdateHistory(CmsBtProductModel cmsProduct) {
-            // 记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
-            if (cmsProduct != null && ListUtils.notNull(cmsProduct.getCommon().getSkus())) {
-                List<String> skuCodeList = cmsProduct.getCommon().getSkus()
-                        .stream()
-                        .map(CmsBtProductModel_Sku::getSkuCode)
-                        .collect(Collectors.toList());
-                // 记录商品价格变动履历
-                cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skuCodeList, cmsProduct.getChannelId(), null, getTaskName(), "feed->master导入");
-            }
-        }
+//        private void addPriceUpdateHistory(CmsBtProductModel cmsProduct) {
+//            // 记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
+//            if (cmsProduct != null && ListUtils.notNull(cmsProduct.getCommon().getSkus())) {
+//                List<String> skuCodeList = cmsProduct.getCommon().getSkus()
+//                        .stream()
+//                        .map(CmsBtProductModel_Sku::getSkuCode)
+//                        .collect(Collectors.toList());
+//                // 记录商品价格变动履历
+//                cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skuCodeList, cmsProduct.getChannelId(), null, getTaskName(), "feed->master导入");
+//            }
+//        }
 
         private void insertWorkload(CmsBtProductModel cmsProduct) {
             // 变更自动同步到全部平台("ALL")或者自动同步到指定平台(用逗号分隔 如:"28,29"),没有配置时不插入workload表
