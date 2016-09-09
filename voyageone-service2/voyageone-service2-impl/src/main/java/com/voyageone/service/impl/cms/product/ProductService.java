@@ -1211,7 +1211,7 @@ public class ProductService extends BaseService {
                     platform.getSkus().forEach(sku -> skuCodeList.add(sku.getStringAttribute("skuCode")));
                     // 记录商品价格变动履历
                     cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skuCodeList, cmsProduct.getChannelId(),
-                            NumberUtils.toInt(cartId), modifier, comment);
+                            platform.getCartId(), modifier, comment);
                 }
             });
         }
