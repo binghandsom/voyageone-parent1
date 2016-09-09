@@ -1,6 +1,6 @@
 package com.voyageone.web2.sdk.api.channeladvisor.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.web2.sdk.api.channeladvisor.enums.OrderStatusEnum;
 
@@ -60,6 +60,7 @@ public class OrderModel extends CABaseModel {
     private OrderAddressModel buyerAddress;
 
     @JsonProperty("DeliverByDateUtc")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSSXXX", timezone = "UTC")
     private Date deliverByDateUtc;
 
     @JsonProperty("ShippingAddress")

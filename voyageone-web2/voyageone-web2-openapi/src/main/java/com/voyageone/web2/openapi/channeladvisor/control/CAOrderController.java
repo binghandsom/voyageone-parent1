@@ -1,6 +1,6 @@
 package com.voyageone.web2.openapi.channeladvisor.control;
 
-import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseController;
+import com.voyageone.web2.openapi.OpenApiBaseController;
 import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
 import com.voyageone.web2.openapi.channeladvisor.service.CAOrderService;
 import com.voyageone.web2.sdk.api.channeladvisor.request.OrderCancellationRequest;
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping(
         value = CAUrlConstants.ROOT
 )
-public class CAOrderController extends CAOpenApiBaseController {
+public class CAOrderController extends OpenApiBaseController {
 
     @Autowired
     private CAOrderService caOrderService;

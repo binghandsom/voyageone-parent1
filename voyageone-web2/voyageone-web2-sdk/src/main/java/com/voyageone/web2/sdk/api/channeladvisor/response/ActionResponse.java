@@ -64,7 +64,7 @@ public class ActionResponse {
     }
 
     public boolean isHasErrors() {
-        return CollectionUtils.isEmpty(errors);
+        return !CollectionUtils.isEmpty(errors);
     }
 
     public void setHasErrors(boolean hasErrors) {

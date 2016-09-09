@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,29 +28,37 @@ public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProd
         return success(responseBody);
     }
 
-    public ActionResponse updateProducts(List<ProductGroupRequest> request) {
-        if (CollectionUtils.isEmpty(request)) ;
-        // TODO: 2016/9/7 空值处理 logger或其他
-        // TODO: 2016/9/7 获取jsonbody 响应 mock response
+    public ActionResponse updateProducts(List<ProductGroupRequest> productGroups) {
+        // check
+        // productGroups is empty return empty response
+        if (CollectionUtils.isEmpty(productGroups)) {
+            success(new ArrayList<>());
+        }
 
         List<ProductGroupResultModel> responseBody = resourcesService.getResourceDataList(this.getClass().getName(), "updateProducts", ProductGroupResultModel.class);
 
         return success(responseBody);
     }
 
-    public ActionResponse updateQuantityPrice(List<ProductGroupRequest> request) {
-        if (CollectionUtils.isEmpty(request)) ;
-        // TODO: 2016/9/7 空值处理 logger或其他
-        // TODO: 2016/9/7 获取jsonbody 响应 mock response
+    public ActionResponse updateQuantityPrice(List<ProductGroupRequest> productGroups) {
+        // check
+        // productGroups is empty return empty response
+        if (CollectionUtils.isEmpty(productGroups)) {
+            success(new ArrayList<>());
+        }
+
         List<ProductGroupResultModel> responseBody = resourcesService.getResourceDataList(this.getClass().getName(), "updateQuantityPrice", ProductGroupResultModel.class);
 
         return success(responseBody);
     }
 
-    public ActionResponse updateStatus(List<ProductGroupRequest> request) {
-        if (CollectionUtils.isEmpty(request)) ;
-        // TODO: 2016/9/7 空值处理 logger或其他
-        // TODO: 2016/9/7 获取jsonbody 响应 mock response
+    public ActionResponse updateStatus(List<ProductGroupRequest> productGroups) {
+        // check
+        // productGroups is empty return empty response
+        if (CollectionUtils.isEmpty(productGroups)) {
+            success(new ArrayList<>());
+        }
+
         List<ProductGroupResultModel> responseBody = resourcesService.getResourceDataList(this.getClass().getName(), "updateStatus", ProductGroupResultModel.class);
 
         return success(responseBody);

@@ -28,7 +28,7 @@ class ChannelAdvisorInterceptor {
     boolean preHandle(HttpServletRequest request) throws Exception {
 
         // TODO 开发阶段跳过检查
-        if (true) return true;
+//        if (true) return true;
 
         //check SellerID
         String sellerID = request.getHeader(SELLER_ID);

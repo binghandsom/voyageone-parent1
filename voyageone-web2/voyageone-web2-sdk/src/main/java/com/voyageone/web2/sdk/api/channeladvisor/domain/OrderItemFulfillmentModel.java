@@ -1,5 +1,6 @@
 package com.voyageone.web2.sdk.api.channeladvisor.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
@@ -21,6 +22,7 @@ public class OrderItemFulfillmentModel extends CABaseModel {
     private String sellerSku;
 
     @JsonProperty("ShippedDateUtc")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSSXXX", timezone = "UTC")
     private Date shippedDateUtc;
 
     @JsonProperty("ShippingCarrier")
