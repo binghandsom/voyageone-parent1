@@ -30,6 +30,7 @@ import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -91,6 +92,9 @@ public class UploadToUSJoiService extends BaseTaskService {
 
     @Autowired
     private BusinessLogService businessLogService;
+
+    @Autowired
+    private SxProductService sxProductService;
 
     // 每个channel的子店->USJOI主店导入最大件数
     private final static int UPLOAD_TO_USJOI_MAX_500 = 500;
@@ -232,6 +236,23 @@ public class UploadToUSJoiService extends BaseTaskService {
             }
         }
 
+        // 自动同步对象平台列表(ALL:所有平台，也可具体指定需要同步的平台id,用逗号分隔(如:"28,29"))
+        String ccAutoSyncCarts = "";
+        List<String> ccAutoSyncCartList = null;
+        // 自动同步对象平台列表(ALL:所有平台，也可具体指定需要同步的平台id,用逗号分隔(如:"28,29"))
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(usjoiChannelId,
+                CmsConstants.ChannelConfig.AUTO_SYNC_CARTS);
+        if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+            String strAutoSyncCarts = cmsChannelConfigBean.getConfigValue1().trim();
+            // 如果配置的值为ALL,则同步所有平台
+            if ("ALL".equalsIgnoreCase(strAutoSyncCarts)) {
+                ccAutoSyncCarts = "ALL";
+            } else {
+                // 取得自动同步指定平台列表
+                ccAutoSyncCartList = Arrays.asList(strAutoSyncCarts.split(","));
+            }
+        }
+
         // 每个channel读入子店数据上新到USJOI主店
         List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(
                 uploadToUsjoiMax, Integer.parseInt(channelBean.getOrder_channel_id()));
@@ -239,7 +260,7 @@ public class UploadToUSJoiService extends BaseTaskService {
             try {
                 // 循环上传单个产品到USJOI主店
                 upload(sxWorkloadModel, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping,
-                        usjoiTypeChannelBeanList, cartIds);
+                        usjoiTypeChannelBeanList, cartIds, ccAutoSyncCarts, ccAutoSyncCartList);
                 successCnt++;
             } catch (CommonConfigNotFoundException ce) {
                 errCnt++;
@@ -266,7 +287,9 @@ public class UploadToUSJoiService extends BaseTaskService {
                        Map<String, String> mapProductTypeMapping,
                        Map<String, String> mapSizeTypeMapping,
                        List<TypeChannelBean> usjoiTypeChannelBeanList,
-                       List<Integer> cartIds) {
+                       List<Integer> cartIds,
+                       String ccAutoSyncCarts,
+                       List<String> ccAutoSyncCartList) {
         // workload表中的cartId是usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
         String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
 
@@ -356,6 +379,9 @@ public class UploadToUSJoiService extends BaseTaskService {
                     productModel = doSetPrice(productModel);
 
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
+
+                    // 插入主店上新workload表
+                    insertWorkload(productModel, ccAutoSyncCarts, ccAutoSyncCartList);
 
                     // 将子店的产品加入更新对象产品列表中
                     targetProductList.add(productModel);
@@ -545,6 +571,9 @@ public class UploadToUSJoiService extends BaseTaskService {
                         $error(errMsg);
                         throw new BusinessException(errMsg);
                     }
+
+                    // 插入主店上新workload表
+                    insertWorkload(productModel, ccAutoSyncCarts, ccAutoSyncCartList);
 
                     // 将USJOI店的产品加入更新对象产品列表中（取得USJOI店的品牌，产品分类和适用人群）
                     targetProductList.add(pr);
@@ -1007,6 +1036,18 @@ public class UploadToUSJoiService extends BaseTaskService {
         }
 
         return usjoiCmsProduct;
+    }
+
+    private void insertWorkload(CmsBtProductModel cmsProduct, String ccAutoSyncCarts, List<String> ccAutoSyncCartList) {
+        // 变更自动同步到全部平台("ALL")或者自动同步到指定平台(用逗号分隔 如:"28,29"),没有配置时不插入workload表
+        // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
+        if ("ALL".equalsIgnoreCase(ccAutoSyncCarts)) {
+            // 变更自动同步到全部平台("ALL")时
+            sxProductService.insertSxWorkLoad(cmsProduct, getTaskName());
+        } else if (ListUtils.notNull(ccAutoSyncCartList)) {
+            // 变更自动同步到指定平台(用逗号分隔 如:"28,29")时
+            sxProductService.insertSxWorkLoad(cmsProduct, ccAutoSyncCartList, getTaskName());
+        }
     }
 
 }
