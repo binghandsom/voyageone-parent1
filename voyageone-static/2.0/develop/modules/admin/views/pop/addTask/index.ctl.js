@@ -7,7 +7,8 @@ define([
     admin.controller('AddTaskController', (function () {
         function AddTaskController(context, taskService, $uibModalInstance) {
             this.sourceData = context ? context : {};
-            this.append = context == 'add' ? true : false;
+            this.append = context == 'add' || context.kind == 'add' ? true : false;
+            this.readOnly = context.isReadOnly == true ? true : false;
             this.taskService = taskService;
             this.popType = '编辑';
             this.companyId = this.sourceData.companyId;
@@ -17,9 +18,13 @@ define([
         AddTaskController.prototype = {
             init: function () {
                 var self = this;
-                if (self.sourceData == 'add') {
+                if (self.sourceData == 'add'||self.sourceData.kind == 'add') {
                     self.popType = '添加';
-                    self.sourceData = {}
+                    if (self.sourceData.isReadOnly !== true) {
+                        self.sourceData = {};
+                    } else {
+                        self.sourceData = self.sourceData;
+                    }
                 }
                 self.taskService.getAllTaskType().then(function (res) {
                     self.taskTypeList = res.data;
@@ -31,6 +36,10 @@ define([
             save: function () {
                 var self = this;
                 var result = {};
+                if (self.readOnly == true) {
+                    self.$uibModalInstance.close(self.sourceData);
+                    return;
+                }
                 if (self.append == true) {
                     self.taskService.addTask(self.sourceData).then(function (res) {
                         if (res.data == false) {
