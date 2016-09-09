@@ -68,4 +68,12 @@ public class VmsShipmentDetailController extends BaseController {
         result.put("shipment", vmsShipmentService.getShipment(this.getUser(), shipmentId));
         return success(result);
     }
+
+    @RequestMapping(SHIPMENT.SHIPMENT_DETAIL.PRINTED)
+    public AjaxResponse printed(@RequestBody ShipmentBean shipmentBean) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", vmsShipmentService.printed(this.getUser(), shipmentBean));
+        return success(result);
+    }
+
 }

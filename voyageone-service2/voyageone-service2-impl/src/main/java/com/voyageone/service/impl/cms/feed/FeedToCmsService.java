@@ -8,12 +8,16 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.configs.VmsChannelConfigs;
+import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
+import com.voyageone.service.impl.wms.ClientInventoryService;
 import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -53,6 +57,9 @@ public class FeedToCmsService extends BaseService {
 
     @Autowired
     private FeedCategoryAttributeService feedCategoryAttributeService;
+
+    @Autowired
+    private ClientInventoryService clientInventoryService;
 
 //    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
 //    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
@@ -130,8 +137,16 @@ public class FeedToCmsService extends BaseService {
                 CmsBtFeedInfoModel befproduct = feedInfoService.getProductByCode(channelId, product.getCode());
                 if (befproduct != null) {
                     product.set_id(befproduct.get_id());
-                    // Vms客户导入的情况下，sku以新的为准（老的舍弃）
+                    // Vms客户导入的情况下，
                     if (isVmsUpdate) {
+                        VmsChannelConfigBean vmsUpdateInventory = VmsChannelConfigs.getConfigBean(channelId,"UPDATE_INVENTORY", "0");
+                        if (vmsUpdateInventory == null || "1".equals(vmsUpdateInventory.getConfigValue1())) {
+                            // 库存同步
+                            for (CmsBtFeedInfoModel_Sku skuModelNew : product.getSkus()) {
+                                clientInventoryService.insertClientInventory(channelId, skuModelNew.getClientSku(), skuModelNew.getQty());
+                            }
+                        }
+                        // sku以新的为准（老的舍弃）
                         if (product.getSkus().size() != befproduct.getSkus().size()) {
                             insertLog = true;
                         }
@@ -154,6 +169,17 @@ public class FeedToCmsService extends BaseService {
                                             || item.getPriceMsrp().compareTo(skuModel.getPriceMsrp()) != 0
                                             || item.getPriceNet().compareTo(skuModel.getPriceNet()) != 0
                                             || item.getPriceCurrent().compareTo(skuModel.getPriceCurrent()) != 0) {
+                                        insertLog = true;
+                                    }
+                                }
+                                // 重量变化的情况下，重新导入
+                                if (!insertLog) {
+                                    CmsBtFeedInfoModel_Sku item = product.getSkus().get(product.getSkus().indexOf(skuModel));
+                                    String newWeight = item.getWeightOrg();
+                                    String oldWeight = skuModel.getWeightOrg();
+                                    if (StringUtils.isEmpty(newWeight) && !StringUtils.isEmpty(oldWeight)) {
+                                        insertLog = true;
+                                    } else if (!StringUtils.isEmpty(newWeight) && !newWeight.equals(oldWeight)) {
                                         insertLog = true;
                                     }
                                 }
@@ -223,6 +249,9 @@ public class FeedToCmsService extends BaseService {
                 attributeMtDataMake(attributeMtData, product);
                 succeedProduct.add(product);
             } catch (Exception e) {
+                if (isVmsUpdate) {
+                    throw e;
+                }
                 e.printStackTrace();
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                 $error(e.getMessage(), e);

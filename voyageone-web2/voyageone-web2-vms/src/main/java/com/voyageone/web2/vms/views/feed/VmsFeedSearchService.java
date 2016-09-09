@@ -86,6 +86,7 @@ public class VmsFeedSearchService extends BaseAppService {
             Map<String, Object> feedInfoMap = new HashMap();
             feedInfoMap.put("code", model.getCode());
             feedInfoMap.put("name", model.getName());
+            feedInfoMap.put("qtyTotal", model.getQty());
             List<CmsBtFeedInfoModel_Sku> skuList = model.getSkus();
             if (skuList != null && skuList.size() > 0) {
                 feedInfoMap.put("skuNum", skuList.size());
@@ -126,6 +127,10 @@ public class VmsFeedSearchService extends BaseAppService {
                     Map<String, Object> skuInfoMap = new HashMap();
                     skuInfoMap.put("sku", skuModel.getClientSku());
                     skuInfoMap.put("voPrice", skuModel.getPriceNet());
+                    skuInfoMap.put("variationTheme", skuModel.getVariationTheme() == null ? "size" : skuModel.getVariationTheme().toLowerCase());
+                    skuInfoMap.put("size", skuModel.getSize());
+                    skuInfoMap.put("weight", skuModel.getWeightOrg() + " " + skuModel.getWeightOrgUnit());
+                    skuInfoMap.put("qty", skuModel.getQty());
                     skuInfoList.add(skuInfoMap);
                     if (maxPrice == null || skuModel.getPriceNet() > maxPrice) {
                         maxPrice = skuModel.getPriceNet();
