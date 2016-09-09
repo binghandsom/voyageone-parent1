@@ -3561,6 +3561,28 @@ public class SxProductService extends BaseService {
     }
 
     /**
+     * 插入上新表的唯一一个正式的统一入口 (单个产品指定平台的场合)
+     * @param productModel  产品数据
+     * @param modifier      修改者
+     */
+    public void insertSxWorkLoad(CmsBtProductModel productModel, List<String> cartIdList, String modifier) {
+        // 输入参数检查
+        if (productModel == null || ListUtils.isNull(cartIdList)) {
+            $warn("insertSxWorkLoad(单个产品指定平台的场合) 参数不对");
+            return;
+        }
+
+        productModel.getPlatforms().forEach( (cartId, platform) -> {
+            // 指定平台，已批准且未锁定时插入指定平台的workload上新
+            if (cartIdList.contains(StringUtils.toString(platform.getCartId()))
+                    && CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())
+                    && (StringUtils.isEmpty(productModel.getLock()) || "0".equals(productModel.getLock()))) {
+                insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier);
+            }
+        });
+    }
+
+    /**
      * 插入上新表的唯一一个正式的统一入口 (单个code的场合)
      * @param channelId channel id
      * @param code code
