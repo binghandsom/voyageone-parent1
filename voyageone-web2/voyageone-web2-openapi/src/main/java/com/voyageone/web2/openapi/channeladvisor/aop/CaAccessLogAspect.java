@@ -23,8 +23,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.String.format;
 
@@ -81,8 +80,17 @@ public class CaAccessLogAspect {
             model.setAccessUri(accessUri);
 
             // access_param
-            String accessParam = "";
+            Map<String, Object> accessParamMap = new LinkedHashMap<>();
             Object[] inputParams = jp.getArgs();
+            @SuppressWarnings("unchecked")
+            Map<String, Object> requestParameterMap = request.getParameterMap();
+            if (requestParameterMap != null && !requestParameterMap.isEmpty()) {
+                Map<String, String> requestParameter = new LinkedHashMap<>();
+                for (String key : requestParameterMap.keySet()) {
+                    requestParameter.put(key, request.getParameter(key));
+                }
+                accessParamMap.put("requestParameter", requestParameter);
+            }
             if (inputParams != null && inputParams.length > 0) {
                 List<Object> paramList = new ArrayList<>();
                 for (Object inputParam : inputParams) {
@@ -90,9 +98,13 @@ public class CaAccessLogAspect {
                         paramList.add(inputParam);
                     }
                 }
-                accessParam = JacksonUtil.bean2Json(paramList);
+                if (!paramList.isEmpty()) {
+                    accessParamMap.put("inputParams", paramList);
+                }
             }
-            model.setAccessParam(accessParam);
+            if (!accessParamMap.isEmpty()) {
+                model.setAccessParam(JacksonUtil.bean2Json(accessParamMap));
+            }
 
             // res_status
             String resStatus = "unknown";
