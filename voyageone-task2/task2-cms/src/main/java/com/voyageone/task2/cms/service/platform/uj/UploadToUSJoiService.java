@@ -488,11 +488,8 @@ public class UploadToUSJoiService extends BaseTaskService {
                 }
             }
 
-            // delete by desmond 2016/09/06 start
-            // 因为productService.updateProductPlatform()里面已经调用了记录价格变动履历的方法，所以这里不要再重新记录价格变动履历了
             // 记录商品价格变动履历,并向Mq发送消息同步sku,code,group价格范围
-//            addPriceHistoryAndSyncPriceScope(usJoiChannelId, targetProductList);
-            // delete by desmond 2016/09/06 end
+            addPriceHistoryAndSyncPriceScope(usJoiChannelId, targetProductList);
 
             // 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
             insertMtValueChannelInfo(usJoiChannelId, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, targetProductList);
@@ -855,27 +852,27 @@ public class UploadToUSJoiService extends BaseTaskService {
         return platformActive;
     }
 
-//    /**
-//     * 记录商品价格变动履历,并向Mq发送消息同步sku,code,group价格范围
-//     *
-//     * @param usjoiChannelId String usjoi渠道id
-//     * @param usjoiProductModels List<CmsBtProductModel> usjoi产品列表
-//     */
-//    private void addPriceHistoryAndSyncPriceScope(String usjoiChannelId, List<CmsBtProductModel> usjoiProductModels) {
-//
-//        for (CmsBtProductModel usjoiProduct : usjoiProductModels) {
-//            // 记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
-//            if (usjoiProduct != null && ListUtils.notNull(usjoiProduct.getCommon().getSkus())) {
-//                List<String> skuCodeList = usjoiProduct.getCommon().getSkus()
-//                        .stream()
-//                        .map(CmsBtProductModel_Sku::getSkuCode)
-//                        .collect(Collectors.toList());
-//                // 记录商品价格变动履历,并向Mq发送消息同步sku,code,group价格范围
-//                cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skuCodeList, usjoiChannelId, null, getTaskName(), "子店->USJOI主店导入");
-//            }
-//        }
-//
-//    }
+    /**
+     * 记录商品价格变动履历,并向Mq发送消息同步sku,code,group价格范围
+     *
+     * @param usjoiChannelId String usjoi渠道id
+     * @param usjoiProductModels List<CmsBtProductModel> usjoi产品列表
+     */
+    private void addPriceHistoryAndSyncPriceScope(String usjoiChannelId, List<CmsBtProductModel> usjoiProductModels) {
+
+        for (CmsBtProductModel usjoiProduct : usjoiProductModels) {
+            // 记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
+            if (usjoiProduct != null && ListUtils.notNull(usjoiProduct.getCommon().getSkus())) {
+                List<String> skuCodeList = usjoiProduct.getCommon().getSkus()
+                        .stream()
+                        .map(CmsBtProductModel_Sku::getSkuCode)
+                        .collect(Collectors.toList());
+                // 记录商品价格变动履历,并向Mq发送消息同步sku,code,group价格范围
+                cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skuCodeList, usjoiChannelId, null, getTaskName(), "子店->USJOI主店导入");
+            }
+        }
+
+    }
 
     /**
      * 出错的时候将错误信息回写到cms_bt_business_log表
