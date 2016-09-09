@@ -33,7 +33,7 @@ public interface VmsBtOrderDetailDaoExt {
 
     Date getLatestPrintedTIme(Map<String, Object> params);
 
-    int clearOrderCancelInfo(String channelId, String consolidationOrderId);
+    int clearOrderCancelInfo(Map<String, Object> params);
 
-    int clearSkuCancelInfo(String channelId, String reservationId);
+    int clearSkuCancelInfo(Map<String, Object> params);
 }

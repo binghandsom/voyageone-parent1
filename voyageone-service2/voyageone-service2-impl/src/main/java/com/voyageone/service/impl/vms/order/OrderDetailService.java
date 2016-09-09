@@ -454,18 +454,29 @@ public class OrderDetailService extends BaseService {
     }
 
     public Date getLatestPrintedTime(String channelId, Integer shipmentId) {
-        return vmsBtOrderDetailDaoExt.getLatestPrintedTIme(new HashMap<String, Object>() {{
-                                                               put("channelId", channelId);
-                                                               put("shipmentId", shipmentId);
-                                                           }}
+        return vmsBtOrderDetailDaoExt.getLatestPrintedTIme(
+                new HashMap<String, Object>() {{
+                    put("channelId", channelId);
+                    put("shipmentId", shipmentId);
+                }}
         );
     }
 
     public int clearOrderCancelInfo(String channelId, String consolidationOrderId) {
-        return vmsBtOrderDetailDaoExt.clearOrderCancelInfo(channelId, consolidationOrderId);
+        return vmsBtOrderDetailDaoExt.clearOrderCancelInfo(
+                new HashMap<String, Object>() {{
+                    put("channelId", channelId);
+                    put("consolidationOrderId", consolidationOrderId);
+                }}
+        );
     }
 
     public int clearSkuCancelInfo(String channelId, String reservationId) {
-        return vmsBtOrderDetailDaoExt.clearSkuCancelInfo(channelId, reservationId);
+        return vmsBtOrderDetailDaoExt.clearSkuCancelInfo(
+                new HashMap<String, Object>() {{
+                    put("channelId", channelId);
+                    put("reservationId", reservationId);
+                }}
+        );
     }
 }
