@@ -11,8 +11,7 @@ import com.voyageone.web2.sdk.api.channeladvisor.enums.ResponseStatusEnum;
 import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 
 /**
  * Response Utils
@@ -64,6 +63,9 @@ public class ResponseUtils {
             CAApiException caException = (CAApiException)exception;
             code = caException.getErrCode();
             message = caException.getErrMsg();
+        } else if (exception instanceof HttpMessageNotReadableException) {
+            code = String.valueOf(ErrorIDEnum.InvalidRequest.getCode());
+            message = exception.getMessage();
         } else {
             code = String.valueOf(ErrorIDEnum.SystemUnavailable.getCode());
             message = ErrorIDEnum.SystemUnavailable.getDefaultMessage();
