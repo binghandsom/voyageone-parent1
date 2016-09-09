@@ -1,6 +1,7 @@
 package com.voyageone.web2.openapi.oauth2.interceptors;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.redis.RedisRateLimiterHelper;
 import com.voyageone.web2.openapi.channeladvisor.exception.CAApiException;
 import com.voyageone.web2.openapi.oauth2.service.OAuthService;
 import com.voyageone.web2.sdk.api.channeladvisor.enums.ErrorIDEnum;
@@ -25,6 +26,9 @@ class ChannelAdvisorInterceptor {
     @Autowired
     private OAuthService oAuthService;
 
+    @Autowired
+    private RedisRateLimiterHelper redisRateLimiterHelper;
+
     boolean preHandle(HttpServletRequest request) throws Exception {
 
         // TODO 开发阶段跳过检查
@@ -35,6 +39,15 @@ class ChannelAdvisorInterceptor {
         if (StringUtil.isEmpty(sellerID)) {
             //4002 (InvalidSellerID)	Authorization failed. Invalid SellerID
             throw new CAApiException(ErrorIDEnum.InvalidSellerID);
+        }
+
+        // 1000 propert
+        Long rateNum = redisRateLimiterHelper.aquire(120, 1000, System.currentTimeMillis() / 60000 + "_" +  sellerID);
+
+        System.out.println("获取到令牌号："+rateNum);
+        if (rateNum < 0) {
+            // rateLimiter
+            throw new CAApiException(ErrorIDEnum.RateLimitExceeded);
         }
 
         //check SellerToken

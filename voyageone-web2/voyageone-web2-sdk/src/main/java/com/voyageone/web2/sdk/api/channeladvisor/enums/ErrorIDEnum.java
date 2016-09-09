@@ -19,7 +19,7 @@ public enum ErrorIDEnum {
 
     SystemUnavailable(3001, "The API is currently down for maintenance."),
 
-    RateLimitExceeded(3002, ""),
+    RateLimitExceeded(3002, "Rate limit exceeded. Please throttle your requests."),
 
     AuthorizationFailure(4000, ""),
 
