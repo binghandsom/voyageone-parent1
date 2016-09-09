@@ -13,7 +13,7 @@ define([
             cartList: context.cartList,
             _optStatus: false,
             priceTypeId: 0,
-            isRoundUp: true,
+            roundType: 1,
             skuUpdType: 1
         };
 
@@ -46,11 +46,7 @@ define([
             $scope.vm.property.priceType = $scope.vm.priceType;
             $scope.vm.property.optionType = $scope.vm.optType;
             $scope.vm.property.priceValue = $scope.vm.priceValue;
-            if ($scope.vm.isRoundUp) {
-                $scope.vm.property.isRoundUp = '1';
-            } else {
-                $scope.vm.property.isRoundUp = '0';
-            }
+            $scope.vm.property.roundType = parseInt($scope.vm.roundType);
             $scope.vm.property.skuUpdType = parseInt($scope.vm.skuUpdType);
             confirm($translate.instant('TXT_BULK_SETSALEPRICE')).then(function(){
                 _setProductFields($scope.vm.property);
@@ -160,6 +156,7 @@ define([
         $scope.chkPriceType = function (priceTypeVal, typeTxt) {
             $scope.vm.priceTypeId = priceTypeVal;
             $scope.vm.priceValue = null;
+            $scope.vm.roundType = "1";
             if (priceTypeVal == 4) {
                 // 基准价格为None时只允许选等于号
                 $scope.vm._optStatus = true;
