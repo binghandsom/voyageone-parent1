@@ -6,7 +6,6 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.CommonConfigNotFoundException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -28,6 +27,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -50,7 +50,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
-import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM.*;
 
 /**
  * 子店->USJOI主店产品导入服务
@@ -103,7 +102,7 @@ public class UploadToUSJoiService extends BaseTaskService {
     private BusinessLogService businessLogService;
 
     // 每个channel的子店->USJOI主店导入最大件数
-    private final static int UPLOAD_TO_USJOI_MAX_100 = 100;
+    private final static int UPLOAD_TO_USJOI_MAX_500 = 500;
 
     @Override
     public SubSystem getSubSystem() {
@@ -117,6 +116,11 @@ public class UploadToUSJoiService extends BaseTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
+        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
 
         // 默认线程池最大线程数(目前最后只有2个USJOI的channelId 928, 929)
         int threadPoolCnt = 2;
@@ -152,11 +156,6 @@ public class UploadToUSJoiService extends BaseTaskService {
 
         // usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
         String usjoiChannelId = channelBean.getOrder_channel_id();
-
-        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
-        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
 
         // --------------------------------------------------------------------------------------------
         // 品牌mapping表
@@ -207,6 +206,16 @@ public class UploadToUSJoiService extends BaseTaskService {
                 }
             }
         }
+
+        // 获取当前usjoi channel, 有多少个platform
+        List<TypeChannelBean> usjoiTypeChannelBeanList = TypeChannels.getTypeListSkuCarts(usjoiChannelId, "D", "en"); // 取得展示用数据
+        if (ListUtils.isNull(usjoiTypeChannelBeanList)) {
+            String errMsg = "com_mt_value_channel表中没有usJoiChannel(" + usjoiChannelId + ")对应的展示用(53 D en)mapping" +
+                    "信息,不能插入usJoiGroup信息，终止UploadToUSJoiServie处理，后面的子店产品都不往USJOI本店导入了，请修改好共通数据后再导入";
+            $info(errMsg);
+            // channel级的共通配置异常，本USJOI channel后面的产品都不导入了
+            return;
+        }
         // --------------------------------------------------------------------------------------------
 
         // 从synship.tm_order_channel表中取得USJOI店铺channel对应的cartId列表（一般只有一条cartId.如928对应28, 929对应29）
@@ -219,13 +228,27 @@ public class UploadToUSJoiService extends BaseTaskService {
             cartIds = new ArrayList<>();
         }
 
+        // 该usjoichannel每次子店->USJOI主店导入最大件数(最大2000件,默认为500件)
+        int uploadToUsjoiMax = UPLOAD_TO_USJOI_MAX_500;
+        // 该店铺每次子店->USJOI主店导入最大件数(FEED_IMPORT_MAX)
+        CmsChannelConfigBean uploadToUsjoiMaxChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(usjoiChannelId,
+                CmsConstants.ChannelConfig.FEED_IMPORT_MAX);
+        if (uploadToUsjoiMaxChannelConfigBean != null && !StringUtils.isEmpty(uploadToUsjoiMaxChannelConfigBean.getConfigValue1())) {
+            if (NumberUtils.toInt(uploadToUsjoiMaxChannelConfigBean.getConfigValue1()) >= 2000) {
+                uploadToUsjoiMax = 2000;
+            } else {
+                uploadToUsjoiMax = NumberUtils.toInt(uploadToUsjoiMaxChannelConfigBean.getConfigValue1());
+            }
+        }
+
         // 每个channel读入子店数据上新到USJOI主店
         List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(
-                UPLOAD_TO_USJOI_MAX_100, Integer.parseInt(channelBean.getOrder_channel_id()));
+                uploadToUsjoiMax, Integer.parseInt(channelBean.getOrder_channel_id()));
         for (CmsBtSxWorkloadModel sxWorkloadModel : cmsBtSxWorkloadModels) {
             try {
                 // 循环上传单个产品到USJOI主店
-                upload(sxWorkloadModel, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, cartIds);
+                upload(sxWorkloadModel, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping,
+                        usjoiTypeChannelBeanList, cartIds);
                 successCnt++;
             } catch (CommonConfigNotFoundException ce) {
                 errCnt++;
@@ -252,6 +275,7 @@ public class UploadToUSJoiService extends BaseTaskService {
                        Map<String, String> mapBrandMapping,
                        Map<String, String> mapProductTypeMapping,
                        Map<String, String> mapSizeTypeMapping,
+                       List<TypeChannelBean> usjoiTypeChannelBeanList,
                        List<Integer> cartIds) {
 
         // 不管子店->USJOI主店上新成功还是失败，都先自动清空之前报的上新错误信息
@@ -263,16 +287,6 @@ public class UploadToUSJoiService extends BaseTaskService {
 
         try {
             $info(String.format("channelId:%s  groupId:%d  复制到%s 开始", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
-
-            // 获取当前usjoi channel, 有多少个platform
-            List<TypeChannelBean> usjoiTypeChannelBeanList = TypeChannels.getTypeListSkuCarts(usJoiChannelId, "D", "en"); // 取得展示用数据
-            if (ListUtils.isNull(usjoiTypeChannelBeanList)) {
-                String errMsg = "com_mt_value_channel表中没有usJoiChannel(" + usJoiChannelId + ")对应的展示用(53 D en)mapping" +
-                        "信息,不能插入usJoiGroup信息，终止UploadToUSJoiServie处理，后面的子店产品都不往USJOI本店导入了，请修改好共通数据后再导入";
-                $info(errMsg);
-                // channel级的共通配置异常，本USJOI channel后面的产品都不导入了
-                throw new CommonConfigNotFoundException(errMsg);
-            }
 
             List<CmsBtProductBean> productModels = productService.getProductByGroupId(sxWorkLoadBean.getChannelId(), new Long(sxWorkLoadBean.getGroupId()), false);
 
@@ -294,8 +308,8 @@ public class UploadToUSJoiService extends BaseTaskService {
 
             // 新增或更新产品列表，用于最后插入品牌，产品类型和使用人群用
             List<CmsBtProductModel> targetProductList = new ArrayList<>();
-            // 取得USJOI店铺共通设置(是否自动同步人民币专柜价格)
-            boolean usjoiIsAutoSyncPriceMsrp = isAutoSyncPriceMsrp(usJoiChannelId);
+//            // 取得USJOI店铺共通设置(是否自动同步人民币专柜价格)
+//            boolean usjoiIsAutoSyncPriceMsrp = isAutoSyncPriceMsrp(usJoiChannelId);
 
             for (CmsBtProductModel productModel : productModels) {
                 productModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel), CmsBtProductModel.class);
@@ -354,14 +368,26 @@ public class UploadToUSJoiService extends BaseTaskService {
                     productModel.getPlatforms().put("P0", p0);
 
                     productService.createProduct(usJoiChannelId, productModel, sxWorkLoadBean.getModifier());
+
+                    // 更新价格相关项目(根据主店配置的税号，公式等计算主店产品的SKU人民币价格)
+                    productModel = doSetPrice(productModel);
+
                     // 将子店的产品加入更新对象产品列表中
                     targetProductList.add(productModel);
                 } else {
                     // 如果已经存在（如老的数据已经有了），更新
-                    // 更新common.fields.image1(品牌方商品图)
+                    // 更新common的一部分属性
                     CmsBtProductModel_Field prCommonFields = pr.getCommon().getFields();
-                    if (prCommonFields != null && productModel.getCommon().getFields() != null)
+                    if (prCommonFields != null && productModel.getCommon().getFields() != null) {
+                        // 更新common.fields.image1(品牌方商品图)
                         prCommonFields.setImages1(productModel.getCommon().getFields().getImages1());
+                        // 克(common.fields.weightG)
+                        if (productModel.getCommon().getFields().getWeightG().compareTo(0.0d) != 0)
+                            prCommonFields.setWeightG(productModel.getCommon().getFields().getWeightG());
+                        // 千克(common.fields.WeighKG)
+                        if (productModel.getCommon().getFields().getWeightKG().compareTo(0.0d) != 0)
+                            prCommonFields.setWeightKG(productModel.getCommon().getFields().getWeightKG());
+                    }
 
                     for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
                         CmsBtProductModel_Sku oldSku = pr.getCommon().getSku(sku.getSkuCode());
@@ -378,8 +404,8 @@ public class UploadToUSJoiService extends BaseTaskService {
                             oldSku.setWeight((sku.getWeight()));  // 重量(单位：磅)
 
                             // 价格发生变化的时候更新该sku价格
-                            if (oldSku.getPriceMsrp().compareTo(sku.getPriceMsrp()) != 0
-                                    || oldSku.getPriceRetail().compareTo(sku.getPriceRetail()) != 0) {
+//                            if (oldSku.getPriceMsrp().compareTo(sku.getPriceMsrp()) != 0
+//                                    || oldSku.getPriceRetail().compareTo(sku.getPriceRetail()) != 0) {
                                 // 美金专柜价
                                 oldSku.setClientMsrpPrice(sku.getClientMsrpPrice());
                                 // 美金指导价
@@ -390,7 +416,7 @@ public class UploadToUSJoiService extends BaseTaskService {
                                 oldSku.setPriceMsrp(sku.getPriceMsrp());
                                 // 人民币指导价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
                                 oldSku.setPriceRetail(sku.getPriceRetail());
-                            }
+//                            }
                         }
                     }
 
@@ -419,29 +445,31 @@ public class UploadToUSJoiService extends BaseTaskService {
                                     if (platformCart.getSkus() != null) {
                                         for (BaseMongoMap<String, Object> oldSku : platformCart.getSkus()) {
                                             if (oldSku.get("skuCode").toString().equalsIgnoreCase(newSku.get("skuCode").toString())) {
-                                                // 在更新前的PXX.skus找到对应的新skuCode的时候,更新价格等平台sku属性(不更新priceSale)
-                                                oldSku.put("originalPriceMsrp", newSku.get("originalPriceMsrp"));
-                                                if (usjoiIsAutoSyncPriceMsrp) {
-                                                    // 如果USJOI店铺(928,929)配置了自动同步人民币专柜价格时，才同步priceMsrp
-                                                    oldSku.put("priceMsrp", newSku.get("priceMsrp"));
-                                                }
-
-                                                // 获取上一次指导价
-                                                Double lastRetailPrice = oldSku.getDoubleAttribute("priceRetail");
-                                                // 保存最新中国指导价格
-                                                oldSku.put("priceRetail", newSku.get("priceRetail"));
-
-                                                // 获取最新指导价
-                                                Double retailPrice = oldSku.getDoubleAttribute("priceRetail");
-                                                // 获取价格波动字符串
-                                                String priceFluctuation = priceService.getPriceFluctuation(retailPrice, lastRetailPrice);
-                                                // 保存价格波动(U50% D30%)
-                                                oldSku.put(priceChgFlg.name(), priceFluctuation);
-
-                                                // 保存击穿标识
-                                                String priceDiffFlgValue = productSkuService.getPriceDiffFlg(usJoiChannelId, oldSku);
-                                                // 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5）
-                                                oldSku.put(priceDiffFlg.name(), priceDiffFlgValue);
+                                                // delete by desmond 2016/09/08 start DOC-128 主店的SKU价格变为调用共通价格计算重新计算
+//                                                // 在更新前的PXX.skus找到对应的新skuCode的时候,更新价格等平台sku属性(不更新priceSale)
+//                                                oldSku.put("originalPriceMsrp", newSku.get("originalPriceMsrp"));
+//                                                if (usjoiIsAutoSyncPriceMsrp) {
+//                                                    // 如果USJOI店铺(928,929)配置了自动同步人民币专柜价格时，才同步priceMsrp
+//                                                    oldSku.put("priceMsrp", newSku.get("priceMsrp"));
+//                                                }
+//
+//                                                // 获取上一次指导价
+//                                                Double lastRetailPrice = oldSku.getDoubleAttribute("priceRetail");
+//                                                // 保存最新中国指导价格
+//                                                oldSku.put("priceRetail", newSku.get("priceRetail"));
+//
+//                                                // 获取最新指导价
+//                                                Double retailPrice = oldSku.getDoubleAttribute("priceRetail");
+//                                                // 获取价格波动字符串
+//                                                String priceFluctuation = priceService.getPriceFluctuation(retailPrice, lastRetailPrice);
+//                                                // 保存价格波动(U50% D30%)
+//                                                oldSku.put(priceChgFlg.name(), priceFluctuation);
+//
+//                                                // 保存击穿标识
+//                                                String priceDiffFlgValue = productSkuService.getPriceDiffFlg(usJoiChannelId, oldSku);
+//                                                // 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5）
+//                                                oldSku.put(priceDiffFlg.name(), priceDiffFlgValue);
+                                                // delete by desmond 2016/09/08 end
 
                                                 updateFlg = true;
                                                 break;
@@ -483,6 +511,10 @@ public class UploadToUSJoiService extends BaseTaskService {
                     }
                     // 插入或者更新cms_bt_product_group_c928中的productGroup信息
                     creatGroup(pr, usJoiChannelId, usjoiTypeChannelBeanList);
+
+                    // 更新价格相关项目(根据主店配置的税号，公式等计算主店产品的SKU人民币价格)
+                    pr = doSetPrice(pr);
+
                     // 将USJOI店的产品加入更新对象产品列表中（取得USJOI店的品牌，产品分类和适用人群）
                     targetProductList.add(pr);
                 }
@@ -491,7 +523,7 @@ public class UploadToUSJoiService extends BaseTaskService {
             // delete by desmond 2016/09/06 start
             // 因为productService.updateProductPlatform()里面已经调用了记录价格变动履历的方法，所以这里不要再重新记录价格变动履历了
             // 记录商品价格变动履历,并向Mq发送消息同步sku,code,group价格范围
-//            addPriceHistoryAndSyncPriceScope(usJoiChannelId, targetProductList);
+//          addPriceHistoryAndSyncPriceScope(usJoiChannelId, targetProductList);
             // delete by desmond 2016/09/06 end
 
             // 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
@@ -551,7 +583,7 @@ public class UploadToUSJoiService extends BaseTaskService {
             // 出错的时候将错误信息回写到cms_bt_business_log表
             insertBusinessLog(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getCartId(),
                     StringUtils.toString(sxWorkLoadBean.getGroupId()), "", "", errMsg, getTaskName());
-            issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+//            issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             // 抛出错误，让外面统计整个usjoi channel的产品导入错误总数
             throw e;
         }
@@ -817,21 +849,21 @@ public class UploadToUSJoiService extends BaseTaskService {
         }
     }
 
-    /**
-     * 查看该渠道是否自动同步人民币专柜价格MSRP
-     *
-     * @param channelId String channel id
-     */
-    private boolean isAutoSyncPriceMsrp(String channelId) {
-        boolean isAutoSyncPriceMsrp = false;
-
-        CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP);
-
-        if (autoSyncPriceMsrp != null && "1".equals(autoSyncPriceMsrp.getConfigValue1()))
-            isAutoSyncPriceMsrp = true;
-
-        return isAutoSyncPriceMsrp;
-    }
+//    /**
+//     * 查看该渠道是否自动同步人民币专柜价格MSRP
+//     *
+//     * @param channelId String channel id
+//     */
+//    private boolean isAutoSyncPriceMsrp(String channelId) {
+//        boolean isAutoSyncPriceMsrp = false;
+//
+//        CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP);
+//
+//        if (autoSyncPriceMsrp != null && "1".equals(autoSyncPriceMsrp.getConfigValue1()))
+//            isAutoSyncPriceMsrp = true;
+//
+//        return isAutoSyncPriceMsrp;
+//    }
 
     /**
      * 取得该渠道的PlatformActive初始值
@@ -912,6 +944,38 @@ public class UploadToUSJoiService extends BaseTaskService {
         businessLogModel.setModifier(modifier);
 
         businessLogService.insertBusinessLog(businessLogModel);
+    }
+
+    /**
+     * doSetPrice 调用共通函数设置product各平台的sku的价格
+     * 把商品推到USJOI主店的都不是旗舰店(用公式计算价格且货款直接打给客户)，所以都是利用新价格体系来计算价格的
+     *
+     * @param usjoiCmsProduct usjoi cms product信息
+     * @return CmsBtProductModel 以后计算价格直接用ProductModel
+     */
+    private CmsBtProductModel doSetPrice(CmsBtProductModel usjoiCmsProduct) {
+
+        // 设置platform.PXX.skus里面的价格
+        try {
+            priceService.setPrice(usjoiCmsProduct, false);
+        } catch (IllegalPriceConfigException ie) {
+            // 渠道级别价格计算配置错误, 停止后面的子店->USJOI主店产品导入，避免报几百条一样的错误信息
+            String errMsg = String.format("子店->USJOI主店产品导入:共通配置异常终止:发现渠道级别的价格计算配置错误，后面的feed导入不做了，" +
+                    "请修改好相应配置项目后重新导入 [ErrMsg=%s]", ie.getMessage());
+            $error(errMsg);
+            throw new CommonConfigNotFoundException(errMsg);
+        } catch (Exception ex) {
+            String errMsg = "子店->USJOI主店产品导入:异常终止:调用共通函数计算产品价格时出错 [ErrMsg= ";
+            if (StringUtils.isNullOrBlank2(ex.getMessage())) {
+                errMsg += ex.getStackTrace()[0].toString() + "]";
+            } else {
+                errMsg += ex.getMessage() + "]";
+            }
+            $error(errMsg);
+            throw new BusinessException(errMsg);
+        }
+
+        return usjoiCmsProduct;
     }
 
 }
