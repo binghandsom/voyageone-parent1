@@ -7,10 +7,11 @@ angular.module("vo.directives").directive("tree", function() {
         replace: true,
         scope: {
             tree: '=',
-            result: '='
+            result: '=',
+            search: '='
         },
         template: '<ul class="dropdown-menu">'
-                  +'<leaf ng-repeat="leaf in tree" leaf="leaf" result="result"></leaf>'
+                  +'<leaf ng-repeat="leaf in tree" leaf="leaf" result="result" search="search"></leaf>'
                   +'</ul>'
     };
 });
