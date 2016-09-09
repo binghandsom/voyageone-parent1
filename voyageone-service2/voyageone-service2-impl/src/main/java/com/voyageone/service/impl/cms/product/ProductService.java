@@ -42,7 +42,6 @@ import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.apache.commons.lang.math.NumberUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -1211,7 +1210,7 @@ public class ProductService extends BaseService {
                     platform.getSkus().forEach(sku -> skuCodeList.add(sku.getStringAttribute("skuCode")));
                     // 记录商品价格变动履历
                     cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skuCodeList, cmsProduct.getChannelId(),
-                            NumberUtils.toInt(cartId), modifier, comment);
+                            platform.getCartId(), modifier, comment);
                 }
             });
         }
