@@ -14,11 +14,11 @@ define([
             this.feedInfoSearchService = feedInfoSearchService;
             this.feedInfoList = [];
             this.collapse = false;
-            this.feedCategoryTree;
+            // this.feedCategoryTree;
             this.showAll = false;
             this.parentSku = "";
             this.name = "";
-            this.category = "";
+            // this.category = "";
             this.priceStart = "";
             this.priceEnd = "";
             this.qtyStart = "";
@@ -65,7 +65,8 @@ define([
                 self.feedInfoSearchService.search({
                     "code": self.parentSku,
                     "name": self.name,
-                    "category": self.category,
+                    //"category": self.category,
+                    "searchCats": self.searchCats,
                     "priceStart": self.priceStart,
                     "priceEnd": self.priceEnd,
                     "qtyStart": self.qtyStart,
