@@ -376,10 +376,18 @@ public class UploadToUSJoiService extends BaseTaskService {
                     targetProductList.add(productModel);
                 } else {
                     // 如果已经存在（如老的数据已经有了），更新
-                    // 更新common.fields.image1(品牌方商品图)
+                    // 更新common的一部分属性
                     CmsBtProductModel_Field prCommonFields = pr.getCommon().getFields();
-                    if (prCommonFields != null && productModel.getCommon().getFields() != null)
+                    if (prCommonFields != null && productModel.getCommon().getFields() != null) {
+                        // 更新common.fields.image1(品牌方商品图)
                         prCommonFields.setImages1(productModel.getCommon().getFields().getImages1());
+                        // 克(common.fields.weightG)
+                        if (productModel.getCommon().getFields().getWeightG().compareTo(0.0d) != 0)
+                            prCommonFields.setWeightG(productModel.getCommon().getFields().getWeightG());
+                        // 千克(common.fields.WeighKG)
+                        if (productModel.getCommon().getFields().getWeightKG().compareTo(0.0d) != 0)
+                            prCommonFields.setWeightKG(productModel.getCommon().getFields().getWeightKG());
+                    }
 
                     for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
                         CmsBtProductModel_Sku oldSku = pr.getCommon().getSku(sku.getSkuCode());
