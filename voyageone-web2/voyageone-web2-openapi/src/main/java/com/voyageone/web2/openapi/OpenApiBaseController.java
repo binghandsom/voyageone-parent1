@@ -1,13 +1,10 @@
 package com.voyageone.web2.openapi;
 
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.base.exception.SystemException;
 import com.voyageone.common.logger.VOAbsLoggable;
-import com.voyageone.web2.sdk.api.VoApiConstants;
+import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
+import com.voyageone.web2.openapi.util.ResponseUtils;
 import com.voyageone.web2.sdk.api.VoApiResponse;
-import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.response.SimpleResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,43 +22,17 @@ public abstract class OpenApiBaseController extends VOAbsLoggable {
      * error Handler
      */
     @ExceptionHandler(Exception.class)
-    public VoApiResponse errorHandler(HttpServletRequest request, Exception exception) {
+    public Object errorHandler(HttpServletRequest request, Exception exception) {
         String message = request.getRequestURL().toString();
         $error("Error Message:=" + message);
         $error(message, exception);
-        return buildError(request, exception);
-    }
 
-    /**
-     * build Error Info
-     */
-    private VoApiResponse buildError(HttpServletRequest request, Exception exception) {
-        String code;
-        String message;
-
-        if (exception instanceof ApiException) {
-            ApiException apiException = (ApiException)exception;
-            code = apiException.getErrCode();
-            message = apiException.getErrMsg();
-        } else if (exception instanceof BusinessException) {
-            BusinessException businessException = (BusinessException)exception;
-            code = businessException.getCode();
-            message = businessException.getMessage();
-        } else if (exception instanceof SystemException) {
-            SystemException systemException = (SystemException)exception;
-            code = systemException.getCode();
-            message = systemException.getMessage();
-        } else {
-            code = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70000.getErrorCode();
-            message = exception.getMessage();
+        // channelAdvisor ExceptionHandler
+        if (request.getRequestURI().contains(CAUrlConstants.ROOT)) {
+            return ResponseUtils.buildCAError(exception);
         }
-
-        String messageNew = StringUtils.isEmpty(message) ? exception.getClass().getName() : message;
-
-        return new VoApiResponse(code, messageNew);
+        return ResponseUtils.buildError(exception);
     }
-
-
 
     protected VoApiResponse simpleResponse(Object resultData) {
         return new SimpleResponse(resultData);

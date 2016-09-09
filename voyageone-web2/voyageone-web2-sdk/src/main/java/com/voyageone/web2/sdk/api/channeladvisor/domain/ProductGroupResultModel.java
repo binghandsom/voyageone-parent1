@@ -59,7 +59,7 @@ public class ProductGroupResultModel extends CABaseModel {
     }
 
     public boolean isHasErrors() {
-        return CollectionUtils.isEmpty(errors);
+        return !CollectionUtils.isEmpty(errors);
     }
 
     public void setHasErrors(boolean hasErrors) {
@@ -69,6 +69,6 @@ public class ProductGroupResultModel extends CABaseModel {
     @Override
     @JsonIgnore
     public boolean hasErrors() {
-        return CollectionUtils.isEmpty(errors);
+        return !CollectionUtils.isEmpty(errors);
     }
 }

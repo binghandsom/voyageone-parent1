@@ -8,7 +8,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.vms.ApiClientAccessLogService;
 import com.voyageone.service.model.vms.VmsBtClientAccessLogModel;
 import com.voyageone.web2.openapi.channeladvisor.exception.CAApiException;
-import com.voyageone.web2.openapi.channeladvisor.util.ResponseUtils;
+import com.voyageone.web2.openapi.util.ResponseUtils;
 import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -124,7 +124,7 @@ public class CaAccessLogAspect {
             boolean isNeedIssueLog = false;
             if (exception != null) {
                 if (exception instanceof CAApiException) {
-                    ActionResponse actionResponse = ResponseUtils.buildError(exception);
+                    ActionResponse actionResponse = ResponseUtils.buildCAError(exception);
                     resStatus = actionResponse.getStatus().name();
                     resResult = JacksonUtil.bean2Json(actionResponse);
                 } else {

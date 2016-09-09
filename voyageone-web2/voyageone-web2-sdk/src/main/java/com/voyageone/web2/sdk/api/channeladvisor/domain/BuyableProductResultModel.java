@@ -58,7 +58,7 @@ public class BuyableProductResultModel extends CABaseModel {
     }
 
     public boolean isHasErrors() {
-        return CollectionUtils.isEmpty(errors);
+        return !CollectionUtils.isEmpty(errors);
     }
 
     public void setHasErrors(boolean hasErrors) {
@@ -92,6 +92,6 @@ public class BuyableProductResultModel extends CABaseModel {
     @Override
     @JsonIgnore
     public boolean hasErrors() {
-        return CollectionUtils.isEmpty(errors);
+        return !CollectionUtils.isEmpty(errors);
     }
 }
