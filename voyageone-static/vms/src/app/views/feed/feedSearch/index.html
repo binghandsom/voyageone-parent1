@@ -12,7 +12,7 @@
 <div class="container content" ng-init="ctrl.init()">
     <div class="panel panel-default">
         <div class="panel-body">
-            <div class="form-inline">
+            <div class="form-inline" ng-if="ctrl.categories.length > 0">
                 <!-- Category -->
                 <nav class="navbar navbar-default" role="navigation">
                     <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
@@ -24,8 +24,8 @@
                                 <tree tree='ctrl.categories' result="ctrl.searchCats" search="ctrl"></tree>
                             </li>
                             <span ng-repeat="cat in ctrl.searchCats">
-                                <label class="selectedCat" title="点击取消选择" ng-click="ctrl.deleteCat(cat)">
-                                    <i class="fa fa-close"></i>&nbsp;&nbsp;已选择:{{cat}}</label>
+                                <label class="selectedCat" title="click to remove" ng-click="ctrl.deleteCat(cat)">
+                                    <i class="fa fa-close"></i>&nbsp;&nbsp;{{cat}}</label>
                             </span>
                         </ul>
                     </div>

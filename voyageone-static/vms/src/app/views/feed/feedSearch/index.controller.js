@@ -10,11 +10,9 @@ define([
             this.feedInfoSearchService = feedInfoSearchService;
             this.feedInfoList = [];
             this.collapse = false;
-            // this.feedCategoryTree;
             this.showAll = false;
             this.parentSku = "";
             this.name = "";
-            // this.category = "";
             this.priceStart = "";
             this.priceEnd = "";
             this.qtyStart = "";
@@ -44,9 +42,6 @@ define([
                         link: "#"
                     }]
                 }];
-                // for (var i = 0; i < self.categories.length; i++) {
-                //     self.replaceScore(self.categories[i]);
-                // }
                 self.feedInfoSearchService.init().then(function (res) {
                     self.categories = res.feedCategoryTree;
                     for (var i = 0; i < self.categories.length; i++) {
@@ -86,6 +81,7 @@ define([
             deleteCat: function (item) {
                 var self = this;
                 self.searchCats.splice(self.searchCats.indexOf(item), 1);
+                self.search();
             },
 
             search: function () {
@@ -110,6 +106,8 @@ define([
             replaceScore: function (category) {
                 var self = this;
                 category.catName = category.catName.replace(/－/g, '-');
+                category.catPath = category.catPath.replace(/-/g, '/');
+                category.catPath = category.catPath.replace(/－/g, '-');
                 if (category.children) {
                     for (var i = 0; i < category.children.length; i++) {
                         self.replaceScore(category.children[i]);
