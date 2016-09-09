@@ -1,7 +1,6 @@
-define(function (require) {
+define(['cms'], function (cms) {
     'use strict';
-    var cms = require('cms');
-    return cms.controller('propertySettingController', (function () {
+    cms.controller('propertySettingController', (function () {
 
         function PropertySettingController(context, $uibModalInstance, platformMappingService, $q, alert) {
             this.context = context;
