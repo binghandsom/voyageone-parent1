@@ -33,11 +33,11 @@ class CmsPriceConfirmLogViewService extends BaseAppService {
         if (cartId.equals(""))
             cartId = null;
 
-        MySqlPageHelper.PageBoundsMap pageBoundsMap = MySqlPageHelper.build(
-                "channelId", channelId,
-                "cartId", cartId,
-                "code", code,
-                "skuCode", skuCode);
+        MySqlPageHelper.PageBoundsMap pageBoundsMap = MySqlPageHelper.build()
+                .addQuery("channelId", channelId)
+                .addQuery("cartId", cartId)
+                .addQuery("code", code)
+                .addQuery("skuCode", skuCode);
 
         int count = priceConfirmLogDao.selectCount(pageBoundsMap.toMap());
 
