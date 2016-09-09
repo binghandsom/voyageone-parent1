@@ -41,6 +41,7 @@ define([
             init: function () {
                 var self = this;
                 self.storeCfgList = [];
+                self.taskCfgList = [];
                 switch (self.searchInfo.configType) {
                     case 'Channel':
                         self.channelService.getAllChannel().then(function (res) {
@@ -63,9 +64,18 @@ define([
                         break;
                     case
                     'Task':
-                        self.taskService.getAllTask().then(function (res) {
-                            self.taskList = res.data;
-                        });
+                        if (self.sourceData.isReadOnly == true) {
+                            self.taskList = self.sourceData.sourceData;
+                            _.forEach(self.sourceData.sourceData, function (item) {
+                                _.forEach(item.taskConfig, function (taskConfig) {
+                                    self.taskCfgList.push(taskConfig);
+                                });
+                            });
+                        } else {
+                            self.taskService.getAllTask().then(function (res) {
+                                self.taskList = res.data;
+                            });
+                        }
                         break;
                     case
                     'Shop':
@@ -157,9 +167,21 @@ define([
                                 'cfgVal2': configInfo.cfgVal2
                             };
                         };
-                        self.taskService.searchTaskConfigByPage(data).then(function (res) {
+                        if (self.sourceData.isReadOnly == true) {
+                            res = self.getConfigPaginationData(item ? item : self.taskCfgList, function (e) {
+                                if (self.searchInfo.taskId != null && self.searchInfo.taskId != '') {
+                                    if (e.taskId != null && e.taskId != self.searchInfo.taskId) {
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            });
                             callback(res, selectKey);
-                        });
+                        } else {
+                            self.taskService.searchTaskConfigByPage(data).then(function (res) {
+                                callback(res, selectKey);
+                            });
+                        }
                         break;
                     case 'Shop':
                         var selectKey = function (configInfo) {
@@ -279,7 +301,13 @@ define([
                             'isReadOnly': self.sourceData.isReadOnly
                         });
                         self.popups.openCreateEdit(item).then(function (res) {
-                            if (res.res == 'success') self.search();
+                            if (res.res == 'success') {
+                                self.search()
+                            } else {
+                                var list = self.taskCfgList;
+                                list.push(res);
+                                self.search(1, list);
+                            }
                         });
                         break;
                     case 'Shop':
@@ -374,10 +402,23 @@ define([
                             }
                             break;
                         case 'Task':
-                            self.taskService.deleteTaskConfig(delList).then(function (res) {
-                                if (res.data == false)self.alert(res.data.message);
-                                self.search(1);
-                            });
+                            if (self.sourceData.isReadOnly == true) {
+                                _.forEach(delList, function (item) {
+                                    var source = self.taskCfgList;
+                                    var data = _.find(source, function (sItem) {
+                                        return sItem.taskId == item.taskId;
+                                    });
+                                    if (source.indexOf(data) > -1) {
+                                        source.splice(source.indexOf(data), 1);
+                                        self.search(1);
+                                    }
+                                })
+                            } else {
+                                self.taskService.deleteTaskConfig(delList).then(function (res) {
+                                    if (res.data == false)self.alert(res.data.message);
+                                    self.search(1);
+                                });
+                            }
                             break;
                         case 'Shop':
                             if (self.sourceData.isReadOnly == true) {

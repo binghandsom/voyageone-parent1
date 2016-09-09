@@ -39,6 +39,56 @@ define([
                 self.taskSelList = self.tempTaskSelect.selectRowsInfo;
                 // End 设置勾选框
             },
+            config: function (type) {
+                var self = this;
+                if (self.taskSelList.selList.length < 1) {
+                    self.popups.openConfig({'configType': type,'isReadOnly': true,
+                        'sourceData': self.context.task,
+                        'orderChannelId': self.context.cartShop[0].orderChannelId});
+                    return;
+                } else {
+                    _.forEach(self.taskList, function (Info) {
+                        if (Info.taskId == self.taskSelList.selList[0].id) {
+                            _.extend(Info, {'configType': type});
+                            self.popups.openConfig(Info);
+                        }
+                    })
+                }
+            },
+            edit: function (type) {
+                var self = this;
+                if (type == 'add') {
+                    self.popups.openTask('add').then(function () {
+                        self.search(1);
+                    });
+                } else {
+                    if (self.taskSelList.selList.length <= 0) {
+                        self.alert('TXT_MSG_NO_ROWS_SELECT');
+                        return;
+                    } else {
+                        _.forEach(self.taskList, function (Info) {
+                            if (Info.taskId == self.taskSelList.selList[0].id) {
+                                self.popups.openTask(Info).then(function () {
+                                    self.search(1);
+                                });
+                            }
+                        })
+                    }
+                }
+            },
+            delete: function () {
+                var self = this;
+                self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
+                        var delList = [];
+                        _.forEach(self.taskSelList.selList, function (delInfo) {
+                            delList.push(delInfo.id);
+                        });
+                        self.taskService.deleteTask(delList).then(function (res) {
+                            self.search(1);
+                        })
+                    }
+                );
+            },
             complete: function () {
                 var self = this;
                 self.confirm('您确定要提交全部新店的数据吗？').then(function () {
