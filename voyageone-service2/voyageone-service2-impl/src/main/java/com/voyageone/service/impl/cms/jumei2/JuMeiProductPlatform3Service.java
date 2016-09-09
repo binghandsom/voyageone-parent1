@@ -69,6 +69,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
 
     public void updateJmByPromotionId(int promotionId) throws Exception {
+        HashMap<String,Boolean> mapMasterBrand =new HashMap<>();//
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(promotionId);
         ShopBean shopBean = serviceJMShopBean.getShopBean(modelCmsBtJmPromotion.getChannelId());
         LOG.info(promotionId + " 聚美上新开始");
@@ -76,12 +77,15 @@ public class JuMeiProductPlatform3Service extends BaseService {
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
                 LOG.info(promotionId + " code:" + model.getProductCode() + "上新begin");
-                updateJm(modelCmsBtJmPromotion, model, shopBean);
+                updateJm(modelCmsBtJmPromotion, model, shopBean,mapMasterBrand);
                 LOG.info(promotionId + " code:" + model.getProductCode() + "上新end");
             }
         } catch (Exception ex) {
             LOG.error("addProductAndDealByPromotionId上新失败", ex);
             ex.printStackTrace();
+        }
+        finally {
+            mapMasterBrand.clear();
         }
         LOG.info(promotionId + " 聚美上新end");
     }
@@ -96,10 +100,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
        if(parameter.platform==null){throw new  BusinessException("CmsBtProduct商品聚美信息不存在.");}
        return parameter;
    }
-    public void updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean) throws Exception {
+    public void updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean,HashMap<String,Boolean> mapMasterBrand) throws Exception {
         try {
             UpdateJmParameter parameter = getUpdateJmParameter(modelCmsBtJmPromotion, cmsBtJmPromotionProductModel, shopBean);
-            api_beforeCheck(parameter);//api调用前check
+            api_beforeCheck(parameter,mapMasterBrand);//api调用前check
             if (parameter.cmsBtJmPromotionProductModel.getSynchStatus() != 2) {
                 // 再售
                 if (StringUtil.isEmpty(parameter.cmsBtJmPromotionProductModel.getJmHashId())) {
@@ -142,15 +146,26 @@ public class JuMeiProductPlatform3Service extends BaseService {
         productService.updateProductPlatform(parameter.cmsBtProductModel.getChannelId(), parameter.cmsBtProductModel.getProdId(), parameter.platform, parameter.cmsBtJmPromotionProductModel.getModifier());
     }
     //所有api调用前check
-    public void api_beforeCheck(UpdateJmParameter parameter) {
+    public void api_beforeCheck(UpdateJmParameter parameter, HashMap<String,Boolean> mapMasterBrand) {
         String errorMsg = "";
         String platformBrandId = parameter.platform.getpBrandId();
         String masterBrand = parameter.cmsBtProductModel.getCommon().getFields().getBrand();
-        CmsBtFeedInfoModel cmsBtFeedInfoModel= feedInfoService.getProductByCode(parameter.cmsBtProductModel.getChannelId(),parameter.cmsBtProductModel.getCommon().getFields().getCode());
-       String feedBrand=cmsBtFeedInfoModel.getBrand();
-        if(CmsBtBrandBlockService.isBlocked(parameter.cmsBtProductModel.getChannelId(),27,feedBrand,masterBrand,platformBrandId))
-        {
-            errorMsg="该商品品牌已加入黑名单,不能再售";
+        if (mapMasterBrand.containsKey(masterBrand)) {
+            if (mapMasterBrand.get(masterBrand)) {
+                errorMsg = "该商品品牌已加入黑名单,不能再售";
+            }
+        } else {
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(parameter.cmsBtProductModel.getChannelId(), parameter.cmsBtProductModel.getCommon().getFields().getCode());
+            String feedBrand = cmsBtFeedInfoModel.getBrand();
+            if (CmsBtBrandBlockService.isBlocked(parameter.cmsBtProductModel.getChannelId(), 27, feedBrand, masterBrand, platformBrandId)) {
+                errorMsg = "该商品品牌已加入黑名单,不能再售";
+                mapMasterBrand.put(masterBrand, true);
+            } else {
+                mapMasterBrand.put(masterBrand, false);
+            }
+        }
+        if (!StringUtils.isEmpty(errorMsg)) {
+
         }
         // 6.0.1
         else if ("1".equalsIgnoreCase(parameter.cmsBtProductModel.getLock()))//1:lock, 0:unLock
