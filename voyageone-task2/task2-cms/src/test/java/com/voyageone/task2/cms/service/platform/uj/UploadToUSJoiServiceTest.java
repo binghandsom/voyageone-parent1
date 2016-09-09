@@ -1,10 +1,13 @@
 package com.voyageone.task2.cms.service.platform.uj;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
@@ -103,6 +106,32 @@ public class UploadToUSJoiServiceTest {
                 }
             }
         }
+
+        // 获取当前usjoi channel, 有多少个platform
+        List<TypeChannelBean> usjoiTypeChannelBeanList = TypeChannels.getTypeListSkuCarts(usjoiChannelId, "D", "en"); // 取得展示用数据
+        if (ListUtils.isNull(usjoiTypeChannelBeanList)) {
+            String errMsg = "com_mt_value_channel表中没有usJoiChannel(" + usjoiChannelId + ")对应的展示用(53 D en)mapping" +
+                    "信息,不能插入usJoiGroup信息，终止UploadToUSJoiServie处理，后面的子店产品都不往USJOI本店导入了，请修改好共通数据后再导入";
+            // channel级的共通配置异常，本USJOI channel后面的产品都不导入了
+            return;
+        }
+
+        // 自动同步对象平台列表(ALL:所有平台，也可具体指定需要同步的平台id,用逗号分隔(如:"28,29"))
+        String ccAutoSyncCarts = "";
+        List<String> ccAutoSyncCartList = null;
+        // 自动同步对象平台列表(ALL:所有平台，也可具体指定需要同步的平台id,用逗号分隔(如:"28,29"))
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(usjoiChannelId,
+                CmsConstants.ChannelConfig.AUTO_SYNC_CARTS);
+        if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+            String strAutoSyncCarts = cmsChannelConfigBean.getConfigValue1().trim();
+            // 如果配置的值为ALL,则同步所有平台
+            if ("ALL".equalsIgnoreCase(strAutoSyncCarts)) {
+                ccAutoSyncCarts = "ALL";
+            } else {
+                // 取得自动同步指定平台列表
+                ccAutoSyncCartList = Arrays.asList(strAutoSyncCarts.split(","));
+            }
+        }
         // --------------------------------------------------------------------------------------------
 
         // 从synship.tm_order_channel表中取得USJOI店铺channel对应的cartId列表（一般只有一条cartId.如928对应28, 929对应29）
@@ -117,11 +146,12 @@ public class UploadToUSJoiServiceTest {
 
         CmsBtSxWorkloadModel sxWorkLoadBean = new CmsBtSxWorkloadModel();
         sxWorkLoadBean.setChannelId("017");
-        sxWorkLoadBean.setGroupId(12922L);
+        sxWorkLoadBean.setGroupId(662793L);
         sxWorkLoadBean.setModifier("james");
         sxWorkLoadBean.setCartId(Integer.parseInt(usjoiChannelId)); // "929"
 
-        uploadToUSJoiService.upload(sxWorkLoadBean, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, cartIds);
+        uploadToUSJoiService.upload(sxWorkLoadBean, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping,
+                usjoiTypeChannelBeanList, cartIds, ccAutoSyncCarts, ccAutoSyncCartList);
     }
 
     @Test
@@ -153,13 +183,20 @@ public class UploadToUSJoiServiceTest {
 
     @Test
     public void testOnStartup() throws Exception {
-
         uploadToUSJoiService.onStartup(new ArrayList<>());
     }
 
     @Test
-    public void testOnStartup1() throws Exception {
+    public void testUploadByChannel() throws Exception {
+        // 保存每个channel最终导入结果(成功失败件数信息)
+        Map<String, String> resultMap = new HashMap<>();
 
+        for (OrderChannelBean channelBean : Channels.getUsJoiChannelList()) {
+            // 只测试928渠道时
+            if ("928".equals(channelBean.getOrder_channel_id())) {
+                uploadToUSJoiService.uploadByChannel(channelBean, resultMap);
+            }
+        }
     }
 
     @Test
