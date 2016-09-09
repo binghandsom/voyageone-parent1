@@ -1,5 +1,6 @@
 package com.voyageone.web2.openapi.oauth2.interceptors;
 
+import com.voyageone.common.configs.Properties;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.RedisRateLimiterHelper;
 import com.voyageone.web2.openapi.channeladvisor.exception.CAApiException;
@@ -42,8 +43,9 @@ class ChannelAdvisorInterceptor {
         }
 
         // 1000 propert
-        Long rateNum = redisRateLimiterHelper.aquire(120, 1000, System.currentTimeMillis() / 60000 + "_" +  sellerID);
-
+        Long rateNum = redisRateLimiterHelper.aquire(120,
+                Integer.parseInt(Properties.readValue("com.voyageone.web2.openapi.channeladvisor.maxrate"))
+                , System.currentTimeMillis() / 60000 + "_" +  sellerID);
         System.out.println("获取到令牌号："+rateNum);
         if (rateNum < 0) {
             // rateLimiter

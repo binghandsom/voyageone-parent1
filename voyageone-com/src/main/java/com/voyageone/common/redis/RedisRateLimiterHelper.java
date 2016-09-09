@@ -22,7 +22,7 @@ public class RedisRateLimiterHelper {
 
     /**
      * 获取执行令牌
-     * 若返回令牌号0，表示未取到令牌，即可执行限流措施
+     * 若返回令牌号-1，表示未取到令牌，即可执行限流措施
      *
      * @param expireSecond key过期时间
      * @param maxRate      有效期最大容量
