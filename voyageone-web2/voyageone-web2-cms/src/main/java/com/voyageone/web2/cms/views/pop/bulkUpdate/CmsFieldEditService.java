@@ -923,7 +923,7 @@ public class CmsFieldEditService extends BaseAppService {
                     cmsBtPriceLogModel.setClientRetailPrice(comSku.getClientRetailPrice());
                     cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
                 }
-                cmsBtPriceLogModel.setComment("高级检索批量更新");
+                cmsBtPriceLogModel.setComment("高级检索 设置最终售价");
                 cmsBtPriceLogModel.setCreated(new Date());
                 cmsBtPriceLogModel.setCreater(userInfo.getUserName());
                 cmsBtPriceLogModel.setModified(new Date());
@@ -960,6 +960,9 @@ public class CmsFieldEditService extends BaseAppService {
         $debug("批量修改商品价格 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
         // 如果有未处理的商品，则放入缓存
+        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2");
+        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "3");
+        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "4");
         if (prodPriceUpList.size() > 0) {
             commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2", prodPriceUpList);
         }
