@@ -52,7 +52,7 @@ public class UploadToUSJoiServiceTest {
         // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
         CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
 
-        String usjoiChannelId = "928";
+        String usjoiChannelId = "929";
 
         // --------------------------------------------------------------------------------------------
         // 品牌mapping表
@@ -125,10 +125,10 @@ public class UploadToUSJoiServiceTest {
         }
 
         CmsBtSxWorkloadModel sxWorkLoadBean = new CmsBtSxWorkloadModel();
-        sxWorkLoadBean.setChannelId("019");
-        sxWorkLoadBean.setGroupId(14452L);
+        sxWorkLoadBean.setChannelId("017");
+        sxWorkLoadBean.setGroupId(662793L);
         sxWorkLoadBean.setModifier("james");
-        sxWorkLoadBean.setCartId(Integer.parseInt(usjoiChannelId)); // "928"
+        sxWorkLoadBean.setCartId(Integer.parseInt(usjoiChannelId)); // "929"
 
         uploadToUSJoiService.upload(sxWorkLoadBean, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping,
                 usjoiTypeChannelBeanList, cartIds);
@@ -163,7 +163,7 @@ public class UploadToUSJoiServiceTest {
 
     @Test
     public void testOnStartup() throws Exception {
-            uploadToUSJoiService.onStartup(new ArrayList<>());
+        uploadToUSJoiService.onStartup(new ArrayList<>());
     }
 
     @Test
