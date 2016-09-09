@@ -1,5 +1,6 @@
 package com.voyageone.web2.openapi.channeladvisor.aop;
 
+import com.google.common.util.concurrent.RateLimiter;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.JacksonUtil;
 import org.aspectj.lang.JoinPoint;
@@ -14,6 +15,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletRequest;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author aooer 2016/9/6.
@@ -28,9 +30,11 @@ public class LogAspect extends VOAbsLoggable {
 
     private static final Logger log = LoggerFactory.getLogger(LogAspect.class);
 
+    final RateLimiter rateLimiter = RateLimiter.create(100000.0,1, TimeUnit.MILLISECONDS);
 
     @Around(POINT_CUT)
     public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
+        rateLimiter.tryAcquire();
         ServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         $info(pjp.getSignature().getName()+":::"+JacksonUtil.bean2Json(request.getParameterMap()));
         return pjp.proceed();
