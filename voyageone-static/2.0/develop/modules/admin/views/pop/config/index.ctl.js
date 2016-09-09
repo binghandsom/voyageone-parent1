@@ -69,6 +69,12 @@ define([
                         break;
                     case
                     'Shop':
+                        self.cartCfgList = [];
+                        _.forEach(self.sourceData.sourceData, function (item) {
+                            _.forEach(item.cartShopConfig, function (cartShopConfig) {
+                                self.cartCfgList.push(cartShopConfig);
+                            });
+                        });
                         self.channelService.getAllChannel().then(function (res) {
                             self.channelAllList = res.data;
                         });
@@ -167,9 +173,14 @@ define([
                                 'cfgVal2': configInfo.cfgVal2
                             };
                         };
-                        self.cartShopService.searchCartShopConfigByPage(data).then(function (res) {
+                        if (self.sourceData.isReadOnly == true) {
+                            res = self.getConfigPaginationData(item ? item : self.cartCfgList);
                             callback(res, selectKey);
-                        });
+                        } else {
+                            self.cartShopService.searchCartShopConfigByPage(data).then(function (res) {
+                                callback(res, selectKey);
+                            });
+                        }
                         break;
                 }
                 function callback(res, selectKey) {
@@ -289,7 +300,13 @@ define([
                             'isReadOnly': self.sourceData.isReadOnly
                         });
                         self.popups.openCreateEdit(item).then(function (res) {
-                            if (res.res == 'success') self.search(1);
+                            if (res.res == 'success') {
+                                self.search();
+                            } else {
+                                var list = self.cartCfgList;
+                                list.push(res);
+                                self.search(1, list);
+                            }
                         });
                         break;
                 }
@@ -363,10 +380,23 @@ define([
                             });
                             break;
                         case 'Shop':
-                            self.cartShopService.deleteCartShopConfig(delList).then(function (res) {
-                                if (res.data == false)self.alert(res.data.message);
-                                self.search(1);
-                            });
+                            if (self.sourceData.isReadOnly == true) {
+                                _.forEach(delList, function (item) {
+                                    var source = self.cartCfgList;
+                                    var data = _.find(source, function (sItem) {
+                                        return sItem.cartId == item.cartId;
+                                    });
+                                    if (source.indexOf(data) > -1) {
+                                        source.splice(source.indexOf(data), 1);
+                                        self.search(1);
+                                    }
+                                })
+                            } else {
+                                self.cartShopService.deleteCartShopConfig(delList).then(function (res) {
+                                    if (res.data == false)self.alert(res.data.message);
+                                    self.search(1);
+                                });
+                            }
                             break;
                     }
                 });

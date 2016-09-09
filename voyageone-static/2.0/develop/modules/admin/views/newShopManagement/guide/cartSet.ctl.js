@@ -6,8 +6,9 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('GuideCartSetController', (function () {
-        function GuideCartSetController(selectRowsFactory) {
+        function GuideCartSetController(selectRowsFactory,popups) {
             this.selectRowsFactory = selectRowsFactory;
+            this.popups = popups;
             this.cartShopSelList = {selList: []};
             this.cartTrackingSelList = {selList: []};
             this.tempShopSelect = null;
@@ -58,6 +59,20 @@ define([
                 });
                 self.cartTrackingSelList = self.tempTrackingSelect.selectRowsInfo;
                 // End 设置勾选框
+            },
+            config: function (type) {
+                var self = this;
+                if (self.cartShopSelList.selList.length < 1) {
+                    self.popups.openConfig({'configType': type, 'isReadOnly': true, 'sourceData': self.context.cartShop, 'orderChannelId':self.context.cartShop[0].orderChannelId});
+                    return;
+                } else {
+                    _.forEach(self.cartList, function (Info) {
+                        if (Info.cartId == self.cartShopSelList.selList[0].id) {
+                            _.extend(Info, {'configType': type});
+                            self.popups.openConfig(Info);
+                        }
+                    })
+                }
             },
             next: function () {
                 window.location.href = "#/newShop/guide/batchJob";
