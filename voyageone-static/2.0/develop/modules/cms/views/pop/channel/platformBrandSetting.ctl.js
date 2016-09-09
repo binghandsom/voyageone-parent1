@@ -27,7 +27,7 @@ define([
                         return;
 
                     var _brandId = _.find(self.custBrandList, function (element) {
-                        return element.brandId = self.platformData.pBrandId;
+                        return element.brandId == self.platformData.pBrandId;
                     });
 
                     self.selectedPlatform = _brandId.brandName;
