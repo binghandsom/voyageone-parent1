@@ -153,6 +153,13 @@ public class SummerGuruAnalysisService extends BaseAnalysisService {
     }
 
     @Override
+    public int fullCopyTemp(){
+        int cnt = summerGuruFeedDao.fullCopyTemp();
+        summerGuruFeedDao.updateMd5();
+        return cnt;
+    }
+
+    @Override
     public ChannelConfigEnums.Channel getChannel() {
         return SUMMERGURU;
     }
