@@ -18,7 +18,9 @@ angular.module("vo.directives").directive("leaf", function ($compile) {
                 event.stopPropagation();
                 var navElement = document.getElementsByClassName("nav")[1];
                 navElement.firstElementChild.className = "dropdown";
-                scope.result.push(scope.leaf.catPath.replace(/-/g, "/"));
+                if (scope.result.indexOf(scope.leaf.catPath.replace(/-/g, "/")) < 0) {
+                    scope.result.push(scope.leaf.catPath.replace(/-/g, "/"));
+                }
                 scope.search.search();
             });
             $compile(element.contents())(scope);
