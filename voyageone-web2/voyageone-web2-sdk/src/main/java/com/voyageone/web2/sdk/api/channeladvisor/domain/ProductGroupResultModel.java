@@ -15,7 +15,7 @@ import java.util.List;
 public class ProductGroupResultModel extends CABaseModel {
 
     @JsonProperty("BuyableProductResults")
-    private List<BuyableProductResultModel> BuyableProductResults;
+    private List<BuyableProductResultModel> buyableProductResults;
 
     @JsonProperty("SellerSKU")
     private String sellerSKU;
@@ -27,11 +27,11 @@ public class ProductGroupResultModel extends CABaseModel {
     private boolean hasErrors;
 
     public List<BuyableProductResultModel> getBuyableProductResults() {
-        return BuyableProductResults;
+        return buyableProductResults;
     }
 
     public void setBuyableProductResults(List<BuyableProductResultModel> buyableProductResults) {
-        BuyableProductResults = buyableProductResults;
+        buyableProductResults = buyableProductResults;
     }
 
     public String getSellerSKU() {
@@ -69,6 +69,17 @@ public class ProductGroupResultModel extends CABaseModel {
     @Override
     @JsonIgnore
     public boolean hasErrors() {
-        return !CollectionUtils.isEmpty(errors);
+        boolean haveError = !CollectionUtils.isEmpty(errors);
+        if (!haveError) {
+            if (buyableProductResults != null && !buyableProductResults.isEmpty()) {
+                for (BuyableProductResultModel model : buyableProductResults) {
+                    if (model != null && model.hasErrors()) {
+                        haveError = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return haveError;
     }
 }
