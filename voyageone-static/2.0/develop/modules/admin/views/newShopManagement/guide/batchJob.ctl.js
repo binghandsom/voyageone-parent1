@@ -94,7 +94,10 @@ define([
             complete: function () {
                 var self = this;
                 self.confirm('您确定要提交全部新店的数据吗？').then(function () {
-                    self.newShopService.saveChannelSeries().then(function (res) {
+                    self.newShopService.saveChannelSeries(self.context).then(function (res) {
+                        if(res.data == true){
+                            window.location.href = "#/newShop/history";
+                        }
                     })
                 })
             }
