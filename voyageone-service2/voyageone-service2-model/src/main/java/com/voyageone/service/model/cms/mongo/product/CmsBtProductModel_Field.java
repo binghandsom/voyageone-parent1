@@ -510,19 +510,19 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     }
 
     //克
-    public Double getWeighG() {
-        return getDoubleAttribute("weighG");
+    public Double getWeightG() {
+        return getDoubleAttribute("weightG");
     }
-    public void setWeighG(Double weighG) {
-        setAttribute("weighG", weighG == null ? 0.0 : weighG);
+    public void setWeightG(Double weightG) {
+        setAttribute("weightG", weightG == null ? 0.0 : weightG);
     }
 
     //千克
-    public Double getWeighKG() {
-        return getDoubleAttribute("weighKG");
+    public Double getWeightKG() {
+        return getDoubleAttribute("weightKG");
     }
-    public void setWeighKG(Double weighKG) {
-        setAttribute("weighKG", weighKG == null ? 0.0 : weighKG);
+    public void setWeightKG(Double weightKG) {
+        setAttribute("weightKG", weightKG == null ? 0.0 : weightKG);
     }
 
     @Override
