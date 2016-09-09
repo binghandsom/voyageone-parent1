@@ -954,10 +954,10 @@ define([
                     _.forEach(selList, function (object) {
                         productIds.push(object.code);
                     });
-                    var params = {'sellerCats': res.sellerCats, 'productIds': productIds, 'cartId': res.cartId};
-                    params.isSelAll = $scope.vm._selall ? 1 : 0;
-                    $addChannelCategoryService.save(params).then(function (context) {
-                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    res.productIds = productIds;
+                    res.isSelAll = $scope.vm._selall ? 1 : 0;
+                    $addChannelCategoryService.save(res).then(function (context) {
+                        notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
                         $scope.search();
                     });
                 })
