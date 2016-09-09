@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,8 @@ public class CmsSetMainPropMongoServiceTest {
 
     @Test
     public void testOnStartup() throws Exception {
+        BigDecimal b = new BigDecimal(1 * 453.59237);
+        int a = b.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
