@@ -13,16 +13,20 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="form-inline">
-                <!-- Category -->
+                <!-- Category -->{{ctrl.searchCats}}
                 <nav class="navbar navbar-default" role="navigation">
                     <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
                         <ul class="nav navbar-nav">
                             <li uib-dropdown>
-                                <a href="#" uib-dropdown-toggle translate="TXT_CATEGORY" style="padding: 0 20px;" ng-change="ctrl.deleCat(ctrl.aa)" ng-model="ctrl.aa" result="ctrl.searchCats">
+                                <a href="#" uib-dropdown-toggle translate="TXT_CATEGORY" style="padding: 0 20px;" ng-change="ctrl.deleteCat(ctrl.aa)" ng-model="ctrl.aa" result="ctrl.searchCats">
                                     <b class='caret'></b>
                                 </a>
-                                <tree tree='ctrl.categories' result="ctrl.searchCats"></tree>
+                                <tree tree='ctrl.categories' result="ctrl.searchCats" search="ctrl"></tree>
                             </li>
+                            <span ng-repeat="cat in ctrl.searchCats">
+                                <label class="selectedCat" title="点击取消选择" ng-click="ctrl.deleteCat(cat)">
+                                    <i class="fa fa-close"></i>&nbsp;&nbsp;已选择:{{cat}}</label>
+                            </span>
                         </ul>
                     </div>
                 </nav>

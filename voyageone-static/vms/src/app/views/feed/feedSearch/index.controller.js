@@ -4,10 +4,6 @@
 define([
     'vms'
 ], function (vms) {
-    function deleteCat(value){
-        var target = document.getElementsByClassName('selectedCat');
-
-    };
     vms.controller('FeedInfoSearchController', (function () {
 
         function FeedInfoSearchController(feedInfoSearchService, popups) {
@@ -86,10 +82,9 @@ define([
                 })
             },
 
-            deleCat:function(value){
-              var self = this;
-                console.log(value);
-                deleteCat(value);
+            deleteCat: function (item) {
+                var self = this;
+                self.searchCats.splice(self.searchCats.indexOf(item), 1);
             },
 
             search: function () {
