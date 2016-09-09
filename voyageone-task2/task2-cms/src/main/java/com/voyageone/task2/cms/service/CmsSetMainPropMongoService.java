@@ -67,6 +67,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -982,6 +983,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
 
+                    //james g kg 计算
+                    weightCalculate(cmsProduct);
+
                     // productService.updateProduct(channelId, requestModel);
                     int updCnt = productService.updateProductFeedToMaster(channelId, cmsProduct, getTaskName());
                     if (updCnt == 0) {
@@ -1052,6 +1056,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
+
+                    //james g kg 计算
+                    weightCalculate(cmsProduct);
 
                     productService.createProduct(channelId, cmsProduct, getTaskName());
 
@@ -3782,6 +3789,22 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         }
 
 
+    }
+
+    private void weightCalculate(CmsBtProductModel cmsProduct) {
+        Double weight = null;
+        for(CmsBtProductModel_Sku sku:cmsProduct.getCommon().getSkus()){
+            if(sku.getWeight() != null && (weight == null || weight.compareTo(sku.getWeight())>0)){
+                weight = sku.getWeight();
+            }
+        }
+        //1磅(lb)=453.59237克(g)
+        if(weight != null){
+            BigDecimal b = new BigDecimal(weight * 453.59237);
+            cmsProduct.getCommon().getFields().setWeightG(b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
+            b = new BigDecimal(weight * 453.59237 / 1000.0);
+            cmsProduct.getCommon().getFields().setWeightKG(b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+        }
     }
 
     private void insertCmsBtFeedImportSize(String channelId, CmsBtProductModel cmsProduct) {
