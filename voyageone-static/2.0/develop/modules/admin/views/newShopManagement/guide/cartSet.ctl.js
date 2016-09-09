@@ -6,9 +6,10 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('GuideCartSetController', (function () {
-        function GuideCartSetController(selectRowsFactory,popups) {
+        function GuideCartSetController(selectRowsFactory, popups, confirm) {
             this.selectRowsFactory = selectRowsFactory;
             this.popups = popups;
+            this.confirm = confirm;
             this.cartShopSelList = {selList: []};
             this.cartTrackingSelList = {selList: []};
             this.tempShopSelect = null;
@@ -63,16 +64,114 @@ define([
             config: function (type) {
                 var self = this;
                 if (self.cartShopSelList.selList.length < 1) {
-                    self.popups.openConfig({'configType': type, 'isReadOnly': true, 'sourceData': self.context.cartShop, 'orderChannelId':self.context.cartShop[0].orderChannelId});
+                    self.popups.openConfig({
+                        'configType': type,
+                        'isReadOnly': true,
+                        'sourceData': self.context.cartShop,
+                        'orderChannelId': self.context.cartShop[0].orderChannelId
+                    });
                     return;
                 } else {
-                    _.forEach(self.cartList, function (Info) {
+                    _.forEach(self.cartShopList, function (Info) {
                         if (Info.cartId == self.cartShopSelList.selList[0].id) {
                             _.extend(Info, {'configType': type});
                             self.popups.openConfig(Info);
                         }
                     })
                 }
+            },
+            edit: function (item) {
+                var self = this;
+                switch (item.type) {
+                    case 'cartShop':
+                        if (item.kind == 'add') {
+                            self.popups.openCartChannelShop({
+                                'kind': 'add',
+                                'isReadOnly': true,
+                                'orderChannelId': self.cartShopList[0].orderChannelId,
+                                'channelName': self.cartShopList[0].channelName
+                            }).then(function (res) {
+                                var list = self.cartShopList;
+                                list.push(res);
+                                self.init(1);
+                            });
+                        } else {
+                            _.forEach(self.cartShopList, function (Info) {
+                                if (Info.cartId == self.cartShopSelList.selList[0].id) {
+                                    _.extend(Info, {'isReadOnly': true});
+                                    self.popups.openCartChannelShop(Info).then(function () {
+                                        self.init(1);
+                                    });
+                                }
+                            })
+                        }
+                        break;
+                    case 'cartTracking':
+                        if (item.kind == 'add') {
+                            self.popups.openCartTrackingInfo({
+                                'kind': 'add',
+                                'isReadOnly': true,
+                                'orderChannelId': self.cartTrackingList[0].orderChannelId,
+                                'channelName': self.cartTrackingList[0].channelName
+                            }).then(function (res) {
+                                var list = self.cartTrackingList;
+                                list.push(res);
+                                self.init(1);
+                            });
+                        } else {
+                            _.forEach(self.cartTrackingList, function (Info) {
+                                if (Info.seq == self.cartTrackingSelList.selList[0].id) {
+                                    _.extend(Info, {'isReadOnly': true});
+                                    self.popups.openCartTrackingInfo(Info).then(function () {
+                                        self.init(1);
+                                    });
+                                }
+                            })
+                        }
+                        break;
+                }
+
+            },
+            delete: function (item) {
+                var self = this;
+                self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
+                        var delList = [];
+                        switch (item.type) {
+                            case 'cartShop':
+                                _.forEach(self.cartShopSelList.selList, function (delInfo) {
+                                    delList.push({'cartId': delInfo.id, 'orderChannelId': delInfo.orderChannelId});
+                                });
+                                _.forEach(delList, function (item) {
+                                        var source = self.cartShopList;
+                                        var data = _.find(source, function (sItem) {
+                                            return sItem.cartId == item.cartId;
+                                        });
+                                        if (source.indexOf(data) > -1) {
+                                            source.splice(source.indexOf(data), 1);
+                                            self.init();
+                                        }
+                                    }
+                                );
+                                break;
+                            case 'cartTracking':
+                                _.forEach(self.cartTrackingSelList.selList, function (delInfo) {
+                                    delList.push({'seq': delInfo.id, 'cartId': delInfo.cartId});
+                                });
+                                _.forEach(delList, function (item) {
+                                        var source = self.cartTrackingList;
+                                        var data = _.find(source, function (sItem) {
+                                            return sItem.seq == item.seq;
+                                        });
+                                        if (source.indexOf(data) > -1) {
+                                            source.splice(source.indexOf(data), 1);
+                                            self.init();
+                                        }
+                                    }
+                                );
+                                break;
+                        }
+                    }
+                );
             },
             next: function () {
                 window.location.href = "#/newShop/guide/batchJob";

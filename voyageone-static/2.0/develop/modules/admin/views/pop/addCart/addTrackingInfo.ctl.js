@@ -7,7 +7,8 @@ define([
     admin.controller('CartAddTrackingInfoController', (function () {
         function CartAddTrackingInfoController(context, channelService, AdminCartService, cartTrackingService, $uibModalInstance) {
             this.sourceData = context ? context : {};
-            this.append = context == 'add' ? true : false;
+            this.append = context == 'add' || context.kind == 'add' ? true : false;
+            this.readOnly = context.isReadOnly == true ? true : false;
             this.channelService = channelService;
             this.AdminCartService = AdminCartService;
             this.cartTrackingService = cartTrackingService;
@@ -20,9 +21,13 @@ define([
         CartAddTrackingInfoController.prototype = {
             init: function () {
                 var self = this;
-                if (self.sourceData == 'add') {
+                if (self.sourceData == 'add' || self.sourceData.kind == 'add') {
                     self.popType = '添加';
-                    self.sourceData = {}
+                    if (self.sourceData.isReadOnly !== true) {
+                        self.sourceData = {};
+                    } else {
+                        self.sourceData = self.sourceData;
+                    }
                 }
                 self.sourceData.trackingSpreadFlg ? self.sourceData.trackingSpreadFlg == '1' ? self.checked = true : self.checked = false : '';
                 self.checked == true ? self.sourceData.trackingSpreadFlg = true : self.sourceData.trackingSpreadFlg = false;
@@ -30,7 +35,7 @@ define([
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
-                self.AdminCartService.getAllCart().then(function (res) {
+                self.AdminCartService.getAllCart(null).then(function (res) {
                     self.cartAllList = res.data;
                 });
             },
@@ -43,6 +48,14 @@ define([
                 self.sourceData.trackingSpreadFlg = self.sourceData.trackingSpreadFlg == true ? self.sourceData.trackingSpreadFlg = '1' : '';
                 self.sourceData.active = self.sourceData.active == '1' ? true : false;
                 self.sourceData.trackingSpreadFlg = self.sourceData.trackingSpreadFlg == true ? '1' : '';
+                if (self.readOnly == true) {
+                    self.data = _.find(self.cartAllList, function (cart) {
+                        return cart.cartId == self.sourceData.cartId;
+                    });
+                    _.extend(self.sourceData,{'cartName':self.data.name});
+                    self.$uibModalInstance.close(self.sourceData);
+                    return;
+                }
                 if (self.append == true) {
                     self.cartTrackingService.addCartTracking(self.sourceData).then(function (res) {
                         if (res.data == false) {
