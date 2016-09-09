@@ -12,6 +12,7 @@ import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.wms.ClientInventoryService;
@@ -166,6 +167,17 @@ public class FeedToCmsService extends BaseService {
                                             || item.getPriceMsrp().compareTo(skuModel.getPriceMsrp()) != 0
                                             || item.getPriceNet().compareTo(skuModel.getPriceNet()) != 0
                                             || item.getPriceCurrent().compareTo(skuModel.getPriceCurrent()) != 0) {
+                                        insertLog = true;
+                                    }
+                                }
+                                // 重量变化的情况下，重新导入
+                                if (!insertLog) {
+                                    CmsBtFeedInfoModel_Sku item = product.getSkus().get(product.getSkus().indexOf(skuModel));
+                                    String newWeight = item.getWeightOrg();
+                                    String oldWeight = skuModel.getWeightOrg();
+                                    if (StringUtils.isEmpty(newWeight) && !StringUtils.isEmpty(oldWeight)) {
+                                        insertLog = true;
+                                    } else if (!StringUtils.isEmpty(newWeight) && !newWeight.equals(oldWeight)) {
                                         insertLog = true;
                                     }
                                 }
