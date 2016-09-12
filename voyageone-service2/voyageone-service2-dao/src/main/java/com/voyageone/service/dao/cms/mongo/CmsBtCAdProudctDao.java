@@ -37,4 +37,11 @@ public class CmsBtCAdProudctDao extends BaseMongoDao<CmsBtCAdProudctModel> {
         query.setLimit(pageSize);
         return mongoTemplate.find(query, CmsBtCAdProudctModel.class, collectionName + channelId);
     }
+
+    public List<CmsBtCAdProudctModel> getProduct(String channelId, List<String> skus) {
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"SellerSKU\":{$in:#}}");
+        query.setParameters(skus);
+        return mongoTemplate.find(query, CmsBtCAdProudctModel.class, collectionName + channelId);
+    }
 }
