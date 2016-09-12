@@ -106,8 +106,6 @@ define([
             var self = this,
                 searchInfo = self.searchInfo;
 
-            //self.searchInfo.categoryType = null;
-
             if (!self.fields) {
                 self.tryGet();
                 return;
