@@ -12,7 +12,7 @@ import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
@@ -31,7 +31,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsAddToPromotionService extends BaseAppService {
+public class CmsAddToPromotionService extends BaseViewService {
 
     @Autowired
     private TagService tagService;

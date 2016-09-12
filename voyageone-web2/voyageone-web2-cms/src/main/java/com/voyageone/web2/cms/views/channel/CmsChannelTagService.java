@@ -11,7 +11,7 @@ import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0, 2016/4/19.
  */
 @Service
-public class CmsChannelTagService extends BaseAppService {
+public class CmsChannelTagService extends BaseViewService {
 
     @Autowired
     private TagService tagService;

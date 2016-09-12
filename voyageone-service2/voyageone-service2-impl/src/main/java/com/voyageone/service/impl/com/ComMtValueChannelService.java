@@ -16,14 +16,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class ComMtValueChannelService extends BaseService {
 
+    private final ComMtValueChannelDao comMtValueChannelDao;
+
     @Autowired
-    private ComMtValueChannelDao comMtValueChannelDao;
+    public ComMtValueChannelService(ComMtValueChannelDao comMtValueChannelDao) {
+        this.comMtValueChannelDao = comMtValueChannelDao;
+    }
 
     /**
      * 将一些项目(如：brand,sizeType,productType)的初始化中英文mapping信息插入到synship.com_mt_value_channel表中
      *
-     * @param intTypeId Integer mapping类型id
-     * @param channelId String 渠道id
+     * @param intTypeId  Integer mapping类型id
+     * @param channelId  String 渠道id
      * @param mappingKey String mapping key的值
      * @param mappingKey String mapping value的值
      * @param mappingKey String strLangId值
@@ -39,14 +43,14 @@ public class ComMtValueChannelService extends BaseService {
     /**
      * 将一些项目(如：brand,sizeType,productType)的初始化mapping信息插入到synship.com_mt_value_channel表中
      *
-     * @param intTypeId Integer mapping类型id
-     * @param channelId String 渠道id
+     * @param intTypeId  Integer mapping类型id
+     * @param channelId  String 渠道id
      * @param mappingKey String mapping key的值
-     * @param mappingKey String mapping value的值
-     * @param mappingKey String strLangId值
+     * @param mappingValue String mapping value的值
+     * @param strLangId String strLangId值
      */
-    public void insertComMtValueChannelMappingInfo(Integer intTypeId, String channelId, String mappingKey,
-                                                   String mappingValue, String strLangId, String modifier) {
+    private void insertComMtValueChannelMappingInfo(Integer intTypeId, String channelId, String mappingKey,
+                                                    String mappingValue, String strLangId, String modifier) {
 
         // 插入一条英文或者中文版mapping信息
         ComMtValueChannelModel brandEnValueChannelModel = new ComMtValueChannelModel();
@@ -60,6 +64,5 @@ public class ComMtValueChannelService extends BaseService {
         brandEnValueChannelModel.setModifier(modifier);
         comMtValueChannelDao.insert(brandEnValueChannelModel);
     }
-
 }
 

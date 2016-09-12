@@ -8,7 +8,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.ImageGroupService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +31,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsImageGroupDetailService extends BaseAppService {
+public class CmsImageGroupDetailService extends BaseViewService {
 
     private final static String URL_PREFIX = "http://image.voyageone.com.cn/cms";
 

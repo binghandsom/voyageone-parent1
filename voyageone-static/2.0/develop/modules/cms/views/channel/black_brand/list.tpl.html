@@ -1,0 +1,111 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="panel panel-vo">
+        <div class="panel-heading">
+            <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;<span>品牌黑名单一览</span></h4>
+        </div>
+        <div class="panel-body">
+            <div class="row form-inline">
+                <div class="col-sm-6">
+                    <label class="control-label col-md-4 text-right">品牌种类 &nbsp;&nbsp;</label>
+                    <div class="col-md-8">
+                        <select class="form-control" ng-model="ctrl.searchInfo.cartId"
+                                ng-options="c.value as c.name for c in ctrl.cartList" style="width: 200px">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-6 text-left">
+                    <div class="form-group">
+                        <label>品牌状态&nbsp;&nbsp;</label>
+                        <span>&nbsp;</span>
+                        <label>
+                            <input name="category" type="radio" value="3" ng-model="ctrl.searchInfo.categoryType">&nbsp;全部
+                        </label>&emsp;
+                        <label>
+                            <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType">&nbsp;全类目
+                        </label>&emsp;
+                        <label>
+                            <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType">&nbsp;选择类目
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-inline m-t-sm">
+                <div class="col-sm-6">
+                    <label class="control-label col-md-4 text-right">品牌 &nbsp;&nbsp;</label>
+                    <div class="col-md-8">
+                        <select class="form-control" ng-model="ctrl.searchInfo.cartId"
+                                ng-options="c.value as c.name for c in ctrl.cartList" style="width: 200px">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-t-md">
+                <div class="col-sm-12 text-center">
+                    <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-undo"></i>&nbsp;清除</button>
+                    <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'|translate}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-5 col-md-offset-7 text-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-pop btn-default">
+                                <i class="glyphicon glyphicon-import"></i>&nbsp;批量加入黑名单&nbsp;
+                            </button>
+                        </div>
+                        &nbsp;
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-pop btn-default" ng-click="doExport()">
+                                <i class="glyphicon glyphicon-export"></i>&nbsp;批量移除黑名单
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+
+            <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                <thead>
+                <tr>
+                    <th class="text-center mfb-x" style="width:66px;padding-left:0px">
+                        <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+                            <input type="checkbox" ng-click="selectAll(vm.feedSelList)"
+                                   ng-checked="isAllSelected(vm.feedSelList)"
+                                   ng-disabled="!vm.feedList.length || !vm.feedSelList.currPageRows.length">
+                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL'
+                            | translate}}&nbsp;
+                        </label>
+                    </th>
+                    <th class="text-center">Master品牌</th>
+                    <th class="text-center">平台类型</th>
+                    <th class="text-center">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="model in ctrl.dataList">
+                    <td class="text-center">{{model.$id}}</td>
+                    <td class="text-center">{{model.masterBrand}}</td>
+                    <td class="text-center">{{model.plateFormType}}</td>
+                    <td class="text-center">
+                        <button class="btn btn-success">加入黑名单</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="col-sm-12 m-t-lg m-b-lg">
+                <vpagination config="ctrl.paging"></vpagination>
+            </div>
+
+        </div>
+    </div>
+
+</div>

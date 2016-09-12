@@ -22,7 +22,7 @@ import java.io.*;
  * @author Jonas
  * @version 2.0.0
  */
-public abstract class BaseController extends BaseAppComponent {
+public abstract class BaseController extends BaseViewComponent {
 
     @Autowired
     protected HttpServletRequest request;

@@ -18,7 +18,7 @@ import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCommonSchemaModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.tools.product.PlatformMappingGetBean;
 import com.voyageone.web2.cms.bean.tools.product.PlatformMappingSaveBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -41,7 +41,7 @@ import static java.util.stream.Collectors.toList;
  * @since 2.4.0
  */
 @Service
-class PlatformMappingViewService extends BaseAppService {
+class PlatformMappingViewService extends BaseViewService {
 
     private final PlatformMappingService platformMappingService;
 
