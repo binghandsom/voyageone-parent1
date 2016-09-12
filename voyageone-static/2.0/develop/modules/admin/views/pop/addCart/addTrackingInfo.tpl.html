@@ -13,7 +13,7 @@
                             <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_NAME' | translate}}</label>
                             <div class="col-sm-8">
                                 <select search-contains="true" chosen width="'100%'" class="form-control" name="channelName"
-                                        ng-model="ctrl.sourceData.orderChannelId" ng-disabled="ctrl.popType == '编辑'" required
+                                        ng-model="ctrl.sourceData.orderChannelId" ng-disabled="ctrl.popType == '编辑'|| ctrl.sourceData.isReadOnly == true" required
                                         ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelAllList">
                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 </select>

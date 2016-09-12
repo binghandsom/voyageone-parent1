@@ -72,37 +72,25 @@ define([
                     modifiedTo: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
-                    self.popups.openChannelCarrier('add').then(function () {
-                        self.search(1);
-                    });
-                } else {
-                    if (self.historySelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.historyList, function (Info) {
-                            if (Info.mainKey == self.historySelList.selList[0].id) {
-                                self.popups.openChannelCarrier(Info).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
-                    }
-                }
-
+                self.newShopService.getNewShopById(item.channelId).then(function (res) {
+                    console.log(res);
+                    window.location.href = "#/newShop/guide";
+                })
             },
-            delete: function (list) {
+            delete: function (item) {
                 var self = this;
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
-                        self.newShopService.deleteNewShop(list.id).then(function (res) {
+                        self.newShopService.deleteNewShop(item.id).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);
                             self.search(1);
                         })
                     }
                 );
+            },
+            download: function () {
+
             }
         };
         return HistoryConfigController;

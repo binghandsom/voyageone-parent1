@@ -7,7 +7,8 @@ define([
     admin.controller('AddChannelShopController', (function () {
         function AddChannelShopController(context, channelService, popups, AdminCartService, cartShopService, $uibModalInstance) {
             this.sourceData = context ? context : {};
-            this.append = context == 'add' ? true : false;
+            this.append = context == 'add' || context.kind == 'add' ? true : false;
+            this.readOnly = context.isReadOnly == true ? true : false;
             this.popups = popups;
             this.channelService = channelService;
             this.AdminCartService = AdminCartService;
@@ -21,14 +22,23 @@ define([
         AddChannelShopController.prototype = {
             init: function () {
                 var self = this;
-                if (self.sourceData == 'add') {
+                if (self.sourceData == 'add' || self.sourceData.kind == 'add') {
                     self.popType = '添加';
-                    self.sourceData = {}
+                    if (self.sourceData.isReadOnly !== true) {
+                        self.sourceData = {};
+                    } else {
+                        self.sourceData = self.sourceData;
+                    }
                 }
                 self.sourceData.active = self.sourceData.active ?  self.sourceData.active ? "1" : "0":'';
-                self.channelService.getAllChannel().then(function (res) {
+                self.channelService.getAllChannel(null).then(function (res) {
                     self.channelAllList = res.data;
                 });
+                if(self.sourceData.isReadOnly == true){
+                    self.AdminCartService.getAllCart(self.sourceData.orderChannelId).then(function (res) {
+                        self.cartAllList = res.data;
+                    });
+                }
             },
             changeCartList:function(){
                 var self = this;
@@ -44,6 +54,14 @@ define([
                 var self = this;
                 var result = {};
                 self.sourceData.active = self.sourceData.active == '1' ? true : false;
+                if (self.readOnly == true) {
+                    self.data = _.find(self.cartAllList, function (cart) {
+                        return cart.cartId == self.sourceData.cartId;
+                    });
+                    _.extend(self.sourceData,{'cartName':self.data.name});
+                    self.$uibModalInstance.close(self.sourceData);
+                    return;
+                }
                 if (self.append == true) {
                     self.cartShopService.addCartShop(self.sourceData).then(function (res) {
                         _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
