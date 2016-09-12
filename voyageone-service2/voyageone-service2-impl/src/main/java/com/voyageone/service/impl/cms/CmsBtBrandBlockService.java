@@ -63,6 +63,7 @@ public class CmsBtBrandBlockService extends BaseService {
         map.put("channelId", channelId);
         map.put("cartId", cartId);
         map.put("type", type);
+        map.put("active",1);
         return brandBlockDao.selectCount(map);
     }
 }
