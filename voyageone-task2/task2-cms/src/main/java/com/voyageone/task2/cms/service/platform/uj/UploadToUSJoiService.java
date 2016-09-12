@@ -448,16 +448,16 @@ public class UploadToUSJoiService extends BaseTaskService {
                             // 价格发生变化的时候更新该sku价格
 //                            if (oldSku.getPriceMsrp().compareTo(sku.getPriceMsrp()) != 0
 //                                    || oldSku.getPriceRetail().compareTo(sku.getPriceRetail()) != 0) {
-                                // 美金专柜价
-                                oldSku.setClientMsrpPrice(sku.getClientMsrpPrice());
-                                // 美金指导价
-                                oldSku.setClientRetailPrice(sku.getClientRetailPrice());
-                                // 美金成本价(=priceClientCost)
-                                oldSku.setClientNetPrice(sku.getClientNetPrice());
-                                // 人民币专柜价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
-                                oldSku.setPriceMsrp(sku.getPriceMsrp());
-                                // 人民币指导价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
-                                oldSku.setPriceRetail(sku.getPriceRetail());
+                            // 美金专柜价
+                            oldSku.setClientMsrpPrice(sku.getClientMsrpPrice());
+                            // 美金指导价
+                            oldSku.setClientRetailPrice(sku.getClientRetailPrice());
+                            // 美金成本价(=priceClientCost)
+                            oldSku.setClientNetPrice(sku.getClientNetPrice());
+                            // 人民币专柜价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
+                            oldSku.setPriceMsrp(sku.getPriceMsrp());
+                            // 人民币指导价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
+                            oldSku.setPriceRetail(sku.getPriceRetail());
 //                            }
                         }
                     }
