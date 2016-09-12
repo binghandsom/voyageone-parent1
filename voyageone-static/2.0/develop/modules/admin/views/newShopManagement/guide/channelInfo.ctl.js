@@ -6,7 +6,7 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('GuideConfigController', (function () {
-        function GuideConfigController(popups, alert, confirm, channelService, newShopService, AdminCartService) {
+        function GuideConfigController(popups, alert, confirm, channelService, newShopService, AdminCartService, $location) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
@@ -14,6 +14,7 @@ define([
             this.newShopService = newShopService;
             this.AdminCartService = AdminCartService;
             this.resList = [];
+            this.$location = $location;
             this.carrierSelList = {selList: []};
             this.tempChannelSelect = null;
             this.display = false;
@@ -47,12 +48,21 @@ define([
                 self.channelService.getAllCompany().then(function (res) {
                     self.companyAllList = res.data;
                 });
+                var url = self.$location.url();
+                if (url.indexOf('previous=true') > -1) {
+                    var context = window.sessionStorage.getItem('valueBean');
+                    if (context) {
+                        self.resListCopy = JSON.parse(context);
+                        self.resList = self.resListCopy.channel;
+                    }
+                    self.display = true;
+                }
             },
             copy: function (channelId) {
                 var self = this;
                 self.resList ? {} : {};
-                if(self.infoList.sessionKey) self.infoList.sessionKey='';
-                if(self.infoList.screctKey) self.infoList.sessionKey='';
+                if (self.infoList.sessionKey) self.infoList.sessionKey = '';
+                if (self.infoList.screctKey) self.infoList.sessionKey = '';
                 self.newShopService.getChannelSeries(channelId).then(function (res) {
                     self.resListCopy = res.data;
                     if (self.autoCopy == true) {
@@ -220,7 +230,7 @@ define([
                 if (self.autoCopy != true) {
                     _.extend(self.resListCopy.channel, self.resList);
                 }
-                
+
                 synchronizeChannelSeries(self.resListCopy);
                 window.sessionStorage.setItem('valueBean', JSON.stringify(self.resListCopy));
                 window.location.href = "#/newShop/guide/channelConfig";
@@ -228,7 +238,7 @@ define([
         };
 
         function _forEach(data, callback, subItemName) {
-            _.forEach(data, function(item) {
+            _.forEach(data, function (item) {
                 callback(item, subItemName);
             });
         }

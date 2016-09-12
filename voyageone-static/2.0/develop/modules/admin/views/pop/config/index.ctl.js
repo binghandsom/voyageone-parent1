@@ -295,7 +295,7 @@ define([
                             } else {
                                 var list = self.storeCfgList;
                                 list.push(res);
-                                _forEachAdd(self.sourceData.sourceData,'store',res);
+                                _forEachAdd(self.sourceData.sourceData, 'storeConfig', res);
                                 self.search(1);
                             }
                         });
@@ -346,6 +346,7 @@ define([
                             } else {
                                 var list = self.cartCfgList;
                                 list.push(res);
+                                _forEachAdd(self.sourceData.sourceData, 'cartShopConfig', res);
                                 self.search(1);
                             }
                         });
@@ -554,10 +555,24 @@ define([
                         break;
                 }
             });
-        };
+        }
 
-        function _forEachAdd(parentData, subData, target){
+        function _forEachAdd(parentData, subData, target) {
             _.forEach(parentData, function (item, x) {
+                var source = parentData;
+                var targetData = target;
+                switch (subData) {
+                    case 'storeConfig':
+                        if (item.storeName === targetData.storeName) {
+                            source[x].storeConfig.push(targetData);
+                        }
+                        break;
+                    case 'cartShopConfig':
+                        if (item.channelName === targetData.channelName && item.cartName === targetData.cartName) {
+                            source[x].cartShopConfig.push(targetData);
+                        }
+                        break;
+                }
 
             })
 
