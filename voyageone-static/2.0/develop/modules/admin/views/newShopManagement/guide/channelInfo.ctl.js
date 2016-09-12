@@ -31,7 +31,8 @@ define([
                 imgUrl: '',
                 cartIds: '',
                 sessionKey : '',
-                screctKey:''
+                screctKey:'',
+                channelConfig: []
             };
 
         }
@@ -50,8 +51,8 @@ define([
             copy: function (channelId) {
                 var self = this;
                 self.newShopService.getChannelSeries(channelId).then(function (res) {
+                    self.resListCopy = res.data;
                     if (self.autoCopy == true) {
-                        self.resListCopy = res.data;
                         self.resList = res.data.channel;
                         if (!self.resList.cartIds) {
                             self.cartList = [];
@@ -83,7 +84,6 @@ define([
                             self.display = true;
                         });
                     } else {
-                        self.resListCopy = res.data;
                         self.resList = self.infoList;
                         self.cartList = [];
                         self.AdminCartService.getAllCart(null).then(function (res) {
@@ -194,10 +194,10 @@ define([
             config: function (type) {
                 var self = this;
                 var channelInfo = {
-                    'orderChannelId': self.autoCopy == true ? self.resList.channel.orderChannelId : self.resListCopy.channel.orderChannelId,
+                    'orderChannelId': self.resList.orderChannelId,
                     'configType': type,
                     'isReadOnly': true,
-                    'sourceData': self.autoCopy == true ? self.resList : self.resListCopy
+                    'sourceData': self.resList
                 };
                 self.popups.openConfig(channelInfo);
             },
@@ -221,14 +221,11 @@ define([
                     _.forEach(data.cartTracking, callback);
                 }
 
-                if (self.autoCopy == true) {
-                    synchronizeChannelSeries(self.resListCopy);
-                    window.sessionStorage.setItem('valueBean', JSON.stringify(self.resListCopy));
-                } else {
+                if (self.autoCopy != true) {
                     _.extend(self.resListCopy.channel, self.resList);
-                    synchronizeChannelSeries(self.resListCopy);
-                    window.sessionStorage.setItem('valueBean', JSON.stringify(self.resListCopy));
                 }
+                synchronizeChannelSeries(self.resListCopy);
+                window.sessionStorage.setItem('channelCogInfo', JSON.stringify(self.resListCopy));
                 window.location.href = "#/newShop/guide/channelConfig";
             }
         };
