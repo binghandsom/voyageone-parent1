@@ -30,17 +30,21 @@ define([
                         self.sourceData = self.sourceData;
                     }
                 }
-                self.sourceData.active = self.sourceData.active ?  self.sourceData.active ? "1" : "0":'';
-                self.channelService.getAllChannel(null).then(function (res) {
-                    self.channelAllList = res.data;
-                });
-                if(self.sourceData.isReadOnly == true){
+                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "1" : "0" : '';
+                if (self.sourceData.isReadOnly == true) {
+                    self.channelAllList = [self.sourceData.sourceData];
+                } else {
+                    self.channelService.getAllChannel(null).then(function (res) {
+                        self.channelAllList = res.data;
+                    });
+                }
+                if (self.sourceData.isReadOnly == true) {
                     self.AdminCartService.getAllCart(self.sourceData.orderChannelId).then(function (res) {
                         self.cartAllList = res.data;
                     });
                 }
             },
-            changeCartList:function(){
+            changeCartList: function () {
                 var self = this;
                 self.AdminCartService.getAllCart(self.sourceData.orderChannelId).then(function (res) {
                     self.cartAllList = res.data;
@@ -58,7 +62,7 @@ define([
                     self.data = _.find(self.cartAllList, function (cart) {
                         return cart.cartId == self.sourceData.cartId;
                     });
-                    _.extend(self.sourceData,{'cartName':self.data.name});
+                    _.extend(self.sourceData, {'cartName': self.data.name});
                     self.$uibModalInstance.close(self.sourceData);
                     return;
                 }

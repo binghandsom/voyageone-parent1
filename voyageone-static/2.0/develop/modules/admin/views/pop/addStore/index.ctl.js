@@ -28,9 +28,13 @@ define([
                     }
                 }
                 self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "1" : "0" : '';
-                self.channelService.getAllChannel().then(function (res) {
-                    self.channelList = res.data;
-                });
+                if (self.sourceData.isReadOnly == true) {
+                    self.channelList = [self.sourceData.sourceData];
+                } else {
+                    self.channelService.getAllChannel().then(function (res) {
+                        self.channelList = res.data;
+                    });
+                }
             },
             changeStore: function (value) {
                 var self = this;

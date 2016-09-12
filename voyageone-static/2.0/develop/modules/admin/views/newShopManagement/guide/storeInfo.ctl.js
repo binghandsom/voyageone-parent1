@@ -55,7 +55,8 @@ define([
                     self.popups.openStoreAdd({
                             'kind': 'add', 'isReadOnly': true,
                             'orderChannelId': self.storeList[0].orderChannelId,
-                            'channelName': self.storeList[0].channelName
+                            'channelName': self.storeList[0].channelName,
+                            'sourceData': self.context.channel
                         })
                         .then(function (res) {
                             var list = self.storeList;
@@ -70,6 +71,7 @@ define([
                             Info.inventoryHold = copyData[0];
                             Info.remainNum = copyData[1];
                             Info.isReadOnly = true;
+                            Info.sourceData = self.context.channel;
                             self.popups.openStoreAdd(Info).then(function () {
                                 self.init();
                             });
