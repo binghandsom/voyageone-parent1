@@ -178,16 +178,16 @@ public class FeedToCmsService extends BaseService {
                 } else {
                     //如果是新的产品,如config已配置直接导入
                     //flag 1导入
-//                    CmsChannelConfigBean isImportFeedTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SET_FEED_IMPORT_FLG);
-//                    if(isImportFeedTypeConfig != null &&"1".equals(isImportFeedTypeConfig.getConfigValue1())){
-//                        insertLog = true;
-//                        product.setCreater(modifier);
-//                        product.setUpdFlg(0);
-//                    }else{
+                    CmsChannelConfigBean isImportFeedTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SET_FEED_IMPORT_FLG);
+                    if(isImportFeedTypeConfig != null &&"1".equals(isImportFeedTypeConfig.getConfigValue1())){
+                        insertLog = true;
+                        product.setCreater(modifier);
+                        product.setUpdFlg(0);
+                    }else{
                         insertLog = true;
                         product.setCreater(modifier);
                         product.setUpdFlg(9);
-//                    }
+                    }
                 }
                 // code 库存计算
                 Integer qty = 0;

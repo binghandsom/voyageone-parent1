@@ -797,6 +797,7 @@ define(function () {
         "TXT_PRICE_CONFIRM_HISTORY": "价格确认历史一览",
         "TXT_CONFIRM_STATUS": "确认状态",
         "TXT_CONFIRM_PRICE": "确认指导价",
-        "TXT_FLOATING_RATE": "价格波动"
+        "TXT_FLOATING_RATE": "价格波动",
+        "TXT_TASK_LIST": "任务一览"
     };
 });
