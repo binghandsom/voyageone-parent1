@@ -202,37 +202,51 @@ define([
                     'isReadOnly': true,
                     'sourceData': self.resList
                 };
+                if (self.autoCopy != true) {
+                    _.extend(self.resListCopy.channel, self.resList);
+                }
+                synchronizeChannelSeries(self.resListCopy);
                 self.popups.openConfig(channelInfo);
             },
             next: function () {
                 var self = this;
 
-                function synchronizeChannelSeries(data) {
-                    var channel = data.channel;
-                    var callback = function (item) {
-                        item.orderChannelId = channel.orderChannelId;
-                        item.channelId = channel.orderChannelId;
-                        item.channelName = channel.name;
-                    };
-                    _.forEach(channel.channelConfig, callback);
-                    _.forEach(data.sms, callback);
-                    _.forEach(data.thirdParty, callback);
-                    _.forEach(data.carrier, callback);
-                    _.forEach(data.channelAttr, callback);
-                    _.forEach(data.store, callback);
-                    _.forEach(data.cartShop, callback);
-                    _.forEach(data.cartShop.cartShopConfig, callback);
-                    _.forEach(data.cartTracking, callback);
-                }
-
                 if (self.autoCopy != true) {
                     _.extend(self.resListCopy.channel, self.resList);
                 }
                 synchronizeChannelSeries(self.resListCopy);
-                window.sessionStorage.setItem('channelCogInfo', JSON.stringify(self.resListCopy));
+                window.sessionStorage.setItem('valueBean', JSON.stringify(self.resListCopy));
                 window.location.href = "#/newShop/guide/channelConfig";
             }
         };
+
+        function _forEach(data, callback, subItemName) {
+            _.forEach(data, function(item) {
+                callback(item, subItemName);
+            });
+        }
+
+        function synchronizeChannelSeries(data) {
+            var channel = data.channel;
+            var callback = function (item, subItemName) {
+                item.orderChannelId = channel.orderChannelId;
+                item.channelId = channel.orderChannelId;
+                item.channelName = channel.name;
+                if (subItemName) {
+                    _forEach(item[subItemName], callback);
+                }
+            };
+            _forEach(channel.channelConfig, callback);
+            _forEach(data.sms, callback);
+            _forEach(data.thirdParty, callback);
+            _forEach(data.carrier, callback);
+            _forEach(data.channelAttr, callback);
+            _forEach(data.store, callback);
+            _forEach(data.cartShop, callback);
+            _forEach(data.cartShop, callback, 'cartShopConfig');
+            _forEach(data.cartTracking, callback);
+        }
+
         return GuideConfigController;
     })());
 });

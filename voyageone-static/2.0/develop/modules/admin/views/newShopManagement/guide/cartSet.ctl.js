@@ -68,6 +68,7 @@ define([
                         'configType': type,
                         'isReadOnly': true,
                         'sourceData': self.context.cartShop,
+                        'channelInfo': self.context.channel,
                         'orderChannelId': self.context.cartShop[0].orderChannelId
                     });
                     return;

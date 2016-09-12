@@ -44,9 +44,13 @@ define([
                 self.taskCfgList = [];
                 switch (self.searchInfo.configType) {
                     case 'Channel':
-                        self.channelService.getAllChannel().then(function (res) {
-                            self.channelList = res.data;
-                        });
+                        if (self.sourceData.isReadOnly == true) {
+                            self.channelList = [self.sourceData.sourceData];
+                        } else {
+                            self.channelService.getAllChannel().then(function (res) {
+                                self.channelList = res.data;
+                            });
+                        }
                         break;
                     case 'Store':
                         if (self.sourceData.isReadOnly == true) {
@@ -80,17 +84,25 @@ define([
                     case
                     'Shop':
                         self.cartCfgList = [];
-                        _.forEach(self.sourceData.sourceData, function (item) {
-                            _.forEach(item.cartShopConfig, function (cartShopConfig) {
-                                self.cartCfgList.push(cartShopConfig);
+                        if (self.sourceData.isReadOnly == true) {
+                            var channel = self.sourceData.channelInfo;
+                            self.channelAllList = [channel];
+                            self.AdminCartService.getCartByIds({cartIds: channel.cartIds}).then(function (res) {
+                                self.cartAllList = res.data;
                             });
-                        });
-                        self.channelService.getAllChannel().then(function (res) {
-                            self.channelAllList = res.data;
-                        });
-                        self.AdminCartService.getAllCart(null).then(function (res) {
-                            self.cartAllList = res.data;
-                        });
+                            _.forEach(self.sourceData.sourceData, function (item) {
+                                _.forEach(item.cartShopConfig, function (cartShopConfig) {
+                                    self.cartCfgList.push(cartShopConfig);
+                                });
+                            });
+                        } else {
+                            self.channelService.getAllChannel().then(function (res) {
+                                self.channelAllList = res.data;
+                            });
+                            self.AdminCartService.getAllCart(null).then(function (res) {
+                                self.cartAllList = res.data;
+                            });
+                        }
                         break;
                 }
                 self.search(1);
