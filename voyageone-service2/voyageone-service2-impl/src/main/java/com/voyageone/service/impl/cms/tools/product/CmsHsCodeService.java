@@ -363,7 +363,7 @@ public class CmsHsCodeService extends BaseService {
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
         String hsCodeTimeStr = DateTimeUtil.format(date, null);
         //未分配的任务
-        String queryStr = String.format("{'$and':[ {'common.fields.translateStatus':'1'," +
+        String queryStr = String.format("{'$and':[{'lock':'0'},{'common.fields.translateStatus':'1'," +
                 "'common.fields.isMasterMain':1," +
                 "'common.fields.hsCodeStatus':'0'," +
                 " '$or': [{'common.fields.hsCodeSetter':''}," +
@@ -416,7 +416,8 @@ public class CmsHsCodeService extends BaseService {
         StringBuilder sbQuery = new StringBuilder();
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
         String hsCodeTimeStr = DateTimeUtil.format(date, null);
-
+        sbQuery.append(MongoUtils.splicingValue("lock",0));
+        sbQuery.append(",");
         //hsCodePrivate
         if (!StringUtils.isEmpty(userName)) {
             sbQuery.append(MongoUtils.splicingValue("common.fields.hsCodeSetter", userName));

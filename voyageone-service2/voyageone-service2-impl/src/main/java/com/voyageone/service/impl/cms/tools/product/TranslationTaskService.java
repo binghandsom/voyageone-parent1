@@ -64,7 +64,7 @@ public class TranslationTaskService extends BaseService {
         TaskSummaryBean taskSummary = new TaskSummaryBean();
 
         //未分配的任务
-        String queryStr = String.format("{'$and':[ {'common.fields.isMasterMain':1}," +
+        String queryStr = String.format("{'$and':[ {'lock':'0'},{'common.fields.isMasterMain':1}," +
                 "{'common.fields.translateStatus': {'$ne' : '1' }}, " +
                 "{'$or': [{'common.fields.translator':''} ,  " +
                 "{'common.fields.translator':null}, " +
@@ -315,7 +315,7 @@ public class TranslationTaskService extends BaseService {
         String translateTimeStr = DateTimeUtil.format(date, null);
 
         JongoQuery queryObj = new JongoQuery();
-
+        queryObj.addQuery("{'lock':'0'}");
         queryObj.addQuery("{'common.fields.isMasterMain':1}");
         queryObj.addQuery("{'common.fields.translator':#}");
         queryObj.addParameters(userName);
