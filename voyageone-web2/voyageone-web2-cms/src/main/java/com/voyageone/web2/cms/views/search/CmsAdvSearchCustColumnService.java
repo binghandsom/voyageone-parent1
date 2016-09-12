@@ -2,7 +2,7 @@ package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.ArrayUtils;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0, 15/12/14
  */
 @Service
-public class CmsAdvSearchCustColumnService extends BaseAppService {
+public class CmsAdvSearchCustColumnService extends BaseViewService {
 
     @Autowired
     private CommonPropService commonPropService;

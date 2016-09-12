@@ -3,7 +3,7 @@ package com.voyageone.web2.cms.views.promotion.task;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.StockSeparateService;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.*;
  * Created by jeff.duan on 2016/03/04.
  */
 @Service
-public class CmsTaskStockIncrementService extends BaseAppService {
+public class CmsTaskStockIncrementService extends BaseViewService {
 
     @Autowired
     private CmsTaskStockIncrementDetailService cmsTaskStockIncrementDetailService;

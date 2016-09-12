@@ -20,7 +20,7 @@ import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 import com.voyageone.service.model.cms.CmsMtPlatformBrandsModel;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.enums.PlatformType;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.BrandMappingBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.jboss.netty.util.internal.ConcurrentHashMap;
@@ -36,7 +36,7 @@ import java.util.*;
  * @since 2.3.0
  */
 @Service
-public class BrandMappingService extends BaseAppService {
+public class BrandMappingService extends BaseViewService {
 	
 	@Autowired
 	private BrandBtMappingService brandBtMappingService;

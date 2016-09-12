@@ -6,7 +6,7 @@ import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.vms.feed.FeedFileService;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ import static com.voyageone.web2.vms.VmsConstants.TYPE_ID.IMPORT_FEED_FILE_STATU
  * @version 1.0
  */
 @Service
-public class VmsFeedImportResultService extends BaseAppService {
+public class VmsFeedImportResultService extends BaseViewService {
 
     @Autowired
     private FeedFileService feedFileService;

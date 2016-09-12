@@ -1,7 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
@@ -17,7 +16,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -34,7 +33,7 @@ import java.util.Map;
  * @version 2.0.0, 15/12/14
  */
 @Service
-public class CmsAdvSearchOtherService extends BaseAppService {
+public class CmsAdvSearchOtherService extends BaseViewService {
 
     @Autowired
     private ProductService productService;
