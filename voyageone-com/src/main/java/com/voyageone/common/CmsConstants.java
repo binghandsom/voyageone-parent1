@@ -79,8 +79,8 @@ public class CmsConstants {
         // 强制击穿阈值(例如: 10 表示的是10%)
         String MANDATORY_BREAK_THRESHOLD = "MANDATORY_BREAK_THRESHOLD";
 
-        // Feed导入Master时是否自动上新
-        String AUTO_APPROVE_PRODUCT_CHANGE = "AUTO_APPROVE_PRODUCT_CHANGE";
+        // Feed导入Master时变更需要自动同步的平台列表
+        String AUTO_SYNC_CARTS = "AUTO_SYNC_CARTS";
 
         // 店铺级别MSRP价格计算公式
         String PRICE_MSRP_CALC_FORMULA = "PRICE_MSRP_CALC_FORMULA";
@@ -148,6 +148,9 @@ public class CmsConstants {
 
         // 该店铺每次feed-master导入最大件数
         String FEED_IMPORT_MAX = "FEED_IMPORT_MAX";
+
+        // 是否只修改价格(1:只修改价格 空,0:修改全部属性)
+        String ONLY_UPDATE_PRICE_FLG = "ONLY_UPDATE_PRICE_FLG";
 
         // feed增加状态属性
         String AUTO_SET_FEED_IMPORT_FLG = "AUTO_SET_FEED_IMPORT_FLG";
