@@ -36,4 +36,6 @@ public interface SummerGuruFeedDao {
     int fullCopyTemp();
 
     int updateMd5();
+
+    int updateUpdateFlag();
 }

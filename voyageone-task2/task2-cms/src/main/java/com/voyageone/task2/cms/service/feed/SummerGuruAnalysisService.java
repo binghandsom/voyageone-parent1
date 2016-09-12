@@ -156,6 +156,7 @@ public class SummerGuruAnalysisService extends BaseAnalysisService {
     public int fullCopyTemp(){
         int cnt = summerGuruFeedDao.fullCopyTemp();
         summerGuruFeedDao.updateMd5();
+        summerGuruFeedDao.updateUpdateFlag();
         return cnt;
     }
 
