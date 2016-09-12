@@ -32,9 +32,13 @@ define([
                 self.sourceData.trackingSpreadFlg ? self.sourceData.trackingSpreadFlg == '1' ? self.checked = true : self.checked = false : '';
                 self.checked == true ? self.sourceData.trackingSpreadFlg = true : self.sourceData.trackingSpreadFlg = false;
                 self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "1" : "0" : '';
-                self.channelService.getAllChannel().then(function (res) {
-                    self.channelAllList = res.data;
-                });
+                if (self.sourceData.isReadOnly == true) {
+                    self.channelAllList = [self.sourceData.sourceData];
+                } else {
+                    self.channelService.getAllChannel().then(function (res) {
+                        self.channelAllList = res.data;
+                    });
+                }
                 self.AdminCartService.getAllCart(null).then(function (res) {
                     self.cartAllList = res.data;
                 });
@@ -52,7 +56,7 @@ define([
                     self.data = _.find(self.cartAllList, function (cart) {
                         return cart.cartId == self.sourceData.cartId;
                     });
-                    _.extend(self.sourceData,{'cartName':self.data.name});
+                    _.extend(self.sourceData, {'cartName': self.data.name});
                     self.$uibModalInstance.close(self.sourceData);
                     return;
                 }
