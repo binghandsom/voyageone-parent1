@@ -42,9 +42,11 @@ define([
             config: function (type) {
                 var self = this;
                 if (self.taskSelList.selList.length < 1) {
-                    self.popups.openConfig({'configType': type,'isReadOnly': true,
+                    self.popups.openConfig({
+                        'configType': type, 'isReadOnly': true,
                         'sourceData': self.context.task,
-                        'orderChannelId': self.context.cartShop[0].orderChannelId});
+                        'orderChannelId': self.context.cartShop[0].orderChannelId
+                    });
                     return;
                 } else {
                     _.forEach(self.taskList, function (Info) {
@@ -85,9 +87,17 @@ define([
                         _.forEach(self.taskSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
-                        // self.taskService.deleteTask(delList).then(function (res) {
-                        //     self.search(1);
-                        // })
+                        _.forEach(delList, function (item) {
+                                var source = self.taskList;
+                                var data = _.find(source, function (sItem) {
+                                    return sItem.taskId == item;
+                                });
+                                if (source.indexOf(data) > -1) {
+                                    source.splice(source.indexOf(data), 1);
+                                    self.init();
+                                }
+                            }
+                        );
                     }
                 );
             },
@@ -95,7 +105,7 @@ define([
                 var self = this;
                 self.confirm('您确定要提交全部新店的数据吗？').then(function () {
                     self.newShopService.saveChannelSeries(self.context).then(function (res) {
-                        if(res.data == true){
+                        if (res.data == true) {
                             window.location.href = "#/newShop/history";
                         }
                     })
