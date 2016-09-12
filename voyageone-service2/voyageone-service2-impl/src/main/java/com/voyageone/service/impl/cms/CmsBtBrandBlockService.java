@@ -1,9 +1,13 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.MapUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtBrandBlockDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtBrandBlockModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,13 +32,16 @@ public class CmsBtBrandBlockService extends BaseService {
 
     private final CmsBtBrandBlockDao brandBlockDao;
 
+    private final MqSender sender;
+
     @Autowired
-    public CmsBtBrandBlockService(CmsBtBrandBlockDao brandBlockDao) {
+    public CmsBtBrandBlockService(CmsBtBrandBlockDao brandBlockDao, MqSender sender) {
         this.brandBlockDao = brandBlockDao;
+        this.sender = sender;
     }
 
-    public void block(String channelId, int cartId, int brandType, String brand, String username) {
-        switch (brandType){
+    public void block(String channelId, int cartId, int brandType, String brand, String username) throws IllegalAccessException {
+        switch (brandType) {
             case BRAND_TYPE_FEED:
             case BRAND_TYPE_MASTER:
             case BRAND_TYPE_PLATFORM:
@@ -44,33 +51,45 @@ public class CmsBtBrandBlockService extends BaseService {
             default:
                 return;
         }
-        brandBlockDao.insert(new CmsBtBrandBlockModel() {{
-            setChannelId(channelId);
-            setCartId(cartId);
-            setType(brandType);
-            setBrand(brand);
-            setCreater(username);
-            setModifier(username);
-            Date now = DateTimeUtil.getDate();
-            setCreated(now);
-            setModified(now);
+        CmsBtBrandBlockModel brandBlockModel = new CmsBtBrandBlockModel();
+        brandBlockModel.setChannelId(channelId);
+        brandBlockModel.setCartId(cartId);
+        brandBlockModel.setType(brandType);
+        brandBlockModel.setBrand(brand);
+        brandBlockModel.setCreater(username);
+        brandBlockModel.setModifier(username);
+
+        brandBlockDao.insert(brandBlockModel);
+
+        // 通知任务进行其他部分的处理
+        // 如 feed 部分的屏蔽
+        // MQ 不负责的部分，应该只包含上新部分
+        sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, new HashMap<String, Object>() {{
+            put("blocking", true);
+            put("data", brandBlockModel);
         }});
-        // TODO MQ OTHER EFFECT
     }
 
     public void unblock(String channelId, int cartId, int brandType, String brand) {
-        switch (brandType){
+        switch (brandType) {
             case BRAND_TYPE_FEED:
             case BRAND_TYPE_MASTER:
             case BRAND_TYPE_PLATFORM:
-                CmsBtBrandBlockModel brandBlockModel = brandBlockDao.selectOne(new CmsBtBrandBlockModel() {{
-                    setChannelId(channelId);
-                    setCartId(cartId);
-                    setType(brandType);
-                    setBrand(brand);
-                }});
+                CmsBtBrandBlockModel brandBlockModel = new CmsBtBrandBlockModel();
+                brandBlockModel.setChannelId(channelId);
+                brandBlockModel.setCartId(cartId);
+                brandBlockModel.setType(brandType);
+                brandBlockModel.setBrand(brand);
+
+                brandBlockModel = brandBlockDao.selectOne(brandBlockModel);
+
                 brandBlockDao.delete(brandBlockModel.getId());
-                // TODO MQ OTHER EFFECT
+
+                // 同上，只是相反
+                Map<String, Object> mqParams = new HashMap<>();
+                mqParams.put("blocking", false);
+                mqParams.put("data", brandBlockModel);
+                sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, mqParams);
         }
     }
 
