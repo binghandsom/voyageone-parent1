@@ -33,7 +33,7 @@
                                     <label class="col-sm-3 control-label">{{'TXT_CART_UPDATE_TIME' | translate}}</label>
                                     <div class="col-sm-9 form-inline">
                                         <div class="col-sm-5 input-group">
-                                            <input type="date" class="form-control" uib-datepicker-popup
+                                            <input type="date" date-model-format="yyyy-MM-dd" class="form-control" uib-datepicker-popup
                                                    ng-model="ctrl.searchInfo.modifiedFrom" onpaste="return false" maxlength="10"
                                                    max-date="ctrl.searchInfo.modifiedTo" is-open="datePicker1" close-text="Close"/>
 													  <span class="input-group-btn">
@@ -42,7 +42,7 @@
                                         </div>
                                         &nbsp;~&nbsp;
                                         <div class="col-sm-5 input-group">
-                                            <input type="date" class="form-control" uib-datepicker-popup
+                                            <input type="date" date-model-format="yyyy-MM-dd" class="form-control" uib-datepicker-popup
                                                    ng-model="ctrl.searchInfo.modifiedTo" onpaste="return false" maxlength="10"
                                                    min-date="ctrl.searchInfo.modifiedFrom" is-open="datePicker2" close-text="Close"/>
 													  <span class="input-group-btn">

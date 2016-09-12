@@ -295,6 +295,7 @@ define([
                             } else {
                                 var list = self.storeCfgList;
                                 list.push(res);
+                                _forEachAdd(self.sourceData.sourceData,'store',res);
                                 self.search(1);
                             }
                         });
@@ -553,6 +554,13 @@ define([
                         break;
                 }
             });
+        };
+
+        function _forEachAdd(parentData, subData, target){
+            _.forEach(parentData, function (item, x) {
+
+            })
+
         }
 
         return ConfigController;
