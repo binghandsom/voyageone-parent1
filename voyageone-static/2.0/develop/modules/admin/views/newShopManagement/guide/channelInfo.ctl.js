@@ -30,8 +30,8 @@ define([
                 fullName: '',
                 imgUrl: '',
                 cartIds: '',
-                sessionKey : '',
-                screctKey:'',
+                sessionKey: '',
+                screctKey: '',
                 channelConfig: []
             };
 
@@ -50,6 +50,9 @@ define([
             },
             copy: function (channelId) {
                 var self = this;
+                self.resList ? {} : {};
+                if(self.infoList.sessionKey) self.infoList.sessionKey='';
+                if(self.infoList.screctKey) self.infoList.sessionKey='';
                 self.newShopService.getChannelSeries(channelId).then(function (res) {
                     self.resListCopy = res.data;
                     if (self.autoCopy == true) {
@@ -110,11 +113,11 @@ define([
                 var self = this;
                 if (type == 'secretKey') {
                     self.channelService.generateSecretKey().then(function (res) {
-                        self.screctKey = res.data;
+                        self.infoList.screctKey = res.data;
                     })
                 } else {
                     self.channelService.generateSessionKey().then(function (res) {
-                        self.sessionKey = res.data;
+                        self.infoList.sessionKey = res.data;
                     })
                 }
             },
@@ -203,6 +206,7 @@ define([
             },
             next: function () {
                 var self = this;
+
                 function synchronizeChannelSeries(data) {
                     var channel = data.channel;
                     var callback = function (item) {

@@ -45,13 +45,11 @@
                                     <th class="text-center mfb-xxt" translate="TXT_APP_URL"></th>
                                     <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
                                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
-                                    <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
-                                    <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td if-no-rows="ctrl.cartShopList.length||ctrl.cartShopList" colspan="9" style="padding: 0px"></td>
+                                    <td if-no-rows="ctrl.cartShopList.length||ctrl.cartShopList" colspan="7" style="padding: 0px"></td>
                                 </tr>
                                 <tr ng-repeat="list in ctrl.cartShopList">
                                     <td class="text-left v-middle">
@@ -67,8 +65,6 @@
                                     <td class="text-center v-middle">{{list.appUrl}}</td>
                                     <td class="text-center v-middle">{{list.comment}}</td>
                                     <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
-                                    <td class="text-left v-middle">{{list.modified}}</td>
-                                    <td class="text-center v-middle">{{list.modifier}}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -103,13 +99,11 @@
                             <th class="text-center mfb-xt" translate="TXT_IS_DISPLAY"></th>
                             <th class="text-center mfb-xxt" translate="TXT_TRACKING_IS_EXPAND"></th>
                             <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
-                            <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
-                            <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
-                            <td if-no-rows="ctrl.cartTrackingList.length||ctrl.cartTrackingList" colspan="11" style="padding: 0px"></td>
+                            <td if-no-rows="ctrl.cartTrackingList.length||ctrl.cartTrackingList" colspan="9" style="padding: 0px"></td>
                         </tr>
                         <tr ng-repeat="list in ctrl.cartTrackingList">
                             <td class="text-left v-middle">
@@ -127,8 +121,6 @@
                             <td class="text-center v-middle">{{list.displayFlg?list.displayFlg=='1'?'显示':'隐藏':''}}</td>
                             <td class="text-center v-middle">{{list.trackingSpreadFlg =='1'?'取得运单号路由信息':''}}</td>
                             <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
-                            <td class="text-left v-middle">{{list.modified}}</td>
-                            <td class="text-center v-middle">{{list.modifier}}</td>
                         </tr>
                         </tbody>
                     </table>

@@ -104,13 +104,11 @@
                                         <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}6</th>
                                         <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
                                         <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
-                                        <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
-                                        <th class="text-center mfb-xxt" translate="TXT_UPDATER"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <td if-no-rows="ctrl.channelThirdList.length||ctrl.channelThirdList" colspan="13" style="padding: 0px"></td>
+                                        <td if-no-rows="ctrl.channelThirdList.length||ctrl.channelThirdList" colspan="11" style="padding: 0px"></td>
                                     </tr>
                                     <tr ng-repeat="list in ctrl.channelThirdList">
                                         <td class="text-left v-middle">
@@ -162,8 +160,6 @@
                               tooltip-trigger="mouseenter" tooltip-placement="top">{{list.comment | stringCutter:true:15:' ...'}}</span>
                                         </td>
                                         <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
-                                        <td class="text-left v-middle">{{list.modified}}</td>
-                                        <td class="text-center v-middle">{{list.modifier}}</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -196,13 +192,11 @@
                                         <th class="text-center mfb-xxt" translate="TXT_CHANNEL_CARRIER_DELETE_ALLOW"></th>
                                         <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
                                         <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
-                                        <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
-                                        <th class="text-center mfb-xxt" translate="TXT_UPDATER"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <td if-no-rows="ctrl.carrierList.length||ctrl.carrierList" colspan="9" style="padding: 0px"></td>
+                                        <td if-no-rows="ctrl.carrierList.length||ctrl.carrierList" colspan="7" style="padding: 0px"></td>
                                     </tr>
                                     <tr ng-repeat="list in ctrl.carrierList">
                                         <td class="text-left v-middle">
@@ -218,8 +212,6 @@
                                         <td class="text-center v-middle">{{list.allowDeleteFlg?list.allowDeleteFlg=='0'?'禁止':'允许':''}}</td>
                                         <td class="text-center v-middle">{{list.comments}}</td>
                                         <td class="text-center v-middle">{{list.active?list.active==true?'启用':'禁用':''}}</td>
-                                        <td class="text-center v-middle">{{list.modified}}</td>
-                                        <td class="text-center v-middle">{{list.modifier}}</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -254,13 +246,11 @@
                                         <th class="text-center mfb-xxt">{{'TXT_CHANNEL_ADD_NAME'|translate}}2</th>
                                         <th class="text-center mfb-xxt" translate="TXT_CHANNEL_LANGUAGE_TYPE"></th>
                                         <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
-                                        <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
-                                        <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <td if-no-rows="ctrl.channelTypeList.length||ctrl.channelTypeList" colspan="11" style="padding: 0px"></td>
+                                        <td if-no-rows="ctrl.channelTypeList.length||ctrl.channelTypeList" colspan="9" style="padding: 0px"></td>
                                     </tr>
                                     <tr ng-repeat="list in ctrl.channelTypeList">
                                         <td class="text-left v-middle">
@@ -278,8 +268,6 @@
                                         <td class="text-center v-middle">{{list.addName2}}</td>
                                         <td class="text-center v-middle">{{list.langId?list.langId=='en'?'英文':'中文':''}}</td>
                                         <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
-                                        <td class="text-left v-middle">{{list.modified}}</td>
-                                        <td class="text-center v-middle">{{list.modifier}}</td>
                                     </tr>
                                     </tbody>
                                 </table>

@@ -44,13 +44,11 @@
                                     <th class="text-left mfb-xxt" translate="TXT_STORE_REMAINED"></th>
                                     <th class="text-center mfb-xt" translate="TXT_COMMENTS"></th>
                                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
-                                    <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
-                                    <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td if-no-rows="ctrl.storeList.length||ctrl.storeList" colspan="9" style="padding: 0px"></td>
+                                    <td if-no-rows="ctrl.storeList.length||ctrl.storeList" colspan="7" style="padding: 0px"></td>
                                 </tr>
                                 <tr ng-repeat="list in ctrl.storeList">
                                     <td class="text-left v-middle">
@@ -69,8 +67,6 @@
                                     <td class="text-left v-middle">{{ctrl.getInventoryHold(list.inventoryHold)}}</td>
                                     <td class="text-center v-middle">{{list.modifier}}</td>
                                     <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
-                                    <td class="text-left v-middle">{{list.modified}}</td>
-                                    <td class="text-center v-middle">{{list.modifier}}</td>
                                 </tr>
                                 </tbody>
                             </table>
