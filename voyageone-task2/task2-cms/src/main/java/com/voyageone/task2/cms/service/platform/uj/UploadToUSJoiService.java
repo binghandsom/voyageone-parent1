@@ -205,10 +205,11 @@ public class UploadToUSJoiService extends BaseTaskService {
         // 获取当前usjoi channel, 有多少个platform
         List<TypeChannelBean> usjoiTypeChannelBeanList = TypeChannels.getTypeListSkuCarts(usjoiChannelId, "D", "en"); // 取得展示用数据
         if (ListUtils.isNull(usjoiTypeChannelBeanList)) {
-            String errMsg = "com_mt_value_channel表中没有usJoiChannel(" + usjoiChannelId + ")对应的展示用(53 D en)mapping" +
-                    "信息,不能插入usJoiGroup信息，终止UploadToUSJoiServie处理，后面的子店产品都不往USJOI本店导入了，请修改好共通数据后再导入";
+            String errMsg = usjoiChannelId + " " + channelBean.getFull_name() + " com_mt_value_channel表中没有usJoiChannel(" + usjoiChannelId + ")对应的展示用(53 D en)mapping" +
+                    "信息,不能插入usJoiGroup信息，终止UploadToUSJoiServie处理，请修改好共通数据后再导入";
             $info(errMsg);
             // channel级的共通配置异常，本USJOI channel后面的产品都不导入了
+            resultMap.put(usjoiChannelId, errMsg);
             return;
         }
         // --------------------------------------------------------------------------------------------
