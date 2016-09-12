@@ -35,14 +35,8 @@
             <div class="row form-inline m-t-sm">
                 <div class="col-sm-6">
                     <div class="col-md-8 col-md-offset-4" ng-if="ctrl.searchInfo.brandType == 2">
-                        <label>
-                            <input name="plateForm" type="checkbox" value="3" ng-model="ctrl.searchInfo.categoryType">&nbsp;天猫
-                        </label>&emsp;
-                        <label>
-                            <input name="plateForm" type="checkbox" value="1" ng-model="ctrl.searchInfo.categoryType">&nbsp;京东
-                        </label>&emsp;
-                        <label>
-                            <input name="plateForm" type="checkbox" value="2" ng-model="ctrl.searchInfo.categoryType">&nbsp;聚美
+                        <label ng-repeat="cart in ctrl.cartList">
+                            <input name="plateForm" type="checkbox" ng-model="ctrl.searchInfo.cart[cart.value]">&nbsp;{{cart.name}}&emsp;
                         </label>
                     </div>
                 </div>
@@ -50,7 +44,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-3">{{'TXT_BRAND'|translate}} &nbsp;&nbsp;</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" style="width: 200px" placeholder="{{'TXT_FUZZY_SEARCH'|translate}}">
+                            <input type="text" class="form-control" style="width: 200px" ng-model="ctrl.searchInfo.brand" placeholder="{{'TXT_FUZZY_SEARCH'|translate}}">
                         </div>
                     </div>
                 </div>

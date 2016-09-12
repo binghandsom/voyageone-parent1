@@ -5,6 +5,7 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.CHANNEL.BLACK_BRAND;
 import com.voyageone.web2.cms.bean.channel.CmsBlackBrandParamBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,11 +28,19 @@ public class CmsBlackBrandController extends CmsController {
         this.blackBrandViewService = blackBrandViewService;
     }
 
-    public AjaxResponse method1(CmsBlackBrandParamBean blackBrandParamBean) {
+    /**
+     * 查询商品黑名单
+     */
+    @RequestMapping(BLACK_BRAND.SEARCH_BLACK_BRAND)
+    public AjaxResponse searchBlackBrand(@RequestBody CmsBlackBrandParamBean blackBrandParamBean) {
         return success(blackBrandViewService.searchBrandListPage(blackBrandParamBean, getUser()));
     }
 
-    public AjaxResponse method2(CmsBlackBrandParamBean blackBrandParamBean) {
+    /**
+     * 更新/批量更新 商品黑名单
+     */
+    @RequestMapping(BLACK_BRAND.UPDATE_BLACK_BRAND)
+    public AjaxResponse updateBlackBrand(@RequestBody CmsBlackBrandParamBean blackBrandParamBean) {
         return success(blackBrandViewService.switchBrandBlock(blackBrandParamBean, getUser()));
     }
 }
