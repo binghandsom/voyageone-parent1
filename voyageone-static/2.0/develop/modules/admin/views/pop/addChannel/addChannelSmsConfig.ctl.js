@@ -28,9 +28,13 @@ define([
                     }
                 }
                 self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "0" : "1" : '';
-                self.channelService.getAllChannel().then(function (res) {
-                    self.channelAllList = res.data;
-                });
+                if (self.sourceData.isReadOnly == true) {
+                    self.channelAllList = [self.sourceData.sourceData];
+                } else {
+                    self.channelService.getAllChannel().then(function (res) {
+                        self.channelAllList = res.data;
+                    });
+                }
             },
             cancel: function () {
                 this.$uibModalInstance.close();

@@ -31,7 +31,7 @@
                                             <label class="checkbox-inline c-checkbox">
                                                 <input type="checkbox" name="active" value="1" ng-model="ctrl.autoCopy"><span class="fa fa-check"></span> 自动填充渠道信息
                                             </label>
-                                            <button class="btn btn-info" ng-click="ctrl.copy(ctrl.searchInfo.orderChannelId)">复制</button>
+                                            <button ng-if="ctrl.searchInfo.orderChannelId" class="btn btn-info" ng-click="ctrl.copy(ctrl.searchInfo.orderChannelId)">复制</button>
                                         </div>
                                     </div>
                                 </div>
