@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.vms.VmsBtCAOrderDao">
+
+    <select id="selectClientOrderById" resultType="com.voyageone.service.model.vms.VmsBtClientOrdersModel">
+        select
+            client_order_id clientOrderId,
+            order_channel_id orderChannelId,
+            order_status orderStatus,
+            order_date orderDate,
+            buyer_email_address buyerEmailAddress,
+            buyer_first_name buyerFirstName,
+            buyer_last_name buyerLastName,
+            buyer_address_line1 buyerAddressLine1,
+            buyer_city buyerCity,
+            buyer_country buyerCountry,
+            buyer_postal_code buyerPostalCode,
+            buyer_state_or_province buyerStateOrProvince,
+            buyer_address_line2 buyerAddressLine2,
+            buyer_company_name buyerCompanyName,
+            buyer_daytime_phone buyerDaytimePhone,
+            buyer_evening_phone buyerEveningPhone,
+            buyer_name_suffix buyerNameSuffix,
+            shipping_email_address shippingEmailAddress,
+            shipping_first_name shippingFirstName,
+            shipping_last_name shippingLastName,
+            shipping_address_line1 shippingAddressLine1,
+            shipping_city shippingCity,
+            shipping_country shippingCountry,
+            shipping_postal_code shippingPostalCode,
+            shipping_state_or_province shippingStateOrProvince,
+            shipping_address_line2 shippingAddressLine2,
+            shipping_company_name shippingCompanyName,
+            shipping_daytime_phone shippingDaytimePhone,
+            shipping_evening_phone shippingEveningPhone,
+            shipping_name_suffix shippingNameSuffix,
+            requested_shipping_method requestedShippingMethod,
+            deliver_by_date deliverByDate,
+            shipping_label_url shippingLabelUrl,
+            total_price totalPrice,
+            total_tax_price totalTaxPrice,
+            total_shipping_price totalShippingPrice,
+            total_shipping_tax_price totalShippingTaxPrice,
+            total_gift_option_price totalGiftOptionPrice,
+            total_gift_option_tax_price totalGiftOptionTaxPrice,
+            total_fees totalFees,
+            currency currency,
+            vat_inclusive vatInclusive,
+            active active,
+            created created,
+            creater creater,
+            modified modified,
+            modifier modifier
+        from vms_bt_client_orders
+        where client_order_id=#{orderId} and order_channel_id=#{orderChannelId}
+    </select>
+
+    <select id="selectClientOrderDetailById" resultType="com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel">
+        select
+            order_channel_id orderChannelId,
+            client_order_id clientOrderId,
+            order_number orderNumber,
+            reservation_id reservationId,
+            order_item_id orderItemId,
+            seller_sku sellerSku,
+            unit_price unitPrice,
+            quantity quantity,
+            status status,
+            shipped_date shippedDate,
+            tracking_number trackingNumber,
+            shipping_carrier shippingCarrier,
+            shipping_class shippingClass,
+            cancel_reason cancelReason,
+            refund_flg refundFlg,
+            active active,
+            created created,
+            creater creater,
+            modified modified,
+            modifier modifier
+        from vms_bt_client_order_details
+        where client_order_id=#{orderId} and order_channel_id=#{orderChannelId} and status = #{status}
+    </select>
+
+    <select id="selectClientOrderList" resultType="com.voyageone.service.model.vms.VmsBtClientOrdersModel">
+        select
+        client_order_id clientOrderId,
+        order_channel_id orderChannelId,
+        order_status orderStatus,
+        order_date orderDate,
+        buyer_email_address buyerEmailAddress,
+        buyer_first_name buyerFirstName,
+        buyer_last_name buyerLastName,
+        buyer_address_line1 buyerAddressLine1,
+        buyer_city buyerCity,
+        buyer_country buyerCountry,
+        buyer_postal_code buyerPostalCode,
+        buyer_state_or_province buyerStateOrProvince,
+        buyer_address_line2 buyerAddressLine2,
+        buyer_company_name buyerCompanyName,
+        buyer_daytime_phone buyerDaytimePhone,
+        buyer_evening_phone buyerEveningPhone,
+        buyer_name_suffix buyerNameSuffix,
+        shipping_email_address shippingEmailAddress,
+        shipping_first_name shippingFirstName,
+        shipping_last_name shippingLastName,
+        shipping_address_line1 shippingAddressLine1,
+        shipping_city shippingCity,
+        shipping_country shippingCountry,
+        shipping_postal_code shippingPostalCode,
+        shipping_state_or_province shippingStateOrProvince,
+        shipping_address_line2 shippingAddressLine2,
+        shipping_company_name shippingCompanyName,
+        shipping_daytime_phone shippingDaytimePhone,
+        shipping_evening_phone shippingEveningPhone,
+        shipping_name_suffix shippingNameSuffix,
+        requested_shipping_method requestedShippingMethod,
+        deliver_by_date deliverByDate,
+        shipping_label_url shippingLabelUrl,
+        total_price totalPrice,
+        total_tax_price totalTaxPrice,
+        total_shipping_price totalShippingPrice,
+        total_shipping_tax_price totalShippingTaxPrice,
+        total_gift_option_price totalGiftOptionPrice,
+        total_gift_option_tax_price totalGiftOptionTaxPrice,
+        total_fees totalFees,
+        currency currency,
+        vat_inclusive vatInclusive,
+        active active,
+        created created,
+        creater creater,
+        modified modified,
+        modifier modifier
+        from vms_bt_client_orders
+        where order_channel_id=#{orderChannelId} and order_status=#{status} limit #{limit}
+    </select>
+
+    <select id="selectClientOrderDetailList" resultType="com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel">
+        select
+        order_channel_id orderChannelId,
+        client_order_id clientOrderId,
+        order_number orderNumber,
+        reservation_id reservationId,
+        order_item_id orderItemId,
+        seller_sku sellerSku,
+        unit_price unitPrice,
+        quantity quantity,
+        status status,
+        shipped_date shippedDate,
+        tracking_number trackingNumber,
+        shipping_carrier shippingCarrier,
+        shipping_class shippingClass,
+        cancel_reason cancelReason,
+        refund_flg refundFlg,
+        active active,
+        created created,
+        creater creater,
+        modified modified,
+        modifier modifier
+        from vms_bt_client_order_details
+        where client_order_id=#{orderId} and order_channel_id in
+        <foreach collection="orderIds" index="index" item="columnName" open="(" separator="," close=")">
+            ${columnName}
+        </foreach>
+    </select>
+
+    <update id="updateClientOrderStatus">
+        update vms_bt_client_orders
+        set order_status=#{status}
+        where client_order_id=#{orderId} and order_channel_id=#{orderChannelId}
+    </update>
+</mapper>

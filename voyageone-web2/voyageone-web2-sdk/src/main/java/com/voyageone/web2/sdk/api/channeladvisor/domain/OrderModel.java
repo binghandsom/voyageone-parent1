@@ -33,7 +33,7 @@ public class OrderModel extends CABaseModel {
     private String requestedShippingMethod;
 
     @JsonProperty("TotalFees")
-    private Double rotalFees;
+    private Double totalFees;
 
     @JsonProperty("TotalGiftOptionPrice")
     private Double totalGiftOptionPrice;
@@ -118,12 +118,12 @@ public class OrderModel extends CABaseModel {
         this.requestedShippingMethod = requestedShippingMethod;
     }
 
-    public Double getRotalFees() {
-        return rotalFees;
+    public Double getTotalFees() {
+        return totalFees;
     }
 
-    public void setRotalFees(Double rotalFees) {
-        this.rotalFees = rotalFees;
+    public void setTotalFees(Double rotalFees) {
+        this.totalFees = rotalFees;
     }
 
     public Double getTotalGiftOptionPrice() {
