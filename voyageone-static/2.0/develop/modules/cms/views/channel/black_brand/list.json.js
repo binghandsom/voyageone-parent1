@@ -7,40 +7,13 @@ define(function () {
         data: {
             list: [
                 {
-                    $id: "1",
-                    masterBrand: "adidas",
-                    "plateFormType": '天猫国际'
-                },
-                {
-                    $id: "2",
-                    masterBrand: "nike",
-                    "plateFormType": '京东'
-                },
-                {
-                    $id: "3",
-                    masterBrand: "李宁",
-                    "plateFormType": '聚美'
-                },
-                {
-                    $id: "4",
-                    masterBrand: "adidas",
-                    "plateFormType": '天猫国际'
-                },
-                {
-                    $id: "5",
-                    masterBrand: "nike",
-                    "plateFormType": '京东'
-                },
-                {
-                    $id: "6",
-                    masterBrand: "newbalance",
-                    "plateFormType": '聚美'
-                },
-                {
-                    $id: "7",
-                    masterBrand: "nikeking",
-                    "plateFormType": '天猫国际'
+                    "brand": "adidas",
+                    "brandType":1,
+                    "brandName":"adidas",
+                    "cartId": '天猫国际',
+                    "blocked":true
                 }
+
             ],
             total: 10
         }
