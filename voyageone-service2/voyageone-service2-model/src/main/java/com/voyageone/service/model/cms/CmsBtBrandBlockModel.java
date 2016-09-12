@@ -27,11 +27,6 @@ public class CmsBtBrandBlockModel extends BaseModel {
      */
     protected String brand;
 
-    /**
-     * 是否启用规则，默认是启用
-     */
-    protected Boolean active;
-
     public String getChannelId() {
         return channelId;
     }
@@ -62,13 +57,5 @@ public class CmsBtBrandBlockModel extends BaseModel {
 
     public void setBrand(String brand) {
         this.brand = brand == null ? null : brand.trim();
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 }
