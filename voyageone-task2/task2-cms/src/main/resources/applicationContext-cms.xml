@@ -24,6 +24,9 @@
         <!-- 天猫上新 -->
         <task:scheduled ref="CmsBuildPlatformProductUploadTmJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
+        <!-- 天猫官网同购上新 -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadTmTongGouJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
         <!-- 京东上新 -->
         <task:scheduled ref="CmsBuildPlatformProductUploadJdJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
