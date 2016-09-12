@@ -1,13 +1,13 @@
 package com.voyageone.web2.cms.views.pop.history;
 
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
-import com.voyageone.common.util.MapUtil;
 import com.voyageone.service.dao.cms.CmsBtPriceConfirmLogDao;
 import com.voyageone.service.model.cms.CmsBtPriceConfirmLogModel;
 import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +43,9 @@ class CmsPriceConfirmLogViewService extends BaseAppService {
 
         List<CmsBtPriceConfirmLogModel> data = priceConfirmLogDao.selectList(pageBoundsMap.page(pageNumber).limit(limit).toMap());
 
-        return MapUtil.toMap("data", data, "count", count);
+        return new HashMap<String, Object>() {{
+            put("data", data);
+            put("count", count);
+        }};
     }
 }

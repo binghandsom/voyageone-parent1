@@ -38,18 +38,6 @@ public class MySqlPageHelper {
         return new PageBoundsMap(queryParam);
     }
 
-//    /**
-//     * 基于给定的参数构建分页或排序语句
-//     * @param queryParams k, v 顺序排列的数组，k 为字符串，即参数名，v 为值
-//     * @return PageBoundsMap
-//     */
-//    public static PageBoundsMap build(Object... queryParams) {
-//
-//        Map<String, Object> queryParamMap = MapUtil.toMap(queryParams);
-//
-//        return new PageBoundsMap(queryParamMap);
-//    }
-
     public static class PageBoundsMap {
         // SQL检索条件MAP
         private Map<String, Object> param = new HashMap<>();
