@@ -1,4 +1,4 @@
-package com.voyageone.web2.sdk.api.channeladvisor.domain;
+package com.voyageone.service.model.cms.mongo.channeladvisor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -43,6 +43,7 @@ public class ProductGroupResultModel extends CABaseModel {
     }
 
     public List<ErrorModel> getErrors() {
+        if(errors == null) errors = new ArrayList<>();
         return errors;
     }
 

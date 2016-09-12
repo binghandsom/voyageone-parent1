@@ -5,6 +5,9 @@ import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
 import org.junit.Test;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author aooer 2016/9/7.
  * @version 2.0.0
@@ -13,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("standbox")
 public class ProductControllerTest {
 
-    private static final String BASE_URL = "http://localhost:8080/rest/channeladvisor/";
+    private static final String BASE_URL = "http://localhost:9090/rest/channeladvisor/";
 
     @Test
     public  void run() throws Exception {
@@ -21,22 +24,26 @@ public class ProductControllerTest {
         orderTest();
     }
 
-    private static void productTest() throws Exception {
+    @Test
+    public void productTest() throws Exception {
         //获取产品
         String url = BASE_URL + CAUrlConstants.PRODUCTS.GET_PRODUCTS;
+        Map<String, String> header = new HashMap<>();
+        header.put("SellerID", "049beea8-bdd1-48f0-a930-e56e42f85458");
+        header.put("SellerToken", "caf8e5ed-16c4-40d8-92ce-1ce86e03cac5");
         String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, url);
         System.out.println(result);
         result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, url.concat("?groupFields=123,4324,345"));
         System.out.println(result);
         //添加或更新产品
         url = BASE_URL + CAUrlConstants.PRODUCTS.UPDATE_PRODUCTS;
-        String reqJson = "[{\"SellerSKU\":\"REBEL X-WING\",\"Fields\":[{\"Name\":\"title\",\"Value\":\"Rebel X-Wing\"},{\"Name\":\"description\",\"Value\":\"Got a Death Star porblem at your base? Take it out with this small craft (PS, aim for the 2-meter exhaust port). Buy now! Republic credits not accepted.\"},{\"Name\":\"category\",\"Value\":\"Transportation : Spacecraft : Single-Passenger\"},{\"Name\":\"brand\",\"Value\":\"Rebel Forces, Inc.\"},{\"Name\":\"productgroupimageurl1\",\"Value\":\"http://courses.cs.washington.edu/courses/cse455/08wi/projects/project3/web/artifacts/jonobird-ncall/artifact/xw1.jpg\"}],\"BuyableProducts\":[{\"SellerSKU\":\"REBEL X-WING\",\"Quantity\":23,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"100.00\"},{\"Name\":\"color\",\"Value\":\"gray\"},{\"Name\":\"size\",\"Value\":\"one-man\"}]}]},{\"SellerSKU\":\"LIGHTSABER\",\"Fields\":[{\"Name\":\"title\",\"Value\":\"Lightsaber\"},{\"Name\":\"description\",\"Value\":\"This is the weapon of a Jedi Knight. Not as clumsy or random as a blaster; an elegant weapon for a more civilized age.\"},{\"Name\":\"category\",\"Value\":\"Civilized Weapons\"},{\"Name\":\"brand\",\"Value\":\"Jedi Knights\"},{\"Name\":\"productgroupimageurl1\",\"Value\":\"https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Dueling_lightsabers.svg/2000px-Dueling_lightsabers.svg.png\"}],\"BuyableProducts\":[{\"SellerSKU\":\"LIGHTSABER_RED_MED\",\"Quantity\":14,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"14.56\"},{\"Name\":\"color\",\"Value\":\"red\"},{\"Name\":\"size\",\"Value\":\"medium\"}]},{\"SellerSKU\":\"LIGHTSABER_RED_LG\",\"Quantity\":9,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"15.56\"},{\"Name\":\"color\",\"Value\":\"red\"},{\"Name\":\"size\",\"Value\":\"large\"}]},{\"SellerSKU\":\"LIGHTSABER_BLUE_MED\",\"Quantity\":17,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"11.56\"},{\"Name\":\"color\",\"Value\":\"blue\"},{\"Name\":\"size\",\"Value\":\"medium\"}]},{\"SellerSKU\":\"LIGHTSABER_BLUE_LG\",\"Quantity\":15,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"12.56\"},{\"Name\":\"color\",\"Value\":\"blue\"},{\"Name\":\"size\",\"Value\":\"large\"}]}]}]";
-        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url, reqJson);
+        String reqJson = "[{\"SellerSKU\":\"REBEL X-WING\",\"Fields\":[{\"Name\":\"title\",\"Value\":\"Rebel X-Wing\"},{\"Name\":\"description\",\"Value\":\"Got a Death Star porblem at your base? Take it out with this small craft (PS, aim for the 2-meter exhaust port). Buy now! Republic credits not accepted.\"},{\"Name\":\"category\",\"Value\":\"Transportation : Spacecraft : Single-Passenger\"},{\"Name\":\"brand\",\"Value\":\"Rebel Forces, Inc.\"},{\"Name\":\"productgroupimageurl1\",\"Value\":\"http://courses.cs.washington.edu/courses/cse455/08wi/projects/project3/web/artifacts/jonobird-ncall/artifact/xw1.jpg\"}],\"BuyableProducts\":[{\"SellerSKU\":\"REBEL X-WING\",\"Quantity\":23,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"100.00\"},{\"Name\":\"color\",\"Value\":\"gray\"},{\"Name\":\"size\",\"Value\":\"one-man\"}]}]},{\"SellerSKU\":\"LIGHTSABER\",\"Fields\":[{\"Name\":\"title\",\"Value\":\"Lightsaber\"},{\"Name\":\"description\",\"Value\":\"This is the weapon of a Jedi Knight. Not as clumsy or random as a blaster; an elegant weapon for a more civilized age.\"},{\"Name\":\"category\",\"Value\":\"Civilized Weapons\"},{\"Name\":\"brand\",\"Value\":\"Jedi Knights\"},{\"Name\":\"productgroupimageurl1\",\"Value\":\"https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Dueling_lightsabers.svg/2000px-Dueling_lightsabers.svg.png\"}],\"BuyableProducts\":[{\"SellerSKU\":\"LIGHTSABER_RED_MED\",\"Quantity\":14,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"14.56\"},{\"Name\":\"color\",\"Value\":\"red\"},{\"Name\":\"size\",\"Value\":\"medium\"}]},{\"SellerSKU\":\"LIGHTSABER_RED_LG\",\"Quantity\":9,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"15.56\"},{\"Name\":\"color\",\"Value\":\"red\"},{\"Name\":\"size\",\"Value\":\"large\"}]},{\"SellerSKU\":\"LIGHTSABER_BLUE_MED\",\"Quantity\":17,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"11.56\"},{\"Name\":\"color\",\"Value\":\"blue\"},{\"Name\":\"size\",\"Value\":\"medium\"}]},{\"SellerSKU\":\"LIGHTSABER_BLUE2_LG\",\"Quantity\":15,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"12.56\"},{\"Name\":\"color\",\"Value\":\"blue\"},{\"Name\":\"size\",\"Value\":\"large\"}]}]}]";
+        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url, reqJson,header);
         System.out.println(result);
         //更新价格或数量
         url = BASE_URL + CAUrlConstants.PRODUCTS.UPDATE_QUANTITY_PRICE;
-        reqJson = "[{\"SellerSKU\":\"REBEL X-WING\",\"Fields\":[],\"BuyableProducts\":[{\"SellerSKU\":\"REBEL X-WING\",\"Quantity\":23,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"100.00\"}]}]},{\"SellerSKU\":\"LIGHTSABER\",\"Fields\":[],\"BuyableProducts\":[{\"SellerSKU\":\"LIGHTSABER_RED_MED\",\"Quantity\":14,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"14.56\"}]},{\"SellerSKU\":\"LIGHTSABER_RED_LG\",\"Quantity\":9,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"15.56\"}]},{\"SellerSKU\":\"LIGHTSABER_BLUE_MED\",\"Quantity\":17,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"11.56\"}]},{\"SellerSKU\":\"LIGHTSABER_BLUE_LG\",\"Quantity\":15,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"12.56\"}]}]}]";
-        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url, reqJson);
+        reqJson = "[{\"SellerSKU\":\"REBEL X-WING\",\"Fields\":[],\"BuyableProducts\":[{\"SellerSKU\":\"REBEL X-WING\",\"Quantity\":32,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"100.00\"}]}]},{\"SellerSKU\":\"LIGHTSABER\",\"Fields\":[],\"BuyableProducts\":[{\"SellerSKU\":\"LIGHTSABER_RED_MED\",\"Quantity\":14,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"14.56\"}]},{\"SellerSKU\":\"LIGHTSABER_RED_LG\",\"Quantity\":9,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"15.56\"}]},{\"SellerSKU\":\"LIGHTSABER_BLUE_MED\",\"Quantity\":17,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"11.56\"}]},{\"SellerSKU\":\"LIGHTSABER_BLUE2_LG\",\"Quantity\":30,\"ListingStatus\":\"Live\",\"Fields\":[{\"Name\":\"price\",\"Value\":\"22.56\"}]}]}]";
+        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url, reqJson, header);
         System.out.println(result);
         //更新状态
         url = BASE_URL + CAUrlConstants.PRODUCTS.UPDATE_STATUS;

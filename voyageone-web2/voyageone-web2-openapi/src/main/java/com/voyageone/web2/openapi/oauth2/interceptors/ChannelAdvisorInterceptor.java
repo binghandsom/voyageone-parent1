@@ -42,15 +42,15 @@ class ChannelAdvisorInterceptor {
             throw new CAApiException(ErrorIDEnum.InvalidSellerID);
         }
 
-        // 1000 propert
-        Long rateNum = redisRateLimiterHelper.aquire(120,
-                Integer.parseInt(Properties.readValue("com.voyageone.web2.openapi.channeladvisor.maxrate"))
-                , System.currentTimeMillis() / 60000 + "_" +  sellerID);
-        System.out.println("获取到令牌号："+rateNum);
-        if (rateNum < 0) {
-            // rateLimiter
-            throw new CAApiException(ErrorIDEnum.RateLimitExceeded);
-        }
+//        // 1000 propert
+//        Long rateNum = redisRateLimiterHelper.aquire(120,
+//                Integer.parseInt(Properties.readValue("com.voyageone.web2.openapi.channeladvisor.maxrate"))
+//                , System.currentTimeMillis() / 60000 + "_" +  sellerID);
+//        System.out.println("获取到令牌号："+rateNum);
+//        if (rateNum < 0) {
+//            // rateLimiter
+//            throw new CAApiException(ErrorIDEnum.RateLimitExceeded);
+//        }
 
         //check SellerToken
         String sellerToken = request.getHeader(SELLER_TOKEN);

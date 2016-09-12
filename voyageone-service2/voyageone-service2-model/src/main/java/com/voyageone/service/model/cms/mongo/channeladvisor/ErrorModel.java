@@ -1,7 +1,7 @@
-package com.voyageone.web2.sdk.api.channeladvisor.domain;
+package com.voyageone.service.model.cms.mongo.channeladvisor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.voyageone.web2.sdk.api.channeladvisor.enums.ErrorIDEnum;
+import com.voyageone.service.enums.channeladvisor.ErrorIDEnum;
 
 /**
  * @author aooer 2016/9/6.
@@ -19,9 +19,12 @@ public class ErrorModel {
     @JsonProperty("Message")
     private String message;
 
-    public ErrorModel(){
-
+    public ErrorModel(ErrorIDEnum errorIDEnum) {
+        this.id = errorIDEnum;
+        this.errorCode = String.valueOf(errorIDEnum.getCode());
+        this.message = errorIDEnum.getDefaultMessage();
     }
+
     public ErrorModel(ErrorIDEnum errorIDEnum, String message) {
         this.id = errorIDEnum;
         this.errorCode = String.valueOf(errorIDEnum.getCode());
