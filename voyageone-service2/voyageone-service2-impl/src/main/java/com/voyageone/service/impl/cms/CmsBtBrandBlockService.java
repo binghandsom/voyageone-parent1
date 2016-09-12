@@ -1,11 +1,14 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtBrandBlockDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtBrandBlockModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,11 +33,56 @@ public class CmsBtBrandBlockService extends BaseService {
         this.brandBlockDao = brandBlockDao;
     }
 
+    public void block(String channelId, int cartId, int brandType, String brand, String username) {
+        switch (brandType){
+            case BRAND_TYPE_FEED:
+            case BRAND_TYPE_MASTER:
+            case BRAND_TYPE_PLATFORM:
+                if (isBlocked(channelId, cartId, brandType, brand))
+                    return;
+                break;
+            default:
+                return;
+        }
+        brandBlockDao.insert(new CmsBtBrandBlockModel() {{
+            setChannelId(channelId);
+            setCartId(cartId);
+            setType(brandType);
+            setBrand(brand);
+            setCreater(username);
+            setModifier(username);
+            Date now = DateTimeUtil.getDate();
+            setCreated(now);
+            setModified(now);
+        }});
+        // TODO MQ OTHER EFFECT
+    }
+
+    public void unblock(String channelId, int cartId, int brandType, String brand) {
+        switch (brandType){
+            case BRAND_TYPE_FEED:
+            case BRAND_TYPE_MASTER:
+            case BRAND_TYPE_PLATFORM:
+                CmsBtBrandBlockModel brandBlockModel = brandBlockDao.selectOne(new CmsBtBrandBlockModel() {{
+                    setChannelId(channelId);
+                    setCartId(cartId);
+                    setType(brandType);
+                    setBrand(brand);
+                }});
+                brandBlockDao.delete(brandBlockModel.getId());
+                // TODO MQ OTHER EFFECT
+        }
+    }
+
     public boolean isBlocked(String channelId, int cartId, String feedBrand, String masterBrand, String platformBrandId) {
         return !StringUtils.isEmpty(feedBrand) && isBlocked(channelId, cartId, BRAND_TYPE_FEED, feedBrand)
                 || !StringUtils.isEmpty(masterBrand) && isBlocked(channelId, cartId, BRAND_TYPE_MASTER, masterBrand)
                 || !StringUtils.isEmpty(platformBrandId) && isBlocked(channelId, cartId, BRAND_TYPE_PLATFORM, platformBrandId);
 
+    }
+
+    public boolean isBlocked(CmsBtBrandBlockModel brandBlockModel) {
+        return isBlocked(brandBlockModel.getChannelId(), brandBlockModel.getCartId(), brandBlockModel.getType(), brandBlockModel.getBrand());
     }
 
     private boolean isBlocked(String channelId, int cartId, int brandType, String brand) {

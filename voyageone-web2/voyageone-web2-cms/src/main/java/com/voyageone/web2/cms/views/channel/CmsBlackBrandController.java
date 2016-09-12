@@ -1,7 +1,9 @@
 package com.voyageone.web2.cms.views.channel;
 
+import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.CHANNEL.BLACK_BRAND;
+import com.voyageone.web2.cms.bean.channel.CmsBlackBrandParamBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,5 +25,13 @@ public class CmsBlackBrandController extends CmsController {
     @Autowired
     public CmsBlackBrandController(CmsBlackBrandViewService blackBrandViewService) {
         this.blackBrandViewService = blackBrandViewService;
+    }
+
+    public AjaxResponse method1(CmsBlackBrandParamBean blackBrandParamBean) {
+        return success(blackBrandViewService.searchBrandListPage(blackBrandParamBean, getUser()));
+    }
+
+    public AjaxResponse method2(CmsBlackBrandParamBean blackBrandParamBean) {
+        return success(blackBrandViewService.switchBrandBlock(blackBrandParamBean, getUser()));
     }
 }
