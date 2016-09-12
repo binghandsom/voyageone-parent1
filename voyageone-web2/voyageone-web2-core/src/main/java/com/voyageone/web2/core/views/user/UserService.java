@@ -6,7 +6,7 @@ import com.voyageone.service.bean.com.ChannelPermissionBean;
 import com.voyageone.service.bean.com.PermissionBean;
 import com.voyageone.service.bean.com.UserBean;
 import com.voyageone.service.bean.com.UserConfigBean;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.service.daoext.com.UserConfigDao;
@@ -31,7 +31,7 @@ import static java.util.stream.Collectors.toList;
  * @version 2.0.0
  */
 @Service
-public class UserService extends BaseAppService {
+public class UserService extends BaseViewService {
     @Autowired
     private UserDao userDao;
 

@@ -199,8 +199,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
         $info("=================feed->master导入  最终结果=====================");
         resultMap.entrySet().stream()
-                            .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
-                            .forEach(p ->  $info(p.getValue()));
+                .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
+                .forEach(p ->  $info(p.getValue()));
         $info("=================feed->master导入  主线程结束====================");
 
         // 线程

@@ -8,7 +8,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import java.util.Map;
  * @version 2.0.0, 16/01/26
  */
 @Service
-class CmsErrorListService extends BaseAppService {
+class CmsErrorListService extends BaseViewService {
 
     @Autowired
     protected ChannelCategoryService cmsBtChannelCategoryService;

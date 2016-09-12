@@ -9,7 +9,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,7 @@ import java.util.List;
  * @version 2.0.0, 15/12/2
  */
 @Service
-public class CmsMenuService extends BaseAppService{
+public class CmsMenuService extends BaseViewService {
 
     @Autowired
     private ChannelCategoryService cmsBtChannelCategoryService;

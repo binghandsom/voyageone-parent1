@@ -31,7 +31,7 @@ import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0, 15/12/14
  */
 @Service
-public class CmsAdvanceSearchService extends BaseAppService {
+public class CmsAdvanceSearchService extends BaseViewService {
 
     @Autowired
     private PromotionService promotionService;

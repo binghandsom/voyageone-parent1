@@ -9,7 +9,7 @@ import static java.lang.String.format;
  * Created by Jonas on 15/6/26.
  * @author Jonas
  */
-public abstract class BaseAppService extends BaseAppComponent {
+public abstract class BaseViewService extends BaseViewComponent {
 
     /**
      * 预先定义好长度的缩进字符串。辅助缩进

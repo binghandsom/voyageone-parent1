@@ -9,7 +9,7 @@ import com.voyageone.service.impl.cms.CustomWordService;
 import com.voyageone.service.impl.cms.DictService;
 import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.enums.DictionaryMasterProp;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import java.util.Map;
  * Created by Jonas on 9/11/15.
  */
 @Service
-public class CmsDictManageService extends BaseAppService {
+public class CmsDictManageService extends BaseViewService {
 
     @Autowired
     private DictService dictService;
