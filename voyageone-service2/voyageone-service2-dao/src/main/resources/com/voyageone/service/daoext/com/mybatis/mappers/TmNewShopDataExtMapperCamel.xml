@@ -13,11 +13,11 @@
                 and channel_name like concat('%', #{channelName}, '%')
             </if>
             <if test="modifiedFrom != null and modifiedFrom != ''" >
-                and modified >= #{modifiedFrom}
+                and datediff(modified, #{modifiedFrom}) >= 0
             </if>
             <if test="modifiedTo != null and modifiedTo != ''" >
             <![CDATA[
-                and modified <= #{modifiedTo}
+                and datediff(modified, #{modifiedTo}) <= 0
             ]]>
             </if>
         </where>
