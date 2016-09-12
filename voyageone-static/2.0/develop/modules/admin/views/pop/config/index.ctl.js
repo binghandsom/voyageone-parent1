@@ -379,13 +379,16 @@ define([
                             if (self.sourceData.isReadOnly == true) {
                                 _.forEach(delList, function (item) {
                                     var source = self.sourceData.sourceData.channelConfig;
-                                    var data = _.find(source, function (sItem) {
-                                        return sItem.mainKey == item.id;
+                                    var dataIndex = -1;
+                                    _.forEach(source, function (sItem, i) {
+                                        if (sItem.mainKey == item.id) {
+                                            dataIndex = i;
+                                        }
                                     });
-                                    if (source.indexOf(data) > -1) {
-                                        source.splice(source.indexOf(data), 1);
+                                    if (dataIndex > -1) {
+                                        source.splice(dataIndex, 1);
                                     }
-                                })
+                                });
                                 self.search(1);
                             } else {
                                 self.channelService.deleteChannelConfig(delList).then(function (res) {
@@ -403,9 +406,10 @@ define([
                                     });
                                     if (source.indexOf(data) > -1) {
                                         source.splice(source.indexOf(data), 1);
-                                        self.search(1);
                                     }
-                                })
+                                    _forEach(self.sourceData.sourceData, 'storeConfig', data);
+                                });
+                                self.search(1);
                             } else {
                                 self.storeService.deleteStoreConfig(delList).then(function (res) {
                                     if (res.data == false)self.alert(res.data.message);
@@ -416,15 +420,16 @@ define([
                         case 'Task':
                             if (self.sourceData.isReadOnly == true) {
                                 _.forEach(delList, function (item) {
-                                    var source = self.storeCfgList;
+                                    var source = self.taskCfgList;
                                     var data = _.find(source, function (sItem) {
-                                        return sItem.storeId == item.storeId;
+                                        return sItem.taskId == item.taskId;
                                     });
                                     if (source.indexOf(data) > -1) {
                                         source.splice(source.indexOf(data), 1);
-                                        self.search(1);
                                     }
-                                })
+                                    _forEach(self.sourceData.sourceData, 'taskConfig', data);
+                                });
+                                self.search(1);
                             } else {
                                 self.taskService.deleteTaskConfig(delList).then(function (res) {
                                     if (res.data == false)self.alert(res.data.message);
@@ -441,9 +446,10 @@ define([
                                     });
                                     if (source.indexOf(data) > -1) {
                                         source.splice(source.indexOf(data), 1);
-                                        self.search(1);
                                     }
-                                })
+                                    _forEach(self.sourceData.sourceData, 'cartShopConfig', data);
+                                });
+                                self.search(1);
                             } else {
                                 self.cartShopService.deleteCartShopConfig(delList).then(function (res) {
                                     if (res.data == false)self.alert(res.data.message);
@@ -512,6 +518,43 @@ define([
                 return res;
             }
         };
+        function _forEach(parentData, subData, target) {
+            _.forEach(parentData, function (item, x) {
+                var source = parentData;
+                var targetData = target;
+                var aim = targetData.cfgName + targetData.cfgVal1 + targetData.cfgVal2 + targetData.comment;
+                switch (subData) {
+                    case 'storeConfig':
+                        _.forEach(item[subData], function (subItem, y) {
+                            if (!subItem) return;
+                            var compare = subItem.cfgName + subItem.cfgVal1 + subItem.cfgVal2 + subItem.comment;
+                            if (aim === compare) {
+                                source[x].storeConfig.splice(y, 1);
+                            }
+                        });
+                        break;
+                    case 'cartShopConfig':
+                        _.forEach(item[subData], function (subItem, y) {
+                            if (!subItem) return;
+                            var compare = subItem.cfgName + subItem.cfgVal1 + subItem.cfgVal2 + subItem.comment;
+                            if (aim === compare) {
+                                source[x].cartShopConfig.splice(y, 1);
+                            }
+                        });
+                        break;
+                    case 'taskConfig':
+                        _.forEach(item[subData], function (subItem, y) {
+                            if (!subItem) return;
+                            var compare = subItem.cfgName + subItem.cfgVal1 + subItem.cfgVal2 + subItem.comment;
+                            if (aim === compare) {
+                                source[x].taskConfig.splice(y, 1);
+                            }
+                        });
+                        break;
+                }
+            });
+        }
+
         return ConfigController;
     })())
 });

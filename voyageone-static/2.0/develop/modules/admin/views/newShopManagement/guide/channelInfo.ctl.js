@@ -210,10 +210,17 @@ define([
             },
             next: function () {
                 var self = this;
+                // 设置cartIds
+                var tempCartList = [];
+                _.forEach(self.cartList, function (item) {
+                    tempCartList.push(item.cartId);
+                    _.extend(self.resListCopy.channel, {'cartIds': tempCartList.join(',')});
+                });
 
                 if (self.autoCopy != true) {
                     _.extend(self.resListCopy.channel, self.resList);
                 }
+                
                 synchronizeChannelSeries(self.resListCopy);
                 window.sessionStorage.setItem('valueBean', JSON.stringify(self.resListCopy));
                 window.location.href = "#/newShop/guide/channelConfig";
