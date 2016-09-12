@@ -39,7 +39,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.web2.base.BaseViewService;
+import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-public class CmsFieldEditService extends BaseViewService {
+public class CmsFieldEditService extends BaseAppService {
 
     @Autowired
     private CategorySchemaService categorySchemaService;
