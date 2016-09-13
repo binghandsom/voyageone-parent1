@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.feed;
+package com.voyageone.service.impl.vms.feed;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-public class CmsBtCAdProductService extends BaseService {
+public class CAFeedProductService extends BaseService {
     @Autowired
     private CmsBtCAdProductLogDao cmsBtCAdProductLogDao;
 
@@ -36,9 +36,9 @@ public class CmsBtCAdProductService extends BaseService {
     // 更新价格和库存
     public String updateQuantityPrice(String channelId, List<CmsBtCAdProudctModel> cmsMtCAdProudcts) {
         List<ProductGroupResultModel> productGroupResultModels = new ArrayList<>(cmsMtCAdProudcts.size());
-        List<String> successSellerSKU = new ArrayList<>();
+        //List<String> successSellerSKU = new ArrayList<>();
         cmsMtCAdProudcts.forEach(p -> {
-            List<ErrorModel> errors = new ArrayList<ErrorModel>();
+            List<ErrorModel> errors = new ArrayList<>();
             ProductGroupResultModel productGroupResultModel = creadResult(channelId, p, errors);
             productGroupResultModels.add(productGroupResultModel);
             cmsBtCAdProductLogDao.insert(channelId, p);
@@ -84,7 +84,7 @@ public class CmsBtCAdProductService extends BaseService {
                 }
                 cmsBtCAdProductDao.update(channelId, befCAdProudctModel);
             }
-            successSellerSKU.add(p.getSellerSKU());
+            //successSellerSKU.add(p.getSellerSKU());
         });
         return JacksonUtil.bean2Json(productGroupResultModels);
     }
@@ -92,7 +92,7 @@ public class CmsBtCAdProductService extends BaseService {
     // 创建更新产品
     public String updateProduct(String channelId, List<CmsBtCAdProudctModel> cmsMtCAdProudcts) {
         List<ProductGroupResultModel> productGroupResultModels = new ArrayList<>(cmsMtCAdProudcts.size());
-        List<String> successSellerSKU = new ArrayList<>();
+        //List<String> successSellerSKU = new ArrayList<>();
         cmsMtCAdProudcts.forEach(p -> {
             List<ErrorModel> errors = requiredProductCheck(p);
             ProductGroupResultModel productGroupResultModel = creadResult(channelId, p, errors);
@@ -121,14 +121,14 @@ public class CmsBtCAdProductService extends BaseService {
                     cmsBtCAdProductDao.update(channelId, p);
                 }
             }
-            successSellerSKU.add(p.getSellerSKU());
+            //successSellerSKU.add(p.getSellerSKU());
         });
         return JacksonUtil.bean2Json(productGroupResultModels);
     }
 
     private List<ErrorModel> requiredProductCheck(CmsBtCAdProudctModel cmsBtCAdProudctModel) {
         List<ErrorModel> errors = new ArrayList<>();
-        ProductGroupResultModel productGroupResultModel = new ProductGroupResultModel();
+        //ProductGroupResultModel productGroupResultModel = new ProductGroupResultModel();
         if (StringUtil.isEmpty(cmsBtCAdProudctModel.getSellerSKU())) {
             ErrorModel error = new ErrorModel(ErrorIDEnum.InvalidSellerID);
             errors.add(error);

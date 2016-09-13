@@ -3,7 +3,7 @@ package com.voyageone.web2.openapi.channeladvisor.service.impl;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.vms.channeladvisor.product.ProductGroupResultModel;
-import com.voyageone.service.impl.cms.feed.CmsBtCAdProductService;
+import com.voyageone.service.impl.vms.feed.CAFeedProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtCAdProudctModel;
 import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseService;
 import com.voyageone.web2.openapi.channeladvisor.service.CAProductService;
@@ -23,7 +23,7 @@ import java.util.List;
 public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProductService {
 
     @Autowired
-    private CmsBtCAdProductService cmsBtCAdProductService;
+    private CAFeedProductService caFeedProductService;
 
     public ActionResponse getProducts(String groupFields, String buyableFields) {
         String channelId = getClientChannelId();
@@ -46,7 +46,7 @@ public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProd
         }
 
         List<CmsBtCAdProudctModel> cmsMtCAdProudcts = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(productGroups),CmsBtCAdProudctModel.class);
-        String response = cmsBtCAdProductService.updateProduct(channelId,cmsMtCAdProudcts);
+        String response = caFeedProductService.updateProduct(channelId,cmsMtCAdProudcts);
 
         if(!StringUtil.isEmpty(response)){
             responseBody = JacksonUtil.jsonToBeanList(response,ProductGroupResultModel.class);
@@ -66,7 +66,7 @@ public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProd
         }
 
         List<CmsBtCAdProudctModel> cmsMtCAdProudcts = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(productGroups),CmsBtCAdProudctModel.class);
-        String response = cmsBtCAdProductService.updateQuantityPrice(channelId, cmsMtCAdProudcts);
+        String response = caFeedProductService.updateQuantityPrice(channelId, cmsMtCAdProudcts);
         if(!StringUtil.isEmpty(response)){
             responseBody = JacksonUtil.jsonToBeanList(response,ProductGroupResultModel.class);
         }
