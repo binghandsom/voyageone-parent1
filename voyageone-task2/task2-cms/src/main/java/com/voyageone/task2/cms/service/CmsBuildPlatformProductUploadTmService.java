@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -15,6 +16,7 @@ import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSxCspuDao;
 import com.voyageone.service.dao.cms.CmsBtSxProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformMappingDeprecatedService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
@@ -27,6 +29,7 @@ import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -80,6 +83,8 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
     private CmsBtSxProductDao cmsBtSxProductDao;
     @Autowired
     private CmsBtSxCspuDao cmsBtSxCspuDao;
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -361,6 +366,17 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                         // added by morse.lu 2016/06/08 start
                     } else {
                         // 更新产品
+                        // added by morse.lu 2016/09/09 start
+                        // 天猫现在一家店一个产品只能发布一款商品(addItem返回同一个numIId)
+                        // 所以如果匹配到了pid，先在数据库里找一下，看看是不是别的group也是这个产品，有的话抛错，需要改一下匹配产品的key(例如系列，型号，容量等等)
+                        JongoQuery query = new JongoQuery();
+                        query.setQuery("{\"platformPid\":#}");
+                        query.setParameters(platformProductId);
+                        CmsBtProductGroupModel groupModel = cmsBtProductGroupDao.selectOneWithQuery(query, channelId);
+                        if (groupModel != null) {
+                            throw new BusinessException(String.format("天猫一个店铺一个产品只允许发布一款商品,已经有同一款商品上新过了!主商品code是%s", groupModel.getMainProductCode()));
+                        }
+                        // added by morse.lu 2016/09/09 end
                         // modified by morse.lu 2016/08/08 start
                         // 如果表里设定允许更新产品，才会去做产品更新
                             if (sxData.isUpdateProductFlg()) {
