@@ -15,6 +15,9 @@ import com.voyageone.base.dao.mysql.BaseModel;
 public class CmsBtBrandBlockModel extends BaseModel {
     protected String channelId;
 
+    /**
+     * 除平台外，feed = 1, master = 0
+     */
     protected Integer cartId;
 
     /**
