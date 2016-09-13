@@ -93,8 +93,8 @@ define([
                             self.popups.openChannelSms({
                                 'kind': 'add',
                                 'isReadOnly': true,
-                                'orderChannelId': self.channelSmsList[0].orderChannelId,
-                                'channelName': self.channelSmsList[0].channelName,
+                                'orderChannelId': self.context.channel.orderChannelId,
+                                'channelName': self.context.channel.channelName,
                                 'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.channelSmsList;
@@ -117,8 +117,8 @@ define([
                             self.popups.openChannelThird({
                                 'kind': 'add',
                                 'isReadOnly': true,
-                                'channelId': self.channelSmsList[0].orderChannelId,
-                                'channelName': self.channelSmsList[0].channelName,
+                                'channelId': self.context.channel.orderChannelId,
+                                'channelName': self.context.channel.channelName,
                                 'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.channelThirdList;
@@ -141,8 +141,8 @@ define([
                             self.popups.openChannelCarrier({
                                 'kind': 'add',
                                 'isReadOnly': true,
-                                'orderChannelId': self.channelSmsList[0].orderChannelId,
-                                'channelName': self.channelSmsList[0].channelName,
+                                'orderChannelId': self.context.channel.orderChannelId,
+                                'channelName': self.context.channel.channelName,
                                 'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.carrierList;
@@ -165,8 +165,8 @@ define([
                             self.popups.openAddChannelType({
                                     'kind': 'add',
                                     'isReadOnly': true,
-                                    'channelId': self.channelSmsList[0].orderChannelId,
-                                    'channelName': self.channelSmsList[0].channelName,
+                                    'channelId': self.context.channel.orderChannelId,
+                                    'channelName': self.context.channel.channelName,
                                     'sourceData': self.context.channel
                                 })
                                 .then(function (res) {

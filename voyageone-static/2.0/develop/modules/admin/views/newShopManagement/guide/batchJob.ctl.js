@@ -45,7 +45,7 @@ define([
                     self.popups.openConfig({
                         'configType': type, 'isReadOnly': true,
                         'sourceData': self.context.task,
-                        'orderChannelId': self.context.cartShop[0].orderChannelId
+                        'orderChannelId': self.context.channel.orderChannelId
                     });
                     return;
                 } else {

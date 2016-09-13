@@ -69,7 +69,7 @@ define([
                         'isReadOnly': true,
                         'sourceData': self.context.cartShop,
                         'channelInfo': self.context.channel,
-                        'orderChannelId': self.context.cartShop[0].orderChannelId
+                        'orderChannelId': self.context.channel.orderChannelId
                     });
                     return;
                 } else {

@@ -61,12 +61,12 @@ define([
             copy: function (channelId) {
                 var self = this;
                 self.resList ? {} : {};
-                if (self.resList.sessionKey) self.resList.sessionKey = '';
-                if (self.resList.screctKey) self.resList.sessionKey = '';
                 self.newShopService.getChannelSeries(channelId).then(function (res) {
                     self.resListCopy = res.data;
                     if (self.autoCopy == true) {
                         self.resList = res.data.channel;
+                        self.resList.sessionKey = '';
+                        self.resList.screctKey = '';
                         if (!self.resList.cartIds) {
                             self.cartList = [];
                             callback();
@@ -99,6 +99,8 @@ define([
                     } else {
                         self.resList = self.infoList;
                         self.cartList = [];
+                        self.resList.sessionKey = '';
+                        self.resList.screctKey = '';
                         self.AdminCartService.getAllCart(null).then(function (res) {
                             self.cartAllList = [];
                             if (self.cartList.length == 0) {
