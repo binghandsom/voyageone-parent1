@@ -41,6 +41,7 @@ import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.BusinessLogService;
+import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -137,6 +138,8 @@ public class SxProductService extends BaseService {
     private CmsMtPlatformPropSkuDao cmsMtPlatformPropSkuDao;
     @Autowired
     private CmsMtChannelSkuConfigDao cmsMtChannelSkuConfigDao;
+    @Autowired
+    private CmsBtBrandBlockService cmsBtBrandBlockService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -845,6 +848,17 @@ public class SxProductService extends BaseService {
                 continue;
             }
             // 2016/06/12 add desmond END
+            // 2016/09/13 add desmond START
+            // 看一下feed的品牌，master的品牌和platform的品牌这3个地方的品牌是否在品牌黑名单中，只有有一个在黑名单中，该产品就是上新对象外
+            // 官网同购的场合（cart是30， 31）， platform的品牌是不存在的
+            if (cmsBtBrandBlockService.isBlocked(channelId, cartId,
+                    sxData.getCmsBtFeedInfoModel().getBrand(),
+                    productModel.getCommon().getFields().getBrand(),
+                    productPlatformCart.getpBrandId())) {
+                removeProductList.add(productModel);
+                continue;
+            }
+            // 2016/09/13 add desmond END
 
             // modified by morse.lu 2016/06/15 start
             // TODO:{}1中的这段暂时不要，临时用{}2，以后恢复
