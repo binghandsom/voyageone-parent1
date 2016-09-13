@@ -1108,7 +1108,7 @@ public class BackDoorController extends CmsController {
             updateGroupQuery.setQuery("{\"cartId\": 27, \"productCodes\": #}");
             updateGroupQuery.setQueryParameters(code);
 
-            updateGroupQuery.setUpdate("{$set:{\"numIid\": #}}");
+            updateGroupQuery.setUpdate("{$set:{\"numIId\": #}}");
             updateGroupQuery.setUpdateParameters(jmHashId);
 
             cmsBtProductGroupDao.updateFirst(updateGroupQuery, channelId);
