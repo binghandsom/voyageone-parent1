@@ -7,59 +7,8 @@ define([
     'modules/admin/enums/MappingTypes'
 ], function (admin, _, MappingTypes) {
     var list;
-    list = [
-        {
-            name: 'Developer',
-            opened: true,
-            children: [
-                {
-                    name: 'Front-End',
-                    children: [
-                        {
-                            name: 'Jack',
-                            title: 'Leader'
-                        },
-                        {
-                            name: 'John',
-                            title: 'Senior F2E'
-                        },
-                        {
-                            name: 'Jason',
-                            title: 'Junior F2E'
-                        }
-                    ]
-                },
-                {
-                    name: 'Back-End',
-                    children: [
-                        {
-                            name: 'Mary',
-                            title: 'Leader'
-                        },
-                        {
-                            name: 'Gary',
-                            title: 'Intern'
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            name: 'Design',
-            children: [{
-                name: 'Freeman',
-                title: 'Designer'
-            }]
-        },
-        {
-            name: 'S&S',
-            children: [{
-                name: 'Nikky',
-                title: 'Robot'
-            }]
-        }
-    ];
-    admin.controller('treeTable', [ '$scope', '$filter',
+    list = [];
+    admin.controller('treeTable', ['$scope', '$filter',
         function ($scope, $filter) {
             $scope.list = list;
             $scope.toggleAllCheckboxes = function ($event) {
@@ -83,6 +32,8 @@ define([
                 return results;
             };
             $scope.initCheckbox = function (item, parentItem) {
+                if (!item.opened) item.opened = true;
+                if (item.children.length < 1) item.showArrow = false;
                 return item.selected = parentItem && parentItem.selected || item.selected || false;
             };
             $scope.toggleCheckbox = function (item, parentScope) {

@@ -24,6 +24,10 @@ define([
                 self.adminOrgService.getAllOrg().then(function (res) {
                     self.orgList = res.data;
                 });
+                self.adminUserService.getAuthByUser({'userAccount':self.sourceData.userAccount,'application':self.sourceData.application}).then(function (res) {
+                    self.authList = res.data;
+                    console.log(self.authList);
+                })
             },
             cancel: function () {
                 this.$uibModalInstance.close();

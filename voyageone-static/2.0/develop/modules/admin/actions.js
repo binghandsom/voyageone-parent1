@@ -39,10 +39,13 @@ define(function () {
                     "addUser": "addUser",
                     "updateUser": "updateUser",
                     "deleteUser": "deleteUser",
+                    "getAuthByUser": "getAuthByUser",
                     "showAuth": "showAuth",
                     "resetPass": "resetPass",
                     "editPass": "editPass",
                     "forgetPass": "forgetPass",
+                    "getUserByToken": "getUserByToken",
+                    "modifyPass": "modifyPass",
                     "getAllApp": "getAllApp"
                 },
                 "adminRoleService": {

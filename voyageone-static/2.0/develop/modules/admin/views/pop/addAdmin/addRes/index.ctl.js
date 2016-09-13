@@ -18,7 +18,8 @@ define([
                 var self = this;
                 if (self.sourceData == 'add') {
                     self.popType = '添加菜单资源';
-                    self.sourceData = {}
+                    self.sourceData = {};
+                    self.sourceData.active = '1';
                 }
                 self.adminUserService.getAllApp().then(function (res) {
                     self.appList = res.data;
