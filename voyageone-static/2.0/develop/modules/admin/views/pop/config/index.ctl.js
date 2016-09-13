@@ -75,7 +75,6 @@ define([
                                     self.taskCfgList.push(taskConfig);
                                 });
                             });
-                            self.search(1);
                         } else {
                             self.taskService.getAllTask().then(function (res) {
                                 self.taskList = res.data;
@@ -520,6 +519,9 @@ define([
                 });
                 res.data.result = result;
                 return res;
+            },
+            show:function (item) {
+                console.log(item);
             }
         };
         function _forEach(parentData, subData, target) {

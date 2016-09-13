@@ -51,7 +51,12 @@ define([
                 } else {
                     _.forEach(self.taskList, function (Info) {
                         if (Info.taskName == self.taskSelList.selList[0].id) {
-                            var data = {'sourceData':[],'configType': type, 'taskId': Info.taskName, 'isReadOnly': true};
+                            var data = {
+                                'sourceData': [],
+                                'configType': type,
+                                'taskId': Info.taskId,
+                                'isReadOnly': true
+                            };
                             data.sourceData.push(Info);
                             self.popups.openConfig(data);
                         }
@@ -66,7 +71,6 @@ define([
                         'isReadOnly': true,
                         'orderChannelId': self.context.channel.orderChannelId
                     }).then(function (res) {
-                        var list = self.taskList;
                         res.taskConfig = [{
                             'taskId': res.taskName,
                             'cfgName': 'run_flg',
@@ -75,6 +79,8 @@ define([
                             'endTime': null,
                             'comment': 'Run flag of task'
                         }];
+                        res.taskId = 'x'+Math.random();
+                        var list = self.taskList;
                         list.push(res);
                         self.init(1);
                     });
