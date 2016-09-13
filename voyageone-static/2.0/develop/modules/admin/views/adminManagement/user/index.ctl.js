@@ -39,7 +39,12 @@ define([
             init: function () {
                 var self = this;
                 self.storeService.getAllStore(null).then(function (res) {
-                    self.storeList = res.data;
+                    self.tempList = res.data;
+                    self.storeList = [];
+                    _.forEach(self.tempList, function (item) {
+                        var data = '(' + item.channelId + ')' + item.storeName;
+                        self.storeList.push(data);
+                    })
                 });
                 self.adminOrgService.getAllOrg().then(function (res) {
                     self.orgList = res.data;
@@ -183,7 +188,7 @@ define([
                     self.confirm('确认要重置密码吗？').then(function () {
                         _.forEach(self.adminList, function (Info) {
                             if (Info.id == self.adminUserSelList.selList[0].id) {
-                                self.adminUserService.resetPass({'userAccount':Info.userAccount}).then(function (res) {
+                                self.adminUserService.resetPass({'userAccount': Info.userAccount}).then(function (res) {
                                     console.log(res);
                                 });
                             }

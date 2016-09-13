@@ -63,9 +63,12 @@ define([
                     self.popups.openTask({
                         'kind': 'add',
                         'isReadOnly': true,
-                        'orderChannelId': self.taskList[0].orderChannelId
+                        'orderChannelId': self.context.channel.orderChannelId
                     }).then(function (res) {
                         var list = self.taskList;
+                        if (res.runFlg == '1') {
+                            res.taskConfig = [{'taskId':res.taskName,'cfgName':'run_flg', 'cfgVal1':'1','cfgVal2':'', 'endTime':null,'comment':'Run flag of task'}];
+                        };
                         list.push(res);
                         self.init(1);
                     });
@@ -107,7 +110,7 @@ define([
                     self.confirm('确定启动该任务吗？').then(function () {
                         if (item.data.runFlg == "0") {
                             item.data.runFlg = "1"
-                        }else(
+                        } else(
                             item.data.runFlg = "0"
                         );
                         forEachTaskList(item.data.taskConfig, item.data.runFlg);
@@ -116,7 +119,7 @@ define([
                     self.confirm('确定停止该任务吗？').then(function () {
                         if (item.data.runFlg == "0") {
                             item.data.runFlg = "1"
-                        }else(
+                        } else(
                             item.data.runFlg = "0"
                         );
                         forEachTaskList(item.data.taskConfig, item.data.runFlg);
