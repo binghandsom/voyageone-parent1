@@ -101,8 +101,6 @@ define([
          * @param content： button内容
          */
         BlackBrandListController.prototype.update = function (mark, content, element) {
-            if (!mark)
-                return;
 
             var self = this,
                 $translate = self.$translate,
@@ -115,7 +113,9 @@ define([
 
             $translate("TXT_BLACK_LIST_CONFIRM", {content: $translate.instant(content)}).then(function (msg) {
                 confirm(msg).then(function () {
-                    blackBrandService.update().then(function () {
+                    blackBrandService.update({
+                        status: mark,
+                        brandList: brandList}).then(function () {
                         notify.success('TXT_MSG_UPDATE_SUCCESS');
                         self.search();
                     }, function () {
@@ -131,9 +131,6 @@ define([
          * @param content:button内容
          */
         BlackBrandListController.prototype.batchUpdate = function (mark, content) {
-
-            if (!mark)
-                return;
 
             var self = this,
                 $translate = self.$translate,
@@ -160,7 +157,9 @@ define([
 
             $translate("TXT_BLACK_LIST_BATCH_CONFIRM", {content: $translate.instant(content)}).then(function (msg) {
                 confirm(msg).then(function () {
-                    blackBrandService.batchUpdate({brandList: brandList}).then(function () {
+                    blackBrandService.update({
+                        status: mark,
+                        brandList: brandList}).then(function () {
                         notify.success('TXT_MSG_UPDATE_SUCCESS');
                         self.search();
                     }, function () {

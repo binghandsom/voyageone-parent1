@@ -64,13 +64,13 @@
                 <div class="row">
                     <div class="col-md-5 col-md-offset-7 text-right">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-pop btn-default" ng-click="ctrl.batchUpdate('add','TXT_BATCH_JOIN_BLACK_LIST')">
+                            <button type="button" class="btn btn-pop btn-default" ng-click="ctrl.batchUpdate(true,'TXT_BATCH_JOIN_BLACK_LIST')">
                                 <i class="glyphicon glyphicon-import"></i>&nbsp;{{'TXT_BATCH_JOIN_BLACK_LIST'|translate}}&nbsp;
                             </button>
                         </div>
                         &nbsp;
                         <div class="btn-group">
-                            <button type="button" class="btn btn-pop btn-default" ng-click="ctrl.batchUpdate('remove','TXT_BATCH_REMOVE_BLACK_LIST')">
+                            <button type="button" class="btn btn-pop btn-default" ng-click="ctrl.batchUpdate(false,'TXT_BATCH_REMOVE_BLACK_LIST')">
                                 <i class="glyphicon glyphicon-export"></i>&nbsp;{{'TXT_BATCH_REMOVE_BLACK_LIST'|translate}}
                             </button>
                         </div>
@@ -107,10 +107,10 @@
                     <td class="text-center mfb-xxx">{{ctrl.$brandType[model.type]}}</td>
                     <td class="text-center mfb-xxx">{{ctrl.cartEnums.valueOf(model.cartId).desc}}</td>
                     <td class="text-center mfb-xxx">
-                        <button class="btn btn-success" ng-click="ctrl.update('add','TXT_JOIN_BLACK_LIST', model)" ng-if="!model.isBlack">
+                        <button class="btn btn-success" ng-click="ctrl.update(true,'TXT_JOIN_BLACK_LIST', model)" ng-if="!model.blocked">
                             <i class="fa fa-arrow-right"></i>&nbsp;{{'TXT_JOIN_BLACK_LIST'|translate}}
                         </button>
-                        <button class="btn btn-danger" ng-click="ctrl.update('remove','TXT_REMOVE_BLACK_LIST', model)" ng-if="model.isBlack">
+                        <button class="btn btn-danger" ng-click="ctrl.update(false,'TXT_REMOVE_BLACK_LIST', model)" ng-if="model.blocked">
                             <i class="fa fa-arrow-left"></i>&nbsp;{{'TXT_REMOVE_BLACK_LIST'|translate}}
                         </button>
                     </td>
