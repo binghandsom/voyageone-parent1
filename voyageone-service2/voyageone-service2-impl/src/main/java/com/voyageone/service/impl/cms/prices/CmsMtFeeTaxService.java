@@ -1,13 +1,12 @@
 package com.voyageone.service.impl.cms.prices;
 
-import com.voyageone.common.asserts.Assert;
-import com.voyageone.common.util.MapUtil;
 import com.voyageone.service.dao.cms.CmsMtFeeTaxDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtFeeTaxModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,7 +36,10 @@ public class CmsMtFeeTaxService extends BaseService {
      */
     public Double getTaxRate(String hsCode, String shippingType) {
 
-        Map<String, Object> queryMap = MapUtil.toMap("hsCode", hsCode, "shippingType", shippingType);
+        Map<String, Object> queryMap = new HashMap<String, Object>() {{
+            put("hsCode", hsCode);
+            put("shippingType", shippingType);
+        }};
 
         CmsMtFeeTaxModel feeTaxModel = cmsMtFeeTaxDao.selectOne(queryMap);
 
