@@ -52,6 +52,7 @@ define([
                     _.forEach(self.taskList, function (Info) {
                         if (Info.taskId == self.taskSelList.selList[0].id) {
                             _.extend(Info, {'configType': type});
+                            Info.isReadOnly='';
                             self.popups.openConfig(Info);
                         }
                     })
@@ -66,9 +67,14 @@ define([
                         'orderChannelId': self.context.channel.orderChannelId
                     }).then(function (res) {
                         var list = self.taskList;
-                        if (res.runFlg == '1') {
-                            res.taskConfig = [{'taskId':res.taskName,'cfgName':'run_flg', 'cfgVal1':'1','cfgVal2':'', 'endTime':null,'comment':'Run flag of task'}];
-                        };
+                        res.taskConfig = [{
+                            'taskId': res.taskName,
+                            'cfgName': 'run_flg',
+                            'cfgVal1': res.runFlg,
+                            'cfgVal2': '',
+                            'endTime': null,
+                            'comment': 'Run flag of task'
+                        }];
                         list.push(res);
                         self.init(1);
                     });
