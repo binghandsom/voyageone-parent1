@@ -126,6 +126,7 @@ define([
          * 添加/移除 黑名单
          * @param mark ：添加/移除 标识
          * @param content： button内容
+         * @param element
          */
         BlackBrandListController.prototype.update = function (mark, content, element) {
 
@@ -170,7 +171,6 @@ define([
 
             brandList = _.map(self.dataList, function (element) {
                 if (element.selected) {
-                    delete element.selected;
                     return element;
                 }
             }).filter(function (item) {
@@ -189,6 +189,7 @@ define([
                         brandList: brandList
                     }).then(function () {
                         notify.success('TXT_MSG_UPDATE_SUCCESS');
+                        self.all = null;
                         self.search();
                     }, function () {
                         notify.danger('TXT_MSG_UPDATE_FAIL');
