@@ -588,6 +588,11 @@ define(function () {
                     cache: CACHE.LOCAL,
                     cacheWith: [KEY.CHANNEL]
                 }
+            },
+            "blackBrandService":{
+                root:"/cms/channel/black_brand/",
+                list:"searchBlackBrand",
+                update:"updateBlackBrand"
             }
         }
     };

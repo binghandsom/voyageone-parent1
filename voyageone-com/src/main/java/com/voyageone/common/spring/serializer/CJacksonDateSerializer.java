@@ -1,8 +1,6 @@
 package com.voyageone.common.spring.serializer;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.voyageone.common.util.DateTimeUtil;
@@ -16,12 +14,12 @@ import java.util.Date;
  *
  * @author godfox 2010-5-3
  */
-public class CJacksonDateSerializer extends JsonSerializer<Date> {
+public class CJacksonDateSerializer extends DateSerializer {
 
     @Override
-    public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+    public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 
-        if (CJacksonSerializerUtil.isCustom(jgen)) {
+        if (CJacksonSerializerUtil.isCustom()) {
             String result = null;
             if (!DateTimeUtil.getCreatedDefaultDate().equals(value)) {
                 result = DateTimeUtil.format(value, null);
@@ -32,9 +30,7 @@ public class CJacksonDateSerializer extends JsonSerializer<Date> {
                 jgen.writeString(result);
             }
         } else {
-            if (value != null) {
-                DateSerializer.instance.serialize(value, jgen, provider);
-            }
+            super.serialize(value, jgen, provider);
         }
     }
 }

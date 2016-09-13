@@ -46,7 +46,7 @@ public class HttpUtils {
             }
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
-            throw  e;
+            throw e;
         } finally {
             if (connection != null)
                 connection.disconnect();
@@ -247,7 +247,7 @@ public class HttpUtils {
         String line;
 
         try {
-	            /*post向服务器请求数据*/
+            /*post向服务器请求数据*/
             HttpPatch request = new HttpPatch(url);
             StringEntity se = new StringEntity(jsonParam);
             request.setEntity(se);
@@ -764,12 +764,12 @@ public class HttpUtils {
     public static InputStream getInputStream(String urlString) throws IOException {
 //        urlString = getFinalURL(urlString);
         URL url = new URL(urlString);
-        HttpURLConnection con = (HttpURLConnection)  url.openConnection();
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setConnectTimeout(60000);
         con.setReadTimeout(60000);
         if (con.getResponseCode() == 301 || con.getResponseCode() == 302) {
             return getInputStream(con.getHeaderField("Location"));
-        }else{
+        } else {
             return url.openStream();
         }
     }
