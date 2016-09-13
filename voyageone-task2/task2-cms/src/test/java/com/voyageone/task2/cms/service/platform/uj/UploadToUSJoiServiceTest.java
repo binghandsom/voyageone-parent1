@@ -27,6 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.toList;
 
@@ -52,8 +53,8 @@ public class UploadToUSJoiServiceTest {
 
         // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
         CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
-        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
+//        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
+//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
 
         String usjoiChannelId = "929";
 
@@ -150,8 +151,12 @@ public class UploadToUSJoiServiceTest {
         sxWorkLoadBean.setModifier("james");
         sxWorkLoadBean.setCartId(Integer.parseInt(usjoiChannelId)); // "929"
 
-        uploadToUSJoiService.upload(sxWorkLoadBean, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping,
-                usjoiTypeChannelBeanList, cartIds, ccAutoSyncCarts, ccAutoSyncCartList);
+        int totalCnt = 1;
+        int currentIndex = 0;
+        long startTime = System.currentTimeMillis();
+
+        uploadToUSJoiService.upload(sxWorkLoadBean, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, usjoiTypeChannelBeanList,
+                cartIds, ccAutoSyncCarts, ccAutoSyncCartList, currentIndex, totalCnt, startTime);
     }
 
     @Test
@@ -189,12 +194,14 @@ public class UploadToUSJoiServiceTest {
     @Test
     public void testUploadByChannel() throws Exception {
         // 保存每个channel最终导入结果(成功失败件数信息)
-        Map<String, String> resultMap = new HashMap<>();
+        Map<String, String> resultMap = new ConcurrentHashMap<>();
+        // 保存是否需要清空缓存(添加过品牌等信息时，需要清空缓存)
+        Map<String, String> needReloadMap = new ConcurrentHashMap<>();
 
         for (OrderChannelBean channelBean : Channels.getUsJoiChannelList()) {
             // 只测试928渠道时
             if ("928".equals(channelBean.getOrder_channel_id())) {
-                uploadToUSJoiService.uploadByChannel(channelBean, resultMap);
+                uploadToUSJoiService.uploadByChannel(channelBean, resultMap, needReloadMap);
             }
         }
     }
