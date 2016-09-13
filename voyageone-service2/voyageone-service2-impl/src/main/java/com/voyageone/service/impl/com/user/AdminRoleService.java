@@ -60,15 +60,17 @@ public class AdminRoleService extends BaseService {
 
 
 
-    public Map<Integer, String> getAllRole() {
+    public List<Map<String, Object>> getAllRole() {
         List<ComRoleModel> roleList = comRoleDao.selectList(new HashMap<String, Object>() {{
             put("active", 1);
         }});
 
+        List<Map<String, Object>> retList = new ArrayList<>();
 
-        Map resultMap = roleList.stream().collect(Collectors.toMap(ComRoleModel::getId, ComRoleModel::getRoleName));
 
-        return resultMap;
+        roleList.forEach(w -> retList.add(new HashMap<String, Object>()  {{put("roleId", w.getId());  put("roleName", w.getRoleName()); } } ) );
+
+        return retList;
     }
 
     /**
