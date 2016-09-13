@@ -93,8 +93,9 @@ define([
                             self.popups.openChannelSms({
                                 'kind': 'add',
                                 'isReadOnly': true,
-                                'orderChannelId': self.channelSmsList[0].orderChannelId,
-                                'channelName': self.channelSmsList[0].channelName
+                                'orderChannelId': self.context.channel.orderChannelId,
+                                'channelName': self.context.channel.channelName,
+                                'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.channelSmsList;
                                 list.push(res);
@@ -103,7 +104,7 @@ define([
                         } else {
                             _.forEach(self.channelSmsList, function (Info) {
                                 if (Info.seq == self.channelSmsSelList.selList[0].id) {
-                                    _.extend(Info, {'isReadOnly': true});
+                                    _.extend(Info, {'isReadOnly': true,'sourceData': self.context.channel});
                                     self.popups.openChannelSms(Info).then(function () {
                                         self.init();
                                     });
@@ -116,8 +117,9 @@ define([
                             self.popups.openChannelThird({
                                 'kind': 'add',
                                 'isReadOnly': true,
-                                'channelId': self.channelSmsList[0].orderChannelId,
-                                'channelName': self.channelSmsList[0].channelName
+                                'channelId': self.context.channel.orderChannelId,
+                                'channelName': self.context.channel.channelName,
+                                'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.channelThirdList;
                                 list.push(res);
@@ -126,7 +128,7 @@ define([
                         } else {
                             _.forEach(self.channelThirdList, function (Info) {
                                 if (Info.seq == self.channelThirdSelList.selList[0].id) {
-                                    _.extend(Info, {'isReadOnly': true});
+                                    _.extend(Info, {'isReadOnly': true,'sourceData': self.context.channel});
                                     self.popups.openChannelThird(Info).then(function () {
                                         self.init();
                                     });
@@ -139,8 +141,9 @@ define([
                             self.popups.openChannelCarrier({
                                 'kind': 'add',
                                 'isReadOnly': true,
-                                'orderChannelId': self.channelSmsList[0].orderChannelId,
-                                'channelName': self.channelSmsList[0].channelName
+                                'orderChannelId': self.context.channel.orderChannelId,
+                                'channelName': self.context.channel.channelName,
+                                'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.carrierList;
                                 list.push(res);
@@ -149,7 +152,7 @@ define([
                         } else {
                             _.forEach(self.carrierList, function (Info) {
                                 if (Info.mainKey == self.carrierSelList.selList[0].id) {
-                                    _.extend(Info, {'isReadOnly': true});
+                                    _.extend(Info, {'isReadOnly': true,'sourceData': self.context.channel});
                                     self.popups.openChannelCarrier(Info).then(function () {
                                         self.init();
                                     });
@@ -162,8 +165,9 @@ define([
                             self.popups.openAddChannelType({
                                     'kind': 'add',
                                     'isReadOnly': true,
-                                    'channelId': self.channelSmsList[0].orderChannelId,
-                                    'channelName': self.channelSmsList[0].channelName
+                                    'channelId': self.context.channel.orderChannelId,
+                                    'channelName': self.context.channel.channelName,
+                                    'sourceData': self.context.channel
                                 })
                                 .then(function (res) {
                                     var list = self.channelTypeList;
@@ -173,7 +177,7 @@ define([
                         } else {
                             _.forEach(self.channelTypeList, function (Info) {
                                 if (Info.id == self.channelTypeSelList.selList[0].id) {
-                                    _.extend(Info, {'isReadOnly': true});
+                                    _.extend(Info, {'isReadOnly': true,'sourceData': self.context.channel});
                                     self.popups.openAddChannelType(Info).then(function () {
                                         self.init();
                                     });

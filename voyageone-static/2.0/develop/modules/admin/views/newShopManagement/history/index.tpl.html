@@ -33,7 +33,7 @@
                                     <label class="col-sm-3 control-label">{{'TXT_CART_UPDATE_TIME' | translate}}</label>
                                     <div class="col-sm-9 form-inline">
                                         <div class="col-sm-5 input-group">
-                                            <input type="date" class="form-control" uib-datepicker-popup
+                                            <input type="date" date-model-format="yyyy-MM-dd" class="form-control" uib-datepicker-popup
                                                    ng-model="ctrl.searchInfo.modifiedFrom" onpaste="return false" maxlength="10"
                                                    max-date="ctrl.searchInfo.modifiedTo" is-open="datePicker1" close-text="Close"/>
 													  <span class="input-group-btn">
@@ -42,7 +42,7 @@
                                         </div>
                                         &nbsp;~&nbsp;
                                         <div class="col-sm-5 input-group">
-                                            <input type="date" class="form-control" uib-datepicker-popup
+                                            <input type="date" date-model-format="yyyy-MM-dd" class="form-control" uib-datepicker-popup
                                                    ng-model="ctrl.searchInfo.modifiedTo" onpaste="return false" maxlength="10"
                                                    min-date="ctrl.searchInfo.modifiedFrom" is-open="datePicker2" close-text="Close"/>
 													  <span class="input-group-btn">
@@ -70,13 +70,6 @@
             <table class="table table-hover-new table-hover table_main">
                 <thead>
                 <tr>
-                    <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
-                        <label class="checkbox-inline c-checkbox" style="height: 15px;">
-                            <input type="checkbox" ng-click="selectAll(ctrl.historySelList)"
-                                   ng-checked="isAllSelected(ctrl.historySelList)" >
-                            <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
-                        </label>
-                    </th>
                     <th class="text-center mfb-xt" translate="TXT_CART_CHANNEL_ID"></th>
                     <th class="text-left mfb-xxt" translate="TXT_CART_CHANNEL_NAME"></th>
                     <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
@@ -86,16 +79,9 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td if-no-rows="ctrl.historyList.length||ctrl.historyList" colspan="6" style="padding: 0px"></td>
+                    <td if-no-rows="ctrl.historyList.length||ctrl.historyList" colspan="5" style="padding: 0px"></td>
                 </tr>
                 <tr ng-repeat="list in ctrl.historyList">
-                    <td class="text-left v-middle">
-                        <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                            <input ng-model="ctrl.historySelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
-                                   ng-click="selectOne(list.id, ctrl.historySelList)">
-                            <span class="fa fa-check"></span>
-                        </label>
-                    </td>
                     <td class="text-center v-middle">{{list.channelId}}</td>
                     <td class="text-left v-middle">{{list.channelName}}</td>
                     <td class="text-left v-middle">{{list.modified}}</td>
@@ -103,7 +89,7 @@
                     <td class="text-center v-middle">
                         <button class="btn btn-default" ng-click="ctrl.edit(list)"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
                         <button class="btn btn-default" ng-click="ctrl.delete(list)"><i class="fa fa-ban"></i>&nbsp;删除</button>
-                        <button class="btn btn-default" ng-click="ctrl.download(list)"><i class="fa fa-pencil"></i>&nbsp;下载</button>
+                        <a class="btn btn-default" ng-href="/admin/newshop/self/downloadNewShopSql?newShopId={{list.id}}"><i class="fa fa-pencil"></i>&nbsp;下载</a>
                     </td>
                 </tr>
                 </tbody>

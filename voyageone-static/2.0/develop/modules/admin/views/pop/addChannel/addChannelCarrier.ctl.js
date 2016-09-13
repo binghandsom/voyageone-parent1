@@ -27,13 +27,18 @@ define([
                         self.sourceData = self.sourceData;
                     }
                 }
-                self.sourceData.active = self.sourceData.active ?  self.sourceData.active ? "0" : "1":'';
-                self.channelService.getAllChannel().then(function (res) {
-                    self.channelAllList = res.data;
-                });
+                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "0" : "1" : '';
+                if (self.sourceData.isReadOnly == true) {
+                    self.channelAllList = [self.sourceData.sourceData];
+                } else {
+                    self.channelService.getAllChannel().then(function (res) {
+                        self.channelAllList = res.data;
+                    });
+                }
                 self.carrierConfigService.getAllCarrier().then(function (res) {
                     self.carrierList = res.data;
                 });
+
             },
             cancel: function () {
                 this.$uibModalInstance.close();

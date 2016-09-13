@@ -42,9 +42,11 @@ define([
             config: function (type) {
                 var self = this;
                 if (self.taskSelList.selList.length < 1) {
-                    self.popups.openConfig({'configType': type,'isReadOnly': true,
+                    self.popups.openConfig({
+                        'configType': type, 'isReadOnly': true,
                         'sourceData': self.context.task,
-                        'orderChannelId': self.context.cartShop[0].orderChannelId});
+                        'orderChannelId': self.context.channel.orderChannelId
+                    });
                     return;
                 } else {
                     _.forEach(self.taskList, function (Info) {
@@ -61,9 +63,12 @@ define([
                     self.popups.openTask({
                         'kind': 'add',
                         'isReadOnly': true,
-                        'orderChannelId': self.taskList[0].orderChannelId
+                        'orderChannelId': self.context.channel.orderChannelId
                     }).then(function (res) {
                         var list = self.taskList;
+                        if (res.runFlg == '1') {
+                            res.taskConfig = [{'taskId':res.taskName,'cfgName':'run_flg', 'cfgVal1':'1','cfgVal2':'', 'endTime':null,'comment':'Run flag of task'}];
+                        };
                         list.push(res);
                         self.init(1);
                     });
@@ -85,23 +90,61 @@ define([
                         _.forEach(self.taskSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
-                        self.taskService.deleteTask(delList).then(function (res) {
-                            self.search(1);
-                        })
+                        _.forEach(delList, function (item) {
+                                var source = self.taskList;
+                                var data = _.find(source, function (sItem) {
+                                    return sItem.taskId == item;
+                                });
+                                if (source.indexOf(data) > -1) {
+                                    source.splice(source.indexOf(data), 1);
+                                    self.init();
+                                }
+                            }
+                        );
                     }
                 );
+            },
+            run: function (item) {
+                var self = this;
+                if (item.type == 'Start') {
+                    self.confirm('确定启动该任务吗？').then(function () {
+                        if (item.data.runFlg == "0") {
+                            item.data.runFlg = "1"
+                        } else(
+                            item.data.runFlg = "0"
+                        );
+                        forEachTaskList(item.data.taskConfig, item.data.runFlg);
+                    })
+                } else {
+                    self.confirm('确定停止该任务吗？').then(function () {
+                        if (item.data.runFlg == "0") {
+                            item.data.runFlg = "1"
+                        } else(
+                            item.data.runFlg = "0"
+                        );
+                        forEachTaskList(item.data.taskConfig, item.data.runFlg);
+                    })
+                }
             },
             complete: function () {
                 var self = this;
                 self.confirm('您确定要提交全部新店的数据吗？').then(function () {
                     self.newShopService.saveChannelSeries(self.context).then(function (res) {
-                        if(res.data == true){
+                        if (res.data == true) {
                             window.location.href = "#/newShop/history";
                         }
                     })
                 })
             }
         };
+        function forEachTaskList(source, target) {
+            _.forEach(source, function (parentItem) {
+                if (parentItem.cfgName == 'run_flg') {
+                    parentItem.cfgVal1 = target;
+                }
+            })
+        }
+
         return GuideBatchJobController;
     })())
 });

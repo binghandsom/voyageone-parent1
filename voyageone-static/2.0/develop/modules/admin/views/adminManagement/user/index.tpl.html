@@ -79,7 +79,7 @@
                                     <div class="col-sm-8">
                                         <select class="form-control" ng-model="ctrl.searchInfo.application">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{app}}" ng-repeat="app in ctrl.appList">&nbsp;{{app}}</option>
+                                            <option value="{{app.id}}" ng-repeat="app in ctrl.appList">&nbsp;{{app.application}}</option>
                                         </select>
                                     </div>
                                 </div>

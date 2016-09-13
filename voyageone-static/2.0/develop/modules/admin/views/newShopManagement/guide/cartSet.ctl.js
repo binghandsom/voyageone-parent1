@@ -69,7 +69,7 @@ define([
                         'isReadOnly': true,
                         'sourceData': self.context.cartShop,
                         'channelInfo': self.context.channel,
-                        'orderChannelId': self.context.cartShop[0].orderChannelId
+                        'orderChannelId': self.context.channel.orderChannelId
                     });
                     return;
                 } else {
@@ -90,7 +90,8 @@ define([
                                 'kind': 'add',
                                 'isReadOnly': true,
                                 'orderChannelId': self.cartShopList[0].orderChannelId,
-                                'channelName': self.cartShopList[0].channelName
+                                'channelName': self.cartShopList[0].channelName,
+                                'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.cartShopList;
                                 list.push(res);
@@ -99,7 +100,7 @@ define([
                         } else {
                             _.forEach(self.cartShopList, function (Info) {
                                 if (Info.cartId == self.cartShopSelList.selList[0].id) {
-                                    _.extend(Info, {'isReadOnly': true});
+                                    _.extend(Info, {'isReadOnly': true,'sourceData': self.context.channel});
                                     self.popups.openCartChannelShop(Info).then(function () {
                                         self.init(1);
                                     });
@@ -113,7 +114,8 @@ define([
                                 'kind': 'add',
                                 'isReadOnly': true,
                                 'orderChannelId': self.cartTrackingList[0].orderChannelId,
-                                'channelName': self.cartTrackingList[0].channelName
+                                'channelName': self.cartTrackingList[0].channelName,
+                                'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.cartTrackingList;
                                 list.push(res);
@@ -122,7 +124,7 @@ define([
                         } else {
                             _.forEach(self.cartTrackingList, function (Info) {
                                 if (Info.seq == self.cartTrackingSelList.selList[0].id) {
-                                    _.extend(Info, {'isReadOnly': true});
+                                    _.extend(Info, {'isReadOnly': true,'sourceData': self.context.channel});
                                     self.popups.openCartTrackingInfo(Info).then(function () {
                                         self.init(1);
                                     });

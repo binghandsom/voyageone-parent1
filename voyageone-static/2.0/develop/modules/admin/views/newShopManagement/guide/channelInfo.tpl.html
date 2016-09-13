@@ -17,7 +17,7 @@
                     </div>
                     <div class="col-sm-12 wrapper">
                         <form role="form" class="form-horizontal" name="addForm" novalidate>
-                            <div class="col-sm-12 m-b-sm" style="border-bottom: 3px solid #efefef;">
+                            <div class="col-sm-12 m-b-sm" style="border-bottom: 3px solid #efefef;" ng-if="ctrl.displayCopy">
                                 <div class="col-sm-8 col-sm-offset-2">
                                     <div class="form-horizontal">
                                         <div class="row form-group">
@@ -31,7 +31,7 @@
                                             <label class="checkbox-inline c-checkbox">
                                                 <input type="checkbox" name="active" value="1" ng-model="ctrl.autoCopy"><span class="fa fa-check"></span> 自动填充渠道信息
                                             </label>
-                                            <button class="btn btn-info" ng-click="ctrl.copy(ctrl.searchInfo.orderChannelId)">复制</button>
+                                            <button ng-if="ctrl.searchInfo.orderChannelId" class="btn btn-info" ng-click="ctrl.copy(ctrl.searchInfo.orderChannelId)">复制</button>
                                         </div>
                                     </div>
                                 </div>
@@ -148,7 +148,7 @@
                                     <div class="row form-group">
                                         <label class="col-sm-2 control-label vo_a_ce" >{{'TXT_SESSION_KEY' | translate}}</label>
                                         <div class="col-sm-8">
-                                            <input class="form-control" ng-model="ctrl.infoList.sessionKey"
+                                            <input class="form-control" ng-model="ctrl.resList.sessionKey"
                                                    readonly name="sessionKey" required/>
                                         </div>
                                         <button class="btn btn-info btn-pop col-sm-1" ng-click="ctrl.generate()">生成</button>
@@ -163,7 +163,7 @@
                                     <div class="row form-group">
                                         <label class="col-sm-2 control-label">{{'TXT_SECRET_KEY' | translate}}</label>
                                         <div class="col-sm-8">
-                                            <input class="form-control" ng-model="ctrl.infoList.screctKey"
+                                            <input class="form-control" ng-model="ctrl.resList.screctKey"
                                                    readonly name="screctKey" required/>
                                         </div>
                                         <button class="btn btn-info btn-pop col-sm-1" ng-click="ctrl.generate('secretKey')">生成</button>

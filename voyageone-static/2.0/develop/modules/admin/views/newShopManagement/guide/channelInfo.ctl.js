@@ -6,7 +6,7 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('GuideConfigController', (function () {
-        function GuideConfigController(popups, alert, confirm, channelService, newShopService, AdminCartService) {
+        function GuideConfigController(popups, alert, confirm, channelService, newShopService, AdminCartService, $location) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
@@ -14,6 +14,7 @@ define([
             this.newShopService = newShopService;
             this.AdminCartService = AdminCartService;
             this.resList = [];
+            this.$location = $location;
             this.carrierSelList = {selList: []};
             this.tempChannelSelect = null;
             this.display = false;
@@ -34,7 +35,7 @@ define([
                 screctKey: '',
                 channelConfig: []
             };
-
+            this.displayCopy = true;
         }
 
         GuideConfigController.prototype = {
@@ -47,48 +48,38 @@ define([
                 self.channelService.getAllCompany().then(function (res) {
                     self.companyAllList = res.data;
                 });
+                var url = self.$location.url();
+                if (url.indexOf('edit') > -1) {
+                    self.displayCopy = false;
+                }
+                if (url.indexOf('reload') > -1) {
+                    var context = window.sessionStorage.getItem('valueBean');
+                    if (context) {
+                        self.resListCopy = JSON.parse(context);
+                        self.resList = self.resListCopy.channel;
+                        self.loadCart();
+                    }
+                    self.display = true;
+                }
             },
             copy: function (channelId) {
                 var self = this;
                 self.resList ? {} : {};
-                if(self.infoList.sessionKey) self.infoList.sessionKey='';
-                if(self.infoList.screctKey) self.infoList.sessionKey='';
                 self.newShopService.getChannelSeries(channelId).then(function (res) {
                     self.resListCopy = res.data;
                     if (self.autoCopy == true) {
                         self.resList = res.data.channel;
-                        if (!self.resList.cartIds) {
-                            self.cartList = [];
-                            callback();
-                        } else {
-                            self.AdminCartService.getCartByIds({'cartIds': self.resList.cartIds}).then(function (res) {
-                                self.cartList = res.data;
-                                callback();
-                            });
-                        }
-                        function callback() {
-                            self.AdminCartService.getAllCart(null).then(function (res) {
-                                self.cartAllList = [];
-                                if (self.cartList.length == 0) {
-                                    self.cartAllList = res.data;
-                                } else {
-                                    self.cartAllList = res.data;
-                                    _.forEach(self.cartList, function (item) {
-                                        self.data = _.find(self.cartAllList, function (cart) {
-                                            return cart.cartId == item.cartId;
-                                        });
-                                        self.cartAllList.splice(self.cartAllList.indexOf(self.data), 1);
-                                    });
-                                }
-                            });
-                        }
-
+                        self.resList.sessionKey = '';
+                        self.resList.screctKey = '';
+                        self.loadCart();
                         self.alert('渠道信息复制成功！').then(function () {
                             self.display = true;
                         });
                     } else {
                         self.resList = self.infoList;
                         self.cartList = [];
+                        self.resList.sessionKey = '';
+                        self.resList.screctKey = '';
                         self.AdminCartService.getAllCart(null).then(function (res) {
                             self.cartAllList = [];
                             if (self.cartList.length == 0) {
@@ -109,15 +100,43 @@ define([
                     }
                 })
             },
+            loadCart: function () {
+                var self = this;
+                if (!self.resList.cartIds) {
+                    self.cartList = [];
+                    callback();
+                } else {
+                    self.AdminCartService.getCartByIds({'cartIds': self.resList.cartIds}).then(function (res) {
+                        self.cartList = res.data;
+                        callback();
+                    });
+                }
+                function callback() {
+                    self.AdminCartService.getAllCart(null).then(function (res) {
+                        self.cartAllList = [];
+                        if (self.cartList.length == 0) {
+                            self.cartAllList = res.data;
+                        } else {
+                            self.cartAllList = res.data;
+                            _.forEach(self.cartList, function (item) {
+                                self.data = _.find(self.cartAllList, function (cart) {
+                                    return cart.cartId == item.cartId;
+                                });
+                                self.cartAllList.splice(self.cartAllList.indexOf(self.data), 1);
+                            });
+                        }
+                    });
+                }
+            },
             generate: function (type) {
                 var self = this;
                 if (type == 'secretKey') {
                     self.channelService.generateSecretKey().then(function (res) {
-                        self.infoList.screctKey = res.data;
+                        self.resList.screctKey = res.data;
                     })
                 } else {
                     self.channelService.generateSessionKey().then(function (res) {
-                        self.infoList.sessionKey = res.data;
+                        self.resList.sessionKey = res.data;
                     })
                 }
             },
@@ -210,10 +229,17 @@ define([
             },
             next: function () {
                 var self = this;
+                // 设置cartIds
+                var tempCartList = [];
+                _.forEach(self.cartList, function (item) {
+                    tempCartList.push(item.cartId);
+                    _.extend(self.resListCopy.channel, {'cartIds': tempCartList.join(',')});
+                });
 
                 if (self.autoCopy != true) {
                     _.extend(self.resListCopy.channel, self.resList);
                 }
+
                 synchronizeChannelSeries(self.resListCopy);
                 window.sessionStorage.setItem('valueBean', JSON.stringify(self.resListCopy));
                 window.location.href = "#/newShop/guide/channelConfig";
@@ -221,7 +247,7 @@ define([
         };
 
         function _forEach(data, callback, subItemName) {
-            _.forEach(data, function(item) {
+            _.forEach(data, function (item) {
                 callback(item, subItemName);
             });
         }
@@ -242,7 +268,6 @@ define([
             _forEach(data.carrier, callback);
             _forEach(data.channelAttr, callback);
             _forEach(data.store, callback);
-            _forEach(data.cartShop, callback);
             _forEach(data.cartShop, callback, 'cartShopConfig');
             _forEach(data.cartTracking, callback);
         }
