@@ -1,8 +1,8 @@
 package com.voyageone.web2.openapi.channeladvisor.service;
 
-import com.voyageone.web2.sdk.api.channeladvisor.request.OrderCancellationRequest;
-import com.voyageone.web2.sdk.api.channeladvisor.request.ShipRequest;
-import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
+import com.voyageone.service.bean.vms.channeladvisor.request.OrderCancellationRequest;
+import com.voyageone.service.bean.vms.channeladvisor.request.ShipRequest;
+import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
 
 /**
  * @author aooer 2016/9/6.

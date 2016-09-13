@@ -1,7 +1,7 @@
 package com.voyageone.web2.openapi.channeladvisor.service;
 
-import com.voyageone.web2.sdk.api.channeladvisor.request.ProductGroupRequest;
-import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
+import com.voyageone.service.bean.vms.channeladvisor.request.ProductGroupRequest;
+import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
 
 import java.util.List;
 

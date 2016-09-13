@@ -1,21 +1,24 @@
-package com.voyageone.service.model.cms.mongo;
+package com.voyageone.service.bean.vms.channeladvisor.product;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
-import com.voyageone.service.bean.vms.channeladvisor.product.BuyableProductModel;
-import com.voyageone.service.bean.vms.channeladvisor.product.FieldModel;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.voyageone.service.bean.vms.channeladvisor.CABaseModel;
 
 import java.util.List;
 
 /**
- * @author james.li on 2016/9/12.
+ * @author aooer 2016/9/6.
  * @version 2.0.0
+ * @since 2.0.0
  */
-public class CmsBtCAdProudctModel extends BaseMongoModel {
+public class ProductGroupModel extends CABaseModel {
 
+    @JsonProperty("BuyableProducts")
     private List<BuyableProductModel> buyableProducts;
 
+    @JsonProperty("SellerSKU")
     private String sellerSKU;
 
+    @JsonProperty("Fields")
     private List<FieldModel> fields;
 
     public List<BuyableProductModel> getBuyableProducts() {
@@ -41,4 +44,5 @@ public class CmsBtCAdProudctModel extends BaseMongoModel {
     public void setFields(List<FieldModel> fields) {
         this.fields = fields;
     }
+
 }

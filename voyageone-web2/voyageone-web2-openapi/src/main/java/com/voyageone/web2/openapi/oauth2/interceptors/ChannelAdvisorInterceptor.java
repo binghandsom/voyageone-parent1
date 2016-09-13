@@ -5,7 +5,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.RedisRateLimiterHelper;
 import com.voyageone.web2.openapi.channeladvisor.exception.CAApiException;
 import com.voyageone.web2.openapi.oauth2.service.OAuthService;
-import com.voyageone.web2.sdk.api.channeladvisor.enums.ErrorIDEnum;
+import com.voyageone.service.bean.vms.channeladvisor.enums.ErrorIDEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

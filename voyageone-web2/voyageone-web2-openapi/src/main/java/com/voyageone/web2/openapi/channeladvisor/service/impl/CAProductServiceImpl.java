@@ -2,14 +2,14 @@ package com.voyageone.web2.openapi.channeladvisor.service.impl;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.bean.vms.channeladvisor.product.ProductGroupResultModel;
 import com.voyageone.service.impl.cms.feed.CmsBtCAdProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtCAdProudctModel;
 import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseService;
 import com.voyageone.web2.openapi.channeladvisor.service.CAProductService;
-import com.voyageone.web2.sdk.api.channeladvisor.domain.ProductGroupModel;
-import com.voyageone.web2.sdk.api.channeladvisor.domain.ProductGroupResultModel;
-import com.voyageone.web2.sdk.api.channeladvisor.request.ProductGroupRequest;
-import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
+import com.voyageone.service.bean.vms.channeladvisor.product.ProductGroupModel;
+import com.voyageone.service.bean.vms.channeladvisor.request.ProductGroupRequest;
+import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;

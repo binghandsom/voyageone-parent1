@@ -4,11 +4,11 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseService;
 import com.voyageone.web2.openapi.channeladvisor.exception.CAApiException;
 import com.voyageone.web2.openapi.channeladvisor.service.CAOrderService;
-import com.voyageone.web2.sdk.api.channeladvisor.domain.OrderModel;
-import com.voyageone.web2.sdk.api.channeladvisor.enums.ErrorIDEnum;
-import com.voyageone.web2.sdk.api.channeladvisor.request.OrderCancellationRequest;
-import com.voyageone.web2.sdk.api.channeladvisor.request.ShipRequest;
-import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
+import com.voyageone.service.bean.vms.channeladvisor.order.OrderModel;
+import com.voyageone.service.bean.vms.channeladvisor.enums.ErrorIDEnum;
+import com.voyageone.service.bean.vms.channeladvisor.request.OrderCancellationRequest;
+import com.voyageone.service.bean.vms.channeladvisor.request.ShipRequest;
+import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 

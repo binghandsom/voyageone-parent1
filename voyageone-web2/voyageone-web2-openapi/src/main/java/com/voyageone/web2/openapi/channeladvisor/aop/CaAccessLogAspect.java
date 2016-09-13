@@ -9,7 +9,7 @@ import com.voyageone.service.impl.vms.ApiClientAccessLogService;
 import com.voyageone.service.model.vms.VmsBtClientAccessLogModel;
 import com.voyageone.web2.openapi.channeladvisor.exception.CAApiException;
 import com.voyageone.web2.openapi.util.ResponseUtils;
-import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
+import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
