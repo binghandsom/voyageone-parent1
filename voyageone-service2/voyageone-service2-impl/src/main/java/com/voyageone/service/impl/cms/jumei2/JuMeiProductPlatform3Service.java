@@ -150,6 +150,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         String errorMsg = "";
         String platformBrandId = parameter.platform.getpBrandId();
         String masterBrand = parameter.cmsBtProductModel.getCommon().getFields().getBrand();
+        LOG.info("黑名单:begin");
         if (mapMasterBrand.containsKey(masterBrand)) {
             if (mapMasterBrand.get(masterBrand)) {
                 errorMsg = "该商品品牌已加入黑名单,不能再售";
@@ -157,12 +158,14 @@ public class JuMeiProductPlatform3Service extends BaseService {
         } else {
             CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(parameter.cmsBtProductModel.getChannelId(), parameter.cmsBtProductModel.getCommon().getFields().getCode());
             String feedBrand = cmsBtFeedInfoModel.getBrand();
+            LOG.info(String.format("begin ChannelId:%s,cartId:%s,feedBrand:%s,masterBrand:%s,platformBrandId:%s", parameter.cmsBtProductModel.getChannelId(), 27, feedBrand, masterBrand, platformBrandId));
             if (CmsBtBrandBlockService.isBlocked(parameter.cmsBtProductModel.getChannelId(), 27, feedBrand, masterBrand, platformBrandId)) {
                 errorMsg = "该商品品牌已加入黑名单,不能再售";
                 mapMasterBrand.put(masterBrand, true);
             } else {
                 mapMasterBrand.put(masterBrand, false);
             }
+            LOG.info("end " + masterBrand + ":" + mapMasterBrand.get(masterBrand));
         }
         if (!StringUtils.isEmpty(errorMsg)) {
 
