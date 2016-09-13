@@ -36,7 +36,7 @@ public class CmsBtBrandBlockService extends BaseService {
         this.sender = sender;
     }
 
-    public void block(String channelId, int cartId, int brandType, String brand, String username) throws IllegalAccessException {
+    public void block(String channelId, int cartId, int brandType, String brand, String username) {
         switch (brandType) {
             case BRAND_TYPE_FEED:
             case BRAND_TYPE_MASTER:

@@ -5,12 +5,15 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
+import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
@@ -21,10 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author gubuchun 15/12/14
@@ -45,6 +45,10 @@ public class CmsAddToPromotionService extends BaseViewService {
     private PromotionDetailService promotionDetailService;
     @Autowired
     private CmsAdvanceSearchService advanceSearchService;
+    @Autowired
+    private FeedInfoService feedInfoService;
+    @Autowired
+    private CmsBtBrandBlockService brandBlockService;
 
     public List<CmsBtTagModel> getPromotionTags(Map<String, Object> params) {
         //fix error by holysky
@@ -145,6 +149,43 @@ public class CmsAddToPromotionService extends BaseViewService {
         if (tagInfo == null) {
             $warn("addToPromotion tagInfo不存在 params=" + params.toString());
             throw new BusinessException("Tag不存在：" + tagInfo.getTagPathName());
+        }
+
+        // 检查品牌黑名单
+        Iterator<Long> iter = productIds.iterator();
+        while (iter.hasNext()) {
+            Long prodId = iter.next();
+            CmsBtProductModel prodObj = productService.getProductById(channelId, prodId);
+            if (prodObj == null) {
+                $warn("addToPromotion CmsBtProductModel不存在 channelId=%s, prodId=%d", channelId, prodId);
+                iter.remove();
+                continue;
+            }
+            String prodCode = StringUtils.trimToNull(prodObj.getCommonNotNull().getFieldsNotNull().getCode());
+            if (prodCode == null) {
+                $warn("addToPromotion CmsBtProductModel不存在(没有code) channelId=%s, prodId=%d", channelId, prodId);
+                iter.remove();
+                continue;
+            }
+            // 取得feed 品牌
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(channelId, prodCode);
+            String feedBrand = null;
+            if (cmsBtFeedInfoModel == null) {
+                $warn("addToPromotion CmsBtFeedInfoModel channelId=%s, code=%s", channelId, prodCode);
+            } else {
+                feedBrand = cmsBtFeedInfoModel.getBrand();
+            }
+            String masterBrand = prodObj.getCommonNotNull().getFieldsNotNull().getBrand();
+            String platBrand = prodObj.getPlatformNotNull(cartId).getpBrandId();
+            if (brandBlockService.isBlocked(channelId, cartId, feedBrand, masterBrand, platBrand)) {
+                $warn("addToPromotion 该品牌为黑名单 channelId=%s, cartId=%d, code=%s, feed brand=%s, master brand=%s, platform brand=%s", channelId, cartId, prodCode, feedBrand, masterBrand, platBrand);
+                iter.remove();
+                continue;
+            }
+        }
+        if (productIds.isEmpty()) {
+            $info("addToPromotion：没有商品需要加入活动");
+            return;
         }
 
         // 给产品数据添加活动标签
