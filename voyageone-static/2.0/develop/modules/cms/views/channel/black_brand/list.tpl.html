@@ -24,10 +24,10 @@
                             <input name="state" type="radio" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_TRANSLATION_SEARCH_SELECT_ALL'|translate}}
                         </label>&emsp;
                         <label>
-                            <input name="state" type="radio" value="true" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_BLACK_LIST_IN'|translate}}
+                            <input name="state" type="radio" value="1" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_BLACK_LIST_IN'|translate}}
                         </label>&emsp;
                         <label>
-                            <input name="state" type="radio" value="false" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_BLACK_LIST_OUT'|translate}}
+                            <input name="state" type="radio" value="0" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_BLACK_LIST_OUT'|translate}}
                         </label>
                     </div>
                 </div>
@@ -85,7 +85,7 @@
                 <tr>
                     <th class="text-center mfb-xt" style="width:66px;padding-left:0px">
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox">
+                            <input type="checkbox" ng-model="ctrl.all" ng-click="ctrl.seletAll()">
                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
                         </label>
                     </th>
@@ -99,18 +99,18 @@
                 <tr ng-repeat="model in ctrl.dataList">
                     <td class="text-center mfb-xt">
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox">
+                            <input type="checkbox" ng-model = "model.selected">
                             <span class="fa fa-check"></span>
                         </label>
                     </td>
                     <td class="text-center mfb-xxx">{{model.brandName}}</td>
-                    <td class="text-center mfb-xxx">{{model.brandType}}</td>
-                    <td class="text-center mfb-xxx">{{model.cartId}}</td>
+                    <td class="text-center mfb-xxx">{{ctrl.$brandType[model.type]}}</td>
+                    <td class="text-center mfb-xxx">{{ctrl.cartEnums.valueOf(model.cartId).desc}}</td>
                     <td class="text-center mfb-xxx">
-                        <button class="btn btn-success" ng-click="ctrl.update('add','TXT_JOIN_BLACK_LIST')" ng-if="!model.isBlack">
+                        <button class="btn btn-success" ng-click="ctrl.update('add','TXT_JOIN_BLACK_LIST', model)" ng-if="!model.isBlack">
                             <i class="fa fa-arrow-right"></i>&nbsp;{{'TXT_JOIN_BLACK_LIST'|translate}}
                         </button>
-                        <button class="btn btn-danger" ng-click="ctrl.update('remove','TXT_REMOVE_BLACK_LIST')" ng-if="model.isBlack">
+                        <button class="btn btn-danger" ng-click="ctrl.update('remove','TXT_REMOVE_BLACK_LIST', model)" ng-if="model.isBlack">
                             <i class="fa fa-arrow-left"></i>&nbsp;{{'TXT_REMOVE_BLACK_LIST'|translate}}
                         </button>
                     </td>
