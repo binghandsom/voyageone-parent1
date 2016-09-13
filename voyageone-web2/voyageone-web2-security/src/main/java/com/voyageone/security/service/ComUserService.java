@@ -47,7 +47,7 @@ public class ComUserService {
     ComUserDao comUserDao;
 
     /**
-     * 登录，实际的验证逻辑在MyReal中
+     * 登录，实际的验证逻辑在MyRealm中
      *
      * @param account
      * @param password
@@ -105,6 +105,12 @@ public class ComUserService {
     }
 
 
+    /**
+     * 读取UserConfig
+     *
+     * @param userId
+     * @return
+     */
     public List<ComUserConfigModel> getUserConfig(int userId) {
 
         Map map = new HashMap<>();
@@ -116,6 +122,8 @@ public class ComUserService {
 
 
 
-
+    public List<String> getPermissionUrls(Integer userId, String channelId, String application) {
+        return comUserDaoExt.getPermissionUrls(userId, channelId, application);
+    }
 
 }

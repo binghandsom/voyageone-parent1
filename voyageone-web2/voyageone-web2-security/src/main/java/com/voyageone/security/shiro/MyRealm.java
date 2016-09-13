@@ -122,10 +122,10 @@ public class MyRealm extends AuthorizingRealm {
 					ByteSource.Util.bytes(username + "" + userModel.getCredentialSalt()),// salt=username+salt
 					getName() // realm name
 			);
-			// 当验证都通过后，把用户信息放在session里
+			// 把用户信息放在session里
 			Session session = SecurityUtils.getSubject().getSession();
 			session.setAttribute("userModel",userModel);
-			session.setAttribute("userSessionId", userModel.getId());
+
 			return authenticationInfo;
 		} else {
 			throw new UnknownAccountException();// 没找到帐号

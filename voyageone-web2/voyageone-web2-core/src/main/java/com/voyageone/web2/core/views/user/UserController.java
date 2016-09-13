@@ -77,7 +77,7 @@ public class UserController extends BaseController {
 
     @RequestMapping(CoreUrlConstants.USER.GET_CHANNEL)
     public AjaxResponse getChannel() {
-        List<ComChannelPermissionBean> companyBeans = comUserService.getPermissionCompany(getUser().getUserId());
+        List<ChannelPermissionBean> companyBeans = userService.getPermissionCompany(getUser());
         return success(companyBeans);
     }
 

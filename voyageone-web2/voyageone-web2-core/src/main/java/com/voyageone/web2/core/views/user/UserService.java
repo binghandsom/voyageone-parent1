@@ -2,9 +2,12 @@ package com.voyageone.web2.core.views.user;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
+import com.voyageone.security.bean.ComChannelPermissionBean;
 import com.voyageone.security.dao.ComUserConfigDao;
+import com.voyageone.security.daoext.ComUserDaoExt;
 import com.voyageone.security.model.ComUserConfigModel;
 import com.voyageone.security.service.ComUserService;
+import com.voyageone.service.bean.com.ChannelPermissionBean;
 import com.voyageone.service.bean.com.PermissionBean;
 import com.voyageone.service.bean.com.UserConfigBean;
 import com.voyageone.service.daoext.com.UserDao;
@@ -36,10 +39,9 @@ public class UserService extends BaseAppService {
     private UserDao userDao;
 
     @Autowired
-    private ComUserConfigDao comUserConfigDao;
-
-    @Autowired
     private ComUserService comUserService;
+
+
 
 
 //    @Autowired
@@ -74,27 +76,29 @@ public class UserService extends BaseAppService {
 //        return userSessionBean;
 //    }
 
-//    public List<ChannelPermissionBean> getPermissionCompany(UserSessionBean userSessionBean) {
-//
-//        List<ComChannelPermissionBean>  list =  comUserDaoExt.selectPermissionChannel(userSessionBean.getUserId());
-//
-//        List<ChannelPermissionBean>  ret = new ArrayList<>();
-//
-//        for(ComChannelPermissionBean  model : list)
-//        {
-//            ChannelPermissionBean  bean = new ChannelPermissionBean();
-//            bean.setApps(model.getApps());
-//            bean.setChannelId(model.getChannelId());
-//            bean.setChannelImgUrl(model.getChannelImgUrl());
-//            bean.setCompanyId(model.getCompanyId());
-//            bean.setChannelName(model.getChannelName());
-//            bean.setCompanyName(model.getCompanyName());
-//            bean.setApps(model.getApps());
-//            ret.add(bean);
-//        }
-//
-//        return ret;
-//    }
+    public List<ChannelPermissionBean> getPermissionCompany(UserSessionBean userSessionBean) {
+
+//        return userDao.selectPermissionChannel(userSessionBean.getUserName());
+
+        List<ComChannelPermissionBean>  list =  comUserService.getPermissionCompany(userSessionBean.getUserId());
+
+        List<ChannelPermissionBean>  ret = new ArrayList<>();
+
+        for(ComChannelPermissionBean  model : list)
+        {
+            ChannelPermissionBean  bean = new ChannelPermissionBean();
+            bean.setApps(model.getApps());
+            bean.setChannelId(model.getChannelId());
+            bean.setChannelImgUrl(model.getChannelImgUrl());
+            bean.setCompanyId(model.getCompanyId());
+            bean.setChannelName(model.getChannelName());
+            bean.setCompanyName(model.getCompanyName());
+            bean.setApps(model.getApps());
+            ret.add(bean);
+        }
+
+        return ret;
+    }
 
     public void setSelectChannel(UserSessionBean user, String channelId,String applicationId,String application) {
 
@@ -155,18 +159,19 @@ public class UserService extends BaseAppService {
 
     private List<String> getPermissionUrls(UserSessionBean userSessionBean, String channelId) {
 
-        List<PermissionBean> rolePermissions = userDao.selectRolePermissions(channelId, userSessionBean.getUserName());
-
-        List<PermissionBean> userPermissions = userDao.selectUserPermissions(channelId, userSessionBean.getUserName());
-
-        return Stream.concat(rolePermissions.stream(), userPermissions.stream())
-                .filter(PermissionBean::isEnabled)
-                .map(permissionBean -> String.format("/%s/%s/%s/%s",
-                        permissionBean.getApplication(),
-                        permissionBean.getModule(),
-                        permissionBean.getController(),
-                        permissionBean.getAction()))
-                .distinct()
-                .collect(toList());
+//        List<PermissionBean> rolePermissions = userDao.selectRolePermissions(channelId, userSessionBean.getUserName());
+//
+//        List<PermissionBean> userPermissions = userDao.selectUserPermissions(channelId, userSessionBean.getUserName());
+//
+//        return Stream.concat(rolePermissions.stream(), userPermissions.stream())
+//                .filter(PermissionBean::isEnabled)
+//                .map(permissionBean -> String.format("/%s/%s/%s/%s",
+//                        permissionBean.getApplication(),
+//                        permissionBean.getModule(),
+//                        permissionBean.getController(),
+//                        permissionBean.getAction()))
+//                .distinct()
+//                .collect(toList());
+        return  comUserService.getPermissionUrls(userSessionBean.getUserId(), channelId, "cms");
     }
 }
