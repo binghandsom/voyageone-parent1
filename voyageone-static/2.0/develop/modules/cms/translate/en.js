@@ -536,6 +536,7 @@ define(function () {
         "TXT_FeedStatus_Error": "导入失败",
         "TXT_FeedStatus_NotImport": "不导入",
         "TXT_FeedStatus_DateError": "Feed数据异常错误",
+        "TXT_FeedStatus_BrandBlock": "品牌黑名单",
 
         "BTN_CREATE_TASK": "新建任务",
         "BTN_CREATE_BEAT_TASK": "新建价格披露任务",
