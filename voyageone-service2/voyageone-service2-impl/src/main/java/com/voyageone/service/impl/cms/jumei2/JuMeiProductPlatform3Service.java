@@ -150,7 +150,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         String errorMsg = "";
         String platformBrandId = parameter.platform.getpBrandId();
         String masterBrand = parameter.cmsBtProductModel.getCommon().getFields().getBrand();
-        LOG.info("黑名单:begin");
+        LOG.info("jm黑名单:begin");
         if (mapMasterBrand.containsKey(masterBrand)) {
             if (mapMasterBrand.get(masterBrand)) {
                 errorMsg = "该商品品牌已加入黑名单,不能再售";
