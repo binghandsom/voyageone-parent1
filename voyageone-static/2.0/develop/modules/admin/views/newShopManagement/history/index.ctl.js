@@ -6,16 +6,13 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('HistoryConfigController', (function () {
-        function HistoryConfigController(popups, alert, confirm, newShopService, selectRowsFactory) {
+        function HistoryConfigController(popups, alert, confirm, newShopService) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
-            this.selectRowsFactory = selectRowsFactory;
             this.newShopService = newShopService;
             this.pageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
             this.historyList = [];
-            this.historySelList = {selList: []};
-            this.tempSelect = null;
             this.searchInfo = {
                 channelId: '',
                 channelName: '',
@@ -44,22 +41,6 @@ define([
                     .then(function (res) {
                         self.historyList = res.data.result;
                         self.pageOption.total = res.data.count;
-
-                        // 设置勾选框
-                        if (self.tempSelect == null) {
-                            self.tempSelect = new self.selectRowsFactory();
-                        } else {
-                            self.tempSelect.clearCurrPageRows();
-                            self.tempSelect.clearSelectedList();
-                        }
-                        _.forEach(self.historyList, function (Info) {
-                            if (Info.updFlg != 8) {
-                                self.tempSelect.currPageRows({
-                                    "id": Info.id
-                                });
-                            }
-                        });
-                        self.historySelList = self.tempSelect.selectRowsInfo;
                     })
             },
             clear: function () {
@@ -75,10 +56,10 @@ define([
             edit: function (item) {
                 var self = this;
                 self.newShopService.getNewShopById(item.id).then(function (res) {
-                    var data = res.data.data;
+                    var data = JSON.parse(res.data.data);
                     data.id = item.id;
-                    window.sessionStorage.setItem('valueBean', data);
-                    window.location.href = "#/newShop/guide?reload";
+                    window.sessionStorage.setItem('valueBean', JSON.stringify(data));
+                    window.location.href = "#/newShop/guide?reload&edit";
                 })
             },
             delete: function (item) {

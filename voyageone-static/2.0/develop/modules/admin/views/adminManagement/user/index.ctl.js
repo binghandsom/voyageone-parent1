@@ -166,7 +166,7 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.adminUserSelList.selList, function (delInfo) {
-                            delList.push({'id': delInfo.id});
+                            delList.push(delInfo.id);
                         });
                         self.adminUserService.deleteUser(delList).then(function (res) {
                             self.search();

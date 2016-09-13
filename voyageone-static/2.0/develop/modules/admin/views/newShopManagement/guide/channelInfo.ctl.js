@@ -35,7 +35,7 @@ define([
                 screctKey: '',
                 channelConfig: []
             };
-
+            this.displayCopy = true;
         }
 
         GuideConfigController.prototype = {
@@ -49,11 +49,15 @@ define([
                     self.companyAllList = res.data;
                 });
                 var url = self.$location.url();
+                if (url.indexOf('edit') > -1) {
+                    self.displayCopy = false;
+                }
                 if (url.indexOf('reload') > -1) {
                     var context = window.sessionStorage.getItem('valueBean');
                     if (context) {
                         self.resListCopy = JSON.parse(context);
                         self.resList = self.resListCopy.channel;
+                        self.loadCart();
                     }
                     self.display = true;
                 }
@@ -67,32 +71,7 @@ define([
                         self.resList = res.data.channel;
                         self.resList.sessionKey = '';
                         self.resList.screctKey = '';
-                        if (!self.resList.cartIds) {
-                            self.cartList = [];
-                            callback();
-                        } else {
-                            self.AdminCartService.getCartByIds({'cartIds': self.resList.cartIds}).then(function (res) {
-                                self.cartList = res.data;
-                                callback();
-                            });
-                        }
-                        function callback() {
-                            self.AdminCartService.getAllCart(null).then(function (res) {
-                                self.cartAllList = [];
-                                if (self.cartList.length == 0) {
-                                    self.cartAllList = res.data;
-                                } else {
-                                    self.cartAllList = res.data;
-                                    _.forEach(self.cartList, function (item) {
-                                        self.data = _.find(self.cartAllList, function (cart) {
-                                            return cart.cartId == item.cartId;
-                                        });
-                                        self.cartAllList.splice(self.cartAllList.indexOf(self.data), 1);
-                                    });
-                                }
-                            });
-                        }
-
+                        self.loadCart();
                         self.alert('渠道信息复制成功！').then(function () {
                             self.display = true;
                         });
@@ -120,6 +99,34 @@ define([
                         });
                     }
                 })
+            },
+            loadCart: function () {
+                var self = this;
+                if (!self.resList.cartIds) {
+                    self.cartList = [];
+                    callback();
+                } else {
+                    self.AdminCartService.getCartByIds({'cartIds': self.resList.cartIds}).then(function (res) {
+                        self.cartList = res.data;
+                        callback();
+                    });
+                }
+                function callback() {
+                    self.AdminCartService.getAllCart(null).then(function (res) {
+                        self.cartAllList = [];
+                        if (self.cartList.length == 0) {
+                            self.cartAllList = res.data;
+                        } else {
+                            self.cartAllList = res.data;
+                            _.forEach(self.cartList, function (item) {
+                                self.data = _.find(self.cartAllList, function (cart) {
+                                    return cart.cartId == item.cartId;
+                                });
+                                self.cartAllList.splice(self.cartAllList.indexOf(self.data), 1);
+                            });
+                        }
+                    });
+                }
             },
             generate: function (type) {
                 var self = this;

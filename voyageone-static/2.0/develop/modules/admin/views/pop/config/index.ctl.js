@@ -525,12 +525,12 @@ define([
             _.forEach(parentData, function (item, x) {
                 var source = parentData;
                 var targetData = target;
-                var aim = targetData.cfgName + targetData.cfgVal1 + targetData.cfgVal2 + targetData.comment;
+                var aim = [targetData.cfgName, targetData.cfgVal1, targetData.cfgVal2].join("|");
                 switch (subData) {
                     case 'storeConfig':
                         _.forEach(item[subData], function (subItem, y) {
                             if (!subItem) return;
-                            var compare = subItem.cfgName + subItem.cfgVal1 + subItem.cfgVal2 + subItem.comment;
+                            var compare = [subItem.cfgName, subItem.cfgVal1, subItem.cfgVal2].join("|");
                             if (aim === compare) {
                                 source[x].storeConfig.splice(y, 1);
                             }
@@ -539,7 +539,7 @@ define([
                     case 'cartShopConfig':
                         _.forEach(item[subData], function (subItem, y) {
                             if (!subItem) return;
-                            var compare = subItem.cfgName + subItem.cfgVal1 + subItem.cfgVal2 + subItem.comment;
+                            var compare = [subItem.cfgName, subItem.cfgVal1, subItem.cfgVal2].join("|");
                             if (aim === compare) {
                                 source[x].cartShopConfig.splice(y, 1);
                             }
@@ -548,7 +548,7 @@ define([
                     case 'taskConfig':
                         _.forEach(item[subData], function (subItem, y) {
                             if (!subItem) return;
-                            var compare = subItem.cfgName + subItem.cfgVal1 + subItem.cfgVal2 + subItem.comment;
+                            var compare = [subItem.cfgName, subItem.cfgVal1, subItem.cfgVal2].join("|");
                             if (aim === compare) {
                                 source[x].taskConfig.splice(y, 1);
                             }
