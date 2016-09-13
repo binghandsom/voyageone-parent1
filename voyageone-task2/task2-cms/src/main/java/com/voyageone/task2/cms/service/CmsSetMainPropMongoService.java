@@ -161,10 +161,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
         conditionPropValueRepo.init();
 
-        // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
-        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+//        // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
+//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
+//        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
+//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
 
         // 默认线程池最大线程数
         int threadPoolCnt = 5;
@@ -239,6 +239,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         int insertCnt = 0;
         int updateCnt = 0;
         int errCnt = 0;
+        int currentIndex = 0;
+        int feedListCnt = 0;
         long startTime;
         private OrderChannelBean channel;
         private boolean skip_mapping_check;
@@ -421,7 +423,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             if (feedImportMaxChannelConfigBean != null && !StringUtils.isEmpty(feedImportMaxChannelConfigBean.getConfigValue1())) {
                 if (NumberUtils.toInt(feedImportMaxChannelConfigBean.getConfigValue1()) >= 2000) {
                     feedImportMax = 2000;
-                } else {
+                } else if (NumberUtils.toInt(feedImportMaxChannelConfigBean.getConfigValue1()) > 0) {
                     feedImportMax = NumberUtils.toInt(feedImportMaxChannelConfigBean.getConfigValue1());
                 }
             }
@@ -492,6 +494,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 共通配置信息存在的时候才进行feed->master导入
             if (ListUtils.notNull(feedList)) {
 
+                // 取得feed->master导入之前的品牌，产品分类，使用人群等mapping件数，用于判断是否新增之后需要清空缓存
+                int oldBrandCnt = mapBrandMapping.size();
+                int oldProductTypeCnt = mapProductTypeMapping.size();
+                int oldSizeTypeCnt = mapSizeTypeMapping.size();
+                int newBrandCnt, newProductTypeCnt, newSizeTypeCnt;
+
                 // jeff 2016/05 add start
                 // 取得所有主类目
                 // update desmond 2016/07/04 start
@@ -500,9 +508,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // update desmond 2016/07/04 end
                 // jeff 2016/05 add end
 
+                // 当前channel需要导入的feed总件数
+                feedListCnt = feedList.size();
                 // 遍历所有数据
                 for (CmsBtFeedInfoModel feed : feedList) {
                     startTime = System.currentTimeMillis();
+                    currentIndex++;
                     // 将商品从feed导入主数据
                     // 注意: 保存单条数据到主数据的时候, 由于要生成group数据, group数据的生成需要检索数据库进行一系列判断
                     //       所以单个渠道的数据, 最好不要使用多线程, 如果以后一定要加多线程的话, 注意要自己写带锁的代码.
@@ -546,12 +557,30 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         // 继续循环做下一条feed->master导入
                     }
                     // update by desmond 2016/07/05 end
+
+                    // 取得feed->master导入之后的品牌，产品分类，使用人群等mapping件数
+                    newBrandCnt = mapBrandMapping.size();
+                    newProductTypeCnt = mapProductTypeMapping.size();
+                    newSizeTypeCnt = mapSizeTypeMapping.size();
+
+                    // 如果品牌，产品分类或者使用人群等有新增过，则重新导入完成之后重新刷新一次
+                    if (oldBrandCnt != newBrandCnt
+                            || oldProductTypeCnt != newProductTypeCnt
+                            || oldSizeTypeCnt != newSizeTypeCnt) {
+                        // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
+                        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+                        // 保存本次刷新之后新的件数,下次再有一条feed->master导入追加了品牌等，可以及时清空缓存在画面上及时显示出来
+                        oldBrandCnt = newBrandCnt;
+                        oldProductTypeCnt = newProductTypeCnt;
+                        oldSizeTypeCnt = newSizeTypeCnt;
+                    }
+
                     $debug("feed->master导入计时结束 [ChannelId=%s] [FeedCode=%s] [耗时:%s]", channelId, feed.getCode(),
                             (System.currentTimeMillis() - startTime));
                 }
 
-                // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
-                CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+//                // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
+//                CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
             }
 
             // jeff 2016/04 add start
@@ -932,9 +961,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         // 回写feed表updFlg状态为1:feed->master导入成功
                         updateFeedInfo(originalFeed, 1, "", "0");
 
-                        $info(strProcName + " 更新成功 [ChannelId:%s] [ProductCode:%s] [耗时:%s]",
+                        $info(strProcName + " 更新成功 [ChannelId:%s] [ProductCode:%s] [%d/%d] [耗时:%s]",
                                 cmsProduct.getChannelId(), cmsProduct.getCommon().getFields().getCode(),
-                                (System.currentTimeMillis() - startTime));
+                                currentIndex, feedListCnt, (System.currentTimeMillis() - startTime));
                     }
 
                     // 后面的更新不做，直接返回
@@ -1122,14 +1151,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // add desmond 2016/07/07 start
                 if (blnProductExist) {
                     updateCnt++;
-                    $info("feed->master导入:更新成功 [ChannelId:%s] [ProductCode:%s] [耗时:%s]",
+                    $info("feed->master导入:更新成功 [ChannelId:%s] [ProductCode:%s] [%d/%d] [耗时:%s]",
                             cmsProduct.getChannelId(), cmsProduct.getCommon().getFields().getCode(),
-                            (System.currentTimeMillis() - startTime));
+                            currentIndex, feedListCnt, (System.currentTimeMillis() - startTime));
                 } else {
                     insertCnt++;
-                    $info("feed->master导入:新增成功 [ChannelId:%s] [ProductCode:%s] [耗时:%s]",
+                    $info("feed->master导入:新增成功 [ChannelId:%s] [ProductCode:%s] [%d/%d] [耗时:%s]",
                             cmsProduct.getChannelId(), cmsProduct.getCommon().getFields().getCode(),
-                            (System.currentTimeMillis() - startTime));
+                            currentIndex, feedListCnt, (System.currentTimeMillis() - startTime));
                 }
                 // add desmond 2016/07/07 end
             }
