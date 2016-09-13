@@ -167,7 +167,6 @@ define([
                 return;
             }
 
-
             $translate("TXT_BLACK_LIST_BATCH_CONFIRM", {content: $translate.instant(content)}).then(function (msg) {
                 confirm(msg).then(function () {
                     blackBrandService.update({
