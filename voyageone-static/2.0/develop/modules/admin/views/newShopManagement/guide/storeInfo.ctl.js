@@ -54,8 +54,8 @@ define([
                 if (type == 'add') {
                     self.popups.openStoreAdd({
                             'kind': 'add', 'isReadOnly': true,
-                            'orderChannelId': self.storeList[0].orderChannelId,
-                            'channelName': self.storeList[0].channelName,
+                            'orderChannelId': self.context.channel.orderChannelId,
+                            'channelName': self.context.channel.channelName,
                             'sourceData': self.context.channel
                         })
                         .then(function (res) {
@@ -84,7 +84,7 @@ define([
                 var self = this;
                 var delList = [];
                 _.forEach(self.storeSelList.selList, function (delInfo) {
-                    delList.push({'orderChannelId': self.storeList[0].orderChannelId, 'storeId': delInfo.id});
+                    delList.push({'orderChannelId': self.context.channel.orderChannelId, 'storeId': delInfo.id});
                 });
                 _.forEach(delList, function (item) {
                         var source = self.storeList;
@@ -99,7 +99,8 @@ define([
                 );
             },
             next: function () {
-                window.sessionStorage.setItem('valueBean', JSON.stringify(context));
+                var self = this;
+                window.sessionStorage.setItem('valueBean', JSON.stringify(self.context));
                 window.location.href = "#/newShop/guide/cartSet";
             }
         };
