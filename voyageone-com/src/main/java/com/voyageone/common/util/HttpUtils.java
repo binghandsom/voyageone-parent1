@@ -19,8 +19,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.security.KeyStore;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * HttpUtils
@@ -135,25 +133,14 @@ public class HttpUtils {
         return null;
     }
 
+
     public static String post(String url, String jsonBody, String accept, String token) throws Exception {
-        Map<String, String> header = new HashMap<>();
-        // setHeader Accept
-        header.put("Accept", StringUtils.isEmpty(accept) ? "application/json" : accept);
-        // setHeader Authorization
-        if (!StringUtils.isEmpty(token)) header.put("Authorization", "Bearer " + token);
-
-        return post(url, jsonBody, header);
-    }
-
-    public static String post(String url, String jsonBody, Map<String, String> header) throws Exception {
         HttpPost post = new HttpPost(new URI(url));
 
-        // setHeader
-        if (header != null && !header.isEmpty()) {
-            for (Map.Entry<String, String> entry : header.entrySet()) {
-                post.setHeader(entry.getKey(), entry.getValue());
-            }
-        }
+        // setHeader Accept
+        post.setHeader("Accept", StringUtils.isEmpty(accept) ? "application/json" : accept);
+        // setHeader Authorization
+        if (!StringUtils.isEmpty(token)) post.setHeader("Authorization", "Bearer " + token);
 
         //setBody
         post.setEntity(new StringEntity(jsonBody, ContentType.APPLICATION_JSON));
@@ -178,16 +165,12 @@ public class HttpUtils {
         return sb.toString();
     }
 
-    public static String getHttp(String url, Map<String, String> header) throws Exception {
+    public static String targetGet(String url, String jsonBody, String accept, String token) throws Exception {
         HttpGet get = new HttpGet(new URI(url));
-
-        // setHeader
-        if (header != null && !header.isEmpty()) {
-            for (Map.Entry<String, String> entry : header.entrySet()) {
-                get.setHeader(entry.getKey(), entry.getValue());
-            }
-        }
-
+        // setHeader Accept
+        get.setHeader("Accept", StringUtils.isEmpty(accept) ? "application/json" : accept);
+        // setHeader Authorization
+        if (!StringUtils.isEmpty(token)) get.setHeader("Authorization", "Bearer " + token);
         //post request
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpResponse response = httpclient.execute(get);

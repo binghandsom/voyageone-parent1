@@ -20,9 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 class ChannelAdvisorInterceptor {
 
-
     private static final String SELLER_ID = "SellerID";
     private static final String SELLER_TOKEN = "SellerToken";
+    private static final String MAX_RATE = "openapi.channeladvisor.maxrate";
+    private static final String SPLIT_STR = "_CA-API_";
+
+    private static final int EXPIRE_SECOND = 120;
+    private static final int SPLIT_TIME = 60000;
+
 
     @Autowired
     private OAuthService oAuthService;
@@ -43,10 +48,11 @@ class ChannelAdvisorInterceptor {
         }
 
         // 1000 propert
-        Long rateNum = redisRateLimiterHelper.aquire(120,
-                Integer.parseInt(Properties.readValue("com.voyageone.web2.openapi.channeladvisor.maxrate"))
-                , System.currentTimeMillis() / 60000 + "_" +  sellerID);
-        System.out.println("获取到令牌号："+rateNum);
+        @SuppressWarnings("ConstantConditions")
+        Long rateNum = redisRateLimiterHelper.aquire(EXPIRE_SECOND,
+                Integer.parseInt(Properties.readValue(MAX_RATE))
+                , System.currentTimeMillis() / SPLIT_TIME + SPLIT_STR + sellerID);
+
         if (rateNum < 0) {
             // rateLimiter
             throw new CAApiException(ErrorIDEnum.RateLimitExceeded);

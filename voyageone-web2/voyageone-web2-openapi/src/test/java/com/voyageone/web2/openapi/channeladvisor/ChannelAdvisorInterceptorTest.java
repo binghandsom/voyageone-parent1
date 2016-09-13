@@ -1,5 +1,6 @@
 package com.voyageone.web2.openapi.channeladvisor;
 
+import com.voyageone.common.util.HttpExcuteUtils;
 import com.voyageone.common.util.HttpUtils;
 import org.junit.Test;
 
@@ -9,9 +10,11 @@ import java.util.Map;
 
 public class ChannelAdvisorInterceptorTest {
 
+    private static final String URL = "http://localhost:8080/rest/channeladvisor/products";
+
     @Test
-    public void test1() throws IOException {
-        String result = HttpUtils.get("http://localhost:8080/rest/channeladvisor/products");
+    public void test1() throws Exception {
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, URL);
         System.out.println(result);
     }
 
@@ -20,7 +23,7 @@ public class ChannelAdvisorInterceptorTest {
         Map<String, String> header = new HashMap<>();
         header.put("SellerID", "049beea8-bdd1-48f0-a930-e56e42f85458");
 
-        String result = HttpUtils.getHttp("http://localhost:8080/rest/channeladvisor/products", header);
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, URL, null, header);
         System.out.println(result);
     }
 
@@ -30,7 +33,7 @@ public class ChannelAdvisorInterceptorTest {
         header.put("SellerID", "049beea8-bdd1-48f0-a930-e56e42f85458");
         header.put("SellerToken", "caf8e5ed-16c4-40d8-92ce-1ce86e03cac5-1");
 
-        String result = HttpUtils.getHttp("http://localhost:8080/rest/channeladvisor/products", header);
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, URL, null, header);
         System.out.println(result);
     }
 
@@ -40,7 +43,7 @@ public class ChannelAdvisorInterceptorTest {
         header.put("SellerID", "049beea8-bdd1-48f0-a930-e56e42f85458");
         header.put("SellerToken", "caf8e5ed-16c4-40d8-92ce-1ce86e03cac5");
 
-        String result = HttpUtils.getHttp("http://localhost:8080/rest/channeladvisor/products", header);
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, URL, null, header);
         System.out.println(result);
     }
 }
