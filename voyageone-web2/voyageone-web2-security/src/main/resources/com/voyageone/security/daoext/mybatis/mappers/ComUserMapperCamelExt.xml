@@ -9,12 +9,12 @@
         <result column="company" property="companyName"/>
         <collection property="apps" javaType="List" ofType="Map">
             <result column="application" property="application"/>
-            <result column="applicationId" property="applicationId"/>
+            <result column="application_id" property="applicationId"/>
         </collection>
     </resultMap>
 
     <select id="selectPermissionChannel" resultMap="ctUserChannelPermissionMap" >
-        SELECT DISTINCT (res_name) AS application , r.id AS applicationId , c.order_channel_id as channel_id ,c.full_name,c.img_url,c.company_id, co.company
+        SELECT DISTINCT (res_name) AS application , r.application_id , c.order_channel_id as channel_id ,c.full_name,c.img_url,c.company_id, co.company
         from view_user_res r, Synship.tm_order_channel c  , Synship.ct_company co
         where res_type = 0  and r.channel_id = c.order_channel_id and c.company_id = co.id
         and r.channel_id &lt;&gt; 'ALL'
@@ -23,7 +23,7 @@
         and co.active = 1
         and user_id =  #{userId,jdbcType=INTEGER}
         UNION
-        SELECT DISTINCT (res_name) AS application , r.id AS applicationId , c.order_channel_id as channel_id ,c.full_name,c.img_url,c.company_id, co.company
+        SELECT DISTINCT (res_name) AS application , r.application_id , c.order_channel_id as channel_id ,c.full_name,c.img_url,c.company_id, co.company
         from view_user_res r, Synship.tm_order_channel c  , Synship.ct_company co
         where res_type = 0  and c.company_id = co.id
         and r.channel_id = 'ALL'
@@ -34,6 +34,14 @@
 
 
     </select>
+
+    <select id="getPermissionUrls" resultType="java.lang.String">
+        SELECT DISTINCT res_url  from view_user_res
+        where res_type = 2 AND active = 1
+        and user_id =  #{userId,jdbcType=INTEGER}
+        and channel_id =  #{channelId,jdbcType=VARCHAR}
+        and application =  #{application,jdbcType=VARCHAR}
+    </select>>
 
 
 </mapper>

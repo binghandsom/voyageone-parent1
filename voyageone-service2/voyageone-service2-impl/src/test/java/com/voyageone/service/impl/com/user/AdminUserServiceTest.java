@@ -42,10 +42,10 @@ public class AdminUserServiceTest {
 
         AdminUserBean model = new AdminUserBean();
         model.setActive(1);
-        model.setUserName("111");
-        model.setPassword("222");
-        model.setCredentialSalt("333");
-        model.setUserAccount("444");
+        model.setUserName("admin");
+        model.setPassword("123456");
+//        model.setCredentialSalt("333");
+        model.setUserAccount("admin");
         model.setEmail("1111@123.com");
         model.setOrgId(1);
         model.setRoleId("1");
