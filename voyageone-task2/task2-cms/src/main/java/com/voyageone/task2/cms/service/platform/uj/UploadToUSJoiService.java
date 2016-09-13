@@ -112,8 +112,8 @@ public class UploadToUSJoiService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+//        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
+//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
 //        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
 //        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
 
