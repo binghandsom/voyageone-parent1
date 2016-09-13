@@ -120,7 +120,6 @@ define([
                             item.data.runFlg = "0"
                         );
                         forEachTaskList(item.data.taskConfig, item.data.runFlg);
-
                     })
                 }
             },
