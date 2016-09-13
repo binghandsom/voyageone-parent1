@@ -114,8 +114,8 @@ public class UploadToUSJoiService extends BaseTaskService {
 
         // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
         CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
-        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
+//        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
+//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
 
         // 默认线程池最大线程数(目前最后只有2个USJOI的channelId 928, 929)
         int threadPoolCnt = 2;
@@ -232,7 +232,7 @@ public class UploadToUSJoiService extends BaseTaskService {
         if (uploadToUsjoiMaxChannelConfigBean != null && !StringUtils.isEmpty(uploadToUsjoiMaxChannelConfigBean.getConfigValue1())) {
             if (NumberUtils.toInt(uploadToUsjoiMaxChannelConfigBean.getConfigValue1()) >= 2000) {
                 uploadToUsjoiMax = 2000;
-            } else {
+            } else if (NumberUtils.toInt(uploadToUsjoiMaxChannelConfigBean.getConfigValue1()) > 0) {
                 uploadToUsjoiMax = NumberUtils.toInt(uploadToUsjoiMaxChannelConfigBean.getConfigValue1());
             }
         }
@@ -254,14 +254,26 @@ public class UploadToUSJoiService extends BaseTaskService {
             }
         }
 
+        // 取得feed->master导入之前的品牌，产品分类，使用人群等mapping件数，用于判断是否新增之后需要清空缓存
+        int oldBrandCnt = mapBrandMapping.size();
+        int oldProductTypeCnt = mapProductTypeMapping.size();
+        int oldSizeTypeCnt = mapSizeTypeMapping.size();
+        int newBrandCnt, newProductTypeCnt, newSizeTypeCnt;
+
+        int totalCnt = 0;
+        int currentIndex = 0;
+        long startTime;
         // 每个channel读入子店数据上新到USJOI主店
         List<CmsBtSxWorkloadModel> cmsBtSxWorkloadModels = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithCartId(
                 uploadToUsjoiMax, Integer.parseInt(channelBean.getOrder_channel_id()));
+        totalCnt = cmsBtSxWorkloadModels.size();
         for (CmsBtSxWorkloadModel sxWorkloadModel : cmsBtSxWorkloadModels) {
+            startTime = System.currentTimeMillis();
+            currentIndex++;
             try {
                 // 循环上传单个产品到USJOI主店
-                upload(sxWorkloadModel, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping,
-                        usjoiTypeChannelBeanList, cartIds, ccAutoSyncCarts, ccAutoSyncCartList);
+                upload(sxWorkloadModel, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, usjoiTypeChannelBeanList,
+                        cartIds, ccAutoSyncCarts, ccAutoSyncCartList, currentIndex, totalCnt, startTime);
                 successCnt++;
             } catch (CommonConfigNotFoundException ce) {
                 errCnt++;
@@ -279,8 +291,21 @@ public class UploadToUSJoiService extends BaseTaskService {
         // 将该channel的子店->主店导入信息加入map，供channel导入线程全部完成一起显示
         resultMap.put(usjoiChannelId, resultInfo);
 
-        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+        // 取得feed->master导入之后的品牌，产品分类，使用人群等mapping件数
+        newBrandCnt = mapBrandMapping.size();
+        newProductTypeCnt = mapProductTypeMapping.size();
+        newSizeTypeCnt = mapSizeTypeMapping.size();
+
+        // 如果品牌，产品分类或者使用人群等有新增过，则重新导入完成之后重新刷新一次
+        if (oldBrandCnt != newBrandCnt
+                || oldProductTypeCnt != newProductTypeCnt
+                || oldSizeTypeCnt != newSizeTypeCnt) {
+            // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
+            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+        }
+
+//        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
+//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
     }
 
     public void upload(CmsBtSxWorkloadModel sxWorkLoadBean,
@@ -290,7 +315,10 @@ public class UploadToUSJoiService extends BaseTaskService {
                        List<TypeChannelBean> usjoiTypeChannelBeanList,
                        List<Integer> cartIds,
                        String ccAutoSyncCarts,
-                       List<String> ccAutoSyncCartList) {
+                       List<String> ccAutoSyncCartList,
+                       int currentIndex,
+                       int totalCnt,
+                       long startTime) {
         // workload表中的cartId是usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
         String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
 
@@ -611,7 +639,8 @@ public class UploadToUSJoiService extends BaseTaskService {
             List<String> listSxCode = productModels.stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
             // 回写USJOI导入成功状态到子店productGroup和product
             productGroupService.updateGroupsPlatformStatus(cmsBtProductGroupModel, listSxCode);
-            $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 结束", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
+            $info(String.format("channelId:%s  groupId:%d [%d/%d] 复制到%s USJOI成功结束 [耗时:%s]", sxWorkLoadBean.getChannelId(),
+                    sxWorkLoadBean.getGroupId(), currentIndex, totalCnt, usJoiChannelId, (System.currentTimeMillis() - startTime)));
         } catch (CommonConfigNotFoundException ce) {
             String errMsg = "子店->USJOI主店产品导入:异常终止:";
             if (StringUtils.isNullOrBlank2(ce.getMessage())) {
