@@ -49,7 +49,7 @@ public class NewShopController extends AdminController {
 		return success(true);
 	}
 	
-	@RequestMapping(AdminUrlConstants.NewShop.Self.DOWNLOAD_NEW_SHOP_SQL)
+	@RequestMapping(value = AdminUrlConstants.NewShop.Self.DOWNLOAD_NEW_SHOP_SQL, method = RequestMethod.GET)
 	public ResponseEntity<byte[]> downloadNewShopSql(@RequestParam Long newShopId) throws Exception {
 		File sqlFile = newShopService.downloadNewShopSql(newShopId, getUser().getUserName());
 		String downloadFileName = "new-shop-" + System.currentTimeMillis() + ".sql";
