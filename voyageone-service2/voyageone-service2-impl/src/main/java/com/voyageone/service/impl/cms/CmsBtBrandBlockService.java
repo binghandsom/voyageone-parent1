@@ -1,8 +1,5 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.MapUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtBrandBlockDao;
 import com.voyageone.service.impl.BaseService;
@@ -12,7 +9,6 @@ import com.voyageone.service.model.cms.CmsBtBrandBlockModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +49,17 @@ public class CmsBtBrandBlockService extends BaseService {
         }
         CmsBtBrandBlockModel brandBlockModel = new CmsBtBrandBlockModel();
         brandBlockModel.setChannelId(channelId);
-        brandBlockModel.setCartId(cartId);
+        switch (brandType) {
+            case BRAND_TYPE_FEED:
+                brandBlockModel.setCartId(1);
+                break;
+            case BRAND_TYPE_MASTER:
+                brandBlockModel.setCartId(0);
+                break;
+            case BRAND_TYPE_PLATFORM:
+                brandBlockModel.setCartId(cartId);
+                break;
+        }
         brandBlockModel.setType(brandType);
         brandBlockModel.setBrand(brand);
         brandBlockModel.setCreater(username);
@@ -73,24 +79,32 @@ public class CmsBtBrandBlockService extends BaseService {
     public void unblock(String channelId, int cartId, int brandType, String brand) {
         switch (brandType) {
             case BRAND_TYPE_FEED:
+                cartId = 1;
+                break;
             case BRAND_TYPE_MASTER:
+                cartId = 0;
+                break;
             case BRAND_TYPE_PLATFORM:
-                CmsBtBrandBlockModel brandBlockModel = new CmsBtBrandBlockModel();
-                brandBlockModel.setChannelId(channelId);
-                brandBlockModel.setCartId(cartId);
-                brandBlockModel.setType(brandType);
-                brandBlockModel.setBrand(brand);
-
-                brandBlockModel = brandBlockDao.selectOne(brandBlockModel);
-
-                brandBlockDao.delete(brandBlockModel.getId());
-
-                // 同上，只是相反
-                Map<String, Object> mqParams = new HashMap<>();
-                mqParams.put("blocking", false);
-                mqParams.put("data", brandBlockModel);
-                sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, mqParams);
+                break;
+            default:
+                return;
         }
+
+        CmsBtBrandBlockModel brandBlockModel = new CmsBtBrandBlockModel();
+        brandBlockModel.setChannelId(channelId);
+        brandBlockModel.setCartId(cartId);
+        brandBlockModel.setType(brandType);
+        brandBlockModel.setBrand(brand);
+
+        brandBlockModel = brandBlockDao.selectOne(brandBlockModel);
+
+        brandBlockDao.delete(brandBlockModel.getId());
+
+        // 同上，只是相反
+        Map<String, Object> mqParams = new HashMap<>();
+        mqParams.put("blocking", false);
+        mqParams.put("data", brandBlockModel);
+        sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, mqParams);
     }
 
     public boolean isBlocked(String channelId, int cartId, String feedBrand, String masterBrand, String platformBrandId) {
@@ -107,7 +121,7 @@ public class CmsBtBrandBlockService extends BaseService {
     private boolean isBlocked(String channelId, int cartId, int brandType, String brand) {
         return brandBlockDao.selectCount(new HashMap<String, Object>(4, 1f) {{
             put("channelId", channelId);
-            put("cartId", cartId);
+            put("cartId", (brandType == BRAND_TYPE_FEED) ? 1 : (brandType == BRAND_TYPE_MASTER ? 0 : cartId));
             put("type", brandType);
             put("brand", brand);
         }}) > 0;

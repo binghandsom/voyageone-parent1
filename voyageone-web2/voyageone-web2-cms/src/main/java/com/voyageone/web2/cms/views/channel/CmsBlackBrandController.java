@@ -40,7 +40,7 @@ public class CmsBlackBrandController extends CmsController {
      * 更新/批量更新 商品黑名单
      */
     @RequestMapping(BLACK_BRAND.UPDATE_BLACK_BRAND)
-    public AjaxResponse updateBlackBrand(@RequestBody CmsBlackBrandParamBean blackBrandParamBean) {
+    public AjaxResponse updateBlackBrand(@RequestBody CmsBlackBrandParamBean blackBrandParamBean) throws IllegalAccessException {
         return success(blackBrandViewService.switchBrandBlock(blackBrandParamBean, getUser()));
     }
 }

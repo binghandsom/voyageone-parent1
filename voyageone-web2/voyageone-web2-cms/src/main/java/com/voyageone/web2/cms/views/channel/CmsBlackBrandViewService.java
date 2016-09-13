@@ -109,7 +109,7 @@ class CmsBlackBrandViewService extends BaseViewService {
         return result;
     }
 
-    boolean switchBrandBlock(CmsBlackBrandParamBean blackBrandParamBean, UserSessionBean user) {
+    boolean switchBrandBlock(CmsBlackBrandParamBean blackBrandParamBean, UserSessionBean user) throws IllegalAccessException {
 
         Boolean status = blackBrandParamBean.getStatus();
 
@@ -130,7 +130,7 @@ class CmsBlackBrandViewService extends BaseViewService {
         return true;
     }
 
-    private void switchBrandBlock(boolean blocked, String channelId, CmsBlackBrandViewBean blackBrandViewBean, String username) {
+    private void switchBrandBlock(boolean blocked, String channelId, CmsBlackBrandViewBean blackBrandViewBean, String username) throws IllegalAccessException {
         if (blocked)
             brandBlockService.block(channelId, blackBrandViewBean.getCartId(), blackBrandViewBean.getType(),
                     blackBrandViewBean.getBrand(), username);
@@ -232,7 +232,7 @@ class CmsBlackBrandViewService extends BaseViewService {
         CmsBlackBrandViewBean viewBean = new CmsBlackBrandViewBean();
 
         viewBean.setChannelId(channelValuesModel.getChannelId());
-        viewBean.setCartId(0);
+        viewBean.setCartId(1);
         viewBean.setType(CmsBtBrandBlockService.BRAND_TYPE_FEED);
         viewBean.setBrand(channelValuesModel.getKey());
         viewBean.setBrandName(channelValuesModel.getValue());
