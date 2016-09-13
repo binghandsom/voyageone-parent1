@@ -61,8 +61,8 @@ define([
             copy: function (channelId) {
                 var self = this;
                 self.resList ? {} : {};
-                if (self.infoList.sessionKey) self.infoList.sessionKey = '';
-                if (self.infoList.screctKey) self.infoList.sessionKey = '';
+                if (self.resList.sessionKey) self.resList.sessionKey = '';
+                if (self.resList.screctKey) self.resList.sessionKey = '';
                 self.newShopService.getChannelSeries(channelId).then(function (res) {
                     self.resListCopy = res.data;
                     if (self.autoCopy == true) {
@@ -123,11 +123,11 @@ define([
                 var self = this;
                 if (type == 'secretKey') {
                     self.channelService.generateSecretKey().then(function (res) {
-                        self.infoList.screctKey = res.data;
+                        self.resList.screctKey = res.data;
                     })
                 } else {
                     self.channelService.generateSessionKey().then(function (res) {
-                        self.infoList.sessionKey = res.data;
+                        self.resList.sessionKey = res.data;
                     })
                 }
             },

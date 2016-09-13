@@ -319,6 +319,7 @@ define([
                             } else {
                                 var list = self.taskCfgList;
                                 list.push(res);
+                                _forEachAdd(self.sourceData.sourceData, 'taskConfig', res);
                                 self.search(1);
                             }
                         });
@@ -570,6 +571,11 @@ define([
                     case 'cartShopConfig':
                         if (item.channelName === targetData.channelName && item.cartName === targetData.cartName) {
                             source[x].cartShopConfig.push(targetData);
+                        }
+                        break;
+                    case 'taskConfig':
+                        if (item.taskName === targetData.taskName) {
+                            source[x].taskConfig.push(targetData);
                         }
                         break;
                 }
