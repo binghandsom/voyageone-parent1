@@ -57,7 +57,7 @@
                                     <div class="col-sm-8">
                                         <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.orgId">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{org.id}}" ng-repeat="org in ctrl.orgList">&nbsp;{{org.orgName}}</option>
+                                            <option value="{{org.id}}" ng-repeat="org in ctrl.orgList" ng-bind="org.orgName"></option>
                                         </select>
                                     </div>
                                 </div>
@@ -66,7 +66,7 @@
                                     <div class="col-sm-8">
                                         <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.storeId">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{store.storeId}}" ng-repeat="store in ctrl.storeList">&nbsp;{{store.storeName}}</option>
+                                            <option value="{{store.storeId}}" ng-repeat="store in ctrl.storeList" ng-bind="store.storeName"></option>
                                         </select>
                                     </div>
                                 </div>

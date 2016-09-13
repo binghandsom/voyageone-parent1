@@ -24,12 +24,19 @@ define([
         AddRoleController.prototype = {
             init: function () {
                 var self = this;
+                self.applicationList = [
+                    {'id':1,'application':'Admin'},
+                    {'id':2,'application':'CMS'},
+                    {'id':3,'application':'OMS'},
+                    {'id':4,'application':'WMS'}
+                ];
                 self.adminRoleService.getAllRoleType().then(function (res) {
                     self.roleTypeList = res.data;
                 });
                 if (self.sourceData == 'add') {
                     self.popType = '添加角色';
-                    self.sourceData = {}
+                    self.sourceData = {};
+                    self.sourceData.active = '1';
                 }
                 self.adminOrgService.getAllOrg().then(function (res) {
                     self.orgList = res.data;
@@ -278,6 +285,7 @@ define([
             },
             save: function () {
                 var self = this;
+                console.log(self.selectedAppList);
                 if (self.sourceData.allChannel == '1' || self.sourceData.allStore == '1') {
                     self.sourceData.channelId = [];
                     self.sourceData.storeId = [];

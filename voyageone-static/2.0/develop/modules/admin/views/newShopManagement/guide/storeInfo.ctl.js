@@ -99,6 +99,7 @@ define([
                 );
             },
             next: function () {
+                window.sessionStorage.setItem('valueBean', JSON.stringify(context));
                 window.location.href = "#/newShop/guide/cartSet";
             }
         };
