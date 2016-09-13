@@ -159,18 +159,19 @@ public class UserService extends BaseAppService {
 
     private List<String> getPermissionUrls(UserSessionBean userSessionBean, String channelId) {
 
-        List<PermissionBean> rolePermissions = userDao.selectRolePermissions(channelId, userSessionBean.getUserName());
-
-        List<PermissionBean> userPermissions = userDao.selectUserPermissions(channelId, userSessionBean.getUserName());
-
-        return Stream.concat(rolePermissions.stream(), userPermissions.stream())
-                .filter(PermissionBean::isEnabled)
-                .map(permissionBean -> String.format("/%s/%s/%s/%s",
-                        permissionBean.getApplication(),
-                        permissionBean.getModule(),
-                        permissionBean.getController(),
-                        permissionBean.getAction()))
-                .distinct()
-                .collect(toList());
+//        List<PermissionBean> rolePermissions = userDao.selectRolePermissions(channelId, userSessionBean.getUserName());
+//
+//        List<PermissionBean> userPermissions = userDao.selectUserPermissions(channelId, userSessionBean.getUserName());
+//
+//        return Stream.concat(rolePermissions.stream(), userPermissions.stream())
+//                .filter(PermissionBean::isEnabled)
+//                .map(permissionBean -> String.format("/%s/%s/%s/%s",
+//                        permissionBean.getApplication(),
+//                        permissionBean.getModule(),
+//                        permissionBean.getController(),
+//                        permissionBean.getAction()))
+//                .distinct()
+//                .collect(toList());
+        return  comUserService.getPermissionUrls(userSessionBean.getUserId(), channelId, "cms");
     }
 }
