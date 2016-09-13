@@ -188,8 +188,9 @@ public class Jumei_019_SummerGuru_DictTest {
 
         // 生成内容
         {
-            // 中文长描述
-            MasterWord word = new MasterWord("longDesCn");
+            // 详情描述 - 中文
+            // 注意：<br> 替换成 <br />，并删除所有*号。
+            MasterHtmlWord word = new MasterHtmlWord("longDesCn");
             ruleRoot.addRuleWord(word);
         }
 
