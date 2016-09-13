@@ -60,15 +60,17 @@ public class AdminRoleService extends BaseService {
 
 
 
-    public Map<Integer, String> getAllRole() {
+    public List<Map<String, Object>> getAllRole() {
         List<ComRoleModel> roleList = comRoleDao.selectList(new HashMap<String, Object>() {{
             put("active", 1);
         }});
 
+        List<Map<String, Object>> retList = new ArrayList<>();
 
-        Map resultMap = roleList.stream().collect(Collectors.toMap(ComRoleModel::getId, ComRoleModel::getRoleName));
 
-        return resultMap;
+        roleList.forEach(w -> retList.add(new HashMap<String, Object>()  {{put("roleId", w.getId());  put("roleName", w.getRoleName()); } } ) );
+
+        return retList;
     }
 
     /**
@@ -288,7 +290,7 @@ public class AdminRoleService extends BaseService {
         for (Integer id : ids) {
             ComRoleModel model = new ComRoleModel();
             model.setId(id);
-            model.setActive(false);
+            model.setActive(0);
             model.setModifier(username);
             if (!(comRoleDao.update(model) > 0)) {
                 throw new BusinessException("禁用角色信息失败");
