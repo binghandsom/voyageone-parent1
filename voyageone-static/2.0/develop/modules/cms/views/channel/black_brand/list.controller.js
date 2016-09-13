@@ -7,7 +7,7 @@
 define([
     'cms',
     'modules/cms/enums/Carts'
-], function (cms,cartEnums) {
+], function (cms, cartEnums) {
 
     var $brandType = {
         "0": "Feed品牌",
@@ -57,6 +57,16 @@ define([
             self.search();
         };
 
+        BlackBrandListController.prototype.clear = function () {
+            this.searchInfo = {
+                brandType: null,
+                cart: {},
+                status: null,
+                brand: ''
+            };
+        };
+
+
         /**查询*/
         BlackBrandListController.prototype.search = function () {
             var self = this,
@@ -69,6 +79,8 @@ define([
             cartIdList = _.map(searchInfo.cart, function (value, key) {
                 if (value)
                     return +key;
+            }).filter(function (item) {
+                return item
             });
 
             upEntity = _.extend({
@@ -115,7 +127,8 @@ define([
                 confirm(msg).then(function () {
                     blackBrandService.update({
                         status: mark,
-                        brandList: brandList}).then(function () {
+                        brandList: brandList
+                    }).then(function () {
                         notify.success('TXT_MSG_UPDATE_SUCCESS');
                         self.search();
                     }, function () {
@@ -159,7 +172,8 @@ define([
                 confirm(msg).then(function () {
                     blackBrandService.update({
                         status: mark,
-                        brandList: brandList}).then(function () {
+                        brandList: brandList
+                    }).then(function () {
                         notify.success('TXT_MSG_UPDATE_SUCCESS');
                         self.search();
                     }, function () {
