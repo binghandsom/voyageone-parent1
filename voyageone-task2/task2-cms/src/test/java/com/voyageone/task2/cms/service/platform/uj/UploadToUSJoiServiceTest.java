@@ -52,8 +52,8 @@ public class UploadToUSJoiServiceTest {
 
         // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
         CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
-        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
+//        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
+//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
 
         String usjoiChannelId = "929";
 
@@ -150,8 +150,12 @@ public class UploadToUSJoiServiceTest {
         sxWorkLoadBean.setModifier("james");
         sxWorkLoadBean.setCartId(Integer.parseInt(usjoiChannelId)); // "929"
 
-        uploadToUSJoiService.upload(sxWorkLoadBean, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping,
-                usjoiTypeChannelBeanList, cartIds, ccAutoSyncCarts, ccAutoSyncCartList);
+        int totalCnt = 1;
+        int currentIndex = 0;
+        long startTime = System.currentTimeMillis();
+
+        uploadToUSJoiService.upload(sxWorkLoadBean, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, usjoiTypeChannelBeanList,
+                cartIds, ccAutoSyncCarts, ccAutoSyncCartList, currentIndex, totalCnt, startTime);
     }
 
     @Test
