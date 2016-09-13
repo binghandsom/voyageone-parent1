@@ -1,4 +1,4 @@
-package com.voyageone.service.dao.vms;
+package com.voyageone.service.daoext.vms;
 
 import com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel;
 import com.voyageone.service.model.vms.VmsBtClientOrdersModel;
@@ -12,7 +12,7 @@ import java.util.List;
  * @since 2.0.0
  */
 @Repository
-public interface VmsBtCAClientDao {
+public interface VmsBtClientOrdersDaoExt {
 
     //根据id查询clientOrder
     VmsBtClientOrdersModel selectClientOrderById(String orderId, String orderChannelId);

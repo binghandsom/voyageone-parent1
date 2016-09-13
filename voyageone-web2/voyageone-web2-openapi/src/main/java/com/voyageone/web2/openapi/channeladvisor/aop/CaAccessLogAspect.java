@@ -50,10 +50,10 @@ public class CaAccessLogAspect {
 
     @Around(POINT_CUT)
     public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
-        log.info("CaAccessLogAspect_doAround start:" + pjp.getSignature().getName());
+        log.info("CaAccessLogAspect_doAround start:" + pjp.getSignature().getName()+ Arrays.toString(pjp.getArgs()));
         Object responseObj = pjp.proceed();
         saveLogToDB(pjp, responseObj, null);
-        log.info("CaAccessLogAspect_doAround end:" + pjp.getSignature().getName());
+        log.info("CaAccessLogAspect_doAround end:" + pjp.getSignature().getName()+" response body:"+JacksonUtil.bean2Json(responseObj));
         return responseObj;
     }
 

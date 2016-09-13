@@ -6,6 +6,17 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.vms.channeladvisor.enums.ErrorIDEnum;
+import com.voyageone.service.bean.vms.channeladvisor.enums.OrderStatusEnum;
+import com.voyageone.service.bean.vms.channeladvisor.order.OrderAddressModel;
+import com.voyageone.service.bean.vms.channeladvisor.order.OrderItemCancellationModel;
+import com.voyageone.service.bean.vms.channeladvisor.order.OrderItemModel;
+import com.voyageone.service.bean.vms.channeladvisor.order.OrderModel;
+
+
+import com.voyageone.service.bean.vms.channeladvisor.request.OrderCancellationRequest;
+import com.voyageone.service.bean.vms.channeladvisor.request.ShipRequest;
+import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.vms.order.CAClientService;
 import com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel;
@@ -13,15 +24,6 @@ import com.voyageone.service.model.vms.VmsBtClientOrdersModel;
 import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseService;
 import com.voyageone.web2.openapi.channeladvisor.exception.CAApiException;
 import com.voyageone.web2.openapi.channeladvisor.service.CAOrderService;
-import com.voyageone.web2.sdk.api.channeladvisor.domain.OrderAddressModel;
-import com.voyageone.web2.sdk.api.channeladvisor.domain.OrderItemCancellationModel;
-import com.voyageone.web2.sdk.api.channeladvisor.domain.OrderItemModel;
-import com.voyageone.web2.sdk.api.channeladvisor.domain.OrderModel;
-import com.voyageone.web2.sdk.api.channeladvisor.enums.ErrorIDEnum;
-import com.voyageone.web2.sdk.api.channeladvisor.enums.OrderStatusEnum;
-import com.voyageone.web2.sdk.api.channeladvisor.request.OrderCancellationRequest;
-import com.voyageone.web2.sdk.api.channeladvisor.request.ShipRequest;
-import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -83,7 +85,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             buyerOrderAddressModel.setStateOrProvince(m.getBuyerStateOrProvince());
             orderModel.setBuyerAddress(buyerOrderAddressModel);
             orderModel.setCurrency(m.getCurrency());
-            orderModel.setDeliverByDateUtc(DateTimeUtil.parse(m.getDeliverByDate()));
+            orderModel.setDeliverByDateUtc(m.getDeliverByDate());
 
             List<OrderItemModel> orderItemsModes = new ArrayList<>();
             for (VmsBtClientOrderDetailsModel orderDetailsModel : orderDetailsModels) {
@@ -97,7 +99,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             }
 
             orderModel.setItems(orderItemsModes);
-            orderModel.setOrderDateUtc(DateTimeUtil.parse(m.getOrderDate()));
+            orderModel.setOrderDateUtc(m.getOrderDate());
             orderModel.setOrderStatus(OrderStatusEnum.getInstance(m.getOrderStatus()));
             orderModel.setRequestedShippingMethod(m.getRequestedShippingMethod());
             orderModel.setTotalFees(m.getTotalFees());
@@ -160,7 +162,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         buyerOrderAddressModel.setStateOrProvince(m.getBuyerStateOrProvince());
         orderModel.setBuyerAddress(buyerOrderAddressModel);
         orderModel.setCurrency(m.getCurrency());
-        orderModel.setDeliverByDateUtc(DateTimeUtil.parse(m.getDeliverByDate()));
+        orderModel.setDeliverByDateUtc(m.getDeliverByDate());
 
         List<OrderItemModel> orderItemsModes = new ArrayList<>();
         for (VmsBtClientOrderDetailsModel orderDetailsModel : orderDetailsModels) {
@@ -174,7 +176,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         }
 
         orderModel.setItems(orderItemsModes);
-        orderModel.setOrderDateUtc(DateTimeUtil.parse(m.getOrderDate()));
+        orderModel.setOrderDateUtc(m.getOrderDate());
         orderModel.setOrderStatus(OrderStatusEnum.getInstance(m.getOrderStatus()));
         orderModel.setRequestedShippingMethod(m.getRequestedShippingMethod());
         orderModel.setTotalFees(m.getTotalFees());
@@ -252,7 +254,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             String sku = vmsBtClientOrderDetailsModel.getSellerSku();
             if (request.getItems().get(sku) != null) {
 
-                vmsBtClientOrderDetailsModel.setShippedDate(DateTimeUtil.format(request.getShippedDateUtc(), null));
+                vmsBtClientOrderDetailsModel.setShippedDate(request.getShippedDateUtc());
                 vmsBtClientOrderDetailsModel.setTrackingNumber(request.getTrackingNumber());
                 vmsBtClientOrderDetailsModel.setShippingCarrier(request.getShippingCarrier());
                 vmsBtClientOrderDetailsModel.setShippingClass(request.getShippingClass());

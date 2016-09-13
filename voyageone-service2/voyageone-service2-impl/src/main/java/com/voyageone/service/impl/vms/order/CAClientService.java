@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.vms.order;
 
-import com.voyageone.service.dao.vms.VmsBtCAClientDao;
+import com.voyageone.service.daoext.vms.VmsBtClientOrdersDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel;
 import com.voyageone.service.model.vms.VmsBtClientOrdersModel;
@@ -18,7 +18,7 @@ import java.util.List;
 public class CAClientService extends BaseService {
 
     @Autowired
-    private VmsBtCAClientDao vmsBtCAClientDao;
+    private VmsBtClientOrdersDaoExt vmsBtCAClientDao;
 
     public List<VmsBtClientOrdersModel> getClientOrderList(String channelId, String status, String limit) {
         return vmsBtCAClientDao.selectClientOrderList(channelId, status, Integer.parseInt(limit));
