@@ -113,6 +113,9 @@ define([
 
             self.confirm('切换类目, 会清空您<strong>未保存</strong>的所有内容。确认要切换么?').then(function () {
                 self.tryGet();
+
+                if(searchInfo.categoryType == 1)
+                    searchInfo.categoryPath = null;
             }, function () {
                 searchInfo.categoryType = self.lastCategoryType;
             });
@@ -134,7 +137,6 @@ define([
             }
 
             self.categoryTitle = (self.searchInfo.categoryType == 1) ? "全类目" : self.searchInfo.categoryPath;
-
             self.lastCartId = searchInfo.cartId;
             self.lastCategoryType = searchInfo.categoryType;
 

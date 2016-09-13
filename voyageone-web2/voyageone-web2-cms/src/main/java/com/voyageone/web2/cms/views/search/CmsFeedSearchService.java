@@ -127,9 +127,9 @@ public class CmsFeedSearchService extends BaseViewService {
 
         Map<String,Object> paraStatusMap = new HashMap<>(1);
         if (status == CmsConstants.FeedUpdFlgStatus.Pending){
-            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr)));
+            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr,CmsConstants.FeedUpdFlgStatus.FeedBlackList)));
         }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
-            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr)));
+            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr,CmsConstants.FeedUpdFlgStatus.FeedBlackList)));
         }
         paraMap2.put("updFlg",paraStatusMap);
 
@@ -149,14 +149,17 @@ public class CmsFeedSearchService extends BaseViewService {
             searchStatus=(List<Integer>)searchValue.get("status");
         }else{
             if (status == CmsConstants.FeedUpdFlgStatus.Pending){
-                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr)));
+                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr,CmsConstants.FeedUpdFlgStatus.FeedBlackList)));
             }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
-                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr)));
+                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr,CmsConstants.FeedUpdFlgStatus.FeedBlackList)));
             }
         }
         if(status == CmsConstants.FeedUpdFlgStatus.Pending){
             if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedErr)){
                 throw new BusinessException("Feed数据异常错误的数据是不能导入主数据的，请重新选择状态");
+            }
+            if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedBlackList)){
+                throw new BusinessException("Feed品牌黑免单的数据是不能导入主数据的，请重新选择状态");
             }
         }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
             if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.Succeed)){
@@ -164,6 +167,9 @@ public class CmsFeedSearchService extends BaseViewService {
             }
             if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedErr)){
                 throw new BusinessException("Feed数据异常错误的数据是不能设为不导入的，请重新选择状态");
+            }
+            if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedBlackList)){
+                throw new BusinessException("Feed品牌黑免单的数据是不能设为不导入的，请重新选择状态");
             }
         }
         String searchQuery = feedInfoService.getSearchQuery(searchValue);
