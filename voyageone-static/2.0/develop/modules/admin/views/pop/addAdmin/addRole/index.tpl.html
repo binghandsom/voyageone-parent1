@@ -46,18 +46,24 @@
                     <div class="row form-group"><!-- 授权系统 -->
                         <label class="col-sm-2 control-label">{{'TXT_ROLE_SYSTEM' | translate}}</label>
                         <div class="col-sm-10">
-                            <label class="checkbox-inline c-checkbox" ng-disabled="ctrl.popType=='修改角色'">
-                                <input type="checkbox" value="cms" ng-model="ctrl.sourceData.application" ng-checked="ctrl.sourceData.application=='cms'"><span class="fa fa-check"></span>&nbsp;CMS
+                            <label class="checkbox-inline c-checkbox" ng-repeat="app in ctrl.applicationList">
+                                <input type="checkbox" ng-value="app.id" style="margin: 0"
+                                       ng-model="ctrl.selectedAppList[app.id]"><span class="fa fa-check"></span> {{app.application}}
                             </label>
-                            <label class="checkbox-inline c-checkbox" ng-disabled="ctrl.popType=='修改角色'">
-                                <input type="checkbox" value="oms" ng-model="ctrl.sourceData.application" ng-checked="ctrl.sourceData.application=='oms'"><span class="fa fa-check"></span>&nbsp;OMS
-                            </label>
-                            <label class="checkbox-inline c-checkbox" ng-disabled="ctrl.popType=='修改角色'">
-                                <input type="checkbox" value="wms" ng-model="ctrl.sourceData.application" ng-checked="ctrl.sourceData.application=='wms'"><span class="fa fa-check"></span>&nbsp;WMS
-                            </label>
-                            <label class="checkbox-inline c-checkbox" style="margin-left: 0" ng-disabled="ctrl.popType=='修改角色'">
-                                <input type="checkbox" value="admin" ng-model="ctrl.sourceData.application" ng-checked="ctrl.sourceData.application=='admin'"><span class="fa fa-check"></span>&nbsp;ADMIN
-                            </label>
+
+
+                            <!--<label class="checkbox-inline c-checkbox" ng-disabled="ctrl.popType=='修改角色'">-->
+                                <!--<input type="checkbox" value="cms" ng-model="ctrl.sourceData.application" ng-checked="ctrl.sourceData.application=='cms'"><span class="fa fa-check"></span>&nbsp;CMS-->
+                            <!--</label>-->
+                            <!--<label class="checkbox-inline c-checkbox" ng-disabled="ctrl.popType=='修改角色'">-->
+                                <!--<input type="checkbox" value="oms" ng-model="ctrl.sourceData.application" ng-checked="ctrl.sourceData.application=='oms'"><span class="fa fa-check"></span>&nbsp;OMS-->
+                            <!--</label>-->
+                            <!--<label class="checkbox-inline c-checkbox" ng-disabled="ctrl.popType=='修改角色'">-->
+                                <!--<input type="checkbox" value="wms" ng-model="ctrl.sourceData.application" ng-checked="ctrl.sourceData.application=='wms'"><span class="fa fa-check"></span>&nbsp;WMS-->
+                            <!--</label>-->
+                            <!--<label class="checkbox-inline c-checkbox" style="margin-left: 0" ng-disabled="ctrl.popType=='修改角色'">-->
+                                <!--<input type="checkbox" value="admin" ng-model="ctrl.sourceData.application" ng-checked="ctrl.sourceData.application=='admin'"><span class="fa fa-check"></span>&nbsp;ADMIN-->
+                            <!--</label>-->
                             <div class="text-warnings" style="padding-left:0">
                                 <i class="icon fa fa-bell-o"></i>&nbsp;请在授权页面中编辑该角色的授权系统
                             </div>

@@ -43,7 +43,7 @@ define([
                     self.storeList = [];
                     _.forEach(self.tempList, function (item) {
                         var data = '(' + item.channelId + ')' + item.storeName;
-                        self.storeList.push(data);
+                        self.storeList.push({'storeId':item.storeId,'storeName':data});
                     })
                 });
                 self.adminOrgService.getAllOrg().then(function (res) {
