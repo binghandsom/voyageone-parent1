@@ -800,7 +800,7 @@ define(function () {
         "TXT_CONFIRM_STATUS": "确认状态",
         "TXT_CONFIRM_PRICE": "确认指导价",
         "TXT_FLOATING_RATE": "价格波动",
-        "TXT_TASK_LIST": "任务一览"
+        "TXT_TASK_LIST": "任务一览",
         "TXT_FLOATING_RATE": "价格波动",
 
         /**黑名单*/
