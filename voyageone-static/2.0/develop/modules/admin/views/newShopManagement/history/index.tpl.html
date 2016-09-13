@@ -103,7 +103,7 @@
                     <td class="text-center v-middle">
                         <button class="btn btn-default" ng-click="ctrl.edit(list)"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
                         <button class="btn btn-default" ng-click="ctrl.delete(list)"><i class="fa fa-ban"></i>&nbsp;删除</button>
-                        <button class="btn btn-default" ng-click="ctrl.download(list)"><i class="fa fa-pencil"></i>&nbsp;下载</button>
+                        <a class="btn btn-default" ng-href="/admin/newshop/self/downloadNewShopSql?newShopId={{::list.id}}"><i class="fa fa-pencil"></i>&nbsp;下载</a>
                     </td>
                 </tr>
                 </tbody>

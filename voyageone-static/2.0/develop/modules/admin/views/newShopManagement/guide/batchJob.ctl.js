@@ -101,6 +101,18 @@ define([
                     }
                 );
             },
+            run: function (item) {
+                var self = this;
+                if (item.type == 'Start') {
+                    self.confirm('确定启动该任务吗？').then(function () {
+
+                    })
+                } else {
+                    self.confirm('确定停止该任务吗？').then(function () {
+
+                    })
+                }
+            },
             complete: function () {
                 var self = this;
                 self.confirm('您确定要提交全部新店的数据吗？').then(function () {

@@ -49,7 +49,7 @@ define([
                     self.companyAllList = res.data;
                 });
                 var url = self.$location.url();
-                if (url.indexOf('previous=true') > -1) {
+                if (url.indexOf('reload') > -1) {
                     var context = window.sessionStorage.getItem('valueBean');
                     if (context) {
                         self.resListCopy = JSON.parse(context);
@@ -261,7 +261,6 @@ define([
             _forEach(data.carrier, callback);
             _forEach(data.channelAttr, callback);
             _forEach(data.store, callback);
-            _forEach(data.cartShop, callback);
             _forEach(data.cartShop, callback, 'cartShopConfig');
             _forEach(data.cartTracking, callback);
         }

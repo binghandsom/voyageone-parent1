@@ -74,9 +74,11 @@ define([
             },
             edit: function (item) {
                 var self = this;
-                self.newShopService.getNewShopById(item.channelId).then(function (res) {
-                    console.log(res);
-                    window.location.href = "#/newShop/guide";
+                self.newShopService.getNewShopById(item.id).then(function (res) {
+                    var data = res.data.data;
+                    data.id = item.id;
+                    window.sessionStorage.setItem('valueBean', data);
+                    window.location.href = "#/newShop/guide?reload";
                 })
             },
             delete: function (item) {
@@ -88,9 +90,6 @@ define([
                         })
                     }
                 );
-            },
-            download: function () {
-
             }
         };
         return HistoryConfigController;
