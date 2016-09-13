@@ -540,6 +540,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                         // 回写feedInfo表(本来准备不回写，但一个feed都不回写的话画面上看不见错误信息)
                         updateFeedInfo(feed, 2, errMsg, "");  // 2:feed->master导入失败
+
+                        $info("feed->master导入:共通配置异常终止:[ChannelId:%s] [%d/%d] [FeedCode:%s] [耗时:%s]",
+                                channelId, currentIndex, feedListCnt, feed.getCode(), (System.currentTimeMillis() - startTime));
+
                         // 跳出循环,后面的feed->master导入不做了，等这个channel共通错误改好了之后再做导入
                         break;
                     } catch (Exception e) {
@@ -558,6 +562,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         // 回写feedInfo表
                         updateFeedInfo(feed, 2, errMsg, "");  // 2:feed->master导入失败
                         // 继续循环做下一条feed->master导入
+
+                        $info("feed->master导入:异常终止:[ChannelId:%s] [%d/%d] [FeedCode:%s] [耗时:%s]",
+                                channelId, currentIndex, feedListCnt, feed.getCode(), (System.currentTimeMillis() - startTime));
                     }
                     // update by desmond 2016/07/05 end
 
@@ -956,9 +963,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         // 回写feed表updFlg状态为1:feed->master导入成功
                         updateFeedInfo(originalFeed, 1, "", "0");
 
-                        $info(strProcName + " 更新成功 [ChannelId:%s] [ProductCode:%s] [%d/%d] [耗时:%s]",
-                                cmsProduct.getChannelId(), cmsProduct.getCommon().getFields().getCode(),
-                                currentIndex, feedListCnt, (System.currentTimeMillis() - startTime));
+                        $info(strProcName + " 更新成功 [ChannelId:%s] [%d/%d] [ProductCode:%s] [耗时:%s]",
+                                cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
+                                (System.currentTimeMillis() - startTime));
                     }
 
                     // 后面的更新不做，直接返回
@@ -1146,14 +1153,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // add desmond 2016/07/07 start
                 if (blnProductExist) {
                     updateCnt++;
-                    $info("feed->master导入:更新成功 [ChannelId:%s] [ProductCode:%s] [%d/%d] [耗时:%s]",
-                            cmsProduct.getChannelId(), cmsProduct.getCommon().getFields().getCode(),
-                            currentIndex, feedListCnt, (System.currentTimeMillis() - startTime));
+                    $info("feed->master导入:更新成功 [ChannelId:%s] [%d/%d] [ProductCode:%s] [耗时:%s]",
+                            cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
+                            (System.currentTimeMillis() - startTime));
                 } else {
                     insertCnt++;
-                    $info("feed->master导入:新增成功 [ChannelId:%s] [ProductCode:%s] [%d/%d] [耗时:%s]",
-                            cmsProduct.getChannelId(), cmsProduct.getCommon().getFields().getCode(),
-                            currentIndex, feedListCnt, (System.currentTimeMillis() - startTime));
+                    $info("feed->master导入:新增成功 [ChannelId:%s] [%d/%d] [ProductCode:%s] [耗时:%s]",
+                            cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
+                            (System.currentTimeMillis() - startTime));
                 }
                 // add desmond 2016/07/07 end
             }
