@@ -32,7 +32,7 @@ define([
                 _.forEach(self.taskList, function (Info) {
                     if (Info.updFlg != 8) {
                         self.tempTaskSelect.currPageRows({
-                            "id": Info.taskId
+                            "id": Info.taskName
                         });
                     }
                 });
@@ -50,9 +50,15 @@ define([
                     return;
                 } else {
                     _.forEach(self.taskList, function (Info) {
-                        if (Info.taskId == self.taskSelList.selList[0].id) {
-                            _.extend(Info, {'configType': type});
-                            self.popups.openConfig(Info);
+                        if (Info.taskName == self.taskSelList.selList[0].id) {
+                            var data = {
+                                'sourceData': [],
+                                'configType': type,
+                                'taskId': Info.taskId,
+                                'isReadOnly': true
+                            };
+                            data.sourceData.push(Info);
+                            self.popups.openConfig(data);
                         }
                     })
                 }
@@ -65,16 +71,22 @@ define([
                         'isReadOnly': true,
                         'orderChannelId': self.context.channel.orderChannelId
                     }).then(function (res) {
+                        res.taskConfig = [{
+                            'taskId': res.taskName,
+                            'cfgName': 'run_flg',
+                            'cfgVal1': res.runFlg,
+                            'cfgVal2': '',
+                            'endTime': null,
+                            'comment': 'Run flag of task'
+                        }];
+                        res.taskId = 'x'+Math.random();
                         var list = self.taskList;
-                        if (res.runFlg == '1') {
-                            res.taskConfig = [{'taskId':res.taskName,'cfgName':'run_flg', 'cfgVal1':'1','cfgVal2':'', 'endTime':null,'comment':'Run flag of task'}];
-                        };
                         list.push(res);
                         self.init(1);
                     });
                 } else {
                     _.forEach(self.taskList, function (Info) {
-                        if (Info.taskId == self.taskSelList.selList[0].id) {
+                        if (Info.taskName == self.taskSelList.selList[0].id) {
                             _.extend(Info, {'isReadOnly': true});
                             self.popups.openTask(Info).then(function () {
                                 self.init(1);
@@ -93,7 +105,7 @@ define([
                         _.forEach(delList, function (item) {
                                 var source = self.taskList;
                                 var data = _.find(source, function (sItem) {
-                                    return sItem.taskId == item;
+                                    return sItem.taskName == item;
                                 });
                                 if (source.indexOf(data) > -1) {
                                     source.splice(source.indexOf(data), 1);

@@ -18,9 +18,9 @@
                                 <div class="row form-group"><!-- 角色 -->
                                     <label class="col-sm-3 control-label">{{'TXT_ROLE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.roleName">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.roleId">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{role}}" ng-repeat="role in ctrl.roleList">&nbsp;{{role}}</option>
+                                            <option value="{{role.roleId}}" ng-repeat="role in ctrl.roleList">&nbsp;{{role.roleName}}</option>
                                         </select>
                                     </div>
                                 </div>

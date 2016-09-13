@@ -279,7 +279,7 @@ define([
                 }
 
                 synchronizeChannelSeries(self.context);
-                window.sessionStorage.setItem('valueBean', JSON.stringify(context));
+                window.sessionStorage.setItem('valueBean', JSON.stringify(self.context));
                 window.location.href = "#/newShop/guide/storeInfo";
             }
 

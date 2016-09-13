@@ -519,6 +519,9 @@ define([
                 });
                 res.data.result = result;
                 return res;
+            },
+            show:function (item) {
+                console.log(item);
             }
         };
         function _forEach(parentData, subData, target) {

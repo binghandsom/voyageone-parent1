@@ -18,7 +18,7 @@
                     <div class="col-sm-12 wrapper">
                         <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                             <div class="form-group m-t-sm m-r-xs">
-                                <button class="btn btn-default" ng-click="ctrl.config('Task')" ng-disabled="ctrl.taskSelList.selList.length > 1"><i class="fa fa-cog"></i>&nbsp;配置</button>
+                                <button class="btn btn-default" ng-click="ctrl.config('Task')" ng-disabled="ctrl.taskList.length<1||ctrl.taskSelList.selList.length > 1"><i class="fa fa-cog"></i>&nbsp;配置</button>
                                 <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
                                 <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.taskSelList.selList.length <= 0||ctrl.taskSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
                                 <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.taskSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;删除</button>
@@ -49,8 +49,8 @@
                             <tr ng-repeat="list in ctrl.taskList">
                                 <td class="text-left v-middle">
                                     <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                                        <input ng-model="ctrl.taskSelList.selFlag[list.taskId]" type="checkbox" ng-controller="selectRowsCtrl"
-                                               ng-click="selectOne(list.taskId, ctrl.taskSelList)">
+                                        <input ng-model="ctrl.taskSelList.selFlag[list.taskName]" type="checkbox" ng-controller="selectRowsCtrl"
+                                               ng-click="selectOne(list.taskName, ctrl.taskSelList)">
                                         <span class="fa fa-check"></span>
                                     </label>
                                 </td>

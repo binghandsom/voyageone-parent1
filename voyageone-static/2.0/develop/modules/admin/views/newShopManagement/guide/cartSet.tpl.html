@@ -22,7 +22,7 @@
                             <tab-heading><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CART_CHANNEL_SHOP' | translate}}</tab-heading>
                             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                                 <div class="form-group m-t-sm m-r-xs">
-                                    <button class="btn btn-default" ng-click="ctrl.config('Shop')" ng-disabled="ctrl.cartShopSelList.selList.length > 1"><i class="fa fa-cog"></i>&nbsp;配置</button>
+                                    <button class="btn btn-default" ng-click="ctrl.config('Shop')" ng-disabled="ctrl.cartShopList.length<1||ctrl.cartShopSelList.selList.length > 1"><i class="fa fa-cog"></i>&nbsp;配置</button>
                                     <button class="btn btn-default" ng-click="ctrl.edit({'type':'cartShop','kind':'add'})"><i class="fa fa-plus"></i>&nbsp;添加</button>
                                     <button class="btn btn-default" ng-click="ctrl.edit({'type':'cartShop'})" ng-disabled="ctrl.cartShopSelList.selList.length <= 0||ctrl.cartShopSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
                                     <button class="btn btn-default" ng-click="ctrl.delete({'type':'cartShop'})" ng-disabled="ctrl.cartShopSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;删除</button>

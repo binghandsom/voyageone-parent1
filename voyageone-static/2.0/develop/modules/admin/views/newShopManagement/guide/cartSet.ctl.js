@@ -89,8 +89,8 @@ define([
                             self.popups.openCartChannelShop({
                                 'kind': 'add',
                                 'isReadOnly': true,
-                                'orderChannelId': self.cartShopList[0].orderChannelId,
-                                'channelName': self.cartShopList[0].channelName,
+                                'orderChannelId': self.context.channel.orderChannelId,
+                                'channelName': self.context.channel.channelName,
                                 'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.cartShopList;
@@ -113,8 +113,8 @@ define([
                             self.popups.openCartTrackingInfo({
                                 'kind': 'add',
                                 'isReadOnly': true,
-                                'orderChannelId': self.cartTrackingList[0].orderChannelId,
-                                'channelName': self.cartTrackingList[0].channelName,
+                                'orderChannelId': self.context.channel.orderChannelId,
+                                'channelName': self.context.channel.channelName,
                                 'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.cartTrackingList;
@@ -177,7 +177,7 @@ define([
                 );
             },
             next: function () {
-                window.sessionStorage.setItem('valueBean', JSON.stringify(context));
+                window.sessionStorage.setItem('valueBean', JSON.stringify(this.context));
                 window.location.href = "#/newShop/guide/batchJob";
             }
         };
