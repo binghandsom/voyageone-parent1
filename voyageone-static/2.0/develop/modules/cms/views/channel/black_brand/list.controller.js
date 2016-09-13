@@ -18,7 +18,7 @@ define([
 
     cms.controller('BlackBrandListController', (function () {
 
-        function BlackBrandListController(menuService, blackBrandService, confirm, $translate, notify, alert) {
+        function BlackBrandListController(menuService, blackBrandService, confirm, $routeParams,$translate, notify, alert) {
             var self = this;
 
             menuService.getPlatformType().then(function (resp) {
@@ -29,6 +29,7 @@ define([
             });
 
             self.blackBrandService = blackBrandService;
+            self.$routeParams = $routeParams;
             self.confirm = confirm;
             self.$translate = $translate;
             self.notify = notify;
@@ -52,11 +53,25 @@ define([
          * 初始化
          */
         BlackBrandListController.prototype.init = function () {
-            var self = this;
+            var self = this,
+                searchInfo = self.searchInfo,
+                params = self.$routeParams.params;
+
+            if(params){
+                var paraArr = params.split("|");
+                searchInfo.brandType = paraArr[0] ? paraArr[0] : null;
+                searchInfo.status =  paraArr[1] ? paraArr[1] : null;
+                if(paraArr[2]){
+                    searchInfo.cart[paraArr[2]] = true;
+                }
+            }
 
             self.search();
         };
 
+        /**
+         * 清空
+         */
         BlackBrandListController.prototype.clear = function () {
             this.searchInfo = {
                 brandType: null,
