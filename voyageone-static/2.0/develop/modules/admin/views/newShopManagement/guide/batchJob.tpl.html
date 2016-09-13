@@ -49,8 +49,8 @@
                             <tr ng-repeat="list in ctrl.taskList">
                                 <td class="text-left v-middle">
                                     <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                                        <input ng-model="ctrl.taskSelList.selFlag[list.taskId]" type="checkbox" ng-controller="selectRowsCtrl"
-                                               ng-click="selectOne(list.taskId, ctrl.taskSelList)">
+                                        <input ng-model="ctrl.taskSelList.selFlag[list.taskName]" type="checkbox" ng-controller="selectRowsCtrl"
+                                               ng-click="selectOne(list.taskName, ctrl.taskSelList)">
                                         <span class="fa fa-check"></span>
                                     </label>
                                 </td>

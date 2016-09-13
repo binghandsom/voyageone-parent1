@@ -75,6 +75,7 @@ define([
                                     self.taskCfgList.push(taskConfig);
                                 });
                             });
+                            self.search(1);
                         } else {
                             self.taskService.getAllTask().then(function (res) {
                                 self.taskList = res.data;

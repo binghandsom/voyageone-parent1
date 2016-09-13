@@ -32,7 +32,7 @@ define([
                 _.forEach(self.taskList, function (Info) {
                     if (Info.updFlg != 8) {
                         self.tempTaskSelect.currPageRows({
-                            "id": Info.taskId
+                            "id": Info.taskName
                         });
                     }
                 });
@@ -50,10 +50,10 @@ define([
                     return;
                 } else {
                     _.forEach(self.taskList, function (Info) {
-                        if (Info.taskId == self.taskSelList.selList[0].id) {
-                            _.extend(Info, {'configType': type});
-                            Info.isReadOnly='';
-                            self.popups.openConfig(Info);
+                        if (Info.taskName == self.taskSelList.selList[0].id) {
+                            var data = {'sourceData':[],'configType': type, 'taskId': Info.taskName, 'isReadOnly': true};
+                            data.sourceData.push(Info);
+                            self.popups.openConfig(data);
                         }
                     })
                 }
@@ -80,7 +80,7 @@ define([
                     });
                 } else {
                     _.forEach(self.taskList, function (Info) {
-                        if (Info.taskId == self.taskSelList.selList[0].id) {
+                        if (Info.taskName == self.taskSelList.selList[0].id) {
                             _.extend(Info, {'isReadOnly': true});
                             self.popups.openTask(Info).then(function () {
                                 self.init(1);
@@ -99,7 +99,7 @@ define([
                         _.forEach(delList, function (item) {
                                 var source = self.taskList;
                                 var data = _.find(source, function (sItem) {
-                                    return sItem.taskId == item;
+                                    return sItem.taskName == item;
                                 });
                                 if (source.indexOf(data) > -1) {
                                     source.splice(source.indexOf(data), 1);
