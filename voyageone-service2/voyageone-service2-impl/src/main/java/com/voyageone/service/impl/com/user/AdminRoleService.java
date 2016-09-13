@@ -288,7 +288,7 @@ public class AdminRoleService extends BaseService {
         for (Integer id : ids) {
             ComRoleModel model = new ComRoleModel();
             model.setId(id);
-            model.setActive(false);
+            model.setActive(0);
             model.setModifier(username);
             if (!(comRoleDao.update(model) > 0)) {
                 throw new BusinessException("禁用角色信息失败");
