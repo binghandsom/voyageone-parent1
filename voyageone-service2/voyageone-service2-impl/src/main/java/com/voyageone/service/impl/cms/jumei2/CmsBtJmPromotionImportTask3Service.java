@@ -17,9 +17,12 @@ import com.voyageone.service.bean.cms.jumei.SkuImportBean;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.*;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -84,6 +87,10 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     CmsBtJmPromotionImportSave3Service serviceCmsBtJmPromotionImportSave3;
     @Autowired
     CmsBtJmPromotionDaoExt  cmsBtJmPromotionDaoExt;
+    @Autowired
+    FeedInfoService feedInfoService;
+    @Autowired
+    CmsBtBrandBlockService cmsBtBrandBlockService;
     @Autowired
     TransactionRunner transactionRunner;
     public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
@@ -243,13 +250,27 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         }
         listSkuErrorMap.addAll(MapUtil.toMapList(listErroSku));//返回  导出
     }
-
+    public boolean isBlocked(CmsBtProductModel p_ProductInfo, HashMap<String,Boolean> mapMasterBrand) {
+        String errorMsg = "";
+        String platformBrandId = p_ProductInfo.getPlatform(27).getpBrandId();
+        String masterBrand = p_ProductInfo.getCommon().getFields().getBrand();
+        if (!mapMasterBrand.containsKey(masterBrand)) {
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(p_ProductInfo.getChannelId(), p_ProductInfo.getCommon().getFields().getCode());
+            String feedBrand = cmsBtFeedInfoModel.getBrand();
+            if (cmsBtBrandBlockService.isBlocked(p_ProductInfo.getChannelId(), 27, feedBrand, masterBrand, platformBrandId)) {
+                mapMasterBrand.put(masterBrand, true);
+            } else {
+                mapMasterBrand.put(masterBrand, false);
+            }
+        }
+        return mapMasterBrand.get(masterBrand);
+    }
     //save
     public void saveImport(CmsBtJmPromotionModel model, List<ProductImportBean> listProductImport, List<SkuImportBean> listSkuImport, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName,boolean isImportExcel) throws IllegalAccessException {
         //check
         check(model, listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap,isImportExcel);//check  if isImportExcel==true  移除不能导入的product
         List<ProductSaveInfo> listSaveInfo = new ArrayList<>();
-
+        HashMap<String,Boolean> mapMasterBrand=new HashMap<>();
         CmsBtPromotionModel modelPromotion=getCmsBtPromotionModel(model.getId());
         //初始化
         ProductSaveInfo saveInfo = null;
@@ -261,7 +282,12 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             if (saveInfo.p_ProductInfo == null) {
                 product.setErrorMsg("不存在" + product.getProductCode());
                 listProducctErrorMap.add(MapUtil.toMap(product));
-                return;
+                break;
+            }
+            if(isBlocked(saveInfo.p_ProductInfo,mapMasterBrand)) {
+                product.setErrorMsg("该商品品牌已加入黑名单,不能导入" + product.getProductCode());
+                listProducctErrorMap.add(MapUtil.toMap(product));
+                break;
             }
             saveInfo.p_Platform_Cart = saveInfo.p_ProductInfo.getPlatform(CartEnums.Cart.JM);
 
