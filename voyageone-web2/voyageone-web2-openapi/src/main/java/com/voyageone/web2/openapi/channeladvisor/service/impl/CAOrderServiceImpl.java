@@ -5,6 +5,7 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.vms.channeladvisor.enums.ErrorIDEnum;
 import com.voyageone.service.bean.vms.channeladvisor.enums.OrderStatusEnum;
@@ -219,6 +220,9 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         Map<String, Object> mqMessageMap = new HashMap<>();
         mqMessageMap.put("client_order_id", m.getClientOrderId());
         mqMessageMap.put("order_channel_id", m.getOrderChannelId());
+
+        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageMap));
+
         mqSender.sendMessage("voyageone_vms_wsdl_mq_acknowledge_order_queue", mqMessageMap);
 
         return success();
@@ -310,6 +314,8 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         }
 
         mqMessageMap.put("items", reservationIds.substring(0, reservationIds.length() - 1));
+
+        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageMap));
 
         mqSender.sendMessage("voyageone_vms_wsdl_mq_ship_order_queue", mqMessageMap);
 
@@ -405,6 +411,8 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         mqMessageMap.put("client_order_id", orderID);
 
         mqMessageMap.put("items", tempRecord);
+
+        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageMap));
 
         mqSender.sendMessage("voyageone_vms_wsdl_mq_cancel_order_queue", mqMessageMap);
 
@@ -503,6 +511,8 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         mqMessageMap.put("client_order_id", orderID);
 
         mqMessageMap.put("items", tempRecord);
+
+        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageMap));
 
         mqSender.sendMessage("voyageone_vms_wsdl_mq_refund_order_queue", mqMessageMap);
 

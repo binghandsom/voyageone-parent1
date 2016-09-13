@@ -4,6 +4,7 @@
 
     <select id="selectClientOrderById" resultType="com.voyageone.service.model.vms.VmsBtClientOrdersModel">
         select
+            id id,
             client_order_id clientOrderId,
             order_channel_id orderChannelId,
             order_status orderStatus,
@@ -57,6 +58,7 @@
 
     <select id="selectClientOrderDetailById" resultType="com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel">
         select
+            id id,
             order_channel_id orderChannelId,
             client_order_id clientOrderId,
             order_number orderNumber,
@@ -83,6 +85,7 @@
 
     <select id="selectClientOrderList" resultType="com.voyageone.service.model.vms.VmsBtClientOrdersModel">
         select
+        id id,
         client_order_id clientOrderId,
         order_channel_id orderChannelId,
         order_status orderStatus,
@@ -136,6 +139,7 @@
 
     <select id="selectClientOrderDetailList" resultType="com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel">
         select
+        id id,
         order_channel_id orderChannelId,
         client_order_id clientOrderId,
         order_number orderNumber,
