@@ -638,8 +638,8 @@ public class UploadToUSJoiService extends BaseTaskService {
             List<String> listSxCode = productModels.stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
             // 回写USJOI导入成功状态到子店productGroup和product
             productGroupService.updateGroupsPlatformStatus(cmsBtProductGroupModel, listSxCode);
-            $info(String.format("channelId:%s  groupId:%d [%d/%d] 复制到%s USJOI成功结束 [耗时:%s]", sxWorkLoadBean.getChannelId(),
-                    sxWorkLoadBean.getGroupId(), currentIndex, totalCnt, usJoiChannelId, (System.currentTimeMillis() - startTime)));
+            $info(String.format("channelId:%s [%d/%d] groupId:%d 复制到%s USJOI成功结束 [耗时:%s]", sxWorkLoadBean.getChannelId(),
+                    currentIndex, totalCnt, sxWorkLoadBean.getGroupId(), usJoiChannelId, (System.currentTimeMillis() - startTime)));
         } catch (CommonConfigNotFoundException ce) {
             String errMsg = "子店->USJOI主店产品导入:异常终止:";
             if (StringUtils.isNullOrBlank2(ce.getMessage())) {
@@ -650,6 +650,10 @@ public class UploadToUSJoiService extends BaseTaskService {
             // 回写详细错误信息表(cms_bt_business_log)
             insertBusinessLog(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getCartId(),
                     StringUtils.toString(sxWorkLoadBean.getGroupId()), "", "", errMsg, getTaskName());
+
+            $info(String.format("channelId:%s [%d/%d] groupId:%d  复制到%s USJOI 共通配置异常", sxWorkLoadBean.getChannelId(),
+                    currentIndex, totalCnt, sxWorkLoadBean.getGroupId(), usJoiChannelId));
+
             // 抛出让外面的循环做处理
             throw ce;
         } catch (Exception e) {
@@ -663,7 +667,8 @@ public class UploadToUSJoiService extends BaseTaskService {
             // 将子店->主店的上新workload的状态更新为2(导入上新失败)
             sxWorkLoadBean.setPublishStatus(2);
             cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
-            $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
+            $info(String.format("channelId:%s [%d/%d] groupId:%d  复制到%s USJOI 异常", sxWorkLoadBean.getChannelId(),
+                    currentIndex, totalCnt, sxWorkLoadBean.getGroupId(), usJoiChannelId));
             e.printStackTrace();
 
             // 上新失败时回写错误状态到子店的productGroup和product
