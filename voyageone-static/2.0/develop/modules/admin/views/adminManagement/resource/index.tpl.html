@@ -12,27 +12,27 @@
                                 <div class="row form-group"><!-- 系统 -->
                                     <label class="col-sm-3 control-label">{{'TXT_SYSTEM' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.application">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.application" ng-change="ctrl.search(1)">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{app}}" ng-repeat="app in ctrl.appList">&nbsp;{{app}}</option>
+                                            <option value="{{app.id}}" ng-repeat="app in ctrl.appList">&nbsp;{{app.application}}</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-12 text-center m-b-xs">
-                            <div class="form-horizontal form-inline">
-                                <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;重置</button>
-                                <button class="btn btn-vo" ng-click="ctrl.search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>
-                            </div>
-                        </div>
+                        <!--<div class="col-sm-12 text-center m-b-xs">-->
+                            <!--<div class="form-horizontal form-inline">-->
+                                <!--<button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;重置</button>-->
+                                <!--<button class="btn btn-vo" ng-click="ctrl.search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>-->
+                            <!--</div>-->
+                        <!--</div>-->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="box">
+    <div class="box" ng-if="ctrl.searchInfo.application">
         <div class="box-body-new">
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">

@@ -19,7 +19,8 @@ define([
                 var self = this;
                 if (self.sourceData == 'add') {
                     self.popType = '添加组织';
-                    self.sourceData = {}
+                    self.sourceData = {};
+                    self.sourceData.active = '1';
                 }
                 self.adminOrgService.getAllOrg().then(function (res) {
                     self.orgList = res.data;

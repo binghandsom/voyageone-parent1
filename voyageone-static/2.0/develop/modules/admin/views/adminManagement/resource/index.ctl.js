@@ -9,12 +9,13 @@ define([
     'modules/admin/controller/treeTable.ctrl'
 ], function (admin) {
     admin.controller('ResManagementController', (function () {
-        function ResManagementController(popups, alert, confirm, adminResService, adminUserService, selectRowsFactory) {
+        function ResManagementController(popups, alert, confirm, adminResService, adminUserService, adminOrgService, selectRowsFactory) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
             this.adminResService = adminResService;
             this.adminUserService = adminUserService;
+            this.adminOrgService = adminOrgService;
             this.selectRowsFactory = selectRowsFactory;
             this.pageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
@@ -59,7 +60,7 @@ define([
             search: function (page) {
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
-                self.adminResService.searchOrg({
+                self.adminOrgService.searchOrg({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
                         'orgName': self.searchInfo.orgName,
