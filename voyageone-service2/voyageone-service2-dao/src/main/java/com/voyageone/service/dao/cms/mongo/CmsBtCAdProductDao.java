@@ -12,7 +12,7 @@ import java.util.List;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtCAdProudctDao extends BaseMongoDao<CmsBtCAdProudctModel> {
+public class CmsBtCAdProductDao extends BaseMongoDao<CmsBtCAdProudctModel> {
     protected String collectionName = "cms_bt_ca_proudct_c";
 
     public void insert(String channelId, CmsBtCAdProudctModel cmsBtCAdProudctModel) {

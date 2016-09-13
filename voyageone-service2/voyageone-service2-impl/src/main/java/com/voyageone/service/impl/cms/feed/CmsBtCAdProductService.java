@@ -3,8 +3,8 @@ package com.voyageone.service.impl.cms.feed;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.dao.cms.mongo.CmsBtCAdProudctDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtCAdProudctLogDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductLogDao;
 import com.voyageone.service.enums.channeladvisor.ErrorIDEnum;
 import com.voyageone.service.enums.channeladvisor.RequestResultEnum;
 import com.voyageone.service.impl.BaseService;
@@ -22,13 +22,14 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-public class CmsBtCAdProudctService extends BaseService {
+public class CmsBtCAdProductService extends BaseService {
     @Autowired
-    private CmsBtCAdProudctLogDao cmsBtCAdProudctLogDao;
+    private CmsBtCAdProductLogDao cmsBtCAdProductLogDao;
 
     @Autowired
-    private CmsBtCAdProudctDao cmsBtCAdProudctDao;
+    private CmsBtCAdProductDao cmsBtCAdProductDao;
 
+    // 更新价格和库存
     public String updateQuantityPrice(String channelId, List<CmsBtCAdProudctModel> cmsMtCAdProudcts) {
         List<ProductGroupResultModel> productGroupResultModels = new ArrayList<>(cmsMtCAdProudcts.size());
         List<String> successSellerSKU = new ArrayList<>();
@@ -36,10 +37,10 @@ public class CmsBtCAdProudctService extends BaseService {
             List<ErrorModel> errors = new ArrayList<ErrorModel>();
             ProductGroupResultModel productGroupResultModel = creadResult(channelId, p, errors);
             productGroupResultModels.add(productGroupResultModel);
-            cmsBtCAdProudctLogDao.insert(channelId, p);
+            cmsBtCAdProductLogDao.insert(channelId, p);
             p.set_id(null);
             // 和之前的产品数据合并
-            CmsBtCAdProudctModel befCAdProudctModel = cmsBtCAdProudctDao.getBySellerSku(channelId, p.getSellerSKU());
+            CmsBtCAdProudctModel befCAdProudctModel = cmsBtCAdProductDao.getBySellerSku(channelId, p.getSellerSKU());
             if (befCAdProudctModel == null) {
                 productGroupResultModel.getErrors().add(new ErrorModel(ErrorIDEnum.ProductNotFound));
                 productGroupResultModel.setHasErrors(true);
@@ -77,13 +78,14 @@ public class CmsBtCAdProudctService extends BaseService {
                         productGroupResultModel.getBuyableProductResults().get(i).getErrors().add(new ErrorModel(ErrorIDEnum.InvalidRequest, e.getMessage()));
                     }
                 }
-                cmsBtCAdProudctDao.update(channelId, befCAdProudctModel);
+                cmsBtCAdProductDao.update(channelId, befCAdProudctModel);
             }
             successSellerSKU.add(p.getSellerSKU());
         });
         return JacksonUtil.bean2Json(productGroupResultModels);
     }
 
+    // 创建更新产品
     public String updateProduct(String channelId, List<CmsBtCAdProudctModel> cmsMtCAdProudcts) {
         List<ProductGroupResultModel> productGroupResultModels = new ArrayList<>(cmsMtCAdProudcts.size());
         List<String> successSellerSKU = new ArrayList<>();
@@ -91,13 +93,13 @@ public class CmsBtCAdProudctService extends BaseService {
             List<ErrorModel> errors = requiredProductCheck(p);
             ProductGroupResultModel productGroupResultModel = creadResult(channelId, p, errors);
             productGroupResultModels.add(productGroupResultModel);
-            cmsBtCAdProudctLogDao.insert(channelId, p);
+            cmsBtCAdProductLogDao.insert(channelId, p);
             p.set_id(null);
             // 和之前的产品数据合并
             if (errors.size() == 0) {
-                CmsBtCAdProudctModel befCAdProudctModel = cmsBtCAdProudctDao.getBySellerSku(channelId, p.getSellerSKU());
+                CmsBtCAdProudctModel befCAdProudctModel = cmsBtCAdProductDao.getBySellerSku(channelId, p.getSellerSKU());
                 if (befCAdProudctModel == null) {
-                    cmsBtCAdProudctDao.insert(channelId, p);
+                    cmsBtCAdProductDao.insert(channelId, p);
                 } else {
                     p.set_id(befCAdProudctModel.get_id());
                     for (BuyableProductModel befSku : befCAdProudctModel.getBuyableProducts()) {
@@ -112,7 +114,7 @@ public class CmsBtCAdProudctService extends BaseService {
                             p.getBuyableProducts().add(befSku);
                         }
                     }
-                    cmsBtCAdProudctDao.update(channelId, p);
+                    cmsBtCAdProductDao.update(channelId, p);
                 }
             }
             successSellerSKU.add(p.getSellerSKU());

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtCAdProudctLogDao extends BaseMongoDao<CmsBtCAdProudctModel> {
+public class CmsBtCAdProductLogDao extends BaseMongoDao<CmsBtCAdProudctModel> {
     protected String collectionName = "cms_bt_ca_proudct_log_c";
 
     public void insert(String channelId, CmsBtCAdProudctModel cmsBtCAdProudctModel) {

@@ -2,7 +2,7 @@ package com.voyageone.web2.openapi.channeladvisor.service.impl;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.impl.cms.feed.CmsBtCAdProudctService;
+import com.voyageone.service.impl.cms.feed.CmsBtCAdProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtCAdProudctModel;
 import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseService;
 import com.voyageone.web2.openapi.channeladvisor.service.CAProductService;
@@ -23,7 +23,7 @@ import java.util.List;
 public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProductService {
 
     @Autowired
-    private CmsBtCAdProudctService cmsBtCAdProudctService;
+    private CmsBtCAdProductService cmsBtCAdProductService;
 
     public ActionResponse getProducts(String groupFields, String buyableFields) {
         String channelId = getClientChannelId();
@@ -46,7 +46,7 @@ public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProd
         }
 
         List<CmsBtCAdProudctModel> cmsMtCAdProudcts = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(productGroups),CmsBtCAdProudctModel.class);
-        String response = cmsBtCAdProudctService.updateProduct(channelId,cmsMtCAdProudcts);
+        String response = cmsBtCAdProductService.updateProduct(channelId,cmsMtCAdProudcts);
 
         if(!StringUtil.isEmpty(response)){
             responseBody = JacksonUtil.jsonToBeanList(response,ProductGroupResultModel.class);
@@ -66,7 +66,7 @@ public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProd
         }
 
         List<CmsBtCAdProudctModel> cmsMtCAdProudcts = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(productGroups),CmsBtCAdProudctModel.class);
-        String response = cmsBtCAdProudctService.updateQuantityPrice(channelId, cmsMtCAdProudcts);
+        String response = cmsBtCAdProductService.updateQuantityPrice(channelId, cmsMtCAdProudcts);
         if(!StringUtil.isEmpty(response)){
             responseBody = JacksonUtil.jsonToBeanList(response,ProductGroupResultModel.class);
         }
