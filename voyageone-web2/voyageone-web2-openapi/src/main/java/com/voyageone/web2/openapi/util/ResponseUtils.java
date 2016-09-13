@@ -2,13 +2,13 @@ package com.voyageone.web2.openapi.util;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
+import com.voyageone.service.bean.vms.channeladvisor.ErrorModel;
 import com.voyageone.web2.openapi.channeladvisor.exception.CAApiException;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiResponse;
-import com.voyageone.web2.sdk.api.channeladvisor.domain.ErrorModel;
-import com.voyageone.web2.sdk.api.channeladvisor.enums.ErrorIDEnum;
-import com.voyageone.web2.sdk.api.channeladvisor.enums.ResponseStatusEnum;
-import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
+import com.voyageone.service.bean.vms.channeladvisor.enums.ErrorIDEnum;
+import com.voyageone.service.bean.vms.channeladvisor.enums.ResponseStatusEnum;
+import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.converter.HttpMessageNotReadableException;

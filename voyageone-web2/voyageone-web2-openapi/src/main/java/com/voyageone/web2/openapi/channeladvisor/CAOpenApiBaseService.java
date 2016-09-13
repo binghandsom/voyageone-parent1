@@ -1,10 +1,10 @@
 package com.voyageone.web2.openapi.channeladvisor;
 
+import com.voyageone.service.bean.vms.channeladvisor.CABaseModel;
 import com.voyageone.web2.openapi.OpenApiBaseService;
 import com.voyageone.web2.openapi.oauth2.service.OAuthService;
-import com.voyageone.web2.sdk.api.channeladvisor.domain.CABaseModel;
-import com.voyageone.web2.sdk.api.channeladvisor.enums.ResponseStatusEnum;
-import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
+import com.voyageone.service.bean.vms.channeladvisor.enums.ResponseStatusEnum;
+import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;

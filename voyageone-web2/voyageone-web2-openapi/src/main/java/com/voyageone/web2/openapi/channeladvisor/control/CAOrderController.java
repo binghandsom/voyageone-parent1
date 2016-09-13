@@ -3,9 +3,9 @@ package com.voyageone.web2.openapi.channeladvisor.control;
 import com.voyageone.web2.openapi.OpenApiBaseController;
 import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
 import com.voyageone.web2.openapi.channeladvisor.service.CAOrderService;
-import com.voyageone.web2.sdk.api.channeladvisor.request.OrderCancellationRequest;
-import com.voyageone.web2.sdk.api.channeladvisor.request.ShipRequest;
-import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
+import com.voyageone.service.bean.vms.channeladvisor.request.OrderCancellationRequest;
+import com.voyageone.service.bean.vms.channeladvisor.request.ShipRequest;
+import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

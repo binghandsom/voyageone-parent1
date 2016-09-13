@@ -2,14 +2,14 @@ package com.voyageone.web2.openapi.channeladvisor.service.impl;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.impl.cms.feed.CmsBtCAdProudctService;
+import com.voyageone.service.bean.vms.channeladvisor.product.ProductGroupResultModel;
+import com.voyageone.service.impl.vms.feed.CAFeedProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtCAdProudctModel;
 import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseService;
 import com.voyageone.web2.openapi.channeladvisor.service.CAProductService;
-import com.voyageone.web2.sdk.api.channeladvisor.domain.ProductGroupModel;
-import com.voyageone.web2.sdk.api.channeladvisor.domain.ProductGroupResultModel;
-import com.voyageone.web2.sdk.api.channeladvisor.request.ProductGroupRequest;
-import com.voyageone.web2.sdk.api.channeladvisor.response.ActionResponse;
+import com.voyageone.service.bean.vms.channeladvisor.product.ProductGroupModel;
+import com.voyageone.service.bean.vms.channeladvisor.request.ProductGroupRequest;
+import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ import java.util.List;
 public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProductService {
 
     @Autowired
-    private CmsBtCAdProudctService cmsBtCAdProudctService;
+    private CAFeedProductService caFeedProductService;
 
     public ActionResponse getProducts(String groupFields, String buyableFields) {
         String channelId = getClientChannelId();
@@ -46,7 +46,7 @@ public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProd
         }
 
         List<CmsBtCAdProudctModel> cmsMtCAdProudcts = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(productGroups),CmsBtCAdProudctModel.class);
-        String response = cmsBtCAdProudctService.updateProduct(channelId,cmsMtCAdProudcts);
+        String response = caFeedProductService.updateProduct(channelId,cmsMtCAdProudcts);
 
         if(!StringUtil.isEmpty(response)){
             responseBody = JacksonUtil.jsonToBeanList(response,ProductGroupResultModel.class);
@@ -66,7 +66,7 @@ public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProd
         }
 
         List<CmsBtCAdProudctModel> cmsMtCAdProudcts = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(productGroups),CmsBtCAdProudctModel.class);
-        String response = cmsBtCAdProudctService.updateQuantityPrice(channelId, cmsMtCAdProudcts);
+        String response = caFeedProductService.updateQuantityPrice(channelId, cmsMtCAdProudcts);
         if(!StringUtil.isEmpty(response)){
             responseBody = JacksonUtil.jsonToBeanList(response,ProductGroupResultModel.class);
         }

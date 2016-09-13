@@ -1,6 +1,6 @@
 package com.voyageone.web2.openapi.channeladvisor.exception;
 
-import com.voyageone.web2.sdk.api.channeladvisor.enums.ErrorIDEnum;
+import com.voyageone.service.bean.vms.channeladvisor.enums.ErrorIDEnum;
 
 /**
  * vo客户端异常。
