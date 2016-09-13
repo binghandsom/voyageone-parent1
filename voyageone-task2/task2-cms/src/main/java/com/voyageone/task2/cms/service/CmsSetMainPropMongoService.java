@@ -558,27 +558,26 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                     // update by desmond 2016/07/05 end
 
-                    // 取得feed->master导入之后的品牌，产品分类，使用人群等mapping件数
-                    newBrandCnt = mapBrandMapping.size();
-                    newProductTypeCnt = mapProductTypeMapping.size();
-                    newSizeTypeCnt = mapSizeTypeMapping.size();
-
-                    // 如果品牌，产品分类或者使用人群等有新增过，则重新导入完成之后重新刷新一次
-                    if (oldBrandCnt != newBrandCnt
-                            || oldProductTypeCnt != newProductTypeCnt
-                            || oldSizeTypeCnt != newSizeTypeCnt) {
-                        // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
-                        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
-                        // 保存本次刷新之后新的件数,下次再有一条feed->master导入追加了品牌等，可以及时清空缓存在画面上及时显示出来
-                        oldBrandCnt = newBrandCnt;
-                        oldProductTypeCnt = newProductTypeCnt;
-                        oldSizeTypeCnt = newSizeTypeCnt;
-                    }
-
                     $debug("feed->master导入计时结束 [ChannelId=%s] [FeedCode=%s] [耗时:%s]", channelId, feed.getCode(),
                             (System.currentTimeMillis() - startTime));
                 }
 
+                // 取得feed->master导入之后的品牌，产品分类，使用人群等mapping件数
+                newBrandCnt = mapBrandMapping.size();
+                newProductTypeCnt = mapProductTypeMapping.size();
+                newSizeTypeCnt = mapSizeTypeMapping.size();
+
+                // 如果品牌，产品分类或者使用人群等有新增过，则重新导入完成之后重新刷新一次
+                if (oldBrandCnt != newBrandCnt
+                        || oldProductTypeCnt != newProductTypeCnt
+                        || oldSizeTypeCnt != newSizeTypeCnt) {
+                    // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
+                    CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+//                    // 保存本次刷新之后新的件数,下次再有一条feed->master导入追加了品牌等，可以及时清空缓存在画面上及时显示出来
+//                    oldBrandCnt = newBrandCnt;
+//                    oldProductTypeCnt = newProductTypeCnt;
+//                    oldSizeTypeCnt = newSizeTypeCnt;
+                }
 //                // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
 //                CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
             }
@@ -3263,12 +3262,26 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
 
                 if (commonSku != null) {
-                    // 美金专柜价
-                    commonSku.setClientMsrpPrice(sku.getPriceClientMsrp());
-                    // 美金指导价
-                    commonSku.setClientRetailPrice(sku.getPriceClientRetail());
+                    // 客户过来的美金价格，不一定3个价格都有，有可能没有MSRP或者没有Retail价格(from will)
+                    // 美金专柜价(优先顺序: Msrp > Retail > Net)
+//                    commonSku.setClientMsrpPrice(sku.getPriceClientMsrp());
+                    if (sku.getPriceClientMsrp() > 0d) {
+                        commonSku.setClientMsrpPrice(sku.getPriceClientMsrp());
+                    } else if (sku.getPriceClientRetail() > 0d) {
+                        commonSku.setClientMsrpPrice(sku.getPriceClientRetail());
+                    } else {
+                        commonSku.setClientMsrpPrice(sku.getPriceNet());
+                    }
+                    // 美金指导价(优先顺序: Retail > Net)
+//                    commonSku.setClientRetailPrice(sku.getPriceClientRetail());
+                    if (sku.getPriceClientRetail() > 0d) {
+                        commonSku.setClientRetailPrice(sku.getPriceClientRetail());
+                    } else {
+                        commonSku.setClientRetailPrice(sku.getPriceNet());
+                    }
                     // 美金成本价(=priceClientCost)
                     commonSku.setClientNetPrice(sku.getPriceNet());
+                    // update by desmond 2016/09/13 end
                     // 人民币专柜价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
                     commonSku.setPriceMsrp(sku.getPriceMsrp());
                     // 人民币指导价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
