@@ -26,7 +26,7 @@ public class ComRoleModel extends CoreBaseModel {
     /**
      * 激活状态:1,激活;0,未激活
      */
-    protected Boolean active;
+    protected Integer active;
 
     public String getRoleName() {
         return roleName;
@@ -52,11 +52,11 @@ public class ComRoleModel extends CoreBaseModel {
         this.description = description == null ? null : description.trim();
     }
 
-    public Boolean getActive() {
+    public Integer getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(Integer active) {
         this.active = active;
     }
 }
