@@ -137,35 +137,35 @@
         where order_channel_id=#{orderChannelId} and order_status=#{status} limit #{limit}
     </select>
 
-    <select id="selectClientOrderDetailList" resultType="com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel">
-        select
-        id id,
-        order_channel_id orderChannelId,
-        client_order_id clientOrderId,
-        order_number orderNumber,
-        reservation_id reservationId,
-        order_item_id orderItemId,
-        seller_sku sellerSku,
-        unit_price unitPrice,
-        quantity quantity,
-        status status,
-        shipped_date shippedDate,
-        tracking_number trackingNumber,
-        shipping_carrier shippingCarrier,
-        shipping_class shippingClass,
-        cancel_reason cancelReason,
-        refund_flg refundFlg,
-        active active,
-        created created,
-        creater creater,
-        modified modified,
-        modifier modifier
-        from vms_bt_client_order_details
-        where client_order_id=#{orderId} and order_channel_id in
-        <foreach collection="orderIds" index="index" item="columnName" open="(" separator="," close=")">
-            ${columnName}
-        </foreach>
-    </select>
+    <!-- <select id="selectClientOrderDetailList" resultType="com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel">
+         select
+         id id,
+         order_channel_id orderChannelId,
+         client_order_id clientOrderId,
+         order_number orderNumber,
+         reservation_id reservationId,
+         order_item_id orderItemId,
+         seller_sku sellerSku,
+         unit_price unitPrice,
+         quantity quantity,
+         status status,
+         shipped_date shippedDate,
+         tracking_number trackingNumber,
+         shipping_carrier shippingCarrier,
+         shipping_class shippingClass,
+         cancel_reason cancelReason,
+         refund_flg refundFlg,
+         active active,
+         created created,
+         creater creater,
+         modified modified,
+         modifier modifier
+         from vms_bt_client_order_details
+         where client_order_id=#{orderId} and order_channel_id in
+         <foreach collection="orderIds" index="index" item="columnName" open="(" separator="," close=")">
+             ${columnName}
+         </foreach>
+     </select>-->
 
     <update id="updateClientOrderStatus">
         update vms_bt_client_orders
@@ -176,72 +176,88 @@
     <update id="updateItemsSkuList" parameterType="java.util.List">
         <foreach collection="list" item="item" index="index" open="begin" close="end;" separator=";">
             update vms_bt_client_order_details
-            <set >
-                <if test="${item.orderChannelId }  != null" >
+            <set>
+                <if test="${item.orderChannelId }  != null">
                     `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR},
                 </if>
-                <if test="${item.clientOrderId }  != null" >
+                <if test="${item.clientOrderId }  != null">
                     `client_order_id` = #{clientOrderId,jdbcType=VARCHAR},
                 </if>
-                <if test="${item.orderNumber }  != null" >
+                <if test="${item.orderNumber }  != null">
                     `order_number` = #{orderNumber,jdbcType=BIGINT},
                 </if>
-                <if test="${item.reservationId }  != null" >
+                <if test="${item.reservationId }  != null">
                     `reservation_id` = #{reservationId,jdbcType=BIGINT},
                 </if>
-                <if test="${item.orderItemId }  != null" >
+                <if test="${item.orderItemId }  != null">
                     `order_item_id` = #{orderItemId,jdbcType=VARCHAR},
                 </if>
-                <if test="${item.sellerSku }  != null" >
+                <if test="${item.sellerSku }  != null">
                     `seller_sku` = #{sellerSku,jdbcType=VARCHAR},
                 </if>
-                <if test="${item.unitPrice }  != null" >
+                <if test="${item.unitPrice }  != null">
                     `unit_price` = #{unitPrice,jdbcType=DOUBLE},
                 </if>
-                <if test="${item.quantity }  != null" >
+                <if test="${item.quantity }  != null">
                     `quantity` = #{quantity,jdbcType=INTEGER},
                 </if>
-                <if test="${item.status }  != null" >
+                <if test="${item.status }  != null">
                     `status` = #{status,jdbcType=VARCHAR},
                 </if>
-                <if test="${item.shippedDate }  != null" >
+                <if test="${item.shippedDate }  != null">
                     `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP},
                 </if>
-                <if test="${item.trackingNumber }  != null" >
+                <if test="${item.trackingNumber }  != null">
                     `tracking_number` = #{trackingNumber,jdbcType=VARCHAR},
                 </if>
-                <if test="${item.shippingCarrier }  != null" >
+                <if test="${item.shippingCarrier }  != null">
                     `shipping_carrier` = #{shippingCarrier,jdbcType=VARCHAR},
                 </if>
-                <if test="${item.shippingClass }  != null" >
+                <if test="${item.shippingClass }  != null">
                     `shipping_class` = #{shippingClass,jdbcType=VARCHAR},
                 </if>
-                <if test="${item.cancelReason }  != null" >
+                <if test="${item.cancelReason }  != null">
                     `cancel_reason` = #{cancelReason,jdbcType=VARCHAR},
                 </if>
-                <if test="${item.refundFlg }  != null" >
+                <if test="${item.refundFlg }  != null">
                     `refund_flg` = #{refundFlg,jdbcType=VARCHAR},
                 </if>
-                <if test="${item.active }  != null" >
+                <if test="${item.active }  != null">
                     `active` = #{active,jdbcType=BIT},
                 </if>
-                <if test="${item.created }  != null" >
+                <if test="${item.created }  != null">
                     `created` = #{created,jdbcType=TIMESTAMP},
                 </if>
-                <if test="${item.creater }  != null" >
+                <if test="${item.creater }  != null">
                     `creater` = #{creater,jdbcType=VARCHAR},
                 </if>
-                <if test="${item.modified }  != null" >
+                <if test="${item.modified }  != null">
                     `modified` = #{modified,jdbcType=TIMESTAMP},
                 </if>
-                <if test="${item.modified == null" >
+                <if test="${item.modified == null">
                     `modified` = now(),
                 </if>
-                <if test="${item.modifier }  != null" >
+                <if test="${item.modifier }  != null">
                     `modifier` = #{modifier,jdbcType=VARCHAR},
                 </if>
             </set>
             where id = ${item.id}
         </foreach>
     </update>
+
+    <select id="selectClientOrderDetailList"
+            resultType="com.voyageone.service.bean.vms.channeladvisor.order.VmsBtClientOrderDetailsGroupModel">
+        select
+        client_order_id clientOrderId,
+        seller_sku sellerSku,
+        min(order_item_id) orderItemId,
+        sum(quantity) quantity,
+        min(unit_price) unitPrice
+        from vms_bt_client_order_details
+        where client_order_id=#{orderId} and order_channel_id in
+        <foreach collection="orderIds" index="index" item="columnName" open="(" separator="," close=")">
+            ${columnName}
+        </foreach>
+        group by client_order_id,seller_sku
+    </select>
 </mapper>

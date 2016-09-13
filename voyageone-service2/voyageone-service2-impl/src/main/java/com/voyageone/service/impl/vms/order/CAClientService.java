@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.vms.order;
 
+import com.voyageone.service.bean.vms.channeladvisor.order.VmsBtClientOrderDetailsGroupModel;
 import com.voyageone.service.daoext.vms.VmsBtClientOrdersDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel;
@@ -36,7 +37,7 @@ public class CAClientService extends BaseService {
         return vmsBtCAClientDao.updateItemsSkuList(vmsBtClientOrderDetailsModelList);
     }
 
-    public List<VmsBtClientOrderDetailsModel> getClientOrderDetailList(String channelId, List<String> orderIds) {
+    public List<VmsBtClientOrderDetailsGroupModel> getClientOrderDetailList(String channelId, List<String> orderIds) {
         return vmsBtCAClientDao.selectClientOrderDetailList(channelId, orderIds);
     }
 

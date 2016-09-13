@@ -9,12 +9,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.vms.channeladvisor.enums.ErrorIDEnum;
 import com.voyageone.service.bean.vms.channeladvisor.enums.OrderStatusEnum;
-import com.voyageone.service.bean.vms.channeladvisor.order.OrderAddressModel;
-import com.voyageone.service.bean.vms.channeladvisor.order.OrderItemCancellationModel;
-import com.voyageone.service.bean.vms.channeladvisor.order.OrderItemModel;
-import com.voyageone.service.bean.vms.channeladvisor.order.OrderModel;
-
-
+import com.voyageone.service.bean.vms.channeladvisor.order.*;
 import com.voyageone.service.bean.vms.channeladvisor.request.OrderCancellationRequest;
 import com.voyageone.service.bean.vms.channeladvisor.request.ShipRequest;
 import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
@@ -62,7 +57,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         //根据取得的client_order_id，检索【品牌方订单明细】vms_bt_client_order_details
 
-        List<VmsBtClientOrderDetailsModel> orderDetailsModels = caClientService.getClientOrderDetailList(channelId, orderIds);
+        List<VmsBtClientOrderDetailsGroupModel> orderDetailsModels = caClientService.getClientOrderDetailList(channelId, orderIds);
 
         List<OrderModel> responseBody = new ArrayList<>();
 
@@ -89,7 +84,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             orderModel.setDeliverByDateUtc(m.getDeliverByDate());
 
             List<OrderItemModel> orderItemsModes = new ArrayList<>();
-            for (VmsBtClientOrderDetailsModel orderDetailsModel : orderDetailsModels) {
+            for (VmsBtClientOrderDetailsGroupModel orderDetailsModel : orderDetailsModels) {
                 if (m.getClientOrderId().equals(orderDetailsModel.getClientOrderId())) {
                     OrderItemModel orderItemModel = new OrderItemModel();
                     orderItemModel.setId(orderDetailsModel.getOrderItemId());
@@ -141,7 +136,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         //取得的client_order_id，检索【品牌方订单明细】vms_bt_client_order_details
 
-        List<VmsBtClientOrderDetailsModel> orderDetailsModels = caClientService.getClientOrderDetailList(channelId, Collections.singletonList(m.getClientOrderId()));
+        List<VmsBtClientOrderDetailsGroupModel> orderDetailsModels = caClientService.getClientOrderDetailList(channelId, Collections.singletonList(m.getClientOrderId()));
 
         //将取得的订单明细，按照client_order_id，放入取得的订单信息中
 
@@ -166,7 +161,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         orderModel.setDeliverByDateUtc(m.getDeliverByDate());
 
         List<OrderItemModel> orderItemsModes = new ArrayList<>();
-        for (VmsBtClientOrderDetailsModel orderDetailsModel : orderDetailsModels) {
+        for (VmsBtClientOrderDetailsGroupModel orderDetailsModel : orderDetailsModels) {
             if (m.getClientOrderId().equals(orderDetailsModel.getClientOrderId())) {
                 OrderItemModel orderItemModel = new OrderItemModel();
                 orderItemModel.setId(orderDetailsModel.getOrderItemId());

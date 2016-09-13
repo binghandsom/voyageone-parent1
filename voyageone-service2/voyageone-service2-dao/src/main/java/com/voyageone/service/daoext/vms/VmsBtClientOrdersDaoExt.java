@@ -1,5 +1,6 @@
 package com.voyageone.service.daoext.vms;
 
+import com.voyageone.service.bean.vms.channeladvisor.order.VmsBtClientOrderDetailsGroupModel;
 import com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel;
 import com.voyageone.service.model.vms.VmsBtClientOrdersModel;
 import org.springframework.stereotype.Repository;
@@ -24,7 +25,7 @@ public interface VmsBtClientOrdersDaoExt {
     List<VmsBtClientOrdersModel> selectClientOrderList(String orderChannelId, String status, int limit);
 
     //根据ids，查询ClientOrderDetails
-    List<VmsBtClientOrderDetailsModel> selectClientOrderDetailList(String orderChannelId, List<String> orderIds);
+    List<VmsBtClientOrderDetailsGroupModel> selectClientOrderDetailList(String orderChannelId, List<String> orderIds);
 
     //根据id，修改clientOrder状态
     int updateClientOrderStatus(String orderId, String orderChannelId, String status);
