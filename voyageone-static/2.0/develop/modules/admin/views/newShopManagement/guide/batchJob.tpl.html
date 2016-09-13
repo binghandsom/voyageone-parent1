@@ -60,10 +60,10 @@
                                 <td class="text-center v-middle">{{list.taskFreq}}</td>
                                 <td class="text-center v-middle">
                                     <button class="btn btn-success" ng-if="list.runFlg=='0'"
-                                            ng-click="ctrl.run({'taskName':list.taskName,'type':'Start'})">启动
+                                            ng-click="ctrl.run({'data':list,'type':'Start'})">启动
                                     </button>
                                     <button class="btn btn-danger" ng-if="list.runFlg=='1'"
-                                            ng-click="ctrl.run({'taskName':list.taskName,'type':'Stop'})">停止
+                                            ng-click="ctrl.run({'data':list,'type':'Stop'})">停止
                                     </button>
                                 </td>
                             </tr>

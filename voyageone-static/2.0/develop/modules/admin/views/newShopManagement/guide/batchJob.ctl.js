@@ -105,10 +105,21 @@ define([
                 var self = this;
                 if (item.type == 'Start') {
                     self.confirm('确定启动该任务吗？').then(function () {
-
+                        if (item.data.runFlg == "0") {
+                            item.data.runFlg = "1"
+                        }else(
+                            item.data.runFlg = "0"
+                        );
+                        forEachTaskList(item.data.taskConfig, item.data.runFlg);
                     })
                 } else {
                     self.confirm('确定停止该任务吗？').then(function () {
+                        if (item.data.runFlg == "0") {
+                            item.data.runFlg = "1"
+                        }else(
+                            item.data.runFlg = "0"
+                        );
+                        forEachTaskList(item.data.taskConfig, item.data.runFlg);
 
                     })
                 }
@@ -124,6 +135,14 @@ define([
                 })
             }
         };
+        function forEachTaskList(source, target) {
+            _.forEach(source, function (parentItem) {
+                if (parentItem.cfgName == 'run_flg') {
+                    parentItem.cfgVal1 = target;
+                }
+            })
+        }
+
         return GuideBatchJobController;
     })())
 });
