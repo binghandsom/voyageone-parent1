@@ -1,49 +1,57 @@
 <div class="wrapper-md" ng-init="ctrl.init()">
     <div class="panel panel-vo">
         <div class="panel-heading">
-            <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;<span>品牌黑名单一览</span></h4>
+            <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;<span translate="TXT_MARKETING_SETTING_COMMON_BLACK_LIST"></span></h4>
         </div>
         <div class="panel-body">
             <div class="row form-inline">
                 <div class="col-sm-6">
-                    <label class="control-label col-md-4 text-right">品牌种类 &nbsp;&nbsp;</label>
+                    <label class="control-label col-md-4 text-right">{{'TXT_BRAND_CATEGORY'|translate}} &nbsp;&nbsp;</label>
                     <div class="col-md-8">
-                        <select class="form-control" ng-model="ctrl.searchInfo.cartId"
-                                ng-options="c.value as c.name for c in ctrl.cartList" style="width: 200px">
+                        <select class="form-control" style="width: 200px" ng-model="ctrl.searchInfo.brandType">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            <option value="0">Feed品牌</option>
+                            <option value="1">Master品牌</option>
+                            <option value="2">平台品牌</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-sm-6 text-left">
                     <div class="form-group">
-                        <label>品牌状态&nbsp;&nbsp;</label>
+                        <label>{{'TXT_BRAND_STATES'|translate}}&nbsp;&nbsp;</label>
                         <span>&nbsp;</span>
                         <label>
-                            <input name="category" type="radio" value="3" ng-model="ctrl.searchInfo.categoryType">&nbsp;全部
+                            <input name="state" type="radio" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_TRANSLATION_SEARCH_SELECT_ALL'|translate}}
                         </label>&emsp;
                         <label>
-                            <input name="category" type="radio" value="1" ng-model="ctrl.searchInfo.categoryType">&nbsp;全类目
+                            <input name="state" type="radio" value="true" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_BLACK_LIST_IN'|translate}}
                         </label>&emsp;
                         <label>
-                            <input name="category" type="radio" value="2" ng-model="ctrl.searchInfo.categoryType">&nbsp;选择类目
+                            <input name="state" type="radio" value="false" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_BLACK_LIST_OUT'|translate}}
                         </label>
                     </div>
                 </div>
             </div>
             <div class="row form-inline m-t-sm">
                 <div class="col-sm-6">
-                    <label class="control-label col-md-4 text-right">品牌 &nbsp;&nbsp;</label>
-                    <div class="col-md-8">
-                        <select class="form-control" ng-model="ctrl.searchInfo.cartId"
-                                ng-options="c.value as c.name for c in ctrl.cartList" style="width: 200px">
-                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                        </select>
+                    <div class="col-md-8 col-md-offset-4" ng-if="ctrl.searchInfo.brandType == 2">
+                        <label ng-repeat="cart in ctrl.cartList">
+                            <input name="plateForm" type="checkbox" ng-model="ctrl.searchInfo.cart[cart.value]">&nbsp;{{cart.name}}&emsp;
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm-6 text-left">
+                    <div class="form-group">
+                        <label class="control-label col-md-3">{{'TXT_BRAND'|translate}} &nbsp;&nbsp;</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" style="width: 200px" ng-model="ctrl.searchInfo.brand" placeholder="{{'TXT_FUZZY_SEARCH'|translate}}">
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="row m-t-md">
                 <div class="col-sm-12 text-center">
-                    <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-undo"></i>&nbsp;清除</button>
+                    <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'|translate}}</button>
                     <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'|translate}}
                     </button>
                 </div>
@@ -56,14 +64,14 @@
                 <div class="row">
                     <div class="col-md-5 col-md-offset-7 text-right">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-pop btn-default">
-                                <i class="glyphicon glyphicon-import"></i>&nbsp;批量加入黑名单&nbsp;
+                            <button type="button" class="btn btn-pop btn-default" ng-click="ctrl.batchUpdate('add','TXT_BATCH_JOIN_BLACK_LIST')">
+                                <i class="glyphicon glyphicon-import"></i>&nbsp;{{'TXT_BATCH_JOIN_BLACK_LIST'|translate}}&nbsp;
                             </button>
                         </div>
                         &nbsp;
                         <div class="btn-group">
-                            <button type="button" class="btn btn-pop btn-default" ng-click="doExport()">
-                                <i class="glyphicon glyphicon-export"></i>&nbsp;批量移除黑名单
+                            <button type="button" class="btn btn-pop btn-default" ng-click="ctrl.batchUpdate('remove','TXT_BATCH_REMOVE_BLACK_LIST')">
+                                <i class="glyphicon glyphicon-export"></i>&nbsp;{{'TXT_BATCH_REMOVE_BLACK_LIST'|translate}}
                             </button>
                         </div>
                     </div>
@@ -75,27 +83,36 @@
             <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
                 <thead>
                 <tr>
-                    <th class="text-center mfb-x" style="width:66px;padding-left:0px">
-                        <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
-                            <input type="checkbox" ng-click="selectAll(vm.feedSelList)"
-                                   ng-checked="isAllSelected(vm.feedSelList)"
-                                   ng-disabled="!vm.feedList.length || !vm.feedSelList.currPageRows.length">
-                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL'
-                            | translate}}&nbsp;
+                    <th class="text-center mfb-xt" style="width:66px;padding-left:0px">
+                        <label class="checkbox-inline c-checkbox">
+                            <input type="checkbox">
+                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
                         </label>
                     </th>
-                    <th class="text-center">Master品牌</th>
-                    <th class="text-center">平台类型</th>
-                    <th class="text-center">操作</th>
+                    <th class="text-center mfb-xxx">Master品牌</th>
+                    <th class="text-center mfb-xxx">品牌种类</th>
+                    <th class="text-center mfb-xxx">平台类型</th>
+                    <th class="text-center mfb-xxx">操作</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="model in ctrl.dataList">
-                    <td class="text-center">{{model.$id}}</td>
-                    <td class="text-center">{{model.masterBrand}}</td>
-                    <td class="text-center">{{model.plateFormType}}</td>
-                    <td class="text-center">
-                        <button class="btn btn-success">加入黑名单</button>
+                    <td class="text-center mfb-xt">
+                        <label class="checkbox-inline c-checkbox">
+                            <input type="checkbox">
+                            <span class="fa fa-check"></span>
+                        </label>
+                    </td>
+                    <td class="text-center mfb-xxx">{{model.brandName}}</td>
+                    <td class="text-center mfb-xxx">{{model.brandType}}</td>
+                    <td class="text-center mfb-xxx">{{model.cartId}}</td>
+                    <td class="text-center mfb-xxx">
+                        <button class="btn btn-success" ng-click="ctrl.update('add','TXT_JOIN_BLACK_LIST')" ng-if="!model.isBlack">
+                            <i class="fa fa-arrow-right"></i>&nbsp;{{'TXT_JOIN_BLACK_LIST'|translate}}
+                        </button>
+                        <button class="btn btn-danger" ng-click="ctrl.update('remove','TXT_REMOVE_BLACK_LIST')" ng-if="model.isBlack">
+                            <i class="fa fa-arrow-left"></i>&nbsp;{{'TXT_REMOVE_BLACK_LIST'|translate}}
+                        </button>
                     </td>
                 </tr>
                 </tbody>

@@ -21,17 +21,21 @@ public class CJacksonDateDeserializer extends JsonDeserializer<Date> {
     public Date deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         String fieldData = parser.getText();
 
-        if (fieldData == null || "".equals(fieldData)) {
-            return DateTimeUtil.getCreatedDefaultDate();
-        }
-
-        if (StringUtils.isNumeric(fieldData)) {
-            return DateDeserializers.DateDeserializer.instance.deserialize(parser, context);
-        } else {
-            if (fieldData.length() < 19) {
-                fieldData += "0000-00-00 00:00:00".substring(fieldData.length());
+        if (CJacksonSerializerUtil.isCustom()) {
+            if (fieldData == null || "".equals(fieldData)) {
+                return DateTimeUtil.getCreatedDefaultDate();
             }
-            return DateTimeUtil.parse(fieldData);
+
+            if (StringUtils.isNumeric(fieldData)) {
+                return DateDeserializers.DateDeserializer.instance.deserialize(parser, context);
+            } else {
+                if (fieldData.length() < 19) {
+                    fieldData += "0000-00-00 00:00:00".substring(fieldData.length());
+                }
+                return DateTimeUtil.parse(fieldData);
+            }
+        } else {
+            return DateDeserializers.DateDeserializer.instance.deserialize(parser, context);
         }
     }
 }

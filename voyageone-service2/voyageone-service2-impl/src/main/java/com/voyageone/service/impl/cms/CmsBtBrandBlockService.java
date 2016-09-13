@@ -1,14 +1,19 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.MapUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtBrandBlockDao;
-import com.voyageone.service.daoext.cms.CmsBtBrandBlockDaoExt;
 import com.voyageone.service.impl.BaseService;
-import org.apache.commons.collections.map.HashedMap;
-import org.apache.ibatis.annotations.Param;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.CmsBtBrandBlockModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,45 +26,98 @@ import java.util.Map;
  */
 @Service
 public class CmsBtBrandBlockService extends BaseService {
-    private final static int BRAND_TYPE_FEED = 0;
-    private final static int BRAND_TYPE_MASTER = 1;
-    private final static int BRAND_TYPE_PLATFORM = 2;
+    public final static int BRAND_TYPE_FEED = 0;
+    public final static int BRAND_TYPE_MASTER = 1;
+    public final static int BRAND_TYPE_PLATFORM = 2;
 
     private final CmsBtBrandBlockDao brandBlockDao;
 
+    private final MqSender sender;
+
     @Autowired
-    public CmsBtBrandBlockService(CmsBtBrandBlockDao brandBlockDao) {
+    public CmsBtBrandBlockService(CmsBtBrandBlockDao brandBlockDao, MqSender sender) {
         this.brandBlockDao = brandBlockDao;
+        this.sender = sender;
+    }
+
+    public void block(String channelId, int cartId, int brandType, String brand, String username) throws IllegalAccessException {
+        switch (brandType) {
+            case BRAND_TYPE_FEED:
+            case BRAND_TYPE_MASTER:
+            case BRAND_TYPE_PLATFORM:
+                if (isBlocked(channelId, cartId, brandType, brand))
+                    return;
+                break;
+            default:
+                return;
+        }
+        CmsBtBrandBlockModel brandBlockModel = new CmsBtBrandBlockModel();
+        brandBlockModel.setChannelId(channelId);
+        brandBlockModel.setCartId(cartId);
+        brandBlockModel.setType(brandType);
+        brandBlockModel.setBrand(brand);
+        brandBlockModel.setCreater(username);
+        brandBlockModel.setModifier(username);
+
+        brandBlockDao.insert(brandBlockModel);
+
+        // 通知任务进行其他部分的处理
+        // 如 feed 部分的屏蔽
+        // MQ 不负责的部分，应该只包含上新部分
+        sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, new HashMap<String, Object>() {{
+            put("blocking", true);
+            put("data", brandBlockModel);
+        }});
+    }
+
+    public void unblock(String channelId, int cartId, int brandType, String brand) {
+        switch (brandType) {
+            case BRAND_TYPE_FEED:
+            case BRAND_TYPE_MASTER:
+            case BRAND_TYPE_PLATFORM:
+                CmsBtBrandBlockModel brandBlockModel = new CmsBtBrandBlockModel();
+                brandBlockModel.setChannelId(channelId);
+                brandBlockModel.setCartId(cartId);
+                brandBlockModel.setType(brandType);
+                brandBlockModel.setBrand(brand);
+
+                brandBlockModel = brandBlockDao.selectOne(brandBlockModel);
+
+                brandBlockDao.delete(brandBlockModel.getId());
+
+                // 同上，只是相反
+                Map<String, Object> mqParams = new HashMap<>();
+                mqParams.put("blocking", false);
+                mqParams.put("data", brandBlockModel);
+                sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, mqParams);
+        }
     }
 
     public boolean isBlocked(String channelId, int cartId, String feedBrand, String masterBrand, String platformBrandId) {
+        return !StringUtils.isEmpty(feedBrand) && isBlocked(channelId, cartId, BRAND_TYPE_FEED, feedBrand)
+                || !StringUtils.isEmpty(masterBrand) && isBlocked(channelId, cartId, BRAND_TYPE_MASTER, masterBrand)
+                || !StringUtils.isEmpty(platformBrandId) && isBlocked(channelId, cartId, BRAND_TYPE_PLATFORM, platformBrandId);
 
-        int count = brandBlockDao.selectCount(MapUtil.toMap("channelId", channelId,
-                "cartId", cartId,
-                "type", BRAND_TYPE_FEED,
-                "brand", feedBrand));
-
-        if (count > 0)
-            return true;
-
-        count = brandBlockDao.selectCount(MapUtil.toMap("channelId", channelId,
-                "cartId", cartId,
-                "type", BRAND_TYPE_MASTER,
-                "brand", masterBrand));
-
-        if (count > 0)
-            return true;
-
-        count = brandBlockDao.selectCount(MapUtil.toMap("channelId", channelId,
-                "cartId", cartId,
-                "type", BRAND_TYPE_PLATFORM,
-                "brand", platformBrandId));
-
-        return count > 0;
     }
-    //匹配类型，0、1、2 分别代表：feed、master、platform
-    public int getBrandCount(String channelId, String cartId, int type) {
-        Map<String, Object> map = new HashedMap();
+
+    public boolean isBlocked(CmsBtBrandBlockModel brandBlockModel) {
+        return isBlocked(brandBlockModel.getChannelId(), brandBlockModel.getCartId(), brandBlockModel.getType(), brandBlockModel.getBrand());
+    }
+
+    private boolean isBlocked(String channelId, int cartId, int brandType, String brand) {
+        return brandBlockDao.selectCount(new HashMap<String, Object>(4, 1f) {{
+            put("channelId", channelId);
+            put("cartId", cartId);
+            put("type", brandType);
+            put("brand", brand);
+        }}) > 0;
+    }
+
+    /**
+     * 匹配类型，0、1、2 分别代表：feed、master、platform
+     */
+    int getBrandCount(String channelId, String cartId, int type) {
+        Map<String, Object> map = new HashMap<>();
         map.put("channelId", channelId);
         map.put("cartId", cartId);
         map.put("type", type);

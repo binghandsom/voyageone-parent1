@@ -8,13 +8,11 @@ import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.HttpScene7;
-import com.voyageone.common.util.ImgUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ftp.FtpComponentFactory;
 import com.voyageone.components.ftp.FtpConstants;
 import com.voyageone.components.ftp.bean.FtpFileBean;
 import com.voyageone.components.ftp.service.BaseFtpComponent;
-import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.PlatformImagesService;
@@ -23,9 +21,8 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Common;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +41,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-public class CmsImageSettingService extends BaseAppService {
+public class CmsImageSettingService extends BaseViewService {
 
     @Autowired
     private ProductService productService;

@@ -15,7 +15,7 @@ import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -24,14 +24,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author JiangJusheng
  * @version 2.0.0, 2016/04/06
  */
 @Service
-public class CmsFeedSearchService extends BaseAppService {
+public class CmsFeedSearchService extends BaseViewService {
 
     @Autowired
     private FeedInfoService feedInfoService;

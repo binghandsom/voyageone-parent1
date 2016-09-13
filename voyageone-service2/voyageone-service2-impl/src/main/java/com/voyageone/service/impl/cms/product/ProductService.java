@@ -42,6 +42,7 @@ import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.apache.commons.lang.math.NumberUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -1028,7 +1029,7 @@ public class ProductService extends BaseService {
         insertProductHistory(channelId, cmsProduct.getProdId());
         // 记录价格变更履历
         addPriceUpdateHistory(cmsProduct,modifier, comment);
-        
+
         return result.getModifiedCount();
     }
 

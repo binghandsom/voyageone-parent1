@@ -1,12 +1,18 @@
 package com.voyageone.common.spring.serializer;
 
-import com.fasterxml.jackson.core.JsonGenerator;
+public abstract class CJacksonSerializerUtil {
 
+    private static ThreadLocal<Boolean> currentThreadSerializerCustom = new ThreadLocal<>();
 
-abstract class CJacksonSerializerUtil {
+    public static void setCustom(boolean custom) {
+        currentThreadSerializerCustom.set(custom);
+    }
 
-    static boolean isCustom(JsonGenerator jgen) {
-        Object outputTarget = jgen.getOutputTarget();
-        return outputTarget != null && outputTarget instanceof CustomServletOutputStream && ((CustomServletOutputStream) outputTarget).isCustom();
+    public static boolean isCustom() {
+        Boolean custom = currentThreadSerializerCustom.get();
+        if (custom != null) {
+            return custom;
+        }
+        return false;
     }
 }

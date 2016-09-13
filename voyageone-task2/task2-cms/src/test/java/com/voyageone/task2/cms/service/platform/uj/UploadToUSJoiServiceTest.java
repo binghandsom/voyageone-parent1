@@ -183,7 +183,7 @@ public class UploadToUSJoiServiceTest {
 
     @Test
     public void testOnStartup() throws Exception {
-            uploadToUSJoiService.onStartup(new ArrayList<>());
+        uploadToUSJoiService.onStartup(new ArrayList<>());
     }
 
     @Test

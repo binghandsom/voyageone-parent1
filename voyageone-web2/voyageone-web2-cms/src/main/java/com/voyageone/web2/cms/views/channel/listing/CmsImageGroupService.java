@@ -1,13 +1,11 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
-import com.mchange.lang.IntegerUtils;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.ConvertUtil;
-import com.voyageone.common.util.IntUtils;
 import com.voyageone.common.util.LongUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtImageGroupBean;
@@ -16,7 +14,7 @@ import com.voyageone.service.impl.cms.ImageGroupService;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +29,7 @@ import static java.util.stream.Collectors.toList;
  * Created by jeff.duan on 2016/5/5.
  */
 @Service
-public class CmsImageGroupService extends BaseAppService {
+public class CmsImageGroupService extends BaseViewService {
 
     @Autowired
     private ImageGroupService imageGroupService;

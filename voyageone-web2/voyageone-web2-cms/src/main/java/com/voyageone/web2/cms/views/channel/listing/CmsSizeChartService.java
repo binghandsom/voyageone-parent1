@@ -5,8 +5,6 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.ConvertUtil;
-import com.voyageone.common.util.IntUtils;
-import com.voyageone.common.util.LongUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.task.CmsBtSizeChartBean;
 import com.voyageone.service.impl.cms.CmsBtSizeChartImageGroupService;
@@ -15,7 +13,7 @@ import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.model.cms.CmsBtSizeChartImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +28,7 @@ import java.util.Map;
  * Created by gjl on 2016/5/5.
  */
 @Service
-public class CmsSizeChartService extends BaseAppService {
+public class CmsSizeChartService extends BaseViewService {
     @Autowired
     private SizeChartService sizeChartService;
     @Autowired

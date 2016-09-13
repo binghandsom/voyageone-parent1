@@ -704,6 +704,13 @@ public interface CmsUrlConstants {
             String GET_SELLER_CAT_CONFIG = "getSellerCatConfig";
         }
 
+        interface BLACK_BRAND {
+            String ROOT = "/cms/channel/black_brand";
+
+            String SEARCH_BLACK_BRAND = "searchBlackBrand";
+
+            String UPDATE_BLACK_BRAND = "updateBlackBrand";
+        }
     }
 
     interface ImageCreate {
