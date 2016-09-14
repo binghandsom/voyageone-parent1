@@ -4,7 +4,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.CmsConstants.PlatformStatus;
-import com.voyageone.common.util.MapUtil;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -59,7 +59,7 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
 
         boolean blocking = (boolean) blockingObject;
         @SuppressWarnings("unchecked") Map<String, Object> brandBlockMap = (Map<String, Object>) dataObject;
-        CmsBtBrandBlockModel brandBlockModel = MapUtil.toModel(brandBlockMap, CmsBtBrandBlockModel.class);
+        CmsBtBrandBlockModel brandBlockModel = BeanUtils.toModel(brandBlockMap, CmsBtBrandBlockModel.class);
 
         if (blocking)
             block(brandBlockModel);

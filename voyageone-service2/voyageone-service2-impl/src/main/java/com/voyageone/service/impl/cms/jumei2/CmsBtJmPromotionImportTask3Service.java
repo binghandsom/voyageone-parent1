@@ -5,9 +5,9 @@ import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.idsnowflake.FactoryIdWorker;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
-import com.voyageone.common.util.MapUtil;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelImportUtil;
 import com.voyageone.service.bean.cms.CallResult;
@@ -224,7 +224,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         if (isImport) {
             listProductModel.removeAll(listErroProduct);//移除不能导入的 product
         }
-        listProducctErrorMap.addAll(MapUtil.toMapList(listErroProduct));//返回  导出
+        listProducctErrorMap.addAll(BeanUtils.toMapList(listErroProduct));//返回  导出
         //sku
         String errorSkuMsg = "";
         List<SkuImportBean> listErroSku = new ArrayList<>();
@@ -248,7 +248,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         if (isImport) {
             listSkuModel.removeAll(listErroSku);
         }
-        listSkuErrorMap.addAll(MapUtil.toMapList(listErroSku));//返回  导出
+        listSkuErrorMap.addAll(BeanUtils.toMapList(listErroSku));//返回  导出
     }
 
     //save
@@ -267,12 +267,12 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.p_ProductInfo = productService.getProductByCode(modelPromotion.getChannelId(), product.getProductCode());
             if (saveInfo.p_ProductInfo == null) {
                 product.setErrorMsg("不存在" + product.getProductCode());
-                listProducctErrorMap.add(MapUtil.toMap(product));
+                listProducctErrorMap.add(BeanUtils.toMap(product));
                 break;
             }
             if(isBlocked(saveInfo.p_ProductInfo,mapMasterBrand)) {
                 product.setErrorMsg("该商品品牌已加入黑名单,不能导入" + product.getProductCode());
-                listProducctErrorMap.add(MapUtil.toMap(product));
+                listProducctErrorMap.add(BeanUtils.toMap(product));
                 break;
             }
             saveInfo.p_Platform_Cart = saveInfo.p_ProductInfo.getPlatform(CartEnums.Cart.JM);
@@ -282,7 +282,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             loadCmsBtPromotionCodes(saveInfo, listProductSkuImport, product, modelPromotion, userName);
             if (saveInfo != null) {
                 if (saveInfo._listSkuImport.size() > 0) {
-                    listProducctErrorMap.addAll(MapUtil.toMapList(saveInfo._listSkuImport));//初始化失败的sku
+                    listProducctErrorMap.addAll(BeanUtils.toMapList(saveInfo._listSkuImport));//初始化失败的sku
                 }
                 listSaveInfo.add(saveInfo);
             }
@@ -298,7 +298,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 long requestId = FactoryIdWorker.nextId();
                 $error("serviceCmsBtJmPromotionImportSave3.saveProductSaveInfo" + requestId, ex);
                 info._importProduct.setErrorMsg("导入失败,请联系管理员" + requestId);
-                listProducctErrorMap.add(MapUtil.toMap(info._importProduct));
+                listProducctErrorMap.add(BeanUtils.toMap(info._importProduct));
             }
         }
         cmsBtJmPromotionDaoExt.updateSumbrandById(model.getId());//汇总品牌
@@ -357,10 +357,10 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         } else {
             if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime() && saveInfo.jmProductModel.getSynchStatus() == 2) {
                 product.setErrorMsg("该商品预热已开始,不能导入");
-                listProducctErrorMap.add(MapUtil.toMap(product));
+                listProducctErrorMap.add(BeanUtils.toMap(product));
                 for (SkuImportBean skuImport : listProductSkuImport) {
                     skuImport.setErrorMsg("预热已开始,不能导入");
-                    listSkuErrorMap.add(MapUtil.toMap(skuImport));
+                    listSkuErrorMap.add(BeanUtils.toMap(skuImport));
                 }
                 return;
             }
