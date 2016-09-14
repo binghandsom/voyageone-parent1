@@ -33,7 +33,7 @@ public class CmsBlackBrandController extends CmsController {
      */
     @RequestMapping(BLACK_BRAND.SEARCH_BLACK_BRAND)
     public AjaxResponse searchBlackBrand(@RequestBody CmsBlackBrandParamBean blackBrandParamBean) {
-        return success(blackBrandViewService.searchBrandListPage(blackBrandParamBean, getUser()));
+        return success(blackBrandViewService.searchBrandListPage(blackBrandParamBean, getLang(), getUser()));
     }
 
     /**
