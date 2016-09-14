@@ -19,7 +19,6 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MD5;
@@ -72,6 +71,7 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -161,15 +161,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
         conditionPropValueRepo.init();
 
-//        // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
-//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
-//        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
-//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
-
         // 默认线程池最大线程数
         int threadPoolCnt = 5;
         // 保存每个channel最终导入结果(成功失败件数信息)
-        Map<String, String> resultMap = new HashMap<>();
+        Map<String, String> resultMap = new ConcurrentHashMap<>();
+        // 保存是否需要清空缓存(添加过品牌等信息时，需要清空缓存)
+        Map<String, String> needReloadMap = new ConcurrentHashMap<>();
         // 创建线程池
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
         // 根据渠道运行
@@ -185,7 +182,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 主逻辑
             setMainProp mainProp = new setMainProp(orderChannelID, bln_skip_mapping_check);
             // 启动多线程
-            executor.execute(() -> mainProp.doRun(resultMap));
+            executor.execute(() -> mainProp.doRun(resultMap, needReloadMap));
         }
         // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
@@ -195,6 +192,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
         } catch (InterruptedException ie) {
             ie.printStackTrace();
+        }
+
+        // 判断是否需要清空缓存
+        if ("1".equals(needReloadMap.get(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString()))) {
+            // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
+            TypeChannels.reload();
         }
 
         $info("=================feed->master导入  最终结果=====================");
@@ -452,7 +455,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          *
          * @param resultMap 用于保存每个channel最终导入结果信息
          */
-        public void doRun(Map<String, String> resultMap) {
+        public void doRun(Map<String, String> resultMap, Map<String, String> needReloadMap) {
             $info(channel.getOrder_channel_id() + " " + channel.getFull_name() + " 产品导入主数据开始");
             String channelId = this.channel.getOrder_channel_id();
 
@@ -537,6 +540,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                         // 回写feedInfo表(本来准备不回写，但一个feed都不回写的话画面上看不见错误信息)
                         updateFeedInfo(feed, 2, errMsg, "");  // 2:feed->master导入失败
+
+                        $info("feed->master导入:共通配置异常终止:[ChannelId:%s] [%d/%d] [FeedCode:%s] [耗时:%s]",
+                                channelId, currentIndex, feedListCnt, feed.getCode(), (System.currentTimeMillis() - startTime));
+
                         // 跳出循环,后面的feed->master导入不做了，等这个channel共通错误改好了之后再做导入
                         break;
                     } catch (Exception e) {
@@ -555,6 +562,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         // 回写feedInfo表
                         updateFeedInfo(feed, 2, errMsg, "");  // 2:feed->master导入失败
                         // 继续循环做下一条feed->master导入
+
+                        $info("feed->master导入:异常终止:[ChannelId:%s] [%d/%d] [FeedCode:%s] [耗时:%s]",
+                                channelId, currentIndex, feedListCnt, feed.getCode(), (System.currentTimeMillis() - startTime));
                     }
                     // update by desmond 2016/07/05 end
 
@@ -571,15 +581,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 if (oldBrandCnt != newBrandCnt
                         || oldProductTypeCnt != newProductTypeCnt
                         || oldSizeTypeCnt != newSizeTypeCnt) {
-                    // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
-                    CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
-//                    // 保存本次刷新之后新的件数,下次再有一条feed->master导入追加了品牌等，可以及时清空缓存在画面上及时显示出来
-//                    oldBrandCnt = newBrandCnt;
-//                    oldProductTypeCnt = newProductTypeCnt;
-//                    oldSizeTypeCnt = newSizeTypeCnt;
+                    needReloadMap.put(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString(), "1");
                 }
-//                // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
-//                CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
             }
 
             // jeff 2016/04 add start
@@ -960,9 +963,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         // 回写feed表updFlg状态为1:feed->master导入成功
                         updateFeedInfo(originalFeed, 1, "", "0");
 
-                        $info(strProcName + " 更新成功 [ChannelId:%s] [ProductCode:%s] [%d/%d] [耗时:%s]",
-                                cmsProduct.getChannelId(), cmsProduct.getCommon().getFields().getCode(),
-                                currentIndex, feedListCnt, (System.currentTimeMillis() - startTime));
+                        $info(strProcName + " 更新成功 [ChannelId:%s] [%d/%d] [ProductCode:%s] [耗时:%s]",
+                                cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
+                                (System.currentTimeMillis() - startTime));
                     }
 
                     // 后面的更新不做，直接返回
@@ -1150,14 +1153,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // add desmond 2016/07/07 start
                 if (blnProductExist) {
                     updateCnt++;
-                    $info("feed->master导入:更新成功 [ChannelId:%s] [ProductCode:%s] [%d/%d] [耗时:%s]",
-                            cmsProduct.getChannelId(), cmsProduct.getCommon().getFields().getCode(),
-                            currentIndex, feedListCnt, (System.currentTimeMillis() - startTime));
+                    $info("feed->master导入:更新成功 [ChannelId:%s] [%d/%d] [ProductCode:%s] [耗时:%s]",
+                            cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
+                            (System.currentTimeMillis() - startTime));
                 } else {
                     insertCnt++;
-                    $info("feed->master导入:新增成功 [ChannelId:%s] [ProductCode:%s] [%d/%d] [耗时:%s]",
-                            cmsProduct.getChannelId(), cmsProduct.getCommon().getFields().getCode(),
-                            currentIndex, feedListCnt, (System.currentTimeMillis() - startTime));
+                    $info("feed->master导入:新增成功 [ChannelId:%s] [%d/%d] [ProductCode:%s] [耗时:%s]",
+                            cmsProduct.getChannelId(), currentIndex, feedListCnt, cmsProduct.getCommon().getFields().getCode(),
+                            (System.currentTimeMillis() - startTime));
                 }
                 // add desmond 2016/07/07 end
             }
