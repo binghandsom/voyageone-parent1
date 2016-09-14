@@ -116,7 +116,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row form-group" ng-if="ctrl.applicationList[4].valid==true"><!-- 授权仓库 -->
+                <div class="row form-group" ng-if="ctrl.applicationList[3].valid==true"><!-- 授权仓库 -->
                     <label class="col-sm-1 control-label">{{'TXT_ROLE_STORE' | translate}}</label>
                     <label class="checkbox-inline c-radio">
                         <input type="radio" name="allStore" value="1" ng-model="ctrl.sourceData.allStore"><span class="fa fa-check"></span> 所有已选渠道的关联仓库
@@ -125,7 +125,7 @@
                         <input type="radio" name="allStore" value="0" ng-model="ctrl.sourceData.allStore"><span class="fa fa-check"></span> 选择特定仓库
                     </label>
                 </div>
-                <div class="row form-group" ng-if="ctrl.sourceData.allStore=='0'">
+                <div class="row form-group" ng-if="ctrl.sourceData.allStore=='0'||ctrl.applicationList[3].valid==true;">
                     <div class="col-sm-10 col-sm-offset-1">
                         <div class="col-sm-5">
                             <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label>
