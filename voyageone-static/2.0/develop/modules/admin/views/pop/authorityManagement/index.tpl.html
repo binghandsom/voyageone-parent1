@@ -6,44 +6,46 @@
     </div>
     <div class="modal-body wrapper vbox">
         <form role="form" class="form-horizontal" name="addForm" novalidate>
-            <div class="col-sm-3">
-                <div class="form-horizontal">
-                    <div class="row form-group"><!-- 用户名 -->
-                        <label class="col-sm-3 control-label">{{'TXT_USER_NAME' | translate}}</label>
-                        <div class="col-sm-8">
-                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.userName" readonly/>
+            <div ng-if="ctrl.show">
+                <div class="col-sm-3">
+                    <div class="form-horizontal">
+                        <div class="row form-group"><!-- 用户名 -->
+                            <label class="col-sm-3 control-label">{{'TXT_USER_NAME' | translate}}</label>
+                            <div class="col-sm-8">
+                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData[0].userName" readonly/>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="form-horizontal">
-                    <div class="row form-group"><!-- 账号 -->
-                        <label class="col-sm-3 control-label">{{'TXT_ACCOUNT' | translate}}</label>
-                        <div class="col-sm-8">
-                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.userAccount" readonly/>
+                <div class="col-sm-3">
+                    <div class="form-horizontal">
+                        <div class="row form-group"><!-- 账号 -->
+                            <label class="col-sm-3 control-label">{{'TXT_ACCOUNT' | translate}}</label>
+                            <div class="col-sm-8">
+                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData[0].userAccount" readonly/>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="form-horizontal">
-                    <div class="row form-group"><!-- 组织 -->
-                        <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
-                        <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.sourceData.orgId" ng-disabled="true" ng-options="org.id as org.orgName for org in ctrl.orgList">
-                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                            </select>
+                <div class="col-sm-3">
+                    <div class="form-horizontal">
+                        <div class="row form-group"><!-- 组织 -->
+                            <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" ng-model="ctrl.sourceData[0].orgId" ng-disabled="true" ng-options="org.id as org.orgName for org in ctrl.orgList">
+                                    <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-3">
-                <div class="form-horizontal">
-                    <div class="row form-group"><!-- 角色名 -->
-                        <label class="col-sm-3 control-label">{{'TXT_ROLE_NAME' | translate}}</label>
-                        <div class="col-sm-8">
-                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.roleName" readonly/>
+                <div class="col-sm-3">
+                    <div class="form-horizontal">
+                        <div class="row form-group"><!-- 角色名 -->
+                            <label class="col-sm-3 control-label">{{'TXT_ROLE_NAME' | translate}}</label>
+                            <div class="col-sm-8">
+                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData[0].roleName" readonly/>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -59,7 +61,7 @@
                     </div>
                 </div>
                 <div class="row form-group" ng-if="ctrl.sourceData.application"><!-- 说明 -->
-                    <div class="wrapper" ng-controller="treeTable">
+                    <div class="wrapper" ng-controller="treeTable" style="max-height:500px;overflow: auto;">
                         <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
                             <thead>
                                 <tr><th style="padding: 5px;text-align: center;">菜单名</th></tr>

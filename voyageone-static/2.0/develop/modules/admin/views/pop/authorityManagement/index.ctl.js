@@ -6,13 +6,11 @@ define([
     'modules/admin/controller/treeTable.ctrl'
 ], function (admin) {
     admin.controller('authorityController', (function () {
-        function authorityController(context, adminRoleService, adminOrgService, adminUserService, $uibModalInstance) {
+        function authorityController(context, adminOrgService, adminRoleService, adminUserService) {
             this.sourceData = context;
-            this.adminRoleService = adminRoleService;
             this.adminOrgService = adminOrgService;
+            this.adminRoleService = adminRoleService;
             this.adminUserService = adminUserService;
-
-            this.$uibModalInstance = $uibModalInstance;
         }
 
         authorityController.prototype = {
@@ -24,35 +22,28 @@ define([
                 self.adminOrgService.getAllOrg().then(function (res) {
                     self.orgList = res.data;
                 });
-                self.adminUserService.getAuthByUser({'userAccount':self.sourceData.userAccount,'application':self.sourceData.application}).then(function (res) {
-                    self.authList = res.data;
-                    console.log(self.authList);
-                })
-            },
-            cancel: function () {
-                this.$uibModalInstance.close();
-            },
-            save: function () {
-                var self = this;
-                var result = {};
-                if (self.append == true) {
-                    self.adminUserService.addUser(self.sourceData).then(function (res) {
-                        if (res.data == false) {
-                            self.confirm(res.data.message);
-                            return;
-                        }
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
-                        self.$uibModalInstance.close(result);
+                if (self.sourceData.length == 1) {
+                    self.show = true;
+                    self.adminUserService.getAuthByUser({
+                        'userAccount': self.sourceData[0].userAccount,
+                        'application': self.sourceData[0].application
+                    }).then(function (res) {
+                        self.authList = res.data;
                     })
                 } else {
-                    self.adminUserService.updateUser(self.sourceData).then(function (res) {
-                        if (res.data == false) {
-                            self.confirm(res.data.message);
-                            return;
-                        }
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
-                        self.$uibModalInstance.close(result);
-                    })
+                    self.show = false;
+                    var roleIds = [];
+                    var application = [];
+                    _.forEach(self.sourceData, function (item) {
+                        roleIds.push(item.roleId);
+                        application.push(item.application);
+                    });
+                    self.adminRoleService.getAuthByRoles({
+                        'roleIds': roleIds,
+                        'application': application
+                    }).then(function (res) {
+                        console.log(res);
+                    });
                 }
             }
         };

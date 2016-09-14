@@ -58,6 +58,7 @@ define(function () {
                     "setAuth": "setAuth",
                     "addAuth": "addAuth",
                     "removeAuth": "removeAuth",
+                    "getAuthByRoles": "getAuthByRoles",
                     "getAllRole": "getAllRole",
                     "getAllRoleType": "getAllRoleType"
                 },

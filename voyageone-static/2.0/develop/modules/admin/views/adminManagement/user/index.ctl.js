@@ -43,7 +43,7 @@ define([
                     self.storeList = [];
                     _.forEach(self.tempList, function (item) {
                         var data = '(' + item.channelId + ')' + item.storeName;
-                        self.storeList.push({'storeId':item.storeId,'storeName':data});
+                        self.storeList.push({'storeId': item.storeId, 'storeName': data});
                     })
                 });
                 self.adminOrgService.getAllOrg().then(function (res) {
@@ -157,12 +157,16 @@ define([
                     self.alert('TXT_MSG_NO_ROWS_SELECT');
                     return;
                 } else {
+                    var popInfo = [];
                     _.forEach(self.adminList, function (Info) {
-                        if (Info.id == self.adminUserSelList.selList[0].id) {
-                            self.popups.openUserAuthority(Info).then(function () {
-                                self.search(1);
-                            });
-                        }
+                        _.forEach(self.adminUserSelList.selList, function (item) {
+                            if (Info.id == item.id) {
+                                popInfo.push(Info);
+                            }
+                        })
+                    });
+                    self.popups.openUserAuthority(popInfo).then(function () {
+                        self.search(1);
                     });
                 }
             },
