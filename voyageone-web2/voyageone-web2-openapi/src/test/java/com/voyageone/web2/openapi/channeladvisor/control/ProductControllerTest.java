@@ -18,7 +18,7 @@ public class ProductControllerTest {
 
     private static final String BASE_URL = "http://localhost:9090/rest/channeladvisor/";
 
-    private static final Map HEADER=new HashMap<>();
+    private static final Map<String,String> HEADER=new HashMap<>();
 
     static {
         HEADER.put("SellerID","123sdfwewqqw");
