@@ -240,7 +240,7 @@ public class FeedToCmsService extends BaseService {
         if(product.getImage() == null || product.getImage().size() == 0){
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有图片");
-            $info(product.getCode()+"----" +product.getUpdMessage());
+            $debug(product.getCode()+"----" +product.getUpdMessage());
             return false;
         }else if(product.getImage().stream().filter(str->!StringUtil.isEmpty(str.trim())).collect(Collectors.toList()).size() == 0){
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
@@ -252,7 +252,7 @@ public class FeedToCmsService extends BaseService {
         if(product.getBrand() == null || StringUtil.isEmpty(product.getBrand().trim())){
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有品牌");
-            $info(product.getCode()+"----" +product.getUpdMessage());
+            $debug(product.getCode()+"----" +product.getUpdMessage());
             return false;
         }
 
@@ -260,14 +260,14 @@ public class FeedToCmsService extends BaseService {
             if(StringUtil.isEmpty(sku.getBarcode())){
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
                 product.setUpdMessage("没有UPC");
-                $info(product.getCode() + "----" + product.getUpdMessage());
+                $debug(product.getCode() + "----" + product.getUpdMessage());
                 return false;
             }
 
             if(sku.getPriceNet() == null || sku.getPriceNet().compareTo(0D) == 0){
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
                 product.setUpdMessage("成本价为0");
-                $info(product.getCode() + "----" + product.getUpdMessage());
+                $debug(product.getCode() + "----" + product.getUpdMessage());
                 return false;
             }
         }
