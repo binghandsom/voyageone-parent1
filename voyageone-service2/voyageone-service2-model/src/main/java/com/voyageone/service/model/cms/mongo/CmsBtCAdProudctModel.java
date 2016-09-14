@@ -41,4 +41,5 @@ public class CmsBtCAdProudctModel extends BaseMongoModel {
     public void setFields(List<FieldModel> fields) {
         this.fields = fields;
     }
+
 }
