@@ -129,7 +129,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     private ConditionPropValueRepo conditionPropValueRepo;
     @Autowired
     private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
-
+    @Autowired
+    CmsBtBrandBlockService cmsBtBrandBlockService;
     // 每个channel的feed->master导入默认最大件数
     private final static int FEED_IMPORT_MAX_500 = 500;
 
@@ -513,6 +514,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 // 当前channel需要导入的feed总件数
                 feedListCnt = feedList.size();
+                HashMap<String,Boolean> mapFeedBrand=new HashMap<>();
                 // 遍历所有数据
                 for (CmsBtFeedInfoModel feed : feedList) {
                     startTime = System.currentTimeMillis();
@@ -524,6 +526,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // 增加try catch捕捉feed导入时出现的异常并新增失败时回写处理等,feed导入共通处理里面出错时改为抛出异常
                     try {
                         feed.setFullAttribute();
+                        if(isBlocked(feed.getChannelId(),feed.getBrand(),mapFeedBrand))
+                        {
+                            updateFeedInfo(feed, 2, "已加入黑名单,不能导入", "");  // 2:feed->master导入失败
+                            break;
+                        }
+                        //feed.getBrand()
                         doSaveProductMainProp(feed, channelId, categoryTreeAllList);
                     } catch (CommonConfigNotFoundException ce) {
                         errCnt++;
@@ -602,7 +610,17 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             $info(channel.getOrder_channel_id() + " " + channel.getFull_name() + " 产品导入主数据结束 ");
 
         }
-
+        //黑名单check
+        public boolean isBlocked(String channelId ,String feedBrand, HashMap<String,Boolean> mapMasterBrand) {
+            if (!mapMasterBrand.containsKey(feedBrand)) {
+                if (cmsBtBrandBlockService.isBlocked(channelId, 27, feedBrand, feedBrand,"")) {
+                    mapMasterBrand.put(feedBrand, true);
+                } else {
+                    mapMasterBrand.put(feedBrand, false);
+                }
+            }
+            return mapMasterBrand.get(feedBrand);
+        }
         /**
          * 将商品从feed导入主数据
          *
