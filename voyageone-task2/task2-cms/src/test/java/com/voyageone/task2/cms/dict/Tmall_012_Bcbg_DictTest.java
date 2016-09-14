@@ -62,18 +62,39 @@ public class Tmall_012_Bcbg_DictTest {
 
 		{
 			{
-				// header
-				String html = "<img src=\"https://img.alicdn.com/imgextra/i1/2694857307/TB2DbDBsFXXXXcbXXXXXXXXXXXX_!!2694857307.jpg\"/>";
-				TextWord word = new TextWord(html);
-				ruleRoot.addRuleWord(word);
+                {
+                    // header
+                    String html = "<img src=\"https://img.alicdn.com/imgextra/i1/2694857307/TB2DbDBsFXXXXcbXXXXXXXXXXXX_!!2694857307.jpg\"/>";
+                    TextWord word = new TextWord(html);
+                    ruleRoot.addRuleWord(word);
+                }
 
-				html = "<img src=\"https://img.alicdn.com/imgextra/i3/2694857307/TB2kCSUgVXXXXcHXXXXXXXXXXXX_!!2694857307.jpg\"/>";
-				word = new TextWord(html);
-				ruleRoot.addRuleWord(word);
+                {
+                    // 尺码图
+                    RuleExpression htmlTemplate = new RuleExpression();
+                    htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
 
-				html = "<img src=\"https://img.alicdn.com/imgextra/i2/2694857307/TB2a3GBgVXXXXXsXpXXXXXXXXXX_!!2694857307.jpg\"/>";
-				word = new TextWord(html);
-				ruleRoot.addRuleWord(word);
+                    RuleExpression imageType = new RuleExpression();
+                    imageType.addRuleWord(new TextWord("2"));
+
+                    RuleExpression viewType = new RuleExpression();
+                    viewType.addRuleWord(new TextWord("1"));
+
+                    RuleExpression useOriUrl = null;
+
+                    CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+                    ruleRoot.addRuleWord(new CustomWord(word));
+                }
+
+                {
+                    String html = "<img src=\"https://img.alicdn.com/imgextra/i3/2694857307/TB2kCSUgVXXXXcHXXXXXXXXXXXX_!!2694857307.jpg\"/>";
+                    TextWord word = new TextWord(html);
+                    ruleRoot.addRuleWord(word);
+
+                    html = "<img src=\"https://img.alicdn.com/imgextra/i2/2694857307/TB2a3GBgVXXXXXsXpXXXXXXXXXX_!!2694857307.jpg\"/>";
+                    word = new TextWord(html);
+                    ruleRoot.addRuleWord(word);
+                }
 			}
 			{
 				// 英文长描述
@@ -170,24 +191,25 @@ public class Tmall_012_Bcbg_DictTest {
 				}
 			}
 
-			{
-				// 尺码图 getCommonImages
-				RuleExpression htmlTemplate = new RuleExpression();
-				htmlTemplate.addRuleWord(new TextWord("<img src=\"%s\"/>"));
-
-				RuleExpression imageType = new RuleExpression();
-				imageType.addRuleWord(new TextWord("2")); // 尺码图
-
-				RuleExpression viewType = new RuleExpression();
-				viewType.addRuleWord(new TextWord("1")); // pc
-
-				RuleExpression useOriUrl = null;
-	//			RuleExpression useOriUrl = new RuleExpression();
-	//			useOriUrl.addRuleWord(new TextWord("1"));
-
-				CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
-				ruleRoot.addRuleWord(new CustomWord(word));
-			}
+            // 以前字典里面就有尺码图，但CMS素材管理的共通图片一览里面没有上传尺码图到天猫平台，所以以前相亲页里面没有显示出来尺码图
+//			{
+//				// 尺码图 getCommonImages
+//				RuleExpression htmlTemplate = new RuleExpression();
+//				htmlTemplate.addRuleWord(new TextWord("<img src=\"%s\"/>"));
+//
+//				RuleExpression imageType = new RuleExpression();
+//				imageType.addRuleWord(new TextWord("2")); // 尺码图
+//
+//				RuleExpression viewType = new RuleExpression();
+//				viewType.addRuleWord(new TextWord("1")); // pc
+//
+//				RuleExpression useOriUrl = null;
+//	//			RuleExpression useOriUrl = new RuleExpression();
+//	//			useOriUrl.addRuleWord(new TextWord("1"));
+//
+//				CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+//				ruleRoot.addRuleWord(new CustomWord(word));
+//			}
 
 			{
 				// 分割线 ----- detail -----
