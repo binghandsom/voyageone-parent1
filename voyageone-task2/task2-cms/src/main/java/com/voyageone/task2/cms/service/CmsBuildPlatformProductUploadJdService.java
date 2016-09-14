@@ -291,7 +291,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
             // 没有lock并且已Approved的产品列表为空的时候,中止该产品的上新流程
             if (ListUtils.isNull(cmsBtProductList)) {
-                String errMsg = "未被锁定且已完成审批的产品列表为空";
+                String errMsg = "未被锁定,已完成审批且品牌不在黑名单的产品列表为空";
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
