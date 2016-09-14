@@ -52,12 +52,12 @@ define([
                     _.forEach(self.taskList, function (Info) {
                         if (Info.taskName == self.taskSelList.selList[0].id) {
                             var data = {
-                                'sourceData': [],
+                                'sourceData': self.context.task,
                                 'configType': type,
                                 'taskId': Info.taskId,
-                                'isReadOnly': true
+                                'isReadOnly': true,
+                                'taskName': Info.taskName
                             };
-                            data.sourceData.push(Info);
                             self.popups.openConfig(data);
                         }
                     })
@@ -79,7 +79,7 @@ define([
                             'endTime': null,
                             'comment': 'Run flag of task'
                         }];
-                        res.taskId = 'x'+Math.random();
+                        res.taskId = 'X' + Math.random();
                         var list = self.taskList;
                         list.push(res);
                         self.init(1);

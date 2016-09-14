@@ -37,8 +37,8 @@
                             </select>
                         </div>
                         <div class="col-sm-8" ng-if="ctrl.searchInfo.configType=='Task'">
-                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.taskId"
-                                    ng-options="task.taskId as task.taskName for task in ctrl.taskList" ng-change="ctrl.show(task.taskId)">
+                            <select id="taskId" search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.taskId"
+                                    ng-options="task.taskId as task.taskName for task in ctrl.taskList" ng-change="ctrl.search(1)">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
