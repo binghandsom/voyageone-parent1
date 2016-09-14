@@ -15,7 +15,6 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
@@ -42,6 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -112,20 +112,17 @@ public class UploadToUSJoiService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-//        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
-//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
-//        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
-//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
-
         // 默认线程池最大线程数(目前最后只有2个USJOI的channelId 928, 929)
         int threadPoolCnt = 2;
         // 保存每个channel最终导入结果(成功失败件数信息)
-        Map<String, String> resultMap = new HashMap<>();
+        Map<String, String> resultMap = new ConcurrentHashMap<>();
+        // 保存是否需要清空缓存(添加过品牌等信息时，需要清空缓存)
+        Map<String, String> needReloadMap = new ConcurrentHashMap<>();
         // 创建线程池
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
         for (OrderChannelBean channelBean : Channels.getUsJoiChannelList()) {
             // 启动多线程(每个USJOI channel一个线程)
-            executor.execute(() -> uploadByChannel(channelBean, resultMap));
+            executor.execute(() -> uploadByChannel(channelBean, resultMap, needReloadMap));
         }
         // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
@@ -137,6 +134,12 @@ public class UploadToUSJoiService extends BaseTaskService {
             ie.printStackTrace();
         }
 
+        // 判断是否需要清空缓存
+        if ("1".equals(needReloadMap.get(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString()))) {
+            // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
+            TypeChannels.reload();
+        }
+
         $info("=================子店->USJOI主店导入  最终结果=====================");
         resultMap.entrySet().stream()
                 .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
@@ -145,7 +148,7 @@ public class UploadToUSJoiService extends BaseTaskService {
 
     }
 
-    public void uploadByChannel(OrderChannelBean channelBean, Map<String, String> resultMap) {
+    public void uploadByChannel(OrderChannelBean channelBean, Map<String, String> resultMap, Map<String, String> needReloadMap) {
         int successCnt = 0;
         int errCnt = 0;
 
@@ -300,12 +303,8 @@ public class UploadToUSJoiService extends BaseTaskService {
         if (oldBrandCnt != newBrandCnt
                 || oldProductTypeCnt != newProductTypeCnt
                 || oldSizeTypeCnt != newSizeTypeCnt) {
-            // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
-            CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+            needReloadMap.put(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString(), "1");
         }
-
-//        // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻生效了）
-//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
     }
 
     public void upload(CmsBtSxWorkloadModel sxWorkLoadBean,
@@ -639,8 +638,8 @@ public class UploadToUSJoiService extends BaseTaskService {
             List<String> listSxCode = productModels.stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
             // 回写USJOI导入成功状态到子店productGroup和product
             productGroupService.updateGroupsPlatformStatus(cmsBtProductGroupModel, listSxCode);
-            $info(String.format("channelId:%s  groupId:%d [%d/%d] 复制到%s USJOI成功结束 [耗时:%s]", sxWorkLoadBean.getChannelId(),
-                    sxWorkLoadBean.getGroupId(), currentIndex, totalCnt, usJoiChannelId, (System.currentTimeMillis() - startTime)));
+            $info(String.format("channelId:%s [%d/%d] groupId:%d 复制到%s USJOI成功结束 [耗时:%s]", sxWorkLoadBean.getChannelId(),
+                    currentIndex, totalCnt, sxWorkLoadBean.getGroupId(), usJoiChannelId, (System.currentTimeMillis() - startTime)));
         } catch (CommonConfigNotFoundException ce) {
             String errMsg = "子店->USJOI主店产品导入:异常终止:";
             if (StringUtils.isNullOrBlank2(ce.getMessage())) {
@@ -651,6 +650,10 @@ public class UploadToUSJoiService extends BaseTaskService {
             // 回写详细错误信息表(cms_bt_business_log)
             insertBusinessLog(sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getCartId(),
                     StringUtils.toString(sxWorkLoadBean.getGroupId()), "", "", errMsg, getTaskName());
+
+            $info(String.format("channelId:%s [%d/%d] groupId:%d  复制到%s USJOI 共通配置异常", sxWorkLoadBean.getChannelId(),
+                    currentIndex, totalCnt, sxWorkLoadBean.getGroupId(), usJoiChannelId));
+
             // 抛出让外面的循环做处理
             throw ce;
         } catch (Exception e) {
@@ -664,7 +667,8 @@ public class UploadToUSJoiService extends BaseTaskService {
             // 将子店->主店的上新workload的状态更新为2(导入上新失败)
             sxWorkLoadBean.setPublishStatus(2);
             cmsBtSxWorkloadDaoExt.updateSxWorkloadModel(sxWorkLoadBean);
-            $info(String.format("channelId:%s  groupId:%d  复制到%s JOI 异常", sxWorkLoadBean.getChannelId(), sxWorkLoadBean.getGroupId(), usJoiChannelId));
+            $info(String.format("channelId:%s [%d/%d] groupId:%d  复制到%s USJOI 异常", sxWorkLoadBean.getChannelId(),
+                    currentIndex, totalCnt, sxWorkLoadBean.getGroupId(), usJoiChannelId));
             e.printStackTrace();
 
             // 上新失败时回写错误状态到子店的productGroup和product
