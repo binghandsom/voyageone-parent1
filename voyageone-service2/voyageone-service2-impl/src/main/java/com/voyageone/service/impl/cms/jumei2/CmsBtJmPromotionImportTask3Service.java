@@ -250,21 +250,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         }
         listSkuErrorMap.addAll(MapUtil.toMapList(listErroSku));//返回  导出
     }
-    public boolean isBlocked(CmsBtProductModel p_ProductInfo, HashMap<String,Boolean> mapMasterBrand) {
-        String errorMsg = "";
-        String platformBrandId = p_ProductInfo.getPlatform(27).getpBrandId();
-        String masterBrand = p_ProductInfo.getCommon().getFields().getBrand();
-        if (!mapMasterBrand.containsKey(masterBrand)) {
-            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(p_ProductInfo.getChannelId(), p_ProductInfo.getCommon().getFields().getCode());
-            String feedBrand = cmsBtFeedInfoModel.getBrand();
-            if (cmsBtBrandBlockService.isBlocked(p_ProductInfo.getChannelId(), 27, feedBrand, masterBrand, platformBrandId)) {
-                mapMasterBrand.put(masterBrand, true);
-            } else {
-                mapMasterBrand.put(masterBrand, false);
-            }
-        }
-        return mapMasterBrand.get(masterBrand);
-    }
+
     //save
     public void saveImport(CmsBtJmPromotionModel model, List<ProductImportBean> listProductImport, List<SkuImportBean> listSkuImport, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName,boolean isImportExcel) throws IllegalAccessException {
         //check
