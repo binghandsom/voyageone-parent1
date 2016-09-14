@@ -23,6 +23,7 @@ import java.util.*;
 import static com.voyageone.common.CmsConstants.PlatformActive.ToInStock;
 
 /**
+ * 执行品牌屏蔽（解除屏蔽）的额外操作。如查找品牌相关的商品，并下架锁定这些商品
  * Created by jonas on 9/12/16.
  *
  * @version 2.6.0
@@ -81,6 +82,11 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
         }
     }
 
+    /**
+     * 解除主数据品牌的屏蔽，解锁这些品牌的商品
+     *
+     * @param brandBlockModel 被解锁品牌的数据模型
+     */
     private void unblockMasterBrand(CmsBtBrandBlockModel brandBlockModel) {
 
         String channelId = brandBlockModel.getChannelId();
@@ -94,6 +100,11 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
             unlockProduct(productModel.getCommon().getFields().getCode(), channelId);
     }
 
+    /**
+     * 解除 Feed 品牌的屏蔽，解锁这些品牌商品对应的主数据商品，并修改 Feed 数据的状态
+     *
+     * @param brandBlockModel 被解锁品牌的数据模型
+     */
     private void unblockFeedBrand(CmsBtBrandBlockModel brandBlockModel) {
 
         String channelId = brandBlockModel.getChannelId();
@@ -109,6 +120,10 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
 
             CmsBtProductModel productModel = productService.getProductByCode(channelId, code);
 
+            // 如果有主数据商品，就把 feed 标记为导入成功
+            // 否则，就标记为新商品
+            // 如果有主数据商品，还需要额外解锁这些商品
+            // 因为屏蔽时，会锁定它们
             if (productModel == null) {
                 feedInfoModel.setUpdFlg(CmsConstants.FeedUpdFlgStatus.New);
             } else {
