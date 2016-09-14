@@ -42,4 +42,12 @@ public class CmsMtPlatformCategorySchemaDao extends BaseMongoCartDao<CmsMtPlatfo
         return selectOneWithQuery(new JongoQuery(
                 new Criteria("catFullPath").is(categoryPath).and("cartId").is(cartId)), cartId);
     }
+
+    /**
+     * 删除参数指定的schema
+     */
+    public WriteResult deletePlatformCategorySchemaByCategory(Integer cartId, String categoryId){
+        String queryStr = String.format("{catId:'%s'}", categoryId);
+        return deleteWithQuery(queryStr, cartId);
+    }
 }
