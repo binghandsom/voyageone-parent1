@@ -304,6 +304,21 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         cmsBtJmPromotionDaoExt.updateSumbrandById(model.getId());//汇总品牌
         $info("保存结束");
     }
+    public boolean isBlocked(CmsBtProductModel p_ProductInfo, HashMap<String,Boolean> mapMasterBrand) {
+        String errorMsg = "";
+        String platformBrandId = p_ProductInfo.getPlatform(27).getpBrandId();
+        String masterBrand = p_ProductInfo.getCommon().getFields().getBrand();
+        if (!mapMasterBrand.containsKey(masterBrand)) {
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(p_ProductInfo.getChannelId(), p_ProductInfo.getCommon().getFields().getCode());
+            String feedBrand = cmsBtFeedInfoModel.getBrand();
+            if (cmsBtBrandBlockService.isBlocked(p_ProductInfo.getChannelId(), 27, feedBrand, masterBrand, platformBrandId)) {
+                mapMasterBrand.put(masterBrand, true);
+            } else {
+                mapMasterBrand.put(masterBrand, false);
+            }
+        }
+        return mapMasterBrand.get(masterBrand);
+    }
     public CmsBtPromotionModel  getCmsBtPromotionModel(int jmPromotionId)
     {
         Map<String, Object> map = new HashMap<>();
