@@ -5,9 +5,9 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('ViewLogController', (function () {
-        function ViewLogController(context, adminOrgService, $uibModalInstance) {
+        function ViewLogController(context, adminLogService, $uibModalInstance) {
             this.sourceData = context ? context : {};
-            this.adminOrgService = adminOrgService;
+            this.adminLogService = adminLogService;
 
             this.popType = '日志详情';
             this.$uibModalInstance = $uibModalInstance;
@@ -16,10 +16,9 @@ define([
         ViewLogController.prototype = {
             init: function () {
                 var self = this;
-                self.adminOrgService.getAllOrg().then(function (res) {
-                    self.orgList = res.data;
+                self.adminLogService.getLogDetail({'logId':self.sourceData.id}).then(function (res) {
+                    self.logList = res.data;
                 });
-
             }
         };
         return ViewLogController;
