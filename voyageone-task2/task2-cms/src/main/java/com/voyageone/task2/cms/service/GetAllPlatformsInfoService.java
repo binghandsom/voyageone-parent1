@@ -166,7 +166,7 @@ public class GetAllPlatformsInfoService extends BaseTaskService {
                     cmsMtPlatformCategorySchemaDao.deletePlatformCategorySchemaByCategory(cartId, platformCategoriesModel.getCatId());
                     // add一下
                     jdSchemaService.doSetPlatformPropJdSub(shopBean, platformCategoriesModel);
-                    $info(String.format("获取天猫类目schema -> 完成度:[%s], channel:[%s], cart:[%s], catId:[%s]", idxCategory + "/" + allCategoryTreeLeaves.size(), channelId, cartId, platformCategoriesModel.getCatId()));
+                    $info(String.format("获取京东类目schema -> 完成度:[%s], channel:[%s], cart:[%s], catId:[%s]", idxCategory + "/" + allCategoryTreeLeaves.size(), channelId, cartId, platformCategoriesModel.getCatId()));
                 } catch (Exception ex) {
                     $error(String.format("京东类目取得失败!category:[%s] + ", platformCategoriesModel.getCatId()));
                 }
