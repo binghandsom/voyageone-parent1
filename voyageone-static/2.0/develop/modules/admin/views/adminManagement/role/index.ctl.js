@@ -128,18 +128,13 @@ define([
                         self.search(1);
                     });
                 } else {
-                    if (self.adminUserSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.adminRoleList, function (Info) {
-                            if (Info.id == self.adminUserSelList.selList[0].id) {
-                                self.popups.openRole(Info).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
-                    }
+                    _.forEach(self.adminRoleList, function (Info) {
+                        if (Info.id == self.adminUserSelList.selList[0].id) {
+                            self.popups.openRole(Info).then(function () {
+                                self.search(1);
+                            });
+                        }
+                    })
                 }
             },
             vieAuthority: function () {

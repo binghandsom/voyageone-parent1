@@ -18,18 +18,18 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.sourceData.allChannel = this.sourceData !== 'add' ? (this.sourceData.channelId != null ? this.sourceData.channelId.indexOf('ALL') > -1 ? '1' : '' : '') : '';
             this.sourceData.allStore = this.sourceData !== 'add' ? (this.sourceData.storeId != null ? this.sourceData.storeId.indexOf('ALL') > -1 ? '1' : '' : '') : '';
+            this.applicationList = [
+                {'id': 1, 'application': 'Admin', 'valid': false},
+                {'id': 2, 'application': 'CMS', 'valid': false},
+                {'id': 3, 'application': 'OMS', 'valid': false},
+                {'id': 4, 'application': 'WMS', 'valid': false}
+            ];
             this.sourceData.roleType = this.sourceData.roleType + '';
         }
 
         AddRoleController.prototype = {
             init: function () {
                 var self = this;
-                self.applicationList = [
-                    {'id': 1, 'application': 'Admin'},
-                    {'id': 2, 'application': 'CMS'},
-                    {'id': 3, 'application': 'OMS'},
-                    {'id': 4, 'application': 'WMS'}
-                ];
                 self.adminRoleService.getAllRoleType().then(function (res) {
                     self.roleTypeList = res.data;
                 });
@@ -117,24 +117,16 @@ define([
                         });
                     }
                 };
-                if (self.sourceData.application == null)return;
+                if (!self.sourceData.application)return;
                 var appList = self.sourceData.application.split(',');
-                _.forEach(appList, function (app) {
-                    switch (app) {
-                        case'cms':
-                            return self.sourceData.application == 'cms';
-                            break;
-                        case'oms':
-                            return self.sourceData.application == 'oms';
-                            break;
-                        case'wms':
-                            return self.sourceData.application == 'wms';
-                            break;
-                        case'admin':
-                            return self.sourceData.application == 'admin';
-                            break;
-                    }
-                });
+                _.forEach(appList, function (item) {
+                    _.forEach(self.applicationList, function (i) {
+                        if (i.application.toLocaleLowerCase() == item) {
+                            i.valid = true;
+                        }
+                    })
+                })
+
             },
             selected: function (item) {
                 var self = this;
@@ -285,16 +277,10 @@ define([
             },
             save: function () {
                 var self = this;
-                console.log(self.selectedAppList);
-                _.map(self.selectedAppList, function (value, key) {
-                    return {id: key, selected: value};
-                }).filter(function (item) {
-                    return item.selected;
-                }).forEach(function (item) {
-                    console.log(item);
-                    var data = self.applicationList;
+                var selectedAppList = _.filter(self.applicationList, function (selectedApp) {
+                    return selectedApp.valid;
                 });
-
+                self.sourceData.application = selectedAppList;
                 if (self.sourceData.allChannel == '1' || self.sourceData.allStore == '1') {
                     self.sourceData.channelId = [];
                     self.sourceData.storeId = [];
