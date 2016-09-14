@@ -52,7 +52,7 @@
         <if test="cartId > 0">
             and voyageone_cms2.cms_bt_business_log.cart_id = #{cartId}
         </if>
-        <if test="codes != null and codes.size() > 0">
+        <if test="codes != null and codes != '' and codes.size() > 0">
             and (code in
             <foreach collection="codes" item="code" open="(" separator="," close=")">
                 #{code}
@@ -85,7 +85,7 @@
         <if test="cartId > 0">
             and cart_id = #{cartId}
         </if>
-        <if test="codes != null and codes.size() > 0">
+        <if test="codes != null and codes != '' and codes.size() > 0">
             and (code in
             <foreach collection="codes" item="code" open="(" separator="," close=")">
                 #{code}

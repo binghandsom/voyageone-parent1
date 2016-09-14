@@ -178,7 +178,7 @@ public class Jumei_021_Bhfox_DictTest {
 
     /**
      * 聚美使用方法
-     * 1. 详情描述 - 英文
+     * 1. 详情描述 - 中文
      * 2. 尺码图
      */
     private RuleExpression doDict_聚美使用方法() {
@@ -188,15 +188,16 @@ public class Jumei_021_Bhfox_DictTest {
 
         // 生成内容
         {
-            // 详情描述 - 英文
-            MasterWord masterWordDescEn = new MasterWord("longDesEn");
-            ruleRoot.addRuleWord(masterWordDescEn);
+            // 详情描述 - 中文
+            // 注意：<br> 替换成 <br />，并删除所有*号。
+            MasterHtmlWord word = new MasterHtmlWord("longDesCn");
+            ruleRoot.addRuleWord(word);
         }
 
         {
-            // 回车
-            TextWord textWord = new TextWord("<br />");
-            ruleRoot.addRuleWord(textWord);
+            // 回车一个
+            TextWord word = new TextWord(C_TEXT_BR);
+            ruleRoot.addRuleWord(word);
         }
 
         {

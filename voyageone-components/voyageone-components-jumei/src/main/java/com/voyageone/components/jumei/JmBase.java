@@ -123,6 +123,12 @@ public class JmBase extends ComponentBase {
             String codes = "";
 
             Map<String, Object> map = JacksonUtil.jsonToMap(result);
+            // 20160913 result里有很多Unicode, 需要转成汉字 START
+            try {
+                result = JacksonUtil.bean2Json(map);
+            } catch (Exception e) {
+            }
+            // 20160913 result里有很多Unicode, 需要转成汉字 END
             if (map.containsKey("error")) {
                 Map<String, Object> errorMap = (Map<String, Object>) map.get("error");
                 if (errorMap.containsKey("code")) {
