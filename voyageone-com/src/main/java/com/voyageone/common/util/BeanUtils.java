@@ -5,7 +5,9 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.cglib.beans.BeanCopier;
 
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,18 +54,63 @@ public final class BeanUtils {
         return target;
     }
 
+    /**
+     * toModelList
+     */
+    public static <T> List<T> toModelList(List<Map<String, Object>> listMap, Class<T> classInfo) {
+        List<T> listModel = new ArrayList<>();
+        for (Map<String, Object> map : listMap) {
+            listModel.add(toModel(map, classInfo));
+        }
+        return listModel;
+    }
 
-//    /**
-//     * copyProperties
-//     * @param source map
-//     * @param target bean
-//     */
-//    public static void copyProperties(Map<String, Object> source, Object target) {
-//        BeanWrapper beanWrapper = new BeanWrapperImpl(target);
-//        beanWrapper.setPropertyValues(source);
-//    }
+    /**
+     * toModel
+     */
+    public static <T> T toModel(Map<String, Object> map, Class<T> classInfo) {
+        T model;
+        try {
+            model = classInfo.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        copyProperties(map, model);
+        return model;
+    }
 
-    public static <T> Map<String, Object> toMap(T entity) throws IllegalAccessException {
+
+    /**
+     * copyProperties
+     *
+     * @param source map
+     * @param target bean
+     */
+    private static void copyProperties(Map<String, Object> source, Object target) {
+        BeanWrapper beanWrapper = new BeanWrapperImpl(target);
+        beanWrapper.setPropertyValues(source);
+    }
+
+
+    /**
+     * toMapList
+     */
+    public static <T> List<Map<String, Object>> toMapList(List<T> modelList) {
+        if (modelList.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<Map<String, Object>> listMap = new ArrayList<>();
+        for (T entity : modelList) {
+            listMap.add(toMap(entity));
+        }
+        return listMap;
+    }
+
+    /**
+     * toMap
+     */
+    public static <T> Map<String, Object> toMap(T entity) {
         Map<String, Object> map = new HashMap<>();
         copyProperties(entity, map);
         return map;
@@ -72,6 +119,7 @@ public final class BeanUtils {
 
     /**
      * copyProperties
+     *
      * @param source bean
      * @param target map
      */
