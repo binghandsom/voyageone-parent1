@@ -1,5 +1,6 @@
 package com.voyageone.service.model.cms.mongo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.service.bean.vms.channeladvisor.product.BuyableProductModel;
 import com.voyageone.service.bean.vms.channeladvisor.product.FieldModel;
@@ -12,10 +13,13 @@ import java.util.List;
  */
 public class CmsBtCAdProudctModel extends BaseMongoModel {
 
+    @JsonProperty("BuyableProducts")
     private List<BuyableProductModel> buyableProducts;
 
+    @JsonProperty("SellerSKU")
     private String sellerSKU;
 
+    @JsonProperty("Fields")
     private List<FieldModel> fields;
 
     public List<BuyableProductModel> getBuyableProducts() {

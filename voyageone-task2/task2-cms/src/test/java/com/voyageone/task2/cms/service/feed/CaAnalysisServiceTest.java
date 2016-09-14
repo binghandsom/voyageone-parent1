@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ public class CaAnalysisServiceTest {
     public void testOnStartup() throws Exception {
         Map<String,Object> message = new HashMap<>();
         message.put("channelId","996");
+        message.put("sellerSKUs", Arrays.asList("REBEL X-WING","LIGHTSABER"));
         caAnalysisService.onStartup(message);
     }
 }

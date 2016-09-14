@@ -2,8 +2,10 @@ package com.voyageone.task2.cms.service.feed;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CamelUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.vms.channeladvisor.product.FieldModel;
 import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductDao;
+import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtCAdProudctModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -30,11 +32,20 @@ public class CaAnalysisService extends BaseMQCmsService {
     @Autowired
     private CmsBtCAdProductDao cmsBtCAdProductDao;
 
+    @Autowired
+    private FeedToCmsService feedToCmsService;
+
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
         String channelId = messageMap.get("channelId").toString();
         List<String> sellerSKUs = (List<String>) messageMap.get("sellerSKUs");
         List<CmsBtCAdProudctModel> feedList = cmsBtCAdProductDao.getProduct(channelId, sellerSKUs);
+        feedList.forEach(cmsBtCAdProudctModel -> {
+            List<CmsBtFeedInfoModel> products = convertToFeedInfo(channelId, cmsBtCAdProudctModel);
+            if(products != null && products.size()>0){
+                Map response = feedToCmsService.updateProduct(channelId, products, getTaskName());
+            }
+        });
 
     }
 
@@ -45,11 +56,12 @@ public class CaAnalysisService extends BaseMQCmsService {
 
         feed.getBuyableProducts().forEach(sku -> {
             CmsBtFeedInfoModel cmsBtFeedInfoModel = new CmsBtFeedInfoModel();
+            cmsBtFeedInfoModel.setChannelId(channelId);
             cmsBtFeedInfoModel.setModel(feed.getSellerSKU());
             cmsBtFeedInfoModel.setBrand(getFieldValueByName(feed.getFields(), "brand"));
             cmsBtFeedInfoModel.setCategory(getFieldValueByName(feed.getFields(), "category").replaceAll("-", "－").replaceAll(" : ", "-"));
             cmsBtFeedInfoModel.setColor(getFieldValueByName(sku.getFields(), "color"));
-            cmsBtFeedInfoModel.setCode(feed.getSellerSKU() + (StringUtil.isEmpty(cmsBtFeedInfoModel.getCode()) ? "" : "-" + cmsBtFeedInfoModel.getCode()));
+            cmsBtFeedInfoModel.setCode(feed.getSellerSKU() + (StringUtil.isEmpty(cmsBtFeedInfoModel.getColor()) ? "" : "-" + cmsBtFeedInfoModel.getColor()));
             cmsBtFeedInfoModel.setLongDescription(getFieldValueByName(feed.getFields(), "description"));
             cmsBtFeedInfoModel.setName(getFieldValueByName(feed.getFields(), "title"));
             cmsBtFeedInfoModel.setImage(getImages(feed.getFields()));
@@ -66,9 +78,10 @@ public class CaAnalysisService extends BaseMQCmsService {
             feedSku.setSize(getFieldValueByName(sku.getFields(), "size"));
             feedSku.setSku(channelId + "-" + sku.getSellerSKU());
             feedSku.setImage(getImages(feed.getFields()));
+            skus.add(feedSku);
+            cmsBtFeedInfoModel.setSkus(skus);
 
-
-            List<FieldModel> temp = feed.getFields();
+            List<FieldModel> temp = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(feed.getFields()), FieldModel.class);
             temp.addAll(sku.getFields());
             cmsBtFeedInfoModel.setAttribute(getAtt(temp));
             if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
@@ -113,12 +126,12 @@ public class CaAnalysisService extends BaseMQCmsService {
 
         Map<String, List<String>> attribute = new HashMap<>();
         fields.forEach(fieldModel -> {
-            if(!StringUtil.isEmpty(fieldModel.getValue())){
-                if(attribute.containsKey(fieldModel.getName())){
+            if (!StringUtil.isEmpty(fieldModel.getValue())) {
+                if (attribute.containsKey(fieldModel.getName())) {
                     List<String> temp = attribute.get(fieldModel.getName());
                     temp.add(fieldModel.getValue());
-                    attribute.put(fieldModel.getName(),temp);
-                }else{
+                    attribute.put(fieldModel.getName(), temp);
+                } else {
                     List<String> values = new ArrayList<>();
                     values.add(fieldModel.getValue());
                     attribute.put(fieldModel.getName(), values);
