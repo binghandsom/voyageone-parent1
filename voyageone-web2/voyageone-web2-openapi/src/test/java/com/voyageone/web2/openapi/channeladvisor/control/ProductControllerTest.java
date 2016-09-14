@@ -18,12 +18,20 @@ public class ProductControllerTest {
 
     private static final String BASE_URL = "http://localhost:9090/rest/channeladvisor/";
 
-    @Test
-    public  void run() throws Exception {
-        productTest();
-        orderTest();
+    private static final Map<String,String> HEADER=new HashMap<>();
+
+    static {
+        HEADER.put("SellerID","123sdfwewqqw");
     }
 
+    @Test
+    public  void run() throws Exception {
+        for (int i = 0; i < 200; i++) {
+
+            productTest();
+            orderTest();
+        }
+    }
     @Test
     public void productTest() throws Exception {
         //获取产品
@@ -55,32 +63,32 @@ public class ProductControllerTest {
     private static void orderTest() throws Exception {
         //获取批量订单
         String url = BASE_URL + CAUrlConstants.ORDERS.GET_ORDERS;
-        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, url);
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, url,null,HEADER);
         System.out.println(result);
-        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, url.concat("?limit=10"));
+        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, url.concat("?limit=10"),null,HEADER);
         System.out.println(result);
         //根据id查询订单
         url = BASE_URL + CAUrlConstants.ORDERS.GET_ORDER;
-        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, url.replace("{id}","546856"));
+        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, url.replace("{id}","546856"),null,HEADER);
         System.out.println(result);
         //确认订单
         url = BASE_URL + CAUrlConstants.ORDERS.ACKNOWLEDGE_ORDER;
-        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}","546856"));
+        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}","546856"),null,HEADER);
         System.out.println(result);
         //运输订单
         url = BASE_URL + CAUrlConstants.ORDERS.SHIP_ORDER;
         String reqJson = "{\"ShippedDateUtc\":\"2016-09-07T04:52:32.9431095Z\",\"TrackingNumber\":\"Z123456789J\",\"ShippingCarrier\":\"Bantha Union\",\"ShippingClass\":\"Express\",\"Items\":{\"LIGHTSABER_BLUE_MED\":1,\"LIGHTSABER_RED_LG\":4,\"REBEL X-WING\":5}}";
-        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}","546856"), reqJson);
+        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}","546856"), reqJson,HEADER);
         System.out.println(result);
         //取消订单
         url = BASE_URL + CAUrlConstants.ORDERS.CANCEL_ORDER;
         reqJson = "{\"OrderID\":\"M456W\",\"Items\":[{\"ID\":\"M333W\",\"SellerSku\":\"LIGHTSABER_BLUE_MED\",\"Quantity\":1,\"Reason\":\"BuyerCanceled\"},{\"ID\":\"M222W\",\"SellerSku\":\"LIGHTSABER_RED_LG\",\"Quantity\":2,\"Reason\":\"CustomerExchange\"},{\"ID\":\"M000W\",\"SellerSku\":\"REBEL X-WING\",\"Quantity\":3,\"Reason\":\"MerchandiseNotReceived\"}]}";
-        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}","546856"), reqJson);
+        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}","546856"), reqJson,HEADER);
         System.out.println(result);
         //退返订单
         url = BASE_URL + CAUrlConstants.ORDERS.REFUND_ORDER;
         reqJson = "{\"OrderID\":\"M456W\",\"Items\":[{\"ID\":\"M333W\",\"SellerSku\":\"LIGHTSABER_BLUE_MED\",\"Quantity\":1,\"Reason\":\"BuyerCanceled\"},{\"ID\":\"M222W\",\"SellerSku\":\"LIGHTSABER_RED_LG\",\"Quantity\":2,\"Reason\":\"CustomerExchange\"},{\"ID\":\"M000W\",\"SellerSku\":\"REBEL X-WING\",\"Quantity\":3,\"Reason\":\"MerchandiseNotReceived\"}]}";
-        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}","546856"), reqJson);
+        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}","546856"), reqJson,HEADER);
         System.out.println(result);
 
     }
