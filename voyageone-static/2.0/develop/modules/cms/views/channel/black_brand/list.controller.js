@@ -18,7 +18,7 @@ define([
 
     cms.controller('BlackBrandListController', (function () {
 
-        function BlackBrandListController(menuService, blackBrandService, confirm, $routeParams,$translate, notify, alert) {
+        function BlackBrandListController(menuService, blackBrandService, confirm, $routeParams, $translate, notify, alert) {
             var self = this;
 
             menuService.getPlatformType().then(function (resp) {
@@ -37,7 +37,7 @@ define([
             self.cartEnums = cartEnums;
             self.$brandType = $brandType;
             self.searchInfo = {
-                brandType: null,
+                brandType: '0',
                 cart: {},
                 status: null,
                 brand: ''
@@ -57,11 +57,11 @@ define([
                 searchInfo = self.searchInfo,
                 params = self.$routeParams.params;
 
-            if(params){
+            if (params) {
                 var paraArr = params.split("|");
                 searchInfo.brandType = paraArr[0] ? paraArr[0] : null;
-                searchInfo.status =  paraArr[1] ? paraArr[1] : null;
-                if(paraArr[2]){
+                searchInfo.status = paraArr[1] ? paraArr[1] : null;
+                if (paraArr[2]) {
                     searchInfo.cart[paraArr[2]] = true;
                 }
             }
