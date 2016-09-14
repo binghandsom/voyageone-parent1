@@ -15,6 +15,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,11 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class ComUserService {
+
+    // 密码加密固定盐值
+    public  static  final String MD5_FIX_SALT = "crypto.voyageone.la";
+    // 密码加密散列加密次数
+    public  static  final int MD5_HASHITERATIONS = 4;
 
     @Autowired
     ComUserDaoExt comUserDaoExt;
@@ -69,7 +75,14 @@ public class ComUserService {
 
         } catch (AuthenticationException e) {
             token.clear();
-            throw new BusinessException("A005", "authentication failed.", e);
+            //尝试用老密码登录
+            ComUserModel userModel = new ComUserModel();
+            userModel.setUserAccount(account);
+            userModel =comUserDao.selectOne(userModel);
+            String cryptoPassword = new Md5Hash(password, account + MD5_FIX_SALT, MD5_HASHITERATIONS).toHex();
+            if (!userModel.getPassword().equals(cryptoPassword)) {
+                throw new BusinessException("A005", "authentication failed.", e);
+            }
         }
 
         //如果user的密码不是自己设的，则强制要求修改密码
