@@ -40,14 +40,15 @@ public class CmsImportOrdersHisInfoService extends BaseTaskService {
         return "CmsImportOrdersHisInfoJob";
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         // 保存操作过程，用于邮件通知
-        Map<String, Object> statusMap = new ConcurrentHashMap();
+        Map<String, Object> statusMap = new ConcurrentHashMap<>();
         String staTime = DateTimeUtil.getNow();
 
         // 从oms系统导入产品前90天订单信息
-        Map<String, Set<String>> prodCodeChannelMap = null;
+        Map<String, Set<String>> prodCodeChannelMap;
         try {
             prodCodeChannelMap = cmsCopyOrdersInfoService.copyOrdersInfo(getTaskName(), statusMap);
         } catch (Exception exp) {

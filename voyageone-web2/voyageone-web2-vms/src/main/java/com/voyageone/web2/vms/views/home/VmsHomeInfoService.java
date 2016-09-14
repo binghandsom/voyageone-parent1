@@ -2,7 +2,7 @@ package com.voyageone.web2.vms.views.home;
 
 
 import com.voyageone.service.model.vms.VmsBtDataAmountModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.vms.VmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.Map;
  * @version 1.0
  */
 @Service
-public class VmsHomeInfoService extends BaseAppService {
+public class VmsHomeInfoService extends BaseViewService {
 
     @Autowired
     private AmountService DataAmountService;

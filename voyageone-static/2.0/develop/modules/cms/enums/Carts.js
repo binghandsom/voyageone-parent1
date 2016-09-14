@@ -21,6 +21,14 @@ define(['underscore'], function (_) {
 
     return {
         /**
+         * Master
+         */
+        MASTER:new Cart('MASTER' , 0 , '主数据',''),
+        /**
+         * Feed
+         */
+        MASTER:new Cart('FEED' , 1 , 'Feed数据',''),
+        /**
          * 天猫
          */
         TM: new Cart('TM', 20, '天猫', ''),

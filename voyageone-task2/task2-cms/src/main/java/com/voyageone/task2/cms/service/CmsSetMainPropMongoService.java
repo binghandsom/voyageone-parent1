@@ -2993,12 +2993,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @return 1:isMasterMain;0:isNotMasterMain
          */
         private int getIsMasterMain(CmsBtFeedInfoModel feed) {
-            long cnt = productService.getCnt(feed.getChannelId(),
-                    String.format("{\"common.fields.model\":\"%s\", \"common.fields.isMasterMain\":1}", feed.getModel()));
-            if (cnt < 1) {
-                return 1;
-            }
-            return 0;
+
+            String query = String.format("{\"common.fields.model\":\"%s\", \"common.fields.isMasterMain\":1}", feed.getModel());
+
+            long cnt = productService.countByQuery(query, null, feed.getChannelId());
+
+            return cnt < 1 ? 1 : 0;
         }
 
         // delete by desmond 2016/07/06 start

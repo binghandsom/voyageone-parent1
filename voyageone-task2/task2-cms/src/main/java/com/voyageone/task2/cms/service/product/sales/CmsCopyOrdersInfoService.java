@@ -61,12 +61,12 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
             return null;
         }
 
-        long oIdx = 0;
-        long qtySum = 0;
+        long oIdx;
+        long qtySum;
         List<Map> rs;
         DBCollection coll = cmsMtProdSalesHisDao.getDBCollection();
         Map<String, Set<String>> prodCodeChannelMap = new HashMap<>();
-        boolean hasdata = false;
+        boolean hasData;
 
         // 根据skuCode取得商品code
         JongoQuery prodQryObj = new JongoQuery();
@@ -105,7 +105,7 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                     }
 
                     BulkWriteOperation bbulkOpe = coll.initializeUnorderedBulkOperation();
-                    hasdata = false;
+                    hasData = false;
                     for (Map orderObj : rs) {
                         String skuCode = (String) orderObj.get("sku");
 
@@ -135,7 +135,7 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                             updateValue.put("prodCode", productCode);
 
                             BasicDBObject updateObj = new BasicDBObject("$set", updateValue);
-                            hasdata = true;
+                            hasData = true;
                             bbulkOpe.find(queryObj).upsert().update(updateObj);
 
                             qtySum += (Long) orderObj.get("qty");
@@ -148,7 +148,7 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                             $error(String.format("CmsCopyOrdersInfoService 产品不存在 channelId=%s, sku=%s", channelId, skuCode));
                         }
                     }
-                    if (hasdata) {
+                    if (hasData) {
                         BulkWriteResult rslt = bbulkOpe.execute();
                         $debug(String.format("copyOrdersInfo excute msg:%s", rslt.toString()));
                         $info(String.format("copyOrdersInfo excute rows:%s", oIdx * PAGE_LIMIT));

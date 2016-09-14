@@ -13,6 +13,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -54,6 +55,9 @@ public class FeedToCmsService extends BaseService {
 
     @Autowired
     private FeedCategoryAttributeService feedCategoryAttributeService;
+
+    @Autowired
+    private CmsBtBrandBlockService cmsBtBrandBlockService;
 
 //    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
 //    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
@@ -263,6 +267,13 @@ public class FeedToCmsService extends BaseService {
         if(product.getBrand() == null || StringUtil.isEmpty(product.getBrand().trim())){
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有品牌");
+            $info(product.getCode()+"----" +product.getUpdMessage());
+            return false;
+        }
+        //String channelId, int cartId, String feedBrand, String masterBrand, String platformBrandId
+        if(cmsBtBrandBlockService.isBlocked(product.getChannelId(), CmsBtBrandBlockService.BRAND_TYPE_FEED,product.getBrand(),null,null)){
+            product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedBlackList);
+            product.setUpdMessage("已经加入黑名单商品");
             $info(product.getCode()+"----" +product.getUpdMessage());
             return false;
         }

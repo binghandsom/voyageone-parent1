@@ -252,6 +252,7 @@ public class CmsConstants {
         int Fail = 2;     //导入失败
         int NotIMport = 3; //不导入
         int FeedErr = 8;  //Feed数据异常
+        int FeedBlackList = 7;  //黑名单
     }
 
 }

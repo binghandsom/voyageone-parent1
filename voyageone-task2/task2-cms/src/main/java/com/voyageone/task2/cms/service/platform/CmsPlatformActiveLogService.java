@@ -36,47 +36,63 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 /**
  * 记录上下架操作历史(新增记录), 并调用上下架API
- * @author jiangjusheng on 2016/07/11
- * @version 2.0.0
+ * create by jiangjusheng on 2016/07/11
+ *
+ * @author jiangjusheng
+ * @version 2.6.0
+ * @since 2.0.0
  */
 @Service
 @RabbitListener(queues = MqRoutingKey.CMS_TASK_PlatformActiveLogJob)
 public class CmsPlatformActiveLogService extends BaseMQCmsService {
 
+    private final CmsBtPlatformActiveLogDao platformActiveLogDao;
+    private final CmsBtProductDao cmsBtProductDao;
+    private final CmsBtProductGroupDao cmsBtProductGroupDao;
+    private final TbSaleService tbSaleService;
+    private final JdSaleService jdSaleService;
+    private final JumeiSaleService jmSaleService;
+    private final MongoSequenceService sequenceService;
+
     @Autowired
-    private CmsBtPlatformActiveLogDao platformActiveLogDao;
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-    @Autowired
-    private CmsBtProductGroupDao cmsBtProductGroupDao;
-    @Autowired
-    private TbSaleService tbSaleService;
-    @Autowired
-    private JdSaleService jdSaleService;
-    @Autowired
-    private JumeiSaleService jmSaleService;
-    @Autowired
-    private MongoSequenceService sequenceService;
+    public CmsPlatformActiveLogService(CmsBtProductGroupDao cmsBtProductGroupDao, JumeiSaleService jmSaleService,
+                                       TbSaleService tbSaleService, JdSaleService jdSaleService,
+                                       MongoSequenceService sequenceService, CmsBtPlatformActiveLogDao platformActiveLogDao,
+                                       CmsBtProductDao cmsBtProductDao) {
+        this.cmsBtProductGroupDao = cmsBtProductGroupDao;
+        this.jmSaleService = jmSaleService;
+        this.tbSaleService = tbSaleService;
+        this.jdSaleService = jdSaleService;
+        this.sequenceService = sequenceService;
+        this.platformActiveLogDao = platformActiveLogDao;
+        this.cmsBtProductDao = cmsBtProductDao;
+    }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onStartup(Map<String, Object> messageMap) throws Exception {
+
         $info("CmsPlatformActiceLogService start 参数 " + JacksonUtil.bean2Json(messageMap));
+
         String channelId = StringUtils.trimToNull((String) messageMap.get("channelId"));
-        List<String> codeList = (List<String>) messageMap.get("codeList");
+        Collection<String> codeList = (Collection<String>) messageMap.get("codeList");
         String activeStatus = StringUtils.trimToNull((String) messageMap.get("activeStatus"));
         String userName = StringUtils.trimToNull((String) messageMap.get("creater"));
+
         if (channelId == null || codeList == null || codeList.isEmpty()
                 || activeStatus == null || userName == null) {
             $error("CmsPlatformActiceLogService 缺少参数");
             return;
         }
 
-        List<Integer> cartIdList = (List<Integer>) messageMap.get("cartIdList");
+        Collection<Integer> cartIdList = (Collection<Integer>) messageMap.get("cartIdList");
+
         if (cartIdList == null || cartIdList.isEmpty()) {
             $error("CmsPlatformActiceLogService 缺少cartid参数");
             return;
@@ -139,9 +155,9 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         BulkJongoUpdateList bulkList2 = new BulkJongoUpdateList(1000, cmsBtProductGroupDao, channelId);
         BulkJongoUpdateList bulkList3 = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
 
-        boolean updRsFlg = false;
-        String errMsg = null;
-        BulkWriteResult rs = null;
+        boolean updRsFlg;
+        String errMsg;
+        BulkWriteResult rs;
         JongoQuery queryObj = new JongoQuery();
         for (Integer cartId : cartIdList) {
             ShopBean shopProp = Shops.getShop(channelId, cartId);
@@ -235,7 +251,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             for (Map<String, Object> prodObj : prs) {
                 String numIId = StringUtils.trimToNull((String) prodObj.get("_id"));
                 List<String> pcdList = (List<String>) prodObj.get("pcdList");
-                if (numIId == null || pcdList == null || pcdList.isEmpty() ) {
+                if (numIId == null || pcdList == null || pcdList.isEmpty()) {
                     $error("CmsPlatformActiceLogService 数据错误 cartId=%d, channelId=%s data=%s", cartId, channelId, prodObj.toString());
                     continue;
                 }

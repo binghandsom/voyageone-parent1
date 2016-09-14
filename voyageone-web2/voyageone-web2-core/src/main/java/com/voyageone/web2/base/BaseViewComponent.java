@@ -7,5 +7,5 @@ import com.voyageone.common.logger.VOAbsLoggable;
  * Created by Jonas on 15/6/26.
  * @author Jonas
  */
-public abstract class BaseAppComponent extends VOAbsLoggable {
+public abstract class BaseViewComponent extends VOAbsLoggable {
 }

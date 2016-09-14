@@ -510,6 +510,9 @@ define(function () {
         "TXT_IMAGE_TYPE": "图片类型",
         "TXT_IMAGE_GROUP_LIST": "图片管理",
         "TXT_RELATED_BRAND_NAME": "相关品牌",
+        "TXT_BRAND_CATEGORY":"品牌种类",
+        "TXT_BRAND_STATES":"品牌状态",
+        "TXT_RELATED_PRODUCT_TYPE": "相关产品类型",
         "TXT_RELATED_PRODUCT_TYPE": "相关产品类型",
         "TXT_RELATED_SIZE_TYPE": "相关尺码",
         "TXT_IMAGE_GROUP_NAME": "图片组别名称",
@@ -799,6 +802,17 @@ define(function () {
         "TXT_CONFIRM_STATUS": "确认状态",
         "TXT_CONFIRM_PRICE": "确认指导价",
         "TXT_FLOATING_RATE": "价格波动",
-        "TXT_TASK_LIST": "任务一览"
+        "TXT_TASK_LIST": "任务一览",
+        "TXT_FLOATING_RATE": "价格波动",
+
+        /**黑名单*/
+        "TXT_BLACK_LIST_IN":"已加入黑名单",
+        "TXT_BLACK_LIST_OUT":"未加入黑名单",
+        "TXT_JOIN_BLACK_LIST":"加入黑名单",
+        "TXT_REMOVE_BLACK_LIST":"移除黑名单",
+        "TXT_BLACK_LIST_CONFIRM":"您确认要进行[{{content}}]操作吗？",
+        "TXT_BATCH_JOIN_BLACK_LIST":"批量加入黑名单",
+        "TXT_BATCH_REMOVE_BLACK_LIST":"批量移除黑名单",
+        "TXT_BLACK_LIST_BATCH_CONFIRM":"您确认要进行[{{content}}]操作吗？"
     };
 });

@@ -17,5 +17,4 @@ public abstract class BaseMQCmsService extends BaseMQAnnoService {
     public String getTaskName() {
         return getClass().getSimpleName();
     }
-
 }

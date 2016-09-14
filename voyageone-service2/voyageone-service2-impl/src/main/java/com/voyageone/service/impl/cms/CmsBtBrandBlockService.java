@@ -36,7 +36,7 @@ public class CmsBtBrandBlockService extends BaseService {
         this.sender = sender;
     }
 
-    public void block(String channelId, int cartId, int brandType, String brand, String username) throws IllegalAccessException {
+    public void block(String channelId, int cartId, int brandType, String brand, String username) {
         switch (brandType) {
             case BRAND_TYPE_FEED:
             case BRAND_TYPE_MASTER:
@@ -70,10 +70,10 @@ public class CmsBtBrandBlockService extends BaseService {
         // 通知任务进行其他部分的处理
         // 如 feed 部分的屏蔽
         // MQ 不负责的部分，应该只包含上新部分
-//        sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, new HashMap<String, Object>() {{
-//            put("blocking", true);
-//            put("data", brandBlockModel);
-//        }});
+        sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, new HashMap<String, Object>() {{
+            put("blocking", true);
+            put("data", brandBlockModel);
+        }});
     }
 
     public void unblock(String channelId, int cartId, int brandType, String brand) {
@@ -101,10 +101,10 @@ public class CmsBtBrandBlockService extends BaseService {
         brandBlockDao.delete(brandBlockModel.getId());
 
         // 同上，只是相反
-//        Map<String, Object> mqParams = new HashMap<>();
-//        mqParams.put("blocking", false);
-//        mqParams.put("data", brandBlockModel);
-//        sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, mqParams);
+        Map<String, Object> mqParams = new HashMap<>();
+        mqParams.put("blocking", false);
+        mqParams.put("data", brandBlockModel);
+        sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, mqParams);
     }
 
     public boolean isBlocked(String channelId, int cartId, String feedBrand, String masterBrand, String platformBrandId) {
