@@ -142,7 +142,7 @@ public class GetPlatformCategoryTreesService extends BaseTaskService {
      *
      * @param shop 店铺信息
      */
-    private void doSetPlatformCategoryTm(ShopBean shop) throws ApiException {
+    protected void doSetPlatformCategoryTm(ShopBean shop) throws ApiException {
 
         // 调用API 获取该店铺被授权的类目和品牌
         SellerAuthorize sellerAuthorize = tbCategoryService.getSellerCategoriesAuthorize(shop);
