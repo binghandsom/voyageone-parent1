@@ -245,13 +245,15 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
     }
 
     private void lockProduct(String code, String channelId) {
-        productService.updateFirstProduct(new JongoUpdate().setQuery("{\"common.fields.code\":\"" + code + "\"}")
-                .setUpdate("{\"lock\":\"1\", \"comment\":\"Feed 品牌加入黑名单，所有商品不能上架\"}"), channelId);
+        productService.updateFirstProduct(new JongoUpdate()
+                .setQuery("{\"common.fields.code\":\"" + code + "\"}")
+                .setUpdate("{$set:{\"lock\":\"1\", \"comment\":\"Feed 品牌加入黑名单，所有商品不能上架\"}}"), channelId);
     }
 
     private void unlockProduct(String code, String channelId) {
-        productService.updateFirstProduct(new JongoUpdate().setQuery("{\"common.fields.code\":\"" + code + "\"}")
-                .setUpdate("{\"lock\":\"0\", \"comment\":\"\"}"), channelId);
+        productService.updateFirstProduct(new JongoUpdate()
+                .setQuery("{\"common.fields.code\":\"" + code + "\"}")
+                .setUpdate("{$set:{\"lock\":\"0\", \"comment\":\"\"}}"), channelId);
     }
 
     private class OffShelfHelper {
@@ -283,7 +285,7 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
             productModel.getPlatforms().forEach((k, platform) -> {
                 if (PlatformStatus.OnSale.equals(platform.getpStatus())) {
                     addCode(productModel.getCommon().getFields().getCode());
-                    addCartId(Integer.valueOf(k));
+                    addCartId(platform.getCartId());
                 }
             });
         }
@@ -293,7 +295,7 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
             // 开发测试阶段，不进行真实下架
             if (true) return;
 
-            if (codeList.isEmpty())
+            if (cartIdList.isEmpty() || codeList.isEmpty())
                 return;
             try {
                 platformActiveLogService.onStartup(mqParams);

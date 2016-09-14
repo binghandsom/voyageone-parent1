@@ -51,7 +51,7 @@
             <div class="row m-t-md">
                 <div class="col-sm-12 text-center">
                     <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'|translate}}</button>
-                    <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'|translate}}
+                    <button class="btn btn-vo" ng-click="ctrl.paging.curr = 1;ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'|translate}}
                     </button>
                 </div>
             </div>
@@ -82,7 +82,7 @@
             <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
                 <thead>
                 <tr>
-                    <th class="text-center mfb-xt" style="width:66px;padding-left:0px">
+                    <th class="text-center mfb-xt">
                         <label class="checkbox-inline c-checkbox">
                             <input type="checkbox" ng-model="ctrl.all" ng-click="ctrl.seletAll()">
                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;

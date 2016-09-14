@@ -50,7 +50,7 @@ class CmsBlackBrandViewService extends BaseViewService {
         this.jmMasterBrandService = jmMasterBrandService;
     }
 
-    Map<String, Object> searchBrandListPage(CmsBlackBrandParamBean blackBrandParamBean, UserSessionBean user) {
+    Map<String, Object> searchBrandListPage(CmsBlackBrandParamBean blackBrandParamBean, String langId, UserSessionBean user) {
 
         Map<String, Object> result = new HashMap<>();
 
@@ -71,7 +71,7 @@ class CmsBlackBrandViewService extends BaseViewService {
                 stream = getFeedBrandStream(channelId);
                 break;
             case CmsBtBrandBlockService.BRAND_TYPE_MASTER:
-                stream = getMasterBrandStream(channelId);
+                stream = getMasterBrandStream(channelId, langId);
                 break;
             case CmsBtBrandBlockService.BRAND_TYPE_PLATFORM:
                 stream = getPlatformBrandStream(channelId, cartIdList);
@@ -187,8 +187,8 @@ class CmsBlackBrandViewService extends BaseViewService {
         return viewBean;
     }
 
-    private Stream<CmsBlackBrandViewBean> getMasterBrandStream(String channelId) {
-        List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeList(TypeConfigEnums.MastType.brand.name(), channelId);
+    private Stream<CmsBlackBrandViewBean> getMasterBrandStream(String channelId, String langId) {
+        List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeWithLang(TypeConfigEnums.MastType.brand.name(), channelId, langId);
         return typeChannelBeanList.stream().map(this::toBlackBrandViewBean);
     }
 
