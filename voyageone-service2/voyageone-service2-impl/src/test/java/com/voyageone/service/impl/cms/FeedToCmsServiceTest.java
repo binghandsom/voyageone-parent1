@@ -18,7 +18,7 @@ import java.util.List;
  * @version 2.0.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class FeedToCmsServiceTest {
 
     @Autowired

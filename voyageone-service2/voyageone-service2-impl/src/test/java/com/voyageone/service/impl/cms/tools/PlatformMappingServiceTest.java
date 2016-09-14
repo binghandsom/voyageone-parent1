@@ -24,7 +24,7 @@ import java.util.HashMap;
  * @since 2.4.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class PlatformMappingServiceTest {
 
     @Autowired
