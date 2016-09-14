@@ -11,7 +11,7 @@
                     <div class="row form-group"><!-- 用户名 -->
                         <label class="col-sm-3 control-label">{{'TXT_USER_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.userName"/>
+                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.userName" readonly/>
                         </div>
                     </div>
                 </div>
@@ -21,7 +21,7 @@
                     <div class="row form-group"><!-- 账号 -->
                         <label class="col-sm-3 control-label">{{'TXT_ACCOUNT' | translate}}</label>
                         <div class="col-sm-8">
-                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.userAccount"/>
+                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.userAccount" readonly/>
                         </div>
                     </div>
                 </div>
@@ -43,7 +43,7 @@
                     <div class="row form-group"><!-- 角色名 -->
                         <label class="col-sm-3 control-label">{{'TXT_ROLE_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.roleName"/>
+                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.roleName" readonly/>
                         </div>
                     </div>
                 </div>
@@ -53,53 +53,30 @@
                     <label class="col-sm-1 control-label">权限：</label>
                     <label class="col-sm-1 control-label">系统</label>
                     <div class="col-sm-3">
-                        <select class="form-control" ng-model="ctrl.sourceData.application" ng-options="app for app in ctrl.appList">
+                        <select class="form-control" ng-model="ctrl.sourceData.application" ng-options="app.id as app.application for app in ctrl.appList">
                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
                 </div>
-                <div class="row form-group"><!-- 说明 -->
-
+                <div class="row form-group" ng-if="ctrl.sourceData.application"><!-- 说明 -->
                     <div class="wrapper" ng-controller="treeTable">
                         <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
                             <thead>
-                            <tr>
-                                <th class="cell-input">
-                                    <input ng-checked="(list | selected).length == list.length" ng-click="toggleAllCheckboxes($event)" type="checkbox" />
-                                </th>
-                                <th>
-                                    Name
-                                </th>
-                                <th class="cell-members">
-                                    Members
-                                </th>
-                                <th>
-                                    Title
-                                </th>
-                            </tr>
+                                <tr><th style="padding: 5px;text-align: center;">菜单名</th></tr>
                             </thead>
-                            <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-repeat="item in list"></tbody>
+                            <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-repeat="item in ctrl.authList"></tbody>
                         </table>
                         <script id="table_tree.html" type="text/ng-template">
                             <tr ng-class="{parent: item.children}" ng-init="parentScope = $parent.$parent; initCheckbox(item, parentScope.item)">
-                                <td class="cell-input">
-                                    <input ng-change="toggleCheckbox(item, parentScope)" ng-model="item.selected" type="checkbox" />
-                                </td>
                                 <td class="cell-name" ng-click="item.opened = !item.opened">
                                     <div class="indent" style="padding-left: {{15*level}}px"></div>
-                                    {{item.name}}
-                                </td>
-                                <td class="cell-members">
-                                    {{item.children.length}}
-                                </td>
-                                <td>
-                                    {{item.title}}
+                                    {{item.resName}}
                                 </td>
                             </tr>
                             <tr class="children" ng-if="item.children&&item.children.length>0">
-                                <td colspan="4">
+                                <td>
                                     <table style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
-                                        <tbody ng-class="{opened: item.opened}" ng-include="&#39;table_tree.html&#39;" ng-init="level = level + 1" ng-repeat="item in item.children"></tbody>
+                                        <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-init="level = level + 1" ng-repeat="item in item.children"></tbody>
                                     </table>
                                 </td>
                             </tr>
@@ -108,9 +85,5 @@
                 </div>
             </div>
         </form>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-        <button class="btn btn-vo" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
     </div>
 </div>
