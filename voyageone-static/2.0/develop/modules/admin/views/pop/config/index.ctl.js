@@ -105,9 +105,9 @@ define([
                         }
                         break;
                 }
-                self.search(1);
+                self.search(1,{taskName:self.sourceData.taskName});
             },
-            search: function (page) {
+            search: function (page, options) {
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
                 self.configInfo = {};
@@ -180,9 +180,10 @@ define([
                             };
                         };
                         if (self.sourceData.isReadOnly == true) {
+                            var taskName = options ? options.taskName : angular.element('#taskId option:selected').text();
                             res = self.getConfigPaginationData(self.taskCfgList, function (e) {
-                                if (self.searchInfo.taskId != null && self.searchInfo.taskId != '') {
-                                    if (e.taskId != null && e.taskId != self.searchInfo.taskId) {
+                                if (taskName != null && taskName != '') {
+                                    if (e.taskId != null && e.taskId != taskName) {
                                         return false;
                                     }
                                 }
@@ -520,7 +521,7 @@ define([
                 res.data.result = result;
                 return res;
             },
-            show:function (item) {
+            show: function (item) {
                 console.log(item);
             }
         };

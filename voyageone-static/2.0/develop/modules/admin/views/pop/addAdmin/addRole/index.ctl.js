@@ -25,10 +25,10 @@ define([
             init: function () {
                 var self = this;
                 self.applicationList = [
-                    {'id':1,'application':'Admin'},
-                    {'id':2,'application':'CMS'},
-                    {'id':3,'application':'OMS'},
-                    {'id':4,'application':'WMS'}
+                    {'id': 1, 'application': 'Admin'},
+                    {'id': 2, 'application': 'CMS'},
+                    {'id': 3, 'application': 'OMS'},
+                    {'id': 4, 'application': 'WMS'}
                 ];
                 self.adminRoleService.getAllRoleType().then(function (res) {
                     self.roleTypeList = res.data;
@@ -286,6 +286,15 @@ define([
             save: function () {
                 var self = this;
                 console.log(self.selectedAppList);
+                _.map(self.selectedAppList, function (value, key) {
+                    return {id: key, selected: value};
+                }).filter(function (item) {
+                    return item.selected;
+                }).forEach(function (item) {
+                    console.log(item);
+                    var data = self.applicationList;
+                });
+
                 if (self.sourceData.allChannel == '1' || self.sourceData.allStore == '1') {
                     self.sourceData.channelId = [];
                     self.sourceData.storeId = [];
