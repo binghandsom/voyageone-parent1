@@ -26,12 +26,12 @@ public class ProductControllerTest {
 
     @Test
     public  void run() throws Exception {
-        for (int i=0;i<200;i++){
+        for (int i = 0; i < 200; i++) {
 
             productTest();
             orderTest();
         }
-
+    }
     @Test
     public void productTest() throws Exception {
         //获取产品
