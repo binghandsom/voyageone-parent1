@@ -1,6 +1,12 @@
 package com.voyageone.common.util;
 
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.cglib.beans.BeanCopier;
+
+import java.beans.PropertyDescriptor;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Bean 帮助类, 提供实例属性复制, 实例克隆等帮助方法
@@ -44,5 +50,37 @@ public final class BeanUtils {
         }
         copier.copy(source, target, null);
         return target;
+    }
+
+
+//    /**
+//     * copyProperties
+//     * @param source map
+//     * @param target bean
+//     */
+//    public static void copyProperties(Map<String, Object> source, Object target) {
+//        BeanWrapper beanWrapper = new BeanWrapperImpl(target);
+//        beanWrapper.setPropertyValues(source);
+//    }
+
+    public static <T> Map<String, Object> toMap(T entity) throws IllegalAccessException {
+        Map<String, Object> map = new HashMap<>();
+        copyProperties(entity, map);
+        return map;
+    }
+
+
+    /**
+     * copyProperties
+     * @param source bean
+     * @param target map
+     */
+    public static void copyProperties(Object source, Map<String, Object> target) {
+        BeanWrapper beanWrapper = new BeanWrapperImpl(source);
+        PropertyDescriptor[] descriptor = beanWrapper.getPropertyDescriptors();
+        for (PropertyDescriptor aDescriptor : descriptor) {
+            String name = aDescriptor.getName();
+            target.put(name, beanWrapper.getPropertyValue(name));
+        }
     }
 }

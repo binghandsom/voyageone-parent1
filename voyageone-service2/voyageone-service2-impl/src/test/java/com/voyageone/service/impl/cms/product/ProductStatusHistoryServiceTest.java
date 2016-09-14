@@ -20,7 +20,7 @@ import java.util.List;
  * Created by dell on 2016/7/18.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class ProductStatusHistoryServiceTest {
 
     @Autowired

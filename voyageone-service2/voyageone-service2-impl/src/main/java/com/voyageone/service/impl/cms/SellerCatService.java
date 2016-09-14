@@ -175,13 +175,15 @@ public class SellerCatService extends BaseService {
      * addSellerCat
      */
     public void addSellerCat(String channelId, int cartId, String cName, String parentCId, String creator) {
-        List<CmsBtSellerCatModel>  sellerCats = getSellerCatsByChannelCart(channelId, cartId, false);
-        if(isDuplicateNode(sellerCats,cName,parentCId))
-        {
-            throw  new BusinessException("重复的店铺内分类名!");
+        List<CmsBtSellerCatModel> sellerCats = getSellerCatsByChannelCart(channelId, cartId, false);
+        if (isDuplicateNode(sellerCats, cName, parentCId)) {
+            throw new BusinessException("重复的店铺内分类名!");
         }
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
+        if (shopBean == null) {
+            throw new BusinessException("未配置店铺的销售平台!");
+        }
         String cId = "";
         String shopCartId = shopBean.getCart_id();
 

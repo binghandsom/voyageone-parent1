@@ -69,6 +69,15 @@ define(['underscore'], function (_) {
         JM: new Cart('JM', 27, '聚美优品', 'http://item.jumeiglobal.com/'),
 
         /**
+         * 天猫国际官网同购
+         */
+        TT: new Cart('TT', 30, '天猫国际官网同购', 'https://detail.tmall.hk/hk/item.htm?id='),
+        /**
+         * 天猫国际USJOI官网同购
+         */
+        TTUS: new Cart('TTUS', 31, '天猫国际USJOI官网同购', 'https://detail.tmall.hk/hk/item.htm?id='),
+
+        /**
          * 京东匠心界
          */
         USJGJ: new Cart('USJGJ', 928, 'USJOI匠心界', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
