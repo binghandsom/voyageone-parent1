@@ -167,9 +167,25 @@ define([
             },
             authority: function (type) {
                 var self = this;
+                var roleIds = [];
+                var resIds = [];
+                var applications = [];
+                var setInfo = [];
+                _.forEach(self.adminRoleList, function (Info) {
+                    _.forEach(self.adminUserSelList.selList, function (item) {
+                        if (Info.id == item.id) {
+                            setInfo.push(Info);
+                        }
+                    });
+                });
                 switch (type) {
                     case 'set':
-                        self.adminRoleService.setAuth().then(function (res) {
+                        _.forEach(setInfo, function (item) {
+                            roleIds = item.roleId;
+                            resIds = item.resIds;
+                            applications = item.application;
+                        });
+                        self.adminRoleService.setAuth(setInfo).then(function (res) {
                             console.log(res)
                         });
                         break;
