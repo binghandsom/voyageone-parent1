@@ -4,21 +4,21 @@ import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.configs.Codes;
 import com.voyageone.common.mail.Mail;
-import com.voyageone.security.dao.ComUserTokenDao;
-import com.voyageone.security.model.ComUserTokenModel;
-import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.security.dao.ComUserDao;
 import com.voyageone.security.dao.ComUserRoleDao;
-import com.voyageone.service.dao.com.CtApplicationDao;
-import com.voyageone.service.daoext.core.AdminResourceDaoExt;
+import com.voyageone.security.dao.ComUserTokenDao;
 import com.voyageone.security.model.ComUserModel;
 import com.voyageone.security.model.ComUserRoleModel;
+import com.voyageone.security.model.ComUserTokenModel;
+import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminUserBean;
+import com.voyageone.service.dao.com.CtApplicationDao;
+import com.voyageone.service.dao.com.CtUserDao;
+import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.service.daoext.core.AdminUserDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.com.CtApplicationModel;
+import com.voyageone.service.model.com.CtUserModel;
 import com.voyageone.service.model.com.PageModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -61,6 +61,9 @@ public class AdminUserService extends BaseService {
 
     @Autowired
     ComUserTokenDao comUserTokenDao;
+
+    @Autowired
+    CtUserDao ctUserDao;
 
     /**
      * 检索用户
@@ -453,6 +456,31 @@ public class AdminUserService extends BaseService {
             child.setChildren(tmpChildren);
         }
         return children;
+    }
+
+
+    @VOTransactional
+    public void moveUser()
+    {
+        CtUserModel query = new CtUserModel();
+        query.setActive(true);
+
+        List<CtUserModel> allOldUser = ctUserDao.selectList(query);
+
+        for(CtUserModel ct : allOldUser)
+        {
+            ComUserModel model = new ComUserModel();
+            model.setId(ct.getId());
+            model.setUserAccount(ct.getUsername());
+            model.setUserName(ct.getFirstName() + ct.getLastName());
+            model.setPassword(ct.getPassword());
+            model.setEmail(ct.getEmail());
+            model.setActive(1);
+            model.setCredentialSalt("");
+            model.setOrgId(1);
+            model.setCreater(ct.getUsername());
+            adminUserDaoExt.insert(model);
+        }
     }
 
 

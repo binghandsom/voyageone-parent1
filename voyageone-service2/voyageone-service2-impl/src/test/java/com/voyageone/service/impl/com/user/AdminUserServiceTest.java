@@ -116,4 +116,8 @@ public class AdminUserServiceTest {
 
     }
 
+    @Test
+    public void testMoveUser() throws Exception {
+        adminUserService.moveUser();
+    }
 }

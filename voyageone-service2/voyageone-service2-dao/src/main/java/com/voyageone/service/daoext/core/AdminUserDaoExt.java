@@ -1,5 +1,6 @@
 package com.voyageone.service.daoext.core;
 
+import com.voyageone.security.model.ComUserModel;
 import com.voyageone.service.bean.com.AdminUserBean;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +19,8 @@ public interface AdminUserDaoExt {
     Integer selectUserCount(Map<String, Object> params);
 
     List<Map<String, Object>> selectAllApp();
+
+    int insert(ComUserModel record);
 
 
 }

@@ -124,5 +124,99 @@
         AND re.active = 1 AND ap.active = 1
     </select>
 
+    <insert id="insert" parameterType="com.voyageone.security.model.ComUserModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into com_user
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                `id`,
+            </if>
+            <if test="userName != null" >
+                `user_name`,
+            </if>
+            <if test="userAccount != null" >
+                `user_account`,
+            </if>
+            <if test="password != null" >
+                `password`,
+            </if>
+            <if test="credentialSalt != null" >
+                `credential_salt`,
+            </if>
+            <if test="orgId != null" >
+                `org_id`,
+            </if>
+            <if test="description != null" >
+                `description`,
+            </if>
+            <if test="email != null" >
+                `email`,
+            </if>
+            <if test="active != null" >
+                `active`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null" >
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="userAccount != null" >
+                #{userAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null" >
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="credentialSalt != null" >
+                #{credentialSalt,jdbcType=VARCHAR},
+            </if>
+            <if test="orgId != null" >
+                #{orgId,jdbcType=INTEGER},
+            </if>
+            <if test="description != null" >
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null" >
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=INTEGER},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
 
 </mapper>
