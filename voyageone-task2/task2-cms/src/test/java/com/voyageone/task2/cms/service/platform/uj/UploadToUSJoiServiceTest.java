@@ -27,6 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.toList;
 
@@ -193,12 +194,14 @@ public class UploadToUSJoiServiceTest {
     @Test
     public void testUploadByChannel() throws Exception {
         // 保存每个channel最终导入结果(成功失败件数信息)
-        Map<String, String> resultMap = new HashMap<>();
+        Map<String, String> resultMap = new ConcurrentHashMap<>();
+        // 保存是否需要清空缓存(添加过品牌等信息时，需要清空缓存)
+        Map<String, String> needReloadMap = new ConcurrentHashMap<>();
 
         for (OrderChannelBean channelBean : Channels.getUsJoiChannelList()) {
             // 只测试928渠道时
             if ("928".equals(channelBean.getOrder_channel_id())) {
-                uploadToUSJoiService.uploadByChannel(channelBean, resultMap);
+                uploadToUSJoiService.uploadByChannel(channelBean, resultMap, needReloadMap);
             }
         }
     }
