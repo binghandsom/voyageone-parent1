@@ -136,6 +136,7 @@ public class SellerCatService extends BaseService {
         copyRoot.setCatId(node.getCatId());
         copyRoot.setCatName(node.getCatName());
         copyRoot.setParentCatId(node.getParentCatId());
+        copyRoot.setIsParent(node.getIsParent());
         copyRoot.setChannelId(node.getChannelId());
         copyRoot.setCartId(node.getCartId());
         copyRoot.setCreated(node.getCreated());

@@ -41,6 +41,7 @@ import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.BusinessLogService;
+import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -137,6 +138,8 @@ public class SxProductService extends BaseService {
     private CmsMtPlatformPropSkuDao cmsMtPlatformPropSkuDao;
     @Autowired
     private CmsMtChannelSkuConfigDao cmsMtChannelSkuConfigDao;
+    @Autowired
+    private CmsBtBrandBlockService cmsBtBrandBlockService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -845,6 +848,17 @@ public class SxProductService extends BaseService {
                 continue;
             }
             // 2016/06/12 add desmond END
+            // 2016/09/13 add desmond START
+            // 看一下feed的品牌，master的品牌和platform的品牌这3个地方的品牌是否在品牌黑名单中，只有有一个在黑名单中，该产品就是上新对象外
+            // 官网同购的场合（cart是30， 31）， platform的品牌是不存在的
+            if (cmsBtBrandBlockService.isBlocked(channelId, cartId,
+                    sxData.getCmsBtFeedInfoModel().getBrand(),
+                    productModel.getCommon().getFields().getBrand(),
+                    productPlatformCart.getpBrandId())) {
+                removeProductList.add(productModel);
+                continue;
+            }
+            // 2016/09/13 add desmond END
 
             // modified by morse.lu 2016/06/15 start
             // TODO:{}1中的这段暂时不要，临时用{}2，以后恢复
@@ -972,7 +986,8 @@ public class SxProductService extends BaseService {
             // 没有对象
             // update by desmond 2016/07/12 start
 //            return null;
-            String errorMsg = "取得上新数据(SxData)失败! 在产品表中没找到groupId(" + groupId + ")对应的未锁定且已审批的产品，请确保产品未被锁定且已完成审批";
+            String errorMsg = "取得上新数据(SxData)失败! 在产品表中没找到groupId(" + groupId + ")" +
+                    "下面有效的产品，请确保产品未被锁定,已完成审批且品牌不在黑名单中.";
             $error(errorMsg);
             sxData.setErrorMessage(errorMsg);
             return sxData;

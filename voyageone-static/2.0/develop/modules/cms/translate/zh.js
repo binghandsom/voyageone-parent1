@@ -104,7 +104,7 @@ define(function () {
         "TXT_PRODUCT_STATUS": "商品状态",
         "TXT_FEED_STATUS": "Feed 状态",
         "TXT_PLATFORM_STATUS": "商品平台状态",
-        "TXT_MSRP_PRICE": "官方售价",
+        "TXT_MSRP_PRICE": "建议售价",
         "TXT_CREATE_TIME": "创建时间",
         "TXT_PUBLISH_TIME": "发布时间",
         "TXT_INVENTORY": "库存",
@@ -534,6 +534,7 @@ define(function () {
         "TXT_FeedStatus_Error": "导入失败",
         "TXT_FeedStatus_NotImport": "不导入",
         "TXT_FeedStatus_DateError": "Feed数据异常错误",
+        "TXT_FeedStatus_BrandBlock": "品牌黑名单",
 
 
         "BTN_CREATE_TASK": "新建任务",
@@ -797,6 +798,7 @@ define(function () {
         "TXT_PRICE_CONFIRM_HISTORY": "价格确认历史一览",
         "TXT_CONFIRM_STATUS": "确认状态",
         "TXT_CONFIRM_PRICE": "确认指导价",
-        "TXT_FLOATING_RATE": "价格波动"
+        "TXT_FLOATING_RATE": "价格波动",
+        "TXT_TASK_LIST": "任务一览"
     };
 });

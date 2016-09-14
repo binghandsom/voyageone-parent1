@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.product;
 
 import com.mongodb.BulkWriteResult;
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
@@ -52,6 +53,17 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
             $error("CmsProcductBIDataService 缺少参数");
             return;
         }
+        if (cartId == 0) {
+            $error("CmsProcductBIDataService 缺少参数");
+            return;
+        }
+
+        // 先判断该店铺的cms_bt_product_cxxx表是否存在
+        boolean exists = cmsBtProductDao.collectionExists(cmsBtProductDao.getCollectionName(channelId));
+        if (!exists) {
+            $warn("本店铺对应的cms_bt_product_cxxx表不存在！ channelId=" + channelId);
+            return;
+        }
 
         Map<String, Object> sqlParams = new HashMap<>(6);
         Date lastDay = DateTimeUtil.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1);
@@ -92,15 +104,29 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
      * 查询并保存BI数据
      */
     private void setBiData(BulkJongoUpdateList bulkUpdList, Map<String, Object> sqlParams, int opeType, boolean isUsJoi, Map<String, String> orgChannelIdMap) {
-        long oIdx = 0;
-        List<Map<String, Object>> biData = null;
-        BulkWriteResult rs = null;
+        String channelId = (String) sqlParams.get("channelId");
+        Integer cartId = (Integer) sqlParams.get("cartId");
+
+        // 清空现有值
+        JongoUpdate updObj = new JongoUpdate();
+        updObj.setUpdate("{$set:{'bi.sum#.pv.cartId#':null,'bi.sum#.uv.cartId#':null, 'bi.sum#.gwc.cartId#':null,'bi.sum#.scs.cartId#':null, 'modified':#,'modifier':#}}");
+        updObj.setUpdateParameters(opeType, cartId, opeType, cartId, opeType, cartId, opeType, cartId, DateTimeUtil.getNowTimeStamp(), MqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
+        // 批量更新
+        WriteResult rs = cmsBtProductDao.updateMulti(updObj, channelId);
+        if (rs != null) {
+            $debug(String.format("更新product 清空现有bi数据 执行结果=%s", rs.toString()));
+        }
+
         Map<String, BulkJongoUpdateList> bulkUpdListMap = null;
         if (isUsJoi) {
             bulkUpdListMap = new HashMap<>();
+            // 若是usjoi店铺，同时清空原始店铺的bi数据
+            clearUsjoiBiData(channelId, cartId, opeType);
         }
-        String channelId = (String) sqlParams.get("channelId");
-        Integer cartId = (Integer) sqlParams.get("cartId");
+
+        long oIdx = 0;
+        List<Map<String, Object>> biData = null;
+        BulkWriteResult wrs = null;
         do {
             sqlParams.put("oIdx", oIdx * PAGE_LIMIT);
             biData = biDataDao.selectList(sqlParams);
@@ -114,15 +140,15 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
             for (Map orderObj : biData) {
                 String numIid = (String) orderObj.get("num_iid");
 
-                JongoUpdate updObj = new JongoUpdate();
+                updObj = new JongoUpdate();
                 updObj.setQuery("{'platforms.P#.pNumIId':#,'platforms.P#.status':'Approved'}");
                 updObj.setQueryParameters(cartId, numIid, cartId);
                 updObj.setUpdate("{$set:{'bi.sum#.pv.cartId#':#,'bi.sum#.uv.cartId#':#, 'bi.sum#.gwc.cartId#':#,'bi.sum#.scs.cartId#':#, 'modified':#,'modifier':#}}");
                 updObj.setUpdateParameters(opeType, cartId, orderObj.get("pv"), opeType, cartId, orderObj.get("uv"), opeType, cartId, orderObj.get("cartNums"), opeType, cartId, orderObj.get("collNums"), DateTimeUtil.getNowTimeStamp(), MqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
                 // 批量更新
-                rs = bulkUpdList.addBulkJongo(updObj);
-                if (rs != null) {
-                    $debug(String.format("更新product sqlParams=%s 执行结果1=%s", sqlParams.toString(), rs.toString()));
+                wrs = bulkUpdList.addBulkJongo(updObj);
+                if (wrs != null) {
+                    $debug(String.format("更新product sqlParams=%s 执行结果1=%s", sqlParams.toString(), wrs.toString()));
                 }
 
                 // 若是usjoi店铺，根据numiid和cartid取得原始channelid
@@ -143,24 +169,24 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
                     updObj2.setUpdate("{$set:{'bi.sum#.pv.cartId#':#,'bi.sum#.uv.cartId#':#, 'bi.sum#.gwc.cartId#':#,'bi.sum#.scs.cartId#':#, 'modified':#,'modifier':#}}");
                     updObj2.setUpdateParameters(opeType, channelId, orderObj.get("pv"), opeType, channelId, orderObj.get("uv"), opeType, channelId, orderObj.get("cartNums"), opeType, channelId, orderObj.get("collNums"), DateTimeUtil.getNowTimeStamp(), MqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
 
-                    rs = orgUpdList.addBulkJongo(updObj2);
-                    if (rs != null) {
-                        $debug(String.format("更新product orgChannelId=%s, sqlParams=%s 执行结果1=%s", orgChannelId, sqlParams.toString(), rs.toString()));
+                    wrs = orgUpdList.addBulkJongo(updObj2);
+                    if (wrs != null) {
+                        $debug(String.format("更新product orgChannelId=%s, sqlParams=%s 执行结果1=%s", orgChannelId, sqlParams.toString(), wrs.toString()));
                     }
                 }
             }
         } while (biData.size() == PAGE_LIMIT);
 
-        rs = bulkUpdList.execute();
-        if (rs != null) {
-            $debug(String.format("更新product sqlParams=%s 执行结果2=%s", sqlParams.toString(), rs.toString()));
+        wrs = bulkUpdList.execute();
+        if (wrs != null) {
+            $debug(String.format("更新product sqlParams=%s 执行结果2=%s", sqlParams.toString(), wrs.toString()));
         }
 
         if (bulkUpdListMap != null) {
             for (Map.Entry<String, BulkJongoUpdateList> entry : bulkUpdListMap.entrySet()) {
-                rs = entry.getValue().execute();
-                if (rs != null) {
-                    $debug(String.format("更新product orgChannelId=%s, sqlParams=%s 执行结果2=%s", entry.getKey(), sqlParams.toString(), rs.toString()));
+                wrs = entry.getValue().execute();
+                if (wrs != null) {
+                    $debug(String.format("更新product orgChannelId=%s, sqlParams=%s 执行结果2=%s", entry.getKey(), sqlParams.toString(), wrs.toString()));
                 }
             }
         }
@@ -194,5 +220,36 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
             orgChannelIdMap.put(orgKey, orgChannelId);
         }
         return orgChannelId;
+    }
+
+    /*
+     * 清空usjoi原始店铺的bi数据
+     */
+    private void clearUsjoiBiData(String channelId, int cartId, int opeType) {
+        // 取得orgChannelId一览
+        List<String> channelIdList = cmsBtProductDao.distinct("orgChannelId", cmsBtProductDao.getCollectionName(channelId), String.class);
+        if (channelIdList == null || channelIdList.isEmpty()) {
+            // 没有销量数据
+            $warn("CmsProcductBIDataService 本店铺无orgChannelId数据 channelId=" + channelId);
+            return;
+        }
+
+        for (String orgChannelId : channelIdList) {
+            // 先判断该店铺的cms_bt_product_cxxx表是否存在
+            boolean exists = cmsBtProductDao.collectionExists(cmsBtProductDao.getCollectionName(orgChannelId));
+            if (!exists) {
+                $warn("本店铺对应的cms_bt_product_cxxx表不存在！ orgChannelId=" + orgChannelId);
+                continue;
+            }
+            // 清空现有值
+            JongoUpdate updObj = new JongoUpdate();
+            updObj.setUpdate("{$set:{'bi.sum#.pv.cartId#':null,'bi.sum#.uv.cartId#':null, 'bi.sum#.gwc.cartId#':null,'bi.sum#.scs.cartId#':null, 'modified':#,'modifier':#}}");
+            updObj.setUpdateParameters(opeType, cartId, opeType, cartId, opeType, cartId, opeType, cartId, DateTimeUtil.getNowTimeStamp(), MqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
+            // 批量更新
+            WriteResult rs = cmsBtProductDao.updateMulti(updObj, orgChannelId);
+            if (rs != null) {
+                $debug(String.format("更新product 清空现有bi数据 orgChannelId=%s, cartid=%d, 执行结果=%s", orgChannelId, cartId, rs.toString()));
+            }
+        }
     }
 }

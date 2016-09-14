@@ -9,9 +9,9 @@ package com.voyageone.service.model.cms.enums;
  */
 public enum CartType {
 
-    TMALL("TMall", "天猫", "TM", 22, 1),
+    TMALL("TMall", "天猫", "TM", 20, 1),
 
-    TAOBAO("Taobao", "淘宝", "TB", 20, 1),
+    TAOBAO("Taobao", "淘宝", "TB", 21, 1),
 
     OFFLINE("Off Line", "线下订单", "OF", 22, 0),
 

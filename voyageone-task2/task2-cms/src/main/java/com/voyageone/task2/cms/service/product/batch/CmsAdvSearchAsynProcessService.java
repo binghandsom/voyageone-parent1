@@ -19,7 +19,9 @@ import java.util.Map;
 public class CmsAdvSearchAsynProcessService extends BaseMQCmsService {
 
     @Autowired
-    private CmsBacthUpdateService bacthUpdateService;
+    private CmsBacthUpdateTask bacthUpdateService;
+    @Autowired
+    private CmsAddChannelCategoryTask saveChannelCategoryService;
 
     @Override
     public String getTaskName() {
@@ -31,7 +33,8 @@ public class CmsAdvSearchAsynProcessService extends BaseMQCmsService {
         String serviceName = (String) messageMap.get("_taskName");
         if ("batchupdate".equals(serviceName)) {
             bacthUpdateService.onStartup(messageMap);
-
+        } else if ("saveChannelCategory".equals(serviceName)) {
+            saveChannelCategoryService.onStartup(messageMap);
         } else {
             $error("高级检索异步批量处理 未知操作 " + messageMap.toString());
         }

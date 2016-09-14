@@ -70,7 +70,8 @@ public class BiSaveDataController extends OpenApiBaseController {
 
         Map<String, Object> messageMap = new HashMap<>();
         messageMap.put("channelId", shopInfo.get("channelCode"));
-        messageMap.put("cartId", shopInfo.get("ecommCode"));
+        String cartId = (String) shopInfo.get("ecommCode");
+        messageMap.put("cartId", Integer.parseInt(cartId));
 
         // send mq
         mqSender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob, messageMap);
