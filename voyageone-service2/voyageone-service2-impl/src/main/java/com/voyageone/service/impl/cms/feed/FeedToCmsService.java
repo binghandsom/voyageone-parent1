@@ -186,10 +186,16 @@ public class FeedToCmsService extends BaseService {
                     if(isImportFeedTypeConfig != null &&"1".equals(isImportFeedTypeConfig.getConfigValue1())){
                         insertLog = true;
                         product.setCreater(modifier);
+                        product.setCreated(DateTimeUtil.getNow());
+                        product.setModifier(modifier);
+                        product.setModified(DateTimeUtil.getNowTimeStamp());
                         product.setUpdFlg(0);
                     }else{
                         insertLog = true;
                         product.setCreater(modifier);
+                        product.setCreated(DateTimeUtil.getNow());
+                        product.setModifier(modifier);
+                        product.setModified(DateTimeUtil.getNowTimeStamp());
                         product.setUpdFlg(9);
                     }
                 }
