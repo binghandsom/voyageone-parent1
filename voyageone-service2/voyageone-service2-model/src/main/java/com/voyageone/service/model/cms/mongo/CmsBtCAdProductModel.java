@@ -11,7 +11,7 @@ import java.util.List;
  * @author james.li on 2016/9/12.
  * @version 2.0.0
  */
-public class CmsBtCAdProudctModel extends BaseMongoModel {
+public class CmsBtCAdProductModel extends BaseMongoModel {
 
     @JsonProperty("BuyableProducts")
     private List<BuyableProductModel> buyableProducts;

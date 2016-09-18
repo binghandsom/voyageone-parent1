@@ -1,15 +1,18 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.CamelUtil;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.vms.channeladvisor.product.FieldModel;
 import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductDao;
+import com.voyageone.service.dao.vms.VmsBtClientInventoryDao;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
+import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
-import com.voyageone.service.model.cms.mongo.CmsBtCAdProudctModel;
+import com.voyageone.service.model.cms.mongo.CmsBtCAdProductModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
+import com.voyageone.service.model.vms.VmsBtClientInventoryModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,21 +38,28 @@ public class CaAnalysisService extends BaseMQCmsService {
     @Autowired
     private FeedToCmsService feedToCmsService;
 
+    @Autowired
+    private VmsBtClientInventoryDao vmsBtClientInventoryDao;
+
+    @Autowired
+    private MqSender sender;
+
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
         String channelId = messageMap.get("channelId").toString();
         List<String> sellerSKUs = (List<String>) messageMap.get("sellerSKUs");
-        List<CmsBtCAdProudctModel> feedList = cmsBtCAdProductDao.getProduct(channelId, sellerSKUs);
+        List<CmsBtCAdProductModel> feedList = cmsBtCAdProductDao.getProduct(channelId, sellerSKUs);
         feedList.forEach(cmsBtCAdProudctModel -> {
             List<CmsBtFeedInfoModel> products = convertToFeedInfo(channelId, cmsBtCAdProudctModel);
-            if(products != null && products.size()>0){
+            if (products != null && products.size() > 0) {
                 Map response = feedToCmsService.updateProduct(channelId, products, getTaskName());
             }
+            updateVmsInventory(channelId, cmsBtCAdProudctModel);
         });
 
     }
 
-    private List<CmsBtFeedInfoModel> convertToFeedInfo(String channelId, CmsBtCAdProudctModel feed) {
+    private List<CmsBtFeedInfoModel> convertToFeedInfo(String channelId, CmsBtCAdProductModel feed) {
 
         List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();
         Map<String, CmsBtFeedInfoModel> codeMap = new HashMap<>();
@@ -73,6 +83,10 @@ public class CaAnalysisService extends BaseMQCmsService {
                 price = Double.parseDouble(getFieldValueByName(sku.getFields(), "price"));
             }
             feedSku.setPriceNet(price);
+            feedSku.setPriceMsrp(price);
+            feedSku.setPriceClientRetail(0.0);
+            feedSku.setPriceClientMsrp(0.0);
+            feedSku.setPriceCurrent(price);
             feedSku.setClientSku(sku.getSellerSKU());
             feedSku.setQty(sku.getQuantity());
             feedSku.setSize(getFieldValueByName(sku.getFields(), "size"));
@@ -140,6 +154,42 @@ public class CaAnalysisService extends BaseMQCmsService {
             }
         });
         return attribute;
+    }
+
+    private void updateVmsInventory(String channelId, CmsBtCAdProductModel cmsBtCAdProduct) {
+        List<String> skulist = new ArrayList<>();
+        cmsBtCAdProduct.getBuyableProducts().forEach(buyableProductModel -> {
+            skulist.add(buyableProductModel.getSellerSKU());
+            Map<String, Object> param = new HashMap<String, Object>();
+            param.put("orderChannelId", channelId);
+            param.put("sellerSku", buyableProductModel.getSellerSKU());
+            VmsBtClientInventoryModel vmsBtClientInventoryModel = vmsBtClientInventoryDao.selectOne(param);
+            if (vmsBtClientInventoryModel != null) {
+                vmsBtClientInventoryModel.setQty(buyableProductModel.getQuantity());
+                vmsBtClientInventoryModel.setStatus(buyableProductModel.getListingStatus().toString());
+                vmsBtClientInventoryModel.setModifier(getTaskName());
+                vmsBtClientInventoryModel.setModified(DateTimeUtil.getDate());
+                vmsBtClientInventoryDao.update(vmsBtClientInventoryModel);
+            } else {
+                vmsBtClientInventoryModel = new VmsBtClientInventoryModel();
+                vmsBtClientInventoryModel.setSellerSku(buyableProductModel.getSellerSKU());
+                vmsBtClientInventoryModel.setQty(buyableProductModel.getQuantity());
+                vmsBtClientInventoryModel.setStatus(buyableProductModel.getListingStatus().toString());
+                vmsBtClientInventoryModel.setOrderChannelId(channelId);
+                vmsBtClientInventoryModel.setCreater(getTaskName());
+                vmsBtClientInventoryModel.setCreated(DateTimeUtil.getDate());
+                vmsBtClientInventoryModel.setModifier(getTaskName());
+                vmsBtClientInventoryModel.setModified(DateTimeUtil.getDate());
+                vmsBtClientInventoryDao.insert(vmsBtClientInventoryModel);
+            }
+        });
+
+        if(skulist.size() > 0){
+            Map<String,Object> data = new HashMap<>();
+            data.put("order_channel_id",channelId);
+            data.put("skulist",skulist);
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_CA_Update_Quantity, data);
+        }
     }
 
 }

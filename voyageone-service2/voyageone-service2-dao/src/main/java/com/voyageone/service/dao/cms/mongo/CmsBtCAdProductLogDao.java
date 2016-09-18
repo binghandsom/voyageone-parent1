@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
-import com.voyageone.service.model.cms.mongo.CmsBtCAdProudctModel;
+import com.voyageone.service.model.cms.mongo.CmsBtCAdProductModel;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Repository;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtCAdProductLogDao extends BaseMongoDao<CmsBtCAdProudctModel> {
+public class CmsBtCAdProductLogDao extends BaseMongoDao<CmsBtCAdProductModel> {
     protected String collectionName = "cms_bt_ca_proudct_log_c";
 
-    public void insert(String channelId, CmsBtCAdProudctModel cmsBtCAdProudctModel) {
-        mongoTemplate.insert(cmsBtCAdProudctModel, collectionName + channelId);
+    public void insert(String channelId, CmsBtCAdProductModel cmsBtCAdProductModel) {
+        mongoTemplate.insert(cmsBtCAdProductModel, collectionName + channelId);
     }
 }

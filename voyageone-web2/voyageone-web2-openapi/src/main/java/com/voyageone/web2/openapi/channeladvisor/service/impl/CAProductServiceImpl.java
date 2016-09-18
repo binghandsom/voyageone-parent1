@@ -4,7 +4,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.vms.channeladvisor.product.ProductGroupResultModel;
 import com.voyageone.service.impl.vms.feed.CAFeedProductService;
-import com.voyageone.service.model.cms.mongo.CmsBtCAdProudctModel;
+import com.voyageone.service.model.cms.mongo.CmsBtCAdProductModel;
 import com.voyageone.web2.openapi.channeladvisor.CAOpenApiBaseService;
 import com.voyageone.web2.openapi.channeladvisor.service.CAProductService;
 import com.voyageone.service.bean.vms.channeladvisor.product.ProductGroupModel;
@@ -45,7 +45,7 @@ public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProd
             success(new ArrayList<>());
         }
 
-        List<CmsBtCAdProudctModel> cmsMtCAdProudcts = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(productGroups),CmsBtCAdProudctModel.class);
+        List<CmsBtCAdProductModel> cmsMtCAdProudcts = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(productGroups),CmsBtCAdProductModel.class);
         String response = caFeedProductService.updateProduct(channelId,cmsMtCAdProudcts);
 
         if(!StringUtil.isEmpty(response)){
@@ -65,7 +65,7 @@ public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProd
             success(new ArrayList<>());
         }
 
-        List<CmsBtCAdProudctModel> cmsMtCAdProudcts = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(productGroups),CmsBtCAdProudctModel.class);
+        List<CmsBtCAdProductModel> cmsMtCAdProudcts = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(productGroups),CmsBtCAdProductModel.class);
         String response = caFeedProductService.updateQuantityPrice(channelId, cmsMtCAdProudcts);
         if(!StringUtil.isEmpty(response)){
             responseBody = JacksonUtil.jsonToBeanList(response,ProductGroupResultModel.class);
