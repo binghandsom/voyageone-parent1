@@ -25,10 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 import static com.voyageone.task2.vms.VmsConstants.*;
 
@@ -122,6 +119,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
 
         // 分析结果
         while (csvReader.readRecord()) {
+            Date date = new Date();
             lineNumber++;
             // 检查该行内容
 
@@ -194,12 +192,13 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
             feedToCmsService.updateProduct(channelId, new ArrayList<CmsBtFeedInfoModel>() {{
                         add(cmsBtFeedInfoModel);
                     }},
-                    getTaskName(), CmsConstants.FeedProductUpdateType.VMS_FEED);
+                    getTaskName(), CmsConstants.FeedProductUpdateType.VMS_PRICE_INVENTORY);
 
             // 推送库存
             if (null != inventory)
                 clientInventoryService.insertClientInventory(channelId, sku, Integer.valueOf(inventory));
 
+            $debug("时间共计" + (new Date().getTime() - date.getTime()) + "毫秒.");
             $debug(cmsBtFeedInfoModel.toString());
         }
 
