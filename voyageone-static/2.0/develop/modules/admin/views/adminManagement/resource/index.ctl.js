@@ -23,8 +23,7 @@ define([
             this.resSelList = {selList: []};
             this.tempSelect = null;
             this.searchInfo = {
-                orgName: '',
-                active: '',
+                application: '',
                 pageInfo: this.pageOption
             }
         }
@@ -63,8 +62,7 @@ define([
                 self.adminResService.searchRes({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
-                        'orgName': self.searchInfo.orgName,
-                        'active': self.searchInfo.active
+                        'application': self.searchInfo.application
                     })
                     .then(function (res) {
                         self.resList = res.data.result;
