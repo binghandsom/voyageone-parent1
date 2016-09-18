@@ -65,11 +65,8 @@ public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProd
             success(new ArrayList<>());
         }
 
-        List<CmsBtCAdProductModel> cmsMtCAdProudcts = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(productGroups),CmsBtCAdProductModel.class);
-        String response = caFeedProductService.updateQuantityPrice(channelId, cmsMtCAdProudcts);
-        if(!StringUtil.isEmpty(response)){
-            responseBody = JacksonUtil.jsonToBeanList(response,ProductGroupResultModel.class);
-        }
+        List<CmsBtCAdProductModel> cmsMtCAdProudcts = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(productGroups), CmsBtCAdProductModel.class);
+        responseBody = caFeedProductService.updateQuantityPrice(channelId, cmsMtCAdProudcts);
         return success(responseBody);
     }
 
@@ -83,7 +80,8 @@ public class CAProductServiceImpl extends CAOpenApiBaseService implements CAProd
             success(new ArrayList<>());
         }
 
-        // TODO: 根据实际的业务处理
+        List<CmsBtCAdProductModel> cmsMtCAdProudcts = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(productGroups),CmsBtCAdProductModel.class);
+        responseBody = caFeedProductService.updateStatus(channelId, cmsMtCAdProudcts);
 
         return success(responseBody);
     }
