@@ -16,12 +16,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.voyageone.web2.vms.VmsConstants.TYPE_ID.IMPORT_FEED_FILE_STATUS;
 import static com.voyageone.web2.vms.VmsConstants.TYPE_ID.IMPORT_PRC_INV_FILE_STATUS;
 
 
 /**
- * VmsFeedImportResultService
+ * VmsPrcInvImportResultService
  * Created on 2016/7/11.
  * @author jeff.duan
  * @version 1.0
@@ -85,12 +84,12 @@ public class VmsPrcInvImportResultService extends BaseAppService {
                 .toMap();
 
         // 根据条件取得检索结果
-        List<Map<String, Object>> feedImportResultList = inventoryFileService.getPrcInvFileList(newMap);
+        List<Map<String, Object>> prcInvImportResultList = inventoryFileService.getPrcInvFileList(newMap);
         result.put("total", inventoryFileService.getPrcInvFileListCount(param));
 
-        editPrcInvImportStatus(feedImportResultList, (String)param.get("lang"));
+        editPrcInvImportStatus(prcInvImportResultList, (String)param.get("lang"));
         // 检索结果转换
-        result.put("prcInvImportResultList",  feedImportResultList);
+        result.put("inventoryImportResultList",  prcInvImportResultList);
 
         return result;
 

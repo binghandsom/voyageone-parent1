@@ -92,7 +92,7 @@ public class VmsConstants {
         int SHIPMENT_STATUS = 85;
 
         // 价格库存文件导入状态(vms系统用)
-        int IMPORT_PRC_INV_FILE_STATUS = 86;
+        int IMPORT_PRC_INV_FILE_STATUS = 91;
 
     }
 

@@ -213,6 +213,10 @@ define(function (require) {
         vendorSettingsService: new CommonDataService('/vms/settings/vendor_settings', {
             init: "init",
             save: "save"
+        }),
+        inventoryImportResultService: new CommonDataService('/vms/inventory/inventory_import_result', {
+            init: "init",
+            search: "search"
         })
     }
 });

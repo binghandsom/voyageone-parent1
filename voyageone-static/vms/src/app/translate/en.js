@@ -130,6 +130,7 @@ define(function () {
         "TXT_CONFIRM_TO_REOPEN_THIS_ORDER": "Confirm to reopen this order?",
         "TXT_CONFIRM_TO_REOPEN_THIS_SKU": "Confirm to reopen this SKU?",
         "TXT_SKU_REOPENED": "SKU reopened",
+        "TXT_PRODUCT_INVENTORY_IMPORT_STATUS": "Inventory&Price Feed Import Status",
 
 
         // buttons

@@ -61,6 +61,12 @@ define(function () {
                 "templateUrl": "./views/settings/vendor_settings.html",
                 "controllerUrl": "./views/settings/vendor_settings.controller",
                 "controller": "VendorSettingsController as ctrl"
+            },
+            {
+                "hash": "/inventory/inventory_import_status",
+                "templateUrl": "./views/inventory/inventoryImport/index.html",
+                "controllerUrl": "./views/inventory/inventoryImport/index.controller",
+                "controller": "InventoryImportResultController as ctrl"
             }
         ]
     };
