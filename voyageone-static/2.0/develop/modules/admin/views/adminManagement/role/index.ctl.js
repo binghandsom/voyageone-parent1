@@ -38,6 +38,9 @@ define([
                 var self = this;
                 self.storeService.getAllStore(null).then(function (res) {
                     self.storeList = res.data;
+                    _.forEach(self.storeList, function (store) {
+                        store.storeName = '(' + store.channelId + ')' + store.storeName;
+                    })
                 });
                 self.adminRoleService.getAllRoleType().then(function (res) {
                     self.roleTypeList = res.data;
@@ -171,6 +174,7 @@ define([
                 var resIds = [];
                 var applications = [];
                 var setInfo = [];
+                var configInfo = {};
                 _.forEach(self.adminRoleList, function (Info) {
                     _.forEach(self.adminUserSelList.selList, function (item) {
                         if (Info.id == item.id) {
@@ -178,25 +182,28 @@ define([
                         }
                     });
                 });
+                _.forEach(setInfo, function (item) {
+                    roleIds.push(item.id);
+                    resIds.push(item.resIds);
+                    applications.push(item.application);
+                });
                 switch (type) {
                     case 'set':
-                        _.forEach(setInfo, function (item) {
-                            roleIds = item.roleId;
-                            resIds = item.resIds;
-                            applications = item.application;
-                        });
-                        self.adminRoleService.setAuth(setInfo).then(function (res) {
+                        _.extend(configInfo, {'roleIds': roleIds, 'resIds': resIds, 'applications': applications});
+                        self.adminRoleService.setAuth(configInfo).then(function (res) {
                             console.log(res)
                         });
                         break;
                     case 'delete':
-                        self.adminRoleService.removeAuth().then(function (res) {
-
+                        _.extend(configInfo, {'roleIds': roleIds, 'resIds': resIds});
+                        self.adminRoleService.removeAuth(configInfo).then(function (res) {
+                            console.log(res)
                         });
                         break;
                     case 'add':
-                        self.adminRoleService.addAuth().then(function (res) {
-
+                        _.extend(configInfo, {'roleIds': roleIds, 'resIds': resIds});
+                        self.adminRoleService.addAuth(configInfo).then(function (res) {
+                            console.log(res)
                         });
                         break;
                 }

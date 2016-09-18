@@ -46,6 +46,7 @@ define([
                 });
 
                 self.channelService.getAllChannel(null).then(function (res) {
+                    self.channelAllListCopy = res.data;
                     self.channelAllList = res.data;
                     if (self.popType == '添加角色') return;
                     return call(self.channelAllList);
@@ -84,7 +85,11 @@ define([
                 }
 
                 self.storeService.getAllStore(null).then(function (res) {
+                    self.storeAllListCopy = res.data;
                     self.storeAllList = res.data;
+                    _.forEach(self.storeAllList, function (item) {
+                        item.storeName = '(' + item.channelId + ')' + item.storeName;
+                    });
                     if (self.popType == '添加角色') return;
                     return storeCall(self.storeAllList);
                 });
@@ -94,7 +99,10 @@ define([
                     _.forEach(self.storeList, function (item, index) {
                         _.map(storeAllList, function (store) {
                             if (store.storeId == item) {
-                                self.storeList[index] = {'storeId': item, 'storeName': store.storeName}
+                                self.storeList[index] = {
+                                    'storeId': item,
+                                    'storeName': '(' + store.channelId + ')' + store.storeName
+                                }
                             }
                             return self.storeList;
                         });
@@ -106,7 +114,6 @@ define([
                     self.storeAllList = [];
                     if (self.storeList.length == 0) {
                         self.storeAllList = storeAllListCopy;
-                        return;
                     } else {
                         self.storeAllList = storeAllListCopy;
                         _.forEach(self.storeList, function (item) {
@@ -116,7 +123,8 @@ define([
                             self.storeAllList.splice(self.storeAllList.indexOf(self.data), 1);
                         });
                     }
-                };
+                }
+
                 if (!self.sourceData.application)return;
                 var appList = self.sourceData.application.split(',');
                 _.forEach(appList, function (item) {
@@ -157,9 +165,6 @@ define([
             },
             channelMove: function (type) {
                 var self = this;
-                self.channelService.getAllChannel().then(function (res) {
-                    self.channelAllListCopy = res.data;
-                });
                 self.channelList = self.channelList ? self.channelList : [];
                 self.channelAllList = self.channelAllList ? self.channelAllList : [];
                 switch (type) {
@@ -170,7 +175,6 @@ define([
                             _.forEach(self.channelAllList, function (allItem, i) {
                                 if (allItem.orderChannelId == item.orderChannelId) {
                                     index = i;
-                                    return;
                                 }
                             });
                             if (index > -1) self.channelAllList.splice(index, 1);
@@ -213,11 +217,16 @@ define([
                         break;
                 }
             },
+            storeInit: function () {
+                var self = this;
+                if (self.channelList) {
+                    _.forEach(self.channelList, function (item) {
+                        self.search({'type': 'store', 'value': item.orderChannelId});
+                    })
+                }
+            },
             storeMove: function (type) {
                 var self = this;
-                self.storeService.getAllStore(null).then(function (res) {
-                    self.storeAllListCopy = res.data;
-                });
                 self.storeList = self.storeList ? self.storeList : [];
                 self.storeAllList = self.storeAllList ? self.storeAllList : [];
                 switch (type) {
@@ -228,7 +237,6 @@ define([
                             _.forEach(self.storeAllList, function (allItem, i) {
                                 if (allItem.storeId == item.storeId) {
                                     index = i;
-                                    return;
                                 }
                             });
                             if (index > -1) self.storeAllList.splice(index, 1);
