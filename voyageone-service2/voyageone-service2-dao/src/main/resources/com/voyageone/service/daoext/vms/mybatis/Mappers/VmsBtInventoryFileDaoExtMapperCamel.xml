@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.vms.VmsBtInventoryFileDaoExt">
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtInventoryFileModel"/>
+    <sql id="Base_Column_List">
+        `id`, `channel_id`, `client_file_name`, `file_name`, `upload_type`, `status`, `error_file_name`,
+        `error_msg`, `created`, `creater`, `modified`, `modifier`
+    </sql>
+
+    <update id="updateStatus" parameterType="com.voyageone.service.model.vms.VmsBtInventoryFileModel">
+        update voyageone_vms.vms_bt_inventory_file
+        <set>
+            <if test="status != null">
+                `status` = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="errorFileName != null">
+                `error_file_name` = #{errorFileName,jdbcType=VARCHAR},
+            </if>
+            <if test="errorMsg != null">
+                `error_msg` = #{errorMsg,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="created != null">
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null">
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null">
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null">
+                `modified` = now(),
+            </if>
+            <if test="modifier != null">
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `channel_id` = #{channelId,jdbcType=VARCHAR} and `file_name` = #{fileName,jdbcType=VARCHAR}
+    </update>
+</mapper>
