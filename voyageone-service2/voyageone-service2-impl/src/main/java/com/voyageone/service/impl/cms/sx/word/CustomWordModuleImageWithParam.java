@@ -63,21 +63,30 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
             imageParams.add(imageParam);
         }
 
-        int deleteItemsCount =0;
-        for(Iterator<String> iterator=imageParams.iterator();iterator.hasNext();){
-            String param = iterator.next();
-            if(param == null || "".equals(param.trim())){
+        // 20160918 tom 逻辑修改 START
+        // 参数没有的场合, 认为这个参数不存在 -> 参数没有的场合, 认为这个参数值为空, 因为要保证顺序与设置的字典一致
+//        int deleteItemsCount =0;
+//        for(Iterator<String> iterator=imageParams.iterator();iterator.hasNext();){
+//            String param = iterator.next();
+//            if(param == null || "".equals(param.trim())){
+//
+//                iterator.remove();
+//
+//                deleteItemsCount++;
+//            }
+//
+//        }
+//
+//        for (int i=0;i<deleteItemsCount;i++){
+//            imageParams.add("");
+//        }
 
-                iterator.remove();
-
-                deleteItemsCount++;
+        for (int i = 0; i < imageParams.size(); i++) {
+            if (StringUtils.isEmpty(imageParams.get(i))) {
+                imageParams.set(i, "");
             }
-
         }
-
-        for (int i=0;i<deleteItemsCount;i++){
-            imageParams.add("");
-        }
+        // 20160918 tom 逻辑修改 END
 
         // 20160513 tom 图片服务器切换 START
         // modified by morse.lu 2016/07/13 start
