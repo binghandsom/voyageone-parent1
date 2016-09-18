@@ -4,6 +4,7 @@ import com.voyageone.common.util.JacksonUtil;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +61,7 @@ public class ReflectUtil {
     public static List<Field> getListField(Class<?> clazz) {
         Field[] selfFields = clazz.getDeclaredFields();
         List<Field> list = Arrays.asList(selfFields);
+        list = new ArrayList<>(list); // Arrays#asList returns a **fixed-size** list backed by the specified array.
         Class<?> superClazz = clazz.getSuperclass();
         if (superClazz != null && superClazz != Object.class) {
             List<Field> listSuperField = getListField(superClazz);

@@ -47,7 +47,7 @@ public class VmsInventoryFileUploadController extends BaseController {
         String sampleFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.inventory.sample.file");
 
         try(FileInputStream file = new FileInputStream(sampleFilePath)) {
-            return genResponseEntityFromStream("inventory_file_sample.csv", file);
+            return genResponseEntityFromStream("inventory&price_file_sample.csv", file);
         } catch (FileNotFoundException ex) {
             // Lost VoyageOneInventoryTemplate.
             throw new BusinessException("8000031");

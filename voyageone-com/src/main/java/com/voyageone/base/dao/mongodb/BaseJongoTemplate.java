@@ -143,11 +143,6 @@ public class BaseJongoTemplate extends BaseJongoPartTemplate {
         return remove(strQuery, collectionName);
     }
 
-    public Distinct distinct(String key, Class<?> entityClass) {
-        String collectionName = getCollectionName(entityClass);
-        return distinct(key, collectionName);
-    }
-
     public Aggregate aggregate(String pipelineOperator, Class<?> entityClass) {
         String collectionName = getCollectionName(entityClass);
         return aggregate(pipelineOperator, collectionName);

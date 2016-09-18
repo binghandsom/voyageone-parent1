@@ -374,8 +374,8 @@ public class BaseJongoPartTemplate {
         return getCollection(collectionName).remove(strQuery);
     }
 
-    public Distinct distinct(String key, String collectionName) {
-        return getCollection(collectionName).distinct(key);
+    public <T> List<T> distinct(String key, String collectionName, final Class<T> clazz) {
+        return getCollection(collectionName).distinct(key).as(clazz);
     }
 
     public Aggregate aggregate(String pipelineOperator, String collectionName) {

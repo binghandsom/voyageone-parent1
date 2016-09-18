@@ -29,12 +29,6 @@
             <url>http://10.0.0.59:8081/nexus/content/groups/public</url>
         </repository>
 
-        <repository>
-            <id>local nexus repo</id>
-            <name>local office site</name>
-            <url>http://maven.oschina.net/content/groups/public/</url>
-        </repository>
-
     </repositories>
 
     <distributionManagement>
@@ -365,6 +359,11 @@
                 <groupId>taobao</groupId>
                 <artifactId>taobao-sdk-java</artifactId>
                 <version>1457083595467-20160817</version>
+            </dependency>
+            <dependency>
+                <groupId>taobao</groupId>
+                <artifactId>taobao-sdk-java-ext</artifactId>
+                <version>20160825</version>
             </dependency>
             <!-- aliyun-sdk-oss -->
             <dependency>

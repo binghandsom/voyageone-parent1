@@ -38,7 +38,7 @@ define([
             self.shipmentScanPopupService.scanBarcode(req).then(function (data) {
                 if (data.success == 1) {
                     self.audioPlay(true);
-                    self.notify.success('TXT_SUCCESS');
+                    self.notify.success('TXT_SCANNED_SUCCESSFULLY');
                 }
                 else if (data.success == 0) {
                     try {

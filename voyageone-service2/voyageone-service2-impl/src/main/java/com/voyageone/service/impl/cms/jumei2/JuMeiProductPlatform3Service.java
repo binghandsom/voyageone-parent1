@@ -21,11 +21,14 @@ import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.BaseService;
 //import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 //import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductAddPlatformService;
+import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.jumei.JMShopBeanService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +62,14 @@ public class JuMeiProductPlatform3Service extends BaseService {
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
     @Autowired
     ProductService productService;
+    @Autowired
+    FeedInfoService feedInfoService;
+    @Autowired
+    CmsBtBrandBlockService CmsBtBrandBlockService;
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
 
     public void updateJmByPromotionId(int promotionId) throws Exception {
+        HashMap<String,Boolean> mapMasterBrand =new HashMap<>();//
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(promotionId);
         ShopBean shopBean = serviceJMShopBean.getShopBean(modelCmsBtJmPromotion.getChannelId());
         LOG.info(promotionId + " 聚美上新开始");
@@ -69,12 +77,15 @@ public class JuMeiProductPlatform3Service extends BaseService {
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
                 LOG.info(promotionId + " code:" + model.getProductCode() + "上新begin");
-                updateJm(modelCmsBtJmPromotion, model, shopBean);
+                updateJm(modelCmsBtJmPromotion, model, shopBean,mapMasterBrand);
                 LOG.info(promotionId + " code:" + model.getProductCode() + "上新end");
             }
         } catch (Exception ex) {
             LOG.error("addProductAndDealByPromotionId上新失败", ex);
             ex.printStackTrace();
+        }
+        finally {
+            mapMasterBrand.clear();
         }
         LOG.info(promotionId + " 聚美上新end");
     }
@@ -89,10 +100,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
        if(parameter.platform==null){throw new  BusinessException("CmsBtProduct商品聚美信息不存在.");}
        return parameter;
    }
-    public void updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean) throws Exception {
+    public void updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean,HashMap<String,Boolean> mapMasterBrand) throws Exception {
         try {
             UpdateJmParameter parameter = getUpdateJmParameter(modelCmsBtJmPromotion, cmsBtJmPromotionProductModel, shopBean);
-            api_beforeCheck(parameter);//api调用前check
+            api_beforeCheck(parameter,mapMasterBrand);//api调用前check
             if (parameter.cmsBtJmPromotionProductModel.getSynchStatus() != 2) {
                 // 再售
                 if (StringUtil.isEmpty(parameter.cmsBtJmPromotionProductModel.getJmHashId())) {
@@ -135,21 +146,42 @@ public class JuMeiProductPlatform3Service extends BaseService {
         productService.updateProductPlatform(parameter.cmsBtProductModel.getChannelId(), parameter.cmsBtProductModel.getProdId(), parameter.platform, parameter.cmsBtJmPromotionProductModel.getModifier());
     }
     //所有api调用前check
-    public void api_beforeCheck(UpdateJmParameter parameter) {
-
+    public void api_beforeCheck(UpdateJmParameter parameter, HashMap<String,Boolean> mapMasterBrand) {
         String errorMsg = "";
+        String platformBrandId = parameter.platform.getpBrandId();
+        String masterBrand = parameter.cmsBtProductModel.getCommon().getFields().getBrand();
+        LOG.info("jm黑名单:begin");
+        if (mapMasterBrand.containsKey(masterBrand)) {
+            if (mapMasterBrand.get(masterBrand)) {
+                errorMsg = "该商品品牌已在黑名单,操作失败";
+            }
+        } else {
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(parameter.cmsBtProductModel.getChannelId(), parameter.cmsBtProductModel.getCommon().getFields().getCode());
+            String feedBrand = cmsBtFeedInfoModel.getBrand();
+            LOG.info(String.format("begin ChannelId:%s,cartId:%s,feedBrand:%s,masterBrand:%s,platformBrandId:%s", parameter.cmsBtProductModel.getChannelId(), 27, feedBrand, masterBrand, platformBrandId));
+            if (CmsBtBrandBlockService.isBlocked(parameter.cmsBtProductModel.getChannelId(), 27, feedBrand, masterBrand, platformBrandId)) {
+                errorMsg = "该商品品牌已在黑名单,操作失败";
+                mapMasterBrand.put(masterBrand, true);
+            } else {
+                mapMasterBrand.put(masterBrand, false);
+            }
+            LOG.info("end " + masterBrand + ":" + mapMasterBrand.get(masterBrand));
+        }
+        if (!StringUtils.isEmpty(errorMsg)) {
+
+        }
         // 6.0.1
-        if ("1".equalsIgnoreCase(parameter.cmsBtProductModel.getLock()))//1:lock, 0:unLock
+        else if ("1".equalsIgnoreCase(parameter.cmsBtProductModel.getLock()))//1:lock, 0:unLock
         {
             errorMsg = "商品被Lock，如确实需要上传商品，请先解锁";
         }
+        //parameter.platform.get
         //6.0.2
         else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() > parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
             errorMsg = "市场价必须大于团购价";
         }
-        if(!StringUtils.isEmpty(errorMsg)) {
-            if(parameter.cmsBtJmPromotionProductModel.getSynchStatus()!=2)
-            {
+        if (!StringUtils.isEmpty(errorMsg)) {
+            if (parameter.cmsBtJmPromotionProductModel.getSynchStatus() != 2) {
                 parameter.cmsBtJmPromotionProductModel.setSynchStatus(3);
             }
             throw new BusinessException(errorMsg);

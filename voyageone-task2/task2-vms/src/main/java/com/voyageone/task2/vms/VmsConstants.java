@@ -63,8 +63,8 @@ public class VmsConstants {
 		String FEED_CSV_ENCODE = "FEED_CSV_ENCODE";
 		// 每个月出财务报表的日期
 		String MAKE_FINANCIAL_REPORT_DAY = "MAKE_FINANCIAL_REPORT_DAY";
-
-
+		// Feed导入时是否同步库存
+		String UPDATE_INVENTORY = "UPDATE_INVENTORY";
 	}
 
 	public interface STATUS_VALUE {

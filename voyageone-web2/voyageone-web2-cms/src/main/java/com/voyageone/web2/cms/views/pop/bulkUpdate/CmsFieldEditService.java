@@ -724,7 +724,16 @@ public class CmsFieldEditService extends BaseAppService {
         String priceType = StringUtils.trimToNull((String) params.get("priceType"));
         String optionType = StringUtils.trimToNull((String) params.get("optionType"));
         String priceValue = StringUtils.trimToNull((String) params.get("priceValue"));
-        boolean isRoundUp = "1".equals((String) params.get("isRoundUp")) ? true : false;
+        // 小数点向上取整:1    个位向下取整:2    个位向上取整:3    无特殊处理:4
+        Integer roundType = (Integer) params.get("roundType");
+        if (roundType == null) {
+            roundType = 0;
+        }
+        // 商品内，SKU统一最高价:1 商品内，SKU统一最低价:2  商品内，SKU价格不统一:3
+        Integer skuUpdType = (Integer) params.get("skuUpdType");
+        if (skuUpdType == null) {
+            skuUpdType = 0;
+        }
 
         // 阀值
         CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
@@ -752,6 +761,32 @@ public class CmsFieldEditService extends BaseAppService {
             List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
             String prodCode = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
 
+            // 先取出最高价/最低价
+            Double maxPriceSale = null;
+            if (priceType != null) {
+                if (skuUpdType == 1) {
+                    // 统一最高价
+                    for (BaseMongoMap skuObj : skuList) {
+                        double befPriceSale = skuObj.getDoubleAttribute(priceType);
+                        if (maxPriceSale == null) {
+                            maxPriceSale = befPriceSale;
+                        } else if (maxPriceSale < befPriceSale) {
+                            maxPriceSale = befPriceSale;
+                        }
+                    }
+                } else if (skuUpdType == 2) {
+                    // 统一最低价
+                    for (BaseMongoMap skuObj : skuList) {
+                        double befPriceSale = skuObj.getDoubleAttribute(priceType);
+                        if (maxPriceSale == null) {
+                            maxPriceSale = befPriceSale;
+                        } else if (maxPriceSale > befPriceSale) {
+                            maxPriceSale = befPriceSale;
+                        }
+                    }
+                }
+            }
+
             for (BaseMongoMap skuObj : skuList) {
                 skuCode = skuObj.getStringAttribute("skuCode");
                 if (StringUtils.isEmpty(skuCode)) {
@@ -770,12 +805,17 @@ public class CmsFieldEditService extends BaseAppService {
                         rsMap.put("ecd", 7);
                         return rsMap;
                     }
-                    rs = getFinalSalePrice(null, optionType, priceValue, isRoundUp);
+                    rs = getFinalSalePrice(null, optionType, priceValue, roundType);
                 } else {
-                    Object basePrice = skuObj.getAttribute(priceType);
+                    Object basePrice = null;
+                    if (maxPriceSale == null) {
+                        basePrice = skuObj.getAttribute(priceType);
+                    } else {
+                        basePrice = maxPriceSale;
+                    }
                     if (basePrice != null) {
                         BigDecimal baseVal = new BigDecimal(basePrice.toString());
-                        rs = getFinalSalePrice(baseVal, optionType, priceValue, isRoundUp);
+                        rs = getFinalSalePrice(baseVal, optionType, priceValue, roundType);
                     } else {
                         $warn(String.format("setProductSalePrice: 缺少数据 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                         rsMap.put("ecd", 9);
@@ -883,7 +923,7 @@ public class CmsFieldEditService extends BaseAppService {
                     cmsBtPriceLogModel.setClientRetailPrice(comSku.getClientRetailPrice());
                     cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
                 }
-                cmsBtPriceLogModel.setComment("高级检索批量更新");
+                cmsBtPriceLogModel.setComment("高级检索 设置最终售价");
                 cmsBtPriceLogModel.setCreated(new Date());
                 cmsBtPriceLogModel.setCreater(userInfo.getUserName());
                 cmsBtPriceLogModel.setModified(new Date());
@@ -920,6 +960,9 @@ public class CmsFieldEditService extends BaseAppService {
         $debug("批量修改商品价格 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
         // 如果有未处理的商品，则放入缓存
+        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2");
+        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "3");
+        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "4");
         if (prodPriceUpList.size() > 0) {
             commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2", prodPriceUpList);
         }
@@ -934,7 +977,7 @@ public class CmsFieldEditService extends BaseAppService {
         return rsMap;
     }
 
-    private Double getFinalSalePrice(BigDecimal baseVal, String optionType, String priceValueStr, boolean isRoundUp) {
+    private Double getFinalSalePrice(BigDecimal baseVal, String optionType, String priceValueStr, int roundType) {
         BigDecimal priceValue = null;
         if (priceValueStr != null) {
             priceValue = new BigDecimal(priceValueStr);
@@ -953,13 +996,34 @@ public class CmsFieldEditService extends BaseAppService {
         } else if ("*".equals(optionType)) {
             rs = baseVal.multiply(priceValue);
         } else if ("/".equals(optionType)) {
-            rs = baseVal.divide(priceValue, 2, BigDecimal.ROUND_CEILING);
+            rs = baseVal.divide(priceValue, 3, BigDecimal.ROUND_CEILING);
         }
         if (rs == null) {
             return null;
         } else {
-            if (isRoundUp) {
+            if (roundType == 1) {
+                // 小数点向上取整
                 return rs.setScale(0, BigDecimal.ROUND_CEILING).doubleValue();
+            } else if (roundType == 2) {
+                // 个位向下取整
+                BigDecimal multyValue = new BigDecimal("10");
+                if (rs.compareTo(multyValue) <= 0) {
+                    // 少于10的直接返回
+                    return rs.setScale(2, BigDecimal.ROUND_CEILING).doubleValue();
+                }
+
+                rs = rs.divide(multyValue);
+                rs = rs.setScale(0, BigDecimal.ROUND_DOWN);
+                rs = rs.multiply(multyValue);
+                return rs.doubleValue();
+            } else if (roundType == 3) {
+                // 个位向上取整
+                BigDecimal multyValue = new BigDecimal("10");
+                rs = rs.divide(multyValue);
+                rs = rs.setScale(1, BigDecimal.ROUND_UP);
+                rs = rs.setScale(0, BigDecimal.ROUND_CEILING);
+                rs = rs.multiply(multyValue);
+                return rs.doubleValue();
             } else {
                 return rs.setScale(2, BigDecimal.ROUND_CEILING).doubleValue();
             }
@@ -1046,7 +1110,7 @@ public class CmsFieldEditService extends BaseAppService {
         for (Integer cartIdVal : cartList) {
             qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartIdVal + ".skus.0':{$exists:true}}");
             qryObj.setParameters(productCodes);
-            qryObj.setProjection("{'common.fields.code':1,'platforms.P" + cartIdVal + ".skus':1,'platforms.P" + cartIdVal + ".status':1,'_id':0}");
+            qryObj.setProjection("{'common.fields.code':1,'platforms.P" + cartIdVal + ".skus':1,'platforms.P" + cartIdVal + ".cartId':1,'_id':0}");
 
             List<String> newCodeList = new ArrayList<>();
             boolean isUpdFlg = false;

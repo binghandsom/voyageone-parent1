@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +43,12 @@ public class MqManagerController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.SYSTEM.MQ.INIT)
     public AjaxResponse init(HttpServletRequest request) throws Exception {
-        return success(Arrays.asList(MqRoutingKey.class.getDeclaredFields()).stream().map(Field::getName).collect(Collectors.toSet()));
+        List<String> result = new ArrayList<>();
+        Field[] fields = MqRoutingKey.class.getDeclaredFields();
+        for (Field field : fields) {
+            result.add((String) field.get(MqRoutingKey.class));
+        }
+        return success(result);
     }
 
     @RequestMapping(CmsUrlConstants.SYSTEM.MQ.SEND)

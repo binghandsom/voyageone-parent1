@@ -101,13 +101,13 @@
             <if test="retailPrice != null">
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
-            <if test="attribute1 != null" >
+            <if test="attribute1 != null">
                 and `attribute1` = #{attribute1,jdbcType=VARCHAR},
             </if>
-            <if test="attribute2 != null" >
+            <if test="attribute2 != null">
                 and `attribute2` = #{attribute2,jdbcType=VARCHAR},
             </if>
-            <if test="attribute3 != null" >
+            <if test="attribute3 != null">
                 and `attribute3` = #{attribute3,jdbcType=VARCHAR},
             </if>
             <if test="created != null">
@@ -208,13 +208,13 @@
             <if test="retailPrice != null">
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
-            <if test="attribute1 != null" >
+            <if test="attribute1 != null">
                 and `attribute1` = #{attribute1,jdbcType=VARCHAR},
             </if>
-            <if test="attribute2 != null" >
+            <if test="attribute2 != null">
                 and `attribute2` = #{attribute2,jdbcType=VARCHAR},
             </if>
-            <if test="attribute3 != null" >
+            <if test="attribute3 != null">
                 and `attribute3` = #{attribute3,jdbcType=VARCHAR},
             </if>
             <if test="created != null">
@@ -351,13 +351,13 @@
             <if test="retailPrice != null">
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
-            <if test="attribute1 != null" >
+            <if test="attribute1 != null">
                 and `attribute1` = #{attribute1,jdbcType=VARCHAR},
             </if>
-            <if test="attribute2 != null" >
+            <if test="attribute2 != null">
                 and `attribute2` = #{attribute2,jdbcType=VARCHAR},
             </if>
-            <if test="attribute3 != null" >
+            <if test="attribute3 != null">
                 and `attribute3` = #{attribute3,jdbcType=VARCHAR},
             </if>
             <if test="created != null">
@@ -456,13 +456,13 @@
             <if test="retailPrice != null">
                 and `retail_price` = #{retailPrice,jdbcType=DECIMAL}
             </if>
-            <if test="attribute1 != null" >
+            <if test="attribute1 != null">
                 and `attribute1` = #{attribute1,jdbcType=VARCHAR},
             </if>
-            <if test="attribute2 != null" >
+            <if test="attribute2 != null">
                 and `attribute2` = #{attribute2,jdbcType=VARCHAR},
             </if>
-            <if test="attribute3 != null" >
+            <if test="attribute3 != null">
                 and `attribute3` = #{attribute3,jdbcType=VARCHAR},
             </if>
             <if test="created != null">
@@ -484,6 +484,14 @@
                 and #{orderDateTo} > `consolidation_order_time`
             </if>
         </where>
+    </select>
+
+    <select id="getLatestPrintedTIme" parameterType="HashMap" resultType="java.util.Date">
+        SELECT `containerizing_time`
+        FROM voyageone_vms.vms_bt_order_detail
+        WHERE `channel_id` = #{channelId, jdbcType=VARCHAR} AND `shipment_id` = #{shipmentId, jdbcType=INTEGER}
+        ORDER BY containerizing_time DESC
+        LIMIT 1;
     </select>
 
     <!-- update -->
@@ -568,11 +576,13 @@
         UPDATE vms_bt_order_detail
         SET `shipment_id`         = NULL,
             `containerizer`       = NULL,
-            `containerizing_time` = NULL
+            `containerizing_time` = NULL,
+            `modified`            = now(),
+            `modifier`            = #{modifier, jdbcType=VARCHAR}
         WHERE `channel_id` = #{channelId, jdbcType=VARCHAR}
         <choose>
             <when test="shipmentId != null">
-              AND `shipment_id` = #{shipmentId, jdbcType=VARCHAR}
+                AND `shipment_id` = #{shipmentId, jdbcType=VARCHAR}
             </when>
             <when test="consolidationOrderId != null">
                 AND `consolidation_order_id` = #{consolidationOrderId, jdbcType=VARCHAR}
@@ -581,6 +591,22 @@
                 AND 1 = 2
             </otherwise>
         </choose>
-              AND `status` = 1
+        AND `status` = 1
+    </update>
+
+    <update id="clearOrderCancelInfo" parameterType="HashMap">
+        UPDATE voyageone_vms.vms_bt_order_detail
+        SET `cancel_time` = NULL,
+            `canceler`    = NULL
+        WHERE `channel_id` = #{channelId, jdbcType=VARCHAR}
+              AND `consolidation_order_id` = #{consolidationOrderId, jdbcType=VARCHAR}
+    </update>
+
+    <update id="clearSkuCancelInfo" parameterType="HashMap">
+        UPDATE voyageone_vms.vms_bt_order_detail
+        SET `cancel_time` = NULL,
+            `canceler`    = NULL
+        WHERE `channel_id` = #{channelId, jdbcType=VARCHAR}
+              AND `reservation_id` = #{reservationId, jdbcType=VARCHAR}
     </update>
 </mapper>

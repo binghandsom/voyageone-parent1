@@ -1,6 +1,9 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.dao.cms.CmsMtBrandsMappingDao;
+import com.voyageone.service.daoext.cms.CmsMtBrandsMappingDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +25,22 @@ import java.util.Map;
 public class CmsMtBrandService extends BaseService {
 
     @Autowired
-    private CmsMtBrandsMappingDao cmsMtBrandsMappingDao;
+    private CmsMtBrandsMappingDaoExt cmsMtBrandsMappingDaoExt;
 
+    @Autowired
+    private CmsMtBrandsMappingDao cmsMtBrandsMappingDao;
     /**
      * getModelByMap
      *
      * @param map Map
      * @return CmsMtBrandsMappingModel
      */
-    public CmsMtBrandsMappingModel getModelByMap(Map<String, Object> map) {
-        return cmsMtBrandsMappingDao.selectOne(map);
+    public CmsMtBrandsMappingBean getModelByMap(Map<String, Object> map) {
+        if(map.get("cartId").toString().equalsIgnoreCase(CartEnums.Cart.JM.getId())){
+            return cmsMtBrandsMappingDaoExt.selectOneJM(map);
+        }else{
+            return cmsMtBrandsMappingDaoExt.selectOneTMJD(map);
+        }
     }
 
     /**
@@ -49,5 +58,19 @@ public class CmsMtBrandService extends BaseService {
 
         // TODO: 16/7/4 目前无法取得platform的brand是信息,暂时使用
         return getModelByMap(map);
+    }
+
+    public CmsMtBrandsMappingBean getModelByCart(String brand, String cartId, String channelId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("channelId", channelId);
+        map.put("cartId", cartId);
+        map.put("cmsBrand", brand);
+
+        if(cartId.equalsIgnoreCase(CartEnums.Cart.JM.getId())){
+            return cmsMtBrandsMappingDaoExt.selectOneJM(map);
+        }else{
+            return cmsMtBrandsMappingDaoExt.selectOneTMJD(map);
+        }
+
     }
 }
