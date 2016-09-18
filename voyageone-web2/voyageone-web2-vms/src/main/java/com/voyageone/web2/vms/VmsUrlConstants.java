@@ -69,6 +69,19 @@ public interface VmsUrlConstants {
             String DOWNLOAD_SAMPLE_INVENTORY_FILE = "downSampleInventoryFile";
             String UPLOAD_INVENTORY_FILE = "uploadInventoryFile";
         }
+
+        interface INVENTORY_IMPORT_RESULT {
+            String ROOT = "/vms/inventory/inventory_import_result";
+            String INIT = "init";
+            String SEARCH = "search";
+            String DOWN_INVENTORY_ERROR_FILE = "downloadFeedErrorFile";
+        }
+
+        interface INVENTORY_SEARCH {
+            String ROOT = "/vms/inventory/inventory_info_search/";
+            String INIT = "init";
+            String SEARCH = "search";
+        }
     }
 
     interface SETTINGS {
