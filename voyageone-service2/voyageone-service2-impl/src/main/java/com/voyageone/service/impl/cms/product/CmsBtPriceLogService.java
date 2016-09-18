@@ -84,7 +84,7 @@ public class CmsBtPriceLogService extends BaseService {
         for (CmsBtPriceLogModel newLog : paramList) {
             String channelId = newLog.getChannelId();
             int cartId = newLog.getCartId();
-            BaseMongoMap<String, Object> skuModel = getSku(newLog.getSku(), cartId, channelId);
+            BaseMongoMap<String, Object> skuModel = getSinglePlatformSku(newLog.getSku(), cartId, channelId);
             Double confirmPrice = skuModel.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.confPriceRetail.name());
             // 检查价格，是否需要记录未确认
             if (newLog.getRetailPrice() >= 0 && !newLog.getRetailPrice().equals(confirmPrice))
@@ -156,7 +156,20 @@ public class CmsBtPriceLogService extends BaseService {
 
     private void addLogAndCallSyncPriceJob(String sku, CmsBtProductModel_Platform_Cart cartProduct, String channelId, CmsBtProductModel_Sku commonSku, CmsBtProductModel productModel, String username, String comment) {
 
-        BaseMongoMap<String, Object> cartSku = cartProduct.getSkus().stream().filter(i -> i.getStringAttribute("skuCode").equals(sku)).findFirst().orElseGet(null);
+        List<BaseMongoMap<String, Object>> skuList = cartProduct.getSkus();
+
+        if (skuList == null || skuList.isEmpty())
+            return;
+
+        BaseMongoMap<String, Object> cartSku;
+
+        if (skuList.size() == 1)
+            cartSku = skuList.get(0);
+        else
+            cartSku = skuList.stream()
+                .filter(i -> sku.equals(i.getStringAttribute("skuCode")))
+                .findFirst()
+                .orElseGet(null);
 
         if (cartSku == null)
             return;
@@ -247,7 +260,7 @@ public class CmsBtPriceLogService extends BaseService {
     /**
      * db.getCollection('cms_bt_product_c010').find({"platforms.P23.skus.skuCode": "DMC015700"}, {"platforms.P23.skus.$": 1})
      */
-    private BaseMongoMap<String, Object> getSku(String sku, int cartId, String channelId) {
+    private BaseMongoMap<String, Object> getSinglePlatformSku(String sku, int cartId, String channelId) {
 
         // 理论上该方法获取数据时，都应该获取到数据
         // 所以查询之后的获取，统统断言不检查 null

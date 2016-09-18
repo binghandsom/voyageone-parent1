@@ -182,13 +182,44 @@ public class PlatformSchemaService extends BaseService {
      */
     private List<Field> getListFieldForProductImage(String channelId, String language, List<Field> listField, List<CmsMtPlatformCategoryInvisibleFieldModel_Field> listInvisibleField, List<CmsMtPlatformCategoryExtendFieldModel_Field> listExtendField) {
         Map<String, Field> mapField = new HashMap<>();
-        for (Field field : listField) {
-            mapField.put(field.getId(), field);
-        }
 
         // 删除不想显示的属性
         if (listInvisibleField != null && !listInvisibleField.isEmpty()) {
-            listInvisibleField.forEach(invisibleFieldModel -> getFieldById(mapField, StringUtil.replaceToDot(invisibleFieldModel.getFieldId()), CmsMtPlatformCategoryInvisibleFieldModel_Field.SEPARATOR, true));
+            Map<String, List<Field>> mapFieldName = new HashMap<>();
+            for (Field field : listField) {
+                List<Field> fields = mapFieldName.get(field.getName());
+                if (fields == null) {
+                    fields = new ArrayList<>();
+                    mapFieldName.put(field.getName(), fields);
+                }
+                fields.add(field);
+            }
+            // 先做name的删除
+            listInvisibleField.forEach(invisibleFieldModel ->
+            {
+                String fieldId = invisibleFieldModel.getFieldId();
+                if (StringUtils.isEmpty(fieldId)) {
+                    getFieldByName(mapFieldName, StringUtil.replaceToDot(invisibleFieldModel.getFieldName()), CmsMtPlatformCategoryInvisibleFieldModel_Field.SEPARATOR, true);
+                }
+            });
+
+            // 再做id的删除
+            List<Field> listFieldName = new ArrayList<>();
+            mapFieldName.forEach((key, value) -> listFieldName.addAll(value));
+            for (Field field : listFieldName) {
+                mapField.put(field.getId(), field);
+            }
+            listInvisibleField.forEach(invisibleFieldModel ->
+            {
+                String fieldId = invisibleFieldModel.getFieldId();
+                if (!StringUtils.isEmpty(fieldId)) {
+                    getFieldById(mapField, StringUtil.replaceToDot(invisibleFieldModel.getFieldId()), CmsMtPlatformCategoryInvisibleFieldModel_Field.SEPARATOR, true);
+                }
+            });
+        } else {
+            for (Field field : listField) {
+                mapField.put(field.getId(), field);
+            }
         }
 
         // 增加属性
@@ -337,7 +368,7 @@ public class PlatformSchemaService extends BaseService {
     /**
      * 取得指定Field
      *
-     * @param mapField     schema转换成的Map
+     * @param mapField     schema转换成的Map<field_id, Field>
      * @param fieldId      一级属性>二级属性>三级属性
      * @param separator    fieldId的分隔符
      * @param isNeedDelete true的话，检索到的同时在Map里删除
@@ -398,6 +429,101 @@ public class PlatformSchemaService extends BaseService {
                 $warn(String.format("field_id=%s 不是复杂类型,没有下一层属性,无法取得%s", fieldIds[0], fieldId));
                 return null;
             }
+        }
+    }
+
+    /**
+     * 取得指定Field
+     *
+     * @param mapField     schema转换成的Map<field_name, Field>
+     * @param fieldName    一级属性>二级属性>三级属性
+     * @param separator    分隔符
+     * @param isNeedDelete true的话，检索到的同时在Map里删除
+     * @return Field
+     */
+    public List<Field> getFieldByName(Map<String, List<Field>> mapField, String fieldName, String separator, boolean isNeedDelete) {
+        String[] fieldNames;
+        if (separator == null) {
+            // 一级属性
+            fieldNames = new String[]{fieldName};
+        } else {
+            fieldNames = fieldName.split(separator);
+        }
+
+        List<Field> fields = mapField.get(fieldNames[0]);
+
+        if (fields == null) {
+            $info("没有找到指定的field");
+            return null;
+        }
+        if (fieldNames.length == 1) {
+            // 最后一层啦
+            if (isNeedDelete) {
+                // map里删除
+                mapField.remove(fieldNames[0]);
+            }
+            return fields;
+        } else {
+            String newFieldName = fieldNames[1];
+            for (int i = 2; i < fieldNames.length; i++) {
+                newFieldName = newFieldName + separator + fieldNames[i];
+            }
+
+            List<Field> retFields = new ArrayList<>();
+            for (Field field: fields) {
+                if (field.getType() == FieldTypeEnum.COMPLEX) {
+                    ComplexField complexField = (ComplexField) field;
+
+                    List<Field> listField = complexField.getFields();
+                    Map<String, List<Field>> mapFieldName = new HashMap<>();
+                    for (Field subField : listField) {
+                        List<Field> subFields = mapFieldName.get(subField.getName());
+                        if (subFields == null) {
+                            subFields = new ArrayList<>();
+                            mapFieldName.put(subField.getName(), subFields);
+                        }
+                        subFields.add(subField);
+                    }
+
+                    List<Field> findField = getFieldByName(mapFieldName, newFieldName, separator, isNeedDelete);
+                    if (findField != null && fieldNames.length == 2) {
+                        // 找到了, fieldIds.length == 2表示之后一次递归是最后一层啦
+                        if (isNeedDelete) {
+                            // map和list里删除
+                            findField.forEach(removeField -> complexField.getFields().remove(removeField));
+                        }
+                    }
+                    retFields.addAll(findField);
+                } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
+                    MultiComplexField multiComplexField = (MultiComplexField) field;
+
+                    List<Field> listField = multiComplexField.getFields();
+                    Map<String, List<Field>> mapFieldName = new HashMap<>();
+                    for (Field subField : listField) {
+                        List<Field> subFields = mapFieldName.get(subField.getName());
+                        if (subFields == null) {
+                            subFields = new ArrayList<>();
+                            mapFieldName.put(subField.getName(), subFields);
+                        }
+                        subFields.add(subField);
+                    }
+
+                    List<Field> findField = getFieldByName(mapFieldName, newFieldName, separator, isNeedDelete);
+                    if (findField != null && fieldNames.length == 2) {
+                        // 找到了, fieldIds.length == 2表示之后一次递归是最后一层啦
+                        if (isNeedDelete) {
+                            // list里删除
+                            findField.forEach(removeField -> multiComplexField.getFields().remove(removeField));
+                        }
+                    }
+                    retFields.addAll(findField);
+                } else {
+                    $warn(String.format("field_name=%s 不是复杂类型,没有下一层属性,无法取得%s", fieldNames[0], fieldName));
+                    return null;
+                }
+            }
+
+            return retFields;
         }
     }
 

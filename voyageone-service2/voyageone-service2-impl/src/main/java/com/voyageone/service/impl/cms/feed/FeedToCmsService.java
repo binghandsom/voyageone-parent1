@@ -5,10 +5,12 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.VmsChannelConfigBean;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
@@ -201,11 +203,19 @@ public class FeedToCmsService extends BaseService {
                         product.setUpdFlg(9);
                     }
                 } else {
-                    insertLog = true;
-                    product.setCreater(modifier);
-                    product.setUpdFlg(9);
+                    //如果是新的产品,如config已配置直接导入
+                    //flag 1导入
+//                    CmsChannelConfigBean isImportFeedTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SET_FEED_IMPORT_FLG);
+//                    if(isImportFeedTypeConfig != null &&"1".equals(isImportFeedTypeConfig.getConfigValue1())){
+//                        insertLog = true;
+//                        product.setCreater(modifier);
+//                        product.setUpdFlg(0);
+//                    }else{
+                        insertLog = true;
+                        product.setCreater(modifier);
+                        product.setUpdFlg(9);
+//                    }
                 }
-
                 // code 库存计算
                 Integer qty = 0;
                 for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {

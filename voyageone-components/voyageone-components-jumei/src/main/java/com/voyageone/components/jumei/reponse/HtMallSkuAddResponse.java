@@ -13,11 +13,20 @@ import java.util.Map;
  * @version 2.5.0
  */
 public class HtMallSkuAddResponse extends BaseJMResponse {
+    private String jumeiSkuNo;
     private boolean isSuccess;
     private String error_code;
     private String reason;
     private String errorMsg;
     private String body;
+
+    public String getJumeiSkuNo() {
+        return jumeiSkuNo;
+    }
+
+    public void setJumeiSkuNo(String jumeiSkuNo) {
+        this.jumeiSkuNo = jumeiSkuNo;
+    }
 
     public boolean isSuccess() {
         return isSuccess;
@@ -69,6 +78,12 @@ public class HtMallSkuAddResponse extends BaseJMResponse {
             }
             if (map.containsKey("reason")) {
                 this.setReason(map.get("reason").toString());
+            }
+            if (map.containsKey("response")) {
+                Map<String, Object> mapSesponse = (Map<String, Object>) map.get("response");
+                if (mapSesponse.containsKey("jumei_sku_no")) {
+                    this.setJumeiSkuNo(mapSesponse.get("jumei_sku_no").toString());
+                }
             }
         } catch (Exception ex) {
             logger.error("setBody ",ex);

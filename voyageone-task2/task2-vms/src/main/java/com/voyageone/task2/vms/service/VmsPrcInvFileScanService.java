@@ -163,24 +163,26 @@ public class VmsPrcInvFileScanService extends BaseTaskService {
         return vmsBtInventoryFileModel;
     }
 
-    private boolean checkWhetherTheFTPUploadedFileExistsThenRenameItAndInsertIntoDB(String orderChannelId) {
+    private void checkWhetherTheFTPUploadedFileExistsThenRenameItAndInsertIntoDB(String orderChannelId) {
         String prcInvFilePath = Codes.getCodeName(VMS_PROPERTY, "vms.inventory.ftp.upload");
         if (StringUtils.isEmpty(prcInvFilePath)) {
-            throw new SystemException(orderChannelId + ": 未配置vms.inventory.ftp.upload, 请检查相关配置表");
+            $info(orderChannelId + ": 未配置vms.inventory.ftp.upload, 请检查相关配置表");
+            return;
         }
 
         if (!prcInvFilePath.endsWith("/")) prcInvFilePath = prcInvFilePath + "/";
 
         File ftpRoot = new File(prcInvFilePath + orderChannelId + PRICE_INVENTORY_DIRECTORY);
         if (!ftpRoot.exists() || !ftpRoot.isDirectory()) {
-            throw new SystemException(orderChannelId + ": FTP上传目录 " + prcInvFilePath + orderChannelId +
+            $info(orderChannelId + ": FTP上传目录 " + prcInvFilePath + orderChannelId +
                     PRICE_INVENTORY_DIRECTORY + " 不存在或者不是目录, 请检查服务器配置");
+            return;
         }
 
         File[] files = ftpRoot.listFiles();
         if (null == files || files.length == 0) {
             $info(orderChannelId + ": 目录为空, 不存在FTP上传内容");
-            return false;
+            return;
         }
 
         for (File file : files) {
@@ -205,11 +207,10 @@ public class VmsPrcInvFileScanService extends BaseTaskService {
             createFtpFileDataInDB(orderChannelId, originFileName, finalFileName, prcInvFilePath);
 
             $info(orderChannelId + ": FTP上传文件 " + originFileName + " 已改名为" + finalFileName);
-            return true;
+            return;
         }
 
         $info(orderChannelId + ": 未发现对应的.csv文件");
-        return false;
     }
 
     private void createFtpFileDataInDB(String orderChannelId, String originFileName, String finalFileName, String
