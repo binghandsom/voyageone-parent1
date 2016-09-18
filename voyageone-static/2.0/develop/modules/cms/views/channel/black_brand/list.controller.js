@@ -15,6 +15,14 @@ define([
         "2": "平台品牌"
     };
 
+    function cartToArray(cart) {
+        return _.map(cart, function (value, key) {
+            if (value)
+                return +key;
+        }).filter(function (item) {
+            return item
+        });
+    }
 
     cms.controller('BlackBrandListController', (function () {
 
@@ -74,7 +82,7 @@ define([
          */
         BlackBrandListController.prototype.clear = function () {
             this.searchInfo = {
-                brandType: null,
+                brandType: '0',
                 cart: {},
                 status: null,
                 brand: ''
@@ -91,12 +99,7 @@ define([
                 paging = self.paging,
                 blackBrandService = self.blackBrandService;
 
-            cartIdList = _.map(searchInfo.cart, function (value, key) {
-                if (value)
-                    return +key;
-            }).filter(function (item) {
-                return item
-            });
+            cartIdList = cartToArray(searchInfo.cart);
 
             upEntity = _.extend({
                 pageNumber: self.paging.curr,
@@ -196,6 +199,18 @@ define([
                     });
                 });
             });
+        };
+
+        BlackBrandListController.prototype.selectCarts = function () {
+            var self = this;
+
+            _.each(self.cartList, function (item) {
+                self.searchInfo.cart[item.value] = true;
+            });
+        };
+
+        BlackBrandListController.prototype.checkCarts = function () {
+            return cartToArray(this.searchInfo.cart).length > 0;
         };
 
         return BlackBrandListController;
