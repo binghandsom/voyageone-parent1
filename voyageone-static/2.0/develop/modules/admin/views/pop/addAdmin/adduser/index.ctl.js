@@ -30,31 +30,21 @@ define([
                 });
                 self.adminRoleService.getAllRole().then(function (res) {
                     self.allList = res.data;
-                    self.roleAllList = [];
-                    for (var item in self.allList) {
-                        self.roleAllList.push({'roleId': item, 'roleName': self.allList[item]});
-                    }
-                    if (self.popType == '添加用户') return;
-                    return call(self.roleAllList);
-                });
-                function call(roleAllList) {
-                    self.roleList = self.sourceData.roleId.split(',');
+                    self.roleList = self.sourceData.roleId != null ? self.sourceData.roleId.split(',') : [];
                     _.forEach(self.roleList, function (item, index) {
-                        _.map(roleAllList, function (role) {
+                        _.map(self.allList, function (role) {
                             if (role.roleId == item) {
-                                self.roleList[index] = {'roleId':item, 'roleName':  role.roleName}
+                                self.roleList[index] = {'roleId': item, 'roleName': role.roleName}
                             }
                             return self.roleList;
                         })
                     });
-                    callback(roleAllList);
-                }
-
+                    callback(self.allList);
+                });
                 function callback(roleAllList) {
                     self.roleAllList = [];
                     if (self.roleList.length == 0) {
                         self.roleAllList = roleAllList;
-                        return;
                     } else {
                         self.roleAllList = roleAllList;
                         _.forEach(self.roleList, function (item) {
