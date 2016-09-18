@@ -170,11 +170,8 @@ define([
             },
             authority: function (type) {
                 var self = this;
-                var roleIds = [];
-                var resIds = [];
-                var applications = [];
                 var setInfo = [];
-                var configInfo = {};
+                var configInfo = {roleIds: [], applications: []};
                 _.forEach(self.adminRoleList, function (Info) {
                     _.forEach(self.adminUserSelList.selList, function (item) {
                         if (Info.id == item.id) {
@@ -183,26 +180,25 @@ define([
                     });
                 });
                 _.forEach(setInfo, function (item) {
-                    roleIds.push(item.id);
-                    resIds.push(item.resIds);
-                    applications.push(item.application);
+                    configInfo.roleIds.push(item.id);
+                    configInfo.applications.push(item.application);
                 });
                 switch (type) {
                     case 'set':
-                        _.extend(configInfo, {'roleIds': roleIds, 'resIds': resIds, 'applications': applications});
-                        self.adminRoleService.setAuth(configInfo).then(function (res) {
+                        _.extend(configInfo, {'type': 'set'});
+                        self.popups.openRoleEdit(configInfo).then(function (res) {
                             console.log(res)
                         });
                         break;
                     case 'delete':
-                        _.extend(configInfo, {'roleIds': roleIds, 'resIds': resIds});
-                        self.adminRoleService.removeAuth(configInfo).then(function (res) {
+                        _.extend(configInfo, {'type': 'delete'});
+                        self.popups.openRoleEdit(configInfo).then(function (res) {
                             console.log(res)
                         });
                         break;
                     case 'add':
-                        _.extend(configInfo, {'roleIds': roleIds, 'resIds': resIds});
-                        self.adminRoleService.addAuth(configInfo).then(function (res) {
+                        _.extend(configInfo, {'type': 'add'});
+                        self.popups.openRoleEdit(configInfo).then(function (res) {
                             console.log(res)
                         });
                         break;

@@ -47,6 +47,12 @@ define([
             "controller": 'AddRoleController as ctrl',
             "size": 'lg'
         },
+        "addRoleEdit": {
+            "templateUrl": "views/pop/addAdmin/addRole/roleEdit.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addAdmin/addRole/roleEdit.ctl",
+            "controller": 'RoleEditController as ctrl',
+            "size": 'lg'
+        },
         "addRes": {
             "templateUrl": "views/pop/addAdmin/addRes/index.tpl.html",
             "controllerUrl": "modules/admin/views/pop/addAdmin/addRes/index.ctl",
@@ -198,6 +204,12 @@ define([
          */
         $scope.openRole= function openRole(context) {
             return openModal(popActions.addRole, context);
+        };
+        /**
+         * 打开用户/权限页面--角色管理页面的权限编辑页面
+         */
+        $scope.openRoleEdit= function openRoleEdit(context) {
+            return openModal(popActions.addRoleEdit, context);
         };
 
         /**
