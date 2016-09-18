@@ -13,7 +13,7 @@ import com.voyageone.service.bean.vms.channeladvisor.product.ProductGroupResultM
 import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductLogDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.mongo.CmsBtCAdProudctModel;
+import com.voyageone.service.model.cms.mongo.CmsBtCAdProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,7 @@ public class CAFeedProductService extends BaseService {
     private CmsBtCAdProductDao cmsBtCAdProductDao;
 
     // 更新价格和库存
-    public String updateQuantityPrice(String channelId, List<CmsBtCAdProudctModel> cmsMtCAdProudcts) {
+    public String updateQuantityPrice(String channelId, List<CmsBtCAdProductModel> cmsMtCAdProudcts) {
         List<ProductGroupResultModel> productGroupResultModels = new ArrayList<>(cmsMtCAdProudcts.size());
         //List<String> successSellerSKU = new ArrayList<>();
         cmsMtCAdProudcts.forEach(p -> {
@@ -44,7 +44,7 @@ public class CAFeedProductService extends BaseService {
             cmsBtCAdProductLogDao.insert(channelId, p);
             p.set_id(null);
             // 和之前的产品数据合并
-            CmsBtCAdProudctModel befCAdProudctModel = cmsBtCAdProductDao.getBySellerSku(channelId, p.getSellerSKU());
+            CmsBtCAdProductModel befCAdProudctModel = cmsBtCAdProductDao.getBySellerSku(channelId, p.getSellerSKU());
             if (befCAdProudctModel == null) {
                 productGroupResultModel.getErrors().add(new ErrorModel(ErrorIDEnum.ProductNotFound));
                 productGroupResultModel.setHasErrors(true);
@@ -90,7 +90,7 @@ public class CAFeedProductService extends BaseService {
     }
 
     // 创建更新产品
-    public String updateProduct(String channelId, List<CmsBtCAdProudctModel> cmsMtCAdProudcts) {
+    public String updateProduct(String channelId, List<CmsBtCAdProductModel> cmsMtCAdProudcts) {
         List<ProductGroupResultModel> productGroupResultModels = new ArrayList<>(cmsMtCAdProudcts.size());
         //List<String> successSellerSKU = new ArrayList<>();
         cmsMtCAdProudcts.forEach(p -> {
@@ -101,7 +101,7 @@ public class CAFeedProductService extends BaseService {
             p.set_id(null);
             // 和之前的产品数据合并
             if (errors.size() == 0) {
-                CmsBtCAdProudctModel befCAdProudctModel = cmsBtCAdProductDao.getBySellerSku(channelId, p.getSellerSKU());
+                CmsBtCAdProductModel befCAdProudctModel = cmsBtCAdProductDao.getBySellerSku(channelId, p.getSellerSKU());
                 if (befCAdProudctModel == null) {
                     cmsBtCAdProductDao.insert(channelId, p);
                 } else {
@@ -126,14 +126,14 @@ public class CAFeedProductService extends BaseService {
         return JacksonUtil.bean2Json(productGroupResultModels);
     }
 
-    private List<ErrorModel> requiredProductCheck(CmsBtCAdProudctModel cmsBtCAdProudctModel) {
+    private List<ErrorModel> requiredProductCheck(CmsBtCAdProductModel cmsBtCAdProductModel) {
         List<ErrorModel> errors = new ArrayList<>();
         //ProductGroupResultModel productGroupResultModel = new ProductGroupResultModel();
-        if (StringUtil.isEmpty(cmsBtCAdProudctModel.getSellerSKU())) {
+        if (StringUtil.isEmpty(cmsBtCAdProductModel.getSellerSKU())) {
             ErrorModel error = new ErrorModel(ErrorIDEnum.InvalidSellerID);
             errors.add(error);
         }
-        cmsBtCAdProudctModel.getBuyableProducts().forEach(buyableProductModel -> {
+        cmsBtCAdProductModel.getBuyableProducts().forEach(buyableProductModel -> {
             if (StringUtil.isEmpty(buyableProductModel.getSellerSKU())) {
                 ErrorModel error = new ErrorModel(ErrorIDEnum.InvalidSellerID);
                 errors.add(error);
@@ -152,10 +152,10 @@ public class CAFeedProductService extends BaseService {
         return errors;
     }
 
-    private ProductGroupResultModel creadResult(String channelId, CmsBtCAdProudctModel cmsBtCAdProudctModel, List<ErrorModel> errors) {
+    private ProductGroupResultModel creadResult(String channelId, CmsBtCAdProductModel cmsBtCAdProductModel, List<ErrorModel> errors) {
         ProductGroupResultModel productGroupResultModel = new ProductGroupResultModel();
         List<BuyableProductResultModel> buyableProductResultModels = new ArrayList<>();
-        cmsBtCAdProudctModel.getBuyableProducts().forEach(buyableProductModel -> {
+        cmsBtCAdProductModel.getBuyableProducts().forEach(buyableProductModel -> {
             BuyableProductResultModel buyableProductResultModel = new BuyableProductResultModel();
             buyableProductResultModel.setSellerSKU(buyableProductModel.getSellerSKU());
             if (errors.size() == 0) {
@@ -166,7 +166,7 @@ public class CAFeedProductService extends BaseService {
             }
             buyableProductResultModels.add(buyableProductResultModel);
         });
-        productGroupResultModel.setSellerSKU(cmsBtCAdProudctModel.getSellerSKU());
+        productGroupResultModel.setSellerSKU(cmsBtCAdProductModel.getSellerSKU());
         productGroupResultModel.setErrors(errors);
         productGroupResultModel.setHasErrors(errors.size() > 0);
         productGroupResultModel.setBuyableProductResults(buyableProductResultModels);

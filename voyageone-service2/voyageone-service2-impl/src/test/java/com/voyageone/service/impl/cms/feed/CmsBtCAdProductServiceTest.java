@@ -2,7 +2,7 @@ package com.voyageone.service.impl.cms.feed;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductDao;
-import com.voyageone.service.model.cms.mongo.CmsBtCAdProudctModel;
+import com.voyageone.service.model.cms.mongo.CmsBtCAdProductModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class CmsBtCAdProductServiceTest {
     @Test
     public void testUpdateProduct() throws Exception {
         List<String> skus = Arrays.asList("REBEL X-WING","LIGHTSABER");
-        List<CmsBtCAdProudctModel> aa = cmsBtCAdProductDao.getProduct("996", skus);
+        List<CmsBtCAdProductModel> aa = cmsBtCAdProductDao.getProduct("996", skus);
         System.out.println(JacksonUtil.bean2Json(aa));
     }
 }
