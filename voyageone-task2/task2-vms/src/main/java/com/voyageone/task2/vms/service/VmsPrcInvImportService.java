@@ -396,8 +396,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
                 if (!errorPathFile.exists()) errorPathFile.mkdirs();
                 String errorFileName = errorPathFile + "/" +
                         fileName.replace("Inventory&Price_", "Inventory&Price_Check_Result_");
-                this.csvWriter = new CsvWriter(errorFileName, COMMA,
-                        Charset.forName(UTF_8));
+                this.csvWriter = new CsvWriter(errorFileName, COMMA, Charset.forName(UTF_8));
                 try {
                     this.csvWriter.writeRecord(new String[]{"sku", "columnNumber", "rowNumber", "errorMessage"});
                 } catch (IOException e) {
