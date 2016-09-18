@@ -1,6 +1,8 @@
 package com.voyageone.service.impl.vms.inventory;
 
 import com.voyageone.service.dao.vms.VmsBtInventoryFileDao;
+import com.voyageone.service.daoext.vms.VmsBtFeedFileDaoExt;
+import com.voyageone.service.daoext.vms.VmsBtInventoryFileDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.vms.VmsBtInventoryFileModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +21,15 @@ import java.util.Map;
 @Service
 public class InventoryFileService extends BaseService {
 
+    private final VmsBtInventoryFileDao vmsBtInventoryFileDao;
+
+    private final VmsBtInventoryFileDaoExt vmsBtInventoryFileDaoExt;
+
     @Autowired
-    private VmsBtInventoryFileDao vmsBtInventoryFileDao;
+    public InventoryFileService(VmsBtInventoryFileDaoExt vmsBtInventoryFileDaoExt, VmsBtInventoryFileDao vmsBtInventoryFileDao) {
+        this.vmsBtInventoryFileDaoExt = vmsBtInventoryFileDaoExt;
+        this.vmsBtInventoryFileDao = vmsBtInventoryFileDao;
+    }
 
     /**
      * 新建一条文件信息到vms_bt_inventory_file表
@@ -59,5 +68,27 @@ public class InventoryFileService extends BaseService {
         param.put("channelId", channelId);
         param.put("status", status);
         return vmsBtInventoryFileDao.selectList(param);
+    }
+
+    /**
+     * 条件搜索FeedFile
+     * @param param 搜索条件
+     * @return FeedFile列表
+     */
+    public List<Map<String, Object>> getPrcInvFileList(Map<String, Object> param) {
+
+        return vmsBtInventoryFileDaoExt.selectList(param);
+
+    }
+
+    /**
+     * 条件搜索FeedFile
+     * @param param 搜索条件
+     * @return FeedFile列表
+     */
+    public long getPrcInvFileListCount(Map<String, Object> param) {
+
+        return vmsBtInventoryFileDaoExt.selectListCount(param);
+
     }
 }

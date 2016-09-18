@@ -7,6 +7,88 @@
         `error_msg`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
+    <select id="selectList" parameterType="HashMap" resultType="HashMap">
+        select
+        <include refid="Base_Column_List"/>
+        from voyageone_vms.vms_bt_inventory_file
+        <where>
+            <if test="channelId != null and channelId != ''">
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="clientFileName != null and clientFileName != ''">
+                and `client_file_name` = #{clientFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="fileName != null and fileName != ''">
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="uploadType != null and uploadType != ''">
+                and `upload_type` = #{uploadType,jdbcType=VARCHAR}
+            </if>
+            <if test="status == '3'.toString()">
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="status == '2'.toString()">
+                and (`status` = '1' or `status` = '2')
+            </if>
+            <if test="status == '4'.toString()">
+                and (`status` = '4' or `status` = '5')
+            </if>
+            <if test="errorFileName != null and errorFileName != ''">
+                and `error_file_name` = #{errorFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="errorMsg != null and errorMsg != ''">
+                and `error_msg` = #{errorMsg,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="uploadDateStart !=null and uploadDateStart != ''">
+                and `created` >= #{uploadDateStart,jdbcType=TIMESTAMP}
+            </if>
+            <if test="uploadDateEnd != null and uploadDateEnd != ''">
+                and #{uploadDateEnd,jdbcType=TIMESTAMP} > `created`
+            </if>
+        </where>
+    </select>
+
+    <select id="selectListCount" parameterType="HashMap" resultType="java.lang.Long">
+        select
+        count(*)
+        from voyageone_vms.vms_bt_inventory_file
+        <where>
+            <if test="channelId != null and channelId != ''">
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="clientFileName != null and clientFileName != ''">
+                and `client_file_name` = #{clientFileName,jdbcType=VARCHAR}
+            </if>
+            <if test="fileName != null and fileName != ''">
+                and `file_name` = #{fileName,jdbcType=VARCHAR}
+            </if>
+            <if test="uploadType != null and uploadType != ''">
+                and `upload_type` = #{uploadType,jdbcType=VARCHAR}
+            </if>
+            <if test="status == '3'.toString()">
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="status == '2'.toString()">
+                and (`status` = '1' or `status` = '2')
+            </if>
+            <if test="status == '4'.toString()">
+                and (`status` = '4' or `status` = '5')
+            </if>
+            <if test="errorFileName != null and errorFileName != ''">
+                and `error_file_name` = #{errorFileName,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="errorMsg != null and errorMsg != ''">
+                and `error_msg` = #{errorMsg,jdbcType=VARCHAR}
+            </if>
+            <if test="uploadDateStart !=null and uploadDateStart != ''">
+                and `created` >= #{uploadDateStart,jdbcType=TIMESTAMP}
+            </if>
+            <if test="uploadDateEnd != null and uploadDateEnd != ''">
+                and #{uploadDateEnd,jdbcType=TIMESTAMP} > `created`
+            </if>
+        </where>
+    </select>
+
     <update id="updateStatus" parameterType="com.voyageone.service.model.vms.VmsBtInventoryFileModel">
         update voyageone_vms.vms_bt_inventory_file
         <set>
