@@ -140,7 +140,7 @@ public class FeedToCmsService extends BaseService {
                 if (befproduct != null) {
                     product.set_id(befproduct.get_id());
                     // Vms客户导入的情况下，
-                    if (FeedProductUpdateType.VMS_FEED == updateType || FeedProductUpdateType.VMS_PRICE_INVENTORY == updateType) {
+                    if (FeedProductUpdateType.VMS_FEED == updateType) {
                         VmsChannelConfigBean vmsUpdateInventory = VmsChannelConfigs.getConfigBean(channelId,"UPDATE_INVENTORY", "0");
                         if (vmsUpdateInventory == null || "1".equals(vmsUpdateInventory.getConfigValue1())) {
                             // 库存同步
