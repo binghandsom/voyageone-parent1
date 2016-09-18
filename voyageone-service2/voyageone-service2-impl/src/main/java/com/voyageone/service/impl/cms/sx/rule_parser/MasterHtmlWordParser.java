@@ -15,7 +15,9 @@ public class MasterHtmlWordParser extends MasterWordParser {
     //目前只支持解析model级别的属性
     public String parse(RuleWord ruleWord) {
         String superResult = super.parse(ruleWord);
-
+        if (superResult == null) {
+            return null;
+        }
         superResult = superResult.replaceAll("<br>", "<br />");
         superResult = superResult.replaceAll("\\*", "");
 
