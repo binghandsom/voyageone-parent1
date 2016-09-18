@@ -56,7 +56,7 @@ public class ProductControllerTest {
         //更新状态
         url = BASE_URL + CAUrlConstants.PRODUCTS.UPDATE_STATUS;
         reqJson = "[{\"SellerSKU\":\"REBEL X-WING\",\"Fields\":[],\"BuyableProducts\":[{\"SellerSKU\":\"REBEL X-WING\",\"Quantity\":0,\"ListingStatus\":\"NotLive\",\"Fields\":null}]},{\"SellerSKU\":\"LIGHTSABER_RED_MED\",\"Fields\":[],\"BuyableProducts\":[{\"SellerSKU\":\"LIGHTSABER_RED_MED\",\"Quantity\":0,\"ListingStatus\":\"NotLive\",\"Fields\":null}]},{\"SellerSKU\":\"LIGHTSABER_RED_LG\",\"Fields\":[],\"BuyableProducts\":[{\"SellerSKU\":\"LIGHTSABER_RED_LG\",\"Quantity\":0,\"ListingStatus\":\"NotLive\",\"Fields\":null}]},{\"SellerSKU\":\"LIGHTSABER_BLUE_MED\",\"Fields\":[],\"BuyableProducts\":[{\"SellerSKU\":\"LIGHTSABER_BLUE_MED\",\"Quantity\":0,\"ListingStatus\":\"NotLive\",\"Fields\":null}]},{\"SellerSKU\":\"LIGHTSABER_BLUE_LG\",\"Fields\":[],\"BuyableProducts\":[{\"SellerSKU\":\"LIGHTSABER_BLUE_LG\",\"Quantity\":0,\"ListingStatus\":\"NotLive\",\"Fields\":null}]}]";
-        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url, reqJson);
+        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url, reqJson,header);
         System.out.println(result);
     }
 

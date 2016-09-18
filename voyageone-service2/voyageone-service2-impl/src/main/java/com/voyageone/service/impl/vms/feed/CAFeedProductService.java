@@ -2,6 +2,7 @@ package com.voyageone.service.impl.vms.feed;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.vms.channeladvisor.*;
 import com.voyageone.service.bean.vms.channeladvisor.enums.ErrorIDEnum;
@@ -13,12 +14,13 @@ import com.voyageone.service.bean.vms.channeladvisor.product.ProductGroupResultM
 import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductLogDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtCAdProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -33,10 +35,64 @@ public class CAFeedProductService extends BaseService {
     @Autowired
     private CmsBtCAdProductDao cmsBtCAdProductDao;
 
-    // 更新价格和库存
-    public String updateQuantityPrice(String channelId, List<CmsBtCAdProductModel> cmsMtCAdProudcts) {
+    @Autowired
+    private MqSender sender;
+
+    public List<ProductGroupResultModel> updateStatus(String channelId, List<CmsBtCAdProductModel> cmsMtCAdProudcts) {
         List<ProductGroupResultModel> productGroupResultModels = new ArrayList<>(cmsMtCAdProudcts.size());
-        //List<String> successSellerSKU = new ArrayList<>();
+        List<String> successSellerSKU = new ArrayList<>();
+        cmsMtCAdProudcts.forEach(p -> {
+            List<ErrorModel> errors = new ArrayList<>();
+            ProductGroupResultModel productGroupResultModel = creadResult(channelId, p, errors);
+            productGroupResultModels.add(productGroupResultModel);
+            cmsBtCAdProductLogDao.insert(channelId, p);
+            p.set_id(null);
+            // 和之前的产品数据合并
+            CmsBtCAdProductModel befCAdProudctModel = cmsBtCAdProductDao.getBySellerSku(channelId, p.getSellerSKU());
+            if (befCAdProudctModel == null) {
+                productGroupResultModel.getErrors().add(new ErrorModel(ErrorIDEnum.ProductNotFound));
+                productGroupResultModel.setHasErrors(true);
+            } else {
+                for (int i = 0; i < p.getBuyableProducts().size(); i++) {
+                    BuyableProductModel sku = p.getBuyableProducts().get(i);
+                    boolean flg = false;
+                    try {
+                        for (BuyableProductModel befSku : befCAdProudctModel.getBuyableProducts()) {
+                            if (sku.getSellerSKU().equalsIgnoreCase(befSku.getSellerSKU())) {
+                                flg = true;
+                                if (sku.getListingStatus() == null) throw new BusinessException("Status Quantity");
+                                befSku.setListingStatus(sku.getListingStatus());
+                                break;
+                            }
+                        }
+                        if (!flg) {
+                            productGroupResultModel.getBuyableProductResults().get(i).setHasErrors(true);
+                            productGroupResultModel.getBuyableProductResults().get(i).setRequestResult(RequestResultEnum.Fail);
+                            productGroupResultModel.getBuyableProductResults().get(i).setMarketPlaceItemID("");
+                            productGroupResultModel.getBuyableProductResults().get(i).getErrors().add(new ErrorModel(ErrorIDEnum.ProductNotFound));
+                        }
+                    } catch (BusinessException e) {
+                        productGroupResultModel.getBuyableProductResults().get(i).setHasErrors(true);
+                        productGroupResultModel.getBuyableProductResults().get(i).setRequestResult(RequestResultEnum.Fail);
+                        productGroupResultModel.getBuyableProductResults().get(i).setMarketPlaceItemID("");
+                        productGroupResultModel.getBuyableProductResults().get(i).getErrors().add(new ErrorModel(ErrorIDEnum.InvalidRequest, e.getMessage()));
+                    }
+                }
+                befCAdProudctModel.setModified(DateTimeUtil.getNowTimeStamp());
+                befCAdProudctModel.setModifier("updateStatus");
+                cmsBtCAdProductDao.update(channelId, befCAdProudctModel);
+                successSellerSKU.add(befCAdProudctModel.getSellerSKU());
+            }
+            //successSellerSKU.add(p.getSellerSKU());
+        });
+        sendMq(channelId, successSellerSKU);
+        return productGroupResultModels;
+    }
+
+    // 更新价格和库存
+    public List<ProductGroupResultModel> updateQuantityPrice(String channelId, List<CmsBtCAdProductModel> cmsMtCAdProudcts) {
+        List<ProductGroupResultModel> productGroupResultModels = new ArrayList<>(cmsMtCAdProudcts.size());
+        List<String> successSellerSKU = new ArrayList<>();
         cmsMtCAdProudcts.forEach(p -> {
             List<ErrorModel> errors = new ArrayList<>();
             ProductGroupResultModel productGroupResultModel = creadResult(channelId, p, errors);
@@ -82,17 +138,20 @@ public class CAFeedProductService extends BaseService {
                         productGroupResultModel.getBuyableProductResults().get(i).getErrors().add(new ErrorModel(ErrorIDEnum.InvalidRequest, e.getMessage()));
                     }
                 }
+                befCAdProudctModel.setModified(DateTimeUtil.getNowTimeStamp());
+                befCAdProudctModel.setModifier("updateQuantityPrice");
                 cmsBtCAdProductDao.update(channelId, befCAdProudctModel);
+                successSellerSKU.add(befCAdProudctModel.getSellerSKU());
             }
-            //successSellerSKU.add(p.getSellerSKU());
         });
-        return JacksonUtil.bean2Json(productGroupResultModels);
+        sendMq(channelId, successSellerSKU);
+        return productGroupResultModels;
     }
 
     // 创建更新产品
     public String updateProduct(String channelId, List<CmsBtCAdProductModel> cmsMtCAdProudcts) {
         List<ProductGroupResultModel> productGroupResultModels = new ArrayList<>(cmsMtCAdProudcts.size());
-        //List<String> successSellerSKU = new ArrayList<>();
+        List<String> successSellerSKU = new ArrayList<>();
         cmsMtCAdProudcts.forEach(p -> {
             List<ErrorModel> errors = requiredProductCheck(p);
             ProductGroupResultModel productGroupResultModel = creadResult(channelId, p, errors);
@@ -103,7 +162,12 @@ public class CAFeedProductService extends BaseService {
             if (errors.size() == 0) {
                 CmsBtCAdProductModel befCAdProudctModel = cmsBtCAdProductDao.getBySellerSku(channelId, p.getSellerSKU());
                 if (befCAdProudctModel == null) {
+                    p.setCreated(DateTimeUtil.getNowTimeStamp());
+                    p.setCreater("updateProduct");
+                    p.setModified(DateTimeUtil.getNowTimeStamp());
+                    p.setModifier("updateProduct");
                     cmsBtCAdProductDao.insert(channelId, p);
+                    successSellerSKU.add(p.getSellerSKU());
                 } else {
                     p.set_id(befCAdProudctModel.get_id());
                     for (BuyableProductModel befSku : befCAdProudctModel.getBuyableProducts()) {
@@ -118,11 +182,14 @@ public class CAFeedProductService extends BaseService {
                             p.getBuyableProducts().add(befSku);
                         }
                     }
+                    p.setModified(DateTimeUtil.getNowTimeStamp());
+                    p.setModifier("updateProduct");
                     cmsBtCAdProductDao.update(channelId, p);
+                    successSellerSKU.add(p.getSellerSKU());
                 }
             }
-            //successSellerSKU.add(p.getSellerSKU());
         });
+        sendMq(channelId, successSellerSKU);
         return JacksonUtil.bean2Json(productGroupResultModels);
     }
 
@@ -171,5 +238,14 @@ public class CAFeedProductService extends BaseService {
         productGroupResultModel.setHasErrors(errors.size() > 0);
         productGroupResultModel.setBuyableProductResults(buyableProductResultModels);
         return productGroupResultModel;
+    }
+
+    private void sendMq(String channelId, List<String> sellerSKUs) {
+        if (sellerSKUs != null && sellerSKUs.size() > 0) {
+            Map<String, Object> message = new HashMap<>();
+            message.put("channelId", "996");
+            message.put("sellerSKUs", sellerSKUs);
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_CA_Feed_Analysis, message);
+        }
     }
 }
