@@ -135,7 +135,10 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
                 $info("京东类目属性:" + i + "/" + cnt + ":CHANNEL_ID:" + platformCategoriesModel.getChannelId() + ":CART_ID:" + platformCategoriesModel.getCartId() + ":PLATFORM_CATEGORY_ID:" + platformCategoriesModel.getCatId());
                 // 设置schema共通信息
                 if (i == 1) {
-                    doSetPlatformJdSchemaCommon(shop, platformCategoriesModel);
+                    // modified by morse.lu 2016/09/14 start
+//                    doSetPlatformJdSchemaCommon(shop, platformCategoriesModel);
+                    doSetPlatformJdSchemaCommon(shop, platformCategoriesModel.getCartId());
+                    // modified by morse.lu 2016/09/14 end
                 }
                 // 设置各个类目schema信息
                 doSetPlatformPropJdSub(shop, platformCategoriesModel);
@@ -151,7 +154,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
      * @param shop                    ShopBean  店铺信息
      * @param platformCategoriesModel CmsMtPlatformCategoryTreeModel 叶子类目信息
      */
-    private void doSetPlatformPropJdSub(ShopBean shop, CmsMtPlatformCategoryTreeModel platformCategoriesModel) {
+    protected void doSetPlatformPropJdSub(ShopBean shop, CmsMtPlatformCategoryTreeModel platformCategoriesModel) {
 
         CmsMtPlatformCategorySchemaModel schemaModel = new CmsMtPlatformCategorySchemaModel();
         schemaModel.setCartId(platformCategoriesModel.getCartId());
@@ -233,12 +236,13 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
      * 将京东平台上新时用到一些平台相关的输入项目转换成XML设置到mongoDB的schema表中的propsProduct字段
      *
      * @param shop ShopBean  店铺信息
-     * @param platformCategoriesModel CmsMtPlatformCategoryTreeModel 叶子类目信息
      */
-    private void doSetPlatformJdSchemaCommon(ShopBean shop, CmsMtPlatformCategoryTreeModel platformCategoriesModel) {
-
+    // modified by morse.lu 2016/09/14 start
+//    private void doSetPlatformJdSchemaCommon(ShopBean shop, CmsMtPlatformCategoryTreeModel platformCategoriesModel) {
+    protected void doSetPlatformJdSchemaCommon(ShopBean shop, int cartId) {
+        // modified by morse.lu 2016/09/14 end
         CmsMtPlatformCategorySchemaModel schemaCommonModel = new CmsMtPlatformCategorySchemaModel();
-        schemaCommonModel.setCartId(platformCategoriesModel.getCartId());
+        schemaCommonModel.setCartId(cartId);
         schemaCommonModel.setCatId("1");
         schemaCommonModel.setCreater(this.getTaskName());
         schemaCommonModel.setModifier(this.getTaskName());

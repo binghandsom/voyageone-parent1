@@ -13,14 +13,22 @@ define([
             $sessionStorage.feedSearch = param;
             $location.path(url);
         }
-        $scope.jumpBlackBrand=function(params) {
-// /marketing/black-brand/:params
-//             参数格式：type|status|cart
-//             type: 0/1/2 = feed/master/platform
-//             status: 0/1 = 未加入/已加入
+
+        /**
+         * 参数格式：type|status|cart
+         *          type: 0/1/2 = feed/master/platform
+         *          status: 0/1 = 未加入/已加入
+         */
+        $scope.jumpBlackBrand = function (params) {
             var url = "/marketing/black-brand/" + params;
             $location.path(url);
-        }
+        };
+
+        $scope.jumpBlackBrandNew = function (type, status, cart) {
+            var url = "/marketing/black-brand/" + type + "|" + status + "|" + cart;
+            $location.path(url);
+        };
+
         /**
          * search by input value.
          */
