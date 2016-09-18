@@ -6,9 +6,10 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('GuideChannelInfoController', (function () {
-        function GuideChannelInfoController(selectRowsFactory, popups) {
+        function GuideChannelInfoController(selectRowsFactory, popups, confirm) {
             this.selectRowsFactory = selectRowsFactory;
             this.popups = popups;
+            this.confirm = confirm;
             this.context = JSON.parse(window.sessionStorage.getItem('valueBean'));
             this.storeList = [];
             this.storeSelList = {selList: []};
@@ -83,20 +84,22 @@ define([
             delete: function () {
                 var self = this;
                 var delList = [];
-                _.forEach(self.storeSelList.selList, function (delInfo) {
-                    delList.push({'orderChannelId': self.context.channel.orderChannelId, 'storeId': delInfo.id});
-                });
-                _.forEach(delList, function (item) {
-                        var source = self.storeList;
-                        var data = _.find(source, function (sItem) {
-                            return sItem.storeId == item.storeId;
-                        });
-                        if (source.indexOf(data) > -1) {
-                            source.splice(source.indexOf(data), 1);
-                            self.init();
+                self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
+                    _.forEach(self.storeSelList.selList, function (delInfo) {
+                        delList.push({'orderChannelId': self.context.channel.orderChannelId, 'storeId': delInfo.id});
+                    });
+                    _.forEach(delList, function (item) {
+                            var source = self.storeList;
+                            var data = _.find(source, function (sItem) {
+                                return sItem.storeId == item.storeId;
+                            });
+                            if (source.indexOf(data) > -1) {
+                                source.splice(source.indexOf(data), 1);
+                                self.init();
+                            }
                         }
-                    }
-                );
+                    );
+                });
             },
             next: function () {
                 var self = this;

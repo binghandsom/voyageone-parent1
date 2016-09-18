@@ -52,7 +52,7 @@ define([
                 });
                 function call(channelAllList) {
                     var channelAllListCopy = angular.copy(channelAllList);
-                    self.channelList = self.sourceData.channelId.split(',');
+                    self.channelList = self.sourceData.channelId != null ? self.sourceData.channelId.split(',') : [];
                     _.forEach(self.channelList, function (item, index) {
                         _.map(channelAllList, function (channel) {
                             if (channel.orderChannelId == item) {
@@ -90,7 +90,7 @@ define([
                 });
                 function storeCall(storeAllList) {
                     var storeAllListCopy = angular.copy(storeAllList);
-                    self.storeList = self.sourceData.storeId.split(',');
+                    self.storeList = self.sourceData.storeId != null ? self.sourceData.storeId.split(',') : [];
                     _.forEach(self.storeList, function (item, index) {
                         _.map(storeAllList, function (store) {
                             if (store.storeId == item) {
@@ -126,7 +126,6 @@ define([
                         }
                     })
                 })
-
             },
             selected: function (item) {
                 var self = this;
@@ -281,19 +280,21 @@ define([
                     return selectedApp.valid;
                 });
                 self.sourceData.application = selectedAppList;
-                if (self.sourceData.allChannel == '1' || self.sourceData.allStore == '1') {
-                    self.sourceData.channelId = [];
-                    self.sourceData.storeId = [];
-                } else {
-                    self.sourceData.channelId = [];
+
+                self.sourceData.channelId = [];
+                self.sourceData.storeId = [];
+                if (self.sourceData.allChannel == '0') {
                     _.forEach(self.channelList, function (item) {
                         self.sourceData.channelId.push(item.orderChannelId);
                     });
-                    self.sourceData.storeId = [];
+                }
+                if (self.sourceData.allStore == '0') {
                     _.forEach(self.storeList, function (item) {
                         self.sourceData.storeId.push(item.storeId);
                     });
                 }
+
+
                 var result = {};
                 if (self.append == true) {
                     self.adminRoleService.addRole(self.sourceData).then(function (res) {

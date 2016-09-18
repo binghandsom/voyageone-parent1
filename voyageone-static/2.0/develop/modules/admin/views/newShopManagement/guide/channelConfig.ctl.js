@@ -6,11 +6,13 @@ define([
     'modules/admin/controller/popup.ctl'
 ], function (admin) {
     admin.controller('GuideChannelCogInfoController', (function () {
-        function GuideChannelCogInfoController(smsConfigService, selectRowsFactory, popups) {
+        function GuideChannelCogInfoController(smsConfigService, selectRowsFactory, popups, confirm) {
             this.selectRowsFactory = selectRowsFactory;
             this.popups = popups;
             this.smsConfigService = smsConfigService;
+            this.confirm = confirm;
             this.context = JSON.parse(window.sessionStorage.getItem('valueBean'));
+            this.editParam = JSON.parse(window.sessionStorage.getItem('editFlg')) ? '&edit' : '';
         }
 
         GuideChannelCogInfoController.prototype = {
@@ -104,7 +106,7 @@ define([
                         } else {
                             _.forEach(self.channelSmsList, function (Info) {
                                 if (Info.seq == self.channelSmsSelList.selList[0].id) {
-                                    _.extend(Info, {'isReadOnly': true,'sourceData': self.context.channel});
+                                    _.extend(Info, {'isReadOnly': true, 'sourceData': self.context.channel});
                                     self.popups.openChannelSms(Info).then(function () {
                                         self.init();
                                     });
@@ -128,7 +130,7 @@ define([
                         } else {
                             _.forEach(self.channelThirdList, function (Info) {
                                 if (Info.seq == self.channelThirdSelList.selList[0].id) {
-                                    _.extend(Info, {'isReadOnly': true,'sourceData': self.context.channel});
+                                    _.extend(Info, {'isReadOnly': true, 'sourceData': self.context.channel});
                                     self.popups.openChannelThird(Info).then(function () {
                                         self.init();
                                     });
@@ -152,7 +154,7 @@ define([
                         } else {
                             _.forEach(self.carrierList, function (Info) {
                                 if (Info.mainKey == self.carrierSelList.selList[0].id) {
-                                    _.extend(Info, {'isReadOnly': true,'sourceData': self.context.channel});
+                                    _.extend(Info, {'isReadOnly': true, 'sourceData': self.context.channel});
                                     self.popups.openChannelCarrier(Info).then(function () {
                                         self.init();
                                     });
@@ -177,7 +179,7 @@ define([
                         } else {
                             _.forEach(self.channelTypeList, function (Info) {
                                 if (Info.id == self.channelTypeSelList.selList[0].id) {
-                                    _.extend(Info, {'isReadOnly': true,'sourceData': self.context.channel});
+                                    _.extend(Info, {'isReadOnly': true, 'sourceData': self.context.channel});
                                     self.popups.openAddChannelType(Info).then(function () {
                                         self.init();
                                     });
@@ -190,76 +192,78 @@ define([
             delete: function (item) {
                 var self = this;
                 var delList = [];
-                switch (item.type) {
-                    case 'Sms':
-                        _.forEach(self.channelSmsSelList.selList, function (delInfo) {
-                            delList.push(delInfo.id);
-                        });
-                        _.forEach(delList, function (item) {
-                                var source = self.channelSmsList;
-                                var data = _.find(source, function (sItem) {
-                                    return sItem.seq == item;
-                                });
-                                if (source.indexOf(data) > -1) {
-                                    source.splice(source.indexOf(data), 1);
-                                    self.init();
+                self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
+                    switch (item.type) {
+                        case 'Sms':
+                            _.forEach(self.channelSmsSelList.selList, function (delInfo) {
+                                delList.push(delInfo.id);
+                            });
+                            _.forEach(delList, function (item) {
+                                    var source = self.channelSmsList;
+                                    var data = _.find(source, function (sItem) {
+                                        return sItem.seq == item;
+                                    });
+                                    if (source.indexOf(data) > -1) {
+                                        source.splice(source.indexOf(data), 1);
+                                        self.init();
+                                    }
                                 }
-                            }
-                        );
-                        break;
-                    case 'Third':
-                        _.forEach(self.channelThirdSelList.selList, function (delInfo) {
-                            delList.push(delInfo.id);
-                        });
-                        _.forEach(delList, function (item) {
-                                var source = self.channelThirdList;
-                                var data = _.find(source, function (sItem) {
-                                    return sItem.seq == item;
-                                });
-                                if (source.indexOf(data) > -1) {
-                                    source.splice(source.indexOf(data), 1);
-                                    self.init();
+                            );
+                            break;
+                        case 'Third':
+                            _.forEach(self.channelThirdSelList.selList, function (delInfo) {
+                                delList.push(delInfo.id);
+                            });
+                            _.forEach(delList, function (item) {
+                                    var source = self.channelThirdList;
+                                    var data = _.find(source, function (sItem) {
+                                        return sItem.seq == item;
+                                    });
+                                    if (source.indexOf(data) > -1) {
+                                        source.splice(source.indexOf(data), 1);
+                                        self.init();
+                                    }
                                 }
-                            }
-                        );
-                        break;
-                    case 'Carrier':
-                        _.forEach(self.carrierSelList.selList, function (delInfo) {
-                            delList.push(delInfo.id);
-                        });
-                        _.forEach(delList, function (item) {
-                                var source = self.carrierList;
-                                var data = _.find(source, function (sItem) {
-                                    return sItem.mainKey == item;
-                                });
-                                if (source.indexOf(data) > -1) {
-                                    source.splice(source.indexOf(data), 1);
-                                    self.init();
+                            );
+                            break;
+                        case 'Carrier':
+                            _.forEach(self.carrierSelList.selList, function (delInfo) {
+                                delList.push(delInfo.id);
+                            });
+                            _.forEach(delList, function (item) {
+                                    var source = self.carrierList;
+                                    var data = _.find(source, function (sItem) {
+                                        return sItem.mainKey == item;
+                                    });
+                                    if (source.indexOf(data) > -1) {
+                                        source.splice(source.indexOf(data), 1);
+                                        self.init();
+                                    }
                                 }
-                            }
-                        );
-                        break;
-                    case 'TypeAttr':
-                        _.forEach(self.channelTypeSelList.selList, function (delInfo) {
-                            delList.push(delInfo.id);
-                        });
-                        _.forEach(delList, function (item) {
-                                var source = self.channelTypeList;
-                                var data = _.find(source, function (sItem) {
-                                    return sItem.id == item;
-                                });
-                                if (source.indexOf(data) > -1) {
-                                    source.splice(source.indexOf(data), 1);
-                                    self.init();
+                            );
+                            break;
+                        case 'TypeAttr':
+                            _.forEach(self.channelTypeSelList.selList, function (delInfo) {
+                                delList.push(delInfo.id);
+                            });
+                            _.forEach(delList, function (item) {
+                                    var source = self.channelTypeList;
+                                    var data = _.find(source, function (sItem) {
+                                        return sItem.id == item;
+                                    });
+                                    if (source.indexOf(data) > -1) {
+                                        source.splice(source.indexOf(data), 1);
+                                        self.init();
+                                    }
                                 }
-                            }
-                        );
-                        break;
-                }
-
+                            );
+                            break;
+                    }
+                });
             },
             next: function () {
                 var self = this;
+
                 function synchronizeChannelSeries(data) {
                     var channel = data.channel;
                     var callback = function (item) {

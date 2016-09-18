@@ -51,6 +51,9 @@ define([
                 var url = self.$location.url();
                 if (url.indexOf('edit') > -1) {
                     self.displayCopy = false;
+                    window.sessionStorage.setItem('editFlg', true);
+                } else {
+                    window.sessionStorage.setItem('editFlg', false);
                 }
                 if (url.indexOf('reload') > -1) {
                     var context = window.sessionStorage.getItem('valueBean');

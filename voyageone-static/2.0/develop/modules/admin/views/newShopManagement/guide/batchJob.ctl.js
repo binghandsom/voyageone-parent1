@@ -97,7 +97,7 @@ define([
             },
             delete: function () {
                 var self = this;
-                self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
+                self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.taskSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);

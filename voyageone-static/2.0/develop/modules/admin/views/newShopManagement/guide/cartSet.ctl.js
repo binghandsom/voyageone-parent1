@@ -137,7 +137,7 @@ define([
             },
             delete: function (item) {
                 var self = this;
-                self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
+                self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
                         var delList = [];
                         switch (item.type) {
                             case 'cartShop':
