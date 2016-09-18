@@ -58,7 +58,7 @@
 
     <select id="selectClientOrderDetailById" resultType="com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel">
         select
-            seq seq,
+            id id,
             order_channel_id orderChannelId,
             client_order_id clientOrderId,
             order_number orderNumber,
@@ -81,7 +81,7 @@
             modifier modifier
         from vms_bt_client_order_details
         where client_order_id=#{orderId} and order_channel_id=#{orderChannelId}
-        <if test="${status }  != null">
+        <if test="status  != null">
             and status = #{status}
         </if>
 
@@ -138,7 +138,13 @@
         modified modified,
         modifier modifier
         from vms_bt_client_orders
-        where order_channel_id=#{orderChannelId} and order_status=#{status} limit #{limit}
+        where order_channel_id=#{orderChannelId}
+        <if test="status  != null">
+            and order_status=#{status}
+        </if>
+        <if test="limit != 0">
+            limit #{limit}
+        </if>
     </select>
 
     <!-- <select id="selectClientOrderDetailList" resultType="com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel">
@@ -177,76 +183,71 @@
         where client_order_id=#{orderId} and order_channel_id=#{orderChannelId}
     </update>
 
-    <update id="updateItemsSkuList" parameterType="java.util.List">
-        <foreach collection="list" item="item" index="index" open="begin" close="end;" separator=";">
-            update vms_bt_client_order_details
-            <set>
-                <if test="${item.orderChannelId }  != null">
-                    `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR},
-                </if>
-                <if test="${item.clientOrderId }  != null">
-                    `client_order_id` = #{clientOrderId,jdbcType=VARCHAR},
-                </if>
-                <if test="${item.orderNumber }  != null">
-                    `order_number` = #{orderNumber,jdbcType=BIGINT},
-                </if>
-                <if test="${item.reservationId }  != null">
-                    `reservation_id` = #{reservationId,jdbcType=BIGINT},
-                </if>
-                <if test="${item.orderItemId }  != null">
-                    `order_item_id` = #{orderItemId,jdbcType=VARCHAR},
-                </if>
-                <if test="${item.sellerSku }  != null">
-                    `seller_sku` = #{sellerSku,jdbcType=VARCHAR},
-                </if>
-                <if test="${item.unitPrice }  != null">
-                    `unit_price` = #{unitPrice,jdbcType=DOUBLE},
-                </if>
-                <if test="${item.quantity }  != null">
-                    `quantity` = #{quantity,jdbcType=INTEGER},
-                </if>
-                <if test="${item.status }  != null">
-                    `status` = #{status,jdbcType=VARCHAR},
-                </if>
-                <if test="${item.shippedDate }  != null">
-                    `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP},
-                </if>
-                <if test="${item.trackingNumber }  != null">
-                    `tracking_number` = #{trackingNumber,jdbcType=VARCHAR},
-                </if>
-                <if test="${item.shippingCarrier }  != null">
-                    `shipping_carrier` = #{shippingCarrier,jdbcType=VARCHAR},
-                </if>
-                <if test="${item.shippingClass }  != null">
-                    `shipping_class` = #{shippingClass,jdbcType=VARCHAR},
-                </if>
-                <if test="${item.cancelReason }  != null">
-                    `cancel_reason` = #{cancelReason,jdbcType=VARCHAR},
-                </if>
-                <if test="${item.refundFlg }  != null">
-                    `refund_flg` = #{refundFlg,jdbcType=VARCHAR},
-                </if>
-                <if test="${item.active }  != null">
-                    `active` = #{active,jdbcType=BIT},
-                </if>
-                <if test="${item.created }  != null">
-                    `created` = #{created,jdbcType=TIMESTAMP},
-                </if>
-                <if test="${item.creater }  != null">
-                    `creater` = #{creater,jdbcType=VARCHAR},
-                </if>
-                <if test="${item.modified }  != null">
-                    `modified` = #{modified,jdbcType=TIMESTAMP},
-                </if>
-                <if test="${item.modified == null">
-                    `modified` = now(),
-                </if>
-                <if test="${item.modifier }  != null">
-                    `modifier` = #{modifier,jdbcType=VARCHAR},
-                </if>
-            </set>
-            where seq = ${item.seq}
-        </foreach>
+    <update id="updateItemsSkuList">
+        UPDATE `vms_bt_client_order_details`
+        <set>
+            <if test="orderChannelId  != null">
+                `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR},
+            </if>
+            <if test="clientOrderId  != null">
+                `client_order_id` = #{clientOrderId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderNumber  != null">
+                `order_number` = #{orderNumber,jdbcType=BIGINT},
+            </if>
+            <if test="reservationId  != null">
+                `reservation_id` = #{reservationId,jdbcType=BIGINT},
+            </if>
+            <if test="orderItemId  != null">
+                `order_item_id` = #{orderItemId,jdbcType=VARCHAR},
+            </if>
+            <if test="sellerSku  != null">
+                `seller_sku` = #{sellerSku,jdbcType=VARCHAR},
+            </if>
+            <if test="unitPrice  != null">
+                `unit_price` = #{unitPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="quantity  != null">
+                `quantity` = #{quantity,jdbcType=INTEGER},
+            </if>
+            <if test="status  != null">
+                `status` = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="shippedDate  != null">
+                `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="trackingNumber  != null">
+                `tracking_number` = #{trackingNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingCarrier  != null">
+                `shipping_carrier` = #{shippingCarrier,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingClass  != null">
+                `shipping_class` = #{shippingClass,jdbcType=VARCHAR},
+            </if>
+            <if test="cancelReason  != null">
+                `cancel_reason` = #{cancelReason,jdbcType=VARCHAR},
+            </if>
+            <if test="refundFlg  != null">
+                `refund_flg` = #{refundFlg,jdbcType=VARCHAR},
+            </if>
+            <if test="active  != null">
+                `active` = #{active,jdbcType=TINYINT},
+            </if>
+            <if test="created  != null">
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater  != null">
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier  != null">
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="1  == 1">
+                `modified` = now(),
+            </if>
+        </set>
+        where `id` = #{id}
     </update>
 
     <select id="selectClientOrderDetailList"

@@ -3,6 +3,7 @@ package com.voyageone.service.daoext.vms;
 import com.voyageone.service.bean.vms.channeladvisor.order.VmsBtClientOrderDetailsGroupModel;
 import com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel;
 import com.voyageone.service.model.vms.VmsBtClientOrdersModel;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,21 +17,21 @@ import java.util.List;
 public interface VmsBtClientOrdersDaoExt {
 
     //根据id查询clientOrder
-    VmsBtClientOrdersModel selectClientOrderById(String orderId, String orderChannelId);
+    VmsBtClientOrdersModel selectClientOrderById(@Param("orderId") String orderId, @Param("orderChannelId") String orderChannelId);
 
     //根据id查询clientOrderDetail
-    List<VmsBtClientOrderDetailsModel> selectClientOrderDetailById(String orderId, String orderChannelId, String status);
+    List<VmsBtClientOrderDetailsModel> selectClientOrderDetailById(@Param("orderId") String orderId, @Param("orderChannelId") String orderChannelId, @Param("status") String status);
 
     //根据状态，查询clientOrders
-    List<VmsBtClientOrdersModel> selectClientOrderList(String orderChannelId, String status, int limit);
+    List<VmsBtClientOrdersModel> selectClientOrderList(@Param("orderChannelId") String orderChannelId, @Param("status") String status, @Param("limit") int limit);
 
     //根据ids，查询ClientOrderDetails
-    List<VmsBtClientOrderDetailsGroupModel> selectClientOrderDetailList(String orderChannelId, List<String> orderIds);
+    List<VmsBtClientOrderDetailsGroupModel> selectClientOrderDetailList(@Param("orderChannelId") String orderChannelId, @Param("orderIds") List<String> orderIds);
 
     //根据id，修改clientOrder状态
-    int updateClientOrderStatus(String orderId, String orderChannelId, String status);
+    int updateClientOrderStatus(@Param("orderId") String orderId, @Param("orderChannelId") String orderChannelId, @Param("status") String status);
 
     //批量更新items对应的明细
-    int updateItemsSkuList(List<VmsBtClientOrderDetailsModel> vmsBtClientOrderDetailsModelList);
+    int updateItemsSkuList(VmsBtClientOrderDetailsModel model);
 
 }
