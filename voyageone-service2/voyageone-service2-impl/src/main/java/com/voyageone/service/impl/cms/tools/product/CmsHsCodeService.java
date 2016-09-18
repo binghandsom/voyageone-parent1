@@ -416,7 +416,7 @@ public class CmsHsCodeService extends BaseService {
         StringBuilder sbQuery = new StringBuilder();
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), EXPIRE_HOURS);
         String hsCodeTimeStr = DateTimeUtil.format(date, null);
-        sbQuery.append(MongoUtils.splicingValue("lock",0));
+        sbQuery.append(MongoUtils.splicingValue("lock","0"));
         sbQuery.append(",");
         //hsCodePrivate
         if (!StringUtils.isEmpty(userName)) {
