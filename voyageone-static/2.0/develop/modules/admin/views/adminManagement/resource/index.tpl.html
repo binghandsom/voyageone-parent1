@@ -20,12 +20,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!--<div class="col-sm-12 text-center m-b-xs">-->
-                            <!--<div class="form-horizontal form-inline">-->
-                                <!--<button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;重置</button>-->
-                                <!--<button class="btn btn-vo" ng-click="ctrl.search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>-->
-                            <!--</div>-->
-                        <!--</div>-->
                     </div>
                 </div>
             </div>
@@ -37,7 +31,7 @@
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                    <button class="btn btn-default" ng-click="ctrl.edit()"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
+                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.selectedList.length <= 0"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
                     <button class="btn btn-default" ng-click="ctrl.delete()"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                 </div>
             </div>
@@ -66,7 +60,7 @@
                     <tr ng-class="{parent: item.children}" ng-init="parentScope = $parent.$parent; initCheckbox(item, parentScope.item)">
 
                         <td class="cell-input" style="padding: 4px;">
-                            <input ng-change="toggleCheckbox(item, parentScope)" ng-model="item.selected" type="checkbox" />
+                            <input ng-change="toggleCheckbox(item, ctrl.selectedList)" ng-model="item.selected" type="checkbox" />
                         </td>
                         <td class="cell-name text-left" ng-click="item.opened = !item.opened" style="width: 238px;">
                             <div ng-class="{'indent': item.children.length>0}" style="padding-left: {{15*level}}px;">

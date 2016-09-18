@@ -19,7 +19,7 @@ define([
             this.selectRowsFactory = selectRowsFactory;
             this.pageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
-            this.adminList = [];
+            this.selectedList = [];
             this.resSelList = {selList: []};
             this.tempSelect = null;
             this.searchInfo = {
@@ -37,23 +37,6 @@ define([
                 self.adminResService.init().then(function (res) {
                     self.resList = res.data.treeList;
                     self.pageOption.total = res.data.count;
-
-                    // 设置勾选框
-                    if (self.tempSelect == null) {
-                        self.tempSelect = new self.selectRowsFactory();
-                    } else {
-                        self.tempSelect.clearCurrPageRows();
-                        self.tempSelect.clearSelectedList();
-                    }
-                    _.forEach(self.resList, function (Info) {
-                        if (Info.updFlg != 8) {
-                            self.tempSelect.currPageRows({
-                                "id": Info.id
-                            });
-                        }
-                    });
-                    self.resSelList = self.tempSelect.selectRowsInfo;
-                    // End 设置勾选框
                 })
             },
             search: function (page) {
@@ -96,17 +79,21 @@ define([
             },
             edit: function (type) {
                 var self = this;
+                _.filter(self.selectedList, function (item) {
+                    return item.selected;
+                }).forEach(function (item, index) {
+                    self.selectedList[index] = item;
+                });
                 if (type == 'add') {
                     self.popups.openRes('add').then(function () {
                         self.search(1);
                     });
                 } else {
-                    if (self.resSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
+                    if (self.selectedList.length > 1) {
+                        self.alert('衹能選擇一條數據哦！');
                     } else {
                         _.forEach(self.resList, function (Info) {
-                            if (Info.id == self.resSelList.selList[0].id) {
+                            if (Info.id == self.selectedList[0].id) {
                                 self.popups.openRes(Info).then(function () {
                                     self.search(1);
                                 });
