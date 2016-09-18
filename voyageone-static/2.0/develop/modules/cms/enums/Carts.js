@@ -75,7 +75,7 @@ define(['underscore'], function (_) {
         /**
          * 天猫国际USJOI官网同购
          */
-        TTUS: new Cart('TTUS', 31, '天猫国际USJOI官网同购', 'https://detail.tmall.hk/hk/item.htm?id='),
+        USTT: new Cart('USTT', 31, '天猫国际USJOI官网同购', 'https://detail.tmall.hk/hk/item.htm?id='),
 
         /**
          * 京东匠心界

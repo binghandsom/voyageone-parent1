@@ -147,7 +147,7 @@ public class CartEnums {
 		 * @since 2.6.0
 		 */
 		public static boolean isSimple(Cart cart) {
-			return TT.equals(cart) || TTUS.equals(cart);
+			return TT.equals(cart) || USTT.equals(cart);
 		}
 	}
 }

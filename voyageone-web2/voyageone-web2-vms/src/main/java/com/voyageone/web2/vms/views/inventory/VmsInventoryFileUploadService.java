@@ -8,11 +8,13 @@ import com.voyageone.service.impl.vms.inventory.InventoryFileService;
 import com.voyageone.service.model.vms.VmsBtInventoryFileModel;
 import com.voyageone.web2.vms.VmsConstants;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * VmsInventoryFileUploadService
