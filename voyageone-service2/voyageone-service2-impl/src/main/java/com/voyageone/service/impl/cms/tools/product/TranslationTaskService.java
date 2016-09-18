@@ -121,7 +121,7 @@ public class TranslationTaskService extends BaseService {
         String translateTimeStr = DateTimeUtil.format(date, null);
 
         //先查是否有任务未完成
-        String queryStr = String.format("{'common.fields.isMasterMain':1," +
+        String queryStr = String.format("{'lock':'0','common.fields.isMasterMain':1," +
                 "'common.fields.translateStatus':'0'," +
                 "'common.fields.translator':'%s', " +
                 "'common.fields.translateTime':{'$gt':'%s'} }", userName, translateTimeStr);
@@ -133,7 +133,7 @@ public class TranslationTaskService extends BaseService {
         }
 
         //再查是否有过期任务，优先分配过期任务
-        queryStr = String.format("{'common.fields.isMasterMain':1," +
+        queryStr = String.format("{'lock':'0','common.fields.isMasterMain':1," +
                 "'common.fields.translateStatus':'0'," +
                 "'common.fields.translator':'%s'}", userName);
 
@@ -144,6 +144,7 @@ public class TranslationTaskService extends BaseService {
             JongoQuery queryObj = new JongoQuery();
 
             //不能有2个or
+            queryObj.addQuery("{'lock':'0'}");
             queryObj.addQuery("{'common.fields.isMasterMain':1}");
             queryObj.addQuery("{'common.fields.translateStatus': {'$ne' : '1' }}");
             queryObj.addQuery("{'$or': [{'common.fields.translator':''},{'common.fields.translateTime':{'$lte':#}},{'common.fields.translator': null}, {'common.fields.translateTime':null}, {'common.fields.translateTime':''}]}");

@@ -4,6 +4,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title"><i class="glyphicon glyphicon-star"></i>&nbsp;欢迎页面
+                        <!--/cms/home/menu/sumHome?channelId=010-->
                     </h4>
                 </div>
                 <div class="panel-body">
@@ -88,21 +89,21 @@
                             <ul class="stat-boxes">
                                 <li>
                                     <div class="right data-priority-2"
-                                         ng-click="goSearchPage(10,{mCatStatus:'0'})">
+                                         ng-click="goSearchPage(10,{mCatStatus:'0',lockFlg:'0'})">
                                         <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_CATEGORY.amountVal}}</strong>
                                         等待设置主类目数
                                     </div>
                                 </li>
                                 <li>
                                     <div class="right  data-priority-2"
-                                         ng-click="goSearchPage(10,{taxNoStatus:'0'})">
+                                         ng-click="goSearchPage(10,{taxNoStatus:'0',lockFlg:'0'})">
                                         <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_HSCODE.amountVal}}</strong>
                                         等待设置税号数
                                     </div>
                                 </li>
                                 <li>
                                     <div class="right data-priority-2"
-                                         ng-click="goSearchPage(10,{transStsFlg:'0'})">
+                                         ng-click="goSearchPage(10,{transStsFlg:'0',lockFlg:'0'})">
                                         <strong>{{vm.sumData.masterSum.CMS_MASTER_UNTRANSLATED.amountVal}}</strong>
                                         等待翻译数
                                     </div>
