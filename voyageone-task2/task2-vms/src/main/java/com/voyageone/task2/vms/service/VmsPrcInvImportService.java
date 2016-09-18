@@ -243,10 +243,10 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
         }
 
         // 导入完成后处理更新库存的标志位
-        clientInventoryService.updateClientInventorySynFlag(channelId);
-
-        // 有错误的情况下抛出
-        if (null != prcInvFileErrorMessage.csvWriter)
+        if (null == prcInvFileErrorMessage.csvWriter)
+            clientInventoryService.updateClientInventorySynFlag(channelId);
+        else
+            // 有错误的情况下抛出
             throw new BusinessException("文件处理中发生部分错误");
 
         csvReader.close();
@@ -394,9 +394,11 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
             if (null == this.csvWriter) {
                 File errorPathFile = new File(path);
                 if (!errorPathFile.exists()) errorPathFile.mkdirs();
-                this.csvWriter = new CsvWriter(errorPathFile + "/errorMessage_" + fileName, COMMA, Charset.forName(UTF_8));
+                this.csvWriter = new CsvWriter(errorPathFile + "/" +
+                        fileName.replace("Inventory&Price_", "Inventory&Price_Check_Result_"), COMMA,
+                        Charset.forName(UTF_8));
                 try {
-                    this.csvWriter.writeRecord(new String[]{"sku", "columnNumber", "lineNumber", "errorMessage"});
+                    this.csvWriter.writeRecord(new String[]{"sku", "columnNumber", "rowNumber", "errorMessage"});
                 } catch (IOException e) {
                     throw new SystemException("8000041");
                 }
