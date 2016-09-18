@@ -17,6 +17,10 @@ public class MasterClrHtmlWordParser extends MasterWordParser {
 
     //目前只支持解析model级别的属性
     public String parse(RuleWord ruleWord) {
+        String superResult = super.parse(ruleWord);
+        if (superResult == null) {
+            return null;
+        }
         String prefix = "< *";
         String suffix = " *>";
         List<String> lstHtml = new ArrayList<>();
@@ -35,8 +39,6 @@ public class MasterClrHtmlWordParser extends MasterWordParser {
         lstHtml.add(prefix + "/div" + suffix);
         lstHtml.add(prefix + "/ *div" + suffix);
         lstHtml.add("&nbsp;");
-
-        String superResult = super.parse(ruleWord);
 
         for (String html : lstHtml) {
             superResult = superResult.replaceAll(html, " ");
