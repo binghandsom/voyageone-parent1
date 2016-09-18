@@ -140,7 +140,7 @@ public class FeedToCmsService extends BaseService {
                 if (befproduct != null) {
                     product.set_id(befproduct.get_id());
                     // Vms客户导入的情况下，
-                    if (FeedProductUpdateType.VMS_FEED == updateType) {
+                    if (FeedProductUpdateType.VMS_FEED == updateType || FeedProductUpdateType.VMS_PRICE_INVENTORY == updateType) {
                         VmsChannelConfigBean vmsUpdateInventory = VmsChannelConfigs.getConfigBean(channelId,"UPDATE_INVENTORY", "0");
                         if (vmsUpdateInventory == null || "1".equals(vmsUpdateInventory.getConfigValue1())) {
                             // 库存同步
@@ -251,7 +251,7 @@ public class FeedToCmsService extends BaseService {
                 attributeMtDataMake(attributeMtData, product);
                 succeedProduct.add(product);
             } catch (Exception e) {
-                if (FeedProductUpdateType.VMS_FEED == updateType) {
+                if (FeedProductUpdateType.VMS_FEED == updateType || FeedProductUpdateType.VMS_PRICE_INVENTORY == updateType) {
                     throw e;
                 }
                 e.printStackTrace();
@@ -261,15 +261,17 @@ public class FeedToCmsService extends BaseService {
             }
         }
 
-        // 更新类目中属性
-        for (Map.Entry<String, Map<String, List<String>>> entry : attributeMtDatas.entrySet()) {
-            updateFeedCategoryAttribute(channelId, entry.getValue(), entry.getKey());
-        }
+        if (FeedProductUpdateType.VMS_PRICE_INVENTORY != updateType) {
+            // 更新类目中属性
+            for (Map.Entry<String, Map<String, List<String>>> entry : attributeMtDatas.entrySet()) {
+                updateFeedCategoryAttribute(channelId, entry.getValue(), entry.getKey());
+            }
 
-        //0:brand 1:sizeType 2:productType
-        insertCmsMtChannelValues(channelId, brandList, 0, modifier);
-        insertCmsMtChannelValues(channelId, sizeTypeList, 1, modifier);
-        insertCmsMtChannelValues(channelId, productTypeList, 2, modifier);
+            //0:brand 1:sizeType 2:productType
+            insertCmsMtChannelValues(channelId, brandList, 0, modifier);
+            insertCmsMtChannelValues(channelId, sizeTypeList, 1, modifier);
+            insertCmsMtChannelValues(channelId, productTypeList, 2, modifier);
+        }
 
         Map<String, List<CmsBtFeedInfoModel>> response = new HashMap<>();
         response.put("succeed", succeedProduct);
