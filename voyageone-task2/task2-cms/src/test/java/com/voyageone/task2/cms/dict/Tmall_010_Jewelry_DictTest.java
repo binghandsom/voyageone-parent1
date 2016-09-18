@@ -392,8 +392,10 @@ public class Tmall_010_Jewelry_DictTest {
 					RuleExpression ruleExpressionFontSize = new RuleExpression();
 					ruleExpressionFontSize.addRuleWord(new TextWord("23"));
 					RuleExpression ruleExpressionOneLineBit = new RuleExpression();
-					ruleExpressionOneLineBit.addRuleWord(new TextWord("63"));
-					CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, ruleExpressionFontSize, ruleExpressionOneLineBit);
+					ruleExpressionOneLineBit.addRuleWord(new TextWord("50"));
+					RuleExpression ruleExpressionSectionSize = new RuleExpression();
+					ruleExpressionSectionSize.addRuleWord(new TextWord("5"));
+					CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, ruleExpressionSectionSize, ruleExpressionFontSize, ruleExpressionOneLineBit);
 					do处理无线端20张图片(1, ruleRoot, new CustomWord(img));
 				}
 				{
@@ -403,7 +405,9 @@ public class Tmall_010_Jewelry_DictTest {
 					ruleExpressionFontSize.addRuleWord(new TextWord("23"));
 					RuleExpression ruleExpressionOneLineBit = new RuleExpression();
 					ruleExpressionOneLineBit.addRuleWord(new TextWord("60"));
-					CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, ruleExpressionFontSize, ruleExpressionOneLineBit);
+					RuleExpression ruleExpressionSectionSize = new RuleExpression();
+					ruleExpressionSectionSize.addRuleWord(new TextWord("8"));
+					CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, ruleExpressionSectionSize, ruleExpressionFontSize, ruleExpressionOneLineBit);
 					do处理无线端20张图片(2, ruleRoot, new CustomWord(img));
 				}
 			}

@@ -224,6 +224,10 @@
 			<groupId>taobao</groupId>
 			<artifactId>taobao-sdk-java</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>taobao</groupId>
+            <artifactId>taobao-sdk-java-ext</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>com.mchange</groupId>
 			<artifactId>c3p0</artifactId>

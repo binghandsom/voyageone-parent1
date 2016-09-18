@@ -205,16 +205,14 @@ define([
             this.popups.openShipment(shipmentInfo).then(function (shipment) {
                 self.currentShipment = shipment;
                 if (type == "new" && self.channelConfig.vendorOperateType == 'SKU') {
-                    var url = '#/shipment/shipment_info/shipment_detail/' + shipment.id;
-                    location.href = url;
+                    location.href = '#/shipment/shipment_info/shipment_detail/' + shipment.id;
                 }
             });
         };
 
         OrderInfoController.prototype.popAddToShipmentForSku = function () {
-            var url = '#/shipment/shipment_info/shipment_detail/' + this.currentShipment.id;
-            location.href = url;
-        }
+            location.href = '#/shipment/shipment_info/shipment_detail/' + this.currentShipment.id;
+        };
 
         OrderInfoController.prototype.popAddToShipmentForOrder = function (item) {
             var self = this;
@@ -275,6 +273,30 @@ define([
                 self.searchInfo.sortParamBean.direction = 'ASC';
             }
             self.search();
+        };
+
+        OrderInfoController.prototype.reopenOrder = function (item) {
+            var self = this;
+            self.confirm('TXT_CONFIRM_TO_REOPEN_THIS_ORDER').then(function () {
+                self.orderInfoService.reopenOrder(item).then(function (data) {
+                    if (data.success > 0) {
+                        self.notify.success('TXT_ORDER_REOPENED');
+                    }
+                    self.search();
+                })
+            });
+        };
+
+        OrderInfoController.prototype.reopenSku = function (item) {
+            var self = this;
+            self.confirm('TXT_CONFIRM_TO_REOPEN_THIS_SKU').then(function () {
+                self.orderInfoService.reopenSku(item).then(function (data) {
+                    if (data.success > 0) {
+                        self.notify.success('TXT_SKU_REOPENED');
+                    }
+                    self.search();
+                })
+            });
         };
 
         return OrderInfoController;
