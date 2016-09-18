@@ -173,6 +173,12 @@ public class VmsPrcInvFileScanService extends BaseTaskService {
             return;
         }
 
+        // bak目录没有的话自动新建
+        File backupFolder = new File(prcInvFilePath + orderChannelId + PRICE_INVENTORY_DIRECTORY + "/bak");
+        if (!backupFolder.exists()) {
+            backupFolder.mkdir();
+        }
+
         File[] files = ftpRoot.listFiles();
         if (null == files || files.length == 0) {
             $info(orderChannelId + ": 目录为空, 不存在FTP上传内容");
@@ -187,13 +193,8 @@ public class VmsPrcInvFileScanService extends BaseTaskService {
             String finalFileName = "Inventory&Price_" + orderChannelId +
                     DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
 
-            /*
-             * FIXME: 这里使用了renameTo方法进行重命名和移动 但是该命令在不同文件格式的磁盘/分区间移动会引起问题 vantis
-             *
-             * 相应应该封装一个copy和delete方法来达到真正移动文件的目的从而避免不同文件格式磁盘间移动的问题
-             * 但由于目标目录和源目录理论上在同一个磁盘/分区 故此问题暂不需要做更多处理
-             */
-            if (!file.renameTo(new File(finalFileName))) {
+            if (!file.renameTo(new File(prcInvFilePath + orderChannelId +
+                    PRICE_INVENTORY_DIRECTORY + "/" + finalFileName))) {
                 $info(orderChannelId + ": 文件 " + file.getName() + "正在被占用 跳过");
                 continue;
             }

@@ -74,7 +74,7 @@ public interface VmsUrlConstants {
             String ROOT = "/vms/inventory/inventory_import_result";
             String INIT = "init";
             String SEARCH = "search";
-            String DOWN_INVENTORY_ERROR_FILE = "downloadFeedErrorFile";
+            String DOWN_INVENTORY_ERROR_FILE = "downloadInventoryErrorFile";
         }
 
         interface INVENTORY_SEARCH {

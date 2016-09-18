@@ -214,11 +214,9 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
 
             final String inventory = tempInventory;
 
-            $debug(channelId + "->SKU: " + sku + ", Inventory检查 " + (new Date().getTime() - date.getTime()) + "毫秒.");
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = cmsBtFeedInfoDao.selectProductByClientSku(channelId, sku);
 
-            $debug(channelId + "->SKU: " + sku + ", Model获取 " + (new Date().getTime() - date.getTime()) + "毫秒.");
 
             cmsBtFeedInfoModel.getSkus().stream()
                     .filter(cmsBtFeedInfoModel_sku -> cmsBtFeedInfoModel_sku.getClientSku().equals(sku))
@@ -228,7 +226,6 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
                         if (null != inventory) cmsBtFeedInfoModel_sku.setQty(Integer.valueOf(inventory));
                     });
 
-            $debug(channelId + "->SKU: " + sku + ", Model修改 " + (new Date().getTime() - date.getTime()) + "毫秒.");
 
             // 更新feed表
             feedToCmsService.updateProduct(channelId, new ArrayList<CmsBtFeedInfoModel>() {{
@@ -236,7 +233,6 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
                     }},
                     getTaskName(), CmsConstants.FeedProductUpdateType.VMS_PRICE_INVENTORY);
 
-            $debug(channelId + "->SKU: " + sku + ", Feed更新 " + (new Date().getTime() - date.getTime()) + "毫秒.");
 
             // 推送库存
             if (null != inventory)
@@ -381,8 +377,6 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
 
         private CsvWriter csvWriter;
 
-        List<String[]> errorMessageListBuffer = new Vector<>();
-
         private PrcInvFileErrorMessage(String channelId, String path, String fileName) {
             this.channelId = channelId;
             this.path = path;
@@ -398,28 +392,32 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
 
             // 在第一次添加内容时初始化错误文件
             if (null == this.csvWriter) {
-                this.csvWriter = new CsvWriter(path + "/errorMessage_" + fileName, COMMA, Charset.forName(UTF_8));
+                File errorPathFile = new File(path);
+                if (!errorPathFile.exists()) errorPathFile.mkdirs();
+                this.csvWriter = new CsvWriter(errorPathFile + "/errorMessage_" + fileName, COMMA, Charset.forName(UTF_8));
                 try {
                     this.csvWriter.writeRecord(new String[]{"sku", "columnNumber", "lineNumber", "errorMessage"});
-                    this.csvWriter.endRecord();
                 } catch (IOException e) {
                     throw new SystemException("8000041");
                 }
+
+                VmsBtInventoryFileModel vmsBtInventoryFileModel = new VmsBtInventoryFileModel();
+                vmsBtInventoryFileModel.setChannelId(channelId);
+                vmsBtInventoryFileModel.setFileName(fileName);
+                vmsBtInventoryFileModel.setErrorFileName("errorMessage_" + fileName);
+                vmsBtInventoryFileDaoExt.updateStatus(vmsBtInventoryFileModel);
             }
 
+            String errorMessage = errorCode;
+            MessageBean messageBean = messageService.getMessage("en", errorCode);
+            if (messageBean != null) {
+                errorMessage = messageBean.getMessage();
+            }
+            if (null != args)
+                errorMessage = String.format(errorMessage, args);
             try {
-                String errorMessage = errorCode;
-                MessageBean messageBean = messageService.getMessage("en", errorCode);
-                if (messageBean != null) {
-                    errorMessage = messageBean.getMessage();
-                }
-                if (null != args)
-                    errorMessage = String.format(errorMessage, args);
-
-                errorMessageListBuffer.add(
+                this.csvWriter.writeRecord(
                         new String[]{sku, String.valueOf(columnNumber), String.valueOf(lineNumber), errorMessage});
-
-                this.csvWriter.endRecord();
                 $debug(channelId + "-> lineNumber: " + lineNumber + ", error: " + errorMessage);
             } catch (IOException e) {
                 throw new SystemException("8000041");
@@ -427,24 +425,9 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
             this.csvWriter.flush();
         }
 
-        private void save() throws IOException {
-
-            for (String[] errorMessage : errorMessageListBuffer) {
-                this.csvWriter.writeRecord(errorMessage);
-                this.csvWriter.endRecord();
-            }
-            this.csvWriter.flush();
-
-        }
-
         private void close() throws IOException {
-            this.save();
+            if (null == this.csvWriter) return;
             this.csvWriter.close();
-            VmsBtInventoryFileModel vmsBtInventoryFileModel = new VmsBtInventoryFileModel();
-            vmsBtInventoryFileModel.setChannelId(channelId);
-            vmsBtInventoryFileModel.setFileName(fileName);
-            vmsBtInventoryFileModel.setErrorFileName("errorMessage_" + fileName);
-            vmsBtInventoryFileDaoExt.updateStatus(vmsBtInventoryFileModel);
         }
     }
 }
