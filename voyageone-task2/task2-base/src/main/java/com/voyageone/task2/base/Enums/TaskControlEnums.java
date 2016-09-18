@@ -78,6 +78,9 @@ public class TaskControlEnums {
          */
         retry_time_interval,
 
+
+        feed_full_copy_temp,
+
         scheduled_time
     }
 

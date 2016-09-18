@@ -55,10 +55,11 @@
                         <th class="td-2-5 text-left v-middle" translate="TXT_SHIPMENT_NAME"></th>
                         <th class="td-1-5 v-middle" translate="TXT_SHIPPED_DATE"></th>
                         <th class="td-2 v-middle" translate="TXT_TRACKING_NO_"></th>
+                        <th class="td-1 v-middle" translate="TXT_PRINTED"></th>
                         <th class="td-1-5 text-center v-middle" translate="TXT_ORDER_TOTAL"></th>
                         <th class="td-1-5 text-center v-middle" translate="TXT_SKU_TOTAL"></th>
                         <th class="td-2 text-left v-middle" translate="TXT_STATUS"></th>
-                        <th class="td-4 v-middle" translate="TXT_COMMENTS"></th>
+                        <th class="td-3 v-middle" translate="TXT_COMMENTS"></th>
                         <th class="td-1 text-center v-middle" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
@@ -67,14 +68,15 @@
                         <td class="text-left v-middle word-wrap"><a ng-href="{{'#/shipment/shipment_info/shipment_detail/' + item.id}}">{{item.shipmentName}}</a></td>
                         <td class="v-middle">{{(item.shippedDate | date: 'yyyy-MM-dd') || '-'}}</td>
                         <td class="v-middle word-wrap">{{item.trackingNo || '-'}}</td>
+                        <td class="v-middle">{{ctrl.isPrinted(item) | translate}}</td>
                         <td class="text-center v-middle">{{item.orderTotal}}</td>
                         <td class="text-center v-middle">{{item.skuTotal}}</td>
                         <td class="text-left v-middle">{{ctrl.getStatusName(item.status)}}</td>
                         <td class="v-middle">
-                            <span class="v-middle" ng-if="item.comment.length <= 30">{{item.comment}}</span>
-                            <span class="v-middle" ng-if="item.comment.length > 30" uib-tooltip="{{item.comment}}"
+                            <span class="v-middle" ng-if="item.comment.length <= 25">{{item.comment}}</span>
+                            <span class="v-middle" ng-if="item.comment.length > 25" uib-tooltip="{{item.comment}}"
                                   tooltip-trigger="mouseenter" tooltip-placement="top">
-                                {{item.comment | stringCutter:true:30:' ...'}}
+                                {{item.comment | stringCutter:true:25:' ...'}}
                             </span>
                         </td>
                         <td class="text-center v-middle">

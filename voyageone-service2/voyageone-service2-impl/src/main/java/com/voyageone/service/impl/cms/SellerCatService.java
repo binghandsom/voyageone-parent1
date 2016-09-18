@@ -504,8 +504,13 @@ public class SellerCatService extends BaseService {
     /**
      * 是天猫平台
      */
-    private boolean isTMPlatform(ShopBean shopBean) {
-        return PlatFormEnums.PlatForm.TM.getId().equals(shopBean.getPlatform_id());
+    private boolean isTMPlatform(String shopCartId) {
+        if (shopCartId.equals(CartEnums.Cart.TM.getId()) || shopCartId.equals(CartEnums.Cart.TB.getId()) ||
+                shopCartId.equals(CartEnums.Cart.TG.getId()) || shopCartId.equals(CartEnums.Cart.TT.getId())
+                || shopCartId.equals(CartEnums.Cart.USTT.getId())) {
+            return true;
+        }
+        return false;
     }
 
 
