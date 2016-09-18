@@ -3,7 +3,6 @@ package com.voyageone.task2.vms.service;
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.base.exception.SystemException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.DateTimeUtil;
@@ -48,11 +47,6 @@ public class VmsPrcInvFileScanService extends BaseTaskService {
     }
 
     private static String PRICE_INVENTORY_DIRECTORY = "/inventory";
-
-    private int skuColumnNumber;
-    private int priceColumnNumber;
-    private int msrpColumnNumber;
-    private int inventoryColumnNumber;
 
     @Override
     public SubSystem getSubSystem() {
@@ -204,7 +198,7 @@ public class VmsPrcInvFileScanService extends BaseTaskService {
                 continue;
             }
 
-            createFtpFileDataInDB(orderChannelId, originFileName, finalFileName, prcInvFilePath);
+            createFtpFileDataInDB(orderChannelId, originFileName, finalFileName);
 
             $info(orderChannelId + ": FTP上传文件 " + originFileName + " 已改名为" + finalFileName);
             return;
@@ -213,8 +207,7 @@ public class VmsPrcInvFileScanService extends BaseTaskService {
         $info(orderChannelId + ": 未发现对应的.csv文件");
     }
 
-    private void createFtpFileDataInDB(String orderChannelId, String originFileName, String finalFileName, String
-            finalPath) {
+    private void createFtpFileDataInDB(String orderChannelId, String originFileName, String finalFileName) {
         VmsBtInventoryFileModel vmsBtInventoryFileModel = new VmsBtInventoryFileModel();
         vmsBtInventoryFileModel.setChannelId(orderChannelId);
         vmsBtInventoryFileModel.setStatus(PrcInvFileStatus.WAITING_IMPORT);
