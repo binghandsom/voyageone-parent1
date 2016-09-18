@@ -14,6 +14,8 @@ import java.util.Date;
  * 
  */
 public class VmsBtClientOrderDetailsModel extends BaseModel {
+    protected String seq;
+
     protected String orderChannelId;
 
     protected String clientOrderId;
@@ -45,6 +47,14 @@ public class VmsBtClientOrderDetailsModel extends BaseModel {
     protected String refundFlg;
 
     protected Boolean active;
+
+    public String getSeq() {
+        return seq;
+    }
+
+    public void setSeq(String seq) {
+        this.seq = seq;
+    }
 
     public String getOrderChannelId() {
         return orderChannelId;

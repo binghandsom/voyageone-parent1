@@ -58,7 +58,7 @@
 
     <select id="selectClientOrderDetailById" resultType="com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel">
         select
-            id id,
+            seq seq,
             order_channel_id orderChannelId,
             client_order_id clientOrderId,
             order_number orderNumber,
@@ -80,7 +80,11 @@
             modified modified,
             modifier modifier
         from vms_bt_client_order_details
-        where client_order_id=#{orderId} and order_channel_id=#{orderChannelId} and status = #{status}
+        where client_order_id=#{orderId} and order_channel_id=#{orderChannelId}
+        <if test="${status }  != null">
+            and status = #{status}
+        </if>
+
     </select>
 
     <select id="selectClientOrderList" resultType="com.voyageone.service.model.vms.VmsBtClientOrdersModel">
@@ -241,7 +245,7 @@
                     `modifier` = #{modifier,jdbcType=VARCHAR},
                 </if>
             </set>
-            where id = ${item.id}
+            where seq = ${item.seq}
         </foreach>
     </update>
 
@@ -254,7 +258,7 @@
         sum(quantity) quantity,
         min(unit_price) unitPrice
         from vms_bt_client_order_details
-        where client_order_id=#{orderId} and order_channel_id in
+        where order_channel_id=#{orderChannelId} and client_order_id in
         <foreach collection="orderIds" index="index" item="columnName" open="(" separator="," close=")">
             ${columnName}
         </foreach>

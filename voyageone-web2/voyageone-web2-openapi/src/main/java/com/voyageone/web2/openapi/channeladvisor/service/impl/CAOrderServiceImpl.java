@@ -91,6 +91,8 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                     orderItemModel.setQuantity(orderDetailsModel.getQuantity());
                     orderItemModel.setSellerSku(orderDetailsModel.getSellerSku());
                     orderItemModel.setUnitPrice(orderDetailsModel.getUnitPrice());
+
+                    orderItemsModes.add(orderItemModel);
                 }
             }
 
@@ -168,6 +170,8 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                 orderItemModel.setQuantity(orderDetailsModel.getQuantity());
                 orderItemModel.setSellerSku(orderDetailsModel.getSellerSku());
                 orderItemModel.setUnitPrice(orderDetailsModel.getUnitPrice());
+
+                orderItemsModes.add(orderItemModel);
             }
         }
 
@@ -213,8 +217,8 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         //消息生成
         Map<String, Object> mqMessageMap = new HashMap<>();
-        mqMessageMap.put("client_order_id", m.getClientOrderId());
-        mqMessageMap.put("order_channel_id", m.getOrderChannelId());
+        mqMessageMap.put("client_order_id", orderID);
+        mqMessageMap.put("order_channel_id", channelId);
 
         logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageMap));
 
@@ -284,14 +288,21 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         String tempStatus = "Shipped";
 
+        boolean hasShipped=false;
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : newList) {
-            if (!vmsBtClientOrderDetailsModel.getStatus().equals("Shipped")) {
+            if(vmsBtClientOrderDetailsModel.getStatus().equals("Shipped")){
+                hasShipped=true;
+            }else{
                 tempStatus = "PartiallyShipped";
             }
         }
 
-        // 更新 【品牌方订单一览】vms_bt_client_orders
-        caClientService.updateClientOrderStatus(channelId, orderID, tempStatus);
+        if(hasShipped) {
+            // 更新 【品牌方订单一览】vms_bt_client_orders
+            caClientService.updateClientOrderStatus(channelId, orderID, tempStatus);
+        }else{
+            logger.warn("未找到shipped订单明细");
+        }
 
         // 消息生成
         Map<String, Object> mqMessageMap = new HashMap<>();
@@ -343,7 +354,8 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         // 根据请求参数中Items.SellerSku， 匹配品牌方订单明细中的 seller_sku，找出对应的明细。
 
-        Map<String, Object> tempRecord = new HashMap<>();
+        List<Map<String,Object>> tempRecords=new ArrayList<>();
+
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : mList) {
             String sku = vmsBtClientOrderDetailsModel.getSellerSku();
 
@@ -362,8 +374,12 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                 vmsBtClientOrderDetailsModel.setStatus("Canceled");
 
                 matchModelList.add(vmsBtClientOrderDetailsModel);
+
+                Map<String, Object> tempRecord = new HashMap<>();
                 tempRecord.put("reservation_id", vmsBtClientOrderDetailsModel.getReservationId());
                 tempRecord.put("reason", vmsBtClientOrderDetailsModel.getCancelReason());
+                tempRecords.add(tempRecord);
+
             }
         }
 
@@ -405,7 +421,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         mqMessageMap.put("order_channel_id", channelId);
         mqMessageMap.put("client_order_id", orderID);
 
-        mqMessageMap.put("items", tempRecord);
+        mqMessageMap.put("items", tempRecords);
 
         logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageMap));
 
@@ -441,7 +457,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         //根据请求参数中Items.SellerSku， 匹配品牌方订单明细中的 seller_sku，找出对应的明细。
 
-        Map<String, Object> tempRecord = new HashMap<>();
+        List<Map<String,Object>> tempRecords=new ArrayList<>();
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : mList) {
             String sku = vmsBtClientOrderDetailsModel.getSellerSku();
 
@@ -461,8 +477,11 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                 vmsBtClientOrderDetailsModel.setRefundFlg("1");
 
                 matchModelList.add(vmsBtClientOrderDetailsModel);
+
+                Map<String, Object> tempRecord = new HashMap<>();
                 tempRecord.put("reservation_id", vmsBtClientOrderDetailsModel.getReservationId());
                 tempRecord.put("reason", vmsBtClientOrderDetailsModel.getCancelReason());
+                tempRecords.add(tempRecord);
             }
         }
 
@@ -505,7 +524,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         mqMessageMap.put("order_channel_id", channelId);
         mqMessageMap.put("client_order_id", orderID);
 
-        mqMessageMap.put("items", tempRecord);
+        mqMessageMap.put("items", tempRecords);
 
         logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageMap));
 
