@@ -8,9 +8,10 @@ define([
 ], function (admin, _, MappingTypes) {
     admin.controller('treeTable', ['$scope', '$filter',
         function ($scope, $filter) {
-            $scope.initCheckbox = function (item, parentItem) {
+            $scope.initCheckbox = function (item, parentItem, flatList) {
                 if (!item.opened) item.opened = true;
                 if (item.children.length < 1) item.showArrow = false;
+                flatList.push(item);
                 return item.selected = parentItem && parentItem.selected || item.selected || false;
             };
             $scope.toggleCheckbox = function (item, list) {

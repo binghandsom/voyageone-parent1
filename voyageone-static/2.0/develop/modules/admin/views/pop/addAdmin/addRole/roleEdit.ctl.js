@@ -6,17 +6,14 @@ define([
     'modules/admin/controller/treeTable.ctrl'
 ], function (admin) {
     admin.controller('RoleEditController', (function () {
-        function RoleEditController(context, adminRoleService, adminOrgService, adminUserService, channelService, storeService, $uibModalInstance) {
+        function RoleEditController(context, adminRoleService, adminUserService, $uibModalInstance) {
             this.sourceData = context ? context : {};
-            this.append = context == 'add' ? true : false;
             this.adminRoleService = adminRoleService;
-            this.adminOrgService = adminOrgService;
             this.adminUserService = adminUserService;
-            this.channelService = channelService;
-            this.storeService = storeService;
             this.popType = '分配权限';
             this.$uibModalInstance = $uibModalInstance;
             this.selectedList = [];
+            this.flatResList = [];
             this.applicationList = [
                 {'id': 1, 'application': 'Admin', 'valid': false},
                 {'id': 2, 'application': 'CMS', 'valid': false},

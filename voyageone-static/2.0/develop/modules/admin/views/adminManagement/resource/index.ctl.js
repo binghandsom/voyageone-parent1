@@ -20,6 +20,7 @@ define([
             this.pageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
             this.selectedList = [];
+            this.flatResList = [];
             this.resSelList = {selList: []};
             this.tempSelect = null;
             this.searchInfo = {
@@ -79,26 +80,32 @@ define([
             },
             edit: function (type) {
                 var self = this;
+                var selectedList=[];
                 _.filter(self.selectedList, function (item) {
                     return item.selected;
-                }).forEach(function (item, index) {
-                    self.selectedList[index] = item;
+                }).forEach(function (item) {
+                    selectedList.push(item);
                 });
-                if (type == 'add') {
-                    self.popups.openRes('add').then(function () {
-                        self.search(1);
-                    });
-                } else {
-                    if (self.selectedList.length > 1) {
-                        self.alert('衹能選擇一條數據哦！');
+                editCallback(selectedList);
+                function editCallback(){
+                    if (type == 'add') {
+                        self.popups.openRes('add').then(function () {
+                            self.search(1);
+                        });
                     } else {
-                        _.forEach(self.resList, function (Info) {
-                            if (Info.id == self.selectedList[0].id) {
-                                self.popups.openRes(Info).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
+                        if (selectedList.length < 1) {
+                            self.alert('请选择一条数据！');
+                        } else if(selectedList.length > 1){
+                            self.alert('只能选择一条数据哦！');
+                        }else {
+                            _.forEach(self.flatResList, function (Info) {
+                                if (Info.id == self.selectedList[0].id) {
+                                    self.popups.openRes(Info).then(function () {
+                                        self.search(1);
+                                    });
+                                }
+                            })
+                        }
                     }
                 }
             },

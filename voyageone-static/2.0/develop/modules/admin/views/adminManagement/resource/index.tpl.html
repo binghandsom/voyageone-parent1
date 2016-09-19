@@ -31,7 +31,7 @@
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.selectedList.length <= 0"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
+                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="selectedList.length <= 0"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
                     <button class="btn btn-default" ng-click="ctrl.delete()"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                 </table>
 
                 <script id="table_tree.html" type="text/ng-template">
-                    <tr ng-class="{parent: item.children}" ng-init="parentScope = $parent.$parent; initCheckbox(item, parentScope.item)">
+                    <tr ng-class="{parent: item.children}" ng-init="parentScope = $parent.$parent; initCheckbox(item, parentScope.item, ctrl.flatResList)">
 
                         <td class="cell-input" style="padding: 4px;">
                             <input ng-change="toggleCheckbox(item, ctrl.selectedList)" ng-model="item.selected" type="checkbox" />

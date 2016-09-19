@@ -12,8 +12,8 @@
                         <div class="row form-group"><!-- 菜单名称 -->
                             <label class="col-sm-3 control-label">{{'TXT_MENU_NAME' | translate}}</label>
                             <div class="col-sm-8">
-                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.orgName"
-                                       name="orgName" required ng-disabled="ctrl.popType == '修改组织'"/>
+                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.resName"
+                                       name="orgName" required ng-disabled="ctrl.popType == '修改菜单资源'"/>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -26,7 +26,7 @@
                             <div class="col-sm-8">
                                 <select class="form-control" ng-model="ctrl.sourceData.application">
                                     <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                    <option value="{{app}}" ng-repeat="app in ctrl.appList">&nbsp;{{app}}</option>
+                                    <option value="{{app.application}}" ng-repeat="app in ctrl.appList">&nbsp;{{app.application}}</option>
                                 </select>
                             </div>
                         </div>
@@ -51,8 +51,7 @@
                         <div class="row form-group"><!-- 菜单Key -->
                             <label class="col-sm-3 control-label">{{'TXT_MENU_KEY' | translate}}</label>
                             <div class="col-sm-8">
-                                <textarea type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.orgName"
-                                       name="menuKey" required readonly/></textarea>
+                                <textarea type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.resKey"  name="menuKey" required readonly/></textarea>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -80,8 +79,7 @@
                         <div class="row form-group"><!-- 菜单URL -->
                             <label class="col-sm-3 control-label">{{'TXT_MENU_URL' | translate}}</label>
                             <div class="col-sm-8">
-                                <textarea type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.orgName"
-                                       name="menuURL" required readonly/></textarea>
+                                <textarea type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.resUrl" name="menuURL" required readonly/></textarea>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -92,9 +90,11 @@
                         <div class="row form-group"><!-- 资源类型 -->
                             <label class="col-sm-3 control-label">{{'TXT_RES_TYPE' | translate}}</label>
                             <div class="col-sm-8">
-                                <select class="form-control" ng-model="ctrl.sourceData.application">
+                                <select class="form-control" ng-model="ctrl.sourceData.resType">
                                     <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                    <option value="{{app}}" ng-repeat="app in ctrl.appList">&nbsp;{{app}}</option>
+                                    <option value="0" >&nbsp;系统</option>
+                                    <option value="1" >&nbsp;菜单</option>
+                                    <option value="2" >&nbsp;Action</option>
                                 </select>
                             </div>
                         </div>
