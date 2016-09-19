@@ -34,9 +34,10 @@ public class CAClientService extends BaseService {
         return vmsBtCAClientDao.selectClientOrderDetailById(orderID, channelId, status);
     }
 
-    public int updateItemsSkuList(List<VmsBtClientOrderDetailsModel> vmsBtClientOrderDetailsModelList) {
+    public int updateItemsSkuList(List<VmsBtClientOrderDetailsModel> vmsBtClientOrderDetailsModelList,String modifier) {
         int count=0;
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : vmsBtClientOrderDetailsModelList) {
+            vmsBtClientOrderDetailsModel.setModifier(modifier);
             count+=vmsBtCAClientDao.updateItemsSkuList(vmsBtClientOrderDetailsModel);
         }
         return count;
@@ -46,8 +47,9 @@ public class CAClientService extends BaseService {
         return vmsBtCAClientDao.selectClientOrderDetailList(channelId, orderIds);
     }
 
-    public int updateClientOrderStatus(String channelId, String orderId, String status) {
-        return vmsBtCAClientDao.updateClientOrderStatus(orderId, channelId, status);
+    public void updateClientOrderStatus(String channelId, String orderId, String status,String modifier) {
+        vmsBtCAClientDao.updateClientOrderStatus(orderId, channelId, status,modifier);
+        vmsBtCAClientDao.updateClientOrderDetailsStatus(orderId,channelId,status,modifier);
     }
 
 }

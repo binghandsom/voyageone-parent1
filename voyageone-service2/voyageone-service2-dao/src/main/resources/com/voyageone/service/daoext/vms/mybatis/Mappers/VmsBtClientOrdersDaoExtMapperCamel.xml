@@ -179,7 +179,13 @@
 
     <update id="updateClientOrderStatus">
         update vms_bt_client_orders
-        set order_status=#{status}
+        set order_status=#{status},modified=now(),modifier=#{modifier}
+        where client_order_id=#{orderId} and order_channel_id=#{orderChannelId}
+    </update>
+
+    <update id="updateClientOrderDetailsStatus">
+        update vms_bt_client_order_details
+        set status=#{status},modified=now(),modifier=#{modifier}
         where client_order_id=#{orderId} and order_channel_id=#{orderChannelId}
     </update>
 

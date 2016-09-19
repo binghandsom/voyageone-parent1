@@ -29,7 +29,10 @@ public interface VmsBtClientOrdersDaoExt {
     List<VmsBtClientOrderDetailsGroupModel> selectClientOrderDetailList(@Param("orderChannelId") String orderChannelId, @Param("orderIds") List<String> orderIds);
 
     //根据id，修改clientOrder状态
-    int updateClientOrderStatus(@Param("orderId") String orderId, @Param("orderChannelId") String orderChannelId, @Param("status") String status);
+    int updateClientOrderStatus(@Param("orderId") String orderId, @Param("orderChannelId") String orderChannelId, @Param("status") String status, @Param("modifier") String modifier);
+
+    //根据id，修改clientOrder状态
+    int updateClientOrderDetailsStatus(@Param("orderId") String orderId, @Param("orderChannelId") String orderChannelId, @Param("status") String status, @Param("modifier") String modifier);
 
     //批量更新items对应的明细
     int updateItemsSkuList(VmsBtClientOrderDetailsModel model);
