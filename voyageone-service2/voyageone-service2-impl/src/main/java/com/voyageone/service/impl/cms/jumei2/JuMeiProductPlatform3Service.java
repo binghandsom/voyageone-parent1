@@ -184,6 +184,14 @@ public class JuMeiProductPlatform3Service extends BaseService {
             if (parameter.cmsBtJmPromotionProductModel.getSynchStatus() != 2) {
                 parameter.cmsBtJmPromotionProductModel.setSynchStatus(3);
             }
+            else if(parameter.cmsBtJmPromotionProductModel.getDealEndTimeStatus()==1)
+            {
+                parameter.cmsBtJmPromotionProductModel.setDealEndTimeStatus(3);
+            }
+            else if(parameter.cmsBtJmPromotionProductModel.getPriceStatus()==1)
+            {
+                parameter.cmsBtJmPromotionProductModel.setPriceStatus(3);
+            }
             throw new BusinessException(errorMsg);
         }
     }
