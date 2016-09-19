@@ -28,22 +28,21 @@ define([
                 self.adminUserService.getAllApp().then(function (res) {
                     self.appList = res.data;
                 });
-                if (self.sourceData.roleIds.length == 1) {
-                    self.adminUserService.getAuthByUser({
-                        'userAccount': self.sourceData[0].userAccount,
-                        'application': self.sourceData[0].application
-                    }).then(function (res) {
-                        self.resList = res.data;
+                self.adminRoleService.getAuthByRoles({
+                    'roleIds': self.sourceData.roleIds,
+                    'application': self.sourceData.application ? self.sourceData.application : "admin"
+                }).then(function (res) {
+                    self.permsStatus = res.data.perms;
+                    self.resList = res.data.res;
+                    console.log(res.data);
+                    _.forEach(self.applicationList, function (item) {
+                        _.map(self.permsStatus, function (ps) {
+                            if (ps.application === item.application.toLocaleLowerCase()) {
+                                item.selected = ps.selected;
+                            }
+                        })
                     })
-                } else {
-                    self.adminRoleService.getAuthByRoles({
-                        'roleIds': self.sourceData.roleIds,
-                        'application': "admin"
-                    }).then(function (res) {
-                        self.resList = res.data.res;
-                        console.log(self.resList)
-                    });
-                }
+                });
                 switch (self.sourceData.type) {
                     case 'delete':
                         return self.popType = '删除权限';

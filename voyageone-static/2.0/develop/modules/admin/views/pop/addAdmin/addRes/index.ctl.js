@@ -7,7 +7,6 @@ define([
     admin.controller('AddResController', (function () {
         function AddResController(context, adminUserService, $uibModalInstance) {
             this.sourceData = context ? context : {};
-            this.append = context == 'add' ? true : false;
             this.adminUserService = adminUserService;
             this.popType = '修改菜单资源';
             this.$uibModalInstance = $uibModalInstance;
