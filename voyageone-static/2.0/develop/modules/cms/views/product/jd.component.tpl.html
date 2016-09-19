@@ -113,15 +113,15 @@
                         </div>
                         <div class="col-md-4">
                             <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
-                            <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Pending'">
-                                <button class="btn btn-vo ng-binding" ng-click="saveProduct('ready')" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
+                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Pending'">
+                                <button class="btn btn-vo" ng-click="saveProduct('ready')" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
                                                                                         vm.checkFlag.category != 1 || vm.checkFlag.attribute == false || !vm.platform.pBrandName"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready</button>
                             </div>
-                            <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Pending'">
-                                <button class="btn btn-vo ng-binding" ng-click="saveProduct('temporary')" ng-disabled="vm.checkFlag.category != 1"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
+                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Pending'">
+                                <button class="btn btn-vo" ng-click="saveProduct('temporary')" ng-disabled="vm.checkFlag.category != 1"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
                             </div>
-                            <div class="pull-right m-t-xs m-r-xs ng-scope" ng-if="vm.status == 'Ready' || vm.status == 'Approved'">
-                                <button class="btn btn-vo ng-binding" ng-click="saveProduct()" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
+                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Ready' || vm.status == 'Approved'">
+                                <button class="btn btn-vo" ng-click="saveProduct()" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
                                                                                         vm.checkFlag.category != 1 || vm.checkFlag.attribute == false"><i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
                             </div>
                             <div class="pull-right text-warnings" style="padding-left:0px">
@@ -230,7 +230,7 @@
                                 <button class="col-md-2 btn btn-default"
                                         ng-controller="popupCtrl"
                                         ng-click="choseBrand(openPlatformMappingSetting)"
-                                        ng-disabled="vm.status == 'Approved'">
+                                        ng-disabled="vm.status == 'Approved' && vm.platform.pBrandName">
                                     <span>{{cartInfo.name}}&nbsp;{{"TXT_BRAND" | translate}}</span>
                                 </button>
                                 <div class="col-md-8">
@@ -320,7 +320,7 @@
                                     <tr>
                                         <td if-no-rows="vm.platform.skus == null || vm.platform.skus.length == 0 ? 0 : vm.platform.skus.length" colspan="10" style="padding: 0px"></td>
                                     </tr>
-                                    <tr ng-repeat="entity in vm.platform.skus" class="ng-scope" ng-if="vm.platform.skus.length > 0" ng-init="entity.property = entity.property == null?'OTHER' : entity.property ">
+                                    <tr ng-repeat="entity in vm.platform.skus" ng-if="vm.platform.skus.length > 0" ng-init="entity.property = entity.property == null?'OTHER' : entity.property ">
                                         <td class="text-center v-middle">
                                             <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value != 27">
                                             <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved' && entity.isSale == true">

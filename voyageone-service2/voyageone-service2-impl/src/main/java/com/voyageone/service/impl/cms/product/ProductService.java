@@ -18,10 +18,7 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.jd.service.JdProductService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.CustomPropBean;
@@ -45,6 +42,7 @@ import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.apache.commons.lang.math.NumberUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -950,7 +948,7 @@ public class ProductService extends BaseService {
         insertProductHistory(channelId, prodId);
     }
 
-    public int updateProductFeedToMaster(String channelId, CmsBtProductModel cmsProduct, String modifier) {
+    public int updateProductFeedToMaster(String channelId, CmsBtProductModel cmsProduct, String modifier, String comment) {
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", cmsProduct.getProdId());
         queryMap.put("modified", cmsProduct.getModified());
@@ -1029,6 +1027,9 @@ public class ProductService extends BaseService {
         BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
         insertProductHistory(channelId, cmsProduct.getProdId());
+        // 记录价格变更履历
+        addPriceUpdateHistory(cmsProduct,modifier, comment);
+
         return result.getModifiedCount();
     }
 
@@ -1198,6 +1199,21 @@ public class ProductService extends BaseService {
             }
         }catch (Exception e){
             throw new BusinessException("商品删除失败：" + e.getMessage());
+        }
+    }
+
+    public void addPriceUpdateHistory(CmsBtProductModel cmsProduct, String modifier, String comment) {
+        // 记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
+        if (cmsProduct != null && cmsProduct.getPlatforms() != null && cmsProduct.getPlatforms().size() > 0) {
+            cmsProduct.getPlatforms().forEach((cartId, platform) -> {
+                if (ListUtils.notNull(platform.getSkus())) {
+                    List<String> skuCodeList = new ArrayList<>();
+                    platform.getSkus().forEach(sku -> skuCodeList.add(sku.getStringAttribute("skuCode")));
+                    // 记录商品价格变动履历
+                    cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skuCodeList, cmsProduct.getChannelId(),
+                            platform.getCartId(), modifier, comment);
+                }
+            });
         }
     }
 }

@@ -24,10 +24,11 @@ define([
             },
             confirm: function () {
                 var self = this;
-                var confirmResult={
-                    result : true,
-                    brandId : self.platformData.brandId,
-                    cmsBrand: self.platformData.cmsBrand
+                var confirmResult = {
+                    result: true,
+                    brandId: self.platformData.brandId,
+                    cmsBrand: self.platformData.cmsBrand,
+                    pBrand: self.platformData.selectedPlatform
                 };
                 self.$uibModalInstance.close(confirmResult);
             }

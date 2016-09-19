@@ -401,7 +401,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
             if (null == this.csvWriter) {
                 File errorPathFile = new File(path);
                 if (!errorPathFile.exists()) errorPathFile.mkdirs();
-                String errorFileName = errorPathFile + "/" +
+                String errorFileName = path + "/" +
                         fileName.replace("Inventory&Price_", "Inventory&Price_Check_Result_");
                 this.csvWriter = new CsvWriter(errorFileName, COMMA, Charset.forName(UTF_8));
                 try {
@@ -413,7 +413,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
                 VmsBtInventoryFileModel vmsBtInventoryFileModel = new VmsBtInventoryFileModel();
                 vmsBtInventoryFileModel.setChannelId(channelId);
                 vmsBtInventoryFileModel.setFileName(fileName);
-                vmsBtInventoryFileModel.setErrorFileName(errorFileName);
+                vmsBtInventoryFileModel.setErrorFileName(fileName.replace("Inventory&Price_", "Inventory&Price_Check_Result_"));
                 vmsBtInventoryFileDaoExt.updateStatus(vmsBtInventoryFileModel);
             }
 

@@ -18,10 +18,7 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -134,9 +131,11 @@ public class CmsMenuController extends CmsController {
         return success(serviceCmsBtDataAmount.getHomeSumData(getUser().getSelChannelId(), getLang()));
     }
     @RequestMapping(value = CmsUrlConstants.HOME.MENU.SumHome,method = RequestMethod.GET)
-    public AjaxResponse SumHome()
-    {
-        serviceCmsBtDataAmount.sumByChannelId(getUser().getSelChannelId());
+    public AjaxResponse SumHome(@RequestParam String channelId) {
+        if (StringUtils.isEmpty(channelId)) {
+            return success("channelId不能为空");
+        }
+        serviceCmsBtDataAmount.sumByChannelId(channelId);
         return success("完成");
     }
     @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CMS_CONFIG)

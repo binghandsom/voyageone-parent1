@@ -267,11 +267,17 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
 
     //sellerCats
-    public List<CmsBtProductModel_SellerCat> getSellerCats(){
+    public List<CmsBtProductModel_SellerCat> getSellerCats() {
         return getAttribute(SELLER_CATS);
     }
-    public void setSellerCats(List<CmsBtProductModel_SellerCat> sellerCats){
-        setAttribute(SELLER_CATS,sellerCats);
+    public void setSellerCats(List<CmsBtProductModel_SellerCat> sellerCats) {
+        setAttribute(SELLER_CATS, sellerCats);
+    }
+    public List<Map<String, Object>> getSellerCatsByMap() {
+        return getAttribute(SELLER_CATS);
+    }
+    public void setSellerCatsByMap(List<Map<String, Object>> sellerCats) {
+        setAttribute(SELLER_CATS, sellerCats);
     }
 
     public String getpReallyStatus() {

@@ -90,10 +90,10 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                    <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl" ng-click="masterCategoryMapping(popupCategoryNew)"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
+                                    <button class="col-md-2 btn btn-default" ng-controller="popupCtrl" ng-click="masterCategoryMapping(popupCategoryNew)"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                                 </button>
                                 <div class="col-md-8">
-                                    <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" required="" style="" ng-model="vm.productComm.catPath" disabled>
+                                    <input class="form-control"  ng-model="vm.productComm.catPath" disabled>
                                     <div class="text-warnings" style="padding-left:0px">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;切换平台类目将影响整个Group中的所有商品，请慎重！
                                     </div>
@@ -161,7 +161,7 @@
                                             品牌方商品图
                                         </tab-heading>
                                         <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
-                                            <div class="tab-pane ng-scope active">
+                                            <div class="tab-pane active">
                                                 <div class="vo_prodGallery">
                                                     <div class="thumbnailWrapper">
                                                         <div  ng-repeat="image in vm.productComm.fields.images1 | limitTo: 10"
@@ -182,7 +182,7 @@
                                             PC端自拍商品图
                                         </tab-heading>
                                         <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
-                                            <div class="tab-pane ng-scope active">
+                                            <div class="tab-pane active">
                                                 <div class="vo_prodGallery">
                                                     <div class="thumbnailWrapper">
                                                         <div  ng-repeat="image in vm.productComm.fields.images6 | limitTo: 10"
@@ -205,7 +205,7 @@
                                             APP端自拍商品图
                                         </tab-heading>
                                         <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
-                                            <div class="tab-pane ng-scope active">
+                                            <div class="tab-pane active">
                                                 <div class="vo_prodGallery">
                                                     <div class="thumbnailWrapper">
                                                         <div  ng-repeat="image in vm.productComm.fields.images7 | limitTo: 10"
@@ -228,7 +228,7 @@
                                             包装图
                                         </tab-heading>
                                         <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
-                                            <div class="tab-pane ng-scope active">
+                                            <div class="tab-pane active">
                                                 <div class="vo_prodGallery">
                                                     <div class="thumbnailWrapper">
                                                         <div  ng-repeat="image in vm.productComm.fields.images2 | limitTo: 10"
@@ -250,7 +250,7 @@
                                             角度图
                                         </tab-heading>
                                         <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
-                                            <div class="tab-pane ng-scope active">
+                                            <div class="tab-pane active">
                                                 <div class="vo_prodGallery">
                                                     <div class="thumbnailWrapper">
                                                         <div  ng-repeat="image in vm.productComm.fields.images3 | limitTo: 10"
@@ -272,7 +272,7 @@
                                             PC端自定义图
                                         </tab-heading>
                                         <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
-                                            <div class="tab-pane ng-scope active">
+                                            <div class="tab-pane active">
                                                 <div class="vo_prodGallery">
                                                     <div class="thumbnailWrapper">
                                                         <div  ng-repeat="image in vm.productComm.fields.images4 | limitTo: 10"
@@ -294,7 +294,7 @@
                                             APP端自定义图
                                         </tab-heading>
                                         <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
-                                            <div class="tab-pane ng-scope active">
+                                            <div class="tab-pane active">
                                                 <div class="vo_prodGallery">
                                                     <div class="thumbnailWrapper">
                                                         <div  ng-repeat="image in vm.productComm.fields.images5 | limitTo: 10"
@@ -316,7 +316,7 @@
                                             吊牌图
                                         </tab-heading>
                                         <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
-                                            <div class="tab-pane ng-scope active">
+                                            <div class="tab-pane active">
                                                 <div class="vo_prodGallery">
                                                     <div class="thumbnailWrapper">
                                                         <div  ng-repeat="image in vm.productComm.fields.images8 | limitTo: 10"
@@ -338,7 +338,7 @@
                                             耐久性标签图
                                         </tab-heading>
                                         <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
-                                            <div class="tab-pane ng-scope active">
+                                            <div class="tab-pane active">
                                                 <div class="vo_prodGallery">
                                                     <div class="thumbnailWrapper">
                                                         <div  ng-repeat="image in vm.productComm.fields.images9 | limitTo: 10"
