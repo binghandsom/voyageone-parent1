@@ -5,11 +5,18 @@ define(['components/dist/voyageone.angular.com'], function () {
     angular.module('voyageone.admin.adminResetPass', [
         'blockUI',
         'voyageone.angular'
-    ]).controller('resetPassController', function ($scope, adminUserService) {
+    ]).controller('resetPassController', function ($scope,$http) {
         $scope.submit = function () {
-            adminUserService.forgetPass().then(function (res) {
-                console.log(res);
-            })
+            $http({
+                url: '/admin/user/self/forgetPass',
+                method: 'post',
+                params:{'userAccount':$scope.userAccount}
+            }).success(function (data) {
+                console.log(data);
+
+            }).error(function (data) {
+                console.log(data);
+            });
         }
     });
     return angular.bootstrap(document, ['voyageone.admin.adminResetPass']);
