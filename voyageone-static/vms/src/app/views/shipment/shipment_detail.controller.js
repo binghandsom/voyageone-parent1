@@ -113,7 +113,6 @@ define([
                 // 先判断是否有其他人改了当前的shipment
                 self.shipmentDetailService.getInfo(self.shipment.id).then(function (data) {
                     tempShipment = data.shipment;
-                    // if (!_.isEqual(self.originalShipment, tempShipment)) {
                     if (self.originalShipment.status != tempShipment.status
                         || self.originalShipment.shipmentName != tempShipment.shipmentName
                         || self.originalShipment.shippedDate != tempShipment.shippedDate
