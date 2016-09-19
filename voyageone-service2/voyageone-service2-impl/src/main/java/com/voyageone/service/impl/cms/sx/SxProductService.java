@@ -852,9 +852,9 @@ public class SxProductService extends BaseService {
             // 看一下feed的品牌，master的品牌和platform的品牌这3个地方的品牌是否在品牌黑名单中，只有有一个在黑名单中，该产品就是上新对象外
             // 官网同购的场合（cart是30， 31）， platform的品牌是不存在的
             if (cmsBtBrandBlockService.isBlocked(channelId, cartId,
-                    sxData.getCmsBtFeedInfoModel().getBrand(),
-                    productModel.getCommon().getFields().getBrand(),
-                    productPlatformCart.getpBrandId())) {
+                    sxData.getCmsBtFeedInfoModel() == null ? "" : sxData.getCmsBtFeedInfoModel().getBrand(),
+                    (productModel.getCommon() == null || productModel.getCommon().getFields() == null) ? "" : productModel.getCommon().getFields().getBrand(),
+                    productPlatformCart == null ? "" : productPlatformCart.getpBrandId())) {
                 removeProductList.add(productModel);
                 continue;
             }
