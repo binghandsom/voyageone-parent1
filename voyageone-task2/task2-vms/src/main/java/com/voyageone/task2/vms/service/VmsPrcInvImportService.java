@@ -6,7 +6,6 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Codes;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
@@ -26,7 +25,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
 
 import static com.voyageone.task2.vms.VmsConstants.*;
 
@@ -226,7 +227,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
 
             final String inventory = tempInventory;
 
-            if (StringUtil.isEmpty(sku)) continue;
+            if (StringUtils.isEmpty(sku)) continue;
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = cmsBtFeedInfoDao.selectProductByClientSku(channelId, sku);
 
