@@ -4,8 +4,8 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtShipmentModel"/>
     <sql id="Base_Column_List">
         `id`, `channel_id`, `shipment_name`, `shipped_date`, `express_company`, `tracking_no`,
-        `comment`, `status`, `arrived_time`, `arriver`, `received_time`, `receiver`, `created`,
-        `creater`, `modified`, `modifier`
+        `comment`, `status`, `arrived_time`, `arriver`, `received_time`, `receiver`, `detail_print_time`,
+        `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="count" resultType="java.lang.Integer" parameterType="HashMap">

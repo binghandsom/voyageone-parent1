@@ -219,7 +219,7 @@ define([
                     var mainBrand = scope.productInfo.masterField.brand,
                         platform = scope.vm.platform;
 
-                    if(!platform.pBrandId)
+                    if (!platform || !platform.pBrandId)
                         return;
 
                     openPlatformMappingSetting({
