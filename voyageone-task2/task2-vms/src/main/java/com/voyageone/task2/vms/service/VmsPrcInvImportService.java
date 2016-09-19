@@ -227,7 +227,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
             CmsBtFeedInfoModel cmsBtFeedInfoModel = cmsBtFeedInfoDao.selectProductByClientSku(channelId, sku);
 
             if (null == cmsBtFeedInfoModel) {
-                prcInvFileErrorMessage.add(sku, pendingFileInfo.inventoryColumnNumber, lineNumber,
+                prcInvFileErrorMessage.add(sku, pendingFileInfo.skuColumnNumber, lineNumber,
                         "SKU not found");
                 haveError = true;
             }
