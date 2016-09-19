@@ -472,7 +472,6 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         List<VmsBtClientOrderDetailsModel> matchModelList = new ArrayList<>();
 
         //根据请求参数中Items.SellerSku， 匹配品牌方订单明细中的 seller_sku，找出对应的明细。
-        int tempUpdateCount=0;
         Map<String,Integer> tempSkuQtyMap=request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getQuantity));
         Map<String,CancellationReasonEnum> tempSkuReasonMap=request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
 
