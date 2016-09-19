@@ -25,7 +25,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
 
 import static com.voyageone.task2.vms.VmsConstants.*;
 
@@ -109,6 +111,9 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
 
         // 尝试移动文件
         this.tryToBackupFile(channelId, fileName, uploadType);
+
+        $info("finished -> channelId: " + channelId + ", fileName: " + fileName + ", uploadType: " +
+                uploadType);
     }
 
     private void tryToBackupFile(String channelId, String fileName, String uploadType) {
@@ -222,7 +227,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
 
             final String inventory = tempInventory;
 
-
+            if (StringUtils.isEmpty(sku)) continue;
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = cmsBtFeedInfoDao.selectProductByClientSku(channelId, sku);
 
