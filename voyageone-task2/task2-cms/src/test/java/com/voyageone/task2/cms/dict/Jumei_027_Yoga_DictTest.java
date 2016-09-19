@@ -260,7 +260,7 @@ public class Jumei_027_Yoga_DictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
         }
