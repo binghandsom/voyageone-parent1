@@ -243,6 +243,7 @@ public class CmsConstants {
         int errorNum = 2;       // 上新失败
         int uploadingNum = 3;   // 上新中(上新完成后回写状态的时候用)
         int review = 4;         // 达尔文产品审核中
+        int waitCnUpload = 5;  // 独立域名等待xml上传
     }
 
     public interface FeedUpdFlgStatus{
