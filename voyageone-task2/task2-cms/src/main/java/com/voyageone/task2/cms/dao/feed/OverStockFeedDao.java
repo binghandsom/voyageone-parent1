@@ -32,4 +32,10 @@ public interface OverStockFeedDao {
     void delete();
 
     List<CmsBtFeedInfoOverStockModel> selectSuperfeedModel(Map colums);
+
+    int fullCopyTemp();
+
+    int updateMd5();
+
+    int updateUpdateFlag();
 }
