@@ -1183,9 +1183,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         cmsBtJmProductModel.setProductCode(productCode);
         cmsBtJmProductModel.setOrigin(fields.getOrigin());
         cmsBtJmProductModel.setProductNameCn(jmFields.getStringAttribute("productNameCn") + " " + special_symbol.matcher(productCode).replaceAll("-"));
-        cmsBtJmProductModel.setVoBrandName(product.getCommon().getCatId());
+        cmsBtJmProductModel.setVoBrandName(brandName);                                   // VO系统里面的品牌名称
         cmsBtJmProductModel.setVoCategoryName(product.getCommon().getCatPath());
-        cmsBtJmProductModel.setBrandName(brandName);
+        cmsBtJmProductModel.setBrandName(product.getPlatform(CART_ID).getpBrandName());  // 聚美平台上的品牌名称
         cmsBtJmProductModel.setProductType(productType);
         cmsBtJmProductModel.setSizeType(sizeType);
         cmsBtJmProductModel.setProductDesEn(fields.getShortDesEn());
