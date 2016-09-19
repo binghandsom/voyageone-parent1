@@ -32,6 +32,7 @@ public interface VmsUrlConstants {
             String SEARCH = "search";
             String IS_PRINTED = "is_printed";
         }
+
         interface SHIPMENT_DETAIL {
             String ROOT = "/vms/shipment/shipment_detail";
             String INIT = "init";
@@ -77,11 +78,6 @@ public interface VmsUrlConstants {
             String DOWN_INVENTORY_ERROR_FILE = "downloadInventoryErrorFile";
         }
 
-        interface INVENTORY_SEARCH {
-            String ROOT = "/vms/inventory/inventory_info_search/";
-            String INIT = "init";
-            String SEARCH = "search";
-        }
     }
 
     interface SETTINGS {

@@ -173,12 +173,6 @@ public class VmsPrcInvFileScanService extends BaseTaskService {
             return;
         }
 
-        // bak目录没有的话自动新建
-        File backupFolder = new File(prcInvFilePath + orderChannelId + PRICE_INVENTORY_DIRECTORY + "/bak");
-        if (!backupFolder.exists()) {
-            backupFolder.mkdir();
-        }
-
         File[] files = ftpRoot.listFiles();
         if (null == files || files.length == 0) {
             $info(orderChannelId + ": 目录为空, 不存在FTP上传内容");

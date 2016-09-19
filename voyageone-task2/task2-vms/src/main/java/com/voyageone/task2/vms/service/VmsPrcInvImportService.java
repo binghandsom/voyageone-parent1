@@ -6,6 +6,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.com.MessageBean;
@@ -128,9 +129,15 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
             rootPath += channelId + "/";
         }
 
+        // bak目录没有的话自动新建
+        File backupFolder = new File(rootPath + "bak");
+        if (!backupFolder.exists()) {
+            backupFolder.mkdirs();
+        }
+
         File file = new File(rootPath + fileName);
         if (file.exists() && !file.isDirectory())
-            file.renameTo(new File(rootPath + "bak/" + fileName));
+            FileUtils.moveFile(rootPath + fileName, rootPath + "bak/" + fileName);
     }
 
     private void commitFile(String channelId, FileInfo pendingFileInfo, PrcInvFileErrorMessage prcInvFileErrorMessage)
