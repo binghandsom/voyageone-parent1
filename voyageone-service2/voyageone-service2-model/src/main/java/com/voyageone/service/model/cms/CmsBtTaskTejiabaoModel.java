@@ -31,6 +31,8 @@ public class CmsBtTaskTejiabaoModel extends BaseModel {
 
     protected String errMsg;
 
+    protected Integer selSynFlg;
+
     public Integer getPromotionId() {
         return promotionId;
     }
@@ -77,5 +79,13 @@ public class CmsBtTaskTejiabaoModel extends BaseModel {
 
     public void setErrMsg(String errMsg) {
         this.errMsg = errMsg == null ? null : errMsg.trim();
+    }
+
+    public Integer getSelSynFlg() {
+        return selSynFlg;
+    }
+
+    public void setSelSynFlg(Integer selSynFlg) {
+        this.selSynFlg = selSynFlg;
     }
 }

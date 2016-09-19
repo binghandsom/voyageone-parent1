@@ -101,7 +101,16 @@ class SEAnalysisContext {
         product.setShortDescription(feedBean.getCategory());
         product.setLongDescription(feedBean.getCategory());
         product.setSkus(new ArrayList<>());
-        product.setAttribute(new HashMap<>());
+        //增加属性
+        Map<String, List<String>> attribute = new HashMap<>();
+        List<String> productType = new ArrayList<>();
+        productType.add(feedBean.getProduct_type());
+        List<String> sizeType = new ArrayList<>();
+        sizeType.add(feedBean.getSize_type());
+        attribute.put("productType",productType);
+        attribute.put("sizeType",sizeType);
+        //增加属性结束
+        product.setAttribute(attribute);
         product.setUpdFlg(0);
         product.setChannelId(ChannelConfigEnums.Channel.SHOE_CITY.getId());
         product.setProductType(feedBean.getProduct_type());

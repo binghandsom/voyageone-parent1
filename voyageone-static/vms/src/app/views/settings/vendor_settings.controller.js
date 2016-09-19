@@ -38,7 +38,7 @@ define([
             var self = this;
             self.vendorSettingsService.save(self.channelConfig).then(function (data) {
                 if (data.success >= 3) {
-                    self.notify.success('TXT_SUCCESS');
+                    self.notify.success('TXT_SETTINGS_SAVED');
                 } else {
                     self.alert('TXT_FAILED_TRY_AGAIN');
                 }

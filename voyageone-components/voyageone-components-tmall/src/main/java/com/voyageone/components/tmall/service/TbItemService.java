@@ -26,14 +26,12 @@ import java.util.List;
 @Component
 public class TbItemService extends TbBase {
     /**
-     * 淘宝接口名：tmall.item.update.schema.get。
-     * 文档地址：http://open.taobao.com/apidoc/api.htm?spm=a219a.7386789.1998342952.14.0uzLoC&path=scopeId:11430-apiId:23435
+     * 淘宝接口名：tmall.item.update.schema.get
+     * 文档地址：http://open.taobao.com/docs/api.htm?apiId=23435
      *
      * @param shopBean 店铺
      * @param num_iid  商品
      * @return 查询到的所有字段
-     * @throws ApiException
-     * @throws TopSchemaException
      */
     public TbItemSchema getUpdateSchema(ShopBean shopBean, long num_iid) throws ApiException, TopSchemaException, GetUpdateSchemaFailException {
 
@@ -55,7 +53,7 @@ public class TbItemService extends TbBase {
      * 全量更新淘宝的商品。
      * <p>
      * 淘宝接口名：tmall.item.schema.update
-     * 文档地址：http://open.taobao.com/apidoc/api.htm?spm=a219a.7386789.1998342952.66.rW9rTR&path=cid:4-apiId:23434
+     * 文档地址：http://open.taobao.com/docs/api.htm?apiId=23434
      */
     public TmallItemSchemaUpdateResponse updateFields(ShopBean shopBean, TbItemSchema tbItemSchema) throws ApiException, TopSchemaException {
 
@@ -72,8 +70,6 @@ public class TbItemService extends TbBase {
 
     /**
      * 根据商品ID列表获取SKU信息
-     *
-     * @throws ApiException
      */
     public ItemSkusGetResponse getSkuInfo(ShopBean shopBean, String numIid, String fields) throws ApiException {
 
@@ -88,6 +84,5 @@ public class TbItemService extends TbBase {
         }
         return reqTaobaoApi(shopBean, req);
     }
-
 }
 

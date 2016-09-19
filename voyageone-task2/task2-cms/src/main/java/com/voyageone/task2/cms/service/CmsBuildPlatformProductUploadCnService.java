@@ -178,6 +178,12 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
                 throw new BusinessException(sxData.getErrorMessage());
             }
 
+            CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+            if (platformActive == CmsConstants.PlatformActive.ToInStock && StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
+                // ToInStock 删除，但numIId = null(没上过)，就没必要推送了
+                return;
+            }
+
             // 平台类目schema信息
             CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = platformCategoryService.getPlatformCatSchema("1", cartId);
             if (cmsMtPlatformCategorySchemaModel == null) {
@@ -191,21 +197,26 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             // TODO:上传图片
 
             // 上传code信息
-            uploadProduct(sxData, cmsMtPlatformCategorySchemaModel, shopBean, getTaskName());
+            String productXml = uploadProduct(sxData, cmsMtPlatformCategorySchemaModel, shopBean, getTaskName());
 
             // 上传sku信息
-            uploadItem(sxData, cmsMtPlatformCategorySchemaModel);
+            String skuXml = null;
+            if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
+                skuXml = uploadItem(sxData, cmsMtPlatformCategorySchemaModel);
+            }
 
             // TODO:<root updateType="2">设置类目里的商品的排序
 
+            //
 
-            // 上新或更新成功后回写product group表中的numIId和platformStatus(Onsale/InStock)
-            String numIId = sxData.getMainProduct().getOrgChannelId() + "-" + Long.toString(sxData.getMainProduct().getProdId()); // 因为现在是一个group一个code
-            sxProductService.updateProductGroupNumIIdStatus(sxData, numIId, getTaskName());
-            // 回写ims_bt_product表(numIId)
-            sxProductService.updateImsBtProduct(sxData, getTaskName());
-            // 回写workload表   (成功1)
-            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
+
+//            // 上新或更新成功后回写product group表中的numIId和platformStatus(Onsale/InStock)
+//            String numIId = sxData.getMainProduct().getOrgChannelId() + "-" + Long.toString(sxData.getMainProduct().getProdId()); // 因为现在是一个group一个code
+//            sxProductService.updateProductGroupNumIIdStatus(sxData, numIId, getTaskName());
+//            // 回写ims_bt_product表(numIId)
+//            sxProductService.updateImsBtProduct(sxData, getTaskName());
+            // 回写workload表   (5等待xml上传)
+            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.waitCnUpload, getTaskName());
 
         } catch (Exception ex) {
             // 取得sxData为空
@@ -245,7 +256,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
      * @param shopBean ShopBean 店铺信息
      * @param modifier 更新者
      */
-    private void uploadProduct(SxData sxData, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel, ShopBean shopBean, String modifier) {
+    private String uploadProduct(SxData sxData, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel, ShopBean shopBean, String modifier) {
         // 产品schema
         String productSchema = cmsMtPlatformCategorySchemaModel.getPropsProduct();
         // 所有产品
@@ -268,8 +279,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
         String xml = cnSchemaService.writeProductXmlString(listProduct);
         logger.debug("product xml:" + xml);
 
-        // TODO:doPost
-
+        return xml;
     }
 
     /**
@@ -278,7 +288,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
      * @param sxData SxData
      * @param cmsMtPlatformCategorySchemaModel MongoDB  propsProduct取得用
      */
-    private void uploadItem(SxData sxData, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel) {
+    private String uploadItem(SxData sxData, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel) {
         // sku schema
         String itemSchema = cmsMtPlatformCategorySchemaModel.getPropsItem();
         // 所有sku
@@ -301,8 +311,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
         String xml = cnSchemaService.writeSkuXmlString(listSku);
         logger.debug("sku xml:" + xml);
 
-        // TODO:doPost
-
+        return xml;
     }
 
     /**
@@ -452,7 +461,11 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             String field_id = "Quantity";
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(qty.toString());
+            if (qty == null) {
+                ((InputField) field).setValue("0");
+            } else {
+                ((InputField) field).setValue(qty.toString());
+            }
         }
         {
             // Size 原始尺码
@@ -540,6 +553,45 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             ((InputField) field).setValue("admin");
         }
         {
+            // Sku code
+            String field_id = "Sku";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(product.getCommon().getFields().getCode());
+        }
+        {
+            // Status 商品处理动作：1创建或更新， 2删除
+            String field_id = "Status";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+            if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
+                ((SingleCheckField) field).setValue("1");
+            } else if (platformActive == CmsConstants.PlatformActive.ToInStock) {
+                ((SingleCheckField) field).setValue("2");
+            } else {
+                throw new BusinessException("PlatformActive must be ToOnSale or ToInStock, but now it is " + platformActive);
+            }
+        }
+        {
+            // OrgChannelId 原始channel id
+            String field_id = "OrgChannelId";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(product.getOrgChannelId());
+        }
+        {
+            // UrlKey orgChannelId + "-" + cms product id
+            String field_id = "UrlKey";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(product.getOrgChannelId() + "-" + Long.toString(product.getProdId()));
+        }
+        {
             // CategoryIds
             String field_id = "CategoryIds";
             listSp.add(field_id);
@@ -571,38 +623,6 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             setDescriptionValue(expressionParser, shopBean, modifier, field, false);
         }
         {
-            // OrgChannelId 原始channel id
-            String field_id = "OrgChannelId";
-            listSp.add(field_id);
-            Field field = fieldsMap.get(field_id);
-
-            ((InputField) field).setValue(product.getOrgChannelId());
-        }
-        {
-            // Sku code
-            String field_id = "Sku";
-            listSp.add(field_id);
-            Field field = fieldsMap.get(field_id);
-
-            ((InputField) field).setValue(product.getCommon().getFields().getCode());
-        }
-        {
-            // Status 1创建或更新， 2删除
-            String field_id = "Status";
-            listSp.add(field_id);
-            Field field = fieldsMap.get(field_id);
-
-            ((SingleCheckField) field).setValue("1");
-        }
-        {
-            // UrlKey orgChannelId + "-" + cms product id
-            String field_id = "UrlKey";
-            listSp.add(field_id);
-            Field field = fieldsMap.get(field_id);
-
-            ((InputField) field).setValue(product.getOrgChannelId() + "-" + Long.toString(product.getProdId()));
-        }
-        {
             // MainImageList 商品主图  逗号分隔
             // TODO
         }
@@ -614,7 +634,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
             String propValue = sxProductService.getProductValueByMasterMapping(field, shopBean, expressionParser, modifier);
             if (!StringUtils.isEmpty(propValue)) {
-                Date date = DateTimeUtil.parse(propValue, DateTimeUtil.DEFAULT_DATE_FORMAT); // TODO:貌似画面上保存后是这个样子的，回头测试一下看看
+                Date date = DateTimeUtil.parse(propValue, DateTimeUtil.DEFAULT_DATE_FORMAT);
                 if (date == null) {
                     throw new BusinessException(field.getName() + "格式转换失败!");
                 }
@@ -637,21 +657,21 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
             ((InputField) field).setValue(product.getCommon().getFields().getBrand());
         }
-        {
-            // IsOnSale 上下架（0下架， 1上架）
-            String field_id = "IsOnSale";
-            listSp.add(field_id);
-            Field field = fieldsMap.get(field_id);
-
-            CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
-            if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
-                ((SingleCheckField) field).setValue("1");
-            } else if (platformActive == CmsConstants.PlatformActive.ToInStock) {
-                ((SingleCheckField) field).setValue("0");
-            } else {
-                throw new BusinessException("PlatformActive must be Onsale or Instock, but now it is " + platformActive);
-            }
-        }
+//        {
+//            // IsOnSale 上下架（0下架， 1上架）
+//            String field_id = "IsOnSale";
+//            listSp.add(field_id);
+//            Field field = fieldsMap.get(field_id);
+//
+//            CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+//            if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
+//                ((SingleCheckField) field).setValue("1");
+//            } else if (platformActive == CmsConstants.PlatformActive.ToInStock) {
+//                ((SingleCheckField) field).setValue("0");
+//            } else {
+//                throw new BusinessException("PlatformActive must be Onsale or Instock, but now it is " + platformActive);
+//            }
+//        }
         {
             // Msrp 建议零售价
             String field_id = "Msrp";

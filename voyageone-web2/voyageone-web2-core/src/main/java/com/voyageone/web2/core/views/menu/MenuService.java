@@ -168,7 +168,7 @@ public class MenuService extends BaseViewService {
         List<Map<String, String>> inventoryMenuItems = new ArrayList<>();
         // Inventory->Inventory Upload
         Map<String, String> inventoryFileUpload = new HashMap<>();
-        inventoryFileUpload.put("name", "Inventory Feed Upload");
+        inventoryFileUpload.put("name", "Inventory&Price Feed Upload");
         inventoryFileUpload.put("url", "#/inventory/inventory_feed_upload");
         inventoryMenuItems.add(inventoryFileUpload);
         inventoryMenu.put("items", inventoryMenuItems);

@@ -292,9 +292,6 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
 
         void offThem() throws BlockBrandOffShelfFailException {
 
-            // 开发测试阶段，不进行真实下架
-            if (true) return;
-
             if (cartIdList.isEmpty() || codeList.isEmpty())
                 return;
             try {

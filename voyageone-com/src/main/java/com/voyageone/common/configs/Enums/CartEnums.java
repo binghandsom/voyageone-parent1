@@ -2,6 +2,9 @@ package com.voyageone.common.configs.Enums;
 
 /**
  * Created by Jack on 6/6/2017.
+ *
+ * @version 2.6.0
+ * @since 2.0.0
  */
 public class CartEnums {
     /**
@@ -58,15 +61,15 @@ public class CartEnums {
 		 */
 		JGY("29"),
 
-		/**
-		 * Tmall 官网同购
-		 */
-		TT("30"),
+        /**
+         * 天猫国际官网同购
+         */
+        TT("30"),
 
-		/**
-		 * Tmall USJoi官网同购
-		 */
-		TTUS("31"),
+        /**
+         * Usjoi天猫国际官网同购
+         */
+        USTT("31"),
 
 		/**
 		 * USJOI测试
@@ -118,8 +121,8 @@ public class CartEnums {
 					return JGY;
 				case "30":
 					return TT;
-				case "31":
-					return TTUS;
+                case "31":
+                    return USTT;
 				case "928":
 					return USJGJ;
 				case "929":
@@ -134,6 +137,17 @@ public class CartEnums {
 		public int getValue()
 		{
 			return  Integer.parseInt(id);
+		}
+
+		/**
+		 * 判断给定的店铺是否是同购店
+		 *
+		 * @param cart 某店铺
+		 * @return 是否是同购店
+		 * @since 2.6.0
+		 */
+		public static boolean isSimple(Cart cart) {
+			return TT.equals(cart) || USTT.equals(cart);
 		}
 	}
 }

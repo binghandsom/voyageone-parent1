@@ -86,4 +86,18 @@ public class VmsOrderInfoController extends BaseController {
         return genResponseEntityFromBytes(PICKING_LIST + new Date().getTime() + XLSX,
                 vmsOrderInfoService.getExcelBytes(this.getUser(), orderSearchInfoBean));
     }
+
+    @RequestMapping(ORDER.ORDER_INFO.REOPEN_ORDER)
+    public AjaxResponse reopenOrder(@RequestBody PlatformSubOrderInfoBean orderInfoBean) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", vmsOrderInfoService.reopenOrder(this.getUser(), orderInfoBean));
+        return success(result);
+    }
+
+    @RequestMapping(ORDER.ORDER_INFO.REOPEN_SKU)
+    public AjaxResponse reopenSku(@RequestBody SubOrderInfoBean item) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", vmsOrderInfoService.reopenSku(this.getUser(), item));
+        return success(result);
+    }
 }
