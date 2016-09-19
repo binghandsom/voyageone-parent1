@@ -68,7 +68,13 @@ define([
             // 先判断是否有其他人改了当前的shipment
             self.shipmentPopupService.getInfo(self.originalShipment.id).then(function (data) {
                 tempShipment = data.shipment;
-                if (!_.isEqual(self.originalShipment, tempShipment)) {
+                // if (!_.isEqual(self.originalShipment, tempShipment)) {
+                if (self.originalShipment.status != tempShipment.status
+                    || self.originalShipment.shipmentName != tempShipment.shipmentName
+                    || self.originalShipment.shippedDate != tempShipment.shippedDate
+                    || self.originalShipment.expressCompany != tempShipment.expressCompany
+                    || self.originalShipment.trackingNo != tempShipment.trackingNo
+                    || self.originalShipment.comment != tempShipment.comment) {
                     self.alert("TXT_SHIPMENT_HAVE_BEEN_EDITED");
                     self.$uibModalInstance.close(tempShipment);
                     return;
