@@ -27,7 +27,7 @@ define(['underscore'], function (_) {
         /**
          * Feed
          */
-        MASTER:new Cart('FEED' , 1 , 'Feed数据',''),
+        FEED:new Cart('FEED' , 1 , 'Feed数据',''),
         /**
          * 天猫
          */
