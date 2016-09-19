@@ -71,7 +71,6 @@ define([
                         break;
                     case 'delete':
                         self.adminRoleService.removeAuth(saveInfo).then(function (res) {
-                            console.log(res);
                             if (res.data == true) {
                                 self.$uibModalInstance.close();
                             }
@@ -79,7 +78,6 @@ define([
                         break;
                     case 'add':
                         self.adminRoleService.addAuth(saveInfo).then(function (res) {
-                            console.log(res);
                             if (res.data == true) {
                                 self.$uibModalInstance.close();
                             }
