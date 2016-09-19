@@ -78,7 +78,7 @@ public final class CommonUtil {
         return builder.toString();
     }
 
-    public static String getExceptionSimpleContent(Exception e) {
+    public static String getExceptionSimpleContent(Throwable e) {
         String top = filterLocation(e, "com.voyageone");
 
         Throwable inner = getInner(e);
