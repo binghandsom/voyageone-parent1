@@ -1,6 +1,5 @@
-<div class="aside-wrap">
-    <div class="">
-        <!-- expand/collpase button -->
+<div class="aside-wrap" ng-controller="asideCtrl" ng-init="initialize()">
+    <div class="navi-wrap" ui-jq="slimScroll" ui-options="{height:'100%', size:'8px'}">
         <div class="vo_a_ce clearfix hidden-xs">
             <div class="hidden-xs">
                 <a href class="btn no-shadow"
@@ -9,8 +8,8 @@
                 </a>
             </div>
         </div>
+        <!-- nav -->
+        <nav ui-nav class="navi clearfix" ng-include="'views/home/menu/nav_new.tpl.html'"></nav>
+        <!-- nav -->
     </div>
-    <!-- nav -->
-    <nav ui-nav ng-include="'views/home/menu/nav_new.tpl.html'"></nav>
-    <!-- nav -->
 </div>

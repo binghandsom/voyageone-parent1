@@ -76,6 +76,9 @@ define([
         // menu.breadcrumbs.
         .controller('breadcrumbsCtrl', breadcrumbsCtrl)
 
+        // menu.aside.
+        .controller('asideCtrl', asideCtrl);
+
     function appCtrl($scope, $window, translateService) {
 
         var isIE = !!navigator.userAgent.match(/MSIE/i);
@@ -199,6 +202,15 @@ define([
          */
         function selectCategory(cid) {
             $location.path(cRoutes.category.url + cid);
+        }
+    }
+
+    function asideCtrl($scope) {
+
+        $scope.initialize = initialize;
+
+        function initialize() {
+
         }
     }
 
