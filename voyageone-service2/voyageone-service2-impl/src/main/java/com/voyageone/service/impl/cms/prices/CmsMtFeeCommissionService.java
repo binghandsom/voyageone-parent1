@@ -48,7 +48,7 @@ public class CmsMtFeeCommissionService extends BaseService {
             {FIELD_CHANNELID, FIELD_CARTID},
             {FIELD_CHANNELID, FIELD_PLATFORMID},
             {FIELD_CHANNELID},
-            {FIELD_CARTID},
+            {FIELD_PLATFORMID, FIELD_CARTID},
             {FIELD_PLATFORMID},
             {} // 最低优先级, 表示仅包含 commission type
     };
