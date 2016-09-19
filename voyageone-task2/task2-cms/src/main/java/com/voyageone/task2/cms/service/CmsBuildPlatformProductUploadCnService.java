@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -20,6 +21,7 @@ import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.dao.cms.mongo.CmsBtSxCnInfoDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
@@ -28,6 +30,7 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsMtChannelConditionConfigModel;
+import com.voyageone.service.model.cms.mongo.CmsBtSxCnInfoModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -68,6 +71,8 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
     private CnSchemaService cnSchemaService;
     @Autowired
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
+    @Autowired
+    private CmsBtSxCnInfoDao cmsBtSxCnInfoDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -207,7 +212,14 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
             // TODO:<root updateType="2">设置类目里的商品的排序
 
-            //
+            // 更新cms_bt_sx_cn_info_cXXX
+            updateCmsBtSxCnInfo(groupId, channelId, cartId, sxData, productXml, skuXml);
+//            List<CmsBtSxCnInfoModel> listModel = cmsBtSxCnInfoDao.selectWaitingPublishData(channelId, 1);
+//            listModel = cmsBtSxCnInfoDao.selectWaitingPublishData(channelId, 2);
+//
+//            List<Long> listGroupId = listModel.stream().map(CmsBtSxCnInfoModel::getGroupId).collect(Collectors.toList());
+//            listGroupId.clear();listGroupId.add(1234321L);listGroupId.add(121L);
+//            WriteResult rs = cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 1, getTaskName());
 
 
 //            // 上新或更新成功后回写product group表中的numIId和platformStatus(Onsale/InStock)
@@ -217,7 +229,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 //            sxProductService.updateImsBtProduct(sxData, getTaskName());
             // 回写workload表   (5等待xml上传)
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.waitCnUpload, getTaskName());
-
+            $info("groupId[%s] success!", groupId);
         } catch (Exception ex) {
             // 取得sxData为空
             if (sxData == null) {
@@ -231,7 +243,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             // 上传产品失败，后面商品也不用上传，直接回写workload表   (失败2)
             if (ex instanceof BusinessException) {
                 $error(ex.getMessage());
-                sxData.setErrorMessage(((BusinessException) ex).getMessage());
+                sxData.setErrorMessage(ex.getMessage());
             } else {
                 String errMsg = String.format("产品匹配或上传产品时异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [%s]",
                         channelId, cartId, groupId, ex.getMessage());
@@ -246,6 +258,36 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             return;
         }
 
+    }
+
+    private void updateCmsBtSxCnInfo(long groupId, String channelId, int cartId, SxData sxData, String productXml, String skuXml) {
+        CmsBtSxCnInfoModel findCnInfoModel;
+        findCnInfoModel = cmsBtSxCnInfoDao.selectInfoByGroupId(channelId, groupId, 0);
+        if (findCnInfoModel != null) {
+            // 有未post的数据，状态更新掉(4:上传终止)，不要重复post
+            cmsBtSxCnInfoDao.updatePublishFlg(channelId, new ArrayList<Long>(){{this.add(groupId);}}, 4, getTaskName());
+        } else {
+            findCnInfoModel = cmsBtSxCnInfoDao.selectInfoByGroupId(channelId, groupId, 1);
+            if (findCnInfoModel != null) {
+                // 有正在post的数据
+                throw new BusinessException("前一回上传处理未结束,请稍后再试!");
+            }
+        }
+
+        CmsBtSxCnInfoModel insertCnInfoModel = new CmsBtSxCnInfoModel();
+        insertCnInfoModel.setChannelId(channelId);
+        insertCnInfoModel.setOrgChannelId(sxData.getMainProduct().getOrgChannelId());
+        insertCnInfoModel.setCartId(cartId);
+        insertCnInfoModel.setGroupId(groupId);
+        insertCnInfoModel.setCatIds(sxData.getMainProduct().getPlatform(cartId).getSellerCats().stream().map(CmsBtProductModel_SellerCat::getcId).collect(Collectors.toList()));
+        insertCnInfoModel.setCode(sxData.getMainProduct().getCommon().getFields().getCode());
+        insertCnInfoModel.setProdId(sxData.getMainProduct().getProdId());
+        insertCnInfoModel.setProductXml(productXml);
+        insertCnInfoModel.setSkuXml(skuXml);
+        insertCnInfoModel.setPublishFlg(0);
+        insertCnInfoModel.setCreater(getTaskName());
+        insertCnInfoModel.setModifier(getTaskName());
+        cmsBtSxCnInfoDao.insert(insertCnInfoModel);
     }
 
     /**
