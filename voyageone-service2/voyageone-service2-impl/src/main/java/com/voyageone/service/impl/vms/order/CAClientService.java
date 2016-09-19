@@ -47,9 +47,11 @@ public class CAClientService extends BaseService {
         return vmsBtCAClientDao.selectClientOrderDetailList(channelId, orderIds);
     }
 
-    public void updateClientOrderStatus(String channelId, String orderId, String status,String modifier) {
-        vmsBtCAClientDao.updateClientOrderStatus(orderId, channelId, status,modifier);
-        vmsBtCAClientDao.updateClientOrderDetailsStatus(orderId,channelId,status,modifier);
+    public void updateClientOrderStatusWithDetails(String channelId, String orderId, String status,String modifier,boolean isWith) {
+        vmsBtCAClientDao.updateClientOrderStatus(orderId, channelId, status, modifier);
+        if(isWith) {
+            vmsBtCAClientDao.updateClientOrderDetailsStatus(orderId, channelId, status, modifier);
+        }
     }
 
 }

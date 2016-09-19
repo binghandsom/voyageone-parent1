@@ -223,7 +223,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         // 更新【品牌方订单一览】vms_bt_client_orders
 
-        caClientService.updateClientOrderStatus(channelId, orderID, AcknowledgedBySeller,"acknowledgeOrder");
+        caClientService.updateClientOrderStatusWithDetails(channelId, orderID, AcknowledgedBySeller,"acknowledgeOrder",true);
 
         //消息生成
         Map<String, Object> mqMessageMap = new HashMap<>();
@@ -316,7 +316,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         if(hasShipped) {
             // 更新 【品牌方订单一览】vms_bt_client_orders
-            caClientService.updateClientOrderStatus(channelId, orderID, tempStatus,"shipOrder");
+            caClientService.updateClientOrderStatusWithDetails(channelId, orderID, tempStatus,"shipOrder",false);
         }else{
             logger.warn("未找到shipped订单明细");
         }
@@ -386,7 +386,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                 tempUpdateModel.setCancelReason(tempSkuReasonMap.get(sku).name());
                 tempUpdateModel.setStatus("Canceled");
                 tempUpdateModel.setId(vmsBtClientOrderDetailsModel.getId());
-                matchModelList.add(vmsBtClientOrderDetailsModel);
+                matchModelList.add(tempUpdateModel);
 
                 Map<String, Object> tempRecord = new HashMap<>();
                 tempRecord.put("reservation_id", vmsBtClientOrderDetailsModel.getReservationId());
@@ -428,7 +428,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         // 更新 【品牌方订单一览】vms_bt_client_orders
 
         if (tempStatus.equals("Canceled")) {
-            caClientService.updateClientOrderStatus(channelId, orderID, tempStatus,"cancelOrder");
+            caClientService.updateClientOrderStatusWithDetails(channelId, orderID, tempStatus,"cancelOrder",false);
         }
 
         // 消息生成
@@ -528,7 +528,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         // 更新 【品牌方订单一览】vms_bt_client_orders
 
         if (tempStatus.equals("Canceled")) {
-            caClientService.updateClientOrderStatus(channelId, orderID, tempStatus,"refundOrder");
+            caClientService.updateClientOrderStatusWithDetails(channelId, orderID, tempStatus,"refundOrder",false);
         }
 
 

@@ -26,7 +26,7 @@ public class CAOrderControllerTest {
          * userAccount:                 vms_channeladvisor
          * clientId(SellerID):          channeladvisor
          * clientSecret(SellerToken):   Y2hhbm5lbGFkdmlzb3I=
-         * channelId:                   010
+         * channelId:                   028
          */
         HEADER.put("SellerID", "channeladvisor");
         HEADER.put("SellerToken", "Y2hhbm5lbGFkdmlzb3I=");
