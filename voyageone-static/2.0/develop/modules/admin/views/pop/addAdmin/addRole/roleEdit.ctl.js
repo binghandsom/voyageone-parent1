@@ -32,13 +32,13 @@ define([
                     'roleIds': self.sourceData.roleIds,
                     'application': self.sourceData.application ? self.sourceData.application : "admin"
                 }).then(function (res) {
-                    self.permsStatus = res.data.perms;
                     self.resList = res.data.res;
-                    console.log(res.data);
+                    self.permsStatus = res.data.perms;
                     _.forEach(self.applicationList, function (item) {
                         _.map(self.permsStatus, function (ps) {
                             if (ps.application === item.application.toLocaleLowerCase()) {
                                 item.selected = ps.selected;
+                                item.selected !== 2 ? item.selected == 1 ? item.valid = true : item.valid = false : item.selected = 2;
                             }
                         })
                     })
