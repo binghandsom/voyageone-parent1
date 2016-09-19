@@ -3,8 +3,10 @@ package com.voyageone.components.tmall.service;
 import com.taobao.api.ApiException;
 import com.taobao.api.request.TmallItemSimpleschemaAddRequest;
 import com.taobao.api.request.TmallItemSimpleschemaUpdateRequest;
+import com.taobao.api.request.TmallItemUpdateSimpleschemaGetRequest;
 import com.taobao.api.response.TmallItemSimpleschemaAddResponse;
 import com.taobao.api.response.TmallItemSimpleschemaUpdateResponse;
+import com.taobao.api.response.TmallItemUpdateSimpleschemaGetResponse;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.tmall.TbBase;
 import org.apache.commons.lang3.StringUtils;
@@ -70,6 +72,32 @@ public class TbSimpleItemService extends TbBase {
         }
 
         return response.getUpdateItemResult();
+    }
+
+    /**
+     * 天猫官网同购编辑商品的get接口
+     * 淘宝接口名：tmall.item.update.simpleschema.get
+     * 文档地址：http://open.taobao.com/docs/api.htm?apiId=26232
+     *
+     * @param shopBean 店铺
+     * @param numIId 商品id
+     * @return numIId
+     * @throws ApiException
+     */
+    public String getSimpleItem(ShopBean shopBean, Long numIId) throws ApiException {
+
+        TmallItemUpdateSimpleschemaGetRequest request = new TmallItemUpdateSimpleschemaGetRequest();
+        request.setItemId(numIId);
+
+        TmallItemUpdateSimpleschemaGetResponse response = reqTaobaoApi(shopBean, request);
+
+        // 调用淘宝API未成功或者subCode不为空的时候(errorCode是英文错误，subCode是中文错误)
+        if (!response.isSuccess() || !StringUtils.isEmpty(response.getSubCode())) {
+            logger.error("getSimpleItem [SubMsg = " + response.getSubMsg() + "]");
+            return "ERROR:"+ response.getErrorCode() + ":" + response.getSubCode() + ":" + response.getSubMsg();
+        }
+
+        return response.getResult();
     }
 
 }
