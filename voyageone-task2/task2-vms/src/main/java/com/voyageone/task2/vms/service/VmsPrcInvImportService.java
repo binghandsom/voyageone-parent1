@@ -94,7 +94,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
             if (e instanceof BusinessException) {
                 status = PrcInvFileStatus.IMPORT_ERROR;
             }
-            $error("channelId: " + channelId + ", fileName: " + fileName + "-> " + e);
+            $error("channelId: " + channelId + ", fileName: " + fileName + " -> " + e);
             // 把文件管理的状态变为 异常
             VmsBtInventoryFileModel vmsBtInventoryFileModel = new VmsBtInventoryFileModel();
             // 更新条件
@@ -151,6 +151,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
         // 分析结果
         while (csvReader.readRecord()) {
             Date date = new Date();
+            boolean haveError = false;
             lineNumber++;
             // 检查该行内容
 
@@ -159,7 +160,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
             if (StringUtils.isEmpty(sku)) {
                 prcInvFileErrorMessage.add(sku, pendingFileInfo.skuColumnNumber, lineNumber,
                         "Missing required column: %s", new Object[]{"sku"});
-                continue;
+                haveError = true;
             }
 
             $debug(channelId + "->SKU: " + sku + ", SKU检查 " + (new Date().getTime() - date.getTime()) + "毫秒.");
@@ -170,15 +171,15 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
                 tempPrice = csvReader.get(pendingFileInfo.priceColumnNumber);
                 // 空值检查
                 if (StringUtils.isEmpty(tempPrice)) {
-                    prcInvFileErrorMessage.add(sku, pendingFileInfo.skuColumnNumber, lineNumber,
+                    prcInvFileErrorMessage.add(sku, pendingFileInfo.priceColumnNumber, lineNumber,
                             "Missing required column: %s", new Object[]{"price"});
-                    continue;
+                    haveError = true;
                 }
 
                 if (!StringUtils.isNumeric(tempPrice) || Float.valueOf(tempPrice) <= 0) {
-                    prcInvFileErrorMessage.add(sku, pendingFileInfo.skuColumnNumber, lineNumber,
+                    prcInvFileErrorMessage.add(sku, pendingFileInfo.priceColumnNumber, lineNumber,
                             "%s must be a positive number", new Object[]{"price"});
-                    continue;
+                    haveError = true;
                 }
             }
             final String price = tempPrice;
@@ -194,7 +195,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
                 if (!StringUtils.isNumeric(tempMsrp) || Float.valueOf(tempMsrp) <= 0) {
                     prcInvFileErrorMessage.add(sku, pendingFileInfo.msrpColumnNumber, lineNumber,
                             "%s must be a positive number", new Object[]{"msrp"});
-                    continue;
+                    haveError = true;
                 }
             }
 
@@ -210,26 +211,41 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
                 if (StringUtils.isEmpty(tempInventory)) {
                     prcInvFileErrorMessage.add(sku, pendingFileInfo.inventoryColumnNumber, lineNumber,
                             "Missing required column: %s", new Object[]{"quantity"});
-                    continue;
+                    haveError = true;
                 }
                 if (!StringUtils.isDigit(tempInventory)) {
                     prcInvFileErrorMessage.add(sku, pendingFileInfo.inventoryColumnNumber, lineNumber,
                             "%s must be a positive number", new Object[]{"quantity"});
-                    continue;
+                    haveError = true;
                 }
             }
 
             final String inventory = tempInventory;
 
 
+
             CmsBtFeedInfoModel cmsBtFeedInfoModel = cmsBtFeedInfoDao.selectProductByClientSku(channelId, sku);
 
+            if (null == cmsBtFeedInfoModel) {
+                prcInvFileErrorMessage.add(sku, pendingFileInfo.inventoryColumnNumber, lineNumber,
+                        "SKU not found");
+                haveError = true;
+            }
+
+            if (haveError) continue;
 
             cmsBtFeedInfoModel.getSkus().stream()
                     .filter(cmsBtFeedInfoModel_sku -> cmsBtFeedInfoModel_sku.getClientSku().equals(sku))
                     .forEach(cmsBtFeedInfoModel_sku -> {
-                        if (null != price) cmsBtFeedInfoModel_sku.setPriceClientRetail(Double.valueOf(price));
-                        if (null != msrp) cmsBtFeedInfoModel_sku.setPriceClientMsrp(Double.valueOf(msrp));
+                        if (null != price) {
+                            cmsBtFeedInfoModel_sku.setPriceClientRetail(Double.valueOf(price));
+                            cmsBtFeedInfoModel_sku.setPriceCurrent(Double.valueOf(price));
+                            cmsBtFeedInfoModel_sku.setPriceNet(Double.valueOf(price));
+                        }
+                        if (null != msrp) {
+                            cmsBtFeedInfoModel_sku.setPriceClientMsrp(Double.valueOf(msrp));
+                            cmsBtFeedInfoModel_sku.setPriceMsrp(Double.valueOf(msrp));
+                        }
                         if (null != inventory) cmsBtFeedInfoModel_sku.setQty(Integer.valueOf(inventory));
                     });
 
@@ -426,7 +442,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
                 errorMessage = String.format(errorMessage, args);
             try {
                 this.csvWriter.writeRecord(
-                        new String[]{sku, String.valueOf(columnNumber), String.valueOf(lineNumber), errorMessage});
+                        new String[]{sku, String.valueOf(columnNumber + 1), String.valueOf(lineNumber), errorMessage});
                 $debug(channelId + "-> lineNumber: " + lineNumber + ", error: " + errorMessage);
             } catch (IOException e) {
                 throw new SystemException("8000041");
