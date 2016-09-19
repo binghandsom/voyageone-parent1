@@ -33,6 +33,25 @@ public class VmsConstants {
 	}
 
 	/**
+	 * 价格/库存文件导入状态
+	 */
+	public final static class PrcInvFileStatus {
+		public final static String WAITING_IMPORT = "1";
+		public final static String IMPORTING = "2";
+		public final static String IMPORT_COMPLETED = "3";
+		public final static String IMPORT_ERROR = "4";
+		public final static String IMPORT_SYSTEM_ERROR = "5";
+	}
+
+	/**
+	 * 价格/库存文件上传类型
+	 */
+	public final static class PrcInvUploadType {
+		public final static String ONLINE = "1";
+		public final static String FTP = "2";
+	}
+
+	/**
 	 * 财务报表状态
 	 */
 	public final static class FinancialReportStatus {

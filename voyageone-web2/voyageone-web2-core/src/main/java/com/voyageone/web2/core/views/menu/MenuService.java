@@ -171,6 +171,11 @@ public class MenuService extends BaseViewService {
         inventoryFileUpload.put("name", "Inventory&Price Feed Upload");
         inventoryFileUpload.put("url", "#/inventory/inventory_feed_upload");
         inventoryMenuItems.add(inventoryFileUpload);
+        // Inventory->Inventory Import Status
+        Map<String, String> inventoryImportStatus = new HashMap<>();
+        inventoryImportStatus.put("name", "Inventory&Price Feed Import Status");
+        inventoryImportStatus.put("url", "#/inventory/inventory_import_status");
+        inventoryMenuItems.add(inventoryImportStatus);
         inventoryMenu.put("items", inventoryMenuItems);
 
         // Shipment

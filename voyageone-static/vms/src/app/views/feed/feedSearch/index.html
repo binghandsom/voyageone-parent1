@@ -18,8 +18,8 @@
                     <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
                         <ul class="nav navbar-nav">
                             <li uib-dropdown>
-                                <a href="#" uib-dropdown-toggle translate="TXT_CATEGORY" style="padding: 0 20px;" ng-change="ctrl.deleteCat(ctrl.aa)" ng-model="ctrl.aa" result="ctrl.searchCats">
-                                    <b class='caret'></b>
+                                <a href="#" uib-dropdown-toggle style="padding: 0 14px 0 0px;margin-left: -15px;color: #333;" ng-change="ctrl.deleteCat(ctrl.aa)" ng-model="ctrl.aa" result="ctrl.searchCats">
+                                    {{'TXT_CATEGORY'|translate}}&nbsp;&nbsp;<i class="fa fa-angle-down"></i>
                                 </a>
                                 <tree tree='ctrl.categories' result="ctrl.searchCats" search="ctrl"></tree>
                             </li>
