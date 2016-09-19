@@ -202,11 +202,15 @@ define([
         };
 
         BlackBrandListController.prototype.selectCarts = function () {
-            var self = this;
+            var self = this,
+                brandType = self.searchInfo.brandType;
 
-            _.each(self.cartList, function (item) {
-                self.searchInfo.cart[item.value] = true;
-            });
+            if(brandType == '2'){
+                _.each(self.cartList, function (item) {
+                    self.searchInfo.cart[item.value] = true;
+                });
+            }
+
         };
 
         BlackBrandListController.prototype.checkCarts = function () {
