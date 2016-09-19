@@ -135,7 +135,7 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
         }
     }
 
-    private void block(CmsBtBrandBlockModel brandBlockModel) throws BlockBrandOffShelfFailException {
+    private void block(CmsBtBrandBlockModel brandBlockModel) {
         switch (brandBlockModel.getType()) {
             case CmsBtBrandBlockService.BRAND_TYPE_FEED:
                 blockFeedBrand(brandBlockModel);
@@ -153,9 +153,8 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
      * 屏蔽平台品牌，同时下架这些品牌的商品
      *
      * @param brandBlockModel 屏蔽品牌的数据模型
-     * @throws BlockBrandOffShelfFailException 下架失败
      */
-    private void blockPlatformBrand(CmsBtBrandBlockModel brandBlockModel) throws BlockBrandOffShelfFailException {
+    private void blockPlatformBrand(CmsBtBrandBlockModel brandBlockModel) {
 
         String channelId = brandBlockModel.getChannelId();
 
@@ -169,16 +168,19 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
 
         productModelList.forEach(offShelfHelper::addProduct);
 
-        offShelfHelper.offThem();
+        try {
+            offShelfHelper.offThem();
+        } catch (BlockBrandOffShelfFailException e) {
+            logIssue(e.getCause());
+        }
     }
 
     /**
      * 屏蔽主数据品牌，同时下架这些品牌的商品。并最终锁定这些商品
      *
      * @param brandBlockModel 屏蔽品牌的数据模型
-     * @throws BlockBrandOffShelfFailException 下架失败
      */
-    private void blockMasterBrand(CmsBtBrandBlockModel brandBlockModel) throws BlockBrandOffShelfFailException {
+    private void blockMasterBrand(CmsBtBrandBlockModel brandBlockModel) {
 
         String channelId = brandBlockModel.getChannelId();
 
@@ -187,25 +189,27 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
         if (productModelList == null || productModelList.isEmpty())
             return;
 
-        OffShelfHelper offShelfHelper = new OffShelfHelper(channelId);
-
-        productModelList.forEach(offShelfHelper::addProduct);
-
-        offShelfHelper.offThem();
-
-        // 在下架完成之后
-        // 锁定商品
-        for (CmsBtProductModel productModel : productModelList)
+        for (CmsBtProductModel productModel : productModelList) {
+            OffShelfHelper offShelfHelper = new OffShelfHelper(channelId);
+            offShelfHelper.addProduct(productModel);
+            try {
+                offShelfHelper.offThem();
+            } catch (BlockBrandOffShelfFailException e) {
+                logIssue(e.getCause());
+                continue;
+            }
+            // 在下架完成之后
+            // 锁定商品
             lockProduct(productModel.getCommon().getFields().getCode(), channelId);
+        }
     }
 
     /**
      * 屏蔽 Feed 品牌，同时下架这些品牌的商品对应的平台商品。并最终锁定所有的平台商品
      *
      * @param brandBlockModel 屏蔽品牌的数据模型
-     * @throws BlockBrandOffShelfFailException 下架失败
      */
-    private void blockFeedBrand(CmsBtBrandBlockModel brandBlockModel) throws BlockBrandOffShelfFailException {
+    private void blockFeedBrand(CmsBtBrandBlockModel brandBlockModel) {
 
         String channelId = brandBlockModel.getChannelId();
 
@@ -213,8 +217,6 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
 
         if (feedInfoModelList == null || feedInfoModelList.isEmpty())
             return;
-
-        OffShelfHelper offShelfHelper = new OffShelfHelper(channelId);
 
         // 先更新所有的 feed upFlg 为 7，标记为黑名单商品
         // 之后，在过滤记录那些已经有 master 数据的商品 code
@@ -232,14 +234,18 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
             if (productModel == null)
                 continue;
 
+            OffShelfHelper offShelfHelper = new OffShelfHelper(channelId);
             offShelfHelper.addProduct(productModel);
-        }
-
-        offShelfHelper.offThem();
-
-        // 在下架完成之后
-        // 锁定商品
-        for (CmsBtFeedInfoModel feedInfoModel : feedInfoModelList) {
+            try {
+                offShelfHelper.offThem();
+            } catch (BlockBrandOffShelfFailException e) {
+                // 下架失败
+                // 跳过锁定
+                logIssue(e.getCause());
+                continue;
+            }
+            // 在下架完成之后
+            // 锁定商品
             lockProduct(feedInfoModel.getCode(), channelId);
         }
     }
