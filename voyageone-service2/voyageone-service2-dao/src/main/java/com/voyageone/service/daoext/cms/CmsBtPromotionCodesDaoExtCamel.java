@@ -7,12 +7,15 @@
  */
 package com.voyageone.service.daoext.cms;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 @Repository
 public interface CmsBtPromotionCodesDaoExtCamel {
     int deleteByPromotionId(int promotionId);
     int deleteByPromotionCodeList(Map<String,Object> map);
+    int updateJmPromotionPrice(@Param("jmPromotionId")int jmPromotionId, @Param("listPromotionProductId") List<Long> listPromotionProductId);
 }
