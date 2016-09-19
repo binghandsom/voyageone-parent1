@@ -6,6 +6,12 @@
                     <h4 class="panel-title"><i class="glyphicon glyphicon-star"></i>&nbsp;欢迎页面
                     </h4>
                 </div>
+                <div class="panel-body">
+                    <div class="text-warnings">
+                        <i class="icon fa fa-bell-o"></i>&nbsp;
+                        首页&nbsp;<strong>【每小时刷新一次】</strong>&nbsp;，如与其它反馈有些许差异，请稍后重新确认。
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -60,6 +66,13 @@
                                         Feed数据错误数
                                     </div>
                                 </li>
+                                <li>
+                                    <div class="right data-priority-1"
+                                         ng-click="jumpBlackBrand('0|1|0')">
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_feedBrand_block.amountVal}}</strong>
+                                        黑名单品牌数
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -92,6 +105,13 @@
                                          ng-click="goSearchPage(10,{transStsFlg:'0'})">
                                         <strong>{{vm.sumData.masterSum.CMS_MASTER_UNTRANSLATED.amountVal}}</strong>
                                         等待翻译数
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="right data-priority-2"
+                                         ng-click="jumpBlackBrand('1|1|0')">
+                                        <strong>{{vm.sumData.masterSum.CMS_MASTER_Brand_block.amountVal}}</strong>
+                                        黑名单品牌数
                                     </div>
                                 </li>
                             </ul>
@@ -191,7 +211,7 @@
                                             <th class="mfb-xt text-center">上新失败数</th>
                                             <th class="mfb-xt text-center">品牌未匹配数</th>
                                             <th class="mfb-xxt text-center">商品平台状态与实际相异数</th>
-
+                                            <th class="mfb-xxt text-center">黑名单品牌数</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -206,6 +226,8 @@
                                             <td class=" text-center"><a ng-click="goSearchPage(150,{cartId:m.CMS_PLATFORM_PUBLISH_FAILD.cartId,hasErrorFlg:'2'})"><span class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</span></a></td>
                                             <td class=" text-center"><a href="#/channel/brand_mapping_list/{{m.CMS_BrandNoMatchCount.cartId}}"><span class="label label-danger">{{m.CMS_BrandNoMatchCount.amountVal}}</span></a></td>
                                             <td class=" text-center"><a ng-click="goSearchPage(170,{cartId:m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.cartId,hasErrorFlg:'3'})"><span class="label label-danger">{{m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.amountVal}}</span></a></td>
+
+                                            <td class=" text-center"><a ng-click="jumpBlackBrand('2|1|{{m.CMS_PLATFORM_Brand_block.cartId}}')"><span class="label label-danger">{{m.CMS_PLATFORM_Brand_block.amountVal}}</span></a></td>
                                         </tr>
                                         </tbody>
                                     </table>

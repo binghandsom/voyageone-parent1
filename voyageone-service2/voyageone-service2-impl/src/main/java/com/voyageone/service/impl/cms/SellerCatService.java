@@ -19,19 +19,19 @@ import com.voyageone.components.tmall.service.TbSellerCatService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
-import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -136,6 +136,7 @@ public class SellerCatService extends BaseService {
         copyRoot.setCatId(node.getCatId());
         copyRoot.setCatName(node.getCatName());
         copyRoot.setParentCatId(node.getParentCatId());
+        copyRoot.setIsParent(node.getIsParent());
         copyRoot.setChannelId(node.getChannelId());
         copyRoot.setCartId(node.getCartId());
         copyRoot.setCreated(node.getCreated());
@@ -531,7 +532,8 @@ public class SellerCatService extends BaseService {
      */
     private boolean isTMPlatform(String shopCartId) {
         if (shopCartId.equals(CartEnums.Cart.TM.getId()) || shopCartId.equals(CartEnums.Cart.TB.getId()) ||
-                shopCartId.equals(CartEnums.Cart.TG.getId()) || shopCartId.equals(CartEnums.Cart.TMM.getId())) {
+                shopCartId.equals(CartEnums.Cart.TG.getId()) || shopCartId.equals(CartEnums.Cart.TT.getId())
+                || shopCartId.equals(CartEnums.Cart.USTT.getId())) {
             return true;
         }
         return false;

@@ -22,6 +22,7 @@ define(['underscore'], function (_) {
         Error: new FeedStatus(2, 'TXT_FeedStatus_Error'),
         NotImport: new FeedStatus(3, 'TXT_FeedStatus_NotImport'),
         FeedErr: new FeedStatus(8, 'TXT_FeedStatus_DateError'),
+        BrandBlock: new FeedStatus(7, 'TXT_FeedStatus_BrandBlock'),
 
         /**
          * 获取枚举

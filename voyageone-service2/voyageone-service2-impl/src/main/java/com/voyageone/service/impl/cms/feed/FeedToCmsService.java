@@ -26,6 +26,7 @@ import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -205,16 +206,16 @@ public class FeedToCmsService extends BaseService {
                 } else {
                     //如果是新的产品,如config已配置直接导入
                     //flag 1导入
-//                    CmsChannelConfigBean isImportFeedTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SET_FEED_IMPORT_FLG);
-//                    if(isImportFeedTypeConfig != null &&"1".equals(isImportFeedTypeConfig.getConfigValue1())){
-//                        insertLog = true;
-//                        product.setCreater(modifier);
-//                        product.setUpdFlg(0);
-//                    }else{
+                    CmsChannelConfigBean isImportFeedTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SET_FEED_IMPORT_FLG);
+                    if(isImportFeedTypeConfig != null &&"1".equals(isImportFeedTypeConfig.getConfigValue1())){
+                        insertLog = true;
+                        product.setCreater(modifier);
+                        product.setUpdFlg(0);
+                    }else{
                         insertLog = true;
                         product.setCreater(modifier);
                         product.setUpdFlg(9);
-//                    }
+                    }
                 }
                 // code 库存计算
                 Integer qty = 0;
@@ -419,16 +420,16 @@ public class FeedToCmsService extends BaseService {
                 String unit = skuModel.getWeightOrgUnit().trim();
                 String weightOrg = skuModel.getWeightOrg().trim();
                 if (unit.toLowerCase().indexOf("oz") > -1) {
-                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 16.0);
+                    Double convertWeight = round(Double.parseDouble(weightOrg) / 16.0);
                     skuModel.setWeightCalc(convertWeight.toString());
                 } else if (unit.toLowerCase().indexOf("lb") > -1) {
-                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg));
+                    Double convertWeight = round(Double.parseDouble(weightOrg));
                     skuModel.setWeightCalc(convertWeight.toString());
                 } else if (unit.toLowerCase().equals("g")) {
-                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 453.59237);
+                    Double convertWeight = round(Double.parseDouble(weightOrg) / 453.59237);
                     skuModel.setWeightCalc(convertWeight.toString());
                 } else if (unit.toLowerCase().equals("kg")) {
-                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 0.4535924);
+                    Double convertWeight = round(Double.parseDouble(weightOrg) / 0.4535924);
                     skuModel.setWeightCalc(convertWeight.toString());
                 }
             }
@@ -437,6 +438,10 @@ public class FeedToCmsService extends BaseService {
         }
     }
 
+    private Double round(Double value){
+        BigDecimal b = new BigDecimal(value);
+        return b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
     private void priceConvert(CmsBtFeedInfoModel_Sku skuModel) {
         Integer weightCalc = StringUtil.isEmpty(skuModel.getWeightCalc()) ? 4 : Integer.parseInt(skuModel.getWeightCalc());
         Double current = (skuModel.getPriceNet() + weightCalc * 3.5) * 6.7 / (1 - 0.1 - 0.05 - 0.119 - 0.05);

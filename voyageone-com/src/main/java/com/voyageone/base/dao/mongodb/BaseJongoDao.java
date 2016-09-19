@@ -160,4 +160,8 @@ public abstract class BaseJongoDao<T> implements ApplicationContextAware {
     public boolean collectionExists(final String collectionName) {
         return mongoTemplate.collectionExists(collectionName);
     }
+
+    public <T> List<T> distinct(String key, String collectionName, final Class<T> clazz) {
+        return mongoTemplate.distinct(key, collectionName, clazz);
+    }
 }
