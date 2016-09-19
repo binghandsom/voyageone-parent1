@@ -20,9 +20,10 @@
         <task:scheduled ref="VmsGetHomeInfoJob" method="run" cron="0 0 0/1 * * ?"/>
 
         <!--扫描vendor通过ftp上传的csv文件 每个05m30s运行一次-->
-        <task:scheduled ref="VmsPrcInvFileScanJob" method="run" cron="30 * * * * ?"/>
+        <!--<task:scheduled ref="VmsPrcInvFileScanJob" method="run" cron="30 * * * * ?"/>-->
+        <task:scheduled ref="VmsPrcInvFileScanJob" method="run" cron="30 0/5 * * * ?"/>
 
-    </task:scheduled-tasks>
+</task:scheduled-tasks>
 
 <!-- 必须需要 -->
     <task:scheduler id="vms-job-scheduler" pool-size="3"/>
