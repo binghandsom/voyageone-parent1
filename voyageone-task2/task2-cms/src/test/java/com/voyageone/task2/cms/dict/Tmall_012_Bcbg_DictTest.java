@@ -180,7 +180,7 @@ public class Tmall_012_Bcbg_DictTest {
 						}
 					}
 
-					CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(null, imageParams, useCmsBtImageTemplate);
+					CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(null, imageParams, useCmsBtImageTemplate, null);
 					ruleRoot.addRuleWord(new CustomWord(word));
 				}
 
@@ -238,7 +238,7 @@ public class Tmall_012_Bcbg_DictTest {
 				RuleExpression useCmsBtImageTemplate = new RuleExpression();
 				useCmsBtImageTemplate.addRuleWord(new TextWord("true"));
 
-				CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, useCmsBtImageTemplate);
+				CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, useCmsBtImageTemplate, null);
 				ruleRoot.addRuleWord(new CustomWord(word));
 			}
 
@@ -257,7 +257,7 @@ public class Tmall_012_Bcbg_DictTest {
 				RuleExpression useOriUrl = new RuleExpression();
 				useOriUrl.addRuleWord(new TextWord("1"));
 
-				CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
+				CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
 				ruleRoot.addRuleWord(new CustomWord(word));
 			}
 

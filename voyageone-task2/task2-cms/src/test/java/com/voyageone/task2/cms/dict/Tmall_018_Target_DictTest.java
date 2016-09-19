@@ -153,7 +153,7 @@ public class Tmall_018_Target_DictTest {
 							}
 						}
 
-						CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null);
+						CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
 						ruleRoot.addRuleWord(new CustomWord(word));
 					}
 
@@ -178,7 +178,7 @@ public class Tmall_018_Target_DictTest {
 					RuleExpression useOriUrl = new RuleExpression();
 					useOriUrl.addRuleWord(new TextWord("1"));
 
-					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
+					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
 					ruleRoot.addRuleWord(new CustomWord(word));
 				}
 
@@ -204,7 +204,7 @@ public class Tmall_018_Target_DictTest {
 
 						RuleExpression useOriUrl = null;
 
-						CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
+						CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
 						ruleRoot.addRuleWord(new CustomWord(word));
 					}
 				}
@@ -599,7 +599,7 @@ public class Tmall_018_Target_DictTest {
                     }
                 }
 
-                CustomWordValueImageWithParam imagesWithParamWord = new CustomWordValueImageWithParam(imageTemplate, imageParams, null);
+                CustomWordValueImageWithParam imagesWithParamWord = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
                 ruleRoot.addRuleWord(new CustomWord(imagesWithParamWord));
 
                 imageStr = "\"}";

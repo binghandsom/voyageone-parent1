@@ -445,7 +445,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             modelCodes.setProductCode(productInfo.getCommon().getFields().getCode());
             //modelCodes.setProductName(com.taobao.api.internal.util.StringUtils.isEmpty(productInfo.getCommon().getFields().get.getFields().getLongTitle()) ? productInfo.getFields().getProductNameEn() : productInfo.getFields().getLongTitle());
             CmsBtProductModel_Platform_Cart ptfObj = productInfo.getPlatform(CartEnums.Cart.JM.getValue());
-            if (ptfObj != null && ptfObj.getSkus() != null && ptfObj.getSkus().isEmpty()) {
+            if (ptfObj != null && ptfObj.getSkus() != null && !ptfObj.getSkus().isEmpty()) {
                 modelCodes.setSalePrice(ptfObj.getSkus().get(0).getDoubleAttribute("priceSale"));
                 modelCodes.setRetailPrice(ptfObj.getSkus().get(0).getDoubleAttribute("priceRetail"));
                 modelCodes.setMsrp(ptfObj.getSkus().get(0).getDoubleAttribute("priceMsrp"));

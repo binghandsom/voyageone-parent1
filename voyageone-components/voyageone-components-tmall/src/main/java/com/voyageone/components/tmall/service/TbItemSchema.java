@@ -2,12 +2,18 @@ package com.voyageone.components.tmall.service;
 
 import com.taobao.top.schema.enums.FieldTypeEnum;
 import com.taobao.top.schema.field.*;
+import com.taobao.top.schema.field.ComplexField;
+import com.taobao.top.schema.field.Field;
+import com.taobao.top.schema.field.InputField;
+import com.taobao.top.schema.field.MultiCheckField;
+import com.taobao.top.schema.field.MultiComplexField;
+import com.taobao.top.schema.field.MultiInputField;
+import com.taobao.top.schema.field.SingleCheckField;
 import com.taobao.top.schema.value.ComplexValue;
+import com.voyageone.common.masterdate.schema.field.*;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.voyageone.components.tmall.service.TbConstants.sizeSortMap;
 
@@ -20,11 +26,14 @@ public class TbItemSchema {
 
     private Map<String, Field> fieldMap;
 
-    private long num_iid;
+    private final long num_iid;
 
-    TbItemSchema(long num_iid, List<Field> fields) {
+    private final boolean simple;
+
+    TbItemSchema(long num_iid, List<Field> fields, boolean simple) {
         this.num_iid = num_iid;
         this.fields = fields;
+        this.simple = simple;
     }
 
     public long getNum_iid() {
@@ -94,6 +103,10 @@ public class TbItemSchema {
         }
     }
 
+    public boolean isSimple() {
+        return simple;
+    }
+
     private boolean setSpecialFieldValue(Field field) {
         // 暂时只有 sku 排序, 所以这里是简写写法
         // 后续请在此修改, 对更多字段提供支持
@@ -132,6 +145,13 @@ public class TbItemSchema {
      * @param imageUrls 主图地址
      */
     public void setMainImage(Map<Integer, String> imageUrls) {
+        if (isSimple())
+            setSimpleSchemaMainImage(imageUrls);
+        else
+            setFullSchemaMainImage(imageUrls);
+    }
+
+    private void setFullSchemaMainImage(Map<Integer, String> imageUrls) {
 
         // 找到第一个节点。否则为空
         Field field = getFieldMap().get("item_images");
@@ -145,10 +165,35 @@ public class TbItemSchema {
             int index = imageUrl.getKey();
 
             // 不在 1-5 范围内说明数据本身有问题,直接无视
-            if (index < 1 || index > 5) return;
+            if (index < 1 || index > 5) continue;
 
             complexValue.setInputFieldValue("item_image_" + String.valueOf(index - 1), imageUrl.getValue());
         }
+    }
+
+    private void setSimpleSchemaMainImage(Map<Integer, String> imageUrls) {
+
+        Field field = getFieldMap().get("main_images");
+
+        InputField inputField = (InputField) field;
+
+        String imageSplitUrls = inputField.getDefaultValue();
+
+        String[] imageUrlArray = imageSplitUrls.split(",");
+
+        List<String> imageUrlList = new ArrayList<>(imageUrlArray.length);
+
+        Collections.addAll(imageUrlList, imageUrlArray);
+
+        imageUrls.forEach((index, url) -> {
+            // 跳过异常数据
+            if (index < 1 || index > 5) return;
+            imageUrlList.add(index, url);
+        });
+
+        imageSplitUrls = StringUtils.join(imageUrlList, ",");
+
+        inputField.setValue(imageSplitUrls);
     }
 
     private Field getVerticalImage() {
