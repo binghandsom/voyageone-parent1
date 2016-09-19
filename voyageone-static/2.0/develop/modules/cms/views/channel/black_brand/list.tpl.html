@@ -9,9 +9,9 @@
                     <label class="control-label col-md-4 text-right">{{'TXT_BRAND_CATEGORY'|translate}} &nbsp;&nbsp;</label>
                     <div class="col-md-8">
                         <select class="form-control" style="width: 200px" ng-model="ctrl.searchInfo.brandType" ng-change="ctrl.selectCarts()">
-                            <option value="0">Feed品牌</option>
-                            <option value="1">Master品牌</option>
-                            <option value="2">平台品牌</option>
+                            <option value="0" translate="TXT_FEED_BRAND"></option>
+                            <option value="1" translate="TXT_MASTER_BRAND"></option>
+                            <option value="2" translate="TXT_PLATFORM_BRAND"></option>
                         </select>
                     </div>
                 </div>
@@ -88,10 +88,10 @@
                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
                         </label>
                     </th>
-                    <th class="text-center mfb-xxx">Master品牌</th>
-                    <th class="text-center mfb-xxx">品牌种类</th>
-                    <th class="text-center mfb-xxx">平台类型</th>
-                    <th class="text-center mfb-xxx">操作</th>
+                    <th class="text-center mfb-xxx" translate="TXT_BRAND"></th>
+                    <th class="text-center mfb-xxx" translate="TXT_BRAND_CATEGORY"></th>
+                    <th class="text-center mfb-xxx" translate="TXT_PLATFORM_TYPE"></th>
+                    <th class="text-center mfb-xxx" translate="TXT_ACTION"></th>
                 </tr>
                 </thead>
                 <tbody>

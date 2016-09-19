@@ -19,6 +19,8 @@ public class ShipmentBean {
     private String comment;
     private int orderTotal;
     private int skuTotal;
+    private boolean isPrinted;
+    private Date detailPrintTime;
 
     /**
      * 1:Open；3：Shipped；4：Arrived；5：Received；6：Receive Error
@@ -161,5 +163,21 @@ public class ShipmentBean {
 
     public void setSkuTotal(int skuTotal) {
         this.skuTotal = skuTotal;
+    }
+
+    public boolean isPrinted() {
+        return isPrinted;
+    }
+
+    public void setPrinted(boolean printed) {
+        isPrinted = printed;
+    }
+
+    public Date getDetailPrintTime() {
+        return detailPrintTime;
+    }
+
+    public void setDetailPrintTime(Date detailPrintTime) {
+        this.detailPrintTime = detailPrintTime;
     }
 }

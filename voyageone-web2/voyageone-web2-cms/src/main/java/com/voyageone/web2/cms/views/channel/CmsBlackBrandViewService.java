@@ -85,8 +85,10 @@ class CmsBlackBrandViewService extends BaseViewService {
         if (status != null)
             stream = stream.filter(i -> status.equals(i.isBlocked()));
 
-        if (!StringUtils.isEmpty(brand))
-            stream = stream.filter(i -> i.getBrandName().contains(brand));
+        if (!StringUtils.isEmpty(brand)) {
+            String lowerCase = brand.toLowerCase();
+            stream = stream.filter(i -> i.getBrandName().toLowerCase().contains(lowerCase));
+        }
 
         List<CmsBlackBrandViewBean> filtered = stream.collect(toList());
 

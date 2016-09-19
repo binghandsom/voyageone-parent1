@@ -7,6 +7,7 @@ import com.taobao.top.schema.field.MultiCheckField;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -189,7 +190,7 @@ public class SellerCatService extends BaseService {
 
         if (isJDPlatform(shopBean)) {
             cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
-        } else if (isTMPlatform(shopBean)) {
+        } else if (isTMPlatform(shopCartId)) {
             cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
         }
 
@@ -218,7 +219,7 @@ public class SellerCatService extends BaseService {
         String shopCartId = shopBean.getCart_id();
         if (isJDPlatform(shopBean)) {
             jdShopService.updateShopCategory(shopBean, cId, cName);
-        } else if (isTMPlatform(shopBean)) {
+        } else if (isTMPlatform(shopCartId)) {
             tbSellerCatService.updateSellerCat(shopBean, cId, cName);
         }
 
@@ -243,7 +244,7 @@ public class SellerCatService extends BaseService {
 
         if (isJDPlatform(shopBean)) {
             jdShopService.deleteShopCategory(shopBean, cId);
-        } else if (isTMPlatform(shopBean)) {
+        } else if (isTMPlatform(shopCartId)) {
             //去TM平台取店铺分类
             List<SellerCat> sellerCatList = tbSellerCatService.getSellerCat(shopBean);
             if(sellerCatList != null) {
@@ -289,7 +290,7 @@ public class SellerCatService extends BaseService {
             List<ShopCategory> shopCategory = jdShopService.getShopCategoryList(shopBean);
             sellerCat = formatJDModel(shopCategory, channelId, cartId, creator);
 
-        } else if (isTMPlatform(shopBean)) {
+        } else if (isTMPlatform(shopCartId)) {
             List<SellerCat> sellerCatList = tbSellerCatService.getSellerCat(shopBean);
             sellerCat = formatTMModel(sellerCatList, channelId, cartId, creator);
         }
@@ -304,7 +305,7 @@ public class SellerCatService extends BaseService {
 
         List<CmsBtSellerCatModel> sellerCat = new ArrayList<>();
 
-        if (isTMPlatform(shopBean)) {
+        if (isTMPlatform(shopCartId)) {
             List<SellerCat> sellerCatList = tbSellerCatService.getSellerCat(shopBean);
             sellerCat = formatTMModel(sellerCatList, channelId, cartId, creator);
             convert2Tree(sellerCat);
@@ -504,8 +505,13 @@ public class SellerCatService extends BaseService {
     /**
      * 是天猫平台
      */
-    private boolean isTMPlatform(ShopBean shopBean) {
-        return PlatFormEnums.PlatForm.TM.getId().equals(shopBean.getPlatform_id());
+    private boolean isTMPlatform(String shopCartId) {
+        if (shopCartId.equals(CartEnums.Cart.TM.getId()) || shopCartId.equals(CartEnums.Cart.TB.getId()) ||
+                shopCartId.equals(CartEnums.Cart.TG.getId()) || shopCartId.equals(CartEnums.Cart.TT.getId())
+                || shopCartId.equals(CartEnums.Cart.USTT.getId())) {
+            return true;
+        }
+        return false;
     }
 
 

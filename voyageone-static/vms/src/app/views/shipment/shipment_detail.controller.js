@@ -89,7 +89,7 @@ define([
                         self.audioPlay(true);
                     } catch (exception) {
                     }
-                    self.notify.success('TXT_SUCCESS');
+                    self.notify.success('TXT_SCANNED_SUCCESSFULLY');
                 }
                 else if (data.success == 0) {
                     try {
@@ -120,7 +120,7 @@ define([
 
                     self.shipmentDetailService.ship(req).then(function (data) {
                         if (data.result.succeedSkuCount > 0) {
-                            self.notify.success("TXT_SUCCESS");
+                            self.notify.success("TXT_SHIPPED");
                             window.location.href = self.fromUrl;
                         }
                     });
@@ -129,9 +129,12 @@ define([
         };
 
         ShipmentDetailController.prototype.printList = function () {
+            var self = this;
             $('#content').print({
                 noPrintSelector: ".no-print"
             });
+
+            self.shipmentDetailService.printed(self.shipment);
         };
 
         ShipmentDetailController.prototype.audioPlay = function (value) {

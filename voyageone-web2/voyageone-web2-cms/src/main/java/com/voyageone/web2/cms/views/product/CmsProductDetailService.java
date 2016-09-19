@@ -1349,7 +1349,7 @@ public class CmsProductDetailService extends BaseViewService {
         platForm.remove("pStatus");
         productService.updateProductPlatform(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
         String comment = paramr.getComment();
-        productStatusHistoryService.insert(paramr.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), paramr.getCartId(), EnumProductOperationType.Delisting, comment, modifier);
+        productStatusHistoryService.insert(paramr.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), paramr.getCartId(), EnumProductOperationType.DelistinGroup, comment, modifier);
         ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(), paramr.getCartId(), code);
         if (imsBtProductModel != null) {
             imsBtProductModel.setNumIid("");

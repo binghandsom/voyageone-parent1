@@ -23,8 +23,8 @@ public class CmsMtFeeCommissionServiceTest {
     public void test() {
         CmsMtFeeCommissionService.CommissionQueryBuilder queryBuilder = feeCommissionService.new CommissionQueryBuilder();
         queryBuilder.withCategory("???");
-        queryBuilder.withCart(23);
-        queryBuilder.withChannel("010");
+        queryBuilder.withCart(30);
+        queryBuilder.withChannel("017");
         queryBuilder.withPlatform(1);
         Double commission = queryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_PLATFORM);
         System.out.println("\n\n"+commission+"\n\n");
