@@ -406,7 +406,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
                 VmsBtInventoryFileModel vmsBtInventoryFileModel = new VmsBtInventoryFileModel();
                 vmsBtInventoryFileModel.setChannelId(channelId);
                 vmsBtInventoryFileModel.setFileName(fileName);
-                vmsBtInventoryFileModel.setErrorFileName(errorFileName);
+                vmsBtInventoryFileModel.setErrorFileName(fileName.replace("Inventory&Price_", "Inventory&Price_Check_Result_"));
                 vmsBtInventoryFileDaoExt.updateStatus(vmsBtInventoryFileModel);
             }
 
