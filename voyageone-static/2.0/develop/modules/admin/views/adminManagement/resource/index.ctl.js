@@ -9,20 +9,16 @@ define([
     'modules/admin/controller/treeTable.ctrl'
 ], function (admin) {
     admin.controller('ResManagementController', (function () {
-        function ResManagementController(popups, alert, confirm, adminResService, adminUserService, adminOrgService, selectRowsFactory) {
+        function ResManagementController(popups, alert, confirm, adminResService, adminUserService) {
             this.popups = popups;
             this.alert = alert;
             this.confirm = confirm;
             this.adminResService = adminResService;
             this.adminUserService = adminUserService;
-            this.adminOrgService = adminOrgService;
-            this.selectRowsFactory = selectRowsFactory;
             this.pageOption = {curr: 1, size: 10, total: 0, fetch: this.search.bind(this)};
 
             this.selectedList = [];
             this.flatResList = [];
-            this.resSelList = {selList: []};
-            this.tempSelect = null;
             this.searchInfo = {
                 application: '',
                 pageInfo: this.pageOption
@@ -51,23 +47,6 @@ define([
                     .then(function (res) {
                         self.resList = res.data.result;
                         self.pageOption.total = res.data.count;
-
-                        // 设置勾选框
-                        if (self.tempSelect == null) {
-                            self.tempSelect = new self.selectRowsFactory();
-                        } else {
-                            self.tempSelect.clearCurrPageRows();
-                            self.tempSelect.clearSelectedList();
-                        }
-                        _.forEach(self.resList, function (Info) {
-                            if (Info.updFlg != 8) {
-                                self.tempSelect.currPageRows({
-                                    "id": Info.id
-                                });
-                            }
-                        });
-                        self.resSelList = self.tempSelect.selectRowsInfo;
-                        // End 设置勾选框
                     })
             },
             clear: function () {
@@ -113,10 +92,10 @@ define([
                 var self = this;
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
-                        _.forEach(self.resSelList.selList, function (delInfo) {
+                        _.forEach(self.selectedList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
-                        self.adminOrgService.deleteOrg(delList).then(function (res) {
+                        self.adminResService.deleteRes(delList).then(function (res) {
                             self.search(1);
                         })
                     }

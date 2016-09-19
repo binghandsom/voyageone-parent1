@@ -77,7 +77,8 @@ define(function () {
                     "init": 'init',
                     "addRes": "addRes",
                     "updateRes": "updateRes",
-                    "deleteRes": "deleteRes"
+                    "deleteRes": "deleteRes",
+                    "getMenu": "getMenu"
                 }
             },
             /** 渠道信息 */
