@@ -109,6 +109,9 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
 
         // 尝试移动文件
         this.tryToBackupFile(channelId, fileName, uploadType);
+
+        $info("finished -> channelId: " + channelId + ", fileName: " + fileName + ", uploadType: " +
+                uploadType);
     }
 
     private void tryToBackupFile(String channelId, String fileName, String uploadType) {
@@ -221,8 +224,6 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
             }
 
             final String inventory = tempInventory;
-
-
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = cmsBtFeedInfoDao.selectProductByClientSku(channelId, sku);
 
