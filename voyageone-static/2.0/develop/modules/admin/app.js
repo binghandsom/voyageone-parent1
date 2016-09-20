@@ -146,33 +146,43 @@ define([
         }
     }
 
-    function headerCtrl($scope, $rootScope, $window, $location, cRoutes, cCommonRoutes) {
+    function headerCtrl($q, ajaxService, cookieService, $scope, cActions, $localStorage, $rootScope, $window, $location, cRoutes, cCommonRoutes) {
         var vm = this;
         vm.languageList = {};
         vm.userInfo = {};
         vm.searchValue = "";
-
-
-
-        /**
-         * change to selected language.
-         * @param language
-         */
-        // function selectLanguage(language) {
-        //     menuService.setLanguage(language).then(function (data) {
-        //         vm.userInfo.language = data;
-        //         $window.location.reload();
-        //     })
-        // }
+        $scope.initialize = initialize;
+        $scope.logout = logout;
+        $scope.changePassword = changePassword;
+        function initialize() {
+            vm.userInfo = $localStorage.user || {};
+        }
 
         /**
          * logout.
          */
-        // function logout() {
-        //     menuService.logout().then(function () {
-        //         $window.location = cCommonRoutes.login.url;
-        //     })
-        // }
+        function logout() {
+            var defer = $q.defer();
+            ajaxService.post(cActions.admin.access.user.logout)
+                .then(function () {
+                    cookieService.removeAll();
+                    defer.resolve();
+                });
+            return defer.promise;
+        }
+
+        /**
+         * changePassword.
+         */
+        function changePassword() {
+            var defer = $q.defer();
+            ajaxService.post(cActions.admin.user.adminUserService.modifyPass)
+                .then(function () {
+                    cookieService.removeAll();
+                    defer.resolve();
+                });
+            return defer.promise;
+        }
     }
 
     function breadcrumbsCtrl($scope, $rootScope, $location, menuService, cRoutes) {
