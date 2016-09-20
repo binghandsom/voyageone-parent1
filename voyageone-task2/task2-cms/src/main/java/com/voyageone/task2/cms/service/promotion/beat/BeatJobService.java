@@ -1,7 +1,6 @@
 package com.voyageone.task2.cms.service.promotion.beat;
 
 import com.taobao.api.ApiException;
-import com.taobao.api.TaobaoResponse;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureGetResponse;
 import com.taobao.api.response.PictureUploadResponse;
@@ -416,7 +415,7 @@ public class BeatJobService extends BaseTaskService {
             TbItemSchema itemSchema = getTbItemSchema();
 
             // 还原覆盖 Schema 的原值
-            getTbItemSchema().setFieldValue();
+            getTbItemSchema().setFieldValueWithDefault();
 
             // 创建结果 Map, 最终该 Map 将更新到 Schema 上
             Map<Integer, String> images = new HashMap<>();

@@ -1,7 +1,6 @@
 package com.voyageone.components.tmall.service;
 
 import com.taobao.top.schema.enums.FieldTypeEnum;
-import com.taobao.top.schema.field.*;
 import com.taobao.top.schema.field.ComplexField;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.InputField;
@@ -10,7 +9,6 @@ import com.taobao.top.schema.field.MultiComplexField;
 import com.taobao.top.schema.field.MultiInputField;
 import com.taobao.top.schema.field.SingleCheckField;
 import com.taobao.top.schema.value.ComplexValue;
-import com.voyageone.common.masterdate.schema.field.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -60,15 +58,15 @@ public class TbItemSchema {
     /**
      * 将所有默认值转换为属性值
      */
-    public void setFieldValue() {
+    public void setFieldValueWithDefault() {
         // 将所有 Field 的默认值，设置到其值上。等待后续更新提交
-        fields.forEach(this::setFieldValue);
+        fields.forEach(this::setFieldValueWithDefault);
     }
 
     /**
      * 辅助方法：在更新淘宝商品时，全量更新需要将不更改的值，从 Default Value 中设置到 Valued
      */
-    private void setFieldValue(Field field) {
+    private void setFieldValueWithDefault(Field field) {
         // 对特定字段进行处理
         if (setSpecialFieldValue(field))
             return;
