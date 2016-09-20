@@ -13,25 +13,27 @@
 <div class="wrapper" style="padding-bottom: 224px;">
     <div class="login-wrap">
         <div class="login-box">
-        <div class="logo-box"><img src="assets/img/voyage_one_logo_3.png"/></div>
-        <hr>
-        <div ng-controller="loginController">
-            <form name="loginForm" novalidate>
-                <div ng-if="message" ng-bind="message" class="first-hidden alert alert-danger"></div>
-                <div class="input-group" ng-class="{'has-error': dirty && loginForm.username.$invalid}">
-                    <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                    <input name="username" required class="form-control" ng-model="username" type="text" placeholder="Email">
-                </div>
-                <div class="input-group" ng-class="{'has-error': dirty && loginForm.password.$invalid}">
-                    <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                    <input name="password" required class="form-control" ng-model="password" type="password" placeholder="Password" enter-click="#btn-login">
-                </div>
-                <div class="login-btn-box">
-                    <button type="button" class="btn btn-u" id="btn-login" ng-click="login()">Login</button>
-                </div>
-            </form>
+            <div class="logo-box"><img src="assets/img/voyage_one_logo_3.png"/></div>
+            <hr>
+            <div ng-controller="loginController">
+                <form name="loginForm" novalidate>
+                    <div ng-if="message" ng-bind="message" class="first-hidden alert alert-danger"></div>
+                    <div class="input-group" ng-class="{'has-error': dirty && loginForm.username.$invalid}">
+                        <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                        <input name="username" required class="form-control" ng-model="username" type="text"
+                               placeholder="Email">
+                    </div>
+                    <div class="input-group" ng-class="{'has-error': dirty && loginForm.password.$invalid}">
+                        <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                        <input name="password" required class="form-control" ng-model="password" type="password"
+                               placeholder="Password" enter-click="#btn-login">
+                    </div>
+                    <div class="login-btn-box">
+                        <button type="button" class="btn btn-u" id="btn-login" ng-click="login()">Login</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
     </div>
     <div class="footer-wrap_footer text-center">
         <div class="copyright_footer">
