@@ -2,7 +2,6 @@ package com.voyageone.task2.vms.service;
 
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.DateTimeUtil;
@@ -118,13 +117,7 @@ public class VmsPrcInvFileScanService extends BaseTaskService {
 
         vmsBtInventoryFileModel.setStatus(PrcInvFileStatus.WAITING_IMPORT);
         Map<String, Object> param;
-        try {
-            param = MapUtil.toMap(vmsBtInventoryFileModel);
-        } catch (IllegalAccessException e) {
-            BusinessException businessException = new BusinessException("参数转换异常");
-            businessException.setStackTrace(e.getStackTrace());
-            throw businessException;
-        }
+        param = MapUtil.toMap(vmsBtInventoryFileModel);
         param = MySqlPageHelper.build(param)
                 .addSort("created", Order.Direction.ASC)
                 .limit(1)
