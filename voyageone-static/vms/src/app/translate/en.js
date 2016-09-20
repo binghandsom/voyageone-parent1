@@ -123,7 +123,7 @@ define(function () {
         "TXT_SCANNED_SUCCESSFULLY": "Scanned successfully",
         "TXT_SHIPMENT_MODIFIED_SUCCESSFULLY": "Shipment modified successfully",
         "TXT_SETTINGS_SAVED": "Settings saved",
-        "TXT_PRINTED": "Printed",
+        "TXT_PACKING_LIST_PRINTED": "Packing List Printed",
         "TXT_NO": "No",
         "TXT_YES": "Yes",
         "TXT_ORDER_REOPENED": "Order reopened",
