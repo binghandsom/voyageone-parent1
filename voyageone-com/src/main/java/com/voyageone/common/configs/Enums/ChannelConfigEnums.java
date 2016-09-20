@@ -592,6 +592,11 @@ public class ChannelConfigEnums {
         Modotex("029"),
 
         /**
+         * Woodland
+         */
+        Woodland("031"),
+
+        /**
          * TestChannel088
          */
         TestChannel088("088"),
@@ -696,6 +701,7 @@ public class ChannelConfigEnums {
                 case "027": return Yogademocracy;
                 case "028": return ShoeMetro;
                 case "029": return Modotex;
+                case "031": return Woodland;
                 case "088": return TestChannel088;
                 case "089": return TestChannel089;
                 case "090": return TestChannel090;

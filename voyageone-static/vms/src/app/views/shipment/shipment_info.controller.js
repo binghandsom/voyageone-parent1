@@ -93,6 +93,7 @@ define([
             delete popShipment.$$hashKey;
             var shipmentInfo = {
                 shipment: popShipment,
+                channelConfig: self.channelConfig,
                 type: type,
                 pendingShipmentStatus: pendingShipmentStatus,
                 statusList: this.shipmentStatusList
