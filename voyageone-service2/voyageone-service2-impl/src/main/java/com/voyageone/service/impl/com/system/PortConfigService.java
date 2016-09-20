@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.com.system;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,10 +10,13 @@ import org.springframework.stereotype.Service;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.service.bean.com.TmPortConfigBean;
 import com.voyageone.service.dao.com.TmPortConfigDao;
+import com.voyageone.service.daoext.com.TmCodeDaoExt;
 import com.voyageone.service.daoext.com.TmPortConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.model.com.TmCodeModel;
 import com.voyageone.service.model.com.TmPortConfigModel;
 
 /**
@@ -24,19 +26,24 @@ import com.voyageone.service.model.com.TmPortConfigModel;
 @Service
 public class PortConfigService extends BaseService {
 	
+	private static final String PORT_CODE = "PORT";
+	
 	@Autowired
 	private TmPortConfigDao portConfigDao;
 
 	@Autowired
 	private TmPortConfigDaoExt portConfigDaoExt;
+	
+	@Autowired
+	private TmCodeDaoExt codeDaoExt;
 
-	public List<TmPortConfigModel> getAllPort() {
-		return portConfigDao.selectList(Collections.emptyMap());
+	public List<TmCodeModel> getAllPort() {
+		return codeDaoExt.selectAllPort(PORT_CODE);
 	}
 
-	public PageModel<TmPortConfigModel> searchPortConfigByPage(String port, String cfgName, String cfgVal,
+	public PageModel<TmPortConfigBean> searchPortConfigByPage(String port, String cfgName, String cfgVal,
 			Integer pageNum, Integer pageSize) {
-		PageModel<TmPortConfigModel> pageModel = new PageModel<TmPortConfigModel>();
+		PageModel<TmPortConfigBean> pageModel = new PageModel<TmPortConfigBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("port", port);

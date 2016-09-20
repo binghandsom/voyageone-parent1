@@ -2,31 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.daoext.com.TmPortConfigDaoExt">
 
-	<resultMap id="codeConfigModelMap" type="com.voyageone.service.model.com.TmPortConfigModel" />
+	<resultMap id="codeConfigBeanMap" type="com.voyageone.service.bean.com.TmPortConfigBean" />
 	
 	<sql id="selectPortConfigFilter">
 		<where>
             <if test="port != null and port != ''" >
-                and port like concat('%', #{port}, '%')
+                and tpc.port like concat('%', #{port}, '%')
             </if>
             <if test="cfgName != null and cfgName != ''" >
-                and cfg_name like concat('%', #{cfgName}, '%')
+                and tpc.cfg_name like concat('%', #{cfgName}, '%')
             </if>
 			<if test="cfgVal != null and cfgVal != ''">
 				and (
-					cfg_val1 like concat('%', #{cfgVal}, '%') or cfg_val2 like concat('%', #{cfgVal}, '%')
+					tpc.cfg_val1 like concat('%', #{cfgVal}, '%') or tpc.cfg_val2 like concat('%', #{cfgVal}, '%')
 				)
 			</if>
         </where>
 	</sql>
     
-    <select id="selectPortConfigByPage" resultMap="codeConfigModelMap">
-    	select seq, port, cfg_name, cfg_val1, cfg_val2, comment from tm_port_config
+    <select id="selectPortConfigByPage" resultMap="codeConfigBeanMap">
+    	select tpc.seq, tpc.port, tpc.cfg_name, tpc.cfg_val1, tpc.cfg_val2, tpc.comment, tc.name as portName
+		from tm_port_config tpc left join tm_code tc on tc.code = tpc.port and tc.id = 'PORT'
     	<include refid="selectPortConfigFilter"/>
     </select>
     
     <select id="selectPortConfigCount" resultType="integer">
-    	select count(0) from tm_port_config
+    	select count(0) from tm_port_config tpc
     	<include refid="selectPortConfigFilter"/>
     </select>
 

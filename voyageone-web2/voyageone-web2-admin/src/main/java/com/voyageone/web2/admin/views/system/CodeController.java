@@ -38,8 +38,8 @@ public class CodeController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索Code信息
-		PageModel<TmCodeModel> codePage = codeService.searchCodeByPage(form.getCode(), form.getName(), form.getDes(),
-				form.getActive(), form.getPageNum(), form.getPageSize());
+		PageModel<TmCodeModel> codePage = codeService.searchCodeByPage(form.getId(), form.getCode(), form.getName(),
+				form.getDes(), form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(codePage);
 	}

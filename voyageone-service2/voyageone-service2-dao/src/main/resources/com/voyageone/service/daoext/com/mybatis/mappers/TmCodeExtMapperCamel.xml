@@ -6,6 +6,9 @@
 	
 	<sql id="selectCodeFilter">
 		<where>
+			<if test="id != null and id != ''">
+				and id = #{id}
+			</if>
 			<if test="code != null and code != ''">
 				and code like concat('%', #{code}, '%')
 			</if>
@@ -30,6 +33,12 @@
 	<select id="selectCodeCount" resultType="integer">
 		select count(0) from tm_code
 		<include refid="selectCodeFilter"/>
+	</select>
+	
+	<select id="selectAllPort" resultMap="codeModelMap">
+		select id, code, name, name1, des, active, created, creater, modified, modifier
+		from tm_code
+		where id = #{id}
 	</select>
 
 </mapper>

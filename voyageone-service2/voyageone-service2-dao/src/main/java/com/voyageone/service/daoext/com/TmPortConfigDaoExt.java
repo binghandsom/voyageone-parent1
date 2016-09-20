@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.voyageone.service.model.com.TmPortConfigModel;
+import com.voyageone.service.bean.com.TmPortConfigBean;
 
 /**
  * @author Wangtd
@@ -16,6 +16,6 @@ public interface TmPortConfigDaoExt {
 
 	Integer selectPortConfigCount(Map<String, Object> params);
 
-	List<TmPortConfigModel> selectPortConfigByPage(Map<String, Object> params);
+	List<TmPortConfigBean> selectPortConfigByPage(Map<String, Object> params);
 
 }

@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
+import com.voyageone.service.bean.com.TmPortConfigBean;
 import com.voyageone.service.impl.com.system.PortConfigService;
 import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.model.com.TmCodeModel;
 import com.voyageone.service.model.com.TmPortConfigModel;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
@@ -38,15 +40,13 @@ public class PortConfigController extends AdminController {
 	@SuppressWarnings("serial")
 	@RequestMapping(AdminUrlConstants.System.Port.GET_ALL_PORT)
 	public AjaxResponse getAllPort() {
-		List<TmPortConfigModel> stores = portConfigService.getAllPort();
+		List<TmCodeModel> stores = portConfigService.getAllPort();
 		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
 		stores.stream().forEach(item -> result.add(new HashMap<String, String>() {{
-			put("port", item.getPort());
+			put("code", item.getCode());
+			put("name", item.getName());
 		}}));
-		Object[] outcome = result.stream().distinct().sorted((a, b) -> 
-			a.get("port").compareTo(b.get("port"))
-		).toArray();
-		return success(outcome);
+		return success(result);
 	}
 	
 	@RequestMapping(AdminUrlConstants.System.Port.SEARCH_PORT_CONFIG_BY_PAGE)
@@ -55,7 +55,7 @@ public class PortConfigController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索港口信息
-		PageModel<TmPortConfigModel> portConfigPage = portConfigService.searchPortConfigByPage(form.getPort(),
+		PageModel<TmPortConfigBean> portConfigPage = portConfigService.searchPortConfigByPage(form.getPort(),
 				form.getCfgName(), form.getCfgVal(), form.getPageNum(), form.getPageSize());
 		
 		return success(portConfigPage);

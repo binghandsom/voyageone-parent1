@@ -31,11 +31,12 @@ public class CodeService extends BaseService {
 	@Autowired
 	private TmCodeDaoExt codeDaoExt;
 
-	public PageModel<TmCodeModel> searchCodeByPage(String code, String name, String des, Boolean active,
+	public PageModel<TmCodeModel> searchCodeByPage(String id, String code, String name, String des, Boolean active,
 			Integer pageNum, Integer pageSize) {
 		PageModel<TmCodeModel> pageModel = new PageModel<TmCodeModel>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("id", id);
 		params.put("code", code);
 		params.put("name", name);
 		params.put("des", des);
