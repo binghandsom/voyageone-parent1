@@ -81,6 +81,10 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
 
     @Override
     public String getTaskName() {
+        return "CmsBuildPlatformProductUploadCnJob";
+    }
+
+    public String getTaskNameForUpdate() {
         return "CmsBuildPlatformProductUploadCnPrepareJob";
     }
 
@@ -202,7 +206,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
             // TODO:上传图片
 
             // 上传code信息
-            String productXml = uploadProduct(sxData, cmsMtPlatformCategorySchemaModel, shopBean, getTaskName());
+            String productXml = uploadProduct(sxData, cmsMtPlatformCategorySchemaModel, shopBean, getTaskNameForUpdate());
 
             // 上传sku信息
             String skuXml = null;
@@ -219,16 +223,16 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
 //
 //            List<Long> listGroupId = listModel.stream().map(CmsBtSxCnInfoModel::getGroupId).collect(Collectors.toList());
 //            listGroupId.clear();listGroupId.add(1234321L);listGroupId.add(121L);
-//            WriteResult rs = cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 1, getTaskName());
+//            WriteResult rs = cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 1, getTaskNameForUpdate());
 
 
 //            // 上新或更新成功后回写product group表中的numIId和platformStatus(Onsale/InStock)
 //            String numIId = sxData.getMainProduct().getOrgChannelId() + "-" + Long.toString(sxData.getMainProduct().getProdId()); // 因为现在是一个group一个code
-//            sxProductService.updateProductGroupNumIIdStatus(sxData, numIId, getTaskName());
+//            sxProductService.updateProductGroupNumIIdStatus(sxData, numIId, getTaskNameForUpdate());
 //            // 回写ims_bt_product表(numIId)
-//            sxProductService.updateImsBtProduct(sxData, getTaskName());
+//            sxProductService.updateImsBtProduct(sxData, getTaskNameForUpdate());
             // 回写workload表   (5等待xml上传)
-            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.waitCnUpload, getTaskName());
+            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.waitCnUpload, getTaskNameForUpdate());
             $info("groupId[%s] success!", groupId);
         } catch (Exception ex) {
             // 取得sxData为空
@@ -252,9 +256,9 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
                 sxData.setErrorMessage(errMsg);
             }
             // 回写workload表   (失败2)
-            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskName());
+            sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.errorNum, getTaskNameForUpdate());
             // 回写详细错误信息表(cms_bt_business_log)
-            sxProductService.insertBusinessLog(sxData, getTaskName());
+            sxProductService.insertBusinessLog(sxData, getTaskNameForUpdate());
             return;
         }
 
@@ -265,7 +269,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
         findCnInfoModel = cmsBtSxCnInfoDao.selectInfoByGroupId(channelId, groupId, 0);
         if (findCnInfoModel != null) {
             // 有未post的数据，状态更新掉(4:上传终止)，不要重复post
-            cmsBtSxCnInfoDao.updatePublishFlg(channelId, new ArrayList<Long>(){{this.add(groupId);}}, 4, getTaskName());
+            cmsBtSxCnInfoDao.updatePublishFlg(channelId, new ArrayList<Long>(){{this.add(groupId);}}, 4, getTaskNameForUpdate());
         } else {
             findCnInfoModel = cmsBtSxCnInfoDao.selectInfoByGroupId(channelId, groupId, 1);
             if (findCnInfoModel != null) {
@@ -285,8 +289,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
         insertCnInfoModel.setProductXml(productXml);
         insertCnInfoModel.setSkuXml(skuXml);
         insertCnInfoModel.setPublishFlg(0);
-        insertCnInfoModel.setCreater(getTaskName());
-        insertCnInfoModel.setModifier(getTaskName());
+        insertCnInfoModel.setCreater(getTaskNameForUpdate());
+        insertCnInfoModel.setModifier(getTaskNameForUpdate());
         cmsBtSxCnInfoDao.insert(insertCnInfoModel);
     }
 
