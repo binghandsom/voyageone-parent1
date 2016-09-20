@@ -22,7 +22,7 @@ define([
                     platform: null,
                     status: "Pending",
                     skuTemp: {},
-                    checkFlag: {translate: 0, tax: 0, category: 0, attribute: 0},
+                    checkFlag: {translate: 0, tax: 0, attribute: 0},
                     resultFlag: 0,
                     sellerCats: [],
                     productUrl: "",
@@ -31,7 +31,6 @@ define([
                 };
 
                 initialize();
-                scope.jdCategoryMapping = jdCategoryMapping;
                 scope.openSellerCat = openSellerCat;
                 scope.openSwitchMainPop = openSwitchMainPop;
                 scope.openOffLinePop = openOffLinePop;
@@ -76,7 +75,6 @@ define([
 
                         if (platform) {
                             scope.vm.status = platform.status == null ? scope.vm.status : platform.status;
-                            scope.vm.checkFlag.category = platform.pCatPath == null ? 0 : 1;
                             scope.vm.platform.pStatus = platform.pStatus == null ? "WaitingPublish" : platform.pStatus;
                             scope.vm.sellerCats = platform.sellerCats == null ? [] : platform.sellerCats;
                             scope.vm.platform.pStatus = platform.pPublishMessage != null && platform.pPublishMessage != "" ? "Failed" : platform.pStatus;
@@ -234,7 +232,7 @@ define([
 
                     switch (scope.vm.status) {
                         case "Pending":
-                            scope.vm.status = statusCount == 4 ? "Ready" : scope.vm.status;
+                            scope.vm.status = statusCount == 3 ? "Ready" : scope.vm.status;
                             break;
                         case "Ready":
                             scope.vm.status = "Approved";
@@ -274,23 +272,7 @@ define([
                                     platform: scope.vm.platform
                                 });
 
-                                if (scope.vm.platform.cartId != 27) {
-                                    productDetailService.checkCategory({
-                                        cartId: scope.vm.platform.cartId,
-                                        pCatPath: scope.vm.platform.pCatPath
-                                    }).then(function (resp) {
-                                        if (resp.data === false) {
-                                            confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").then(function () {
-                                                scope.vm.platform.status = scope.vm.status = "Pending";
-                                                callSave();
-                                            });
-                                        } else {
-                                            callSave();
-                                        }
-                                    });
-                                } else {
-                                    callSave();
-                                }
+                                callSave();
                             } else {
                                 callSave();
                             }

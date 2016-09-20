@@ -22,7 +22,7 @@ define([
                     platform: null,
                     status: "Pending",
                     skuTemp: {},
-                    checkFlag: {translate: 0, tax: 0, category: 0, attribute: 0},
+                    checkFlag: {tax: 0},
                     resultFlag: 0,
                     sellerCats: [],
                     productUrl: "",
@@ -32,7 +32,6 @@ define([
 
                 initialize();
                 scope.categoryMapping = categoryMapping;
-                scope.openSellerCat = openSellerCat;
                 scope.openSwitchMainPop = openSwitchMainPop;
                 scope.openOffLinePop = openOffLinePop;
                 scope.saveProduct = saveProduct;
@@ -40,7 +39,6 @@ define([
                 scope.pageAnchor = pageAnchor;
                 scope.allSkuSale = allSkuSale;
                 scope.focusError = focusError;
-                scope.choseBrand = choseBrand;
                 scope.copyMainProduct = copyMainProduct;
 
                 /**
@@ -146,29 +144,6 @@ define([
                 }
 
                 /**
-                 * @description 店铺内分类popup
-                 * @param openAddChannelCategoryEdit
-                 */
-                function openSellerCat(openAddChannelCategoryEdit) {
-                    var selectedIds = {};
-                    scope.vm.sellerCats.forEach(function (element) {
-                        selectedIds[element.cId] = true;
-                    });
-                    var selList = [{
-                        "code": scope.vm.mastData.productCode,
-                        "sellerCats": scope.vm.sellerCats,
-                        "cartId": scope.cartInfo.value,
-                        "selectedIds": selectedIds,
-                        plateSchema: true
-                    }];
-                    openAddChannelCategoryEdit(selList).then(function (context) {
-                        /**清空原来店铺类分类*/
-                        scope.vm.sellerCats = [];
-                        scope.vm.sellerCats = context.sellerCats;
-                    });
-                }
-
-                /**
                  *  切换主商品  cartInfo.value,vm.mastData.productCode
                  */
                 function openSwitchMainPop(openSwitchMain) {
@@ -208,30 +183,6 @@ define([
                         //刷新子页面
                         getplatformData();
                     });
-                }
-
-                /**
-                 *  商品品牌选择
-                 */
-                function choseBrand(openPlatformMappingSetting) {
-
-                    var mainBrand = scope.productInfo.masterField.brand,
-                        platform = scope.vm.platform;
-
-                    if (!platform || !platform.pBrandId)
-                        return;
-
-                    openPlatformMappingSetting({
-                        cartId: scope.cartInfo.value,
-                        cartName: scope.cartInfo.name,
-                        masterName: mainBrand,
-                        pBrandId: platform.pBrandId
-                    }).then(function (context) {
-                        scope.vm.platform.pBrandName = context.pBrand;
-                        if (platform.schemaFields && platform.schemaFields.product)
-                            initBrand(platform.schemaFields.product, context.brandId);
-                    });
-
                 }
 
                 /**
@@ -306,23 +257,20 @@ define([
                                     platform: scope.vm.platform
                                 });
 
-                                if (scope.vm.platform.cartId != 27) {
-                                    productDetailService.checkCategory({
-                                        cartId: scope.vm.platform.cartId,
-                                        pCatPath: scope.vm.platform.pCatPath
-                                    }).then(function (resp) {
-                                        if (resp.data === false) {
-                                            confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").then(function () {
-                                                scope.vm.platform.status = scope.vm.status = "Pending";
-                                                callSave();
-                                            });
-                                        } else {
+                                productDetailService.checkCategory({
+                                    cartId: scope.vm.platform.cartId,
+                                    pCatPath: scope.vm.platform.pCatPath
+                                }).then(function (resp) {
+                                    if (resp.data === false) {
+                                        confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").then(function () {
+                                            scope.vm.platform.status = scope.vm.status = "Pending";
                                             callSave();
-                                        }
-                                    });
-                                } else {
-                                    callSave();
-                                }
+                                        });
+                                    } else {
+                                        callSave();
+                                    }
+                                });
+
                             } else {
                                 callSave();
                             }
