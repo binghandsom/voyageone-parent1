@@ -25,6 +25,7 @@ public class CmsBtFeedInfoModel_Sku {
     private String weightOrgUnit;
     private String weightCalc;
     private Map<String, String> attribute = new HashMap<>();
+    private String errInfo;
     public Double getPriceCurrent() {
         return priceCurrent;
     }
@@ -161,5 +162,13 @@ public class CmsBtFeedInfoModel_Sku {
 
     public void setAttribute(Map<String, String> attribute) {
         this.attribute = attribute;
+    }
+
+    public String getErrInfo() {
+        return errInfo;
+    }
+
+    public void setErrInfo(String errInfo) {
+        this.errInfo = errInfo;
     }
 }
