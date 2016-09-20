@@ -1,6 +1,6 @@
 /**
  * @author tony-piao
- * 京东 & 聚美 & 天猫国际 产品概述（schema）
+ * 官网同购
  */
 define([
     'cms',
@@ -10,7 +10,6 @@ define([
         return {
             restrict: "E",
             templateUrl: "views/product/gw.component.tpl.html",
-            /**独立的scope对象*/
             scope: {
                 productInfo: "=productInfo",
                 cartInfo: "=cartInfo"

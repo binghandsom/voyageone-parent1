@@ -1,6 +1,6 @@
 /**
  * @author tony-piao
- * 京东 & 聚美 & 天猫国际 产品概述（schema）
+ * 独立官网
  */
 define([
     'cms',
@@ -10,7 +10,6 @@ define([
         return {
             restrict: "E",
             templateUrl: "views/product/dl.component.tpl.html",
-            /**独立的scope对象*/
             scope: {
                 productInfo: "=productInfo",
                 cartInfo: "=cartInfo"
@@ -96,56 +95,6 @@ define([
 
                     scope.vm.productUrl = carts.valueOf(+scope.cartInfo.value).pUrl;
 
-                }
-
-                /**
-                 @description 类目popup
-                 * @param productInfo
-                 * @param popupNewCategory popup实例
-                 */
-                function jdCategoryMapping(popupNewCategory) {
-
-                    if (scope.vm.status == 'Approved') {
-                        alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
-                        return;
-                    }
-
-                    productDetailService.getPlatformCategories({cartId: scope.cartInfo.value})
-                        .then(function (res) {
-                            return $q(function (resolve, reject) {
-                                if (!res.data || !res.data.length) {
-                                    notify.danger("数据还未准备完毕");
-                                    reject("数据还未准备完毕");
-                                } else {
-                                    resolve(popupNewCategory({
-                                        from: scope.vm.platform == null ? "" : scope.vm.platform.pCatPath,
-                                        categories: res.data,
-                                        divType: ">",
-                                        plateSchema: true
-                                    }));
-                                }
-                            });
-                        }).then(function (context) {
-                        if (scope.vm.platform != null) {
-                            if (context.selected.catPath == scope.vm.platform.pCatPath)
-                                return;
-                        }
-
-                        productDetailService.changePlatformCategory({
-                            cartId: scope.cartInfo.value,
-                            prodId: scope.productInfo.productId,
-                            catId: context.selected.catId,
-                            catPath: context.selected.catPath
-                        }).then(function (resp) {
-                            scope.vm.platform = resp.data.platform;
-                            scope.vm.platform.pCatPath = context.selected.catPath;
-                            scope.vm.platform.pCatId = context.selected.catId;
-                            scope.vm.checkFlag.category = 1;
-                            scope.vm.platform.pStatus == 'WaitingPublish';
-                            scope.vm.status = "Pending";
-
-                        });
-                    });
                 }
 
                 /**
