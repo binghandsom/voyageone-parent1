@@ -98,13 +98,13 @@
                                     <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                 </label>
                             </th>
-                            <th class="text-center mfb-xt" ng-if="ctrl.searchInfo.configType=='Shop'" translate="TXT_CART_CHANNEL_NAME"></th>
-                            <th class="text-center mfb-xt">{{ctrl.getConfigType(ctrl.searchInfo.configType)}}名</th>
+                            <th class="text-left mfb-xt" ng-if="ctrl.searchInfo.configType=='Shop'" translate="TXT_CART_CHANNEL_NAME"></th>
+                            <th class="text-left mfb-xt">{{ctrl.getConfigType(ctrl.searchInfo.configType)}}名</th>
                             <th class="text-left mfb-xxt" translate="TXT_PROPERTY_NAME"></th>
                             <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}1</th>
-                            <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}2</th>
+                            <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}2</th>
                             <th class="text-center mfb-xxt" translate="TXT_TIME_END" ng-if="ctrl.searchInfo.configType=='Task'"></th>
-                            <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
+                            <th class="text-left mfb-xxt" translate="TXT_COMMENTS"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -119,14 +119,30 @@
                                 <span class="fa fa-check"></span>
                             </label>
                         </td>
-                        <td class="text-center v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.channelName}}</td>
-                        <td class="text-center v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.cartName}}</td>
-                        <td class="text-center v-middle"ng-if="ctrl.searchInfo.configType!=='Shop'">{{list.channelName||list.storeName||list.taskName}}</td>
-                        <td class="text-left v-middle">{{list.cfgName}}</td>
-                        <td class="text-left v-middle" style="overflow: auto;max-width: 116px;">{{list.cfgVal1}}</td>
-                        <td class="text-center v-middle" style="overflow: auto;max-width: 116px;">{{list.cfgVal2}}</td>
+                        <td class="text-left v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.channelName}}</td>
+                        <td class="text-left v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.cartName}}</td>
+                        <td class="text-left v-middle"ng-if="ctrl.searchInfo.configType!=='Shop'">{{list.channelName||list.storeName||list.taskName}}</td>
+                        <td class="text-left v-middle">
+                            <label class="v-middle" ng-if="list.cfgName.length <= 15">{{list.cfgName}}</label>
+                            <label class="v-middle" ng-if="list.cfgName.length > 15" uib-tooltip="{{list.cfgName}}"
+                                   tooltip-trigger="mouseenter" tooltip-placement="top">{{list.cfgName | stringCutter:true:15:' ...'}}</label>
+                        </td>
+                        <td class="text-left v-middle" style="overflow: auto;max-width: 116px;">
+                            <label class="v-middle" ng-if="list.cfgVal1.length <= 15">{{list.cfgVal1}}</label>
+                            <label class="v-middle" ng-if="list.cfgVal1.length > 15" uib-tooltip="{{list.cfgVal1}}"
+                                   tooltip-trigger="mouseenter" tooltip-placement="top">{{list.cfgVal1 | stringCutter:true:15:' ...'}}</label>
+                        </td>
+                        <td class="text-left v-middle" style="overflow: auto;max-width: 116px;">
+                            <label class="v-middle" ng-if="list.cfgVal2.length <= 15">{{list.cfgVal2}}</label>
+                            <label class="v-middle" ng-if="list.cfgVal2.length > 15" uib-tooltip="{{list.cfgVal2}}"
+                                   tooltip-trigger="mouseenter" tooltip-placement="top">{{list.cfgVal2 | stringCutter:true:15:' ...'}}</label>
+                        </td>
                         <td class="text-center v-middle" ng-if="ctrl.searchInfo.configType=='Task'">{{list.endTime| date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                        <td class="text-center v-middle">{{list.comment}}</td>
+                        <td class="text-left v-middle">
+                            <label class="v-middle" ng-if="list.comment.length <= 10">{{list.comment}}</label>
+                            <label class="v-middle" ng-if="list.comment.length > 10" uib-tooltip="{{list.comment}}"
+                                   tooltip-trigger="mouseenter" tooltip-placement="top">{{list.comment | stringCutter:true:10:' ...'}}</label>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
