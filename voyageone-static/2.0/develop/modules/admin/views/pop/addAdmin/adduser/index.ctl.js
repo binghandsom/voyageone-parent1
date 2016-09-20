@@ -15,6 +15,14 @@ define([
             this.popType = '修改用户';
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
+            this.saveInfo = {
+                userAccount: this.sourceData.userAccount,
+                userName: this.sourceData.userName,
+                orgId: this.sourceData.orgId,
+                email: this.sourceData.email,
+                active: this.sourceData.active,
+                description: this.sourceData.description
+            };
         }
 
         AddUserController.prototype = {
@@ -30,6 +38,7 @@ define([
                 });
                 self.adminRoleService.getAllRole().then(function (res) {
                     self.allList = res.data;
+                    self.roleAllListCopy = res.data;
                     self.roleList = self.sourceData.roleId != null ? self.sourceData.roleId.split(',') : [];
                     _.forEach(self.roleList, function (item, index) {
                         _.map(self.allList, function (role) {
@@ -73,13 +82,6 @@ define([
             },
             move: function (type) {
                 var self = this;
-                self.adminRoleService.getAllRole().then(function (res) {
-                    self.ttroleList = res.data;
-                    self.roleAllListCopy = [];
-                    for (var item in self.ttroleList) {
-                        self.roleAllListCopy.push({'roleId': item, 'roleName': self.ttroleList[item]});
-                    }
-                });
                 self.roleList = self.roleList ? self.roleList : [];
                 self.roleAllList = self.roleAllList ? self.roleAllList : [];
                 switch (type) {
@@ -141,10 +143,11 @@ define([
                 _.forEach(self.roleList, function (item) {
                     tempRoleList.push(item.roleId);
                     tempRoleName.push(item.roleName);
-                    _.extend(self.sourceData, {'roleId': tempRoleList.join(','), 'roleName': tempRoleName.join(',')});
+                    _.extend(self.saveInfo, {'roleId': tempRoleList.join(','), 'roleName': tempRoleName.join(',')});
                 });
+                _.extend(self.sourceData, self.saveInfo);
                 if (self.append == true) {
-                    self.adminUserService.addUser(self.sourceData).then(function (res) {
+                    self.adminUserService.addUser(self.saveInfo).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
@@ -153,7 +156,7 @@ define([
                         self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.adminUserService.updateUser(self.sourceData).then(function (res) {
+                    self.adminUserService.updateUser(self.saveInfo).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;

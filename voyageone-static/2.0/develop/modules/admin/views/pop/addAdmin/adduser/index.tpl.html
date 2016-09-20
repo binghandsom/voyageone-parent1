@@ -11,7 +11,7 @@
                     <div class="row form-group"><!-- 账号 -->
                         <label class="col-sm-3 control-label">{{'TXT_ACCOUNT' | translate}}</label>
                         <div class="col-sm-8">
-                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.userAccount"
+                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.saveInfo.userAccount"
                             name="account" required ng-disabled="ctrl.popType == '修改用户'"/>
                         </div>
                     </div>
@@ -31,7 +31,7 @@
                     <div class="row form-group"><!-- 用户名 -->
                         <label class="col-sm-3 control-label">{{'TXT_USER_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData.userName"
+                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.saveInfo.userName"
                             name="userName" required/>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                     <div class="row form-group"><!-- 组织 -->
                         <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.sourceData.orgId" ng-options="org.id as org.orgName for org in ctrl.orgList">
+                            <select class="form-control" ng-model="ctrl.saveInfo.orgId" ng-options="org.id as org.orgName for org in ctrl.orgList">
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
@@ -55,7 +55,7 @@
                     <div class="row form-group"><!-- 邮箱 -->
                         <label class="col-sm-3 control-label">{{'TXT_EMAIL' | translate}}</label>
                         <div class="col-sm-8">
-                            <input type="email" maxlength="50" class="form-control" ng-model="ctrl.sourceData.email"
+                            <input type="email" maxlength="50" class="form-control" ng-model="ctrl.saveInfo.email"
                             name="email" required/>
                         </div>
                     </div>
@@ -68,13 +68,13 @@
                         <label class="col-sm-4 control-label">{{'TXT_STATUS' | translate}}</label>
                         <div class="col-sm-8">
                             <label class="checkbox-inline c-radio">
-                                <input type="radio" name="active" value="1" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> 启用
+                                <input type="radio" name="active" value="1" ng-model="ctrl.saveInfo.active"><span class="fa fa-check"></span> 启用
                             </label>
                             <label class="checkbox-inline c-radio">
-                                <input type="radio" name="active" value="0" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> 禁用
+                                <input type="radio" name="active" value="0" ng-model="ctrl.saveInfo.active"><span class="fa fa-check"></span> 禁用
                             </label>
                             <label class="checkbox-inline c-radio">
-                                <input type="radio" name="active" value="2" ng-model="ctrl.sourceData.active"><span class="fa fa-check"></span> 锁定
+                                <input type="radio" name="active" value="2" ng-model="ctrl.saveInfo.active"><span class="fa fa-check"></span> 锁定
                             </label>
                         </div>
                     </div>
