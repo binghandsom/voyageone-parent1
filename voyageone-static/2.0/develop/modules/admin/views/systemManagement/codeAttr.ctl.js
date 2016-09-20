@@ -17,6 +17,7 @@ define([
             this.codeSelList = {selList: []};
             this.tempSelect = null;
             this.searchInfo = {
+                id: '',
                 code: '',
                 name: '',
                 des: '',
@@ -37,6 +38,7 @@ define([
                 self.codeService.searchCodeByPage({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,
+                        'id': self.searchInfo.id,
                         'code': self.searchInfo.code,
                         'name': self.searchInfo.name,
                         'des': self.searchInfo.des,
@@ -69,6 +71,7 @@ define([
             clear: function () {
                 var self = this;
                 self.searchInfo = {
+                    id: '',
                     code: '',
                     name: '',
                     des: '',
