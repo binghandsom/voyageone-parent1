@@ -149,7 +149,7 @@ public abstract class BaseTaskService extends VOAbsIssueLoggable {
     /**
      * 错误信息记录
      */
-    public void logIssue(Exception ex) {
+    public void logIssue(Throwable ex) {
         logIssue(ex, null);
     }
 
@@ -167,7 +167,7 @@ public abstract class BaseTaskService extends VOAbsIssueLoggable {
     /**
      * 错误信息记录
      */
-    public void logIssue(Exception ex, Object attJson) {
+    public void logIssue(Throwable ex, Object attJson) {
         issueLog.log(ex, ErrorType.BatchJob, getSubSystem(), format("<p>出现未处理异常的任务是: [ %s ]</p>%s", getTaskName(), makeIssueAttach(attJson)));
     }
 

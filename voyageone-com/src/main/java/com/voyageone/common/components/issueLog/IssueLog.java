@@ -26,7 +26,7 @@ public final class IssueLog {
      * @param errorType 错误类型
      * @param subSystem 发生的子系统
      */
-    public void log(Exception exception, ErrorType errorType, SubSystem subSystem) {
+    public void log(Throwable exception, ErrorType errorType, SubSystem subSystem) {
         log(exception, errorType, subSystem, Constants.EmptyString);
     }
 
@@ -50,7 +50,7 @@ public final class IssueLog {
      * @param subSystem 发生的子系统
      * @param add       附加的信息
      */
-    public void log(Exception exception, ErrorType errorType, SubSystem subSystem, String add) {
+    public void log(Throwable exception, ErrorType errorType, SubSystem subSystem, String add) {
 
         // 有的异常 message 是 null 或 空，此处处理这种状况
         String message = exception.getMessage();
