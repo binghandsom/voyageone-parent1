@@ -69,7 +69,7 @@
                                     <div class="col-sm-8" ng-if="ctrl.searchInfo.configType=='Port'">
                                         <select search-contains="true" chosen width="'100%'" class="form-control"
                                                 ng-model="ctrl.searchInfo.port"
-                                                ng-options="port.port as port.port for port in ctrl.portList">
+                                                ng-options="port.code as port.name for port in ctrl.portList">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>
