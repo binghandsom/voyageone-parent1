@@ -215,4 +215,8 @@ public class ChannelService extends BaseService {
 		}
 	}
 
+	public boolean isChannelUsed(String channelId) {
+		return channelDao.select(channelId) == null ? false : true;
+	}
+
 }
