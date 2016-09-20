@@ -37,6 +37,8 @@ public interface AdminUrlConstants {
 			String UPDATE_CHANNEL_CONFIG = "updateChannelConfig";
 
 			String DELETE_CHANNEL_CONFIG = "deleteChannelConfig";
+
+			String IS_CHANNEL_USED = "isChannelUsed";
 			
 		}
 		

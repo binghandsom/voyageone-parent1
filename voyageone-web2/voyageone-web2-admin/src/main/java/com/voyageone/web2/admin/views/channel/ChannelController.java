@@ -58,6 +58,12 @@ public class ChannelController extends AdminController {
 		return success(result);
 	}
 	
+	@RequestMapping(AdminUrlConstants.Channel.Self.IS_CHANNEL_USED)
+	public AjaxResponse isChannelUsed(@RequestBody String channelId) {
+		Preconditions.checkArgument(StringUtils.isNoneBlank(channelId));
+		return success(channelService.isChannelUsed(channelId));
+	}
+	
 	@RequestMapping(AdminUrlConstants.Channel.Self.SEARCH_CHANNEL_BY_PAGE)
 	public AjaxResponse searchChannelByPage(@RequestBody ChannelFormBean form) {
 		// 验证参数
