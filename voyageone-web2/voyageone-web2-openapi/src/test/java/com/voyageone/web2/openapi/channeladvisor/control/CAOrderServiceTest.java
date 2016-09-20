@@ -72,7 +72,7 @@ public class CAOrderServiceTest {
         System.out.println(result);*/
         //id在表中存在
         String url = BASE_URL + CAUrlConstants.ORDERS.ACKNOWLEDGE_ORDER;
-        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111117008"), null, HEADER);
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111119012"), null, HEADER);
         System.out.println(result);
     }
 
@@ -210,61 +210,99 @@ public class CAOrderServiceTest {
         String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111117008"), reqJson, HEADER);
         System.out.println(result);*/
 
-        //退返订单
-        String url = BASE_URL + CAUrlConstants.ORDERS.REFUND_ORDER;
+        ///同一理由退货
+       /* String url = BASE_URL + CAUrlConstants.ORDERS.REFUND_ORDER;
         String reqJson = "{\"OrderID\":\"02820160919111117008\",\"Items\":[" +
-                "{\"ID\":\"M333W1\",\"SellerSku\":\"2963720\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}," +
-                "{\"ID\":\"M333W2\",\"SellerSku\":\"3337520\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}," +
-                "{\"ID\":\"M333W3\",\"SellerSku\":\"3117624\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}," +
-                "{\"ID\":\"M333W4\",\"SellerSku\":\"2784405\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}," +
-                "{\"ID\":\"M333W5\",\"SellerSku\":\"2237491\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}," +
-                "{\"ID\":\"M333W6\",\"SellerSku\":\"3108487\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}," +
-                "{\"ID\":\"M333W7\",\"SellerSku\":\"2868623\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}," +
-                "{\"ID\":\"M333W8\",\"SellerSku\":\"1160427\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}," +
-                "{\"ID\":\"M333W9\",\"SellerSku\":\"3385170\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}," +
-                "{\"ID\":\"M333W10\",\"SellerSku\":\"3114141\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}" +
+                "{\"ID\":\"M333W1\",\"SellerSku\":\"2963720\",\"Quantity\":1,\"Reason\":\"ItemNotAvailable\"}," +
+                "{\"ID\":\"M333W2\",\"SellerSku\":\"3337520\",\"Quantity\":1,\"Reason\":\"ItemNotAvailable\"}," +
+                "{\"ID\":\"M333W3\",\"SellerSku\":\"3117624\",\"Quantity\":1,\"Reason\":\"ItemNotAvailable\"}," +
+                "{\"ID\":\"M333W4\",\"SellerSku\":\"2784405\",\"Quantity\":1,\"Reason\":\"ItemNotAvailable\"}," +
+                "{\"ID\":\"M333W5\",\"SellerSku\":\"2237491\",\"Quantity\":1,\"Reason\":\"ItemNotAvailable\"}," +
+                "{\"ID\":\"M333W6\",\"SellerSku\":\"3108487\",\"Quantity\":1,\"Reason\":\"ItemNotAvailable\"}," +
+                "{\"ID\":\"M333W7\",\"SellerSku\":\"2868623\",\"Quantity\":1,\"Reason\":\"ItemNotAvailable\"}," +
+                "{\"ID\":\"M333W8\",\"SellerSku\":\"1160427\",\"Quantity\":1,\"Reason\":\"ItemNotAvailable\"}," +
+                "{\"ID\":\"M333W9\",\"SellerSku\":\"3385170\",\"Quantity\":1,\"Reason\":\"ItemNotAvailable\"}," +
+                "{\"ID\":\"M333W10\",\"SellerSku\":\"3114141\",\"Quantity\":1,\"Reason\":\"ItemNotAvailable\"}" +
                 "]}";
         String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111117008"), reqJson, HEADER);
+        System.out.println(result);*/
+
+        //不同一理由退货
+        /*String url = BASE_URL + CAUrlConstants.ORDERS.SHIP_ORDER;
+        String reqJson = "{\"ShippedDateUtc\":\"2016-09-19T04:52:32.9431095Z\"," +
+                "\"TrackingNumber\":\"Z123456789I\"," +
+                "\"ShippingCarrier\":\"Bantha Union\"," +
+                "\"ShippingClass\":\"Express\"," +
+                "\"Items\":{\"3114141\":7,\"3564246\":1,\"3117503\":1,\"3325995\":1," +
+                "\"3337245\":1}}";
+        //订单A：所有物品使用同一运单全部发货
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111117009"), reqJson, HEADER);
         System.out.println(result);
-
-
-        /*//同一理由退货
-        String url = BASE_URL + CAUrlConstants.ORDERS.REFUND_ORDER;
-        String reqJson = "{\"OrderID\":\"M456W\",\"Items\":[" +
-                "{\"ID\":\"M333W\",\"SellerSku\":\"3108487\",\"Quantity\":1,\"Reason\":\"BuyerCanceled\"}," +
-                "{\"ID\":\"M333W\",\"SellerSku\":\"3321289\",\"Quantity\":1,\"Reason\":\"BuyerCanceled\"}," +
-                "{\"ID\":\"M333W\",\"SellerSku\":\"3117503\",\"Quantity\":1,\"Reason\":\"BuyerCanceled\"}" +
+*/
+        /*String url = BASE_URL + CAUrlConstants.ORDERS.REFUND_ORDER;
+        String reqJson = "{\"OrderID\":\"02820160919111117009\",\"Items\":[" +
+                "{\"ID\":\"M333W1\",\"SellerSku\":\"3114141\",\"Quantity\":7,\"Reason\":\"BuyerCanceled\"}," +
+                "{\"ID\":\"M333W2\",\"SellerSku\":\"3564246\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}," +
+                "{\"ID\":\"M333W3\",\"SellerSku\":\"3117503\",\"Quantity\":1,\"Reason\":\"ItemNotAvailable\"}," +
+                "{\"ID\":\"M333W4\",\"SellerSku\":\"3325995\",\"Quantity\":1,\"Reason\":\"Other\"}," +
+                "{\"ID\":\"M333W5\",\"SellerSku\":\"3337245\",\"Quantity\":1,\"Reason\":\"AlternateItemProvided\"}" +
                 "]}";
-        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111115001"), reqJson, HEADER);
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111117009"), reqJson, HEADER);
         System.out.println(result);*/
 
-        /*//不同一理由退货
-        String url = BASE_URL + CAUrlConstants.ORDERS.REFUND_ORDER;
-        String reqJson = "{\"OrderID\":\"M456W\",\"Items\":[" +
-                "{\"ID\":\"M333W\",\"SellerSku\":\"3108487\",\"Quantity\":1,\"Reason\":\"BuyerCanceled\"}," +
-                "{\"ID\":\"M333W\",\"SellerSku\":\"3321289\",\"Quantity\":1,\"Reason\":\"Other\"}," +
-                "{\"ID\":\"M333W\",\"SellerSku\":\"3117503\",\"Quantity\":1,\"Reason\":\"AlternateItemProvided\"}" +
-                "]}";
-        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111115001"), reqJson, HEADER);
+        //部分退货
+       //不同一理由退货
+        /*String url = BASE_URL + CAUrlConstants.ORDERS.SHIP_ORDER;
+        String reqJson = "{\"ShippedDateUtc\":\"2016-09-19T04:52:32.9431095Z\"," +
+                "\"TrackingNumber\":\"Z123456789I\"," +
+                "\"ShippingCarrier\":\"Bantha Union\"," +
+                "\"ShippingClass\":\"Express\"," +
+                "\"Items\":{\"3114141\":9,\"3117503\":1,\"1908350\":1,\"3091639\":1}}";
+        //订单A：所有物品使用同一运单全部发货
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111118011"), reqJson, HEADER);
         System.out.println(result);*/
 
-        /*//部分退货
-        String url = BASE_URL + CAUrlConstants.ORDERS.REFUND_ORDER;
-        String reqJson = "{\"OrderID\":\"M456W\",\"Items\":[" +
-                "{\"ID\":\"M333W\",\"SellerSku\":\"3108487\",\"Quantity\":1,\"Reason\":\"BuyerCanceled\"}," +
-                "{\"ID\":\"M333W\",\"SellerSku\":\"3321289\",\"Quantity\":1,\"Reason\":\"Other\"}" +
+       /* String url = BASE_URL + CAUrlConstants.ORDERS.REFUND_ORDER;
+        String reqJson = "{\"OrderID\":\"02820160919111117009\",\"Items\":[" +
+                "{\"ID\":\"M333W1\",\"SellerSku\":\"3114141\",\"Quantity\":7,\"Reason\":\"BuyerCanceled\"}," +
+                "{\"ID\":\"M333W2\",\"SellerSku\":\"3117503\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}" +
                 "]}";
-        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111115001"), reqJson, HEADER);
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111118011"), reqJson, HEADER);
         System.out.println(result);
 */
 
-        //部分退货
-        /*String url = BASE_URL + CAUrlConstants.ORDERS.REFUND_ORDER;
-        String reqJson = "{\"OrderID\":\"M456W\",\"Items\":[" +
-                "{\"ID\":\"M333W\",\"SellerSku\":\"3117503\",\"Quantity\":1,\"Reason\":\"AlternateItemProvided\"}" +
-                "]}";
-        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111115001"), reqJson, HEADER);
+
+        //上部分退货
+        //不同一理由退货
+        /*String url = BASE_URL + CAUrlConstants.ORDERS.SHIP_ORDER;
+        String reqJson = "{\"ShippedDateUtc\":\"2016-09-19T04:52:32.9431095Z\"," +
+                "\"TrackingNumber\":\"Z123456789O\"," +
+                "\"ShippingCarrier\":\"Bantha Union\"," +
+                "\"ShippingClass\":\"Express\"," +
+                "\"Items\":{\"3114141\":7,\"3108978\":2,\"3108487\":1,\"3108666\":1}}";
+        //订单A：所有物品使用同一运单全部发货
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111119012"), reqJson, HEADER);
         System.out.println(result);*/
+
+
+      /*String url = BASE_URL + CAUrlConstants.ORDERS.REFUND_ORDER;
+        String reqJson = "{\"OrderID\":\"02820160919111117009\",\"Items\":[" +
+                "{\"ID\":\"M333W1\",\"SellerSku\":\"3114141\",\"Quantity\":5,\"Reason\":\"BuyerCanceled\"}," +
+                "{\"ID\":\"M333W2\",\"SellerSku\":\"3108978\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}" +
+                "]}";
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111119012"), reqJson, HEADER);
+        System.out.println(result);*/
+
+        //下部分退货
+        String url = BASE_URL + CAUrlConstants.ORDERS.REFUND_ORDER;
+        String reqJson = "{\"OrderID\":\"02820160919111117009\",\"Items\":[" +
+                "{\"ID\":\"M333W1\",\"SellerSku\":\"3114141\",\"Quantity\":2,\"Reason\":\"BuyerCanceled\"}," +
+                "{\"ID\":\"M333W1\",\"SellerSku\":\"3108487\",\"Quantity\":1,\"Reason\":\"MerchandiseNotReceived\"}," +
+                "{\"ID\":\"M333W1\",\"SellerSku\":\"3108666\",\"Quantity\":1,\"Reason\":\"ShippingAddressUndeliverable\"}," +
+                "{\"ID\":\"M333W2\",\"SellerSku\":\"3108978\",\"Quantity\":1,\"Reason\":\"GeneralAdjustment\"}" +
+                "]}";
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111119012"), reqJson, HEADER);
+        System.out.println(result);
 
     }
 }
