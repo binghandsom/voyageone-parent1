@@ -106,7 +106,7 @@ public class JmBase extends ComponentBase {
         while ((StringUtils.isNullOrBlank2(result) || result.contains("502 Bad Gateway")) && retry > 0) {
             result = HttpUtils.post(post_url.toString(), parm_url.toString());
             retry--;
-            logger.info("result：" + result);
+            //logger.info("result：" + result);
         }
 
 
