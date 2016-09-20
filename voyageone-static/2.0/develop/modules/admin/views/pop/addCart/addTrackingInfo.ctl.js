@@ -5,7 +5,7 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('CartAddTrackingInfoController', (function () {
-        function CartAddTrackingInfoController(context, channelService, AdminCartService, cartTrackingService, $uibModalInstance) {
+        function CartAddTrackingInfoController(context, alert, channelService, AdminCartService, cartTrackingService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' || context.kind == 'add' ? true : false;
             this.readOnly = context.isReadOnly == true ? true : false;
@@ -13,6 +13,7 @@ define([
             this.AdminCartService = AdminCartService;
             this.cartTrackingService = cartTrackingService;
             this.popType = '编辑';
+            this.alert = alert;
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
             this.checked = false;
@@ -45,6 +46,16 @@ define([
             },
             cancel: function () {
                 this.$uibModalInstance.close();
+            },
+            changeCartList: function () {
+                var self = this;
+                self.AdminCartService.getAllCart(self.sourceData.orderChannelId).then(function (res) {
+                    self.cartAllList = res.data;
+                    if (self.cartAllList.length == 0) {
+                        self.alert('请前往【 渠道信息管理 】页，选取 渠道Cart 信息！');
+                    }
+                });
+
             },
             save: function () {
                 var self = this;

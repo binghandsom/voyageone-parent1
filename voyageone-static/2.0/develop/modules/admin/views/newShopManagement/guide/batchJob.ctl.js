@@ -109,10 +109,10 @@ define([
                                 });
                                 if (source.indexOf(data) > -1) {
                                     source.splice(source.indexOf(data), 1);
-                                    self.init();
                                 }
                             }
                         );
+                        self.init();
                     }
                 );
             },
