@@ -38,11 +38,8 @@
         where `sku` = #{sku,jdbcType=VARCHAR}
     </update>
 
-    <delete id="delete" parameterType="java.lang.String" >
+    <delete id="delete" >
         delete from cms_zz_feed_gilt_inventory
-        <if test="sku == null">
-        where `sku` = #{sku,jdbcType=VARCHAR}
-        </if>
     </delete>
 
     <select id="selectOne" resultMap="BaseResultMap" >
@@ -114,7 +111,7 @@
     </select>
 
     <insert id="insertList" parameterType="ArrayList" >
-        insert into cms_zz_feed_gilt_inventory
+        insert IGNORE into cms_zz_feed_gilt_inventory
         (
         `sku`,
 
@@ -125,9 +122,6 @@
         `creater`,
 
         `modified`,
-
-        `modifier`,
-
 
         `modifier`
         )value

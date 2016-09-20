@@ -25,6 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.GILT;
@@ -200,14 +203,20 @@ public class GiltAnalysisService extends BaseTaskService {
 
     private void getQty() throws Exception {
 
+        cmsZzFeedGiltInventoryDaoExt.delete(null);
+
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+
         List<GiltSale> sales = giltSalesService.getAllSales();
-        sales.forEach(giltSale -> {
+        sales.forEach(giltSale1 -> executor.execute(() -> {
             try {
-                getInventorysBySalesId(giltSale.getId().toString());
+                getInventorysBySalesId(giltSale1.getId().toString());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
+        }));
+        executor.shutdown();
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
 
     }
@@ -219,19 +228,21 @@ public class GiltAnalysisService extends BaseTaskService {
         GiltPageGetSaleAttrRequest giltPageGetSaleAttrRequest = new GiltPageGetSaleAttrRequest();
         giltPageGetSaleAttrRequest.setId(salesId);
         giltPageGetSaleAttrRequest.setLimit(limit);
-        giltPageGetSaleAttrRequest.setOffset(offset);
         while (true){
+            giltPageGetSaleAttrRequest.setOffset(offset);
             $info("SalesId:" + salesId + "offset:" + offset);
-            List<GiltInventory> inventorys = giltSalesService.getInventorysBySaleId(giltPageGetSaleAttrRequest);
+            List<GiltRealTimeInventory> inventorys = giltSalesService.getRealTimeInventoriesBySaleId(giltPageGetSaleAttrRequest);
             if(inventorys.size() > 0){
                 List<Map<String, Object>> data = new ArrayList<>();
                 inventorys.forEach(giltInventory -> {
-                    Map<String, Object> item = new HashMap<String, Object>();
-                    item.put("sku", giltInventory.getSku_id());
-                    item.put("qty", giltInventory.getQuantity());
-                    data.add(item);
+                    if (giltInventory.getQuantity() > 0) {
+                        Map<String, Object> item = new HashMap<String, Object>();
+                        item.put("sku", giltInventory.getSku_id());
+                        item.put("qty", giltInventory.getQuantity());
+                        data.add(item);
+                    }
                 });
-                cmsZzFeedGiltInventoryDaoExt.insertList(data);
+                if(data.size() > 0) cmsZzFeedGiltInventoryDaoExt.insertList(data);
             }
             if(inventorys.size() < 100) break;
             offset += limit;
