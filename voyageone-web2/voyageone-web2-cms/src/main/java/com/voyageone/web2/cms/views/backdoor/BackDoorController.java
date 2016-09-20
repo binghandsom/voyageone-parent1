@@ -17,6 +17,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.dao.com.ComMtValueChannelDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.impl.cms.CategoryTreeAllService;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
@@ -31,6 +32,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.com.ComMtValueChannelModel;
 import com.voyageone.service.model.util.MapModel;
 import com.voyageone.web2.cms.CmsController;
 import org.springframework.beans.BeanUtils;
@@ -82,6 +84,8 @@ public class BackDoorController extends CmsController {
     private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     private CmsBtJmPromotionDaoExt cmsBtJmPromotionDaoExt;
+    @Autowired
+    private ComMtValueChannelDao comMtValueChannelDao;
 
 
     /**
@@ -1225,4 +1229,100 @@ public class BackDoorController extends CmsController {
         return builder.toString();
     }
 
+    /**
+     * 根据channelId重新设置
+     * @param channelId
+     * @return
+     */
+    @RequestMapping(value = "createBrandInComMtValueChannel", method = RequestMethod.GET)
+    public Object createBrandInComMtValueChannel(@RequestParam("channelId") String channelId) {
+
+        // 获取所有的产品数据
+        JongoQuery query = new JongoQuery();
+        query.setProjection("{\"common.fields.brand\": 1}");
+        List<CmsBtProductModel> products = cmsBtProductDao.select(query, channelId);
+
+        // 获取产品的所有brand
+        List<String> brandList = new ArrayList<>();
+        products.parallelStream().forEach(CmsBtProductModel -> {
+            if (!brandList.contains(CmsBtProductModel.getCommon().getFields().getBrand().toLowerCase()))
+                brandList.add(CmsBtProductModel.getCommon().getFields().getBrand().toLowerCase());
+        });
+
+        // 删除不存在的brand数据
+        Map<String, String> param = new HashMap<>();
+        param.put("channelId", channelId);
+        param.put("typeId", "41");
+        List<ComMtValueChannelModel> mtValueChannelList = comMtValueChannelDao.selectList(param);
+
+        List<String> deleteList = new ArrayList<>();
+        mtValueChannelList.forEach(ComMtValueChannelModel -> {
+            if (!brandList.contains(ComMtValueChannelModel.getValue())) {
+                ComMtValueChannelModel.setDisplayOrder(9999);
+                ComMtValueChannelModel.setModified(new Date());
+                comMtValueChannelDao.update(ComMtValueChannelModel);
+                deleteList.add(ComMtValueChannelModel.getValue() + "-" + ComMtValueChannelModel.getId());
+            }
+        });
+
+        // 在ComMtValueChannel中不存在的数据列表
+        List<String> notExistsBrandList = new ArrayList<>();
+        brandList.forEach( brand -> {
+            Map<String, String> param2 = new HashMap<>();
+            param2.put("channelId", channelId);
+            param2.put("typeId", "41");
+            param2.put("value", brand);
+            param2.put("langId", "en");
+            List<ComMtValueChannelModel> currentEnBrandList = comMtValueChannelDao.selectList(param2);
+            if (currentEnBrandList.size() == 0) {
+                ComMtValueChannelModel newEnBrand = new ComMtValueChannelModel();
+                newEnBrand.setChannelId(channelId);
+                newEnBrand.setTypeId(41);
+                newEnBrand.setLangId("en");
+                newEnBrand.setValue(brand);
+                newEnBrand.setName(brand);
+                newEnBrand.setAddName1(brand);
+                newEnBrand.setModifier("edward");
+                newEnBrand.setCreater("edward");
+                newEnBrand.setModified(new Date());
+                newEnBrand.setCreated(new Date());
+                newEnBrand.setDisplayOrder(0);
+                comMtValueChannelDao.insert(newEnBrand);
+
+                notExistsBrandList.add(brand + "-en");
+            }
+            param2.put("langId", "cn");
+            List<ComMtValueChannelModel> currentCnBrandList = comMtValueChannelDao.selectList(param2);
+            if (currentCnBrandList.size() == 0) {
+                ComMtValueChannelModel newEnBrand = new ComMtValueChannelModel();
+                newEnBrand.setChannelId(channelId);
+                newEnBrand.setTypeId(41);
+                newEnBrand.setLangId("cn");
+                newEnBrand.setValue(brand);
+                newEnBrand.setName(brand);
+                newEnBrand.setAddName1(brand);
+                newEnBrand.setModifier("edward");
+                newEnBrand.setCreater("edward");
+                newEnBrand.setModified(new Date());
+                newEnBrand.setCreated(new Date());
+                newEnBrand.setDisplayOrder(0);
+                comMtValueChannelDao.insert(newEnBrand);
+
+                notExistsBrandList.add(brand + "-cn");
+            }
+        });
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>删除brand 信息列表</h2>");
+        builder.append("<ul>");
+        deleteList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("<h2>需要插入的brand 信息列表</h2>");
+        builder.append("<ul>");
+        notExistsBrandList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
+    }
 }
