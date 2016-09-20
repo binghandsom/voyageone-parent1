@@ -12,8 +12,10 @@ import com.taobao.top.schema.value.ComplexValue;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static com.voyageone.components.tmall.service.TbConstants.sizeSortMap;
+import static java.util.stream.Collectors.joining;
 
 /**
  * 淘宝商品信息操作辅助类
@@ -179,20 +181,20 @@ public class TbItemSchema {
 
         String[] imageUrlArray = imageSplitUrls.split(",");
 
-        List<String> imageUrlList = new ArrayList<>(imageUrlArray.length);
-
-        Collections.addAll(imageUrlList, imageUrlArray);
+        String[] newImageUrlArray = Arrays.copyOf(imageUrlArray, 5);
 
         imageUrls.forEach((index, url) -> {
             // 跳过异常数据
             if (index < 1 || index > 5) return;
-            imageUrlList.add(index, url);
+            index = index - 1;
+            newImageUrlArray[index] = url;
         });
 
-        imageSplitUrls = StringUtils.join(imageUrlList, ",");
+        imageSplitUrls = Stream.of(newImageUrlArray).filter(i -> !StringUtils.isEmpty(i)).collect(joining(","));
 
         inputField.setValue(imageSplitUrls);
     }
+
 
     private Field getVerticalImage() {
         return getFieldMap().get("vertical_image");
