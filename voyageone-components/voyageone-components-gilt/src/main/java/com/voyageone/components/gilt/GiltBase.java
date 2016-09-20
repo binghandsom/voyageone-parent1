@@ -38,8 +38,8 @@ public abstract class GiltBase extends ComponentBase {
         String api_url_root = ThirdPartyConfigs.getVal1(ChannelConfigEnums.Channel.GILT.getId(), "api_url");
         String app_key = ThirdPartyConfigs.getVal1(ChannelConfigEnums.Channel.GILT.getId(), "app_key");
 
-        api_url_root = "https://api.gilt.com/global/";
-        app_key = "MDM0MTJkYmNlN2ZhMmFhZGZkZTlkZGI3ZDU0YWQ3ZGQ6";
+//        api_url_root = "https://api.gilt.com/global/";
+//        app_key = "MDM0MTJkYmNlN2ZhMmFhZGZkZTlkZGI3ZDU0YWQ3ZGQ6";
 
         String call_url = api_url_root + api_url;
 
