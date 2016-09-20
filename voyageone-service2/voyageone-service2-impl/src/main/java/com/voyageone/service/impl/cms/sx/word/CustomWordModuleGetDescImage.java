@@ -14,9 +14,11 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.net.URL;
+import java.util.*;
 
 /**
  * Created by tom.zhu on 16-8-26.
@@ -133,6 +135,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         // 万一有html的话, 直接换掉
         txtDesc = txtDesc.replaceAll("<br />", "\n");
         txtDesc = txtDesc.replaceAll("<br>", "\n");
+        txtDesc = doClearHtml(txtDesc);
 
         // 制作图片
         byte[] img = doCreateImage(txtDesc, width, startX, startY, sectionSize, fontSize, oneLineBit);
@@ -147,6 +150,33 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         }
 
         return "";
+    }
+
+    public String doClearHtml(String value) {
+        String prefix = "< *";
+        String suffix = " *>";
+        java.util.List<String> lstHtml = new ArrayList<>();
+        lstHtml.add(prefix + "br" + suffix);
+        lstHtml.add("< *br */>");
+        lstHtml.add(prefix + "p" + suffix);
+        lstHtml.add(prefix + "/p" + suffix);
+        lstHtml.add(prefix + "/ *p" + suffix);
+        lstHtml.add(prefix + "ul" + suffix);
+        lstHtml.add(prefix + "/ul" + suffix);
+        lstHtml.add(prefix + "/ *ul" + suffix);
+        lstHtml.add(prefix + "li" + suffix);
+        lstHtml.add(prefix + "/li" + suffix);
+        lstHtml.add(prefix + "/ *li" + suffix);
+        lstHtml.add(prefix + "div" + suffix);
+        lstHtml.add(prefix + "/div" + suffix);
+        lstHtml.add(prefix + "/ *div" + suffix);
+        lstHtml.add("&nbsp;");
+
+        for (String html : lstHtml) {
+            value = value.replaceAll(html, " ");
+        }
+
+        return value;
     }
 
     private byte[] doCreateImage(String txtDesc, int width, int startX, int startY, int sectionSize, float fontSize, int oneLineBit) {
