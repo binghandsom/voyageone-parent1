@@ -330,17 +330,20 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         mqMessageMap.put("shipping_carrier", request.getShippingCarrier());
         mqMessageMap.put("shipping_class", request.getShippingClass());
 
-        String reservationIds = "";
+/*        String reservationIds = "";
 
         for (Long aLong : tempReservationId) {
             reservationIds += aLong + ",";
-        }
+        }*/
 
-        mqMessageMap.put("items", reservationIds.substring(0, reservationIds.length() - 1));
+        mqMessageMap.put("items", tempReservationId);
 
-        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageMap));
+        Map<String,Object> mqMessageBody=new HashMap<>();
+        mqMessageBody.put("body",JacksonUtil.bean2Json(mqMessageMap));
 
-        mqSender.sendMessage("voyageone_vms_wsdl_mq_ship_order_queue", mqMessageMap);
+        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageBody));
+
+        mqSender.sendMessage("voyageone_vms_wsdl_mq_ship_order_queue", mqMessageBody);
 
         return success();
     }
@@ -390,7 +393,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
                 Map<String, Object> tempRecord = new HashMap<>();
                 tempRecord.put("reservation_id", vmsBtClientOrderDetailsModel.getReservationId());
-                tempRecord.put("reason", vmsBtClientOrderDetailsModel.getCancelReason());
+                tempRecord.put("reason", tempUpdateModel.getCancelReason());
                 tempRecords.add(tempRecord);
             }
         }
@@ -439,9 +442,12 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         mqMessageMap.put("items", tempRecords);
 
-        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageMap));
+        Map<String,Object> mqMessageBody=new HashMap<>();
+        mqMessageBody.put("body",JacksonUtil.bean2Json(mqMessageMap));
 
-        mqSender.sendMessage("voyageone_vms_wsdl_mq_cancel_order_queue", mqMessageMap);
+        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageBody));
+
+        mqSender.sendMessage("voyageone_vms_wsdl_mq_cancel_order_queue", mqMessageBody);
 
         return success();
     }
@@ -490,7 +496,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
                 Map<String, Object> tempRecord = new HashMap<>();
                 tempRecord.put("reservation_id", vmsBtClientOrderDetailsModel.getReservationId());
-                tempRecord.put("reason", vmsBtClientOrderDetailsModel.getCancelReason());
+                tempRecord.put("reason", tempUpdateModel.getCancelReason());
                 tempRecords.add(tempRecord);
             }
         }
@@ -540,9 +546,11 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         mqMessageMap.put("items", tempRecords);
 
-        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageMap));
+        Map<String,Object> mqMessageBody=new HashMap<>();
+        mqMessageBody.put("body",JacksonUtil.bean2Json(mqMessageMap));
+        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageBody));
 
-        mqSender.sendMessage("voyageone_vms_wsdl_mq_refund_order_queue", mqMessageMap);
+        mqSender.sendMessage("voyageone_vms_wsdl_mq_refund_order_queue", mqMessageBody);
 
         return success();
     }
