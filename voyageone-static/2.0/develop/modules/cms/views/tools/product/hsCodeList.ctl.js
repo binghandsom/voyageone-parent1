@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
     cms.controller('HsCodeController', (function () {
-        function HsCodeController(hsCodeInfoService, notify, popups, $feedSearchService) {
+        function HsCodeController(hsCodeInfoService, notify, popups,alert, $feedSearchService) {
             this.hsCodeInfoService = hsCodeInfoService;
             this.$feedSearchService = $feedSearchService;
             this.prodPageOption = {curr: 1, total: 0, size: 10, fetch: this.search.bind(this)};
@@ -14,6 +14,7 @@ define([
             this.hsCodeValue = [];
             this.status = false;
             this.notify = notify;
+            this.alert=alert;
             this.popups = popups;
             this.getTaskInfo = {
                 curr: this.prodPageOption.curr,
@@ -53,6 +54,10 @@ define([
                     self.hsCodeInfoService.get(self.getTaskInfo).then(function (res) {
                         self.hsSettedData = res.data.taskSummary;
                         self.hsCodeList = res.data.hsCodeList;
+                        if(res.data.hsCodeList.length==0)
+                        {
+                            self.alert("当前没有待领取的税号设置任务！");
+                        }
                         self.hsCodeValue = res.data.hsCodeValue;
                     })
                 }
