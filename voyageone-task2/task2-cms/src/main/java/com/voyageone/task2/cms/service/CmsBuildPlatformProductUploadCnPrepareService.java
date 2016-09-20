@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
  * @version 2.5.0
  */
 @Service
-public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
+public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskService {
 
     @Autowired
     private PlatformProductUploadService platformProductUploadService;
