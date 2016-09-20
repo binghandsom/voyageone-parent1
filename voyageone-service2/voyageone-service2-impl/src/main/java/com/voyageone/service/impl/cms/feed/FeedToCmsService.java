@@ -460,7 +460,7 @@ public class FeedToCmsService extends BaseService {
         return b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
     }
     private void priceConvert(CmsBtFeedInfoModel_Sku skuModel) {
-        Integer weightCalc = StringUtil.isEmpty(skuModel.getWeightCalc()) ? 4 : Integer.parseInt(skuModel.getWeightCalc());
+        Double weightCalc = StringUtil.isEmpty(skuModel.getWeightCalc()) ? 4.0 : Double.parseDouble(skuModel.getWeightCalc());
         Double current = (skuModel.getPriceNet() + weightCalc * 3.5) * 6.7 / (1 - 0.1 - 0.05 - 0.119 - 0.05);
         skuModel.setPriceCurrent(Math.ceil(current));
         Double msrp = (skuModel.getPriceClientMsrp() + weightCalc * 3.5) * 6.7 / (1 - 0.1 - 0.05 - 0.119 - 0.05);
