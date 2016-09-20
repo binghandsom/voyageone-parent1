@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtSxCnProductSellercatDao" >
+
+    <select id="select" resultType="Map" parameterType="java.lang.Integer" >
+        select 
+        *
+        from voyageone_cms2.cms_bt_sx_cn_product_sellercat
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="update" parameterType="Map" >
+        update voyageone_cms2.cms_bt_sx_cn_product_sellercat
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="catId != null" >
+                `cat_id` = #{catId,jdbcType=VARCHAR},
+            </if>
+            <if test="updFlg != null" >
+                `updflg` = #{updFlg,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <insert id="insert" parameterType="Map" useGeneratedKeys="true" keyProperty="id" >
+        insert into voyageone_cms2.cms_bt_sx_cn_product_sellercat (channel_id,cat_id,created,creater, modified, modifier )
+        values ( #{channelId}, #{catId}, now(), #{userName}, now(), #{userName} )
+    </insert>
+
+</mapper>
