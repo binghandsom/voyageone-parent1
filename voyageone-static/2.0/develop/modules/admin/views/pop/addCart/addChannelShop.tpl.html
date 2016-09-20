@@ -25,19 +25,21 @@
                             <vo-message target="addForm.channelName"></vo-message>
                         </div>
                     </div>
-                    <div class="form-group" ng-if="ctrl.sourceData.orderChannelId"><!-- Cart名* -->
-                        <label class="col-sm-3 control-label">{{'TXT_NAME_CART' | translate}}</label>
-                        <div class="col-sm-8">
-                            <select search-contains="true" chosen width="'100%'" class="form-control"
-                                    ng-model="ctrl.sourceData.cartId" name="cartName" required ng-disabled="ctrl.popType == '编辑'"
-                                    ng-options="cart.cartId as cart.name for cart in ctrl.cartAllList">
-                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                            </select>
+                    <div ng-if="ctrl.sourceData.orderChannelId">
+                        <div class="form-group"><!-- Cart名* -->
+                            <label class="col-sm-3 control-label">{{'TXT_NAME_CART' | translate}}</label>
+                            <div class="col-sm-8">
+                                <select search-contains="true" chosen width="'100%'" class="form-control"
+                                        ng-model="ctrl.sourceData.cartId" name="cartName" required ng-disabled="ctrl.popType == '编辑'"
+                                        ng-options="cart.cartId as cart.name for cart in ctrl.cartAllList">
+                                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-sm-8 col-sm-offset-3">
-                            <vo-message target="addForm.cartName"></vo-message>
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <vo-message target="addForm.cartName"></vo-message>
+                            </div>
                         </div>
                     </div>
                     <div class="row form-group"><!-- 商店名 -->

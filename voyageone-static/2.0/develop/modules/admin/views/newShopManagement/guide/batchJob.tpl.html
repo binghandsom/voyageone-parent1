@@ -35,10 +35,10 @@
                                         <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                     </label>
                                 </th>
-                                <th class="text-center mfb-xt" translate="TXT_TASK_TYPE"></th>
+                                <th class="text-left mfb-xt" translate="TXT_TASK_TYPE"></th>
                                 <th class="text-left mfb-xxt" translate="TXT_TASK_NAME"></th>
                                 <th class="text-left mfb-xxt" translate="TXT_TASK_COMMENT"></th>
-                                <th class="text-center mfb-xxt" translate="TXT_TASK_TIME"></th>
+                                <th class="text-left mfb-xxt" translate="TXT_TASK_TIME"></th>
                                 <th class="text-center mfb-xt" translate="TXT_ACTION"></th>
                             </tr>
                             </thead>
@@ -54,10 +54,10 @@
                                         <span class="fa fa-check"></span>
                                     </label>
                                 </td>
-                                <td class="text-center v-middle">{{list.taskType}}</td>
+                                <td class="text-left v-middle">{{list.taskType}}</td>
                                 <td class="text-left v-middle">{{list.taskName}}</td>
                                 <td class="text-left v-middle">{{list.taskComment}}</td>
-                                <td class="text-center v-middle">{{list.taskFreq}}</td>
+                                <td class="text-left v-middle">{{list.taskFreq}}</td>
                                 <td class="text-center v-middle">
                                     <button class="btn btn-success" ng-if="list.runFlg=='0'"
                                             ng-click="ctrl.run({'data':list,'type':'Start'})">启动

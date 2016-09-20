@@ -37,7 +37,7 @@ define([
                 });
                 self.search();
             },
-            changeCartList:function(channel){
+            changeCartList: function (channel) {
                 var self = this;
                 self.AdminCartService.getAllCart(channel).then(function (res) {
                     self.cartAllList = res.data;
@@ -65,10 +65,12 @@ define([
                             self.tempSelect.clearCurrPageRows();
                             self.tempSelect.clearSelectedList();
                         }
-                        _.forEach(self.cartList, function (Info) {
+                        _.forEach(self.cartList, function (Info, index) {
                             if (Info.updFlg != 8) {
+                                _.extend(Info, {mainKey: index});
                                 self.tempSelect.currPageRows({
-                                    "id": Info.cartId,
+                                    "id": Info.mainKey,
+                                    'cartId': Info.cartId,
                                     "code": Info.name,
                                     "orderChannelId": Info.orderChannelId
                                 });
@@ -95,7 +97,7 @@ define([
                     return;
                 } else {
                     _.forEach(self.cartList, function (Info) {
-                        if (Info.cartId == self.cartShopSelList.selList[0].id) {
+                        if (Info.mainKey == self.cartShopSelList.selList[0].id) {
                             _.extend(Info, {'configType': type});
                             self.popups.openConfig(Info);
                         }
@@ -114,7 +116,7 @@ define([
                         return;
                     } else {
                         _.forEach(self.cartList, function (Info) {
-                            if (Info.cartId == self.cartShopSelList.selList[0].id) {
+                            if (Info.mainKey == self.cartShopSelList.selList[0].id) {
                                 self.popups.openCartChannelShop(Info).then(function () {
                                     self.search(1);
                                 });
@@ -128,7 +130,7 @@ define([
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
                         var delList = [];
                         _.forEach(self.cartShopSelList.selList, function (delInfo) {
-                            delList.push({'cartId': delInfo.id, 'orderChannelId': delInfo.orderChannelId});
+                            delList.push({'cartId': delInfo.cartId, 'orderChannelId': delInfo.orderChannelId});
                         });
                         self.cartShopService.deleteCartShop(delList).then(function (res) {
                             self.search();

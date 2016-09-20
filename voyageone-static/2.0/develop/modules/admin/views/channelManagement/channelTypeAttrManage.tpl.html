@@ -99,16 +99,16 @@
                             <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                         </label>
                     </th>
-                    <th class="text-center mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
+                    <th class="text-left mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
                     <th class="text-left mfb-xt" translate="TXT_CHANNEL_TYPE_NAME"></th>
                     <th class="text-left mfb-xxt" translate="TXT_PROPERTY_NAME"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_PROPERTY_VALUE"></th>
-                    <th class="text-center mfb-xxt">{{'TXT_CHANNEL_ADD_NAME'|translate}}1</th>
-                    <th class="text-center mfb-xxt">{{'TXT_CHANNEL_ADD_NAME'|translate}}2</th>
-                    <th class="text-center mfb-xxt" translate="TXT_CHANNEL_LANGUAGE_TYPE"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_PROPERTY_VALUE"></th>
+                    <th class="text-left mfb-xxt">{{'TXT_CHANNEL_ADD_NAME'|translate}}1</th>
+                    <th class="text-left mfb-xxt">{{'TXT_CHANNEL_ADD_NAME'|translate}}2</th>
+                    <th class="text-left mfb-xxt" translate="TXT_CHANNEL_LANGUAGE_TYPE"></th>
                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
-                    <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                    <th class="text-left mfb-xt" translate="TXT_UPDATER"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -123,16 +123,16 @@
                             <span class="fa fa-check"></span>
                         </label>
                     </td>
-                    <td class="text-center v-middle">{{list.channelName}}</td>
+                    <td class="text-left v-middle">{{list.channelName}}</td>
                     <td class="text-left v-middle">{{list.typeName}}</td>
                     <td class="text-left v-middle">{{list.name}}</td>
-                    <td class="text-center v-middle">{{list.value}}</td>
-                    <td class="text-center v-middle">{{list.addName1}}</td>
-                    <td class="text-center v-middle">{{list.addName2}}</td>
-                    <td class="text-center v-middle">{{list.langId?list.langId=='en'?'英文':'中文':''}}</td>
-                    <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
-                    <td class="text-left v-middle">{{list.modified}}</td>
-                    <td class="text-center v-middle">{{list.modifier}}</td>
+                    <td class="text-left v-middle">{{list.value}}</td>
+                    <td class="text-left v-middle">{{list.addName1}}</td>
+                    <td class="text-left v-middle">{{list.addName2}}</td>
+                    <td class="text-left v-middle">{{list.langId?list.langId=='en'?'英文':'中文':''}}</td>
+                    <td class="text-center v-middle">{{list.active!=null?list.active==true ? '启用':'禁用':''}}</td>
+                    <td class="text-center v-middle">{{list.modified}}</td>
+                    <td class="text-left v-middle">{{list.modifier}}</td>
                 </tr>
                 </tbody>
             </table>

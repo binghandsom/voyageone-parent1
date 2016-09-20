@@ -38,13 +38,13 @@
                                                     <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                                 </label>
                                             </th>
-                                            <th class="text-center mfb-xt" translate="TXT_CHANNEL_NAME"></th>
-                                            <th class="text-center mfb-xt" translate="TXT_CHANNEL_SMS_TYPE"></th>
-                                            <th class="text-center mfb-xt">{{'TXT_CHANNEL_SMS_CODE'|translate}}1</th>
-                                            <th class="text-center mfb-xt">{{'TXT_CHANNEL_SMS_CODE'|translate}}2</th>
-                                            <th class="text-center mfb-xxt" translate="TXT_CHANNEL_SMS_CONTENT"></th>
-                                            <th class="text-center mfb-xxt" translate="TXT_CHANNEL_SMS_DESC"></th>
-                                            <th class="text-center mfb-xt" translate="TXT_CHANNEL_SNS_DEL_TARGET"></th>
+                                            <th class="text-left mfb-xt" translate="TXT_CHANNEL_NAME"></th>
+                                            <th class="text-left mfb-xt" translate="TXT_CHANNEL_SMS_TYPE"></th>
+                                            <th class="text-left mfb-xt">{{'TXT_CHANNEL_SMS_CODE'|translate}}1</th>
+                                            <th class="text-left mfb-xt">{{'TXT_CHANNEL_SMS_CODE'|translate}}2</th>
+                                            <th class="text-left mfb-xxt" translate="TXT_CHANNEL_SMS_CONTENT"></th>
+                                            <th class="text-left mfb-xxt" translate="TXT_CHANNEL_SMS_DESC"></th>
+                                            <th class="text-left mfb-xt" translate="TXT_CHANNEL_SNS_DEL_TARGET"></th>
                                             <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
                                         </tr>
                                         </thead>
@@ -60,14 +60,14 @@
                                                     <span class="fa fa-check"></span>
                                                 </label>
                                             </td>
-                                            <td class="text-center v-middle">{{list.channelName}}</td>
-                                            <td class="text-center v-middle">{{list.smsType}}</td>
-                                            <td class="text-center v-middle">{{list.smsCode1}}</td>
-                                            <td class="text-center v-middle">{{list.smsCode2}}</td>
+                                            <td class="text-left v-middle">{{list.channelName}}</td>
+                                            <td class="text-left v-middle">{{list.smsType}}</td>
+                                            <td class="text-left v-middle">{{list.smsCode1}}</td>
+                                            <td class="text-left v-middle">{{list.smsCode2}}</td>
                                             <td class="text-left v-middle">{{list.content}}</td>
-                                            <td class="text-center v-middle">{{list.describe}}</td>
-                                            <td class="text-center v-middle">{{list.delFlg?list.delFlg=='1'?'删除':'未删除':''}}</td>
-                                            <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
+                                            <td class="text-left v-middle">{{list.describe}}</td>
+                                            <td class="text-left v-middle">{{list.delFlg!=null?list.delFlg=='1'?'删除':'未删除':''}}</td>
+                                            <td class="text-center v-middle">{{list.active!=null?list.active==true ? '启用':'禁用':''}}</td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -94,15 +94,15 @@
                                                 <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                             </label>
                                         </th>
-                                        <th class="text-center mfb-xxt" translate="TXT_CART_CHANNEL_NAME"></th>
+                                        <th class="text-left mfb-xxt" translate="TXT_CART_CHANNEL_NAME"></th>
                                         <th class="text-left mfb-xxt" translate="TXT_PROPERTY_NAME"></th>
-                                        <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}1</th>
-                                        <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}2</th>
-                                        <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}3</th>
-                                        <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}4</th>
-                                        <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}5</th>
-                                        <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}6</th>
-                                        <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
+                                        <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}1</th>
+                                        <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}2</th>
+                                        <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}3</th>
+                                        <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}4</th>
+                                        <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}5</th>
+                                        <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}6</th>
+                                        <th class="text-left mfb-xxt" translate="TXT_COMMENTS"></th>
                                         <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
                                     </tr>
                                     </thead>
@@ -118,7 +118,7 @@
                                                 <span class="fa fa-check"></span>
                                             </label>
                                         </td>
-                                        <td class="text-center v-middle">{{list.channelName}}</td>
+                                        <td class="text-left v-middle">{{list.channelName}}</td>
                                         <td class="text-left v-middle">
                                             <span class="v-middle" ng-if="list.propName.length <= 15">{{list.propName}}</span>
                         <span class="v-middle" ng-if="list.propName.length > 15" uib-tooltip="{{list.propName}}"
@@ -129,37 +129,37 @@
                         <span class="v-middle" ng-if="list.propVal1.length > 15" uib-tooltip="{{list.propVal1}}"
                               tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal1 | stringCutter:true:15:' ...'}}</span>
                                         </td>
-                                        <td class="text-center v-middle">
+                                        <td class="text-left v-middle">
                                             <span class="v-middle" ng-if="list.propVal2.length <= 15">{{list.propVal2}}</span>
                         <span class="v-middle" ng-if="list.propVal2.length > 15" uib-tooltip="{{list.propVal2}}"
                               tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal2 | stringCutter:true:15:' ...'}}</span>
                                         </td>
-                                        <td class="text-center v-middle">
+                                        <td class="text-left v-middle">
                                             <span class="v-middle" ng-if="list.propVal3.length <= 15">{{list.propVal3}}</span>
                         <span class="v-middle" ng-if="list.propVal3.length > 15" uib-tooltip="{{list.propVal3}}"
                               tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal3 | stringCutter:true:15:' ...'}}</span>
                                         </td>
-                                        <td class="text-center v-middle">
+                                        <td class="text-left v-middle">
                                             <span class="v-middle" ng-if="list.propVal4.length <= 15">{{list.propVal4}}</span>
                         <span class="v-middle" ng-if="list.propVal4.length > 15" uib-tooltip="{{list.propVal4}}"
                               tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal4 | stringCutter:true:15:' ...'}}</span>
                                         </td>
-                                        <td class="text-center v-middle">
+                                        <td class="text-left v-middle">
                                             <span class="v-middle" ng-if="list.propVal5.length <= 15">{{list.propVal5}}</span>
                         <span class="v-middle" ng-if="list.propVal5.length > 15" uib-tooltip="{{list.propVal5}}"
                               tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal5 | stringCutter:true:15:' ...'}}</span>
                                         </td>
-                                        <td class="text-center v-middle">
+                                        <td class="text-left v-middle">
                                             <span class="v-middle" ng-if="list.propVal6.length <= 15">{{list.propVal6}}</span>
                         <span class="v-middle" ng-if="list.propVal6.length > 15" uib-tooltip="{{list.propVal6}}"
                               tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal6 | stringCutter:true:15:' ...'}}</span>
                                         </td>
-                                        <td class="text-center v-middle">
+                                        <td class="text-left v-middle">
                                             <span class="v-middle" ng-if="list.comment.length <= 15">{{list.comment}}</span>
                         <span class="v-middle" ng-if="list.comment.length > 15" uib-tooltip="{{list.comment}}"
                               tooltip-trigger="mouseenter" tooltip-placement="top">{{list.comment | stringCutter:true:15:' ...'}}</span>
                                         </td>
-                                        <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
+                                        <td class="text-center v-middle">{{list.active!=null?list.active==true ? '启用':'禁用':''}}</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -186,11 +186,11 @@
                                                 <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                             </label>
                                         </th>
-                                        <th class="text-center mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
-                                        <th class="text-center mfb-xt" translate="TXT_CHANNEL_CARRIER_NAME"></th>
+                                        <th class="text-left mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
+                                        <th class="text-left mfb-xt" translate="TXT_CHANNEL_CARRIER_NAME"></th>
                                         <th class="text-center mfb-xxt" translate="TXT_CHANNEL_CARRIER_ISEBUY_ID"></th>
                                         <th class="text-center mfb-xxt" translate="TXT_CHANNEL_CARRIER_DELETE_ALLOW"></th>
-                                        <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
+                                        <th class="text-left mfb-xxt" translate="TXT_COMMENTS"></th>
                                         <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
                                     </tr>
                                     </thead>
@@ -206,12 +206,12 @@
                                                 <span class="fa fa-check"></span>
                                             </label>
                                         </td>
-                                        <td class="text-center v-middle">{{list.channelName}}</td>
-                                        <td class="text-center v-middle">{{list.carrier}}</td>
-                                        <td class="text-center v-middle">{{list.usekd100Flg?list.usekd100Flg=='0'?'否':'是':''}}</td>
-                                        <td class="text-center v-middle">{{list.allowDeleteFlg?list.allowDeleteFlg=='0'?'禁止':'允许':''}}</td>
-                                        <td class="text-center v-middle">{{list.comments}}</td>
-                                        <td class="text-center v-middle">{{list.active?list.active==true?'启用':'禁用':''}}</td>
+                                        <td class="text-left v-middle">{{list.channelName}}</td>
+                                        <td class="text-left v-middle">{{list.carrier}}</td>
+                                        <td class="text-center v-middle">{{list.usekd100Flg!=null?list.usekd100Flg=='0'?'否':'是':''}}</td>
+                                        <td class="text-center v-middle">{{list.allowDeleteFlg!=null?list.allowDeleteFlg=='0'?'禁止':'允许':''}}</td>
+                                        <td class="text-left v-middle">{{list.comments}}</td>
+                                        <td class="text-center v-middle">{{list.active!=null?list.active==true?'启用':'禁用':''}}</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -238,12 +238,12 @@
                                                 <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                             </label>
                                         </th>
-                                        <th class="text-center mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
+                                        <th class="text-lefttext-left mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
                                         <th class="text-left mfb-xt" translate="TXT_CHANNEL_TYPE_NAME"></th>
                                         <th class="text-left mfb-xxt" translate="TXT_PROPERTY_NAME"></th>
-                                        <th class="text-center mfb-xxt" translate="TXT_PROPERTY_VALUE"></th>
-                                        <th class="text-center mfb-xxt">{{'TXT_CHANNEL_ADD_NAME'|translate}}1</th>
-                                        <th class="text-center mfb-xxt">{{'TXT_CHANNEL_ADD_NAME'|translate}}2</th>
+                                        <th class="text-lefttext-left mfb-xxt" translate="TXT_PROPERTY_VALUE"></th>
+                                        <th class="text-lefttext-left mfb-xxt">{{'TXT_CHANNEL_ADD_NAME'|translate}}1</th>
+                                        <th class="text-lefttext-left mfb-xxt">{{'TXT_CHANNEL_ADD_NAME'|translate}}2</th>
                                         <th class="text-center mfb-xxt" translate="TXT_CHANNEL_LANGUAGE_TYPE"></th>
                                         <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
                                     </tr>
@@ -260,14 +260,14 @@
                                                 <span class="fa fa-check"></span>
                                             </label>
                                         </td>
-                                        <td class="text-center v-middle">{{list.channelName}}</td>
+                                        <td class="text-lefttext-left v-middle">{{list.channelName}}</td>
                                         <td class="text-left v-middle">{{list.typeName}}</td>
                                         <td class="text-left v-middle">{{list.name}}</td>
-                                        <td class="text-center v-middle">{{list.value}}</td>
-                                        <td class="text-center v-middle">{{list.addName1}}</td>
-                                        <td class="text-center v-middle">{{list.addName2}}</td>
-                                        <td class="text-center v-middle">{{list.langId?list.langId=='en'?'英文':'中文':''}}</td>
-                                        <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
+                                        <td class="text-lefttext-left v-middle">{{list.value}}</td>
+                                        <td class="text-lefttext-left v-middle">{{list.addName1}}</td>
+                                        <td class="text-lefttext-left v-middle">{{list.addName2}}</td>
+                                        <td class="text-center v-middle">{{list.langId!=null?list.langId=='en'?'英文':'中文':''}}</td>
+                                        <td class="text-center v-middle">{{list.active!=null?list.active==true ? '启用':'禁用':''}}</td>
                                     </tr>
                                     </tbody>
                                 </table>

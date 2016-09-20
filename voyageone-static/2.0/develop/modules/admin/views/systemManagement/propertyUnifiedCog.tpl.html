@@ -131,13 +131,13 @@
                             <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                         </label>
                     </th>
-                    <th class="text-center mfb-xt" ng-if="ctrl.searchInfo.configType=='Shop'" translate="TXT_CART_CHANNEL_NAME"></th>
-                    <th class="text-center mfb-xt">{{ctrl.getConfigType(ctrl.searchInfo.configType)}}名</th>
+                    <th class="text-left mfb-xt" ng-if="ctrl.searchInfo.configType=='Shop'" translate="TXT_CART_CHANNEL_NAME"></th>
+                    <th class="text-left mfb-xt">{{ctrl.getConfigType(ctrl.searchInfo.configType)}}名</th>
                     <th class="text-left mfb-xxt" translate="TXT_PROPERTY_NAME"></th>
                     <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}1</th>
-                    <th class="text-center mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}2</th>
+                    <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}2</th>
                     <th class="text-center mfb-xxt" translate="TXT_TIME_END" ng-if="ctrl.searchInfo.configType=='Task'"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_COMMENTS"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -152,14 +152,14 @@
                             <span class="fa fa-check"></span>
                         </label>
                     </td>
-                    <td class="text-center v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.channelName}}</td>
-                    <td class="text-center v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.cartName}}</td>
-                    <td class="text-center v-middle"ng-if="ctrl.searchInfo.configType!=='Shop'">{{list.channelName||list.storeName||list.taskId||list.portName}}</td>
+                    <td class="text-left v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.channelName}}</td>
+                    <td class="text-left v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.cartName}}</td>
+                    <td class="text-left v-middle"ng-if="ctrl.searchInfo.configType!=='Shop'">{{list.channelName||list.storeName||list.taskId||list.portName}}</td>
                     <td class="text-left v-middle">{{list.cfgName}}</td>
                     <td class="text-left v-middle" style="overflow: auto;max-width: 116px;">{{list.cfgVal1}}</td>
-                    <td class="text-center v-middle" style="overflow: auto;max-width: 116px;">{{list.cfgVal2}}</td>
+                    <td class="text-left v-middle" style="overflow: auto;max-width: 116px;">{{list.cfgVal2}}</td>
                     <td class="text-center v-middle" ng-if="ctrl.searchInfo.configType=='Task'">{{list.endTime| date: 'yyyy-MM-dd HH:mm:ss'}}</td>
-                    <td class="text-center v-middle">{{list.comment}}</td>
+                    <td class="text-left v-middle">{{list.comment}}</td>
                 </tr>
                 </tbody>
             </table>

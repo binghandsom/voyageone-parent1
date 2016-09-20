@@ -86,14 +86,14 @@
                             <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                         </label>
                     </th>
-                    <th class="text-center mfb-xt" translate="TXT_CODE_ID"></th>
+                    <th class="text-left mfb-xt" translate="TXT_CODE_ID"></th>
                     <th class="text-left mfb-xt" translate="TXT_CODE"></th>
                     <th class="text-left mfb-xxt" translate="TXT_CODE_NAME"></th>
                     <th class="text-left mfb-xxt">{{'TXT_CODE_NAME'|translate}}1</th>
-                    <th class="text-center mfb-xxt" translate="TXT_CODE_DESC"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_CODE_DESC"></th>
                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
-                    <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                    <th class="text-left mfb-xt" translate="TXT_UPDATER"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -108,14 +108,14 @@
                             <span class="fa fa-check"></span>
                         </label>
                     </td>
-                    <td class="text-center v-middle">{{list.id}}</td>
+                    <td class="text-left v-middle">{{list.id}}</td>
                     <td class="text-left v-middle">{{list.code}}</td>
                     <td class="text-left v-middle">{{list.name}}</td>
                     <td class="text-left v-middle">{{list.name1}}</td>
                     <td class="text-left v-middle">{{list.des}}</td>
                     <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
-                    <td class="text-left v-middle">{{list.modified}}</td>
-                    <td class="text-center v-middle">{{list.modifier}}</td>
+                    <td class="text-center v-middle">{{list.modified}}</td>
+                    <td class="text-left v-middle">{{list.modifier}}</td>
                 </tr>
                 </tbody>
             </table>

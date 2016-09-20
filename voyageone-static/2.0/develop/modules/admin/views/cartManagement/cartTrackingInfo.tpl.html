@@ -95,16 +95,16 @@
                             <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                         </label>
                     </th>
-                    <th class="text-center mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
-                    <th class="text-center mfb-xt" translate="TXT_CART_SHOP_NAME"></th>
-                    <th class="text-center mfb-xt" translate="TXT_TRACKING_STATE"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_TRACKING_INFO"></th>
-                    <th class="text-center mfb-xt" translate="TXT_TRACKING_LOCATION"></th>
+                    <th class="text-left mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
+                    <th class="text-left mfb-xt" translate="TXT_CART_SHOP_NAME"></th>
+                    <th class="text-left mfb-xt" translate="TXT_TRACKING_STATE"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_TRACKING_INFO"></th>
+                    <th class="text-left mfb-xt" translate="TXT_TRACKING_LOCATION"></th>
                     <th class="text-center mfb-xt" translate="TXT_IS_DISPLAY"></th>
                     <th class="text-center mfb-xxt" translate="TXT_TRACKING_IS_EXPAND"></th>
                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
-                    <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                    <th class="text-left mfb-xt" translate="TXT_UPDATER"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -119,16 +119,16 @@
                             <span class="fa fa-check"></span>
                         </label>
                     </td>
-                    <td class="text-center v-middle">{{list.channelName}}</td>
-                    <td class="text-center v-middle">{{list.cartName}}</td>
-                    <td class="text-center v-middle">{{list.trackingStatus}}</td>
+                    <td class="text-left v-middle">{{list.channelName}}</td>
+                    <td class="text-left v-middle">{{list.cartName}}</td>
+                    <td class="text-left v-middle">{{list.trackingStatus}}</td>
                     <td class="text-left v-middle">{{list.trackingInfo}}</td>
-                    <td class="text-center v-middle">{{list.location}}</td>
-                    <td class="text-center v-middle">{{list.displayFlg?list.displayFlg=='1'?'显示':'隐藏':''}}</td>
+                    <td class="text-left v-middle">{{list.location}}</td>
+                    <td class="text-center v-middle">{{list.displayFlg!=null?list.displayFlg=='1'?'显示':'隐藏':''}}</td>
                     <td class="text-center v-middle">{{list.trackingSpreadFlg =='1'?'取得运单号路由信息':''}}</td>
-                    <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
-                    <td class="text-left v-middle">{{list.modified}}</td>
-                    <td class="text-center v-middle">{{list.modifier}}</td>
+                    <td class="text-center v-middle">{{list.active!=null?list.active==true ? '启用':'禁用':''}}</td>
+                    <td class="text-center v-middle">{{list.modified}}</td>
+                    <td class="text-left v-middle">{{list.modifier}}</td>
                 </tr>
                 </tbody>
             </table>

@@ -35,14 +35,14 @@
                                             <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                         </label>
                                     </th>
-                                    <th class="text-center mfb-xt" translate="TXT_CHANNEL_NAME"></th>
+                                    <th class="text-left mfb-xt" translate="TXT_CHANNEL_NAME"></th>
                                     <th class="text-left mfb-xt" translate="TXT_STORE_NAME"></th>
                                     <th class="text-left mfb-xt" translate="TXT_MAIN_STORE_NAME"></th>
-                                    <th class="text-center mfb-xxt" translate="TXT_STORE_TYPE"></th>
-                                    <th class="text-center mfb-xxt" translate="TXT_SALE_STATE"></th>
-                                    <th class="text-center mfb-xxt" translate="TXT_STORE_MANAGE_STATE"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_STORE_TYPE"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_SALE_STATE"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_STORE_MANAGE_STATE"></th>
                                     <th class="text-left mfb-xxt" translate="TXT_STORE_REMAINED"></th>
-                                    <th class="text-center mfb-xt" translate="TXT_COMMENTS"></th>
+                                    <th class="text-left mfb-xt" translate="TXT_COMMENTS"></th>
                                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
                                 </tr>
                                 </thead>
@@ -58,15 +58,15 @@
                                             <span class="fa fa-check"></span>
                                         </label>
                                     </td>
-                                    <td class="text-center v-middle">{{list.channelName}}</td>
+                                    <td class="text-left v-middle">{{list.channelName}}</td>
                                     <td class="text-left v-middle">{{list.storeName}}</td>
                                     <td class="text-left v-middle">{{list.storeArea}}</td>
-                                    <td class="text-center v-middle">{{ctrl.getStoreType(list.storeType)}}</td>
-                                    <td class="text-center v-middle">{{list.isSale?list.isSale=='1'?'在售':'不在售':''}}</td>
-                                    <td class="text-center v-middle">{{list.inventoryManager?list.inventoryManager=='1' ? '管理':'不管理':''}}</td>
+                                    <td class="text-left v-middle">{{ctrl.getStoreType(list.storeType)}}</td>
+                                    <td class="text-left v-middle">{{list.isSale!=null?list.isSale=='1'?'在售':'不在售':''}}</td>
+                                    <td class="text-left v-middle">{{list.inventoryManager?list.inventoryManager=='1' ? '管理':'不管理':''}}</td>
                                     <td class="text-left v-middle">{{ctrl.getInventoryHold(list.inventoryHold)}}</td>
-                                    <td class="text-center v-middle">{{list.modifier}}</td>
-                                    <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
+                                    <td class="text-left v-middle">{{list.modifier}}</td>
+                                    <td class="text-center v-middle">{{list.active!=null?list.active==true ? '启用':'禁用':''}}</td>
                                 </tr>
                                 </tbody>
                             </table>

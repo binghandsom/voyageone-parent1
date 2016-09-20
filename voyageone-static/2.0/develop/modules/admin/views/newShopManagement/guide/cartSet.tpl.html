@@ -39,11 +39,11 @@
                                             <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                         </label>
                                     </th>
-                                    <th class="text-center mfb-xt" translate="TXT_CHANNEL_NAME"></th>
+                                    <th class="text-left mfb-xt" translate="TXT_CHANNEL_NAME"></th>
                                     <th class="text-left mfb-xt" translate="TXT_NAME_CART"></th>
                                     <th class="text-left mfb-xxt" translate="TXT_SHOP_NAME"></th>
-                                    <th class="text-center mfb-xxt" translate="TXT_APP_URL"></th>
-                                    <th class="text-center mfb-xxt" translate="TXT_COMMENTS"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_APP_URL"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_COMMENTS"></th>
                                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
                                 </tr>
                                 </thead>
@@ -59,12 +59,12 @@
                                             <span class="fa fa-check"></span>
                                         </label>
                                     </td>
-                                    <td class="text-center v-middle">{{list.channelName}}</td>
+                                    <td class="text-left v-middle">{{list.channelName}}</td>
                                     <td class="text-left v-middle">{{list.cartName}}</td>
                                     <td class="text-left v-middle">{{list.shopName}}</td>
-                                    <td class="text-center v-middle">{{list.appUrl}}</td>
-                                    <td class="text-center v-middle">{{list.comment}}</td>
-                                    <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
+                                    <td class="text-left v-middle">{{list.appUrl}}</td>
+                                    <td class="text-left v-middle">{{list.comment}}</td>
+                                    <td class="text-center v-middle">{{list.active!=null?list.active==true ? '启用':'禁用':''}}</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -91,11 +91,11 @@
                                     <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                 </label>
                             </th>
-                            <th class="text-center mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
-                            <th class="text-center mfb-xt" translate="TXT_CART_SHOP_NAME"></th>
-                            <th class="text-center mfb-xt" translate="TXT_TRACKING_STATE"></th>
-                            <th class="text-center mfb-xxt" translate="TXT_TRACKING_INFO"></th>
-                            <th class="text-center mfb-xt" translate="TXT_TRACKING_LOCATION"></th>
+                            <th class="text-left mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
+                            <th class="text-left mfb-xt" translate="TXT_CART_SHOP_NAME"></th>
+                            <th class="text-left mfb-xt" translate="TXT_TRACKING_STATE"></th>
+                            <th class="text-left mfb-xxt" translate="TXT_TRACKING_INFO"></th>
+                            <th class="text-left mfb-xt" translate="TXT_TRACKING_LOCATION"></th>
                             <th class="text-center mfb-xt" translate="TXT_IS_DISPLAY"></th>
                             <th class="text-center mfb-xxt" translate="TXT_TRACKING_IS_EXPAND"></th>
                             <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
@@ -113,14 +113,14 @@
                                     <span class="fa fa-check"></span>
                                 </label>
                             </td>
-                            <td class="text-center v-middle">{{list.channelName}}</td>
-                            <td class="text-center v-middle">{{list.cartName}}</td>
-                            <td class="text-center v-middle">{{list.trackingStatus}}</td>
+                            <td class="text-left v-middle">{{list.channelName}}</td>
+                            <td class="text-left v-middle">{{list.cartName}}</td>
+                            <td class="text-left v-middle">{{list.trackingStatus}}</td>
                             <td class="text-left v-middle">{{list.trackingInfo}}</td>
-                            <td class="text-center v-middle">{{list.location}}</td>
-                            <td class="text-center v-middle">{{list.displayFlg?list.displayFlg=='1'?'显示':'隐藏':''}}</td>
+                            <td class="text-left v-middle">{{list.location}}</td>
+                            <td class="text-center v-middle">{{list.displayFlg!=null?list.displayFlg=='1'?'显示':'隐藏':''}}</td>
                             <td class="text-center v-middle">{{list.trackingSpreadFlg =='1'?'取得运单号路由信息':''}}</td>
-                            <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
+                            <td class="text-center v-middle">{{list.active!=null?list.active==true ? '启用':'禁用':''}}</td>
                         </tr>
                         </tbody>
                     </table>

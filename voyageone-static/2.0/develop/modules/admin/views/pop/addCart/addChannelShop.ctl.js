@@ -5,11 +5,12 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('AddChannelShopController', (function () {
-        function AddChannelShopController(context, channelService, popups, AdminCartService, cartShopService, $uibModalInstance) {
+        function AddChannelShopController(context, alert, channelService, popups, AdminCartService, cartShopService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' || context.kind == 'add' ? true : false;
             this.readOnly = context.isReadOnly == true ? true : false;
             this.popups = popups;
+            this.alert = alert;
             this.channelService = channelService;
             this.AdminCartService = AdminCartService;
             this.cartShopService = cartShopService;
@@ -42,12 +43,19 @@ define([
                     self.AdminCartService.getAllCart(self.sourceData.orderChannelId).then(function (res) {
                         self.cartAllList = res.data;
                     });
+                } else {
+                    self.AdminCartService.getAllCart(null).then(function (res) {
+                        self.cartAllList = res.data;
+                    });
                 }
             },
             changeCartList: function () {
                 var self = this;
                 self.AdminCartService.getAllCart(self.sourceData.orderChannelId).then(function (res) {
                     self.cartAllList = res.data;
+                    if (self.cartAllList.length == 0) {
+                        self.alert('请前往【 渠道信息管理 】页，选取 渠道Cart 信息！');
+                    }
                 });
 
             },

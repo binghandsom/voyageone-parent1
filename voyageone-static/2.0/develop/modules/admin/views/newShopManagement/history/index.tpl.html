@@ -70,9 +70,9 @@
             <table class="table table-hover-new table-hover table_main">
                 <thead>
                 <tr>
-                    <th class="text-center mfb-xt" translate="TXT_CART_CHANNEL_ID"></th>
+                    <th class="text-left mfb-xt" translate="TXT_CART_CHANNEL_ID"></th>
                     <th class="text-left mfb-xxt" translate="TXT_CART_CHANNEL_NAME"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
                     <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
                     <th class="text-center mfb-xxt" translate="TXT_ACTION"></th>
                 </tr>
@@ -82,9 +82,9 @@
                     <td if-no-rows="ctrl.historyList.length||ctrl.historyList" colspan="5" style="padding: 0px"></td>
                 </tr>
                 <tr ng-repeat="list in ctrl.historyList">
-                    <td class="text-center v-middle">{{list.channelId}}</td>
+                    <td class="text-left v-middle">{{list.channelId}}</td>
                     <td class="text-left v-middle">{{list.channelName}}</td>
-                    <td class="text-left v-middle">{{list.modified}}</td>
+                    <td class="text-center v-middle">{{list.modified}}</td>
                     <td class="text-center v-middle">{{list.modifier}}</td>
                     <td class="text-center v-middle">
                         <button class="btn btn-default" ng-click="ctrl.edit(list)"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
