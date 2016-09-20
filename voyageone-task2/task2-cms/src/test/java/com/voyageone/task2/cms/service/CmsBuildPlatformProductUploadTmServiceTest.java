@@ -40,12 +40,15 @@ public class CmsBuildPlatformProductUploadTmServiceTest {
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
         workload.setId(247);
-        workload.setChannelId("017");
+        workload.setChannelId("012");
         workload.setCartId(23);
-        workload.setGroupId(Long.parseLong("389857"));
+//        workload.setGroupId(Long.parseLong("977667"));   // 服饰
+//        workload.setGroupId(Long.parseLong("980134"));   // 配饰1
+        workload.setGroupId(Long.parseLong("980170"));   // 配饰2
+//        workload.setGroupId(Long.parseLong("984304"));   // 鞋子
         workload.setPublishStatus(0);
 
-        ShopBean shopProp = Shops.getShop("017", "23");
+        ShopBean shopProp = Shops.getShop("012", "23");
 
         uploadTmService.uploadProduct(workload, shopProp);
     }
