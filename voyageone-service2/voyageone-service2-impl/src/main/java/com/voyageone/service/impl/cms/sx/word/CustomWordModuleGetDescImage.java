@@ -5,7 +5,10 @@ import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbPictureService;
-import com.voyageone.ims.rule_expression.*;
+import com.voyageone.ims.rule_expression.CustomModuleUserParamGetDescImage;
+import com.voyageone.ims.rule_expression.CustomWord;
+import com.voyageone.ims.rule_expression.CustomWordValueGetDescImage;
+import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
@@ -14,9 +17,11 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by tom.zhu on 16-8-26.
@@ -133,6 +138,7 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         // 万一有html的话, 直接换掉
         txtDesc = txtDesc.replaceAll("<br />", "\n");
         txtDesc = txtDesc.replaceAll("<br>", "\n");
+        txtDesc = doClearHtml(txtDesc);
 
         // 制作图片
         byte[] img = doCreateImage(txtDesc, width, startX, startY, sectionSize, fontSize, oneLineBit);
@@ -147,6 +153,33 @@ public class CustomWordModuleGetDescImage extends CustomWordModule {
         }
 
         return "";
+    }
+
+    public String doClearHtml(String value) {
+        String prefix = "< *";
+        String suffix = " *>";
+        java.util.List<String> lstHtml = new ArrayList<>();
+        lstHtml.add(prefix + "br" + suffix);
+        lstHtml.add("< *br */>");
+        lstHtml.add(prefix + "p" + suffix);
+        lstHtml.add(prefix + "/p" + suffix);
+        lstHtml.add(prefix + "/ *p" + suffix);
+        lstHtml.add(prefix + "ul" + suffix);
+        lstHtml.add(prefix + "/ul" + suffix);
+        lstHtml.add(prefix + "/ *ul" + suffix);
+        lstHtml.add(prefix + "li" + suffix);
+        lstHtml.add(prefix + "/li" + suffix);
+        lstHtml.add(prefix + "/ *li" + suffix);
+        lstHtml.add(prefix + "div" + suffix);
+        lstHtml.add(prefix + "/div" + suffix);
+        lstHtml.add(prefix + "/ *div" + suffix);
+        lstHtml.add("&nbsp;");
+
+        for (String html : lstHtml) {
+            value = value.replaceAll(html, " ");
+        }
+
+        return value;
     }
 
     private byte[] doCreateImage(String txtDesc, int width, int startX, int startY, int sectionSize, float fontSize, int oneLineBit) {
