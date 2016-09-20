@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * 独立域名产品上新服务
+ * 独立域名产品上新xml准备
  *
  * @author morse on 2016/8/23
  * @version 2.5.0
@@ -81,7 +81,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
 
     @Override
     public String getTaskName() {
-        return "CmsBuildPlatformProductUploadCnJob";
+        return "CmsBuildPlatformProductUploadCnPrepareJob";
     }
 
     /**
