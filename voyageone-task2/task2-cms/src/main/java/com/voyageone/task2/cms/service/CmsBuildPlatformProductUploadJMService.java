@@ -448,6 +448,26 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     remoteSpus = new ArrayList<>();
                 }
 
+                // 补全两个属性, 这两个属性最终会回写到数据库中 START
+				for (BaseMongoMap map : product.getPlatform(CART_ID).getSkus()) {
+					if (remoteSpus.stream().filter(w -> w.getBusinessman_code().equals(map.getStringAttribute("skuCode"))).count() > 0) {
+						JmGetProductInfo_Spus result = remoteSpus.stream().filter(w -> w.getBusinessman_code().equals(map.getStringAttribute("skuCode"))).findFirst().get();
+
+						if (!map.containsKey("jmSpuNo") || StringUtils.isEmpty(map.getStringAttribute("jmSpuNo"))) {
+							if (!StringUtils.isEmpty(result.getSpu_no())) {
+								map.put("jmSpuNo", result.getSpu_no());
+							}
+						}
+
+						if (!map.containsKey("jmSkuNo") || StringUtils.isEmpty(map.getStringAttribute("jmSkuNo"))) {
+							if (result.getSku_list().size() > 0 && !StringUtils.isEmpty(result.getSku_list().get(0).getSku_no())) {
+								map.put("jmSkuNo", result.getSku_list().get(0).getSku_no());
+							}
+						}
+					}
+				}
+				// 补全两个属性, 这两个属性最终会回写到数据库中 END
+
                 // added by morse.lu 2016/09/01 start
                 // 追加的skuCode列表
                 List<String> addSkuList = new ArrayList<>();
