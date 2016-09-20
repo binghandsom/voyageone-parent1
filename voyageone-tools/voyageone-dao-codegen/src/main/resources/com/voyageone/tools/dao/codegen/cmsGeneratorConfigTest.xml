@@ -40,11 +40,11 @@
 
 
 
-        <!--<table tableName="cms_bt_jm_product" delimitAllColumns="true" enableCountByExample="false"-->
-               <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
-               <!--selectByExampleQueryId="false">-->
-            <!--<generatedKey column="id" sqlStatement="JDBC"/>-->
-        <!--</table>-->
+        <table tableName="cms_zz_feed_gilt_inventory" delimitAllColumns="true" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
 
         <!--<table tableName="cms_bt_jm_sku" delimitAllColumns="true" enableCountByExample="false"-->
                <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
@@ -86,11 +86,11 @@
                <!--selectByExampleQueryId="false">-->
             <!--<generatedKey column="id" sqlStatement="JDBC"/>-->
         <!--</table>-->
-        <table tableName="cms_bt_size_chart_image_group" delimitAllColumns="true" enableCountByExample="false"
-               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
-               selectByExampleQueryId="false">
-            <generatedKey column="id" sqlStatement="JDBC"/>
-        </table>
+        <!--<table tableName="cms_bt_size_chart_image_group" delimitAllColumns="true" enableCountByExample="false"-->
+               <!--enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+               <!--selectByExampleQueryId="false">-->
+            <!--<generatedKey column="id" sqlStatement="JDBC"/>-->
+        <!--</table>-->
 
     </context>
 </generatorConfiguration>
