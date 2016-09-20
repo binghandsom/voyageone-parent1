@@ -501,8 +501,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
                         String skuCode = skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
                         //旧SPU需要更新
-                        if (remoteSpus.stream().filter(w -> w.getBusinessman_code().equals(skuCode)).count() > 0) {
-                            JmGetProductInfo_Spus oldSku = remoteSpus.stream().filter(w -> w.getBusinessman_code().equals(skuCode)).findFirst().get();
+//                        if (remoteSpus.stream().filter(w -> w.getBusinessman_code().equals(skuCode)).count() > 0) {
+                        if (remoteSpus.stream().filter(w -> w.getUpc_code().equals(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId, skuCode))).count() > 0) {
+//                            JmGetProductInfo_Spus oldSku = remoteSpus.stream().filter(w -> w.getBusinessman_code().equals(skuCode)).findFirst().get();
+                            JmGetProductInfo_Spus oldSku = remoteSpus.stream().filter(w -> w.getUpc_code().equals(addVoToBarcode(skuMap.getStringAttribute("barcode"), channelId, skuCode))).findFirst().get();
                             String jmSpuNo = oldSku.getSpu_no();
                             HtSpuUpdateRequest htSpuUpdateRequest = new HtSpuUpdateRequest();
                             htSpuUpdateRequest.setJumei_spu_no(jmSpuNo);
