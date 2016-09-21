@@ -24,6 +24,7 @@ public class CmsBtSxCnInfoDao extends BaseMongoChannelDao<CmsBtSxCnInfoModel> {
         query.setQuery("{\"publishFlg\":#}");
         query.setParameters(0);
         query.setLimit(limit);
+        query.setSort("{\"created\":1}");
 
         return select(query, channelId);
     }
