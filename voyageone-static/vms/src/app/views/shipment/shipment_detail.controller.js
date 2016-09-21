@@ -160,6 +160,13 @@ define([
             }
         };
 
+        ShipmentDetailController.prototype.watchExpress = function () {
+            var self = this;
+            if (self.shipment.expressCompany == "DROPOFF") {
+                self.shipment.trackingNo = self.channelConfig.channelId.toString() + new Date().getTime();
+            }
+        };
+
         return ShipmentDetailController;
     })());
 });

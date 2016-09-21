@@ -270,6 +270,8 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
             $debug(cmsBtFeedInfoModel.toString());
         }
 
+        csvReader.close();
+
         // 导入完成后处理更新库存的标志位
         if (null == prcInvFileErrorMessage.csvWriter)
             clientInventoryService.updateClientInventorySynFlag(channelId);
@@ -277,7 +279,6 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
             // 有错误的情况下抛出
             throw new BusinessException("文件处理中发生部分错误");
 
-        csvReader.close();
     }
 
     private void saveSuccessfulRecord(String channelId, FileInfo pendingFileInfo) {
@@ -348,6 +349,7 @@ public class VmsPrcInvImportService extends BaseMQCmsService {
                         && null == pendingFileInfo.inventoryColumnNumber)) {
             prcInvFileErrorMessage.add("header", 0, 0, "8000040");
             prcInvFileErrorMessage.close();
+            csvReader.close();
             throw new BusinessException(pendingFileInfo.file.getName() + " failed to pass the checking");
         }
 
