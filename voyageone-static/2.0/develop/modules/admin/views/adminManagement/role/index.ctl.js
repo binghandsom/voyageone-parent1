@@ -22,6 +22,7 @@ define([
             this.adminRoleList = [];
             this.adminUserSelList = {selList: []};
             this.tempSelect = null;
+            this._selall = false;
             this.searchInfo = {
                 roleName: '',
                 roleType: '',
@@ -170,19 +171,33 @@ define([
             },
             authority: function (type) {
                 var self = this;
-                var setInfo = [];
-                var configInfo = {roleIds: [], applications: []};
-                _.forEach(self.adminRoleList, function (Info) {
-                    _.forEach(self.adminUserSelList.selList, function (item) {
-                        if (Info.id == item.id) {
-                            setInfo.push(Info);
-                        }
+                if (self._selall == false && self.adminUserSelList.selList.length == 0) {
+                    self.alert('请至少选择一条数据 或 勾选全量操作！');
+                    return;
+                }
+                if (self._selall == true) {
+                    var configInfo = {}, data = angular.copy(self.searchInfo);
+                    if (data.active == '' && data.application == '' && data.channelId == '' && data.roleName == '' && data.roleType == '' && data.storeId == '') {
+                        self.alert('请至少输入一条搜索条件！');
+                        return;
+                    }
+                    delete data.pageInfo;
+                    configInfo = data;
+                    _.extend(configInfo, {_selall: true});
+                } else {
+                    var configInfo = {roleIds: [], applications: []}, setInfo = [];
+                    _.forEach(self.adminRoleList, function (Info) {
+                        _.forEach(self.adminUserSelList.selList, function (item) {
+                            if (Info.id == item.id) {
+                                setInfo.push(Info);
+                            }
+                        });
                     });
-                });
-                _.forEach(setInfo, function (item) {
-                    configInfo.roleIds.push(item.id);
-                    configInfo.applications.push(item.application);
-                });
+                    _.forEach(setInfo, function (item) {
+                        configInfo.roleIds.push(item.id);
+                        configInfo.applications.push(item.application);
+                    });
+                }
                 switch (type) {
                     case 'set':
                         _.extend(configInfo, {'type': 'set'});

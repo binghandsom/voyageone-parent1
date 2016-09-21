@@ -6,7 +6,8 @@ define([
     'modules/admin/controller/treeTable.ctrl'
 ], function (admin) {
     admin.controller('RoleEditController', (function () {
-        function RoleEditController(context, adminRoleService, adminUserService, $uibModalInstance) {
+        function RoleEditController(context, alert, adminRoleService, adminUserService, $uibModalInstance) {
+            this.alert = alert;
             this.sourceData = context ? context : {};
             this.adminRoleService = adminRoleService;
             this.adminUserService = adminUserService;
@@ -14,6 +15,9 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.selectedList = [];
             this.flatResList = [];
+            this.saveInfo = {
+                application: ''
+            };
             this.applicationList = [
                 {'id': 1, 'application': 'Admin', 'valid': false},
                 {'id': 2, 'application': 'CMS', 'valid': false},
@@ -23,15 +27,13 @@ define([
         }
 
         RoleEditController.prototype = {
-            init: function () {
+            init: function (app) {
                 var self = this;
-                self.adminUserService.getAllApp().then(function (res) {
-                    self.appList = res.data;
-                });
-                self.adminRoleService.getAuthByRoles({
+                var getInfo = self.sourceData._selall == true ? self.sourceData : {
                     'roleIds': self.sourceData.roleIds,
-                    'application': self.sourceData.application ? self.sourceData.application : "admin"
-                }).then(function (res) {
+                    'application': app ? app : (self.sourceData.application ? self.sourceData.application : "admin")
+                };
+                self.adminRoleService.getAuthByRoles({getInfo}).then(function (res) {
                     self.resList = res.data.res;
                     self.permsStatus = res.data.perms;
                     _.forEach(self.applicationList, function (item) {
@@ -51,15 +53,29 @@ define([
                         return self.popType = '新增权限';
                         break;
                 }
+                self.adminUserService.getAllApp().then(function (res) {
+                    self.appList = res.data;
+                });
+            },
+            changeApp: function (app) {
+                var self = this;
+                self.init(app);
             },
             save: function () {
                 var self = this;
-                var saveInfo = {resIds: [], applications: [], roleIds: self.sourceData.roleIds};
+                _.extend(saveInfo, {resIds: [], applications: [], roleIds: self.sourceData.roleIds});
+                _.filter(self.applicationList, function (e) {
+                    return e.valid;
+                }).forEach(function (e) {
+                    saveInfo.applications.push(e.application.toLocaleLowerCase());
+                });
                 _.filter(self.selectedList, function (item) {
                     return item.selected;
                 }).forEach(function (item) {
                     saveInfo.resIds.push(item.id);
-                    saveInfo.applications.push(item.application);
+                    if (saveInfo.applications.indexOf(item.application) < 0) {
+                        saveInfo.applications.push(item.application);
+                    }
                 });
                 switch (self.sourceData.type) {
                     case 'set':

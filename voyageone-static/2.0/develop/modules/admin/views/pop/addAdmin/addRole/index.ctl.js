@@ -310,6 +310,15 @@ define([
                             self.confirm(res.data.message);
                             return;
                         }
+                        var channelName = [], storeName = [];
+                        _.forEach(self.channelList, function (item) {
+                            channelName.push(item.name);
+                        });
+                        _.forEach(self.storeList, function (item) {
+                            storeName.push(item.storeName);
+                        });
+                        self.sourceData.channelName = channelName.join(',');
+                        self.sourceData.storeName = storeName.join(',');
                         _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })

@@ -65,7 +65,7 @@
                                     <div class="col-sm-8">
                                         <select class="form-control" ng-model="ctrl.searchInfo.application">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{app.id}}" ng-repeat="app in ctrl.appList">&nbsp;{{app.application}}</option>
+                                            <option value="{{app.application}}" ng-repeat="app in ctrl.appList">&nbsp;{{app.application}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -88,7 +88,7 @@
             <div class="col-sm-4 pull-left text-left" ng-controller="popupCtrl">
                 <div class="form-group">
                     <label class="checkbox-inline c-checkbox" style="margin-top:12px">
-                        <input type="checkbox" value="1" ng-model="vm._selall">
+                        <input type="checkbox" value="1" ng-model="ctrl._selall">
                         <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;检索结果全量&nbsp;
                     </label>
                     <button class="btn btn-default" ng-click="ctrl.authority('set')"><i class="fa fa-arrow-circle-right"></i>&nbsp;分配权限</button>

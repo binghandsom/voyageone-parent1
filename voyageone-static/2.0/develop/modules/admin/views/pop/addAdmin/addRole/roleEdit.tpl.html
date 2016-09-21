@@ -22,13 +22,13 @@
                 <div class="row form-group"><!-- 特定权限 -->
                     <label class="col-sm-2 control-label">特定权限 &nbsp;&nbsp;{{'TXT_SYSTEM' | translate}}</label>
                     <div class="col-sm-4">
-                        <select class="form-control" ng-model="ctrl.searchInfo.application">
+                        <select class="form-control" ng-model="ctrl.saveInfo.application" ng-change="ctrl.changeApp(ctrl.saveInfo.application)">
                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                            <option value="{{app.id}}" ng-repeat="app in ctrl.appList">&nbsp;{{app.application}}</option>
+                            <option value="{{app.application}}" ng-repeat="app in ctrl.appList">&nbsp;{{app.application}}</option>
                         </select>
                     </div>
                 </div>
-                <div class="row form-group">
+                <div class="row form-group" >
                     <div class="" ng-controller="treeTable" style="max-height:500px;overflow: auto;">
                         <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
                             <thead>
