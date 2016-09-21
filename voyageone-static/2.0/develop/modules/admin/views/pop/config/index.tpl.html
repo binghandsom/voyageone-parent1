@@ -121,7 +121,7 @@
                         </td>
                         <td class="text-left v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.channelName}}</td>
                         <td class="text-left v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.cartName}}</td>
-                        <td class="text-left v-middle"ng-if="ctrl.searchInfo.configType!=='Shop'">{{list.channelName||list.storeName||list.taskName}}</td>
+                        <td class="text-left v-middle"ng-if="ctrl.searchInfo.configType!=='Shop'">{{list.channelName||list.storeName||list.taskId}}</td>
                         <td class="text-left v-middle">
                             <label class="v-middle" ng-if="list.cfgName.length <= 15">{{list.cfgName}}</label>
                             <label class="v-middle" ng-if="list.cfgName.length > 15" uib-tooltip="{{list.cfgName}}"

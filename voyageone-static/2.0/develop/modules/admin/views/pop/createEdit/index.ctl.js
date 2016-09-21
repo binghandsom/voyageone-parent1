@@ -89,11 +89,14 @@ define([
                         if (self.sourceData.isReadOnly == true) {
                             self.$uibModalInstance.close(self.sourceData);
                             return;
+                        } else {
+                            var sourceDataCopy = angular.copy(self.sourceData);
+                            sourceDataCopy.taskId = sourceDataCopy.taskName;
+                            self.taskService.addTaskConfig(sourceDataCopy).then(function (res) {
+                                _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                                self.$uibModalInstance.close(result);
+                            });
                         }
-                        self.taskService.addTaskConfig(self.sourceData).then(function (res) {
-                            _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
-                            self.$uibModalInstance.close(result);
-                        });
                         break;
                     case 'Shop':
                         if (self.sourceData.isReadOnly == true) {

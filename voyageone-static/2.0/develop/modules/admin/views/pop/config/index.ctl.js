@@ -105,7 +105,7 @@ define([
                         }
                         break;
                 }
-                self.search(1,{taskName:self.sourceData.taskName});
+                self.search(1, {taskName: self.sourceData.taskName});
             },
             search: function (page, options) {
                 var self = this;
@@ -318,6 +318,7 @@ define([
                             if (res.res == 'success') {
                                 self.search()
                             } else {
+                                res.taskId = res.taskName;
                                 var list = self.taskCfgList;
                                 list.push(res);
                                 _forEachAdd(self.sourceData.sourceData, 'taskConfig', res);
@@ -578,7 +579,7 @@ define([
                         }
                         break;
                     case 'taskConfig':
-                        if (item.taskName === targetData.taskName) {
+                        if (item.taskName === targetData.taskId) {
                             source[x].taskConfig.push(targetData);
                         }
                         break;
