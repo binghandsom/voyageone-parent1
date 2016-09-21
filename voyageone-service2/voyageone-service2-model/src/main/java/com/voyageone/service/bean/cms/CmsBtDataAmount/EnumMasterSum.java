@@ -9,7 +9,7 @@ import java.util.List;
  */
 public enum EnumMasterSum implements IEnumDataAmountSum{
     CMS_MASTER_NO_CATEGORY("CMS_MASTER_NO_CATEGORY", "{'lock':'0','common.fields.isMasterMain':1,'common.fields.categoryStatus':{$in:[null,'','0']}}", "", "", "等待设置主类目数"),
-    CMS_MASTER_NO_HSCODE("CMS_MASTER_NO_HSCODE", "{'lock':'0','common.fields.isMasterMain':1,'common.fields.hsCodeStatus':{$in:[null,'','0']}}", "", "", "等待设置税号数"),
+    CMS_MASTER_NO_HSCODE("CMS_MASTER_NO_HSCODE", "{'lock':'0',common.fields.hsCodeStatus':{$in:[null,'','0']}}", "", "", "等待设置税号数"),
     CMS_MASTER_UNTRANSLATED("CMS_MASTER_UNTRANSLATED", "{'lock':'0','common.fields.isMasterMain':1,'common.fields.translateStatus':{$in:[null,'','0']}}", "", "", "等待翻译数"),
     CMS_MASTER_Brand_block("CMS_MASTER_Brand_block", "", "", "", "黑名单数量",1);
 

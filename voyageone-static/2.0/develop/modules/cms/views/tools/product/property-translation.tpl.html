@@ -22,12 +22,12 @@
                             <div class="data"><strong>{{ctrl.vm.taskSummary.unassginedCount}}</strong> {{'TXT_UN_TRANSLATION' | translate}}</div>
                         </li>
                         <li>
-                            <div class="data"><strong>{{ctrl.vm.taskSummary.incompleteCount}}</strong> {{'TXT_DISTRIBUTE_UN_TRANSLATION' | translate}}</div>
+                            <div class="data"><strong>{{ctrl.vm.taskSummary.completeCount}}</strong> {{'TXT_TRANSLATED' | translate}}</div>
                         </li>
                     </ul>
                     <ul class="data-display-boxes">
                         <li>
-                            <div class="data"><strong>{{ctrl.vm.taskSummary.completeCount}}</strong> {{'TXT_TRANSLATED' | translate}}</div>
+                            <div class="data"><strong>{{ctrl.vm.taskSummary.incompleteCount}}</strong> {{'TXT_DISTRIBUTE_UN_TRANSLATION' | translate}}</div>
                         </li>
                         <li>
                             <div class="data"><strong>{{ctrl.vm.taskSummary.userCompleteCount}}</strong> {{'TXT_PERSONAL_FINISHED_TRANSLATION' | translate}}
@@ -71,7 +71,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <button class="btn btn-success" ng-click="ctrl.assign()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
+                                <button class="btn btn-success" ng-disabled="ctrl.vm.taskSummary.unassginedCount == 0" ng-click="ctrl.assign()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
                             </div>
                         </div>
                     </div>

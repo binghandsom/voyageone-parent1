@@ -20,13 +20,15 @@
                             <div class="data"> <strong ng-bind="ctrl.hsSettedData.notAssignedTotalHsCodeCnt"></strong> {{'TXT_UN_TRANSLATION'|translate}} </div>
                         </li>
                         <li>
+                            <div class="data"> <strong ng-bind="ctrl.hsSettedData.setChannelTotalHsCodeCnt"></strong> {{'TXT_TRANSLATED'|translate}} </div>
+                        </li>
+                    </ul>
+                    <ul class="data-display-boxes">
+                        <li>
                             <div class="data"> <strong ng-bind="ctrl.hsSettedData.alreadyAssignedTotalHsCodeCnt"></strong> {{'TXT_DISTRIBUTE_UN_TRANSLATION'|translate}} </div>
                         </li>
                         <li>
-                            <div class="data"> <strong ng-bind="ctrl.hsSettedData.setChannelTotalHsCodeCnt"></strong> {{'TXT_NUMBER_OF_SETTED'|translate}} </div>
-                        </li>
-                        <li>
-                            <div class="data"> <strong ng-bind="ctrl.hsSettedData.setPersonalTotalHsCodeCnt"></strong> {{'TXT_NUMBER_OF_SETTED_BY_PERSONAL'|translate}} </div>
+                            <div class="data"> <strong ng-bind="ctrl.hsSettedData.setPersonalTotalHsCodeCnt"></strong> {{'TXT_PERSONAL_FINISHED_TRANSLATION'|translate}} </div>
                         </li>
                     </ul>
                 </div>
@@ -69,7 +71,7 @@
                                        uib-tooltip="请输入[1-{{ctrl.max}} ] 的整数" tooltip-trigger="mouseenter" tooltip-placement="bottom" required>
                             </div>
                             <div class="col-sm-2">
-                                <button class="btn btn-success" ng-click="ctrl.get()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
+                                <button ng-disabled="ctrl.hsSettedData.notAssignedTotalHsCodeCnt == 0" class="btn btn-success" ng-click="ctrl.get()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
                             </div>
                         </div>
                         <div class="form-group" ng-if="ctrl.hsCodeTaskCnt > ctrl.max || !ctrl.hsCodeTaskCnt" style="color: red;">
