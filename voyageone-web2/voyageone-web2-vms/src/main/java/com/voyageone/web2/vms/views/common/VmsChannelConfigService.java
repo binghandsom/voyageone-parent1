@@ -56,6 +56,7 @@ public class VmsChannelConfigService {
         if (null == vendorOperateType) throw new BusinessException("8000019");
 
         VmsChannelSettingBean vmsChannelSettingBean = new VmsChannelSettingBean();
+        vmsChannelSettingBean.setChannelId(user.getSelChannelId());
         vmsChannelSettingBean.setVendorOperateType(vendorOperateType.getConfigValue1());
         if (null != salePriceShow)
             vmsChannelSettingBean.setSalePriceShow(salePriceShow.getConfigValue1());
