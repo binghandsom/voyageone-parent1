@@ -39,7 +39,13 @@ import java.util.stream.Collectors;
 @VOTransactional
 public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderService {
 
-    private static final String AcknowledgedBySeller="AcknowledgedBySeller";
+    private static final String AcknowledgedBySeller = "AcknowledgedBySeller";
+
+    private static final String PartiallyShipped = "PartiallyShipped";
+
+    private static final String Shipped = "Shipped";
+
+    private static final String Canceled = "Canceled";
 
     @Autowired
     private CAClientService caClientService;
@@ -58,7 +64,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         List<VmsBtClientOrdersModel> ordersModels = caClientService.getClientOrderList(channelId, status, limit);
 
         //如检索的订单件数为0，无需检索订单明细信息。直接空数组返回。
-        if(CollectionUtils.isEmpty(ordersModels)){
+        if (CollectionUtils.isEmpty(ordersModels)) {
             return success(new ArrayList<OrderModel>());
         }
 
@@ -223,14 +229,14 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         // 更新【品牌方订单一览】vms_bt_client_orders
 
-        caClientService.updateClientOrderStatusWithDetails(channelId, orderID, AcknowledgedBySeller,"acknowledgeOrder",true);
+        caClientService.updateClientOrderStatusWithDetails(channelId, orderID, AcknowledgedBySeller, "acknowledgeOrder", true);
 
         //消息生成
         Map<String, Object> mqMessageMap = new HashMap<>();
         mqMessageMap.put("client_order_id", orderID);
         mqMessageMap.put("order_channel_id", channelId);
 
-        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageMap));
+        logger.info("发送mq消息：" + JacksonUtil.bean2Json(mqMessageMap));
 
         mqSender.sendMessage("voyageone_vms_wsdl_mq_acknowledge_order_queue", mqMessageMap);
 
@@ -264,18 +270,20 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         //根据请求参数中Items.SellerSku， 匹配 品牌方订单明细中的 seller_sku，找出对应的明细。
         List<Long> tempReservationId = new ArrayList<>();
 
-        Map<String,Integer> tempSkuQtyMap=request.getItems();
+        Map<String, Integer> tempSkuQtyMap = request.getItems();
+        Set<String> issueSkuNotExistList = tempSkuQtyMap.keySet();
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : mList) {
             String sku = vmsBtClientOrderDetailsModel.getSellerSku();
-            if (tempSkuQtyMap.get(sku) != null && tempSkuQtyMap.get(sku)>0) {
-                tempSkuQtyMap.put(sku,tempSkuQtyMap.get(sku)-1);
+            if (tempSkuQtyMap.get(sku) != null && tempSkuQtyMap.get(sku) > 0) {
+                tempSkuQtyMap.put(sku, tempSkuQtyMap.get(sku) - 1);
+                issueSkuNotExistList.remove(sku);
 
-                VmsBtClientOrderDetailsModel tempUpdateModel=new VmsBtClientOrderDetailsModel();
+                VmsBtClientOrderDetailsModel tempUpdateModel = new VmsBtClientOrderDetailsModel();
                 tempUpdateModel.setShippedDate(request.getShippedDateUtc());
                 tempUpdateModel.setTrackingNumber(request.getTrackingNumber());
                 tempUpdateModel.setShippingCarrier(request.getShippingCarrier());
                 tempUpdateModel.setShippingClass(request.getShippingClass());
-                tempUpdateModel.setStatus("Shipped");
+                tempUpdateModel.setStatus(Shipped);
                 tempUpdateModel.setId(vmsBtClientOrderDetailsModel.getId());
 
                 matchModelList.add(tempUpdateModel);
@@ -285,39 +293,40 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         //根据Items.SellerSku对应的件数，更新 对应件数的明细。
 
-        caClientService.updateItemsSkuList(matchModelList,"shipOrder");
+        caClientService.updateItemsSkuList(matchModelList, "shipOrder");
 
         //Items.SellerSku 在品牌方订单明细 中不存在，issuelog 输出，处理继续
-        if (CollectionUtils.isEmpty(matchModelList)) {
-            issueLog.log(new RuntimeException("Items.SellerSku 在品牌方订单明细 中不存在 请求订单号：orderId="+orderID+
-                    " skus="+JacksonUtil.bean2Json(request.getItems().keySet())), ErrorType.OpenAPI, SubSystem.VMS);
+        if (!CollectionUtils.isEmpty(issueSkuNotExistList)) {
+            issueLog.log(new RuntimeException("Items.SellerSku 在品牌方订单明细 中不存在 请求订单号：orderId=" + orderID +
+                    " skus=" + JacksonUtil.bean2Json(issueSkuNotExistList)), ErrorType.OpenAPI, SubSystem.VMS);
         }
 
         //Items.SellerSku 对应的数量 > 对应SKU明细件数的数量，issuelog 输出，处理继续
-        if (request.getItems().size() > matchModelList.size()) {
-            issueLog.log(new RuntimeException("Items.SellerSku 对应的数量 > 对应SKU明细件数的数量 请求订单号：orderId="+orderID+
-                    " skus="+JacksonUtil.bean2Json(request.getItems().keySet())), ErrorType.OpenAPI, SubSystem.VMS);
+        List<String> issueSkuQtyNotComplete = tempSkuQtyMap.entrySet().stream().filter(e -> e.getValue() > 0).map(Map.Entry::getKey).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(issueSkuQtyNotComplete)) {
+            issueLog.log(new RuntimeException("Items.SellerSku 对应的数量 > 对应SKU明细件数的数量 请求订单号：orderId=" + orderID +
+                    " skus=" + JacksonUtil.bean2Json(issueSkuQtyNotComplete)), ErrorType.OpenAPI, SubSystem.VMS);
         }
 
         // 检索【品牌方订单明细】vms_bt_client_order_details
 
         List<VmsBtClientOrderDetailsModel> newList = caClientService.getClientOrderDetailById(channelId, orderID, null);
 
-        String tempStatus = "Shipped";
+        String tempStatus = Shipped;
 
-        boolean hasShipped=false;
+        boolean hasShipped = false;
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : newList) {
-            if(vmsBtClientOrderDetailsModel.getStatus().equals("Shipped")){
-                hasShipped=true;
-            }else{
-                tempStatus = "PartiallyShipped";
+            if (vmsBtClientOrderDetailsModel.getStatus().equals(Shipped)) {
+                hasShipped = true;
+            } else {
+                tempStatus = PartiallyShipped;
             }
         }
 
-        if(hasShipped) {
+        if (hasShipped) {
             // 更新 【品牌方订单一览】vms_bt_client_orders
-            caClientService.updateClientOrderStatusWithDetails(channelId, orderID, tempStatus,"shipOrder",false);
-        }else{
+            caClientService.updateClientOrderStatusWithDetails(channelId, orderID, tempStatus, "shipOrder", false);
+        } else {
             logger.warn("未找到shipped订单明细");
         }
 
@@ -338,10 +347,10 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         mqMessageMap.put("items", tempReservationId);
 
-        Map<String,Object> mqMessageBody=new HashMap<>();
-        mqMessageBody.put("body",JacksonUtil.bean2Json(mqMessageMap));
+        Map<String, Object> mqMessageBody = new HashMap<>();
+        mqMessageBody.put("body", JacksonUtil.bean2Json(mqMessageMap));
 
-        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageBody));
+        logger.info("发送mq消息：" + JacksonUtil.bean2Json(mqMessageBody));
 
         mqSender.sendMessage("voyageone_vms_wsdl_mq_ship_order_queue", mqMessageBody);
 
@@ -374,20 +383,22 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         // 根据请求参数中Items.SellerSku， 匹配品牌方订单明细中的 seller_sku，找出对应的明细。
 
-        List<Map<String,Object>> tempRecords=new ArrayList<>();
+        List<Map<String, Object>> tempRecords = new ArrayList<>();
 
-        Map<String,Integer> tempSkuQtyMap=request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getQuantity));
-        Map<String,CancellationReasonEnum> tempSkuReasonMap=request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
+        Map<String, Integer> tempSkuQtyMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getQuantity));
+        Map<String, CancellationReasonEnum> tempSkuReasonMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
 
+        Set<String> issueSkuNotExistList = tempSkuQtyMap.keySet();
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : mList) {
             String sku = vmsBtClientOrderDetailsModel.getSellerSku();
 
-            if (tempSkuQtyMap.get(sku) != null && tempSkuQtyMap.get(sku)>0) {
+            if (tempSkuQtyMap.get(sku) != null && tempSkuQtyMap.get(sku) > 0) {
                 tempSkuQtyMap.put(sku, tempSkuQtyMap.get(sku) - 1);
+                issueSkuNotExistList.remove(sku);
 
-                VmsBtClientOrderDetailsModel tempUpdateModel=new VmsBtClientOrderDetailsModel();
+                VmsBtClientOrderDetailsModel tempUpdateModel = new VmsBtClientOrderDetailsModel();
                 tempUpdateModel.setCancelReason(tempSkuReasonMap.get(sku).name());
-                tempUpdateModel.setStatus("Canceled");
+                tempUpdateModel.setStatus(Canceled);
                 tempUpdateModel.setId(vmsBtClientOrderDetailsModel.getId());
                 matchModelList.add(tempUpdateModel);
 
@@ -400,19 +411,19 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         // 根据Items.SellerSku对应的件数，更新 对应件数的明细。
 
-        caClientService.updateItemsSkuList(matchModelList,"cancelOrder");
+        caClientService.updateItemsSkuList(matchModelList, "cancelOrder");
 
         //Items.SellerSku 在品牌方订单明细 中不存在，issuelog 输出，处理继续
-        if (CollectionUtils.isEmpty(matchModelList)) {
-            issueLog.log(new RuntimeException("Items.SellerSku 在品牌方订单明细 中不存在 请求订单号：orderId="+orderID+
-                    " skus="+JacksonUtil.bean2Json(request.getItems().stream().map(OrderItemCancellationModel::getSellerSku).collect(Collectors.toList()))),
-                    ErrorType.OpenAPI, SubSystem.VMS);
+        if (!CollectionUtils.isEmpty(issueSkuNotExistList)) {
+            issueLog.log(new RuntimeException("Items.SellerSku 在品牌方订单明细 中不存在 请求订单号：orderId=" + orderID +
+                    " skuList=" + JacksonUtil.bean2Json(issueSkuNotExistList)), ErrorType.OpenAPI, SubSystem.VMS);
         }
 
         //Items.SellerSku 对应的数量 > 对应SKU明细件数的数量，issuelog 输出，处理继续
-        if (request.getItems().size() > matchModelList.size()) {
-            issueLog.log(new RuntimeException("Items.SellerSku 对应的数量 > 对应SKU明细件数的数量 请求订单号：orderId="+orderID+
-                    " skus="+JacksonUtil.bean2Json(request.getItems().stream().map(OrderItemCancellationModel::getSellerSku).collect(Collectors.toList()))),
+        List<String> issueSkuQtyNotComplete = tempSkuQtyMap.entrySet().stream().filter(e -> e.getValue() > 0).map(Map.Entry::getKey).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(issueSkuQtyNotComplete)) {
+            issueLog.log(new RuntimeException("Items.SellerSku 对应的数量 > 对应SKU明细件数的数量 请求订单号：orderId=" + orderID +
+                            " skus=" + JacksonUtil.bean2Json(issueSkuQtyNotComplete)),
                     ErrorType.OpenAPI, SubSystem.VMS);
         }
 
@@ -420,18 +431,18 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         List<VmsBtClientOrderDetailsModel> newList = caClientService.getClientOrderDetailById(channelId, orderID, null);
 
-        String tempStatus = "Canceled";
+        String tempStatus = Canceled;
 
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : newList) {
-            if (!vmsBtClientOrderDetailsModel.getStatus().equals("Canceled")) {
+            if (!vmsBtClientOrderDetailsModel.getStatus().equals(Canceled)) {
                 tempStatus = "";
             }
         }
 
         // 更新 【品牌方订单一览】vms_bt_client_orders
 
-        if (tempStatus.equals("Canceled")) {
-            caClientService.updateClientOrderStatusWithDetails(channelId, orderID, tempStatus,"cancelOrder",false);
+        if (tempStatus.equals(Canceled)) {
+            caClientService.updateClientOrderStatusWithDetails(channelId, orderID, tempStatus, "cancelOrder", false);
         }
 
         // 消息生成
@@ -442,10 +453,10 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         mqMessageMap.put("items", tempRecords);
 
-        Map<String,Object> mqMessageBody=new HashMap<>();
-        mqMessageBody.put("body",JacksonUtil.bean2Json(mqMessageMap));
+        Map<String, Object> mqMessageBody = new HashMap<>();
+        mqMessageBody.put("body", JacksonUtil.bean2Json(mqMessageMap));
 
-        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageBody));
+        logger.info("发送mq消息：" + JacksonUtil.bean2Json(mqMessageBody));
 
         mqSender.sendMessage("voyageone_vms_wsdl_mq_cancel_order_queue", mqMessageBody);
 
@@ -466,7 +477,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         //检索【品牌方订单明细】vms_bt_client_order_details
 
-        List<VmsBtClientOrderDetailsModel> mList = caClientService.getClientOrderDetailById(channelId, orderID, "Shipped");
+        List<VmsBtClientOrderDetailsModel> mList = caClientService.getClientOrderDetailById(channelId, orderID, Shipped);
 
         //检索结果不存在的场合，Error ID 6000 的 异常抛出
 
@@ -478,18 +489,21 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         List<VmsBtClientOrderDetailsModel> matchModelList = new ArrayList<>();
 
         //根据请求参数中Items.SellerSku， 匹配品牌方订单明细中的 seller_sku，找出对应的明细。
-        Map<String,Integer> tempSkuQtyMap=request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getQuantity));
-        Map<String,CancellationReasonEnum> tempSkuReasonMap=request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
+        Map<String, Integer> tempSkuQtyMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getQuantity));
+        Map<String, CancellationReasonEnum> tempSkuReasonMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
 
-        List<Map<String,Object>> tempRecords=new ArrayList<>();
+        List<Map<String, Object>> tempRecords = new ArrayList<>();
+        Set<String> issueSkuNotExistList = tempSkuQtyMap.keySet();
+
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : mList) {
             String sku = vmsBtClientOrderDetailsModel.getSellerSku();
-            if (tempSkuQtyMap.get(sku) != null && tempSkuQtyMap.get(sku)>0) {
+            if (tempSkuQtyMap.get(sku) != null && tempSkuQtyMap.get(sku) > 0) {
                 tempSkuQtyMap.put(sku, tempSkuQtyMap.get(sku) - 1);
+                issueSkuNotExistList.remove(sku);
 
-                VmsBtClientOrderDetailsModel tempUpdateModel=new VmsBtClientOrderDetailsModel();
+                VmsBtClientOrderDetailsModel tempUpdateModel = new VmsBtClientOrderDetailsModel();
                 tempUpdateModel.setCancelReason(tempSkuReasonMap.get(sku).name());
-                tempUpdateModel.setStatus("Canceled");
+                tempUpdateModel.setStatus(Canceled);
                 tempUpdateModel.setRefundFlg("1");
                 tempUpdateModel.setId(vmsBtClientOrderDetailsModel.getId());
                 matchModelList.add(tempUpdateModel);
@@ -503,19 +517,20 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         //根据Items.SellerSku对应的件数，更新 对应件数的明细。
 
-        caClientService.updateItemsSkuList(matchModelList,"refundOrder");
+        caClientService.updateItemsSkuList(matchModelList, "refundOrder");
 
         //Items.SellerSku 在品牌方订单明细 中不存在，issuelog 输出，处理继续
-        if (CollectionUtils.isEmpty(matchModelList)) {
-            issueLog.log(new RuntimeException("Items.SellerSku 在品牌方订单明细 中不存在 请求订单号：orderId="+orderID+
-                    " skus="+JacksonUtil.bean2Json(request.getItems().stream().map(OrderItemCancellationModel::getSellerSku).collect(Collectors.toList()))),
+        if (!CollectionUtils.isEmpty(issueSkuNotExistList)) {
+            issueLog.log(new RuntimeException("Items.SellerSku 在品牌方订单明细 中不存在 请求订单号：orderId=" + orderID +
+                            " skus=" + JacksonUtil.bean2Json(issueSkuNotExistList)),
                     ErrorType.OpenAPI, SubSystem.VMS);
         }
 
         //Items.SellerSku 对应的数量 > 对应SKU明细件数的数量，issuelog 输出，处理继续
-        if (request.getItems().size() > matchModelList.size()) {
-            issueLog.log(new RuntimeException("Items.SellerSku 对应的数量 > 对应SKU明细件数的数量 请求订单号：orderId="+orderID+
-                    " skus="+JacksonUtil.bean2Json(request.getItems().stream().map(OrderItemCancellationModel::getSellerSku).collect(Collectors.toList()))),
+        List<String> issueSkuQtyNotComplete = tempSkuQtyMap.entrySet().stream().filter(e -> e.getValue() > 0).map(Map.Entry::getKey).collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(issueSkuQtyNotComplete)) {
+            issueLog.log(new RuntimeException("Items.SellerSku 对应的数量 > 对应SKU明细件数的数量 请求订单号：orderId=" + orderID +
+                            " skus=" + JacksonUtil.bean2Json(issueSkuQtyNotComplete)),
                     ErrorType.OpenAPI, SubSystem.VMS);
         }
 
@@ -523,18 +538,18 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         List<VmsBtClientOrderDetailsModel> newList = caClientService.getClientOrderDetailById(channelId, orderID, null);
 
-        String tempStatus = "Canceled";
+        String tempStatus = Canceled;
 
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : newList) {
-            if (!vmsBtClientOrderDetailsModel.getStatus().equals("Canceled")) {
+            if (!vmsBtClientOrderDetailsModel.getStatus().equals(Canceled)) {
                 tempStatus = "";
             }
         }
 
         // 更新 【品牌方订单一览】vms_bt_client_orders
 
-        if (tempStatus.equals("Canceled")) {
-            caClientService.updateClientOrderStatusWithDetails(channelId, orderID, tempStatus,"refundOrder",false);
+        if (tempStatus.equals(Canceled)) {
+            caClientService.updateClientOrderStatusWithDetails(channelId, orderID, tempStatus, "refundOrder", false);
         }
 
 
@@ -546,9 +561,9 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         mqMessageMap.put("items", tempRecords);
 
-        Map<String,Object> mqMessageBody=new HashMap<>();
-        mqMessageBody.put("body",JacksonUtil.bean2Json(mqMessageMap));
-        logger.info("发送mq消息："+JacksonUtil.bean2Json(mqMessageBody));
+        Map<String, Object> mqMessageBody = new HashMap<>();
+        mqMessageBody.put("body", JacksonUtil.bean2Json(mqMessageMap));
+        logger.info("发送mq消息：" + JacksonUtil.bean2Json(mqMessageBody));
 
         mqSender.sendMessage("voyageone_vms_wsdl_mq_refund_order_queue", mqMessageBody);
 
