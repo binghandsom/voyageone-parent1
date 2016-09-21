@@ -352,7 +352,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     //取得bean
                                     superfeed.add(superFeedverStockBean);
                                     count++;
-                                    $info("SKU:" + count + "---" + sku);
+                                    $debug("SKU:" + count + "---" + sku);
                                     if (superfeed.size() > 1000) {
                                         transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                                         superfeed.clear();
