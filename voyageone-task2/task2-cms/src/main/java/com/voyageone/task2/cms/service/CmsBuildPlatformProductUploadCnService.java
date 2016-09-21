@@ -114,61 +114,77 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
         List<Long> listGroupId = listSxModel.stream().map(CmsBtSxCnInfoModel::getGroupId).collect(Collectors.toList());
         cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 1, getTaskName());
 
-        // 上传
-        List<List<Field>> listProductFields = new ArrayList<>();
-        List<List<Field>> listSkuFields = new ArrayList<>();
+        boolean needRetry = false;
         String startTime = "";
         String endTime = "";
-        int index = 0;
-        for (CmsBtSxCnInfoModel sxModel : listSxModel) {
-            if (index == 0) {
-                startTime = sxModel.getCreated();
-            }
-            if (index == listSxModel.size() - 1) {
-                endTime = sxModel.getCreated();
-            }
-
-            listProductFields.addAll(cnSchemaService.readProductXmlString(sxModel.getProductXml()));
-            listSkuFields.addAll(cnSchemaService.readSkuXmlString(sxModel.getSkuXml()));
-
-            index++;
-        }
-        String productXml = cnSchemaService.writeProductXmlString(listProductFields);
-        String skuXml = cnSchemaService.writeSkuXmlString(listSkuFields);
-        $info("独立域名上传产品的xml:" + productXml);
-        $info("独立域名上传Sku的xml:" + skuXml);
-        // TODO: doPost
-        boolean isSuccess = false;
-
-
-
-        if (!isSuccess) {
-            // 只有网络问题推送失败才会false，所以就打个log，不把status更新成error
-            // 把状态更新成 0:等待上传，下次再推
-            cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 0, getTaskName());
-            // 回写详细错误信息表(cms_bt_business_log)
-            insertBusinessLog(channelId, String.format("独立域名xml推送失败!请耐心等待下一次推送!本次推送数据的Approve时间为[%s]-[%s]", startTime, endTime), null);
-        } else {
+        try {
+            // 上传
+            List<List<Field>> listProductFields = new ArrayList<>();
+            List<List<Field>> listSkuFields = new ArrayList<>();
+            int index = 0;
             for (CmsBtSxCnInfoModel sxModel : listSxModel) {
-                // 上传产品和sku成功的场合,回写product group表中的numIId和platformStatus(Onsale/InStock)
-                String numIId = sxModel.getOrgChannelId() + "-" + Long.toString(sxModel.getProdId()); // 因为现在是一个group一个code
-                try {
-                    updateProductGroupNumIIdStatus(sxModel, numIId);
-                    // 回写ims_bt_product表(numIId)
-                    updateImsBtProduct(sxModel, numIId);
-                    // 回写workload表   (1上新成功)
-                    updateSxWorkload(sxModel.getSxWorkloadId(), CmsConstants.SxWorkloadPublishStatusNum.okNum);
-                } catch (Exception ex) {
-                    $error(ex.getMessage());
-                    insertBusinessLog(channelId, "回写numIId发生异常!" + ex.getMessage(), sxModel);
+                if (index == 0) {
+                    startTime = sxModel.getCreated();
+                }
+                if (index == listSxModel.size() - 1) {
+                    endTime = sxModel.getCreated();
+                }
+
+                listProductFields.addAll(cnSchemaService.readProductXmlString(sxModel.getProductXml()));
+                listSkuFields.addAll(cnSchemaService.readSkuXmlString(sxModel.getSkuXml()));
+
+                index++;
+            }
+            String productXml = cnSchemaService.writeProductXmlString(listProductFields);
+            String skuXml = cnSchemaService.writeSkuXmlString(listSkuFields);
+            $info("独立域名上传产品的xml:" + productXml);
+            $info("独立域名上传Sku的xml:" + skuXml);
+            // TODO: doPost
+            boolean isSuccess = false;
+
+
+            if (!isSuccess) {
+                // 只有网络问题推送失败才会false，所以就打个log，不把status更新成error
+                // 把状态更新成 0:等待上传，下次再推
+                cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 0, getTaskName());
+                needRetry = true;
+                // 回写详细错误信息表(cms_bt_business_log)
+                insertBusinessLog(channelId, String.format("独立域名xml推送失败!请耐心等待下一次推送!本次推送数据的Approve时间为[%s]-[%s]", startTime, endTime), null);
+            } else {
+                for (CmsBtSxCnInfoModel sxModel : listSxModel) {
+                    // 上传产品和sku成功的场合,回写product group表中的numIId和platformStatus(Onsale/InStock)
+                    String numIId = sxModel.getOrgChannelId() + "-" + Long.toString(sxModel.getProdId()); // 因为现在是一个group一个code
+                    try {
+                        updateProductGroupNumIIdStatus(sxModel, numIId);
+                        // 回写ims_bt_product表(numIId)
+                        updateImsBtProduct(sxModel, numIId);
+                        // 回写workload表   (1上新成功)
+                        updateSxWorkload(sxModel.getSxWorkloadId(), CmsConstants.SxWorkloadPublishStatusNum.okNum);
+                    } catch (Exception ex) {
+                        $error(ex.getMessage());
+                        insertBusinessLog(channelId, "回写numIId发生异常!" + ex.getMessage(), sxModel);
+                    }
                 }
             }
+
+            // 类目保存
+
+
+            // 把状态更新成 2:上传结束
+            cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName());
+        } catch (Exception ex) {
+            $error(ex.getMessage());
+            if (!needRetry) {
+                // 不需要重新传
+                // 回写详细错误信息表(cms_bt_business_log)
+                insertBusinessLog(channelId, String.format("发生预想外的异常,需要重新Approve!本次推送数据的Approve时间为[%s]-[%s]!错误内容是[%s]", startTime, endTime, ex.getMessage()), null);
+                // 把状态更新成 2:上传结束
+                cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName());
+            } else {
+                // 回写详细错误信息表(cms_bt_business_log)
+                insertBusinessLog(channelId, String.format("发生预想外的异常,请等待系统自动重新上传!本次推送数据的Approve时间为[%s]-[%s]!错误内容是[%s]", startTime, endTime, ex.getMessage()), null);
+            }
         }
-
-        // 类目保存
-
-        // 把状态更新成 2:上传结束
-        cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName());
     }
 
     /**

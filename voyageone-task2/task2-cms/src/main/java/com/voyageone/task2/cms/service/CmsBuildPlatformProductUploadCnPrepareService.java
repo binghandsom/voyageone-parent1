@@ -271,7 +271,11 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
         insertCnInfoModel.setOrgChannelId(sxData.getMainProduct().getOrgChannelId());
         insertCnInfoModel.setCartId(cartId);
         insertCnInfoModel.setGroupId(groupId);
-        insertCnInfoModel.setCatIds(sxData.getMainProduct().getPlatform(cartId).getSellerCats().stream().map(CmsBtProductModel_SellerCat::getcId).collect(Collectors.toList()));
+        List<String> catIds = new ArrayList<>();
+        for (CmsBtProductModel_SellerCat sellerCat : sxData.getMainProduct().getPlatform(cartId).getSellerCats()) {
+            catIds.addAll(sellerCat.getcIds());
+        }
+        insertCnInfoModel.setCatIds(catIds);
         insertCnInfoModel.setCode(sxData.getMainProduct().getCommon().getFields().getCode());
         insertCnInfoModel.setProdId(sxData.getMainProduct().getProdId());
         insertCnInfoModel.setProductXml(productXml);
