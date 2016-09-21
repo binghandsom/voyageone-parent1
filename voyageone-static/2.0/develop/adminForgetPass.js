@@ -1,11 +1,11 @@
 /**
- * Created by sofia on 2016/9/21.
+ * Created by sofia on 2016/8/30.
  */
 define(['components/dist/voyageone.angular.com'], function () {
-    angular.module('voyageone.admin.adminResetPass', [
+    angular.module('voyageone.admin.adminForgetPass', [
         'blockUI',
         'voyageone.angular'
-    ]).controller('resetPassController', function ($scope, $http) {
+    ]).controller('forgetPassController', function ($scope, $http) {
         $scope.submit = function () {
             $http({
                 url: '/admin/user/self/forgetPass',
@@ -13,9 +13,8 @@ define(['components/dist/voyageone.angular.com'], function () {
                 params: {'userAccount': $scope.userAccount}
             }).then(function (res) {
                 console.log(res);
-                window.location.href = "adminResetPass.html";
             })
         }
     });
-    return angular.bootstrap(document, ['voyageone.admin.adminResetPass']);
+    return angular.bootstrap(document, ['voyageone.admin.adminForgetPass']);
 });

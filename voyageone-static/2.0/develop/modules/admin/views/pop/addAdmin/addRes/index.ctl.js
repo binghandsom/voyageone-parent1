@@ -51,6 +51,7 @@ define([
                 var self = this;
                 var result = {};
                 _.extend(self.sourceData, self.saveInfo);
+                self.saveInfo.active = self.saveInfo.active - 0;
                 self.saveInfo.resType = self.saveInfo.resType - 0;
                 self.saveInfo.parentId = self.saveInfo.parentId - 0;
                 if (self.append == true) {
