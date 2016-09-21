@@ -157,7 +157,7 @@ public class TaskController extends AdminController {
 		// 添加任务配置信息
 		TmTaskControlModel model = new TmTaskControlModel();
 		BeanUtils.copyProperties(form, model);
-		taskService.addTaskConfig(Integer.valueOf(form.getTaskId()), model);
+		taskService.addTaskConfig(model);
 		
 		return success(true);
 	}

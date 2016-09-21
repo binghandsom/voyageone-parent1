@@ -188,13 +188,7 @@ public class TaskService extends BaseService {
 		return pageModel;
 	}
 
-	public void addTaskConfig(Integer taskId, TmTaskControlModel model) {
-		ComMtTaskModel task = taskDao.select(taskId);
-		if (task == null) {
-			throw new BusinessException("配置的任务信息不存在"); 
-		} else {
-			model.setTaskId(task.getTaskName());
-		}
+	public void addTaskConfig(TmTaskControlModel model) {
 		if (model.getCfgVal2() == null) {
 			model.setCfgVal2(TASK_ATTR_EMPTY_VALUE);
 		}
