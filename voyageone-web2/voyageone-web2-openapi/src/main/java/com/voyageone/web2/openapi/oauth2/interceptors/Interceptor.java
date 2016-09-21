@@ -1,6 +1,7 @@
 package com.voyageone.web2.openapi.oauth2.interceptors;
 
 import com.voyageone.common.logger.VOAbsLoggable;
+import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,6 +20,9 @@ public class Interceptor extends VOAbsLoggable implements HandlerInterceptor {
     @Autowired
     private AccessTokenInterceptor accessTokenInterceptor;
 
+    @Autowired
+    private ChannelAdvisorInterceptor channelAdvisorInterceptor;
+
     /**
      * Intercept the execution of a handler. Called after HandlerMapping determined
      * an appropriate handler object, but before HandlerAdapter invokes the handler.
@@ -31,6 +35,12 @@ public class Interceptor extends VOAbsLoggable implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         $info("openapi {} is start.", request.getServletPath());
 
+        // channelAdvisor Interceptor
+        if (request.getRequestURI().contains(CAUrlConstants.ROOT)) {
+            return channelAdvisorInterceptor.preHandle(request);
+        }
+
+        // other
         return accessTokenInterceptor.preHandle(request);
     }
 

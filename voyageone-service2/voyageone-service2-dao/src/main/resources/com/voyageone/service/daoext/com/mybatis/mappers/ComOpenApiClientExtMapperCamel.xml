@@ -5,7 +5,8 @@
     <select id="selectByClientSecret"  resultType="com.voyageone.service.model.openapi.oauth.ComOpenApiClientModel">
         select
             user_account,
-            client_id
+            client_id,
+            channel_id
         from voyageone_core.com_openapi_client
         where client_id=#{clientId,jdbcType=VARCHAR} and client_secret=#{clientSecret,jdbcType=VARCHAR} and active=1
     </select>
