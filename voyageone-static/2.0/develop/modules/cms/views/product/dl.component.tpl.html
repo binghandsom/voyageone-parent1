@@ -1,5 +1,5 @@
 <div class="product-shema-detail">
-    <form class="form-horizontal" name="productFieldForm" novalidate>
+    <div class="form-horizontal">
         <div class="panel vo_panel tab_panel">
             <div class="wrapper">
                 <div class="container-fluid"  id="common">
@@ -70,10 +70,10 @@
                                         </span>
                                     </li>
                                 </ul>
-                                <div class="text-warnings no-master" style="padding-left:0px;" ng-if="vm.noMaterMsg">
+                                <div class="text-warnings no-master" ng-if="vm.noMaterMsg">
                                     <i class="icon fa fa-bell-o"></i>&nbsp;{{vm.noMaterMsg}} , 否则该产品信息无法显示！！！<br>
                                 </div>
-                                <div class="text-warnings" style="padding-left:0px" ng-if="vm.mastData.isMain != true">
+                                <div class="text-warnings" ng-if="vm.mastData.isMain != true">
                                     <i class="icon fa fa-bell-o"></i>&nbsp;此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面。<br>
                                 </div>
                         </div>
@@ -90,7 +90,7 @@
                                 <button class="btn btn-vo" ng-click="saveProduct()" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
                                                                                         vm.checkFlag.attribute == false"><i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
                             </div>
-                            <div class="pull-right text-warnings" style="padding-left:0px">
+                            <div class="pull-right text-warnings">
                                 <i class="icon fa fa-bell-o"></i>&nbsp;【Save】按钮，用于数据临时保存；【Ready】/【Approve】按钮，用于数据正式保存并确认，设计产品状态变更，将启动必填属性检查机制，一旦检查发现异常，保存即失败。
                             </div>
                         </div>
@@ -112,7 +112,7 @@
                                         {{vm.platform.pPublishMessage | limitTo: 30}}{{vm.platform.pPublishMessage.length > 30 ? '...' : ''}}
                                     </span>&nbsp;
 
-                                    <div class="text-warnings" style="padding-left:0px">
+                                    <div class="text-warnings">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;【{{cartInfo.name}} NumIID】，红灯时为上新/更新失败状态，请及时修正；绿灯时为在售状态；黄灯时为在库状态；灰灯时为未发布状态。点击以上{{cartInfo.name}} NumIID进入{{cartInfo.name}}商品页面。<br>
                                     </div>
                                 </div>
@@ -148,7 +148,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="text-warnings" style="padding-left:0px">
+                                    <div class="text-warnings">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;切换平台店铺内分类将影响整个Group中的所有商品，请慎重！
                                     </div>
                                 </div>
@@ -161,7 +161,7 @@
                                            target="_blank">{{vm.mastData.model | limitTo: 30}}{{vm.mastData.model.length > 30 ? '...' : ''}}
                                         </a>
                                     </span>
-                                    <div class="text-warnings" style="padding-left:0px">
+                                    <div class="text-warnings">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;拆分Group 或 切换主商品，请点击以上Number ID，进入Group详情画面编辑
                                     </div>
                                 </div>
@@ -169,8 +169,8 @@
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_CODE"|translate}}</strong></label>
                                 <div class="col-md-8">
-                                    <input class="form-control" required="" style="" ng-model="vm.mastData.productCode" disabled>
-                                    <div class="text-warnings" style="padding-left:0px">
+                                    <input class="form-control" ng-model="vm.mastData.productCode" disabled>
+                                    <div class="text-warnings">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;如果此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面
                                     </div>
                                 </div>
@@ -204,8 +204,6 @@
                         </div>
                     </div>
                 </div>
-                <ng-form name="schemaForm" novalidate>
-
                     <hr>
                     <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;商品详情</span>
                     <!------------------------------------------------以下为商品Schema------------------------------------------------------->
@@ -229,15 +227,12 @@
                         </div>
                         <br>
                     </div>
-
-                </ng-form>
                 <br>
                 <hr>
                 <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;Sku属性</span>
                 <!------------------------------------------------以下为产品SKU------------------------------------------------------->
                 <div class="container-fluid" id="sku">
                     <div class="table-responsive">
-                        <ng-form name="skuForm" novalidate>
                             <table class="table text-left">
                                 <thead>
                                     <tr>
@@ -280,9 +275,8 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </ng-form>
                     </div>
-                    <div class="text-warnings" style="padding-left:0px">
+                    <div class="text-warnings">
                         例：{{cartInfo.name}}上新时的容量/尺码是根据设置在【尺码表管理页面】里的匹配关系来进行转化的。
                         如果需要个别设置可以人工在本页面进行设置
                     </div>
@@ -290,5 +284,5 @@
 
             </div>
         </div>
-    </form>
+    </div>
 </div>
