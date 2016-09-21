@@ -95,8 +95,10 @@ public class PlatformSchemaService extends BaseService {
     public Map<String, List<Field>> getFieldForProductImage(String catId, String channelId, int cartId, String language) {
         if (CartEnums.Cart.JM.getValue() == cartId
                 || CartEnums.Cart.TT.getValue() == cartId
-                || CartEnums.Cart.USTT.getValue() == cartId) {
-            // “聚美”或“天猫国际官网同购”或“Usjoi天猫国际官网同购”的场合，因为只有一个catId，写死 catId = 1
+                || CartEnums.Cart.USTT.getValue() == cartId
+                || CartEnums.Cart.CN.getValue() == cartId
+                ) {
+            // “聚美”或“天猫国际官网同购”或“Usjoi天猫国际官网同购”或"独立域名"的场合，因为只有一个catId，写死 catId = 1
             catId = "1";
         }
 

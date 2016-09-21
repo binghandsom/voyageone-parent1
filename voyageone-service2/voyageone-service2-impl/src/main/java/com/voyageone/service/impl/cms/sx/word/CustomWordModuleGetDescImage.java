@@ -5,10 +5,7 @@ import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbPictureService;
-import com.voyageone.ims.rule_expression.CustomModuleUserParamGetDescImage;
-import com.voyageone.ims.rule_expression.CustomWord;
-import com.voyageone.ims.rule_expression.CustomWordValueGetDescImage;
-import com.voyageone.ims.rule_expression.RuleExpression;
+import com.voyageone.ims.rule_expression.*;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
@@ -21,7 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Created by tom.zhu on 16-8-26.

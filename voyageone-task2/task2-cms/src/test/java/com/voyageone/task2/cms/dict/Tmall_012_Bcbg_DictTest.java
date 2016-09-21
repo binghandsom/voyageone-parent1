@@ -391,7 +391,7 @@ public class Tmall_012_Bcbg_DictTest extends BaseDictTest{
 
             {
                 // 第1张, 固定图片:价格解释
-                String strImgJiage = "https://img.alicdn.com/imgextra/i1/2694857307/TB2DbDBsFXXXXcbXXXXXXXXXXXX_!!2694857307.jpg";
+                String strImgJiage = "https://img.alicdn.com/imgextra/i1/2694857307/TB2X2ELbX6AQeBjSZFFXXaiFpXa_!!2694857307.jpg";
                 do处理无线端20张图片(0, ruleRoot, new TextWord(strImgJiage));
             }
 
@@ -475,7 +475,13 @@ public class Tmall_012_Bcbg_DictTest extends BaseDictTest{
             }
 
             {
-                // 第4,5张, 英/中文文字描述图片
+                // 第4张, 分割线 ----- 商品介绍 -----
+                String strImage = "https://img.alicdn.com/imgextra/i1/2694857307/TB24xdWXPzB11BjSspaXXcJ0VXa_!!2694857307.jpg";
+                do处理无线端20张图片(3, ruleRoot, new TextWord(strImage));
+            }
+
+            {
+                // 第5,6张, 英/中文文字描述图片
                 // 文字描述(空两个位置)  把去掉HTML代码之后的文字转换为图片处理
                 {
                     RuleExpression ruleExpressionField = new RuleExpression();
@@ -485,7 +491,7 @@ public class Tmall_012_Bcbg_DictTest extends BaseDictTest{
                     RuleExpression ruleExpressionOneLineBit = new RuleExpression();
                     ruleExpressionOneLineBit.addRuleWord(new TextWord("63"));
                     CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, ruleExpressionFontSize, ruleExpressionOneLineBit);
-                    do处理无线端20张图片(3, ruleRoot, new CustomWord(img));
+                    do处理无线端20张图片(4, ruleRoot, new CustomWord(img));
                 }
                 {
                     RuleExpression ruleExpressionField = new RuleExpression();
@@ -495,7 +501,7 @@ public class Tmall_012_Bcbg_DictTest extends BaseDictTest{
                     RuleExpression ruleExpressionOneLineBit = new RuleExpression();
                     ruleExpressionOneLineBit.addRuleWord(new TextWord("60"));
                     CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, ruleExpressionFontSize, ruleExpressionOneLineBit);
-                    do处理无线端20张图片(4, ruleRoot, new CustomWord(img));
+                    do处理无线端20张图片(5, ruleRoot, new CustomWord(img));
                 }
             }
 
@@ -504,12 +510,6 @@ public class Tmall_012_Bcbg_DictTest extends BaseDictTest{
                 // 测试临时
 //				String strImgJiage = "https://img.alicdn.com/imgextra/i3/2641101981/TB24I4SXF6AQeBjSZFFXXaiFpXa_!!2641101981.jpg";
 //				do处理无线端20张图片(3, ruleRoot, new TextWord(strImgJiage));
-            }
-
-            {
-                // 第6张, 分割线 ----- 商品介绍 -----
-                String strImage = "https://img.alicdn.com/imgextra/i1/2694857307/TB24xdWXPzB11BjSspaXXcJ0VXa_!!2694857307.jpg";
-                do处理无线端20张图片(5, ruleRoot, new TextWord(strImage));
             }
 
             {
@@ -542,9 +542,21 @@ public class Tmall_012_Bcbg_DictTest extends BaseDictTest{
             }
 
             {
-                // 第13张, 分割线 ----- 购物须知等 -----
-                String strImage = "https://img.alicdn.com/imgextra/i4/2694857307/TB2tPBVXKYC11Bjy1zkXXaZdXXa_!!2694857307.jpg";
+                // 第13张, 分割线 ----- 退换货服务等 -----
+                String strImage = "https://img.alicdn.com/imgextra/i2/2694857307/TB2y97pXVPcZ1BjSZFlXXb3PVXa_!!2694857307.jpg";
                 do处理无线端20张图片(12, ruleRoot, new TextWord(strImage));
+            }
+
+            {
+                // 第14张, 分割线 ----- 购物须知等 -----
+                String strImage = "https://img.alicdn.com/imgextra/i3/2694857307/TB2KRzYXIrC11Bjy1zjXXcduVXa_!!2694857307.jpg";
+                do处理无线端20张图片(13, ruleRoot, new TextWord(strImage));
+            }
+
+            {
+                // 第15张, 分割线 ----- 品牌信息等 -----
+                String strImage = "https://img.alicdn.com/imgextra/i4/2694857307/TB2sD6WXKzz11Bjy1XdXXbfqVXa_!!2694857307.jpg";
+                do处理无线端20张图片(14, ruleRoot, new TextWord(strImage));
             }
 
 //            {
