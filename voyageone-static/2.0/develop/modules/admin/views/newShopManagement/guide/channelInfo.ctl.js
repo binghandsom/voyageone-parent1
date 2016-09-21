@@ -230,6 +230,14 @@ define([
                 synchronizeChannelSeries(self.resListCopy);
                 self.popups.openConfig(channelInfo);
             },
+            validChannelId: function (id) {
+                var self = this;
+                self.channelService.isChannelUsed(id).then(function (res) {
+                    if (res.data == true) {
+                        self.alert('当前渠道&nbsp;&nbsp;' + id + '&nbsp;&nbsp;已存在，请重新输入！');
+                    }
+                })
+            },
             next: function () {
                 var self = this;
                 // 设置cartIds

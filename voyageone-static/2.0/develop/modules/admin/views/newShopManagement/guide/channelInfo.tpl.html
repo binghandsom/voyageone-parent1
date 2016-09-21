@@ -55,8 +55,8 @@
                                     <div class="row form-group">
                                         <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_ID' | translate}}</label>
                                         <div class="col-sm-8">
-                                            <input type="text" maxlength="3" class="form-control" ng-model="ctrl.resList.orderChannelId"
-                                                   name="channelId" required ng-readonly="ctrl.displayCopy==false"/>
+                                            <input type="text" class="form-control" ng-model="ctrl.resList.orderChannelId"
+                                                   name="channelId" required ng-readonly="ctrl.displayCopy==false" ng-blur="ctrl.validChannelId(ctrl.resList.orderChannelId)"/>
                                         </div>
                                     </div>
                                     <div class="row form-group">

@@ -96,7 +96,8 @@ define(function () {
                     "searchChannelConfigByPage": "searchChannelConfigByPage",
                     "addChannelConfig": "addChannelConfig",
                     "updateChannelConfig": "updateChannelConfig",
-                    "deleteChannelConfig": "deleteChannelConfig"
+                    "deleteChannelConfig": "deleteChannelConfig",
+                    "isChannelUsed": "isChannelUsed"
                 },
                 "channelAttributeService": {
                     "root": "/admin/channel/attribute",
