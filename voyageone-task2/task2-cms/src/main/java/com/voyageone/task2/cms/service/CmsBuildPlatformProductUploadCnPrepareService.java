@@ -217,20 +217,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
             // TODO:<root updateType="2">设置类目里的商品的排序
 
             // 更新cms_bt_sx_cn_info_cXXX
-            updateCmsBtSxCnInfo(groupId, channelId, cartId, sxData, productXml, skuXml);
-//            List<CmsBtSxCnInfoModel> listModel = cmsBtSxCnInfoDao.selectWaitingPublishData(channelId, 1);
-//            listModel = cmsBtSxCnInfoDao.selectWaitingPublishData(channelId, 2);
-//
-//            List<Long> listGroupId = listModel.stream().map(CmsBtSxCnInfoModel::getGroupId).collect(Collectors.toList());
-//            listGroupId.clear();listGroupId.add(1234321L);listGroupId.add(121L);
-//            WriteResult rs = cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 1, getTaskNameForUpdate());
+            updateCmsBtSxCnInfo(groupId, channelId, cartId, sxData, productXml, skuXml, cmsBtSxWorkloadModel.getId());
 
-
-//            // 上新或更新成功后回写product group表中的numIId和platformStatus(Onsale/InStock)
-//            String numIId = sxData.getMainProduct().getOrgChannelId() + "-" + Long.toString(sxData.getMainProduct().getProdId()); // 因为现在是一个group一个code
-//            sxProductService.updateProductGroupNumIIdStatus(sxData, numIId, getTaskNameForUpdate());
-//            // 回写ims_bt_product表(numIId)
-//            sxProductService.updateImsBtProduct(sxData, getTaskNameForUpdate());
             // 回写workload表   (5等待xml上传)
             sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.waitCnUpload, getTaskNameForUpdate());
             $info("groupId[%s] success!", groupId);
@@ -264,7 +252,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
 
     }
 
-    private void updateCmsBtSxCnInfo(long groupId, String channelId, int cartId, SxData sxData, String productXml, String skuXml) {
+    private void updateCmsBtSxCnInfo(long groupId, String channelId, int cartId, SxData sxData, String productXml, String skuXml, int sxWorkloadId) {
         CmsBtSxCnInfoModel findCnInfoModel;
         findCnInfoModel = cmsBtSxCnInfoDao.selectInfoByGroupId(channelId, groupId, 0);
         if (findCnInfoModel != null) {
@@ -289,6 +277,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
         insertCnInfoModel.setProductXml(productXml);
         insertCnInfoModel.setSkuXml(skuXml);
         insertCnInfoModel.setPublishFlg(0);
+        insertCnInfoModel.setPlatformActive(sxData.getPlatform().getPlatformActive());
+        insertCnInfoModel.setSxWorkloadId(sxWorkloadId);
         insertCnInfoModel.setCreater(getTaskNameForUpdate());
         insertCnInfoModel.setModifier(getTaskNameForUpdate());
         cmsBtSxCnInfoDao.insert(insertCnInfoModel);
