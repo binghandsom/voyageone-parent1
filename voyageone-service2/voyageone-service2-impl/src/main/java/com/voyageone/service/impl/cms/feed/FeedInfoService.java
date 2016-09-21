@@ -67,7 +67,9 @@ public class FeedInfoService extends BaseService {
     public CmsBtFeedInfoModel getProductBySku(String channelId, String sku) {
         return cmsBtFeedInfoDao.selectProductBySku(channelId, sku);
     }
-
+    public CmsBtFeedInfoModel getProductByClientSku(String channelId, String clientSku) {
+        return cmsBtFeedInfoDao.selectProductByClientSku(channelId, clientSku);
+    }
     /**
      * 更新feed的产品信息
      *

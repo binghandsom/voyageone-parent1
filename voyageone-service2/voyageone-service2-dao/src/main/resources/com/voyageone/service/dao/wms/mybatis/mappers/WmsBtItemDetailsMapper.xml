@@ -19,4 +19,7 @@
         and client_sku = #{clientSku};
   </select>
 
+  <update id="wms_bt_item_details_updateIsSale">
+     UPDATE  `wms_bt_item_details`    SET `is_sale`=#{isSale}  where `client_sku`=#{clientSku} and  `product_id`=#{productId} and `order_channel_id`=#{channelId}
+  </update>
 </mapper>

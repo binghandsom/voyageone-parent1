@@ -141,4 +141,14 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
     public void setWeightUnit(String weightUnit) {
         setStringAttribute("weightUnit", weightUnit);
     }
+
+
+    public Integer getIsSale()
+    {
+        return getIntAttribute("isSale");
+    }
+    public void setIsSale(int IsSale)
+    {
+        setStringAttribute("isSale", IsSale);
+    }
 }
