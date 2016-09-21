@@ -29,7 +29,7 @@ define([
                 hsCodeStatus: "0",
                 searchCondition: ""
             };
-            this.selected = false;
+            //this.selected = false;
         }
 
         HsCodeController.prototype = {
@@ -85,7 +85,7 @@ define([
             save: function (list) {
                 var self = this;
                 if (list.common.fields.hsCodePrivate) {
-                    self.selected = true;
+                    list.selected = true;
                     self.notify.success('TXT_MSG_UPDATE_SUCCESS');
                     self.hsCodeInfoService.save({
                         "code": list.common.fields.code,

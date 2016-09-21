@@ -134,7 +134,7 @@
                     </tr>
                 </tbody>
                 <tbody ng-if="ctrl.hsCodeList.length > 0">
-                    <tr ng-repeat="list in ctrl.hsCodeList" ng-style="{'background-color': ctrl.selected == true ? '#cfcaca': 'white'}">
+                    <tr ng-repeat="list in ctrl.hsCodeList" ng-style="{'background-color': list.selected == true ? '#cfcaca': 'white'}">
                         <td class="text-center v-middle">{{$index + 1}}</td>
                         <td style="overflow: hidden;" class="text-center v-middle">
                             <a ng-if="list.common.fields.images1.length > 0" ng-click="ctrl.openHsCodeImagedetail(list)"><img class="thumb" image="{{list.common.fields.images1[0].image1}}"></a>
