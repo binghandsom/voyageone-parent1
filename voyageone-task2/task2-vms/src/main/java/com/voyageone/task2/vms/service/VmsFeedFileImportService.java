@@ -3,6 +3,7 @@ package com.voyageone.task2.vms.service;
 import com.csvreader.CsvReader;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.*;
@@ -33,9 +34,11 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.*;
+
 /**
  * 将Feed信息导入FeedInfo表
  * Created on 16/06/29.
+ *
  * @author jeff.duan
  * @version 1.0
  */
@@ -197,7 +200,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     feedFilePath += "/" + channel.getOrder_channel_id() + "/";
                 } else {
                     // ftp上传的场合
-                    feedFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY,"vms.feed.ftp.upload");
+                    feedFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.feed.ftp.upload");
                     feedFilePath += "/" + channel.getOrder_channel_id() + "/feed/";
                 }
 
@@ -235,8 +238,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
         /**
          * check数据并且插入MongoDb表
-         * @param feedFileName FeedFile文件名
          *
+         * @param feedFileName FeedFile文件名
          */
         private void doHandle(String feedFileName) throws IOException {
 
@@ -252,7 +255,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 // checkProductId重复
                 List<Map<String, Object>> productIdList = vmsBtFeedInfoTempDaoExt.selectSameProductId(channel.getOrder_channel_id());
                 for (Map<String, Object> productIdMap : productIdList) {
-                    if (!StringUtils.isEmpty((String)productIdMap.get("product_id"))) {
+                    if (!StringUtils.isEmpty((String) productIdMap.get("product_id"))) {
                         Map<String, Object> paramProductId = new HashMap<>();
                         paramProductId.put("channelId", channel.getOrder_channel_id());
                         paramProductId.put("productId", (String) productIdMap.get("product_id"));
@@ -288,7 +291,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
                 int codeCnt = 0;
                 int skuCnt = 0;
-                int i=1;
+                int i = 1;
                 // 取得需要处理的Code级别的数据,每次取得固定件数(100件)
                 while (true) {
                     List<CmsBtFeedInfoModel> feedInfoModelList = new ArrayList<>();
@@ -301,7 +304,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     if (codeList.size() == 0) {
                         break;
                     }
-                    $info("***************处理件数:" + String.valueOf(i*100) + ",channel：" + channel.getFull_name());
+                    $info("***************处理件数:" + String.valueOf(i * 100) + ",channel：" + channel.getFull_name());
                     for (VmsBtFeedInfoTempModel codeModel : codeList) {
                         Map<String, Object> param1 = new HashMap<>();
                         param1.put("channelId", channel.getOrder_channel_id());
@@ -335,7 +338,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     // 插入MongoDb表
                     if (feedInfoModelList.size() > 0) {
                         $info("point-mongo-start" + ",channel：" + channel.getFull_name());
-                        Map<String, List<CmsBtFeedInfoModel>> response = feedToCmsService.updateProduct(channel.getOrder_channel_id(), feedInfoModelList, getTaskName(), true);
+                        Map<String, List<CmsBtFeedInfoModel>> response = feedToCmsService.updateProduct(channel
+                                        .getOrder_channel_id(), feedInfoModelList, getTaskName(),
+                                CmsConstants.FeedProductUpdateType.VMS_FEED);
                         List<CmsBtFeedInfoModel> succeed = response.get("succeed");
                         codeCnt += succeed.size();
                         skuCnt += succeed.stream().mapToInt((model) -> model.getSkus().size()).summaryStatistics().getSum();
@@ -346,7 +351,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 $info("插入MongoDb表,成功Code数: " + codeCnt + ", Sku数:" + skuCnt + ",channel：" + channel.getFull_name());
 
                 // 处理剩余的Sku件数（没有匹配上parent-id）
-                i=1;
+                i = 1;
                 while (true) {
                     Map<String, Object> param = new HashMap<>();
                     param.put("channelId", channel.getOrder_channel_id());
@@ -356,7 +361,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     if (otherList.size() == 0) {
                         break;
                     }
-                    $info("***************处理剩余件数:" + String.valueOf(i*100) + ",channel：" + channel.getFull_name());
+                    $info("***************处理剩余件数:" + String.valueOf(i * 100) + ",channel：" + channel.getFull_name());
                     for (VmsBtFeedInfoTempModel otherModel : otherList) {
                         // parent-id(%s) is invalidate.
                         addErrorMessage(errorList, "8000004", new Object[]{otherModel.getParentId()}, otherModel.getSku(), columnMap.get(PARENT_ID));
@@ -410,7 +415,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_COMPLETED);
                     feedFileModel.setModifier(getTaskName());
                     vmsBtFeedFileDaoExt.updateErrorInfo(feedFileModel);
-                    VmsChannelConfigBean vmsUpdateInventory = VmsChannelConfigs.getConfigBean(channel.getOrder_channel_id(),VmsConstants.ChannelConfig.UPDATE_INVENTORY,
+                    VmsChannelConfigBean vmsUpdateInventory = VmsChannelConfigs.getConfigBean(channel.getOrder_channel_id(), VmsConstants.ChannelConfig.UPDATE_INVENTORY,
                             VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
                     if (vmsUpdateInventory == null || "1".equals(vmsUpdateInventory.getConfigValue1())) {
                         // 库存同步
@@ -430,9 +435,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
          * @param codeModel Code级别数据
          * @param skuModels Sku级别数据
          * @param errorList 所有Error内容
-         *
          * @return FeedInfo对象
-         *
          */
         private CmsBtFeedInfoModel checkByCodeGroup(VmsBtFeedInfoTempModel codeModel, List<VmsBtFeedInfoTempModel> skuModels, List<Map<String, Object>> errorList) throws IOException {
 
@@ -582,7 +585,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         String keyValue = skuKeyMap.get("Value");
                         // 去掉key中的空格
                         if (!StringUtils.isEmpty(keyValue)) {
-                            keyValue = keyValue.replaceAll(" ","");
+                            keyValue = keyValue.replaceAll(" ", "");
                         }
 
                         // 没有设定Sku唯一标识的情况下
@@ -709,11 +712,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
          * 做出AttributeMap
          *
          * @param attributeMap 做出的AttributeMap
-         * @param codeModel VmsBtFeedInfoTempModel
-         * @param flag 'code' or 'sku'
-         *
+         * @param codeModel    VmsBtFeedInfoTempModel
+         * @param flag         'code' or 'sku'
          * @return 可变主题对应Attribute的序号和内容
-         *
          */
         private void makeAttributeMap(Map attributeMap, VmsBtFeedInfoTempModel codeModel, String flag) {
             String attributeKey1 = codeModel.getAttributeKey1();
@@ -759,140 +760,180 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             String attributeValue20 = codeModel.getAttributeValue20();
             if (!StringUtils.isEmpty(attributeKey1)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey1, new ArrayList<String>() {{this.add(attributeValue1);}});
+                    attributeMap.put(attributeKey1, new ArrayList<String>() {{
+                        this.add(attributeValue1);
+                    }});
                 } else {
                     attributeMap.put(attributeKey1, attributeValue1);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey2)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey2, new ArrayList<String>() {{this.add(attributeValue2);}});
+                    attributeMap.put(attributeKey2, new ArrayList<String>() {{
+                        this.add(attributeValue2);
+                    }});
                 } else {
                     attributeMap.put(attributeKey2, attributeValue2);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey3)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey3, new ArrayList<String>() {{this.add(attributeValue3);}});
+                    attributeMap.put(attributeKey3, new ArrayList<String>() {{
+                        this.add(attributeValue3);
+                    }});
                 } else {
                     attributeMap.put(attributeKey3, attributeValue3);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey4)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey4, new ArrayList<String>() {{this.add(attributeValue4);}});
+                    attributeMap.put(attributeKey4, new ArrayList<String>() {{
+                        this.add(attributeValue4);
+                    }});
                 } else {
                     attributeMap.put(attributeKey4, attributeValue4);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey5)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey5, new ArrayList<String>() {{this.add(attributeValue5);}});
+                    attributeMap.put(attributeKey5, new ArrayList<String>() {{
+                        this.add(attributeValue5);
+                    }});
                 } else {
                     attributeMap.put(attributeKey5, attributeValue5);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey6)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey6, new ArrayList<String>() {{this.add(attributeValue6);}});
+                    attributeMap.put(attributeKey6, new ArrayList<String>() {{
+                        this.add(attributeValue6);
+                    }});
                 } else {
                     attributeMap.put(attributeKey6, attributeValue6);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey7)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey7, new ArrayList<String>() {{this.add(attributeValue7);}});
+                    attributeMap.put(attributeKey7, new ArrayList<String>() {{
+                        this.add(attributeValue7);
+                    }});
                 } else {
                     attributeMap.put(attributeKey7, attributeValue7);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey8)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey8, new ArrayList<String>() {{this.add(attributeValue8);}});
+                    attributeMap.put(attributeKey8, new ArrayList<String>() {{
+                        this.add(attributeValue8);
+                    }});
                 } else {
                     attributeMap.put(attributeKey8, attributeValue8);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey9)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey9, new ArrayList<String>() {{this.add(attributeValue9);}});
+                    attributeMap.put(attributeKey9, new ArrayList<String>() {{
+                        this.add(attributeValue9);
+                    }});
                 } else {
                     attributeMap.put(attributeKey9, attributeValue9);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey10)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey10, new ArrayList<String>() {{this.add(attributeValue10);}});
+                    attributeMap.put(attributeKey10, new ArrayList<String>() {{
+                        this.add(attributeValue10);
+                    }});
                 } else {
                     attributeMap.put(attributeKey10, attributeValue10);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey11)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey11, new ArrayList<String>() {{this.add(attributeValue11);}});
+                    attributeMap.put(attributeKey11, new ArrayList<String>() {{
+                        this.add(attributeValue11);
+                    }});
                 } else {
                     attributeMap.put(attributeKey11, attributeValue11);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey12)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey12, new ArrayList<String>() {{this.add(attributeValue12);}});
+                    attributeMap.put(attributeKey12, new ArrayList<String>() {{
+                        this.add(attributeValue12);
+                    }});
                 } else {
                     attributeMap.put(attributeKey12, attributeValue12);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey13)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey13, new ArrayList<String>() {{this.add(attributeValue13);}});
+                    attributeMap.put(attributeKey13, new ArrayList<String>() {{
+                        this.add(attributeValue13);
+                    }});
                 } else {
                     attributeMap.put(attributeKey13, attributeValue13);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey14)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey14, new ArrayList<String>() {{this.add(attributeValue14);}});
+                    attributeMap.put(attributeKey14, new ArrayList<String>() {{
+                        this.add(attributeValue14);
+                    }});
                 } else {
                     attributeMap.put(attributeKey14, attributeValue14);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey15)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey15, new ArrayList<String>() {{this.add(attributeValue15);}});
+                    attributeMap.put(attributeKey15, new ArrayList<String>() {{
+                        this.add(attributeValue15);
+                    }});
                 } else {
                     attributeMap.put(attributeKey15, attributeValue15);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey16)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey16, new ArrayList<String>() {{this.add(attributeValue16);}});
+                    attributeMap.put(attributeKey16, new ArrayList<String>() {{
+                        this.add(attributeValue16);
+                    }});
                 } else {
                     attributeMap.put(attributeKey16, attributeValue16);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey17)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey17, new ArrayList<String>() {{this.add(attributeValue17);}});
+                    attributeMap.put(attributeKey17, new ArrayList<String>() {{
+                        this.add(attributeValue17);
+                    }});
                 } else {
                     attributeMap.put(attributeKey17, attributeValue17);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey18)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey18, new ArrayList<String>() {{this.add(attributeValue18);}});
+                    attributeMap.put(attributeKey18, new ArrayList<String>() {{
+                        this.add(attributeValue18);
+                    }});
                 } else {
                     attributeMap.put(attributeKey18, attributeValue18);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey19)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey19, new ArrayList<String>() {{this.add(attributeValue19);}});
+                    attributeMap.put(attributeKey19, new ArrayList<String>() {{
+                        this.add(attributeValue19);
+                    }});
                 } else {
                     attributeMap.put(attributeKey19, attributeValue19);
                 }
             }
             if (!StringUtils.isEmpty(attributeKey20)) {
                 if ("code".equals(flag)) {
-                    attributeMap.put(attributeKey20, new ArrayList<String>() {{this.add(attributeValue20);}});
+                    attributeMap.put(attributeKey20, new ArrayList<String>() {{
+                        this.add(attributeValue20);
+                    }});
                 } else {
                     attributeMap.put(attributeKey20, attributeValue20);
                 }
@@ -903,9 +944,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
          * 从Attribute属性中找出可变主题
          *
          * @param skuModel sku级别数据
-         *
          * @return 可变主题对应Attribute的序号和内容
-         *
          */
         private Map<String, String> getSkuKey(VmsBtFeedInfoTempModel skuModel) {
             Map<String, String> returnMap = new HashMap<>();
@@ -1042,7 +1081,6 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
          *
          * @param codeModel Code级别数据
          * @param errorList 所有Error内容
-         *
          * @return 是否有错误
          */
         private boolean checkSkuCommon(VmsBtFeedInfoTempModel codeModel, List<Map<String, Object>> errorList) throws IOException {
@@ -1102,8 +1140,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             String weight = codeModel.getWeight();
             // 如果以有重量单位，那么去掉最后的重量单位
             if (!StringUtils.isEmpty(weight)) {
-                for (String weightUnit :weightUnits) {
-                    if ( weight.toLowerCase().lastIndexOf(weightUnit) > 0) {
+                for (String weightUnit : weightUnits) {
+                    if (weight.toLowerCase().lastIndexOf(weightUnit) > 0) {
                         weight = weight.substring(0, weight.toLowerCase().lastIndexOf(weightUnit));
                         weight = weight.trim();
                         break;
@@ -1124,7 +1162,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         /**
          * 读入Feed文件，插入到临时表vms_bt_feed_info_temp里
          *
-         * @param feedFile  导入Feed文件
+         * @param feedFile 导入Feed文件
          * @return 是否有错误 true:有错；false：没错
          */
         private boolean readCsvToDB(File feedFile) throws IOException {
@@ -1144,15 +1182,15 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 // 取得CSV分隔符
                 VmsChannelConfigBean vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(channel.getOrder_channel_id()
                         , VmsConstants.ChannelConfig.FEED_CSV_SPLIT_SYMBOL
-                        ,VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
+                        , VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
                 if (vmsChannelConfigBean != null) {
                     csvSplitSymbol = vmsChannelConfigBean.getConfigValue1().charAt(0);
                 }
 
-                // 取得CSV分隔符
+                // 取得CSV编码
                 vmsChannelConfigBean = VmsChannelConfigs.getConfigBean(channel.getOrder_channel_id()
                         , VmsConstants.ChannelConfig.FEED_CSV_ENCODE
-                        ,VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
+                        , VmsConstants.ChannelConfig.COMMON_CONFIG_CODE);
                 if (vmsChannelConfigBean != null) {
                     csvEncode = vmsChannelConfigBean.getConfigValue1();
                 }
@@ -1171,13 +1209,13 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     } else {
                         for (Map.Entry<Object, String> entry : columnMap.entrySet()) {
                             // 列名与VoyageOneFeedTemplate定义的列名不匹配
-                            if (!entry.getValue().equals(headers[(int)entry.getKey()].trim())) {
+                            if (!entry.getValue().equals(headers[(int) entry.getKey()].trim())) {
                                 checkHeader = false;
                                 break;
                             }
                         }
                     }
-                } else  {
+                } else {
                     // 空文件的场合
                     checkHeader = false;
                 }
@@ -1484,7 +1522,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
                     return true;
                 }
-                $info("导入Temp表成功,导入件数：" + rowNum +"件,channel：" + channel.getFull_name());
+                $info("导入Temp表成功,导入件数：" + rowNum + "件,channel：" + channel.getFull_name());
 
                 return false;
             } catch (IOException ex) {
@@ -1496,7 +1534,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         /**
          * 删除临时表vms_bt_feed_info_temp里的数据
          *
-         * @param channelId  渠道id
+         * @param channelId 渠道id
          */
         private void deleteFeedInfoTemp(String channelId) {
             int delCnt = 0;
@@ -1509,7 +1547,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
             $info("删除临时表数据开始,channel：" + channel.getFull_name());
 
-            for (int i=0; i < loopCnt; i++) {
+            for (int i = 0; i < loopCnt; i++) {
                 // 先删除这个channel下的临时数据
                 delCnt += vmsBtFeedInfoTempDaoExt.deleteByChannelWithLimit(channelId);
                 $info("已经删除数据：" + delCnt + "件;channel：" + channel.getFull_name());
@@ -1521,12 +1559,11 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         /**
          * 追加ErrorMessage
          *
-         * @param errorList  所有Error内容
-         * @param messageCode  错误Code
-         * @param args 参数
-         * @param sku  SKU
-         * @param column  列号
-         *
+         * @param errorList   所有Error内容
+         * @param messageCode 错误Code
+         * @param args        参数
+         * @param sku         SKU
+         * @param column      列号
          * @return FeedInfoModel数据（列表）
          */
         private void addErrorMessage(List<Map<String, Object>> errorList, String messageCode, Object[] args, String sku, String column) throws IOException {
@@ -1561,12 +1598,11 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         /**
          * 追加ErrorMessage
          *
-         * @param error  所有Error内容
-         * @param messageCode  错误Code
-         * @param args 参数
-         * @param sku  SKU
-         * @param column  列名
-         *
+         * @param error       所有Error内容
+         * @param messageCode 错误Code
+         * @param args        参数
+         * @param sku         SKU
+         * @param column      列名
          * @return FeedInfoModel数据（列表）
          */
         private void addErrorMessage(StringBuilder error, String messageCode, Object[] args, String sku, String column) {
@@ -1585,8 +1621,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
          * 生成Feed错误结果文件
          *
          * @param stringBuilder 错误内容
-         *
-         * return Feed错误结果文件名
+         *                      <p>
+         *                      return Feed错误结果文件名
          */
         private String createErrorFile(StringBuilder stringBuilder) throws IOException {
             // 取得Feed文件检查结果路径
@@ -1609,9 +1645,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         /**
          * 生成Feed错误结果文件
          *
-         * @param errorList 错误内容列表
+         * @param errorList  错误内容列表
          * @param successCnt 成功导入件数
-         *
          */
         private void createErrorFile(List<Map<String, Object>> errorList, int successCnt) throws IOException {
             // 取得Feed文件检查结果路径
@@ -1630,9 +1665,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 // 按rowNum排序
                 // Collections.sort(errorList, new MapComparator());
                 for (Map<String, Object> error : errorList) {
-                    stringBuilder.append(String.valueOf(error.get("sku"))  + VmsConstants.COMMA
-                            + String.valueOf(error.get("column"))  + VmsConstants.COMMA
-                            + String.valueOf(error.get("message"))  + "\r\n");
+                    stringBuilder.append(String.valueOf(error.get("sku")) + VmsConstants.COMMA
+                            + String.valueOf(error.get("column")) + VmsConstants.COMMA
+                            + String.valueOf(error.get("message")) + "\r\n");
                 }
                 if (writeHeader) {
                     String header = "sku,column,message\r\n";
@@ -1656,7 +1691,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
         /**
          * 生成Feed错误结果文件路径
-         *
+         * <p>
          * return Feed错误结果文件路径
          */
         private String createErrorFilePath() {
@@ -1671,15 +1706,16 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
         /**
          * 移动Feed文件到bak目录下
+         *
          * @param feedFileName FeedFile文件名
          */
         private void moveFeedFileToBak(String feedFileName) {
             // 取得Feed文件上传路径
-            String feedFilePath ="";
+            String feedFilePath = "";
             // online上传的场合
             if (VmsConstants.FeedFileUploadType.ONLINE.equals(uploadType)) {
                 feedFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.feed.online.upload");
-                feedFilePath +=  "/" + channel.getOrder_channel_id() + "/";
+                feedFilePath += "/" + channel.getOrder_channel_id() + "/";
             } else {
                 // ftp上传的场合
                 feedFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.feed.ftp.upload");
@@ -1692,12 +1728,12 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
         /**
          * 设置Feed的Weight属性
-         * @param skuInfo skuInfoModel
-         * @param feedInfo FeedInfoModel
-         * @param weight 重量
          *
+         * @param skuInfo  skuInfoModel
+         * @param feedInfo FeedInfoModel
+         * @param weight   重量
          */
-        private void setFeedWeight (CmsBtFeedInfoModel_Sku skuInfo, CmsBtFeedInfoModel feedInfo, String weight) {
+        private void setFeedWeight(CmsBtFeedInfoModel_Sku skuInfo, CmsBtFeedInfoModel feedInfo, String weight) {
 
             String weightOrg = "";
             String weightOrgUnit = "lbs";

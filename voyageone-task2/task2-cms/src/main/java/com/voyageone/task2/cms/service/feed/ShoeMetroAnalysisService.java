@@ -140,6 +140,13 @@ public class ShoeMetroAnalysisService extends BaseAnalysisService {
         }
         return cnt;
     }
+    @Override
+    public int fullCopyTemp(){
+        int cnt = shoeMetroFeedDao.fullCopyTemp();
+        shoeMetroFeedDao.updateMd5();
+        shoeMetroFeedDao.updateUpdateFlag();
+        return cnt;
+    }
 
     /**
      * YogaDemocracy产品信息插入

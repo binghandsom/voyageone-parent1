@@ -254,4 +254,12 @@ public class CmsConstants {
         int FeedErr = 8;  //Feed数据异常
     }
 
+    /**
+     * feed product更新接口的参数方式
+     */
+    public interface FeedProductUpdateType {
+        int CMS_FEED = 0; //CMS feed 导入
+        int VMS_FEED = 80; //VMS feed 导入
+        int VMS_PRICE_INVENTORY = 81; //VMS price inventory 导入
+    }
 }

@@ -46,6 +46,7 @@ define([
             } else if (self.type == 'new') {
                 self.shipment.shippedDate = new Date();
                 self.shipment.expressCompany = self.channelConfig.defaultDeliveryCompany;
+                self.watchExpress();
                 if (self.channelConfig.namingConverter)
                     self.shipment.shipmentName = moment().format(self.channelConfig.namingConverter);
             }
@@ -68,7 +69,12 @@ define([
             // 先判断是否有其他人改了当前的shipment
             self.shipmentPopupService.getInfo(self.originalShipment.id).then(function (data) {
                 tempShipment = data.shipment;
-                if (!_.isEqual(self.originalShipment, tempShipment)) {
+                if (self.originalShipment.status != tempShipment.status
+                    || self.originalShipment.shipmentName != tempShipment.shipmentName
+                    || self.originalShipment.shippedDate != tempShipment.shippedDate
+                    || self.originalShipment.expressCompany != tempShipment.expressCompany
+                    || self.originalShipment.trackingNo != tempShipment.trackingNo
+                    || self.originalShipment.comment != tempShipment.comment) {
                     self.alert("TXT_SHIPMENT_HAVE_BEEN_EDITED");
                     self.$uibModalInstance.close(tempShipment);
                     return;
@@ -88,7 +94,12 @@ define([
             // 先判断是否有其他人改了当前的shipment
             self.shipmentPopupService.get().then(function (data) {
                 tempShipment = data.currentShipment;
-                if (!_.isEqual(self.originalShipment, tempShipment)) {
+                if (self.originalShipment.status != tempShipment.status
+                    || self.originalShipment.shipmentName != tempShipment.shipmentName
+                    || self.originalShipment.shippedDate != tempShipment.shippedDate
+                    || self.originalShipment.expressCompany != tempShipment.expressCompany
+                    || self.originalShipment.trackingNo != tempShipment.trackingNo
+                    || self.originalShipment.comment != tempShipment.comment) {
                     self.alert("TXT_SHIPMENT_HAVE_BEEN_EDITED");
                     self.$uibModalInstance.close(tempShipment);
                     return;
@@ -126,6 +137,13 @@ define([
                     }
                 });
             });
+        };
+
+        NewShipmentController.prototype.watchExpress = function () {
+            var self = this;
+            if (self.shipment.expressCompany == "DROPOFF") {
+                self.shipment.trackingNo = self.channelConfig.channelId.toString() + new Date().getTime();
+            }
         };
 
         return NewShipmentController;

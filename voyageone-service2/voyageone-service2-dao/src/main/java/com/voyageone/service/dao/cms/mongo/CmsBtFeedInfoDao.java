@@ -30,6 +30,17 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
     }
 
     /**
+     * 根据clientSku获取feed product信息
+     * @param channelId channel
+     * @param clientSku client sku
+     * @return feed product
+     */
+    public CmsBtFeedInfoModel selectProductByClientSku(String channelId, String clientSku) {
+        String query = "{\"skus.clientSku\":\"" + clientSku + "\"}";
+        return selectOneWithQuery(query, channelId);
+    }
+
+    /**
      * updateFeedInfoUpdFlg
      */
     public int updateFeedInfoUpdFlg(String channelId, String[] modelCode) {

@@ -123,13 +123,14 @@ define(function () {
         "TXT_SCANNED_SUCCESSFULLY": "Scanned successfully",
         "TXT_SHIPMENT_MODIFIED_SUCCESSFULLY": "Shipment modified successfully",
         "TXT_SETTINGS_SAVED": "Settings saved",
-        "TXT_PRINTED": "Printed",
+        "TXT_PACKING_LIST_PRINTED": "Packing List Printed",
         "TXT_NO": "No",
         "TXT_YES": "Yes",
         "TXT_ORDER_REOPENED": "Order reopened",
         "TXT_CONFIRM_TO_REOPEN_THIS_ORDER": "Confirm to reopen this order?",
         "TXT_CONFIRM_TO_REOPEN_THIS_SKU": "Confirm to reopen this SKU?",
         "TXT_SKU_REOPENED": "SKU reopened",
+        "TXT_PRODUCT_INVENTORY_IMPORT_STATUS": "Inventory&Price Feed Import Status",
 
 
         // buttons
