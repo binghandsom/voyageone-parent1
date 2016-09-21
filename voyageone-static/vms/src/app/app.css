@@ -58,7 +58,7 @@ body {
 .wrapper {
   position: relative;
   min-height: 100%;
-  padding-bottom: 224px;
+  padding-bottom: 64px;
 }
 .footer-wrap_footer {
   position: absolute;
@@ -88,7 +88,6 @@ address {
   padding: 0;
   background: #3e4753;
   border-top: solid 1px #777;
-  height: 42px;
 }
 .copyright_footer p {
   color: #dadada;

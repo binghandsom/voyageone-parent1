@@ -36,8 +36,8 @@
             <if test="modified == null" >
                 `modified` = now(),
             </if>
-            <if test="creater != null" >
-                `modifier` = #{creater,jdbcType=VARCHAR},
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
         where `channel_id` = #{channelId,jdbcType=VARCHAR} and `file_name` = #{fileName,jdbcType=VARCHAR}

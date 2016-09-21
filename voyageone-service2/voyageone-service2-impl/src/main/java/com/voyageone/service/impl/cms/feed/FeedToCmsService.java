@@ -5,13 +5,19 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.configs.VmsChannelConfigs;
+import com.voyageone.common.configs.beans.VmsChannelConfigBean;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
+import com.voyageone.service.impl.wms.ClientInventoryService;
 import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -20,11 +26,13 @@ import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
+import static com.voyageone.common.CmsConstants.FeedProductUpdateType;
 
 /**
  * feed数据导入CMS中 给各个店铺feed解析程序调用插入mongoDB的接口
@@ -51,6 +59,9 @@ public class FeedToCmsService extends BaseService {
 
     @Autowired
     private FeedCategoryAttributeService feedCategoryAttributeService;
+
+    @Autowired
+    private ClientInventoryService clientInventoryService;
 
 //    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
 //    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
@@ -86,7 +97,7 @@ public class FeedToCmsService extends BaseService {
      */
     @VOTransactional
     public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> products, String modifier) {
-        return updateProduct(channelId, products, modifier, false);
+        return updateProduct(channelId, products, modifier, FeedProductUpdateType.CMS_FEED);
     }
 
     /**
@@ -95,7 +106,8 @@ public class FeedToCmsService extends BaseService {
      * @param products 产品列表
      */
     @VOTransactional
-    public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> products, String modifier, boolean isVmsUpdate) {
+    public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> products,
+                                                               String modifier, int updateType) {
         List<String> existCategory = new ArrayList<>();
         List<CmsBtFeedInfoModel> failProduct = new ArrayList<>();
         List<CmsBtFeedInfoModel> succeedProduct = new ArrayList<>();
@@ -128,8 +140,16 @@ public class FeedToCmsService extends BaseService {
                 CmsBtFeedInfoModel befproduct = feedInfoService.getProductByCode(channelId, product.getCode());
                 if (befproduct != null) {
                     product.set_id(befproduct.get_id());
-                    // Vms客户导入的情况下，sku以新的为准（老的舍弃）
-                    if (isVmsUpdate) {
+                    // Vms客户导入的情况下，
+                    if (FeedProductUpdateType.VMS_FEED == updateType) {
+                        VmsChannelConfigBean vmsUpdateInventory = VmsChannelConfigs.getConfigBean(channelId,"UPDATE_INVENTORY", "0");
+                        if (vmsUpdateInventory == null || "1".equals(vmsUpdateInventory.getConfigValue1())) {
+                            // 库存同步
+                            for (CmsBtFeedInfoModel_Sku skuModelNew : product.getSkus()) {
+                                clientInventoryService.insertClientInventory(channelId, skuModelNew.getClientSku(), skuModelNew.getQty());
+                            }
+                        }
+                        // sku以新的为准（老的舍弃）
                         if (product.getSkus().size() != befproduct.getSkus().size()) {
                             insertLog = true;
                         }
@@ -138,7 +158,7 @@ public class FeedToCmsService extends BaseService {
                         //把之前的sku（新的product中没有的sku）保存到新的product的sku中
                         for (CmsBtFeedInfoModel_Sku skuModel : befproduct.getSkus()) {
                             if (!product.getSkus().contains(skuModel)) {
-                                if (!isVmsUpdate) {
+                                if (FeedProductUpdateType.CMS_FEED == updateType) {
                                     // Vms系统以新的sku为准
                                     product.getSkus().add(skuModel);
                                 }
@@ -155,29 +175,48 @@ public class FeedToCmsService extends BaseService {
                                         insertLog = true;
                                     }
                                 }
+                                // 重量变化的情况下，重新导入
+                                if (!insertLog) {
+                                    CmsBtFeedInfoModel_Sku item = product.getSkus().get(product.getSkus().indexOf(skuModel));
+                                    String newWeight = item.getWeightOrg();
+                                    String oldWeight = skuModel.getWeightOrg();
+                                    if (StringUtils.isEmpty(newWeight) && !StringUtils.isEmpty(oldWeight)) {
+                                        insertLog = true;
+                                    } else if (!StringUtils.isEmpty(newWeight) && !newWeight.equals(oldWeight)) {
+                                        insertLog = true;
+                                    }
+                                }
                             }
                         }
                     }
                     product.setCreated(befproduct.getCreated());
                     product.setCreater(befproduct.getCreater());
                     // Vms的场合不MergeAttribute
-                    if (!isVmsUpdate) {
+                    if (FeedProductUpdateType.CMS_FEED == updateType) {
                         product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
                     }
                     //feed增加状态属性(New(9), Waiting For Import(0),Finish Import(1),Error(2), Not Import(3))，9,3 ,0->不变, 2, 1->0
                     if (befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1 || befproduct.getUpdFlg() == 0) {
-                        if(insertLog) {
+                        if (insertLog) {
                             product.setUpdFlg(0);
                         }
                     } else {
                         product.setUpdFlg(9);
                     }
                 } else {
-                    insertLog = true;
-                    product.setCreater(modifier);
-                    product.setUpdFlg(9);
+                    //如果是新的产品,如config已配置直接导入
+                    //flag 1导入
+                    CmsChannelConfigBean isImportFeedTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SET_FEED_IMPORT_FLG);
+                    if(isImportFeedTypeConfig != null &&"1".equals(isImportFeedTypeConfig.getConfigValue1())){
+                        insertLog = true;
+                        product.setCreater(modifier);
+                        product.setUpdFlg(0);
+                    }else{
+                        insertLog = true;
+                        product.setCreater(modifier);
+                        product.setUpdFlg(9);
+                    }
                 }
-
                 // code 库存计算
                 Integer qty = 0;
                 for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
@@ -213,6 +252,9 @@ public class FeedToCmsService extends BaseService {
                 attributeMtDataMake(attributeMtData, product);
                 succeedProduct.add(product);
             } catch (Exception e) {
+                if (FeedProductUpdateType.VMS_FEED == updateType || FeedProductUpdateType.VMS_PRICE_INVENTORY == updateType) {
+                    throw e;
+                }
                 e.printStackTrace();
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                 $error(e.getMessage(), e);
@@ -220,15 +262,21 @@ public class FeedToCmsService extends BaseService {
             }
         }
 
-        // 更新类目中属性
-        for (Map.Entry<String, Map<String, List<String>>> entry : attributeMtDatas.entrySet()) {
-            updateFeedCategoryAttribute(channelId, entry.getValue(), entry.getKey());
-        }
+        if (FeedProductUpdateType.VMS_PRICE_INVENTORY != updateType) {
+            // 更新类目中属性
+            for (Map.Entry<String, Map<String, List<String>>> entry : attributeMtDatas.entrySet()) {
+                try {
+                    updateFeedCategoryAttribute(channelId, entry.getValue(), entry.getKey());
+                }catch (Exception e){
 
-        //0:brand 1:sizeType 2:productType
-        insertCmsMtChannelValues(channelId, brandList, 0, modifier);
-        insertCmsMtChannelValues(channelId, sizeTypeList, 1, modifier);
-        insertCmsMtChannelValues(channelId, productTypeList, 2, modifier);
+                }
+            }
+
+            //0:brand 1:sizeType 2:productType
+            insertCmsMtChannelValues(channelId, brandList, 0, modifier);
+            insertCmsMtChannelValues(channelId, sizeTypeList, 1, modifier);
+            insertCmsMtChannelValues(channelId, productTypeList, 2, modifier);
+        }
 
         Map<String, List<CmsBtFeedInfoModel>> response = new HashMap<>();
         response.put("succeed", succeedProduct);
@@ -236,35 +284,35 @@ public class FeedToCmsService extends BaseService {
         return response;
     }
 
-    public Boolean checkProduct(CmsBtFeedInfoModel product){
-        if(product.getImage() == null || product.getImage().size() == 0){
+    public Boolean checkProduct(CmsBtFeedInfoModel product) {
+        if (product.getImage() == null || product.getImage().size() == 0) {
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有图片");
-            $info(product.getCode()+"----" +product.getUpdMessage());
+            $info(product.getCode() + "----" + product.getUpdMessage());
             return false;
-        }else if(product.getImage().stream().filter(str->!StringUtil.isEmpty(str.trim())).collect(Collectors.toList()).size() == 0){
+        } else if (product.getImage().stream().filter(str -> !StringUtil.isEmpty(str.trim())).collect(Collectors.toList()).size() == 0) {
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有图片");
-            $info(product.getCode()+"----" +product.getUpdMessage());
+            $info(product.getCode() + "----" + product.getUpdMessage());
             return false;
         }
 
-        if(product.getBrand() == null || StringUtil.isEmpty(product.getBrand().trim())){
+        if (product.getBrand() == null || StringUtil.isEmpty(product.getBrand().trim())) {
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有品牌");
-            $info(product.getCode()+"----" +product.getUpdMessage());
+            $info(product.getCode() + "----" + product.getUpdMessage());
             return false;
         }
 
-        for(CmsBtFeedInfoModel_Sku sku : product.getSkus()){
-            if(StringUtil.isEmpty(sku.getBarcode())){
+        for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+            if (StringUtil.isEmpty(sku.getBarcode())) {
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
                 product.setUpdMessage("没有UPC");
                 $info(product.getCode() + "----" + product.getUpdMessage());
                 return false;
             }
 
-            if(sku.getPriceNet() == null || sku.getPriceNet().compareTo(0D) == 0){
+            if (sku.getPriceNet() == null || sku.getPriceNet().compareTo(0D) == 0) {
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
                 product.setUpdMessage("成本价为0");
                 $info(product.getCode() + "----" + product.getUpdMessage());
@@ -273,6 +321,7 @@ public class FeedToCmsService extends BaseService {
         }
         return true;
     }
+
     private Map<String, List<String>> attributeMerge(Map<String, List<String>> attribute1, Map<String, List<String>> attribute2) {
 
         for (Map.Entry<String, List<String>> entry1 : attribute1.entrySet()) {
@@ -369,32 +418,36 @@ public class FeedToCmsService extends BaseService {
 
     }
 
-    private void weightConvert(CmsBtFeedInfoModel_Sku skuModel ){
+    private void weightConvert(CmsBtFeedInfoModel_Sku skuModel) {
         try {
             if (!StringUtil.isEmpty(skuModel.getWeightOrg()) && !StringUtil.isEmpty(skuModel.getWeightOrgUnit())) {
                 String unit = skuModel.getWeightOrgUnit().trim();
                 String weightOrg = skuModel.getWeightOrg().trim();
                 if (unit.toLowerCase().indexOf("oz") > -1) {
-                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 16.0);
+                    Double convertWeight = round(Double.parseDouble(weightOrg) / 16.0);
                     skuModel.setWeightCalc(convertWeight.toString());
                 } else if (unit.toLowerCase().indexOf("lb") > -1) {
-                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg));
+                    Double convertWeight = round(Double.parseDouble(weightOrg));
                     skuModel.setWeightCalc(convertWeight.toString());
                 } else if (unit.toLowerCase().equals("g")) {
-                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 453.59237);
+                    Double convertWeight = round(Double.parseDouble(weightOrg) / 453.59237);
                     skuModel.setWeightCalc(convertWeight.toString());
                 } else if (unit.toLowerCase().equals("kg")) {
-                    Integer convertWeight = (int) Math.ceil(Double.parseDouble(weightOrg) / 0.4535924);
+                    Double convertWeight = round(Double.parseDouble(weightOrg) / 0.4535924);
                     skuModel.setWeightCalc(convertWeight.toString());
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private Double round(Double value){
+        BigDecimal b = new BigDecimal(value);
+        return b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+    }
     private void priceConvert(CmsBtFeedInfoModel_Sku skuModel) {
-        Integer weightCalc = StringUtil.isEmpty(skuModel.getWeightCalc()) ? 4 : Integer.parseInt(skuModel.getWeightCalc());
+        Double weightCalc = StringUtil.isEmpty(skuModel.getWeightCalc()) ? 4.0 : Double.parseDouble(skuModel.getWeightCalc());
         Double current = (skuModel.getPriceNet() + weightCalc * 3.5) * 6.7 / (1 - 0.1 - 0.05 - 0.119 - 0.05);
         skuModel.setPriceCurrent(Math.ceil(current));
         Double msrp = (skuModel.getPriceClientMsrp() + weightCalc * 3.5) * 6.7 / (1 - 0.1 - 0.05 - 0.119 - 0.05);

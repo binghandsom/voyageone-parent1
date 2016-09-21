@@ -222,6 +222,10 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
 
             @Override
             public void render(Map<String, ?> map, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+                // set Response ContentType & CharacterEncoding
+                httpServletResponse.setContentType(getContentType());
+                httpServletResponse.setCharacterEncoding("UTF-8");
+
                 httpServletResponse.getWriter().write(json);
             }
         });

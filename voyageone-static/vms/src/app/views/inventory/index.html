@@ -1,10 +1,10 @@
 <div class="breadcrumbs">
     <div class="container">
-        <h4 class="pull-left" translate="TXT_INVENTORY_FEED_UPLOAD"></h4>
+        <h4 class="pull-left" translate="TXT_INVENTORY_PRICE_FEED_UPLOAD"></h4>
         <ul class="pull-right breadcrumb">
             <li><a href="#/home" translate="TXT_HOME"></a></li>
             <li class="active disabled" translate="TXT_INVENTORY"></li>
-            <li class="active selected" translate="TXT_INVENTORY_FEED_UPLOAD"></li>
+            <li class="active selected" translate="TXT_INVENTORY_PRICE_FEED_UPLOAD"></li>
         </ul>
     </div>
 </div>
@@ -31,9 +31,14 @@
             <i class="fa fa-bell-o icon-info-blocks"></i>
             <div class="info-blocks-in">
                 <h3>Notice</h3>
-                <p>Please make sure your file follows <a href="javascript:void(0)" ng-click="ctrl.download()"><strong>VoyageOneInventoryTemplate</strong></a> .</p>
+                <p>Please make sure your file follows <a href="javascript:void(0)" ng-click="ctrl.download()"><strong>VoyageOneInventoryPriceTemplate</strong></a> .</p>
                 <p>Please make sure to use .csv format.</p>
                 <p>Please make sure your file size is under 50MB.</p>
+                <p>If your file size exceed 50MB, please upload via FTP.</p>
+                <p>&nbsp;</p>
+            </div>
+            <div class="col-md-12">
+                <p><b>To check the status of your uploaded inventory&price feed, please click <a href="#/inventory/inventory_import_status"><strong>here</strong></a> .</b></p>
             </div>
         </div>
     </div>

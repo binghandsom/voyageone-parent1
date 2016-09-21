@@ -16,6 +16,7 @@ define(function () {
         "TXT_CONFIRM_SHIPPED": "Confirm to ship?",
         "TXT_CONFIRM_TO_CANCEL_ORDER": "Confirm to cancel this order?",
         "TXT_CONFIRM_TO_CANCEL_SKU": "Confirm to cancel this SKU?",
+        "TXT_CONTENT": "Content",
         "TXT_CONTAINERIZING_TIME": "Scanned Time",
         "TXT_CONTAINERIZING_USER": "Scanned User",
         "TXT_CURRENT_SHIPMENT": "Current Shipment",
@@ -38,7 +39,7 @@ define(function () {
         "TXT_IMAGE": "Image",
         "TXT_IMAGE_PREVIEW":"Image Preview",
         "TXT_INVENTORY": "Inventory",
-        "TXT_INVENTORY_FEED_UPLOAD": "Inventory Feed Upload",
+        "TXT_INVENTORY_PRICE_FEED_UPLOAD": "Inventory&Price Feed Upload",
         "TXT_ITEM_NOT_FOUND": "Barcode can not be found in this order, please check and try again later.",
         "TXT_ITEM_NOT_FOUND_SKU": "Barcode can not be found in OPEN orders, please check and try again later.",
         "TXT_ITEMS": "Items",
@@ -117,6 +118,20 @@ define(function () {
         "TXT_DEMO": "Demo",
         "TXT_FAILED_TRY_AGAIN": "Failed, please try again.",
         "TXT_ORDER_BY": "Order by: ",
+        "TXT_ORDERS": "Order(s)",
+        "TXT_SKUS": "SKU(s)",
+        "TXT_SCANNED_SUCCESSFULLY": "Scanned successfully",
+        "TXT_SHIPMENT_MODIFIED_SUCCESSFULLY": "Shipment modified successfully",
+        "TXT_SETTINGS_SAVED": "Settings saved",
+        "TXT_PACKING_LIST_PRINTED": "Packing List Printed",
+        "TXT_NO": "No",
+        "TXT_YES": "Yes",
+        "TXT_ORDER_REOPENED": "Order reopened",
+        "TXT_CONFIRM_TO_REOPEN_THIS_ORDER": "Confirm to reopen this order?",
+        "TXT_CONFIRM_TO_REOPEN_THIS_SKU": "Confirm to reopen this SKU?",
+        "TXT_SKU_REOPENED": "SKU reopened",
+        "TXT_PRODUCT_INVENTORY_IMPORT_STATUS": "Inventory&Price Feed Import Status",
+
 
         // buttons
         "BTN_ADD_TO_SHIPMENT": "ADD TO SHIPMENT",
@@ -146,6 +161,7 @@ define(function () {
         "BTN_SAVE": "SAVE",
         "BTN_PREVIEW": "PREVIEW",
         "BTN_DOWNLOAD": "DOWNLOAD",
-        "BTN_CLEAR": "CLEAR"
+        "BTN_CLEAR": "CLEAR",
+        "BTN_REOPEN": "REOPEN"
     }
 });

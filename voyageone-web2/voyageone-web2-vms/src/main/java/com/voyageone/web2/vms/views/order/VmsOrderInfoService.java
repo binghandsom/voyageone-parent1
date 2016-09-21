@@ -643,7 +643,7 @@ public class VmsOrderInfoService extends BaseService {
                         && !vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
                 .count();
         if (scannedCount == 0)
-            return orderDetailService.removeSkuOrderId(user.getSelChannelId(), orderId);
+            return orderDetailService.removeSkuOrderId(user.getSelChannelId(), orderId, user.getUserName());
         // TODO: 16-8-29 取消订单内sku的扫描状态 vantis
         throw new BusinessException("8000039");
     }
@@ -772,4 +772,64 @@ public class VmsOrderInfoService extends BaseService {
                 .distinct()
                 .count();
     }
+
+    /**
+     * 重新打开订单
+     *
+     * @param user 当前用户
+     * @param item 被取消订单
+     * @return 重新打开的条目数
+     */
+    public int reopenOrder(UserSessionBean user, PlatformSubOrderInfoBean item) {
+
+        // 检查订单状态
+        Map<String, Object> checkParam = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannel().getId());
+            put("consolidationOrderId", item.getConsolidationOrderId());
+        }};
+
+        List<VmsBtOrderDetailModel> invalidOrderModelList = orderDetailService.selectOrderList(checkParam)
+                .stream()
+                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus()
+                        .equals(STATUS_VALUE.PRODUCT_STATUS.CANCEL))
+                .collect(Collectors.toList());
+
+        if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
+            throw new BusinessException("8000009");
+
+        // 检测通过 进行状态变更
+        orderDetailService.clearOrderCancelInfo(user.getSelChannelId(), item.getConsolidationOrderId());
+        return orderDetailService.updateOrderStatus(user.getSelChannelId(), item.getConsolidationOrderId(), STATUS_VALUE
+                .PRODUCT_STATUS.OPEN, user.getUserName());
+    }
+
+    /**
+     * 重新打开sku
+     *
+     * @param user 当前用户
+     * @param item 需要取消的对象
+     * @return 重新打开的条数
+     */
+    public int reopenSku(UserSessionBean user, SubOrderInfoBean item) {
+
+        // 检查sku状态
+        Map<String, Object> checkParam = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannel().getId());
+            put("reservationId", item.getReservationId());
+        }};
+
+        List<VmsBtOrderDetailModel> invalidOrderModelList = orderDetailService.selectOrderList(checkParam).stream()
+                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus()
+                        .equals(STATUS_VALUE.PRODUCT_STATUS.CANCEL))
+                .collect(Collectors.toList());
+
+        if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
+            throw new BusinessException("8000027");
+
+        // 检测通过 进行状态变更
+        orderDetailService.clearSkuCancelInfo(user.getSelChannelId(), item.getReservationId());
+        return orderDetailService.updateReservationStatus(user.getSelChannelId(), item.getReservationId(),
+                STATUS_VALUE.PRODUCT_STATUS.OPEN, user.getUserName());
+    }
+
 }

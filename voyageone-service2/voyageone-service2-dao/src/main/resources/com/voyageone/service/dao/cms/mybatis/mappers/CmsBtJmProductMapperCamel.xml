@@ -135,10 +135,10 @@
                 `hs_unit` = #{hsUnit,jdbcType=VARCHAR},
             </if>
             <if test="materialEn != null" >
-                `material_en` = #{materialEn,jdbcType=VARCHAR},
+                `material_en` = #{materialEn,jdbcType=LONGVARCHAR},
             </if>
             <if test="materialCn != null" >
-                `material_cn` = #{materialCn,jdbcType=VARCHAR},
+                `material_cn` = #{materialCn,jdbcType=LONGVARCHAR},
             </if>
             <if test="categoryName != null" >
                 `category_name` = #{categoryName,jdbcType=VARCHAR},
@@ -269,10 +269,10 @@
                 and `hs_unit` = #{hsUnit,jdbcType=VARCHAR}
             </if>
             <if test="materialEn != null" >
-                and `material_en` = #{materialEn,jdbcType=VARCHAR}
+                and `material_en` = #{materialEn,jdbcType=LONGVARCHAR}
             </if>
             <if test="materialCn != null" >
-                and `material_cn` = #{materialCn,jdbcType=VARCHAR}
+                and `material_cn` = #{materialCn,jdbcType=LONGVARCHAR}
             </if>
             <if test="categoryName != null" >
                 and `category_name` = #{categoryName,jdbcType=VARCHAR}
@@ -398,10 +398,10 @@
                 and `hs_unit` = #{hsUnit,jdbcType=VARCHAR}
             </if>
             <if test="materialEn != null" >
-                and `material_en` = #{materialEn,jdbcType=VARCHAR}
+                and `material_en` = #{materialEn,jdbcType=LONGVARCHAR}
             </if>
             <if test="materialCn != null" >
-                and `material_cn` = #{materialCn,jdbcType=VARCHAR}
+                and `material_cn` = #{materialCn,jdbcType=LONGVARCHAR}
             </if>
             <if test="categoryName != null" >
                 and `category_name` = #{categoryName,jdbcType=VARCHAR}
@@ -524,10 +524,10 @@
                 and `hs_unit` = #{hsUnit,jdbcType=VARCHAR}
             </if>
             <if test="materialEn != null" >
-                and `material_en` = #{materialEn,jdbcType=VARCHAR}
+                and `material_en` = #{materialEn,jdbcType=LONGVARCHAR}
             </if>
             <if test="materialCn != null" >
-                and `material_cn` = #{materialCn,jdbcType=VARCHAR}
+                and `material_cn` = #{materialCn,jdbcType=LONGVARCHAR}
             </if>
             <if test="categoryName != null" >
                 and `category_name` = #{categoryName,jdbcType=VARCHAR}
@@ -780,10 +780,10 @@
                 #{hsUnit,jdbcType=VARCHAR},
             </if>
             <if test="materialEn != null" >
-                #{materialEn,jdbcType=VARCHAR},
+                #{materialEn,jdbcType=LONGVARCHAR},
             </if>
             <if test="materialCn != null" >
-                #{materialCn,jdbcType=VARCHAR},
+                #{materialCn,jdbcType=LONGVARCHAR},
             </if>
             <if test="categoryName != null" >
                 #{categoryName,jdbcType=VARCHAR},

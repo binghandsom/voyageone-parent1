@@ -51,7 +51,8 @@ public class CmsMtFeeExchangeService extends BaseService {
         Assert.notNull(currencyType).elseThrowDefaultWithTitle("currencyType");
 
         Map<String, Object> map = MySqlPageHelper
-                .build("currencyType", currencyType)
+                .build()
+                .addQuery("currencyType", currencyType)
                 .addSort("modified", Order.Direction.DESC)
                 .toMap();
 

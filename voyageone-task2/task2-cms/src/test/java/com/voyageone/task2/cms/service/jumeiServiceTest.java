@@ -18,6 +18,9 @@ public class jumeiServiceTest {
 
     @Test
     public void testGet() throws Exception {
+        Double a=1.1;
+        Double b=2.1;
+        int aa = a.compareTo(b);
         JumeiProductService productService = new JumeiProductService();
         ShopBean shopBean = new ShopBean();
         shopBean.setAppKey("72");

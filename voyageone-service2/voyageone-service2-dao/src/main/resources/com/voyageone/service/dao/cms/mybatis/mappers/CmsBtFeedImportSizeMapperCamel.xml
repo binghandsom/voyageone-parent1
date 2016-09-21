@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtFeedImportSizeDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtFeedImportSizeModel" />
     <sql id="Base_Column_List" >
-        `id`, `brand_name`, `product_type`, `size_type`, `original_size`, `creater`, `modifier`, 
-        `created`, `modified`, `channel_id`
+        `id`, `channel_id`, `brand_name`, `product_type`, `size_type`, `original_size`, `creater`, 
+        `modifier`, `created`, `modified`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -17,6 +17,9 @@
     <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtFeedImportSizeModel" >
         update cms_bt_feed_import_size
         <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
             <if test="brandName != null" >
                 `brand_name` = #{brandName,jdbcType=VARCHAR},
             </if>
@@ -44,9 +47,6 @@
             <if test="modified == null" >
                 `modified` = now(),
             </if>
-            <if test="channelId != null" >
-                `channel_id` = #{channelId,jdbcType=VARCHAR},
-            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -61,6 +61,9 @@
         <include refid="Base_Column_List" />
         from cms_bt_feed_import_size
         <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
             <if test="brandName != null" >
                 and `brand_name` = #{brandName,jdbcType=VARCHAR}
             </if>
@@ -84,9 +87,6 @@
             </if>
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
         </where>
         limit 1
@@ -97,6 +97,9 @@
         <include refid="Base_Column_List" />
         from cms_bt_feed_import_size
         <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
             <if test="brandName != null" >
                 and `brand_name` = #{brandName,jdbcType=VARCHAR}
             </if>
@@ -120,9 +123,6 @@
             </if>
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
         </where>
     </select>
@@ -130,6 +130,9 @@
     <select id="selectCount" resultType="java.lang.Integer" >
         select count(*) from cms_bt_feed_import_size
         <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
             <if test="brandName != null" >
                 and `brand_name` = #{brandName,jdbcType=VARCHAR}
             </if>
@@ -154,15 +157,15 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
         </where>
     </select>
 
     <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtFeedImportSizeModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_bt_feed_import_size
         <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
             <if test="brandName != null" >
                 `brand_name`,
             </if>
@@ -186,11 +189,11 @@
             </if>
             `created`,
             `modified`,
-            <if test="channelId != null" >
-                `channel_id`,
-            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
             <if test="brandName != null" >
                 #{brandName,jdbcType=VARCHAR},
             </if>
@@ -223,9 +226,6 @@
             </if>
             <if test="modified != null" >
                 #{modified,jdbcType=TIMESTAMP},
-            </if>
-            <if test="channelId != null" >
-                #{channelId,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

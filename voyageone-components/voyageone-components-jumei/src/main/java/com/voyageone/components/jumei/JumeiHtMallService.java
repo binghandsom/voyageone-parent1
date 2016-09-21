@@ -1,6 +1,8 @@
 package com.voyageone.components.jumei;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.bean.HtMallSkuAddInfo;
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.components.jumei.bean.HtMallUpdateInfo;
@@ -15,6 +17,8 @@ import com.voyageone.components.jumei.request.HtMallUpdateRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 聚美商城
@@ -36,12 +40,39 @@ public class JumeiHtMallService extends JmBase {
     public String addMall(ShopBean shopBean, String jumeiHashId, StringBuffer failCause) throws Exception {
         HtMallAddRequest request = new HtMallAddRequest();
         request.setJumeiHashId(jumeiHashId);
-        String reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
+        String reqResult;
+        String errorMallId = null;
+        try {
+            reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
+        } catch (BusinessException bex) {
+            if (bex.getInfo() != null && bex.getInfo().length > 0) {
+                reqResult = (String) bex.getInfo()[0];
+                if (!StringUtils.isEmpty(reqResult)) {
+                    // 判断一下,是不是有add成功并生成了mallId,只是有别的错误
+                    String[] regexs = {"MALLID", "MALL_ID", "MALL ID"};
+                    String error = reqResult.toUpperCase();
+                    for (String regex : regexs) {
+                        Pattern pattern = Pattern.compile(regex + ":\\d+");
+                        Matcher matcher = pattern.matcher(error);
+                        if (matcher.find()) {
+                            String matchString = error.substring(matcher.start(), matcher.end());
+                            Pattern mallIdPattern = Pattern.compile("\\d+");
+                            Matcher mallIdMatcher = mallIdPattern.matcher(matchString);
+                            if (mallIdMatcher.find()) {
+                                errorMallId = matchString.substring(mallIdMatcher.start(), mallIdMatcher.end());
+                            }
+                        }
+                    }
+                }
+            } else {
+                throw bex;
+            }
+        }
         HtMallAddResponse response = new HtMallAddResponse();
         response.setBody(reqResult);
         if (!response.isSuccess()) {
             failCause.append(response.getErrorMsg());
-            return null;
+            return errorMallId;
         } else {
             return response.getJumeiMallId();
         }
@@ -58,7 +89,16 @@ public class JumeiHtMallService extends JmBase {
     public boolean updateMall(ShopBean shopBean, HtMallUpdateInfo mallUpdateInfo, StringBuffer failCause) throws Exception {
         HtMallUpdateRequest request = new HtMallUpdateRequest();
         request.setMallUpdateInfo(mallUpdateInfo);
-        String reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
+        String reqResult;
+        try {
+            reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
+        } catch (BusinessException bex) {
+            if (bex.getInfo() != null && bex.getInfo().length > 0) {
+                reqResult = (String) bex.getInfo()[0];
+            } else {
+                throw bex;
+            }
+        }
         HtMallUpdateResponse response = new HtMallUpdateResponse();
         response.setBody(reqResult);
         if (!response.isSuccess()) {
@@ -80,7 +120,16 @@ public class JumeiHtMallService extends JmBase {
     public boolean updateMallSkuPrice(ShopBean shopBean, List<HtMallSkuPriceUpdateInfo> updateData, StringBuffer failCause) throws Exception {
         HtMallSkuPriceUpdateRequest request = new HtMallSkuPriceUpdateRequest();
         request.setUpdateData(updateData);
-        String reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
+        String reqResult;
+        try {
+            reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
+        } catch (BusinessException bex) {
+            if (bex.getInfo() != null && bex.getInfo().length > 0) {
+                reqResult = (String) bex.getInfo()[0];
+            } else {
+                throw bex;
+            }
+        }
         HtMallSkuPriceUpdateResponse response = new HtMallSkuPriceUpdateResponse();
         response.setBody(reqResult);
         if (!response.isSuccess()) {
@@ -99,17 +148,26 @@ public class JumeiHtMallService extends JmBase {
      * @param failCause 用于保存错误信息
      * @return 是否更新成功
      */
-    public boolean addMallSku(ShopBean shopBean, HtMallSkuAddInfo mallSkuAddInfo, StringBuffer failCause) throws Exception {
+    public String addMallSku(ShopBean shopBean, HtMallSkuAddInfo mallSkuAddInfo, StringBuffer failCause) throws Exception {
         HtMallSkuAddRequest request = new HtMallSkuAddRequest();
         request.setMallSkuAddInfo(mallSkuAddInfo);
-        String reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
+        String reqResult;
+        try {
+            reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
+        } catch (BusinessException bex) {
+            if (bex.getInfo() != null && bex.getInfo().length > 0) {
+                reqResult = (String) bex.getInfo()[0];
+            } else {
+                throw bex;
+            }
+        }
         HtMallSkuAddResponse response = new HtMallSkuAddResponse();
         response.setBody(reqResult);
         if (!response.isSuccess()) {
             failCause.append(response.getErrorMsg());
-            return false;
+            return null;
         } else {
-            return true;
+            return response.getJumeiSkuNo();
         }
     }
 

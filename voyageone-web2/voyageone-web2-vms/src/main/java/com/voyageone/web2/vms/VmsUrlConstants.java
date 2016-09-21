@@ -20,6 +20,8 @@ public interface VmsUrlConstants {
             String CANCEL_ORDER = "cancelOrder";
             String CANCEL_SKU = "cancelSku";
             String DOWNLOAD_PICKING_LIST = "downloadPickingList";
+            String REOPEN_ORDER = "reopen_order";
+            String REOPEN_SKU = "reopen_sku";
         }
     }
 
@@ -28,13 +30,16 @@ public interface VmsUrlConstants {
             String ROOT = "/vms/shipment/shipment_info/";
             String INIT = "init";
             String SEARCH = "search";
+            String IS_PRINTED = "is_printed";
         }
+
         interface SHIPMENT_DETAIL {
             String ROOT = "/vms/shipment/shipment_detail";
             String INIT = "init";
             String SCAN = "scan";
             String SHIP = "ship";
             String GET_INFO = "get_info";
+            String PRINTED = "printed";
         }
     }
 
@@ -65,6 +70,14 @@ public interface VmsUrlConstants {
             String DOWNLOAD_SAMPLE_INVENTORY_FILE = "downSampleInventoryFile";
             String UPLOAD_INVENTORY_FILE = "uploadInventoryFile";
         }
+
+        interface INVENTORY_IMPORT_RESULT {
+            String ROOT = "/vms/inventory/inventory_import_result";
+            String INIT = "init";
+            String SEARCH = "search";
+            String DOWN_INVENTORY_ERROR_FILE = "downloadInventoryErrorFile";
+        }
+
     }
 
     interface SETTINGS {

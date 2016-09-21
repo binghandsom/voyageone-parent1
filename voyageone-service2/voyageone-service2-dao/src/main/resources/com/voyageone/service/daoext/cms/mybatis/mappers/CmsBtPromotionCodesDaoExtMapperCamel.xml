@@ -14,4 +14,17 @@
         #{item}
     </foreach>
     </delete>
+    <update id="updateJmPromotionPrice">
+
+        UPDATE cms_bt_promotion_codes  AS a
+        join cms_bt_promotion as b on a.promotion_id=b.id
+        JOIN (SELECT deal_price,product_code FROM `cms_bt_jm_promotion_product`
+        WHERE  id in  <foreach item="item" index="i" collection="listPromotionProductId"
+                               open="(" separator="," close=")">
+        #{item}
+    </foreach>
+        ) AS c  ON c.product_code=a.product_code
+        SET a.promotion_price=c.deal_price
+        WHERE  b.promotion_id=#{jmPromotionId}
+    </update>
 </mapper>

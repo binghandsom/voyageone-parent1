@@ -69,7 +69,7 @@ public class SuperFeedLightHouseBean extends SuperFeedBean {
 
     private String weight;
 
-    private String njtotalinventory;
+    private String njtotalinventory ="0";
 
     public String getSku() {
         return sku;

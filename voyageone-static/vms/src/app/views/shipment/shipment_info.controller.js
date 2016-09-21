@@ -93,6 +93,7 @@ define([
             delete popShipment.$$hashKey;
             var shipmentInfo = {
                 shipment: popShipment,
+                channelConfig: self.channelConfig,
                 type: type,
                 pendingShipmentStatus: pendingShipmentStatus,
                 statusList: this.shipmentStatusList
@@ -113,6 +114,11 @@ define([
             }
             if (!currentStatus) return statusValue;
             return currentStatus.name;
+        };
+
+        ShipmentInfoController.prototype.isPrinted = function (item) {
+            var self = this;
+            return item.printed ? 'TXT_YES' : 'TXT_NO';
         };
 
         ShipmentInfoController.prototype.configTitle = function (title, model) {

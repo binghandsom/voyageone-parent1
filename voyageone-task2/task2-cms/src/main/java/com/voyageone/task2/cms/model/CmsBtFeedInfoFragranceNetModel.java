@@ -5,20 +5,20 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 /**
  * Created by gjl on 2016/7/5.
  */
-public class CmsBtFeedInfoFragranceNetModel extends CmsBtFeedInfoModel{
+public class CmsBtFeedInfoFragranceNetModel extends CmsBtFeedInfoModel {
     private String sku;
     private String title;
     private String description;
-    private String shortDescriptions;
+    private String shortdescriptions;
     private String upc;
     private String height;
     private String length;
     private String width;
-    private String productWeight;
+    private String productweight;
     private String manufacturer;
-    private String itemGender;
+    private String itemgender;
     private String msrp;
-    private String countryOfOrigin;
+    private String countryoforigin;
     private String quantity;
 
     public String getSku() {
@@ -45,12 +45,12 @@ public class CmsBtFeedInfoFragranceNetModel extends CmsBtFeedInfoModel{
         this.description = description;
     }
 
-    public String getShortDescriptions() {
-        return shortDescriptions;
+    public String getShortdescriptions() {
+        return shortdescriptions;
     }
 
-    public void setShortDescriptions(String shortDescriptions) {
-        this.shortDescriptions = shortDescriptions;
+    public void setShortdescriptions(String shortdescriptions) {
+        this.shortdescriptions = shortdescriptions;
     }
 
     public String getUpc() {
@@ -85,12 +85,12 @@ public class CmsBtFeedInfoFragranceNetModel extends CmsBtFeedInfoModel{
         this.width = width;
     }
 
-    public String getProductWeight() {
-        return productWeight;
+    public String getProductweight() {
+        return productweight;
     }
 
-    public void setProductWeight(String productWeight) {
-        this.productWeight = productWeight;
+    public void setProductweight(String productweight) {
+        this.productweight = productweight;
     }
 
     public String getManufacturer() {
@@ -101,12 +101,12 @@ public class CmsBtFeedInfoFragranceNetModel extends CmsBtFeedInfoModel{
         this.manufacturer = manufacturer;
     }
 
-    public String getItemGender() {
-        return itemGender;
+    public String getItemgender() {
+        return itemgender;
     }
 
-    public void setItemGender(String itemGender) {
-        this.itemGender = itemGender;
+    public void setItemgender(String itemgender) {
+        this.itemgender = itemgender;
     }
 
     public String getMsrp() {
@@ -117,12 +117,12 @@ public class CmsBtFeedInfoFragranceNetModel extends CmsBtFeedInfoModel{
         this.msrp = msrp;
     }
 
-    public String getCountryOfOrigin() {
-        return countryOfOrigin;
+    public String getCountryoforigin() {
+        return countryoforigin;
     }
 
-    public void setCountryOfOrigin(String countryOfOrigin) {
-        this.countryOfOrigin = countryOfOrigin;
+    public void setCountryoforigin(String countryoforigin) {
+        this.countryoforigin = countryoforigin;
     }
 
     public String getQuantity() {

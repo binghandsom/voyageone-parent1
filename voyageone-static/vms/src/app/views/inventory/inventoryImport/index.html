@@ -1,0 +1,85 @@
+<div class="breadcrumbs">
+    <div class="container">
+        <h4 class="pull-left" translate="TXT_PRODUCT_INVENTORY_IMPORT_STATUS"></h4>
+        <ul class="pull-right breadcrumb">
+            <li><a href="#/home" translate="TXT_HOME"></a></li>
+            <li class="active disabled" translate="TXT_INVENTORY"></li>
+            <li class="active selected" translate="TXT_PRODUCT_INVENTORY_IMPORT_STATUS"></li>
+        </ul>
+    </div>
+</div>
+<div class="container content" ng-init="ctrl.init()">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="form-inline">
+                <div class="form-group">
+                    <!-- clientFileName -->
+                    <label class="control-label" translate="TXT_FILE_NAME"></label>
+                    <input id="clientFileName" type="text" ng-model="ctrl.clientFileName"
+                           class="form-control input-sm m-r-sm" enter-click="#inventorySearchButton">
+
+                    <label class="control-label" translate="TXT_STATUS"></label>
+                    <select name="status" id="select" ng-model="ctrl.status" class="form-control input-sm m-r-sm"
+                            ng-options="status.value as status.name for status in ctrl.statusList">
+                        <option value="" translate="TXT_ALL"></option>
+                    </select>
+                    <label class="control-label" translate="TXT_UPLOAD_DATE"></label>
+                    <span class="input-group">
+                        <input type="date" class="form-control input-sm"
+                               uib-datepicker-popup
+                               datepicker-options="{maxDate:ctrl.uploadDateEnd}"
+                               ng-model="ctrl.uploadDateStart"
+                               is-open="datepicker1">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default btn-sm" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </span>
+                    <span>~</span>
+                    <span class="input-group">
+                        <input type="date" class="form-control input-sm"
+                               uib-datepicker-popup
+                               datepicker-options="{minDate:ctrl.uploadDateStart}"
+                               ng-model="ctrl.uploadDateEnd"
+                               is-open="datepicker2">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default btn-sm" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </span>
+                </div>
+                <div class="pull-right">
+                    <button id="inventorySearchButton" class="btn btn-primary btn-sm" ng-click="ctrl.search()"
+                            translate="BTN_SEARCH"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-vo">
+        <div class="panel-body">
+            <div class="table-responsive" if-no-rows="ctrl.inventoryImportResultList.length">
+                <table class="table table-fixed table-vo table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th class="v-middle td-3" translate="TXT_FILE_NAME"></th>
+                        <th class="v-middle td-2" translate="TXT_UPLOAD_DATE"></th>
+                        <th class="v-middle td-2" translate="TXT_UPLOAD_USER"></th>
+                        <th class="v-middle td-3" translate="TXT_STATUS"></th>
+                        <th class="v-middle td-2 text-center" translate="TXT_EXPORT_ERROR_FILE"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="inventoryImportResult in ctrl.inventoryImportResultList">
+                        <td class="v-middle word-wrap">{{inventoryImportResult.client_file_name}}</td>
+                        <td class="v-middle">{{inventoryImportResult.created | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="v-middle">{{inventoryImportResult.creater}}</td>
+                        <td class="v-middle">{{inventoryImportResult.statusName}}</td>
+                        <td class="v-middle text-center"><button class="btn btn-success btn-xs" ng-show="inventoryImportResult.status == '4'" ng-click="ctrl.download(inventoryImportResult.error_file_name)"><i class="fa fa-cloud-download fa-lg" ng-show="inventoryImportResult.status == '4'"></i></button></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-12 m-t-lg no-padding">
+                <vpagination config="ctrl.pageOption" total="ctrl.pageOption.total"></vpagination>
+            </div>
+        </div>
+    </div>
+</div>

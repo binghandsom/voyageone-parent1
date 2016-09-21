@@ -106,7 +106,7 @@ public class JmBase extends ComponentBase {
         while ((StringUtils.isNullOrBlank2(result) || result.contains("502 Bad Gateway")) && retry > 0) {
             result = HttpUtils.post(post_url.toString(), parm_url.toString());
             retry--;
-            logger.info("result：" + result);
+            //logger.info("result：" + result);
         }
 
 
@@ -123,6 +123,12 @@ public class JmBase extends ComponentBase {
             String codes = "";
 
             Map<String, Object> map = JacksonUtil.jsonToMap(result);
+            // 20160913 result里有很多Unicode, 需要转成汉字 START
+            try {
+                result = JacksonUtil.bean2Json(map);
+            } catch (Exception e) {
+            }
+            // 20160913 result里有很多Unicode, 需要转成汉字 END
             if (map.containsKey("error")) {
                 Map<String, Object> errorMap = (Map<String, Object>) map.get("error");
                 if (errorMap.containsKey("code")) {

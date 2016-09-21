@@ -459,4 +459,15 @@
     ${tableName}
     ${keyword}
   </select>
+
+  <insert id="fullCopyTemp" >
+    INSERT INTO voyageone_cms2.cms_zz_feed_summerGuru_product_temp
+     SELECT * FROM voyageone_cms2.cms_zz_feed_summerGuru_product_full;
+  </insert>
+  <update id="updateMd5">
+      UPDATE voyageone_cms2.cms_zz_feed_summerGuru_product_full SET md5 = '1'
+  </update>
+  <update id="updateUpdateFlag">
+    UPDATE voyageone_cms2.cms_zz_feed_summerGuru_product_temp SET updateFlag = 1
+  </update>
 </mapper>

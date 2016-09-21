@@ -179,8 +179,7 @@ public class Jumei_029_Modotex_DictTest {
     /**
      * 聚美使用方法
      * 1. 详情描述 - 中文
-     * 2. 详情描述 - 英文
-     * 3. 尺码图
+     * 2. 尺码图
      */
     private RuleExpression doDict_聚美使用方法() {
 
@@ -191,11 +190,14 @@ public class Jumei_029_Modotex_DictTest {
         {
             // 详情描述 - 中文
             // 注意：<br> 替换成 <br />，并删除所有*号。
+            MasterHtmlWord word = new MasterHtmlWord("longDesCn");
+            ruleRoot.addRuleWord(word);
         }
 
         {
-            // 详情描述 - 英文
-            // 注意：<br> 替换成 <br />，并删除所有*号。
+            // 回车一个
+            TextWord word = new TextWord(C_TEXT_BR);
+            ruleRoot.addRuleWord(word);
         }
 
         {

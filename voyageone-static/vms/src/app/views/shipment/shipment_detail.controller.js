@@ -48,7 +48,7 @@ define([
 
                 var classTestTemp = true;
                 var className = 'bg-sub-default';
-                for (var index = 0; index < self.scannedSkuList.length; index ++) {
+                for (var index = 0; index < self.scannedSkuList.length; index++) {
                     if (index == 0) self.scannedSkuList[index].className = className;
                     else if (self.scannedSkuList[index].consolidationOrderId == self.scannedSkuList[index - 1].consolidationOrderId)
                         self.scannedSkuList[index].className = self.scannedSkuList[index - 1].className;
@@ -89,7 +89,7 @@ define([
                         self.audioPlay(true);
                     } catch (exception) {
                     }
-                    self.notify.success('TXT_SUCCESS');
+                    self.notify.success('TXT_SCANNED_SUCCESSFULLY');
                 }
                 else if (data.success == 0) {
                     try {
@@ -113,14 +113,19 @@ define([
                 // 先判断是否有其他人改了当前的shipment
                 self.shipmentDetailService.getInfo(self.shipment.id).then(function (data) {
                     tempShipment = data.shipment;
-                    if (!_.isEqual(self.originalShipment, tempShipment)) {
+                    if (self.originalShipment.status != tempShipment.status
+                        || self.originalShipment.shipmentName != tempShipment.shipmentName
+                        || self.originalShipment.shippedDate != tempShipment.shippedDate
+                        || self.originalShipment.expressCompany != tempShipment.expressCompany
+                        || self.originalShipment.trackingNo != tempShipment.trackingNo
+                        || self.originalShipment.comment != tempShipment.comment) {
                         self.alert("TXT_SHIPMENT_HAVE_BEEN_EDITED");
                         return;
                     }
 
                     self.shipmentDetailService.ship(req).then(function (data) {
                         if (data.result.succeedSkuCount > 0) {
-                            self.notify.success("TXT_SUCCESS");
+                            self.notify.success("TXT_SHIPPED");
                             window.location.href = self.fromUrl;
                         }
                     });
@@ -129,9 +134,12 @@ define([
         };
 
         ShipmentDetailController.prototype.printList = function () {
+            var self = this;
             $('#content').print({
                 noPrintSelector: ".no-print"
             });
+
+            self.shipmentDetailService.printed(self.shipment);
         };
 
         ShipmentDetailController.prototype.audioPlay = function (value) {
@@ -149,6 +157,13 @@ define([
             if (!self.barcode) return;
             if (event.keyCode == 13) {
                 self.scan();
+            }
+        };
+
+        ShipmentDetailController.prototype.watchExpress = function () {
+            var self = this;
+            if (self.shipment.expressCompany == "DROPOFF") {
+                self.shipment.trackingNo = self.channelConfig.channelId.toString() + new Date().getTime();
             }
         };
 

@@ -272,4 +272,12 @@ public class ShoeZooAnalysisService extends BaseAnalysisService{
     public String getTaskName() {
         return "CmsShoeZooAnalysisJob";
     }
+
+    @Override
+    public int fullCopyTemp(){
+        int cnt = shoeZooFeedDao.fullCopyTemp();
+        shoeZooFeedDao.updateMd5();
+        shoeZooFeedDao.updateUpdateFlag();
+        return cnt;
+    }
 }
