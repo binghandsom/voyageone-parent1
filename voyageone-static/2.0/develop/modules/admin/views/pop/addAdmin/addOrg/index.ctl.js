@@ -23,20 +23,17 @@ define([
                     self.sourceData.active = '1';
                 }
                 self.adminOrgService.getAllOrg().then(function (res) {
-                    self.orgList = [];
+                    var data = angular.copy(res.data);
                     var name = [];
-                    _.forEach(res.data, function (item) {
-                        name = item.orgName.split('-');
-                        if (name.length > 1) {
-                            var tt = name[length + 1];
-                        } else {
-                            var tt = name[length];
-                        }
-                        if (tt == self.sourceData.orgName) {
-                            res.data.slice(res.data.indexOf(item), 1);
+                    _.forEach(data, function (item) {
+                        if (item) {
+                            name = item.orgName.split('-');
+                            if (name.length > 1 ? name[length + 1] : name[length] == self.sourceData.orgName) {
+                                data.splice(data.indexOf(item), 1);
+                            }
                         }
                     });
-                    self.orgList.push(res.data);
+                    self.orgList = data;
                 });
 
             },
