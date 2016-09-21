@@ -23,7 +23,20 @@ define([
                     self.sourceData.active = '1';
                 }
                 self.adminOrgService.getAllOrg().then(function (res) {
-                    self.orgList = res.data;
+                    self.orgList = [];
+                    var name = [];
+                    _.forEach(res.data, function (item) {
+                        name = item.orgName.split('-');
+                        if (name.length > 1) {
+                            var tt = name[length + 1];
+                        } else {
+                            var tt = name[length];
+                        }
+                        if (tt == self.sourceData.orgName) {
+                            res.data.slice(res.data.indexOf(item), 1);
+                        }
+                    });
+                    self.orgList.push(res.data);
                 });
 
             },
