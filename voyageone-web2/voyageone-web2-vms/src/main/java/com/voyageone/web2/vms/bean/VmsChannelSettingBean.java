@@ -1,6 +1,5 @@
 package com.voyageone.web2.vms.bean;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,6 +7,7 @@ import java.util.List;
  * Created by vantis on 16-7-7.
  */
 public class VmsChannelSettingBean {
+    private String channelId;
     private String vendorOperateType;
     private String salePriceShow = "0";
     private String defaultDeliveryCompany;
@@ -15,6 +15,14 @@ public class VmsChannelSettingBean {
     private String emailAddress;
     private List<String> additionalAttributes;
     private List<String> additionalAttributesClass;
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
 
     public String getVendorOperateType() {
         return vendorOperateType;

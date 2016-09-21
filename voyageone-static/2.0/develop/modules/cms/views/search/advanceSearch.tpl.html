@@ -635,6 +635,9 @@
                                 <li>
                                     <a href="javascript:void(0)" ng-click="openApproval(openUpdateApproval)">{{'TXT_ALL_CHANNEL_APPROVAL'|translate}}</a>
                                 </li>
+                                <li ng-if="vm.masterData.isPriceFormula==1">
+                                    <a href="javascript:void(0)" ng-click="refreshRetailPrice(null)">重新计算价格</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -675,6 +678,9 @@
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" ng-click="$parent.openApproval(openUpdateApproval,cartBean.value)">{{'TXT_PRODUCTS_APPROVAL'|translate}}</a>
+                                </li>
+                                <li ng-if="vm.masterData.isPriceFormula==1">
+                                    <a href="javascript:void(0)" ng-click="refreshRetailPrice(cartBean)">重新计算价格</a>
                                 </li>
                             </ul>
                         </div>

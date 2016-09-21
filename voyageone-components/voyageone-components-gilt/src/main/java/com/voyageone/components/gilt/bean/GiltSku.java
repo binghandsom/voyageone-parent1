@@ -39,6 +39,8 @@ public class GiltSku {
 
     private Date timestamp; //time
 
+    private Long qty;
+
     public Long getId() {
         return id;
     }
@@ -149,5 +151,13 @@ public class GiltSku {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Long getQty() {
+        return qty;
+    }
+
+    public void setQty(Long qty) {
+        this.qty = qty;
     }
 }

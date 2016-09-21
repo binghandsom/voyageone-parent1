@@ -73,6 +73,8 @@ public class SuperFeedGiltBean {
 
     private String categories_key;
 
+    private String qty;
+
     private String updateFlag = "0";
 
     private String md5;
@@ -341,6 +343,14 @@ public class SuperFeedGiltBean {
         temp.append(this.categories_key);
 
         return MD5.getMD5(temp.toString());
+    }
+
+    public String getQty() {
+        return qty;
+    }
+
+    public void setQty(String qty) {
+        this.qty = qty;
     }
 
     public void setMd5(String md5) {
