@@ -212,11 +212,6 @@ define([
                         return;
                     }
 
-                    if (scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null) {
-                        alert("请先确认是否在后台申请过相应品牌");
-                        return;
-                    }
-
                     scope.vm.preStatus = angular.copy(scope.vm.status);
 
                     switch (scope.vm.status) {
