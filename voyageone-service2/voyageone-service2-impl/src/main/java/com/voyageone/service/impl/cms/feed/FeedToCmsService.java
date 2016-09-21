@@ -265,7 +265,11 @@ public class FeedToCmsService extends BaseService {
         if (FeedProductUpdateType.VMS_PRICE_INVENTORY != updateType) {
             // 更新类目中属性
             for (Map.Entry<String, Map<String, List<String>>> entry : attributeMtDatas.entrySet()) {
-                updateFeedCategoryAttribute(channelId, entry.getValue(), entry.getKey());
+                try {
+                    updateFeedCategoryAttribute(channelId, entry.getValue(), entry.getKey());
+                }catch (Exception e){
+
+                }
             }
 
             //0:brand 1:sizeType 2:productType
