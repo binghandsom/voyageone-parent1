@@ -22,7 +22,7 @@ public class VmsBtClientInventoryModel extends BaseModel {
     protected Integer qty;
 
     /**
-     * Live¡¢NotLive¡¢Pending
+     * Live NotLive Pending
      */
     protected String status;
 

@@ -59,10 +59,15 @@ public class CartEnums {
 		 */
 		JGY("29"),
 
-		/**
-		 * 天猫MiniMall
-		 */
-		TMM("30"),
+        /**
+         * 天猫国际官网同购
+         */
+        TT("30"),
+
+        /**
+         * Usjoi天猫国际官网同购
+         */
+        USTT("31"),
 
 		/**
 		 * USJOI测试
@@ -113,7 +118,9 @@ public class CartEnums {
 				case "29":
 					return JGY;
 				case "30":
-					return TMM;
+					return TT;
+                case "31":
+                    return USTT;
 				case "928":
 					return USJGJ;
 				case "929":
