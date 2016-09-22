@@ -3393,36 +3393,6 @@ public class SxProductService extends BaseService {
      * 上新成功时回写group, product,ims_bt_product(只限天猫和京东)表状态并记录履历
      * 上新失败时回写product表并将错误信息写入cms_bt_business_log表
      *
-     * 1.一般店铺上新时成功时更新字段 (失败时只更新product表的pPublishError字段)
-     * 1-1.MongoDB的product group表中下列字段的值，没找到不新插入新的记录
-     *     numIId,
-     *     platformPid（有的话更新）,
-     *     publishTime,
-     *     onSaleTime，
-     *     inStockTime，
-     *     platformStatus(Onsale/InStock)
-     * 1-2.MongoDB的product表中下列字段的值，没找到不新插入新的记录
-     *     pNumIId，
-     *     pProductId（有的话更新），
-     *     pPublishTime，
-     *     pPublishError（上新失败"Error"，上新成功清空），
-     *     pStatus(Onsale/InStock)
-     * 1-3.上新成功时更新MySql的ims_bt_product表中下列字段的值，没找到插入新的记录
-     *     NumIId，
-     *     QuantityUpdateType（s:sku级别, p:product级别）
-     * 1-4.上新成功时MySql.ims_bt_log表中插入履历信息，失败时把错误信息写入cms_bt_business_log表
-     *
-     * 2.子店铺上新到US JOI上新成功时更新字段（不用更新ims_bt_product表）
-     * 2-1.MongoDB的product group表中下列字段的值，没找到不新插入新的记录
-     *     publishTime,
-     *     inStockTime,
-     *     platformStatus：InStock
-     * 2-2.MongoDB的product表下面（例：P928/P929）平台的下列字段的值，没找到不新插入新的记录
-     *     pPublishTime，
-     *     pStatus：InStock,
-     *     pPublishError（上新失败"Error"，上新成功清空），
-     * 2-3.上新成功时MySql.ims_bt_log表中插入履历信息，失败时把错误信息写入cms_bt_business_log表
-     *
      * @param shopProp ShopBean 店铺信息
      * @param uploadStatus boolean 上新结果(成功:true,失败:false)
      * @param sxData SxData 上新数据
@@ -3433,6 +3403,25 @@ public class SxProductService extends BaseService {
     public void doUploadFinalProc(ShopBean shopProp, boolean uploadStatus, SxData sxData, CmsBtSxWorkloadModel workload,
                                   String numIId, CmsConstants.PlatformStatus platformStatus,
                                   String platformPid, String modifier) {
+        doUploadFinalProc(shopProp, uploadStatus, sxData, workload, numIId, platformStatus, platformPid, modifier, null);
+    }
+
+    /**
+     * 上新成功或出错时状态回写操作
+     * 上新成功时回写group, product,ims_bt_product(只限天猫和京东)表状态并记录履历
+     * 上新失败时回写product表并将错误信息写入cms_bt_business_log表
+     *
+     * @param shopProp ShopBean 店铺信息
+     * @param uploadStatus boolean 上新结果(成功:true,失败:false)
+     * @param sxData SxData 上新数据
+     * @param workload CmsBtSxWorkloadModel WorkLoad信息
+     * @param numIId String 商品id
+     * @param platformStatus CmsConstants.PlatformStatus (Onsale/InStock) US JOI不用填
+     * @param pCatInfoMap 平台类目信息(包含pCatId, pCatPath)
+     */
+    public void doUploadFinalProc(ShopBean shopProp, boolean uploadStatus, SxData sxData, CmsBtSxWorkloadModel workload,
+                                  String numIId, CmsConstants.PlatformStatus platformStatus,
+                                  String platformPid, String modifier, Map<String, String> pCatInfoMap) {
 
         // 取得变更前的product group表数据
         CmsBtProductGroupModel beforeProductGroup = productGroupService.getProductGroupByGroupId(sxData.getChannelId(),
@@ -3442,9 +3431,6 @@ public class SxProductService extends BaseService {
                     sxData.getChannelId(), sxData.getPlatform().getGroupId());
             return;
         }
-
-//        // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
-//        clearBusinessLog(sxData, modifier);
 
         // 上新成功时
         if (uploadStatus) {
@@ -3479,7 +3465,7 @@ public class SxProductService extends BaseService {
             // 上新对象产品Code列表
             List<String> listSxCode = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
             // 一般店铺上新成功后回写productGroup及product表的状态
-            productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
+            productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode, pCatInfoMap);
 
             // 如果是天猫，京东平台的场合，回写ims_bt_product表(numIId)
             if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())

@@ -8,6 +8,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
@@ -201,10 +202,21 @@ public class ProductGroupService extends BaseService {
      * @param listSxCode 上新了的code
      * @return CmsBtProductGroupModel
      */
+    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model, List<String> listSxCode) {
+        return updateGroupsPlatformStatus(model, listSxCode, null);
+    }
+
+    /**
+     * 上新成功时更新该model对应的所有和上新有关的状态信息
+     * @param model (model中包含的productCodes,是这次平台上新处理的codes)
+     * @param listSxCode 上新了的code
+     * @param pCatInfoMap 平台类目信息
+     * @return CmsBtProductGroupModel
+     */
     // modified by morse.lu 2016/08/08 start
     // 一个group下可能有些code不上新，就不要回写了
 //    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model) {
-    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model, List<String> listSxCode) {
+    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model, List<String> listSxCode, Map<String, String> pCatInfoMap) {
         // modified by morse.lu 2016/08/08 end
 
         if (model == null) {
@@ -261,6 +273,19 @@ public class ProductGroupService extends BaseService {
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "");
                 // 设置pPublishMessage(产品平台详情页显示用的错误信息)清空
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishMessage", "");
+
+                // 如果需要回写该平台的pCatId和pCatPath的时候
+                if (pCatInfoMap != null && pCatInfoMap.size() > 0) {
+                    if (!StringUtils.isEmpty(pCatInfoMap.get("pCatId")))
+                        bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pCatId", pCatInfoMap.get("pCatId"));
+
+                    if (!StringUtils.isEmpty(pCatInfoMap.get("pCatPath")))
+                        bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pCatPath", pCatInfoMap.get("pCatPath"));
+
+                    if (!StringUtils.isEmpty(pCatInfoMap.get("pCatId"))
+                            || !StringUtils.isEmpty(pCatInfoMap.get("pCatPath")))
+                        bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pCatStatus", "1");
+                }
 
                 // 设定批量更新条件和值
                 if (!bulkUpdateMap.isEmpty()) {
