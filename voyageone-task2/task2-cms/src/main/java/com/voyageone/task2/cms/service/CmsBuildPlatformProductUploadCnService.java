@@ -29,7 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -121,6 +123,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             // 上传
             List<List<Field>> listProductFields = new ArrayList<>();
             List<List<Field>> listSkuFields = new ArrayList<>();
+            Set<String> catIds = new HashSet<>();
             int index = 0;
             for (CmsBtSxCnInfoModel sxModel : listSxModel) {
                 if (index == 0) {
@@ -132,6 +135,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
                 listProductFields.addAll(cnSchemaService.readProductXmlString(sxModel.getProductXml()));
                 listSkuFields.addAll(cnSchemaService.readSkuXmlString(sxModel.getSkuXml()));
+                catIds.addAll(sxModel.getCatIds());
 
                 index++;
             }

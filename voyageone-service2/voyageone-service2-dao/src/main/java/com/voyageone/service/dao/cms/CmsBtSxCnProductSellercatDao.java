@@ -7,17 +7,26 @@
  */
 package com.voyageone.service.dao.cms;
 
+import com.voyageone.service.model.cms.CmsBtSxCnProductSellercatModel;
 import org.springframework.stereotype.Repository;
 
-import java.util.Map;
+import java.util.List;
 
 @Repository
 public interface CmsBtSxCnProductSellercatDao {
 
-    Map select(Integer id);
+    List<CmsBtSxCnProductSellercatModel> selectList(Object map);
 
-    int insert(Map record);
+    CmsBtSxCnProductSellercatModel selectOne(Object map);
 
-    int update(Map record);
+    int selectCount(Object map);
+
+    CmsBtSxCnProductSellercatModel select(Integer id);
+
+    int insert(CmsBtSxCnProductSellercatModel record);
+
+    int update(CmsBtSxCnProductSellercatModel record);
+
+    int delete(Integer id);
 
 }
