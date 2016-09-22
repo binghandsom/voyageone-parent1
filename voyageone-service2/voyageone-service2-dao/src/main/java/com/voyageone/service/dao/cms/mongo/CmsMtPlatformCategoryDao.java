@@ -39,14 +39,4 @@ public class CmsMtPlatformCategoryDao extends BaseMongoCartDao<CmsMtPlatformCate
         return select(queryStr, cartId);
     }
 
-    public List<CmsMtPlatformCategoryTreeModel> selectByChannel_CartId_ChildCatId(String channelId, int cartId, String childCatId) {
-        String queryStrTemp = "{" +
-                "channelId:'%s'" +
-                ",cartId:%s" +
-                ",'children.catId':'%s'" +
-                "}";
-        String queryStr = String.format(queryStrTemp, channelId, cartId, childCatId);
-        return select(queryStr, cartId);
-    }
-
 }
