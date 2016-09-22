@@ -340,13 +340,14 @@
                                 </td>
                                 <td class="text-center v-middle">{{entity.priceRetail}}</td>
                                 <td class="text-center v-middle">
-                                    <input class="form-control" type="text" ng-model="entity.sizeNick" style="width: 100px;margin: 0px auto;">
+                                    <input class="form-control" type="text" ng-model="entity.sizeNick"
+                                           style="width: 100px;margin: 0px auto;">
                                 </td>
                                 <td class="mfb-xxx text-center v-middle">
                                     <label class="col-sm-3 control-label vo_reqfield"></label>
                                     <input class="form-control ng-number" type="number" ng-model="entity.priceSale"
                                            ng-disabled="productInfo.autoApprovePrice.configValue1 == '1'" scale="15,2"
-                                           >
+                                    >
                                 </td>
                                 <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].barcode}}</td>
                             </tr>
