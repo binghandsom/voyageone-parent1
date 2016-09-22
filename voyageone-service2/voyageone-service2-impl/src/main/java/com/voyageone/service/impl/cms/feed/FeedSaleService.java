@@ -99,8 +99,6 @@ public class FeedSaleService extends BaseService {
             model.setQueryMap(queryMap);
             bulkList.add(model);
             cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "FeedSaleService", "$set");
-
-            productService.updateProductCommon(channelId, cmsBtProductModel.getProdId(), cmsBtProductModel.getCommon(), "", false);
             wmsBtItemDetailsDao.update(channelId,clientSku,1);
         }
 
