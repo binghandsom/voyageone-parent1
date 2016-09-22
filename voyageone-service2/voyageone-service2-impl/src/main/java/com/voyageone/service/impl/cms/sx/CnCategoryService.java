@@ -5,16 +5,18 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.masterdate.schema.utils.JsonUtil;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.components.cn.service.CnSchemaService;
 import com.voyageone.service.bean.cms.cn.CnCategoryBean;
+import com.voyageone.service.dao.cms.CmsBtSxCnProductSellercatDao;
+import com.voyageone.service.daoext.cms.CmsBtSxCnProductSellercatDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtSxCnProductSellercatModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 独立域名类目Service
@@ -27,6 +29,11 @@ public class CnCategoryService extends BaseService {
 
     @Autowired
     private CnSchemaService cnSchemaService;
+
+    @Autowired
+    private CmsBtSxCnProductSellercatDao cmsBtSxCnProductSellercatDao;
+    @Autowired
+    private CmsBtSxCnProductSellercatDaoExt cmsBtSxCnProductSellercatDaoExt;
 
     /**
      * 创建CnCategoryBean(要推送的属性)
@@ -144,4 +151,103 @@ public class CnCategoryService extends BaseService {
         return isSuccess;
     }
 
+    /**
+     * 更新cms_bt_sx_cn_product_sellercat，用于之后上传类目下code以及排序
+     * 找到更新，找不到插入
+     *
+     * @param channelId 渠道id
+     * @param catId 类目id
+     * @return 更新件数
+     */
+    public int updateProductSellercatForUpload(String channelId, String catId, String modifier) {
+        Map<String, Object> searchParam = new HashMap<>();
+        searchParam.put("channelId", channelId);
+        searchParam.put("catId", catId);
+        CmsBtSxCnProductSellercatModel model = cmsBtSxCnProductSellercatDao.selectOne(searchParam);
+
+        int updateCnt;
+        if (model == null) {
+            // insert
+            model = new CmsBtSxCnProductSellercatModel();
+            model.setChannelId(channelId);
+            model.setCatId(catId);
+            model.setUpdFlg("0");
+            model.setCreater(modifier);
+            updateCnt = cmsBtSxCnProductSellercatDao.insert(model);
+        } else {
+            // update
+            model.setUpdFlg("0");
+            model.setModifier(modifier);
+            model.setModified(DateTimeUtil.getDate());
+            updateCnt = cmsBtSxCnProductSellercatDao.update(model);
+        }
+
+        return updateCnt;
+    }
+
+    /**
+     * 批量更新cms_bt_sx_cn_product_sellercat，用于之后上传类目下code以及排序
+     * 找到更新，找不到插入
+     *
+     * @param channelId 渠道id
+     * @param listCatId 类目id列表
+     * @return 更新件数
+     */
+    public int updateProductSellercatForUpload(String channelId, Set<String> listCatId, String modifier) {
+        int updateCnt = 0;
+
+        Map<String, Object> searchParam = new HashMap<>();
+        searchParam.put("channelId", channelId);
+
+        List<CmsBtSxCnProductSellercatModel> listInsertData = new ArrayList<>();
+        List<String> listUpdateData = new ArrayList<>();
+        for (String catId : listCatId) {
+            searchParam.put("catId", catId);
+            CmsBtSxCnProductSellercatModel findModel = cmsBtSxCnProductSellercatDao.selectOne(searchParam);
+            if (findModel == null) {
+                // insert
+                CmsBtSxCnProductSellercatModel model = new CmsBtSxCnProductSellercatModel();
+                model.setChannelId(channelId);
+                model.setCatId(catId);
+                model.setCreater(modifier);
+                listInsertData.add(model);
+            } else {
+                listUpdateData.add(catId);
+            }
+
+        }
+
+        if (!listInsertData.isEmpty()) {
+            updateCnt += cmsBtSxCnProductSellercatDaoExt.insertByList(listInsertData);
+        }
+        if (!listUpdateData.isEmpty()) {
+            updateCnt += updateProductSellercatUpdFlg(channelId, listUpdateData, "0", modifier);
+        }
+
+        $info("cms_bt_sx_cn_product_sellercat更新了%d件!", updateCnt);
+        return updateCnt;
+    }
+
+    /**
+     * 批量更新cms_bt_sx_cn_product_sellercat状态
+     *
+     * @param channelId 渠道id
+     * @param listCatId 类目id列表
+     * @param updFlg 更新成的状态  0:未处理, 1:已处理
+     * @return 更新件数
+     */
+    public int updateProductSellercatUpdFlg(String channelId, List<String> listCatId, String updFlg, String modifier) {
+        int updateCnt = cmsBtSxCnProductSellercatDaoExt.updateFlgByCatIds(channelId, updFlg, modifier, listCatId);
+        $info("cms_bt_sx_cn_product_sellercat状态更新了%d件!", updateCnt);
+        return updateCnt;
+    }
+
+    /**
+     * 检索等待上传的类目列表
+     *
+     * @param channelId 渠道id
+     */
+    public List<String> selectListWaitingUpload(String channelId) {
+        return cmsBtSxCnProductSellercatDaoExt.selectListWaitingUpload(channelId);
+    }
 }
