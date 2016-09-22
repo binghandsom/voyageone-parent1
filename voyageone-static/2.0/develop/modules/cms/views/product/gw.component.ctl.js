@@ -31,6 +31,7 @@ define([
                 };
 
                 initialize();
+                scope.openSellerCat = openSellerCat;
                 scope.categoryMapping = categoryMapping;
                 scope.openSwitchMainPop = openSwitchMainPop;
                 scope.openOffLinePop = openOffLinePop;
@@ -91,6 +92,29 @@ define([
                         scope.vm.noMaterMsg = resp.message.indexOf("Server Exception") >= 0 ? null : resp.message;
                     });
 
+                }
+
+                /**
+                 * @description 店铺内分类popup
+                 * @param openAddChannelCategoryEdit
+                 */
+                function openSellerCat(openAddChannelCategoryEdit) {
+                    var selectedIds = {};
+                    scope.vm.sellerCats.forEach(function (element) {
+                        selectedIds[element.cId] = true;
+                    });
+                    var selList = [{
+                        "code": scope.vm.mastData.productCode,
+                        "sellerCats": scope.vm.sellerCats,
+                        "cartId": scope.cartInfo.value,
+                        "selectedIds": selectedIds,
+                        plateSchema: true
+                    }];
+                    openAddChannelCategoryEdit(selList).then(function (context) {
+                        /**清空原来店铺类分类*/
+                        scope.vm.sellerCats = [];
+                        scope.vm.sellerCats = context.sellerCats;
+                    });
                 }
 
                 /**

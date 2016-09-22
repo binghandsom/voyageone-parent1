@@ -22,7 +22,7 @@ define([
                     platform: null,
                     status: "Pending",
                     skuTemp: {},
-                    checkFlag: {translate: 0, tax: 0, attribute: 0},
+                    checkFlag: {tax: 0, category: 0, attribute: 0},
                     resultFlag: 0,
                     sellerCats: [],
                     productUrl: "",
@@ -77,6 +77,8 @@ define([
                             scope.vm.status = platform.status == null ? scope.vm.status : platform.status;
                             scope.vm.platform.pStatus = platform.pStatus == null ? "WaitingPublish" : platform.pStatus;
                             scope.vm.sellerCats = platform.sellerCats == null ? [] : platform.sellerCats;
+                            /**店铺内分类状态*/
+                            scope.vm.checkFlag.category = platform.sellerCats.length == 0 ? 0 : 1;
                             scope.vm.platform.pStatus = platform.pPublishMessage != null && platform.pPublishMessage != "" ? "Failed" : platform.pStatus;
                         }
 
@@ -115,6 +117,7 @@ define([
                         /**清空原来店铺类分类*/
                         scope.vm.sellerCats = [];
                         scope.vm.sellerCats = context.sellerCats;
+                        scope.vm.checkFlag.category = context.sellerCats.length == 0 ? 0 : 1;
                     });
                 }
 
