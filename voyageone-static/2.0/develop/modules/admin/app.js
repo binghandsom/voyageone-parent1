@@ -38,7 +38,10 @@ define([
         })
         .constant('cCommonRoutes', {
             "login": {
-                "url": "/login.html"
+                "url": "/adminLogin.html"
+            },
+            "resetPass": {
+                "url": "/adminResetPass.html"
             },
             "application": {
                 "modules": "/modules/",
@@ -162,26 +165,14 @@ define([
          * logout.
          */
         function logout() {
-            var defer = $q.defer();
-            ajaxService.post(cActions.admin.access.user.logout)
-                .then(function () {
-                    cookieService.removeAll();
-                    defer.resolve();
-                });
-            return defer.promise;
+            $window.location = cCommonRoutes.login.url;
         }
 
         /**
          * changePassword.
          */
         function changePassword() {
-            var defer = $q.defer();
-            ajaxService.post(cActions.admin.user.adminUserService.modifyPass)
-                .then(function () {
-                    cookieService.removeAll();
-                    defer.resolve();
-                });
-            return defer.promise;
+            $window.location = cCommonRoutes.resetPass.url;
         }
     }
 
