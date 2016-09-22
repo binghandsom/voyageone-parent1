@@ -27,7 +27,7 @@ public class CmsBtFeedInfoModel_Sku {
     private Integer isSale;
 
     public int getIsSale() {
-        return isSale == null?1:0;
+        return isSale == null?1:isSale;
     }
 
     public void setIsSale(Integer isSale) {
