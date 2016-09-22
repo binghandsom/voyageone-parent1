@@ -3,6 +3,7 @@ package com.voyageone.web2.openapi.oauth2.interceptors;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.RedisRateLimiterHelper;
+import com.voyageone.service.model.openapi.oauth.ComOpenApiClientModel;
 import com.voyageone.web2.openapi.channeladvisor.exception.CAApiException;
 import com.voyageone.web2.openapi.oauth2.service.OAuthService;
 import com.voyageone.service.bean.vms.channeladvisor.enums.ErrorIDEnum;
@@ -65,11 +66,20 @@ class ChannelAdvisorInterceptor {
             throw new CAApiException(ErrorIDEnum.InvalidToken);
         }
 
+        // 检查客户端客户端id是否正确
+        if (oAuthService.getClientSecretId(sellerID) == null) {
+            //4001 (InvalidToken)	Authorization failed. Invalid SellerToken
+            throw new CAApiException(ErrorIDEnum.InvalidSellerID);
+        }
+
         // 检查客户端客户端id, 安全KEY是否正确
-        if (oAuthService.getClientSecretAndSetCurrentThread(sellerID, sellerToken) == null) {
+        ComOpenApiClientModel model = oAuthService.getClientSecretAndSetCurrentThread(sellerID, sellerToken);
+        if (model == null) {
             //4001 (InvalidToken)	Authorization failed. Invalid SellerToken
             throw new CAApiException(ErrorIDEnum.InvalidToken);
         }
+
+        oAuthService.setCurrentThreadClientModel(model);
 
         return true;
     }
