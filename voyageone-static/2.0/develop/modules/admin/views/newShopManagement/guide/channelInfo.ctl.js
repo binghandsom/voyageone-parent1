@@ -218,42 +218,48 @@ define([
             },
             config: function (type) {
                 var self = this;
-                var channelInfo = {
-                    'orderChannelId': self.resList.orderChannelId,
-                    'configType': type,
-                    'isReadOnly': true,
-                    'sourceData': self.resList
-                };
-                if (self.autoCopy != true) {
-                    _.extend(self.resListCopy.channel, self.resList);
-                }
-                synchronizeChannelSeries(self.resListCopy);
-                self.popups.openConfig(channelInfo);
+                self.validChannelId(function() {
+                    var channelInfo = {
+                            'orderChannelId': self.resList.orderChannelId,
+                            'configType': type,
+                            'isReadOnly': true,
+                            'sourceData': self.resList
+                        };
+                    if (self.autoCopy != true) {
+                        _.extend(self.resListCopy.channel, self.resList);
+                    }
+                    synchronizeChannelSeries(self.resListCopy);
+                    self.popups.openConfig(channelInfo);
+                });
             },
-            validChannelId: function (id) {
+            validChannelId: function (callback) {
                 var self = this;
-                self.channelService.isChannelUsed(id).then(function (res) {
+                self.channelService.isChannelUsed(self.resList.orderChannelId).then(function (res) {
                     if (res.data == true) {
-                        self.alert('当前渠道&nbsp;&nbsp;' + id + '&nbsp;&nbsp;已存在，请重新输入！');
+                        self.alert('当前渠道&nbsp;&nbsp;' + self.resList.orderChannelId + '&nbsp;&nbsp;已存在，请重新输入！');
+                    } else if (typeof callback === "function") {
+                    	callback();
                     }
                 })
             },
             next: function () {
                 var self = this;
-                // 设置cartIds
-                var tempCartList = [];
-                _.forEach(self.cartList, function (item) {
-                    tempCartList.push(item.cartId);
-                    _.extend(self.resListCopy.channel, {'cartIds': tempCartList.join(',')});
+                self.validChannelId(function() {
+                    // 设置cartIds
+                    var tempCartList = [];
+                    _.forEach(self.cartList, function (item) {
+                        tempCartList.push(item.cartId);
+                        _.extend(self.resListCopy.channel, {'cartIds': tempCartList.join(',')});
+                    });
+
+                    if (self.autoCopy != true) {
+                        _.extend(self.resListCopy.channel, self.resList);
+                    }
+
+                    synchronizeChannelSeries(self.resListCopy);
+                    window.sessionStorage.setItem('valueBean', JSON.stringify(self.resListCopy));
+                    window.location.href = "#/newShop/guide/channelConfig";
                 });
-
-                if (self.autoCopy != true) {
-                    _.extend(self.resListCopy.channel, self.resList);
-                }
-
-                synchronizeChannelSeries(self.resListCopy);
-                window.sessionStorage.setItem('valueBean', JSON.stringify(self.resListCopy));
-                window.location.href = "#/newShop/guide/channelConfig";
             }
         };
 
