@@ -360,6 +360,6 @@ define(function () {
             "templateUrl": "views/channel/black_brand/list.tpl.html",
             "controllerUrl": "modules/cms/views/channel/black_brand/list.controller",
             "controller": "BlackBrandListController as ctrl"
-        },
+        }
     };
 });
