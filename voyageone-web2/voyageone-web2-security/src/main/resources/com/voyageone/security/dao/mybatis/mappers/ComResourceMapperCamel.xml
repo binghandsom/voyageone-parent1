@@ -5,7 +5,7 @@
     <sql id="Base_Column_List" >
         `id`, `application`, `res_name`, `res_key`, `res_type`, `parent_id`, `parent_ids`, 
         `weight`, `res_url`, `icon`, `active`, `description`, `created`, `creater`, `modified`, 
-        `modifier`
+        `modifier`, `origin_id`, `origin_table`, `origin_name`, `show_in_menu`, `menu_title`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -66,6 +66,21 @@
             <if test="modifier != null" >
                 `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
+            <if test="originId != null" >
+                `origin_id` = #{originId,jdbcType=INTEGER},
+            </if>
+            <if test="originTable != null" >
+                `origin_table` = #{originTable,jdbcType=VARCHAR},
+            </if>
+            <if test="originName != null" >
+                `origin_name` = #{originName,jdbcType=VARCHAR},
+            </if>
+            <if test="showInMenu != null" >
+                `show_in_menu` = #{showInMenu,jdbcType=BIT},
+            </if>
+            <if test="menuTitle != null" >
+                `menu_title` = #{menuTitle,jdbcType=VARCHAR},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -125,6 +140,21 @@
             <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
+            <if test="originId != null" >
+                and `origin_id` = #{originId,jdbcType=INTEGER}
+            </if>
+            <if test="originTable != null" >
+                and `origin_table` = #{originTable,jdbcType=VARCHAR}
+            </if>
+            <if test="originName != null" >
+                and `origin_name` = #{originName,jdbcType=VARCHAR}
+            </if>
+            <if test="showInMenu != null" >
+                and `show_in_menu` = #{showInMenu,jdbcType=BIT}
+            </if>
+            <if test="menuTitle != null" >
+                and `menu_title` = #{menuTitle,jdbcType=VARCHAR}
+            </if>
         </where>
         limit 1
     </select>
@@ -179,6 +209,21 @@
             <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
+            <if test="originId != null" >
+                and `origin_id` = #{originId,jdbcType=INTEGER}
+            </if>
+            <if test="originTable != null" >
+                and `origin_table` = #{originTable,jdbcType=VARCHAR}
+            </if>
+            <if test="originName != null" >
+                and `origin_name` = #{originName,jdbcType=VARCHAR}
+            </if>
+            <if test="showInMenu != null" >
+                and `show_in_menu` = #{showInMenu,jdbcType=BIT}
+            </if>
+            <if test="menuTitle != null" >
+                and `menu_title` = #{menuTitle,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -230,6 +275,21 @@
             <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
+            <if test="originId != null" >
+                and `origin_id` = #{originId,jdbcType=INTEGER}
+            </if>
+            <if test="originTable != null" >
+                and `origin_table` = #{originTable,jdbcType=VARCHAR}
+            </if>
+            <if test="originName != null" >
+                and `origin_name` = #{originName,jdbcType=VARCHAR}
+            </if>
+            <if test="showInMenu != null" >
+                and `show_in_menu` = #{showInMenu,jdbcType=BIT}
+            </if>
+            <if test="menuTitle != null" >
+                and `menu_title` = #{menuTitle,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -279,6 +339,21 @@
             </if>
             <if test="modifier == null and creater != null" >
                 `modifier`,
+            </if>
+            <if test="originId != null" >
+                `origin_id`,
+            </if>
+            <if test="originTable != null" >
+                `origin_table`,
+            </if>
+            <if test="originName != null" >
+                `origin_name`,
+            </if>
+            <if test="showInMenu != null" >
+                `show_in_menu`,
+            </if>
+            <if test="menuTitle != null" >
+                `menu_title`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -335,6 +410,21 @@
             </if>
             <if test="modifier == null and creater != null" >
                 #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="originId != null" >
+                #{originId,jdbcType=INTEGER},
+            </if>
+            <if test="originTable != null" >
+                #{originTable,jdbcType=VARCHAR},
+            </if>
+            <if test="originName != null" >
+                #{originName,jdbcType=VARCHAR},
+            </if>
+            <if test="showInMenu != null" >
+                #{showInMenu,jdbcType=BIT},
+            </if>
+            <if test="menuTitle != null" >
+                #{menuTitle,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

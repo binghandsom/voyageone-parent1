@@ -120,4 +120,9 @@ public class AdminUserServiceTest {
     public void testMoveUser() throws Exception {
         adminUserService.moveUser();
     }
+
+    @Test
+    public void testMoveApplication() throws Exception {
+        adminUserService.moveApplication();
+    }
 }

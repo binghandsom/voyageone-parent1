@@ -45,6 +45,16 @@ public class ComResourceModel extends CoreBaseModel {
 
     protected String description;
 
+    protected Integer originId;
+
+    protected String originTable;
+
+    protected String originName;
+
+    protected Boolean showInMenu;
+
+    protected String menuTitle;
+
     public String getApplication() {
         return application;
     }
@@ -131,5 +141,45 @@ public class ComResourceModel extends CoreBaseModel {
 
     public void setDescription(String description) {
         this.description = description == null ? null : description.trim();
+    }
+
+    public Integer getOriginId() {
+        return originId;
+    }
+
+    public void setOriginId(Integer originId) {
+        this.originId = originId;
+    }
+
+    public String getOriginTable() {
+        return originTable;
+    }
+
+    public void setOriginTable(String originTable) {
+        this.originTable = originTable == null ? null : originTable.trim();
+    }
+
+    public String getOriginName() {
+        return originName;
+    }
+
+    public void setOriginName(String originName) {
+        this.originName = originName == null ? null : originName.trim();
+    }
+
+    public Boolean getShowInMenu() {
+        return showInMenu;
+    }
+
+    public void setShowInMenu(Boolean showInMenu) {
+        this.showInMenu = showInMenu;
+    }
+
+    public String getMenuTitle() {
+        return menuTitle;
+    }
+
+    public void setMenuTitle(String menuTitle) {
+        this.menuTitle = menuTitle == null ? null : menuTitle.trim();
     }
 }

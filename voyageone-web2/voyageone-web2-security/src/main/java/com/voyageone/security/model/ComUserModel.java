@@ -45,6 +45,11 @@ public class ComUserModel extends CoreBaseModel {
      */
     protected Integer active;
 
+    /**
+     * 冗余列，为了保持和原系统兼容
+     */
+    protected Boolean isSuperuser;
+
     public String getUserName() {
         return userName;
     }
@@ -107,5 +112,13 @@ public class ComUserModel extends CoreBaseModel {
 
     public void setActive(Integer active) {
         this.active = active;
+    }
+
+    public Boolean getIsSuperuser() {
+        return isSuperuser;
+    }
+
+    public void setIsSuperuser(Boolean isSuperuser) {
+        this.isSuperuser = isSuperuser;
     }
 }
