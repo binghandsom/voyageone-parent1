@@ -14,6 +14,7 @@ import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.sx.CnCategoryService;
 import com.voyageone.service.impl.cms.sx.ConditionPropValueService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
@@ -55,6 +56,8 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
     private BusinessLogService businessLogService;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
+    @Autowired
+    private CnCategoryService cnCategoryService;
 
     @Autowired
     private CmsBtSxCnInfoDao cmsBtSxCnInfoDao;
@@ -169,13 +172,13 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
                         insertBusinessLog(channelId, "回写numIId发生异常!" + ex.getMessage(), sxModel);
                     }
                 }
+
+                // 类目保存，用于之后上传类目下code以及排序
+                cnCategoryService.updateProductSellercatForUpload(channelId, catIds, getTaskName());
+
+                // 把状态更新成 2:上传结束
+                cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName());
             }
-
-            // 类目保存
-
-
-            // 把状态更新成 2:上传结束
-            cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName());
         } catch (Exception ex) {
             $error(ex.getMessage());
             if (!needRetry) {
