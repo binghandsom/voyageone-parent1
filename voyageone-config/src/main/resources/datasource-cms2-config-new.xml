@@ -78,7 +78,7 @@
             <array>
                 <bean class="com.voyageone.base.dao.mysql.MybatisSchemaInterceptor">
                     <property name="properties">
-                        <value>database_schema=synship</value>
+                        <value>database_schema=Synship</value>
                     </property>
                 </bean>
             </array>

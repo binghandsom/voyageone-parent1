@@ -22,11 +22,10 @@ public class WmsBtItemDetailsDao extends com.voyageone.service.dao.ServiceBaseDa
 
         return selectList("wms_bt_item_details_select_by_client_sku", params);
     }
-    public int update(String channelId, String productId, String clientSku, int isSale) {
+    public int update(String channelId,String clientSku, int isSale) {
         Map<String, Object> params = new HashMap<>();
         params.put("channelId", channelId);
         params.put("clientSku", clientSku);
-        params.put("productId", productId);
         params.put("isSale", isSale);
         return update("wms_bt_item_details_updateIsSale", params);
     }
