@@ -7,7 +7,7 @@ public class CmsBtSxCnProductSellercatModel extends BaseModel {
 
     private String catId;
 
-    private String updFlg;
+    private String updFlg; // 0:未处理, 1:已处理
 
     public String getChannelId() {
         return channelId;

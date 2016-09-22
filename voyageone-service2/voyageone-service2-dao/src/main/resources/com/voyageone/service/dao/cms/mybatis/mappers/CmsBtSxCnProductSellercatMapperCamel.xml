@@ -6,8 +6,8 @@
         `id`, `channel_id`, `cat_id`, `upd_flg`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
-    <select id="select" resultType="BaseResultMap" parameterType="java.lang.Integer" >
-        select
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
         <include refid="Base_Column_List" />
         from cms_bt_sx_cn_product_sellercat
         where `id` = #{id,jdbcType=INTEGER}
@@ -41,7 +41,7 @@
     </delete>
 
     <select id="selectOne" resultMap="BaseResultMap" >
-        select
+        select 
         <include refid="Base_Column_List" />
         from cms_bt_sx_cn_product_sellercat
         <where >
@@ -71,7 +71,7 @@
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
-        select
+        select 
         <include refid="Base_Column_List" />
         from cms_bt_sx_cn_product_sellercat
         <where >
@@ -99,7 +99,7 @@
         </where>
     </select>
 
-    <select id="selectCount" resultMap="java.lang.Integer" >
+    <select id="selectCount" resultType="java.lang.Integer" >
         select count(*) from cms_bt_sx_cn_product_sellercat
         <where >
             <if test="channelId != null" >
