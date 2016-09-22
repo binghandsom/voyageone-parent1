@@ -1,4 +1,6 @@
 package com.voyageone.service.impl.cms.feed;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.wms.WmsBtItemDetailsDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -10,6 +12,10 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Created by dell on 2016/9/21.
  */
@@ -19,6 +25,10 @@ public class FeedSaleService extends BaseService {
     private FeedInfoService feedInfoService;
 @Autowired
     private WmsBtItemDetailsDao  wmsBtItemDetailsDao;
+
+    @Autowired
+    CmsBtProductDao cmsBtProductDao;
+
     @Autowired
     private ProductService  productService;
     public void notSale( String channelId, String clientSku) {
@@ -48,7 +58,16 @@ public class FeedSaleService extends BaseService {
         }
         feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);
         if(cmsBtProductModel!=null) {
-            productService.updateProductCommon(channelId, cmsBtProductModel.getProdId(), cmsBtProductModel.getCommon(), "", false);
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("common.skus.skuCode",  cmsBtFeedInfoModel_sku.getSku());
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+            HashMap<String, Object> updateMap = new HashMap<>();
+            updateMap.put("common.skus.$.isSale", 0);
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "FeedSaleService", "$set");
             wmsBtItemDetailsDao.update(channelId, clientSku, 0);
         }
     }
@@ -70,6 +89,17 @@ public class FeedSaleService extends BaseService {
 
         feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);
         if(cmsBtProductModel!=null) {
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("common.skus.skuCode",  cmsBtFeedInfoModel_sku.getSku());
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+            HashMap<String, Object> updateMap = new HashMap<>();
+            updateMap.put("common.skus.$.isSale", 1);
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "FeedSaleService", "$set");
+
             productService.updateProductCommon(channelId, cmsBtProductModel.getProdId(), cmsBtProductModel.getCommon(), "", false);
             wmsBtItemDetailsDao.update(channelId,clientSku,1);
         }
