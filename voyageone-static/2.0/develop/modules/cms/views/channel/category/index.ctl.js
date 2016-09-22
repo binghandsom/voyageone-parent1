@@ -137,7 +137,7 @@ define([
 
         CategoryController.prototype.delete = function (node) {
             var self = this;
-            self.confirm(this.translate.instant("TXT_MSG_DELETE_ITEM")).then(function () {
+            self.confirm("TXT_MSG_DELETE_ITEM").then(function () {
                 self.sellerCatService.delCat({
                     "cartId": +self.cartInfo.cart,
                     "catId": node.catId,
