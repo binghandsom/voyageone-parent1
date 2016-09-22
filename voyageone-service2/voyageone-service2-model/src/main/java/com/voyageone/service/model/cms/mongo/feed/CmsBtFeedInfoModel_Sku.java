@@ -24,6 +24,16 @@ public class CmsBtFeedInfoModel_Sku {
     private String weightOrg;
     private String weightOrgUnit;
     private String weightCalc;
+    private int isSale;
+
+    public int getIsSale() {
+        return isSale;
+    }
+
+    public void setIsSale(int isSale) {
+        this.isSale = isSale;
+    }
+
     private Map<String, String> attribute = new HashMap<>();
     private String errInfo;
     public Double getPriceCurrent() {

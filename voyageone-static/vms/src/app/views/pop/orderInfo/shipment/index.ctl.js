@@ -46,6 +46,7 @@ define([
             } else if (self.type == 'new') {
                 self.shipment.shippedDate = new Date();
                 self.shipment.expressCompany = self.channelConfig.defaultDeliveryCompany;
+                self.watchExpress();
                 if (self.channelConfig.namingConverter)
                     self.shipment.shipmentName = moment().format(self.channelConfig.namingConverter);
             }
@@ -136,6 +137,13 @@ define([
                     }
                 });
             });
+        };
+
+        NewShipmentController.prototype.watchExpress = function () {
+            var self = this;
+            if (self.shipment.expressCompany == "DROPOFF") {
+                self.shipment.trackingNo = self.channelConfig.channelId.toString() + new Date().getTime();
+            }
         };
 
         return NewShipmentController;

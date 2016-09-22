@@ -70,7 +70,7 @@ public class GetAllPlatformsInfoService extends BaseTaskService {
             String[] carts = taskControlBean.getCfg_val2().split(",");
             for (String cart : carts) {
                 Integer cartId = Integer.valueOf(cart);
-            ShopBean shopBean = Shops.getShop(channelId, cartId);
+                ShopBean shopBean = Shops.getShop(channelId, cartId);
                 if (shopBean == null ||
                         StringUtils.isEmpty(shopBean.getApp_url()) ||
                         StringUtils.isEmpty(shopBean.getAppKey()) ||

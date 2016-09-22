@@ -221,14 +221,11 @@ define([
                     var mainBrand = scope.productInfo.masterField.brand,
                         platform = scope.vm.platform;
 
-                    if (!platform || !platform.pBrandId)
-                        return;
-
                     openPlatformMappingSetting({
                         cartId: scope.cartInfo.value,
                         cartName: scope.cartInfo.name,
                         masterName: mainBrand,
-                        pBrandId: platform.pBrandId
+                        pBrandId: platform.pBrandId ? platform.pBrandId : null
                     }).then(function (context) {
                         scope.vm.platform.pBrandName = context.pBrand;
                         if (platform.schemaFields && platform.schemaFields.product)

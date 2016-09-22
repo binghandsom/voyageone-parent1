@@ -608,7 +608,11 @@ public class PlatformSchemaService extends BaseService {
         if (field.getType() == FieldTypeEnum.SINGLECHECK) {
             List<Option> defaultOptions = ((SingleCheckField) field).getOptions();
             if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
-                List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
+                String id = field.getInputOrgId();
+                if (StringUtils.isEmpty(id)) {
+                    id = field.getId();
+                }
+                List<TypeBean> typeBeanList = Types.getTypeList(id, language);
 
                 // 替换成field需要的样式
                 List<Option> options = new ArrayList<>();
@@ -623,8 +627,12 @@ public class PlatformSchemaService extends BaseService {
                     ((SingleCheckField) field).setOptions(options);
                 }
             } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+                String id = field.getInputOrgId();
+                if (StringUtils.isEmpty(id)) {
+                    id = field.getId();
+                }
                 // 获取type channel bean
-                List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeWithLang(field.getId(), channelId, language);
+                List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeWithLang(id, channelId, language);
 
                 // 替换成field需要的样式
                 List<Option> options = new ArrayList<>();
