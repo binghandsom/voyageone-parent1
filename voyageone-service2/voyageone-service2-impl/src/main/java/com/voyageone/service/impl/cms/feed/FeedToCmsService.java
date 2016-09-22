@@ -333,22 +333,23 @@ public class FeedToCmsService extends BaseService {
             return false;
         }
 
+        StringBuffer sbUpdMessage = new StringBuffer();
         for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
             if (StringUtil.isEmpty(sku.getBarcode())) {
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
-                product.setUpdMessage("没有UPC");
                 sku.setErrInfo("没有UPC");
-                $info(product.getCode() + "----" + product.getUpdMessage());
-                return false;
+                sbUpdMessage.append(sku.getClientSku() +":没有UPC,");
             }
-
             if (sku.getPriceNet() == null || sku.getPriceNet().compareTo(0D) == 0) {
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
-                product.setUpdMessage("成本价为0");
                 sku.setErrInfo("成本价为0");
-                $info(product.getCode() + "----" + product.getUpdMessage());
-                return false;
+                sbUpdMessage.append(sku.getClientSku() +":成本价为0,");
             }
+        }
+        if(CmsConstants.FeedUpdFlgStatus.FeedErr == product.getUpdFlg()){
+            product.setUpdMessage(sbUpdMessage.toString());
+            $info(product.getCode() + "----" +product.getUpdMessage());
+            return false;
         }
         return true;
     }

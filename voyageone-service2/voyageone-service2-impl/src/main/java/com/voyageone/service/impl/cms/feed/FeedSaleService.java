@@ -49,7 +49,7 @@ public class FeedSaleService extends BaseService {
         feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);
         if(cmsBtProductModel!=null) {
             productService.updateProductCommon(channelId, cmsBtProductModel.getProdId(), cmsBtProductModel.getCommon(), "", false);
-            wmsBtItemDetailsDao.update(channelId, Long.toString(cmsBtProductModel.getProdId()), clientSku, 0);
+            wmsBtItemDetailsDao.update(channelId, clientSku, 0);
         }
     }
 
@@ -71,7 +71,7 @@ public class FeedSaleService extends BaseService {
         feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);
         if(cmsBtProductModel!=null) {
             productService.updateProductCommon(channelId, cmsBtProductModel.getProdId(), cmsBtProductModel.getCommon(), "", false);
-            wmsBtItemDetailsDao.update(channelId,Long.toString(cmsBtProductModel.getProdId()),clientSku,1);
+            wmsBtItemDetailsDao.update(channelId,clientSku,1);
         }
 
     }
