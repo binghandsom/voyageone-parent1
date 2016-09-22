@@ -1,23 +1,18 @@
 package com.voyageone.task2.cms.service;
 
 import com.jayway.jsonpath.JsonPath;
-import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
-import com.taobao.top.schema.exception.TopSchemaException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.bean.ItemSchema;
 import com.voyageone.components.tmall.service.TbCategoryService;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
-import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaTmDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.model.cms.CmsMtPlatformCategoryExtendInfoModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaTmModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.task2.base.BaseTaskService;
@@ -29,9 +24,11 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class GetPlatformCategorySchemaService extends BaseTaskService {
@@ -76,6 +73,8 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
         List<Integer> cartList = new ArrayList<>();
         cartList.add(CartEnums.Cart.TM.getValue());
         cartList.add(CartEnums.Cart.TG.getValue());
+        cartList.add(CartEnums.Cart.TT.getValue());
+        cartList.add(CartEnums.Cart.USTT.getValue());
 
         // 获取该任务可以运行的销售渠道
         int idxChannel = 1;
@@ -216,70 +215,75 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
         schemaModel.setModifier(this.getTaskName());
         schemaModel.setCatFullPath(platformCategoriesModel.getCatPath());
 
-        // 扩展信息
-        CmsMtPlatformCategoryExtendInfoModel extendInfo = platformCategoryExtendInfoMap.get(getPlatformCategoryExtendInfoKey(schemaModel.getChannelId(), schemaModel.getCartId(), schemaModel.getCatId()));
+        // 天猫官网同购的时候，不设置扩展信息,不取得schema信息
+        if (!CartEnums.Cart.isSimple(CartEnums.Cart.getValueByID(shopBean.getCart_id()))) {
+            // 扩展信息
+            CmsMtPlatformCategoryExtendInfoModel extendInfo = platformCategoryExtendInfoMap.get(getPlatformCategoryExtendInfoKey(schemaModel.getChannelId(), schemaModel.getCartId(), schemaModel.getCatId()));
 
-        // 获取天猫产品schema
-        {
-            Long brandId = null;
-            if (extendInfo != null && !StringUtils.isEmpty(extendInfo.getPlatformBrandId())) {
-                brandId = Long.parseLong(extendInfo.getPlatformBrandId());
-            }
-
-            // 调用API获取产品属性规则
-            String productXmlContent = null;
-            try {
-                productXmlContent = tbCategoryService.getTbProductAddSchema(shopBean, Long.parseLong(schemaModel.getCatId()), brandId);
-            } catch (ApiException e) {
-                $error(String.format("天猫ProductSchema获取异常[A]: channel:[%s], cart:[%s], category:[%s], fullPath:[%s], brandId:[%s]", schemaModel.getChannelId(), schemaModel.getCartId(), schemaModel.getCatId(), schemaModel.getCatFullPath(), brandId));
-            }
-            if (productXmlContent != null && !productXmlContent.startsWith("ERROR:")) {
-                schemaModel.setPropsProduct(productXmlContent);
-            } else {
-                if (productXmlContent != null && productXmlContent.contains("不需要发布产品")) {
-                    // 忽略
-                } else {
-                    $error(String.format("天猫ProductSchema获取异常[B]: channel:[%s], cart:[%s], category:[%s], fullPath:[%s], brandId:[%s], err:[%s]", schemaModel.getChannelId(), schemaModel.getCartId(), schemaModel.getCatId(), schemaModel.getCatFullPath(), brandId, productXmlContent));
+            // 获取天猫产品schema
+            {
+                Long brandId = null;
+                if (extendInfo != null && !StringUtils.isEmpty(extendInfo.getPlatformBrandId())) {
+                    brandId = Long.parseLong(extendInfo.getPlatformBrandId());
                 }
-            }
 
-        }
-
-        // 获取天猫商品schema
-        {
-            Long productId = null;
-            if (extendInfo != null && !StringUtils.isEmpty(extendInfo.getPlatformProductId())) {
-                productId = Long.parseLong(extendInfo.getPlatformProductId());
-            }
-            ItemSchema result = null;
-            String itemXmlContent = null;
-            try {
-                result = tbCategoryService.getTbItemAddSchema(shopBean, Long.parseLong(schemaModel.getCatId()), productId);
-            } catch (ApiException e) {
-                $error(String.format("天猫ItemSchema获取异常[A]: channel:[%s], cart:[%s], category:[%s], fullPath:[%s], productId:[%s]", schemaModel.getChannelId(), schemaModel.getCartId(), schemaModel.getCatId(), schemaModel.getCatFullPath(), productId));
-            }
-            if (result != null) {
-                if (result.getResult() == 0) {
-                    itemXmlContent = result.getItemResult();
-                } else if (result.getResult() == 1) {
-                    if (result.getItemResult().contains("不能发布")) {
-                        itemXmlContent =
-                                String.format("<itemRule><field id=\"infos\" name=\"信息\" type=\"label\"><label-group name=\"\"><label-group name=\"sys_infos\"><label desc=\"\" name=\"禁用\" value=\"%s\"/></label-group></label-group></field></itemRule>",
-                                        result.getItemResult()
-                                );
+                // 调用API获取产品属性规则
+                String productXmlContent = null;
+                try {
+                    productXmlContent = tbCategoryService.getTbProductAddSchema(shopBean, Long.parseLong(schemaModel.getCatId()), brandId);
+                } catch (ApiException e) {
+                    $error(String.format("天猫ProductSchema获取异常[A]: channel:[%s], cart:[%s], category:[%s], fullPath:[%s], brandId:[%s]", schemaModel.getChannelId(), schemaModel.getCartId(), schemaModel.getCatId(), schemaModel.getCatFullPath(), brandId));
+                }
+                if (productXmlContent != null && !productXmlContent.startsWith("ERROR:")) {
+                    schemaModel.setPropsProduct(productXmlContent);
+                } else {
+                    if (productXmlContent != null && productXmlContent.contains("不需要发布产品")) {
+                        // 忽略
+                    } else {
+                        $error(String.format("天猫ProductSchema获取异常[B]: channel:[%s], cart:[%s], category:[%s], fullPath:[%s], brandId:[%s], err:[%s]", schemaModel.getChannelId(), schemaModel.getCartId(), schemaModel.getCatId(), schemaModel.getCatFullPath(), brandId, productXmlContent));
                     }
                 }
-            }
-            if (!StringUtils.isEmpty(itemXmlContent)) {
-                schemaModel.setPropsItem(itemXmlContent);
-            } else {
-                $error(String.format("天猫ItemSchema获取异常[B]: channel:[%s], cart:[%s], category:[%s], fullPath:[%s], productId:[%s]", schemaModel.getChannelId(), schemaModel.getCartId(), schemaModel.getCatId(), schemaModel.getCatFullPath(), productId));
+
             }
 
+            // 获取天猫商品schema
+            {
+                Long productId = null;
+                if (extendInfo != null && !StringUtils.isEmpty(extendInfo.getPlatformProductId())) {
+                    productId = Long.parseLong(extendInfo.getPlatformProductId());
+                }
+                ItemSchema result = null;
+                String itemXmlContent = null;
+                try {
+                    result = tbCategoryService.getTbItemAddSchema(shopBean, Long.parseLong(schemaModel.getCatId()), productId);
+                } catch (ApiException e) {
+                    $error(String.format("天猫ItemSchema获取异常[A]: channel:[%s], cart:[%s], category:[%s], fullPath:[%s], productId:[%s]", schemaModel.getChannelId(), schemaModel.getCartId(), schemaModel.getCatId(), schemaModel.getCatFullPath(), productId));
+                }
+                if (result != null) {
+                    if (result.getResult() == 0) {
+                        itemXmlContent = result.getItemResult();
+                    } else if (result.getResult() == 1) {
+                        if (result.getItemResult().contains("不能发布")) {
+                            itemXmlContent =
+                                    String.format("<itemRule><field id=\"infos\" name=\"信息\" type=\"label\"><label-group name=\"\"><label-group name=\"sys_infos\"><label desc=\"\" name=\"禁用\" value=\"%s\"/></label-group></label-group></field></itemRule>",
+                                            result.getItemResult()
+                                    );
+                        }
+                    }
+                }
+                if (!StringUtils.isEmpty(itemXmlContent)) {
+                    schemaModel.setPropsItem(itemXmlContent);
+                } else {
+                    $error(String.format("天猫ItemSchema获取异常[B]: channel:[%s], cart:[%s], category:[%s], fullPath:[%s], productId:[%s]", schemaModel.getChannelId(), schemaModel.getCartId(), schemaModel.getCatId(), schemaModel.getCatFullPath(), productId));
+                }
+
+            }
         }
 
         // 插入数据库
-        if (!StringUtils.isEmpty(schemaModel.getPropsProduct()) || !StringUtils.isEmpty(schemaModel.getPropsItem())) {
+        if (CartEnums.Cart.isSimple(CartEnums.Cart.getValueByID(shopBean.getCart_id()))  // 天猫官网同购
+                || !StringUtils.isEmpty(schemaModel.getPropsProduct())
+                || !StringUtils.isEmpty(schemaModel.getPropsItem())) {
             cmsMtPlatformCategorySchemaTmDao.insert(schemaModel);
         }
 
