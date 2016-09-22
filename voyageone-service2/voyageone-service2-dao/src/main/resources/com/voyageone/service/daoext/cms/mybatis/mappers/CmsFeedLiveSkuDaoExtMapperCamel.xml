@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.voyageone.service.dao.cms.CmsBtSxCnProductSellercatDao" >
-    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtSxCnProductSellercatModel" />
+<mapper namespace="com.voyageone.service.daoext.cms.CmsFeedLiveSkuDaoExt" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsFeedLiveSkuModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `cat_id`, `upd_flg`, `created`, `creater`, `modified`, `modifier`
+        `channel_id`, `sku`, `qty`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
-    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    <select id="select" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.cms.CmsFeedLiveSkuKey" >
         select 
         <include refid="Base_Column_List" />
-        from cms_bt_sx_cn_product_sellercat
-        where `id` = #{id,jdbcType=INTEGER}
+        from cms_feed_live_sku
+        where `channel_id` = #{channelId,jdbcType=VARCHAR}
+          and `sku` = #{sku,jdbcType=VARCHAR}
     </select>
 
-    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtSxCnProductSellercatModel" >
-        update cms_bt_sx_cn_product_sellercat
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsFeedLiveSkuModel" >
+        update cms_feed_live_sku
         <set >
-            <if test="channelId != null" >
-                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            <if test="qty != null" >
+                `qty` = #{qty,jdbcType=INTEGER},
             </if>
-            <if test="catId != null" >
-                `cat_id` = #{catId,jdbcType=VARCHAR},
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
             </if>
-            <if test="updFlg != null" >
-                `upd_flg` = #{updFlg,jdbcType=VARCHAR},
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
             </if>
             <if test="modified == null" >
                 `modified` = now(),
@@ -32,27 +36,25 @@
                 `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
-        where `id` = #{id,jdbcType=INTEGER}
+        where `channel_id` = #{channelId,jdbcType=VARCHAR}
+          and `sku` = #{sku,jdbcType=VARCHAR}
     </update>
 
-    <delete id="delete" parameterType="java.lang.Integer" >
-        delete from cms_bt_sx_cn_product_sellercat
-        where `id` = #{id,jdbcType=INTEGER}
+    <delete id="delete" parameterType="com.voyageone.service.model.cms.CmsFeedLiveSkuKey" >
+        delete from cms_feed_live_sku
+        where `channel_id` = #{channelId,jdbcType=VARCHAR}
+        <if test="sku != null">
+          and `sku` = #{sku,jdbcType=VARCHAR}
+        </if>
     </delete>
 
     <select id="selectOne" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
-        from cms_bt_sx_cn_product_sellercat
+        from cms_feed_live_sku
         <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="catId != null" >
-                and `cat_id` = #{catId,jdbcType=VARCHAR}
-            </if>
-            <if test="updFlg != null" >
-                and `upd_flg` = #{updFlg,jdbcType=VARCHAR}
+            <if test="qty != null" >
+                and `qty` = #{qty,jdbcType=INTEGER}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -73,16 +75,10 @@
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
-        from cms_bt_sx_cn_product_sellercat
+        from cms_feed_live_sku
         <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="catId != null" >
-                and `cat_id` = #{catId,jdbcType=VARCHAR}
-            </if>
-            <if test="updFlg != null" >
-                and `upd_flg` = #{updFlg,jdbcType=VARCHAR}
+            <if test="qty != null" >
+                and `qty` = #{qty,jdbcType=INTEGER}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -100,16 +96,10 @@
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" >
-        select count(*) from cms_bt_sx_cn_product_sellercat
+        select count(*) from cms_feed_live_sku
         <where >
-            <if test="channelId != null" >
-                and `channel_id` = #{channelId,jdbcType=VARCHAR}
-            </if>
-            <if test="catId != null" >
-                and `cat_id` = #{catId,jdbcType=VARCHAR}
-            </if>
-            <if test="updFlg != null" >
-                and `upd_flg` = #{updFlg,jdbcType=VARCHAR}
+            <if test="qty != null" >
+                and `qty` = #{qty,jdbcType=INTEGER}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -126,17 +116,17 @@
         </where>
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtSxCnProductSellercatModel" useGeneratedKeys="true" keyProperty="id" >
-        insert into cms_bt_sx_cn_product_sellercat
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsFeedLiveSkuModel" >
+        insert into cms_feed_live_sku
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
                 `channel_id`,
             </if>
-            <if test="catId != null" >
-                `cat_id`,
+            <if test="sku != null" >
+                `sku`,
             </if>
-            <if test="updFlg != null" >
-                `upd_flg`,
+            <if test="qty != null" >
+                `qty`,
             </if>
             `created`,
             <if test="creater != null" >
@@ -154,11 +144,11 @@
             <if test="channelId != null" >
                 #{channelId,jdbcType=VARCHAR},
             </if>
-            <if test="catId != null" >
-                #{catId,jdbcType=VARCHAR},
+            <if test="sku != null" >
+                #{sku,jdbcType=VARCHAR},
             </if>
-            <if test="updFlg != null" >
-                #{updFlg,jdbcType=VARCHAR},
+            <if test="qty != null" >
+                #{qty,jdbcType=INTEGER},
             </if>
             <if test="created == null" >
                 now(),
@@ -183,5 +173,25 @@
             </if>
         </trim>
     </insert>
+    <insert id="insertList" parameterType="ArrayList" >
+        insert IGNORE into cms_feed_live_sku
+        (
+        `channel_id`,
+        `sku`,
 
+        `qty`,
+
+        `created`,
+
+        `creater`,
+
+        `modified`,
+
+        `modifier`
+        )value
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            ( #{item.channelId}, #{item.sku}, #{item.qty},now(),#{item.creater,jdbcType=VARCHAR},now(),#{item.modifier,jdbcType=VARCHAR} )
+        </foreach>
+    </insert>
 </mapper>
