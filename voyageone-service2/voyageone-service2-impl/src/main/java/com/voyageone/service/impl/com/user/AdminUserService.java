@@ -5,21 +5,21 @@ import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.mail.Mail;
+import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.dao.ComUserDao;
 import com.voyageone.security.dao.ComUserRoleDao;
 import com.voyageone.security.dao.ComUserTokenDao;
+import com.voyageone.security.model.ComResourceModel;
 import com.voyageone.security.model.ComUserModel;
 import com.voyageone.security.model.ComUserRoleModel;
 import com.voyageone.security.model.ComUserTokenModel;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminUserBean;
-import com.voyageone.service.dao.com.CtApplicationDao;
-import com.voyageone.service.dao.com.CtUserDao;
+import com.voyageone.service.dao.com.*;
 import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.service.daoext.core.AdminUserDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.com.CtUserModel;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.model.com.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.crypto.RandomNumberGenerator;
@@ -65,6 +65,17 @@ public class AdminUserService extends BaseService {
     @Autowired
     CtUserDao ctUserDao;
 
+    @Autowired
+    CtModuleDao ctModuleDao;
+
+    @Autowired
+    ComResourceDao comResourceDao;
+
+    @Autowired
+    CtActionDao ctActionDao;
+
+    @Autowired
+    CtControllerDao ctControllerDao;
     /**
      * 检索用户
      *
@@ -459,6 +470,10 @@ public class AdminUserService extends BaseService {
     }
 
 
+    /**
+     * 迁移旧系统的User
+     *
+     */
     @VOTransactional
     public void moveUser()
     {
@@ -478,10 +493,153 @@ public class AdminUserService extends BaseService {
             model.setActive(1);
             model.setCredentialSalt("");
             model.setOrgId(1);
+            model.setIsSuperuser(ct.getIsSuperuser());
             model.setCreater(ct.getUsername());
             adminUserDaoExt.insert(model);
         }
     }
+
+    @VOTransactional
+    public void moveApplication()
+    {
+        CtApplicationModel query = new CtApplicationModel();
+        query.setActive(true);
+        query.setShowInMenu(true);
+
+        //添加顶级资源
+        List<CtApplicationModel> allApps = ctApplicationDao.selectList(query);
+        for(CtApplicationModel app : allApps)
+        {
+            ComResourceModel  res = new ComResourceModel();
+            res.setOriginId(app.getId());
+            res.setResType(0);
+            res.setActive(1);
+            res.setResName(app.getMenuTitle());
+            res.setResKey(app.getApplication());
+            res.setParentId(0);
+            res.setApplication(app.getApplication());
+            res.setWeight(app.getOrderBy());
+            res.setResUrl(app.getDefaultUrl());
+            res.setShowInMenu(app.getShowInMenu());
+            res.setDescription(app.getDescription());
+            res.setOriginTable("ct_application");
+            res.setOriginName(app.getApplication());
+            res.setMenuTitle(app.getMenuTitle());
+            adminResService.addRes(res);
+        }
+
+        //添加菜单资源
+        CtModuleModel module = new CtModuleModel();
+//        module.setActive(true);
+
+        List<CtModuleModel> allModule = ctModuleDao.selectList(module);
+
+        for(CtModuleModel model : allModule)
+        {
+            ComResourceModel  res = new ComResourceModel();
+            res.setOriginId(model.getId());
+            res.setResType(1);
+            res.setActive(1);
+
+            res.setWeight(model.getOrderBy());
+            res.setResUrl(model.getDefaultUrl());
+            res.setShowInMenu(model.getShowInMenu());
+            res.setDescription(model.getDescription());
+            res.setOriginName(model.getModule());
+
+            ComResourceModel app = new ComResourceModel();
+            app.setOriginId(model.getApplicationId());
+            app.setResType(0);
+            app.setActive(1);
+            app = comResourceDao.selectOne(app);
+
+            res.setResKey(app.getResKey() + "_" + model.getModule());
+//            res.setResName(StringUtils.isEmpty(model.getMenuTitle()) ? res.getResKey().toUpperCase() : model.getMenuTitle().toUpperCase());
+            res.setResName(res.getResKey().toUpperCase());
+            res.setApplication(app.getApplication());
+            res.setParentId(app.getId());
+            res.setOriginTable("ct_module");
+            res.setMenuTitle(model.getMenuTitle());
+            adminResService.addRes(res);
+        }
+
+        //添加菜单资源
+        CtControllerModel controller = new CtControllerModel();
+//        controller.setActive(true);
+
+        List<CtControllerModel> allControllers = ctControllerDao.selectList(controller);
+
+        for(CtControllerModel model : allControllers)
+        {
+            ComResourceModel  res = new ComResourceModel();
+            res.setOriginId(model.getId());
+            res.setResType(1);
+            res.setActive(1);
+            res.setWeight(model.getOrderBy());
+            res.setResUrl(model.getDefaultUrl());
+            res.setShowInMenu(model.getShowInMenu());
+            res.setDescription(model.getDescription());
+            res.setOriginName(model.getController());
+
+            ComResourceModel module1 = new ComResourceModel();
+            module1.setOriginId(model.getModuleId());
+            module1.setResType(1);
+            module1.setActive(1);
+            module1.setOriginTable("ct_module");
+            module1 = comResourceDao.selectOne(module1);
+
+            ComResourceModel app = comResourceDao.select(module1.getParentId());
+
+            res.setResKey(module1.getResKey() + "_" +  model.getController());
+//            res.setResName(StringUtils.isEmpty(model.getMenuTitle()) ? res.getResKey().toUpperCase() : module1.getResName() + "_" + model.getMenuTitle().toUpperCase());
+            res.setResName(res.getResKey().toUpperCase());
+            res.setApplication(app.getApplication());
+            res.setParentId(module1.getId());
+            res.setOriginTable("ct_controller");
+            res.setMenuTitle(model.getMenuTitle());
+            adminResService.addRes(res);
+        }
+
+        //添加Action资源
+        CtActionModel action = new CtActionModel();
+        controller.setActive(true);
+
+        List<CtActionModel> allActions = ctActionDao.selectList(action);
+
+        for(CtActionModel model : allActions)
+        {
+            ComResourceModel  res = new ComResourceModel();
+            res.setOriginId(model.getId());
+            res.setResType(2);
+            res.setActive(1);
+            res.setWeight(model.getOrderBy());
+            res.setDescription(model.getDescription());
+            res.setOriginName(model.getName());
+
+            ComResourceModel controller1 = new ComResourceModel();
+            controller1.setOriginId(model.getControllerId());
+            controller1.setResType(1);
+            controller1.setActive(1);
+            controller1.setOriginTable("ct_controller");
+            controller1 = comResourceDao.selectOne(controller1);
+
+            ComResourceModel module1 = comResourceDao.select(controller1.getParentId());
+            ComResourceModel app = comResourceDao.select(module1.getParentId());
+
+
+            res.setResUrl(controller1.getResUrl() + "/" + model.getName());
+            res.setShowInMenu(false);
+
+            res.setResKey(controller1.getResKey() + "_" +  model.getName());
+            res.setResName(controller1.getResName() + "_" + model.getName().toUpperCase());
+            res.setApplication(app.getApplication());
+            res.setParentId(controller1.getId());
+            res.setOriginTable("ct_action");
+            res.setMenuTitle("");
+            adminResService.addRes(res);
+        }
+    }
+
 
 
 
