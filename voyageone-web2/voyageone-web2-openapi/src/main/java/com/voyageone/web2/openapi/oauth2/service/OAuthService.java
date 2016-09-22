@@ -71,14 +71,20 @@ public class OAuthService {
     }
 
     public ComOpenApiClientModel getClientSecretAndSetCurrentThread(String clientId, String clientSecret) {
-        ComOpenApiClientModel model = clientDao.selectByClientSecret(clientId, clientSecret);
-        if (model != null) {
-            currentThreadClientModel.set(model);
-        }
-        return model;
+        return clientDao.selectByClientSecret(clientId, clientSecret);
+    }
+
+    public ComOpenApiClientModel getClientSecretId(String clientId) {
+        return clientDao.selectByClientId(clientId);
     }
 
     public ComOpenApiClientModel getCurrentThreadClientModel() {
         return currentThreadClientModel.get();
+    }
+
+    public void setCurrentThreadClientModel(ComOpenApiClientModel model) {
+        if (model != null) {
+            currentThreadClientModel.set(model);
+        }
     }
 }
