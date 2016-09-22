@@ -298,26 +298,38 @@ public class FeedToCmsService extends BaseService {
         if (product.getImage() == null || product.getImage().size() == 0) {
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有图片");
-            $debug(product.getCode()+"----" +product.getUpdMessage());
+            for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+                sku.setErrInfo("没有图片");
+            }
+            $info(product.getCode()+"----" +product.getUpdMessage());
             return false;
         } else if (product.getImage().stream().filter(str -> !StringUtil.isEmpty(str.trim())).collect(Collectors.toList()).size() == 0) {
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有图片");
-            $debug(product.getCode()+"----" +product.getUpdMessage());
+            for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+                sku.setErrInfo("没有图片");
+            }
+            $info(product.getCode()+"----" +product.getUpdMessage());
             return false;
         }
 
         if (product.getBrand() == null || StringUtil.isEmpty(product.getBrand().trim())) {
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有品牌");
-            $debug(product.getCode()+"----" +product.getUpdMessage());
+            for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+                sku.setErrInfo("没有品牌");
+            }
+            $info(product.getCode()+"----" +product.getUpdMessage());
             return false;
         }
         //String channelId, int cartId, String feedBrand, String masterBrand, String platformBrandId
         if(cmsBtBrandBlockService.isBlocked(product.getChannelId(), CmsBtBrandBlockService.BRAND_TYPE_FEED,product.getBrand(),null,null)){
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedBlackList);
             product.setUpdMessage("已经加入黑名单商品");
-            $debug(product.getCode()+"----" +product.getUpdMessage());
+            for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+                sku.setErrInfo("已经加入黑名单商品");
+            }
+            $info(product.getCode()+"----" +product.getUpdMessage());
             return false;
         }
 
@@ -325,14 +337,16 @@ public class FeedToCmsService extends BaseService {
             if (StringUtil.isEmpty(sku.getBarcode())) {
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
                 product.setUpdMessage("没有UPC");
-                $debug(product.getCode() + "----" + product.getUpdMessage());
+                sku.setErrInfo("没有UPC");
+                $info(product.getCode() + "----" + product.getUpdMessage());
                 return false;
             }
 
             if (sku.getPriceNet() == null || sku.getPriceNet().compareTo(0D) == 0) {
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
                 product.setUpdMessage("成本价为0");
-                $debug(product.getCode() + "----" + product.getUpdMessage());
+                sku.setErrInfo("成本价为0");
+                $info(product.getCode() + "----" + product.getUpdMessage());
                 return false;
             }
         }
