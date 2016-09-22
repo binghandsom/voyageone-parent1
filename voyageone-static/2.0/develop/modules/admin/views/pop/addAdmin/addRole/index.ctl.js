@@ -144,6 +144,11 @@ define([
                 var self = this;
                 self.channelTempAllList = [];
                 self.storeTempAllList = [];
+                if (item.isFilter == true) {
+                    self.storeService.getAllStore(null).then(function (res) {
+                        self.storeAllListCopy = res.data;
+                    });
+                }
                 switch (item.type) {
                     case'channel':
                         _.filter(self.channelAllList, function (data) {
@@ -154,12 +159,22 @@ define([
                         self.channelAllList = self.channelTempAllList;
                         break;
                     case'store':
-                        _.filter(self.storeAllList, function (data) {
-                            if (data.storeName.toUpperCase().indexOf(item.value.toUpperCase()) > -1) {
-                                self.storeTempAllList.push(data)
-                            }
-                        });
-                        self.storeAllList = self.storeTempAllList;
+                        if (item.isFilter == true) {
+                            _.filter(self.storeAllList.length < self.storeAllListCopy.length ? self.storeAllListCopy : self.storeAllList, function (data) {
+                                if (data.channelId == item.value) {
+                                    data.storeName = data.storeName.indexOf('(') < 0 ? '(' + data.channelId + ')' + data.storeName : data.storeName;
+                                    self.storeTempAllList.push(data)
+                                }
+                            });
+                            return self.storeTempAllList;
+                        } else {
+                            _.filter(self.storeAllList, function (data) {
+                                if (data.storeName.toUpperCase().indexOf(item.value.toUpperCase()) > -1) {
+                                    self.storeTempAllList.push(data)
+                                }
+                            });
+                            self.storeAllList = self.storeTempAllList;
+                        }
                         break;
                 }
             },
@@ -201,6 +216,14 @@ define([
                         });
                         self.channelList.push(self.data);
                         self.channelAllList.splice(self.channelAllList.indexOf(self.data), 1);
+                        var data = self.search({'type': 'store', 'value': self.data.orderChannelId, 'isFilter': true});
+                        if (self.storeAllList.length < self.storeAllListCopy.length) {
+                            _.forEach(data, function (item) {
+                                self.storeAllList.push(item);
+                            })
+                        } else {
+                            self.storeAllList = data;
+                        }
                         break;
                     case 'exclude':
                         self.data = _.find(self.channelList, function (channel) {
@@ -217,14 +240,6 @@ define([
                         break;
                 }
             },
-            storeInit: function () {
-                var self = this;
-                if (self.channelList) {
-                    _.forEach(self.channelList, function (item) {
-                        self.search({'type': 'store', 'value': item.orderChannelId});
-                    })
-                }
-            },
             storeMove: function (type) {
                 var self = this;
                 self.storeList = self.storeList ? self.storeList : [];
@@ -232,6 +247,9 @@ define([
                 switch (type) {
                     case '':
                         self.storeAllList = self.storeAllListCopy;
+                        _.forEach(self.storeAllList, function (item) {
+                            item.storeName = item.storeName.indexOf('(') < 0 ? '(' + item.channelId + ')' + item.storeName : item.storeName;
+                        });
                         _.forEach(self.storeList, function (item) {
                             var index = -1;
                             _.forEach(self.storeAllList, function (allItem, i) {

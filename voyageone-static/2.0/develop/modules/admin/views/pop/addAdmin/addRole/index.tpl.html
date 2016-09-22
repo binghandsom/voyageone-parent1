@@ -154,7 +154,7 @@
                                 <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search({'type':'store','value':storeName})" ng-disabled="!storeName"><i class="fa fa-search"></i></button>
                             </div>
                             <div class="column_overflow col-sm-12 m-t-xs" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
-                                <div class="col-sm-12" ng-init="ctrl.storeInit()">
+                                <div class="col-sm-12">
                                     <ul class="list-unstyled">
                                         <li class="btn-block" ng-repeat="store in ctrl.storeAllList" ng-style="{'background-color': ctrl.selectedStoreId==store.storeId? '#dcf3f9': 'white'}">
                                             <a href="javascript:void(0)" ng-click="ctrl.selected(store)">{{store.storeName}}</a>
