@@ -269,7 +269,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 // 如果有Sku或者ProductId重复错误，那么直接返回
                 // 如果有错误的情况下(因为error达到固定件数就会先出到文件，所以ERROR的条件 除了 errorList>0以外，还有 errorFileName不为空)
                 if (errorList.size() > 0 || !StringUtils.isEmpty(errorFileName)) {
-                    $info("导入Temp表时出现错误,channel：" + channel.getFull_name());
+                    $info("导入时出现错误001,channel：" + channel.getFull_name());
                     // 生成错误文件
                     createErrorFile(errorList, 0);
 
@@ -380,7 +380,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 }
                 // 如果有错误的情况下(因为error达到固定件数就会先出到文件，所以ERROR的条件 除了 errorList>0以外，还有 errorFileName不为空)
                 if (errorList.size() > 0 || !StringUtils.isEmpty(errorFileName)) {
-                    $info("导入Temp表时出现错误,channel：" + channel.getFull_name());
+                    $info("导入时出现错误002,channel：" + channel.getFull_name());
                     // 生成错误文件
                     createErrorFile(errorList, codeCnt);
 
@@ -1097,13 +1097,15 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             boolean errorFlg = false;
 
             // 如果sku在feedInfo表中存在，那么parent id是不能变更的
-            JongoQuery queryObject = new JongoQuery();
-            queryObject.setQuery("{\"skus.clientSku\":\"" + codeModel.getSku() + "\"}");
-            List<CmsBtFeedInfoModel> feeds = feedInfoService.getList(channel.getOrder_channel_id(), queryObject);
-            if (feeds.size() > 0 && !feeds.get(0).getCode().equals(codeModel.getParentId())) {
-                // The parent-id can not be changed from %s to %s.
-                addErrorMessage(errorList, "8000007", new Object[]{feeds.get(0).getCode(), codeModel.getParentId()}, codeModel.getSku(), columnMap.get(PARENT_ID));
-                errorFlg = true;
+            if (!BLANK_PARENT_ID.equals(codeModel.getParentId())) {
+                JongoQuery queryObject = new JongoQuery();
+                queryObject.setQuery("{\"skus.clientSku\":\"" + codeModel.getSku() + "\"}");
+                List<CmsBtFeedInfoModel> feeds = feedInfoService.getList(channel.getOrder_channel_id(), queryObject);
+                if (feeds.size() > 0 && !feeds.get(0).getCode().equals(codeModel.getParentId())) {
+                    // The parent-id can not be changed from %s to %s.
+                    addErrorMessage(errorList, "8000007", new Object[]{feeds.get(0).getCode(), codeModel.getParentId()}, codeModel.getSku(), columnMap.get(PARENT_ID));
+                    errorFlg = true;
+                }
             }
 
             // product-id
