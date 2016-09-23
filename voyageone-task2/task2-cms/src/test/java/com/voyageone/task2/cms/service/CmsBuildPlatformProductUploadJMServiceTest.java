@@ -7,6 +7,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.JumeiHtMallService;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -42,6 +43,9 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
     @Autowired
     CmsBtProductGroupDao cmsBtProductGroupDao;
+
+    @Autowired
+    CmsBtProductDao cmsBtProductDao;
 
     @Autowired
     CmsBtJmSkuDao cmsBtJmSkuDao;
@@ -205,6 +209,33 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
         System.out.println("跳过的groupId:" + listSkipGroupId);
         System.out.println("============ 上传聚美商城 end !!! ============");
+    }
+
+    /**
+     * 测试成功上传到聚美商城之后回写状态处理
+     */
+    @Test
+    public void testUpdateMallId() {
+
+        String channelId = "010";
+//        int cartId = 27;
+        String productCode = "B10-416AGDC4-75";
+        String mallId = "ID00001";
+
+        try {
+            // 获取product信息
+            CmsBtProductModel productModel = cmsBtProductDao.selectOneWithQuery("{'common.fields.code':'" + productCode + "'}", channelId);
+            if (productModel == null) {
+                System.out.println("没找到对应的product数据(productCode=" + productCode + ")");
+                return;
+            }
+            // 测试回写状态
+            cmsBuildPlatformProductUploadJMService.updateMallId(productModel, mallId);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
