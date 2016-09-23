@@ -11,6 +11,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -89,7 +90,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             // 取得group信息
             queryObj.setQuery("{'productCodes':{$in:#},'cartId':#}");
             queryObj.setParameters(codeList, cartId);
-            queryObj.setProjectionExt("mainProductCode", "productCodes", "groupId", "numIId");
+            queryObj.setProjectionExt("mainProductCode", "productCodes", "groupId", "numIId", "platformMallId");
             List<CmsBtProductGroupModel> grpObjList = cmsBtProductGroupDao.select(queryObj, channelId);
             if (grpObjList == null || grpObjList.isEmpty()) {
                 $error("CmsPlatformActiceLogService 产品对应的group不存在 cartId=%d, channelId=%s, codes=%s", cartId, channelId, codeList.toString());
@@ -113,7 +114,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     model.setGroupId(grpObj.getGroupId());
                     model.setMainProdCode(grpObj.getMainProductCode());
                     model.setProdCode(pCode);
-                    model.setNumIId(grpObj.getNumIId());
+                    model.setNumIId(CartEnums.Cart.JM.getId().equals(cartId) ? grpObj.getPlatformMallId() : grpObj.getNumIId());
                     model.setResult("0");
                     model.setCreater(userName);
                     model.setCreated(DateTimeUtil.getNow());
@@ -172,14 +173,14 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     // 取得商品信息
                     queryObj.setQuery("{'common.fields.code':#}");
                     queryObj.setParameters(actLogObj.getProdCode());
-                    queryObj.setProjectionExt("lock", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode");
+                    queryObj.setProjectionExt("lock", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".platformMallId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode");
                     CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
                     if (prodObj == null) {
                         $warn("CmsPlatformActiceLogService 找不到商品code cartId=%d", cartId);
                         failedComment = "商品不存在";
                     } else {
                         String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
-                        long numIId = NumberUtils.toLong(prodObj.getPlatformNotNull(cartId).getpNumIId());
+                        long numIId = NumberUtils.toLong(CartEnums.Cart.JM.getId().equals(cartId) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId());
 
                         if (numIId == 0) {
                             $warn("CmsPlatformActiceLogService numIId错误 channelId=%s, code=%s", channelId, prodCode);
