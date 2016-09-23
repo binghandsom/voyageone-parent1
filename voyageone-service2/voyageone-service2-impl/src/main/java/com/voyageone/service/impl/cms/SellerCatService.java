@@ -17,10 +17,12 @@ import com.voyageone.components.jd.service.JdShopService;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
+import com.voyageone.service.bean.cms.cn.CnCategoryBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.sx.CnCategoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -66,7 +68,11 @@ public class SellerCatService extends BaseService {
 
     @Autowired
     private SxProductService sxProductService;
+@Autowired
+MongoSequenceService commSequenceMongoService;
 
+    @Autowired
+    CnSellerCatService cnSellerCatService;
 
     /**
      * 获取店铺自定义分类的相关配置参数
@@ -189,10 +195,9 @@ public class SellerCatService extends BaseService {
         } else if (isTMPlatform(shopCartId)) {
             cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
         } else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
-            cId = Long.toString(new Random(1000000000).nextLong());
-            //// TODO: 2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
+            ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
+          cId=cnSellerCatService.addSellerCat(channelId,parentCId,cName);
         }
-
         if (!StringUtils.isNullOrBlank2(cId)) {
             cmsBtSellerCatDao.add(channelId, cartId, cName, parentCId, cId, creator);
         }
@@ -206,8 +211,6 @@ public class SellerCatService extends BaseService {
 
         List<CmsBtSellerCatModel>  sellercats = getSellerCatsByChannelCart(channelId, cartId, false);
         CmsBtSellerCatModel currentNode = sellercats.stream().filter(w ->w.getCatId().equals(cId)).findFirst().get();
-        currentNode.getParentCatId();
-
         if(isDuplicateNode(sellercats,cName,currentNode.getParentCatId()))
         {
             throw  new BusinessException("重复的店铺内分类!");
@@ -221,8 +224,8 @@ public class SellerCatService extends BaseService {
         } else if (isTMPlatform(shopCartId)) {
             tbSellerCatService.updateSellerCat(shopBean, cId, cName);
         }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
-
-            //// TODO: 2016/9/23  独立官网 店铺内分类api update 下周tom提供
+            ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
+            cnSellerCatService.updateSellerCat(channelId,cId);
         }
 
         List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
@@ -255,8 +258,7 @@ public class SellerCatService extends BaseService {
                 }
             }
         }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
-
-            //// TODO: 2016/9/23  独立官网 店铺内分类api delte 下周tom提供
+            cnSellerCatService.deleteSellerCat(channelId,cId);
         }
 
 
