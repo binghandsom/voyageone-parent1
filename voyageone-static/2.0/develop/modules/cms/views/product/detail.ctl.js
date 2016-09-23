@@ -13,7 +13,8 @@ define([
     './feed.component.ctl',
     './master.component.ctl',
     './jgj.component.ctl',
-    './gw.component.ctl'
+    './gw.component.ctl',
+    './dl.component.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {
@@ -52,7 +53,7 @@ define([
                 self.product.autoApprovePrice = resp.autoApprovePrice[0];
             });
 
-            this.defaultCartId = this.routeParams.cartId != null ? this.routeParams.cartId : 0;
+            this.defaultCartId = this.routeParams.cartId != null ? this.routeParams.cartId : 25;
         };
 
         /**锁定操作*/

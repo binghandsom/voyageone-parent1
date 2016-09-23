@@ -1,15 +1,15 @@
 /**
  * @author tony-piao
- * 官网同购
+ * 独立官网
  */
 define([
     'cms',
     'modules/cms/enums/Carts'
 ], function (cms, carts) {
-    cms.directive("gwSchema", function (productDetailService, $translate, notify, confirm, $q, $compile, alert, popups) {
+    cms.directive("dlSchema", function (productDetailService, $translate, notify, confirm, $q, $compile, alert, popups) {
         return {
             restrict: "E",
-            templateUrl: "views/product/gw.component.tpl.html",
+            templateUrl: "views/product/dl.component.tpl.html",
             scope: {
                 productInfo: "=productInfo",
                 cartInfo: "=cartInfo"
@@ -22,7 +22,7 @@ define([
                     platform: null,
                     status: "Pending",
                     skuTemp: {},
-                    checkFlag: {tax: 0},
+                    checkFlag: {tax: 0, category: 0, attribute: 0},
                     resultFlag: 0,
                     sellerCats: [],
                     productUrl: "",
@@ -32,14 +32,15 @@ define([
 
                 initialize();
                 scope.openSellerCat = openSellerCat;
-                scope.categoryMapping = categoryMapping;
                 scope.openSwitchMainPop = openSwitchMainPop;
                 scope.openOffLinePop = openOffLinePop;
                 scope.saveProduct = saveProduct;
+                scope.validSchema = validSchema;
                 scope.selectAll = selectAll;
                 scope.pageAnchor = pageAnchor;
                 scope.allSkuSale = allSkuSale;
                 scope.focusError = focusError;
+                scope.choseBrand = choseBrand;
                 scope.copyMainProduct = copyMainProduct;
 
                 /**
@@ -74,9 +75,10 @@ define([
 
                         if (platform) {
                             scope.vm.status = platform.status == null ? scope.vm.status : platform.status;
-                            scope.vm.checkFlag.category = platform.pCatPath == null ? 0 : 1;
                             scope.vm.platform.pStatus = platform.pStatus == null ? "WaitingPublish" : platform.pStatus;
                             scope.vm.sellerCats = platform.sellerCats == null ? [] : platform.sellerCats;
+                            /**店铺内分类状态*/
+                            scope.vm.checkFlag.category = platform.sellerCats.length == 0 ? 0 : 1;
                             scope.vm.platform.pStatus = platform.pPublishMessage != null && platform.pPublishMessage != "" ? "Failed" : platform.pStatus;
                         }
 
@@ -87,10 +89,11 @@ define([
                         if (platform.schemaFields && platform.schemaFields.product)
                             initBrand(platform.schemaFields.product, platform.pBrandId);
 
-                        scope.vm.productUrl = carts.valueOf(+scope.cartInfo.value).pUrl;
                     }, function (resp) {
                         scope.vm.noMaterMsg = resp.message.indexOf("Server Exception") >= 0 ? null : resp.message;
                     });
+
+                    scope.vm.productUrl = carts.valueOf(+scope.cartInfo.value).pUrl;
 
                 }
 
@@ -114,56 +117,7 @@ define([
                         /**清空原来店铺类分类*/
                         scope.vm.sellerCats = [];
                         scope.vm.sellerCats = context.sellerCats;
-                    });
-                }
-
-                /**
-                 @description 类目popup
-                 * @param productInfo
-                 * @param popupNewCategory popup实例
-                 */
-                function categoryMapping(popupNewCategory) {
-
-                    if (scope.vm.status == 'Approved') {
-                        alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
-                        return;
-                    }
-
-                    productDetailService.getPlatformCategories({cartId: scope.cartInfo.value})
-                        .then(function (res) {
-                            return $q(function (resolve, reject) {
-                                if (!res.data || !res.data.length) {
-                                    notify.danger("数据还未准备完毕");
-                                    reject("数据还未准备完毕");
-                                } else {
-                                    resolve(popupNewCategory({
-                                        from: scope.vm.platform == null ? "" : scope.vm.platform.pCatPath,
-                                        categories: res.data,
-                                        divType: ">",
-                                        plateSchema: true
-                                    }));
-                                }
-                            });
-                        }).then(function (context) {
-                        if (scope.vm.platform != null) {
-                            if (context.selected.catPath == scope.vm.platform.pCatPath)
-                                return;
-                        }
-
-                        productDetailService.changePlatformCategory({
-                            cartId: scope.cartInfo.value,
-                            prodId: scope.productInfo.productId,
-                            catId: context.selected.catId,
-                            catPath: context.selected.catPath
-                        }).then(function (resp) {
-                            scope.vm.platform = resp.data.platform;
-                            scope.vm.platform.pCatPath = context.selected.catPath;
-                            scope.vm.platform.pCatId = context.selected.catId;
-                            scope.vm.checkFlag.category = 1;
-                            scope.vm.platform.pStatus == 'WaitingPublish';
-                            scope.vm.status = "Pending";
-
-                        });
+                        scope.vm.checkFlag.category = context.sellerCats.length == 0 ? 0 : 1;
                     });
                 }
 
@@ -210,6 +164,30 @@ define([
                 }
 
                 /**
+                 *  商品品牌选择
+                 */
+                function choseBrand(openPlatformMappingSetting) {
+
+                    var mainBrand = scope.productInfo.masterField.brand,
+                        platform = scope.vm.platform;
+
+                    if (!platform || !platform.pBrandId)
+                        return;
+
+                    openPlatformMappingSetting({
+                        cartId: scope.cartInfo.value,
+                        cartName: scope.cartInfo.name,
+                        masterName: mainBrand,
+                        pBrandId: platform.pBrandId
+                    }).then(function (context) {
+                        scope.vm.platform.pBrandName = context.pBrand;
+                        if (platform.schemaFields && platform.schemaFields.product)
+                            initBrand(platform.schemaFields.product, context.brandId);
+                    });
+
+                }
+
+                /**
                  * 复制主数据filed到平台编辑页
                  * */
                 function copyMainProduct() {
@@ -236,11 +214,23 @@ define([
                         return;
                     }
 
+                    if (mark == "ready") {
+                        if (!validSchema()) {
+                            alert("请输入必填属性，或者输入的属性格式不正确");
+                            return;
+                        }
+                    }
+
+                    var statusCount = 0;
+                    for (var attr in scope.vm.checkFlag) {
+                        statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
+                    }
+
                     scope.vm.preStatus = angular.copy(scope.vm.status);
 
                     switch (scope.vm.status) {
                         case "Pending":
-                            scope.vm.status = scope.vm.checkFlag.tax ? "Ready" : scope.vm.status;
+                            scope.vm.status = statusCount == 3 ? "Ready" : scope.vm.status;
                             break;
                         case "Ready":
                             scope.vm.status = "Approved";
@@ -253,8 +243,12 @@ define([
                         return;
                     }
 
+                    /**构造调用接口上行参数*/
+                    if (scope.vm.checkFlag.attribute == 1)
+                        scope.vm.platform.pAttributeStatus = "1";
+                    else
+                        scope.vm.platform.pAttributeStatus = "0";
 
-                    scope.vm.platform.pAttributeStatus = "1";
                     scope.vm.platform.status = scope.vm.status;
                     scope.vm.platform.sellerCats = scope.vm.sellerCats;
                     scope.vm.platform.cartId = +scope.cartInfo.value;
@@ -276,20 +270,7 @@ define([
                                     platform: scope.vm.platform
                                 });
 
-                                productDetailService.checkCategory({
-                                    cartId: scope.vm.platform.cartId,
-                                    pCatPath: scope.vm.platform.pCatPath
-                                }).then(function (resp) {
-                                    if (resp.data === false) {
-                                        confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").then(function () {
-                                            scope.vm.platform.status = scope.vm.status = "Pending";
-                                            callSave();
-                                        });
-                                    } else {
-                                        callSave();
-                                    }
-                                });
-
+                                callSave();
                             } else {
                                 callSave();
                             }
@@ -329,6 +310,10 @@ define([
                                 scope.vm.status = scope.vm.preStatus;
                         });
                     });
+                }
+
+                function validSchema() {
+                    return scope.vm.platform == null || scope.vm.platform.schemaFields == null ? false : scope.schemaForm.$valid && scope.skuForm.$valid;
                 }
 
                 function selectAll() {
