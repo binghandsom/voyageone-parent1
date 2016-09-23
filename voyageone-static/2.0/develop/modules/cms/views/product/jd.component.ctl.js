@@ -44,6 +44,7 @@ define([
                 scope.focusError = focusError;
                 scope.choseBrand = choseBrand;
                 scope.copyMainProduct = copyMainProduct;
+                scope.refreshPrice = refreshPrice;
 
                 /**
                  * 获取京东页面初始化数据
@@ -478,6 +479,10 @@ define([
                     });
 
                     return result;
+                }
+
+                function refreshPrice(){
+                    console.log("价格刷新");
                 }
 
             }
