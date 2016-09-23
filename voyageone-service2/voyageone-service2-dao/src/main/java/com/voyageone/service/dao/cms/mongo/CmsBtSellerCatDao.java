@@ -22,7 +22,15 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
 
         return result;
     }
+    public CmsBtSellerCatModel selectByCatId(String channelId, String catId) {
 
+        String queryStr = "{\"channelId\":\"" + channelId + "\"" + ",\"catId\"" + ":" + catId + "}";
+
+        List<CmsBtSellerCatModel> result = select(queryStr);
+        if(result.size()==0) return  null;
+        return result.get(0);
+
+    }
 
     /**
      *

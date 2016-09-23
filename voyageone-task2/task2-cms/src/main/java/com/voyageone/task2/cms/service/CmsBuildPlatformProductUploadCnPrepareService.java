@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service;
 
-import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -32,10 +31,7 @@ import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsMtChannelConditionConfigModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSxCnInfoModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -202,8 +198,6 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
             }
 
             sxData.setHasSku(true); // 独立域名都有sku
-
-            // TODO:上传图片
 
             // 上传code信息
             String productXml = uploadProduct(sxData, cmsMtPlatformCategorySchemaModel, shopBean, getTaskNameForUpdate());
@@ -662,7 +656,25 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
         }
         {
             // MainImageList 商品主图  逗号分隔
-            // TODO
+            // TODO:图片上传
+            String field_id = "MainImageList";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            List<CmsBtProductModel_Field_Image> imageList = sxProductService.getProductImages(product, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE);
+            int imageCnt = imageList.size() > 5 ? 5 : imageList.size(); // 最多5张图
+
+            String strImageNames = "";
+            for (int index = 0; index < imageCnt; index++) {
+                String imageName = imageList.get(index).getName();
+                if (index == 0) {
+                    strImageNames = imageName;
+                } else {
+                    strImageNames = strImageNames + "," + imageName;
+                }
+            }
+
+            ((InputField) field).setValue(strImageNames);
         }
         {
             // CreatedAt 上市日期
