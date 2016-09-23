@@ -40,7 +40,7 @@ define([
                     });
                 }
                 if (self.sourceData.isReadOnly == true) {
-                    self.AdminCartService.getAllCart(self.sourceData.orderChannelId).then(function (res) {
+                    self.AdminCartService.getCartByIds({'cartIds':self.sourceData.sourceData.cartIds}).then(function (res) {
                         self.cartAllList = res.data;
                     });
                 } else {

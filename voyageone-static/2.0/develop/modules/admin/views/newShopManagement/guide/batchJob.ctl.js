@@ -138,6 +138,11 @@ define([
                     })
                 }
             },
+            forward: function () {
+                var self = this;
+                window.sessionStorage.setItem('valueBean', JSON.stringify(self.context));
+                window.location.href = "#/newShop/guide/cartSet";
+            },
             complete: function () {
                 var self = this;
                 self.confirm('您确定要提交全部新店的数据吗？').then(function () {

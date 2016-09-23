@@ -96,7 +96,7 @@ define([
                                 'kind': 'add',
                                 'isReadOnly': true,
                                 'orderChannelId': self.context.channel.orderChannelId,
-                                'channelName': self.context.channel.channelName,
+                                'channelName': self.context.channel.name,
                                 'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.channelSmsList;
@@ -120,7 +120,7 @@ define([
                                 'kind': 'add',
                                 'isReadOnly': true,
                                 'channelId': self.context.channel.orderChannelId,
-                                'channelName': self.context.channel.channelName,
+                                'channelName': self.context.channel.name,
                                 'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.channelThirdList;
@@ -144,7 +144,7 @@ define([
                                 'kind': 'add',
                                 'isReadOnly': true,
                                 'orderChannelId': self.context.channel.orderChannelId,
-                                'channelName': self.context.channel.channelName,
+                                'channelName': self.context.channel.name,
                                 'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.carrierList;
@@ -168,7 +168,7 @@ define([
                                     'kind': 'add',
                                     'isReadOnly': true,
                                     'channelId': self.context.channel.orderChannelId,
-                                    'channelName': self.context.channel.channelName,
+                                    'channelName': self.context.channel.name,
                                     'sourceData': self.context.channel
                                 })
                                 .then(function (res) {

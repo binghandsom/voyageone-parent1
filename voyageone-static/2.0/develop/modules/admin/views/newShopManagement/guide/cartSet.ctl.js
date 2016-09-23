@@ -90,7 +90,7 @@ define([
                                 'kind': 'add',
                                 'isReadOnly': true,
                                 'orderChannelId': self.context.channel.orderChannelId,
-                                'channelName': self.context.channel.channelName,
+                                'channelName': self.context.channel.name,
                                 'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.cartShopList;
@@ -114,7 +114,7 @@ define([
                                 'kind': 'add',
                                 'isReadOnly': true,
                                 'orderChannelId': self.context.channel.orderChannelId,
-                                'channelName': self.context.channel.channelName,
+                                'channelName': self.context.channel.name,
                                 'sourceData': self.context.channel
                             }).then(function (res) {
                                 var list = self.cartTrackingList;
@@ -175,6 +175,11 @@ define([
                         }
                     }
                 );
+            },
+            forward: function () {
+                var self = this;
+                window.sessionStorage.setItem('valueBean', JSON.stringify(self.context));
+                window.location.href = "#/newShop/guide/storeInfo";
             },
             next: function () {
                 window.sessionStorage.setItem('valueBean', JSON.stringify(this.context));
