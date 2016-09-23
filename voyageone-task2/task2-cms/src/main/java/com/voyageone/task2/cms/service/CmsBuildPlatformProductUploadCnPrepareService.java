@@ -214,8 +214,6 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
                 skuXml = uploadItem(sxData, cmsMtPlatformCategorySchemaModel);
             }
 
-            // TODO:<root updateType="2">设置类目里的商品的排序
-
             // 更新cms_bt_sx_cn_info_cXXX
             updateCmsBtSxCnInfo(groupId, channelId, cartId, sxData, productXml, skuXml, cmsBtSxWorkloadModel.getId());
 
@@ -317,7 +315,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
 
         // 匹配之后的XML格式数据
         String xml = cnSchemaService.writeProductXmlString(listProduct);
-        logger.debug("product xml:" + xml);
+        $debug("product xml:" + xml);
 
         return xml;
     }
@@ -349,7 +347,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
 
         // 匹配之后的XML格式数据
         String xml = cnSchemaService.writeSkuXmlString(listSku);
-        logger.debug("sku xml:" + xml);
+        $debug("sku xml:" + xml);
 
         return xml;
     }
