@@ -652,7 +652,11 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     CmsBtFeedInfoModel_Sku skuModel = new CmsBtFeedInfoModel_Sku();
                     skuModel.setBarcode(codeModel.getProductId());
                     skuModel.setClientSku(codeModel.getSku());
-                    skuModel.setSku(channel.getOrder_channel_id() + "-" + codeModel.getSku());
+                    if (!"030".equals(channel.getOrder_channel_id())) {
+                        skuModel.setSku(channel.getOrder_channel_id() + "-" + codeModel.getSku());
+                    } else {
+                        skuModel.setSku(codeModel.getSku());
+                    }
                     skuModel.setSize("One Size");
                     skuModel.setImage(Arrays.asList(images.split(",")));
                     skuModel.setQty(new Integer(codeModel.getQuantity()));
@@ -680,7 +684,11 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         skuModel.setClientSku(skuTemp.getSku());
                         Map<String, String> skuKeyMap = getSkuKey(skuTemp);
                         // skuModel.setSku(channel.getOrder_channel_id() + "-" + codeModel.getSku() + "-" + skuKeyMap.get("Value").replaceAll(" ", ""));
-                        skuModel.setSku(channel.getOrder_channel_id() + "-" + skuTemp.getSku());
+                        if (!"030".equals(channel.getOrder_channel_id())) {
+                            skuModel.setSku(channel.getOrder_channel_id() + "-" + skuTemp.getSku());
+                        }  else {
+                            skuModel.setSku(skuTemp.getSku());
+                        }
                         skuModel.setSize(skuKeyMap.get("Value"));
                         skuModel.setImage(Arrays.asList(images.split(",")));
                         skuModel.setQty(new Integer(skuTemp.getQuantity()));
