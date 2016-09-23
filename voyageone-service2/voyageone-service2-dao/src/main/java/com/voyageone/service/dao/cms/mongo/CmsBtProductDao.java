@@ -290,7 +290,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         jongoQuery.setQuery(String.format("{\"channelId\":#, \"platforms.P%s.sellerCats.cIds\":#, \"platforms.P%s.pNumIId\":{$nin: ['', null]}}, \"platforms.P%s.pStatus\":'%s'", cartId, cartId, cartId, CmsConstants.PlatformStatus.OnSale.name()));
         jongoQuery.setParameters(channelId, catId);
         jongoQuery.setProjection("{\"common.fields.code\": 1}");
-        jongoQuery.setSort(String.format("{\"platforms.P%s.pPublishTime\":1}", cartId)); // 暂定pPublishTime
+        jongoQuery.setSort(String.format("{\"platforms.P%s.pPublishTime\":-1}", cartId)); // 暂定pPublishTime
 
         List<CmsBtProductModel> products = select(jongoQuery, channelId);
 
