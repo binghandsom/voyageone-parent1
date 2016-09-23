@@ -24,13 +24,13 @@ public class CmsBtFeedInfoModel_Sku {
     private String weightOrg;
     private String weightOrgUnit;
     private String weightCalc;
-    private int isSale;
+    private Integer isSale;
 
     public int getIsSale() {
-        return isSale;
+        return isSale == null?1:isSale;
     }
 
-    public void setIsSale(int isSale) {
+    public void setIsSale(Integer isSale) {
         this.isSale = isSale;
     }
 

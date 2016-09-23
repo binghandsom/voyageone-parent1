@@ -538,7 +538,10 @@ public class Tmall_018_Target_DictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("0"));
+
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
                 ruleRoot.addRuleWord(new CustomWord(getCommonImagesWord));
 
                 imageStr = "\"}";

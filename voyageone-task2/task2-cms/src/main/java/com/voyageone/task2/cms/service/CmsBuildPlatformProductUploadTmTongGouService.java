@@ -1,6 +1,11 @@
 package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
+import com.taobao.api.ApiException;
+import com.taobao.top.schema.exception.TopSchemaException;
+import com.taobao.top.schema.factory.SchemaWriter;
+import com.taobao.top.schema.field.Field;
+import com.taobao.top.schema.field.InputField;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -11,19 +16,19 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.masterdate.schema.factory.SchemaWriter;
-import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
+import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbSimpleItemService;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtTmTonggouFeedAttrDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaTmDao;
 import com.voyageone.service.impl.cms.DictService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -32,6 +37,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsBtTmTonggouFeedAttrModel;
 import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaTmModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -83,6 +89,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
     private TbSimpleItemService tbSimpleItemService;
     @Autowired
     private CmsBtTmTonggouFeedAttrDao cmsBtTmTonggouFeedAttrDao;
+    @Autowired
+    private CmsMtPlatformCategorySchemaTmDao platformCategorySchemaDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -116,8 +124,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             for (String channelId : channelIdList) {
                 // 商品上传(天猫国际官网同购)
                 doProductUpload(channelId, CartEnums.Cart.TT.getValue());
-//                // 商品上传(USJOI天猫国际官网同购)
-//                doProductUpload(channelId, CartEnums.Cart.USTT.getValue());
+                // 商品上传(USJOI天猫国际官网同购)
+                doProductUpload(channelId, CartEnums.Cart.USTT.getValue());
             }
         }
 
@@ -316,7 +324,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 numIId = sxData.getPlatform().getNumIId();
             }
 
-            String result = "";
+            String result;
             // 新增或更新商品主处理
             if (!updateWare) {
                 // 新增商品的时候
@@ -340,9 +348,17 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 if (!updateWare) numIId = result;
             }
 
-            // 上新成功时状态回写操作(默认为在库)
-            sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, numIId,
-                    CmsConstants.PlatformStatus.InStock, "", getTaskName());
+            // 回写PXX.pCatId, PXX.pCatPath等信息
+            Map<String, String> pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
+            if (pCatInfoMap != null && pCatInfoMap.size() > 0) {
+                // 上新成功且成功取得平台类目信息时状态回写操作(默认为在库)
+                sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, numIId,
+                        CmsConstants.PlatformStatus.InStock, "", getTaskName(), pCatInfoMap);
+            } else {
+                // 上新成功时但未取得平台类目信息状态回写操作(默认为在库)
+                sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, numIId,
+                        CmsConstants.PlatformStatus.InStock, "", getTaskName());
+            }
 
             // 正常结束
             $info(String.format("天猫官网同购商品上新成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s]",
@@ -889,6 +905,73 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         }
 
         return targetSkuList;
+    }
+
+    /**
+     * 根据天猫官网同购返回的NumIId取得平台上的类目id和类目path
+     *
+     * @param shopProp 店铺信息
+     * @param numIId 天猫官网同购上新成功之后返回的numIId
+     * @return Map<String, String> 天猫官网同购平台类目信息
+     */
+    protected Map<String, String> getSimpleItemCatInfo(ShopBean shopProp, String numIId) throws ApiException, GetUpdateSchemaFailException, TopSchemaException {
+        // 调用官网同购编辑商品的get接口取得商品信息
+        TbItemSchema tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, NumberUtils.toLong(numIId));
+        if (tbItemSchema == null || ListUtils.isNull(tbItemSchema.getFields())) {
+            // 天猫官网同购取得商品信息失败
+            String errMsg = "天猫官网同购取得商品信息失败! ";
+            $error(errMsg);
+            throw new BusinessException(errMsg);
+        }
+
+        String pCatId = null;
+        // 取得类目对应的Field
+        InputField inputFieldCategory = (InputField)tbItemSchema.getFieldMap().get("category");
+        if (!StringUtils.isEmpty(inputFieldCategory.getDefaultValue())
+                && inputFieldCategory.getDefaultValue().contains(":")) {
+            // 取得平台上返回的catId
+            String[] strings = inputFieldCategory.getDefaultValue().split(":");
+            pCatId = strings[1].replaceAll("}|\"", "");   // 删除里面多余的大括号(})和双引号(")
+        }
+
+        if (StringUtils.isEmpty(pCatId)) {
+            return null;
+        }
+
+        Map<String, String> pCatInfoMap = new HashMap<>(2, 1f);
+        pCatInfoMap.put("pCatId", pCatId);
+
+        try {
+            // 取得天猫官网同购pCatId对应的pCatPath
+            String pCatPath = getTongGouCatFullPathByCatId(shopProp, pCatId);
+            if (!StringUtils.isEmpty(pCatPath)) {
+                pCatInfoMap.put("pCatPath", pCatPath);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return pCatInfoMap;
+    }
+
+    /**
+     * 根据天猫官网同购返回的NumIId取得平台上的类目id和类目path
+     *
+     * @param shopProp 店铺信息
+     * @param pCatdId 天猫官网同购商品中取得的catId
+     * @return String 天猫官网同购catId对应的平台catPath
+     */
+    protected String getTongGouCatFullPathByCatId(ShopBean shopProp, String pCatdId) {
+        String pCatPath = null;
+
+        // 从cms_mt_platform_category_schema_tm_cXXX(channelId)表中取得pCatId对应的pCatPath
+        CmsMtPlatformCategorySchemaTmModel categorySchemaTm = platformCategorySchemaDao.selectPlatformCatSchemaTmModel(
+                pCatdId, shopProp.getOrder_channel_id(), NumberUtils.toInt(shopProp.getCart_id()));
+        if (categorySchemaTm != null) {
+            pCatPath = categorySchemaTm.getCatFullPath();
+        }
+
+        return pCatPath;
     }
 
 }
