@@ -29,10 +29,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -180,7 +177,6 @@ public class SellerCatService extends BaseService {
         if (isDuplicateNode(sellerCats, cName, parentCId)) {
             throw new BusinessException("重复的店铺内分类名!");
         }
-
         ShopBean shopBean = Shops.getShop(channelId, cartId);
         if (shopBean == null) {
             throw new BusinessException("未配置店铺的销售平台!");
@@ -192,8 +188,10 @@ public class SellerCatService extends BaseService {
             cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
         } else if (isTMPlatform(shopCartId)) {
             cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
+        } else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+            cId = Long.toString(new Random(1000000000).nextLong());
+            //// TODO: 2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
         }
-
         if (!StringUtils.isNullOrBlank2(cId)) {
             cmsBtSellerCatDao.add(channelId, cartId, cName, parentCId, cId, creator);
         }
