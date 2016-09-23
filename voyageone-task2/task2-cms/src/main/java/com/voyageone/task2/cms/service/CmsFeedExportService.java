@@ -229,7 +229,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
                 ExcelUtils.setCellValue(row, cellIndex++, item.getPriceClientMsrp(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getPriceClientRetail(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getPriceNet(), unlock);
-                ExcelUtils.setCellValue(row, cellIndex, StringUtil.isEmpty(item.getErrInfo())?cmsBtFeedInfoModel.getUpdMessage():item.getErrInfo(), unlock);
+                ExcelUtils.setCellValue(row, cellIndex, item.getErrInfo(), unlock);
                 rowIndex++;
             }
         }

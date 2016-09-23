@@ -14,8 +14,8 @@ import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.sx.CnCategoryService;
 import com.voyageone.service.impl.cms.sx.ConditionPropValueService;
-import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSxCnInfoModel;
@@ -48,13 +48,13 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
     @Autowired
     private CnSchemaService cnSchemaService;
     @Autowired
-    private SxProductService sxProductService;
-    @Autowired
     private ProductGroupService productGroupService;
     @Autowired
     private BusinessLogService businessLogService;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
+    @Autowired
+    private CnCategoryService cnCategoryService;
 
     @Autowired
     private CmsBtSxCnInfoDao cmsBtSxCnInfoDao;
@@ -141,8 +141,8 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             }
             String productXml = cnSchemaService.writeProductXmlString(listProductFields);
             String skuXml = cnSchemaService.writeSkuXmlString(listSkuFields);
-            $info("独立域名上传产品的xml:" + productXml);
-            $info("独立域名上传Sku的xml:" + skuXml);
+            $debug("独立域名上传产品的xml:" + productXml);
+            $debug("独立域名上传Sku的xml:" + skuXml);
             // TODO: doPost
             boolean isSuccess = false;
 
@@ -169,13 +169,13 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
                         insertBusinessLog(channelId, "回写numIId发生异常!" + ex.getMessage(), sxModel);
                     }
                 }
+
+                // 类目保存，用于之后上传类目下code以及排序
+                cnCategoryService.updateProductSellercatForUpload(channelId, catIds, getTaskName());
+
+                // 把状态更新成 2:上传结束
+                cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName());
             }
-
-            // 类目保存
-
-
-            // 把状态更新成 2:上传结束
-            cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName());
         } catch (Exception ex) {
             $error(ex.getMessage());
             if (!needRetry) {
@@ -213,8 +213,11 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
         if (sxModel != null) {
             // 单个产品错误
+            // deleted by morse.lu 2016/09/22 start
+            // 拼接后可能太长了,就干脆不塞值了吧
             // 类目id
-           businessLogModel.setCatId(sxModel.getCatIds().stream().collect(Collectors.joining(",")));
+//           businessLogModel.setCatId(sxModel.getCatIds().stream().collect(Collectors.joining(",")));
+            // deleted by morse.lu 2016/09/22 end
             // 平台id
             businessLogModel.setCartId(sxModel.getCartId());
             // Group id

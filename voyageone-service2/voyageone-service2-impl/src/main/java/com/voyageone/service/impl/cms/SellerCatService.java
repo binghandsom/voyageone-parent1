@@ -29,10 +29,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -180,7 +177,6 @@ public class SellerCatService extends BaseService {
         if (isDuplicateNode(sellerCats, cName, parentCId)) {
             throw new BusinessException("重复的店铺内分类名!");
         }
-
         ShopBean shopBean = Shops.getShop(channelId, cartId);
         if (shopBean == null) {
             throw new BusinessException("未配置店铺的销售平台!");
@@ -192,6 +188,9 @@ public class SellerCatService extends BaseService {
             cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
         } else if (isTMPlatform(shopCartId)) {
             cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
+        } else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+            cId = Long.toString(new Random(1000000000).nextLong());
+            //// TODO: 2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
         }
 
         if (!StringUtils.isNullOrBlank2(cId)) {
@@ -221,6 +220,9 @@ public class SellerCatService extends BaseService {
             jdShopService.updateShopCategory(shopBean, cId, cName);
         } else if (isTMPlatform(shopCartId)) {
             tbSellerCatService.updateSellerCat(shopBean, cId, cName);
+        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+
+            //// TODO: 2016/9/23  独立官网 店铺内分类api update 下周tom提供
         }
 
         List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
@@ -252,6 +254,9 @@ public class SellerCatService extends BaseService {
                     throw new BusinessException(shopBean.getShop_name() + ":请先到天猫后台删除店铺内分类后再在CMS中删除。");
                 }
             }
+        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+
+            //// TODO: 2016/9/23  独立官网 店铺内分类api delte 下周tom提供
         }
 
 
