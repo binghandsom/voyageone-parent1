@@ -114,7 +114,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     model.setGroupId(grpObj.getGroupId());
                     model.setMainProdCode(grpObj.getMainProductCode());
                     model.setProdCode(pCode);
-                    model.setNumIId(CartEnums.Cart.JM.getId().equals(cartId) ? grpObj.getPlatformMallId() : grpObj.getNumIId());
+                    model.setNumIId(CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? grpObj.getPlatformMallId() : grpObj.getNumIId());
                     model.setResult("0");
                     model.setCreater(userName);
                     model.setCreated(DateTimeUtil.getNow());
@@ -180,7 +180,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                         failedComment = "商品不存在";
                     } else {
                         String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
-                        long numIId = NumberUtils.toLong(CartEnums.Cart.JM.getId().equals(cartId) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId());
+                        long numIId = NumberUtils.toLong(CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId());
 
                         if (numIId == 0) {
                             $warn("CmsPlatformActiceLogService numIId错误 channelId=%s, code=%s", channelId, prodCode);
