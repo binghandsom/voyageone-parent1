@@ -173,7 +173,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     // 取得商品信息
                     queryObj.setQuery("{'common.fields.code':#}");
                     queryObj.setParameters(actLogObj.getProdCode());
-                    queryObj.setProjectionExt("lock", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".platformMallId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode");
+                    queryObj.setProjectionExt("lock", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".pPlatformMallId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode");
                     CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
                     if (prodObj == null) {
                         $warn("CmsPlatformActiceLogService 找不到商品code cartId=%d", cartId);
