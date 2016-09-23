@@ -371,6 +371,7 @@ define(function () {
         "TXT_IMPORT_ONLY_SKU_AND_INVENTORY": "只导入SKU和库存",
         "TXT_SEPARATE": "隔离",
         "TXT_SHARE": "共享",
+        "TXT_BANNER": "禁用",
         "TXT_SEPARATE_NEW_TASK": "新建隔离任务",
         "TXT_PERSONAL_FINISHED_TRANSLATION": "个人完成总数",
         "TXT_UN_TRANSLATION": "未分配总数",

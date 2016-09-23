@@ -6,14 +6,8 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.bean.HtMallSkuAddInfo;
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.components.jumei.bean.HtMallUpdateInfo;
-import com.voyageone.components.jumei.reponse.HtMallAddResponse;
-import com.voyageone.components.jumei.reponse.HtMallSkuAddResponse;
-import com.voyageone.components.jumei.reponse.HtMallSkuPriceUpdateResponse;
-import com.voyageone.components.jumei.reponse.HtMallUpdateResponse;
-import com.voyageone.components.jumei.request.HtMallAddRequest;
-import com.voyageone.components.jumei.request.HtMallSkuAddRequest;
-import com.voyageone.components.jumei.request.HtMallSkuPriceUpdateRequest;
-import com.voyageone.components.jumei.request.HtMallUpdateRequest;
+import com.voyageone.components.jumei.reponse.*;
+import com.voyageone.components.jumei.request.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -168,6 +162,28 @@ public class JumeiHtMallService extends JmBase {
             return null;
         } else {
             return response.getJumeiSkuNo();
+        }
+    }
+
+    /**
+     * 编辑商城Sku属性[MALL]
+     *
+     * @param shopBean 店铺信息
+     * @param failCause 用于保存错误信息
+     * @return 是否更新成功
+     */
+    public boolean updateMallSku(ShopBean shopBean, String jumei_sku_no, boolean enabled, StringBuffer failCause) throws Exception {
+        HtMallSkuUpdateRequest request = new HtMallSkuUpdateRequest();
+        request.setJumei_sku_no(jumei_sku_no);
+        request.setEnabled(enabled);
+        String reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
+        HtMallSkuUpdateResponse response = new HtMallSkuUpdateResponse();
+        response.setBody(reqResult);
+        if (!response.isSuccess()) {
+            failCause.append(response.getErrorMsg());
+            return false;
+        } else {
+            return true;
         }
     }
 
