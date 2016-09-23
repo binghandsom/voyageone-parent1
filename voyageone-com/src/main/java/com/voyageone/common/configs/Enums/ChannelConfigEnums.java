@@ -592,6 +592,11 @@ public class ChannelConfigEnums {
         Modotex("029"),
 
         /**
+         * Wella
+         */
+        Wella("030"),
+
+        /**
          * Woodland
          */
         Woodland("031"),
