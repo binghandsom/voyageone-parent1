@@ -231,11 +231,6 @@ define([
                  */
                 function saveProduct(mark) {
 
-                    if (mark == "temporary") {
-                        callSave("temporary");
-                        return;
-                    }
-
                     scope.vm.preStatus = angular.copy(scope.vm.status);
 
                     switch (scope.vm.status) {
@@ -262,6 +257,11 @@ define([
                     _.map(scope.vm.platform.skus, function (item) {
                         item.property = item.property == null ? "OTHER" : item.property;
                     });
+
+                    if (mark == "temporary") {
+                        callSave("temporary");
+                        return;
+                    }
 
                     if (scope.vm.status == "Approved") {
 
