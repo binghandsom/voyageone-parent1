@@ -141,8 +141,8 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             }
             String productXml = cnSchemaService.writeProductXmlString(listProductFields);
             String skuXml = cnSchemaService.writeSkuXmlString(listSkuFields);
-            $info("独立域名上传产品的xml:" + productXml);
-            $info("独立域名上传Sku的xml:" + skuXml);
+            $debug("独立域名上传产品的xml:" + productXml);
+            $debug("独立域名上传Sku的xml:" + skuXml);
             // TODO: doPost
             boolean isSuccess = false;
 
