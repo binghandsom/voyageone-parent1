@@ -2,6 +2,8 @@ package com.voyageone.service.bean.com;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.voyageone.service.model.com.ComMtTaskModel;
 
 /**
@@ -13,6 +15,14 @@ public class ComMtTaskBean extends ComMtTaskModel {
 	private String runFlg;
 	
 	private List<TmTaskControlBean> taskConfig;
+	
+	public void setTaskId(String taskId) {
+		if (StringUtils.startsWith(taskId, "X")) {
+			super.setTaskId(null);
+		} else {
+			super.setTaskId(Integer.valueOf(taskId));
+		}
+	}
 
 	public String getRunFlg() {
 		return runFlg;
