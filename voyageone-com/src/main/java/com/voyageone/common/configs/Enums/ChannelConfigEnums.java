@@ -706,6 +706,7 @@ public class ChannelConfigEnums {
                 case "027": return Yogademocracy;
                 case "028": return ShoeMetro;
                 case "029": return Modotex;
+                case "030": return Wella;
                 case "031": return Woodland;
                 case "088": return TestChannel088;
                 case "089": return TestChannel089;
