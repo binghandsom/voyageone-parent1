@@ -1487,7 +1487,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
      * @param product
      * @param mallId 聚美Mall Id
      */
-    private void updateMallId(CmsBtProductModel product, String mallId) {
+    protected void updateMallId(CmsBtProductModel product, String mallId) {
         String channelId = product.getChannelId();
         String code = product.getCommon().getFields().getCode();
 
@@ -1495,7 +1495,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         updateProductQuery.setQuery("{\"common.fields.code\": #}");
         updateProductQuery.setQueryParameters(code);
 
-        updateProductQuery.setUpdate("{$set:{\"platforms.P"+ CART_ID +".pPlatformMallId\": #}}");
+        // 上到聚美商城是默认在售的，所以只要成功上传到聚美商城，就把状态回写为OnSale
+        updateProductQuery.setUpdate("{$set:{" +
+                "\"platforms.P"+ CART_ID +".pPlatformMallId\": #," +
+                "\"platforms.P"+ CART_ID +".pStatus\": #," +
+                "\"platforms.P"+ CART_ID +".pReallyStatus\": #" +
+                "}}");
         updateProductQuery.setUpdateParameters(mallId);
 
         cmsBtProductDao.updateFirst(updateProductQuery, channelId);
@@ -1505,7 +1510,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         updateGroupQuery.setQuery("{\"cartId\": #, \"productCodes\": #}");
         updateGroupQuery.setQueryParameters(CART_ID, code);
 
-        updateGroupQuery.setUpdate("{$set:{\"platformMallId\": #}}");
+        updateGroupQuery.setUpdate("{$set:{" +
+                "\"platformMallId\": #," +
+                "\"platformStatus\": #" +
+                "}}");
         updateGroupQuery.setUpdateParameters(mallId);
 
         cmsBtProductGroupDao.updateFirst(updateGroupQuery, channelId);
