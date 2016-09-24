@@ -125,6 +125,7 @@ define([
                 });
 
                 var returnObj = {sellerCats:sellerCats, cartId:self.cartId};
+                // 处于半选状态的分类ID
                 returnObj._orgDispList = _.map(self.orgDispMap, function (value, key) {
                     if (value) {
                         return key;
