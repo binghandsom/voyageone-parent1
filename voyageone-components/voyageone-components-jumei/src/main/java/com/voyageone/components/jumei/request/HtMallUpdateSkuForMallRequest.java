@@ -1,5 +1,7 @@
 package com.voyageone.components.jumei.request;
 
+import com.voyageone.common.util.StringUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,9 +67,9 @@ public class HtMallUpdateSkuForMallRequest implements BaseJMRequest {
     public Map<String, Object> getParameter() {
         Map<String, Object> params = new HashMap<>();
         params.put("jumei_sku_no", jumei_sku_no);
-        params.put("status", status);
-        params.put("customs_product_number", customs_product_number);
-        params.put("businessman_num", businessman_num);
+        if (!StringUtils.isEmpty(status)) params.put("status", status);
+        if (!StringUtils.isEmpty(customs_product_number)) params.put("customs_product_number", customs_product_number);
+        if (!StringUtils.isEmpty(businessman_num)) params.put("businessman_num", businessman_num);
         return params;
     }
 }
