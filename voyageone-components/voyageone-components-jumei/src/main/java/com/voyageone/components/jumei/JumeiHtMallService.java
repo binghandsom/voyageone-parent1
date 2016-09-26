@@ -179,9 +179,9 @@ public class JumeiHtMallService extends JmBase {
     public boolean updateSkuForMall(ShopBean shopBean, String jumeiSkuNo, String status, String customsProductNumber, String businessmanNum, StringBuffer failCause) throws Exception {
         HtMallUpdateSkuForMallRequest request = new HtMallUpdateSkuForMallRequest();
         request.setJumei_sku_no(jumeiSkuNo);
-        if (!StringUtils.isEmpty(status)) request.setStatus(status);
-        if (!StringUtils.isEmpty(customsProductNumber)) request.setCustoms_product_number(customsProductNumber);
-        if (!StringUtils.isEmpty(businessmanNum)) request.setBusinessman_num(businessmanNum);
+        request.setStatus(status);
+        request.setCustoms_product_number(customsProductNumber);
+        request.setBusinessman_num(businessmanNum);
 
         String reqResult;
         try {
