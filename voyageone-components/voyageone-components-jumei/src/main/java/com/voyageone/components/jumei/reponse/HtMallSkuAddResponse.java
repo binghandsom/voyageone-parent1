@@ -76,6 +76,7 @@ public class HtMallSkuAddResponse extends BaseJMResponse {
             if ("0".equals(this.error_code)) {
                 this.setSuccess(true);
             } else {
+                this.setSuccess(false);
                 StringBuffer sbMsg = new StringBuffer("商城商品追加sku[MALL](v1/htSku/addMallSku)时,");
                 switch (this.error_code) {
                     case "10002":

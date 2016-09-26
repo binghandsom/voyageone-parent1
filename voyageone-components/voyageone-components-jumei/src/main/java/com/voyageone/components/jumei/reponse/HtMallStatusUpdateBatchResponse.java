@@ -65,6 +65,7 @@ public class HtMallStatusUpdateBatchResponse extends BaseJMResponse {
             if ("0".equals(this.error_code)) {
                 this.setSuccess(true);
             } else {
+                this.setSuccess(false);
                 StringBuffer sbMsg = new StringBuffer("批量上下架商城商品[MALL](/v1/htMall/updateMallStatusBatch)时,");
                 switch (this.error_code) {
                     case "10002":

@@ -85,6 +85,7 @@ public class HtMallAddResponse extends BaseJMResponse {
             if ("0".equals(this.error_code)) {
                 this.setSuccess(true);
             } else {
+                this.setSuccess(false);
                 StringBuffer sbMsg = new StringBuffer("特卖商品绑定到商城[MALL](/v1/htProduct/dealToMall)时,");
                 switch (this.error_code) {
                     case "10002":

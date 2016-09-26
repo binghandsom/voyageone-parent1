@@ -65,6 +65,7 @@ public class HtMallUpdateSkuForMallResponse extends BaseJMResponse {
             if ("0".equals(this.error_code)) {
                 this.setSuccess(true);
             } else {
+                this.setSuccess(false);
                 StringBuffer sbMsg = new StringBuffer("编辑商城的sku[MALL](/v1/htSku/updateSkuForMall)时,");
                 switch (this.error_code) {
                     case "10002":
