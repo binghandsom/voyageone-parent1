@@ -119,6 +119,14 @@ public class ProductService extends BaseService {
     }
 
     /**
+     * 获取商品 根据ID获
+     */
+    public List<CmsBtProductModel> getProductByNumIid(String channelId, String numIid, Integer cartId) {
+        String temp = "platforms.P"+cartId+".pNumIId";
+        String query = String.format("{\"%s\":\"%s\"}",temp,numIid);
+        return cmsBtProductDao.select(query, channelId);
+    }
+    /**
      * 获取商品 根据Code
      */
     public CmsBtProductModel getProductByCode(String channelId, String code) {
