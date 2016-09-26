@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ComOpenApiClientDaoExt {
 
+    ComOpenApiClientModel selectByClientId(String clientId);
+
     ComOpenApiClientModel selectByClientSecret(@Param("clientId") String clientId, @Param("clientSecret") String clientSecret);
 
 }

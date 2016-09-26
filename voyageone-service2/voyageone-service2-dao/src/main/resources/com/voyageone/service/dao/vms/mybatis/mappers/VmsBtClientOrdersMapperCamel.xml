@@ -1,0 +1,926 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.vms.VmsBtClientOrdersDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtClientOrdersModel" />
+    <sql id="Base_Column_List" >
+        `id`, `client_order_id`, `order_channel_id`, `order_status`, `order_date`, `buyer_email_address`, 
+        `buyer_first_name`, `buyer_last_name`, `buyer_address_line1`, `buyer_city`, `buyer_country`, 
+        `buyer_postal_code`, `buyer_state_or_province`, `buyer_address_line2`, `buyer_company_name`, 
+        `buyer_daytime_phone`, `buyer_evening_phone`, `buyer_name_suffix`, `shipping_email_address`, 
+        `shipping_first_name`, `shipping_last_name`, `shipping_address_line1`, `shipping_city`, 
+        `shipping_country`, `shipping_postal_code`, `shipping_state_or_province`, `shipping_address_line2`, 
+        `shipping_company_name`, `shipping_daytime_phone`, `shipping_evening_phone`, `shipping_name_suffix`, 
+        `requested_shipping_method`, `deliver_by_date`, `shipping_label_url`, `total_price`, 
+        `total_tax_price`, `total_shipping_price`, `total_shipping_tax_price`, `total_gift_option_price`, 
+        `total_gift_option_tax_price`, `total_fees`, `currency`, `vat_inclusive`, `active`, 
+        `created`, `creater`, `modified`, `modifier`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_client_orders
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.vms.VmsBtClientOrdersModel" >
+        update vms_bt_client_orders
+        <set >
+            <if test="clientOrderId != null" >
+                `client_order_id` = #{clientOrderId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderChannelId != null" >
+                `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderStatus != null" >
+                `order_status` = #{orderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="orderDate != null" >
+                `order_date` = #{orderDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="buyerEmailAddress != null" >
+                `buyer_email_address` = #{buyerEmailAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerFirstName != null" >
+                `buyer_first_name` = #{buyerFirstName,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerLastName != null" >
+                `buyer_last_name` = #{buyerLastName,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerAddressLine1 != null" >
+                `buyer_address_line1` = #{buyerAddressLine1,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerCity != null" >
+                `buyer_city` = #{buyerCity,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerCountry != null" >
+                `buyer_country` = #{buyerCountry,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerPostalCode != null" >
+                `buyer_postal_code` = #{buyerPostalCode,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerStateOrProvince != null" >
+                `buyer_state_or_province` = #{buyerStateOrProvince,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerAddressLine2 != null" >
+                `buyer_address_line2` = #{buyerAddressLine2,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerCompanyName != null" >
+                `buyer_company_name` = #{buyerCompanyName,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerDaytimePhone != null" >
+                `buyer_daytime_phone` = #{buyerDaytimePhone,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerEveningPhone != null" >
+                `buyer_evening_phone` = #{buyerEveningPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerNameSuffix != null" >
+                `buyer_name_suffix` = #{buyerNameSuffix,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingEmailAddress != null" >
+                `shipping_email_address` = #{shippingEmailAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingFirstName != null" >
+                `shipping_first_name` = #{shippingFirstName,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingLastName != null" >
+                `shipping_last_name` = #{shippingLastName,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingAddressLine1 != null" >
+                `shipping_address_line1` = #{shippingAddressLine1,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingCity != null" >
+                `shipping_city` = #{shippingCity,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingCountry != null" >
+                `shipping_country` = #{shippingCountry,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingPostalCode != null" >
+                `shipping_postal_code` = #{shippingPostalCode,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingStateOrProvince != null" >
+                `shipping_state_or_province` = #{shippingStateOrProvince,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingAddressLine2 != null" >
+                `shipping_address_line2` = #{shippingAddressLine2,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingCompanyName != null" >
+                `shipping_company_name` = #{shippingCompanyName,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingDaytimePhone != null" >
+                `shipping_daytime_phone` = #{shippingDaytimePhone,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingEveningPhone != null" >
+                `shipping_evening_phone` = #{shippingEveningPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingNameSuffix != null" >
+                `shipping_name_suffix` = #{shippingNameSuffix,jdbcType=VARCHAR},
+            </if>
+            <if test="requestedShippingMethod != null" >
+                `requested_shipping_method` = #{requestedShippingMethod,jdbcType=VARCHAR},
+            </if>
+            <if test="deliverByDate != null" >
+                `deliver_by_date` = #{deliverByDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="shippingLabelUrl != null" >
+                `shipping_label_url` = #{shippingLabelUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="totalPrice != null" >
+                `total_price` = #{totalPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="totalTaxPrice != null" >
+                `total_tax_price` = #{totalTaxPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="totalShippingPrice != null" >
+                `total_shipping_price` = #{totalShippingPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="totalShippingTaxPrice != null" >
+                `total_shipping_tax_price` = #{totalShippingTaxPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="totalGiftOptionPrice != null" >
+                `total_gift_option_price` = #{totalGiftOptionPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="totalGiftOptionTaxPrice != null" >
+                `total_gift_option_tax_price` = #{totalGiftOptionTaxPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="totalFees != null" >
+                `total_fees` = #{totalFees,jdbcType=DOUBLE},
+            </if>
+            <if test="currency != null" >
+                `currency` = #{currency,jdbcType=VARCHAR},
+            </if>
+            <if test="vatInclusive != null" >
+                `vat_inclusive` = #{vatInclusive,jdbcType=BIT},
+            </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=BIT},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from vms_bt_client_orders
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_client_orders
+        <where >
+            <if test="clientOrderId != null" >
+                and `client_order_id` = #{clientOrderId,jdbcType=VARCHAR}
+            </if>
+            <if test="orderChannelId != null" >
+                and `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR}
+            </if>
+            <if test="orderStatus != null" >
+                and `order_status` = #{orderStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="orderDate != null" >
+                and `order_date` = #{orderDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="buyerEmailAddress != null" >
+                and `buyer_email_address` = #{buyerEmailAddress,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerFirstName != null" >
+                and `buyer_first_name` = #{buyerFirstName,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerLastName != null" >
+                and `buyer_last_name` = #{buyerLastName,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerAddressLine1 != null" >
+                and `buyer_address_line1` = #{buyerAddressLine1,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerCity != null" >
+                and `buyer_city` = #{buyerCity,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerCountry != null" >
+                and `buyer_country` = #{buyerCountry,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerPostalCode != null" >
+                and `buyer_postal_code` = #{buyerPostalCode,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerStateOrProvince != null" >
+                and `buyer_state_or_province` = #{buyerStateOrProvince,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerAddressLine2 != null" >
+                and `buyer_address_line2` = #{buyerAddressLine2,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerCompanyName != null" >
+                and `buyer_company_name` = #{buyerCompanyName,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerDaytimePhone != null" >
+                and `buyer_daytime_phone` = #{buyerDaytimePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerEveningPhone != null" >
+                and `buyer_evening_phone` = #{buyerEveningPhone,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerNameSuffix != null" >
+                and `buyer_name_suffix` = #{buyerNameSuffix,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingEmailAddress != null" >
+                and `shipping_email_address` = #{shippingEmailAddress,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingFirstName != null" >
+                and `shipping_first_name` = #{shippingFirstName,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingLastName != null" >
+                and `shipping_last_name` = #{shippingLastName,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingAddressLine1 != null" >
+                and `shipping_address_line1` = #{shippingAddressLine1,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingCity != null" >
+                and `shipping_city` = #{shippingCity,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingCountry != null" >
+                and `shipping_country` = #{shippingCountry,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingPostalCode != null" >
+                and `shipping_postal_code` = #{shippingPostalCode,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingStateOrProvince != null" >
+                and `shipping_state_or_province` = #{shippingStateOrProvince,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingAddressLine2 != null" >
+                and `shipping_address_line2` = #{shippingAddressLine2,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingCompanyName != null" >
+                and `shipping_company_name` = #{shippingCompanyName,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingDaytimePhone != null" >
+                and `shipping_daytime_phone` = #{shippingDaytimePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingEveningPhone != null" >
+                and `shipping_evening_phone` = #{shippingEveningPhone,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingNameSuffix != null" >
+                and `shipping_name_suffix` = #{shippingNameSuffix,jdbcType=VARCHAR}
+            </if>
+            <if test="requestedShippingMethod != null" >
+                and `requested_shipping_method` = #{requestedShippingMethod,jdbcType=VARCHAR}
+            </if>
+            <if test="deliverByDate != null" >
+                and `deliver_by_date` = #{deliverByDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="shippingLabelUrl != null" >
+                and `shipping_label_url` = #{shippingLabelUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="totalPrice != null" >
+                and `total_price` = #{totalPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalTaxPrice != null" >
+                and `total_tax_price` = #{totalTaxPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalShippingPrice != null" >
+                and `total_shipping_price` = #{totalShippingPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalShippingTaxPrice != null" >
+                and `total_shipping_tax_price` = #{totalShippingTaxPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalGiftOptionPrice != null" >
+                and `total_gift_option_price` = #{totalGiftOptionPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalGiftOptionTaxPrice != null" >
+                and `total_gift_option_tax_price` = #{totalGiftOptionTaxPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalFees != null" >
+                and `total_fees` = #{totalFees,jdbcType=DOUBLE}
+            </if>
+            <if test="currency != null" >
+                and `currency` = #{currency,jdbcType=VARCHAR}
+            </if>
+            <if test="vatInclusive != null" >
+                and `vat_inclusive` = #{vatInclusive,jdbcType=BIT}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_client_orders
+        <where >
+            <if test="clientOrderId != null" >
+                and `client_order_id` = #{clientOrderId,jdbcType=VARCHAR}
+            </if>
+            <if test="orderChannelId != null" >
+                and `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR}
+            </if>
+            <if test="orderStatus != null" >
+                and `order_status` = #{orderStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="orderDate != null" >
+                and `order_date` = #{orderDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="buyerEmailAddress != null" >
+                and `buyer_email_address` = #{buyerEmailAddress,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerFirstName != null" >
+                and `buyer_first_name` = #{buyerFirstName,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerLastName != null" >
+                and `buyer_last_name` = #{buyerLastName,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerAddressLine1 != null" >
+                and `buyer_address_line1` = #{buyerAddressLine1,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerCity != null" >
+                and `buyer_city` = #{buyerCity,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerCountry != null" >
+                and `buyer_country` = #{buyerCountry,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerPostalCode != null" >
+                and `buyer_postal_code` = #{buyerPostalCode,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerStateOrProvince != null" >
+                and `buyer_state_or_province` = #{buyerStateOrProvince,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerAddressLine2 != null" >
+                and `buyer_address_line2` = #{buyerAddressLine2,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerCompanyName != null" >
+                and `buyer_company_name` = #{buyerCompanyName,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerDaytimePhone != null" >
+                and `buyer_daytime_phone` = #{buyerDaytimePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerEveningPhone != null" >
+                and `buyer_evening_phone` = #{buyerEveningPhone,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerNameSuffix != null" >
+                and `buyer_name_suffix` = #{buyerNameSuffix,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingEmailAddress != null" >
+                and `shipping_email_address` = #{shippingEmailAddress,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingFirstName != null" >
+                and `shipping_first_name` = #{shippingFirstName,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingLastName != null" >
+                and `shipping_last_name` = #{shippingLastName,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingAddressLine1 != null" >
+                and `shipping_address_line1` = #{shippingAddressLine1,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingCity != null" >
+                and `shipping_city` = #{shippingCity,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingCountry != null" >
+                and `shipping_country` = #{shippingCountry,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingPostalCode != null" >
+                and `shipping_postal_code` = #{shippingPostalCode,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingStateOrProvince != null" >
+                and `shipping_state_or_province` = #{shippingStateOrProvince,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingAddressLine2 != null" >
+                and `shipping_address_line2` = #{shippingAddressLine2,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingCompanyName != null" >
+                and `shipping_company_name` = #{shippingCompanyName,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingDaytimePhone != null" >
+                and `shipping_daytime_phone` = #{shippingDaytimePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingEveningPhone != null" >
+                and `shipping_evening_phone` = #{shippingEveningPhone,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingNameSuffix != null" >
+                and `shipping_name_suffix` = #{shippingNameSuffix,jdbcType=VARCHAR}
+            </if>
+            <if test="requestedShippingMethod != null" >
+                and `requested_shipping_method` = #{requestedShippingMethod,jdbcType=VARCHAR}
+            </if>
+            <if test="deliverByDate != null" >
+                and `deliver_by_date` = #{deliverByDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="shippingLabelUrl != null" >
+                and `shipping_label_url` = #{shippingLabelUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="totalPrice != null" >
+                and `total_price` = #{totalPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalTaxPrice != null" >
+                and `total_tax_price` = #{totalTaxPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalShippingPrice != null" >
+                and `total_shipping_price` = #{totalShippingPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalShippingTaxPrice != null" >
+                and `total_shipping_tax_price` = #{totalShippingTaxPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalGiftOptionPrice != null" >
+                and `total_gift_option_price` = #{totalGiftOptionPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalGiftOptionTaxPrice != null" >
+                and `total_gift_option_tax_price` = #{totalGiftOptionTaxPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalFees != null" >
+                and `total_fees` = #{totalFees,jdbcType=DOUBLE}
+            </if>
+            <if test="currency != null" >
+                and `currency` = #{currency,jdbcType=VARCHAR}
+            </if>
+            <if test="vatInclusive != null" >
+                and `vat_inclusive` = #{vatInclusive,jdbcType=BIT}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from vms_bt_client_orders
+        <where >
+            <if test="clientOrderId != null" >
+                and `client_order_id` = #{clientOrderId,jdbcType=VARCHAR}
+            </if>
+            <if test="orderChannelId != null" >
+                and `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR}
+            </if>
+            <if test="orderStatus != null" >
+                and `order_status` = #{orderStatus,jdbcType=VARCHAR}
+            </if>
+            <if test="orderDate != null" >
+                and `order_date` = #{orderDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="buyerEmailAddress != null" >
+                and `buyer_email_address` = #{buyerEmailAddress,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerFirstName != null" >
+                and `buyer_first_name` = #{buyerFirstName,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerLastName != null" >
+                and `buyer_last_name` = #{buyerLastName,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerAddressLine1 != null" >
+                and `buyer_address_line1` = #{buyerAddressLine1,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerCity != null" >
+                and `buyer_city` = #{buyerCity,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerCountry != null" >
+                and `buyer_country` = #{buyerCountry,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerPostalCode != null" >
+                and `buyer_postal_code` = #{buyerPostalCode,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerStateOrProvince != null" >
+                and `buyer_state_or_province` = #{buyerStateOrProvince,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerAddressLine2 != null" >
+                and `buyer_address_line2` = #{buyerAddressLine2,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerCompanyName != null" >
+                and `buyer_company_name` = #{buyerCompanyName,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerDaytimePhone != null" >
+                and `buyer_daytime_phone` = #{buyerDaytimePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerEveningPhone != null" >
+                and `buyer_evening_phone` = #{buyerEveningPhone,jdbcType=VARCHAR}
+            </if>
+            <if test="buyerNameSuffix != null" >
+                and `buyer_name_suffix` = #{buyerNameSuffix,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingEmailAddress != null" >
+                and `shipping_email_address` = #{shippingEmailAddress,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingFirstName != null" >
+                and `shipping_first_name` = #{shippingFirstName,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingLastName != null" >
+                and `shipping_last_name` = #{shippingLastName,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingAddressLine1 != null" >
+                and `shipping_address_line1` = #{shippingAddressLine1,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingCity != null" >
+                and `shipping_city` = #{shippingCity,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingCountry != null" >
+                and `shipping_country` = #{shippingCountry,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingPostalCode != null" >
+                and `shipping_postal_code` = #{shippingPostalCode,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingStateOrProvince != null" >
+                and `shipping_state_or_province` = #{shippingStateOrProvince,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingAddressLine2 != null" >
+                and `shipping_address_line2` = #{shippingAddressLine2,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingCompanyName != null" >
+                and `shipping_company_name` = #{shippingCompanyName,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingDaytimePhone != null" >
+                and `shipping_daytime_phone` = #{shippingDaytimePhone,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingEveningPhone != null" >
+                and `shipping_evening_phone` = #{shippingEveningPhone,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingNameSuffix != null" >
+                and `shipping_name_suffix` = #{shippingNameSuffix,jdbcType=VARCHAR}
+            </if>
+            <if test="requestedShippingMethod != null" >
+                and `requested_shipping_method` = #{requestedShippingMethod,jdbcType=VARCHAR}
+            </if>
+            <if test="deliverByDate != null" >
+                and `deliver_by_date` = #{deliverByDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="shippingLabelUrl != null" >
+                and `shipping_label_url` = #{shippingLabelUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="totalPrice != null" >
+                and `total_price` = #{totalPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalTaxPrice != null" >
+                and `total_tax_price` = #{totalTaxPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalShippingPrice != null" >
+                and `total_shipping_price` = #{totalShippingPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalShippingTaxPrice != null" >
+                and `total_shipping_tax_price` = #{totalShippingTaxPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalGiftOptionPrice != null" >
+                and `total_gift_option_price` = #{totalGiftOptionPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalGiftOptionTaxPrice != null" >
+                and `total_gift_option_tax_price` = #{totalGiftOptionTaxPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="totalFees != null" >
+                and `total_fees` = #{totalFees,jdbcType=DOUBLE}
+            </if>
+            <if test="currency != null" >
+                and `currency` = #{currency,jdbcType=VARCHAR}
+            </if>
+            <if test="vatInclusive != null" >
+                and `vat_inclusive` = #{vatInclusive,jdbcType=BIT}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.vms.VmsBtClientOrdersModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into vms_bt_client_orders
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="clientOrderId != null" >
+                `client_order_id`,
+            </if>
+            <if test="orderChannelId != null" >
+                `order_channel_id`,
+            </if>
+            <if test="orderStatus != null" >
+                `order_status`,
+            </if>
+            <if test="orderDate != null" >
+                `order_date`,
+            </if>
+            <if test="buyerEmailAddress != null" >
+                `buyer_email_address`,
+            </if>
+            <if test="buyerFirstName != null" >
+                `buyer_first_name`,
+            </if>
+            <if test="buyerLastName != null" >
+                `buyer_last_name`,
+            </if>
+            <if test="buyerAddressLine1 != null" >
+                `buyer_address_line1`,
+            </if>
+            <if test="buyerCity != null" >
+                `buyer_city`,
+            </if>
+            <if test="buyerCountry != null" >
+                `buyer_country`,
+            </if>
+            <if test="buyerPostalCode != null" >
+                `buyer_postal_code`,
+            </if>
+            <if test="buyerStateOrProvince != null" >
+                `buyer_state_or_province`,
+            </if>
+            <if test="buyerAddressLine2 != null" >
+                `buyer_address_line2`,
+            </if>
+            <if test="buyerCompanyName != null" >
+                `buyer_company_name`,
+            </if>
+            <if test="buyerDaytimePhone != null" >
+                `buyer_daytime_phone`,
+            </if>
+            <if test="buyerEveningPhone != null" >
+                `buyer_evening_phone`,
+            </if>
+            <if test="buyerNameSuffix != null" >
+                `buyer_name_suffix`,
+            </if>
+            <if test="shippingEmailAddress != null" >
+                `shipping_email_address`,
+            </if>
+            <if test="shippingFirstName != null" >
+                `shipping_first_name`,
+            </if>
+            <if test="shippingLastName != null" >
+                `shipping_last_name`,
+            </if>
+            <if test="shippingAddressLine1 != null" >
+                `shipping_address_line1`,
+            </if>
+            <if test="shippingCity != null" >
+                `shipping_city`,
+            </if>
+            <if test="shippingCountry != null" >
+                `shipping_country`,
+            </if>
+            <if test="shippingPostalCode != null" >
+                `shipping_postal_code`,
+            </if>
+            <if test="shippingStateOrProvince != null" >
+                `shipping_state_or_province`,
+            </if>
+            <if test="shippingAddressLine2 != null" >
+                `shipping_address_line2`,
+            </if>
+            <if test="shippingCompanyName != null" >
+                `shipping_company_name`,
+            </if>
+            <if test="shippingDaytimePhone != null" >
+                `shipping_daytime_phone`,
+            </if>
+            <if test="shippingEveningPhone != null" >
+                `shipping_evening_phone`,
+            </if>
+            <if test="shippingNameSuffix != null" >
+                `shipping_name_suffix`,
+            </if>
+            <if test="requestedShippingMethod != null" >
+                `requested_shipping_method`,
+            </if>
+            <if test="deliverByDate != null" >
+                `deliver_by_date`,
+            </if>
+            <if test="shippingLabelUrl != null" >
+                `shipping_label_url`,
+            </if>
+            <if test="totalPrice != null" >
+                `total_price`,
+            </if>
+            <if test="totalTaxPrice != null" >
+                `total_tax_price`,
+            </if>
+            <if test="totalShippingPrice != null" >
+                `total_shipping_price`,
+            </if>
+            <if test="totalShippingTaxPrice != null" >
+                `total_shipping_tax_price`,
+            </if>
+            <if test="totalGiftOptionPrice != null" >
+                `total_gift_option_price`,
+            </if>
+            <if test="totalGiftOptionTaxPrice != null" >
+                `total_gift_option_tax_price`,
+            </if>
+            <if test="totalFees != null" >
+                `total_fees`,
+            </if>
+            <if test="currency != null" >
+                `currency`,
+            </if>
+            <if test="vatInclusive != null" >
+                `vat_inclusive`,
+            </if>
+            <if test="active != null" >
+                `active`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="clientOrderId != null" >
+                #{clientOrderId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderChannelId != null" >
+                #{orderChannelId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderStatus != null" >
+                #{orderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="orderDate != null" >
+                #{orderDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="buyerEmailAddress != null" >
+                #{buyerEmailAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerFirstName != null" >
+                #{buyerFirstName,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerLastName != null" >
+                #{buyerLastName,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerAddressLine1 != null" >
+                #{buyerAddressLine1,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerCity != null" >
+                #{buyerCity,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerCountry != null" >
+                #{buyerCountry,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerPostalCode != null" >
+                #{buyerPostalCode,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerStateOrProvince != null" >
+                #{buyerStateOrProvince,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerAddressLine2 != null" >
+                #{buyerAddressLine2,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerCompanyName != null" >
+                #{buyerCompanyName,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerDaytimePhone != null" >
+                #{buyerDaytimePhone,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerEveningPhone != null" >
+                #{buyerEveningPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="buyerNameSuffix != null" >
+                #{buyerNameSuffix,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingEmailAddress != null" >
+                #{shippingEmailAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingFirstName != null" >
+                #{shippingFirstName,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingLastName != null" >
+                #{shippingLastName,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingAddressLine1 != null" >
+                #{shippingAddressLine1,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingCity != null" >
+                #{shippingCity,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingCountry != null" >
+                #{shippingCountry,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingPostalCode != null" >
+                #{shippingPostalCode,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingStateOrProvince != null" >
+                #{shippingStateOrProvince,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingAddressLine2 != null" >
+                #{shippingAddressLine2,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingCompanyName != null" >
+                #{shippingCompanyName,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingDaytimePhone != null" >
+                #{shippingDaytimePhone,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingEveningPhone != null" >
+                #{shippingEveningPhone,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingNameSuffix != null" >
+                #{shippingNameSuffix,jdbcType=VARCHAR},
+            </if>
+            <if test="requestedShippingMethod != null" >
+                #{requestedShippingMethod,jdbcType=VARCHAR},
+            </if>
+            <if test="deliverByDate != null" >
+                #{deliverByDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="shippingLabelUrl != null" >
+                #{shippingLabelUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="totalPrice != null" >
+                #{totalPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="totalTaxPrice != null" >
+                #{totalTaxPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="totalShippingPrice != null" >
+                #{totalShippingPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="totalShippingTaxPrice != null" >
+                #{totalShippingTaxPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="totalGiftOptionPrice != null" >
+                #{totalGiftOptionPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="totalGiftOptionTaxPrice != null" >
+                #{totalGiftOptionTaxPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="totalFees != null" >
+                #{totalFees,jdbcType=DOUBLE},
+            </if>
+            <if test="currency != null" >
+                #{currency,jdbcType=VARCHAR},
+            </if>
+            <if test="vatInclusive != null" >
+                #{vatInclusive,jdbcType=BIT},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

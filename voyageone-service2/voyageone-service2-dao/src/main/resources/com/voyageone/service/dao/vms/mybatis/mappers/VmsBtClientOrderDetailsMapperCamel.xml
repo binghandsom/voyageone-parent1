@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.vms.VmsBtClientOrderDetailsDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel" />
+    <sql id="Base_Column_List" >
+        `id`, `order_channel_id`, `client_order_id`, `order_number`, `reservation_id`, `order_item_id`, 
+        `seller_sku`, `unit_price`, `quantity`, `status`, `shipped_date`, `tracking_number`, 
+        `shipping_carrier`, `shipping_class`, `cancel_reason`, `refund_flg`, `active`, `created`, 
+        `creater`, `modified`, `modifier`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_client_order_details
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel" >
+        update vms_bt_client_order_details
+        <set >
+            <if test="orderChannelId != null" >
+                `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR},
+            </if>
+            <if test="clientOrderId != null" >
+                `client_order_id` = #{clientOrderId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderNumber != null" >
+                `order_number` = #{orderNumber,jdbcType=BIGINT},
+            </if>
+            <if test="reservationId != null" >
+                `reservation_id` = #{reservationId,jdbcType=BIGINT},
+            </if>
+            <if test="orderItemId != null" >
+                `order_item_id` = #{orderItemId,jdbcType=VARCHAR},
+            </if>
+            <if test="sellerSku != null" >
+                `seller_sku` = #{sellerSku,jdbcType=VARCHAR},
+            </if>
+            <if test="unitPrice != null" >
+                `unit_price` = #{unitPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="quantity != null" >
+                `quantity` = #{quantity,jdbcType=INTEGER},
+            </if>
+            <if test="status != null" >
+                `status` = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="shippedDate != null" >
+                `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="trackingNumber != null" >
+                `tracking_number` = #{trackingNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingCarrier != null" >
+                `shipping_carrier` = #{shippingCarrier,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingClass != null" >
+                `shipping_class` = #{shippingClass,jdbcType=VARCHAR},
+            </if>
+            <if test="cancelReason != null" >
+                `cancel_reason` = #{cancelReason,jdbcType=VARCHAR},
+            </if>
+            <if test="refundFlg != null" >
+                `refund_flg` = #{refundFlg,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=BIT},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from vms_bt_client_order_details
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_client_order_details
+        <where >
+            <if test="orderChannelId != null" >
+                and `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR}
+            </if>
+            <if test="clientOrderId != null" >
+                and `client_order_id` = #{clientOrderId,jdbcType=VARCHAR}
+            </if>
+            <if test="orderNumber != null" >
+                and `order_number` = #{orderNumber,jdbcType=BIGINT}
+            </if>
+            <if test="reservationId != null" >
+                and `reservation_id` = #{reservationId,jdbcType=BIGINT}
+            </if>
+            <if test="orderItemId != null" >
+                and `order_item_id` = #{orderItemId,jdbcType=VARCHAR}
+            </if>
+            <if test="sellerSku != null" >
+                and `seller_sku` = #{sellerSku,jdbcType=VARCHAR}
+            </if>
+            <if test="unitPrice != null" >
+                and `unit_price` = #{unitPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="quantity != null" >
+                and `quantity` = #{quantity,jdbcType=INTEGER}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="shippedDate != null" >
+                and `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="trackingNumber != null" >
+                and `tracking_number` = #{trackingNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingCarrier != null" >
+                and `shipping_carrier` = #{shippingCarrier,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingClass != null" >
+                and `shipping_class` = #{shippingClass,jdbcType=VARCHAR}
+            </if>
+            <if test="cancelReason != null" >
+                and `cancel_reason` = #{cancelReason,jdbcType=VARCHAR}
+            </if>
+            <if test="refundFlg != null" >
+                and `refund_flg` = #{refundFlg,jdbcType=VARCHAR}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from vms_bt_client_order_details
+        <where >
+            <if test="orderChannelId != null" >
+                and `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR}
+            </if>
+            <if test="clientOrderId != null" >
+                and `client_order_id` = #{clientOrderId,jdbcType=VARCHAR}
+            </if>
+            <if test="orderNumber != null" >
+                and `order_number` = #{orderNumber,jdbcType=BIGINT}
+            </if>
+            <if test="reservationId != null" >
+                and `reservation_id` = #{reservationId,jdbcType=BIGINT}
+            </if>
+            <if test="orderItemId != null" >
+                and `order_item_id` = #{orderItemId,jdbcType=VARCHAR}
+            </if>
+            <if test="sellerSku != null" >
+                and `seller_sku` = #{sellerSku,jdbcType=VARCHAR}
+            </if>
+            <if test="unitPrice != null" >
+                and `unit_price` = #{unitPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="quantity != null" >
+                and `quantity` = #{quantity,jdbcType=INTEGER}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="shippedDate != null" >
+                and `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="trackingNumber != null" >
+                and `tracking_number` = #{trackingNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingCarrier != null" >
+                and `shipping_carrier` = #{shippingCarrier,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingClass != null" >
+                and `shipping_class` = #{shippingClass,jdbcType=VARCHAR}
+            </if>
+            <if test="cancelReason != null" >
+                and `cancel_reason` = #{cancelReason,jdbcType=VARCHAR}
+            </if>
+            <if test="refundFlg != null" >
+                and `refund_flg` = #{refundFlg,jdbcType=VARCHAR}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from vms_bt_client_order_details
+        <where >
+            <if test="orderChannelId != null" >
+                and `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR}
+            </if>
+            <if test="clientOrderId != null" >
+                and `client_order_id` = #{clientOrderId,jdbcType=VARCHAR}
+            </if>
+            <if test="orderNumber != null" >
+                and `order_number` = #{orderNumber,jdbcType=BIGINT}
+            </if>
+            <if test="reservationId != null" >
+                and `reservation_id` = #{reservationId,jdbcType=BIGINT}
+            </if>
+            <if test="orderItemId != null" >
+                and `order_item_id` = #{orderItemId,jdbcType=VARCHAR}
+            </if>
+            <if test="sellerSku != null" >
+                and `seller_sku` = #{sellerSku,jdbcType=VARCHAR}
+            </if>
+            <if test="unitPrice != null" >
+                and `unit_price` = #{unitPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="quantity != null" >
+                and `quantity` = #{quantity,jdbcType=INTEGER}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=VARCHAR}
+            </if>
+            <if test="shippedDate != null" >
+                and `shipped_date` = #{shippedDate,jdbcType=TIMESTAMP}
+            </if>
+            <if test="trackingNumber != null" >
+                and `tracking_number` = #{trackingNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingCarrier != null" >
+                and `shipping_carrier` = #{shippingCarrier,jdbcType=VARCHAR}
+            </if>
+            <if test="shippingClass != null" >
+                and `shipping_class` = #{shippingClass,jdbcType=VARCHAR}
+            </if>
+            <if test="cancelReason != null" >
+                and `cancel_reason` = #{cancelReason,jdbcType=VARCHAR}
+            </if>
+            <if test="refundFlg != null" >
+                and `refund_flg` = #{refundFlg,jdbcType=VARCHAR}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.vms.VmsBtClientOrderDetailsModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into vms_bt_client_order_details
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="orderChannelId != null" >
+                `order_channel_id`,
+            </if>
+            <if test="clientOrderId != null" >
+                `client_order_id`,
+            </if>
+            <if test="orderNumber != null" >
+                `order_number`,
+            </if>
+            <if test="reservationId != null" >
+                `reservation_id`,
+            </if>
+            <if test="orderItemId != null" >
+                `order_item_id`,
+            </if>
+            <if test="sellerSku != null" >
+                `seller_sku`,
+            </if>
+            <if test="unitPrice != null" >
+                `unit_price`,
+            </if>
+            <if test="quantity != null" >
+                `quantity`,
+            </if>
+            <if test="status != null" >
+                `status`,
+            </if>
+            <if test="shippedDate != null" >
+                `shipped_date`,
+            </if>
+            <if test="trackingNumber != null" >
+                `tracking_number`,
+            </if>
+            <if test="shippingCarrier != null" >
+                `shipping_carrier`,
+            </if>
+            <if test="shippingClass != null" >
+                `shipping_class`,
+            </if>
+            <if test="cancelReason != null" >
+                `cancel_reason`,
+            </if>
+            <if test="refundFlg != null" >
+                `refund_flg`,
+            </if>
+            <if test="active != null" >
+                `active`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="orderChannelId != null" >
+                #{orderChannelId,jdbcType=VARCHAR},
+            </if>
+            <if test="clientOrderId != null" >
+                #{clientOrderId,jdbcType=VARCHAR},
+            </if>
+            <if test="orderNumber != null" >
+                #{orderNumber,jdbcType=BIGINT},
+            </if>
+            <if test="reservationId != null" >
+                #{reservationId,jdbcType=BIGINT},
+            </if>
+            <if test="orderItemId != null" >
+                #{orderItemId,jdbcType=VARCHAR},
+            </if>
+            <if test="sellerSku != null" >
+                #{sellerSku,jdbcType=VARCHAR},
+            </if>
+            <if test="unitPrice != null" >
+                #{unitPrice,jdbcType=DOUBLE},
+            </if>
+            <if test="quantity != null" >
+                #{quantity,jdbcType=INTEGER},
+            </if>
+            <if test="status != null" >
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="shippedDate != null" >
+                #{shippedDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="trackingNumber != null" >
+                #{trackingNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingCarrier != null" >
+                #{shippingCarrier,jdbcType=VARCHAR},
+            </if>
+            <if test="shippingClass != null" >
+                #{shippingClass,jdbcType=VARCHAR},
+            </if>
+            <if test="cancelReason != null" >
+                #{cancelReason,jdbcType=VARCHAR},
+            </if>
+            <if test="refundFlg != null" >
+                #{refundFlg,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>
