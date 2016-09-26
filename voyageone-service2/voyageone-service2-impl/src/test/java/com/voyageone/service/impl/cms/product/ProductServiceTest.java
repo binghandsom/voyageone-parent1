@@ -116,4 +116,9 @@ public class ProductServiceTest {
         System.out.println(JacksonUtil.bean2Json(productService.getWmsProductsInfo("017", "017-101500", null)));
     }
 
+    @Test
+    public void testGetProductByNumIid() throws Exception {
+        List<CmsBtProductModel> a = productService.getProductByNumIid("010", "527616787069", 23);
+        System.out.println(JacksonUtil.bean2Json(a));
+    }
 }
