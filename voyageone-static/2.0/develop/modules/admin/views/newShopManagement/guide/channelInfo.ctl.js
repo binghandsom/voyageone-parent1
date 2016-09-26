@@ -72,6 +72,7 @@ define([
                     self.resListCopy = res.data;
                     if (self.autoCopy == true) {
                         self.resList = res.data.channel;
+                        self.resList.orderChannelId = '';
                         self.resList.sessionKey = '';
                         self.resList.screctKey = '';
                         self.loadCart();
@@ -218,13 +219,13 @@ define([
             },
             config: function (type) {
                 var self = this;
-                self.validChannelId(function() {
+                self.validChannelId(function () {
                     var channelInfo = {
-                            'orderChannelId': self.resList.orderChannelId,
-                            'configType': type,
-                            'isReadOnly': true,
-                            'sourceData': self.resList
-                        };
+                        'orderChannelId': self.resList.orderChannelId,
+                        'configType': type,
+                        'isReadOnly': true,
+                        'sourceData': self.resList
+                    };
                     if (self.autoCopy != true) {
                         _.extend(self.resListCopy.channel, self.resList);
                     }
@@ -238,13 +239,13 @@ define([
                     if (res.data == true) {
                         self.alert('当前渠道&nbsp;&nbsp;' + self.resList.orderChannelId + '&nbsp;&nbsp;已存在，请重新输入！');
                     } else if (typeof callback === "function") {
-                    	callback();
+                        callback();
                     }
                 })
             },
             next: function () {
                 var self = this;
-                self.validChannelId(function() {
+                self.validChannelId(function () {
                     // 设置cartIds
                     var tempCartList = [];
                     _.forEach(self.cartList, function (item) {
@@ -287,6 +288,23 @@ define([
             _forEach(data.store, callback);
             _forEach(data.cartShop, callback, 'cartShopConfig');
             _forEach(data.cartTracking, callback);
+            var cartlists = channel.cartIds.split(',');
+            var cartShopCopy = angular.copy(data.cartShop);
+            var cartTrackingCopy = angular.copy(data.cartTracking);
+            data.cartShop = [];
+            data.cartTracking = [];
+            _.forEach(cartlists, function (c) {
+                _.map(cartShopCopy, function (d) {
+                    if (c - 0 == d.cartId) {
+                        data.cartShop.push(d);
+                    }
+                });
+                _.map(cartTrackingCopy, function (e) {
+                    if (c - 0 == e.cartId) {
+                        data.cartTracking.push(e);
+                    }
+                })
+            });
         }
 
         return GuideConfigController;

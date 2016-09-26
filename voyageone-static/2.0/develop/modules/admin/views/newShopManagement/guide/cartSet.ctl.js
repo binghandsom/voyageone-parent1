@@ -71,11 +71,15 @@ define([
                         'channelInfo': self.context.channel,
                         'orderChannelId': self.context.channel.orderChannelId
                     });
-                    return;
                 } else {
                     _.forEach(self.cartShopList, function (Info) {
                         if (Info.cartId == self.cartShopSelList.selList[0].id) {
-                            _.extend(Info, {'configType': type});
+                            _.extend(Info, {
+                                'configType': type,
+                                'isReadOnly': true,
+                                'sourceData': self.context.cartShop,
+                                'channelInfo': self.context.channel,
+                                'orderChannelId': self.context.channel.orderChannelId});
                             self.popups.openConfig(Info);
                         }
                     })
@@ -177,8 +181,7 @@ define([
                 );
             },
             forward: function () {
-                var self = this;
-                window.sessionStorage.setItem('valueBean', JSON.stringify(self.context));
+                window.sessionStorage.setItem('valueBean', JSON.stringify(this.context));
                 window.location.href = "#/newShop/guide/storeInfo";
             },
             next: function () {
