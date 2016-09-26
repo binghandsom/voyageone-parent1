@@ -867,7 +867,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
         List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
 
-        List<String> jmSkuNoList = skuList.stream().map(w->w.getStringAttribute("jmSkuNo")).collect(Collectors.toList());
+        List<String> jmSkuNoList = skuList.stream().filter(p -> !StringUtils.isEmpty(p.getStringAttribute("jmSkuNo")))
+                .map(w->w.getStringAttribute("jmSkuNo")).collect(Collectors.toList());
         dealInfo.setJumei_sku_no(Joiner.on(",").join(jmSkuNoList));
         htDealUpdateRequest.setUpdate_data(dealInfo);
         return htDealUpdateRequest;
@@ -1103,7 +1104,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         // edward 2016-07-11 时间从30分钟改成3分钟
         rightNow.add(Calendar.MINUTE, 3);
         deal.setEnd_time(rightNow.getTimeInMillis() / 1000);
-        List<String> skuCodeList = product.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
+        List<String> skuCodeList = product.getCommon().getSkus().stream().filter(p -> !StringUtils.isEmpty(p.getStringAttribute("skuCode")))
+                .map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
         String skuString = Joiner.on(",").join(skuCodeList);
         deal.setPartner_sku_nos(skuString);
         deal.setRebate_ratio("1");
