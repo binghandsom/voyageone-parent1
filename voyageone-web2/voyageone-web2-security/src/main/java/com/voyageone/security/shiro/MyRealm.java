@@ -132,6 +132,8 @@ public class MyRealm extends AuthorizingRealm {
 				}
 			}
 
+
+			//有重复的部分，待优化
 			Map queryMap =new HashMap<String, Object>();
 			queryMap.put("userId", userId);
 			queryMap.put("channelId", channelId);
