@@ -65,7 +65,36 @@ public class HtMallUpdateSkuForMallResponse extends BaseJMResponse {
             if ("0".equals(this.error_code)) {
                 this.setSuccess(true);
             } else {
-                this.setErrorMsg(body);
+                StringBuffer sbMsg = new StringBuffer("编辑商城的sku[MALL](/v1/htSku/updateSkuForMall)时,");
+                switch (this.error_code) {
+                    case "10002":
+                        sbMsg.append("client_id,client_key,sign 认证失败");
+                    case "100001":
+                        sbMsg.append("jumei_sku_no, 聚美sku_no错误");
+                    case "100002":
+                        sbMsg.append("status参数错误,只要设置了就只能是enabled或disabled");
+                    case "100003":
+                        sbMsg.append("businessman_num参数错误,只要设置了就不能为空");
+                    case "100004":
+                        sbMsg.append("customs_product_number参数错误,只要设置了就不能为空");
+                    case "100005":
+                        sbMsg.append("status,businessman_code,customs_product_number不能全部同时为空");
+                    case "100006":
+                        sbMsg.append("该sku无所属的spu");
+                    case "100007":
+                        sbMsg.append("该sku所属的spu无所属产品");
+                    case "100008":
+                        sbMsg.append("该jumei_sku_no不属于商家");
+                    case "100009":
+                        sbMsg.append("该sku没有商城详情数据");
+                    case "100010":
+                        sbMsg.append("没有售卖该sku");
+                    case "100011":
+                        sbMsg.append("businessman_code不能重复，必须唯一");
+                    default:
+                        sbMsg.append(map.get("reason").toString());
+                }
+                this.setErrorMsg(this.body + " " + sbMsg);
             }
             if (map.containsKey("reason")) {
                 this.setReason(map.get("reason").toString());

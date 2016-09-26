@@ -65,7 +65,20 @@ public class HtMallUpdateResponse extends BaseJMResponse {
             if ("0".equals(this.error_code)) {
                 this.setSuccess(true);
             } else {
-                this.setErrorMsg(body);
+                StringBuffer sbMsg = new StringBuffer("编辑商城属性[MALL](/v1/htMall/updateMallInfo)时,");
+                switch (this.error_code) {
+                    case "10002":
+                        sbMsg.append("client_id,client_key,sign 认证失败");
+                    case "120013":
+                        sbMsg.append("jumei_mall_id 参数错误");
+                    case "100002":
+                        sbMsg.append("mallInfo 格式错误");
+                    case "100003":
+                        sbMsg.append("mallInfo 有效字段至少一个");
+                    default:
+                        sbMsg.append(map.get("reason").toString());
+                }
+                this.setErrorMsg(this.body + " " + sbMsg);
             }
             if (map.containsKey("reason")) {
                 this.setReason(map.get("reason").toString());

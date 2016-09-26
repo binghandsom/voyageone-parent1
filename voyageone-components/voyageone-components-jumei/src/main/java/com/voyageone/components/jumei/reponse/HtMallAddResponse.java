@@ -1,6 +1,7 @@
 package com.voyageone.components.jumei.reponse;
 
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.common.util.UnicodeUtil;
 
 import java.io.IOException;
@@ -75,7 +76,7 @@ public class HtMallAddResponse extends BaseJMResponse {
             if (map.containsKey("reason")) {
                 this.setReason(map.get("reason").toString());
             }
-            if (map.containsKey("response")) {
+            if (map.containsKey("response") && !StringUtils.isEmpty(StringUtils.toString(map.get("response")))) {
                 LinkedHashMap<String, Object> mapSesponse = (LinkedHashMap<String, Object>)map.get("response");
                 if (mapSesponse.containsKey("jumei_mall_id")) {
                     this.setJumeiMallId(mapSesponse.get("jumei_mall_id").toString());
@@ -84,7 +85,20 @@ public class HtMallAddResponse extends BaseJMResponse {
             if ("0".equals(this.error_code)) {
                 this.setSuccess(true);
             } else {
-                this.setErrorMsg(this.body);
+                StringBuffer sbMsg = new StringBuffer("特卖商品绑定到商城[MALL](/v1/htProduct/dealToMall)时,");
+                switch (this.error_code) {
+                    case "10002":
+                        sbMsg.append("client_id,client_key,sign 认证失败");
+                    case "120014":
+                        sbMsg.append("jumei_hash_id 参数错误");
+                    case "100001":
+                        sbMsg.append("skuInfo 参数错误");
+                    case "100002":
+                        sbMsg.append("mallInfo 参数错误");
+                    default:
+                        sbMsg.append(map.get("reason").toString());
+                }
+                this.setErrorMsg(this.body + " " + sbMsg);
             }
         } catch (Exception ex) {
             logger.error("setBody ",ex);
