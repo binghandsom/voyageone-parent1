@@ -24,8 +24,8 @@ class AccessTokenInterceptor {
 
     boolean preHandle(HttpServletRequest request) throws Exception {
 
-        // TODO 开发阶段跳过检查
-        if (true) return true;
+//        // TODO 开发阶段跳过检查
+//        if (true) return true;
 
         OAuthAccessResourceRequest oauthRequest;
 
