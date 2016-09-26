@@ -147,7 +147,7 @@ public class TargetDailyService extends BaseTaskService {
             content.append("VoyageOne Auto Report");
             List<String> files = new ArrayList<>();
             files.add(outPath + fileName);
-            Mail.sendAlert("TARGET_DAILY", "Daily OffLine Report" + DateTimeUtil.getLocalTime(-6, "YYYY-MM-dd HH:mm:ss"), content.toString(), files, false);
+            Mail.sendReport("TARGET_DAILY", "Daily OffLine Report" + DateTimeUtil.getLocalTime(-6, "YYYY-MM-dd HH:mm:ss"), content.toString(), files);
         } catch (Exception e) {
             e.printStackTrace();
         }
