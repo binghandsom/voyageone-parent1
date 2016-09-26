@@ -4,11 +4,8 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
@@ -23,9 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-
-import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
-import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA;
 
 /**
  * 高级检索业务的批量更新
@@ -88,21 +82,25 @@ public class CmsBacthUpdateTask extends VOAbsLoggable {
             }
         }
 
-        CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, PRICE_CALCULATOR);
-        if (priceCalculatorConfig != null) {
-            String priceCalculator = StringUtils.trimToNull(priceCalculatorConfig.getConfigValue1());
-            if (priceCalculator != null && priceCalculator.equals(PRICE_CALCULATOR_FORMULA)) {
-                // 使用价格公式，不变更指导价
-
-            }
-        }
-
         String msgTxt = msg;
         boolean isUpdFlg = false;
+        JongoUpdate updObj = new JongoUpdate();
+        WriteResult rs = null;
+
         for (String prodCode : codeList) {
             try {
                 CmsBtProductModel newProduct = productService.getProductByCode(channelId, prodCode);
-                priceService.setPrice(newProduct, synPriceFlg);
+                String oldHsCode = StringUtils.trimToNull((String) newProduct.getCommonNotNull().getFieldsNotNull().get(propId));
+
+                updObj.setQuery("{'common.fields.code':#}");
+                updObj.setQueryParameters(prodCode);
+                updObj.setUpdate("{$set:{'common.fields." + propId + "':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}");
+                updObj.setUpdateParameters(propValue, userName, DateTimeUtil.getNow());
+                rs = productService.updateFirstProduct(updObj, channelId);
+                $debug("高级检索 批量更新 更新税号结果 " + rs.toString());
+
+                // 重新计算并保存价格
+                priceService.setPrice(newProduct, synPriceFlg || oldHsCode == null);
                 newProduct.getPlatforms().forEach((s, platform) -> {
                     if (platform.getCartId() != 0) {
                         productService.updateProductPlatform(channelId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.BatchUpdate, msgTxt);
@@ -112,12 +110,6 @@ public class CmsBacthUpdateTask extends VOAbsLoggable {
                 // 确认指导价变更
                 List<Integer> cartList = newProduct.getCartIdList();
                 for (Integer cartVal : cartList) {
-                    TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53_A, channelId, cartVal.toString());
-                    if (cartObj == null) {
-                        $error("该商品的平台数据错误 code=%s, channelid=%s, cartid=%d", prodCode, channelId, cartVal);
-                        continue;
-                    }
-
                     isUpdFlg = false;
                     List<BaseMongoMap<String, Object>> skuList = newProduct.getPlatform(cartVal).getSkus();
                     for (BaseMongoMap skuObj : skuList) {
@@ -133,15 +125,14 @@ public class CmsBacthUpdateTask extends VOAbsLoggable {
 
                     // 更新产品的信息
                     if (isUpdFlg) {
-                        JongoUpdate updObj = new JongoUpdate();
                         updObj.setQuery("{'common.fields.code':#}");
                         updObj.setQueryParameters(prodCode);
                         updObj.setUpdate("{$set:{'platforms.P" + cartVal + ".skus':#,'modified':#,'modifier':#}}");
                         updObj.setUpdateParameters(skuList, DateTimeUtil.getNowTimeStamp(), userName);
 
-                        WriteResult rs = productService.updateFirstProduct(updObj, channelId);
+                        rs = productService.updateFirstProduct(updObj, channelId);
                         if (rs != null) {
-                            $debug("指导价变更批量确认 code=%s, channelId=%s 执行结果=%s", prodCode, channelId, rs.toString());
+                            $debug("高级检索 批量更新 指导价变更批量确认 code=%s, channelId=%s 执行结果=%s", prodCode, channelId, rs.toString());
                         }
                     }
                 }

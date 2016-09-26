@@ -11,6 +11,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -24,6 +25,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.MongoSequenceService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtPlatformActiveLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -59,12 +61,13 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
     private final JdSaleService jdSaleService;
     private final JumeiSaleService jmSaleService;
     private final MongoSequenceService sequenceService;
+    private final SxProductService sxProductService;
 
     @Autowired
     public CmsPlatformActiveLogService(CmsBtProductGroupDao cmsBtProductGroupDao, JumeiSaleService jmSaleService,
                                        TbSaleService tbSaleService, JdSaleService jdSaleService,
                                        MongoSequenceService sequenceService, CmsBtPlatformActiveLogDao platformActiveLogDao,
-                                       CmsBtProductDao cmsBtProductDao) {
+                                       CmsBtProductDao cmsBtProductDao, SxProductService sxProductService) {
         this.cmsBtProductGroupDao = cmsBtProductGroupDao;
         this.jmSaleService = jmSaleService;
         this.tbSaleService = tbSaleService;
@@ -72,6 +75,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         this.sequenceService = sequenceService;
         this.platformActiveLogDao = platformActiveLogDao;
         this.cmsBtProductDao = cmsBtProductDao;
+        this.sxProductService = sxProductService;
     }
 
     @Override
@@ -105,7 +109,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             // 取得group信息
             queryObj.setQuery("{'productCodes':{$in:#},'cartId':#}");
             queryObj.setParameters(codeList, cartId);
-            queryObj.setProjectionExt("mainProductCode", "productCodes", "groupId", "numIId");
+            queryObj.setProjectionExt("mainProductCode", "productCodes", "groupId", "numIId", "platformMallId");
             List<CmsBtProductGroupModel> grpObjList = cmsBtProductGroupDao.select(queryObj, channelId);
             if (grpObjList == null || grpObjList.isEmpty()) {
                 $error("CmsPlatformActiceLogService 产品对应的group不存在 cartId=%d, channelId=%s, codes=%s", cartId, channelId, codeList.toString());
@@ -129,7 +133,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     model.setGroupId(grpObj.getGroupId());
                     model.setMainProdCode(grpObj.getMainProductCode());
                     model.setProdCode(pCode);
-                    model.setNumIId(grpObj.getNumIId());
+                    model.setNumIId(CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? grpObj.getPlatformMallId() : grpObj.getNumIId());
                     model.setResult("0");
                     model.setCreater(userName);
                     model.setCreated(DateTimeUtil.getNow());
@@ -188,14 +192,14 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     // 取得商品信息
                     queryObj.setQuery("{'common.fields.code':#}");
                     queryObj.setParameters(actLogObj.getProdCode());
-                    queryObj.setProjectionExt("lock", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode");
+                    queryObj.setProjectionExt("lock", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".pPlatformMallId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".pStatus", "platforms.P" + cartId + ".mainProductCode");
                     CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
                     if (prodObj == null) {
                         $warn("CmsPlatformActiceLogService 找不到商品code cartId=%d", cartId);
                         failedComment = "商品不存在";
                     } else {
                         String mainCode = StringUtils.trimToNull(prodObj.getPlatformNotNull(cartId).getMainProductCode());
-                        long numIId = NumberUtils.toLong(prodObj.getPlatformNotNull(cartId).getpNumIId());
+                        long numIId = NumberUtils.toLong(CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? prodObj.getPlatformNotNull(cartId).getpPlatformMallId() : prodObj.getPlatformNotNull(cartId).getpNumIId());
 
                         if (numIId == 0) {
                             $warn("CmsPlatformActiceLogService numIId错误 channelId=%s, code=%s", channelId, prodCode);
@@ -260,29 +264,37 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
 
                 if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())) {
                     // 天猫国际上下架
-                    if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
-                        // 上架
-                        ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId);
-                        if (response == null) {
-                            errMsg = "调用淘宝商品上架API失败";
-                        } else {
-                            if (StringUtils.isEmpty(response.getErrorCode())) {
-                                updRsFlg = true;
+                    if (CartEnums.Cart.CN.getValue() == cartId) {
+                        // 如果是独立官网，不调用API
+                        updRsFlg = true;
+                        // 开始记入SxWorkLoad表
+                        $debug("CmsPlatformActiceLogService 开始记入SxWorkLoad表");
+                        sxProductService.insertSxWorkLoad(channelId, pcdList, cartId, userName);
+                    } else {
+                        if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
+                            // 上架
+                            ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId);
+                            if (response == null) {
+                                errMsg = "调用淘宝商品上架API失败";
                             } else {
-                                errMsg = response.getBody();
+                                if (StringUtils.isEmpty(response.getErrorCode())) {
+                                    updRsFlg = true;
+                                } else {
+                                    errMsg = response.getBody();
+                                }
                             }
-                        }
 
-                    } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
-                        // 下架
-                        ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shopProp, numIId);
-                        if (response == null) {
-                            errMsg = "调用淘宝商品下架API失败";
-                        } else {
-                            if (StringUtils.isEmpty(response.getErrorCode())) {
-                                updRsFlg = true;
+                        } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
+                            // 下架
+                            ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shopProp, numIId);
+                            if (response == null) {
+                                errMsg = "调用淘宝商品下架API失败";
                             } else {
-                                errMsg = response.getBody();
+                                if (StringUtils.isEmpty(response.getErrorCode())) {
+                                    updRsFlg = true;
+                                } else {
+                                    errMsg = response.getBody();
+                                }
                             }
                         }
                     }

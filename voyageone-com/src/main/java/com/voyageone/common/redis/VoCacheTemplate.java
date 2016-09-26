@@ -12,6 +12,10 @@ public class VoCacheTemplate<K,V> extends RedisTemplate<K,V>{
 
     private boolean local = false;
 
+    public boolean isLocal() {
+        return local;
+    }
+
     public void setLocal(boolean local) {
         this.local = local;
     }

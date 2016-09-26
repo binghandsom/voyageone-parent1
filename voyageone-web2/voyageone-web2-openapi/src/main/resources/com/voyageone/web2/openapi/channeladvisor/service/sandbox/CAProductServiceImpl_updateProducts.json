@@ -1,0 +1,49 @@
+[
+  {
+    "SellerSKU": "REBEL X-WING",
+    "BuyableProductResults": [
+      {
+        "RequestResult": "Success",
+        "SellerSKU": "REBEL X-WING",
+        "MarketPlaceItemID": "REBEL X-WING",
+        "URL": "http://your-url.com/products/REBEL X-WING",
+        "Errors": null
+      }
+    ],
+    "Errors": null
+  },
+  {
+    "SellerSKU": "LIGHTSABER",
+    "BuyableProductResults": [
+      {
+        "RequestResult": "Success",
+        "SellerSKU": "LIGHTSABER_RED_MED",
+        "MarketPlaceItemID": "LIGHTSABER_RED_MED",
+        "URL": "http://your-url.com/products/LIGHTSABER_RED_MED",
+        "Errors": null
+      },
+      {
+        "RequestResult": "Success",
+        "SellerSKU": "LIGHTSABER_RED_LG",
+        "MarketPlaceItemID": "LIGHTSABER_RED_LG",
+        "URL": "http://your-url.com/products/LIGHTSABER_RED_LG",
+        "Errors": null
+      },
+      {
+        "RequestResult": "Success",
+        "SellerSKU": "LIGHTSABER_BLUE_MED",
+        "MarketPlaceItemID": "LIGHTSABER_BLUE_MED",
+        "URL": "http://your-url.com/products/LIGHTSABER_BLUE_MED",
+        "Errors": null
+      },
+      {
+        "RequestResult": "Success",
+        "SellerSKU": "LIGHTSABER_BLUE_LG",
+        "MarketPlaceItemID": "LIGHTSABER_BLUE_LG",
+        "URL": "http://your-url.com/products/LIGHTSABER_BLUE_LG",
+        "Errors": null
+      }
+    ],
+    "Errors": null
+  }
+]

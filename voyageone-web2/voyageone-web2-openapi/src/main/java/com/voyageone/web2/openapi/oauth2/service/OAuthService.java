@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class OAuthService {
 
+    private ThreadLocal<ComOpenApiClientModel> currentThreadClientModel = new ThreadLocal<>();
+
     private static final String CACHE_BIZ_NAME = "AccessToken";
 
     @Autowired
@@ -68,4 +70,21 @@ public class OAuthService {
         return clientDao.selectByClientSecret(clientId, clientSecret);
     }
 
+    public ComOpenApiClientModel getClientSecretAndSetCurrentThread(String clientId, String clientSecret) {
+        return clientDao.selectByClientSecret(clientId, clientSecret);
+    }
+
+    public ComOpenApiClientModel getClientSecretId(String clientId) {
+        return clientDao.selectByClientId(clientId);
+    }
+
+    public ComOpenApiClientModel getCurrentThreadClientModel() {
+        return currentThreadClientModel.get();
+    }
+
+    public void setCurrentThreadClientModel(ComOpenApiClientModel model) {
+        if (model != null) {
+            currentThreadClientModel.set(model);
+        }
+    }
 }
