@@ -1543,7 +1543,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 "\"platforms.P"+ CART_ID +".pStatus\": #," +
                 "\"platforms.P"+ CART_ID +".pReallyStatus\": #" +
                 "}}");
-        updateProductQuery.setUpdateParameters(mallId);
+        updateProductQuery.setUpdateParameters(mallId, CmsConstants.PlatformStatus.OnSale, CmsConstants.PlatformStatus.OnSale);
 
         cmsBtProductDao.updateFirst(updateProductQuery, channelId);
 
@@ -1556,7 +1556,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 "\"platformMallId\": #," +
                 "\"platformStatus\": #" +
                 "}}");
-        updateGroupQuery.setUpdateParameters(mallId);
+        updateGroupQuery.setUpdateParameters(mallId, CmsConstants.PlatformStatus.OnSale);
 
         cmsBtProductGroupDao.updateFirst(updateGroupQuery, channelId);
     }
