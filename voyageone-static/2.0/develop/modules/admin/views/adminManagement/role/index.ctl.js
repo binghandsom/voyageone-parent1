@@ -180,13 +180,22 @@ define([
                         roleIds: [],
                         form: {
                             'roleName': self.searchInfo.roleName,
-                            'roleType': self.searchInfo.roleType,
-                            'active': self.searchInfo.active,
+                            'roleType': self.searchInfo.roleType - 0,
+                            'active': self.searchInfo.active - 0,
                             'channelId': self.searchInfo.channelId,
-                            'storeId': self.searchInfo.storeId,
+                            'storeId': self.searchInfo.storeId - 0,
                             'application': self.searchInfo.application
                         }
                     };
+                    if (configInfo.form.roleType == 0) {
+                        delete configInfo.form.roleType;
+                    }
+                    if (configInfo.form.active == 0) {
+                        delete configInfo.form.active;
+                    }
+                    if (configInfo.form.storeId == 0) {
+                        delete configInfo.form.storeId;
+                    }
                     self.popups.openRoleEdit(configInfo).then(function (res) {
                         console.log(res)
                     });
