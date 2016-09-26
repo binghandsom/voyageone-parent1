@@ -1428,9 +1428,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 if (!StringUtils.isEmpty(mallId)) {
                     // add成功并生成了mallId,只是有别的错误，也回写mallId
                     updateMallId(product, mallId);
+                } else {
+                    // 上传失败
+                    throw new BusinessException("添加商品到聚美商城失败!" + sb.toString());
                 }
-                // 上传失败
-                throw new BusinessException("添加商品到聚美商城失败!" + sb.toString());
             } else {
                 // 成功，回写mallId
                 updateMallId(product, mallId);
