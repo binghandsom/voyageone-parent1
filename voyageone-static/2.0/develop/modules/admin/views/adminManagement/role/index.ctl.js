@@ -176,14 +176,20 @@ define([
                     return;
                 }
                 if (self._selall == true) {
-                    var configInfo = {}, data = angular.copy(self.searchInfo);
-                    if (data.active == '' && data.application == '' && data.channelId == '' && data.roleName == '' && data.roleType == '' && data.storeId == '') {
-                        self.alert('请至少输入一条搜索条件！');
-                        return;
-                    }
-                    delete data.pageInfo;
-                    configInfo = data;
-                    _.extend(configInfo, {_selall: true});
+                    var configInfo = {
+                        roleIds: [],
+                        form: {
+                            'roleName': self.searchInfo.roleName,
+                            'roleType': self.searchInfo.roleType,
+                            'active': self.searchInfo.active,
+                            'channelId': self.searchInfo.channelId,
+                            'storeId': self.searchInfo.storeId,
+                            'application': self.searchInfo.application
+                        }
+                    };
+                    self.popups.openRoleEdit(configInfo).then(function (res) {
+                        console.log(res)
+                    });
                 } else {
                     var configInfo = {roleIds: [], applications: []}, setInfo = [];
                     _.forEach(self.adminRoleList, function (Info) {

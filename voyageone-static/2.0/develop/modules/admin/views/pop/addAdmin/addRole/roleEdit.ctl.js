@@ -27,13 +27,10 @@ define([
         }
 
         RoleEditController.prototype = {
-            init: function (app) {
+            init: function () {
                 var self = this;
-                var getInfo = self.sourceData._selall == true ? self.sourceData : {
-                    'roleIds': self.sourceData.roleIds,
-                    'application': app ? app : (self.sourceData.application ? self.sourceData.application : "admin")
-                };
-                self.adminRoleService.getAuthByRoles({getInfo}).then(function (res) {
+                var getInfo =  self.sourceData;
+                self.adminRoleService.getAuthByRoles(getInfo).then(function (res) {
                     self.resList = res.data.res;
                     self.permsStatus = res.data.perms;
                     _.forEach(self.applicationList, function (item) {
