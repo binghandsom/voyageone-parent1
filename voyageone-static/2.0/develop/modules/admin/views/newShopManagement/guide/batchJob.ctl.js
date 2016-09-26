@@ -105,7 +105,7 @@ define([
                         _.forEach(delList, function (item) {
                                 var source = self.taskList;
                                 var data = _.find(source, function (sItem) {
-                                    return sItem.taskName == item;
+                                    return sItem.taskName === item;
                                 });
                                 if (source.indexOf(data) > -1) {
                                     source.splice(source.indexOf(data), 1);
