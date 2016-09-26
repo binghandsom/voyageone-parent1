@@ -796,7 +796,7 @@ public class PriceService extends BaseService {
     /**
      * 更新商品SKU的价格 （非天猫平台暂不实现）
      * 需要查询 voyageone_ims.ims_bt_product表，若对应的产品quantity_update_type为s：更新sku价格；为p：则更新商品价格(用最高一个sku的价格)
-     * CmsBtProductModel中需要属性：common.fields.code, platforms.Pxx.pNumIId, platforms.Pxx.status, platforms.Pxx.skus.skuCode, platforms.Pxx.skus.priceSale,
+     * CmsBtProductModel中需要属性：common.fields.code, platforms.Pxx.pNumIId, platforms.Pxx.status, platforms.Pxx.skus.skuCode, platforms.Pxx.skus.priceSale,platforms.Pxx.skus.priceMsrp
      */
     public void updateSkuPrice(String channleId, int cartId, CmsBtProductModel productModel) {
         logger.info("PriceService　更新商品SKU的价格 ");
@@ -842,12 +842,25 @@ public class PriceService extends BaseService {
                 throw new BusinessException("产品数据不全,未配置ims_bt_product表quantity_update_type！");
             }
 
+            // 判断上新时销售价用的是建议售价还是最终售价
+            CmsChannelConfigBean priceConfig = CmsChannelConfigs.getConfigBean(channleId, CmsConstants.ChannelConfig.PRICE, cartId + CmsConstants.ChannelConfig.PRICE_SX_PRICE);
+            String priceConfigValue = null;
+            if (priceConfig != null) {
+                // 取得价格对应的configValue名
+                priceConfigValue = org.apache.commons.lang3.StringUtils.trimToNull(priceConfig.getConfigValue1());
+            }
+
             Double maxPrice = null;
             List<UpdateSkuPrice> list2 = new ArrayList<>(skuList.size());
             for (BaseMongoMap skuObj : skuList) {
                 UpdateSkuPrice obj3 = new UpdateSkuPrice();
                 obj3.setOuterId((String) skuObj.get("skuCode"));
-                Double priceSale = skuObj.getDoubleAttribute("priceSale");
+                Double priceSale = null;
+                if (priceConfigValue == null) {
+                    priceSale = skuObj.getDoubleAttribute("priceSale");
+                } else {
+                    priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+                }
                 if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
                     maxPrice = priceSale;
                 }
