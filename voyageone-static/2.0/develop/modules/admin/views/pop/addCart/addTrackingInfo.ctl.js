@@ -40,9 +40,15 @@ define([
                         self.channelAllList = res.data;
                     });
                 }
-                self.AdminCartService.getAllCart(null).then(function (res) {
-                    self.cartAllList = res.data;
-                });
+                if (self.sourceData.isReadOnly == true) {
+                    self.AdminCartService.getCartByIds({'cartIds': self.sourceData.sourceData.cartIds}).then(function (res) {
+                        self.cartAllList = res.data;
+                    });
+                } else {
+                    self.AdminCartService.getAllCart(null).then(function (res) {
+                        self.cartAllList = res.data;
+                    });
+                }
             },
             cancel: function () {
                 this.$uibModalInstance.close();

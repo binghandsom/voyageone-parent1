@@ -181,8 +181,7 @@ define([
                 );
             },
             forward: function () {
-                var self = this;
-                window.sessionStorage.setItem('valueBean', JSON.stringify(self.context));
+                window.sessionStorage.setItem('valueBean', JSON.stringify(this.context));
                 window.location.href = "#/newShop/guide/storeInfo";
             },
             next: function () {

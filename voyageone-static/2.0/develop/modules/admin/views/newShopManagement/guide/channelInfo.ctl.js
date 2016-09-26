@@ -290,14 +290,21 @@ define([
             _forEach(data.cartTracking, callback);
             var cartlists = channel.cartIds.split(',');
             var cartShopCopy = angular.copy(data.cartShop);
+            var cartTrackingCopy = angular.copy(data.cartTracking);
             data.cartShop = [];
+            data.cartTracking = [];
             _.forEach(cartlists, function (c) {
                 _.map(cartShopCopy, function (d) {
                     if (c - 0 == d.cartId) {
                         data.cartShop.push(d);
                     }
+                });
+                _.map(cartTrackingCopy, function (e) {
+                    if (c - 0 == e.cartId) {
+                        data.cartTracking.push(e);
+                    }
                 })
-            })
+            });
         }
 
         return GuideConfigController;
