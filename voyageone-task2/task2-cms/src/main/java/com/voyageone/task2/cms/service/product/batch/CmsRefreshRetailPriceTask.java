@@ -1,7 +1,6 @@
 package com.voyageone.task2.cms.service.product.batch;
 
 import com.mongodb.WriteResult;
-import com.taobao.api.ApiException;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -148,22 +147,22 @@ public class CmsRefreshRetailPriceTask extends VOAbsLoggable {
                     cmsBtPriceLogModel.setModified(new Date());
                     cmsBtPriceLogModel.setModifier(userName);
                     logModelList.add(cmsBtPriceLogModel);
-
-                    // 只有最终售价变化了，才需要上新
-                    if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
-                        // 最终售价被自动同步
-                        if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
-                            // 天猫平台直接调用API
-                            try {
-                                tbItemService.updateSkuPrice(shopObj, prodObj.getPlatform(cartId).getpNumIId(), Double.toString(skuObj.getDoubleAttribute("priceSale")));
-                            } catch (ApiException e) {
-                                $error(String.format("调用天猫API失败 channelId=%s, cartId=%s msg=%s", channleId, cartId.toString(), e.getMessage()), e);
-                            }
-                        }
-                    }
                 }
                 int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(logModelList);
                 $debug("CmsRefreshRetailPriceTask修改商品价格 记入价格变更履历结束 结果=" + cnt);
+
+                // 只有最终售价变化了，才需要上新
+                if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
+                    // 最终售价被自动同步
+                    if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
+                        // 天猫平台直接调用API
+                        try {
+                            priceService.updateSkuPrice(channleId, cartId, prodObj);
+                        } catch (Exception e) {
+                            $error(String.format("CmsRefreshRetailPriceTask修改商品价格 调用天猫API失败 channelId=%s, cartId=%d msg=%s", channleId, cartId, e.getMessage()), e);
+                        }
+                    }
+                }
             }
 
             // 记录商品修改历史

@@ -2,7 +2,6 @@ package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
-import com.taobao.api.ApiException;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -20,12 +19,12 @@ import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.cache.CommCacheService;
@@ -86,7 +85,7 @@ public class CmsFieldEditService extends BaseViewService {
     @Autowired
     private CommCacheService commCacheService;
     @Autowired
-    private TbItemService tbItemService;
+    private PriceService priceService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -935,15 +934,13 @@ public class CmsFieldEditService extends BaseViewService {
                 cmsBtPriceLogModel.setModified(new Date());
                 cmsBtPriceLogModel.setModifier(userInfo.getUserName());
                 priceLogList.add(cmsBtPriceLogModel);
+            }
 
-                if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id()) && CmsConstants.ProductStatus.Approved.name().equals(prodObj.getPlatform(cartId).getStatus())) {
-                    // 是天猫平台时直接调用API更新sku价格(要求已上新)
-                    try {
-                        tbItemService.updateSkuPrice(shopObj, prodObj.getPlatform(cartId).getpNumIId(), rs.toString());
-                    } catch (ApiException e) {
-                        $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
-                    }
-                }
+            // 是天猫平台时直接调用API更新sku价格(要求已上新)
+            try {
+                priceService.updateSkuPrice(userInfo.getSelChannelId(), cartId, prodObj);
+            } catch (Exception e) {
+                $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
             }
 
             // 更新产品的信息
