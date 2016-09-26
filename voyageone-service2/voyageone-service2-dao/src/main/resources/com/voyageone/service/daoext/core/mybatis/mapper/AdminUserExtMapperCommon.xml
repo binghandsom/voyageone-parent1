@@ -55,8 +55,8 @@
         (SELECT * FROM
         (SELECT cr.*, channel_id , store_id, GROUP_CONCAT( DISTINCT cre.application) as application  from com_role cr LEFT JOIN
         (SELECT t.id, t.role_name, t.role_type, t.active,t.modified,t.modifier, t.description,
-        MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE 0 END ) channel_id,
-        MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE 0 END ) store_id
+        MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE NULL END ) channel_id,
+        MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE NULL END ) store_id
         FROM
         (select r.id, r.role_name,r.role_type, r.description, r.active, r.modified, r.modifier , rc.cfg_name, GROUP_CONCAT( DISTINCT rc.cfg_val1) as cfg_val1
         from com_role r, com_role_config rc , Synship.wms_mt_store st, Synship.tm_order_channel ch
@@ -91,8 +91,8 @@
         (SELECT * FROM
         (SELECT cr.*, channel_id , store_id, GROUP_CONCAT( DISTINCT cre.application) as application  from com_role cr LEFT JOIN
         (SELECT t.id, t.role_name, t.role_type, t.active,t.modified,t.modifier, t.description,
-        MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE 0 END ) channel_id,
-        MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE 0 END ) store_id
+        MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE NULL END ) channel_id,
+        MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE NULL END ) store_id
         FROM
         (select r.id, r.role_name,r.role_type, r.description, r.active, r.modified, r.modifier , rc.cfg_name, GROUP_CONCAT( DISTINCT rc.cfg_val1) as cfg_val1
         from com_role r, com_role_config rc , Synship.wms_mt_store st, Synship.tm_order_channel ch
