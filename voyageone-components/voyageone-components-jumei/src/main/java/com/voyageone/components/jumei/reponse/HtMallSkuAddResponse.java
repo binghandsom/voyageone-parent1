@@ -1,10 +1,10 @@
 package com.voyageone.components.jumei.reponse;
 
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.common.util.UnicodeUtil;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -81,7 +81,7 @@ public class HtMallSkuAddResponse extends BaseJMResponse {
                 this.setReason(map.get("reason").toString());
             }
             if (map.containsKey("response")) {
-                Map<String, Object> mapSesponse = JacksonUtil.jsonToMap(StringUtils.toString(map.get("response")));
+                LinkedHashMap<String, Object> mapSesponse = (LinkedHashMap<String, Object>)map.get("response");
                 if (mapSesponse.containsKey("jumei_sku_no")) {
                     this.setJumeiSkuNo(mapSesponse.get("jumei_sku_no").toString());
                 }
@@ -89,7 +89,7 @@ public class HtMallSkuAddResponse extends BaseJMResponse {
         } catch (Exception ex) {
             logger.error("setBody ",ex);
             this.setSuccess(false);
-            this.setErrorMsg("返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
+            this.setErrorMsg("HtMallSkuAddResponse 返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
         }
     }
 

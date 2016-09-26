@@ -73,7 +73,7 @@ public class HtMallStatusUpdateBatchResponse extends BaseJMResponse {
         } catch (Exception ex) {
             logger.error("setBody ",ex);
             this.setSuccess(false);
-            this.setErrorMsg("返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
+            this.setErrorMsg("HtMallStatusUpdateBatchResponse 返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
         }
     }
 

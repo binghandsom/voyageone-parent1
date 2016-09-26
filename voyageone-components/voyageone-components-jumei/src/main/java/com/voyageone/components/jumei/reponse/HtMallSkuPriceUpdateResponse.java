@@ -73,7 +73,7 @@ public class HtMallSkuPriceUpdateResponse extends BaseJMResponse {
         } catch (Exception ex) {
             logger.error("setBody ",ex);
             this.setSuccess(false);
-            this.setErrorMsg("返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
+            this.setErrorMsg("HtMallSkuPriceUpdateResponse 返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
         }
     }
 
