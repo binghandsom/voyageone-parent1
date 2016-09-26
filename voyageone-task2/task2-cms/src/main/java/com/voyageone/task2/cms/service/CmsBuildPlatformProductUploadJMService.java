@@ -745,9 +745,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
             saveWorkload(work, WORK_LOAD_SUCCESS);
 
-//            // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
-//            sxProductService.clearBusinessLog(sxData, getTaskName());
-
             $info("保存workload成功！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
 
         }
@@ -784,9 +781,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             }
             // 上新失败后回写product表pPublishError的值("Error")和pPublishMessage(上新错误信息)
             productGroupService.updateUploadErrorStatus(sxData.getPlatform(), sxData.getErrorMessage());
-
-//            // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
-//            sxProductService.clearBusinessLog(sxData, getTaskName());
 
             // 插入错误消息
             sxProductService.insertBusinessLog(sxData, getTaskName());
@@ -1556,7 +1550,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 updateErrSpuUpcCode(shop, spu.getSpu_no(), spu.getUpc_code());
 
                 // 将聚美SKU状态（最新Deal）改为隐藏(is_enable=0)
-                updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), 0);
+                updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
             } else if (isNotSaleBusinessmanCode(spu, jmSkus)) {
                 // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中存在对应的SkuCode,但isSale=false(不在该平台卖了)
                 // 只下架该sku，不修改商家商品编码(skuCode)和聚美SKU商家商品编码(skuCode)
@@ -1564,11 +1558,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 String stockSyncResponse = updateStockNum(shop, spu.getBusinessman_code(), "0");
                 $info("[skuCode:%s]同步库存:%s", spu.getBusinessman_code(), stockSyncResponse);
 
-                // 将聚美SKU状态（最新Deal）改为隐藏(is_enable=0)
-                updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), 0);
+                // 将聚美SKU状态（最新Deal）改为隐藏(is_enable="0")
+                updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
             } else {
-                // 将聚美SKU状态（最新Deal）改为显示(is_enable=1)  // 每个正常的都改一下显示太花时间了，这次先注掉，好像没有取得isEnable的API
-//                updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), 1);
+                // 将聚美SKU状态（最新Deal）改为显示(is_enable="1")  // 每个正常的都改一下显示太花时间了，这次先注掉，好像没有取得isEnable的API
+//                updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "1");
             }
         }
     }
@@ -1653,9 +1647,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
      * 修改聚美上下架Deal关联的Sku(上下架)
      * 聚美平台上商品如果只剩下一个skuCode,下架时会报异常（每个商品至少要有一个sku），这里直接抛出异常，另外处理
      */
-    protected void updateSkuIsEnableDeal(ShopBean shop, String jumeiHashId, String jumeiSkuNo, int isEnable) throws Exception {
+    protected void updateSkuIsEnableDeal(ShopBean shop, String jumeiHashId, String jumeiSkuNo, String isEnable) throws Exception {
 
-        if (isEnable != 0 && isEnable != 1) {
+        if (!"0".equals(isEnable) && !"1".equals(isEnable)) {
             String errMsg = String.format("聚美上下架Deal关联的Sku方法(updateSkuIsEnableDeal)的isEnable(0/1)参数不对 [isEnable:%s]", isEnable);
             $error(errMsg);
             throw new BusinessException(errMsg);
@@ -1670,6 +1664,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             HtDealUpdateSkuIsEnableResponse response = jumeiHtDealService.updateSkuIsEnable(shop, request);
             if (response != null) {
                 $info("聚美上新修改聚美Deal关联的Sku上下架 " + response.getBody());
+                if (!response.is_Success()) {
+                    // 100013  : is_enable参数和数据库中参数一致，没有发生改变  <-这个不算异常
+                    if (!StringUtils.isEmpty(response.getError_code())
+                            && !"100013".equals(response.getError_code())) {
+                        throw new BusinessException("聚美上新修改聚美Deal关联的Sku上下架失败! msg=%s", response.getErrorMsg());
+                    }
+                }
             }
         } catch (Exception e) {
             $error(String.format("聚美上新修改聚美Deal关联的Sku上下架 调用聚美API失败 channelId=%s, " +
@@ -1720,7 +1721,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         if (!oldSkuCode.startsWith("ERROR_")) {
             htSkuUpdateRequest.setBusinessman_num("ERROR_" + oldSkuCode);
         } else {
-            htSkuUpdateRequest.setBusinessman_num(oldSkuCode);
+            return;
+//            htSkuUpdateRequest.setBusinessman_num(oldSkuCode);
         }
 
         htSkuUpdateRequest.setCustoms_product_number(" ");
@@ -1749,7 +1751,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         if (!oldUpcCode.startsWith("ERROR_")) {
             htSpuUpdateRequest.setUpc_code("ERROR_" + oldUpcCode);
         } else {
-            htSpuUpdateRequest.setUpc_code(oldUpcCode);
+            return;
+//            htSpuUpdateRequest.setUpc_code(oldUpcCode);
         }
 
         try {
