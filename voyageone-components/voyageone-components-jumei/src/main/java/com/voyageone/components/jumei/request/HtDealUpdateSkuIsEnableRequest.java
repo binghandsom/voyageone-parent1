@@ -12,7 +12,7 @@ public class HtDealUpdateSkuIsEnableRequest implements BaseJMRequest {
 
     private String jumei_hash_id;  // 聚美的Deal唯一标识.
     private String jumei_sku_no;   // 聚美的Sku编号
-    private int is_enable;         // Number 是否启用.    参数范围: 枚举值：0,1
+    private String is_enable;      // 是否启用.    参数范围: 枚举值：0,1
 
     @Override
     public String getUrl() {
@@ -39,11 +39,11 @@ public class HtDealUpdateSkuIsEnableRequest implements BaseJMRequest {
         this.jumei_sku_no = jumei_sku_no;
     }
 
-    public int getIs_enable() {
+    public String getIs_enable() {
         return is_enable;
     }
 
-    public void setIs_enable(int is_enable) {
+    public void setIs_enable(String is_enable) {
         this.is_enable = is_enable;
     }
 
