@@ -26,7 +26,7 @@ define([
             this.configSelList = {selList: []};
             this.tempConfigSelect = null;
             this.searchInfo = {
-                orderChannelId: this.sourceData ? this.sourceData.orderChannelId : "",
+                orderChannelId: this.sourceData ? this.sourceData.orderChannelId || this.sourceData.channelId : "",
                 storeId: this.sourceData ? this.sourceData.storeId : "",
                 taskId: this.sourceData ? this.sourceData.taskId : "",
                 cartId: this.sourceData ? this.sourceData.cartId : "",
