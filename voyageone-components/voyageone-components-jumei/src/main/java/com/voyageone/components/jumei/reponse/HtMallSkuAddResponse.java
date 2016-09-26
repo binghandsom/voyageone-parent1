@@ -1,6 +1,7 @@
 package com.voyageone.components.jumei.reponse;
 
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.common.util.UnicodeUtil;
 
 import java.io.IOException;
@@ -80,7 +81,7 @@ public class HtMallSkuAddResponse extends BaseJMResponse {
                 this.setReason(map.get("reason").toString());
             }
             if (map.containsKey("response")) {
-                Map<String, Object> mapSesponse = (Map<String, Object>) map.get("response");
+                Map<String, Object> mapSesponse = JacksonUtil.jsonToMap(StringUtils.toString(map.get("response")));
                 if (mapSesponse.containsKey("jumei_sku_no")) {
                     this.setJumeiSkuNo(mapSesponse.get("jumei_sku_no").toString());
                 }
