@@ -265,15 +265,6 @@ public class CmsFieldEditService extends BaseViewService {
                 return rsMap;
             }
 
-            JongoUpdate updObj = new JongoUpdate();
-            updObj.setQuery("{'common.fields.code':{$in:#}}");
-            updObj.setQueryParameters(productCodes);
-            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}");
-            updObj.setUpdateParameters(hsCode, userInfo.getUserName(), DateTimeUtil.getNow());
-
-            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
-            $debug("批量更新结果 " + rs.toString());
-
             params.put("productIds", productCodes);
             params.put("_taskName", "batchupdate");
             params.put("_channleId",  userInfo.getSelChannelId());
