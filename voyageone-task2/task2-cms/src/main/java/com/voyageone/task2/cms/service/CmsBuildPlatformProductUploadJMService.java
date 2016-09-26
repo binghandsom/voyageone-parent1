@@ -1666,6 +1666,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
      * 聚美Deal SKU库存同步
      */
     protected String updateStockNum(ShopBean shop, String businessmanCode, String stockNum) {
+        if (!StringUtils.isEmpty(businessmanCode) && businessmanCode.startsWith("ERROR_")) {
+            return "当前SKU无需同步库存";
+        }
+
         StockSyncReq stockSyncReq = new StockSyncReq();
         stockSyncReq.setBusinessman_code(businessmanCode);
         stockSyncReq.setEnable_num(stockNum);
