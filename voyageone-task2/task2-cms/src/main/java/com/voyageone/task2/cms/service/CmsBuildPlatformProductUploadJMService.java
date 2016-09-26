@@ -810,7 +810,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
                 if(StringUtils.isNullOrBlank2(e.getMessage())) {
                     sxData.setErrorMessage("聚美上新出现不可预知的错误，请跟管理员联系 " + e.getStackTrace()[0].toString());
-                    e.printStackTrace();
                 }
                 else
                 {
@@ -824,6 +823,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             sxProductService.insertBusinessLog(sxData, getTaskName());
             //保存workload
             saveWorkload(work, WORK_LOAD_FAIL);
+
+            e.printStackTrace();
             $error("workload上新失败！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
         }
 
