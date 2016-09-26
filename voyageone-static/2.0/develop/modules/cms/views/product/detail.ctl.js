@@ -13,7 +13,8 @@ define([
     './feed.component.ctl',
     './master.component.ctl',
     './jgj.component.ctl',
-    './gw.component.ctl'
+    './gw.component.ctl',
+    './dl.component.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {

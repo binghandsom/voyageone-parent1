@@ -340,7 +340,8 @@ define([
                 "dealExtension": {
                     "templateUrl": "views/pop/jm/dealextension.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/jm/dealextension.ctl",
-                    "controller": 'popDealExtensionCtl'
+                    "controller": 'popDealExtensionCtl',
+                    "size": 'md'
                 },
                 "priceModify": {
                     "templateUrl": "views/pop/jm/pricemodify.tpl.html",
