@@ -53,7 +53,7 @@ define([
                 self.product.autoApprovePrice = resp.autoApprovePrice[0];
             });
 
-            this.defaultCartId = this.routeParams.cartId != null ? this.routeParams.cartId : 25;
+            this.defaultCartId = this.routeParams.cartId != null ? this.routeParams.cartId : 0;
         };
 
         /**锁定操作*/

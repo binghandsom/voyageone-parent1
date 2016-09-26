@@ -2,26 +2,25 @@ package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
+import com.taobao.api.ApiException;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Carts;
-import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.*;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.Types;
-import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.configs.beans.TypeBean;
-import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.configs.beans.*;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -87,7 +86,7 @@ public class CmsFieldEditService extends BaseViewService {
     @Autowired
     private CommCacheService commCacheService;
     @Autowired
-    private CmsBtPriceConfirmLogService priceConfirmLogService;
+    private TbItemService tbItemService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -704,17 +703,24 @@ public class CmsFieldEditService extends BaseViewService {
             productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
         }
         if (productCodes == null || productCodes.isEmpty()) {
-            $warn("没有code条件 params=" + params.toString());
+            $warn("批量修改商品价格 没有code条件 params=" + params.toString());
             rsMap.put("ecd", 1);
             return rsMap;
         }
 
         Integer cartId = (Integer) params.get("cartId");
         if (cartId == null || cartId == 0) {
-            $warn("没有cartId条件 params=" + params.toString());
+            $warn("批量修改商品价格 没有cartId条件 params=" + params.toString());
             rsMap.put("ecd", 1);
             return rsMap;
         }
+        ShopBean shopObj = Shops.getShop(userInfo.getSelChannelId(), cartId.toString());
+        CartBean cartObj = Carts.getCart(cartId);
+        if (shopObj == null) {
+            $error("批量修改商品价格 未配置平台 channelId=%s, cartId=%s", userInfo.getSelChannelId(), cartId.toString());
+            throw new BusinessException("本店铺未配置所销售平台");
+        }
+
         // 检查商品价格 notChkPrice=1时表示忽略价格超过阈值
         Integer notChkPriceFlg = (Integer) params.get("notChkPrice");
         if (notChkPriceFlg == null) {
@@ -929,6 +935,15 @@ public class CmsFieldEditService extends BaseViewService {
                 cmsBtPriceLogModel.setModified(new Date());
                 cmsBtPriceLogModel.setModifier(userInfo.getUserName());
                 priceLogList.add(cmsBtPriceLogModel);
+
+                if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id()) && CmsConstants.ProductStatus.Approved.name().equals(prodObj.getPlatform(cartId).getStatus())) {
+                    // 是天猫平台时直接调用API更新sku价格(要求已上新)
+                    try {
+                        tbItemService.updateSkuPrice(shopObj, prodObj.getPlatform(cartId).getpNumIId(), rs.toString());
+                    } catch (ApiException e) {
+                        $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
+                    }
+                }
             }
 
             // 更新产品的信息
@@ -953,11 +968,13 @@ public class CmsFieldEditService extends BaseViewService {
         int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(priceLogList);
         $debug("批量修改商品价格 记入价格变更履历结束 结果=" + cnt + " 耗时" + (System.currentTimeMillis() - sta));
 
-        // 插入上新程序
-        $debug("批量修改商品价格 开始记入SxWorkLoad表");
-        sta = System.currentTimeMillis();
-        sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartId, userInfo.getUserName());
-        $debug("批量修改商品价格 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+        if (!PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
+            // 不是天猫平台时插入上新程序
+            $debug("批量修改商品价格 开始记入SxWorkLoad表");
+            sta = System.currentTimeMillis();
+            sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartId, userInfo.getUserName());
+            $debug("批量修改商品价格 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+        }
 
         // 如果有未处理的商品，则放入缓存
         commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2");
