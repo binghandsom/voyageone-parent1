@@ -172,17 +172,19 @@ public class AdminResService extends BaseService {
     private List<AdminResourceBean> convert2List(List<AdminResourceBean> resList,List<AdminResourceBean> result) {
         for (AdminResourceBean bean : resList) {
 
+            AdminResourceBean  newBean =  new AdminResourceBean();
+            BeanUtils.copyProperties(bean, newBean);
+
+
             if(bean.getResType() == 1)
             {
-                result.add(bean);
+                result.add(newBean);
+                newBean.setChildren(Collections.EMPTY_LIST);
             }
 
             if (bean.getChildren() != null && bean.getChildren().size() > 0) {
+                newBean.setChildren(bean.getChildren().stream().filter(w -> w.getResType() == 2).collect(Collectors.toList()));
                 convert2List(bean.getChildren(), result);
-                if(bean.getChildren().get(0).getResType() == 1)
-                {
-                    bean.setChildren(Collections.EMPTY_LIST);
-                }
             }
         }
         return result;
@@ -224,7 +226,7 @@ public class AdminResService extends BaseService {
         List<AdminResourceBean> children = new ArrayList<>();
 
         for (AdminResourceBean node : allNodes) {
-            if (node.getParentId() == root.getId()) {
+            if (node.getParentId().equals( root.getId())) {
                 children.add(node);
             }
         }
