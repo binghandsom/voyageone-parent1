@@ -810,6 +810,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             if (StringUtils.isNullOrBlank2(sxData.getErrorMessage())) {
                 if(StringUtils.isNullOrBlank2(e.getMessage())) {
                     sxData.setErrorMessage("聚美上新出现不可预知的错误，请跟管理员联系 " + e.getStackTrace()[0].toString());
+                    $error(sxData.getErrorMessage());
                 }
                 else
                 {
