@@ -3,16 +3,24 @@
 <mapper namespace="com.voyageone.security.dao.ViewUserResDao" >
     <resultMap id="BaseResultMap" type="java.util.Map" />
     <sql id="Base_Column_List" >
-        `id`, `res_name`, `res_key`, `res_type`, `parent_id`, `res_url`, `level`, `icon`,
+        `id`, `res_name`, `res_key`, `res_type`, `parent_id`, `res_url`, `icon`, `application`
         `active`, `description`, `created`, `creater`, `modified`, `modifier`,`role_id`,`channel_id`,`user_id`
     </sql>
 
     <select id="selectResByUserChannel" resultMap="BaseResultMap" >
-        select
+        select DISTINCT
         <include refid="Base_Column_List" />
         from view_user_res
         <where >
-            `user_id` = #{userId,jdbcType=INTEGER} and  `channel_id` = #{channelId,jdbcType=VARCHAR}
+            <if test="application != null" >
+                and `application` = #{application,jdbcType=VARCHAR}
+            </if>
+            <if test="userId != null" >
+                and `user_id` = #{userId,jdbcType=VARCHAR}
+            </if>
+            <if test="channelId != null" >
+                and `channel_id` = #{channel_id,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 

@@ -71,6 +71,9 @@ public class UserController extends BaseController {
         session.setAttribute(BaseConstants.SESSION_USER, userSessionBean);
         session.setAttribute(BaseConstants.SESSION_LANG, userService.getUserLanguage(userSessionBean));
 
+
+        session.setAttribute("userId", userModel.getId());
+
         // 返回用户信息
         return success(true);
     }
@@ -86,6 +89,8 @@ public class UserController extends BaseController {
 
         getSession().setAttribute("voyageone.session.cms", null);
         getSession().setAttribute("channelId", params.get("channelId").toString());
+        getSession().setAttribute("applicationId", params.get("applicationId").toString());
+        getSession().setAttribute("application", params.get("application").toString());
 
         userService.setSelectChannel(getUser(),params.get("channelId").toString(),params.get("applicationId").toString(),params.get("application").toString());
         // 只要不报异常就是ok

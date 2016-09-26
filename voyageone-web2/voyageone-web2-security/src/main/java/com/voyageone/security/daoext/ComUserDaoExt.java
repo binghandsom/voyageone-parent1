@@ -2,6 +2,7 @@
 package com.voyageone.security.daoext;
 
 import com.voyageone.security.bean.ComChannelPermissionBean;
+import com.voyageone.security.model.ComRoleModel;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +14,7 @@ public interface ComUserDaoExt {
 
 
     List<String> getPermissionUrls(@Param("userId") Integer userId, @Param("channelId") String channelId, @Param("application") String application);
+
+
+    List<ComRoleModel> selectRolesByUserId(Integer userId);
 }

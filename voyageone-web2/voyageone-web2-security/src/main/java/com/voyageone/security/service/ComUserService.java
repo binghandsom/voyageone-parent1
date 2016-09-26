@@ -6,10 +6,7 @@ import com.voyageone.security.dao.ComLoginLogDao;
 import com.voyageone.security.dao.ComUserConfigDao;
 import com.voyageone.security.dao.ComUserDao;
 import com.voyageone.security.daoext.ComUserDaoExt;
-import com.voyageone.security.model.ComLogModel;
-import com.voyageone.security.model.ComLoginLogModel;
-import com.voyageone.security.model.ComUserConfigModel;
-import com.voyageone.security.model.ComUserModel;
+import com.voyageone.security.model.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
@@ -86,8 +83,6 @@ public class ComUserService {
         }
 
         //如果user的密码不是自己设的，则强制要求修改密码
-
-
         ComUserModel userModel = new ComUserModel();
         userModel.setUserAccount(account);
         userModel =comUserDao.selectOne(userModel);
@@ -137,6 +132,12 @@ public class ComUserService {
 
     public List<String> getPermissionUrls(Integer userId, String channelId, String application) {
         return comUserDaoExt.getPermissionUrls(userId, channelId, application);
+    }
+
+
+    public List<ComRoleModel> selectRolesByUserId(Integer userId)
+    {
+        return comUserDaoExt.selectRolesByUserId(userId);
     }
 
 }
