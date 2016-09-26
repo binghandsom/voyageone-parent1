@@ -165,6 +165,9 @@
             <if test="modifier == null and creater != null" >
                 `modifier`,
             </if>
+            <if test="companyId != null" >
+                `company_id`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="id != null" >
@@ -214,6 +217,9 @@
             </if>
             <if test="modifier == null and creater != null" >
                 #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="companyId != null" >
+                #{companyId,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>

@@ -246,13 +246,14 @@ public class AdminRoleController extends AdminController {
     public AjaxResponse getAuthByRoles(@RequestBody Map requestMap) {
         List<Integer> roleIds = (List<Integer>) requestMap.get("roleIds");
         if (roleIds.size() == 0) {
-            UserFormBean form = (UserFormBean) requestMap.get("form");
-            String roleName = form.getRoleName();
-            Integer roleType = form.getRoleType();
-            String channelId = form.getChannelId();
-            Integer active = form.getActive();
-            Integer storeId = form.getStoreId();
-            String application = form.getApplication();
+            Map form = (Map) requestMap.get("form");
+
+            String roleName = form.get("roleName").toString();
+            Integer roleType = (Integer)form.get("roleType");
+            String channelId = form.get("roleName").toString();
+            Integer active =  (Integer)form.get("active");
+            Integer storeId = (Integer)form.get("storeId");
+            String application = form.get("roleName").toString();
 
             List<AdminRoleBean> result = adminRoleService.searchRole(roleName, roleType, channelId, active, storeId, application, null, null).getResult();
             if (result != null && result.size() > 0) {

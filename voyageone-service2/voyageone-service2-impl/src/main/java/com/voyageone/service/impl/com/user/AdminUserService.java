@@ -495,6 +495,7 @@ public class AdminUserService extends BaseService {
             model.setOrgId(1);
             model.setIsSuperuser(ct.getIsSuperuser());
             model.setCreater(ct.getUsername());
+            model.setCompanyId(ct.getCompanyId());
             adminUserDaoExt.insert(model);
         }
     }

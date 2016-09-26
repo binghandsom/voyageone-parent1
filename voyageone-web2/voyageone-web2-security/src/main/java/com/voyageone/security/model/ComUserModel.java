@@ -50,6 +50,8 @@ public class ComUserModel extends CoreBaseModel {
      */
     protected Boolean isSuperuser;
 
+    protected Integer companyId;
+
     public String getUserName() {
         return userName;
     }
@@ -120,5 +122,13 @@ public class ComUserModel extends CoreBaseModel {
 
     public void setIsSuperuser(Boolean isSuperuser) {
         this.isSuperuser = isSuperuser;
+    }
+
+    public Integer getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Integer companyId) {
+        this.companyId = companyId;
     }
 }
