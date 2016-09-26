@@ -6,14 +6,8 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.bean.HtMallSkuAddInfo;
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.components.jumei.bean.HtMallUpdateInfo;
-import com.voyageone.components.jumei.reponse.HtMallAddResponse;
-import com.voyageone.components.jumei.reponse.HtMallSkuAddResponse;
-import com.voyageone.components.jumei.reponse.HtMallSkuPriceUpdateResponse;
-import com.voyageone.components.jumei.reponse.HtMallUpdateResponse;
-import com.voyageone.components.jumei.request.HtMallAddRequest;
-import com.voyageone.components.jumei.request.HtMallSkuAddRequest;
-import com.voyageone.components.jumei.request.HtMallSkuPriceUpdateRequest;
-import com.voyageone.components.jumei.request.HtMallUpdateRequest;
+import com.voyageone.components.jumei.reponse.*;
+import com.voyageone.components.jumei.request.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -168,6 +162,44 @@ public class JumeiHtMallService extends JmBase {
             return null;
         } else {
             return response.getJumeiSkuNo();
+        }
+    }
+
+    /**
+     * 编辑商城的sku[MALL] 上下架，商家商品编码等
+     *
+     * @param shopBean 店铺信息
+     * @param jumeiSkuNo 聚美Sku_No(必须)
+     * @param status 是否启用，enabled-是，disabled-否(非必须)
+     * @param customsProductNumber 海关备案商品编码(非必须) 参数范围: 注:获取仓库接口返回bonded_area_id字段 大于０表示保税区仓库
+     * @param businessmanNum 商家商品编码(非必须)
+     * @param failCause 用于保存错误信息
+     * @return 是否更新成功
+     */
+    public boolean updateSkuForMall(ShopBean shopBean, String jumeiSkuNo, String status, String customsProductNumber, String businessmanNum, StringBuffer failCause) throws Exception {
+        HtMallUpdateSkuForMallRequest request = new HtMallUpdateSkuForMallRequest();
+        request.setJumei_sku_no(jumeiSkuNo);
+        if (!StringUtils.isEmpty(status)) request.setStatus(status);
+        if (!StringUtils.isEmpty(customsProductNumber)) request.setCustoms_product_number(customsProductNumber);
+        if (!StringUtils.isEmpty(businessmanNum)) request.setBusinessman_num(businessmanNum);
+
+        String reqResult;
+        try {
+            reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
+        } catch (BusinessException bex) {
+            if (bex.getInfo() != null && bex.getInfo().length > 0) {
+                reqResult = (String) bex.getInfo()[0];
+            } else {
+                throw bex;
+            }
+        }
+        HtMallUpdateSkuForMallResponse response = new HtMallUpdateSkuForMallResponse();
+        response.setBody(reqResult);
+        if (!response.isSuccess()) {
+            failCause.append(response.getErrorMsg());
+            return false;
+        } else {
+            return true;
         }
     }
 
