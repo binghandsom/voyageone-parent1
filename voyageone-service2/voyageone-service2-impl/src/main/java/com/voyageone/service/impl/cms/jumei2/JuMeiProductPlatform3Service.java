@@ -157,15 +157,17 @@ public class JuMeiProductPlatform3Service extends BaseService {
             }
         } else {
             CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(parameter.cmsBtProductModel.getChannelId(), parameter.cmsBtProductModel.getCommon().getFields().getCode());
-            String feedBrand = cmsBtFeedInfoModel.getBrand();
-            LOG.info(String.format("begin ChannelId:%s,cartId:%s,feedBrand:%s,masterBrand:%s,platformBrandId:%s", parameter.cmsBtProductModel.getChannelId(), 27, feedBrand, masterBrand, platformBrandId));
-            if (CmsBtBrandBlockService.isBlocked(parameter.cmsBtProductModel.getChannelId(), 27, feedBrand, masterBrand, platformBrandId)) {
-                errorMsg = "该商品品牌已在黑名单,操作失败";
-                mapMasterBrand.put(masterBrand, true);
-            } else {
-                mapMasterBrand.put(masterBrand, false);
+            if(cmsBtFeedInfoModel != null) {
+                String feedBrand = cmsBtFeedInfoModel.getBrand();
+                LOG.info(String.format("begin ChannelId:%s,cartId:%s,feedBrand:%s,masterBrand:%s,platformBrandId:%s", parameter.cmsBtProductModel.getChannelId(), 27, feedBrand, masterBrand, platformBrandId));
+                if (CmsBtBrandBlockService.isBlocked(parameter.cmsBtProductModel.getChannelId(), 27, feedBrand, masterBrand, platformBrandId)) {
+                    errorMsg = "该商品品牌已在黑名单,操作失败";
+                    mapMasterBrand.put(masterBrand, true);
+                } else {
+                    mapMasterBrand.put(masterBrand, false);
+                }
+                LOG.info("end " + masterBrand + ":" + mapMasterBrand.get(masterBrand));
             }
-            LOG.info("end " + masterBrand + ":" + mapMasterBrand.get(masterBrand));
         }
         if (!StringUtils.isEmpty(errorMsg)) {
 
