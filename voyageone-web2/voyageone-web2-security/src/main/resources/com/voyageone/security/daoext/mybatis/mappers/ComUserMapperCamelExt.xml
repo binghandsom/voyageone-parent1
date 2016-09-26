@@ -43,5 +43,11 @@
         and application =  #{application,jdbcType=VARCHAR}
     </select>
 
+    <select id="selectRolesByUserId" resultType="com.voyageone.security.model.ComRoleModel">
+        SELECT r.* from com_role r , com_user_role ur, com_user u
+        WHERE r.id = ur.role_id AND ur.user_id = u.id
+        AND r.active =1
+        AND user_id =  #{userId,jdbcType=INTEGER}
+    </select>
 
 </mapper>

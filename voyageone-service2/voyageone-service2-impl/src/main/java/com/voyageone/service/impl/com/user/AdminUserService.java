@@ -539,7 +539,7 @@ public class AdminUserService extends BaseService {
             ComResourceModel  res = new ComResourceModel();
             res.setOriginId(model.getId());
             res.setResType(1);
-            res.setActive(1);
+            res.setActive(model.getActive() ? 1 : 0);
 
             res.setWeight(model.getOrderBy());
             res.setResUrl(model.getDefaultUrl());
@@ -574,7 +574,7 @@ public class AdminUserService extends BaseService {
             ComResourceModel  res = new ComResourceModel();
             res.setOriginId(model.getId());
             res.setResType(1);
-            res.setActive(1);
+            res.setActive(model.getActive() ? 1 : 0);
             res.setWeight(model.getOrderBy());
             res.setResUrl(model.getDefaultUrl());
             res.setShowInMenu(model.getShowInMenu());
@@ -602,7 +602,7 @@ public class AdminUserService extends BaseService {
 
         //添加Action资源
         CtActionModel action = new CtActionModel();
-        controller.setActive(true);
+//        controller.setActive(true);
 
         List<CtActionModel> allActions = ctActionDao.selectList(action);
 
@@ -611,7 +611,7 @@ public class AdminUserService extends BaseService {
             ComResourceModel  res = new ComResourceModel();
             res.setOriginId(model.getId());
             res.setResType(2);
-            res.setActive(1);
+            res.setActive(model.getActive() ? 1 : 0);
             res.setWeight(model.getOrderBy());
             res.setDescription(model.getDescription());
             res.setOriginName(model.getName());
