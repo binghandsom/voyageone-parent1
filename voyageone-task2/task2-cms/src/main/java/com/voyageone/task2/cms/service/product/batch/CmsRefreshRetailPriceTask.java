@@ -90,7 +90,7 @@ public class CmsRefreshRetailPriceTask extends VOAbsLoggable {
             for (String prodCode : codeList) {
                 queryObj.setQuery("{'common.fields.code':#,'platforms.P#':{$exists:true}}");
                 queryObj.setParameters(prodCode, cartId);
-                queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId + ".skus", "common.fields", "common.skus");
+                queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".skus", "common.fields", "common.skus");
                 CmsBtProductModel prodObj = productService.getProductByCondition(channleId, queryObj);
                 if (prodObj == null) {
                     $warn("CmsRefreshRetailPriceTask 产品不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
