@@ -524,6 +524,15 @@ define([
             },
             show: function (item) {
                 console.log(item);
+            },
+            changeCartList: function (channelId) {
+                var self = this;
+                self.AdminCartService.getAllCart(channelId).then(function (res) {
+                    self.cartAllList = res.data;
+                    if (self.cartAllList.length == 0) {
+                        self.alert('请前往【 渠道信息管理 】页，选取 渠道Cart 信息！');
+                    }
+                });
             }
         };
         function _forEach(parentData, subData, target) {

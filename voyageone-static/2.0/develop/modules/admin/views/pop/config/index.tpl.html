@@ -12,7 +12,7 @@
                         <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_NAME' | translate}}</label>
                         <div class="col-sm-8">
                             <select search-contains="true" chosen width="'100%'" class="form-control"
-                                    ng-model="ctrl.searchInfo.orderChannelId"
+                                    ng-model="ctrl.searchInfo.orderChannelId" ng-change="ctrl.changeCartList(ctrl.searchInfo.orderChannelId)"
                                     ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelAllList">
                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>

@@ -19,7 +19,7 @@ define([
         AddStoreController.prototype = {
             init: function () {
                 var self = this;
-                if (self.sourceData == 'add'||self.sourceData.kind == 'add') {
+                if (self.sourceData == 'add' || self.sourceData.kind == 'add') {
                     self.popType = '添加';
                     if (self.sourceData.isReadOnly !== true) {
                         self.sourceData = {};
@@ -30,18 +30,23 @@ define([
                 self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "1" : "0" : '';
                 if (self.sourceData.isReadOnly == true) {
                     self.channelList = [self.sourceData.sourceData];
+                    self.changeStore(self.sourceData.orderChannelId);
                 } else {
                     self.channelService.getAllChannel().then(function (res) {
                         self.channelList = res.data;
                     });
+                    self.changeStore(self.sourceData.orderChannelId);
                 }
             },
             changeStore: function (value) {
                 var self = this;
-                self.storeService.getAllStore(value).then(function (res) {
-                    self.storeAllList = res.data;
-                });
-
+                if (self.sourceData.isReadOnly == true) {
+                    self.storeAllList = self.sourceData.storeSourceData;
+                } else {
+                    self.storeService.getAllStore(value).then(function (res) {
+                        self.storeAllList = res.data;
+                    });
+                }
             },
             cancel: function () {
                 this.$uibModalInstance.close();

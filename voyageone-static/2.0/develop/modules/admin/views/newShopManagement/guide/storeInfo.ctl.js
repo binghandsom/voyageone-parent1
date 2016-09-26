@@ -73,6 +73,7 @@ define([
                             Info.remainNum = copyData[1];
                             Info.isReadOnly = true;
                             Info.sourceData = self.context.channel;
+                            Info.storeSourceData = self.context.store;
                             self.popups.openStoreAdd(Info).then(function () {
                                 self.init();
                             });
