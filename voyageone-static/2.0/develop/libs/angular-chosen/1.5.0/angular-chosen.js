@@ -129,6 +129,14 @@
                 }
               });
             });
+
+            /**当已有值和option中的值对不上*/
+            scope.$watch(function () {
+              return element.find('option').length;
+            }, function () {
+              element.trigger('chosen:updated');
+            });
+
             return scope.$on('$destroy', function(event) {
               if (typeof timer !== "undefined" && timer !== null) {
                 return $timeout.cancel(timer);
