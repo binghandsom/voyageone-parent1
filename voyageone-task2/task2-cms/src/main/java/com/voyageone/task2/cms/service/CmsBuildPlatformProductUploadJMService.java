@@ -218,6 +218,44 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 throw new BusinessException(errorMsg);
             }
 
+            // 增加聚美规格的默认属性设置 START
+            {
+                // 修改main product里的内容
+                {
+                    CmsBtProductModel product = sxData.getMainProduct();
+                    List<BaseMongoMap<String, Object>> productJmSku = product.getPlatform(CART_ID).getSkus();
+                    for (BaseMongoMap<String, Object> sku : productJmSku) {
+                        if (StringUtils.isEmpty(sku.getStringAttribute("property"))) {
+                            sku.setStringAttribute("property", "OTHER");
+                        }
+                    }
+                }
+
+                // 修改product list里的内容
+                if (sxData.getProductList() != null) {
+                    for (CmsBtProductModel product : sxData.getProductList()) {
+                        List<BaseMongoMap<String, Object>> productJmSku = product.getPlatform(CART_ID).getSkus();
+                        for (BaseMongoMap<String, Object> sku : productJmSku) {
+                            if (StringUtils.isEmpty(sku.getStringAttribute("property"))) {
+                                sku.setStringAttribute("property", "OTHER");
+                            }
+                        }
+                    }
+                }
+
+                // 修改sku list里的内容
+                if (sxData.getSkuList() != null) {
+                    for (BaseMongoMap<String, Object> sku : sxData.getSkuList()) {
+                        if (StringUtils.isEmpty(sku.getStringAttribute("property"))) {
+                            sku.setStringAttribute("property", "OTHER");
+                        }
+                    }
+                }
+
+            }
+
+            // 增加聚美规格的默认属性设置 END
+
             // 上新对象产品Code列表
             List<String> listSxCode = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
 
@@ -1628,6 +1666,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
      * 聚美Deal SKU库存同步
      */
     protected String updateStockNum(ShopBean shop, String businessmanCode, String stockNum) {
+        if (!StringUtils.isEmpty(businessmanCode) && businessmanCode.startsWith("ERROR_")) {
+            return "当前SKU无需同步库存";
+        }
+
         StockSyncReq stockSyncReq = new StockSyncReq();
         stockSyncReq.setBusinessman_code(businessmanCode);
         stockSyncReq.setEnable_num(stockNum);
