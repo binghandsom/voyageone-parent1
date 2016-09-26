@@ -25,6 +25,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.MongoSequenceService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtPlatformActiveLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -60,12 +61,13 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
     private final JdSaleService jdSaleService;
     private final JumeiSaleService jmSaleService;
     private final MongoSequenceService sequenceService;
+    private final SxProductService sxProductService;
 
     @Autowired
     public CmsPlatformActiveLogService(CmsBtProductGroupDao cmsBtProductGroupDao, JumeiSaleService jmSaleService,
                                        TbSaleService tbSaleService, JdSaleService jdSaleService,
                                        MongoSequenceService sequenceService, CmsBtPlatformActiveLogDao platformActiveLogDao,
-                                       CmsBtProductDao cmsBtProductDao) {
+                                       CmsBtProductDao cmsBtProductDao, SxProductService sxProductService) {
         this.cmsBtProductGroupDao = cmsBtProductGroupDao;
         this.jmSaleService = jmSaleService;
         this.tbSaleService = tbSaleService;
@@ -73,6 +75,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
         this.sequenceService = sequenceService;
         this.platformActiveLogDao = platformActiveLogDao;
         this.cmsBtProductDao = cmsBtProductDao;
+        this.sxProductService = sxProductService;
     }
 
     @Override
@@ -261,29 +264,37 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
 
                 if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())) {
                     // 天猫国际上下架
-                    if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
-                        // 上架
-                        ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId);
-                        if (response == null) {
-                            errMsg = "调用淘宝商品上架API失败";
-                        } else {
-                            if (StringUtils.isEmpty(response.getErrorCode())) {
-                                updRsFlg = true;
+                    if (CartEnums.Cart.CN.getValue() == cartId) {
+                        // 如果是独立官网，不调用API
+                        updRsFlg = true;
+                        // 开始记入SxWorkLoad表
+                        $debug("CmsPlatformActiceLogService 开始记入SxWorkLoad表");
+                        sxProductService.insertSxWorkLoad(channelId, pcdList, cartId, userName);
+                    } else {
+                        if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
+                            // 上架
+                            ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId);
+                            if (response == null) {
+                                errMsg = "调用淘宝商品上架API失败";
                             } else {
-                                errMsg = response.getBody();
+                                if (StringUtils.isEmpty(response.getErrorCode())) {
+                                    updRsFlg = true;
+                                } else {
+                                    errMsg = response.getBody();
+                                }
                             }
-                        }
 
-                    } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
-                        // 下架
-                        ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shopProp, numIId);
-                        if (response == null) {
-                            errMsg = "调用淘宝商品下架API失败";
-                        } else {
-                            if (StringUtils.isEmpty(response.getErrorCode())) {
-                                updRsFlg = true;
+                        } else if (CmsConstants.PlatformActive.ToInStock.name().equals(activeStatus)) {
+                            // 下架
+                            ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shopProp, numIId);
+                            if (response == null) {
+                                errMsg = "调用淘宝商品下架API失败";
                             } else {
-                                errMsg = response.getBody();
+                                if (StringUtils.isEmpty(response.getErrorCode())) {
+                                    updRsFlg = true;
+                                } else {
+                                    errMsg = response.getBody();
+                                }
                             }
                         }
                     }

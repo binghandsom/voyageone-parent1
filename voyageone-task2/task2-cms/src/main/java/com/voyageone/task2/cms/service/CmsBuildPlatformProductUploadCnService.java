@@ -16,7 +16,6 @@ import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.CnCategoryService;
 import com.voyageone.service.impl.cms.sx.ConditionPropValueService;
-import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSxCnInfoModel;
@@ -48,8 +47,6 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
     private ConditionPropValueService conditionPropValueService;
     @Autowired
     private CnSchemaService cnSchemaService;
-    @Autowired
-    private SxProductService sxProductService;
     @Autowired
     private ProductGroupService productGroupService;
     @Autowired
@@ -144,8 +141,8 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             }
             String productXml = cnSchemaService.writeProductXmlString(listProductFields);
             String skuXml = cnSchemaService.writeSkuXmlString(listSkuFields);
-            $info("独立域名上传产品的xml:" + productXml);
-            $info("独立域名上传Sku的xml:" + skuXml);
+            $debug("独立域名上传产品的xml:" + productXml);
+            $debug("独立域名上传Sku的xml:" + skuXml);
             // TODO: doPost
             boolean isSuccess = false;
 
@@ -216,8 +213,11 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
         if (sxModel != null) {
             // 单个产品错误
+            // deleted by morse.lu 2016/09/22 start
+            // 拼接后可能太长了,就干脆不塞值了吧
             // 类目id
-           businessLogModel.setCatId(sxModel.getCatIds().stream().collect(Collectors.joining(",")));
+//           businessLogModel.setCatId(sxModel.getCatIds().stream().collect(Collectors.joining(",")));
+            // deleted by morse.lu 2016/09/22 end
             // 平台id
             businessLogModel.setCartId(sxModel.getCartId());
             // Group id

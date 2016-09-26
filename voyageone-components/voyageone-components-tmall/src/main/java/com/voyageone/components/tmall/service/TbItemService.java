@@ -1,10 +1,13 @@
 package com.voyageone.components.tmall.service;
 
 import com.taobao.api.ApiException;
+import com.taobao.api.domain.UpdateSkuPrice;
 import com.taobao.api.request.ItemSkusGetRequest;
+import com.taobao.api.request.TmallItemPriceUpdateRequest;
 import com.taobao.api.request.TmallItemSchemaUpdateRequest;
 import com.taobao.api.request.TmallItemUpdateSchemaGetRequest;
 import com.taobao.api.response.ItemSkusGetResponse;
+import com.taobao.api.response.TmallItemPriceUpdateResponse;
 import com.taobao.api.response.TmallItemSchemaUpdateResponse;
 import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
@@ -15,6 +18,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.tmall.TbBase;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -84,5 +88,31 @@ public class TbItemService extends TbBase {
         }
         return reqTaobaoApi(shopBean, req);
     }
-}
 
+    /**
+     * 更新商品SKU的价格（天猫商品/SKU价格更新接口 tmall.item.price.update）
+     * numIid参数为必须，
+     * prodPrice，skuPriceList为可选，且互斥，即这两个只有一个有值
+     */
+    public TmallItemPriceUpdateResponse updateSkuPrice(ShopBean shopBean, String numIid, Double prodPrice, List<UpdateSkuPrice> skuPriceList) throws ApiException {
+        logger.info("更新商品SKU的价格 " + numIid);
+        TmallItemPriceUpdateRequest req = new TmallItemPriceUpdateRequest();
+        req.setItemId(NumberUtils.toLong(numIid));
+        if (prodPrice != null) {
+            req.setItemPrice(prodPrice.toString());
+        }
+        if (skuPriceList != null && skuPriceList.size() > 0) {
+            req.setSkuPrices(skuPriceList);
+        }
+
+        TmallItemPriceUpdateResponse response = reqTaobaoApi(shopBean, req);
+        if (response == null) {
+            return null;
+        }
+        if (response.getErrorCode() != null) {
+            logger.error(response.getSubMsg());
+        }
+        logger.info("更新商品SKU的价格 结果：" + response.getPriceUpdateResult());
+        return response;
+    }
+}

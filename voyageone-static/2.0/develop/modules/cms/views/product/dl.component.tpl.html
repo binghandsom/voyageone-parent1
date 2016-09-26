@@ -1,5 +1,5 @@
 <div class="product-shema-detail">
-    <div class="form-horizontal">
+    <form class="form-horizontal" name="productFieldForm" novalidate>
         <div class="panel vo_panel tab_panel">
             <div class="wrapper">
                 <div class="container-fluid" id="common">
@@ -53,47 +53,29 @@
                                         </li>
                                     </ul>
                                 </div>
-                                &nbsp;&nbsp;
-                                <div class="btn-group" uib-dropdown ng-controller="popupCtrl">
-                                    <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
-                                        &nbsp;平台操作&nbsp;<span class="caret"></span>
-                                    </button>
-                                    <ul uib-dropdown-menu>
-                                        <li>
-                                            <a href="javascript:void(0)"
-                                               ng-click="openOffLinePop(openProductOffLine,'single')">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;单Code下线
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)"
-                                               ng-click="openOffLinePop(openProductOffLine,'group')">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;全group下线
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" ng-click="openSwitchMainPop(openSwitchMain)">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;切换主商品
-                                            </a>
-                                        </li>
-                                        <li ng-if="vm.mastData.isMain != true">
-                                            <a href="javascript:void(0)" ng-click="copyMainProduct()">
-                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;复制主商品
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
                             </div>
                             <!----------------------------------check 状态------------------------------------------>
                             <ul class="nav nav-pills">
                                 <li>
-                                        <span ng-class="{tagFlag:vm.checkFlag.tax != 1}">{{'TXT_HS_CODE_STATUS' | translate}}&emsp;
-                                            <i class="fa fa-check" ng-if="vm.checkFlag.tax == 1"></i>
-                                            <i class="fa fa-times" ng-if="vm.checkFlag.tax != 1"></i>
-                                        </span>
+                                    <span ng-class="{tagFlag:vm.checkFlag.tax != 1}">{{'TXT_HS_CODE_STATUS' | translate}}&emsp;
+                                        <i class="fa fa-check" ng-if="vm.checkFlag.tax == 1"></i>
+                                        <i class="fa fa-times" ng-if="vm.checkFlag.tax != 1"></i>
+                                    </span>
+                                </li>
+                                <li>
+                                    <span ng-class = "{tagFlag:vm.checkFlag.category != 1}">{{'TXT_TAG_STORE_CLASSIFY' | translate}}&emsp;
+                                        <i class="fa fa-check" ng-if="vm.checkFlag.category == 1"></i>
+                                        <i class="fa fa-times" ng-if="vm.checkFlag.category != 1"></i>
+                                    </span>
+                                </li>
+                                <li ng-click="focusError()" ng-style="{ cursor:!validSchema() ? 'pointer' : 'default' }">
+                                    <span ng-class="{tagFlag:!validSchema()}">{{'TXT_ATTRIBUTE' | translate}}&emsp;
+                                        <i class="fa fa-check" ng-if="vm.checkFlag.attribute = validSchema()"></i>
+                                        <i class="fa fa-times" ng-if="!validSchema()"></i>
+                                    </span>
                                 </li>
                             </ul>
-                            <div class="text-warnings no-master" style="padding-left:0px;" ng-if="vm.noMaterMsg">
+                            <div class="text-warnings no-master" ng-if="vm.noMaterMsg">
                                 <i class="icon fa fa-bell-o"></i>&nbsp;{{vm.noMaterMsg}} , 否则该产品信息无法显示！！！<br>
                             </div>
                             <div class="text-warnings" ng-if="vm.mastData.isMain != true">
@@ -101,9 +83,10 @@
                             </div>
                         </div>
                         <div class="col-md-4">
+                            <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
                             <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Pending'">
-                                <button class="btn btn-vo" ng-click="saveProduct('ready')"
-                                        ng-disabled="vm.checkFlag.tax != 1">
+                                <button class="btn btn-vo" ng-click="saveProduct('ready')" ng-disabled="vm.checkFlag.tax != 1 || vm.checkFlag.category != 1 ||
+                                                                                        vm.checkFlag.attribute == false">
                                     <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready
                                 </button>
                             </div>
@@ -114,12 +97,13 @@
                             </div>
                             <div class="pull-right m-t-xs m-r-xs"
                                  ng-if="vm.status == 'Ready' || vm.status == 'Approved'">
-                                <button class="btn btn-vo" ng-click="saveProduct()" ng-disabled="vm.checkFlag.tax != 1">
+                                <button class="btn btn-vo" ng-click="saveProduct()" ng-disabled="vm.checkFlag.tax != 1 || vm.checkFlag.category != 1 ||
+                                                                                        vm.checkFlag.attribute == false">
                                     <i class="glyphicon glyphicon-floppy-disk"></i>Approved
                                 </button>
                             </div>
                             <div class="pull-right text-warnings">
-                                <i class="icon fa fa-bell-o"></i>&nbsp;【Ready】/【Approve】按钮，用于数据正式保存并确认，设计产品状态变更，将启动必填属性检查机制，一旦检查发现异常，保存即失败。
+                                <i class="icon fa fa-bell-o"></i>&nbsp;【Save】按钮，用于数据临时保存；【Ready】/【Approve】按钮，用于数据正式保存并确认，设计产品状态变更，将启动必填属性检查机制，一旦检查发现异常，保存即失败。
                             </div>
                         </div>
                     </div>
@@ -176,17 +160,6 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <button class="col-md-2 btn btn-default" ng-controller="popupCtrl"
-                                        ng-click="categoryMapping(popupNewCategory)"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
-                                </button>
-                                <div class="col-md-8">
-                                    <input class="form-control" ng-model="vm.platform.pCatPath" disabled>
-                                    <div class="text-warnings">
-                                        <i class="icon fa fa-bell-o"></i>&nbsp;切换平台类目将影响整个Group中的所有商品，请慎重！
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row form-group">
                                 <button class="col-md-2 btn btn-default ng-binding" ng-controller="popupCtrl"
                                         ng-click="openSellerCat(openAddChannelCategoryEdit)"><span>{{cartInfo.name}}&nbsp;店铺内分类</span>
                                 </button>
@@ -211,8 +184,7 @@
                                     <span>
                                         <a ng-href="#/group/detail/{{vm.mastData.groupId}}"
                                            title="{{vm.mastData.model}}"
-                                           target="_blank">{{vm.mastData.model | limitTo: 30}}{{vm.mastData.model.length
-                                            > 30 ? '...' : ''}}
+                                           target="_blank">{{vm.mastData.model | limitTo: 30}}{{vm.mastData.model.length > 30 ? '...' : ''}}
                                         </a>
                                     </span>
                                     <div class="text-warnings">
@@ -224,8 +196,7 @@
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_CODE"|translate}}</strong></label>
                                 <div class="col-md-8">
-                                    <input class="form-control" ng-model="vm.mastData.productCode"
-                                           disabled>
+                                    <input class="form-control" ng-model="vm.mastData.productCode" disabled>
                                     <div class="text-warnings">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;如果此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面
                                     </div>
@@ -235,13 +206,6 @@
                                 <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_NAME"|translate}}</strong></label>
                                 <div class="col-md-8">
                                     <input class="form-control" ng-model="vm.mastData.productName" disabled>
-                                </div>
-                            </div>
-                            <div class="row form-group">
-                                <label class="col-md-2 control-label"><strong>{{cartInfo.name}}{{"TXT_BRAND" |
-                                    translate}}</strong></label>
-                                <div class="col-md-8">
-                                    <input class="form-control" ng-model="vm.platform.pBrandName" disabled>
                                 </div>
                             </div>
                         </div>
@@ -267,92 +231,90 @@
                         </div>
                     </div>
                 </div>
-
                 <hr>
-                <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;商品详情</span>
-                <!------------------------------------------------以下为商品Schema------------------------------------------------------->
-                <div class="container-fluid" id="item">
-                    <div class="row">
-                        <div class="col-sm-9">
-                            <schema data="vm.platform.schemaFields.item"></schema>
+                <ng-form name="schemaForm" novalidate>
+                    <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;商品详情</span>
+                    <!------------------------------------------------以下为商品Schema------------------------------------------------------->
+                    <div class="container-fluid" id="item">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <schema data="vm.platform.schemaFields.item"></schema>
+                            </div>
                         </div>
+                        <br>
                     </div>
-                    <br>
-                </div>
 
-                <hr>
-                <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
-                <!------------------------------------------------以下为产品Schema------------------------------------------------------->
-                <div class="container-fluid" id="product">
-                    <div class="row">
-                        <div class="col-sm-9">
-                            <schema data="vm.platform.schemaFields.product"></schema>
+                    <hr>
+                    <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</span>
+                    <!------------------------------------------------以下为产品Schema------------------------------------------------------->
+                    <div class="container-fluid" id="product">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <schema data="vm.platform.schemaFields.product"></schema>
+                            </div>
                         </div>
+                        <br>
                     </div>
-                    <br>
-                </div>
 
+                </ng-form>
                 <br>
                 <hr>
                 <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;Sku属性</span>
                 <!------------------------------------------------以下为产品SKU------------------------------------------------------->
                 <div class="container-fluid" id="sku">
                     <div class="table-responsive">
-                        <table class="table text-left">
-                            <thead>
-                            <tr>
-                                <th class="text-center">
-                                    <input class="sku_check" type="checkbox" ng-click="selectAll()"
-                                           ng-model="vm.skuFlag" ng-true-value="true" ng-false-value="false"
-                                           ng-checked="allSkuSale()">
-                                </th>
-                                <th class="text-center">skuCode</th>
-                                <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
-                                <th class="text-center">size</th>
-                                <th class="text-center">platform size</th>
-                                <th class="mfb-xxx text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
-                                <th class="text-center">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
-                                <th class="text-center">容量/尺码</th>
-                                <th class="mfb-xxx text-center">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
-                                <th class="text-center">{{"TXT_BAR_CODE"|translate}}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td if-no-rows="vm.platform.skus == null || vm.platform.skus.length == 0 ? 0 : vm.platform.skus.length"
-                                    colspan="10" style="padding: 0px"></td>
-                            </tr>
-                            <tr ng-repeat="entity in vm.platform.skus" class="ng-scope"
-                                ng-if="vm.platform.skus.length > 0"
-                                ng-init="entity.property = entity.property == null?'OTHER' : entity.property ">
-                                <td class="text-center v-middle">
-                                    <input class="sku_check" type="checkbox" ng-model="entity.isSale"
-                                           ng-true-value="true" ng-false-value="false">
-                                </td>
-                                <td class="text-center v-middle">{{entity.skuCode}}</td>
-                                <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].qty}}</td>
-                                <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].size}}</td>
-                                <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].platformSize}}</td>
-                                <td class="mfb-xxx text-center v-middle">
-                                    <label class="col-sm-3 control-label vo_reqfield"></label>
-                                    <input class="form-control ng-number" type="number" ng-model="entity.priceMsrp"
-                                           scale="15,2">
-                                </td>
-                                <td class="text-center v-middle">{{entity.priceRetail}}</td>
-                                <td class="text-center v-middle">
-                                    <input class="form-control" type="text" ng-model="entity.sizeNick"
-                                           style="width: 100px;margin: 0px auto;">
-                                </td>
-                                <td class="mfb-xxx text-center v-middle">
-                                    <label class="col-sm-3 control-label vo_reqfield"></label>
-                                    <input class="form-control ng-number" type="number" ng-model="entity.priceSale"
-                                           ng-disabled="productInfo.autoApprovePrice.configValue1 == '1'" scale="15,2"
-                                    >
-                                </td>
-                                <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].barcode}}</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <ng-form name="skuForm" novalidate>
+                            <table class="table text-left">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">
+                                        <input class="sku_check" type="checkbox" ng-click="selectAll()"
+                                               ng-model="vm.skuFlag" ng-true-value="true" ng-false-value="false"
+                                               ng-checked="allSkuSale()">
+                                    </th>
+                                    <th class="text-center">skuCode</th>
+                                    <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
+                                    <th class="text-center">size</th>
+                                    <th class="text-center">platform size</th>
+                                    <th class="mfb-xxx text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
+                                    <th class="text-center">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
+                                    <th class="text-center">容量/尺码</th>
+                                    <th class="mfb-xxx text-center">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
+                                    <th class="text-center">{{"TXT_BAR_CODE"|translate}}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td if-no-rows="vm.platform.skus == null || vm.platform.skus.length == 0 ? 0 : vm.platform.skus.length"
+                                        colspan="10" style="padding: 0px"></td>
+                                </tr>
+                                <tr ng-repeat="entity in vm.platform.skus" ng-if="vm.platform.skus.length > 0"
+                                    ng-init="entity.property = entity.property == null?'OTHER' : entity.property ">
+                                    <td class="text-center v-middle">
+                                        <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false">
+                                    </td>
+                                    <td class="text-center v-middle">{{entity.skuCode}}</td>
+                                    <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].qty}}</td>
+                                    <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].size}}</td>
+                                    <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].platformSize}}</td>
+                                    <td class="mfb-xxx text-center v-middle">
+                                        <label class="col-sm-3 control-label vo_reqfield"></label>
+                                        <input class="form-control ng-number" type="number" ng-model="entity.priceMsrp" scale="15,2" required>
+                                    </td>
+                                    <td class="text-center v-middle">{{entity.priceRetail}}</td>
+                                    <td class="text-center v-middle"><input class="form-control" type="text"
+                                                                            ng-model="entity.sizeNick"
+                                                                            style="width: 100px;margin: 0px auto;"></td>
+                                    <td class="mfb-xxx text-center v-middle">
+                                        <label class="col-sm-3 control-label vo_reqfield"></label>
+                                        <input class="form-control ng-number" type="number" ng-model="entity.priceSale"
+                                               ng-disabled="productInfo.autoApprovePrice.configValue1 == '1'" scale="15,2" required
+                                               ></td>
+                                    <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].barcode}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </ng-form>
                     </div>
                     <div class="text-warnings">
                         例：{{cartInfo.name}}上新时的容量/尺码是根据设置在【尺码表管理页面】里的匹配关系来进行转化的。
@@ -362,5 +324,5 @@
 
             </div>
         </div>
-    </div>
+    </form>
 </div>

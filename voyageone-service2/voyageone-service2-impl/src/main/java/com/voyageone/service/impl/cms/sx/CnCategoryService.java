@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.sx;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
@@ -12,7 +11,6 @@ import com.voyageone.service.dao.cms.CmsBtSxCnProductSellercatDao;
 import com.voyageone.service.daoext.cms.CmsBtSxCnProductSellercatDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtSxCnProductSellercatModel;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -214,7 +212,6 @@ public class CnCategoryService extends BaseService {
             } else {
                 listUpdateData.add(catId);
             }
-
         }
 
         if (!listInsertData.isEmpty()) {

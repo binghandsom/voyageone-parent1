@@ -8,9 +8,12 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
+import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
@@ -48,6 +51,8 @@ public class CmsRefreshRetailPriceTask extends VOAbsLoggable {
     private SxProductService sxProductService;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
+    @Autowired
+    private TbItemService tbItemService;
 
     public void onStartup(Map<String, Object> messageMap) {
         $debug("高级检索 重新计算指导价 开始执行... param=" + messageMap.toString());
@@ -75,10 +80,17 @@ public class CmsRefreshRetailPriceTask extends VOAbsLoggable {
         JongoUpdate updObj = new JongoUpdate();
 
         for (Integer cartId : cartList) {
+            ShopBean shopObj = Shops.getShop(channleId, cartId.toString());
+            CartBean cartObj = Carts.getCart(cartId);
+            if (shopObj == null) {
+                $error("CmsRefreshRetailPriceTask 未配置平台 channelId=%s, cartId=%s", channleId, cartId.toString());
+                continue;
+            }
+
             for (String prodCode : codeList) {
                 queryObj.setQuery("{'common.fields.code':#,'platforms.P#':{$exists:true}}");
                 queryObj.setParameters(prodCode, cartId);
-                queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId + ".skus", "common.fields", "common.skus");
+                queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".skus", "common.fields", "common.skus");
                 CmsBtProductModel prodObj = productService.getProductByCondition(channleId, queryObj);
                 if (prodObj == null) {
                     $warn("CmsRefreshRetailPriceTask 产品不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
@@ -138,6 +150,19 @@ public class CmsRefreshRetailPriceTask extends VOAbsLoggable {
                 }
                 int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(logModelList);
                 $debug("CmsRefreshRetailPriceTask修改商品价格 记入价格变更履历结束 结果=" + cnt);
+
+                // 只有最终售价变化了，才需要上新
+                if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
+                    // 最终售价被自动同步
+                    if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
+                        // 天猫平台直接调用API
+                        try {
+                            priceService.updateSkuPrice(channleId, cartId, prodObj);
+                        } catch (Exception e) {
+                            $error(String.format("CmsRefreshRetailPriceTask修改商品价格 调用天猫API失败 channelId=%s, cartId=%d msg=%s", channleId, cartId, e.getMessage()), e);
+                        }
+                    }
+                }
             }
 
             // 记录商品修改历史
@@ -149,17 +174,13 @@ public class CmsRefreshRetailPriceTask extends VOAbsLoggable {
             // 只有最终售价变化了，才需要上新
             if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
                 // 最终售价被自动同步
-                CartBean cartObj = Carts.getCart(cartId);
-//                if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
-//                    // TODO --天猫平台直接调用API, 暂时先使用原来代码
-//
-//                } else {
+                if (!PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
                     // 插入上新程序
                     $debug("CmsRefreshRetailPriceTask 开始记入SxWorkLoad表");
                     sta = System.currentTimeMillis();
                     sxProductService.insertSxWorkLoad(channleId, codeList, cartId, userName);
                     $debug("CmsRefreshRetailPriceTask 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
-//                }
+                }
             }
         }
     }

@@ -156,6 +156,15 @@
         <!-- 取所有平台tree和schema（每天早上5点一次） -->
         <task:scheduled ref="CmsGetAllPlatformsInfoJob" method="run" cron="0 0 5 * * ?"/>
 
+        <!-- 独立域名上新xml准备（每分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadCnPrepareJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <!-- 独立域名上新（每3分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadCnJob" method="run" cron="0 0/3 0-23 * * ?"/>
+
+        <!-- 独立域名类目-产品关系（每5分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductSellercatCnJob" method="run" cron="0 0/5 0-23 * * ?"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

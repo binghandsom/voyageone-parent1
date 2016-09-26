@@ -1,16 +1,28 @@
 package com.voyageone.service.impl.cms.prices;
 
+import com.taobao.api.ApiException;
+import com.taobao.api.domain.UpdateSkuPrice;
+import com.taobao.api.response.TmallItemPriceUpdateResponse;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.asserts.Assert;
+import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.tmall.service.TbItemService;
+import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.ims.ImsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -51,6 +63,10 @@ public class PriceService extends BaseService {
     private final CmsMtFeeShippingService feeShippingService;
 
     private final ProductSkuService productSkuService;
+    @Autowired
+    private ImsBtProductDao imsBtProductDao;
+    @Autowired
+    private TbItemService tbItemService;
 
     @Autowired
     public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService,
@@ -774,6 +790,90 @@ public class PriceService extends BaseService {
             Double price = ((inputPrice + shippingFee + otherFee) * exchangeRate * 100d) / denominator;
 
             return roundDouble(price, roundUp);
+        }
+    }
+
+    /**
+     * 更新商品SKU的价格 （非天猫平台暂不实现）
+     * 需要查询 voyageone_ims.ims_bt_product表，若对应的产品quantity_update_type为s：更新sku价格；为p：则更新商品价格(用最高一个sku的价格)
+     * CmsBtProductModel中需要属性：common.fields.code, platforms.Pxx.pNumIId, platforms.Pxx.status, platforms.Pxx.skus.skuCode, platforms.Pxx.skus.priceSale,
+     */
+    public void updateSkuPrice(String channleId, int cartId, CmsBtProductModel productModel) {
+        logger.info("PriceService　更新商品SKU的价格 ");
+        ShopBean shopObj = Shops.getShop(channleId, Integer.toString(cartId));
+        CartBean cartObj = Carts.getCart(cartId);
+        if (shopObj == null || cartObj == null) {
+            $error("PriceService 未配置平台 channelId=%s, cartId=%d", channleId, cartId);
+            throw new BusinessException("该店铺未配置销售平台！");
+        }
+
+        String prodCode = org.apache.commons.lang3.StringUtils.trimToNull(productModel.getCommonNotNull().getFieldsNotNull().getCode());
+        if (prodCode == null) {
+            $error("PriceService 产品数据不全 缺少code channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
+            throw new BusinessException("产品数据不全,缺少code！");
+        }
+        CmsBtProductModel_Platform_Cart platObj = productModel.getPlatform(cartId);
+        if (platObj == null) {
+            $error("PriceService 产品数据不全 缺少Platform channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
+            throw new BusinessException("产品数据不全,缺少Platform！");
+        }
+        if (!CmsConstants.ProductStatus.Approved.name().equals(platObj.getStatus())) {
+            $warn("PriceService 产品未上新,不可修改价格 channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
+            return;
+        }
+
+        if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
+            // 天猫平台直接调用API
+            List<BaseMongoMap<String, Object>> skuList = platObj.getSkus();
+            if (skuList == null || skuList.isEmpty()) {
+                $error("PriceService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
+                throw new BusinessException("产品数据不全,缺少sku数据！");
+            }
+
+            // 先要判断更新类型
+            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(channleId, cartId, prodCode);
+            if (imsBtProductModel == null) {
+                $error("PriceService 产品数据不全 未配置ims_bt_product表 channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
+                throw new BusinessException("产品数据不全,未配置ims_bt_product表！");
+            }
+            String updType = org.apache.commons.lang3.StringUtils.trimToNull(imsBtProductModel.getQuantityUpdateType());
+            if (updType == null || (!"s".equals(updType) && !"p".equals(updType))) {
+                $error("PriceService 产品数据不全 未配置ims_bt_product表quantity_update_type channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
+                throw new BusinessException("产品数据不全,未配置ims_bt_product表quantity_update_type！");
+            }
+
+            Double maxPrice = null;
+            List<UpdateSkuPrice> list2 = new ArrayList<>(skuList.size());
+            for (BaseMongoMap skuObj : skuList) {
+                UpdateSkuPrice obj3 = new UpdateSkuPrice();
+                obj3.setOuterId((String) skuObj.get("skuCode"));
+                Double priceSale = skuObj.getDoubleAttribute("priceSale");
+                if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
+                    maxPrice = priceSale;
+                }
+                obj3.setPrice(priceSale.toString());
+                list2.add(obj3);
+            }
+            if ("s".equals(updType)) {
+                // 更新sku价格
+                maxPrice = null;
+            } else {
+                // 更新商品价格
+                list2 = null;
+            }
+
+            try {
+                TmallItemPriceUpdateResponse response = tbItemService.updateSkuPrice(shopObj, platObj.getpNumIId(), maxPrice, list2);
+                if (response != null) {
+                    logger.info("PriceService　更新商品SKU的价格 " + response.getBody());
+                }
+            } catch (ApiException e) {
+                $error(String.format("PriceService 调用天猫API失败 channelId=%s, cartId=%d msg=%s", channleId, cartId, e.getMessage()), e);
+                throw new BusinessException("调用天猫API更新商品SKU的价格失败！");
+            }
+        } else {
+            // TODO-- PriceService 非天猫平台暂不实现 更新商品SKU的价格
+            $info("PriceService 非天猫平台暂不实现");
         }
     }
 }

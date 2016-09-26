@@ -18,7 +18,7 @@ public class CmsBtSellerCatModel extends BaseMongoModel {
     private Integer isParent;
     private String fullCatId;
     private int cartId;
-
+    private String isSpecial;
 
     private List<CmsBtSellerCatModel> children;
 
@@ -85,7 +85,7 @@ public class CmsBtSellerCatModel extends BaseMongoModel {
         this.cartId = cartId;
     }
 
-        public Integer getIsParent() {
+    public Integer getIsParent() {
         return isParent;
     }
 
@@ -107,5 +107,13 @@ public class CmsBtSellerCatModel extends BaseMongoModel {
 
     public void setFullCatId(String fullCatId) {
         this.fullCatId = fullCatId;
+    }
+
+    public String getIsSpecial() {
+        return isSpecial;
+    }
+
+    public void setIsSpecial(String isSpecial) {
+        this.isSpecial = isSpecial;
     }
 }

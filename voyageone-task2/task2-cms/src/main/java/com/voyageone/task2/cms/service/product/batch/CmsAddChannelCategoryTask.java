@@ -5,6 +5,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.logger.VOAbsLoggable;
@@ -12,18 +13,17 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.daoext.cms.CmsBtSxCnProductSellercatDaoExt;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.model.cms.CmsBtSxCnProductSellercatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 高级检索业务的批量设置店铺内分类
@@ -42,6 +42,8 @@ public class CmsAddChannelCategoryTask extends VOAbsLoggable {
     private SxProductService sxProductService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
+    @Autowired
+    private CmsBtSxCnProductSellercatDaoExt cnProductSellercatDao;
 
     public void onStartup(Map<String, Object> messageMap) {
         List<String> codeList = (List) messageMap.get("productIds");
@@ -57,6 +59,7 @@ public class CmsAddChannelCategoryTask extends VOAbsLoggable {
             return;
         }
 
+        // 已勾选的分类
         List<Map<String, Object>> sellerCats = (List) messageMap.get("sellerCats");
         if (sellerCats == null || sellerCats.isEmpty()) {
             $info("sellerCats为空，可能是删除所有分类 params=" + messageMap.toString());
@@ -82,6 +85,12 @@ public class CmsAddChannelCategoryTask extends VOAbsLoggable {
             return;
         }
 
+        // 被变更的分类类目ID
+        Map<String, Map<String, Object>> updCatObjMap = null;
+        if (CartEnums.Cart.CN.getValue() == cartId) {
+            updCatObjMap = new HashMap<>();
+        }
+
         // 更新cms_bt_product表的Platform->SellerCat字段
         BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
         for (CmsBtProductModel prodObj : prodList) {
@@ -91,14 +100,43 @@ public class CmsAddChannelCategoryTask extends VOAbsLoggable {
                 $warn("产品数据不完整，缺少Platform， prodCode=" + prodCode);
                 continue;
             }
+            // 变更前的分类选择
             List<Map<String, Object>> catsList = platformObj.getSellerCatsByMap();
             if (catsList == null || catsList.isEmpty()) {
                 // 如果该商品未设置店铺内分类，则直接保存输入值
                 catsList = sellerCats;
+                if (CartEnums.Cart.CN.getValue() == cartId) {
+                    for (Map<String, Object> catObj : sellerCats) {
+                        updCatObjMap.put((String) catObj.get("cId"), catObj);
+                    }
+                }
+
             } else {
                 // 若已有设置，则要对比输入值与原始值，结果合并后保存
-                // 先删除非保留的分类
-                Iterator<Map<String, Object>> catsEntries = catsList.iterator();
+                Iterator<Map<String, Object>> catsEntries = null;
+                if (CartEnums.Cart.CN.getValue() == cartId) {
+                    // 先记录删除的分类
+                    catsEntries = catsList.iterator();
+                    while (catsEntries.hasNext()) {
+                        Map<String, Object> catsObj = catsEntries.next();
+                        String cId = (String) catsObj.get("cId");
+                        if (!orgDispList.contains(cId) && !isInChecked(sellerCats, cId)) {
+                            // 该分类已被删除
+                            updCatObjMap.put(cId, catsObj);
+                        }
+                    }
+
+                    // 然后记录新增的分类
+                    for (Map<String, Object> vatObj : sellerCats) {
+                        String cId = (String) vatObj.get("cId");
+                        if (!isInChecked(catsList, cId)) {
+                            updCatObjMap.put(cId, vatObj);
+                        }
+                    }
+                }
+
+                // 删除非保留的分类
+                catsEntries = catsList.iterator();
                 while (catsEntries.hasNext()) {
                     Map<String, Object> catsObj = catsEntries.next();
                     String cId = (String) catsObj.get("cId");
@@ -128,8 +166,36 @@ public class CmsAddChannelCategoryTask extends VOAbsLoggable {
             $debug(String.format("批量设置店铺内分类 channelId=%s 结果=%s", channelId, rs.toString()));
         }
 
-        //取得approved的code插入
-        sxProductService.insertSxWorkLoad(channelId, codeList, cartId, userName);
+        // 独立官网时，不做上新，只记录变更结果
+        if (CartEnums.Cart.CN.getValue() == cartId) {
+            // 记录分类的变更
+            List<CmsBtSxCnProductSellercatModel> updModelList = new ArrayList<>();
+            CmsBtSxCnProductSellercatModel model = new CmsBtSxCnProductSellercatModel();
+            model.setChannelId(channelId);
+            model.setUpdFlg("0");
+            model.setCreater(userName);
+
+            for (Map<String, Object> vatObj : updCatObjMap.values()) {
+                List<String> cIdList = (List<String>) vatObj.get("cIds");
+                if (cIdList == null || cIdList.isEmpty()) {
+                    continue;
+                }
+                for (String catId : cIdList) {
+                    if (isInList(updModelList, catId)) {
+                        continue;
+                    }
+                    model.setCatId(catId);
+                    updModelList.add(model);
+                }
+            }
+
+            int rsCnt = cnProductSellercatDao.insertByList(updModelList);
+            $debug(String.format("批量设置店铺内分类 记录变更结果=%d", rsCnt));
+        } else {
+            //取得approved的code插入
+            $debug("批量设置店铺内分类 开始记入SxWorkLoad表");
+            sxProductService.insertSxWorkLoad(channelId, codeList, cartId, userName);
+        }
 
         // 记录商品修改历史
         TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, Integer.toString(cartId), "cn");
@@ -155,4 +221,28 @@ public class CmsAddChannelCategoryTask extends VOAbsLoggable {
         productStatusHistoryService.insertList(channelId, codeList, cartId, EnumProductOperationType.BatchSetCats, msg, userName);
     }
 
+    /**
+     * 判断指定的分类类目是否在输入的选择项中
+     */
+    private boolean isInChecked(List<Map<String, Object>> sellerCats, String catId) {
+        for (Map<String, Object> vatObj : sellerCats) {
+            String cId = (String) vatObj.get("cId");
+            if (catId.equals(cId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断指定的分类类目是否在输入的选择项中
+     */
+    private boolean isInList(List<CmsBtSxCnProductSellercatModel> modelList, String catId) {
+        for (CmsBtSxCnProductSellercatModel vatObj : modelList) {
+            if (catId.equals(vatObj.getCatId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
