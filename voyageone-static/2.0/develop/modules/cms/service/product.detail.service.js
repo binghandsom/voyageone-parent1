@@ -38,7 +38,7 @@ define([
 		this.copyCommonProperty = copyCommonProperty;
 		this.getPlatformCategories = getPlatformCategories;
 		this.priceConfirm = priceConfirm;
-
+		this.updateSkuPrice = updateSkuPrice;
 		/**
 		 * 获取页面产品信息
 		 * @param formData
@@ -494,6 +494,22 @@ define([
 		function priceConfirm(req){
 			var defer = $q.defer();
 			$productDetailService.priceConfirm(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 *  sku价格刷新
+		 * @param req {cartId:平台Id,prodId:产品Id}
+         */
+		function updateSkuPrice(req){
+			var defer = $q.defer();
+
+			$productDetailService.updateSkuPrice(req)
 				.then (function (res) {
 					defer.resolve(res);
 				},function(res){
