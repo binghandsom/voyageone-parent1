@@ -102,6 +102,9 @@ public class TbSaleService extends TbBase {
      */
     public List<Item> getInventoryProduct(String strOrderChannelId, String strCardId, Long lPageIndex, Long pageSize) throws ApiException {
         ShopBean shopInfo = Shops.getShop(strOrderChannelId, strCardId);
+        shopInfo.setAppKey("21008948");
+        shopInfo.setAppSecret("0a16bd08019790b269322e000e52a19f");
+        shopInfo.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
         ItemsInventoryGetRequest req = new ItemsInventoryGetRequest();
 
         req.setPageNo(lPageIndex);
