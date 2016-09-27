@@ -884,24 +884,26 @@ public class CmsFieldEditService extends BaseAppService {
                     $info(String.format("setProductSalePrice: 输入的最终售价低于下限阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                     prodPriceDownExList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (1 - breakThreshold)) + "\t " + rs);
                     continue;
-                } else if ("4".equals(diffFlg)) {
-                    $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    prodPriceUpList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (breakThreshold + 1)) + "\t " + rs);
-                    continue;
-                    // 超过阈值时不更新，(下面注释掉的代码暂时保留，将来可能会有用)
-//                    if (notChkPriceFlg == 1) {
-//                        // 忽略检查
-//                        $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，强制更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-//                    } else {
-//                        $warn(String.format("setProductSalePrice: 输入数据错误 大于阈值 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-//                        rsMap.put("ecd", 3);
-//                        rsMap.put("prodCode", prodCode);
-//                        rsMap.put("skuCode", skuCode);
-//                        rsMap.put("priceSale", rs);
-//                        rsMap.put("priceLimit", result * (breakThreshold + 1));
-//                        return rsMap;
-//                    }
                 }
+                // DOC-161 价格向上击穿的阀值检查 取消
+//                else if ("4".equals(diffFlg)) {
+//                    $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+//                    prodPriceUpList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (breakThreshold + 1)) + "\t " + rs);
+//                    continue;
+//                    // 超过阈值时不更新，(下面注释掉的代码暂时保留，将来可能会有用)
+////                    if (notChkPriceFlg == 1) {
+////                        // 忽略检查
+////                        $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，强制更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+////                    } else {
+////                        $warn(String.format("setProductSalePrice: 输入数据错误 大于阈值 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+////                        rsMap.put("ecd", 3);
+////                        rsMap.put("prodCode", prodCode);
+////                        rsMap.put("skuCode", skuCode);
+////                        rsMap.put("priceSale", rs);
+////                        rsMap.put("priceLimit", result * (breakThreshold + 1));
+////                        return rsMap;
+////                    }
+//                }
                 skuObj.setAttribute("priceSale", rs);
                 skuObj.setAttribute("priceDiffFlg", diffFlg);
 
