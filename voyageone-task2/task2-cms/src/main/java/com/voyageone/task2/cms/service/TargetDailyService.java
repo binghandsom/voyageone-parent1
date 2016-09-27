@@ -139,9 +139,9 @@ public class TargetDailyService extends BaseTaskService {
             StringBuffer content = new StringBuffer();
 
             content.append("Please see the current offline report for Target Tmall store as of "+time+"(US Central Time).");
-            content.append("<br>");
+            content.append("<br><br>");
             content.append("For technical questions, please contact us at target-tmall-reports-support@voyageone.cn");
-            content.append("<br>");
+            content.append("<br><br>");
             content.append("Best Regards");
             content.append("<br>");
             content.append("VoyageOne Auto Report");
