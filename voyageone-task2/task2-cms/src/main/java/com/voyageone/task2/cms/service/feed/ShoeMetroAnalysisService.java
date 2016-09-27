@@ -41,32 +41,6 @@ public class ShoeMetroAnalysisService extends BaseAnalysisService {
     ShoeMetroFeedDao shoeMetroFeedDao;
 
     @Override
-    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-
-        init();
-//
-//        zzWorkClear();
-//        int cnt = 0;
-//        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
-//            cnt = fullCopyTemp();
-//        }else {
-//            $info("产品信息插入开始");
-//            cnt = superFeedImport();
-//        }
-//
-//        $info("产品信息插入完成 共" + cnt + "条数据");
-//        if (cnt > 0) {
-            transformer.new Context(channel, this).transform();
-
-            postNewProduct();
-
-//            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
-//                backupFeedFile(channel.getId());
-//            }
-//        }
-    }
-
-    @Override
     protected void updateFull(List<String> itemIds) {
         if (itemIds.size() > 0) {
             List<List<String>> listItems = CommonUtil.splitList(itemIds, 1000);
