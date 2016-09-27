@@ -182,7 +182,7 @@ define([
                         if (self.sourceData.isReadOnly == true) {
                             var taskName = options ? options.taskName : angular.element('#taskId option:selected').text();
                             res = self.getConfigPaginationData(self.taskCfgList, function (e) {
-                                if (taskName != null && taskName != '') {
+                                if (taskName != null && taskName != '' && taskName != '请选择...') {
                                     if (e.taskId != null && e.taskId != taskName) {
                                         return false;
                                     }
@@ -367,7 +367,6 @@ define([
                         self.popups.openCreateEdit(cfgInfo).then(function () {
                             self.search(1);
                         });
-                        return;
                     }
                 });
             },
@@ -377,7 +376,13 @@ define([
                     var delList = [];
                     _.forEach(self.configSelList.selList, function (delInfo) {
                         _.extend(delInfo, {'configType': self.searchInfo.configType});
-                        delList.push(delInfo);
+                        if (delInfo.configType == 'Task') {
+                            if (delInfo.cfgName != 'run_flg') {
+                                delList.push(delInfo);
+                            }
+                        } else {
+                            delList.push(delInfo);
+                        }
                     });
                     switch (self.searchInfo.configType) {
                         case 'Channel':

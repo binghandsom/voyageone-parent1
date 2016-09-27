@@ -109,7 +109,8 @@
                     </thead>
                     <tbody>
                     <tr>
-                        <td if-no-rows="ctrl.cfgList.length" colspan="6" style="padding: 0px"></td>
+                        <td ng-if="ctrl.searchInfo.configType=='Store'||ctrl.searchInfo.configType=='Channel'" if-no-rows="ctrl.cfgList.length" colspan="6" style="padding: 0px"></td>
+                        <td ng-if="ctrl.searchInfo.configType=='Task'||ctrl.searchInfo.configType=='Shop'" if-no-rows="ctrl.cfgList.length" colspan="7" style="padding: 0px"></td>
                     </tr>
                     <tr ng-repeat="list in ctrl.cfgList">
                         <td class="text-left v-middle">
@@ -121,7 +122,7 @@
                         </td>
                         <td class="text-left v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.channelName}}</td>
                         <td class="text-left v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.cartName}}</td>
-                        <td class="text-left v-middle"ng-if="ctrl.searchInfo.configType!=='Shop'">{{list.channelName||list.storeName||list.taskId}}</td>
+                        <td class="text-left v-middle" ng-if="ctrl.searchInfo.configType!=='Shop'">{{list.channelName||list.storeName||list.taskId}}</td>
                         <td class="text-left v-middle">
                             <label class="v-middle" ng-if="list.cfgName.length <= 15">{{list.cfgName}}</label>
                             <label class="v-middle" ng-if="list.cfgName.length > 15" uib-tooltip="{{list.cfgName}}"
