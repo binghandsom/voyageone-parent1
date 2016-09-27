@@ -113,7 +113,8 @@ define(function () {
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
                     priceConfirm:"priceConfirm",
-                    getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL}
+                    getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
+                    updateSkuPrice:"updateSkuPrice"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",

@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.product;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
@@ -25,6 +26,7 @@ import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.*;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -32,10 +34,7 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
-import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
-import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
+import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
@@ -89,18 +88,18 @@ public class CmsProductDetailService extends BaseViewService {
     private CategoryTreeAllService categoryTreeAllService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
-
     @Autowired
     private SxProductService sxProductService;
-
     @Autowired
     private ImsBtProductDao imsBtProductDao;
-
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private CmsBtPriceConfirmLogService cmsBtPriceConfirmLogService;
-
     @Autowired
     private PriceService priceService;
+    @Autowired
+    private CmsBtPriceLogService cmsBtPriceLogService;
 
     /**
      * 获取类目以及类目属性信息.
@@ -653,7 +652,13 @@ public class CmsProductDetailService extends BaseViewService {
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
         if (!compareHsCode(commonModel.getFields().getHsCodePrivate(), oldProduct.getCommon().getFields().getHsCodePrivate())) {
             try {
-                priceService.setPrice(newProduct, false);
+                // 税号从无到有的场后同步最终售价
+                if(StringUtil.isEmpty(oldProduct.getCommon().getFields().getHsCodePrivate())){
+                    priceService.setPrice(newProduct, true);
+                }else{
+                    priceService.setPrice(newProduct, false);
+                }
+
             } catch (PriceCalculateException e) {
                 throw new BusinessException("价格计算错误" + e.getMessage());
             } catch (IllegalPriceConfigException e) {
@@ -1437,5 +1442,32 @@ public class CmsProductDetailService extends BaseViewService {
         common.put("schemaFields", cmsMtCommonFields);
 
         return common;
+    }
+
+    public void updateSkuPrice(String channelId, int cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform) {
+
+        //更新mongo数据
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+
+        updateMap.put("platforms.P" + platform.getCartId() + ".modified", DateTimeUtil.getNowTimeStamp());
+        updateMap.put("platforms.P" + platform.getCartId() + ".skus", platform.getSkus());
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
+
+        //更新价格履历
+        List<String> skus = new ArrayList<>();
+        platform.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
+        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, cartId, userName, "sku价格刷新");
+
+        //刷新价格
+        CmsBtProductModel productInfo = productService.getProductById(channelId, prodId);
+        priceService.updateSkuPrice(channelId, cartId, productInfo);
     }
 }

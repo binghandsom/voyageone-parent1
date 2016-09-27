@@ -229,7 +229,11 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 feedFileModel.setChannelId(channel.getOrder_channel_id());
                 feedFileModel.setFileName(fileName);
                 // 更新内容
-                feedFileModel.setErrorMsg(ex.getMessage());
+                String errorMsg = ex.getMessage();
+                if (ex.getMessage() != null && ex.getMessage().length() > 2000) {
+                    errorMsg = ex.getMessage().substring(0, 2000);
+                }
+                feedFileModel.setErrorMsg(errorMsg);
                 feedFileModel.setStatus(VmsConstants.FeedFileStatus.IMPORT_SYSTEM_ERROR);
                 feedFileModel.setModifier(getTaskName());
                 vmsBtFeedFileDaoExt.updateErrorInfo(feedFileModel);

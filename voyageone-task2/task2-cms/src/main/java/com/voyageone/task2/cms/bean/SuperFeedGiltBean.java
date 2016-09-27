@@ -341,6 +341,7 @@ public class SuperFeedGiltBean {
         temp.append(this.categories_id);
         temp.append(this.categories_name);
         temp.append(this.categories_key);
+        temp.append(this.qty);
 
         return MD5.getMD5(temp.toString());
     }
