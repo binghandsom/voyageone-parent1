@@ -44,50 +44,6 @@ public class CnUploadImageService extends CnBase {
     private static final String ALIYUN_ACCESS_KEYSECRET ="zSkOk82RetLpwCe9igqCm9bSW9tuPy";
     private static final String ALIYUN_BUCKETNAME ="sneakerheadcn";
 
-    @Retryable
-    private void doUploadImage(String url, String strOssFilePath) throws IOException {
-
-//        try {
-//            downloadImage(url);
-//        } catch (IOException e) {
-//            logger.info(String.format("error! retry:%d", retry));
-//        } catch (BusinessException e) {
-//            logger.info(String.format("bus error! retry:%d", retry));
-//        }
-//        logger.info(String.format("读取图片[%s]成功!", url));
-//        downloadImage("http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x1200_1200x?$1200x1200$&$product=010-5190838801-0DTCN00-1-1");
-//        throw new BusinessException(String.format("throws retry:%d", retry));
-
-
-//        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        URL imgUrl = new URL(url);
-//        InputStream is = imgUrl.openStream();
-//
-//        byte[] byte_buf = new byte[1024];
-//        int readBytes = 0;
-//        while ((readBytes = is.read(byte_buf)) > 0) {
-//            out.write(byte_buf, 0, readBytes);
-//        }
-//        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-//
-//        String fileName = "D:\\a.jpg";
-//        File file = new File(fileName);
-//        if (!file.exists()) {
-//            file.createNewFile();
-//        }
-//
-//        FileOutputStream output = new FileOutputStream(fileName);
-//        int bytesRead;
-//        byte[] buf = new byte[BUFFER_SIZE];
-//        while ((bytesRead = in.read(buf)) > 0) {
-//            output.write(buf, 0, bytesRead);
-//        }
-//        output.close();
-//        in.close();
-//
-//
-    }
-
     /**
      * 读取图片
      */
@@ -107,19 +63,17 @@ public class CnUploadImageService extends CnBase {
         }
     }
 
-
     /**
      * 上传图片
      *
      * @param strOssFilePath OSS存放路径
      */
     @Retryable
-    public void uploadImage(byte[] bytes, String strOssFilePath) throws IOException {
-        logger.info(String.format("retry:%d!", retry++));
+    public String uploadImage(byte[] bytes, String strOssFilePath) throws IOException {
+//        logger.info(String.format("retry:%d!", retry++));
         try (ByteArrayInputStream in = new ByteArrayInputStream(bytes);){
             AliYunOSSClient client = new AliYunOSSClient(ALIYUN_ENDPOINT, ALIYUN_ACCESS_KEYID, ALIYUN_ACCESS_KEYSECRET);
-
-
+            return client.putOSS(in, ALIYUN_BUCKETNAME, strOssFilePath);
         }
     }
 

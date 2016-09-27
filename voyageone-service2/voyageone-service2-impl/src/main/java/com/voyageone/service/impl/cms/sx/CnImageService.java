@@ -90,6 +90,12 @@ public class CnImageService extends BaseService {
         }
     }
 
+    /**
+     * 上传图片
+     *
+     * @param url 图片url
+     * @param strOssFilePath OSS存放路径
+     */
     public void doUploadImage(String url, String strOssFilePath) {
         byte[] bytes;
         try {
@@ -97,6 +103,8 @@ public class CnImageService extends BaseService {
         } catch (IOException e) {
             $warn("独立域名图片取得失败![%s]", url);
             return;
+        } catch (Exception ex) {
+            throw ex;
         }
         $info("独立域名读取图片成功![%s]", url);
 
@@ -106,6 +114,8 @@ public class CnImageService extends BaseService {
         } catch (IOException e) {
             $warn("独立域名图片上传失败![%s]", url);
             return;
+        } catch (Exception ex) {
+            throw ex;
         }
         $info("独立域名上传图片成功![%s]", url);
 
