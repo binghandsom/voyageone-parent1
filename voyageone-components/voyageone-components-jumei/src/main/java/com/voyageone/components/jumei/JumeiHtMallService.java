@@ -166,18 +166,34 @@ public class JumeiHtMallService extends JmBase {
     }
 
     /**
-     * 编辑商城Sku属性[MALL]
+     * 编辑商城的sku[MALL] 上下架，商家商品编码等
      *
      * @param shopBean 店铺信息
+     * @param jumeiSkuNo 聚美Sku_No(必须)
+     * @param status 是否启用，enabled-是，disabled-否(非必须)
+     * @param customsProductNumber 海关备案商品编码(非必须) 参数范围: 注:获取仓库接口返回bonded_area_id字段 大于０表示保税区仓库
+     * @param businessmanNum 商家商品编码(非必须)
      * @param failCause 用于保存错误信息
      * @return 是否更新成功
      */
-    public boolean updateMallSku(ShopBean shopBean, String jumei_sku_no, boolean enabled, StringBuffer failCause) throws Exception {
-        HtMallSkuUpdateRequest request = new HtMallSkuUpdateRequest();
-        request.setJumei_sku_no(jumei_sku_no);
-        request.setEnabled(enabled);
-        String reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
-        HtMallSkuUpdateResponse response = new HtMallSkuUpdateResponse();
+    public boolean updateSkuForMall(ShopBean shopBean, String jumeiSkuNo, String status, String customsProductNumber, String businessmanNum, StringBuffer failCause) throws Exception {
+        HtMallUpdateSkuForMallRequest request = new HtMallUpdateSkuForMallRequest();
+        request.setJumei_sku_no(jumeiSkuNo);
+        request.setStatus(status);
+        request.setCustoms_product_number(customsProductNumber);
+        request.setBusinessman_num(businessmanNum);
+
+        String reqResult;
+        try {
+            reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
+        } catch (BusinessException bex) {
+            if (bex.getInfo() != null && bex.getInfo().length > 0) {
+                reqResult = (String) bex.getInfo()[0];
+            } else {
+                throw bex;
+            }
+        }
+        HtMallUpdateSkuForMallResponse response = new HtMallUpdateSkuForMallResponse();
         response.setBody(reqResult);
         if (!response.isSuccess()) {
             failCause.append(response.getErrorMsg());

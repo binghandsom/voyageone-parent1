@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.asserts.Assert;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CustomPropBean;
@@ -8,6 +10,7 @@ import com.voyageone.service.bean.cms.product.GetChangeMastProductInfoParameter;
 import com.voyageone.service.bean.cms.product.SetMastProductParameter;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -39,6 +42,9 @@ public class CmsProductDetailController extends CmsController {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    CmsProductPlatformDetailService cmsProductPlatformDetailService;
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_INFO)
     public AjaxResponse doGetProductInfo(@RequestBody Map params) {
@@ -178,6 +184,7 @@ public class CmsProductDetailController extends CmsController {
         productPropsEditService.setMastProduct(parameter, getUser().getUserName());
         return success(null);
     }
+
     //单品下架
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.Delisting)
     public AjaxResponse delisting(@RequestBody DelistingParameter parameter) {
@@ -185,6 +192,7 @@ public class CmsProductDetailController extends CmsController {
         productPropsEditService.delisting(parameter, getUser().getUserName());
         return success(null);
     }
+
     //group下架
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.DelistinGroup)
     public AjaxResponse delistinGroup(@RequestBody DelistingParameter parameter) {
@@ -192,22 +200,54 @@ public class CmsProductDetailController extends CmsController {
         productPropsEditService.delistinGroup(parameter, getUser().getUserName());
         return success(null);
     }
+
     //税号变更
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.HsCodeChg)
-    public AjaxResponse hsCodeChg(@RequestBody Map<String,Object> parameter){
+    public AjaxResponse hsCodeChg(@RequestBody Map<String, Object> parameter) {
 
         String channelId = getUser().getSelChannelId();
         Long prodId = Long.parseLong(String.valueOf(parameter.get("prodId")));
         String hsCode = String.valueOf(parameter.get("hsCode"));
-        return success(productPropsEditService.hsCodeChg(channelId,prodId,hsCode));
+        return success(productPropsEditService.hsCodeChg(channelId, prodId, hsCode));
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CopyCommonProperty)
-    public AjaxResponse copyProperty (@RequestBody Map params){
+    public AjaxResponse copyProperty(@RequestBody Map params) {
 
         Map<String, Object> result = new HashMap<>();
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
-        result.put("platform", productPropsEditService.copyPropertyFromMainProduct(getUser().getSelChannelId(), prodId,getLang()));
+        result.put("platform", productPropsEditService.copyPropertyFromMainProduct(getUser().getSelChannelId(), prodId, getLang()));
         return success(result);
     }
+
+    /**
+     * 产品详情页sku价格刷新
+     *
+     * @return
+     * @params cartId：平台Id  prodId：产品编号   platform:平台信息
+     */
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_SKUPRICE)
+    public AjaxResponse updateSkuPrice(@RequestBody Map params) {
+
+        String channelId = getUser().getSelChannelId();
+        Assert.notNull(channelId).elseThrowDefaultWithTitle("channelId");
+
+        int cartId = Integer.parseInt(String.valueOf(params.get("cartId")));
+        Assert.notNull(cartId).elseThrowDefaultWithTitle("cartId");
+
+        Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
+        Assert.notNull(prodId).elseThrowDefaultWithTitle("prodId");
+
+        Map<String, Object> platform = (Map<String, Object>) params.get("platform");
+        Assert.notNull(platform).elseThrowDefaultWithTitle("platform");
+
+
+        cmsProductPlatformDetailService.priceChk(channelId, prodId, platform);
+
+        productPropsEditService.updateSkuPrice(channelId, cartId, prodId, getUser().getUserName(), new CmsBtProductModel_Platform_Cart(platform));
+
+        return success(null);
+    }
+
+
 }

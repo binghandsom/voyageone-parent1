@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * HtSpuAddResponse
+ * HtSpuAddResponse 添加Spu信息
  * @author peitao.sun, 2016/3/29
  * @version 2.0.0
  * @since 2.0.0
@@ -88,12 +88,37 @@ public class HtSpuAddResponse extends BaseJMResponse {
             if ("0".equals(this.error_code)) {
                 this.setIs_Success(true);
             } else {
-                this.setErrorMsg(this.body);
+                this.setIs_Success(false);
+                StringBuffer sbMsg = new StringBuffer(" 添加Spu信息(/v1/htSpu/add)时,发生错误[" + this.error_code + ":");
+                switch (this.error_code) {
+                    case "10002":
+                        sbMsg.append("client_id,client_key,sign 认证失败");
+                        break;
+                    case "100001":
+                        sbMsg.append("jumei_product_id, 聚美产品ID参数错误");
+                        break;
+                    case "100013":
+                        sbMsg.append("property，规格错误");
+                        break;
+                    case "100014":
+                        sbMsg.append("size，容量/尺码错误");
+                        break;
+                    case "100016":
+                        sbMsg.append("abroad_price， 海外官网价错误");
+                        break;
+                    case "100017":
+                        sbMsg.append("area_code， 货币符号Id错误");
+                        break;
+                    default:
+                        sbMsg.append(map.get("reason").toString());
+                }
+                sbMsg.append("] ");
+                this.setErrorMsg(sbMsg.toString() + this.body);
             }
         } catch (Exception ex) {
             logger.error("setBody ",ex);
             this.setIs_Success(false);
-            this.setErrorMsg("返回参数解析错误" + this.body);
+            this.setErrorMsg("HtSpuAddResponse 返回参数解析错误" + this.body);
         }
     }
 }

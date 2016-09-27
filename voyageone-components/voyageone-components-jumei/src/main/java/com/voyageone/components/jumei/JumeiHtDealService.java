@@ -6,7 +6,6 @@ import com.voyageone.components.jumei.reponse.*;
 import com.voyageone.components.jumei.request.*;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Map;
 
 @Service
@@ -120,6 +119,25 @@ public class JumeiHtDealService extends JmBase {
         }
         logger.info("获取Deal信息返回：" + reqResult);//
         HtDealGetDealByHashIDResponse response = new HtDealGetDealByHashIDResponse();
+        response.setRequestUrl(request.getUrl());
+        response.setBody(reqResult);
+        return response;
+    }
+
+    public HtDealUpdateSkuIsEnableResponse updateSkuIsEnable(ShopBean shopBean, HtDealUpdateSkuIsEnableRequest request) throws Exception {
+        Map<String, Object> params = request.getParameter();
+        String reqResult;
+        try {
+            reqResult = reqJmApi(shopBean, request.getUrl(), params);
+        }catch (BusinessException bex) {
+            if (bex.getInfo() != null && bex.getInfo().length>0) {
+                reqResult = (String) bex.getInfo()[0];
+            } else {
+                throw bex;
+            }
+        }
+        logger.info("修改Deal(特卖)上下架Deal关联的Sku信息返回：" + reqResult);
+        HtDealUpdateSkuIsEnableResponse response = new HtDealUpdateSkuIsEnableResponse();
         response.setRequestUrl(request.getUrl());
         response.setBody(reqResult);
         return response;
