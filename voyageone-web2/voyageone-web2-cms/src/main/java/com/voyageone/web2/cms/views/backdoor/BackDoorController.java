@@ -1085,14 +1085,19 @@ public class BackDoorController extends CmsController {
      * 根据channelId和cartId,设置已经Approved商品所有的cart
      *
      * @param channelId
+     * @param flg
      * @return
      */
     @RequestMapping(value = "updateProductJMHashId", method = RequestMethod.GET)
-    public Object updateProductJMHashId(@RequestParam("channelId") String channelId) {
+    public Object updateProductJMHashId(@RequestParam("channelId") String channelId, @RequestParam("flg") String flg) {
 
         List<String> codes = new ArrayList<>();
 
-        List<MapModel> promotionCodes = cmsBtJmPromotionDaoExt.selectMaxJmHashId(channelId);
+        List<MapModel> promotionCodes = new ArrayList<>();
+        if ("1".equals(flg))
+            promotionCodes = cmsBtJmPromotionDaoExt.selectMaxJmHashId(channelId);
+        else if ("2".equals(flg))
+            promotionCodes = cmsBtJmPromotionDaoExt.selectJmProductHashId(channelId);
 
         promotionCodes.forEach(promtionCode -> {
             String code = promtionCode.get("productCode").toString();
@@ -1128,6 +1133,7 @@ public class BackDoorController extends CmsController {
 
         return builder.toString();
     }
+
 
     @RequestMapping(value = "changeProductTypeToLow", method = RequestMethod.GET)
     public Object changeProductTypeToLow(@RequestParam("channelId") String channelId) {
