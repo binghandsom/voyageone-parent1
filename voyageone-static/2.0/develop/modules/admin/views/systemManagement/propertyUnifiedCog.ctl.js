@@ -46,7 +46,7 @@ define([
                         });
                         break;
                     case 'Store':
-                        self.storeService.getAllStore().then(function (res) {
+                        self.storeService.getAllStore(null).then(function (res) {
                             self.storeList = res.data;
                         });
                         break;
@@ -59,7 +59,7 @@ define([
                         self.channelService.getAllChannel().then(function (res) {
                             self.channelAllList = res.data;
                         });
-                        self.AdminCartService.getAllCart().then(function (res) {
+                        self.AdminCartService.getAllCart(null).then(function (res) {
                             self.cartAllList = res.data;
                         });
                         break;

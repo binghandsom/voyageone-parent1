@@ -36,7 +36,7 @@ define([
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
-                self.AdminCartService.getAllCart().then(function (res) {
+                self.AdminCartService.getAllCart(null).then(function (res) {
                     self.cartAllList = res.data;
                 });
                 self.search(1);

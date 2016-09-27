@@ -34,6 +34,7 @@
 .table-nested .parent > .cell-name > .indent:before {
     content: "";
     font-family: FontAwesome;
+    margin-right:6px;
     display: inline-block;
     -moz-transition: -moz-transform 0.3s;
     -o-transition: -o-transform 0.3s;
