@@ -481,8 +481,20 @@ define([
                     return result;
                 }
 
-                function refreshPrice(){
-                    console.log("价格刷新");
+                /**sku价格刷新*/
+                function refreshPrice() {
+                    confirm("您是否确认要刷新sku价格").then(function () {
+                        productDetailService.updateSkuPrice({
+                            cartId: scope.cartInfo.value,
+                            prodId: scope.productInfo.productId,
+                            platform:scope.vm.platform
+                        }).then(function () {
+                            alert("TXT_MSG_UPDATE_SUCCESS");
+                        },function(res){
+                            alert(res.message);
+                        });
+                    });
+
                 }
 
             }

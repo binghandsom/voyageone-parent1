@@ -2,7 +2,6 @@ package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
-import com.taobao.api.ApiException;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -13,6 +12,8 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.*;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.Carts;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.*;
 import com.voyageone.common.masterdate.schema.field.Field;
@@ -20,12 +21,12 @@ import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.cache.CommCacheService;
@@ -86,7 +87,7 @@ public class CmsFieldEditService extends BaseViewService {
     @Autowired
     private CommCacheService commCacheService;
     @Autowired
-    private TbItemService tbItemService;
+    private PriceService priceService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -266,15 +267,6 @@ public class CmsFieldEditService extends BaseViewService {
                 return rsMap;
             }
 
-            JongoUpdate updObj = new JongoUpdate();
-            updObj.setQuery("{'common.fields.code':{$in:#}}");
-            updObj.setQueryParameters(productCodes);
-            updObj.setUpdate("{$set:{'common.fields." + prop_id + "':#,'common.fields.hsCodeStatus':'1','common.fields.hsCodeSetter':#,'common.fields.hsCodeSetTime':#}}");
-            updObj.setUpdateParameters(hsCode, userInfo.getUserName(), DateTimeUtil.getNow());
-
-            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
-            $debug("批量更新结果 " + rs.toString());
-
             params.put("productIds", productCodes);
             params.put("_taskName", "batchupdate");
             params.put("_channleId",  userInfo.getSelChannelId());
@@ -333,14 +325,16 @@ public class CmsFieldEditService extends BaseViewService {
             List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
             cartList = new ArrayList<>();
             for (TypeChannelBean cartObj : cartTypeList) {
-                if (!CartEnums.Cart.JM.getId().equals(cartObj.getValue()) && !"3".equals(cartObj.getCartType())) {
+//                if (!CartEnums.Cart.JM.getId().equals(cartObj.getValue()) && !"3".equals(cartObj.getCartType())) {
+                if (!"3".equals(cartObj.getCartType())) {
                     cartList.add(NumberUtils.toInt(cartObj.getValue()));
                 }
             }
             cartList = cartTypeList.stream().map((cartType) -> NumberUtils.toInt(cartType.getValue())).collect(Collectors.toList());
         } else {
             TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, userInfo.getSelChannelId(), cartId.toString(), "en");
-            if (CartEnums.Cart.JM.getValue() != cartId && !"3".equals(cartObj.getCartType())) {
+//            if (CartEnums.Cart.JM.getValue() != cartId && !"3".equals(cartObj.getCartType())) {
+            if (!"3".equals(cartObj.getCartType())) {
                 cartList = new ArrayList<>(1);
                 cartList.add(cartId);
             }
@@ -752,7 +746,7 @@ public class CmsFieldEditService extends BaseViewService {
         JongoQuery qryObj = new JongoQuery();
         qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".skus.0':{$exists:true}}");
         qryObj.setParameters(productCodes);
-        qryObj.setProjection("{'common.fields.code':1,'prodId':1,'common.skus.skuCode':1,'common.skus.clientMsrpPrice':1,'common.skus.clientRetailPrice':1,'common.skus.clientNetPrice':1,'platforms.P" + cartId + ".skus':1,'_id':0}");
+        qryObj.setProjection("{'common.fields.code':1,'prodId':1,'common.skus.skuCode':1,'common.skus.clientMsrpPrice':1,'common.skus.clientRetailPrice':1,'common.skus.clientNetPrice':1,'platforms.P" + cartId + ".pNumIId':1,'platforms.P" + cartId + ".status':1,'platforms.P" + cartId + ".skus':1,'_id':0}");
 
         List<CmsBtPriceLogModel> priceLogList = new ArrayList<CmsBtPriceLogModel>();
         String skuCode = null;
@@ -889,24 +883,26 @@ public class CmsFieldEditService extends BaseViewService {
                     $info(String.format("setProductSalePrice: 输入的最终售价低于下限阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                     prodPriceDownExList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (1 - breakThreshold)) + "\t " + rs);
                     continue;
-                } else if ("4".equals(diffFlg)) {
-                    $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    prodPriceUpList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (breakThreshold + 1)) + "\t " + rs);
-                    continue;
-                    // 超过阈值时不更新，(下面注释掉的代码暂时保留，将来可能会有用)
-//                    if (notChkPriceFlg == 1) {
-//                        // 忽略检查
-//                        $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，强制更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-//                    } else {
-//                        $warn(String.format("setProductSalePrice: 输入数据错误 大于阈值 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-//                        rsMap.put("ecd", 3);
-//                        rsMap.put("prodCode", prodCode);
-//                        rsMap.put("skuCode", skuCode);
-//                        rsMap.put("priceSale", rs);
-//                        rsMap.put("priceLimit", result * (breakThreshold + 1));
-//                        return rsMap;
-//                    }
                 }
+                // DOC-161 价格向上击穿的阀值检查 取消
+//                else if ("4".equals(diffFlg)) {
+//                    $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+//                    prodPriceUpList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (breakThreshold + 1)) + "\t " + rs);
+//                    continue;
+//                    // 超过阈值时不更新，(下面注释掉的代码暂时保留，将来可能会有用)
+////                    if (notChkPriceFlg == 1) {
+////                        // 忽略检查
+////                        $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，强制更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+////                    } else {
+////                        $warn(String.format("setProductSalePrice: 输入数据错误 大于阈值 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+////                        rsMap.put("ecd", 3);
+////                        rsMap.put("prodCode", prodCode);
+////                        rsMap.put("skuCode", skuCode);
+////                        rsMap.put("priceSale", rs);
+////                        rsMap.put("priceLimit", result * (breakThreshold + 1));
+////                        return rsMap;
+////                    }
+//                }
                 skuObj.setAttribute("priceSale", rs);
                 skuObj.setAttribute("priceDiffFlg", diffFlg);
 
@@ -935,15 +931,13 @@ public class CmsFieldEditService extends BaseViewService {
                 cmsBtPriceLogModel.setModified(new Date());
                 cmsBtPriceLogModel.setModifier(userInfo.getUserName());
                 priceLogList.add(cmsBtPriceLogModel);
+            }
 
-                if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id()) && CmsConstants.ProductStatus.Approved.name().equals(prodObj.getPlatform(cartId).getStatus())) {
-                    // 是天猫平台时直接调用API更新sku价格(要求已上新)
-                    try {
-                        tbItemService.updateSkuPrice(shopObj, prodObj.getPlatform(cartId).getpNumIId(), rs.toString());
-                    } catch (ApiException e) {
-                        $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
-                    }
-                }
+            // 是天猫平台时直接调用API更新sku价格(要求已上新)
+            try {
+                priceService.updateSkuPrice(userInfo.getSelChannelId(), cartId, prodObj);
+            } catch (Exception e) {
+                $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
             }
 
             // 更新产品的信息

@@ -24,6 +24,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtSxCnInfoDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
+import com.voyageone.service.impl.cms.sx.CnImageService;
 import com.voyageone.service.impl.cms.sx.ConditionPropValueService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
@@ -65,6 +66,9 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
     private ConditionPropValueService conditionPropValueService;
     @Autowired
     private CnSchemaService cnSchemaService;
+    @Autowired
+    private CnImageService cnImageService;
+
     @Autowired
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
     @Autowired
@@ -249,7 +253,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
         findCnInfoModel = cmsBtSxCnInfoDao.selectInfoByGroupId(channelId, groupId, 0);
         if (findCnInfoModel != null) {
             // 有未post的数据，状态更新掉(4:上传终止)，不要重复post
-            cmsBtSxCnInfoDao.updatePublishFlg(channelId, new ArrayList<Long>(){{this.add(groupId);}}, 4, getTaskNameForUpdate());
+            cmsBtSxCnInfoDao.updatePublishFlg(channelId, new ArrayList<Long>(){{this.add(groupId);}}, 4, getTaskNameForUpdate(), 0);
         } else {
             findCnInfoModel = cmsBtSxCnInfoDao.selectInfoByGroupId(channelId, groupId, 1);
             if (findCnInfoModel != null) {
@@ -538,6 +542,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
      */
     private void constructProductCustomPlatformProps(List<Field> fields, List<String> listSp, CmsBtProductModel product, ExpressionParser expressionParser, ShopBean shopBean, String modifier) throws Exception {
         SxData sxData = expressionParser.getSxData();
+        String strUrlKey = product.getOrgChannelId() + "-" + Long.toString(product.getProdId());
 
         Map<String, Field> fieldsMap = new HashMap<>();
         for (Field field : fields) {
@@ -621,7 +626,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(product.getOrgChannelId() + "-" + Long.toString(product.getProdId()));
+            ((InputField) field).setValue(strUrlKey);
         }
         {
             // CategoryIds
@@ -656,7 +661,6 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
         }
         {
             // MainImageList 商品主图  逗号分隔
-            // TODO:图片上传
             String field_id = "MainImageList";
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
@@ -664,17 +668,27 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
             List<CmsBtProductModel_Field_Image> imageList = sxProductService.getProductImages(product, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE);
             int imageCnt = imageList.size() > 5 ? 5 : imageList.size(); // 最多5张图
 
-            String strImageNames = "";
+            List<String> imageKey = new ArrayList<>();
+            List<String> imageNames = new ArrayList<>();
             for (int index = 0; index < imageCnt; index++) {
-                String imageName = imageList.get(index).getName();
-                if (index == 0) {
-                    strImageNames = imageName;
-                } else {
-                    strImageNames = strImageNames + "," + imageName;
-                }
+                // modified by morse.lu 2016/09/26 start
+                // UrlKey-1,UrlKey-2
+//                String imageName = imageList.get(index).getName();
+//                if (index == 0) {
+//                    strImageNames = imageName;
+//                } else {
+//                    strImageNames = strImageNames + "," + imageName;
+//                }
+                imageKey.add(strUrlKey + "-" + Integer.toString(index));
+                imageNames.add(imageList.get(index).getName());
+                // modified by morse.lu 2016/09/26 end
             }
 
-            ((InputField) field).setValue(strImageNames);
+            // 更新cms_bt_sx_cn_images表，之后上传图片的job会抽出status=0的数据进行上传图片
+            cnImageService.updateImageInfo(sxData.getChannelId(), sxData.getCartId(), product.getCommon().getFields().getCode(), strUrlKey, imageNames, getTaskNameForUpdate());
+
+//            ((InputField) field).setValue(strImageNames);
+            ((InputField) field).setValue(imageKey.stream().collect(Collectors.joining(",")));
         }
         {
             // CreatedAt 上市日期

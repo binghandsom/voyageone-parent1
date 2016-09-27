@@ -114,7 +114,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
         // 把状态更新成 1:上传中，防止推过来更新的xml数据
         List<Long> listGroupId = listSxModel.stream().map(CmsBtSxCnInfoModel::getGroupId).collect(Collectors.toList());
-        cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 1, getTaskName());
+        cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 1, getTaskName(), 0);
 
         boolean needRetry = false;
         String startTime = "";
@@ -150,7 +150,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             if (!isSuccess) {
                 // 只有网络问题推送失败才会false，所以就打个log，不把status更新成error
                 // 把状态更新成 0:等待上传，下次再推
-                cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 0, getTaskName());
+                cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 0, getTaskName(), 1);
                 needRetry = true;
                 // 回写详细错误信息表(cms_bt_business_log)
                 insertBusinessLog(channelId, String.format("独立域名xml推送失败!请耐心等待下一次推送!本次推送数据的Approve时间为[%s]-[%s]", startTime, endTime), null);
@@ -174,7 +174,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
                 cnCategoryService.updateProductSellercatForUpload(channelId, catIds, getTaskName());
 
                 // 把状态更新成 2:上传结束
-                cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName());
+                cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName(), 1);
             }
         } catch (Exception ex) {
             $error(ex.getMessage());
@@ -183,7 +183,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
                 // 回写详细错误信息表(cms_bt_business_log)
                 insertBusinessLog(channelId, String.format("发生预想外的异常,需要重新Approve!本次推送数据的Approve时间为[%s]-[%s]!错误内容是[%s]", startTime, endTime, ex.getMessage()), null);
                 // 把状态更新成 2:上传结束
-                cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName());
+                cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName(), 1);
             } else {
                 // 回写详细错误信息表(cms_bt_business_log)
                 insertBusinessLog(channelId, String.format("发生预想外的异常,请等待系统自动重新上传!本次推送数据的Approve时间为[%s]-[%s]!错误内容是[%s]", startTime, endTime, ex.getMessage()), null);

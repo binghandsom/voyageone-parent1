@@ -36,10 +36,10 @@ public class CmsBtSxCnInfoDao extends BaseMongoChannelDao<CmsBtSxCnInfoModel> {
         return selectOneWithQuery(query, channelId);
     }
 
-    public WriteResult updatePublishFlg(String channelId, List<Long> listGroupId, int publishFlg, String modifier) {
+    public WriteResult updatePublishFlg(String channelId, List<Long> listGroupId, int publishFlg, String modifier, int wherePublishFlg) {
         JongoUpdate updateQuery = new JongoUpdate();
-        updateQuery.setQuery("{\"groupId\":{$in:#}}");
-        updateQuery.setQueryParameters(listGroupId);
+        updateQuery.setQuery("{\"groupId\":{$in:#}, \"publishFlg\":#}");
+        updateQuery.setQueryParameters(listGroupId, wherePublishFlg);
         updateQuery.setUpdate("{$set:{\"publishFlg\": #, \"modifier\": #, \"modified\": #}}");
         updateQuery.setUpdateParameters(publishFlg, modifier, DateTimeUtil.getNowTimeStamp());
 

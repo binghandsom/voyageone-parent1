@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * HtSpuAddRequest
+ * HtSpuAddRequest 添加Spu信息
  *
  * @author peitao.sun, 2016/3/29
  * @version 2.0.0
