@@ -142,7 +142,17 @@
     </update>
 
     <insert id="cms_zz_worktable_gilt_superfeed_full_insert"  parameterType="java.util.List">
-        INSERT INTO voyageone_cms2.cms_zz_feed_gilt_product_full SELECT * from
+        INSERT INTO voyageone_cms2.cms_zz_feed_gilt_product_full  (id,product_id, product_look_id, locale, name,
+        description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
+        attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
+        attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
+        prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
+        categories_key, updateFlag, md5) SELECT id,product_id, product_look_id, locale, name,
+        description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
+        attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
+        attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
+        prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
+        categories_key, updateFlag, md5 from
         voyageone_cms2.cms_zz_feed_gilt_product_temp where `id` in
         (
         <foreach collection="list" item="itemIds" index="index" separator=",">
