@@ -53,7 +53,7 @@
         LEFT JOIN (SELECT id, org_name FROM com_organization WHERE active =1) o ON u.org_id = o.id
         LEFT JOIN
         (SELECT * FROM
-        (SELECT cr.*, channel_id , store_id, GROUP_CONCAT( DISTINCT cre.application) as application  from com_role cr LEFT JOIN
+        (SELECT cr.*, channel_id , store_id, GROUP_CONCAT( DISTINCT ap.application) as application  from com_role cr LEFT JOIN
         (SELECT t.id, t.role_name, t.role_type, t.active,t.modified,t.modifier, t.description,
         MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE NULL END ) channel_id,
         MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE NULL END ) store_id
@@ -70,9 +70,7 @@
         GROUP BY r.id, rc.cfg_name) t
         GROUP BY t.id) t1
         ON cr.id = t1.id
-        LEFT JOIN com_res_role rr ON rr.role_id = cr.id
-        LEFT JOIN (SELECT id, application from com_resource WHERE active =1 and res_type = 0) cre ON rr.res_id = cre.id
-        LEFT JOIN (SELECT application from Synship.ct_application WHERE active =1) ap  ON ap.application = cre.application
+        LEFT JOIN (SELECT id, application from view_role_application ) ap ON cr.id = ap.id
         GROUP BY cr.id) t2
         WHERE t2.active =1 ) t3
         ON t3.id = ur.role_id
@@ -89,7 +87,7 @@
         LEFT JOIN (SELECT id, org_name FROM com_organization WHERE active =1) o ON u.org_id = o.id
         LEFT JOIN
         (SELECT * FROM
-        (SELECT cr.*, channel_id , store_id, GROUP_CONCAT( DISTINCT cre.application) as application  from com_role cr LEFT JOIN
+        (SELECT cr.*, channel_id , store_id, GROUP_CONCAT( DISTINCT ap.application) as application  from com_role cr LEFT JOIN
         (SELECT t.id, t.role_name, t.role_type, t.active,t.modified,t.modifier, t.description,
         MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE NULL END ) channel_id,
         MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE NULL END ) store_id
@@ -106,9 +104,7 @@
         GROUP BY r.id, rc.cfg_name) t
         GROUP BY t.id) t1
         ON cr.id = t1.id
-        LEFT JOIN com_res_role rr ON rr.role_id = cr.id
-        LEFT JOIN (SELECT id, application from com_resource WHERE active =1 and res_type = 0) cre ON rr.res_id = cre.id
-        LEFT JOIN (SELECT application from Synship.ct_application WHERE active =1) ap  ON ap.application = cre.application
+        LEFT JOIN (SELECT id, application from view_role_application ) ap ON cr.id = ap.id
         GROUP BY cr.id) t2
         WHERE t2.active =1 ) t3
         ON t3.id = ur.role_id
