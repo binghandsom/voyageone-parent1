@@ -1,0 +1,1669 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.task2.cms.dao.feed.NewTargetFeedDao" >
+  <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedNewTargetBean" >
+    <id column="tcin" property="tcin" jdbcType="VARCHAR" />
+    <result column="upc" property="upc" jdbcType="VARCHAR" />
+    <result column="md5" property="md5" jdbcType="VARCHAR" />
+    <result column="updateFlag" property="updateflag" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.voyageone.task2.cms.bean.SuperFeedNewTargetBean" extends="BaseResultMap" >
+    <result column="parent_tcins" property="parentTcins" jdbcType="LONGVARCHAR" />
+    <result column="manufacturer_id" property="manufacturerId" jdbcType="LONGVARCHAR" />
+    <result column="manufacturer_part_number" property="manufacturerPartNumber" jdbcType="LONGVARCHAR" />
+    <result column="manufacturer_model_number" property="manufacturerModelNumber" jdbcType="LONGVARCHAR" />
+    <result column="product_description_title" property="productDescriptionTitle" jdbcType="LONGVARCHAR" />
+    <result column="product_description_downstream_description" property="productDescriptionDownstreamDescription" jdbcType="LONGVARCHAR" />
+    <result column="product_description_long_description" property="productDescriptionLongDescription" jdbcType="LONGVARCHAR" />
+    <result column="regprice" property="regprice" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_buy_url" property="enrichmentBuyUrl" jdbcType="LONGVARCHAR" />
+    <result column="product_classification_item_type_category_type" property="productClassificationItemTypeCategoryType" jdbcType="LONGVARCHAR" />
+    <result column="product_classification_item_type_name" property="productClassificationItemTypeName" jdbcType="LONGVARCHAR" />
+    <result column="product_classification_item_type_type" property="productClassificationItemTypeType" jdbcType="LONGVARCHAR" />
+    <result column="product_classification_merchandise_type" property="productClassificationMerchandiseType" jdbcType="LONGVARCHAR" />
+    <result column="product_classification_merchandise_type_name" property="productClassificationMerchandiseTypeName" jdbcType="LONGVARCHAR" />
+    <result column="product_classification_product_subtype" property="productClassificationProductSubtype" jdbcType="LONGVARCHAR" />
+    <result column="product_classification_product_subtype_name" property="productClassificationProductSubtypeName" jdbcType="LONGVARCHAR" />
+    <result column="product_classification_product_type" property="productClassificationProductType" jdbcType="LONGVARCHAR" />
+    <result column="product_classification_product_type_name" property="productClassificationProductTypeName" jdbcType="LONGVARCHAR" />
+    <result column="availability_status" property="availabilityStatus" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_images_base_url" property="enrichmentImagesBaseUrl" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_images_primary_image" property="enrichmentImagesPrimaryImage" jdbcType="LONGVARCHAR" />
+    <result column="product_brand_manufacturer_brand" property="productBrandManufacturerBrand" jdbcType="LONGVARCHAR" />
+    <result column="identifiers" property="identifiers" jdbcType="LONGVARCHAR" />
+    <result column="display_option_keywords" property="displayOptionKeywords" jdbcType="LONGVARCHAR" />
+    <result column="product_description_selling_feature" property="productDescriptionSellingFeature" jdbcType="LONGVARCHAR" />
+    <result column="package_dimensions_weight" property="packageDimensionsWeight" jdbcType="LONGVARCHAR" />
+    <result column="package_dimensions_weight_unit_of_measure" property="packageDimensionsWeightUnitOfMeasure" jdbcType="LONGVARCHAR" />
+    <result column="variation_theme" property="variationTheme" jdbcType="LONGVARCHAR" />
+    <result column="variation_size" property="variationSize" jdbcType="LONGVARCHAR" />
+    <result column="variation_color" property="variationColor" jdbcType="LONGVARCHAR" />
+    <result column="variation_material_type" property="variationMaterialType" jdbcType="LONGVARCHAR" />
+    <result column="merchandise_type_attributes" property="merchandiseTypeAttributes" jdbcType="LONGVARCHAR" />
+    <result column="relationship_type_code" property="relationshipTypeCode" jdbcType="LONGVARCHAR" />
+    <result column="dpci" property="dpci" jdbcType="LONGVARCHAR" />
+    <result column="ecom_divisional" property="ecomDivisional" jdbcType="LONGVARCHAR" />
+    <result column="soldonweb" property="soldonweb" jdbcType="LONGVARCHAR" />
+    <result column="soldinstores" property="soldinstores" jdbcType="LONGVARCHAR" />
+    <result column="estore_item_status_code" property="estoreItemStatusCode" jdbcType="LONGVARCHAR" />
+    <result column="item_kind" property="itemKind" jdbcType="LONGVARCHAR" />
+    <result column="mmbv_content_street_date" property="mmbvContentStreetDate" jdbcType="LONGVARCHAR" />
+    <result column="launch_date_time" property="launchDateTime" jdbcType="LONGVARCHAR" />
+    <result column="averageoverallrating" property="averageoverallrating" jdbcType="LONGVARCHAR" />
+    <result column="totalreviewcount" property="totalreviewcount" jdbcType="LONGVARCHAR" />
+    <result column="product_brand_brand" property="productBrandBrand" jdbcType="LONGVARCHAR" />
+    <result column="handling_is_back_order_eligible" property="handlingIsBackOrderEligible" jdbcType="LONGVARCHAR" />
+    <result column="listprice" property="listprice" jdbcType="LONGVARCHAR" />
+    <result column="sales_classification_nodes" property="salesClassificationNodes" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_images_alternate_images" property="enrichmentImagesAlternateImages" jdbcType="LONGVARCHAR" />
+    <result column="display_option_has_size_chart" property="displayOptionHasSizeChart" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_size_chart" property="enrichmentSizeChart" jdbcType="LONGVARCHAR" />
+    <result column="tax_category_tax_code_id" property="taxCategoryTaxCodeId" jdbcType="LONGVARCHAR" />
+    <result column="package_dimensions_dimension_unit_of_measure" property="packageDimensionsDimensionUnitOfMeasure" jdbcType="LONGVARCHAR" />
+    <result column="package_dimensions_height" property="packageDimensionsHeight" jdbcType="LONGVARCHAR" />
+    <result column="package_dimensions_depth" property="packageDimensionsDepth" jdbcType="LONGVARCHAR" />
+    <result column="package_dimensions_width" property="packageDimensionsWidth" jdbcType="LONGVARCHAR" />
+    <result column="handling_receiving_facility_type" property="handlingReceivingFacilityType" jdbcType="LONGVARCHAR" />
+    <result column="product_description_bullet_description" property="productDescriptionBulletDescription" jdbcType="LONGVARCHAR" />
+    <result column="handling_back_order_type" property="handlingBackOrderType" jdbcType="LONGVARCHAR" />
+    <result column="fulfillment_purchase_limit" property="fulfillmentPurchaseLimit" jdbcType="LONGVARCHAR" />
+    <result column="environmental_segmentation_is_hazardous_material" property="environmentalSegmentationIsHazardousMaterial" jdbcType="LONGVARCHAR" />
+    <result column="environmental_segmentation_is_ingestible" property="environmentalSegmentationIsIngestible" jdbcType="LONGVARCHAR" />
+    <result column="fulfillment_is_whenever_shipping_eligible" property="fulfillmentIsWheneverShippingEligible" jdbcType="LONGVARCHAR" />
+    <result column="fulfillment_shipping_restriction" property="fulfillmentShippingRestriction" jdbcType="LONGVARCHAR" />
+    <result column="fulfillment_is_po_box_prohibited" property="fulfillmentIsPoBoxProhibited" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_nutrition_facts_ingredients" property="enrichmentNutritionFactsIngredients" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_nutrition_facts_warning" property="enrichmentNutritionFactsWarning" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_nutrition_facts_prepared_count" property="enrichmentNutritionFactsPreparedCount" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_nutrition_facts_value_prepared_list" property="enrichmentNutritionFactsValuePreparedList" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_product_details" property="enrichmentDrugFactsProductDetails" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_product_ingredients" property="enrichmentDrugFactsProductIngredients" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_label" property="enrichmentDrugFactsLabel" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_purpose_label" property="enrichmentDrugFactsPurposeLabel" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_active_ingredient_label" property="enrichmentDrugFactsActiveIngredientLabel" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_active_ingredients" property="enrichmentDrugFactsActiveIngredients" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_uses_label" property="enrichmentDrugFactsUsesLabel" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_uses_treated_symptoms" property="enrichmentDrugFactsUsesTreatedSymptoms" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_warning_text" property="enrichmentDrugFactsWarningText" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_warning_label" property="enrichmentDrugFactsWarningLabel" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_warning_usage" property="enrichmentDrugFactsWarningUsage" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_warning_other_warnings" property="enrichmentDrugFactsWarningOtherWarnings" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_direction_label" property="enrichmentDrugFactsDirectionLabel" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_direction_general_directions" property="enrichmentDrugFactsDirectionGeneralDirections" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_direction_age_groups" property="enrichmentDrugFactsDirectionAgeGroups" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_other_information_label" property="enrichmentDrugFactsOtherInformationLabel" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_other_information_bullets" property="enrichmentDrugFactsOtherInformationBullets" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_inactive_ingredients" property="enrichmentDrugFactsInactiveIngredients" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_questions_comments_section_label" property="enrichmentDrugFactsQuestionsCommentsSectionLabel" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_drug_facts_questions_comments_section_phone_number" property="enrichmentDrugFactsQuestionsCommentsSectionPhoneNumber" jdbcType="LONGVARCHAR" />
+    <result column="energy_guide_capacity_measurement" property="energyGuideCapacityMeasurement" jdbcType="LONGVARCHAR" />
+    <result column="energy_guide_estimated_operating_cost" property="energyGuideEstimatedOperatingCost" jdbcType="LONGVARCHAR" />
+    <result column="energy_guide_slider_low_range" property="energyGuideSliderLowRange" jdbcType="LONGVARCHAR" />
+    <result column="energy_guide_slider_high_range" property="energyGuideSliderHighRange" jdbcType="LONGVARCHAR" />
+    <result column="energy_guide_slider_label" property="energyGuideSliderLabel" jdbcType="LONGVARCHAR" />
+    <result column="energy_guide_estimated_energy_use_title" property="energyGuideEstimatedEnergyUseTitle" jdbcType="LONGVARCHAR" />
+    <result column="energy_guide_estimated_energy_use_value" property="energyGuideEstimatedEnergyUseValue" jdbcType="LONGVARCHAR" />
+    <result column="energy_guide_estimated_energy_use_unit_of_measurement" property="energyGuideEstimatedEnergyUseUnitOfMeasurement" jdbcType="LONGVARCHAR" />
+    <result column="energy_guide_legal_disclaimer_text" property="energyGuideLegalDisclaimerText" jdbcType="LONGVARCHAR" />
+    <result column="energy_guide_legal_disclaimer_information" property="energyGuideLegalDisclaimerInformation" jdbcType="LONGVARCHAR" />
+    <result column="energy_guide_has_energy_star" property="energyGuideHasEnergyStar" jdbcType="LONGVARCHAR" />
+    <result column="return_method" property="returnMethod" jdbcType="LONGVARCHAR" />
+    <result column="country_of_origin_code" property="countryOfOriginCode" jdbcType="LONGVARCHAR" />
+    <result column="perordercharges" property="perordercharges" jdbcType="LONGVARCHAR" />
+    <result column="perunitcharges" property="perunitcharges" jdbcType="LONGVARCHAR" />
+    <result column="weight" property="weight" jdbcType="LONGVARCHAR" />
+    <result column="itembulky" property="itembulky" jdbcType="LONGVARCHAR" />
+    <result column="fixedPrice" property="fixedprice" jdbcType="LONGVARCHAR" />
+    <result column="handlingFee" property="handlingfee" jdbcType="LONGVARCHAR" />
+    <result column="handlingFeeMessage" property="handlingfeemessage" jdbcType="LONGVARCHAR" />
+    <result column="handlingFeeLegalDisclaimer" property="handlingfeelegaldisclaimer" jdbcType="LONGVARCHAR" />
+    <result column="isbn" property="isbn" jdbcType="LONGVARCHAR" />
+    <result column="pattern" property="pattern" jdbcType="LONGVARCHAR" />
+    <result column="age_group" property="ageGroup" jdbcType="LONGVARCHAR" />
+    <result column="gender" property="gender" jdbcType="LONGVARCHAR" />
+    <result column="barcode_type" property="barcodeType" jdbcType="LONGVARCHAR" />
+    <result column="iac_attributes" property="iacAttributes" jdbcType="LONGVARCHAR" />
+    <result column="sec_barcode" property="secBarcode" jdbcType="LONGVARCHAR" />
+    <result column="mozart_vendor_id" property="mozartVendorId" jdbcType="LONGVARCHAR" />
+    <result column="specialitemsource" property="specialitemsource" jdbcType="LONGVARCHAR" />
+    <result column="enrichment_return_policies" property="enrichmentReturnPolicies" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    "tcin", "upc", "md5", "updateFlag"
+  </sql>
+  <sql id="Blob_Column_List" >
+    "parent_tcins", "manufacturer_id", "manufacturer_part_number", "manufacturer_model_number",
+    "product_description_title", "product_description_downstream_description", "product_description_long_description",
+    "regprice", "enrichment_buy_url", "product_classification_item_type_category_type",
+    "product_classification_item_type_name", "product_classification_item_type_type",
+    "product_classification_merchandise_type", "product_classification_merchandise_type_name",
+    "product_classification_product_subtype", "product_classification_product_subtype_name",
+    "product_classification_product_type", "product_classification_product_type_name",
+    "availability_status", "enrichment_images_base_url", "enrichment_images_primary_image",
+    "product_brand_manufacturer_brand", "identifiers", "display_option_keywords", "product_description_selling_feature",
+    "package_dimensions_weight", "package_dimensions_weight_unit_of_measure", "variation_theme",
+    "variation_size", "variation_color", "variation_material_type", "merchandise_type_attributes",
+    "relationship_type_code", "dpci", "ecom_divisional", "soldonweb", "soldinstores",
+    "estore_item_status_code", "item_kind", "mmbv_content_street_date", "launch_date_time",
+    "averageoverallrating", "totalreviewcount", "product_brand_brand", "handling_is_back_order_eligible",
+    "listprice", "sales_classification_nodes", "enrichment_images_alternate_images",
+    "display_option_has_size_chart", "enrichment_size_chart", "tax_category_tax_code_id",
+    "package_dimensions_dimension_unit_of_measure", "package_dimensions_height", "package_dimensions_depth",
+    "package_dimensions_width", "handling_receiving_facility_type", "product_description_bullet_description",
+    "handling_back_order_type", "fulfillment_purchase_limit", "environmental_segmentation_is_hazardous_material",
+    "environmental_segmentation_is_ingestible", "fulfillment_is_whenever_shipping_eligible",
+    "fulfillment_shipping_restriction", "fulfillment_is_po_box_prohibited", "enrichment_nutrition_facts_ingredients",
+    "enrichment_nutrition_facts_warning", "enrichment_nutrition_facts_prepared_count",
+    "enrichment_nutrition_facts_value_prepared_list", "enrichment_drug_facts_product_details",
+    "enrichment_drug_facts_product_ingredients", "enrichment_drug_facts_label", "enrichment_drug_facts_purpose_label",
+    "enrichment_drug_facts_active_ingredient_label", "enrichment_drug_facts_active_ingredients",
+    "enrichment_drug_facts_uses_label", "enrichment_drug_facts_uses_treated_symptoms",
+    "enrichment_drug_facts_warning_text", "enrichment_drug_facts_warning_label", "enrichment_drug_facts_warning_usage",
+    "enrichment_drug_facts_warning_other_warnings", "enrichment_drug_facts_direction_label",
+    "enrichment_drug_facts_direction_general_directions", "enrichment_drug_facts_direction_age_groups",
+    "enrichment_drug_facts_other_information_label", "enrichment_drug_facts_other_information_bullets",
+    "enrichment_drug_facts_inactive_ingredients", "enrichment_drug_facts_questions_comments_section_label",
+    "enrichment_drug_facts_questions_comments_section_phone_number", "energy_guide_capacity_measurement",
+    "energy_guide_estimated_operating_cost", "energy_guide_slider_low_range", "energy_guide_slider_high_range",
+    "energy_guide_slider_label", "energy_guide_estimated_energy_use_title", "energy_guide_estimated_energy_use_value",
+    "energy_guide_estimated_energy_use_unit_of_measurement", "energy_guide_legal_disclaimer_text",
+    "energy_guide_legal_disclaimer_information", "energy_guide_has_energy_star", "return_method",
+    "country_of_origin_code", "perordercharges", "perunitcharges", "weight", "itembulky",
+    "fixedPrice", "handlingFee", "handlingFeeMessage", "handlingFeeLegalDisclaimer",
+    "isbn", "pattern", "age_group", "gender", "barcode_type", "iac_attributes", "sec_barcode",
+    "mozart_vendor_id", "specialitemsource", "enrichment_return_policies"
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_zz_feed_new_target_product_temp
+    where "tcin" = #{tcin,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cms_zz_feed_new_target_product_temp
+    where "tcin" = #{tcin,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedNewTargetBean" >
+    insert into cms_zz_feed_new_target_product_temp ("tcin", "upc", "md5",
+    "updateFlag", "parent_tcins", "manufacturer_id",
+    "manufacturer_part_number", "manufacturer_model_number",
+    "product_description_title", "product_description_downstream_description",
+    "product_description_long_description", "regprice",
+    "enrichment_buy_url", "product_classification_item_type_category_type",
+    "product_classification_item_type_name", "product_classification_item_type_type",
+    "product_classification_merchandise_type", "product_classification_merchandise_type_name",
+    "product_classification_product_subtype", "product_classification_product_subtype_name",
+    "product_classification_product_type", "product_classification_product_type_name",
+    "availability_status", "enrichment_images_base_url",
+    "enrichment_images_primary_image", "product_brand_manufacturer_brand",
+    "identifiers", "display_option_keywords",
+    "product_description_selling_feature", "package_dimensions_weight",
+    "package_dimensions_weight_unit_of_measure", "variation_theme",
+    "variation_size", "variation_color",
+    "variation_material_type", "merchandise_type_attributes",
+    "relationship_type_code", "dpci", "ecom_divisional",
+    "soldonweb", "soldinstores", "estore_item_status_code",
+    "item_kind", "mmbv_content_street_date",
+    "launch_date_time", "averageoverallrating",
+    "totalreviewcount", "product_brand_brand",
+    "handling_is_back_order_eligible", "listprice",
+    "sales_classification_nodes", "enrichment_images_alternate_images",
+    "display_option_has_size_chart", "enrichment_size_chart",
+    "tax_category_tax_code_id", "package_dimensions_dimension_unit_of_measure",
+    "package_dimensions_height", "package_dimensions_depth",
+    "package_dimensions_width", "handling_receiving_facility_type",
+    "product_description_bullet_description", "handling_back_order_type",
+    "fulfillment_purchase_limit", "environmental_segmentation_is_hazardous_material",
+    "environmental_segmentation_is_ingestible", "fulfillment_is_whenever_shipping_eligible",
+    "fulfillment_shipping_restriction", "fulfillment_is_po_box_prohibited",
+    "enrichment_nutrition_facts_ingredients", "enrichment_nutrition_facts_warning",
+    "enrichment_nutrition_facts_prepared_count", "enrichment_nutrition_facts_value_prepared_list",
+    "enrichment_drug_facts_product_details", "enrichment_drug_facts_product_ingredients",
+    "enrichment_drug_facts_label", "enrichment_drug_facts_purpose_label",
+    "enrichment_drug_facts_active_ingredient_label", "enrichment_drug_facts_active_ingredients",
+    "enrichment_drug_facts_uses_label", "enrichment_drug_facts_uses_treated_symptoms",
+    "enrichment_drug_facts_warning_text", "enrichment_drug_facts_warning_label",
+    "enrichment_drug_facts_warning_usage", "enrichment_drug_facts_warning_other_warnings",
+    "enrichment_drug_facts_direction_label", "enrichment_drug_facts_direction_general_directions",
+    "enrichment_drug_facts_direction_age_groups", "enrichment_drug_facts_other_information_label",
+    "enrichment_drug_facts_other_information_bullets", "enrichment_drug_facts_inactive_ingredients",
+    "enrichment_drug_facts_questions_comments_section_label", "enrichment_drug_facts_questions_comments_section_phone_number",
+    "energy_guide_capacity_measurement", "energy_guide_estimated_operating_cost",
+    "energy_guide_slider_low_range", "energy_guide_slider_high_range",
+    "energy_guide_slider_label", "energy_guide_estimated_energy_use_title",
+    "energy_guide_estimated_energy_use_value", "energy_guide_estimated_energy_use_unit_of_measurement",
+    "energy_guide_legal_disclaimer_text", "energy_guide_legal_disclaimer_information",
+    "energy_guide_has_energy_star", "return_method",
+    "country_of_origin_code", "perordercharges",
+    "perunitcharges", "weight", "itembulky",
+    "fixedPrice", "handlingFee", "handlingFeeMessage",
+    "handlingFeeLegalDisclaimer", "isbn",
+    "pattern", "age_group", "gender",
+    "barcode_type", "iac_attributes", "sec_barcode",
+    "mozart_vendor_id", "specialitemsource",
+    "enrichment_return_policies")
+    values (#{tcin,jdbcType=VARCHAR}, #{upc,jdbcType=VARCHAR}, #{md5,jdbcType=VARCHAR},
+    #{updateflag,jdbcType=INTEGER}, #{parentTcins,jdbcType=LONGVARCHAR}, #{manufacturerId,jdbcType=LONGVARCHAR},
+    #{manufacturerPartNumber,jdbcType=LONGVARCHAR}, #{manufacturerModelNumber,jdbcType=LONGVARCHAR},
+    #{productDescriptionTitle,jdbcType=LONGVARCHAR}, #{productDescriptionDownstreamDescription,jdbcType=LONGVARCHAR},
+    #{productDescriptionLongDescription,jdbcType=LONGVARCHAR}, #{regprice,jdbcType=LONGVARCHAR},
+    #{enrichmentBuyUrl,jdbcType=LONGVARCHAR}, #{productClassificationItemTypeCategoryType,jdbcType=LONGVARCHAR},
+    #{productClassificationItemTypeName,jdbcType=LONGVARCHAR}, #{productClassificationItemTypeType,jdbcType=LONGVARCHAR},
+    #{productClassificationMerchandiseType,jdbcType=LONGVARCHAR}, #{productClassificationMerchandiseTypeName,jdbcType=LONGVARCHAR},
+    #{productClassificationProductSubtype,jdbcType=LONGVARCHAR}, #{productClassificationProductSubtypeName,jdbcType=LONGVARCHAR},
+    #{productClassificationProductType,jdbcType=LONGVARCHAR}, #{productClassificationProductTypeName,jdbcType=LONGVARCHAR},
+    #{availabilityStatus,jdbcType=LONGVARCHAR}, #{enrichmentImagesBaseUrl,jdbcType=LONGVARCHAR},
+    #{enrichmentImagesPrimaryImage,jdbcType=LONGVARCHAR}, #{productBrandManufacturerBrand,jdbcType=LONGVARCHAR},
+    #{identifiers,jdbcType=LONGVARCHAR}, #{displayOptionKeywords,jdbcType=LONGVARCHAR},
+    #{productDescriptionSellingFeature,jdbcType=LONGVARCHAR}, #{packageDimensionsWeight,jdbcType=LONGVARCHAR},
+    #{packageDimensionsWeightUnitOfMeasure,jdbcType=LONGVARCHAR}, #{variationTheme,jdbcType=LONGVARCHAR},
+    #{variationSize,jdbcType=LONGVARCHAR}, #{variationColor,jdbcType=LONGVARCHAR},
+    #{variationMaterialType,jdbcType=LONGVARCHAR}, #{merchandiseTypeAttributes,jdbcType=LONGVARCHAR},
+    #{relationshipTypeCode,jdbcType=LONGVARCHAR}, #{dpci,jdbcType=LONGVARCHAR}, #{ecomDivisional,jdbcType=LONGVARCHAR},
+    #{soldonweb,jdbcType=LONGVARCHAR}, #{soldinstores,jdbcType=LONGVARCHAR}, #{estoreItemStatusCode,jdbcType=LONGVARCHAR},
+    #{itemKind,jdbcType=LONGVARCHAR}, #{mmbvContentStreetDate,jdbcType=LONGVARCHAR},
+    #{launchDateTime,jdbcType=LONGVARCHAR}, #{averageoverallrating,jdbcType=LONGVARCHAR},
+    #{totalreviewcount,jdbcType=LONGVARCHAR}, #{productBrandBrand,jdbcType=LONGVARCHAR},
+    #{handlingIsBackOrderEligible,jdbcType=LONGVARCHAR}, #{listprice,jdbcType=LONGVARCHAR},
+    #{salesClassificationNodes,jdbcType=LONGVARCHAR}, #{enrichmentImagesAlternateImages,jdbcType=LONGVARCHAR},
+    #{displayOptionHasSizeChart,jdbcType=LONGVARCHAR}, #{enrichmentSizeChart,jdbcType=LONGVARCHAR},
+    #{taxCategoryTaxCodeId,jdbcType=LONGVARCHAR}, #{packageDimensionsDimensionUnitOfMeasure,jdbcType=LONGVARCHAR},
+    #{packageDimensionsHeight,jdbcType=LONGVARCHAR}, #{packageDimensionsDepth,jdbcType=LONGVARCHAR},
+    #{packageDimensionsWidth,jdbcType=LONGVARCHAR}, #{handlingReceivingFacilityType,jdbcType=LONGVARCHAR},
+    #{productDescriptionBulletDescription,jdbcType=LONGVARCHAR}, #{handlingBackOrderType,jdbcType=LONGVARCHAR},
+    #{fulfillmentPurchaseLimit,jdbcType=LONGVARCHAR}, #{environmentalSegmentationIsHazardousMaterial,jdbcType=LONGVARCHAR},
+    #{environmentalSegmentationIsIngestible,jdbcType=LONGVARCHAR}, #{fulfillmentIsWheneverShippingEligible,jdbcType=LONGVARCHAR},
+    #{fulfillmentShippingRestriction,jdbcType=LONGVARCHAR}, #{fulfillmentIsPoBoxProhibited,jdbcType=LONGVARCHAR},
+    #{enrichmentNutritionFactsIngredients,jdbcType=LONGVARCHAR}, #{enrichmentNutritionFactsWarning,jdbcType=LONGVARCHAR},
+    #{enrichmentNutritionFactsPreparedCount,jdbcType=LONGVARCHAR}, #{enrichmentNutritionFactsValuePreparedList,jdbcType=LONGVARCHAR},
+    #{enrichmentDrugFactsProductDetails,jdbcType=LONGVARCHAR}, #{enrichmentDrugFactsProductIngredients,jdbcType=LONGVARCHAR},
+    #{enrichmentDrugFactsLabel,jdbcType=LONGVARCHAR}, #{enrichmentDrugFactsPurposeLabel,jdbcType=LONGVARCHAR},
+    #{enrichmentDrugFactsActiveIngredientLabel,jdbcType=LONGVARCHAR}, #{enrichmentDrugFactsActiveIngredients,jdbcType=LONGVARCHAR},
+    #{enrichmentDrugFactsUsesLabel,jdbcType=LONGVARCHAR}, #{enrichmentDrugFactsUsesTreatedSymptoms,jdbcType=LONGVARCHAR},
+    #{enrichmentDrugFactsWarningText,jdbcType=LONGVARCHAR}, #{enrichmentDrugFactsWarningLabel,jdbcType=LONGVARCHAR},
+    #{enrichmentDrugFactsWarningUsage,jdbcType=LONGVARCHAR}, #{enrichmentDrugFactsWarningOtherWarnings,jdbcType=LONGVARCHAR},
+    #{enrichmentDrugFactsDirectionLabel,jdbcType=LONGVARCHAR}, #{enrichmentDrugFactsDirectionGeneralDirections,jdbcType=LONGVARCHAR},
+    #{enrichmentDrugFactsDirectionAgeGroups,jdbcType=LONGVARCHAR}, #{enrichmentDrugFactsOtherInformationLabel,jdbcType=LONGVARCHAR},
+    #{enrichmentDrugFactsOtherInformationBullets,jdbcType=LONGVARCHAR}, #{enrichmentDrugFactsInactiveIngredients,jdbcType=LONGVARCHAR},
+    #{enrichmentDrugFactsQuestionsCommentsSectionLabel,jdbcType=LONGVARCHAR}, #{enrichmentDrugFactsQuestionsCommentsSectionPhoneNumber,jdbcType=LONGVARCHAR},
+    #{energyGuideCapacityMeasurement,jdbcType=LONGVARCHAR}, #{energyGuideEstimatedOperatingCost,jdbcType=LONGVARCHAR},
+    #{energyGuideSliderLowRange,jdbcType=LONGVARCHAR}, #{energyGuideSliderHighRange,jdbcType=LONGVARCHAR},
+    #{energyGuideSliderLabel,jdbcType=LONGVARCHAR}, #{energyGuideEstimatedEnergyUseTitle,jdbcType=LONGVARCHAR},
+    #{energyGuideEstimatedEnergyUseValue,jdbcType=LONGVARCHAR}, #{energyGuideEstimatedEnergyUseUnitOfMeasurement,jdbcType=LONGVARCHAR},
+    #{energyGuideLegalDisclaimerText,jdbcType=LONGVARCHAR}, #{energyGuideLegalDisclaimerInformation,jdbcType=LONGVARCHAR},
+    #{energyGuideHasEnergyStar,jdbcType=LONGVARCHAR}, #{returnMethod,jdbcType=LONGVARCHAR},
+    #{countryOfOriginCode,jdbcType=LONGVARCHAR}, #{perordercharges,jdbcType=LONGVARCHAR},
+    #{perunitcharges,jdbcType=LONGVARCHAR}, #{weight,jdbcType=LONGVARCHAR}, #{itembulky,jdbcType=LONGVARCHAR},
+    #{fixedprice,jdbcType=LONGVARCHAR}, #{handlingfee,jdbcType=LONGVARCHAR}, #{handlingfeemessage,jdbcType=LONGVARCHAR},
+    #{handlingfeelegaldisclaimer,jdbcType=LONGVARCHAR}, #{isbn,jdbcType=LONGVARCHAR},
+    #{pattern,jdbcType=LONGVARCHAR}, #{ageGroup,jdbcType=LONGVARCHAR}, #{gender,jdbcType=LONGVARCHAR},
+    #{barcodeType,jdbcType=LONGVARCHAR}, #{iacAttributes,jdbcType=LONGVARCHAR}, #{secBarcode,jdbcType=LONGVARCHAR},
+    #{mozartVendorId,jdbcType=LONGVARCHAR}, #{specialitemsource,jdbcType=LONGVARCHAR},
+    #{enrichmentReturnPolicies,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedNewTargetBean" >
+    insert into cms_zz_feed_new_target_product_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tcin != null" >
+        tcin,
+      </if>
+      <if test="upc != null" >
+        upc,
+      </if>
+      <if test="md5 != null" >
+        md5,
+      </if>
+      <if test="updateflag != null" >
+        updateFlag,
+      </if>
+      <if test="parentTcins != null" >
+        parent_tcins,
+      </if>
+      <if test="manufacturerId != null" >
+        manufacturer_id,
+      </if>
+      <if test="manufacturerPartNumber != null" >
+        manufacturer_part_number,
+      </if>
+      <if test="manufacturerModelNumber != null" >
+        manufacturer_model_number,
+      </if>
+      <if test="productDescriptionTitle != null" >
+        product_description_title,
+      </if>
+      <if test="productDescriptionDownstreamDescription != null" >
+        product_description_downstream_description,
+      </if>
+      <if test="productDescriptionLongDescription != null" >
+        product_description_long_description,
+      </if>
+      <if test="regprice != null" >
+        regprice,
+      </if>
+      <if test="enrichmentBuyUrl != null" >
+        enrichment_buy_url,
+      </if>
+      <if test="productClassificationItemTypeCategoryType != null" >
+        product_classification_item_type_category_type,
+      </if>
+      <if test="productClassificationItemTypeName != null" >
+        product_classification_item_type_name,
+      </if>
+      <if test="productClassificationItemTypeType != null" >
+        product_classification_item_type_type,
+      </if>
+      <if test="productClassificationMerchandiseType != null" >
+        product_classification_merchandise_type,
+      </if>
+      <if test="productClassificationMerchandiseTypeName != null" >
+        product_classification_merchandise_type_name,
+      </if>
+      <if test="productClassificationProductSubtype != null" >
+        product_classification_product_subtype,
+      </if>
+      <if test="productClassificationProductSubtypeName != null" >
+        product_classification_product_subtype_name,
+      </if>
+      <if test="productClassificationProductType != null" >
+        product_classification_product_type,
+      </if>
+      <if test="productClassificationProductTypeName != null" >
+        product_classification_product_type_name,
+      </if>
+      <if test="availabilityStatus != null" >
+        availability_status,
+      </if>
+      <if test="enrichmentImagesBaseUrl != null" >
+        enrichment_images_base_url,
+      </if>
+      <if test="enrichmentImagesPrimaryImage != null" >
+        enrichment_images_primary_image,
+      </if>
+      <if test="productBrandManufacturerBrand != null" >
+        product_brand_manufacturer_brand,
+      </if>
+      <if test="identifiers != null" >
+        identifiers,
+      </if>
+      <if test="displayOptionKeywords != null" >
+        display_option_keywords,
+      </if>
+      <if test="productDescriptionSellingFeature != null" >
+        product_description_selling_feature,
+      </if>
+      <if test="packageDimensionsWeight != null" >
+        package_dimensions_weight,
+      </if>
+      <if test="packageDimensionsWeightUnitOfMeasure != null" >
+        package_dimensions_weight_unit_of_measure,
+      </if>
+      <if test="variationTheme != null" >
+        variation_theme,
+      </if>
+      <if test="variationSize != null" >
+        variation_size,
+      </if>
+      <if test="variationColor != null" >
+        variation_color,
+      </if>
+      <if test="variationMaterialType != null" >
+        variation_material_type,
+      </if>
+      <if test="merchandiseTypeAttributes != null" >
+        merchandise_type_attributes,
+      </if>
+      <if test="relationshipTypeCode != null" >
+        relationship_type_code,
+      </if>
+      <if test="dpci != null" >
+        dpci,
+      </if>
+      <if test="ecomDivisional != null" >
+        ecom_divisional,
+      </if>
+      <if test="soldonweb != null" >
+        soldonweb,
+      </if>
+      <if test="soldinstores != null" >
+        soldinstores,
+      </if>
+      <if test="estoreItemStatusCode != null" >
+        estore_item_status_code,
+      </if>
+      <if test="itemKind != null" >
+        item_kind,
+      </if>
+      <if test="mmbvContentStreetDate != null" >
+        mmbv_content_street_date,
+      </if>
+      <if test="launchDateTime != null" >
+        launch_date_time,
+      </if>
+      <if test="averageoverallrating != null" >
+        averageoverallrating,
+      </if>
+      <if test="totalreviewcount != null" >
+        totalreviewcount,
+      </if>
+      <if test="productBrandBrand != null" >
+        product_brand_brand,
+      </if>
+      <if test="handlingIsBackOrderEligible != null" >
+        handling_is_back_order_eligible,
+      </if>
+      <if test="listprice != null" >
+        listprice,
+      </if>
+      <if test="salesClassificationNodes != null" >
+        sales_classification_nodes,
+      </if>
+      <if test="enrichmentImagesAlternateImages != null" >
+        enrichment_images_alternate_images,
+      </if>
+      <if test="displayOptionHasSizeChart != null" >
+        display_option_has_size_chart,
+      </if>
+      <if test="enrichmentSizeChart != null" >
+        enrichment_size_chart,
+      </if>
+      <if test="taxCategoryTaxCodeId != null" >
+        tax_category_tax_code_id,
+      </if>
+      <if test="packageDimensionsDimensionUnitOfMeasure != null" >
+        package_dimensions_dimension_unit_of_measure,
+      </if>
+      <if test="packageDimensionsHeight != null" >
+        package_dimensions_height,
+      </if>
+      <if test="packageDimensionsDepth != null" >
+        package_dimensions_depth,
+      </if>
+      <if test="packageDimensionsWidth != null" >
+        package_dimensions_width,
+      </if>
+      <if test="handlingReceivingFacilityType != null" >
+        handling_receiving_facility_type,
+      </if>
+      <if test="productDescriptionBulletDescription != null" >
+        product_description_bullet_description,
+      </if>
+      <if test="handlingBackOrderType != null" >
+        handling_back_order_type,
+      </if>
+      <if test="fulfillmentPurchaseLimit != null" >
+        fulfillment_purchase_limit,
+      </if>
+      <if test="environmentalSegmentationIsHazardousMaterial != null" >
+        environmental_segmentation_is_hazardous_material,
+      </if>
+      <if test="environmentalSegmentationIsIngestible != null" >
+        environmental_segmentation_is_ingestible,
+      </if>
+      <if test="fulfillmentIsWheneverShippingEligible != null" >
+        fulfillment_is_whenever_shipping_eligible,
+      </if>
+      <if test="fulfillmentShippingRestriction != null" >
+        fulfillment_shipping_restriction,
+      </if>
+      <if test="fulfillmentIsPoBoxProhibited != null" >
+        fulfillment_is_po_box_prohibited,
+      </if>
+      <if test="enrichmentNutritionFactsIngredients != null" >
+        enrichment_nutrition_facts_ingredients,
+      </if>
+      <if test="enrichmentNutritionFactsWarning != null" >
+        enrichment_nutrition_facts_warning,
+      </if>
+      <if test="enrichmentNutritionFactsPreparedCount != null" >
+        enrichment_nutrition_facts_prepared_count,
+      </if>
+      <if test="enrichmentNutritionFactsValuePreparedList != null" >
+        enrichment_nutrition_facts_value_prepared_list,
+      </if>
+      <if test="enrichmentDrugFactsProductDetails != null" >
+        enrichment_drug_facts_product_details,
+      </if>
+      <if test="enrichmentDrugFactsProductIngredients != null" >
+        enrichment_drug_facts_product_ingredients,
+      </if>
+      <if test="enrichmentDrugFactsLabel != null" >
+        enrichment_drug_facts_label,
+      </if>
+      <if test="enrichmentDrugFactsPurposeLabel != null" >
+        enrichment_drug_facts_purpose_label,
+      </if>
+      <if test="enrichmentDrugFactsActiveIngredientLabel != null" >
+        enrichment_drug_facts_active_ingredient_label,
+      </if>
+      <if test="enrichmentDrugFactsActiveIngredients != null" >
+        enrichment_drug_facts_active_ingredients,
+      </if>
+      <if test="enrichmentDrugFactsUsesLabel != null" >
+        enrichment_drug_facts_uses_label,
+      </if>
+      <if test="enrichmentDrugFactsUsesTreatedSymptoms != null" >
+        enrichment_drug_facts_uses_treated_symptoms,
+      </if>
+      <if test="enrichmentDrugFactsWarningText != null" >
+        enrichment_drug_facts_warning_text,
+      </if>
+      <if test="enrichmentDrugFactsWarningLabel != null" >
+        enrichment_drug_facts_warning_label,
+      </if>
+      <if test="enrichmentDrugFactsWarningUsage != null" >
+        enrichment_drug_facts_warning_usage,
+      </if>
+      <if test="enrichmentDrugFactsWarningOtherWarnings != null" >
+        enrichment_drug_facts_warning_other_warnings,
+      </if>
+      <if test="enrichmentDrugFactsDirectionLabel != null" >
+        enrichment_drug_facts_direction_label,
+      </if>
+      <if test="enrichmentDrugFactsDirectionGeneralDirections != null" >
+        enrichment_drug_facts_direction_general_directions,
+      </if>
+      <if test="enrichmentDrugFactsDirectionAgeGroups != null" >
+        enrichment_drug_facts_direction_age_groups,
+      </if>
+      <if test="enrichmentDrugFactsOtherInformationLabel != null" >
+        enrichment_drug_facts_other_information_label,
+      </if>
+      <if test="enrichmentDrugFactsOtherInformationBullets != null" >
+        enrichment_drug_facts_other_information_bullets,
+      </if>
+      <if test="enrichmentDrugFactsInactiveIngredients != null" >
+        enrichment_drug_facts_inactive_ingredients,
+      </if>
+      <if test="enrichmentDrugFactsQuestionsCommentsSectionLabel != null" >
+        enrichment_drug_facts_questions_comments_section_label,
+      </if>
+      <if test="enrichmentDrugFactsQuestionsCommentsSectionPhoneNumber != null" >
+        enrichment_drug_facts_questions_comments_section_phone_number,
+      </if>
+      <if test="energyGuideCapacityMeasurement != null" >
+        energy_guide_capacity_measurement,
+      </if>
+      <if test="energyGuideEstimatedOperatingCost != null" >
+        energy_guide_estimated_operating_cost,
+      </if>
+      <if test="energyGuideSliderLowRange != null" >
+        energy_guide_slider_low_range,
+      </if>
+      <if test="energyGuideSliderHighRange != null" >
+        energy_guide_slider_high_range,
+      </if>
+      <if test="energyGuideSliderLabel != null" >
+        energy_guide_slider_label,
+      </if>
+      <if test="energyGuideEstimatedEnergyUseTitle != null" >
+        energy_guide_estimated_energy_use_title,
+      </if>
+      <if test="energyGuideEstimatedEnergyUseValue != null" >
+        energy_guide_estimated_energy_use_value,
+      </if>
+      <if test="energyGuideEstimatedEnergyUseUnitOfMeasurement != null" >
+        energy_guide_estimated_energy_use_unit_of_measurement,
+      </if>
+      <if test="energyGuideLegalDisclaimerText != null" >
+        energy_guide_legal_disclaimer_text,
+      </if>
+      <if test="energyGuideLegalDisclaimerInformation != null" >
+        energy_guide_legal_disclaimer_information,
+      </if>
+      <if test="energyGuideHasEnergyStar != null" >
+        energy_guide_has_energy_star,
+      </if>
+      <if test="returnMethod != null" >
+        return_method,
+      </if>
+      <if test="countryOfOriginCode != null" >
+        country_of_origin_code,
+      </if>
+      <if test="perordercharges != null" >
+        perordercharges,
+      </if>
+      <if test="perunitcharges != null" >
+        perunitcharges,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="itembulky != null" >
+        itembulky,
+      </if>
+      <if test="fixedprice != null" >
+        fixedPrice,
+      </if>
+      <if test="handlingfee != null" >
+        handlingFee,
+      </if>
+      <if test="handlingfeemessage != null" >
+        handlingFeeMessage,
+      </if>
+      <if test="handlingfeelegaldisclaimer != null" >
+        handlingFeeLegalDisclaimer,
+      </if>
+      <if test="isbn != null" >
+        isbn,
+      </if>
+      <if test="pattern != null" >
+        pattern,
+      </if>
+      <if test="ageGroup != null" >
+        age_group,
+      </if>
+      <if test="gender != null" >
+        gender,
+      </if>
+      <if test="barcodeType != null" >
+        barcode_type,
+      </if>
+      <if test="iacAttributes != null" >
+        iac_attributes,
+      </if>
+      <if test="secBarcode != null" >
+        sec_barcode,
+      </if>
+      <if test="mozartVendorId != null" >
+        mozart_vendor_id,
+      </if>
+      <if test="specialitemsource != null" >
+        specialitemsource,
+      </if>
+      <if test="enrichmentReturnPolicies != null" >
+        enrichment_return_policies,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tcin != null" >
+        #{tcin,jdbcType=VARCHAR},
+      </if>
+      <if test="upc != null" >
+        #{upc,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="parentTcins != null" >
+        #{parentTcins,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturerId != null" >
+        #{manufacturerId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturerPartNumber != null" >
+        #{manufacturerPartNumber,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturerModelNumber != null" >
+        #{manufacturerModelNumber,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productDescriptionTitle != null" >
+        #{productDescriptionTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productDescriptionDownstreamDescription != null" >
+        #{productDescriptionDownstreamDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productDescriptionLongDescription != null" >
+        #{productDescriptionLongDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="regprice != null" >
+        #{regprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentBuyUrl != null" >
+        #{enrichmentBuyUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationItemTypeCategoryType != null" >
+        #{productClassificationItemTypeCategoryType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationItemTypeName != null" >
+        #{productClassificationItemTypeName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationItemTypeType != null" >
+        #{productClassificationItemTypeType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationMerchandiseType != null" >
+        #{productClassificationMerchandiseType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationMerchandiseTypeName != null" >
+        #{productClassificationMerchandiseTypeName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationProductSubtype != null" >
+        #{productClassificationProductSubtype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationProductSubtypeName != null" >
+        #{productClassificationProductSubtypeName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationProductType != null" >
+        #{productClassificationProductType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationProductTypeName != null" >
+        #{productClassificationProductTypeName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="availabilityStatus != null" >
+        #{availabilityStatus,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentImagesBaseUrl != null" >
+        #{enrichmentImagesBaseUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentImagesPrimaryImage != null" >
+        #{enrichmentImagesPrimaryImage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productBrandManufacturerBrand != null" >
+        #{productBrandManufacturerBrand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="identifiers != null" >
+        #{identifiers,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="displayOptionKeywords != null" >
+        #{displayOptionKeywords,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productDescriptionSellingFeature != null" >
+        #{productDescriptionSellingFeature,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageDimensionsWeight != null" >
+        #{packageDimensionsWeight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageDimensionsWeightUnitOfMeasure != null" >
+        #{packageDimensionsWeightUnitOfMeasure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationTheme != null" >
+        #{variationTheme,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationSize != null" >
+        #{variationSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationColor != null" >
+        #{variationColor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationMaterialType != null" >
+        #{variationMaterialType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="merchandiseTypeAttributes != null" >
+        #{merchandiseTypeAttributes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="relationshipTypeCode != null" >
+        #{relationshipTypeCode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dpci != null" >
+        #{dpci,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ecomDivisional != null" >
+        #{ecomDivisional,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="soldonweb != null" >
+        #{soldonweb,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="soldinstores != null" >
+        #{soldinstores,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="estoreItemStatusCode != null" >
+        #{estoreItemStatusCode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemKind != null" >
+        #{itemKind,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mmbvContentStreetDate != null" >
+        #{mmbvContentStreetDate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="launchDateTime != null" >
+        #{launchDateTime,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="averageoverallrating != null" >
+        #{averageoverallrating,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="totalreviewcount != null" >
+        #{totalreviewcount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productBrandBrand != null" >
+        #{productBrandBrand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handlingIsBackOrderEligible != null" >
+        #{handlingIsBackOrderEligible,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="listprice != null" >
+        #{listprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="salesClassificationNodes != null" >
+        #{salesClassificationNodes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentImagesAlternateImages != null" >
+        #{enrichmentImagesAlternateImages,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="displayOptionHasSizeChart != null" >
+        #{displayOptionHasSizeChart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentSizeChart != null" >
+        #{enrichmentSizeChart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="taxCategoryTaxCodeId != null" >
+        #{taxCategoryTaxCodeId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageDimensionsDimensionUnitOfMeasure != null" >
+        #{packageDimensionsDimensionUnitOfMeasure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageDimensionsHeight != null" >
+        #{packageDimensionsHeight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageDimensionsDepth != null" >
+        #{packageDimensionsDepth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageDimensionsWidth != null" >
+        #{packageDimensionsWidth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handlingReceivingFacilityType != null" >
+        #{handlingReceivingFacilityType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productDescriptionBulletDescription != null" >
+        #{productDescriptionBulletDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handlingBackOrderType != null" >
+        #{handlingBackOrderType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fulfillmentPurchaseLimit != null" >
+        #{fulfillmentPurchaseLimit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="environmentalSegmentationIsHazardousMaterial != null" >
+        #{environmentalSegmentationIsHazardousMaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="environmentalSegmentationIsIngestible != null" >
+        #{environmentalSegmentationIsIngestible,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fulfillmentIsWheneverShippingEligible != null" >
+        #{fulfillmentIsWheneverShippingEligible,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fulfillmentShippingRestriction != null" >
+        #{fulfillmentShippingRestriction,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fulfillmentIsPoBoxProhibited != null" >
+        #{fulfillmentIsPoBoxProhibited,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentNutritionFactsIngredients != null" >
+        #{enrichmentNutritionFactsIngredients,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentNutritionFactsWarning != null" >
+        #{enrichmentNutritionFactsWarning,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentNutritionFactsPreparedCount != null" >
+        #{enrichmentNutritionFactsPreparedCount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentNutritionFactsValuePreparedList != null" >
+        #{enrichmentNutritionFactsValuePreparedList,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsProductDetails != null" >
+        #{enrichmentDrugFactsProductDetails,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsProductIngredients != null" >
+        #{enrichmentDrugFactsProductIngredients,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsLabel != null" >
+        #{enrichmentDrugFactsLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsPurposeLabel != null" >
+        #{enrichmentDrugFactsPurposeLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsActiveIngredientLabel != null" >
+        #{enrichmentDrugFactsActiveIngredientLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsActiveIngredients != null" >
+        #{enrichmentDrugFactsActiveIngredients,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsUsesLabel != null" >
+        #{enrichmentDrugFactsUsesLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsUsesTreatedSymptoms != null" >
+        #{enrichmentDrugFactsUsesTreatedSymptoms,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsWarningText != null" >
+        #{enrichmentDrugFactsWarningText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsWarningLabel != null" >
+        #{enrichmentDrugFactsWarningLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsWarningUsage != null" >
+        #{enrichmentDrugFactsWarningUsage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsWarningOtherWarnings != null" >
+        #{enrichmentDrugFactsWarningOtherWarnings,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsDirectionLabel != null" >
+        #{enrichmentDrugFactsDirectionLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsDirectionGeneralDirections != null" >
+        #{enrichmentDrugFactsDirectionGeneralDirections,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsDirectionAgeGroups != null" >
+        #{enrichmentDrugFactsDirectionAgeGroups,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsOtherInformationLabel != null" >
+        #{enrichmentDrugFactsOtherInformationLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsOtherInformationBullets != null" >
+        #{enrichmentDrugFactsOtherInformationBullets,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsInactiveIngredients != null" >
+        #{enrichmentDrugFactsInactiveIngredients,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsQuestionsCommentsSectionLabel != null" >
+        #{enrichmentDrugFactsQuestionsCommentsSectionLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsQuestionsCommentsSectionPhoneNumber != null" >
+        #{enrichmentDrugFactsQuestionsCommentsSectionPhoneNumber,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideCapacityMeasurement != null" >
+        #{energyGuideCapacityMeasurement,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideEstimatedOperatingCost != null" >
+        #{energyGuideEstimatedOperatingCost,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideSliderLowRange != null" >
+        #{energyGuideSliderLowRange,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideSliderHighRange != null" >
+        #{energyGuideSliderHighRange,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideSliderLabel != null" >
+        #{energyGuideSliderLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideEstimatedEnergyUseTitle != null" >
+        #{energyGuideEstimatedEnergyUseTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideEstimatedEnergyUseValue != null" >
+        #{energyGuideEstimatedEnergyUseValue,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideEstimatedEnergyUseUnitOfMeasurement != null" >
+        #{energyGuideEstimatedEnergyUseUnitOfMeasurement,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideLegalDisclaimerText != null" >
+        #{energyGuideLegalDisclaimerText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideLegalDisclaimerInformation != null" >
+        #{energyGuideLegalDisclaimerInformation,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideHasEnergyStar != null" >
+        #{energyGuideHasEnergyStar,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="returnMethod != null" >
+        #{returnMethod,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryOfOriginCode != null" >
+        #{countryOfOriginCode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="perordercharges != null" >
+        #{perordercharges,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="perunitcharges != null" >
+        #{perunitcharges,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itembulky != null" >
+        #{itembulky,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fixedprice != null" >
+        #{fixedprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handlingfee != null" >
+        #{handlingfee,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handlingfeemessage != null" >
+        #{handlingfeemessage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handlingfeelegaldisclaimer != null" >
+        #{handlingfeelegaldisclaimer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isbn != null" >
+        #{isbn,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pattern != null" >
+        #{pattern,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ageGroup != null" >
+        #{ageGroup,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="gender != null" >
+        #{gender,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="barcodeType != null" >
+        #{barcodeType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="iacAttributes != null" >
+        #{iacAttributes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="secBarcode != null" >
+        #{secBarcode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mozartVendorId != null" >
+        #{mozartVendorId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="specialitemsource != null" >
+        #{specialitemsource,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentReturnPolicies != null" >
+        #{enrichmentReturnPolicies,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedNewTargetBean" >
+    update cms_zz_feed_new_target_product_temp
+    <set >
+      <if test="upc != null" >
+        "upc" = #{upc,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        "md5" = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        "updateFlag" = #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="parentTcins != null" >
+        "parent_tcins" = #{parentTcins,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturerId != null" >
+        "manufacturer_id" = #{manufacturerId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturerPartNumber != null" >
+        "manufacturer_part_number" = #{manufacturerPartNumber,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="manufacturerModelNumber != null" >
+        "manufacturer_model_number" = #{manufacturerModelNumber,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productDescriptionTitle != null" >
+        "product_description_title" = #{productDescriptionTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productDescriptionDownstreamDescription != null" >
+        "product_description_downstream_description" = #{productDescriptionDownstreamDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productDescriptionLongDescription != null" >
+        "product_description_long_description" = #{productDescriptionLongDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="regprice != null" >
+        "regprice" = #{regprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentBuyUrl != null" >
+        "enrichment_buy_url" = #{enrichmentBuyUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationItemTypeCategoryType != null" >
+        "product_classification_item_type_category_type" = #{productClassificationItemTypeCategoryType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationItemTypeName != null" >
+        "product_classification_item_type_name" = #{productClassificationItemTypeName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationItemTypeType != null" >
+        "product_classification_item_type_type" = #{productClassificationItemTypeType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationMerchandiseType != null" >
+        "product_classification_merchandise_type" = #{productClassificationMerchandiseType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationMerchandiseTypeName != null" >
+        "product_classification_merchandise_type_name" = #{productClassificationMerchandiseTypeName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationProductSubtype != null" >
+        "product_classification_product_subtype" = #{productClassificationProductSubtype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationProductSubtypeName != null" >
+        "product_classification_product_subtype_name" = #{productClassificationProductSubtypeName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationProductType != null" >
+        "product_classification_product_type" = #{productClassificationProductType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productClassificationProductTypeName != null" >
+        "product_classification_product_type_name" = #{productClassificationProductTypeName,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="availabilityStatus != null" >
+        "availability_status" = #{availabilityStatus,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentImagesBaseUrl != null" >
+        "enrichment_images_base_url" = #{enrichmentImagesBaseUrl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentImagesPrimaryImage != null" >
+        "enrichment_images_primary_image" = #{enrichmentImagesPrimaryImage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productBrandManufacturerBrand != null" >
+        "product_brand_manufacturer_brand" = #{productBrandManufacturerBrand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="identifiers != null" >
+        "identifiers" = #{identifiers,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="displayOptionKeywords != null" >
+        "display_option_keywords" = #{displayOptionKeywords,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productDescriptionSellingFeature != null" >
+        "product_description_selling_feature" = #{productDescriptionSellingFeature,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageDimensionsWeight != null" >
+        "package_dimensions_weight" = #{packageDimensionsWeight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageDimensionsWeightUnitOfMeasure != null" >
+        "package_dimensions_weight_unit_of_measure" = #{packageDimensionsWeightUnitOfMeasure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationTheme != null" >
+        "variation_theme" = #{variationTheme,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationSize != null" >
+        "variation_size" = #{variationSize,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationColor != null" >
+        "variation_color" = #{variationColor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variationMaterialType != null" >
+        "variation_material_type" = #{variationMaterialType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="merchandiseTypeAttributes != null" >
+        "merchandise_type_attributes" = #{merchandiseTypeAttributes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="relationshipTypeCode != null" >
+        "relationship_type_code" = #{relationshipTypeCode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="dpci != null" >
+        "dpci" = #{dpci,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ecomDivisional != null" >
+        "ecom_divisional" = #{ecomDivisional,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="soldonweb != null" >
+        "soldonweb" = #{soldonweb,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="soldinstores != null" >
+        "soldinstores" = #{soldinstores,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="estoreItemStatusCode != null" >
+        "estore_item_status_code" = #{estoreItemStatusCode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itemKind != null" >
+        "item_kind" = #{itemKind,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mmbvContentStreetDate != null" >
+        "mmbv_content_street_date" = #{mmbvContentStreetDate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="launchDateTime != null" >
+        "launch_date_time" = #{launchDateTime,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="averageoverallrating != null" >
+        "averageoverallrating" = #{averageoverallrating,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="totalreviewcount != null" >
+        "totalreviewcount" = #{totalreviewcount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productBrandBrand != null" >
+        "product_brand_brand" = #{productBrandBrand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handlingIsBackOrderEligible != null" >
+        "handling_is_back_order_eligible" = #{handlingIsBackOrderEligible,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="listprice != null" >
+        "listprice" = #{listprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="salesClassificationNodes != null" >
+        "sales_classification_nodes" = #{salesClassificationNodes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentImagesAlternateImages != null" >
+        "enrichment_images_alternate_images" = #{enrichmentImagesAlternateImages,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="displayOptionHasSizeChart != null" >
+        "display_option_has_size_chart" = #{displayOptionHasSizeChart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentSizeChart != null" >
+        "enrichment_size_chart" = #{enrichmentSizeChart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="taxCategoryTaxCodeId != null" >
+        "tax_category_tax_code_id" = #{taxCategoryTaxCodeId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageDimensionsDimensionUnitOfMeasure != null" >
+        "package_dimensions_dimension_unit_of_measure" = #{packageDimensionsDimensionUnitOfMeasure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageDimensionsHeight != null" >
+        "package_dimensions_height" = #{packageDimensionsHeight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageDimensionsDepth != null" >
+        "package_dimensions_depth" = #{packageDimensionsDepth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="packageDimensionsWidth != null" >
+        "package_dimensions_width" = #{packageDimensionsWidth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handlingReceivingFacilityType != null" >
+        "handling_receiving_facility_type" = #{handlingReceivingFacilityType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productDescriptionBulletDescription != null" >
+        "product_description_bullet_description" = #{productDescriptionBulletDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handlingBackOrderType != null" >
+        "handling_back_order_type" = #{handlingBackOrderType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fulfillmentPurchaseLimit != null" >
+        "fulfillment_purchase_limit" = #{fulfillmentPurchaseLimit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="environmentalSegmentationIsHazardousMaterial != null" >
+        "environmental_segmentation_is_hazardous_material" = #{environmentalSegmentationIsHazardousMaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="environmentalSegmentationIsIngestible != null" >
+        "environmental_segmentation_is_ingestible" = #{environmentalSegmentationIsIngestible,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fulfillmentIsWheneverShippingEligible != null" >
+        "fulfillment_is_whenever_shipping_eligible" = #{fulfillmentIsWheneverShippingEligible,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fulfillmentShippingRestriction != null" >
+        "fulfillment_shipping_restriction" = #{fulfillmentShippingRestriction,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fulfillmentIsPoBoxProhibited != null" >
+        "fulfillment_is_po_box_prohibited" = #{fulfillmentIsPoBoxProhibited,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentNutritionFactsIngredients != null" >
+        "enrichment_nutrition_facts_ingredients" = #{enrichmentNutritionFactsIngredients,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentNutritionFactsWarning != null" >
+        "enrichment_nutrition_facts_warning" = #{enrichmentNutritionFactsWarning,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentNutritionFactsPreparedCount != null" >
+        "enrichment_nutrition_facts_prepared_count" = #{enrichmentNutritionFactsPreparedCount,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentNutritionFactsValuePreparedList != null" >
+        "enrichment_nutrition_facts_value_prepared_list" = #{enrichmentNutritionFactsValuePreparedList,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsProductDetails != null" >
+        "enrichment_drug_facts_product_details" = #{enrichmentDrugFactsProductDetails,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsProductIngredients != null" >
+        "enrichment_drug_facts_product_ingredients" = #{enrichmentDrugFactsProductIngredients,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsLabel != null" >
+        "enrichment_drug_facts_label" = #{enrichmentDrugFactsLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsPurposeLabel != null" >
+        "enrichment_drug_facts_purpose_label" = #{enrichmentDrugFactsPurposeLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsActiveIngredientLabel != null" >
+        "enrichment_drug_facts_active_ingredient_label" = #{enrichmentDrugFactsActiveIngredientLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsActiveIngredients != null" >
+        "enrichment_drug_facts_active_ingredients" = #{enrichmentDrugFactsActiveIngredients,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsUsesLabel != null" >
+        "enrichment_drug_facts_uses_label" = #{enrichmentDrugFactsUsesLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsUsesTreatedSymptoms != null" >
+        "enrichment_drug_facts_uses_treated_symptoms" = #{enrichmentDrugFactsUsesTreatedSymptoms,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsWarningText != null" >
+        "enrichment_drug_facts_warning_text" = #{enrichmentDrugFactsWarningText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsWarningLabel != null" >
+        "enrichment_drug_facts_warning_label" = #{enrichmentDrugFactsWarningLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsWarningUsage != null" >
+        "enrichment_drug_facts_warning_usage" = #{enrichmentDrugFactsWarningUsage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsWarningOtherWarnings != null" >
+        "enrichment_drug_facts_warning_other_warnings" = #{enrichmentDrugFactsWarningOtherWarnings,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsDirectionLabel != null" >
+        "enrichment_drug_facts_direction_label" = #{enrichmentDrugFactsDirectionLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsDirectionGeneralDirections != null" >
+        "enrichment_drug_facts_direction_general_directions" = #{enrichmentDrugFactsDirectionGeneralDirections,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsDirectionAgeGroups != null" >
+        "enrichment_drug_facts_direction_age_groups" = #{enrichmentDrugFactsDirectionAgeGroups,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsOtherInformationLabel != null" >
+        "enrichment_drug_facts_other_information_label" = #{enrichmentDrugFactsOtherInformationLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsOtherInformationBullets != null" >
+        "enrichment_drug_facts_other_information_bullets" = #{enrichmentDrugFactsOtherInformationBullets,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsInactiveIngredients != null" >
+        "enrichment_drug_facts_inactive_ingredients" = #{enrichmentDrugFactsInactiveIngredients,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsQuestionsCommentsSectionLabel != null" >
+        "enrichment_drug_facts_questions_comments_section_label" = #{enrichmentDrugFactsQuestionsCommentsSectionLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentDrugFactsQuestionsCommentsSectionPhoneNumber != null" >
+        "enrichment_drug_facts_questions_comments_section_phone_number" = #{enrichmentDrugFactsQuestionsCommentsSectionPhoneNumber,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideCapacityMeasurement != null" >
+        "energy_guide_capacity_measurement" = #{energyGuideCapacityMeasurement,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideEstimatedOperatingCost != null" >
+        "energy_guide_estimated_operating_cost" = #{energyGuideEstimatedOperatingCost,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideSliderLowRange != null" >
+        "energy_guide_slider_low_range" = #{energyGuideSliderLowRange,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideSliderHighRange != null" >
+        "energy_guide_slider_high_range" = #{energyGuideSliderHighRange,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideSliderLabel != null" >
+        "energy_guide_slider_label" = #{energyGuideSliderLabel,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideEstimatedEnergyUseTitle != null" >
+        "energy_guide_estimated_energy_use_title" = #{energyGuideEstimatedEnergyUseTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideEstimatedEnergyUseValue != null" >
+        "energy_guide_estimated_energy_use_value" = #{energyGuideEstimatedEnergyUseValue,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideEstimatedEnergyUseUnitOfMeasurement != null" >
+        "energy_guide_estimated_energy_use_unit_of_measurement" = #{energyGuideEstimatedEnergyUseUnitOfMeasurement,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideLegalDisclaimerText != null" >
+        "energy_guide_legal_disclaimer_text" = #{energyGuideLegalDisclaimerText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideLegalDisclaimerInformation != null" >
+        "energy_guide_legal_disclaimer_information" = #{energyGuideLegalDisclaimerInformation,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="energyGuideHasEnergyStar != null" >
+        "energy_guide_has_energy_star" = #{energyGuideHasEnergyStar,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="returnMethod != null" >
+        "return_method" = #{returnMethod,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryOfOriginCode != null" >
+        "country_of_origin_code" = #{countryOfOriginCode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="perordercharges != null" >
+        "perordercharges" = #{perordercharges,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="perunitcharges != null" >
+        "perunitcharges" = #{perunitcharges,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="weight != null" >
+        "weight" = #{weight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="itembulky != null" >
+        "itembulky" = #{itembulky,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="fixedprice != null" >
+        "fixedPrice" = #{fixedprice,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handlingfee != null" >
+        "handlingFee" = #{handlingfee,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handlingfeemessage != null" >
+        "handlingFeeMessage" = #{handlingfeemessage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="handlingfeelegaldisclaimer != null" >
+        "handlingFeeLegalDisclaimer" = #{handlingfeelegaldisclaimer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isbn != null" >
+        "isbn" = #{isbn,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pattern != null" >
+        "pattern" = #{pattern,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ageGroup != null" >
+        "age_group" = #{ageGroup,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="gender != null" >
+        "gender" = #{gender,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="barcodeType != null" >
+        "barcode_type" = #{barcodeType,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="iacAttributes != null" >
+        "iac_attributes" = #{iacAttributes,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="secBarcode != null" >
+        "sec_barcode" = #{secBarcode,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mozartVendorId != null" >
+        "mozart_vendor_id" = #{mozartVendorId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="specialitemsource != null" >
+        "specialitemsource" = #{specialitemsource,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="enrichmentReturnPolicies != null" >
+        "enrichment_return_policies" = #{enrichmentReturnPolicies,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where "tcin" = #{tcin,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperFeedNewTargetBean" >
+    update cms_zz_feed_new_target_product_temp
+    set "upc" = #{upc,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER},
+    "parent_tcins" = #{parentTcins,jdbcType=LONGVARCHAR},
+    "manufacturer_id" = #{manufacturerId,jdbcType=LONGVARCHAR},
+    "manufacturer_part_number" = #{manufacturerPartNumber,jdbcType=LONGVARCHAR},
+    "manufacturer_model_number" = #{manufacturerModelNumber,jdbcType=LONGVARCHAR},
+    "product_description_title" = #{productDescriptionTitle,jdbcType=LONGVARCHAR},
+    "product_description_downstream_description" = #{productDescriptionDownstreamDescription,jdbcType=LONGVARCHAR},
+    "product_description_long_description" = #{productDescriptionLongDescription,jdbcType=LONGVARCHAR},
+    "regprice" = #{regprice,jdbcType=LONGVARCHAR},
+    "enrichment_buy_url" = #{enrichmentBuyUrl,jdbcType=LONGVARCHAR},
+    "product_classification_item_type_category_type" = #{productClassificationItemTypeCategoryType,jdbcType=LONGVARCHAR},
+    "product_classification_item_type_name" = #{productClassificationItemTypeName,jdbcType=LONGVARCHAR},
+    "product_classification_item_type_type" = #{productClassificationItemTypeType,jdbcType=LONGVARCHAR},
+    "product_classification_merchandise_type" = #{productClassificationMerchandiseType,jdbcType=LONGVARCHAR},
+    "product_classification_merchandise_type_name" = #{productClassificationMerchandiseTypeName,jdbcType=LONGVARCHAR},
+    "product_classification_product_subtype" = #{productClassificationProductSubtype,jdbcType=LONGVARCHAR},
+    "product_classification_product_subtype_name" = #{productClassificationProductSubtypeName,jdbcType=LONGVARCHAR},
+    "product_classification_product_type" = #{productClassificationProductType,jdbcType=LONGVARCHAR},
+    "product_classification_product_type_name" = #{productClassificationProductTypeName,jdbcType=LONGVARCHAR},
+    "availability_status" = #{availabilityStatus,jdbcType=LONGVARCHAR},
+    "enrichment_images_base_url" = #{enrichmentImagesBaseUrl,jdbcType=LONGVARCHAR},
+    "enrichment_images_primary_image" = #{enrichmentImagesPrimaryImage,jdbcType=LONGVARCHAR},
+    "product_brand_manufacturer_brand" = #{productBrandManufacturerBrand,jdbcType=LONGVARCHAR},
+    "identifiers" = #{identifiers,jdbcType=LONGVARCHAR},
+    "display_option_keywords" = #{displayOptionKeywords,jdbcType=LONGVARCHAR},
+    "product_description_selling_feature" = #{productDescriptionSellingFeature,jdbcType=LONGVARCHAR},
+    "package_dimensions_weight" = #{packageDimensionsWeight,jdbcType=LONGVARCHAR},
+    "package_dimensions_weight_unit_of_measure" = #{packageDimensionsWeightUnitOfMeasure,jdbcType=LONGVARCHAR},
+    "variation_theme" = #{variationTheme,jdbcType=LONGVARCHAR},
+    "variation_size" = #{variationSize,jdbcType=LONGVARCHAR},
+    "variation_color" = #{variationColor,jdbcType=LONGVARCHAR},
+    "variation_material_type" = #{variationMaterialType,jdbcType=LONGVARCHAR},
+    "merchandise_type_attributes" = #{merchandiseTypeAttributes,jdbcType=LONGVARCHAR},
+    "relationship_type_code" = #{relationshipTypeCode,jdbcType=LONGVARCHAR},
+    "dpci" = #{dpci,jdbcType=LONGVARCHAR},
+    "ecom_divisional" = #{ecomDivisional,jdbcType=LONGVARCHAR},
+    "soldonweb" = #{soldonweb,jdbcType=LONGVARCHAR},
+    "soldinstores" = #{soldinstores,jdbcType=LONGVARCHAR},
+    "estore_item_status_code" = #{estoreItemStatusCode,jdbcType=LONGVARCHAR},
+    "item_kind" = #{itemKind,jdbcType=LONGVARCHAR},
+    "mmbv_content_street_date" = #{mmbvContentStreetDate,jdbcType=LONGVARCHAR},
+    "launch_date_time" = #{launchDateTime,jdbcType=LONGVARCHAR},
+    "averageoverallrating" = #{averageoverallrating,jdbcType=LONGVARCHAR},
+    "totalreviewcount" = #{totalreviewcount,jdbcType=LONGVARCHAR},
+    "product_brand_brand" = #{productBrandBrand,jdbcType=LONGVARCHAR},
+    "handling_is_back_order_eligible" = #{handlingIsBackOrderEligible,jdbcType=LONGVARCHAR},
+    "listprice" = #{listprice,jdbcType=LONGVARCHAR},
+    "sales_classification_nodes" = #{salesClassificationNodes,jdbcType=LONGVARCHAR},
+    "enrichment_images_alternate_images" = #{enrichmentImagesAlternateImages,jdbcType=LONGVARCHAR},
+    "display_option_has_size_chart" = #{displayOptionHasSizeChart,jdbcType=LONGVARCHAR},
+    "enrichment_size_chart" = #{enrichmentSizeChart,jdbcType=LONGVARCHAR},
+    "tax_category_tax_code_id" = #{taxCategoryTaxCodeId,jdbcType=LONGVARCHAR},
+    "package_dimensions_dimension_unit_of_measure" = #{packageDimensionsDimensionUnitOfMeasure,jdbcType=LONGVARCHAR},
+    "package_dimensions_height" = #{packageDimensionsHeight,jdbcType=LONGVARCHAR},
+    "package_dimensions_depth" = #{packageDimensionsDepth,jdbcType=LONGVARCHAR},
+    "package_dimensions_width" = #{packageDimensionsWidth,jdbcType=LONGVARCHAR},
+    "handling_receiving_facility_type" = #{handlingReceivingFacilityType,jdbcType=LONGVARCHAR},
+    "product_description_bullet_description" = #{productDescriptionBulletDescription,jdbcType=LONGVARCHAR},
+    "handling_back_order_type" = #{handlingBackOrderType,jdbcType=LONGVARCHAR},
+    "fulfillment_purchase_limit" = #{fulfillmentPurchaseLimit,jdbcType=LONGVARCHAR},
+    "environmental_segmentation_is_hazardous_material" = #{environmentalSegmentationIsHazardousMaterial,jdbcType=LONGVARCHAR},
+    "environmental_segmentation_is_ingestible" = #{environmentalSegmentationIsIngestible,jdbcType=LONGVARCHAR},
+    "fulfillment_is_whenever_shipping_eligible" = #{fulfillmentIsWheneverShippingEligible,jdbcType=LONGVARCHAR},
+    "fulfillment_shipping_restriction" = #{fulfillmentShippingRestriction,jdbcType=LONGVARCHAR},
+    "fulfillment_is_po_box_prohibited" = #{fulfillmentIsPoBoxProhibited,jdbcType=LONGVARCHAR},
+    "enrichment_nutrition_facts_ingredients" = #{enrichmentNutritionFactsIngredients,jdbcType=LONGVARCHAR},
+    "enrichment_nutrition_facts_warning" = #{enrichmentNutritionFactsWarning,jdbcType=LONGVARCHAR},
+    "enrichment_nutrition_facts_prepared_count" = #{enrichmentNutritionFactsPreparedCount,jdbcType=LONGVARCHAR},
+    "enrichment_nutrition_facts_value_prepared_list" = #{enrichmentNutritionFactsValuePreparedList,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_product_details" = #{enrichmentDrugFactsProductDetails,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_product_ingredients" = #{enrichmentDrugFactsProductIngredients,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_label" = #{enrichmentDrugFactsLabel,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_purpose_label" = #{enrichmentDrugFactsPurposeLabel,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_active_ingredient_label" = #{enrichmentDrugFactsActiveIngredientLabel,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_active_ingredients" = #{enrichmentDrugFactsActiveIngredients,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_uses_label" = #{enrichmentDrugFactsUsesLabel,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_uses_treated_symptoms" = #{enrichmentDrugFactsUsesTreatedSymptoms,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_warning_text" = #{enrichmentDrugFactsWarningText,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_warning_label" = #{enrichmentDrugFactsWarningLabel,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_warning_usage" = #{enrichmentDrugFactsWarningUsage,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_warning_other_warnings" = #{enrichmentDrugFactsWarningOtherWarnings,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_direction_label" = #{enrichmentDrugFactsDirectionLabel,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_direction_general_directions" = #{enrichmentDrugFactsDirectionGeneralDirections,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_direction_age_groups" = #{enrichmentDrugFactsDirectionAgeGroups,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_other_information_label" = #{enrichmentDrugFactsOtherInformationLabel,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_other_information_bullets" = #{enrichmentDrugFactsOtherInformationBullets,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_inactive_ingredients" = #{enrichmentDrugFactsInactiveIngredients,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_questions_comments_section_label" = #{enrichmentDrugFactsQuestionsCommentsSectionLabel,jdbcType=LONGVARCHAR},
+    "enrichment_drug_facts_questions_comments_section_phone_number" = #{enrichmentDrugFactsQuestionsCommentsSectionPhoneNumber,jdbcType=LONGVARCHAR},
+    "energy_guide_capacity_measurement" = #{energyGuideCapacityMeasurement,jdbcType=LONGVARCHAR},
+    "energy_guide_estimated_operating_cost" = #{energyGuideEstimatedOperatingCost,jdbcType=LONGVARCHAR},
+    "energy_guide_slider_low_range" = #{energyGuideSliderLowRange,jdbcType=LONGVARCHAR},
+    "energy_guide_slider_high_range" = #{energyGuideSliderHighRange,jdbcType=LONGVARCHAR},
+    "energy_guide_slider_label" = #{energyGuideSliderLabel,jdbcType=LONGVARCHAR},
+    "energy_guide_estimated_energy_use_title" = #{energyGuideEstimatedEnergyUseTitle,jdbcType=LONGVARCHAR},
+    "energy_guide_estimated_energy_use_value" = #{energyGuideEstimatedEnergyUseValue,jdbcType=LONGVARCHAR},
+    "energy_guide_estimated_energy_use_unit_of_measurement" = #{energyGuideEstimatedEnergyUseUnitOfMeasurement,jdbcType=LONGVARCHAR},
+    "energy_guide_legal_disclaimer_text" = #{energyGuideLegalDisclaimerText,jdbcType=LONGVARCHAR},
+    "energy_guide_legal_disclaimer_information" = #{energyGuideLegalDisclaimerInformation,jdbcType=LONGVARCHAR},
+    "energy_guide_has_energy_star" = #{energyGuideHasEnergyStar,jdbcType=LONGVARCHAR},
+    "return_method" = #{returnMethod,jdbcType=LONGVARCHAR},
+    "country_of_origin_code" = #{countryOfOriginCode,jdbcType=LONGVARCHAR},
+    "perordercharges" = #{perordercharges,jdbcType=LONGVARCHAR},
+    "perunitcharges" = #{perunitcharges,jdbcType=LONGVARCHAR},
+    "weight" = #{weight,jdbcType=LONGVARCHAR},
+    "itembulky" = #{itembulky,jdbcType=LONGVARCHAR},
+    "fixedPrice" = #{fixedprice,jdbcType=LONGVARCHAR},
+    "handlingFee" = #{handlingfee,jdbcType=LONGVARCHAR},
+    "handlingFeeMessage" = #{handlingfeemessage,jdbcType=LONGVARCHAR},
+    "handlingFeeLegalDisclaimer" = #{handlingfeelegaldisclaimer,jdbcType=LONGVARCHAR},
+    "isbn" = #{isbn,jdbcType=LONGVARCHAR},
+    "pattern" = #{pattern,jdbcType=LONGVARCHAR},
+    "age_group" = #{ageGroup,jdbcType=LONGVARCHAR},
+    "gender" = #{gender,jdbcType=LONGVARCHAR},
+    "barcode_type" = #{barcodeType,jdbcType=LONGVARCHAR},
+    "iac_attributes" = #{iacAttributes,jdbcType=LONGVARCHAR},
+    "sec_barcode" = #{secBarcode,jdbcType=LONGVARCHAR},
+    "mozart_vendor_id" = #{mozartVendorId,jdbcType=LONGVARCHAR},
+    "specialitemsource" = #{specialitemsource,jdbcType=LONGVARCHAR},
+    "enrichment_return_policies" = #{enrichmentReturnPolicies,jdbcType=LONGVARCHAR}
+    where "tcin" = #{tcin,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedNewTargetBean" >
+    update cms_zz_feed_new_target_product_temp
+    set "upc" = #{upc,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER}
+    where "tcin" = #{tcin,jdbcType=VARCHAR}
+  </update>
+
+
+
+
+
+  <delete id="delete">
+    delete from voyageone_cms2.cms_zz_feed_new_target_product_temp
+  </delete>
+
+  <resultMap id="resultMap_feed" type="com.voyageone.task2.cms.model.CmsBtFeedInfNewTargetModel" autoMapping="true">
+    <result column="category" property="category" />
+    <result column="channel_id" property="channelId" />
+    <result column="m_brand" property="brand" />
+    <result column="m_model" property="model" />
+    <result column="p_name" property="name" />
+    <result column="pe_short_description" property="shortDescription" />
+    <result column="pe_long_description" property="longDescription" />
+    <result column="m_size_type" property="sizeType" />
+    <result column="m_weight" property="weight" />
+    <result column="p_code" property="code" />
+    <result column="p_color" property="color" />
+    <result column="p_made_in_country" property="origin" />
+    <result column="client_product_url" property="clientProductURL"/>
+    <result column="product_type" property="productType"/>
+    <result column="material" property="material"/>
+    <result column="usage_en" property="usageEn"/>
+    <result column="clientProductURL" property="clientProductURL"/>
+    <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
+      <result column="i_sku" property="sku" />
+      <result column="i_size" property="size" />
+      <result column="i_barcode" property="barcode" />
+      <result column="i_client_sku" property="clientSku" />
+      <result column="price_msrp" property="priceMsrp" />
+      <result column="price_current" property="priceCurrent" />
+      <result column="price_net" property="priceNet" />
+      <result column="price_client_retail" property="priceClientRetail" />
+      <result column="price_client_msrp" property="priceClientMsrp" />
+      <result column="quantity" property="qty" />
+      <result column="weight_org" property="weightOrg" />
+      <result column="weight_org_unit" property="weightOrgUnit" />
+    </collection>
+    <collection property="image" javaType="ArrayList" ofType="String" >
+      <result column="image" property="image" />
+    </collection>
+  </resultMap>
+  <select id="selectSuperfeedModel" resultMap="resultMap_feed" parameterType="HashMap">
+    select
+    ${category} as category
+    ,#{channel_id} as channel_id
+    ,${m_brand} as m_brand
+    ,${m_model} as m_model
+    ,${m_size_type} as m_size_type
+    ,${m_weight} as m_weight
+    ,${p_code} as p_code
+    ,${p_name} as p_name
+    ,${p_color} as p_color
+    ,${p_made_in_country} as p_made_in_country
+    ,${pe_short_description} as pe_short_description
+    ,${pe_long_description} as pe_long_description
+    ,${price_client_msrp} as price_client_msrp
+    ,${price_client_retail}  as price_client_retail
+    ,${price_net}  as price_net
+    ,${price_current}  as price_current
+    ,${price_msrp}  as price_msrp
+    ,${i_sku} as i_sku
+    ,${i_size} as i_size
+    ,${i_barcode} as i_barcode
+    ,${i_client_sku} as i_client_sku
+    ,1 as i_active
+    ,${image} as image
+    ,${client_product_url} as client_product_url
+    ,${product_type} as product_type
+    ,${quantity} as quantity
+    ,${material} as material
+    ,${usage_en} as usageEn
+    ,${weight_org} as weight_org
+    ,${weight_org_unit} as weight_org_unit
+    ,${weight_calc} as weightCalc
+    <if test="attr != null">
+      ,${attr}
+    </if>
+    from
+    ${tableName}
+    ${keyword}
+  </select>
+  <update id="updateFlagBySku"  parameterType="java.util.List">
+    UPDATE voyageone_cms2.cms_zz_feed_new_target_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `tcin` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </update>
+
+  <insert id="insertFullBySku"  parameterType="java.util.List">
+    INSERT INTO voyageone_cms2.cms_zz_feed_new_target_product_full SELECT * from
+    voyageone_cms2.cms_zz_feed_new_target_product_temp where `tcin` in
+    (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </insert>
+
+  <delete id="delFullBySku" parameterType="java.util.List">
+    DELETE
+    FROM
+    voyageone_cms2.cms_zz_feed_new_target_product_full
+    where `tcin` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </delete>
+</mapper>
