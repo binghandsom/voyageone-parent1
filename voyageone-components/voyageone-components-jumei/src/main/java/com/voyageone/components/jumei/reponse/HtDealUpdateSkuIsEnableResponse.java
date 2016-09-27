@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
+ * HtDealUpdateSkuIsEnableRequest 上下架Deal关联的Sku
+ *
  * Created by dell on 2016/9/23.
  */
 public class HtDealUpdateSkuIsEnableResponse extends BaseJMResponse {
@@ -56,15 +58,53 @@ public class HtDealUpdateSkuIsEnableResponse extends BaseJMResponse {
         this.body = body;
         try {
             Map<String, Object> map = JacksonUtil.jsonToMap(body);
+            if (map.containsKey("error_code")) {
+                this.setError_code(map.get("error_code").toString());
+            }
             if (map.containsKey("is_Success") && "1".equals(map.get("is_Success"))) {
                 this.setIs_Success(true);
             } else {
-                this.setErrorMsg(this.getRequestUrl()+this.body);
+                this.setIs_Success(false);
+                StringBuffer sbMsg = new StringBuffer(" 上下架Deal关联的Sku(/v1/htDeal/updateSkuIsEnable)时,发生错误[" + this.error_code + ":");
+                switch (this.error_code) {
+                    case "10002":
+                        sbMsg.append("client_id,client_key,sign 认证失败");
+                        break;
+                    case "100002":
+                        sbMsg.append("jumei_hash_id参数错误，不能为空");
+                        break;
+                    case "100003":
+                        sbMsg.append("jumei_sku_no参数错误，不能为空");
+                        break;
+                    case "100004":
+                        sbMsg.append("is_enable参数错误，只能是0或1");
+                        break;
+                    case "100005":
+                        sbMsg.append("无权操作的Deal");
+                        break;
+                    case "100006":
+                        sbMsg.append("此Deal必须有sku售卖");
+                        break;
+                    case "100008":
+                        sbMsg.append("与此Deal相关的Sku在其他Deal下销售,不允许更新");
+                        break;
+                    case "100012":
+                        sbMsg.append("Sku不存在");
+                        break;
+                    case "100013":
+                        sbMsg.append("is_enable参数和数据库中参数一致，没有发生改变");
+                        break;
+                    default:
+                        sbMsg.append(map.get("reason").toString());
+                }
+                sbMsg.append("] ");
+                this.setErrorMsg(sbMsg.toString() + this.getRequestUrl() + " " + this.body);
             }
+
         } catch (Exception ex) {
             logger.error("setBody ",ex);
             this.setIs_Success(false);
-            this.setErrorMsg("返回参数解析错误" + this.body);
+            this.setErrorMsg("HtDealUpdateSkuIsEnableResponse 返回参数解析错误" + this.body);
         }
     }
 }

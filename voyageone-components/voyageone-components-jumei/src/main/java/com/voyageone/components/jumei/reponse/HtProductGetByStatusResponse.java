@@ -4,7 +4,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,8 +51,8 @@ public class HtProductGetByStatusResponse extends BaseJMResponse {
             }
 
             // 取得聚美生成的产品Id jumei_product_id
-            if (map.containsKey("response")) {
-                Map<String, Object> response = (Map<String, Object>) map.get("response");
+            if (map.containsKey("response") && !StringUtils.isEmpty(StringUtils.toString(map.get("response")))) {
+                LinkedHashMap<String, Object> response = (LinkedHashMap<String, Object>) map.get("response");
                 if (response.containsKey("productInfo")) {
                     isSuccess = true;
                     prodInfos = (List<Map<String, Object>>) response.get("productInfo");
@@ -62,7 +62,7 @@ public class HtProductGetByStatusResponse extends BaseJMResponse {
         } catch (Exception ex) {
             logger.error("setBody ",ex);
             isSuccess = false;
-            errorMsg = "返回参数解析错误" + this.body;
+            errorMsg = "HtProductGetByStatusResponse 返回参数解析错误" + this.body;
         }
     }
 

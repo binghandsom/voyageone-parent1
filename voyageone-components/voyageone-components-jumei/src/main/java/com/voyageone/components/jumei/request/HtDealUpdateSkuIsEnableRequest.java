@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ *  HtDealUpdateSkuIsEnableRequest 上下架Deal关联的Sku
+ *
  * Created by dell on 2016/9/23.
  */
 public class HtDealUpdateSkuIsEnableRequest implements BaseJMRequest {

@@ -86,20 +86,25 @@ public class HtMallAddResponse extends BaseJMResponse {
                 this.setSuccess(true);
             } else {
                 this.setSuccess(false);
-                StringBuffer sbMsg = new StringBuffer("特卖商品绑定到商城[MALL](/v1/htProduct/dealToMall)时,");
+                StringBuffer sbMsg = new StringBuffer(" 特卖商品绑定到商城[MALL](/v1/htProduct/dealToMall)时,发生错误[" + this.error_code + ":");
                 switch (this.error_code) {
                     case "10002":
                         sbMsg.append("client_id,client_key,sign 认证失败");
+                        break;
                     case "120014":
                         sbMsg.append("jumei_hash_id 参数错误");
+                        break;
                     case "100001":
                         sbMsg.append("skuInfo 参数错误");
+                        break;
                     case "100002":
                         sbMsg.append("mallInfo 参数错误");
+                        break;
                     default:
                         sbMsg.append(map.get("reason").toString());
                 }
-                this.setErrorMsg(this.body + " " + sbMsg);
+                sbMsg.append("] ");
+                this.setErrorMsg(sbMsg.toString() + this.body);
             }
         } catch (Exception ex) {
             logger.error("setBody ",ex);

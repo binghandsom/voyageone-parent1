@@ -77,34 +77,46 @@ public class HtMallSkuAddResponse extends BaseJMResponse {
                 this.setSuccess(true);
             } else {
                 this.setSuccess(false);
-                StringBuffer sbMsg = new StringBuffer("商城商品追加sku[MALL](v1/htSku/addMallSku)时,");
+                StringBuffer sbMsg = new StringBuffer(" 商城商品追加sku[MALL](v1/htSku/addMallSku)时,发生错误[" + this.error_code + ":");
                 switch (this.error_code) {
                     case "10002":
                         sbMsg.append("client_id,client_key,sign 认证失败");
+                        break;
                     case "100001":
                         sbMsg.append("skujumei_spu_no,聚美SPU_NO错误");
+                        break;
                     case "100002":
                         sbMsg.append("sku_info参数错误,只要被设置就只能是json数据且当spu_no下无sku时必填");
+                        break;
                     case "100003":
                         sbMsg.append("businessman_num参数错误");
+                        break;
                     case "100004":
                         sbMsg.append("stocks库存参数错误");
+                        break;
                     case "100005":
                         sbMsg.append("mall_price参数错误,必须是Float类型且大于15元");
+                        break;
                     case "100006":
                         sbMsg.append("market_price参数错误,必须是Float类型且大于等于商城价");
+                        break;
                     case "100007":
                         sbMsg.append("只要被设置就不能为空且当发货仓库为保税区仓库时, customs_product_number不能为空");
+                        break;
                     case "100008":
                         sbMsg.append("该jumei_spu_no不存在");
+                        break;
                     case "100009":
                         sbMsg.append("spu下存在的sku参数不完整，请重新添加完整信息后再来追加");
+                        break;
                     case "100010":
                         sbMsg.append("spu下存在的sku的deal_price(团购价格)不能小于15元,请修改后再来追加");
+                        break;
                     default:
                         sbMsg.append(map.get("reason").toString());
                 }
-                this.setErrorMsg(body + " " + sbMsg);
+                sbMsg.append("] ");
+                this.setErrorMsg(sbMsg.toString() + this.body);
             }
             if (map.containsKey("reason")) {
                 this.setReason(map.get("reason").toString());

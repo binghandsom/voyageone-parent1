@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * HtSkuUpdateResponse
+ * HtSkuUpdateResponse 修改Sku信息
  * @author peitao.sun, 2016/3/29
  * @version 2.0.0
  * @since 2.0.0
@@ -74,12 +74,37 @@ public class HtSkuUpdateResponse extends BaseJMResponse {
             if (map.containsKey("reason") && "success".equals(map.get("reason"))) {
                 this.setIs_Success(true);
             } else {
-                this.setErrorMsg(this.body);
+                this.setIs_Success(false);
+                StringBuffer sbMsg = new StringBuffer(" 修改Sku信息(/v1/htSku/update)时,发生错误[" + this.error_code + ":");
+                switch (this.error_code) {
+                    case "10002":
+                        sbMsg.append("client_id,client_key,sign 认证失败");
+                        break;
+                    case "100001":
+                        sbMsg.append("jumei_hash_id, 聚美Deal唯一值错误");
+                        break;
+                    case "100002":
+                        sbMsg.append("jumei_sku_no, 聚美sku_no错误");
+                        break;
+                    case "100003":
+                        sbMsg.append("update_data必须不为空的JSON,有效字段至少一个");
+                        break;
+                    case "100014":
+                        sbMsg.append("businessman_num,商家商品编码参数错误");
+                        break;
+                    case "100016":
+                        sbMsg.append("发货仓库为保税区仓库时, 海关备案商品编码不能为空");
+                        break;
+                    default:
+                        sbMsg.append(map.get("reason").toString());
+                }
+                sbMsg.append("] ");
+                this.setErrorMsg(sbMsg.toString() + this.body);
             }
         } catch (Exception ex) {
             logger.error("setBody ",ex);
             this.setIs_Success(false);
-            this.setErrorMsg("返回参数解析错误" + this.body);
+            this.setErrorMsg("HtSkuUpdateResponse 返回参数解析错误" + this.body);
         }
     }
 }
