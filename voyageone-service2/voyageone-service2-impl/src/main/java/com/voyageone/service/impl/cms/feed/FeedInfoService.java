@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.feed;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -40,6 +41,10 @@ public class FeedInfoService extends BaseService {
     public long getCnt(String channelId, Map<String, Object> searchValue) {
         String queryStr = getSearchQuery(searchValue);
         return cmsBtFeedInfoDao.countByQuery(queryStr, channelId);
+    }
+
+    public WriteResult updateFeedInfoSkuPrice(String channelId, String sku, Double price){
+        return  cmsBtFeedInfoDao.updateFeedInfoSkuPrice(channelId, sku,price);
     }
 
     /**
