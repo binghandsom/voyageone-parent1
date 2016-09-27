@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * HtMallUpdateRequest 特卖商品绑定到商城[MALL]
+ * HtMallUpdateRequest 编辑商城属性[MALL]
  *
  * @author morse on 2016/8/29
  * @version 2.5.0

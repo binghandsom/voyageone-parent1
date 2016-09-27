@@ -6,12 +6,11 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * HtSkuUpdateResponse 修改Sku信息
- * @author peitao.sun, 2016/3/29
- * @version 2.0.0
- * @since 2.0.0
+ * HtDealUpdateSkuIsEnableRequest 上下架Deal关联的Sku
+ *
+ * Created by dell on 2016/9/23.
  */
-public class HtSkuUpdateResponse extends BaseJMResponse {
+public class HtDealUpdateSkuIsEnableResponse extends BaseJMResponse {
 
     private String error_code;
     private String reason;
@@ -58,53 +57,54 @@ public class HtSkuUpdateResponse extends BaseJMResponse {
     public void setBody(String body) throws IOException {
         this.body = body;
         try {
-//            {
-//                "error_code": "0",
-//                    "reason": "success",
-//                    "response": ""
-//            }
-
             Map<String, Object> map = JacksonUtil.jsonToMap(body);
             if (map.containsKey("error_code")) {
                 this.setError_code(map.get("error_code").toString());
             }
-            if (map.containsKey("reason")) {
-                this.setReason(map.get("reason").toString());
-            }
-            if (map.containsKey("reason") && "success".equals(map.get("reason"))) {
+            if (map.containsKey("is_Success") && "1".equals(map.get("is_Success"))) {
                 this.setIs_Success(true);
             } else {
                 this.setIs_Success(false);
-                StringBuffer sbMsg = new StringBuffer(" 修改Sku信息(/v1/htSku/update)时,发生错误[" + this.error_code + ":");
+                StringBuffer sbMsg = new StringBuffer(" 上下架Deal关联的Sku(/v1/htDeal/updateSkuIsEnable)时,发生错误[" + this.error_code + ":");
                 switch (this.error_code) {
                     case "10002":
                         sbMsg.append("client_id,client_key,sign 认证失败");
                         break;
-                    case "100001":
-                        sbMsg.append("jumei_hash_id, 聚美Deal唯一值错误");
-                        break;
                     case "100002":
-                        sbMsg.append("jumei_sku_no, 聚美sku_no错误");
+                        sbMsg.append("jumei_hash_id参数错误，不能为空");
                         break;
                     case "100003":
-                        sbMsg.append("update_data必须不为空的JSON,有效字段至少一个");
+                        sbMsg.append("jumei_sku_no参数错误，不能为空");
                         break;
-                    case "100014":
-                        sbMsg.append("businessman_num,商家商品编码参数错误");
+                    case "100004":
+                        sbMsg.append("is_enable参数错误，只能是0或1");
                         break;
-                    case "100016":
-                        sbMsg.append("发货仓库为保税区仓库时, 海关备案商品编码不能为空");
+                    case "100005":
+                        sbMsg.append("无权操作的Deal");
+                        break;
+                    case "100006":
+                        sbMsg.append("此Deal必须有sku售卖");
+                        break;
+                    case "100008":
+                        sbMsg.append("与此Deal相关的Sku在其他Deal下销售,不允许更新");
+                        break;
+                    case "100012":
+                        sbMsg.append("Sku不存在");
+                        break;
+                    case "100013":
+                        sbMsg.append("is_enable参数和数据库中参数一致，没有发生改变");
                         break;
                     default:
                         sbMsg.append(map.get("reason").toString());
                 }
                 sbMsg.append("] ");
-                this.setErrorMsg(sbMsg.toString() + this.body);
+                this.setErrorMsg(sbMsg.toString() + this.getRequestUrl() + " " + this.body);
             }
+
         } catch (Exception ex) {
             logger.error("setBody ",ex);
             this.setIs_Success(false);
-            this.setErrorMsg("HtSkuUpdateResponse 返回参数解析错误" + this.body);
+            this.setErrorMsg("HtDealUpdateSkuIsEnableResponse 返回参数解析错误" + this.body);
         }
     }
 }
