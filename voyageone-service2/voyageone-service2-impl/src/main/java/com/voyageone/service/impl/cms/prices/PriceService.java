@@ -322,24 +322,20 @@ public class PriceService extends BaseService {
             hsCode = strings[0];
         }
 
+        /**
+         * 1.如果无税号，价格计算 按默认值11.9（配置）中计算 中国建议售价,中国指导售价和中国最终售价
+           2.如果税号从无 -》有，根据税号的税率重新计算 中国建议售价,中国指导售价和中国最终售价
+           3.如果税号从有 -》有，现有逻辑不变，根据价格同步配置，重新计算 中国指导售价和中国最终售价（看配置）
+         */
+        Double taxRate;
+
         if (StringUtils.isEmpty(hsCode)) {
-
-            // 最终计算税号依然不能正确获取
-            // 就标记价格为异常价格
-
-            cart.getSkus().forEach(sku -> {
-                sku.put(priceRetail.name(), -1D);
-                sku.put(originalPriceMsrp.name(), 0D);
-                sku.put(priceMsrpFlg.name(), "");
-                resetPriceIfInvalid(sku, priceMsrp, -1D);
-                resetPriceIfInvalid(sku, priceSale, 0D);
-            });
-
-            return;
+            //无税号时，税率取配置中的默认税率
+            taxRate = feeTaxService.getDefaultTaxRate();
+        }else {
+            // 公式参数: 税率
+            taxRate = feeTaxService.getTaxRate(hsCode, shippingType);
         }
-
-        // 公式参数: 税率
-        Double taxRate = feeTaxService.getTaxRate(hsCode, shippingType);
 
         if (taxRate == null)
             throw new PriceCalculateException("没有找到发货方式 %s 可用的税率 ( %s ) 配置", shippingType, hsCode);

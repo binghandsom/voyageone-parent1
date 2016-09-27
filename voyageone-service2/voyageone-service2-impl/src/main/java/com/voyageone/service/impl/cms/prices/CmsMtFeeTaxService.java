@@ -52,4 +52,28 @@ public class CmsMtFeeTaxService extends BaseService {
 
         return vaTaxRate + consumptionTaxRate;
     }
+
+    /**
+     *获取默认税率
+     *
+     * @return 默认税率
+     */
+    public Double getDefaultTaxRate() {
+        Double defaultTaxRate;
+
+        Map<String, Object> queryMap = new HashMap<String, Object>() {{
+            put("hsCode", "");
+            put("shippingType", "");
+        }};
+
+        try {
+            defaultTaxRate = cmsMtFeeTaxDao.selectOne(queryMap).getVaTaxRate();
+        } catch (NullPointerException e) {
+            $warn("***   配置表中没有配置默认税率，请重新检查配置   ***");
+            //默认税号设置为11.9   更新时间2016-09-27
+            defaultTaxRate = 11.9;
+        }
+
+        return defaultTaxRate;
+    }
 }
