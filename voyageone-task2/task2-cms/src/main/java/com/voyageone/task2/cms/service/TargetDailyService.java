@@ -159,7 +159,7 @@ public class TargetDailyService extends BaseTaskService {
 
             content.append("Please see the current offline report for Target Tmall store as of "+time+"(US Central Time).");
             content.append("<br><br>");
-            content.append("For technical questions, please contact us at target-tmall-reports-support@voyageone.cn");
+            content.append("For technical questions, please contact us at <a href=\"mailto:target-tmall-reports-support@voyageone.cn\">target-tmall-reports-support@voyageone.cn</a> ");
             content.append("<br><br>");
             content.append("Best Regards");
             content.append("<br>");
