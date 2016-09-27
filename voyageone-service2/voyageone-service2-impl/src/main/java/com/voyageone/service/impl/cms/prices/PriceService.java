@@ -337,9 +337,6 @@ public class PriceService extends BaseService {
             taxRate = feeTaxService.getTaxRate(hsCode, shippingType);
         }
 
-        if (taxRate == null)
-            throw new PriceCalculateException("没有找到发货方式 %s 可用的税率 ( %s ) 配置", shippingType, hsCode);
-
         // 进入计算阶段
         SystemPriceCalculator systemPriceCalculator = new SystemPriceCalculator()
                 .setRoundUp(isRoundUp(channelId))
