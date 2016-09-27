@@ -18,28 +18,22 @@ define([
             this.saveInfo = {
                 application: ''
             };
-            this.applicationList = [
-                {'id': 1, 'application': 'Admin', 'valid': false},
-                {'id': 2, 'application': 'CMS', 'valid': false},
-                {'id': 3, 'application': 'OMS', 'valid': false},
-                {'id': 4, 'application': 'WMS', 'valid': false}
-            ];
+            this.hasAllAuth = false;
         }
 
         RoleEditController.prototype = {
-            init: function () {
+            init: function (app) {
                 var self = this;
-                var getInfo =  self.sourceData;
+                self.hasAllAuth = false;
+                var getInfo = self.sourceData;
+                getInfo.application = app ? app : '';
                 self.adminRoleService.getAuthByRoles(getInfo).then(function (res) {
                     self.resList = res.data.res;
                     self.permsStatus = res.data.perms;
-                    _.forEach(self.applicationList, function (item) {
-                        _.map(self.permsStatus, function (ps) {
-                            if (ps.application === item.application.toLocaleLowerCase()) {
-                                item.selected = ps.selected;
-                                item.selected !== 2 ? item.selected == 1 ? item.valid = true : item.valid = false : item.selected = 2;
-                            }
-                        })
+                    _.map(self.permsStatus, function (ps) {
+                        if (ps.application === self.saveInfo.application && ps.selected == 1) {
+                            self.hasAllAuth = true;
+                        }
                     })
                 });
                 switch (self.sourceData.type) {
@@ -59,20 +53,13 @@ define([
                 self.init(app);
             },
             save: function () {
-                var self = this;
+                var self = this, saveInfo = {};
                 _.extend(saveInfo, {resIds: [], applications: [], roleIds: self.sourceData.roleIds});
-                _.filter(self.applicationList, function (e) {
-                    return e.valid;
-                }).forEach(function (e) {
-                    saveInfo.applications.push(e.application.toLocaleLowerCase());
-                });
+                saveInfo.applications.push(self.saveInfo.application);
                 _.filter(self.selectedList, function (item) {
                     return item.selected;
                 }).forEach(function (item) {
                     saveInfo.resIds.push(item.id);
-                    if (saveInfo.applications.indexOf(item.application) < 0) {
-                        saveInfo.applications.push(item.application);
-                    }
                 });
                 switch (self.sourceData.type) {
                     case 'set':

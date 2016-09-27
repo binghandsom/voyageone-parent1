@@ -200,7 +200,7 @@ define([
                         console.log(res)
                     });
                 } else {
-                    var configInfo = {roleIds: [], applications: []}, setInfo = [];
+                    var configInfo = {roleIds: [], application: ''}, setInfo = [];
                     _.forEach(self.adminRoleList, function (Info) {
                         _.forEach(self.adminUserSelList.selList, function (item) {
                             if (Info.id == item.id) {
@@ -210,7 +210,6 @@ define([
                     });
                     _.forEach(setInfo, function (item) {
                         configInfo.roleIds.push(item.id);
-                        configInfo.applications.push(item.application);
                     });
                 }
                 switch (type) {

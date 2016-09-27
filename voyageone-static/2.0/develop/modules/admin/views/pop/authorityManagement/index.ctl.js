@@ -11,6 +11,7 @@ define([
             this.adminOrgService = adminOrgService;
             this.adminRoleService = adminRoleService;
             this.adminUserService = adminUserService;
+            this.flatResList = [];
         }
 
         authorityController.prototype = {
