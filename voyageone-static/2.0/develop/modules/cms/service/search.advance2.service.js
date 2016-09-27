@@ -369,7 +369,7 @@ define([
                             cartItem._purl = '';
                             cartItem._pname = '';
                         } else {
-                            if (cartItem.numiid == null || cartItem.numiid == '' || cartItem.numiid == undefined) {
+                            if (cartItem.numiid == null || cartItem.numiid == '' || cartItem.numiid == undefined || data.status != 'Approved') {
                                 cartItem._purl = '';
                             } else {
                                 if (cartItem.cartId == 27) {
@@ -380,7 +380,7 @@ define([
                             }
                             cartItem._pname = cartInfo.name;
                         }
-                        var stsCnVal = PlatformStatus.getStsTxt(data.pStatus, data.pReallyStatus);
+                        var stsCnVal = PlatformStatus.getStsTxt(data.pStatus, data.pReallyStatus, data.status);
                         if (stsCnVal) {
                             cartItem._pTxt = cartItem._pname + ':' + stsCnVal;
                         } else {
