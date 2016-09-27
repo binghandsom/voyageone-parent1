@@ -1,12 +1,15 @@
 package com.voyageone.service.impl.cms.sx;
 
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.components.cn.service.CnUploadImageService;
 import com.voyageone.service.dao.cms.CmsBtSxCnImagesDao;
 import com.voyageone.service.daoext.cms.CmsBtSxCnImagesDaoExt;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtSxCnImagesModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,18 +20,20 @@ import java.util.List;
  * @version 2.6.0
  */
 @Service
-public class CnImageService {
+public class CnImageService extends BaseService {
 
     @Autowired
     private CmsBtSxCnImagesDao cmsBtSxCnImagesDao;
     @Autowired
     private CmsBtSxCnImagesDaoExt cmsBtSxCnImagesDaoExt;
+    @Autowired
+    private CnUploadImageService cnUploadImageService;
 
     /**
      * 检索等待上传的图片
      */
-    public List<CmsBtSxCnImagesModel> selectListWaitingUpload(String channelId, int cartId) {
-        return cmsBtSxCnImagesDaoExt.selectListWaitingUpload(channelId, cartId);
+    public List<CmsBtSxCnImagesModel> selectListWaitingUpload(String channelId, int cartId, int limit) {
+        return cmsBtSxCnImagesDaoExt.selectListWaitingUpload(channelId, cartId, limit);
     }
 
     /**
@@ -83,5 +88,28 @@ public class CnImageService {
         if (!listInsertData.isEmpty()) {
             cmsBtSxCnImagesDaoExt.insertByList(listInsertData);
         }
+    }
+
+    public void doUploadImage(String url, String strOssFilePath) {
+        byte[] bytes;
+        try {
+            bytes = cnUploadImageService.downloadImage(url);
+        } catch (IOException e) {
+            $warn("独立域名图片取得失败![%s]", url);
+            return;
+        }
+        $info("独立域名读取图片成功![%s]", url);
+
+
+        try {
+            cnUploadImageService.uploadImage(bytes, strOssFilePath);
+        } catch (IOException e) {
+            $warn("独立域名图片上传失败![%s]", url);
+            return;
+        }
+        $info("独立域名上传图片成功![%s]", url);
+
+        // TODO:回写cms_bt_sx_cn_images状态
+
     }
 }
