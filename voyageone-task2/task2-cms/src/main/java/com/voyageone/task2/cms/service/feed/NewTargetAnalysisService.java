@@ -1,6 +1,9 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.csvreader.CsvReader;
+import com.mongodb.WriteResult;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
@@ -10,9 +13,11 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.cms.bean.SuperFeedNewTargetBean;
+import com.voyageone.task2.cms.bean.SuperFeedTargetBean;
 import com.voyageone.task2.cms.dao.feed.NewTargetFeedDao;
 import com.voyageone.task2.cms.model.CmsBtFeedInfNewTargetModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +40,9 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
     @Autowired
     NewTargetFeedDao targetFeedDao;
 
+    @Autowired
+    FeedInfoService feedInfoService;
+
     @Override
     protected void updateFull(List<String> itemIds) {
         if (itemIds.size() > 0) {
@@ -54,6 +62,10 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
 
     @Override
     protected int superFeedImport() {
+        $info("Target产品价格文件读入开始");
+        Map<String, String> retail = getRetailPriceList();
+        if(retail.size() == 0) return 0;
+
         $info("Target产品文件读入开始");
         List<SuperFeedNewTargetBean> superfeed = new ArrayList<>();
         int cnt = 0;
@@ -304,6 +316,48 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
         return modelBeans;
     }
 
+    public Map<String, String> getRetailPriceList() {
+
+        Map<String, String> retailPriceList = new HashMap<>();
+        CsvReader reader;
+        String fileName = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.file_id_import_sku);
+        String filePath = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_localpath);
+        String fileFullName = String.format("%s/%s", filePath, fileName);
+
+        String encode = Feeds.getVal1(getChannel().getId(), FeedEnums.Name.feed_ftp_file_coding);
+
+        try {
+            reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
+            // Head读入
+//            reader.readHeaders();
+//            reader.getHeaders();
+
+            // Body读入
+            while (reader.readRecord()) {
+                int i = 0;
+                String sku = reader.get(i++);
+                String marketprice = reader.get(i++);
+                WriteResult writeResult = feedInfoService.updateFeedInfoSkuPrice("018", sku, Double.parseDouble(marketprice));
+                if(!writeResult.isUpdateOfExisting()){
+                    retailPriceList.put(sku,marketprice);
+                }else{
+                    CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductBySku("018",sku);
+                    if(cmsBtFeedInfoModel.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Succeed || cmsBtFeedInfoModel.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Fail){
+                        feedInfoService.updateAllUpdFlg("018","{\"code\":\""+ cmsBtFeedInfoModel.getCode()+"\"}",CmsConstants.FeedUpdFlgStatus.Pending,getTaskName());
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            $info("Target价格列表不存在");
+            return null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+            return null;
+        }
+        return retailPriceList;
+    }
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
