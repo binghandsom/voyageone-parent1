@@ -13,7 +13,6 @@ import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
-import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
@@ -51,8 +50,6 @@ public class CmsRefreshRetailPriceTask extends VOAbsLoggable {
     private SxProductService sxProductService;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
-    @Autowired
-    private TbItemService tbItemService;
 
     public void onStartup(Map<String, Object> messageMap) {
         $debug("高级检索 重新计算指导价 开始执行... param=" + messageMap.toString());
@@ -104,7 +101,17 @@ public class CmsRefreshRetailPriceTask extends VOAbsLoggable {
 
                 // 计算指导价
                 try {
+                    if ($isDebugEnabled()) {
+                        for (BaseMongoMap skuObj : skuList) {
+                            $debug("CmsRefreshRetailPriceTask 计算前的sku价格 skuCode=%s, priceMsrp=%s, priceRetail=%s, priceSale=%s", skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceMsrp"), skuObj.getDoubleAttribute("priceRetail"), skuObj.getDoubleAttribute("priceSale"));
+                        }
+                    }
                     priceService.setPrice(prodObj, cartId, false);
+                    if ($isDebugEnabled()) {
+                        for (BaseMongoMap skuObj : skuList) {
+                            $debug("CmsRefreshRetailPriceTask 计算后的sku价格 skuCode=%s, priceMsrp=%s, priceRetail=%s, priceSale=%s", skuObj.getStringAttribute("skuCode"), skuObj.getDoubleAttribute("priceMsrp"), skuObj.getDoubleAttribute("priceRetail"), skuObj.getDoubleAttribute("priceSale"));
+                        }
+                    }
                 } catch (Exception exp) {
                     $error(String.format("CmsRefreshRetailPriceTask 调用共通函数计算指导价时出错 channelId=%s, code=%s, cartId=%d, errmsg=%s", channleId, prodCode, cartId, exp.getMessage()), exp);
                     continue;
