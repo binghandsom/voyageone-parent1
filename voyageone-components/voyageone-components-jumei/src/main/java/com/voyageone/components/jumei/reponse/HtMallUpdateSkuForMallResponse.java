@@ -7,12 +7,12 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * HtMallSkuPriceUpdateResponse 批量修改商城价格[MALL]
+ * HtMallUpdateSkuForMallResponse 编辑商城的sku[MALL]
  *
- * @author morse on 2016/8/29
- * @version 2.5.0
+ * @author desmond on 2016/9/23
+ * @version 2.6.0
  */
-public class HtMallSkuPriceUpdateResponse extends BaseJMResponse {
+public class HtMallUpdateSkuForMallResponse extends BaseJMResponse {
     private boolean isSuccess;
     private String error_code;
     private String reason;
@@ -66,49 +66,43 @@ public class HtMallSkuPriceUpdateResponse extends BaseJMResponse {
                 this.setSuccess(true);
             } else {
                 this.setSuccess(false);
-                StringBuffer sbMsg = new StringBuffer(" 批量修改商城商品价格[MALL](/v1/htMall/updateMallPriceBatch)时,发生错误[" + this.error_code + ":");
+                StringBuffer sbMsg = new StringBuffer(" 编辑商城的sku[MALL](/v1/htSku/updateSkuForMall)时,发生错误[" + this.error_code + ":");
                 switch (this.error_code) {
                     case "10002":
                         sbMsg.append("client_id,client_key,sign 认证失败");
                         break;
-                    case "302":
-                        sbMsg.append("未全部成功,包括全部失败(successCount对应成功的条数, msg对应失败原因, errorList对应失败的jumei_sku_no)");
-                        break;
                     case "100001":
-                        sbMsg.append("update_data,参数错误,必须为合法的JSON, 一次最多修改20个");
+                        sbMsg.append("jumei_sku_no, 聚美sku_no错误");
                         break;
                     case "100002":
-                        sbMsg.append("jumei_sku_no,参数错误");
+                        sbMsg.append("status参数错误,只要设置了就只能是enabled或disabled");
                         break;
                     case "100003":
-                        sbMsg.append("mall_price,参数错误,商城价大于15");
+                        sbMsg.append("businessman_num参数错误,只要设置了就不能为空");
                         break;
                     case "100004":
-                        sbMsg.append("market_price,参数错误");
+                        sbMsg.append("customs_product_number参数错误,只要设置了就不能为空");
                         break;
                     case "100005":
-                        sbMsg.append("market_price 和 mall_price至少存在一个, 且市场价大于等于商城价");
+                        sbMsg.append("status,businessman_code,customs_product_number不能全部同时为空");
                         break;
                     case "100006":
-                        sbMsg.append("该sku_no不存在");
+                        sbMsg.append("该sku无所属的spu");
                         break;
                     case "100007":
-                        sbMsg.append("该sku_no没有所属产品");
+                        sbMsg.append("该sku所属的spu无所属产品");
                         break;
                     case "100008":
-                        sbMsg.append("该sku_no所属产品没有发布");
+                        sbMsg.append("该jumei_sku_no不属于商家");
                         break;
                     case "100009":
-                        sbMsg.append("该sku_no没有商城详情数据, 请核实商城详情");
+                        sbMsg.append("该sku没有商城详情数据");
                         break;
                     case "100010":
-                        sbMsg.append("该sku_no不在售卖状态, 请核实");
+                        sbMsg.append("没有售卖该sku");
                         break;
                     case "100011":
-                        sbMsg.append("该sku_no不存在关系售卖数据, 请核实");
-                        break;
-                    case "100012":
-                        sbMsg.append("该sku有在售的deal,不允许修改市场价");
+                        sbMsg.append("businessman_code不能重复，必须唯一");
                         break;
                     default:
                         sbMsg.append(map.get("reason").toString());
@@ -122,7 +116,7 @@ public class HtMallSkuPriceUpdateResponse extends BaseJMResponse {
         } catch (Exception ex) {
             logger.error("setBody ",ex);
             this.setSuccess(false);
-            this.setErrorMsg("HtMallSkuPriceUpdateResponse 返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
+            this.setErrorMsg("HtMallUpdateSkuForMallResponse 返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
         }
     }
 
