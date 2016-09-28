@@ -158,9 +158,8 @@ public class TargetDailyService extends BaseTaskService {
             sheet.setColumnWidth(1, 256*73+184);
             sheet.setColumnWidth(2, 256*17+184);
             sheet.setColumnWidth(3, 256 * 17 + 184);
-            sheet.setColumnWidth(5, 256 * 17 + 184);
-            sheet.setColumnWidth(6, 256 * 17 + 184);
-            sheet.setColumnWidth(8, 256 * 17 + 184);
+            sheet.setColumnWidth(8, 256 * 20 + 184);
+            sheet.setColumnWidth(9, 256 * 17 + 184);
             for (int pageNum = 1; pageNum <= targetDailys.size(); pageNum++) {
 
 
@@ -178,12 +177,11 @@ public class TargetDailyService extends BaseTaskService {
                 ExcelUtils.setCellValue(row, cellIndex++, item.getUpc(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getNumIid(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getQty(), unlock);
-                ExcelUtils.setCellValue(row, cellIndex++, item.getDelistTime(), unlock);
-                ExcelUtils.setCellValue(row, cellIndex++, item.getComment(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getSales7(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getSales30(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getSalesAll(), unlock);
-                ExcelUtils.setCellValue(row, cellIndex++, item.getQty() != 0?"Other reasons":"", unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getDelistTime(), unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getComment(), unlock);
             }
             book.write(outputStream);
             outputStream.close();
