@@ -285,33 +285,33 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     }
 
     @Test
-    public void testJmMallSku() {
-        ShopBean shop = Shops.getShop("028", 27);
-
-        String[] args_jumei_sku_no = {"701299894"};
-
-        for(String jumei_sku_no : args_jumei_sku_no) {
-            try {
-                StringBuffer sb = new StringBuffer("");
-                boolean isSuccess = jumeiHtMallService.updateMallSku(shop, jumei_sku_no, false, sb);
-
-                if (!isSuccess || sb.length() > 0) {
-                    // 上传失败
-                    throw new BusinessException("更新聚美商城Sku失败!" + sb.toString());
-                }
-                logger.info(String.format("更新聚美商城Sku成功!jumei_sku_no=%s", jumei_sku_no));
-            } catch (BusinessException be) {
-                logger.info("jumei_sku_no [" + jumei_sku_no + "] 更新聚美商城Sku失败-1!" + be.getMessage());
-            } catch (Exception e) {
-                logger.info("jumei_sku_no [" + jumei_sku_no + "] 更新聚美商城Sku失败-2!" + e.getMessage());
-            }
-        }
-    }
+//    public void testJmMallSku() {
+//        ShopBean shop = Shops.getShop("028", 27);
+//
+//        String[] args_jumei_sku_no = {"701299894"};
+//
+//        for(String jumei_sku_no : args_jumei_sku_no) {
+//            try {
+//                StringBuffer sb = new StringBuffer("");
+////                boolean isSuccess = jumeiHtMallService.updateMallSku(shop, jumei_sku_no, false, sb);
+//
+//                if (!isSuccess || sb.length() > 0) {
+//                    // 上传失败
+//                    throw new BusinessException("更新聚美商城Sku失败!" + sb.toString());
+//                }
+//                logger.info(String.format("更新聚美商城Sku成功!jumei_sku_no=%s", jumei_sku_no));
+//            } catch (BusinessException be) {
+//                logger.info("jumei_sku_no [" + jumei_sku_no + "] 更新聚美商城Sku失败-1!" + be.getMessage());
+//            } catch (Exception e) {
+//                logger.info("jumei_sku_no [" + jumei_sku_no + "] 更新聚美商城Sku失败-2!" + e.getMessage());
+//            }
+//        }
+//    }
 
     /**
      * 上传到聚美商城
      */
-    @Test
+//    @Test
     public void testUploadMall() {
 //        String channelId = "010";
 //        int cartId = 27;
@@ -343,55 +343,55 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     /**
      * 测试成功上传到聚美商城之后回写状态处理
      */
-    @Test
-    public void testUpdateMallId() {
-
-        String channelId = "010";
-//        int cartId = 27;
-        String productCode = "B10-416AGDC4-75";
-        String mallId = "ID00001";
-
-        try {
-            // 获取product信息
-            CmsBtProductModel productModel = cmsBtProductDao.selectOneWithQuery("{'common.fields.code':'" + productCode + "'}", channelId);
-            if (productModel == null) {
-                logger.info("没找到对应的product数据(productCode=" + productCode + ")");
-                return;
-            }
-            // 测试回写状态
-            cmsBuildPlatformProductUploadJMService.updateMallId(productModel, mallId);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * 测试成功上传到聚美商城之后回写状态处理
-     */
-    @Test
-    public void testUpdateMallId() {
-
-        String channelId = "010";
-//        int cartId = 27;
-        String productCode = "B10-416AGDC4-75";
-        String mallId = "ID00001";
-
-        try {
-            // 获取product信息
-            CmsBtProductModel productModel = cmsBtProductDao.selectOneWithQuery("{'common.fields.code':'" + productCode + "'}", channelId);
-            if (productModel == null) {
-                System.out.println("没找到对应的product数据(productCode=" + productCode + ")");
-                return;
-            }
-            // 测试回写状态
-            cmsBuildPlatformProductUploadJMService.updateMallId(productModel, mallId);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
+//    @Test
+//    public void testUpdateMallId() {
+//
+//        String channelId = "010";
+////        int cartId = 27;
+//        String productCode = "B10-416AGDC4-75";
+//        String mallId = "ID00001";
+//
+//        try {
+//            // 获取product信息
+//            CmsBtProductModel productModel = cmsBtProductDao.selectOneWithQuery("{'common.fields.code':'" + productCode + "'}", channelId);
+//            if (productModel == null) {
+//                logger.info("没找到对应的product数据(productCode=" + productCode + ")");
+//                return;
+//            }
+//            // 测试回写状态
+//            cmsBuildPlatformProductUploadJMService.updateMallId(productModel, mallId);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+//
+//    /**
+//     * 测试成功上传到聚美商城之后回写状态处理
+//     */
+//    @Test
+//    public void testUpdateMallId() {
+//
+//        String channelId = "010";
+////        int cartId = 27;
+//        String productCode = "B10-416AGDC4-75";
+//        String mallId = "ID00001";
+//
+//        try {
+//            // 获取product信息
+//            CmsBtProductModel productModel = cmsBtProductDao.selectOneWithQuery("{'common.fields.code':'" + productCode + "'}", channelId);
+//            if (productModel == null) {
+//                System.out.println("没找到对应的product数据(productCode=" + productCode + ")");
+//                return;
+//            }
+//            // 测试回写状态
+//            cmsBuildPlatformProductUploadJMService.updateMallId(productModel, mallId);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 
 }
