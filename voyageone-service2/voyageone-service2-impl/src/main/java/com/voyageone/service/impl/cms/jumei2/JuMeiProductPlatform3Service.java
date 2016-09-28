@@ -540,6 +540,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
 
         try {
+            String errorMsg="";
             List<List<HtDeal_UpdateDealPriceBatch_UpdateData>> pageList = CommonUtil.splitList(list,10);
             for(List<HtDeal_UpdateDealPriceBatch_UpdateData> page:pageList) {
                 request.setUpdate_data(page);
@@ -547,8 +548,13 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 HtDealUpdateDealPriceBatchResponse response = serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
                 if (!response.is_Success()) {
                     model.setPriceStatus(3);
-                    throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+                  //  throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+                    errorMsg+=response.getErrorMsg();
                 }
+            }
+            if(!StringUtil.isEmpty(errorMsg))
+            {
+                throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + errorMsg);
             }
         }
         catch (Exception ex)
@@ -584,6 +590,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
 
         try {
+            String errorMsg="";
             List<List<HtDeal_UpdateDealStockBatch_UpdateData>> pageList = CommonUtil.splitList(list,10);
             for(List<HtDeal_UpdateDealStockBatch_UpdateData> page:pageList) {
                 request.setUpdate_data(page);
@@ -591,8 +598,13 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 HtDealUpdateDealStockBatchResponse response = serviceJumeiHtDeal.updateDealStockBatch(shopBean, request);
                 if (!response.is_Success()) {
                     model.setStockStatus(3);
-                    throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+                    //throw new BusinessException("productId:" + model.getId() + "jmHtDealUpdateDealStockBatch:" + response.getErrorMsg());
+                    errorMsg+=response.getErrorMsg();
                 }
+            }
+            if(!StringUtil.isEmpty(errorMsg))
+            {
+                throw new BusinessException("productId:" + model.getId() + "jmHtDealUpdateDealStockBatch:" + errorMsg);
             }
         }
         catch (Exception ex)
