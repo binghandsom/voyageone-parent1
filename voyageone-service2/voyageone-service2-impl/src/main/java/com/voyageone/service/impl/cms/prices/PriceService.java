@@ -299,9 +299,6 @@ public class PriceService extends BaseService {
                 .withCart(cartId)
                 .withCategory(catId);
 
-        // TODO 删除
-        $info("即将进行佣金比例查询, 这些是参数 %s, %s, %s, %s", channelId, platformId, cartId, catId);
-
         // 公式参数: 退货率
         Double returnRate = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_RETURN);
 
@@ -353,7 +350,8 @@ public class PriceService extends BaseService {
         // 对设置到价格计算器上的参数
         // 在计算之前做一次检查
         if (!systemPriceCalculator.isValid())
-            throw new IllegalPriceConfigException("创建价格计算器失败. " + systemPriceCalculator.getErrorMessage());
+            throw new IllegalPriceConfigException("创建价格计算器失败. %s [ 以下是管理员查看 => %s, %s, %s, %s ]",
+                    systemPriceCalculator.getErrorMessage(), channelId, platformId, cartId, catId);
 
         List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
         List<BaseMongoMap<String, Object>> platformSkus = cart.getSkus();
@@ -422,7 +420,7 @@ public class PriceService extends BaseService {
      * @param lastRetailPrice 上一次的指导价
      * @return 波动字符串
      */
-    public String getPriceFluctuation(Double retailPrice, Double lastRetailPrice) {
+    private String getPriceFluctuation(Double retailPrice, Double lastRetailPrice) {
 
         // 老价格为空, 表示新建, 则不需要设置波动
         // 新老价格相同也同样(价格=-1时，返回空)
