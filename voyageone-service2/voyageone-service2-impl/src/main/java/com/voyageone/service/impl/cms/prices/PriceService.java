@@ -299,6 +299,9 @@ public class PriceService extends BaseService {
                 .withCart(cartId)
                 .withCategory(catId);
 
+        // TODO 删除
+        $info("即将进行佣金比例查询, 这些是参数 %s, %s, %s, %s", channelId, platformId, cartId, catId);
+
         // 公式参数: 退货率
         Double returnRate = commissionQueryBuilder.getCommission(CmsMtFeeCommissionService.COMMISSION_TYPE_RETURN);
 
