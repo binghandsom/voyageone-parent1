@@ -54,12 +54,12 @@ define([
             },
             save: function () {
                 var self = this, saveInfo = {};
-                _.extend(saveInfo, {applications: [], roleIds: self.sourceData.roleIds, hasAllAuth: false});
+                _.extend(saveInfo, {applications: [], roleIds: self.sourceData.roleIds, resIds: [], hasAllAuth: false});
                 saveInfo.applications.push(self.saveInfo.application);
                 if (self.hasAllAuth == true) {
                     saveInfo.hasAllAuth = true;
+                    saveInfo.resIds = [];
                 } else {
-                    _.extend(saveInfo, {resIds: []});
                     _.filter(self.selectedList, function (item) {
                         return item.selected;
                     }).forEach(function (item) {
