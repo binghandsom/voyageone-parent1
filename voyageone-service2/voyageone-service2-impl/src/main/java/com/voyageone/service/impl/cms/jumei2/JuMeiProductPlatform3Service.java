@@ -604,6 +604,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             }
             if(!StringUtil.isEmpty(errorMsg))
             {
+
                 throw new BusinessException("productId:" + model.getId() + "jmHtDealUpdateDealStockBatch:" + errorMsg);
             }
         }
