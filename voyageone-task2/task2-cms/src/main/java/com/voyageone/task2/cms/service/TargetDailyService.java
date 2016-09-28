@@ -25,7 +25,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,6 +45,9 @@ public class TargetDailyService extends BaseTaskService {
     @Autowired
     ProductService productService;
 
+    SimpleDateFormat ss = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -56,14 +61,36 @@ public class TargetDailyService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        List<Item> rsList = null;
+        List<Item> forShelvedList = null;
+        List<Item> soldOutList = null;
+        List<Item> violationOffShelfList = null;
+
+        forShelvedList = getInventoryProduct("for_shelved");
+        soldOutList = getInventoryProduct("sold_out");
+        violationOffShelfList = getInventoryProduct("violation_off_shelf");
+
+        List<TargetDailyBean> targetDailyBeans = getProductInfo(forShelvedList,"for shelved");
+        targetDailyBeans.addAll(getProductInfo(soldOutList, "sold out"));
+        targetDailyBeans.addAll(getProductInfo(violationOffShelfList, "violation off shelf"));
+
+        Map<String,TargetDailyBean> temp = new HashMap<>();
+        targetDailyBeans.forEach(targetDailyBean -> temp.put(targetDailyBean.getSku(),targetDailyBean));
+        targetDailyBeans=new ArrayList<TargetDailyBean>();
+        final List<TargetDailyBean> finalTargetDailyBeans = targetDailyBeans;
+        temp.forEach((s, targetDailyBean) -> finalTargetDailyBeans.add(targetDailyBean));
+
+        creatDaily(targetDailyBeans);
+    }
+
+    private List<Item> getInventoryProduct(String type){
         List<Item> allList = new ArrayList<>();
+        List<Item> rsList = null;
         Long pageNo = 1L;
         do {
             rsList = null;
             try {
                 // 查询上架
-                rsList = tbSaleService.getInventoryProduct(ChannelConfigEnums.Channel.TARGET.getId(), CartEnums.Cart.TG.getId(), pageNo++, 200L);
+                rsList = tbSaleService.getInventoryProduct(ChannelConfigEnums.Channel.TARGET.getId(), CartEnums.Cart.TG.getId(), type, pageNo++, 200L);
             } catch (ApiException apiExp) {
                 $error(String.format("调用淘宝API获取上架商品时API出错 channelId=%s, cartId=%s", ChannelConfigEnums.Channel.TARGET.getId(), CartEnums.Cart.TG.getId()), apiExp);
                 break;
@@ -75,11 +102,10 @@ public class TargetDailyService extends BaseTaskService {
                 allList.addAll(rsList);
             }
         } while (rsList != null && rsList.size() == 200);
-
-        creatDaily(getProductInfo(allList));
+        return allList;
     }
 
-    private List<TargetDailyBean> getProductInfo(List<Item> numIids) {
+    private List<TargetDailyBean> getProductInfo(List<Item> numIids, String type) {
 
         List<TargetDailyBean> targetDailyBeans = new ArrayList<>();
         numIids.forEach(item -> {
@@ -93,6 +119,10 @@ public class TargetDailyService extends BaseTaskService {
                     targetDailyBean.setUpc(cmsBtProductModel_sku.getBarcode());
                     targetDailyBean.setTitle(item.getTitle());
                     targetDailyBean.setNumIid(item.getNumIid() + "");
+                    targetDailyBean.setComment(type);
+                    if(item.getDelistTime() != null){
+                        targetDailyBean.setDelistTime(ss.format(item.getDelistTime()));
+                    }
                     targetDailyBeans.add(targetDailyBean);
                 });
             });
@@ -113,6 +143,7 @@ public class TargetDailyService extends BaseTaskService {
             sheet.setColumnWidth(2, 256*17+184);
             sheet.setColumnWidth(3, 256 * 17 + 184);
             sheet.setColumnWidth(5, 256 * 17 + 184);
+            sheet.setColumnWidth(6, 256 * 17 + 184);
             for (int pageNum = 1; pageNum <= targetDailys.size(); pageNum++) {
 
 
@@ -130,7 +161,8 @@ public class TargetDailyService extends BaseTaskService {
                 ExcelUtils.setCellValue(row, cellIndex++, item.getUpc(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getNumIid(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getQty(), unlock);
-                ExcelUtils.setCellValue(row, cellIndex++, item.getQty() != 0?"Other reasons":"", unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getDelistTime(), unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getComment(), unlock);
             }
             book.write(outputStream);
             outputStream.close();
@@ -154,7 +186,7 @@ public class TargetDailyService extends BaseTaskService {
     }
 
     private void writeHead(Workbook book) {
-        String productHeadEn[] = {"SKU", "Title", "UPC", "TM_numiid", "Inventory", "comment"};
+        String productHeadEn[] = {"SKU", "Title", "UPC", "TM_numiid", "Inventory", "Delist Time(CN)","Comment"};
         Sheet sheet = book.createSheet("sku");
         Row rowEn = sheet.createRow(0);
 
@@ -178,6 +210,7 @@ public class TargetDailyService extends BaseTaskService {
         String upc;
         Integer qty;
         String comment;
+        String delistTime;
 
         public String getSku() {
             return sku;
@@ -227,6 +260,14 @@ public class TargetDailyService extends BaseTaskService {
 
         public void setComment(String comment) {
             this.comment = comment;
+        }
+
+        public String getDelistTime() {
+            return delistTime;
+        }
+
+        public void setDelistTime(String delistTime) {
+            this.delistTime = delistTime;
         }
     }
 }
