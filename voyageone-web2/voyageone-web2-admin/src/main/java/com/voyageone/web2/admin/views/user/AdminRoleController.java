@@ -197,8 +197,9 @@ public class AdminRoleController extends AdminController {
         List<Integer> roleIds = (List<Integer>) requestMap.get("roleIds");
         List<Integer> resIds = (List<Integer>) requestMap.get("resIds");
         List<String> apps = (List<String>) requestMap.get("applications");
+        Boolean hasAllAuth = (Boolean) requestMap.get("hasAllAuth");
         String username = getUser().getUserName();
-        adminRoleService.setAuth(apps, roleIds, resIds, username);
+        adminRoleService.setAuth(apps, roleIds, resIds, hasAllAuth,  username);
         return success(true);
     }
 
