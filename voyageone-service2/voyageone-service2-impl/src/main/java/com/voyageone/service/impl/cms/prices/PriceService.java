@@ -350,7 +350,7 @@ public class PriceService extends BaseService {
         // 对设置到价格计算器上的参数
         // 在计算之前做一次检查
         if (!systemPriceCalculator.isValid())
-            throw new IllegalPriceConfigException("创建价格计算器失败. %s [ DEBUG => %s, %s, %s, %s ]",
+            throw new IllegalPriceConfigException("创建价格计算器失败. %s [ 以下是管理员查看 => %s, %s, %s, %s ]",
                     systemPriceCalculator.getErrorMessage(), channelId, platformId, cartId, catId);
 
         List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
