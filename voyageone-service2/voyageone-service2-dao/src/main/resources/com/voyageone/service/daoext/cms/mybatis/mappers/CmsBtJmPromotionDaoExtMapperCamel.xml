@@ -84,6 +84,12 @@
         where channel_id = #{channelId} and jm_hash_id != ''
         group by product_code) as b where a.id=b.id)
     </select>
+
+    <select id="selectJmProductHashId" resultType="com.voyageone.service.model.util.MapModel">
+        select product_code , max(origin_jm_hash_id) as jm_hash_id from cms_bt_jm_product where channel_id = #{channelId} and origin_jm_hash_id != ''
+        group by product_code
+    </select>
+
     <update id="updateSumbrandById">
         UPDATE `cms_bt_jm_promotion` AS a
         SET `brand`=(
