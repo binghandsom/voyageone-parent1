@@ -82,9 +82,6 @@ public class CmsMtFeeCommissionService extends BaseService {
 
             CmsMtFeeCommissionModel feeCommissionModel = feeCommissionDao.selectOne(queryMap);
 
-            // TODO 删除
-            $info("佣金比例查询参数 %s => %s", JacksonUtil.bean2Json(queryMap), feeCommissionModel == null ? "null" : JacksonUtil.bean2Json(feeCommissionModel));
-
             if (feeCommissionModel != null)
                 return feeCommissionModel;
         }
