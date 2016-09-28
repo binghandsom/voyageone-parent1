@@ -8,13 +8,17 @@
     <!-- localhost dev env -->
     <import resource="classpath*:common-config.xml"/>
     <import resource="classpath*:data-cache-config.xml"/>
-    <import resource="classpath*:datasource-cms2-config.xml"/>
     <import resource="classpath*:datasource-cms2-config-new.xml"/>
     <import resource="classpath*:datasource-vms-config.xml"/>
-    <import resource="classpath*:datasource-config-mongo-cms2.xml"/>
     <import resource="classpath*:sdk-client-config.xml"/>
     <import resource="classpath*:mq-config.xml"/>
     <import resource="classpath*:redis-config.xml"/>
+
+    <!--<import resource="classpath*:datasource-cms2-config.xml"/>-->
+    <!--<import resource="classpath*:datasource-config-mongo-cms2.xml"/>-->
+
+    <import resource="classpath*:Release-datasource-cms2-config.xml"/>
+    <import resource="classpath*:Release-datasource-config-mongo-cms2.xml"/>
 
     <!-- online env -->
     <!--<import resource="file:/usr/web/spring-config/common-config.xml" />-->
