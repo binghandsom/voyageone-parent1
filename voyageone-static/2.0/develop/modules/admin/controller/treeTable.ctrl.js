@@ -35,9 +35,6 @@ define([
                 if (item.selected === true && list != undefined) {
                     list.push(item);
                 }
-                if (item.children != null) {
-                    $scope.$broadcast('changeChildren', item);
-                }
             };
             $scope.$on('changeChildren', function (event, parentItem, selectedList) {
                 var child, i, len, ref, results;
