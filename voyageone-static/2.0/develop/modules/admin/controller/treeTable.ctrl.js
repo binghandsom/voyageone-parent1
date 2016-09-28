@@ -29,7 +29,7 @@ define([
                 if (!item.opened) item.opened = true;
                 if (item.children.length < 1) item.showArrow = false;
                 flatList.push(item);
-                return item.selected = parentItem && parentItem.selected || item.selected || false;
+                return item.selected = item.selected==1 || item.selected || false;
             };
             $scope.toggleCheckbox = function (item, list) {
                 if (item.selected === true && list != undefined) {
