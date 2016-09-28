@@ -17,9 +17,8 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.cms.bean.SuperFeedNewTargetBean;
-import com.voyageone.task2.cms.bean.SuperFeedTargetBean;
 import com.voyageone.task2.cms.dao.feed.NewTargetFeedDao;
-import com.voyageone.task2.cms.model.CmsBtFeedInfNewTargetModel;
+import com.voyageone.task2.cms.model.CmsBtFeedInfoNewTargetModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.io.*;
@@ -84,6 +83,7 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
                 SuperFeedNewTargetBean targetBean = new SuperFeedNewTargetBean();
                 int i = 0;
                 targetBean.setTcin(reader.get(i++));
+                if(!retail.containsKey(targetBean.getTcin())) continue;
                 targetBean.setParentTcins(reader.get(i++));
                 targetBean.setManufacturerId(reader.get(i++));
                 targetBean.setManufacturerPartNumber(reader.get(i++));
@@ -91,7 +91,8 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
                 targetBean.setProductDescriptionTitle(reader.get(i++));
                 targetBean.setProductDescriptionDownstreamDescription(reader.get(i++));
                 targetBean.setProductDescriptionLongDescription(reader.get(i++));
-                targetBean.setRegprice(reader.get(i++));
+                targetBean.setRegprice(retail.get(targetBean.getTcin()));
+                reader.get(i++);
                 targetBean.setEnrichmentBuyUrl(reader.get(i++));
                 targetBean.setProductClassificationItemTypeCategoryType(reader.get(i++));
                 targetBean.setProductClassificationItemTypeName(reader.get(i++));
@@ -271,9 +272,9 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
             colums.put("attr", attList.stream().map(s -> "`" + s + "`").collect(Collectors.joining(",")));
         }
 
-        List<CmsBtFeedInfNewTargetModel> ModelBeans = targetFeedDao.selectSuperfeedModel(colums);
+        List<CmsBtFeedInfoNewTargetModel> ModelBeans = targetFeedDao.selectSuperfeedModel(colums);
         List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();
-        for (CmsBtFeedInfNewTargetModel modelBean : ModelBeans) {
+        for (CmsBtFeedInfoNewTargetModel modelBean : ModelBeans) {
             Map temp = JacksonUtil.json2Bean(JacksonUtil.bean2Json(modelBean), HashMap.class);
             Map<String, List<String>> attribute = new HashMap<>();
             for (String attr : attList) {
@@ -285,6 +286,28 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
             }
             CmsBtFeedInfoModel cmsBtFeedInfoModel = modelBean.getCmsBtFeedInfoModel(getChannel());
             cmsBtFeedInfoModel.setAttribute(attribute);
+            //取得图片开始
+            List<String> imagesList = new ArrayList<>();
+            //主图
+            if(!StringUtil.isEmpty(modelBean.getEnrichmentImagesAlternateImages())){
+                if(!StringUtil.isEmpty(modelBean.getEnrichmentImagesBaseUrl())){
+                    String images[] =modelBean.getEnrichmentImagesAlternateImages().split(",");
+                    for(String image:images){
+                        imagesList.add(modelBean.getEnrichmentImagesBaseUrl()+image+"?wid=1200&hei=1200");
+                    }
+                }
+            }
+            //附图
+            if(!StringUtil.isEmpty(modelBean.getEnrichmentImagesPrimaryImage())){
+                if(!StringUtil.isEmpty(modelBean.getEnrichmentImagesBaseUrl())){
+                    String images[] =modelBean.getEnrichmentImagesPrimaryImage().split(",");
+                    for(String image:images){
+                        imagesList.add(modelBean.getEnrichmentImagesBaseUrl()+image+"?wid=1200&hei=1200");
+                    }
+                }
+            }
+            cmsBtFeedInfoModel.setImage(imagesList);
+            //取得图片结束
             List<CmsBtFeedInfoModel_Sku> skus = modelBean.getSkus();
             for (CmsBtFeedInfoModel_Sku sku : skus) {
                 String Weight = sku.getWeightOrg().trim();
@@ -298,6 +321,7 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
                     }
                 }
                 sku.setWeightOrgUnit("lb");
+                sku.setImage(imagesList);
             }
             if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
                 CmsBtFeedInfoModel beforeFeed = codeMap.get(cmsBtFeedInfoModel.getCode());

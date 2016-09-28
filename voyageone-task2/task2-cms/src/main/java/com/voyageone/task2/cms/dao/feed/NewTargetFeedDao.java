@@ -1,9 +1,7 @@
 package com.voyageone.task2.cms.dao.feed;
 
 import com.voyageone.task2.cms.bean.SuperFeedNewTargetBean;
-import com.voyageone.task2.cms.bean.SuperFeedTargetBean;
-import com.voyageone.task2.cms.model.CmsBtFeedInfNewTargetModel;
-import com.voyageone.task2.cms.model.CmsBtFeedInfoTargetModel;
+import com.voyageone.task2.cms.model.CmsBtFeedInfoNewTargetModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,5 +31,5 @@ public interface NewTargetFeedDao {
 
     void delete();
 
-    List<CmsBtFeedInfNewTargetModel> selectSuperfeedModel(Map colums);
+    List<CmsBtFeedInfoNewTargetModel> selectSuperfeedModel(Map colums);
 }
