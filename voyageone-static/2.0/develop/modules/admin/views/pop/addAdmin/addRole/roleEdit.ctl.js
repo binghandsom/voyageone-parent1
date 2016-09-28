@@ -54,13 +54,18 @@ define([
             },
             save: function () {
                 var self = this, saveInfo = {};
-                _.extend(saveInfo, {resIds: [], applications: [], roleIds: self.sourceData.roleIds});
+                _.extend(saveInfo, {applications: [], roleIds: self.sourceData.roleIds, hasAllAuth: false});
                 saveInfo.applications.push(self.saveInfo.application);
-                _.filter(self.selectedList, function (item) {
-                    return item.selected;
-                }).forEach(function (item) {
-                    saveInfo.resIds.push(item.id);
-                });
+                if (self.hasAllAuth == true) {
+                    saveInfo.hasAllAuth = true;
+                } else {
+                    _.extend(saveInfo, {resIds: []});
+                    _.filter(self.selectedList, function (item) {
+                        return item.selected;
+                    }).forEach(function (item) {
+                        saveInfo.resIds.push(item.id);
+                    });
+                }
                 switch (self.sourceData.type) {
                     case 'set':
                         self.adminRoleService.setAuth(saveInfo).then(function (res) {

@@ -80,7 +80,7 @@
             </div>
         </form>
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer" ng-if="ctrl.saveInfo.application">
         <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
         <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled="addForm.$valid==false"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
     </div>
