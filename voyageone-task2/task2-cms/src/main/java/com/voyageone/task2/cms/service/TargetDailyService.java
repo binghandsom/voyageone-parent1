@@ -7,14 +7,12 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.mail.Mail;
-import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.ExcelUtils;
-import com.voyageone.common.util.FileUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.poi.ss.usermodel.*;
@@ -119,6 +117,13 @@ public class TargetDailyService extends BaseTaskService {
                     targetDailyBean.setUpc(cmsBtProductModel_sku.getBarcode());
                     targetDailyBean.setTitle(item.getTitle());
                     targetDailyBean.setNumIid(item.getNumIid() + "");
+
+                    CmsBtProductModel_Sales_Sku skuSale = getSales(targetDailyBean.getSku(),cmsBtProductModel);
+                    if(skuSale != null){
+                        targetDailyBean.setSales7(skuSale.getSkuSum7());
+                        targetDailyBean.setSales30(skuSale.getSkuSum30());
+                        targetDailyBean.setSalesAll(skuSale.getSkuSumAll());
+                    }
                     targetDailyBean.setComment(type);
                     if(item.getDelistTime() != null){
                         targetDailyBean.setDelistTime(ss.format(item.getDelistTime()));
@@ -131,6 +136,17 @@ public class TargetDailyService extends BaseTaskService {
         return targetDailyBeans;
     }
 
+    private CmsBtProductModel_Sales_Sku getSales(String sku, CmsBtProductModel cmsBtProductModel){
+        CmsBtProductModel_Sales_Sku salesSku = null;
+        if(cmsBtProductModel.getSales() != null && !ListUtils.isNull(cmsBtProductModel.getSales().getSkus())){
+            salesSku = cmsBtProductModel.getSales().getSkus()
+                    .stream()
+                    .filter(cmsBtProductModel_sales_sku -> cmsBtProductModel_sales_sku.getSkuCode().equalsIgnoreCase(sku))
+                    .findFirst()
+                    .orElse(null);
+        }
+        return salesSku;
+    }
     private void creatDaily(List<TargetDailyBean> targetDailys) {
         String outPath = "/usr/web/contents/cms/feed_export/";
         String fileName = String.format("Daily_OffLine_Report_%s.xlsx", DateTimeUtil.getLocalTime(-6, "yyyyMMdd_HHmmss"));
@@ -144,6 +160,7 @@ public class TargetDailyService extends BaseTaskService {
             sheet.setColumnWidth(3, 256 * 17 + 184);
             sheet.setColumnWidth(5, 256 * 17 + 184);
             sheet.setColumnWidth(6, 256 * 17 + 184);
+            sheet.setColumnWidth(8, 256 * 17 + 184);
             for (int pageNum = 1; pageNum <= targetDailys.size(); pageNum++) {
 
 
@@ -163,6 +180,10 @@ public class TargetDailyService extends BaseTaskService {
                 ExcelUtils.setCellValue(row, cellIndex++, item.getQty(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getDelistTime(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getComment(), unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getSales7(), unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getSales30(), unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getSalesAll(), unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getQty() != 0?"Other reasons":"", unlock);
             }
             book.write(outputStream);
             outputStream.close();
@@ -171,9 +192,9 @@ public class TargetDailyService extends BaseTaskService {
             StringBuffer content = new StringBuffer();
 
             content.append("Please see the current offline report for Target Tmall store as of "+time+"(US Central Time).");
-            content.append("<br>");
-            content.append("For technical questions, please contact us at target-tmall-reports-support@voyageone.cn");
-            content.append("<br>");
+            content.append("<br><br>");
+            content.append("For technical questions, please contact us at <a href=\"mailto:target-tmall-reports-support@voyageone.cn\">target-tmall-reports-support@voyageone.cn</a> ");
+            content.append("<br><br>");
             content.append("Best Regards");
             content.append("<br>");
             content.append("VoyageOne Auto Report");
@@ -186,7 +207,7 @@ public class TargetDailyService extends BaseTaskService {
     }
 
     private void writeHead(Workbook book) {
-        String productHeadEn[] = {"SKU", "Title", "UPC", "TM_numiid", "Inventory", "Delist Time(CN)","Comment"};
+        String productHeadEn[] = {"SKU", "Title", "UPC", "TM_numiid", "Inventory","Last 7Days Sales" ,"Last 30Days Sales","Total sales","Delist Time(CN)","comment"};
         Sheet sheet = book.createSheet("sku");
         Row rowEn = sheet.createRow(0);
 
@@ -210,6 +231,9 @@ public class TargetDailyService extends BaseTaskService {
         String upc;
         Integer qty;
         String comment;
+        Integer sales7;
+        Integer sales30;
+        Integer salesAll;
         String delistTime;
 
         public String getSku() {
@@ -260,6 +284,33 @@ public class TargetDailyService extends BaseTaskService {
 
         public void setComment(String comment) {
             this.comment = comment;
+        }
+
+        public Integer getSales7() {
+            if(sales7 == null) sales7 = 0;
+            return sales7;
+        }
+
+        public void setSales7(Integer sales7) {
+            this.sales7 = sales7;
+        }
+
+        public Integer getSales30() {
+            if(sales30 == null) sales30 = 0;
+            return sales30;
+        }
+
+        public void setSales30(Integer sales30) {
+            this.sales30 = sales30;
+        }
+
+        public Integer getSalesAll() {
+            if(salesAll == null) salesAll = 0;
+            return salesAll;
+        }
+
+        public void setSalesAll(Integer salesAll) {
+            this.salesAll = salesAll;
         }
 
         public String getDelistTime() {
