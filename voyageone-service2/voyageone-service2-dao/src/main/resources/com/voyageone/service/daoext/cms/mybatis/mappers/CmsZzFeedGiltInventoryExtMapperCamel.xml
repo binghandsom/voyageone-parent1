@@ -113,6 +113,8 @@
     <insert id="insertList" parameterType="ArrayList" >
         insert IGNORE into cms_zz_feed_gilt_inventory
         (
+        `sale_id`,
+
         `sku`,
 
         `qty`,
@@ -127,7 +129,7 @@
         )value
         <foreach collection="list" item="item" index="index"
                  separator=",">
-            ( #{item.sku}, #{item.qty},now(),'',now(),'' )
+            (#{item.saleId}, #{item.sku}, #{item.qty},now(),'',now(),'' )
         </foreach>
     </insert>
     <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsZzFeedGiltInventoryModel" >

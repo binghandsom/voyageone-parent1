@@ -7,14 +7,12 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.mail.Mail;
-import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.ExcelUtils;
-import com.voyageone.common.util.FileUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.poi.ss.usermodel.*;
@@ -25,7 +23,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,6 +43,9 @@ public class TargetDailyService extends BaseTaskService {
     @Autowired
     ProductService productService;
 
+    SimpleDateFormat ss = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -56,14 +59,36 @@ public class TargetDailyService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        List<Item> rsList = null;
+        List<Item> forShelvedList = null;
+        List<Item> soldOutList = null;
+        List<Item> violationOffShelfList = null;
+
+        forShelvedList = getInventoryProduct("for_shelved");
+        soldOutList = getInventoryProduct("sold_out");
+        violationOffShelfList = getInventoryProduct("violation_off_shelf");
+
+        List<TargetDailyBean> targetDailyBeans = getProductInfo(forShelvedList,"for shelved");
+        targetDailyBeans.addAll(getProductInfo(soldOutList, "sold out"));
+        targetDailyBeans.addAll(getProductInfo(violationOffShelfList, "violation off shelf"));
+
+        Map<String,TargetDailyBean> temp = new HashMap<>();
+        targetDailyBeans.forEach(targetDailyBean -> temp.put(targetDailyBean.getSku(),targetDailyBean));
+        targetDailyBeans=new ArrayList<TargetDailyBean>();
+        final List<TargetDailyBean> finalTargetDailyBeans = targetDailyBeans;
+        temp.forEach((s, targetDailyBean) -> finalTargetDailyBeans.add(targetDailyBean));
+
+        creatDaily(targetDailyBeans);
+    }
+
+    private List<Item> getInventoryProduct(String type){
         List<Item> allList = new ArrayList<>();
+        List<Item> rsList = null;
         Long pageNo = 1L;
         do {
             rsList = null;
             try {
                 // 查询上架
-                rsList = tbSaleService.getInventoryProduct(ChannelConfigEnums.Channel.TARGET.getId(), CartEnums.Cart.TG.getId(), pageNo++, 200L);
+                rsList = tbSaleService.getInventoryProduct(ChannelConfigEnums.Channel.TARGET.getId(), CartEnums.Cart.TG.getId(), type, pageNo++, 200L);
             } catch (ApiException apiExp) {
                 $error(String.format("调用淘宝API获取上架商品时API出错 channelId=%s, cartId=%s", ChannelConfigEnums.Channel.TARGET.getId(), CartEnums.Cart.TG.getId()), apiExp);
                 break;
@@ -75,11 +100,10 @@ public class TargetDailyService extends BaseTaskService {
                 allList.addAll(rsList);
             }
         } while (rsList != null && rsList.size() == 200);
-
-        creatDaily(getProductInfo(allList));
+        return allList;
     }
 
-    private List<TargetDailyBean> getProductInfo(List<Item> numIids) {
+    private List<TargetDailyBean> getProductInfo(List<Item> numIids, String type) {
 
         List<TargetDailyBean> targetDailyBeans = new ArrayList<>();
         numIids.forEach(item -> {
@@ -93,6 +117,17 @@ public class TargetDailyService extends BaseTaskService {
                     targetDailyBean.setUpc(cmsBtProductModel_sku.getBarcode());
                     targetDailyBean.setTitle(item.getTitle());
                     targetDailyBean.setNumIid(item.getNumIid() + "");
+
+                    CmsBtProductModel_Sales_Sku skuSale = getSales(targetDailyBean.getSku(),cmsBtProductModel);
+                    if(skuSale != null){
+                        targetDailyBean.setSales7(skuSale.getSkuSum7());
+                        targetDailyBean.setSales30(skuSale.getSkuSum30());
+                        targetDailyBean.setSalesAll(skuSale.getSkuSumAll());
+                    }
+                    targetDailyBean.setComment(type);
+                    if(item.getDelistTime() != null){
+                        targetDailyBean.setDelistTime(ss.format(item.getDelistTime()));
+                    }
                     targetDailyBeans.add(targetDailyBean);
                 });
             });
@@ -101,6 +136,17 @@ public class TargetDailyService extends BaseTaskService {
         return targetDailyBeans;
     }
 
+    private CmsBtProductModel_Sales_Sku getSales(String sku, CmsBtProductModel cmsBtProductModel){
+        CmsBtProductModel_Sales_Sku salesSku = null;
+        if(cmsBtProductModel.getSales() != null && !ListUtils.isNull(cmsBtProductModel.getSales().getSkus())){
+            salesSku = cmsBtProductModel.getSales().getSkus()
+                    .stream()
+                    .filter(cmsBtProductModel_sales_sku -> cmsBtProductModel_sales_sku.getSkuCode().equalsIgnoreCase(sku))
+                    .findFirst()
+                    .orElse(null);
+        }
+        return salesSku;
+    }
     private void creatDaily(List<TargetDailyBean> targetDailys) {
         String outPath = "/usr/web/contents/cms/feed_export/";
         String fileName = String.format("Daily_OffLine_Report_%s.xlsx", DateTimeUtil.getLocalTime(-6, "yyyyMMdd_HHmmss"));
@@ -112,7 +158,8 @@ public class TargetDailyService extends BaseTaskService {
             sheet.setColumnWidth(1, 256*73+184);
             sheet.setColumnWidth(2, 256*17+184);
             sheet.setColumnWidth(3, 256 * 17 + 184);
-            sheet.setColumnWidth(5, 256 * 17 + 184);
+            sheet.setColumnWidth(8, 256 * 20 + 184);
+            sheet.setColumnWidth(9, 256 * 17 + 184);
             for (int pageNum = 1; pageNum <= targetDailys.size(); pageNum++) {
 
 
@@ -130,7 +177,11 @@ public class TargetDailyService extends BaseTaskService {
                 ExcelUtils.setCellValue(row, cellIndex++, item.getUpc(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getNumIid(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getQty(), unlock);
-                ExcelUtils.setCellValue(row, cellIndex++, item.getQty() != 0?"Other reasons":"", unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getSales7(), unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getSales30(), unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getSalesAll(), unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getDelistTime(), unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getComment(), unlock);
             }
             book.write(outputStream);
             outputStream.close();
@@ -139,9 +190,9 @@ public class TargetDailyService extends BaseTaskService {
             StringBuffer content = new StringBuffer();
 
             content.append("Please see the current offline report for Target Tmall store as of "+time+"(US Central Time).");
-            content.append("<br>");
-            content.append("For technical questions, please contact us at target-tmall-reports-support@voyageone.cn");
-            content.append("<br>");
+            content.append("<br><br>");
+            content.append("For technical questions, please contact us at <a href=\"mailto:target-tmall-reports-support@voyageone.cn\">target-tmall-reports-support@voyageone.cn</a> ");
+            content.append("<br><br>");
             content.append("Best Regards");
             content.append("<br>");
             content.append("VoyageOne Auto Report");
@@ -154,7 +205,7 @@ public class TargetDailyService extends BaseTaskService {
     }
 
     private void writeHead(Workbook book) {
-        String productHeadEn[] = {"SKU", "Title", "UPC", "TM_numiid", "Inventory", "comment"};
+        String productHeadEn[] = {"SKU", "Title", "UPC", "TM_numiid", "Inventory","Last 7Days Sales" ,"Last 30Days Sales","Total sales","Delist Time(CN)","comment"};
         Sheet sheet = book.createSheet("sku");
         Row rowEn = sheet.createRow(0);
 
@@ -178,6 +229,10 @@ public class TargetDailyService extends BaseTaskService {
         String upc;
         Integer qty;
         String comment;
+        Integer sales7;
+        Integer sales30;
+        Integer salesAll;
+        String delistTime;
 
         public String getSku() {
             return sku;
@@ -227,6 +282,41 @@ public class TargetDailyService extends BaseTaskService {
 
         public void setComment(String comment) {
             this.comment = comment;
+        }
+
+        public Integer getSales7() {
+            if(sales7 == null) sales7 = 0;
+            return sales7;
+        }
+
+        public void setSales7(Integer sales7) {
+            this.sales7 = sales7;
+        }
+
+        public Integer getSales30() {
+            if(sales30 == null) sales30 = 0;
+            return sales30;
+        }
+
+        public void setSales30(Integer sales30) {
+            this.sales30 = sales30;
+        }
+
+        public Integer getSalesAll() {
+            if(salesAll == null) salesAll = 0;
+            return salesAll;
+        }
+
+        public void setSalesAll(Integer salesAll) {
+            this.salesAll = salesAll;
+        }
+
+        public String getDelistTime() {
+            return delistTime;
+        }
+
+        public void setDelistTime(String delistTime) {
+            this.delistTime = delistTime;
         }
     }
 }

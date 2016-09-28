@@ -236,12 +236,13 @@ public class GiltAnalysisService extends BaseTaskService {
             if(inventorys.size() > 0){
                 List<Map<String, Object>> data = new ArrayList<>();
                 inventorys.forEach(giltInventory -> {
-                    if (giltInventory.getQuantity() > 0) {
+//                    if (giltInventory.getQuantity() > 0) {
                         Map<String, Object> item = new HashMap<String, Object>();
+                        item.put("saleId",salesId);
                         item.put("sku", giltInventory.getSku_id());
                         item.put("qty", giltInventory.getQuantity());
                         data.add(item);
-                    }
+//                    }
                 });
                 if(data.size() > 0) cmsZzFeedGiltInventoryDaoExt.insertList(data);
             }

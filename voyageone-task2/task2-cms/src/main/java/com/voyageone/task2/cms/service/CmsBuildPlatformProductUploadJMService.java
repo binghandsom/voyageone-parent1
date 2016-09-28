@@ -1510,12 +1510,15 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         for (BaseMongoMap<String, Object> sku : skuList) {
             String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
             if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
-                // 不是新追加的
-                HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
-                skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
-                skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-                skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
-                updateData.add(skuInfo);
+                // 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
+                if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) {
+                    // 不是新追加的
+                    HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
+                    skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
+                    skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+                    skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                    updateData.add(skuInfo);
+                }
             }
         }
 
