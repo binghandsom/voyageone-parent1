@@ -3,7 +3,7 @@ package com.voyageone.task2.cms.model;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 
 /**
- * @author james.li on 2016/5/9.
+ * @author gump on 2016/09/28.
  * @version 2.0.0
  */
 public class CmsBtFeedInfoNewTargetModel extends CmsBtFeedInfoModel {
@@ -32,8 +32,6 @@ public class CmsBtFeedInfoNewTargetModel extends CmsBtFeedInfoModel {
 
     private String productBrandManufacturerBrand;
 
-    private String identifiers;
-
     private String displayOptionKeywords;
 
     private String productDescriptionSellingFeature;
@@ -58,16 +56,6 @@ public class CmsBtFeedInfoNewTargetModel extends CmsBtFeedInfoModel {
 
     private String ecomDivisional;
 
-    private String soldonweb;
-
-    private String soldinstores;
-
-    private String estoreItemStatusCode;
-
-    private String itemKind;
-
-    private String mmbvContentStreetDate;
-
     private String launchDateTime;
 
     private String averageoverallrating;
@@ -77,8 +65,6 @@ public class CmsBtFeedInfoNewTargetModel extends CmsBtFeedInfoModel {
     private String productBrandBrand;
 
     private String handlingIsBackOrderEligible;
-
-    private String salesClassificationNodes;
 
     private String enrichmentImagesAlternateImages;
 
@@ -222,6 +208,8 @@ public class CmsBtFeedInfoNewTargetModel extends CmsBtFeedInfoModel {
 
     private String enrichmentReturnPolicies;
 
+    private String productVendors;
+
     public Integer getUpdateflag() {
         return updateflag;
     }
@@ -316,14 +304,6 @@ public class CmsBtFeedInfoNewTargetModel extends CmsBtFeedInfoModel {
 
     public void setProductBrandManufacturerBrand(String productBrandManufacturerBrand) {
         this.productBrandManufacturerBrand = productBrandManufacturerBrand;
-    }
-
-    public String getIdentifiers() {
-        return identifiers;
-    }
-
-    public void setIdentifiers(String identifiers) {
-        this.identifiers = identifiers;
     }
 
     public String getDisplayOptionKeywords() {
@@ -422,46 +402,6 @@ public class CmsBtFeedInfoNewTargetModel extends CmsBtFeedInfoModel {
         this.ecomDivisional = ecomDivisional;
     }
 
-    public String getSoldonweb() {
-        return soldonweb;
-    }
-
-    public void setSoldonweb(String soldonweb) {
-        this.soldonweb = soldonweb;
-    }
-
-    public String getSoldinstores() {
-        return soldinstores;
-    }
-
-    public void setSoldinstores(String soldinstores) {
-        this.soldinstores = soldinstores;
-    }
-
-    public String getEstoreItemStatusCode() {
-        return estoreItemStatusCode;
-    }
-
-    public void setEstoreItemStatusCode(String estoreItemStatusCode) {
-        this.estoreItemStatusCode = estoreItemStatusCode;
-    }
-
-    public String getItemKind() {
-        return itemKind;
-    }
-
-    public void setItemKind(String itemKind) {
-        this.itemKind = itemKind;
-    }
-
-    public String getMmbvContentStreetDate() {
-        return mmbvContentStreetDate;
-    }
-
-    public void setMmbvContentStreetDate(String mmbvContentStreetDate) {
-        this.mmbvContentStreetDate = mmbvContentStreetDate;
-    }
-
     public String getLaunchDateTime() {
         return launchDateTime;
     }
@@ -500,14 +440,6 @@ public class CmsBtFeedInfoNewTargetModel extends CmsBtFeedInfoModel {
 
     public void setHandlingIsBackOrderEligible(String handlingIsBackOrderEligible) {
         this.handlingIsBackOrderEligible = handlingIsBackOrderEligible;
-    }
-
-    public String getSalesClassificationNodes() {
-        return salesClassificationNodes;
-    }
-
-    public void setSalesClassificationNodes(String salesClassificationNodes) {
-        this.salesClassificationNodes = salesClassificationNodes;
     }
 
     public String getEnrichmentImagesAlternateImages() {
@@ -1078,5 +1010,13 @@ public class CmsBtFeedInfoNewTargetModel extends CmsBtFeedInfoModel {
 
     public void setEnrichmentReturnPolicies(String enrichmentReturnPolicies) {
         this.enrichmentReturnPolicies = enrichmentReturnPolicies;
+    }
+
+    public String getProductVendors() {
+        return productVendors;
+    }
+
+    public void setProductVendors(String productVendors) {
+        this.productVendors = productVendors;
     }
 }

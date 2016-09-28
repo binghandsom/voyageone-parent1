@@ -30,7 +30,6 @@
     <result column="enrichment_images_base_url" property="enrichmentImagesBaseUrl" jdbcType="LONGVARCHAR" />
     <result column="enrichment_images_primary_image" property="enrichmentImagesPrimaryImage" jdbcType="LONGVARCHAR" />
     <result column="product_brand_manufacturer_brand" property="productBrandManufacturerBrand" jdbcType="LONGVARCHAR" />
-    <result column="identifiers" property="identifiers" jdbcType="LONGVARCHAR" />
     <result column="display_option_keywords" property="displayOptionKeywords" jdbcType="LONGVARCHAR" />
     <result column="product_description_selling_feature" property="productDescriptionSellingFeature" jdbcType="LONGVARCHAR" />
     <result column="package_dimensions_weight" property="packageDimensionsWeight" jdbcType="LONGVARCHAR" />
@@ -43,18 +42,12 @@
     <result column="relationship_type_code" property="relationshipTypeCode" jdbcType="LONGVARCHAR" />
     <result column="dpci" property="dpci" jdbcType="LONGVARCHAR" />
     <result column="ecom_divisional" property="ecomDivisional" jdbcType="LONGVARCHAR" />
-    <result column="soldonweb" property="soldonweb" jdbcType="LONGVARCHAR" />
-    <result column="soldinstores" property="soldinstores" jdbcType="LONGVARCHAR" />
-    <result column="estore_item_status_code" property="estoreItemStatusCode" jdbcType="LONGVARCHAR" />
-    <result column="item_kind" property="itemKind" jdbcType="LONGVARCHAR" />
-    <result column="mmbv_content_street_date" property="mmbvContentStreetDate" jdbcType="LONGVARCHAR" />
     <result column="launch_date_time" property="launchDateTime" jdbcType="LONGVARCHAR" />
     <result column="averageoverallrating" property="averageoverallrating" jdbcType="LONGVARCHAR" />
     <result column="totalreviewcount" property="totalreviewcount" jdbcType="LONGVARCHAR" />
     <result column="product_brand_brand" property="productBrandBrand" jdbcType="LONGVARCHAR" />
     <result column="handling_is_back_order_eligible" property="handlingIsBackOrderEligible" jdbcType="LONGVARCHAR" />
     <result column="listprice" property="listprice" jdbcType="LONGVARCHAR" />
-    <result column="sales_classification_nodes" property="salesClassificationNodes" jdbcType="LONGVARCHAR" />
     <result column="enrichment_images_alternate_images" property="enrichmentImagesAlternateImages" jdbcType="LONGVARCHAR" />
     <result column="display_option_has_size_chart" property="displayOptionHasSizeChart" jdbcType="LONGVARCHAR" />
     <result column="enrichment_size_chart" property="enrichmentSizeChart" jdbcType="LONGVARCHAR" />
@@ -127,6 +120,7 @@
     <result column="mozart_vendor_id" property="mozartVendorId" jdbcType="LONGVARCHAR" />
     <result column="specialitemsource" property="specialitemsource" jdbcType="LONGVARCHAR" />
     <result column="enrichment_return_policies" property="enrichmentReturnPolicies" jdbcType="LONGVARCHAR" />
+    <result column="product_vendors" property="productVendors" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
     "tcin", "upc", "md5", "updateFlag"
@@ -140,24 +134,22 @@
     "product_classification_product_subtype", "product_classification_product_subtype_name",
     "product_classification_product_type", "product_classification_product_type_name",
     "availability_status", "enrichment_images_base_url", "enrichment_images_primary_image",
-    "product_brand_manufacturer_brand", "identifiers", "display_option_keywords", "product_description_selling_feature",
+    "product_brand_manufacturer_brand", "display_option_keywords", "product_description_selling_feature",
     "package_dimensions_weight", "package_dimensions_weight_unit_of_measure", "variation_theme",
     "variation_size", "variation_color", "variation_material_type", "merchandise_type_attributes",
-    "relationship_type_code", "dpci", "ecom_divisional", "soldonweb", "soldinstores",
-    "estore_item_status_code", "item_kind", "mmbv_content_street_date", "launch_date_time",
-    "averageoverallrating", "totalreviewcount", "product_brand_brand", "handling_is_back_order_eligible",
-    "listprice", "sales_classification_nodes", "enrichment_images_alternate_images",
-    "display_option_has_size_chart", "enrichment_size_chart", "tax_category_tax_code_id",
-    "package_dimensions_dimension_unit_of_measure", "package_dimensions_height", "package_dimensions_depth",
-    "package_dimensions_width", "handling_receiving_facility_type", "product_description_bullet_description",
-    "handling_back_order_type", "fulfillment_purchase_limit", "environmental_segmentation_is_hazardous_material",
-    "environmental_segmentation_is_ingestible", "fulfillment_is_whenever_shipping_eligible",
-    "fulfillment_shipping_restriction", "fulfillment_is_po_box_prohibited", "enrichment_nutrition_facts_ingredients",
-    "enrichment_nutrition_facts_warning", "enrichment_nutrition_facts_prepared_count",
-    "enrichment_nutrition_facts_value_prepared_list", "enrichment_drug_facts_product_details",
-    "enrichment_drug_facts_product_ingredients", "enrichment_drug_facts_label", "enrichment_drug_facts_purpose_label",
-    "enrichment_drug_facts_active_ingredient_label", "enrichment_drug_facts_active_ingredients",
-    "enrichment_drug_facts_uses_label", "enrichment_drug_facts_uses_treated_symptoms",
+    "relationship_type_code", "dpci", "ecom_divisional", "launch_date_time", "averageoverallrating",
+    "totalreviewcount", "product_brand_brand", "handling_is_back_order_eligible", "listprice",
+    "enrichment_images_alternate_images", "display_option_has_size_chart", "enrichment_size_chart",
+    "tax_category_tax_code_id", "package_dimensions_dimension_unit_of_measure", "package_dimensions_height",
+    "package_dimensions_depth", "package_dimensions_width", "handling_receiving_facility_type",
+    "product_description_bullet_description", "handling_back_order_type", "fulfillment_purchase_limit",
+    "environmental_segmentation_is_hazardous_material", "environmental_segmentation_is_ingestible",
+    "fulfillment_is_whenever_shipping_eligible", "fulfillment_shipping_restriction",
+    "fulfillment_is_po_box_prohibited", "enrichment_nutrition_facts_ingredients", "enrichment_nutrition_facts_warning",
+    "enrichment_nutrition_facts_prepared_count", "enrichment_nutrition_facts_value_prepared_list",
+    "enrichment_drug_facts_product_details", "enrichment_drug_facts_product_ingredients",
+    "enrichment_drug_facts_label", "enrichment_drug_facts_purpose_label", "enrichment_drug_facts_active_ingredient_label",
+    "enrichment_drug_facts_active_ingredients", "enrichment_drug_facts_uses_label", "enrichment_drug_facts_uses_treated_symptoms",
     "enrichment_drug_facts_warning_text", "enrichment_drug_facts_warning_label", "enrichment_drug_facts_warning_usage",
     "enrichment_drug_facts_warning_other_warnings", "enrichment_drug_facts_direction_label",
     "enrichment_drug_facts_direction_general_directions", "enrichment_drug_facts_direction_age_groups",
@@ -171,7 +163,7 @@
     "country_of_origin_code", "perordercharges", "perunitcharges", "weight", "itembulky",
     "fixedPrice", "handlingFee", "handlingFeeMessage", "handlingFeeLegalDisclaimer",
     "isbn", "pattern", "age_group", "gender", "barcode_type", "iac_attributes", "sec_barcode",
-    "mozart_vendor_id", "specialitemsource", "enrichment_return_policies"
+    "mozart_vendor_id", "specialitemsource", "enrichment_return_policies", "product_vendors"
   </sql>
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
     select
@@ -198,18 +190,15 @@
     "product_classification_product_type", "product_classification_product_type_name",
     "availability_status", "enrichment_images_base_url",
     "enrichment_images_primary_image", "product_brand_manufacturer_brand",
-    "identifiers", "display_option_keywords",
-    "product_description_selling_feature", "package_dimensions_weight",
-    "package_dimensions_weight_unit_of_measure", "variation_theme",
-    "variation_size", "variation_color",
-    "variation_material_type", "merchandise_type_attributes",
-    "relationship_type_code", "dpci", "ecom_divisional",
-    "soldonweb", "soldinstores", "estore_item_status_code",
-    "item_kind", "mmbv_content_street_date",
-    "launch_date_time", "averageoverallrating",
-    "totalreviewcount", "product_brand_brand",
-    "handling_is_back_order_eligible", "listprice",
-    "sales_classification_nodes", "enrichment_images_alternate_images",
+    "display_option_keywords", "product_description_selling_feature",
+    "package_dimensions_weight", "package_dimensions_weight_unit_of_measure",
+    "variation_theme", "variation_size",
+    "variation_color", "variation_material_type",
+    "merchandise_type_attributes", "relationship_type_code",
+    "dpci", "ecom_divisional", "launch_date_time",
+    "averageoverallrating", "totalreviewcount",
+    "product_brand_brand", "handling_is_back_order_eligible",
+    "listprice", "enrichment_images_alternate_images",
     "display_option_has_size_chart", "enrichment_size_chart",
     "tax_category_tax_code_id", "package_dimensions_dimension_unit_of_measure",
     "package_dimensions_height", "package_dimensions_depth",
@@ -243,7 +232,8 @@
     "pattern", "age_group", "gender",
     "barcode_type", "iac_attributes", "sec_barcode",
     "mozart_vendor_id", "specialitemsource",
-    "enrichment_return_policies")
+    "enrichment_return_policies", "product_vendors"
+    )
     values (#{tcin,jdbcType=VARCHAR}, #{upc,jdbcType=VARCHAR}, #{md5,jdbcType=VARCHAR},
     #{updateflag,jdbcType=INTEGER}, #{parentTcins,jdbcType=LONGVARCHAR}, #{manufacturerId,jdbcType=LONGVARCHAR},
     #{manufacturerPartNumber,jdbcType=LONGVARCHAR}, #{manufacturerModelNumber,jdbcType=LONGVARCHAR},
@@ -256,18 +246,15 @@
     #{productClassificationProductType,jdbcType=LONGVARCHAR}, #{productClassificationProductTypeName,jdbcType=LONGVARCHAR},
     #{availabilityStatus,jdbcType=LONGVARCHAR}, #{enrichmentImagesBaseUrl,jdbcType=LONGVARCHAR},
     #{enrichmentImagesPrimaryImage,jdbcType=LONGVARCHAR}, #{productBrandManufacturerBrand,jdbcType=LONGVARCHAR},
-    #{identifiers,jdbcType=LONGVARCHAR}, #{displayOptionKeywords,jdbcType=LONGVARCHAR},
-    #{productDescriptionSellingFeature,jdbcType=LONGVARCHAR}, #{packageDimensionsWeight,jdbcType=LONGVARCHAR},
-    #{packageDimensionsWeightUnitOfMeasure,jdbcType=LONGVARCHAR}, #{variationTheme,jdbcType=LONGVARCHAR},
-    #{variationSize,jdbcType=LONGVARCHAR}, #{variationColor,jdbcType=LONGVARCHAR},
-    #{variationMaterialType,jdbcType=LONGVARCHAR}, #{merchandiseTypeAttributes,jdbcType=LONGVARCHAR},
-    #{relationshipTypeCode,jdbcType=LONGVARCHAR}, #{dpci,jdbcType=LONGVARCHAR}, #{ecomDivisional,jdbcType=LONGVARCHAR},
-    #{soldonweb,jdbcType=LONGVARCHAR}, #{soldinstores,jdbcType=LONGVARCHAR}, #{estoreItemStatusCode,jdbcType=LONGVARCHAR},
-    #{itemKind,jdbcType=LONGVARCHAR}, #{mmbvContentStreetDate,jdbcType=LONGVARCHAR},
-    #{launchDateTime,jdbcType=LONGVARCHAR}, #{averageoverallrating,jdbcType=LONGVARCHAR},
-    #{totalreviewcount,jdbcType=LONGVARCHAR}, #{productBrandBrand,jdbcType=LONGVARCHAR},
-    #{handlingIsBackOrderEligible,jdbcType=LONGVARCHAR}, #{listprice,jdbcType=LONGVARCHAR},
-    #{salesClassificationNodes,jdbcType=LONGVARCHAR}, #{enrichmentImagesAlternateImages,jdbcType=LONGVARCHAR},
+    #{displayOptionKeywords,jdbcType=LONGVARCHAR}, #{productDescriptionSellingFeature,jdbcType=LONGVARCHAR},
+    #{packageDimensionsWeight,jdbcType=LONGVARCHAR}, #{packageDimensionsWeightUnitOfMeasure,jdbcType=LONGVARCHAR},
+    #{variationTheme,jdbcType=LONGVARCHAR}, #{variationSize,jdbcType=LONGVARCHAR},
+    #{variationColor,jdbcType=LONGVARCHAR}, #{variationMaterialType,jdbcType=LONGVARCHAR},
+    #{merchandiseTypeAttributes,jdbcType=LONGVARCHAR}, #{relationshipTypeCode,jdbcType=LONGVARCHAR},
+    #{dpci,jdbcType=LONGVARCHAR}, #{ecomDivisional,jdbcType=LONGVARCHAR}, #{launchDateTime,jdbcType=LONGVARCHAR},
+    #{averageoverallrating,jdbcType=LONGVARCHAR}, #{totalreviewcount,jdbcType=LONGVARCHAR},
+    #{productBrandBrand,jdbcType=LONGVARCHAR}, #{handlingIsBackOrderEligible,jdbcType=LONGVARCHAR},
+    #{listprice,jdbcType=LONGVARCHAR}, #{enrichmentImagesAlternateImages,jdbcType=LONGVARCHAR},
     #{displayOptionHasSizeChart,jdbcType=LONGVARCHAR}, #{enrichmentSizeChart,jdbcType=LONGVARCHAR},
     #{taxCategoryTaxCodeId,jdbcType=LONGVARCHAR}, #{packageDimensionsDimensionUnitOfMeasure,jdbcType=LONGVARCHAR},
     #{packageDimensionsHeight,jdbcType=LONGVARCHAR}, #{packageDimensionsDepth,jdbcType=LONGVARCHAR},
@@ -301,7 +288,8 @@
     #{pattern,jdbcType=LONGVARCHAR}, #{ageGroup,jdbcType=LONGVARCHAR}, #{gender,jdbcType=LONGVARCHAR},
     #{barcodeType,jdbcType=LONGVARCHAR}, #{iacAttributes,jdbcType=LONGVARCHAR}, #{secBarcode,jdbcType=LONGVARCHAR},
     #{mozartVendorId,jdbcType=LONGVARCHAR}, #{specialitemsource,jdbcType=LONGVARCHAR},
-    #{enrichmentReturnPolicies,jdbcType=LONGVARCHAR})
+    #{enrichmentReturnPolicies,jdbcType=LONGVARCHAR}, #{productVendors,jdbcType=LONGVARCHAR}
+    )
   </insert>
   <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedNewTargetBean" >
     insert into cms_zz_feed_new_target_product_temp
@@ -384,9 +372,6 @@
       <if test="productBrandManufacturerBrand != null" >
         product_brand_manufacturer_brand,
       </if>
-      <if test="identifiers != null" >
-        identifiers,
-      </if>
       <if test="displayOptionKeywords != null" >
         display_option_keywords,
       </if>
@@ -423,21 +408,6 @@
       <if test="ecomDivisional != null" >
         ecom_divisional,
       </if>
-      <if test="soldonweb != null" >
-        soldonweb,
-      </if>
-      <if test="soldinstores != null" >
-        soldinstores,
-      </if>
-      <if test="estoreItemStatusCode != null" >
-        estore_item_status_code,
-      </if>
-      <if test="itemKind != null" >
-        item_kind,
-      </if>
-      <if test="mmbvContentStreetDate != null" >
-        mmbv_content_street_date,
-      </if>
       <if test="launchDateTime != null" >
         launch_date_time,
       </if>
@@ -455,9 +425,6 @@
       </if>
       <if test="listprice != null" >
         listprice,
-      </if>
-      <if test="salesClassificationNodes != null" >
-        sales_classification_nodes,
       </if>
       <if test="enrichmentImagesAlternateImages != null" >
         enrichment_images_alternate_images,
@@ -675,6 +642,9 @@
       <if test="enrichmentReturnPolicies != null" >
         enrichment_return_policies,
       </if>
+      <if test="productVendors != null" >
+        product_vendors,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="tcin != null" >
@@ -755,9 +725,6 @@
       <if test="productBrandManufacturerBrand != null" >
         #{productBrandManufacturerBrand,jdbcType=LONGVARCHAR},
       </if>
-      <if test="identifiers != null" >
-        #{identifiers,jdbcType=LONGVARCHAR},
-      </if>
       <if test="displayOptionKeywords != null" >
         #{displayOptionKeywords,jdbcType=LONGVARCHAR},
       </if>
@@ -794,21 +761,6 @@
       <if test="ecomDivisional != null" >
         #{ecomDivisional,jdbcType=LONGVARCHAR},
       </if>
-      <if test="soldonweb != null" >
-        #{soldonweb,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="soldinstores != null" >
-        #{soldinstores,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="estoreItemStatusCode != null" >
-        #{estoreItemStatusCode,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="itemKind != null" >
-        #{itemKind,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="mmbvContentStreetDate != null" >
-        #{mmbvContentStreetDate,jdbcType=LONGVARCHAR},
-      </if>
       <if test="launchDateTime != null" >
         #{launchDateTime,jdbcType=LONGVARCHAR},
       </if>
@@ -826,9 +778,6 @@
       </if>
       <if test="listprice != null" >
         #{listprice,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="salesClassificationNodes != null" >
-        #{salesClassificationNodes,jdbcType=LONGVARCHAR},
       </if>
       <if test="enrichmentImagesAlternateImages != null" >
         #{enrichmentImagesAlternateImages,jdbcType=LONGVARCHAR},
@@ -1046,6 +995,9 @@
       <if test="enrichmentReturnPolicies != null" >
         #{enrichmentReturnPolicies,jdbcType=LONGVARCHAR},
       </if>
+      <if test="productVendors != null" >
+        #{productVendors,jdbcType=LONGVARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedNewTargetBean" >
@@ -1126,9 +1078,6 @@
       <if test="productBrandManufacturerBrand != null" >
         "product_brand_manufacturer_brand" = #{productBrandManufacturerBrand,jdbcType=LONGVARCHAR},
       </if>
-      <if test="identifiers != null" >
-        "identifiers" = #{identifiers,jdbcType=LONGVARCHAR},
-      </if>
       <if test="displayOptionKeywords != null" >
         "display_option_keywords" = #{displayOptionKeywords,jdbcType=LONGVARCHAR},
       </if>
@@ -1165,21 +1114,6 @@
       <if test="ecomDivisional != null" >
         "ecom_divisional" = #{ecomDivisional,jdbcType=LONGVARCHAR},
       </if>
-      <if test="soldonweb != null" >
-        "soldonweb" = #{soldonweb,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="soldinstores != null" >
-        "soldinstores" = #{soldinstores,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="estoreItemStatusCode != null" >
-        "estore_item_status_code" = #{estoreItemStatusCode,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="itemKind != null" >
-        "item_kind" = #{itemKind,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="mmbvContentStreetDate != null" >
-        "mmbv_content_street_date" = #{mmbvContentStreetDate,jdbcType=LONGVARCHAR},
-      </if>
       <if test="launchDateTime != null" >
         "launch_date_time" = #{launchDateTime,jdbcType=LONGVARCHAR},
       </if>
@@ -1197,9 +1131,6 @@
       </if>
       <if test="listprice != null" >
         "listprice" = #{listprice,jdbcType=LONGVARCHAR},
-      </if>
-      <if test="salesClassificationNodes != null" >
-        "sales_classification_nodes" = #{salesClassificationNodes,jdbcType=LONGVARCHAR},
       </if>
       <if test="enrichmentImagesAlternateImages != null" >
         "enrichment_images_alternate_images" = #{enrichmentImagesAlternateImages,jdbcType=LONGVARCHAR},
@@ -1417,6 +1348,9 @@
       <if test="enrichmentReturnPolicies != null" >
         "enrichment_return_policies" = #{enrichmentReturnPolicies,jdbcType=LONGVARCHAR},
       </if>
+      <if test="productVendors != null" >
+        "product_vendors" = #{productVendors,jdbcType=LONGVARCHAR},
+      </if>
     </set>
     where "tcin" = #{tcin,jdbcType=VARCHAR}
   </update>
@@ -1447,7 +1381,6 @@
     "enrichment_images_base_url" = #{enrichmentImagesBaseUrl,jdbcType=LONGVARCHAR},
     "enrichment_images_primary_image" = #{enrichmentImagesPrimaryImage,jdbcType=LONGVARCHAR},
     "product_brand_manufacturer_brand" = #{productBrandManufacturerBrand,jdbcType=LONGVARCHAR},
-    "identifiers" = #{identifiers,jdbcType=LONGVARCHAR},
     "display_option_keywords" = #{displayOptionKeywords,jdbcType=LONGVARCHAR},
     "product_description_selling_feature" = #{productDescriptionSellingFeature,jdbcType=LONGVARCHAR},
     "package_dimensions_weight" = #{packageDimensionsWeight,jdbcType=LONGVARCHAR},
@@ -1460,18 +1393,12 @@
     "relationship_type_code" = #{relationshipTypeCode,jdbcType=LONGVARCHAR},
     "dpci" = #{dpci,jdbcType=LONGVARCHAR},
     "ecom_divisional" = #{ecomDivisional,jdbcType=LONGVARCHAR},
-    "soldonweb" = #{soldonweb,jdbcType=LONGVARCHAR},
-    "soldinstores" = #{soldinstores,jdbcType=LONGVARCHAR},
-    "estore_item_status_code" = #{estoreItemStatusCode,jdbcType=LONGVARCHAR},
-    "item_kind" = #{itemKind,jdbcType=LONGVARCHAR},
-    "mmbv_content_street_date" = #{mmbvContentStreetDate,jdbcType=LONGVARCHAR},
     "launch_date_time" = #{launchDateTime,jdbcType=LONGVARCHAR},
     "averageoverallrating" = #{averageoverallrating,jdbcType=LONGVARCHAR},
     "totalreviewcount" = #{totalreviewcount,jdbcType=LONGVARCHAR},
     "product_brand_brand" = #{productBrandBrand,jdbcType=LONGVARCHAR},
     "handling_is_back_order_eligible" = #{handlingIsBackOrderEligible,jdbcType=LONGVARCHAR},
     "listprice" = #{listprice,jdbcType=LONGVARCHAR},
-    "sales_classification_nodes" = #{salesClassificationNodes,jdbcType=LONGVARCHAR},
     "enrichment_images_alternate_images" = #{enrichmentImagesAlternateImages,jdbcType=LONGVARCHAR},
     "display_option_has_size_chart" = #{displayOptionHasSizeChart,jdbcType=LONGVARCHAR},
     "enrichment_size_chart" = #{enrichmentSizeChart,jdbcType=LONGVARCHAR},
@@ -1543,7 +1470,8 @@
     "sec_barcode" = #{secBarcode,jdbcType=LONGVARCHAR},
     "mozart_vendor_id" = #{mozartVendorId,jdbcType=LONGVARCHAR},
     "specialitemsource" = #{specialitemsource,jdbcType=LONGVARCHAR},
-    "enrichment_return_policies" = #{enrichmentReturnPolicies,jdbcType=LONGVARCHAR}
+    "enrichment_return_policies" = #{enrichmentReturnPolicies,jdbcType=LONGVARCHAR},
+    "product_vendors" = #{productVendors,jdbcType=LONGVARCHAR}
     where "tcin" = #{tcin,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedNewTargetBean" >

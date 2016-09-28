@@ -108,7 +108,6 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
                 targetBean.setEnrichmentImagesPrimaryImage(reader.get(i++));
                 targetBean.setProductBrandManufacturerBrand(reader.get(i++));
                 targetBean.setUpc(reader.get(i++));
-                targetBean.setIdentifiers(reader.get(i++));
                 targetBean.setDisplayOptionKeywords(reader.get(i++));
                 targetBean.setProductDescriptionSellingFeature(reader.get(i++));
                 targetBean.setPackageDimensionsWeight(reader.get(i++));
@@ -121,18 +120,12 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
                 targetBean.setRelationshipTypeCode(reader.get(i++));
                 targetBean.setDpci(reader.get(i++));
                 targetBean.setEcomDivisional(reader.get(i++));
-                targetBean.setSoldonweb(reader.get(i++));
-                targetBean.setSoldinstores(reader.get(i++));
-                targetBean.setEstoreItemStatusCode(reader.get(i++));
-                targetBean.setItemKind(reader.get(i++));
-                targetBean.setMmbvContentStreetDate(reader.get(i++));
                 targetBean.setLaunchDateTime(reader.get(i++));
                 targetBean.setAverageoverallrating(reader.get(i++));
                 targetBean.setTotalreviewcount(reader.get(i++));
                 targetBean.setProductBrandBrand(reader.get(i++));
                 targetBean.setHandlingIsBackOrderEligible(reader.get(i++));
                 targetBean.setListprice(reader.get(i++));
-                targetBean.setSalesClassificationNodes(reader.get(i++));
                 targetBean.setEnrichmentImagesAlternateImages(reader.get(i++));
                 targetBean.setDisplayOptionHasSizeChart(reader.get(i++));
                 targetBean.setEnrichmentSizeChart(reader.get(i++));
@@ -202,9 +195,10 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
                 targetBean.setBarcodeType(reader.get(i++));
                 targetBean.setIacAttributes(reader.get(i++));
                 targetBean.setSecBarcode(reader.get(i++));
-                targetBean.setMozartVendorId(reader.get(i++));
                 targetBean.setSpecialitemsource(reader.get(i++));
                 targetBean.setEnrichmentReturnPolicies(reader.get(i++));
+                targetBean.setMozartVendorId(reader.get(i++));
+                targetBean.setProductVendors(reader.get(i++));
                 superfeed.add(targetBean);
                 cnt++;
                 if (superfeed.size() > 1000) {

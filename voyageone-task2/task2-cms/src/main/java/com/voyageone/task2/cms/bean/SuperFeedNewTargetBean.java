@@ -57,8 +57,6 @@ public class SuperFeedNewTargetBean extends  SuperFeedBean{
 
     private String productBrandManufacturerBrand;
 
-    private String identifiers;
-
     private String displayOptionKeywords;
 
     private String productDescriptionSellingFeature;
@@ -83,16 +81,6 @@ public class SuperFeedNewTargetBean extends  SuperFeedBean{
 
     private String ecomDivisional;
 
-    private String soldonweb;
-
-    private String soldinstores;
-
-    private String estoreItemStatusCode;
-
-    private String itemKind;
-
-    private String mmbvContentStreetDate;
-
     private String launchDateTime;
 
     private String averageoverallrating;
@@ -104,8 +92,6 @@ public class SuperFeedNewTargetBean extends  SuperFeedBean{
     private String handlingIsBackOrderEligible;
 
     private String listprice;
-
-    private String salesClassificationNodes;
 
     private String enrichmentImagesAlternateImages;
 
@@ -250,6 +236,8 @@ public class SuperFeedNewTargetBean extends  SuperFeedBean{
     private String specialitemsource;
 
     private String enrichmentReturnPolicies;
+
+    private String productVendors;
 
     public String getTcin() {
         return tcin;
@@ -462,14 +450,6 @@ public class SuperFeedNewTargetBean extends  SuperFeedBean{
         this.productBrandManufacturerBrand = productBrandManufacturerBrand == null ? null : productBrandManufacturerBrand.trim();
     }
 
-    public String getIdentifiers() {
-        return identifiers;
-    }
-
-    public void setIdentifiers(String identifiers) {
-        this.identifiers = identifiers == null ? null : identifiers.trim();
-    }
-
     public String getDisplayOptionKeywords() {
         return displayOptionKeywords;
     }
@@ -566,46 +546,6 @@ public class SuperFeedNewTargetBean extends  SuperFeedBean{
         this.ecomDivisional = ecomDivisional == null ? null : ecomDivisional.trim();
     }
 
-    public String getSoldonweb() {
-        return soldonweb;
-    }
-
-    public void setSoldonweb(String soldonweb) {
-        this.soldonweb = soldonweb == null ? null : soldonweb.trim();
-    }
-
-    public String getSoldinstores() {
-        return soldinstores;
-    }
-
-    public void setSoldinstores(String soldinstores) {
-        this.soldinstores = soldinstores == null ? null : soldinstores.trim();
-    }
-
-    public String getEstoreItemStatusCode() {
-        return estoreItemStatusCode;
-    }
-
-    public void setEstoreItemStatusCode(String estoreItemStatusCode) {
-        this.estoreItemStatusCode = estoreItemStatusCode == null ? null : estoreItemStatusCode.trim();
-    }
-
-    public String getItemKind() {
-        return itemKind;
-    }
-
-    public void setItemKind(String itemKind) {
-        this.itemKind = itemKind == null ? null : itemKind.trim();
-    }
-
-    public String getMmbvContentStreetDate() {
-        return mmbvContentStreetDate;
-    }
-
-    public void setMmbvContentStreetDate(String mmbvContentStreetDate) {
-        this.mmbvContentStreetDate = mmbvContentStreetDate == null ? null : mmbvContentStreetDate.trim();
-    }
-
     public String getLaunchDateTime() {
         return launchDateTime;
     }
@@ -652,14 +592,6 @@ public class SuperFeedNewTargetBean extends  SuperFeedBean{
 
     public void setListprice(String listprice) {
         this.listprice = listprice == null ? null : listprice.trim();
-    }
-
-    public String getSalesClassificationNodes() {
-        return salesClassificationNodes;
-    }
-
-    public void setSalesClassificationNodes(String salesClassificationNodes) {
-        this.salesClassificationNodes = salesClassificationNodes == null ? null : salesClassificationNodes.trim();
     }
 
     public String getEnrichmentImagesAlternateImages() {
@@ -1238,4 +1170,11 @@ public class SuperFeedNewTargetBean extends  SuperFeedBean{
         this.enrichmentReturnPolicies = enrichmentReturnPolicies == null ? null : enrichmentReturnPolicies.trim();
     }
 
+    public String getProductVendors() {
+        return productVendors;
+    }
+
+    public void setProductVendors(String productVendors) {
+        this.productVendors = productVendors;
+    }
 }
