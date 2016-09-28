@@ -391,4 +391,10 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
     public String getTaskName() {
         return "CmsTargetAnalySisJob";
     }
+
+    @Override
+    protected boolean backupFeedFile(String channelId){
+//        super.backupFeedFile(channelId);
+        return backupFeedFile(channelId,FeedEnums.Name.file_id_import_sku);
+    }
 }
