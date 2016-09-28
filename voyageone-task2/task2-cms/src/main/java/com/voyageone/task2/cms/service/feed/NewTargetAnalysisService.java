@@ -287,7 +287,7 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
                 if(!StringUtil.isEmpty(modelBean.getEnrichmentImagesBaseUrl())){
                     String images[] =modelBean.getEnrichmentImagesAlternateImages().split(",");
                     for(String image:images){
-                        imagesList.add(modelBean.getEnrichmentImagesBaseUrl()+image+"?wid=1200&hei=1200");
+                        imagesList.add("http:"+modelBean.getEnrichmentImagesBaseUrl()+image+"?wid=1200&hei=1200");
                     }
                 }
             }
@@ -296,7 +296,7 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
                 if(!StringUtil.isEmpty(modelBean.getEnrichmentImagesBaseUrl())){
                     String images[] =modelBean.getEnrichmentImagesPrimaryImage().split(",");
                     for(String image:images){
-                        imagesList.add(modelBean.getEnrichmentImagesBaseUrl()+image+"?wid=1200&hei=1200");
+                        imagesList.add("http:"+modelBean.getEnrichmentImagesBaseUrl()+image+"?wid=1200&hei=1200");
                     }
                 }
             }
