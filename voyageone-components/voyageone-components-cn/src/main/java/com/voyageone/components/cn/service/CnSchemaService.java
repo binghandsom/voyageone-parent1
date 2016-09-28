@@ -1,12 +1,13 @@
 package com.voyageone.components.cn.service;
 
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.utils.XmlUtils;
-import com.voyageone.components.ComponentBase;
+import com.voyageone.components.cn.CnBase;
 import com.voyageone.components.cn.enums.CnConstants;
 import com.voyageone.components.cn.enums.CnUpdateType;
 import org.dom4j.Element;
@@ -22,7 +23,7 @@ import java.util.List;
  * @version 2.5.0
  */
 @Service
-public class CnSchemaService extends ComponentBase {
+public class CnSchemaService extends CnBase {
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
     /**
@@ -147,4 +148,8 @@ public class CnSchemaService extends ComponentBase {
         return multiFields;
     }
 
+    public String postXml(String xml, ShopBean shopBean) throws Exception {
+        // TODO:  apiAction 未定
+        return post("/catalog_request_json.php", xml, shopBean);
+    }
 }

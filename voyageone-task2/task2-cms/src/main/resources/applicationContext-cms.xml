@@ -165,6 +165,9 @@
         <!-- 独立域名类目-产品关系（每5分钟一次） -->
         <task:scheduled ref="CmsBuildPlatformProductSellercatCnJob" method="run" cron="0 0/5 0-23 * * ?"/>
 
+         <!--独立域名图片上传（每2小时一次） -->
+        <task:scheduled ref="CmsBuildPlatformImageUploadCnJob" method="run" cron="0 0 0/2 * * ?"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

@@ -21,11 +21,16 @@ define(['underscore'], function (_) {
         WaitingPublish: new PlatformStatus('WaitingPublish', '等待上新'),
 
         /**
-         * 获取枚举
-         * @param  val
+         * 显示商品上下架状态
+         * @param  val   平台状态
+         * @param  val2  实际平台状态
+         * @param  val3  商品状态
          */
-        getStsTxt: function(val, val2) {
+        getStsTxt: function(val, val2, val3) {
             // 按 name 查找
+            if (val3 != 'Approved') {
+                return '';
+            }
             var stsItem = this[val];
             var stsTxt = (stsItem instanceof PlatformStatus) ? stsItem.name : '';
             if (val2 == 'OnSale' && val2 != val) {

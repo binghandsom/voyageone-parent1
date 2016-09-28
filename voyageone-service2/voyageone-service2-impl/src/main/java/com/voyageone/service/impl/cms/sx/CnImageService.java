@@ -1,12 +1,16 @@
 package com.voyageone.service.impl.cms.sx;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.components.cn.service.CnUploadImageService;
 import com.voyageone.service.dao.cms.CmsBtSxCnImagesDao;
 import com.voyageone.service.daoext.cms.CmsBtSxCnImagesDaoExt;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtSxCnImagesModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,18 +21,20 @@ import java.util.List;
  * @version 2.6.0
  */
 @Service
-public class CnImageService {
+public class CnImageService extends BaseService {
 
     @Autowired
     private CmsBtSxCnImagesDao cmsBtSxCnImagesDao;
     @Autowired
     private CmsBtSxCnImagesDaoExt cmsBtSxCnImagesDaoExt;
+    @Autowired
+    private CnUploadImageService cnUploadImageService;
 
     /**
      * 检索等待上传的图片
      */
-    public List<CmsBtSxCnImagesModel> selectListWaitingUpload(String channelId, int cartId) {
-        return cmsBtSxCnImagesDaoExt.selectListWaitingUpload(channelId, cartId);
+    public List<CmsBtSxCnImagesModel> selectListWaitingUpload(String channelId, int cartId, int limit) {
+        return cmsBtSxCnImagesDaoExt.selectListWaitingUpload(channelId, cartId, limit);
     }
 
     /**
@@ -36,6 +42,16 @@ public class CnImageService {
      */
     public List<CmsBtSxCnImagesModel> selectListByCodeWithUsing(String channelId, int cartId, String code, String urlKey) {
         return cmsBtSxCnImagesDaoExt.selectListByCodeWithUsing(channelId, cartId, code, urlKey);
+    }
+
+    /**
+     * 更新状态
+     */
+    public int updateStatus(CmsBtSxCnImagesModel model, String status, String modifier) {
+        model.setStatus(status);
+        model.setModifier(modifier);
+        model.setModified(DateTimeUtil.getDate());
+        return cmsBtSxCnImagesDao.update(model);
     }
 
     /**
@@ -52,10 +68,7 @@ public class CnImageService {
             if (!images.get(oriIndex - 1).equals(oriImageName)) {
                 // 原来的图和现在的图不一致，则需要重新上传
                 // 原数据status更新成3
-                model.setStatus("3");
-                model.setModifier(modifier);
-                model.setModified(DateTimeUtil.getDate());
-                cmsBtSxCnImagesDao.update(model);
+                updateStatus(model, "3", modifier);
             } else {
                 // 上过的index且不需要重新传的，记录一下
                 listOriIndex.add(oriIndex);
@@ -83,5 +96,39 @@ public class CnImageService {
         if (!listInsertData.isEmpty()) {
             cmsBtSxCnImagesDaoExt.insertByList(listInsertData);
         }
+    }
+
+    /**
+     * 上传图片
+     *
+     * @param url 图片url
+     * @param strOssFilePath OSS存放路径
+     */
+    public void doUploadImage(String url, String strOssFilePath) {
+        byte[] bytes;
+        try {
+            bytes = cnUploadImageService.downloadImage(url);
+        } catch (IOException e) {
+            String errMsg = String.format("独立域名图片取得失败![%s]", url);
+            $warn(errMsg);
+            throw new BusinessException(errMsg);
+        } catch (Exception ex) {
+            throw ex;
+        }
+        $info("独立域名读取图片成功![%s]", url);
+
+
+        try {
+            cnUploadImageService.uploadImage(bytes, strOssFilePath);
+        } catch (IOException e) {
+            String errMsg = String.format("独立域名图片上传失败![%s]", url);
+            $warn(errMsg);
+            throw new BusinessException(errMsg);
+        } catch (Exception ex) {
+            throw ex;
+        }
+
+        $info("独立域名上传图片成功![%s]", url);
+
     }
 }
