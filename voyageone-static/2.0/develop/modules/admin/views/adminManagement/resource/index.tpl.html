@@ -44,7 +44,7 @@
                         </th>
                         <th class="text-left mfb-xxt" translate="TXT_MENU_NAME"></th>
                         <th class="text-left mfb-xxt" translate="TXT_MENU_KEY"></th>
-                        <th class="cell-members text-center mfb-xxt" translate="TXT_URL"></th>
+                        <th class="text-left mfb-xxt" translate="TXT_URL"></th>
                         <th class="text-center mfb-xxt" translate="TXT_SYSTEM"></th>
                         <th class="text-center mfb-xt" translate="TXT_TYPE"></th>
                         <th class="text-center mfb-xt3" translate="TXT_STATUS"></th>
@@ -61,8 +61,7 @@
                         <td class="cell-input" style="padding: 4px;">
                             <input ng-change="toggleCheckbox(item, ctrl.selectedList)" ng-model="item.selected" type="checkbox" />
                         </td>
-                        <!--ng-style="{'margin-right':item.children.length>0?'0':'20px'}"-->
-                        <td class="cell-name text-left mfb-xxt" ng-click="item.opened = !item.opened">
+                        <td class="cell-name text-left mfb-xxt" ng-click="item.opened = !item.opened" ng-style="{'padding-left':item.children.length==0? '18px':'0'}">
                             <div ng-class="{'indent': item.children.length>0}" style="padding-left: {{15*level}}px;">
                                 <label class="v-middle" ng-if="item.resName.length <= 20">{{item.resName}}</label>
                                 <label class="v-middle" ng-if="item.resName.length > 20" uib-tooltip="{{item.resName}}"
