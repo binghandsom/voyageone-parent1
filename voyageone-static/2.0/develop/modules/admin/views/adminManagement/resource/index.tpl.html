@@ -40,7 +40,7 @@
                     <thead>
                     <tr>
                         <th class="cell-input" style="padding: 5px;">
-                            <input ng-checked="(ctrl.resList | selected).length == ctrl.resList.length" ng-click="toggleAllCheckboxes($event)" type="checkbox" />
+                            <input ng-checked="(ctrl.resList | selected).length == ctrl.resList.length" ng-click="toggleAllCheckboxes($event,ctrl.resList, ctrl.selectedList)" type="checkbox" />
                         </th>
                         <th class="text-left mfb-xxt" translate="TXT_MENU_NAME"></th>
                         <th class="text-left mfb-xxt" translate="TXT_MENU_KEY"></th>

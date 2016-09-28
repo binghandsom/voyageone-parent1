@@ -8,7 +8,7 @@
         <form role="form" class="form-horizontal" name="addForm" novalidate>
             <div class="col-sm-12">
                 <div class="row form-group"><!-- 特定权限 -->
-                    <label class="col-sm-2 control-label">特定权限 &nbsp;&nbsp;{{'TXT_SYSTEM' | translate}}</label>
+                    <label class="col-sm-2 control-label">{{'TXT_SYSTEM' | translate}}</label>
                     <div class="col-sm-4">
                         <select class="form-control" ng-model="ctrl.saveInfo.application" ng-change="ctrl.changeApp(ctrl.saveInfo.application)">
                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
@@ -23,13 +23,16 @@
                         </label>
                     </div>
                 </div>
+                <div class="row form-group"><!-- 特定权限 -->
+                    <label class="col-sm-2 control-label text-left">特定权限</label>
+                </div>
                 <div class="row form-group" >
                     <div class="" ng-controller="treeTable" style="max-height:500px;overflow: auto;">
                         <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;border:none">
                             <thead>
                             <tr>
                                 <th class="cell-input" style="padding: 5px; width: 13px;">
-                                    <input ng-checked="(ctrl.resList | selected).length == ctrl.resList.length" ng-click="toggleAllCheckboxes($event)" type="checkbox" />
+                                    <input ng-checked="(ctrl.resList | selected).length == ctrl.resList.length" ng-click="toggleAllCheckboxes($event,ctrl.resList, ctrl.selectedList)" type="checkbox" />
                                 </th>
                                 <th class="text-left mfb-xxt" translate="TXT_MENU_NAME"></th>
                                 <th class="text-left mfb-xxt" translate="TXT_MENU_KEY"></th>
