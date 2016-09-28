@@ -101,13 +101,17 @@ public class TbSaleService extends TbBase {
      * 只返回 num_iid
      */
     public List<Item> getInventoryProduct(String strOrderChannelId, String strCardId, Long lPageIndex, Long pageSize) throws ApiException {
+       return getInventoryProduct(strOrderChannelId,strCardId,"for_shelved,sold_out,violation_off_shelf",lPageIndex,pageSize);
+    }
+
+    public List<Item> getInventoryProduct(String strOrderChannelId, String strCardId, String banner, Long lPageIndex, Long pageSize) throws ApiException {
         ShopBean shopInfo = Shops.getShop(strOrderChannelId, strCardId);
         ItemsInventoryGetRequest req = new ItemsInventoryGetRequest();
 
         req.setPageNo(lPageIndex);
         req.setPageSize(pageSize);
-        req.setFields("num_iid,outer_id,title");
-        req.setBanner("for_shelved,sold_out,violation_off_shelf");
+        req.setFields("num_iid,outer_id,title,delist_time");
+        req.setBanner(banner);
 
 //        String staDate = DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
 //        req.setStartModified(DateTimeUtil.parse(staDate));
