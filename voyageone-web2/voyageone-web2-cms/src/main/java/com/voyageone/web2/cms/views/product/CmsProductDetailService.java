@@ -652,7 +652,13 @@ public class CmsProductDetailService extends BaseViewService {
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
         if (!compareHsCode(commonModel.getFields().getHsCodePrivate(), oldProduct.getCommon().getFields().getHsCodePrivate())) {
             try {
-                priceService.setPrice(newProduct, false);
+                // 税号从无到有的场后同步最终售价
+                if(StringUtil.isEmpty(oldProduct.getCommon().getFields().getHsCodePrivate())){
+                    priceService.setPrice(newProduct, true);
+                }else{
+                    priceService.setPrice(newProduct, false);
+                }
+
             } catch (PriceCalculateException e) {
                 throw new BusinessException("价格计算错误" + e.getMessage());
             } catch (IllegalPriceConfigException e) {

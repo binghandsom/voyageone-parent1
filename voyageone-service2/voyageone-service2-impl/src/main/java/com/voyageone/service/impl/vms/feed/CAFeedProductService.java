@@ -226,7 +226,7 @@ public class CAFeedProductService extends BaseService {
             BuyableProductResultModel buyableProductResultModel = new BuyableProductResultModel();
             buyableProductResultModel.setSellerSKU(buyableProductModel.getSellerSKU());
             if (errors.size() == 0) {
-                buyableProductResultModel.setMarketPlaceItemID("channelId-" + buyableProductModel.getSellerSKU());
+                buyableProductResultModel.setMarketPlaceItemID(channelId + "-" + buyableProductModel.getSellerSKU());
                 buyableProductResultModel.setRequestResult(RequestResultEnum.Success);
             } else {
                 buyableProductResultModel.setRequestResult(RequestResultEnum.Fail);

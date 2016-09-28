@@ -12,6 +12,7 @@ import com.voyageone.components.gilt.service.GiltInventoryService;
 import com.voyageone.components.gilt.service.GiltSalesService;
 import com.voyageone.components.gilt.service.GiltSkuService;
 import com.voyageone.service.daoext.cms.CmsZzFeedGiltInventoryDaoExt;
+import com.voyageone.service.model.cms.CmsZzFeedGiltInventoryModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
@@ -389,7 +390,14 @@ public class GiltAnalysisService extends BaseTaskService {
         superFeedGiltBean.setCategories_id(String.valueOf(giltCategory.getId()));
         superFeedGiltBean.setCategories_key(catPath);
         superFeedGiltBean.setCategories_name(giltCategory.getName());
-        superFeedGiltBean.setQty(giltSku.getQty() == null ? "0" : giltSku.getQty().toString());
+
+        CmsZzFeedGiltInventoryModel qtys = cmsZzFeedGiltInventoryDaoExt.select(superFeedGiltBean.getId());
+        if(qtys == null){
+            superFeedGiltBean.setQty("0");
+        }else{
+            superFeedGiltBean.setQty(qtys.getQty().toString());
+        }
+
 
         return superFeedGiltBean;
     }

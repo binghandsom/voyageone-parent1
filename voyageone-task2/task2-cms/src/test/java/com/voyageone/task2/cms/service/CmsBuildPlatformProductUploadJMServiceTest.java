@@ -367,31 +367,5 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
     }
 
-    /**
-     * 测试成功上传到聚美商城之后回写状态处理
-     */
-    @Test
-    public void testUpdateMallId() {
-
-        String channelId = "010";
-//        int cartId = 27;
-        String productCode = "B10-416AGDC4-75";
-        String mallId = "ID00001";
-
-        try {
-            // 获取product信息
-            CmsBtProductModel productModel = cmsBtProductDao.selectOneWithQuery("{'common.fields.code':'" + productCode + "'}", channelId);
-            if (productModel == null) {
-                System.out.println("没找到对应的product数据(productCode=" + productCode + ")");
-                return;
-            }
-            // 测试回写状态
-            cmsBuildPlatformProductUploadJMService.updateMallId(productModel, mallId);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
 }
