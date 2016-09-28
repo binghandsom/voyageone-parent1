@@ -1,13 +1,12 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.components.cn.service.CnSchemaService;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.BusinessLogService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.CnImageService;
 import com.voyageone.service.impl.cms.sx.ConditionPropValueService;
+import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtSxCnImagesModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -16,6 +15,7 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,13 +33,7 @@ public class CmsBuildPlatformImageUploadCnService extends BaseTaskService {
     @Autowired
     private ConditionPropValueService conditionPropValueService;
     @Autowired
-    private CnSchemaService cnSchemaService;
-    @Autowired
-    private ProductGroupService productGroupService;
-    @Autowired
     private BusinessLogService businessLogService;
-    @Autowired
-    private CmsBtProductGroupDao cmsBtProductGroupDao;
     @Autowired
     private CnImageService cnImageService;
 
@@ -130,13 +124,56 @@ public class CmsBuildPlatformImageUploadCnService extends BaseTaskService {
         int index = cmsBtSxCnImagesModel.getIndex();
         String ossImageName = strUrlKey + "-" + Integer.toString(index);
 
+        List<String> errorList = new ArrayList<>();
         for (String[] cnUrl : CN_URLS) {
             try {
                 cnImageService.doUploadImage(cnUrl[1] + cmsBtSxCnImagesModel.getImageName(), "010/" + cnUrl[0] + "/" + ossImageName);
+            } catch (BusinessException ex) {
+                errorList.add(ex.getMessage());
             } catch (Exception ex) {
                 $warn("独立域名上传图片失败!code[%s],url[%s],错误信息[%s]", cmsBtSxCnImagesModel.getCode(), cnUrl[1] + cmsBtSxCnImagesModel.getImageName(), ex.getMessage());
+                String errMsg = String.format("独立域名上传图片失败!url[%s],错误信息[%s]", cnUrl[1] + cmsBtSxCnImagesModel.getImageName(), ex.getMessage());
+                errorList.add(errMsg);
             }
         }
+
+        if (errorList.isEmpty()) {
+            // 没有错误,回写cms_bt_sx_cn_images状态1:已上传
+            cnImageService.updateStatus(cmsBtSxCnImagesModel, "1", getTaskNameForUpdate());
+        } else {
+            // 有错,回写cms_bt_sx_cn_images状态2:上传失败,cms_bt_business_log记录一下
+            cnImageService.updateStatus(cmsBtSxCnImagesModel, "2", getTaskNameForUpdate());
+            for (String errMsg : errorList) {
+                insertBusinessLog(cmsBtSxCnImagesModel.getChannelId(), errMsg, cmsBtSxCnImagesModel);
+            }
+        }
+    }
+
+    /**
+     * 出错的时候将错误信息回写到cms_bt_business_log表
+     *
+     * @param errorMsg 错误信息
+     */
+    private void insertBusinessLog(String channelId, String errorMsg, CmsBtSxCnImagesModel cmsBtSxCnImagesModel) {
+        CmsBtBusinessLogModel businessLogModel = new CmsBtBusinessLogModel();
+        // 渠道id
+        businessLogModel.setChannelId(channelId);
+        // 错误类型(1:上新错误)
+        businessLogModel.setErrorTypeId(1);
+        // 详细错误信息
+        businessLogModel.setErrorMsg(errorMsg);
+        // 状态(0:未处理 1:已处理)
+        businessLogModel.setStatus(0);
+        // 创建者
+        businessLogModel.setCreater(getTaskNameForUpdate());
+        // 更新者
+        businessLogModel.setModifier(getTaskNameForUpdate());
+        // 平台id
+        businessLogModel.setCartId(cmsBtSxCnImagesModel.getCartId());
+        // code
+        businessLogModel.setCode(cmsBtSxCnImagesModel.getCode());
+
+        businessLogService.insertBusinessLog(businessLogModel);
     }
 
 }
