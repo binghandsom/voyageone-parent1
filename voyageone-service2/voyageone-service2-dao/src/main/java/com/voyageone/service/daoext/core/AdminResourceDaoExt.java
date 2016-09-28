@@ -1,5 +1,6 @@
 package com.voyageone.service.daoext.core;
 
+import com.voyageone.security.model.ComResRoleModel;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -18,5 +19,7 @@ public interface AdminResourceDaoExt {
     List<AdminResourceBean> selectRes(@Param("application") String app);
 
     List<Map> selectAllPermConfig(@Param("roleIds")List<Integer> list);
+
+    List<ComResRoleModel> selectResRoleList(@Param("roleId") Integer roleId, @Param("application") String app);
 
 }

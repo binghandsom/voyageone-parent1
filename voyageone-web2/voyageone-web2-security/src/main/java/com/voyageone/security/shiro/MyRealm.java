@@ -139,9 +139,8 @@ public class MyRealm extends AuthorizingRealm {
 			queryMap.put("channelId", channelId);
 			queryMap.put("application", application);
 			queryMap.put("res_type", 2);
-
-
 			List<Map<String, Object>> resources = viewUserResDao.selectResByUserChannel(queryMap);
+
 			// 权限信息对象info,用来存放查出的用户的所有的角色（role）及权限（permission）
 			SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 

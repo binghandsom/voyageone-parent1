@@ -76,5 +76,13 @@
     </select>
 
 
+    <select id="selectResRoleList" resultType="com.voyageone.security.model.ComResRoleModel">
+        SELECT rr.* FROM com_res_role rr
+        LEFT JOIN com_resource re ON re.id = rr.id
+        Where role_id =  #{roleId}
+        AND application =  #{application}
+    </select>
+
+
 
 </mapper>

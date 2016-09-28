@@ -337,22 +337,35 @@ public class AdminRoleService extends BaseService {
 
 
 
-    public void setAuth(List<String> apps, List<Integer> roleIds, List<Integer> resIds, String username) {
+    public void setAuth(List<String> apps, List<Integer> roleIds, List<Integer> resIds, Boolean hasAllAuth, String username) {
+
+        //新的逻辑只能对单个application授权
+        String app = apps.get(0);
 
         for (Integer roleId : roleIds) {
-            updateConfig(apps, roleId, "all_permission");
+//            updateConfig(apps, roleId, "all_permission");
 
-            //查询该角色的所有权限
-            ComResRoleModel model1 = new ComResRoleModel();
-            model1.setRoleId(roleId);
-            List<ComResRoleModel> olds = comResRoleDao.selectList(model1);
+            if(hasAllAuth) {
+                ComRoleConfigModel comRoleConfigModel = new ComRoleConfigModel();
+                comRoleConfigModel.setRoleId(roleId);
+                comRoleConfigModel.setCfgName("all_permission");
+                comRoleConfigModel.setCfgVal1(app);
+                List<ComRoleConfigModel> confList = comRoleConfigDao.selectList(comRoleConfigModel);
+
+                if (confList == null || confList.size() == 0) {
+                    comRoleConfigDao.insert(comRoleConfigModel);
+                }
+            }
+
+            //查询该角色在app下的所有权限
+            List<ComResRoleModel> olds = adminResourceDaoExt.selectResRoleList(roleId, app);
 
             //删除不需要的项目
             for(ComResRoleModel old : olds )
             {
                 if(resIds.stream().filter(w -> w.equals(old.getResId())).count() == 0)
                 {
-                    comResRoleDao.delete(model1.getId());
+                    comResRoleDao.delete(old.getId());
                 }
             }
 
