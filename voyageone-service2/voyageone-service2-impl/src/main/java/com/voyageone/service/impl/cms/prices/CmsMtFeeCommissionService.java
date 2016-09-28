@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.prices;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtFeeCommissionDao;
 import com.voyageone.service.impl.BaseService;
@@ -80,6 +81,9 @@ public class CmsMtFeeCommissionService extends BaseService {
                 continue;
 
             CmsMtFeeCommissionModel feeCommissionModel = feeCommissionDao.selectOne(queryMap);
+
+            // TODO 删除
+            $info("佣金比例查询参数 %s => %s", JacksonUtil.bean2Json(queryMap), feeCommissionModel == null ? "null" : JacksonUtil.bean2Json(feeCommissionModel));
 
             if (feeCommissionModel != null)
                 return feeCommissionModel;
