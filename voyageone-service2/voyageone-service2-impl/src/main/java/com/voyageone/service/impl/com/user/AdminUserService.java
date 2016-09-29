@@ -148,8 +148,8 @@ public class AdminUserService extends BaseService {
         List<ComUserModel> userList = comUserDao.selectList(map);
 
         if (userList.size() > 0) {
-            if (userList.stream().filter(w -> w.getId() != model.getId()).count() > 0) {
-                throw new BusinessException("该用户名已在系统中注册。");
+            if (userList.stream().filter(w -> !w.getId().equals(model.getId())).count() > 0) {
+                throw new BusinessException("该Email已在系统中注册。");
             }
         }
 
