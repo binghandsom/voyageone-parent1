@@ -478,7 +478,7 @@ public class AdminUserService extends BaseService {
     public void moveUser()
     {
         CtUserModel query = new CtUserModel();
-        query.setActive(true);
+//        query.setActive(true);
 
         List<CtUserModel> allOldUser = ctUserDao.selectList(query);
 
@@ -490,7 +490,7 @@ public class AdminUserService extends BaseService {
             model.setUserName(ct.getFirstName() + ct.getLastName());
             model.setPassword(ct.getPassword());
             model.setEmail(ct.getEmail());
-            model.setActive(1);
+            model.setActive(ct.getActive() ? 1 : 0);
             model.setCredentialSalt("");
             model.setOrgId(1);
             model.setIsSuperuser(ct.getIsSuperuser());
