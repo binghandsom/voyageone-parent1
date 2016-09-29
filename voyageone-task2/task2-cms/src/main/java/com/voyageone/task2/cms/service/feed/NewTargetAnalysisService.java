@@ -63,7 +63,7 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
     protected int superFeedImport() {
         $info("Target产品价格文件读入开始");
         Map<String, String> retail = getRetailPriceList();
-        if(retail.size() == 0) return 0;
+        if(retail == null || retail.size() == 0) return 0;
 
         $info("Target产品文件读入开始");
         List<SuperFeedNewTargetBean> superfeed = new ArrayList<>();
