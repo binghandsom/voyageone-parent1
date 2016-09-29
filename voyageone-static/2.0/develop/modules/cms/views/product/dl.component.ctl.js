@@ -253,6 +253,8 @@ define([
                     });
 
                     if (mark == "temporary") {
+                        //暂存状态都为 Pending
+                        scope.vm.status = "Pending";
                         callSave("temporary");
                         return;
                     }
