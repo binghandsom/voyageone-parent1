@@ -1,8 +1,10 @@
 package com.voyageone.components.jumei.request;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,8 +36,20 @@ public class HtDealUpdateDealPriceBatchRequest implements BaseJMRequest {
 
     @Override
     public Map<String, Object> getParameter() {
+        List<BaseMongoMap<String, Object>> updateDataList = new ArrayList<>();
+        update_data.forEach(p -> {
+            BaseMongoMap<String, Object> mapTmp = new BaseMongoMap<String, Object>();
+            mapTmp.put("jumei_sku_no", p.getJumei_sku_no());
+            mapTmp.put("jumei_hash_id", p.getJumei_hash_id());
+            if (p.getMarket_price() > 0.0d)
+                mapTmp.put("market_price", p.getMarket_price());
+            if (p.getDeal_price() > 0.0d)
+                mapTmp.put("deal_price", p.getDeal_price());
+            updateDataList.add(mapTmp);
+        });
+
         Map<String, Object> params = new HashMap<>();
-        params.put("update_data", JacksonUtil.bean2JsonNotNull(update_data));
+        params.put("update_data", JacksonUtil.bean2JsonNotNull(updateDataList));
         return params;
     }
 }
