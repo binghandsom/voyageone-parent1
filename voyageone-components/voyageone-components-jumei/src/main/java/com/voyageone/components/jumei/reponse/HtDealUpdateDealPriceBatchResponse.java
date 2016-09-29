@@ -9,6 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * HtDealUpdateDealPriceBatchResponse 批量更新deal价格
+ * @author peitao.sun, 2016/3/29
+ * @version 2.6.0
+ * @since 2.0.0
+ */
 public class HtDealUpdateDealPriceBatchResponse extends BaseJMResponse {
     /*
    {
@@ -135,12 +141,44 @@ public class HtDealUpdateDealPriceBatchResponse extends BaseJMResponse {
             if ("0".equals(this.error_code)) {
                 this.setIs_Success(true);
             } else {
-                this.setErrorMsg(this.getRequestUrl()+UnicodeUtil.decodeUnicode(this.body));
+                this.setIs_Success(false);
+                StringBuffer sbMsg = new StringBuffer(" 批量更新deal价格[MALL](/v1/htDeal/updateDealPriceBatch)时,发生错误[" + this.error_code + ":");
+                switch (this.error_code) {
+                    case "10002":
+                        sbMsg.append("client_id,client_key,sign 认证失败");
+                        break;
+                    case "100001":
+                        sbMsg.append("update_data,参数错误,必须为合法的JSON, 一次最多修改20个");
+                        break;
+                    case "302":
+                        sbMsg.append("未全部成功,包括全部失败(successCount对应成功的条数, errorList对应失败的信息)");
+                        break;
+                    // 下列错误当error_code为302时返回,对应errorList.error_code,可能不用特意判断也没关系
+                    case "100011":
+                        sbMsg.append("jumei_sku_no,参数错误");
+                        break;
+                    case "100012":
+                        sbMsg.append("jumei_hash_id,参数错误");
+                        break;
+                    case "100013":
+                        sbMsg.append("deal_price,参数错误");
+                        break;
+                    case "100014":
+                        sbMsg.append("market_price,参数错误");
+                        break;
+                    case "100015":
+                        sbMsg.append("market_price 和 deal_price至少存在一个, 且团购价大于15,市场价大于等于团购价");
+                        break;
+                    default:
+                        sbMsg.append(map.get("reason").toString());
+                }
+                sbMsg.append("] ");
+                this.setErrorMsg(sbMsg.toString() + this.getRequestUrl() + this.body);
             }
         } catch (Exception ex) {
             logger.error("setBody ",ex);
             this.setIs_Success(false);
-            this.setErrorMsg("返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
+            this.setErrorMsg("HtDealUpdateDealPriceBatchResponse 返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
         }
     }
 
