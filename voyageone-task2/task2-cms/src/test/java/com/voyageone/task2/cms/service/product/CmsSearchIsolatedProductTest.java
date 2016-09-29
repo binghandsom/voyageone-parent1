@@ -41,6 +41,37 @@ public class CmsSearchIsolatedProductTest {
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
 
+    // 过滤出group表与product表不一致的数据
+    /**
+     错误情况：
+     1.1 商品的商品code或主商品code未设值
+     解决方法：手工检查
+
+     1.2 商品的主商品code在product表中不存在
+     解决方法：手工检查，参看其numiid以及该商品code在group中的对应数据，然后手工修改值
+
+     1.3 商品的主商品code在group表中不存在
+     解决方法：在group表中新建数据
+
+     1.4 商品的主商品code在group表中存在，但是商品code不在其"productCodes"中
+     解决方法：向group表中的"productCodes"添加该商品code
+
+     1.5 商品的商品code在group表的"productCodes"中存在，但是主商品code与其不一致
+     解决方法：手工检查，参看其numiid以及该商品code在group中的对应数据，然后手工修改值
+
+     2.1 group表中的主商品code在product表中（common.fields.code）不存在
+     解决方法：直接删除该记录
+
+     2.2 group表中的主商品code在product表中（platforms.Pxx.mainProductCode）不存在
+     解决方法：手工检查
+
+     2.3 group表中,"productCodes"为空
+     解决方法：手工检查，参看其numiid以及该商品code在group中的对应数据，然后手工修改值
+
+     2.4 group表中,"productCodes"中的商品code在product表中不存在
+     解决方法：直接在"productCodes"中删除该商品code
+
+     */
     @Test
     public void testIsolatedProduct() {
         // 取得所有店铺
@@ -122,84 +153,58 @@ public class CmsSearchIsolatedProductTest {
                         continue;
                     }
 
+                    // 检查主商品code是否在product表中存在
+                    boolean hasData = false;
+                    for (CmsBtProductModel prodModel2 : prodList) {
+                        String prodCode2 = StringUtils.trimToNull(prodModel2.getCommonNotNull().getFieldsNotNull().getCode());
+                        if (prodCode2 != null && mpCode.equals(prodCode2)) {
+                            hasData = true;
+                            break;
+                        }
+                    }
+                    if (!hasData) {
+                        log.error("该商品对应的主商品code不存在 channelId=" + channelId + toProdString(prodModel, cartId));
+                        continue;
+                    }
+
+                    // 检查主商品code是否在group表中存在
                     List<CmsBtProductGroupModel> groupList = groupMap.get(cartObj.getValue());
                     if (groupList == null) {
-                        log.error("该平台商品对应的group不存在 channelId=" + channelId + toProdString(prodModel, cartId));
+                        log.error("该平台商品对应的group表不存在 channelId=" + channelId + toProdString(prodModel, cartId));
                         continue;
                     }
                     // 找到其group对象
                     CmsBtProductGroupModel groupModel = null;
                     for (CmsBtProductGroupModel model : groupList) {
                         List<String> subCodeList = model.getProductCodes();
+                        if (subCodeList == null || subCodeList.isEmpty()) {
+                            continue;
+                        }
                         if (mpCode.equals(model.getMainProductCode())) {
                             groupModel = model;
                             // 下面是可能错误的数据
-                            if (subCodeList == null || subCodeList.isEmpty()) {
-                                log.error("该group未配置子商品 channelId=" + channelId + ", cartId=" + cartId + toGroupString(model));
-                                continue;
-                            }
                             if (!subCodeList.contains(prodCode)) {
-                                log.error("该group不包含此子商品 channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(model));
-                                continue;
+                                log.error("该商品不在其group中 channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(model));
+                                break;
                             }
                         }
-
                     }
                     if (groupModel == null) {
                         log.error("该商品对应的group不存在 channelId=" + channelId + toProdString(prodModel, cartId));
                         continue;
                     }
-
-//                    // 然后判断numiid以及状态是否一致
-//                    String spNumIId = StringUtils.trimToNull(ptfObj.getpNumIId());
-//                    String spStatus = StringUtils.trimToNull(ptfObj.getStringAttribute("pStatus"));
-//                    String sprStatus = StringUtils.trimToNull(ptfObj.getStringAttribute("pReallyStatus"));
-//
-//                    String gNumIId = StringUtils.trimToNull(groupModel.getNumIId());
-//                    String gStatus = groupModel.getPlatformStatus() == null ? null : groupModel.getPlatformStatus().name();
-//
-//                    if (spNumIId == null) {
-//                        if (gNumIId != null) {
-//                            log.error("\tgroup与product的numIId不一致(product的为空) channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
-//                        }
-//                    } else {
-//                        if (gNumIId == null) {
-//                            log.error("\tgroup与product的numIId不一致(group的为空) channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
-//                        } else {
-//                            if (!spNumIId.equals(gNumIId)) {
-//                                log.error("\tgroup与product的numIId不一致 channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
-//                            }
-//                        }
-//                    }
-//
-//                    if (spStatus == null) {
-//                        if (gStatus != null) {
-//                            log.error("\t\tgroup与product的平台状态不一致(product的为空) channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
-//                        }
-//                    } else {
-//                        if (gStatus == null) {
-//                            log.error("\t\tgroup与product的平台状态不一致(group的为空) channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
-//                        } else {
-//                            if (!spStatus.equals(gStatus)) {
-//                                log.error("\t\tgroup与product的平台状态不一致 channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
-//                            }
-//                        }
-//                    }
-//
-//                    if (spStatus == null) {
-//                        if (sprStatus != null) {
-//                            log.error("\t\t\tCMS与平台的实际状态不一致(CMS的为空) channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
-//                        }
-//                    } else {
-//                        if (sprStatus == null) {
-//                            log.error("\t\t\tCMS与平台的实际状态不一致(平台的为空) channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
-//                        } else {
-//                            if (!spStatus.equals(sprStatus)) {
-//                                log.error("\t\t\tCMS与平台的实际状态不一致 channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
-//                            }
-//                        }
-//                    }
-
+                    for (CmsBtProductGroupModel model : groupList) {
+                        List<String> subCodeList = model.getProductCodes();
+                        if (subCodeList == null || subCodeList.isEmpty()) {
+                            continue;
+                        }
+                        if (!mpCode.equals(model.getMainProductCode())) {
+                            if (subCodeList.contains(prodCode)) {
+                                log.error("该商品在错误的group中 channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(model));
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -225,14 +230,36 @@ public class CmsSearchIsolatedProductTest {
                         log.error("该group未配置子商品 channelId=" + channelId + ", cartId=" + cartId + toGroupString(groupModel));
                         continue;
                     }
-
                     boolean hasData = false;
+                    for (String subCode : subCodeList) {
+                        hasData = false;
+                        for (CmsBtProductModel prodModel : prodList) {
+                            String prodCode = StringUtils.trimToNull(prodModel.getCommonNotNull().getFieldsNotNull().getCode()); // 这里不再检查商品code是否为空，上面已经作过了
+                            if (subCode.equals(prodCode)) {
+                                hasData = true;
+                                break;
+                            }
+                        }
+                        if (!hasData) {
+                            log.error("该group中的子商品不存在 channelId=" + channelId + ", cartId=" + cartId + ", 子商品=" + subCode + toGroupString(groupModel));
+                        }
+                    }
+
+                    hasData = false;
                     for (CmsBtProductModel prodModel : prodList) {
                         String prodCode = StringUtils.trimToNull(prodModel.getCommonNotNull().getFieldsNotNull().getCode()); // 这里不再检查商品code是否为空，上面已经作过了
-                        if (prodCode == null) {
-                            continue;
+                        if (mpCode.equals(prodCode)) {
+                            hasData = true;
+                            break;
                         }
+                    }
+                    if (!hasData) {
+                        log.error("该group对应的主商品不存在 channelId=" + channelId + ", cartId=" + cartId + toGroupString(groupModel));
+                        continue;
+                    }
 
+                    hasData = false;
+                    for (CmsBtProductModel prodModel : prodList) {
                         CmsBtProductModel_Platform_Cart ptfObj = prodModel.getPlatformNotNull(cartId);
                         String smpCode = StringUtils.trimToNull(ptfObj.getMainProductCode()); // 这里不再检查主商品是否为空，上面已经作过了
                         if (mpCode.equals(smpCode)) {
@@ -241,7 +268,7 @@ public class CmsSearchIsolatedProductTest {
                         }
                     }
                     if (!hasData) {
-                        log.error("该group对应的商品不存在 channelId=" + channelId + ", cartId=" + cartId + toGroupString(groupModel));
+                        log.error("该group对应的主商品没有使用过 channelId=" + channelId + ", cartId=" + cartId + toGroupString(groupModel));
                         continue;
                     }
                 }
@@ -293,3 +320,55 @@ public class CmsSearchIsolatedProductTest {
         return rs.toString();
     }
 }
+
+/**
+ *                    // 然后判断numiid以及状态是否一致
+ *                    String spNumIId = StringUtils.trimToNull(ptfObj.getpNumIId());
+ *                    String spStatus = StringUtils.trimToNull(ptfObj.getStringAttribute("pStatus"));
+ *                    String sprStatus = StringUtils.trimToNull(ptfObj.getStringAttribute("pReallyStatus"));
+ *
+ *                    String gNumIId = StringUtils.trimToNull(groupModel.getNumIId());
+ *                    String gStatus = groupModel.getPlatformStatus() == null ? null : groupModel.getPlatformStatus().name();
+ *
+ *                    if (spNumIId == null) {
+ *                        if (gNumIId != null) {
+ *                            log.error("\tgroup与product的numIId不一致(product的为空) channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
+ *                        }
+ *                    } else {
+ *                        if (gNumIId == null) {
+ *                            log.error("\tgroup与product的numIId不一致(group的为空) channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
+ *                        } else {
+ *                            if (!spNumIId.equals(gNumIId)) {
+ *                                log.error("\tgroup与product的numIId不一致 channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
+ *                            }
+ *                        }
+ *                    }
+ *
+ *                    if (spStatus == null) {
+ *                        if (gStatus != null) {
+ *                            log.error("\t\tgroup与product的平台状态不一致(product的为空) channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
+ *                        }
+ *                    } else {
+ *                        if (gStatus == null) {
+ *                            log.error("\t\tgroup与product的平台状态不一致(group的为空) channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
+ *                        } else {
+ *                            if (!spStatus.equals(gStatus)) {
+ *                                log.error("\t\tgroup与product的平台状态不一致 channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
+ *                            }
+ *                        }
+ *                    }
+ *
+ *                    if (spStatus == null) {
+ *                        if (sprStatus != null) {
+ *                            log.error("\t\t\tCMS与平台的实际状态不一致(CMS的为空) channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
+ *                        }
+ *                    } else {
+ *                        if (sprStatus == null) {
+ *                            log.error("\t\t\tCMS与平台的实际状态不一致(平台的为空) channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
+ *                        } else {
+ *                            if (!spStatus.equals(sprStatus)) {
+ *                                log.error("\t\t\tCMS与平台的实际状态不一致 channelId=" + channelId + toProdString(prodModel, cartId) + toGroupString(groupModel));
+ *                            }
+ *                        }
+ *                    }
+ */
