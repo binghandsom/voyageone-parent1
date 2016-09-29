@@ -54,7 +54,7 @@ public class HtProductUpdateResponse extends BaseJMResponse {
                         sbMsg.append("client_id,client_key,sign 认证失败");
                         break;
                     case "100001":
-                        sbMsg.append("jumei_product_id 参数格式错误");
+                        sbMsg.append("jumei_product_id 参数格式错误(大于0的整数)");
                         break;
                     case "100002":
                         sbMsg.append("update_data必须不为空的JSON,且有效字段至少1个");

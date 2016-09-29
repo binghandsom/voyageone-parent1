@@ -177,13 +177,13 @@ public class HtProductAddResponse extends BaseJMResponse {
                         sbMsg.append("在聚美不存在的Shipping_system_id");
                         break;
                     case "100018":
-                        sbMsg.append("产品短标题(product_short_name)长度为：0<长度<=15字");
+                        sbMsg.append("产品短标题(product_short_name)长度为：0<长度<=15字,不能出现价格及促销信息");
                         break;
                     case "100020":
-                        sbMsg.append("产品中标题(product_medium_name)长度为：0<长度<=35字");
+                        sbMsg.append("产品中标题(product_medium_name)长度为：0<长度<=35字,不能出现价格及促销信息");
                         break;
                     case "100022":
-                        sbMsg.append("产品长标题(product_long_name)长度为：0<长度<=130字");
+                        sbMsg.append("产品长标题(product_long_name)长度为：0<长度<=130字,不能出现价格及促销信息");
                         break;
                     case "100024":
                         sbMsg.append("1,本单详情(description_properties)不能为空;2,CSS语法错误,出现}},不要用Id定义CSS,CSS不能" +
