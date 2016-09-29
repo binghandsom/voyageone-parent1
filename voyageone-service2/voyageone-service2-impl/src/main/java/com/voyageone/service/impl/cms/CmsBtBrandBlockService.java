@@ -36,7 +36,16 @@ public class CmsBtBrandBlockService extends BaseService {
         this.sender = sender;
     }
 
-    public void block(String channelId, int cartId, int brandType, String brand, String username) throws IllegalAccessException {
+    /**
+     * 屏蔽指定品牌
+     *
+     * @param channelId 渠道
+     * @param cartId    店铺
+     * @param brandType 品牌类型，{@link CmsBtBrandBlockService#BRAND_TYPE_FEED} / {@link CmsBtBrandBlockService#BRAND_TYPE_MASTER} / {@link CmsBtBrandBlockService#BRAND_TYPE_PLATFORM}
+     * @param brand     品牌值
+     * @param username  屏蔽人
+     */
+    public void block(String channelId, int cartId, int brandType, String brand, String username) {
         switch (brandType) {
             case BRAND_TYPE_FEED:
             case BRAND_TYPE_MASTER:
@@ -70,12 +79,20 @@ public class CmsBtBrandBlockService extends BaseService {
         // 通知任务进行其他部分的处理
         // 如 feed 部分的屏蔽
         // MQ 不负责的部分，应该只包含上新部分
-//        sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, new HashMap<String, Object>() {{
-//            put("blocking", true);
-//            put("data", brandBlockModel);
-//        }});
+        sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, new HashMap<String, Object>() {{
+            put("blocking", true);
+            put("data", brandBlockModel);
+        }});
     }
 
+    /**
+     * 解除指定品牌的屏蔽
+     *
+     * @param channelId 渠道
+     * @param cartId    店铺
+     * @param brandType 品牌类型，{@link CmsBtBrandBlockService#BRAND_TYPE_FEED} / {@link CmsBtBrandBlockService#BRAND_TYPE_MASTER} / {@link CmsBtBrandBlockService#BRAND_TYPE_PLATFORM}
+     * @param brand     品牌值
+     */
     public void unblock(String channelId, int cartId, int brandType, String brand) {
         switch (brandType) {
             case BRAND_TYPE_FEED:
@@ -101,19 +118,35 @@ public class CmsBtBrandBlockService extends BaseService {
         brandBlockDao.delete(brandBlockModel.getId());
 
         // 同上，只是相反
-//        Map<String, Object> mqParams = new HashMap<>();
-//        mqParams.put("blocking", false);
-//        mqParams.put("data", brandBlockModel);
-//        sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, mqParams);
+        Map<String, Object> mqParams = new HashMap<>();
+        mqParams.put("blocking", false);
+        mqParams.put("data", brandBlockModel);
+        sender.sendMessage(MqRoutingKey.CMS_TASK_BRANDBLOCKJOB, mqParams);
     }
 
-    public boolean isBlocked(String channelId, int cartId, String feedBrand, String masterBrand, String platformBrandId) {
+    /**
+     * 判断品牌是否已经被屏蔽
+     *
+     * @param channelId       渠道
+     * @param cartId          店铺，该参数只在需要判断 platform 品牌的时候，才是必传参数
+     * @param feedBrand       feed 品牌，只在需要判断 feed 品牌时，传入该参数
+     * @param masterBrand     master 品牌，只在需要判断 master 品牌时，传入该参数
+     * @param platformBrandId platform 品牌的 id，只在需要判断 platform 品牌时，传入该参数
+     * @return true 表示其中一个品牌已被屏蔽, false 则全部未屏蔽
+     */
+    public boolean isBlocked(String channelId, Integer cartId, String feedBrand, String masterBrand, String platformBrandId) {
         return !StringUtils.isEmpty(feedBrand) && isBlocked(channelId, cartId, BRAND_TYPE_FEED, feedBrand)
                 || !StringUtils.isEmpty(masterBrand) && isBlocked(channelId, cartId, BRAND_TYPE_MASTER, masterBrand)
-                || !StringUtils.isEmpty(platformBrandId) && isBlocked(channelId, cartId, BRAND_TYPE_PLATFORM, platformBrandId);
+                || cartId != null && !StringUtils.isEmpty(platformBrandId) && isBlocked(channelId, cartId, BRAND_TYPE_PLATFORM, platformBrandId);
 
     }
 
+    /**
+     * 判断品牌是否已经被屏蔽
+     *
+     * @param brandBlockModel 包含品牌信息的数据模型
+     * @return 是否已屏蔽
+     */
     public boolean isBlocked(CmsBtBrandBlockModel brandBlockModel) {
         return isBlocked(brandBlockModel.getChannelId(), brandBlockModel.getCartId(), brandBlockModel.getType(), brandBlockModel.getBrand());
     }

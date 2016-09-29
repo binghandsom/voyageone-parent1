@@ -65,9 +65,9 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         shopProp.setOrder_channel_id(channelId);
         shopProp.setCart_id(String.valueOf(cartId));
         shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
-        shopProp.setAppKey("999999");
-        shopProp.setAppSecret("aaa");
-        shopProp.setSessionKey("bbb");
+        shopProp.setAppKey("23239809");
+        shopProp.setAppSecret("34fb2f57498bc6b00384da175021e587");
+        shopProp.setSessionKey("6100330f76a107e76570295d6a3f2d7295f98415d0d2b1e2640015666");
         // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
         shopProp.setPlatform_id("1");
         // for test only==============================================================
@@ -85,4 +85,53 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
 
         uploadTmTongGouService.uploadProduct(workload, shopProp, tmTonggouFeedAttrList);
     }
+
+
+    @Test
+    public void testGetSimpleItemPCatPath() throws Exception {
+
+        String channelId = "010";
+        Integer cartId = 30;
+        String numIId = "537818716734";
+
+        // for test only=============================================================
+        ShopBean shopProp = new ShopBean();
+        shopProp.setOrder_channel_id(channelId);
+        shopProp.setCart_id(String.valueOf(cartId));
+        shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
+        shopProp.setAppKey("23239809");
+        shopProp.setAppSecret("34fb2f57498bc6b00384da175021e587");
+        shopProp.setSessionKey("6100330f76a107e76570295d6a3f2d7295f98415d0d2b1e2640015666");
+        // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
+        shopProp.setPlatform_id("1");
+        // for test only==============================================================
+
+        Map<String, String> resultMap = uploadTmTongGouService.getSimpleItemCatInfo(shopProp, numIId);
+        System.out.println("");
+        System.out.println("pCatId = " + resultMap.get("pCatId"));
+        System.out.println("pCatPath = " + resultMap.get("pCatPath"));
+    }
+
+    @Test
+    public void testGetTongGouCatFullPathByCatId() throws Exception {
+
+        String channelId = "010";
+        Integer cartId = 30;
+
+        ShopBean shopProp = new ShopBean();
+        shopProp.setOrder_channel_id(channelId);
+        shopProp.setCart_id(String.valueOf(cartId));
+        shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
+        shopProp.setAppKey("23239809");
+        shopProp.setAppSecret("34fb2f57498bc6b00384da175021e587");
+        shopProp.setSessionKey("6100330f76a107e76570295d6a3f2d7295f98415d0d2b1e2640015666");
+        // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
+        shopProp.setPlatform_id("1");
+        // for test only==============================================================
+
+        String pCatFullPath = uploadTmTongGouService.getTongGouCatFullPathByCatId(shopProp, "50017233");
+        System.out.println("");
+        System.out.println("pCatPath = " + pCatFullPath);
+    }
+
 }

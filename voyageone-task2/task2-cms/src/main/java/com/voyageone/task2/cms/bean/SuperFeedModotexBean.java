@@ -123,7 +123,7 @@ public class SuperFeedModotexBean extends SuperFeedBean {
         Set<String> noMd5Fields = new HashSet<>();
         noMd5Fields.add("md5");
         noMd5Fields.add("updateflag");
-        return  beanToMd5(this,noMd5Fields);
+        return beanToMd5(this, noMd5Fields);
     }
 
     public void setMd5(String md5) {

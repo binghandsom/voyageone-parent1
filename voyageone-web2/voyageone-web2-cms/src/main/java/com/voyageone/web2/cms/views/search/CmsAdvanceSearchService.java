@@ -31,7 +31,7 @@ import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -44,12 +44,15 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA;
+
 /**
  * @author Edward
  * @version 2.0.0, 15/12/14
  */
 @Service
-public class CmsAdvanceSearchService extends BaseAppService {
+public class CmsAdvanceSearchService extends BaseViewService {
 
     @Autowired
     private PromotionService promotionService;
@@ -170,14 +173,20 @@ public class CmsAdvanceSearchService extends BaseAppService {
         masterData.put("cartList", cartList);
 
         // 是否自动最终售价同步指导价格
-        List<CmsChannelConfigBean> chCfgList = CmsChannelConfigs.getConfigBeans(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
+        CmsChannelConfigBean autoPriceCfg = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE);
         String autoApprovePrice = "0"; // 缺省不自动同步
-        if (chCfgList != null && chCfgList.size() > 0) {
-            if ("1".equals(chCfgList.get(0).getConfigValue1())) {
-                autoApprovePrice = "1"; // 自动同步
-            }
+        if (autoPriceCfg != null && "1".equals(autoPriceCfg.getConfigValue1())) {
+             autoApprovePrice = "1"; // 自动同步
         }
         masterData.put("autoApprovePrice", autoApprovePrice);
+
+        // 是否是使用价格公式
+        CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), PRICE_CALCULATOR);
+        String isPriceFormula = "0";
+        if (priceCalculatorConfig != null && PRICE_CALCULATOR_FORMULA.equals(priceCalculatorConfig.getConfigValue1())) {
+            isPriceFormula = "1";
+        }
+        masterData.put("isPriceFormula", isPriceFormula);
 
         return masterData;
     }

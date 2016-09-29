@@ -30,7 +30,7 @@ require.config({
         'notify': 'libs/notify/0.4.0/notify',
         'cms': 'modules/cms/app',
         'chosen': 'libs/chosen/1.4.2/chosen.jquery',
-        'angular-chosen': 'libs/angular-chosen/1.2.0/angular-chosen',
+        'angular-chosen': 'libs/angular-chosen/1.5.0/angular-chosen',
         'md5': 'libs/angular-md5/0.1.8/angular-md5',
         'angular-drag':'libs/angular-drag/angular-drag'
     },

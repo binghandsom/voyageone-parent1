@@ -21,6 +21,14 @@ define(['underscore'], function (_) {
 
     return {
         /**
+         * Master
+         */
+        MASTER:new Cart('MASTER' , 0 , '主数据',''),
+        /**
+         * Feed
+         */
+        FEED:new Cart('FEED' , 1 , 'Feed数据',''),
+        /**
          * 天猫
          */
         TM: new Cart('TM', 20, '天猫', ''),
@@ -59,6 +67,15 @@ define(['underscore'], function (_) {
          * 聚美优品 (注意：聚美的产品url后缀要添加'.html')
          */
         JM: new Cart('JM', 27, '聚美优品', 'http://item.jumeiglobal.com/'),
+
+        /**
+         * 天猫国际官网同购
+         */
+        TT: new Cart('TT', 30, '天猫国际官网同购', 'https://detail.tmall.hk/hk/item.htm?id='),
+        /**
+         * 天猫国际USJOI官网同购
+         */
+        USTT: new Cart('USTT', 31, '天猫国际USJOI官网同购', 'https://detail.tmall.hk/hk/item.htm?id='),
 
         /**
          * 京东匠心界

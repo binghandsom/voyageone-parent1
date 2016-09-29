@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.feed;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -42,6 +43,10 @@ public class FeedInfoService extends BaseService {
         return cmsBtFeedInfoDao.countByQuery(queryStr, channelId);
     }
 
+    public WriteResult updateFeedInfoSkuPrice(String channelId, String sku, Double price){
+        return  cmsBtFeedInfoDao.updateFeedInfoSkuPrice(channelId, sku,price);
+    }
+
     /**
      * getListForVendor
      */
@@ -67,7 +72,9 @@ public class FeedInfoService extends BaseService {
     public CmsBtFeedInfoModel getProductBySku(String channelId, String sku) {
         return cmsBtFeedInfoDao.selectProductBySku(channelId, sku);
     }
-
+    public CmsBtFeedInfoModel getProductByClientSku(String channelId, String clientSku) {
+        return cmsBtFeedInfoDao.selectProductByClientSku(channelId, clientSku);
+    }
     /**
      * 更新feed的产品信息
      *

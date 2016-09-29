@@ -6,6 +6,7 @@
         http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
     <!-- localhost dev env -->
+    <!-- localhost dev env -->
     <import resource="classpath*:common-config.xml"/>
     <import resource="classpath*:data-cache-config.xml"/>
     <import resource="classpath*:datasource-cms2-config.xml"/>

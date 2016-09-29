@@ -17,6 +17,11 @@
             <artifactId>voyageone-components-base</artifactId>
             <version>${voyageone.components.base.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-tmall</artifactId>
+            <version>${voyageone.components.tmall.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>voyageone-components-cn</finalName>

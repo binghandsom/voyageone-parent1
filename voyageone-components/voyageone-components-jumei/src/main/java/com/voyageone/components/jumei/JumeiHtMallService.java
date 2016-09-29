@@ -203,4 +203,26 @@ public class JumeiHtMallService extends JmBase {
         }
     }
 
+    /**
+     * 编辑商城Sku属性[MALL]
+     *
+     * @param shopBean 店铺信息
+     * @param failCause 用于保存错误信息
+     * @return 是否更新成功
+     */
+    public boolean updateMallSku(ShopBean shopBean, String jumei_sku_no, boolean enabled, StringBuffer failCause) throws Exception {
+        HtMallSkuUpdateRequest request = new HtMallSkuUpdateRequest();
+        request.setJumei_sku_no(jumei_sku_no);
+        request.setEnabled(enabled);
+        String reqResult = reqJmApi(shopBean, request.getUrl(), request.getParameter());
+        HtMallSkuUpdateResponse response = new HtMallSkuUpdateResponse();
+        response.setBody(reqResult);
+        if (!response.isSuccess()) {
+            failCause.append(response.getErrorMsg());
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 }

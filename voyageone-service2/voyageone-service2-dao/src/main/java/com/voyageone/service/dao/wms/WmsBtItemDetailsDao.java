@@ -15,12 +15,18 @@ import java.util.Map;
 
 @Repository
 public class WmsBtItemDetailsDao extends com.voyageone.service.dao.ServiceBaseDao {
-
     public List<ItemDetailsBean> selectByClientSku(String channelId, String sku) {
         Map<String, Object> params = new HashMap<>();
         params.put("channelId", channelId);
         params.put("clientSku", sku);
 
         return selectList("wms_bt_item_details_select_by_client_sku", params);
+    }
+    public int update(String channelId,String clientSku, int isSale) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("channelId", channelId);
+        params.put("clientSku", clientSku);
+        params.put("isSale", isSale);
+        return update("wms_bt_item_details_updateIsSale", params);
     }
 }

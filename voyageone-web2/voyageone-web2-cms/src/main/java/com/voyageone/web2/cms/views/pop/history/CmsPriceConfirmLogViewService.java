@@ -3,7 +3,7 @@ package com.voyageone.web2.cms.views.pop.history;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.service.dao.cms.CmsBtPriceConfirmLogDao;
 import com.voyageone.service.model.cms.CmsBtPriceConfirmLogModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ import java.util.Map;
  * @since 2.5.0
  */
 @Service
-class CmsPriceConfirmLogViewService extends BaseAppService {
+class CmsPriceConfirmLogViewService extends BaseViewService {
 
     private final CmsBtPriceConfirmLogDao priceConfirmLogDao;
 

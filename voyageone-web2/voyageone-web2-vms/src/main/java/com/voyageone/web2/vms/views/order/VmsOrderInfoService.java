@@ -6,7 +6,6 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.BeanUtils;
-import com.voyageone.common.util.MapUtil;
 import com.voyageone.service.bean.vms.order.*;
 import com.voyageone.service.bean.vms.shipment.ShipmentBean;
 import com.voyageone.service.impl.BaseService;
@@ -418,8 +417,8 @@ public class VmsOrderInfoService extends BaseService {
                                                           SortParamBean sortParamBean) {
         Map<String, Object> orderSearchParams;
         try {
-            orderSearchParams = MapUtil.toMap(orderSearchInfoBean);
-        } catch (IllegalAccessException e) {
+            orderSearchParams = BeanUtils.toMap(orderSearchInfoBean);
+        } catch (RuntimeException e) {
             throw new BusinessException("8000037", e);
         }
 

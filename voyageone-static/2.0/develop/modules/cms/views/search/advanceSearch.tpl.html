@@ -440,8 +440,8 @@
                                                         <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                                         <option value="2">比指导售价低</option>
                                                         <option value="3">比指导售价高</option>
-                                                        <option value="4">向上击穿警告</option>
-                                                        <option value="5">向下击穿警告</option>
+                                                        <option value="4">比指导售价低(超出阀值)</option>
+                                                        <option value="5">比指导售价高(超出阀值)</option>
                                                         <option value="1">等于指导售价</option>
                                                     </select>
                                                 </div>
@@ -635,6 +635,9 @@
                                 <li>
                                     <a href="javascript:void(0)" ng-click="openApproval(openUpdateApproval)">{{'TXT_ALL_CHANNEL_APPROVAL'|translate}}</a>
                                 </li>
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="refreshRetailPrice(null)">重新计算价格</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -675,6 +678,9 @@
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" ng-click="$parent.openApproval(openUpdateApproval,cartBean.value)">{{'TXT_PRODUCTS_APPROVAL'|translate}}</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="refreshRetailPrice(cartBean)">重新计算价格</a>
                                 </li>
                             </ul>
                         </div>

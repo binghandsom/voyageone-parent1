@@ -3,9 +3,9 @@ package com.voyageone.web2.vms.views.inventory;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.service.impl.vms.inventory.InventoryFileService;
 import com.voyageone.service.model.vms.VmsBtInventoryFileModel;
-import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.vms.VmsConstants;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -24,7 +23,7 @@ import java.util.List;
  * @version 1.0
  */
 @Service
-public class VmsInventoryFileUploadService extends BaseAppService {
+public class VmsInventoryFileUploadService extends BaseViewService {
 
     private final static int FILE_LIMIT_SIZE = 52428800;
 

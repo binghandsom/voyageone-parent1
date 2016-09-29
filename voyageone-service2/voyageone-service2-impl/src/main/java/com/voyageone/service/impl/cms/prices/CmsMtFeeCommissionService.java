@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.prices;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtFeeCommissionDao;
 import com.voyageone.service.impl.BaseService;
@@ -48,7 +49,7 @@ public class CmsMtFeeCommissionService extends BaseService {
             {FIELD_CHANNELID, FIELD_CARTID},
             {FIELD_CHANNELID, FIELD_PLATFORMID},
             {FIELD_CHANNELID},
-            {FIELD_CARTID},
+            {FIELD_PLATFORMID, FIELD_CARTID},
             {FIELD_PLATFORMID},
             {} // 最低优先级, 表示仅包含 commission type
     };
@@ -147,45 +148,36 @@ public class CmsMtFeeCommissionService extends BaseService {
 
         private Map<String, Object> getQueryMap(String[] paramKeys) {
 
-            boolean match = true;
+            Map<String, Object> _queryMap = new HashMap<>();
+
+            // 此处先初始化好相应的默认值
+            // 这样防止出现 channelId = 1, commissionType = pf
+            // 查询时匹配到 channelId = 1, commissionType = pf, 并且 cartId = 23
+            // 类似的情况出现
+            // 也就是要进行绝对精确的查询
+            _queryMap.put(FIELD_COMMISSION_TYPE, getCommissionType());
+            _queryMap.put(FIELD_CHANNELID, "");
+            _queryMap.put(FIELD_PLATFORMID, 0);
+            _queryMap.put(FIELD_CARTID, 0);
+            _queryMap.put(FIELD_CATID, "");
 
             for (String fieldName : paramKeys) {
                 // 不包含 KEY
                 // 则说明不匹配
-                if (!queryMap.containsKey(fieldName)) {
-                    match = false;
-                    break;
-                }
+                if (!queryMap.containsKey(fieldName))
+                    return null;
 
                 // 有 Key 但没值, 不匹配
                 Object value = queryMap.get(fieldName);
-                if (value == null) {
-                    match = false;
-                    break;
-                }
+                if (value == null)
+                    return null;
 
                 // 有值, 但是空字符串, 也不匹配
-                if (value instanceof String && StringUtils.isEmpty((String) value)) {
-                    match = false;
-                    break;
-                }
+                if (value instanceof String && StringUtils.isEmpty((String) value))
+                    return null;
+
+                _queryMap.put(fieldName, queryMap.get(fieldName));
             }
-
-            // 当中途匹配成功
-            // 直接返回
-            // 此时当前优先级已经被保存
-            if (!match)
-                return null;
-
-            Map<String, Object> _queryMap = new HashMap<>();
-
-            _queryMap.put(FIELD_COMMISSION_TYPE, getCommissionType());
-
-            if (paramKeys.length == 0)
-                return _queryMap;
-
-            for (String key : paramKeys)
-                _queryMap.put(key, queryMap.get(key));
 
             return _queryMap;
         }

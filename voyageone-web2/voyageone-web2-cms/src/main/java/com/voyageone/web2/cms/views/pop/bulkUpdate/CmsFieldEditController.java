@@ -65,6 +65,10 @@ public class CmsFieldEditController extends CmsController {
                 // 指导价变更批量确认
                 Map<String, Object> rs = fieldEditService.confirmRetailPrice(params, getUser(), cmsSession);
                 return success(rs);
+            } else if ("refreshRetailPrice".equals(prop)) {
+                // 重新计算指导价
+                Map<String, Object> rs = fieldEditService.confirmRetailPrice(params, getUser(), cmsSession);
+                return success(rs);
             }
             return success(null);
         }

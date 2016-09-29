@@ -12,7 +12,9 @@ public enum EnumProductOperationType {
     BatchSetCats(5, "批量设置店铺内分类"),  // 高级检索 批量设置店铺内分类
     BatchSetFreeTag(6, "批量设置自由标签"),  // 高级检索 批量设置自由标签
     WebEdit(7, "页面编辑"),                     // 产品编辑页
-    BatchConfirmRetailPrice(7, "指导价变更批量确认");                     // 指导价变更批量确认
+    BatchConfirmRetailPrice(8, "指导价变更批量确认"),                     // 高级检索 指导价变更批量确认
+    DelistinGroup(9, "Group下线"),
+    BatchRefreshRetailPrice(10, "重新计算价格");                     // 高级检索 重新计算指导售价
 
     private int id;
     private String name;

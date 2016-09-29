@@ -6,7 +6,7 @@ import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.vms.inventory.InventoryFileService;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ import static com.voyageone.web2.vms.VmsConstants.TYPE_ID.IMPORT_PRC_INV_FILE_ST
  * @version 1.0
  */
 @Service
-public class VmsPrcInvImportResultService extends BaseAppService {
+public class VmsPrcInvImportResultService extends BaseViewService {
 
     private final InventoryFileService inventoryFileService;
 

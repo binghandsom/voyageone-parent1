@@ -248,7 +248,7 @@ public class Jumei_019_SummerGuru_DictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
         }
@@ -267,7 +267,7 @@ public class Jumei_019_SummerGuru_DictTest {
             RuleExpression useOriUrl = new RuleExpression();
             useOriUrl.addRuleWord(new TextWord("1"));
 
-            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
             ruleRoot.addRuleWord(new CustomWord(word));
         }
 

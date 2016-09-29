@@ -16,6 +16,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.wms.ClientInventoryService;
 import com.voyageone.service.model.cms.CmsMtChannelValuesModel;
@@ -62,6 +63,9 @@ public class FeedToCmsService extends BaseService {
 
     @Autowired
     private ClientInventoryService clientInventoryService;
+
+    @Autowired
+    private CmsBtBrandBlockService cmsBtBrandBlockService;
 
 //    public static final String URL_FORMAT = "[~@.' '#$%&*_''/‘’^\\()]";
 //    private final Pattern special_symbol = Pattern.compile(URL_FORMAT);
@@ -210,10 +214,16 @@ public class FeedToCmsService extends BaseService {
                     if(isImportFeedTypeConfig != null &&"1".equals(isImportFeedTypeConfig.getConfigValue1())){
                         insertLog = true;
                         product.setCreater(modifier);
+                        product.setCreated(DateTimeUtil.getNow());
+                        product.setModifier(modifier);
+                        product.setModified(DateTimeUtil.getNowTimeStamp());
                         product.setUpdFlg(0);
                     }else{
                         insertLog = true;
                         product.setCreater(modifier);
+                        product.setCreated(DateTimeUtil.getNow());
+                        product.setModifier(modifier);
+                        product.setModified(DateTimeUtil.getNowTimeStamp());
                         product.setUpdFlg(9);
                     }
                 }
@@ -288,36 +298,58 @@ public class FeedToCmsService extends BaseService {
         if (product.getImage() == null || product.getImage().size() == 0) {
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有图片");
-            $info(product.getCode() + "----" + product.getUpdMessage());
+            for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+                sku.setErrInfo("没有图片");
+            }
+            $info(product.getCode()+"----" +product.getUpdMessage());
             return false;
         } else if (product.getImage().stream().filter(str -> !StringUtil.isEmpty(str.trim())).collect(Collectors.toList()).size() == 0) {
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有图片");
-            $info(product.getCode() + "----" + product.getUpdMessage());
+            for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+                sku.setErrInfo("没有图片");
+            }
+            $info(product.getCode()+"----" +product.getUpdMessage());
             return false;
         }
 
         if (product.getBrand() == null || StringUtil.isEmpty(product.getBrand().trim())) {
             product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
             product.setUpdMessage("没有品牌");
-            $info(product.getCode() + "----" + product.getUpdMessage());
+            for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+                sku.setErrInfo("没有品牌");
+            }
+            $info(product.getCode()+"----" +product.getUpdMessage());
+            return false;
+        }
+        //String channelId, int cartId, String feedBrand, String masterBrand, String platformBrandId
+        if(cmsBtBrandBlockService.isBlocked(product.getChannelId(), CmsBtBrandBlockService.BRAND_TYPE_FEED,product.getBrand(),null,null)){
+            product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedBlackList);
+            product.setUpdMessage("已经加入黑名单商品");
+            for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+                sku.setErrInfo("已经加入黑名单商品");
+            }
+            $info(product.getCode()+"----" +product.getUpdMessage());
             return false;
         }
 
+        StringBuffer sbUpdMessage = new StringBuffer();
         for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
             if (StringUtil.isEmpty(sku.getBarcode())) {
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
-                product.setUpdMessage("没有UPC");
-                $info(product.getCode() + "----" + product.getUpdMessage());
-                return false;
+                sku.setErrInfo("没有UPC");
+                sbUpdMessage.append(sku.getClientSku() +":没有UPC,");
             }
-
             if (sku.getPriceNet() == null || sku.getPriceNet().compareTo(0D) == 0) {
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
-                product.setUpdMessage("成本价为0");
-                $info(product.getCode() + "----" + product.getUpdMessage());
-                return false;
+                sku.setErrInfo("成本价为0");
+                sbUpdMessage.append(sku.getClientSku() +":成本价为0,");
             }
+        }
+        if(CmsConstants.FeedUpdFlgStatus.FeedErr == product.getUpdFlg()){
+            product.setUpdMessage(sbUpdMessage.toString());
+            $info(product.getCode() + "----" +product.getUpdMessage());
+            return false;
         }
         return true;
     }

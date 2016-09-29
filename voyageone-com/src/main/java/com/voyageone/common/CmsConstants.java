@@ -243,6 +243,7 @@ public class CmsConstants {
         int errorNum = 2;       // 上新失败
         int uploadingNum = 3;   // 上新中(上新完成后回写状态的时候用)
         int review = 4;         // 达尔文产品审核中
+        int waitCnUpload = 5;  // 独立域名等待xml上传
     }
 
     public interface FeedUpdFlgStatus{
@@ -252,6 +253,7 @@ public class CmsConstants {
         int Fail = 2;     //导入失败
         int NotIMport = 3; //不导入
         int FeedErr = 8;  //Feed数据异常
+        int FeedBlackList = 7;  //黑名单
     }
 
     /**

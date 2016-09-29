@@ -52,4 +52,24 @@ public class CmsMtFeeTaxService extends BaseService {
 
         return vaTaxRate + consumptionTaxRate;
     }
+
+    /**
+     *获取默认税率
+     *
+     * @return 默认税率
+     */
+    public Double getDefaultTaxRate() {
+
+        Double defaultTaxRate;
+
+        defaultTaxRate = getTaxRate("","");
+
+        if(defaultTaxRate == null){
+            $warn("***   配置表中没有配置默认税率，系统设置税率为11.9   ***");
+            //默认税号设置为11.9   更新时间2016-09-27
+            defaultTaxRate = 11.9;
+        }
+
+        return defaultTaxRate;
+    }
 }

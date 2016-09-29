@@ -529,7 +529,8 @@ public class TmallGjSkuFieldBuilderImpl6 extends AbstractSkuFieldBuilder {
             String sizeId = customSizeNameIdMap.get(skuSize);
             if (sizeId == null) {
                 $error("No customSize found for size:" + skuSize);
-                return null;
+//                return null;
+                throw new BusinessException(String.format("[%s]的尺码[%s]对应尺码扩展(脚长等属性)未设定!", skuExtend_sizeField.getName(), skuSize));
             }
             Map<String, String> customSizePropMap = allCustomSizePropMap.get(sizeId);
 

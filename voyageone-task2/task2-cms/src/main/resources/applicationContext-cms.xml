@@ -148,10 +148,25 @@
         <task:scheduled ref="Cms2BcbgAnalysisJob" method="run" cron="40 0/3 * * * *"/>
 
         <!-- 单独向Target发送数据-->
-        <task:scheduled ref="TargetDailyService" method="run" cron="0 0 8,20 * * *"/>
+        <task:scheduled ref="TargetDailyService" method="run" cron="0 0 1,13 * * *"/>
 
         <!-- 从天猫/京东获取商品的上下架状态（每天早上2点一次） -->
         <task:scheduled ref="CmsGetPlatformStatusJob" method="run" cron="0 0 0/2 * * ?"/>
+
+        <!-- 取所有平台tree和schema（每天早上5点一次） -->
+        <task:scheduled ref="CmsGetAllPlatformsInfoJob" method="run" cron="0 0 5 * * ?"/>
+
+        <!-- 独立域名上新xml准备（每分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadCnPrepareJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <!-- 独立域名上新（每3分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadCnJob" method="run" cron="0 0/3 0-23 * * ?"/>
+
+        <!-- 独立域名类目-产品关系（每5分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductSellercatCnJob" method="run" cron="0 0/5 0-23 * * ?"/>
+
+         <!--独立域名图片上传（每2小时一次） -->
+        <task:scheduled ref="CmsBuildPlatformImageUploadCnJob" method="run" cron="0 0 0/2 * * ?"/>
 
     </task:scheduled-tasks>
 

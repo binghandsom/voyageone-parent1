@@ -2,8 +2,10 @@ package com.voyageone.common.configs.Enums;
 
 /**
  * Created by Jack on 6/6/2017.
+ *
+ * @version 2.6.0
+ * @since 2.0.0
  */
-
 public class CartEnums {
     /**
      * 对应 ct_cart 表中存在的配置名称
@@ -135,6 +137,17 @@ public class CartEnums {
 		public int getValue()
 		{
 			return  Integer.parseInt(id);
+		}
+
+		/**
+		 * 判断给定的店铺是否是同购店
+		 *
+		 * @param cart 某店铺
+		 * @return 是否是同购店
+		 * @since 2.6.0
+		 */
+		public static boolean isSimple(Cart cart) {
+			return TT.equals(cart) || USTT.equals(cart);
 		}
 	}
 }

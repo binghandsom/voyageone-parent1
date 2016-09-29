@@ -11,12 +11,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.IOException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class CmsBtJmPromotionExportTaskServiceTest {
     @Autowired
     CmsBtJmPromotionExportTask3Service service;
     @Test
     public  void  test() throws IOException, ExcelException {
-        service.export(180,"/usr/web/contents/cms/jumei_sx/export");
+        service.export(181,"/usr/web/contents/cms/jumei_sx/export");
     }
 }

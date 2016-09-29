@@ -2,7 +2,7 @@ package com.voyageone.service.impl.com.mq.config;
 
 /**
  * @author aooer 2016/4/18.
- * @version 2.0.0
+ * @version 2.6.0
  * @since 2.0.0
  */
 public class MqRoutingKey {
@@ -15,15 +15,14 @@ public class MqRoutingKey {
     public static final String CMS_BATCH_JmBtPromotionExportTask = "voyageone_cms_batchjob_JmBtPromotionExportTask_queue";
 
     public static final String CMS_BATCH_JmPromotionRecovery = "voyageone_cms_batchjob_JmPromotionRecovery_queue";
+
     public static final String CMS_BATCH_JuMeiProductUpdate = "voyageone_cms_batchjob_JuMeiProductUpdate_queue";
 
     public static final String CMS_BATCH_JuMeiProductUpdateDealEndTimeJob = "voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue";
-
     /**
      * image create task
      */
     public static final String CMS_BATCH_CmsMtImageCreateTaskJob = "voyageone_cms_batchjob_CmsMtImageCreateTaskJob_queue";
-
     /**
      * jd mq task
      */
@@ -38,13 +37,12 @@ public class MqRoutingKey {
     public static final String CMS_BATCH_FeedExportJob = "voyageone_cms_batchjob_FeedExportJob_queue";
 
     public static final String CMS_BATCH_TMFieldsImportCms2Job = "voyageone_CMS_BATCH_TMFieldsImportCms2Job_queue";
-
     /**
      * tmall mq task
      */
     public static final String CMS_BATCH_PlatformCategorySchemaTmJob = "voyageone_cms_batchjob_CmsBuildPlatformCategorySchemaTmJob_queue";
-    public static final String CMS_BATCH_PlatformProductUploadTmJob = "voyageone_cms_batchjob_CmsBuildPlatformProductUploadTmJob_queue";
 
+    public static final String CMS_BATCH_PlatformProductUploadTmJob = "voyageone_cms_batchjob_CmsBuildPlatformProductUploadTmJob_queue";
     /**
      * ca api task
      */
@@ -76,4 +74,11 @@ public class MqRoutingKey {
      * 高级检索-取得产品的bi信息
      */
     public static final String CMS_TASK_AdvSearch_GetBIDataJob = "voyageone_cms_task_AdvSearch_GetBIDataJob_queue";
+    /**
+     * 品牌黑名单，屏蔽任务
+     * create by jonas
+     *
+     * @since 2.6.0
+     */
+    public static final String CMS_TASK_BRANDBLOCKJOB = "voyageone_cms_task_CmsBrandBlockJobService_queue";
 }

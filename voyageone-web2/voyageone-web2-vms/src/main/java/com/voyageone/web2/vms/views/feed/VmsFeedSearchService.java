@@ -7,7 +7,7 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.*;
  * @version 1.0
  */
 @Service
-public class VmsFeedSearchService extends BaseAppService {
+public class VmsFeedSearchService extends BaseViewService {
 
     @Autowired
     private FeedInfoService feedInfoService;
