@@ -82,7 +82,8 @@ public class HtProductUpdateResponse extends BaseJMResponse {
                         sbMsg.append("brand_id，品牌id（请确认字段类型及品牌id在聚美是否存在，以及是否有品牌授权）");
                         break;
                     case "100012":
-                        sbMsg.append("name，产品名格式错误");
+                        sbMsg.append("产品名(name)格式错误，不能出现容量、规格、颜色等信息，不能填写除了\"（）\" \"/\" \"+\" \"*\"这" +
+                                "4种符号以外的特殊符号(如-，<>，·等) ，空格等符号必须是英文半角符号，套装产品名以“+”号连接");
                         break;
                     case "100013":
                         sbMsg.append("foreign_language_name，产品外文名格式错误");
