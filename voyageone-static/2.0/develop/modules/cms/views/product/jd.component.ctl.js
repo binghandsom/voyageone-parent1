@@ -257,11 +257,6 @@ define([
                  */
                 function saveProduct(mark) {
 
-                    if (mark == "temporary") {
-                        callSave("temporary");
-                        return;
-                    }
-
                     if (mark == "ready") {
                         if (!validSchema()) {
                             alert("请输入必填属性，或者输入的属性格式不正确");
@@ -309,6 +304,11 @@ define([
                     _.map(scope.vm.platform.skus, function (item) {
                         item.property = item.property == null ? "OTHER" : item.property;
                     });
+
+                    if (mark == "temporary") {
+                        callSave("temporary");
+                        return;
+                    }
 
                     if (scope.vm.status == "Approved") {
 
