@@ -36,17 +36,17 @@ define([
                         }
                     })
                 });
-                switch (self.sourceData.type) {
-                    case 'delete':
-                        return self.popType = '删除权限';
-                        break;
-                    case 'add':
-                        return self.popType = '新增权限';
-                        break;
-                }
                 self.adminUserService.getAllApp().then(function (res) {
                     self.appList = res.data;
                 });
+                switch (self.sourceData.type) {
+                    case 'delete':
+                        self.popType = '删除权限';
+                        break;
+                    case 'add':
+                        self.popType = '新增权限';
+                        break;
+                }
             },
             changeApp: function (app) {
                 var self = this;

@@ -38,10 +38,12 @@ define([
             init: function () {
                 var self = this;
                 self.storeService.getAllStore(null).then(function (res) {
-                    self.storeList = res.data;
-                    _.forEach(self.storeList, function (store) {
-                        store.storeName = '(' + store.channelId + ')' + store.storeName;
-                    })
+                	 self.tempList = res.data;
+                     self.storeList = [];
+                     _.forEach(self.tempList, function (item) {
+                         var data = '(' + item.channelId + ')' + item.storeName;
+                         self.storeList.push({'storeId': item.storeId, 'storeName': data});
+                     })
                 });
                 self.adminRoleService.getAllRoleType().then(function (res) {
                     self.roleTypeList = res.data;

@@ -31,6 +31,7 @@ define([
                 orgId: '',
                 application: '',
                 storeId: '',
+                company:'',
                 pageInfo: this.pageOption
             }
         }
@@ -57,6 +58,9 @@ define([
                 });
                 self.adminRoleService.getAllRole().then(function (res) {
                     self.roleList = res.data;
+                });
+                self.channelService.getAllCompany().then(function(res){
+                	self.companyList = res.data;
                 });
                 self.adminUserService.init().then(function (res) {
                     self.adminList = res.data.result;
@@ -92,6 +96,7 @@ define([
                         'channelId': self.searchInfo.channelId,
                         'orgId': self.searchInfo.orgId,
                         'application': self.searchInfo.application,
+                        'company': self.search.company,
                         'storeId': self.searchInfo.storeId
                     })
                     .then(function (res) {
@@ -127,6 +132,7 @@ define([
                     channelId: '',
                     orgId: '',
                     application: '',
+        			company:'',
                     storeId: ''
                 }
             },
@@ -190,13 +196,17 @@ define([
                     return;
                 } else {
                     self.confirm('确认要重置密码吗？').then(function () {
-                        _.forEach(self.adminList, function (Info) {
-                            if (Info.id == self.adminUserSelList.selList[0].id) {
-                                self.adminUserService.resetPass({'userAccount': Info.userAccount}).then(function (res) {
-                                    console.log(res);
-                                });
+                    	var idList = [];
+                    	_.forEach(self.adminUserSelList.selList,function(sel){
+                        	idList.push(sel.id);
+                		})
+                        self.adminUserService.resetPass(idList).then(function (res) {
+                            if(res.data==true){
+                            	self.alert('恭喜您！密码重置成功啦！');
+                            }else{
+                            	self.alert('密码充值失败，请重试');
                             }
-                        })
+                        });
                     })
                 }
             },

@@ -216,7 +216,7 @@ public class AdminUserController extends AdminController {
         String userAccount = requestMap.get("userAccount").toString();
         String application = requestMap.get("application").toString();
 
-        return success(adminUserService.showUserAuth(application, userAccount));
+        return success(adminUserService.showUserAuth(userAccount, application));
     }
 
 

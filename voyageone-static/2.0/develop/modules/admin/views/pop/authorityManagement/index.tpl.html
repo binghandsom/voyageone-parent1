@@ -6,7 +6,7 @@
     </div>
     <div class="modal-body wrapper vbox">
         <form role="form" class="form-horizontal" name="addForm" novalidate>
-            <div ng-if="ctrl.show">
+            <div>
                 <div class="col-sm-3">
                     <div class="form-horizontal">
                         <div class="row form-group"><!-- 用户名 -->
@@ -55,7 +55,7 @@
                     <label class="col-sm-1 control-label">权限：</label>
                     <label class="col-sm-1 control-label">系统</label>
                     <div class="col-sm-3">
-                        <select class="form-control" ng-model="ctrl.sourceData.application" ng-options="app.id as app.application for app in ctrl.appList">
+                        <select class="form-control" ng-model="ctrl.sourceData.application" ng-options="app.application as app.application for app in ctrl.appList" ng-change="ctrl.search(ctrl.sourceData.application)">
                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>

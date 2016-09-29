@@ -23,29 +23,15 @@ define([
                 self.adminOrgService.getAllOrg().then(function (res) {
                     self.orgList = res.data;
                 });
-                if (self.sourceData.length == 1) {
-                    self.show = true;
-                    self.adminUserService.getAuthByUser({
-                        'userAccount': self.sourceData[0].userAccount,
-                        'application': self.sourceData[0].application
-                    }).then(function (res) {
-                        self.authList = res.data;
-                    })
-                } else {
-                    self.show = false;
-                    var roleIds = [];
-                    var application = [];
-                    _.forEach(self.sourceData, function (item) {
-                        roleIds.push(item.roleId);
-                        application.push(item.application);
-                    });
-                    self.adminRoleService.getAuthByRoles({
-                        'roleIds': roleIds,
-                        'application': application
-                    }).then(function (res) {
-                        console.log(res);
-                    });
-                }
+            },
+            search:function(value){
+            	var self = this;
+                self.adminUserService.getAuthByUser({
+                    'userAccount': self.sourceData[0].userAccount,
+                    'application': value
+                }).then(function (res) {
+                    self.authList = res.data;
+                })
             }
         };
         return authorityController;

@@ -305,7 +305,11 @@ define([
                 var selectedAppList = _.filter(self.applicationList, function (selectedApp) {
                     return selectedApp.valid;
                 });
-                self.sourceData.application = selectedAppList;
+                var selApp = [];
+                _.forEach(selectedAppList,function(app){
+                	selApp.push(app.application.toLowerCase());
+                })
+                self.sourceData.application = selApp;
 
                 self.sourceData.channelId = [];
                 self.sourceData.storeId = [];

@@ -16,7 +16,8 @@ define([
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
             this.saveInfo = {
-                userAccount: this.sourceData.userAccount,
+                id:this.sourceData.id,
+        		userAccount: this.sourceData.userAccount,
                 userName: this.sourceData.userName,
                 orgId: this.sourceData.orgId,
                 email: this.sourceData.email,
