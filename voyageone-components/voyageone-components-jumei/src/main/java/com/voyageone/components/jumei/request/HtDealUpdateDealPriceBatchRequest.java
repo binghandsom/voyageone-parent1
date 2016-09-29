@@ -36,7 +36,7 @@ public class HtDealUpdateDealPriceBatchRequest implements BaseJMRequest {
 
     @Override
     public Map<String, Object> getParameter() {
-        List<BaseMongoMap<String, Object>> updateDataList = new ArrayList<>();
+        List<BaseMongoMap<String, Object>> updateDataMapList = new ArrayList<>();
         update_data.forEach(p -> {
             BaseMongoMap<String, Object> mapTmp = new BaseMongoMap<String, Object>();
             mapTmp.put("jumei_sku_no", p.getJumei_sku_no());
@@ -45,11 +45,11 @@ public class HtDealUpdateDealPriceBatchRequest implements BaseJMRequest {
                 mapTmp.put("market_price", p.getMarket_price());
             if (p.getDeal_price() > 0.0d)
                 mapTmp.put("deal_price", p.getDeal_price());
-            updateDataList.add(mapTmp);
+            updateDataMapList.add(mapTmp);
         });
 
         Map<String, Object> params = new HashMap<>();
-        params.put("update_data", JacksonUtil.bean2JsonNotNull(updateDataList));
+        params.put("update_data", JacksonUtil.bean2JsonNotNull(updateDataMapList));
         return params;
     }
 }
