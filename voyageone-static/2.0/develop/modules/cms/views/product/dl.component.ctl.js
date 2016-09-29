@@ -244,7 +244,7 @@ define([
                     else
                         scope.vm.platform.pAttributeStatus = "0";
 
-                    scope.vm.platform.status = scope.vm.status;
+                    scope.vm.platform.status = mark == "temporary" ? "Pending" : scope.vm.status;
                     scope.vm.platform.sellerCats = scope.vm.sellerCats;
                     scope.vm.platform.cartId = +scope.cartInfo.value;
 
