@@ -585,20 +585,22 @@ public class AdminUserService extends BaseService {
             ComResourceModel module1 = new ComResourceModel();
             module1.setOriginId(model.getModuleId());
             module1.setResType(1);
-            module1.setActive(1);
+//            module1.setActive(1);
             module1.setOriginTable("ct_module");
             module1 = comResourceDao.selectOne(module1);
 
             ComResourceModel app = comResourceDao.select(module1.getParentId());
 
-            res.setResKey(module1.getResKey() + "_" +  model.getController());
+            if(app != null) {
+                res.setResKey(module1.getResKey() + "_" + model.getController());
 //            res.setResName(StringUtils.isEmpty(model.getMenuTitle()) ? res.getResKey().toUpperCase() : module1.getResName() + "_" + model.getMenuTitle().toUpperCase());
-            res.setResName(res.getResKey().toUpperCase());
-            res.setApplication(app.getApplication());
-            res.setParentId(module1.getId());
-            res.setOriginTable("ct_controller");
-            res.setMenuTitle(model.getMenuTitle());
-            adminResService.addRes(res);
+                res.setResName(res.getResKey().toUpperCase());
+                res.setApplication(app.getApplication());
+                res.setParentId(module1.getId());
+                res.setOriginTable("ct_controller");
+                res.setMenuTitle(model.getMenuTitle());
+                adminResService.addRes(res);
+            }
         }
 
         //添加Action资源
@@ -620,24 +622,27 @@ public class AdminUserService extends BaseService {
             ComResourceModel controller1 = new ComResourceModel();
             controller1.setOriginId(model.getControllerId());
             controller1.setResType(1);
-            controller1.setActive(1);
+//            controller1.setActive(1);
             controller1.setOriginTable("ct_controller");
             controller1 = comResourceDao.selectOne(controller1);
 
             ComResourceModel module1 = comResourceDao.select(controller1.getParentId());
-            ComResourceModel app = comResourceDao.select(module1.getParentId());
+
+            if(module1 != null) {
+                ComResourceModel app = comResourceDao.select(module1.getParentId());
 
 
-            res.setResUrl(controller1.getResUrl() + "/" + model.getName());
-            res.setShowInMenu(false);
+                res.setResUrl(controller1.getResUrl() + "/" + model.getName());
+                res.setShowInMenu(false);
 
-            res.setResKey(controller1.getResKey() + "_" +  model.getName());
-            res.setResName(controller1.getResName() + "_" + model.getName().toUpperCase());
-            res.setApplication(app.getApplication());
-            res.setParentId(controller1.getId());
-            res.setOriginTable("ct_action");
-            res.setMenuTitle("");
-            adminResService.addRes(res);
+                res.setResKey(controller1.getResKey() + "_" + model.getName());
+                res.setResName(controller1.getResName() + "_" + model.getName().toUpperCase());
+                res.setApplication(app.getApplication());
+                res.setParentId(controller1.getId());
+                res.setOriginTable("ct_action");
+                res.setMenuTitle("");
+                adminResService.addRes(res);
+            }
         }
     }
 
