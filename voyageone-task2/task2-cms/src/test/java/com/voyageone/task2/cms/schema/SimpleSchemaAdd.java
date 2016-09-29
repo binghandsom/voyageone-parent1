@@ -18,6 +18,7 @@ import java.util.List;
  */
 public class SimpleSchemaAdd {
 	public static void main(String[] args) {
+		// 生成XML(作为mongDB的cms_mt_platform_category_schema_p30(或P31)表中catId=1的共通schema记录的propsItem字段)
 		doCreateProduct();
 //		doCreateItem();
 	}
