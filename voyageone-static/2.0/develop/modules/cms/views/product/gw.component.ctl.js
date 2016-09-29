@@ -250,7 +250,7 @@ define([
 
 
                     scope.vm.platform.pAttributeStatus = "1";
-                    scope.vm.platform.status = scope.vm.status;
+                    scope.vm.platform.status = mark == "temporary" ? "Pending" : scope.vm.status;
                     scope.vm.platform.sellerCats = scope.vm.sellerCats;
                     scope.vm.platform.cartId = +scope.cartInfo.value;
 
@@ -259,6 +259,8 @@ define([
                     });
 
                     if (mark == "temporary") {
+                        //暂存状态都为 Pending
+                        scope.vm.status = "Pending";
                         callSave("temporary");
                         return;
                     }

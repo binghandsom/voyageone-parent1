@@ -257,11 +257,6 @@ define([
                  */
                 function saveProduct(mark) {
 
-                    if (mark == "temporary") {
-                        callSave("temporary");
-                        return;
-                    }
-
                     if (mark == "ready") {
                         if (!validSchema()) {
                             alert("请输入必填属性，或者输入的属性格式不正确");
@@ -302,13 +297,20 @@ define([
                     else
                         scope.vm.platform.pAttributeStatus = "0";
 
-                    scope.vm.platform.status = scope.vm.status;
+                    scope.vm.platform.status = mark == "temporary" ? "Pending" : scope.vm.status;
                     scope.vm.platform.sellerCats = scope.vm.sellerCats;
                     scope.vm.platform.cartId = +scope.cartInfo.value;
 
                     _.map(scope.vm.platform.skus, function (item) {
                         item.property = item.property == null ? "OTHER" : item.property;
                     });
+
+                    if (mark == "temporary") {
+                        //暂存状态都为 Pending
+                        scope.vm.status = "Pending";
+                        callSave("temporary");
+                        return;
+                    }
 
                     if (scope.vm.status == "Approved") {
 
@@ -487,10 +489,10 @@ define([
                         productDetailService.updateSkuPrice({
                             cartId: scope.cartInfo.value,
                             prodId: scope.productInfo.productId,
-                            platform:scope.vm.platform
+                            platform: scope.vm.platform
                         }).then(function () {
                             alert("TXT_MSG_UPDATE_SUCCESS");
-                        },function(res){
+                        }, function (res) {
                             alert(res.message);
                         });
                     });

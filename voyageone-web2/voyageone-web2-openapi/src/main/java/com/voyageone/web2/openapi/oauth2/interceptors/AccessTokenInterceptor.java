@@ -5,6 +5,8 @@ import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Component
 class AccessTokenInterceptor {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private OAuthService oAuthService;
@@ -42,7 +46,8 @@ class AccessTokenInterceptor {
         String accessToken = oauthRequest.getAccessToken();
 
         //验证Access Token
-        if (oAuthService.checkAccessToken(accessToken)) {
+        if (!oAuthService.checkAccessToken(accessToken)) {
+            logger.info("accessToken : " + accessToken + " not found.");
             // 如果不存在/过期了，返回未验证错误，需重新验证
             VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70099;
             throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
