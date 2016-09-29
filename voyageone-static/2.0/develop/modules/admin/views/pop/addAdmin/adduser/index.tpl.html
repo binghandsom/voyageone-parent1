@@ -20,7 +20,7 @@
                             <vo-message target="addForm.account"></vo-message>
                         </div>
                     </div>
-                    <div class="row form-group"><!-- 密码 -->
+                    <div class="row form-group" ng-if="ctrl.popType != '修改用户'"><!-- 密码 -->
                         <label class="col-sm-3 control-label">{{'TXT_PASSWORD' | translate}}</label>
                         <label class="col-sm-8 control-label text-left">默认密码1234567890</label>
                     </div>
@@ -85,7 +85,7 @@
                     <label class="col-sm-1 control-label">{{'TXT_ROLE' | translate}}：</label>
                     <div class="col-sm-10">
                         <div class="col-sm-5">
-                            <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label>
+                            <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label><span class="text-warnings">(必填)</span>
                             <div class="column_overflow col-sm-12 m-t-sm" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
