@@ -24,7 +24,7 @@
                         <div class="row form-group"><!-- 系统 -->
                             <label class="col-sm-3 control-label">{{'TXT_SYSTEM' | translate}}</label>
                             <div class="col-sm-8">
-                                <select class="form-control" ng-model="ctrl.saveInfo.application">
+                                <select class="form-control" ng-model="ctrl.saveInfo.application" ng-change="ctrl.changeMenu(ctrl.saveInfo.application)">
                                     <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                     <option value="{{app.application}}" ng-repeat="app in ctrl.appList">&nbsp;{{app.application}}</option>
                                 </select>
@@ -62,9 +62,9 @@
                         <div class="row form-group"><!-- 上级菜单 -->
                             <label class="col-sm-3 control-label">{{'TXT_UPPER_MENU' | translate}}</label>
                             <div class="col-sm-8">
-                                <select class="form-control" ng-model="ctrl.saveInfo.parentId">
+                                <select class="form-control" ng-model="ctrl.saveInfo.parentId" ng-disabled="!ctrl.saveInfo.application">
                                     <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                    <option value="{{menu.id}}" ng-repeat="menu in ctrl.menuList">{{menu.resName}}</option>
+                                    <option value="{{menu.id}}" ng-repeat="menu in ctrl.menuList">{{menu.res_name}}</option>
                                 </select>
                             </div>
                         </div>
@@ -79,12 +79,7 @@
                         <div class="row form-group"><!-- 菜单URL -->
                             <label class="col-sm-3 control-label">{{'TXT_MENU_URL' | translate}}</label>
                             <div class="col-sm-8">
-                                <textarea type="text" maxlength="50" class="form-control" ng-model="ctrl.saveInfo.resUrl" name="menuURL" required/></textarea>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-sm-8 col-sm-offset-3">
-                                <vo-message target="addForm.menuURL"></vo-message>
+                                <textarea type="text" maxlength="50" class="form-control" ng-model="ctrl.saveInfo.resUrl"/></textarea>
                             </div>
                         </div>
                         <div class="row form-group"><!-- 资源类型 -->
