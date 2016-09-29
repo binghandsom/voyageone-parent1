@@ -78,9 +78,9 @@
 
     <select id="selectResRoleList" resultType="com.voyageone.security.model.ComResRoleModel">
         SELECT rr.* FROM com_res_role rr
-        LEFT JOIN com_resource re ON re.id = rr.id
-        Where role_id =  #{roleId}
-        AND application =  #{application}
+        INNER JOIN com_resource re ON re.id = rr.res_id
+        Where rr.role_id = #{roleId}
+        AND re.application =   #{application}
     </select>
 
     <select id="selectAllMenu" resultType="com.voyageone.security.model.ComResourceModel">

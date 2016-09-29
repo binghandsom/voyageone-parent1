@@ -485,7 +485,7 @@ public class AdminRoleService extends BaseService {
         List<AdminResourceBean> children = new ArrayList<>();
 
         for (AdminResourceBean node : allNodes) {
-            if (node.getParentId() == root.getId()) {
+            if (node.getParentId().equals(root.getId())) {
                 children.add(node);
             }
         }
