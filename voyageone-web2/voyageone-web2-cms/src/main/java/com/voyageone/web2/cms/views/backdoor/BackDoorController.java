@@ -14,6 +14,9 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
+import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
+import com.voyageone.service.dao.cms.CmsBtPromotionSkusDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -27,6 +30,9 @@ import com.voyageone.service.impl.cms.jumei2.JmBtDealImportService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
+import com.voyageone.service.model.cms.CmsBtJmSkuModel;
+import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -86,6 +92,12 @@ public class BackDoorController extends CmsController {
     private CmsBtJmPromotionDaoExt cmsBtJmPromotionDaoExt;
     @Autowired
     private ComMtValueChannelDao comMtValueChannelDao;
+    @Autowired
+    private CmsBtJmPromotionSkuDao cmsBtJmPromotionSkuDao;
+    @Autowired
+    private CmsBtJmSkuDao cmsBtJmSkuDao;
+    @Autowired
+    private CmsBtPromotionSkusDao cmsBtPromotionSkusDao;
 
 
     /**
@@ -1099,30 +1111,95 @@ public class BackDoorController extends CmsController {
         else if ("2".equals(flg))
             promotionCodes = cmsBtJmPromotionDaoExt.selectJmProductHashId(channelId);
 
-        promotionCodes.forEach(promtionCode -> {
-            String code = promtionCode.get("productCode").toString();
-            String jmHashId = promtionCode.get("jmHashId").toString();
 
-            JongoUpdate updateQuery = new JongoUpdate();
-            updateQuery.setQuery("{\"common.fields.code\": #}");
-            updateQuery.setQueryParameters(code);
+            if ("1".equals(flg) || "2".equals(flg)) {
+                promotionCodes.forEach(promtionCode -> {
+                    String code = promtionCode.get("productCode").toString();
+                    String jmHashId = promtionCode.get("jmHashId").toString();
 
-            updateQuery.setUpdate("{$set:{\"platforms.P27.pNumIId\": #}}");
-            updateQuery.setUpdateParameters(jmHashId);
+                    JongoUpdate updateQuery = new JongoUpdate();
+                    updateQuery.setQuery("{\"common.fields.code\": #}");
+                    updateQuery.setQueryParameters(code);
 
-            cmsBtProductDao.updateFirst(updateQuery, channelId);
+                    updateQuery.setUpdate("{$set:{\"platforms.P27.pNumIId\": #}}");
+                    updateQuery.setUpdateParameters(jmHashId);
+
+                    cmsBtProductDao.updateFirst(updateQuery, channelId);
 
 
-            JongoUpdate updateGroupQuery = new JongoUpdate();
-            updateGroupQuery.setQuery("{\"cartId\": 27, \"productCodes\": #}");
-            updateGroupQuery.setQueryParameters(code);
+                    JongoUpdate updateGroupQuery = new JongoUpdate();
+                    updateGroupQuery.setQuery("{\"cartId\": 27, \"productCodes\": #}");
+                    updateGroupQuery.setQueryParameters(code);
 
-            updateGroupQuery.setUpdate("{$set:{\"numIId\": #}}");
-            updateGroupQuery.setUpdateParameters(jmHashId);
+                    updateGroupQuery.setUpdate("{$set:{\"numIId\": #}}");
+                    updateGroupQuery.setUpdateParameters(jmHashId);
 
-            cmsBtProductGroupDao.updateFirst(updateGroupQuery, channelId);
-            codes.add(code + "=======" + jmHashId);
-        });
+                    cmsBtProductGroupDao.updateFirst(updateGroupQuery, channelId);
+                    codes.add(code + "=======" + jmHashId);
+                });
+            } else if ("3".equals(flg)) {
+
+                Map<String, String> queryMap = new HashMap<>();
+                queryMap.put("channelId", channelId);
+                List<CmsBtJmPromotionSkuModel> jmPromotionSkuList = cmsBtJmPromotionSkuDao.selectList(queryMap);
+                List<CmsBtJmSkuModel> jmSkuList = cmsBtJmSkuDao.selectList(queryMap);
+                queryMap.put("orgChannelId", channelId);
+                List<CmsBtPromotionSkusModel> promotionSkuList = cmsBtPromotionSkusDao.selectList(queryMap);
+
+                JongoQuery query = new JongoQuery();
+                query.setQuery("{}");
+                query.setProjection("{\"common.fields.code\": 1, \"common.skus\": 1}");
+                List<CmsBtProductModel> products = cmsBtProductDao.select(query, channelId);
+
+                // 取得所有的sku和code对应关系
+                Map<String, String> allSkus = new HashMap<>();
+                products.parallelStream().forEach(CmsBtProductModel -> {
+                    CmsBtProductModel.getCommon().getSkus().forEach(skuInfo -> {
+                        if(!allSkus.containsKey(skuInfo.getSkuCode())) {
+                            allSkus.put(skuInfo.getSkuCode(), CmsBtProductModel.getCommon().getFields().getCode());
+                        }
+                    });
+                });
+
+                jmPromotionSkuList.forEach(CmsBtJmPromotionSkuModel -> {
+                    String newCode = allSkus.get(CmsBtJmPromotionSkuModel.getSkuCode());
+                    if(!CmsBtJmPromotionSkuModel.getProductCode().equals(newCode)) {
+                        if(!StringUtils.isEmpty(newCode)) {
+                            codes.add("CmsBtJmPromotionSkuModel===" + CmsBtJmPromotionSkuModel.getId() + "<" + CmsBtJmPromotionSkuModel.getProductCode() + "===" + newCode + ">");
+                            CmsBtJmPromotionSkuModel.setProductCode(newCode);
+                            cmsBtJmPromotionSkuDao.update(CmsBtJmPromotionSkuModel);
+                        } else {
+                            codes.add("CmsBtJmPromotionSkuModel===" + CmsBtJmPromotionSkuModel.getId() + "<" + CmsBtJmPromotionSkuModel.getProductCode() + "===newCode为空>");
+                        }
+                    }
+                });
+
+                jmSkuList.forEach(CmsBtJmSkuModel -> {
+                    String newCode = allSkus.get(CmsBtJmSkuModel.getSkuCode());
+                    if(!CmsBtJmSkuModel.getProductCode().equals(newCode)) {
+                        if(!StringUtils.isEmpty(newCode)) {
+                            codes.add("CmsBtJmSkuModel===" + CmsBtJmSkuModel.getId() + "<" + CmsBtJmSkuModel.getProductCode() + "===" + newCode + ">");
+                            CmsBtJmSkuModel.setProductCode(newCode);
+                            cmsBtJmSkuDao.update(CmsBtJmSkuModel);
+                        } else {
+                            codes.add("CmsBtJmSkuModel===" + CmsBtJmSkuModel.getId() + "<" + CmsBtJmSkuModel.getProductCode() + "===newCode为空>");
+                        }
+                    }
+                });
+
+                promotionSkuList.forEach(CmsBtPromotionSkusModel -> {
+                    String newCode = allSkus.get(CmsBtPromotionSkusModel.getProductSku());
+                    if(!CmsBtPromotionSkusModel.getProductCode().equals(newCode)) {
+                        if(!StringUtils.isEmpty(newCode)) {
+                            codes.add("CmsBtPromotionSkusModel===" + CmsBtPromotionSkusModel.getId() + "<" + CmsBtPromotionSkusModel.getProductCode() + "===" + newCode + ">");
+                            CmsBtPromotionSkusModel.setProductCode(newCode);
+                            cmsBtPromotionSkusDao.update(CmsBtPromotionSkusModel);
+                        } else {
+                            codes.add("CmsBtPromotionSkusModel===" + CmsBtPromotionSkusModel.getId() + "<" + CmsBtPromotionSkusModel.getProductCode() + "===newCode为空>");
+                        }
+                    }
+                });
+            }
 
         StringBuilder builder = new StringBuilder("<body>");
         builder.append("<h2>feed 信息列表</h2>");
