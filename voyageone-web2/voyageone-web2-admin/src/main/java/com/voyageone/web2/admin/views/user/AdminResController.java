@@ -95,9 +95,21 @@ public class AdminResController extends AdminController {
 
         String username = getUser().getUserName();
 
-        String application = requestBean.getOrDefault("application", "").toString();
+//        String application = requestBean.getOrDefault("application", "").toString();
+
+        String application = "admin";
 
         return success(adminResService.getMenu(application, username));
+    }
+
+    @RequestMapping(AdminUrlConstants.User.Res.GET_ALL_MENU)
+    public AjaxResponse getAllMenu(@RequestBody Map requestBean)  {
+
+        String username = getUser().getUserName();
+
+        String application = requestBean.getOrDefault("application", "admin").toString();
+
+        return success(adminResService.getAllMenu(application));
     }
 
 

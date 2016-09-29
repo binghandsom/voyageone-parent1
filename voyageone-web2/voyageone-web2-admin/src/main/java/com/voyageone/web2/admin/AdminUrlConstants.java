@@ -418,6 +418,9 @@ public interface AdminUrlConstants {
 
 			String GET_MENU = "getMenu";
 
+			//for dropdown list options
+			String GET_ALL_MENU = "getAllMenu";
+
 		}
 
 	}

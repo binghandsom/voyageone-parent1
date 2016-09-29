@@ -180,7 +180,7 @@ public class AdminOrgService extends BaseService {
      * @param returnList
      * @return
      */
-    private List<ComOrganizationModel> getChildTreeObjects(List<ComOrganizationModel> list, int typeId,String prefix , List<ComOrganizationModel> returnList){
+    private List<ComOrganizationModel> getChildTreeObjects(List<ComOrganizationModel> list, int typeId, String prefix , List<ComOrganizationModel> returnList){
         if(list == null) return null;
         for (Iterator<ComOrganizationModel> iterator = list.iterator(); iterator.hasNext();) {
             ComOrganizationModel node = (ComOrganizationModel) iterator.next();

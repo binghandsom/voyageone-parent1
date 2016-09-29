@@ -6,6 +6,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.dao.ComUserDao;
+import com.voyageone.security.model.ComOrganizationModel;
 import com.voyageone.security.model.ComResourceModel;
 import com.voyageone.security.model.ComUserModel;
 import com.voyageone.service.bean.com.AdminOrgBean;
@@ -151,6 +152,13 @@ public class AdminResService extends BaseService {
         comResourceDao.update(model);
     }
 
+    /**
+     * 获取用户有权限的系统菜单
+     *
+     * @param app
+     * @param user
+     * @return
+     */
     public List<AdminResourceBean> getMenu(String app, String user) {
         Map map = new HashMap<>();
         map.put("application", app);
@@ -163,6 +171,85 @@ public class AdminResService extends BaseService {
             return Collections.EMPTY_LIST;
         }
     }
+
+
+    public List<Map<String, Object>> getAllMenu(String app) {
+        Map query = new HashMap<>();
+        query.put("application", app);
+        List<ComResourceModel> list = adminResourceDaoExt.selectAllMenu(query);
+        List<ComResourceModel> result = new ArrayList<>();
+        result = getChildTreeObjects(list, 0 , "-", result);
+
+        List<Map<String, Object>> resultMap = new ArrayList<>();
+
+        for(ComResourceModel model : result)
+        {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", model.getId());
+            map.put("res_name", model.getResName());
+            resultMap.add(map);
+        }
+        return resultMap;
+    }
+
+
+
+    /**
+     * 生成树状列表
+     *
+     * @param list
+     * @param typeId
+     * @param prefix
+     * @param returnList
+     * @return
+     */
+    private List<ComResourceModel> getChildTreeObjects(List<ComResourceModel> list, int typeId, String prefix , List<ComResourceModel> returnList){
+        if(list == null) return null;
+        for (Iterator<ComResourceModel> iterator = list.iterator(); iterator.hasNext();) {
+            ComResourceModel node = (ComResourceModel) iterator.next();
+            // 一、根据传入的某个父节点ID,遍历该父节点的所有子节点
+            if (node.getParentId().equals(typeId)) {
+                recursionFn(list, node,prefix , returnList);
+            }
+        }
+        return returnList;
+    }
+
+    private void recursionFn(List<ComResourceModel> list, ComResourceModel node,String p , List<ComResourceModel> returnList) {
+        List<ComResourceModel> childList = getChildList(list, node);// 得到子节点列表
+        if (hasChild(list, node)) {// 判断是否有子节点
+            returnList.add(node);
+            Iterator<ComResourceModel> it = childList.iterator();
+            while (it.hasNext()) {
+                ComResourceModel n = (ComResourceModel) it.next();
+                n.setResName(p+n.getResName());
+                recursionFn(list, n,p+p, returnList);
+            }
+        } else {
+            returnList.add(node);
+        }
+    }
+
+    // 判断是否有子节点
+    private boolean hasChild(List<ComResourceModel> list, ComResourceModel t) {
+        return getChildList(list, t).size() > 0 ? true : false;
+    }
+
+    // 得到子节点列表
+    private List<ComResourceModel> getChildList(List<ComResourceModel> list, ComResourceModel t) {
+
+        List<ComResourceModel> tlist = new ArrayList<ComResourceModel>();
+        Iterator<ComResourceModel> it = list.iterator();
+        while (it.hasNext()) {
+            ComResourceModel n = (ComResourceModel) it.next();
+            if (n.getParentId().equals(t.getId())) {
+                tlist.add(n);
+            }
+        }
+        return tlist;
+    }
+
+
 
 
     /**

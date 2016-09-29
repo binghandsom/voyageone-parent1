@@ -66,4 +66,11 @@ public class AdminResServiceTest {
         List<AdminResourceBean> result = adminResService.getMenu("admin","admin");
         System.out.println(JacksonUtil.bean2Json(result));
     }
+
+    @Test
+    public void testGetAllMenu() throws Exception {
+        List<Map<String, Object>> result = adminResService.getAllMenu("wms");
+        System.out.println(JacksonUtil.bean2Json(result));
+
+    }
 }
