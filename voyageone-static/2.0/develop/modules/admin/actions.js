@@ -78,7 +78,8 @@ define(function () {
                     "addRes": "addRes",
                     "updateRes": "updateRes",
                     "deleteRes": "deleteRes",
-                    "getMenu": "getMenu"
+                    "getMenu": "getMenu",
+                    "getAllMenu": "getAllMenu"
                 }
             },
             /** 渠道信息 */

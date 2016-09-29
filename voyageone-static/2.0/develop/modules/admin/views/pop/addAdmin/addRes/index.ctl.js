@@ -37,11 +37,11 @@ define([
                 self.adminUserService.getAllApp().then(function (res) {
                     self.appList = res.data;
                 });
-                self.adminResService.getMenu({'application': 'admin'}).then(function (res) {
+            },
+            changeMenu: function (value) {
+                var self = this;
+                self.adminResService.getAllMenu({'application': value}).then(function (res) {
                     self.menuList = res.data;
-                    _.forEach(self.menuList, function (item) {
-                        item.id = item.id + '';
-                    });
                 })
             },
             cancel: function () {
