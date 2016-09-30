@@ -16,8 +16,9 @@ define([
                 for (i = 0, len = ref.length; i < len; i++) {
                     item = ref[i];
                     item.selected = selected;
+                    selectedList = selected == true ? selectedList : [];
+                    $scope.toggleCheckbox(item, selectedList);
                     if (item.children != null && item.children.length > 0) {
-                        $scope.toggleCheckbox(item, selectedList);
                         results.push($scope.$broadcast('changeChildren', item, selectedList));
                     } else {
                         results.push(void 0);
@@ -44,6 +45,7 @@ define([
                 for (i = 0, len = ref.length; i < len; i++) {
                     child = ref[i];
                     child.selected = parentItem.selected;
+                    selectedList = child.selected == true ? selectedList : [];
                     $scope.toggleCheckbox(child, selectedList);
                     if (child.children != null) {
                         results.push($scope.$broadcast('changeChildren', child, selectedList));

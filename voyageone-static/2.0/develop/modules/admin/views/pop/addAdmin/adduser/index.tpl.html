@@ -90,7 +90,7 @@
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
                                         <li class="btn-block" ng-repeat="role in ctrl.roleList" ng-style="{'background-color': ctrl.selectedRoleId==role.roleId? '#dcf3f9': 'white'}">
-                                            <a href="javascript:void(0)" ng-click="ctrl.selected(role)">{{role.roleName}}</a>
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected({direction:'left',value:role})">{{role.roleName}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -98,10 +98,10 @@
                         </div>
                         <div class="col-sm-2">
                             <label class="col-sm-5 text-center control-label vo_a_ce" >操作</label>
-                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1 m-t-sm" ng-click="ctrl.move('allInclude')"><i class="fa fa-angle-double-left"></i></button> </div>
-                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('include')"><i class="fa fa-angle-left"></i></button></div>
-                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('exclude')"><i class="fa fa-angle-right"></i></button></div>
-                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('allExclude')"><i class="fa fa-angle-double-right"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1 m-t-sm" ng-click="ctrl.move('allInclude')" ng-disabled="ctrl.roleAllList.length<1"><i class="fa fa-angle-double-left"></i></button> </div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('include')" ng-disabled="ctrl.roleAllList.length<1"><i class="fa fa-angle-left"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('exclude')" ng-disabled="ctrl.roleList.length<1"><i class="fa fa-angle-right"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('allExclude')" ng-disabled="ctrl.roleList.length<1"><i class="fa fa-angle-double-right"></i></button></div>
                         </div>
                         <div class="col-sm-5">
                             <label class="col-sm-2 text-left control-label vo_a_ce" >{{'TXT_CHOOSE' | translate}}</label>
@@ -113,7 +113,7 @@
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
                                         <li class="btn-block" ng-repeat="role in ctrl.roleAllList" ng-style="{'background-color': ctrl.selectedRoleId==role.roleId? '#dcf3f9': 'white'}">
-                                            <a href="javascript:void(0)" ng-click="ctrl.selected(role)">{{role.roleName}}</a>
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected({direction:'right',value:role})">{{role.roleName}}</a>
                                         </li>
                                     </ul>
                                 </div>

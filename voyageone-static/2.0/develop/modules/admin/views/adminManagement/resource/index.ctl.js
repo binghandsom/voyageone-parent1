@@ -59,14 +59,20 @@ define([
             },
             edit: function (type) {
                 var self = this;
-                var selectedList=[];
+                var selectedList = [];
                 _.filter(self.selectedList, function (item) {
                     return item.selected;
                 }).forEach(function (item) {
-                    selectedList.push(item);
+                    if (selectedList.length < 1) {
+                        selectedList.push(item);
+                    } else {
+                        if (selectedList.indexOf(item) < 0) {
+                            selectedList.push(item);
+                        }
+                    }
                 });
                 editCallback(selectedList);
-                function editCallback(){
+                function editCallback() {
                     if (type == 'add') {
                         self.popups.openRes('add').then(function () {
                             self.search(1);
@@ -74,9 +80,9 @@ define([
                     } else {
                         if (selectedList.length < 1) {
                             self.alert('请选择一条数据！');
-                        } else if(selectedList.length > 1){
+                        } else if (selectedList.length > 1) {
                             self.alert('只能选择一条数据哦！');
-                        }else {
+                        } else {
                             _.forEach(self.flatResList, function (Info) {
                                 if (Info.id == self.selectedList[0].id) {
                                     self.popups.openRes(Info).then(function () {
