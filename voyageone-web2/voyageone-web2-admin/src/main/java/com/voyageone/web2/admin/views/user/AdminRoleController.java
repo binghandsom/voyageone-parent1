@@ -264,12 +264,12 @@ public class AdminRoleController extends AdminController {
     }
 
     public  enum RoleType {
-        ADMIN ("Role_Admin", "管理员",  0),
-        CS("Role_CS","客服", 1),
-        CS_MANAGER("Role_CS_Manager", "客服主管", 2),
-        WHS("Role_WHS","仓库", 3),
-        OP("Role_OP", "运营",  4),
-        OTHER("Role_OTHER", "其他",  5);
+        ADMIN ("Role_Admin", "管理员",  1),
+        CS("Role_CS","客服", 2),
+        CS_MANAGER("Role_CS_Manager", "客服主管", 3),
+        WHS("Role_WHS","仓库", 4),
+        OP("Role_OP", "运营",  5),
+        OTHER("Role_OTHER", "其他",  6);
 
         private String _typeName;
         private String _name;
