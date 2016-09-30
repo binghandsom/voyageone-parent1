@@ -56,7 +56,7 @@ public class AdminUserController extends AdminController {
         // 检索用户信息
 
         PageModel<AdminUserBean> userPage = adminUserService.searchUser(form.getUserAccount(), form.getActive(),
-                form.getOrgId(),form.getRoleId(),  form.getChannelId(), form.getStoreId(), form.getApplication(),pageNum, pageSize );
+                form.getOrgId(),form.getRoleId(),  form.getChannelId(), form.getStoreId(), form.getApplication(), form.getCompanyId(), pageNum, pageSize );
 
         return success(userPage);
     }
@@ -68,7 +68,7 @@ public class AdminUserController extends AdminController {
     @RequestMapping(AdminUrlConstants.User.Self.INIT)
     public AjaxResponse init()  {
         // 检索用户信息
-        PageModel<AdminUserBean> userPage = adminUserService.searchUser(null, null, null, null, null,null,null, 1, DEFAULT_PAGE_SIZE);
+        PageModel<AdminUserBean> userPage = adminUserService.searchUser(null, null, null, null, null,null,null,null, 1, DEFAULT_PAGE_SIZE);
 
         return success(userPage);
     }

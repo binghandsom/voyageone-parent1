@@ -298,6 +298,7 @@ public class AdminRoleService extends BaseService {
         }
     }
 
+    @VOTransactional
     public void addAuth(List<Integer> roleIds, List<Integer> resIds, String username) {
         for (Integer roleId : roleIds) {
             //添加新项目
@@ -316,6 +317,7 @@ public class AdminRoleService extends BaseService {
         }
     }
 
+    @VOTransactional
     public void removeAuth(List<Integer> roleIds, List<Integer> resIds, String username) {
         for (Integer roleId : roleIds) {
             //删除项目
@@ -337,6 +339,7 @@ public class AdminRoleService extends BaseService {
 
 
 
+    @VOTransactional
     public void setAuth(List<String> apps, List<Integer> roleIds, List<Integer> resIds, Boolean hasAllAuth, String username) {
 
         //新的逻辑只能对单个application授权
