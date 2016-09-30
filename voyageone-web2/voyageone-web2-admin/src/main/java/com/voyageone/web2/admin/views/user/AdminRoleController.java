@@ -161,26 +161,16 @@ public class AdminRoleController extends AdminController {
     @RequestMapping(AdminUrlConstants.User.Role.GET_ALL_ROLE_TYPE)
     public AjaxResponse getAllRoleType() {
         List<Map<String, Object>> list = new ArrayList<>();
-        list.add(new HashMap() {
-            {
-                put("id", 1);
-                put("name", "IT管理员");
-            } });
-        list.add(new HashMap() {
-            {
-                put("id", 2);
-                put("name", "运营人员");
-            } });
-        list.add(new HashMap() {
-            {
-                put("id", 3);
-                put("name", "客服人员");
-            } });
-        list.add(new HashMap() {
-            {
-                put("id", 4);
-                put("name", "财务人员");
-            } });
+
+        for(RoleType tp : RoleType.values() )
+        {
+            list.add(new HashMap<String, Object>() {
+                {
+                    put("id", tp.getId());
+                    put("name", tp.getName());
+                    put("typeName", tp.getTypeName());
+                } });
+        }
         return success(list);
     }
 
@@ -271,6 +261,38 @@ public class AdminRoleController extends AdminController {
         result.put("res", res);
         result.put("perms", perms);
         return success(result);
+    }
+
+    public  enum RoleType {
+        ADMIN ("Role_Admin", "管理员",  0),
+        CS("Role_CS","客服", 1),
+        CS_MANAGER("Role_CS_Manager", "客服主管", 2),
+        WHS("Role_WHS","仓库", 3),
+        OP("Role_OP", "运营",  4),
+        OTHER("Role_OTHER", "其他",  5);
+
+        private String _typeName;
+        private String _name;
+        private int _id;
+
+
+        RoleType(String typeName , String name, int id) {
+            this._typeName = typeName;
+            this._name = name;
+            this._id = id;
+        }
+
+        public String getTypeName() {
+            return this._typeName;
+        }
+
+        public String getName() {
+            return this._name;
+        }
+
+        public int getId() {
+            return this._id;
+        }
     }
 
 }

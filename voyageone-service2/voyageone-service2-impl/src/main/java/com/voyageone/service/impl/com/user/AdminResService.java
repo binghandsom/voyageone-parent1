@@ -96,12 +96,12 @@ public class AdminResService extends BaseService {
             throw new BusinessException(model.getResKey() +": 菜单Key在系统中已存在。");
         }
 
-        map.clear();
-        map.put("resName", model.getResName());
-
-        if (comResourceDao.selectCount(map) > 0) {
-            throw new BusinessException(model.getResName() +": 菜单名称在系统中已存在。");
-        }
+//        map.clear();
+//        map.put("resName", model.getResName());
+//
+//        if (comResourceDao.selectCount(map) > 0) {
+//            throw new BusinessException(model.getResName() +": 菜单名称在系统中已存在。");
+//        }
 
         ComResourceModel parent = comResourceDao.select(model.getParentId());
 

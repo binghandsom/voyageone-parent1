@@ -24,6 +24,16 @@ public class UserFormBean extends AdminFormBean {
 
     private String application;
 
+    private Integer companyId;
+
+    public Integer getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Integer companyId) {
+        this.companyId = companyId;
+    }
+
     public String getUserAccount() {
         return userAccount;
     }

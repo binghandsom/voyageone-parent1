@@ -89,7 +89,7 @@ public class AdminUserService extends BaseService {
      * @return
      */
     public PageModel<AdminUserBean> searchUser(String userAccount, Integer active, Integer orgId, Integer roleId,
-                                               String channelId, Integer storeId, String application, Integer pageNum, Integer pageSize) {
+                                               String channelId, Integer storeId, String application,Integer companyId, Integer pageNum, Integer pageSize) {
 
         PageModel<AdminUserBean> pageModel = new PageModel<>();
 
@@ -102,6 +102,7 @@ public class AdminUserService extends BaseService {
         params.put("orgId", orgId);
         params.put("roleId", roleId);
         params.put("application", "".equals(application) ? null : application);
+        params.put("companyId", companyId);
 
         boolean needPage = false;
 
@@ -632,11 +633,11 @@ public class AdminUserService extends BaseService {
                 ComResourceModel app = comResourceDao.select(module1.getParentId());
 
 
-                res.setResUrl(controller1.getResUrl() + "/" + model.getName());
+                res.setResUrl("/" + app.getResName().toLowerCase() + "/" + module1.getOriginName() + "/" +  controller1.getOriginName() + "/" + model.getName());
                 res.setShowInMenu(false);
 
                 res.setResKey(controller1.getResKey() + "_" + model.getName());
-                res.setResName(controller1.getResName() + "_" + model.getName().toUpperCase());
+                res.setResName(model.getName().toUpperCase());
                 res.setApplication(app.getApplication());
                 res.setParentId(controller1.getId());
                 res.setOriginTable("ct_action");
