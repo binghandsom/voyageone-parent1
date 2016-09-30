@@ -5,6 +5,9 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.JumeiHtMallService;
+import com.voyageone.components.jumei.bean.JmGetProductInfoRes;
+import com.voyageone.components.jumei.bean.JmGetProductInfo_Spus;
+import com.voyageone.components.jumei.service.JumeiProductService;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -13,6 +16,7 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -54,6 +58,8 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     @Autowired
     SxProductService sxProductService;
 
+    @Autowired
+    JumeiProductService jumeiProductService;
 
     @Test
     public void TestPrice() throws Exception {
@@ -347,7 +353,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     public void testUpdateMallId() {
 
         String channelId = "010";
-//        int cartId = 27;
+        int cartId = 27;
         String productCode = "B10-416AGDC4-75";
         String mallId = "ID00001";
 
@@ -365,6 +371,86 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
             e.printStackTrace();
         }
 
+    }
+
+    @Test
+    public void testDoHidNotExistSku () {
+
+        String channelId = "028";
+        int cartId = 27;
+        String productCode = "028-TEAGAN-BLK";
+        String mallId = "ID00001";
+
+        ShopBean shop = new ShopBean();
+        shop.setOrder_channel_id(channelId);
+        shop.setCart_id(String.valueOf(cartId));
+        shop.setApp_url("http://openapi.ext.jumei.com/");
+        shop.setAppKey("");
+        shop.setAppSecret("");
+        shop.setSessionKey("");
+        // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
+        shop.setPlatform_id("3");
+
+        try {
+            // 获取product信息
+            CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery("{'common.fields.code':'" + productCode + "'}", channelId);
+            if (product == null) {
+                System.out.println("没找到对应的product数据(productCode=" + productCode + ")");
+                return;
+            }
+
+            CmsBtProductModel_Platform_Cart jmCart = product.getPlatform(cartId);
+            String originHashId = jmCart.getpNumIId();
+
+            //先去聚美查一下product
+            JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
+            List<JmGetProductInfo_Spus> remoteSpus = null;
+            if(jmGetProductInfoRes != null)
+            {
+                remoteSpus = jmGetProductInfoRes.getSpus();
+            }
+            if(remoteSpus == null)
+            {
+                remoteSpus = new ArrayList<>();
+            }
+
+            // 测试
+            // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode，则在平台上隐藏该商品编码并把库存改为0
+            cmsBuildPlatformProductUploadJMService.doHideNotExistSkuDeal(shop, originHashId, remoteSpus, product.getPlatform(cartId).getSkus());
+            // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode，则在聚美商城上隐藏该商品编码并把库存改为0
+//        if (!StringUtils.isEmpty(product.getPlatform(CART_ID).getpPlatformMallId()))
+            cmsBuildPlatformProductUploadJMService.doHideNotExistSkuMall(shop, remoteSpus, product.getPlatform(cartId).getSkus());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 测试批量修改deal价格处理
+     */
+    @Test
+    public void testUpdateDealPriceBatch() {
+
+        String channelId = "012";
+        int cartId = 27;
+        String productCode = "BCH60F46-6R3";
+
+        ShopBean shop = Shops.getShop(channelId, cartId);
+
+        try {
+            // 获取product信息
+            CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery("{'common.fields.code':'" + productCode + "'}", channelId);
+            if (product == null) {
+                logger.info("没找到对应的product数据(productCode=" + productCode + ")");
+                return;
+            }
+            // 测试回写状态
+            cmsBuildPlatformProductUploadJMService.updateDealPriceBatch(shop, product, true, false);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
