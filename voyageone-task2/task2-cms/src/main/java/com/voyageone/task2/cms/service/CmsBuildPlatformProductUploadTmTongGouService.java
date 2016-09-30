@@ -317,6 +317,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
 
             // 判断新增商品还是更新商品
             // 只要numIId不为空，则为更新商品
+			// TODO 测试代码 START
+            sxData.getPlatform().setNumIId("539429848247");
+			// 测试代码 END
             if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
                 // 更新商品
                 updateWare = true;
@@ -432,7 +435,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             valTitle = mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn");
         } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("productNameEn"))) {
             // common英文长标题
-            valTitle = mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn");
+            valTitle = mainProduct.getCommon().getFields().getStringAttribute("productNameEn");
         }
 //        productInfoMap.put("title", "测试请不要拍 " + valTitle);
         productInfoMap.put("title", valTitle);
@@ -451,7 +454,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         } else if (feedInfo != null && !StringUtils.isEmpty(feedInfo.getCategory())) {
             // 使用商家自有系统类目路径
             // feed_info表的category（将中杠【-】替换为：【&gt;】(>)） (格式：<value>man&gt;sports&gt;socks</value>)
-            valCategory = feedInfo.getCategory().replaceAll("-", "&gt;");
+
+			// TODO 测试代码, 这里需要改进
+//            valCategory = feedInfo.getCategory().replaceAll("-", "&gt;");
+            valCategory = "居家布艺";
         }
         productInfoMap.put("category", valCategory);
 
@@ -538,9 +544,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         //         start_from为货源地;
         // 格式:<value>{"weight":"1.5","volume":"0.0001","template_id":"243170100","province":"美国","city":"美国"}</value>
         Map<String, Object> paramLogistics = new HashMap<>();
-        // 物流重量
+        // 物流重量 // TODO 这里要改进
         paramLogistics.put("weight", getValueFromPage("logistics_weight", "1", mainProductPlatformCart));
-        // 物流体积
+        // 物流体积 // TODO 这里是要改成从condition表获取
         paramLogistics.put("volume", getValueFromPage("logistics_volume", "1", mainProductPlatformCart));
         // 物流模板ID
         paramLogistics.put("template_id", getValueFromPageOrCondition("logistics_template_id", "", mainProductPlatformCart, sxData, shopProp));
@@ -875,7 +881,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 // 销售属性map(颜色，尺寸)
                 BaseMongoMap<String, Object> saleProp = new BaseMongoMap<>();
                 // 商品特质英文（颜色/口味/香型等）
-                saleProp.put("color", product.getCommon().getFields().getCodeDiff());
+                // TODO: 现在先用CODE, 之后要根据配置来判断, 使用颜色还是用CODE
+//                saleProp.put("color", product.getCommon().getFields().getCodeDiff());
+                saleProp.put("color", product.getCommon().getFields().getCode());
                 // 根据skuCode从skuList中取得common.sku和PXX.sku合并之后的sku
                 BaseMongoMap<String, Object> mergedSku = skuList.stream()
                         .filter(s -> s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()).equals(skuCode))
@@ -893,7 +901,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 // 库存
                 skuMap.put("quantity", skuLogicQtyMap.get(skuCode));
                 // 与颜色尺寸这个销售属性关联的图片
-                skuMap.put("image", getValueByDict("属性图片模板", expressionParser, shopProp));
+				String imageTemplate = getValueByDict("属性图片模板", expressionParser, shopProp);
+				String propImage = expressionParser.getSxProductService().getProductImages(product, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+				skuMap.put("image", String.format(imageTemplate, propImage));
                 // 只有当入关方式(true表示跨境申报)时，才需要设置海关报关税号hscode;false表示邮关申报时，不需要设置海关报关税号hscode
                 if ("true".equalsIgnoreCase(crossBorderRreportFlg)) {
                     // 海关报关的税号
