@@ -238,16 +238,22 @@ define([
             getRoleType: function (type) {
                 switch (type) {
                     case 1:
-                        return 'IT管理员';
+                        return '管理员';
                         break;
                     case 2:
-                        return '运营人员';
+                        return '客服';
                         break;
                     case 3:
-                        return '客服人员';
+                        return '客服主管';
                         break;
                     case 4:
-                        return '财务人员';
+                        return '仓库';
+                        break;
+                    case 5:
+                        return '运营';
+                        break;
+                    case 6:
+                        return '其他';
                         break;
                 }
             }
