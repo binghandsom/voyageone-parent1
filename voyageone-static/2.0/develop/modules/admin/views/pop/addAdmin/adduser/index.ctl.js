@@ -5,9 +5,10 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('AddUserController', (function () {
-        function AddUserController(context, adminRoleService, adminOrgService, adminUserService, $uibModalInstance) {
+        function AddUserController(context, alert, adminRoleService, adminOrgService, adminUserService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
+            this.alert = alert;
             this.adminRoleService = adminRoleService;
             this.adminOrgService = adminOrgService;
             this.adminUserService = adminUserService;
@@ -16,14 +17,16 @@ define([
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
             this.saveInfo = {
-                id:this.sourceData.id,
-        		userAccount: this.sourceData.userAccount,
+                id: this.sourceData.id,
+                userAccount: this.sourceData.userAccount,
                 userName: this.sourceData.userName,
                 orgId: this.sourceData.orgId,
                 email: this.sourceData.email,
                 active: this.sourceData.active,
                 description: this.sourceData.description
             };
+            this.leftSelectedFlg = false;
+            this.rightSelectedFlg = false;
         }
 
         AddUserController.prototype = {
@@ -69,7 +72,12 @@ define([
             },
             selected: function (item) {
                 var self = this;
-                self.selectedRoleId = item.roleId;
+                if (item.value) {
+                    self.selectedRoleId = item.value.roleId;
+                    item.direction == 'left' ? self.leftSelectedFlg = true : self.rightSelectedFlg = true;
+                } else {
+                    item.direction == 'left' ? self.leftSelectedFlg = false : self.rightSelectedFlg = false;
+                }
             },
             search: function (item) {
                 var self = this;
@@ -111,19 +119,27 @@ define([
                             break;
                         }
                     case 'include':
-                        self.data = _.find(self.roleAllList, function (role) {
-                            return role.roleId == self.selectedRoleId;
-                        });
-                        self.roleList.push(self.data);
-                        self.roleAllList.splice(self.roleAllList.indexOf(self.data), 1);
-                        break;
+                        if (self.rightSelectedFlg == true) {
+                            self.data = _.find(self.roleAllList, function (role) {
+                                return role.roleId == self.selectedRoleId;
+                            });
+                            self.roleList.push(self.data);
+                            self.roleAllList.splice(self.roleAllList.indexOf(self.data), 1);
+                            break;
+                        } else {
+                            self.alert('请在可选择角色区 选择角色后再点此按钮!');
+                        }
                     case 'exclude':
-                        self.data = _.find(self.roleList, function (role) {
-                            return role.roleId == self.selectedRoleId;
-                        });
-                        self.roleAllList.push(self.data);
-                        self.roleList.splice(self.roleList.indexOf(self.data), 1);
-                        break;
+                        if (self.leftSelectedFlg == true) {
+                            self.data = _.find(self.roleList, function (role) {
+                                return role.roleId == self.selectedRoleId;
+                            });
+                            self.roleAllList.push(self.data);
+                            self.roleList.splice(self.roleList.indexOf(self.data), 1);
+                            break;
+                        } else {
+                            self.alert('请在已选择角色区 选择角色后再点此按钮!');
+                        }
                     case 'allExclude':
                         _.forEach(self.roleList, function (item) {
                             self.roleAllList.push(item);
