@@ -25,14 +25,15 @@ define([
                 }
                 return results;
             };
-            $scope.initCheckbox = function (item, parentItem, flatList) {
+            $scope.initCheckbox = function (item, selList, flatList) {
                 if (!item.opened) item.opened = true;
                 if (item.children.length < 1) item.showArrow = false;
                 flatList.push(item);
-                return item.selected = item.selected==1 || item.selected || false;
+                $scope.toggleCheckbox(item, selList);
+                return item.selected = item.selected == 1 || item.selected || false;
             };
             $scope.toggleCheckbox = function (item, list) {
-                if (item.selected === true && list != undefined) {
+                if (item.selected === true && list != undefined || item.selected == 1) {
                     list.push(item);
                 }
             };
