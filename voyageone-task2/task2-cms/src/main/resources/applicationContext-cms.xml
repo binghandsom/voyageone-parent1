@@ -24,6 +24,9 @@
         <!-- 天猫上新 -->
         <task:scheduled ref="CmsBuildPlatformProductUploadTmJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
+        <!-- 天猫官网同购上新 -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadTmTongGouJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
         <!-- 京东上新 -->
         <task:scheduled ref="CmsBuildPlatformProductUploadJdJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
@@ -156,17 +159,17 @@
         <!-- 取所有平台tree和schema（每天早上5点一次） -->
         <task:scheduled ref="CmsGetAllPlatformsInfoJob" method="run" cron="0 0 5 * * ?"/>
 
-        <!-- 独立域名上新xml准备（每分钟一次） -->
-        <task:scheduled ref="CmsBuildPlatformProductUploadCnPrepareJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <!--&lt;!&ndash; 独立域名上新xml准备（每分钟一次） &ndash;&gt;-->
+        <!--<task:scheduled ref="CmsBuildPlatformProductUploadCnPrepareJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
 
-        <!-- 独立域名上新（每3分钟一次） -->
-        <task:scheduled ref="CmsBuildPlatformProductUploadCnJob" method="run" cron="0 0/3 0-23 * * ?"/>
+        <!--&lt;!&ndash; 独立域名上新（每3分钟一次） &ndash;&gt;-->
+        <!--<task:scheduled ref="CmsBuildPlatformProductUploadCnJob" method="run" cron="0 0/3 0-23 * * ?"/>-->
 
-        <!-- 独立域名类目-产品关系（每5分钟一次） -->
-        <task:scheduled ref="CmsBuildPlatformProductSellercatCnJob" method="run" cron="0 0/5 0-23 * * ?"/>
+        <!--&lt;!&ndash; 独立域名类目-产品关系（每5分钟一次） &ndash;&gt;-->
+        <!--<task:scheduled ref="CmsBuildPlatformProductSellercatCnJob" method="run" cron="0 0/5 0-23 * * ?"/>-->
 
-         <!--独立域名图片上传（每2小时一次） -->
-        <task:scheduled ref="CmsBuildPlatformImageUploadCnJob" method="run" cron="0 0 0/2 * * ?"/>
+         <!--&lt;!&ndash;独立域名图片上传（每2小时一次） &ndash;&gt;-->
+        <!--<task:scheduled ref="CmsBuildPlatformImageUploadCnJob" method="run" cron="0 0 0/2 * * ?"/>-->
 
     </task:scheduled-tasks>
 

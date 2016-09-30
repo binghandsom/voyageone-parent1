@@ -110,8 +110,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
     @Override
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
+//        // 清除缓存（这样在cms_mt_channel_config表中刚追加的价格计算公式等配置就能立刻生效了）
+//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());
 
         // 获取该任务可以运行的销售渠道
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
@@ -639,7 +639,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
 
         // 无线描述(选填)
         // 解析cms_mt_platform_dict表中的数据字典
-        productInfoMap.put("wireless_desc", getValueByDict("天猫同购无线描述", expressionParser, shopProp));
+//        productInfoMap.put("wireless_desc", getValueByDict("天猫同购无线描述", expressionParser, shopProp));
 
         return productInfoMap;
     }
