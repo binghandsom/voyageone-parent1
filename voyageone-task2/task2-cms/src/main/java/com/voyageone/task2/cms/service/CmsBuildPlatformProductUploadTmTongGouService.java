@@ -53,10 +53,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -92,7 +89,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
     @Autowired
     private CmsMtPlatformCategorySchemaTmDao platformCategorySchemaDao;
 
-    @Override
+	@Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
     }
@@ -166,6 +163,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         // 从上新的任务表中获取该平台及渠道需要上新的任务列表(group by channel_id, cart_id, group_id)
         List<CmsBtSxWorkloadModel> sxWorkloadModels = platformProductUploadService.getSxWorkloadWithChannelIdCartId(
                 CmsConstants.PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE, channelId, cartId);
+		$info("TOM-待处理件数" + sxWorkloadModels.size());
         if (ListUtils.isNull(sxWorkloadModels)) {
             $error("上新任务表中没有该渠道和平台对应的任务列表信息！[ChannelId:%s] [CartId:%s]", channelId, cartId);
             return;
@@ -176,14 +174,18 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         // 根据上新任务列表中的groupid循环上新处理
         for (CmsBtSxWorkloadModel cmsBtSxWorkloadModel : sxWorkloadModels) {
             // 启动多线程
+			$info("TOM-启动多线程START");
             executor.execute(() -> uploadProduct(cmsBtSxWorkloadModel, shopProp, tmTonggouFeedAttrList));
+			$info("TOM-启动多线程END");
         }
         // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
         executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
         try {
             // 阻塞，直到线程池里所有任务结束
+			$info("TOM-阻塞，直到线程池里所有任务结束");
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
+			$info("TOM-阻塞完毕，直到线程池里所有任务结束");
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
@@ -198,6 +200,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
      */
     public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp, List<String> tmTonggouFeedAttrList) {
 
+    	$info("TOM-官网同购产品上新处理-START");
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
         // 渠道id
@@ -471,15 +474,16 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             Map<String, Object> paramProperty = new HashMap<>();
 
             Map<String, List<String>> feedAttribute = feedInfo.getAttribute();
-            // 如果cms_bt_tm_tonggou_feed_attr表中没有配置当前渠道和平台可以上传的feed attribute属性，
-            // 则认为可以上传全部feed attribute属性
+            // 误 -> 如果cms_bt_tm_tonggou_feed_attr表中没有配置当前渠道和平台可以上传的feed attribute属性，
+            // 误 -> 则认为可以上传全部feed attribute属性
+			// 没有配置就不要设置
             if (ListUtils.isNull(tmTonggouFeedAttrList)) {
-                feedAttribute.entrySet().forEach(p -> {
-                    List<String> attrValueList = p.getValue();
-                    // feed.Attrivute里面的value是一个List，有多个值，用逗号分隔
-                    String value = Joiner.on(Separtor_Coma).join(attrValueList);
-                    paramProperty.put(p.getKey(), value);
-                });
+//                feedAttribute.entrySet().forEach(p -> {
+//                    List<String> attrValueList = p.getValue();
+//                    // feed.Attrivute里面的value是一个List，有多个值，用逗号分隔
+//                    String value = Joiner.on(Separtor_Coma).join(attrValueList);
+//                    paramProperty.put(p.getKey(), value);
+//                });
             } else {
                 // 如果cms_bt_tm_tonggou_feed_attr表中配置了当前渠道和平台可以上传的feed attribute属性，
                 // 则只上传表中配置过的feed attribute属性
@@ -645,7 +649,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
 
         // 无线描述(选填)
         // 解析cms_mt_platform_dict表中的数据字典
-//        productInfoMap.put("wireless_desc", getValueByDict("天猫同购无线描述", expressionParser, shopProp));
+		if (mainProduct.getCommon().getFields().getAppSwitch() != null &&
+				mainProduct.getCommon().getFields().getAppSwitch() == 1) {
+			productInfoMap.put("wireless_desc", getValueByDict("天猫同购无线描述", expressionParser, shopProp));
+		}
 
         return productInfoMap;
     }
@@ -903,7 +910,15 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 // 与颜色尺寸这个销售属性关联的图片
 				String imageTemplate = getValueByDict("属性图片模板", expressionParser, shopProp);
 				String propImage = expressionParser.getSxProductService().getProductImages(product, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
-				skuMap.put("image", String.format(imageTemplate, propImage));
+				String srcImage = String.format(imageTemplate, propImage);
+				Set<String> url = new HashSet<>();
+				url.add(srcImage);
+				try {
+					Map<String, String> map = sxProductService.uploadImage(shopProp.getOrder_channel_id(), cartId, expressionParser.getSxData().getGroupId().toString(), shopProp, url, getTaskName());
+					skuMap.put("image", map.get(srcImage));
+				} catch (Exception e) {
+					logger.warn("官网同购sku颜色图片取得失败, groupId: " + expressionParser.getSxData().getGroupId());
+				}
                 // 只有当入关方式(true表示跨境申报)时，才需要设置海关报关税号hscode;false表示邮关申报时，不需要设置海关报关税号hscode
                 if ("true".equalsIgnoreCase(crossBorderRreportFlg)) {
                     // 海关报关的税号
