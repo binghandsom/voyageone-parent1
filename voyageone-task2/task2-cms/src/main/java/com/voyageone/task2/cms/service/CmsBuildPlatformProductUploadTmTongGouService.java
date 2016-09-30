@@ -298,7 +298,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             }
 
             // 编辑天猫国际官网同购共通属性
+			$info("TOM-1");
             BaseMongoMap<String, String> productInfoMap = getProductInfo(sxData, shopProp, priceConfigValue, skuLogicQtyMap, tmTonggouFeedAttrList);
+			$info("TOM-2");
 
             // 构造Field列表
             List<Field> itemFieldList = new ArrayList<>();
@@ -332,14 +334,18 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
 
             String result;
             // 新增或更新商品主处理
+			$info("TOM-6");
             if (!updateWare) {
                 // 新增商品的时候
                 result = tbSimpleItemService.addSimpleItem(shopProp, productInfoXml);
+				$info("TOM-7" + result);
             } else {
                 // 更新商品的时候
                 result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
+				$info("TOM-8" + result);
             }
 
+			$info("TOM-3");
             if (!StringUtils.isEmpty(result) && result.startsWith("ERROR:")) {
                 // 天猫官网同购新增/更新商品失败时
                 String errMsg = "天猫官网同购新增商品时出现错误! ";
@@ -353,6 +359,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 // 天猫官网同购新增/更新商品成功时
                 if (!updateWare) numIId = result;
             }
+			$info("TOM-4");
 
             // 回写PXX.pCatId, PXX.pCatPath等信息
             Map<String, String> pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
@@ -365,6 +372,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, numIId,
                         CmsConstants.PlatformStatus.InStock, "", getTaskName());
             }
+			$info("TOM-5");
 
             // 正常结束
             $info(String.format("天猫官网同购商品上新成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s]",
