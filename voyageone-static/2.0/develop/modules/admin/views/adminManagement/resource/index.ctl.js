@@ -60,6 +60,7 @@ define([
             edit: function (type) {
                 var self = this;
                 var selectedList = [];
+                // 过滤选择框选中的数据
                 _.filter(self.selectedList, function (item) {
                     return item.selected;
                 }).forEach(function (item) {
