@@ -124,8 +124,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             for (String channelId : channelIdList) {
                 // 商品上传(天猫国际官网同购)
                 doProductUpload(channelId, CartEnums.Cart.TT.getValue());
-                // 商品上传(USJOI天猫国际官网同购)
-                doProductUpload(channelId, CartEnums.Cart.USTT.getValue());
+//                // 商品上传(USJOI天猫国际官网同购)
+//                doProductUpload(channelId, CartEnums.Cart.USTT.getValue());
             }
         }
 
