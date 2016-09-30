@@ -58,6 +58,7 @@ public class TargetSkuStatusCheckService extends FeedStatusCheckBaseService {
 
         // 加入一个自定义sku
         CmsFeedLiveSkuModel cmsFeedLiveSkuModel = new CmsFeedLiveSkuModel();
+        cmsFeedLiveSkuModel.setChannelId(getChannel().getId());
         cmsFeedLiveSkuModel.setSku("910453407");
         cmsFeedLiveSkuModel.setQty(0);
         cmsFeedLiveSkuModel.setCreater(getTaskName());
