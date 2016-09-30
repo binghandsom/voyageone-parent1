@@ -44,7 +44,7 @@
                                     <div class="col-sm-8">
                                         <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.channelId">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{channel.orderChannelId}}" ng-repeat="channel in ctrl.channelList">&nbsp;{{channel.name}}</option>
+                                            <option value="{{channel.orderChannelId}}" ng-repeat="channel in ctrl.channelList" ng-bind="channel.name"></option>
                                         </select>
                                     </div>
                                 </div>
@@ -88,7 +88,7 @@
                                     <div class="col-sm-8">
                                         <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.company">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{company.id}}" ng-repeat="company in ctrl.companyList">&nbsp;{{company.company}}</option>
+                                            <option value="{{company.id}}" ng-repeat="company in ctrl.companyList" ng-bind="company.company"></option>
                                         </select>
                                     </div>
                                 </div>
