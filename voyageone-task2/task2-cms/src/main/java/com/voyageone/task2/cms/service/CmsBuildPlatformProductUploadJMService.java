@@ -761,6 +761,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
                 productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
 
+                // add by desmond 2016/09/29 start
+                // 批量修改deal市场价(为了后面uploadMall时不报商城市场价与团购市场价不一致的错误，即使异常也继续uploadMall)
+                updateDealPriceBatch(shop, product, true, false);
+                // add by desmond 2016/09/29 end
+
                 // added by morse.lu 2016/08/30 start
                 uploadMall(product, shop, expressionParser, addSkuList, skuLogicQtyMap);
                 // added by morse.lu 2016/08/30 end
@@ -1510,12 +1515,15 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         for (BaseMongoMap<String, Object> sku : skuList) {
             String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
             if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
-                // 不是新追加的
-                HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
-                skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
-                skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-                skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
-                updateData.add(skuInfo);
+                // 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
+                if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) {
+                    // 不是新追加的
+                    HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
+                    skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
+                    skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+                    skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                    updateData.add(skuInfo);
+                }
             }
         }
 
@@ -1769,7 +1777,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             htSkuUpdateRequest.setBusinessman_num("ERROR_" + oldSkuCode);
         } else {
             return;
-//            htSkuUpdateRequest.setBusinessman_num(oldSkuCode);
         }
 
         htSkuUpdateRequest.setCustoms_product_number(" ");
@@ -1799,7 +1806,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             htSpuUpdateRequest.setUpc_code("ERROR_" + oldUpcCode);
         } else {
             return;
-//            htSpuUpdateRequest.setUpc_code(oldUpcCode);
         }
 
         try {
@@ -1811,6 +1817,75 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             $error(String.format("聚美上新修改聚美Spu商品自带条码(barCode) 头部+\"ERROR_\" 调用聚美API失败 channelId=%s, " +
                     "cartId=%d msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
             throw new BusinessException("聚美上新修改聚美Spu商品自带条码(barCode) 头部+\"ERROR_\"失败！");
+        }
+    }
+
+    /**
+     * 批量更新deal价格(不用逐个deal去修或团购价了)
+     *
+     * @param product CmsBtProductModel
+     * @param isUpdateMarketPrice 是否批量修改市场价
+     * @param isUpdateDealPrice 是否批量修改团购价
+     */
+    protected void updateDealPriceBatch(ShopBean shop, CmsBtProductModel product, boolean isUpdateMarketPrice, boolean isUpdateDealPrice) {
+
+        if (product == null) return;
+        // 产品code
+        String productCode = product.getCommon().getFields().getCode();
+
+        List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+        if (ListUtils.isNull(skuList)) return;
+
+        // 聚美HashId
+        String jmHashId = product.getPlatform(CART_ID).getpNumIId();
+
+        List<HtDeal_UpdateDealPriceBatch_UpdateData> updateDataList = new ArrayList<>();
+        for (BaseMongoMap<String, Object> sku : skuList) {
+            // 如果该sku的聚美Sku_no为空,则跳过
+            if (StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) continue;
+
+            HtDeal_UpdateDealPriceBatch_UpdateData skuUpdate = new HtDeal_UpdateDealPriceBatch_UpdateData();
+            // 聚美Deal唯一值(jmHashId)
+            skuUpdate.setJumei_hash_id(jmHashId);
+            // 聚美Sku_no
+            skuUpdate.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
+            // 市场价(市场价和团购价不能同时为空,市场价必须大于等于团购价)
+            if (isUpdateMarketPrice)
+                skuUpdate.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+            // 团购价(市场价和团购价不能同时为空,团购价至少大于15元)
+            if (isUpdateDealPrice)
+                skuUpdate.setDeal_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+
+            updateDataList.add(skuUpdate);
+        }
+
+        if (ListUtils.isNull(updateDataList)) return;
+
+        HtDealUpdateDealPriceBatchRequest request = new HtDealUpdateDealPriceBatchRequest();
+        request.setUpdate_data(updateDataList);
+
+        // 修改对象价格
+        String strUpdatePrice = "";
+        if (isUpdateMarketPrice && !isUpdateDealPrice) {
+            strUpdatePrice += "(市场价)";
+        } if (!isUpdateMarketPrice && isUpdateDealPrice) {
+            strUpdatePrice += "(团购价)";
+        } if (isUpdateMarketPrice && isUpdateDealPrice) {
+            strUpdatePrice += "(市场价和团购价)";
+        }
+
+        HtDealUpdateDealPriceBatchResponse response;
+        try {
+            // 调用批量更新deal价格API(/v1/htDeal/updateDealPriceBatch)
+            response = jumeiHtDealService.updateDealPriceBatch(shop, request);
+            if (response != null && response.is_Success()) {
+                $info("批量更新deal价格%s成功! [ProductCode=%s], [JumeiHashId=%s]", strUpdatePrice, productCode, jmHashId);
+            } else {
+                throw new BusinessException(response.getErrorMsg());
+            }
+        } catch (Exception e) {
+            // 即使批量修改deal价格失败，也继续做后面的uploadMall
+            $error("批量更新deal价格%s失败! [ProductCode=%s], [JumeiHashId=%s], [Error=%s]", strUpdatePrice, productCode, jmHashId, e.getMessage());
         }
     }
 

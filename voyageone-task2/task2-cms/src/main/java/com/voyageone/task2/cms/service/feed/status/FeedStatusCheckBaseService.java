@@ -57,12 +57,12 @@ public abstract class FeedStatusCheckBaseService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-//        List<CmsFeedLiveSkuModel> skus = getSkuList();
-//        List<List<CmsFeedLiveSkuModel>> skuList = CommonUtil.splitList(skus, 1000);
-//        $info("删除channel=" + getChannel().getId() + "的数据");
-//        deleteData();
-//        $info("插入channel=" + getChannel().getId() + "的数据。共" + skus.size() + "条");
-//        skuList.forEach(this::insertData);
+        List<CmsFeedLiveSkuModel> skus = getSkuList();
+        List<List<CmsFeedLiveSkuModel>> skuList = CommonUtil.splitList(skus, 1000);
+        $info("删除channel=" + getChannel().getId() + "的数据");
+        deleteData();
+        $info("插入channel=" + getChannel().getId() + "的数据。共" + skus.size() + "条");
+        skuList.forEach(this::insertData);
 
         long cnt = feedInfoService.getCnt(getChannel().getId(), new HashMap<>());
         long pageCnt = cnt / pageSize + (cnt % pageSize == 0 ? 0 : 1);

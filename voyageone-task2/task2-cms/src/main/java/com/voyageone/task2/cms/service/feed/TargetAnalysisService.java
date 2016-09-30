@@ -1,7 +1,9 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.csvreader.CsvReader;
+import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -12,6 +14,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.task2.cms.bean.SuperFeedTargetBean;
 import com.voyageone.task2.cms.dao.feed.TargetFeedDao;
@@ -37,6 +40,10 @@ public class TargetAnalysisService extends BaseAnalysisService {
 
     @Autowired
     TargetFeedDao TargetFeedDao;
+
+    @Autowired
+    FeedInfoService feedInfoService;
+
     private Map<String, Map<String, String>> retailPriceList;
 
     @Override
@@ -448,7 +455,15 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 int i = 0;
                 superFeedTargetBean.setSku(reader.get(i++));
                 superFeedTargetBean.setMarketprice(reader.get(i++));
-                retailPriceList.put(superFeedTargetBean.getSku(),superFeedTargetBean);
+                WriteResult writeResult = feedInfoService.updateFeedInfoSkuPrice("018", superFeedTargetBean.getSku(), Double.parseDouble(superFeedTargetBean.getMarketprice()));
+                if(!writeResult.isUpdateOfExisting()){
+                    retailPriceList.put(superFeedTargetBean.getSku(),superFeedTargetBean);
+                }else{
+                    CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductBySku("018",superFeedTargetBean.getSku());
+                    if(cmsBtFeedInfoModel.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Succeed || cmsBtFeedInfoModel.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Fail){
+                        feedInfoService.updateAllUpdFlg("018","{\"code\":\""+ cmsBtFeedInfoModel.getCode()+"\"}",CmsConstants.FeedUpdFlgStatus.Pending,getTaskName());
+                    }
+                }
             }
         } catch (FileNotFoundException e) {
             $info("Target价格列表不存在");

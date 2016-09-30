@@ -94,9 +94,9 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
 
             postNewProduct();
 
-            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
-                backupFeedFile(channel.getId());
-            }
+        }
+        if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
+            backupFeedFile(channel.getId());
         }
     }
 
