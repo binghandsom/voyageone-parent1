@@ -90,9 +90,16 @@ public class AliYunOSSClient {
      * @param fileOSSFullPath 阿里云oss文件路径
      */
     public String putOSS(InputStream inputStream, String bucketName, String fileOSSFullPath) {
-        OSSClient client = create();
-        PutObjectResult result = client.putObject(bucketName, fileOSSFullPath, inputStream);
-        return result.toString();
+        OSSClient client = null;
+        try {
+            client = create();
+            PutObjectResult result = client.putObject(bucketName, fileOSSFullPath, inputStream);
+            return result.toString();
+        } finally {
+            if (client != null) {
+                client.shutdown();
+            }
+        }
     }
 
 }
