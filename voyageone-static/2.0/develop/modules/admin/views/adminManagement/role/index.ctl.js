@@ -238,7 +238,7 @@ define([
             getRoleType: function (type) {
                 switch (type) {
                     case 1:
-                        return 'IT管理员';
+                        return '管理员';
                         break;
                     case 2:
                         return '客服';
