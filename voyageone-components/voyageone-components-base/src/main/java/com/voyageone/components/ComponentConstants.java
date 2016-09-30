@@ -11,6 +11,6 @@ public class ComponentConstants {
 
     public static final int C_MAX_API_ERROR = 3;
 
-    public static final int TRY_WAIT_TIME_4TAOBAO = 5000;
+    public static final int TRY_WAIT_TIME_4TAOBAO = 20000;
 
 }
