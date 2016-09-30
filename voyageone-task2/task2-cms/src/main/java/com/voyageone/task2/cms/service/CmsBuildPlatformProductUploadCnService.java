@@ -15,7 +15,6 @@ import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.CnCategoryService;
-import com.voyageone.service.impl.cms.sx.ConditionPropValueService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSxCnInfoModel;
@@ -43,8 +42,6 @@ import java.util.stream.Collectors;
 @Service
 public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
-    @Autowired
-    private ConditionPropValueService conditionPropValueService;
     @Autowired
     private CnSchemaService cnSchemaService;
     @Autowired
@@ -86,9 +83,6 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         // 获取该任务可以运行的销售渠道
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
-
-        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
-        conditionPropValueService.init();
 
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {
