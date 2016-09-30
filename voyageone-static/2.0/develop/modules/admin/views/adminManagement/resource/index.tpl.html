@@ -64,7 +64,7 @@
                 </table>
 
                 <script id="table_tree.html" type="text/ng-template">
-                    <tr ng-class="{parent: item.children}" ng-init="initCheckbox(item, ctrl.selectedList, ctrl.flatResList)">
+                    <tr ng-class="{parent: item.children}" ng-init="initCheckbox(item, ctrl.selectedList, ctrl.flatResList, {isOpen:false})">
                         <td class="cell-input" style="padding: 4px;">
                             <input ng-change="toggleCheckbox(item, ctrl.selectedList)" ng-model="item.selected" type="checkbox" />
                         </td>

@@ -26,8 +26,10 @@ define([
                 }
                 return results;
             };
-            $scope.initCheckbox = function (item, selList, flatList) {
-                if (!item.opened) item.opened = true;
+            $scope.initCheckbox = function (item, selList, flatList, ob) {
+            	if(ob.isOpen==true){
+                    if (!item.opened) item.opened = true;	
+            	}
                 if (item.children.length < 1) item.showArrow = false;
                 flatList.push(item);
                 $scope.toggleCheckbox(item, selList);

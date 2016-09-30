@@ -39,6 +39,7 @@ define([
             search: function (page) {
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
+                self.selectedList = [];
                 self.adminResService.searchRes({
                         'pageNum': self.searchInfo.pageInfo.curr,
                         'pageSize': self.searchInfo.pageInfo.size,

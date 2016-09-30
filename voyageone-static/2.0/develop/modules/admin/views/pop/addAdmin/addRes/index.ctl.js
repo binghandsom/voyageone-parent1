@@ -37,6 +37,9 @@ define([
                 self.adminUserService.getAllApp().then(function (res) {
                     self.appList = res.data;
                 });
+                if (self.popType=='修改菜单资源'){
+                    self.changeMenu(self.sourceData.application);	
+                }
             },
             changeMenu: function (value) {
                 var self = this;
