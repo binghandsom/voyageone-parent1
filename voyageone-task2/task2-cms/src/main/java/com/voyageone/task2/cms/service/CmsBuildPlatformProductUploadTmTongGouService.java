@@ -163,7 +163,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         // 从上新的任务表中获取该平台及渠道需要上新的任务列表(group by channel_id, cart_id, group_id)
         List<CmsBtSxWorkloadModel> sxWorkloadModels = platformProductUploadService.getSxWorkloadWithChannelIdCartId(
                 CmsConstants.PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE, channelId, cartId);
-		$info("TOM-待处理件数" + sxWorkloadModels.size());
         if (ListUtils.isNull(sxWorkloadModels)) {
             $error("上新任务表中没有该渠道和平台对应的任务列表信息！[ChannelId:%s] [CartId:%s]", channelId, cartId);
             return;
@@ -174,18 +173,14 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         // 根据上新任务列表中的groupid循环上新处理
         for (CmsBtSxWorkloadModel cmsBtSxWorkloadModel : sxWorkloadModels) {
             // 启动多线程
-			$info("TOM-启动多线程START");
             executor.execute(() -> uploadProduct(cmsBtSxWorkloadModel, shopProp, tmTonggouFeedAttrList));
-			$info("TOM-启动多线程END");
         }
         // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
         executor.shutdown(); // 并不是终止线程的运行，而是禁止在这个Executor中添加新的任务
         try {
             // 阻塞，直到线程池里所有任务结束
-			$info("TOM-阻塞，直到线程池里所有任务结束");
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-			$info("TOM-阻塞完毕，直到线程池里所有任务结束");
         } catch (InterruptedException ie) {
             ie.printStackTrace();
         }
@@ -200,7 +195,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
      */
     public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp, List<String> tmTonggouFeedAttrList) {
 
-    	$info("TOM-官网同购产品上新处理-START");
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
         // 渠道id
@@ -298,9 +292,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             }
 
             // 编辑天猫国际官网同购共通属性
-			$info("TOM-1");
             BaseMongoMap<String, String> productInfoMap = getProductInfo(sxData, shopProp, priceConfigValue, skuLogicQtyMap, tmTonggouFeedAttrList);
-			$info("TOM-2");
 
             // 构造Field列表
             List<Field> itemFieldList = new ArrayList<>();
@@ -322,11 +314,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
 
             // 判断新增商品还是更新商品
             // 只要numIId不为空，则为更新商品
-			// TODO 测试代码 START
-            $info("TOM-10");
-            sxData.getPlatform().setNumIId("539429848247");
-            $info("TOM-11");
-			// 测试代码 END
             if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
                 // 更新商品
                 updateWare = true;
@@ -334,23 +321,16 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 numIId = sxData.getPlatform().getNumIId();
             }
 
-            $info("TOM-12");
             String result;
             // 新增或更新商品主处理
-			$info("TOM-6");
             if (!updateWare) {
-                $info("TOM-13");
                 // 新增商品的时候
                 result = tbSimpleItemService.addSimpleItem(shopProp, productInfoXml);
-				$info("TOM-7" + result);
             } else {
                 // 更新商品的时候
-                $info("TOM-14");
                 result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
-				$info("TOM-8" + result);
             }
 
-			$info("TOM-3");
             if (!StringUtils.isEmpty(result) && result.startsWith("ERROR:")) {
                 // 天猫官网同购新增/更新商品失败时
                 String errMsg = "天猫官网同购新增商品时出现错误! ";
@@ -364,7 +344,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 // 天猫官网同购新增/更新商品成功时
                 if (!updateWare) numIId = result;
             }
-			$info("TOM-4");
 
             // 回写PXX.pCatId, PXX.pCatPath等信息
             Map<String, String> pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
@@ -377,7 +356,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, numIId,
                         CmsConstants.PlatformStatus.InStock, "", getTaskName());
             }
-			$info("TOM-5");
 
             // 正常结束
             $info(String.format("天猫官网同购商品上新成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s]",

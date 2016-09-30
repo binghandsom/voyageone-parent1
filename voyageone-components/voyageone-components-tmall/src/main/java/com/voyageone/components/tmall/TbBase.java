@@ -130,8 +130,7 @@ public abstract class TbBase {
 
         ReqTaobaoApiThread<T> t = new ReqTaobaoApiThread<>(shopBean, request, setSessionKey);
 
-//        t.start();
-        t.run();
+        t.start();
 
         try {
             t.join(timeout);
