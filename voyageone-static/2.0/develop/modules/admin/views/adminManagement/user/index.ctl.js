@@ -96,7 +96,7 @@ define([
                         'channelId': self.searchInfo.channelId,
                         'orgId': self.searchInfo.orgId,
                         'application': self.searchInfo.application,
-                        'company': self.searchInfo.company,
+                        'companyId': self.searchInfo.company,
                         'storeId': self.searchInfo.storeId
                     })
                     .then(function (res) {
