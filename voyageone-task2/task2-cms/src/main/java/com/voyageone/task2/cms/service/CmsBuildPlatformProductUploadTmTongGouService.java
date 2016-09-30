@@ -639,7 +639,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
 
         // 无线描述(选填)
         // 解析cms_mt_platform_dict表中的数据字典
-        productInfoMap.put("wireless_desc", getValueByDict("天猫同购无线描述", expressionParser, shopProp));
+//        productInfoMap.put("wireless_desc", getValueByDict("天猫同购无线描述", expressionParser, shopProp));
 
         return productInfoMap;
     }
