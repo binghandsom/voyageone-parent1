@@ -168,6 +168,9 @@
          <!--独立域名图片上传（每2小时一次） -->
         <task:scheduled ref="CmsBuildPlatformImageUploadCnJob" method="run" cron="0 0 0/2 * * ?"/>
 
+        <!-- target的feed所有sku的判断,是live还是notLive处理（每天早上3点一次） -->
+        <task:scheduled ref="CmsTargetStautsJob" method="run" cron="0 0 3 * * ?"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->
