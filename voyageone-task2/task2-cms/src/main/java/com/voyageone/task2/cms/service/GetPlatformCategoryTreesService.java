@@ -59,8 +59,10 @@ public class GetPlatformCategoryTreesService extends BaseTaskService {
 
         // cart列表
         List<Integer> cartList = new ArrayList<>();
+        cartList.add(CartEnums.Cart.TT.getValue());
         cartList.add(CartEnums.Cart.TM.getValue());
         cartList.add(CartEnums.Cart.TG.getValue());
+        cartList.add(CartEnums.Cart.USTT.getValue());
 
         // 获取该任务可以运行的销售渠道
         int idxChannel = 1;
