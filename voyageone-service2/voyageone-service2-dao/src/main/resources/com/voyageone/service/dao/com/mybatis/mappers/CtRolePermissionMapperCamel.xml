@@ -1,33 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.voyageone.security.dao.ComRoleDao" >
-    <resultMap id="BaseResultMap" type="com.voyageone.security.model.ComRoleModel" />
+<mapper namespace="com.voyageone.service.dao.com.CtRolePermissionDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.com.CtRolePermissionModel" />
     <sql id="Base_Column_List" >
-        `id`, `role_name`, `role_type`, `description`, `active`, `created`, `creater`, `modified`, 
-        `modifier`
+        `id`, `property_id`, `role_id`, `controller_id`, `action_id`, `value`, `active`, 
+        `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
         select 
         <include refid="Base_Column_List" />
-        from com_role
+        from ct_role_permission
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <update id="update" parameterType="com.voyageone.security.model.ComRoleModel" >
-        update com_role
+    <update id="update" parameterType="com.voyageone.service.model.com.CtRolePermissionModel" >
+        update ct_role_permission
         <set >
-            <if test="roleName != null" >
-                `role_name` = #{roleName,jdbcType=VARCHAR},
+            <if test="propertyId != null" >
+                `property_id` = #{propertyId,jdbcType=VARCHAR},
             </if>
-            <if test="roleType != null" >
-                `role_type` = #{roleType,jdbcType=INTEGER},
+            <if test="roleId != null" >
+                `role_id` = #{roleId,jdbcType=INTEGER},
             </if>
-            <if test="description != null" >
-                `description` = #{description,jdbcType=VARCHAR},
+            <if test="controllerId != null" >
+                `controller_id` = #{controllerId,jdbcType=INTEGER},
+            </if>
+            <if test="actionId != null" >
+                `action_id` = #{actionId,jdbcType=INTEGER},
+            </if>
+            <if test="value != null" >
+                `value` = #{value,jdbcType=BIT},
             </if>
             <if test="active != null" >
-                `active` = #{active,jdbcType=INTEGER},
+                `active` = #{active,jdbcType=BIT},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -49,26 +55,32 @@
     </update>
 
     <delete id="delete" parameterType="java.lang.Integer" >
-        delete from com_role
+        delete from ct_role_permission
         where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
     <select id="selectOne" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
-        from com_role
+        from ct_role_permission
         <where >
-            <if test="roleName != null" >
-                and `role_name` = #{roleName,jdbcType=VARCHAR}
+            <if test="propertyId != null" >
+                and `property_id` = #{propertyId,jdbcType=VARCHAR}
             </if>
-            <if test="roleType != null" >
-                and `role_type` = #{roleType,jdbcType=INTEGER}
+            <if test="roleId != null" >
+                and `role_id` = #{roleId,jdbcType=INTEGER}
             </if>
-            <if test="description != null" >
-                and `description` = #{description,jdbcType=VARCHAR}
+            <if test="controllerId != null" >
+                and `controller_id` = #{controllerId,jdbcType=INTEGER}
+            </if>
+            <if test="actionId != null" >
+                and `action_id` = #{actionId,jdbcType=INTEGER}
+            </if>
+            <if test="value != null" >
+                and `value` = #{value,jdbcType=BIT}
             </if>
             <if test="active != null" >
-                and `active` = #{active,jdbcType=INTEGER}
+                and `active` = #{active,jdbcType=BIT}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -89,19 +101,25 @@
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
-        from com_role
+        from ct_role_permission
         <where >
-            <if test="roleName != null" >
-                and `role_name` = #{roleName,jdbcType=VARCHAR}
+            <if test="propertyId != null" >
+                and `property_id` = #{propertyId,jdbcType=VARCHAR}
             </if>
-            <if test="roleType != null" >
-                and `role_type` = #{roleType,jdbcType=INTEGER}
+            <if test="roleId != null" >
+                and `role_id` = #{roleId,jdbcType=INTEGER}
             </if>
-            <if test="description != null" >
-                and `description` = #{description,jdbcType=VARCHAR}
+            <if test="controllerId != null" >
+                and `controller_id` = #{controllerId,jdbcType=INTEGER}
+            </if>
+            <if test="actionId != null" >
+                and `action_id` = #{actionId,jdbcType=INTEGER}
+            </if>
+            <if test="value != null" >
+                and `value` = #{value,jdbcType=BIT}
             </if>
             <if test="active != null" >
-                and `active` = #{active,jdbcType=INTEGER}
+                and `active` = #{active,jdbcType=BIT}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -119,19 +137,25 @@
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" >
-        select count(*) from com_role
+        select count(*) from ct_role_permission
         <where >
-            <if test="roleName != null" >
-                and `role_name` = #{roleName,jdbcType=VARCHAR}
+            <if test="propertyId != null" >
+                and `property_id` = #{propertyId,jdbcType=VARCHAR}
             </if>
-            <if test="roleType != null" >
-                and `role_type` = #{roleType,jdbcType=INTEGER}
+            <if test="roleId != null" >
+                and `role_id` = #{roleId,jdbcType=INTEGER}
             </if>
-            <if test="description != null" >
-                and `description` = #{description,jdbcType=VARCHAR}
+            <if test="controllerId != null" >
+                and `controller_id` = #{controllerId,jdbcType=INTEGER}
+            </if>
+            <if test="actionId != null" >
+                and `action_id` = #{actionId,jdbcType=INTEGER}
+            </if>
+            <if test="value != null" >
+                and `value` = #{value,jdbcType=BIT}
             </if>
             <if test="active != null" >
-                and `active` = #{active,jdbcType=INTEGER}
+                and `active` = #{active,jdbcType=BIT}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -148,17 +172,23 @@
         </where>
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.security.model.ComRoleModel" useGeneratedKeys="true" keyProperty="id" >
-        insert into com_role
+    <insert id="insert" parameterType="com.voyageone.service.model.com.CtRolePermissionModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into ct_role_permission
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="roleName != null" >
-                `role_name`,
+            <if test="propertyId != null" >
+                `property_id`,
             </if>
-            <if test="roleType != null" >
-                `role_type`,
+            <if test="roleId != null" >
+                `role_id`,
             </if>
-            <if test="description != null" >
-                `description`,
+            <if test="controllerId != null" >
+                `controller_id`,
+            </if>
+            <if test="actionId != null" >
+                `action_id`,
+            </if>
+            <if test="value != null" >
+                `value`,
             </if>
             <if test="active != null" >
                 `active`,
@@ -176,17 +206,23 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="roleName != null" >
-                #{roleName,jdbcType=VARCHAR},
+            <if test="propertyId != null" >
+                #{propertyId,jdbcType=VARCHAR},
             </if>
-            <if test="roleType != null" >
-                #{roleType,jdbcType=INTEGER},
+            <if test="roleId != null" >
+                #{roleId,jdbcType=INTEGER},
             </if>
-            <if test="description != null" >
-                #{description,jdbcType=VARCHAR},
+            <if test="controllerId != null" >
+                #{controllerId,jdbcType=INTEGER},
+            </if>
+            <if test="actionId != null" >
+                #{actionId,jdbcType=INTEGER},
+            </if>
+            <if test="value != null" >
+                #{value,jdbcType=BIT},
             </if>
             <if test="active != null" >
-                #{active,jdbcType=INTEGER},
+                #{active,jdbcType=BIT},
             </if>
             <if test="created == null" >
                 now(),

@@ -125,4 +125,18 @@ public class AdminUserServiceTest {
     public void testMoveApplication() throws Exception {
         adminUserService.moveApplication();
     }
+
+
+    @Test
+    public void testMovePermission() throws Exception {
+
+        adminUserService.movePermission("001", 2 , "普通客服1组");
+        adminUserService.movePermission("001", 5 , "售后客服1组");
+        adminUserService.movePermission("001", 11 , "客服主管1组");
+    }
+
+    @Test
+    public void testCreateRoles() throws Exception {
+        adminUserService.createRoles();
+    }
 }

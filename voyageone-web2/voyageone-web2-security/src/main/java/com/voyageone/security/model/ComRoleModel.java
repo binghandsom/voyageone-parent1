@@ -16,7 +16,7 @@ public class ComRoleModel extends CoreBaseModel {
      */
     protected String roleName;
 
-    protected Short roleType;
+    protected Integer roleType;
 
     /**
      * 说明
@@ -36,11 +36,11 @@ public class ComRoleModel extends CoreBaseModel {
         this.roleName = roleName == null ? null : roleName.trim();
     }
 
-    public Short getRoleType() {
+    public Integer getRoleType() {
         return roleType;
     }
 
-    public void setRoleType(Short roleType) {
+    public void setRoleType(Integer roleType) {
         this.roleType = roleType;
     }
 

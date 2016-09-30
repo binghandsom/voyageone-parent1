@@ -5,19 +5,15 @@ import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.mail.Mail;
-import com.voyageone.security.dao.ComResourceDao;
-import com.voyageone.security.dao.ComUserDao;
-import com.voyageone.security.dao.ComUserRoleDao;
-import com.voyageone.security.dao.ComUserTokenDao;
-import com.voyageone.security.model.ComResourceModel;
-import com.voyageone.security.model.ComUserModel;
-import com.voyageone.security.model.ComUserRoleModel;
-import com.voyageone.security.model.ComUserTokenModel;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.security.dao.*;
+import com.voyageone.security.model.*;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminUserBean;
 import com.voyageone.service.dao.com.*;
 import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.service.daoext.core.AdminUserDaoExt;
+import com.voyageone.service.impl.AdminProperty;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -30,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import javax.mail.Store;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,6 +73,23 @@ public class AdminUserService extends BaseService {
 
     @Autowired
     CtControllerDao ctControllerDao;
+
+
+    @Autowired
+    CtRolePermissionDao ctRolePermissionDao;
+
+    @Autowired
+    ComResRoleDao comResRoleDao;
+
+    @Autowired
+    ComRoleDao comRoleDao;
+
+
+    @Autowired
+    AdminRoleService adminRoleService;
+
+
+
     /**
      * 检索用户
      *
@@ -89,7 +103,7 @@ public class AdminUserService extends BaseService {
      * @return
      */
     public PageModel<AdminUserBean> searchUser(String userAccount, Integer active, Integer orgId, Integer roleId,
-                                               String channelId, Integer storeId, String application,Integer companyId, Integer pageNum, Integer pageSize) {
+                                               String channelId, Integer storeId, String application, Integer companyId, Integer pageNum, Integer pageSize) {
 
         PageModel<AdminUserBean> pageModel = new PageModel<>();
 
@@ -111,15 +125,12 @@ public class AdminUserService extends BaseService {
             needPage = true;
             pageModel.setCount(adminUserDaoExt.selectUserCount(params));
             params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).addSort("modified", Order.Direction.DESC).toMap();
-        }
-        else
-        {
+        } else {
             params = MySqlPageHelper.build(params).addSort("modified", Order.Direction.DESC).toMap();
         }
 
         List<AdminUserBean> list = adminUserDaoExt.selectUserByPage(params);
-        if(!needPage)
-        {
+        if (!needPage) {
             pageModel.setCount(list.size());
         }
         pageModel.setResult(list);
@@ -283,7 +294,7 @@ public class AdminUserService extends BaseService {
 
 
     @VOTransactional
-    public void restPass (String token, String pass) {
+    public void restPass(String token, String pass) {
         ComUserTokenModel model = getComUserTokenModel(token);
         ComUserModel user = new ComUserModel();
         user.setUserAccount(model.getUserAccount());
@@ -298,33 +309,30 @@ public class AdminUserService extends BaseService {
         comUserTokenDao.delete(model.getId());
     }
 
-    public Map getUserByToken(String token)
-    {
+    public Map getUserByToken(String token) {
         ComUserTokenModel model = getComUserTokenModel(token);
 
         Map<String, Object> result = new HashMap<>();
-        result.put("userAccount",  model.getUserAccount());
-        return  result;
+        result.put("userAccount", model.getUserAccount());
+        return result;
     }
 
     private ComUserTokenModel getComUserTokenModel(String token) {
-        if(StringUtils.isEmpty(token))
+        if (StringUtils.isEmpty(token))
             throw new BusinessException("A007", "Bad Request Token.");
 
         ComUserTokenModel model = new ComUserTokenModel();
         model.setToken(token);
         model = comUserTokenDao.selectOne(model);
 
-        if(model == null)
-        {
+        if (model == null) {
             throw new BusinessException("A007", "Bad Request Token.");
         }
 
         Date modified = model.getModified();
         Date now = new Date();
 
-        if (now.getTime() - modified.getTime() > 1000*3600*24)
-        {
+        if (now.getTime() - modified.getTime() > 1000 * 3600 * 24) {
             comUserTokenDao.delete(model.getId());
             throw new BusinessException("A008", "Token Expired");
         }
@@ -333,7 +341,7 @@ public class AdminUserService extends BaseService {
 
 
     @VOTransactional
-    public void restPass (List<Integer> userIds, String pass, String username) {
+    public void restPass(List<Integer> userIds, String pass, String username) {
         for (Integer id : userIds) {
             restPass(id, pass, username);
         }
@@ -350,18 +358,17 @@ public class AdminUserService extends BaseService {
         }
     }
 
-    public void forgetPass(String account)  {
+    public void forgetPass(String account) {
         ComUserModel model = new ComUserModel();
         model.setUserAccount(account);
         ComUserModel user = comUserDao.selectOne(model);
-        if(user == null)
-        {
+        if (user == null) {
             throw new BusinessException("该用户在系统中不存在");
         }
 
         String email = user.getEmail();
-        String token = UUID.randomUUID().toString().replaceAll("-","");
-        ComUserTokenModel tokenModel = new  ComUserTokenModel();
+        String token = UUID.randomUUID().toString().replaceAll("-", "");
+        ComUserTokenModel tokenModel = new ComUserTokenModel();
         tokenModel.setToken(token);
         tokenModel.setUserAccount(user.getUserAccount());
 
@@ -374,7 +381,7 @@ public class AdminUserService extends BaseService {
         }
     }
 
-    public List<AdminResourceBean>  showUserAuth(String userAccount, String application) {
+    public List<AdminResourceBean> showUserAuth(String userAccount, String application) {
         Map<String, Object> map = new HashMap<>();
         map.put("userAccount", userAccount);
 
@@ -391,16 +398,13 @@ public class AdminUserService extends BaseService {
     }
 
 
-
-    public List<Map<String, Object>>  getAllApp()
-    {
+    public List<Map<String, Object>> getAllApp() {
         List<Map<String, Object>> list = adminUserDaoExt.selectAllApp();
         return list;
     }
 
 
-    private void encryptPassword(ComUserModel model)
-    {
+    private void encryptPassword(ComUserModel model) {
         RandomNumberGenerator randomNumberGenerator = new SecureRandomNumberGenerator();
         String salt = randomNumberGenerator.nextBytes().toHex();
         model.setCredentialSalt(salt);
@@ -408,8 +412,7 @@ public class AdminUserService extends BaseService {
         model.setPassword(newPassword);
     }
 
-    private String getMailContent(ComUserModel model, String token)
-    {
+    private String getMailContent(ComUserModel model, String token) {
         StringBuffer sb = new StringBuffer();
 
         sb.append("<p>").append("亲爱的").append(model.getUserAccount()).append(":</p>");
@@ -473,18 +476,15 @@ public class AdminUserService extends BaseService {
 
     /**
      * 迁移旧系统的User
-     *
      */
     @VOTransactional
-    public void moveUser()
-    {
+    public void moveUser() {
         CtUserModel query = new CtUserModel();
 //        query.setActive(true);
 
         List<CtUserModel> allOldUser = ctUserDao.selectList(query);
 
-        for(CtUserModel ct : allOldUser)
-        {
+        for (CtUserModel ct : allOldUser) {
             ComUserModel model = new ComUserModel();
             model.setId(ct.getId());
             model.setUserAccount(ct.getUsername());
@@ -502,17 +502,15 @@ public class AdminUserService extends BaseService {
     }
 
     @VOTransactional
-    public void moveApplication()
-    {
+    public void moveApplication() {
         CtApplicationModel query = new CtApplicationModel();
         query.setActive(true);
         query.setShowInMenu(true);
 
         //添加顶级资源
         List<CtApplicationModel> allApps = ctApplicationDao.selectList(query);
-        for(CtApplicationModel app : allApps)
-        {
-            ComResourceModel  res = new ComResourceModel();
+        for (CtApplicationModel app : allApps) {
+            ComResourceModel res = new ComResourceModel();
             res.setOriginId(app.getId());
             res.setResType(0);
             res.setActive(1);
@@ -536,9 +534,8 @@ public class AdminUserService extends BaseService {
 
         List<CtModuleModel> allModule = ctModuleDao.selectList(module);
 
-        for(CtModuleModel model : allModule)
-        {
-            ComResourceModel  res = new ComResourceModel();
+        for (CtModuleModel model : allModule) {
+            ComResourceModel res = new ComResourceModel();
             res.setOriginId(model.getId());
             res.setResType(1);
             res.setActive(model.getActive() ? 1 : 0);
@@ -571,9 +568,8 @@ public class AdminUserService extends BaseService {
 
         List<CtControllerModel> allControllers = ctControllerDao.selectList(controller);
 
-        for(CtControllerModel model : allControllers)
-        {
-            ComResourceModel  res = new ComResourceModel();
+        for (CtControllerModel model : allControllers) {
+            ComResourceModel res = new ComResourceModel();
             res.setOriginId(model.getId());
             res.setResType(1);
             res.setActive(model.getActive() ? 1 : 0);
@@ -592,7 +588,7 @@ public class AdminUserService extends BaseService {
 
             ComResourceModel app = comResourceDao.select(module1.getParentId());
 
-            if(app != null) {
+            if (app != null) {
                 res.setResKey(module1.getResKey() + "_" + model.getController());
 //            res.setResName(StringUtils.isEmpty(model.getMenuTitle()) ? res.getResKey().toUpperCase() : module1.getResName() + "_" + model.getMenuTitle().toUpperCase());
                 res.setResName(res.getResKey().toUpperCase());
@@ -610,9 +606,8 @@ public class AdminUserService extends BaseService {
 
         List<CtActionModel> allActions = ctActionDao.selectList(action);
 
-        for(CtActionModel model : allActions)
-        {
-            ComResourceModel  res = new ComResourceModel();
+        for (CtActionModel model : allActions) {
+            ComResourceModel res = new ComResourceModel();
             res.setOriginId(model.getId());
             res.setResType(2);
             res.setActive(model.getActive() ? 1 : 0);
@@ -629,11 +624,11 @@ public class AdminUserService extends BaseService {
 
             ComResourceModel module1 = comResourceDao.select(controller1.getParentId());
 
-            if(module1 != null) {
+            if (module1 != null) {
                 ComResourceModel app = comResourceDao.select(module1.getParentId());
 
 
-                res.setResUrl("/" + app.getResName().toLowerCase() + "/" + module1.getOriginName() + "/" +  controller1.getOriginName() + "/" + model.getName());
+                res.setResUrl("/" + app.getResName().toLowerCase() + "/" + module1.getOriginName() + "/" + controller1.getOriginName() + "/" + model.getName());
                 res.setShowInMenu(false);
 
                 res.setResKey(controller1.getResKey() + "_" + model.getName());
@@ -647,10 +642,216 @@ public class AdminUserService extends BaseService {
         }
     }
 
+    @VOTransactional
+    public void createRoles()
+    {
+        //客服角色
+        for(int i =1 ; i < 6; i ++) {
+            String team = i + "组";
+            ComRoleModel model = new ComRoleModel();
+            model.setRoleName("普通客服" + team);
+            model.setDescription("普通客服" + team);
+            model.setRoleType(AdminProperty.RoleType.CS.getId());
+            model.setActive(1);
+
+            List<String> applications = new ArrayList<String>() {
+                {
+                    add("oms");
+                    add("wms");
+                }
+            };
+            List<String> channelIds = new ArrayList<>();
+
+            if( i == 1) {
+                channelIds = new ArrayList<String>() {
+                    {
+                        add("001");
+                        add("002");
+                    }
+                };
+            }
+            else if(i == 2)
+            {
+                channelIds = new ArrayList<String>() {
+                    {
+                        add("005");
+                        add("008");
+                    }
+                };
+            }
+            else if(i == 3)
+            {
+                channelIds = new ArrayList<String>() {
+                    {
+                        add("012");
+                        add("928");
+                        add("015");
+                        add("021");
+                        add("023");
+                        add("019");
+                        add("022");
+                        add("027");
+                        add("028");
+                        add("016");
+                        add("009");
+                        add("029");
+                    }
+                };
+            }
+            else if(i == 4)
+            {
+                channelIds = new ArrayList<String>() {
+                    {
+                        add("010");
+                        add("007");
+                        add("017");
+                        add("020");
+                        add("026");
+                        add("928");
+                    }
+                };
+            }
+            else if(i == 5)
+            {
+                channelIds = new ArrayList<String>() {
+                    {
+                        add("018");
+                        add("014");
+                        add("024");
+                        add("030");
+                    }
+                };
+            }
 
 
+            List<String> storeIds = new ArrayList<String>();
+            if (comRoleDao.selectCount(model) == 0) {
+                adminRoleService.addRole(model, applications, channelIds, storeIds, "0", "1");
+            }
+            else
+            {
+                ComRoleModel old = comRoleDao.selectOne(model);
+                model.setId(old.getId());
+                adminRoleService.updateRole(model, applications, channelIds, storeIds, "0", "1");
+
+            }
+
+            model = new ComRoleModel();
+            model.setRoleName("售后客服" + team);
+            model.setDescription("售后客服" + team);
+            model.setRoleType(AdminProperty.RoleType.CS.getId());
+            model.setActive(1);
+
+            if (comRoleDao.selectCount(model) == 0) {
+                adminRoleService.addRole(model, applications, channelIds, storeIds, "0", "1");
+            }
+            else
+            {
+                ComRoleModel old = comRoleDao.selectOne(model);
+                model.setId(old.getId());
+                adminRoleService.updateRole(model, applications, channelIds, storeIds, "0", "1");
+
+            }
+
+            model = new ComRoleModel();
+            model.setRoleName("仓库客服" + team);
+            model.setDescription("仓库客服" + team);
+            model.setRoleType(AdminProperty.RoleType.CS.getId());
+            model.setActive(1);
+
+            if (comRoleDao.selectCount(model) == 0) {
+                adminRoleService.addRole(model, applications, channelIds, storeIds, "0", "1");
+            }
+            else
+            {
+                ComRoleModel old = comRoleDao.selectOne(model);
+                model.setId(old.getId());
+                adminRoleService.updateRole(model, applications, channelIds, storeIds, "0", "1");
+
+            }
+
+            model = new ComRoleModel();
+            model.setRoleName("客服主管" + team);
+            model.setDescription("客服主管" + team);
+            model.setRoleType(AdminProperty.RoleType.CS_MANAGER.getId());
+            model.setActive(1);
+
+            if (comRoleDao.selectCount(model) == 0) {
+                adminRoleService.addRole(model, applications, channelIds, storeIds, "0", "1");
+            }
+            else
+            {
+                ComRoleModel old = comRoleDao.selectOne(model);
+                model.setId(old.getId());
+                adminRoleService.updateRole(model, applications, channelIds, storeIds, "0", "1");
+
+            }
+        }
+    }
 
 
+    @VOTransactional
+    public void movePermission(String channelId, Integer oldRoleId, String roleName) {
+        ComRoleModel role = new ComRoleModel();
+        role.setRoleName(roleName);
+
+        role = comRoleDao.selectOne(role);
+
+        if(role != null) {
+            Integer newRoleId = role.getId();
+
+            CtRolePermissionModel permissionModel = new CtRolePermissionModel();
+            permissionModel.setPropertyId(channelId);
+            permissionModel.setRoleId(oldRoleId);
+
+            List<CtRolePermissionModel> oldPermissions = ctRolePermissionDao.selectList(permissionModel);
+
+            Set<String> parentIds = new HashSet<String>();
+
+            for (CtRolePermissionModel model : oldPermissions) {
+                Integer actionId = model.getActionId();
+
+                ComResourceModel query = new ComResourceModel();
+                query.setOriginId(actionId);
+                query.setOriginTable("ct_action");
+
+                ComResourceModel res = comResourceDao.selectOne(query);
+                if (res != null) {
+                    String pIds = res.getParentIds();
+                    String[] strPIds = pIds.split(",");
+                    Collections.addAll(parentIds, strPIds);
+
+                    ComResRoleModel rr = new ComResRoleModel();
+                    rr.setResId(res.getId());
+                    rr.setRoleId(newRoleId);
+
+                    if (comResRoleDao.selectCount(rr) == 0) {
+                        comResRoleDao.insert(rr);
+                    }
+                }
+
+                for (String strPId : parentIds) {
+                    if (!"0".equals(strPId)) {
+                        Integer pId = Integer.valueOf(strPId);
+                        ComResourceModel pRes = comResourceDao.select(pId);
+                        if (pRes != null) {
+                            ComResRoleModel rr = new ComResRoleModel();
+                            rr.setResId(pRes.getId());
+                            rr.setRoleId(newRoleId);
+
+                            if (comResRoleDao.selectCount(rr) == 0) {
+                                comResRoleDao.insert(rr);
+                            }
+                        }
+                    }
+                }
+
+
+            }
+        }
+
+
+    }
 
 
 }

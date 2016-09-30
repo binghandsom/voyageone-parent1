@@ -3,10 +3,7 @@ package com.voyageone.service.impl.com.user;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.security.dao.ComResRoleDao;
-import com.voyageone.security.dao.ComResourceDao;
-import com.voyageone.security.dao.ComRoleConfigDao;
-import com.voyageone.security.dao.ComRoleDao;
+import com.voyageone.security.dao.*;
 import com.voyageone.security.model.ComResRoleModel;
 import com.voyageone.security.model.ComResourceModel;
 import com.voyageone.security.model.ComRoleConfigModel;
@@ -158,9 +155,65 @@ public class AdminRoleService extends BaseService {
             //查找是否有ALL的记录,没有则新增
             insertIgnoreConfig(roleId, "store_id", "ALL");
         } else {
-            updateConfig(channelIds, roleId, "channel_id");
+            updateConfig(storeIds, roleId, "store_id");
         }
         //修改授权系统
+
+        Map map = new HashMap<>();
+        //查找resource表中的res_id
+        map.clear();
+        map.put("resType", 0);
+        List<ComResourceModel> resList = comResourceDao.selectList(map);
+        //查找老的app列表
+        List<Map<String, Object>> oldApps = adminRoleDaoExt.selectAppByRole(roleId);
+
+        for (Map old : oldApps)
+        {
+            String strOld = old.get("application").toString();
+
+            if(appList.stream().filter(w->w.equals(strOld)).count() == 0)
+            {
+                //删除系统权限
+                Integer oldResId = Integer.valueOf(old.get("rest_id").toString());
+
+                ComResRoleModel rrModel = new ComResRoleModel();
+                rrModel.setRoleId(roleId);
+                rrModel.setResId(oldResId);
+                List<ComResRoleModel>  list = comResRoleDao.selectList(rrModel);
+
+                for(ComResRoleModel rr : list)
+                {
+                    comResRoleDao.delete(rr.getId());
+                }
+                ComRoleConfigModel rc = new ComRoleConfigModel();
+                rc.setRoleId(roleId);
+                rc.setCfgName("all_permission");
+                rc.setCfgVal1(strOld);
+                List<ComRoleConfigModel>  configs = comRoleConfigDao.selectList(rc);
+
+                for(ComRoleConfigModel config : configs)
+                {
+                    comRoleConfigDao.delete(config.getId());
+                }
+            }
+        }
+
+
+        for (String app : appList) {
+            if (resList.stream().filter(w -> w.getApplication().equals(app)).count() > 0) {
+                //找到resId
+                ComResourceModel res = resList.stream().filter(w -> w.getApplication().equals(app)).findFirst().get();
+
+                if(oldApps.stream().filter(w ->w.get("application").toString().equals(app)).count() == 0) {
+
+                    ComResRoleModel rrModel = new ComResRoleModel();
+                    rrModel.setRoleId(roleId);
+                    rrModel.setResId(res.getId());
+                    rrModel.setCreater(model.getCreater());
+                    comResRoleDao.insert(rrModel);
+                }
+            }
+        }
     }
 
     private void insertIgnoreConfig(Integer roleId, String configName, String configValue) {
