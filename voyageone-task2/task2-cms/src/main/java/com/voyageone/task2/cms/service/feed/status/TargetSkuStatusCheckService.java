@@ -54,6 +54,18 @@ public class TargetSkuStatusCheckService extends FeedStatusCheckBaseService {
             cmsFeedLiveSkuModel.setModified(DateTimeUtil.getDate());
             skus.add(cmsFeedLiveSkuModel);
         }
+
+
+        // 加入一个自定义sku
+        CmsFeedLiveSkuModel cmsFeedLiveSkuModel = new CmsFeedLiveSkuModel();
+        cmsFeedLiveSkuModel.setSku("910453407");
+        cmsFeedLiveSkuModel.setQty(0);
+        cmsFeedLiveSkuModel.setCreater(getTaskName());
+        cmsFeedLiveSkuModel.setModifier(getTaskName());
+        cmsFeedLiveSkuModel.setCreated(DateTimeUtil.getDate());
+        cmsFeedLiveSkuModel.setModified(DateTimeUtil.getDate());
+        skus.add(cmsFeedLiveSkuModel);
+
         return skus;
     }
 
