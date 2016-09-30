@@ -323,7 +323,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             // 判断新增商品还是更新商品
             // 只要numIId不为空，则为更新商品
 			// TODO 测试代码 START
+            $info("TOM-10");
             sxData.getPlatform().setNumIId("539429848247");
+            $info("TOM-11");
 			// 测试代码 END
             if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
                 // 更新商品
@@ -332,15 +334,18 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 numIId = sxData.getPlatform().getNumIId();
             }
 
+            $info("TOM-12");
             String result;
             // 新增或更新商品主处理
 			$info("TOM-6");
             if (!updateWare) {
+                $info("TOM-13");
                 // 新增商品的时候
                 result = tbSimpleItemService.addSimpleItem(shopProp, productInfoXml);
 				$info("TOM-7" + result);
             } else {
                 // 更新商品的时候
+                $info("TOM-14");
                 result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
 				$info("TOM-8" + result);
             }
