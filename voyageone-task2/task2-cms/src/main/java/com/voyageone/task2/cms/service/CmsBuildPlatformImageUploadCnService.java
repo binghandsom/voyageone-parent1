@@ -5,7 +5,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.sx.CnImageService;
-import com.voyageone.service.impl.cms.sx.ConditionPropValueService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtSxCnImagesModel;
 import com.voyageone.task2.base.BaseTaskService;
@@ -30,8 +29,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class CmsBuildPlatformImageUploadCnService extends BaseTaskService {
 
-    @Autowired
-    private ConditionPropValueService conditionPropValueService;
     @Autowired
     private BusinessLogService businessLogService;
     @Autowired
@@ -70,9 +67,6 @@ public class CmsBuildPlatformImageUploadCnService extends BaseTaskService {
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         // 获取该任务可以运行的销售渠道
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
-
-        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
-        conditionPropValueService.init();
 
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {

@@ -3751,13 +3751,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                        skuList.add(feedSku.getSku());
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
                     // update desmond 2016/07/06 start
-                    String errMsg = String.format("feed->master导入:异常终止:无法插入或更新wms_bt_item_details表( channel: [%s], sku: [%s], itemcode: [%s], barcode: [%s], size: [%s]  )",
+                    String errMsg = String.format("feed->master导入:异常终止:无法插入或更新wms_bt_item_details表( channel: [%s], sku: [%s], itemcode: [%s], barcode: [%s], size: [%s], msg: [%s] )",
                             channelId,
                             itemDetailsBean.getSku(),
                             itemDetailsBean.getItemcode(),
                             itemDetailsBean.getBarcode(),
-                            itemDetailsBean.getSize()
+                            itemDetailsBean.getSize(),
+                            e.getMessage()
                     );
                     $error(errMsg);
                     throw new BusinessException(errMsg);
