@@ -765,12 +765,13 @@ public class HttpUtils {
 //        urlString = getFinalURL(urlString);
         URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestProperty("User-agent", "  Mozilla/5.0 (Windows NT 6.1; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0");
         con.setConnectTimeout(60000);
         con.setReadTimeout(60000);
         if (con.getResponseCode() == 301 || con.getResponseCode() == 302) {
             return getInputStream(con.getHeaderField("Location"));
         } else {
-            return url.openStream();
+            return con.getInputStream();
         }
     }
 
