@@ -347,7 +347,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     public void testUpdateMallId() {
 
         String channelId = "010";
-//        int cartId = 27;
+        int cartId = 27;
         String productCode = "B10-416AGDC4-75";
         String mallId = "ID00001";
 
@@ -365,6 +365,33 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * 测试批量修改deal价格处理
+     */
+    @Test
+    public void testUpdateDealPriceBatch() {
+
+        String channelId = "012";
+        int cartId = 27;
+        String productCode = "BCH60F46-6R3";
+
+        ShopBean shop = Shops.getShop(channelId, cartId);
+
+        try {
+            // 获取product信息
+            CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery("{'common.fields.code':'" + productCode + "'}", channelId);
+            if (product == null) {
+                logger.info("没找到对应的product数据(productCode=" + productCode + ")");
+                return;
+            }
+            // 测试回写状态
+            cmsBuildPlatformProductUploadJMService.updateDealPriceBatch(shop, product, true, false);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
