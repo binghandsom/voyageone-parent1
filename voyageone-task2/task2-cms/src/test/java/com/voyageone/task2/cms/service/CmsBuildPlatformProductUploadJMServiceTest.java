@@ -353,7 +353,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     public void testUpdateMallId() {
 
         String channelId = "010";
-//        int cartId = 27;
+        int cartId = 27;
         String productCode = "B10-416AGDC4-75";
         String mallId = "ID00001";
 
@@ -452,5 +452,6 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
             e.printStackTrace();
         }
     }
+
 
 }

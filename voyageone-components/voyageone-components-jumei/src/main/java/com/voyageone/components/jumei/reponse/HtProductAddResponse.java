@@ -177,13 +177,13 @@ public class HtProductAddResponse extends BaseJMResponse {
                         sbMsg.append("在聚美不存在的Shipping_system_id");
                         break;
                     case "100018":
-                        sbMsg.append("产品短标题(product_short_name)长度为：0<长度<=15字");
+                        sbMsg.append("产品短标题(product_short_name)长度为：0<长度<=15字,不能出现价格及促销信息");
                         break;
                     case "100020":
-                        sbMsg.append("产品中标题(product_medium_name)长度为：0<长度<=35字");
+                        sbMsg.append("产品中标题(product_medium_name)长度为：0<长度<=35字,不能出现价格及促销信息");
                         break;
                     case "100022":
-                        sbMsg.append("产品长标题(product_long_name)长度为：0<长度<=130字");
+                        sbMsg.append("产品长标题(product_long_name)长度为：0<长度<=130字,不能出现价格及促销信息");
                         break;
                     case "100024":
                         sbMsg.append("1,本单详情(description_properties)不能为空;2,CSS语法错误,出现}},不要用Id定义CSS,CSS不能" +
@@ -210,6 +210,7 @@ public class HtProductAddResponse extends BaseJMResponse {
                         break;
                     case "100034":
                         sbMsg.append("特殊说明(special_explain)不能为空");
+                        break;
                     case "100035":
                         sbMsg.append("特殊说明长度不能超过150个字符");
                         break;
@@ -221,6 +222,7 @@ public class HtProductAddResponse extends BaseJMResponse {
                         break;
                     case "100047":
                         sbMsg.append("特殊说明(special_explain)不存在");
+                        break;
                     case "102056":
                         sbMsg.append("partner_deal_id不能为空");
                         break;
@@ -232,6 +234,7 @@ public class HtProductAddResponse extends BaseJMResponse {
                         break;
                     case "102063":
                         sbMsg.append("在聚美已存在的商家编码(businessman_num)");
+                        break;
                     case "102064":
                         sbMsg.append("商家商品编码(upc_code)不能为空");
                         break;
@@ -243,6 +246,7 @@ public class HtProductAddResponse extends BaseJMResponse {
                         break;
                     case "102071":
                         sbMsg.append("市场价(market_price)不能为空，并且不能小于15，并且不能小于团购价（deal_price）");
+                        break;
                     case "103077":
                         sbMsg.append("品牌 ID(brand_id)不能为空");
                         break;
@@ -253,7 +257,13 @@ public class HtProductAddResponse extends BaseJMResponse {
                         sbMsg.append("产品英文名称(foreign_language_name)不能为空,长度不能超过100字");
                         break;
                     case "103083":
-                        sbMsg.append("产品名称(name)不能为空,长度不能大于100字,包含不被允许的字符");
+                        sbMsg.append("产品名称(name)不能为空,长度不能大于100字,包含不被允许的字符(除了\"（）\" \"/\" \"+\" \"*\"这" +
+                                "4种符号以外的特殊符号(如-，<>，·等))都是不被允许的");
+                        break;
+                    case "103086":
+                        sbMsg.append("产品名称(name)格式不正确，不能出现容量、规格、颜色等信息，不能填写除了\"（）\" \"/\" \"+\" \"*\"这" +
+                                "4种符号以外的特殊符号(如-，<>，·等) ，空格等符号必须是英文半角符号，套装产品名以“+”号连接");
+                        break;
                     case "103087":
                         sbMsg.append("产品名称(name)在聚美已存在");
                         break;
@@ -265,6 +275,7 @@ public class HtProductAddResponse extends BaseJMResponse {
                         break;
                     case "103096":
                         sbMsg.append("分类四级 ID 在聚美不存在,或者不是四级分类ID（提示此错误建议重新获取分类信息）");
+                        break;
                     case "103097":
                         sbMsg.append("功效(function_ids)格式错误");
                         break;
@@ -276,6 +287,7 @@ public class HtProductAddResponse extends BaseJMResponse {
                         break;
                     case "105106":
                         sbMsg.append("商品自带条码（UPC_CODE）存在相同 值或UPC_CODE在聚美已存在");
+                        break;
                     case "105107":
                         sbMsg.append("子型号规格不在设置范围内('FORMAL','MS','OTHER')");
                         break;
@@ -287,6 +299,7 @@ public class HtProductAddResponse extends BaseJMResponse {
                         break;
                     case "105115":
                         sbMsg.append("海外地址(abroad_url)必须是正确的url格式");
+                        break;
                     case "105117":
                         sbMsg.append("地区(area_code)不存在");
                         break;
