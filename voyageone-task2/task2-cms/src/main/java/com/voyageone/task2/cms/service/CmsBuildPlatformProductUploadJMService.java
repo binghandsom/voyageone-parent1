@@ -530,6 +530,24 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 					}
 				}
 				// 补全两个属性, 这两个属性最终会回写到数据库中 END
+				// 20161002 tom 除了上面这段根据sku来查找, 还应该再根据我们起名规则的商品自带条码再找一遍(这就是SPU存在, 但是SKU不存在的场合) START
+				for (BaseMongoMap map : product.getPlatform(CART_ID).getSkus()) {
+					if (!map.containsKey("jmSpuNo") || StringUtils.isEmpty(map.getStringAttribute("jmSpuNo"))) {
+						// 预想的SPU的barcode
+						String barcode = product.getCommon().getSkus().stream().filter(w -> w.getSkuCode().equals(map.getStringAttribute("skuCode"))).findFirst().get().getBarcode();
+						String voToBarcode = addVoToBarcode(barcode, channelId, map.getStringAttribute("skuCode"));
+
+						if (remoteSpus.stream().filter(w -> w.getUpc_code().equals(voToBarcode)).count() > 0) {
+							JmGetProductInfo_Spus result = remoteSpus.stream().filter(w -> w.getUpc_code().equals(voToBarcode)).findFirst().get();
+							if (!StringUtils.isEmpty(result.getSpu_no())) {
+								map.put("jmSpuNo", result.getSpu_no());
+							}
+						}
+
+					}
+
+				}
+				// 20161002 tom 除了上面这段根据sku来查找, 还应该再根据我们起名规则的商品自带条码再找一遍(这就是SPU存在, 但是SKU不存在的场合) END
 
                 // added by morse.lu 2016/09/01 start
                 // 追加的skuCode列表
@@ -1502,7 +1520,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         mallSkuAddInfo.setJumeiSpuNo(sku.getStringAttribute("jmSpuNo"));
                         HtMallSkuAddInfo.SkuInfo skuInfo = mallSkuAddInfo.getSkuInfo();
 //                        skuInfo.setCustoms_product_number(" "); // 发货仓库为保税区仓库时，此处必填, 现在暂时不用设置
-						skuInfo.setCustoms_product_number(skuCode);
+//						skuInfo.setCustoms_product_number(skuCode);
                         skuInfo.setBusinessman_num(skuCode);
                         Integer stock = skuLogicQtyMap.get(skuCode);
                         if (stock == null) {
