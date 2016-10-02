@@ -1656,7 +1656,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 				}
 
                 // 修改聚美SKU商品自带条码(barCode/upcCode) 头部+“ERROR_”（已有“ERROR_”的不追加）
-                updateErrSpuUpcCode(shop, spu.getSpu_no(), spu.getUpc_code());
+				if (!StringUtils.isEmpty(spu.getBusinessman_code())) {
+					updateErrSpuUpcCode(shop, spu.getSpu_no(), spu.getUpc_code());
+				}
 
                 // 将聚美SKU状态（最新Deal）改为隐藏(is_enable=0)
 				if (!StringUtils.isEmpty(spu.getSku_no())) {
