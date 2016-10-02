@@ -1502,7 +1502,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         mallSkuAddInfo.setJumeiSpuNo(sku.getStringAttribute("jmSpuNo"));
                         HtMallSkuAddInfo.SkuInfo skuInfo = mallSkuAddInfo.getSkuInfo();
 //                        skuInfo.setCustoms_product_number(" "); // 发货仓库为保税区仓库时，此处必填, 现在暂时不用设置
-//						skuInfo.setCustoms_product_number(skuCode);
+						skuInfo.setCustoms_product_number(skuCode);
                         skuInfo.setBusinessman_num(skuCode);
                         Integer stock = skuLogicQtyMap.get(skuCode);
                         if (stock == null) {
