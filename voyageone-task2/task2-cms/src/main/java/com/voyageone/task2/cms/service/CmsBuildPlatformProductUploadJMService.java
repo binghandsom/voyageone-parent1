@@ -506,6 +506,27 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 								map.put("jmSkuNo", result.getSku_list().get(0).getSku_no());
 							}
 						}
+
+						// 20161002 tom 增加一个补丁 START
+						// 首先刚才用sku找到的这条记录, 我们认为是正确的SPU
+						String barcode = product.getCommon().getSkus().stream().filter(w -> w.getSkuCode().equals(map.getStringAttribute("skuCode"))).findFirst().get().getBarcode();
+						String voToBarcode = addVoToBarcode(barcode, channelId, map.getStringAttribute("skuCode"));
+
+						// 我们判断一下这个SPU的【商品自带条码】是否符合我们的起名规则, 如果不一样, 那么我们就需要改正它
+						if (!voToBarcode.equals(result.getUpc_code())) {
+
+							// 但是如果remote里, 已经有其他SPU占用了这个SPU的【商品自带条码】的话,  那么那个就认为是错误的SPU, 需要将其变为ERROR
+							long cnt = remoteSpus.stream().filter(w -> w.getUpc_code().equals(voToBarcode)).count();
+							if (cnt > 0) {
+								JmGetProductInfo_Spus resultError = remoteSpus.stream().filter(w -> w.getUpc_code().equals(voToBarcode)).findFirst().get();
+								updateErrSpuUpcCode(shop, resultError.getSpu_no(), resultError.getUpc_code());
+							}
+
+							// 然后再把当前的这个SPU的【商品自带条码】改成正确的
+							result.setUpc_code(voToBarcode);
+							updateRealSpuUpcCode(shop, result.getSpu_no(), result.getUpc_code());
+						}
+						// 20161002 tom 增加一个补丁 END
 					}
 				}
 				// 补全两个属性, 这两个属性最终会回写到数据库中 END
@@ -1819,6 +1840,28 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             throw new BusinessException("聚美上新修改聚美Spu商品自带条码(barCode) 头部+\"ERROR_\"失败！");
         }
     }
+
+	/**
+	 * 修改聚美Spu商品自带条码(barCode)
+	 */
+	protected void updateRealSpuUpcCode(ShopBean shop, String jumeiSpuNo, String newUpcCode) throws Exception {
+
+		HtSpuUpdateRequest htSpuUpdateRequest = new HtSpuUpdateRequest();
+		htSpuUpdateRequest.setJumei_spu_no(jumeiSpuNo);
+
+		htSpuUpdateRequest.setUpc_code(newUpcCode);
+
+		try {
+			HtSpuUpdateResponse response = jumeiHtSpuService.update(shop, htSpuUpdateRequest);
+			if (response != null) {
+				$info("聚美上新修改聚美Spu商品自带条码(barCode) " + response.getBody());
+			}
+		} catch (Exception e) {
+			$error(String.format("聚美上新修改聚美Spu商品自带条码(barCode) 调用聚美API失败 channelId=%s, " +
+					"cartId=%d msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
+			throw new BusinessException("聚美上新修改聚美Spu商品自带条码(barCode) 失败！");
+		}
+	}
 
     /**
      * 批量更新deal价格(不用逐个deal去修或团购价了)
