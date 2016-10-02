@@ -1579,8 +1579,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             StringBuffer sb = new StringBuffer("");
             boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(shopBean, updateData, sb);
             if (!isSuccess) {
-                // 价格更新失败throw出去
-                throw new BusinessException("聚美商城的商品价格更新失败!" + sb.toString());
+            	// TODO 临时修改:
+				// TODO 目前是先做成: 只要错误信息里有"不存在关系售卖数据"这几个字, 就认为是正常的不报错
+				// TODO 之后应该改成: 必须是全部错误都是"不存在关系售卖数据"的场合, 才认为是正常的不报错
+				// TODO 最终应该是让聚美提供API, 进行关联
+				if (!StringUtils.isEmpty(sb.toString()) && !sb.toString().contains("不存在关系售卖数据")) {
+					// 价格更新失败throw出去
+					throw new BusinessException("聚美商城的商品价格更新失败!" + sb.toString());
+				}
             }
         }
     }
