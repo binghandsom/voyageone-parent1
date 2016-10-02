@@ -1501,12 +1501,19 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         HtMallSkuAddInfo mallSkuAddInfo = new HtMallSkuAddInfo();
                         mallSkuAddInfo.setJumeiSpuNo(sku.getStringAttribute("jmSpuNo"));
                         HtMallSkuAddInfo.SkuInfo skuInfo = mallSkuAddInfo.getSkuInfo();
-                        skuInfo.setCustoms_product_number(" ");
+//                        skuInfo.setCustoms_product_number(" "); // 发货仓库为保税区仓库时，此处必填, 现在暂时不用设置
+//						skuInfo.setCustoms_product_number(skuCode);
                         skuInfo.setBusinessman_num(skuCode);
                         Integer stock = skuLogicQtyMap.get(skuCode);
                         if (stock == null) {
                             stock = 0;
                         }
+
+                        // 聚美mall sku 不能追加库存为0的sku, 所以如果库存为0的场合, 跳过不追加
+                        if (stock == 0) {
+                        	continue;
+						}
+
                         skuInfo.setStocks(stock);
                         skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
                         skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
@@ -1614,26 +1621,36 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode
             if (isNotExistBusinessmanCode(spu, jmSkus)) {
                 // 把Deal的库存修改成0
-                String stockSyncResponse = updateStockNum(shop, spu.getBusinessman_code(), "0");
-                $info("[skuCode:%s]同步库存:%s", spu.getBusinessman_code(), stockSyncResponse);
+				if (!StringUtils.isEmpty(spu.getBusinessman_code())) {
+					String stockSyncResponse = updateStockNum(shop, spu.getBusinessman_code(), "0");
+					$info("[skuCode:%s]同步库存:%s", spu.getBusinessman_code(), stockSyncResponse);
+				}
 
                 // 修改聚美SKU商家商品编码(skuCode) 头部+“ERROR_”（已有“ERROR_”的不追加）
-                updateErrSkuBusinessmanNum(shop, originHashId, spu.getBusinessman_code(), spu.getSku_no());
+				if (!StringUtils.isEmpty(spu.getSku_no())) {
+					updateErrSkuBusinessmanNum(shop, originHashId, spu.getBusinessman_code(), spu.getSku_no());
+				}
 
                 // 修改聚美SKU商品自带条码(barCode/upcCode) 头部+“ERROR_”（已有“ERROR_”的不追加）
                 updateErrSpuUpcCode(shop, spu.getSpu_no(), spu.getUpc_code());
 
                 // 将聚美SKU状态（最新Deal）改为隐藏(is_enable=0)
-                updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
+				if (!StringUtils.isEmpty(spu.getSku_no())) {
+					updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
+				}
             } else if (isNotSaleBusinessmanCode(spu, jmSkus)) {
                 // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中存在对应的SkuCode,但isSale=false(不在该平台卖了)
                 // 只下架该sku，不修改商家商品编码(skuCode)和聚美SKU商家商品编码(skuCode)
                 // 把Deal的库存修改成0
-                String stockSyncResponse = updateStockNum(shop, spu.getBusinessman_code(), "0");
-                $info("[skuCode:%s]同步库存:%s", spu.getBusinessman_code(), stockSyncResponse);
+				if (!StringUtils.isEmpty(spu.getBusinessman_code())) {
+					String stockSyncResponse = updateStockNum(shop, spu.getBusinessman_code(), "0");
+					$info("[skuCode:%s]同步库存:%s", spu.getBusinessman_code(), stockSyncResponse);
+				}
 
                 // 将聚美SKU状态（最新Deal）改为隐藏(is_enable="0")
-                updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
+				if (!StringUtils.isEmpty(spu.getSku_no())) {
+					updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
+				}
             } else {
                 // 将聚美SKU状态（最新Deal）改为显示(is_enable="1")  // 每个正常的都改一下显示太花时间了，这次先注掉，好像没有取得isEnable的API
 //                updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "1");
@@ -1658,12 +1675,16 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode
             if (isNotExistBusinessmanCode(spu, jmSkus)) {
                 // 将聚美SKU状态（商城）改为隐藏(is_enable=disabled)
-                updateSkuIsEnableMall(shop, spu.getSku_no(), "disabled", failCause);
+				if (!StringUtils.isEmpty(spu.getSku_no())) {
+					updateSkuIsEnableMall(shop, spu.getSku_no(), "disabled", failCause);
+				}
             } else if (isNotSaleBusinessmanCode(spu, jmSkus)) {
                 // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中存在对应的SkuCode,但isSale=false(不在该平台卖了)
                 // 只下架该sku，不修改商家商品编码(skuCode)和聚美SKU商家商品编码(skuCode)
                 // 将聚美SKU状态（商城）改为隐藏(is_enable=disabled)
-                updateSkuIsEnableMall(shop, spu.getSku_no(), "disabled", failCause);
+				if (!StringUtils.isEmpty(spu.getSku_no())) {
+					updateSkuIsEnableMall(shop, spu.getSku_no(), "disabled", failCause);
+				}
             } else {
                 // 将聚美SKU状态（商城）改为显示(is_enable=enabled)  // 每个正常的都改一下显示太花时间了，这次先注掉，好像没有取得isEnable的API
 //                updateSkuIsEnableMall(shop, spu.getSku_no(), "enabled", failCause);
