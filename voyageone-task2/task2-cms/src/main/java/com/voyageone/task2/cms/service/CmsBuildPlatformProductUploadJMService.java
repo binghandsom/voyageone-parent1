@@ -1482,8 +1482,79 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 // 成功，回写mallId
                 updateMallId(product, mallId);
             }
-        } else {
-            // 变更
+
+			{
+				// 更新价格
+				List<HtMallSkuPriceUpdateInfo> updateData = new ArrayList<>();
+				List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+				for (BaseMongoMap<String, Object> sku : skuList) {
+					String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+					if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
+						// 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
+						if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) {
+							// 不是新追加的
+							HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
+							skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
+							skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+							skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+							updateData.add(skuInfo);
+						}
+					}
+				}
+
+				if (!updateData.isEmpty()) {
+					StringBuffer sbPrice = new StringBuffer("");
+					boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(shopBean, updateData, sbPrice);
+					if (!isSuccess) {
+						// TODO 临时修改:
+						// TODO 目前是先做成: 只要错误信息里有"不存在关系售卖数据"这几个字, 就认为是正常的不报错
+						// TODO 之后应该改成: 必须是全部错误都是"不存在关系售卖数据"的场合, 才认为是正常的不报错
+						// TODO 最终应该是让聚美提供API, 进行关联
+						if (!StringUtils.isEmpty(sbPrice.toString()) && !sbPrice.toString().contains("不存在关系售卖数据")) {
+							// 价格更新失败throw出去
+							throw new BusinessException("聚美商城的商品价格更新失败!" + sbPrice.toString());
+						}
+					}
+				}
+			}
+
+		} else {
+			{
+				// 更新价格
+				List<HtMallSkuPriceUpdateInfo> updateData = new ArrayList<>();
+				List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+				for (BaseMongoMap<String, Object> sku : skuList) {
+					String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+					if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
+						// 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
+						if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) {
+							// 不是新追加的
+							HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
+							skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
+							skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+							skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+							updateData.add(skuInfo);
+						}
+					}
+				}
+
+				if (!updateData.isEmpty()) {
+					StringBuffer sbPrice = new StringBuffer("");
+					boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(shopBean, updateData, sbPrice);
+					if (!isSuccess) {
+						// TODO 临时修改:
+						// TODO 目前是先做成: 只要错误信息里有"不存在关系售卖数据"这几个字, 就认为是正常的不报错
+						// TODO 之后应该改成: 必须是全部错误都是"不存在关系售卖数据"的场合, 才认为是正常的不报错
+						// TODO 最终应该是让聚美提供API, 进行关联
+						if (!StringUtils.isEmpty(sbPrice.toString()) && !sbPrice.toString().contains("不存在关系售卖数据")) {
+							// 价格更新失败throw出去
+							throw new BusinessException("聚美商城的商品价格更新失败!" + sbPrice.toString());
+						}
+					}
+				}
+			}
+
+			// 变更
             BaseMongoMap<String, Object> jmFields = product.getPlatform(CART_ID).getFields();
 
             HtMallUpdateInfo mallUpdateInfo = new HtMallUpdateInfo();
@@ -1554,39 +1625,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                         saveProductPlatform(product.getChannelId(), product);
                     }
                 }
-            }
-        }
-
-        // 更新价格
-        List<HtMallSkuPriceUpdateInfo> updateData = new ArrayList<>();
-        List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
-        for (BaseMongoMap<String, Object> sku : skuList) {
-            String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
-            if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
-                // 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
-                if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) {
-                    // 不是新追加的
-                    HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
-                    skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
-                    skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-                    skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
-                    updateData.add(skuInfo);
-                }
-            }
-        }
-
-        if (!updateData.isEmpty()) {
-            StringBuffer sb = new StringBuffer("");
-            boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(shopBean, updateData, sb);
-            if (!isSuccess) {
-            	// TODO 临时修改:
-				// TODO 目前是先做成: 只要错误信息里有"不存在关系售卖数据"这几个字, 就认为是正常的不报错
-				// TODO 之后应该改成: 必须是全部错误都是"不存在关系售卖数据"的场合, 才认为是正常的不报错
-				// TODO 最终应该是让聚美提供API, 进行关联
-				if (!StringUtils.isEmpty(sb.toString()) && !sb.toString().contains("不存在关系售卖数据")) {
-					// 价格更新失败throw出去
-					throw new BusinessException("聚美商城的商品价格更新失败!" + sb.toString());
-				}
             }
         }
     }
