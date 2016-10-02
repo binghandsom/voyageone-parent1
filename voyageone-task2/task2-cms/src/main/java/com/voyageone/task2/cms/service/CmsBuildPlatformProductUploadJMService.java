@@ -639,36 +639,38 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             //检查Remote SPU是否有sku属性，如果没有，则添加SKU
                             if(StringUtils.isNullOrBlank2(oldSku.getSku_no()))
                             {
-                                //需要增加SKU
-                                HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
-//                                htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-                                htSkuAddRequest.setCustoms_product_number(" ");
-                                htSkuAddRequest.setSale_on_this_deal("1");
-                                htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-                                htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
-                                htSkuAddRequest.setDeal_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
-                                htSkuAddRequest.setMarket_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-                                htSkuAddRequest.setJumei_hash_id(originHashId);
-                                htSkuAddRequest.setJumei_spu_no(oldSku.getSpu_no());
-                                HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
-                                if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
-                                    $info("增加Sku成功！[skuCode:%s]", skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-                                    if(skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).count() > 0)
-                                    {
-                                        CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
-                                        mySku.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
-                                        mySku.setModifier(getTaskName());
-                                        mySku.setModified(new Date());
-                                        cmsBtJmSkuDao.update(mySku);
-                                    }
-                                }
-                                //增加Sku失败
-                                else
-                                {
-                                    String msg = String.format("增加Sku失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSkuAddResponse.getErrorMsg());
-                                    $error(msg);
-                                    throw  new BusinessException(msg);
-                                }
+								addSkuList.add(skuCode);
+
+//								//需要增加SKU
+//                                HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
+////                                htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+//                                htSkuAddRequest.setCustoms_product_number(" ");
+//                                htSkuAddRequest.setSale_on_this_deal("1");
+//                                htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+//                                htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
+//                                htSkuAddRequest.setDeal_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+//                                htSkuAddRequest.setMarket_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+//                                htSkuAddRequest.setJumei_hash_id(originHashId);
+//                                htSkuAddRequest.setJumei_spu_no(oldSku.getSpu_no());
+//                                HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
+//                                if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
+//                                    $info("增加Sku成功！[skuCode:%s]", skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+//                                    if(skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).count() > 0)
+//                                    {
+//                                        CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
+//                                        mySku.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
+//                                        mySku.setModifier(getTaskName());
+//                                        mySku.setModified(new Date());
+//                                        cmsBtJmSkuDao.update(mySku);
+//                                    }
+//                                }
+//                                //增加Sku失败
+//                                else
+//                                {
+//                                    String msg = String.format("增加Sku失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSkuAddResponse.getErrorMsg());
+//                                    $error(msg);
+//                                    throw  new BusinessException(msg);
+//                                }
                             }
                         }
                         //新SPU需要增加
