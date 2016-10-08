@@ -51,8 +51,8 @@ public class CmsPromotionDetailController extends CmsController {
         // 返回用户信息
         return success(result);
     }
-    @RequestMapping(PROMOTION.LIST.DETAIL.GetPromotionSkuListByWhere)
-    public AjaxResponse getPromotionSkuListByWhere(@RequestBody Map<String, Object> params) {
+    @RequestMapping(PROMOTION.LIST.DETAIL.GetPromotionSkuList)
+    public AjaxResponse GetPromotionSkuList(@RequestBody Map<String, Object> params) {
         Object data= promotionSkuService.getListByWhere(params);
         return success(data);
     }
