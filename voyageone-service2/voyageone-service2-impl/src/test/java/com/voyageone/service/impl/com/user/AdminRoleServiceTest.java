@@ -48,7 +48,7 @@ public class AdminRoleServiceTest {
 
         List<String>  applications = new ArrayList<String>(){ {add("cms") ;add("wms") ;add("admin"); }};
         List<String>  channelIds = new ArrayList<String>(){ {add("010") ; }};
-        List<String>  StoreIds  =new ArrayList<String>(){ {add("34") ;add("125"); }};
+        List<Integer>  StoreIds  =new ArrayList<Integer>(){ {add(34) ;add(125); }};
 
         Map<String, Object> map = new HashMap<>();
         map.put("roleName", "010客服");
@@ -74,7 +74,7 @@ public class AdminRoleServiceTest {
     public void testUpdateRole() throws Exception {
         List<String>  applications = new ArrayList<String>(){ {add("cms") ;add("wms") ; }};
         List<String>  channelIds = new ArrayList<String>(){ {add("010") ; }};
-        List<String>  StoreIds  =new ArrayList<String>(){ {add("34"); }};
+        List<Integer>  StoreIds  =new ArrayList<Integer>(){ {add(34); }};
 
         Map<String, Object> map = new HashMap<>();
         map.put("id", 6);
