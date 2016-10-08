@@ -1754,7 +1754,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 //                updateSkuIsEnableMall(shop, spu.getSku_no(), "enabled", failCause);
             }
             if (failCause.toString().length() > 0)
-                $info("隐藏聚美商城上该品编码 [skuCode:%s] [failCause=%s]", spu.getBusinessman_code(), failCause.toString());
+                $info("隐藏聚美商城sku失败! [skuCode:%s] [failCause=%s]", spu.getBusinessman_code(), failCause.toString());
         }
     }
 
@@ -1800,7 +1800,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             strResult = jumeiService.stockSync(shop, stockSyncReq);
         } catch (Exception e) {
             $error(String.format("聚美上新修改聚美Deal SKU库存同步(清空不存在sku的库存) 调用聚美API失败 channelId=%s, " +
-                    "cartId=%d msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
+                    "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
             throw new BusinessException("聚美上新修改聚美Deal SKU库存同步(清空不存在sku的库存)失败！");
         }
         return strResult;
@@ -1831,13 +1831,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                     // 100013  : is_enable参数和数据库中参数一致，没有发生改变  <-这个不算异常
                     if (!StringUtils.isEmpty(response.getError_code())
                             && !"100013".equals(response.getError_code())) {
-                        throw new BusinessException("聚美上新修改聚美Deal关联的Sku上下架失败! msg=%s", response.getErrorMsg());
+//                        throw new BusinessException("聚美上新修改聚美Deal关联的Sku上下架失败! msg=%s", response.getErrorMsg());
+                        $warn("聚美上新修改聚美Deal关联的Sku上下架失败! msg=%s", response.getErrorMsg());
                     }
                 }
             }
         } catch (Exception e) {
             $error(String.format("聚美上新修改聚美Deal关联的Sku上下架 调用聚美API失败 channelId=%s, " +
-                    "cartId=%d msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
+                    "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
             throw new BusinessException("聚美上新修改聚美Deal关联的Sku上下架失败！");
         }
     }
@@ -1859,13 +1860,16 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 
         try {
             result = jumeiHtMallService.updateSkuForMall(shop, jumeiSkuNo, status, null, null, failCause);
-            if (!result) {
-                throw new BusinessException("聚美上新修改聚美Sku商家商品编码(skuCode) 头部+\"ERROR_\"失败！");
-            }
+            // delete by morse.lu 2016/10/08 start
+            // 出错也继续做下去
+//            if (!result) {
+//                throw new BusinessException("聚美上新修改聚美Sku商家商品编码(skuCode) 头部+\"ERROR_\"失败！");
+//            }
+            // delete by morse.lu 2016/10/08 end
         } catch (Exception e) {
             $error(String.format("聚美上新修改聚美Mall 编辑商城的sku是否启用(上下架) 调用聚美API失败 channelId=%s, " +
-                    "cartId=%d msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
-            throw new BusinessException("聚美上新修改聚美Sku商家商品编码(skuCode) 头部+\"ERROR_\"失败！");
+                    "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
+            throw new BusinessException("聚美上新修改聚美Mall 编辑商城的sku是否启用(上下架)失败！");
         }
 
         return result;
@@ -1896,7 +1900,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             }
         } catch (Exception e) {
             $error(String.format("聚美上新修改聚美Sku商家商品编码(skuCode) 头部+\"ERROR_\" 调用聚美API失败 channelId=%s, " +
-                    "cartId=%d msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
+                    "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
             throw new BusinessException("聚美上新修改聚美Sku商家商品编码(skuCode) 头部+\"ERROR_\"失败！");
         }
     }
@@ -1923,7 +1927,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             }
         } catch (Exception e) {
             $error(String.format("聚美上新修改聚美Spu商品自带条码(barCode) 头部+\"ERROR_\" 调用聚美API失败 channelId=%s, " +
-                    "cartId=%d msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
+                    "cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
             throw new BusinessException("聚美上新修改聚美Spu商品自带条码(barCode) 头部+\"ERROR_\"失败！");
         }
     }
@@ -1945,7 +1949,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 			}
 		} catch (Exception e) {
 			$error(String.format("聚美上新修改聚美Spu商品自带条码(barCode) 调用聚美API失败 channelId=%s, " +
-					"cartId=%d msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
+					"cartId=%s msg=%s", shop.getOrder_channel_id(), shop.getCart_id(), e.getMessage()), e);
 			throw new BusinessException("聚美上新修改聚美Spu商品自带条码(barCode) 失败！");
 		}
 	}
