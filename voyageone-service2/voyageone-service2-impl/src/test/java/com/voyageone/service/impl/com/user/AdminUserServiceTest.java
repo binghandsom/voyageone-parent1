@@ -119,6 +119,17 @@ public class AdminUserServiceTest {
     @Test
     public void testMoveUser() throws Exception {
         adminUserService.moveUser();
+
+        AdminUserBean model = new AdminUserBean();
+        model.setActive(1);
+        model.setUserName("admin");
+        model.setPassword("123456");
+        model.setUserAccount("admin");
+        model.setEmail("ethan.shi@voyageone.cn");
+        model.setOrgId(1);
+        model.setRoleId("4");
+
+        adminUserService.addUser(model, "admin");
     }
 
     @Test
@@ -133,6 +144,27 @@ public class AdminUserServiceTest {
         adminUserService.movePermission("001", 2 , "普通客服1组");
         adminUserService.movePermission("001", 5 , "售后客服1组");
         adminUserService.movePermission("001", 11 , "客服主管1组");
+        adminUserService.addCsWmsPermission("仓库客服1组");
+
+        adminUserService.movePermission("005", 2 , "普通客服2组");
+        adminUserService.movePermission("005", 5 , "售后客服2组");
+        adminUserService.movePermission("005", 11 , "客服主管2组");
+        adminUserService.addCsWmsPermission("仓库客服2组");
+
+        adminUserService.movePermission("023", 2 , "普通客服3组");
+        adminUserService.movePermission("023", 5 , "售后客服3组");
+        adminUserService.movePermission("023", 11 , "客服主管3组");
+        adminUserService.addCsWmsPermission("仓库客服3组");
+
+        adminUserService.movePermission("010", 2 , "普通客服4组");
+        adminUserService.movePermission("010", 5 , "售后客服4组");
+        adminUserService.movePermission("010", 11 , "客服主管4组");
+        adminUserService.addCsWmsPermission("仓库客服4组");
+
+        adminUserService.movePermission("018", 2 , "普通客服5组");
+        adminUserService.movePermission("018", 5 , "售后客服5组");
+        adminUserService.movePermission("018", 11 , "客服主管5组");
+        adminUserService.addCsWmsPermission("仓库客服5组");
     }
 
     @Test
