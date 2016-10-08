@@ -61,6 +61,16 @@ public class HtDealUpdateSkuIsEnableResponse extends BaseJMResponse {
             if (map.containsKey("error_code")) {
                 this.setError_code(map.get("error_code").toString());
             }
+            // added by morse.lu 2016/10/08 start
+            // 返回的错误格式是 "error": {"code": "500"}
+            // error_code逻辑暂时保留，以防以后会变
+            if (map.containsKey("error")) {
+                Map<String, Object> mapError = (Map<String, Object>) map.get("error");
+                if (mapError.containsKey("code")) {
+                    this.setError_code(mapError.get("code").toString());
+                }
+            }
+            // added by morse.lu 2016/10/08 end
             if (map.containsKey("is_Success") && "1".equals(map.get("is_Success"))) {
                 this.setIs_Success(true);
             } else {

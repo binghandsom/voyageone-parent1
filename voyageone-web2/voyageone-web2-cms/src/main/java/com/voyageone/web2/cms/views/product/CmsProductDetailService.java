@@ -1388,7 +1388,7 @@ public class CmsProductDetailService extends BaseViewService {
             throw new BusinessException("价格计算错误" + e.getMessage());
         }
         cmsBtProductModel.getPlatforms().forEach((s, platform) -> {
-            if (platform.getCartId() != 0) {
+            if (platform.getCartId() != 0 && platform.getCartId() != CartEnums.Cart.USJGJ.getValue()) {
                 prices.get(platform.getCartId()).get(platform.getSkus().get(0).getStringAttribute("skuCode")).add(platform.getSkus().get(0).getDoubleAttribute("priceRetail"));
 
                 for (BaseMongoMap<String, Object> sku : platform.getSkus()) {
