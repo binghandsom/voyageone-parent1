@@ -58,15 +58,17 @@ public class CmsFeedExportService extends BaseMQCmsService {
         BeanUtils.populate(cmsBtExportTaskModel, messageMap);
         JongoQuery queryObject = new JongoQuery();
         Long cnt = 0L;
-        if(JacksonUtil.isArray(cmsBtExportTaskModel.getParameter())){
-            List<Map<String,Object>> codes = JacksonUtil.jsonToMapList(cmsBtExportTaskModel.getParameter());
+        Map<String, Object> searchValue = JacksonUtil.jsonToMap(cmsBtExportTaskModel.getParameter());
+        String channelId = searchValue.get("orgChaId") == null ? cmsBtExportTaskModel.getChannelId() : searchValue.get("orgChaId").toString();
+
+        if(searchValue.get("codeList") != null){
+            List<Map<String,Object>> codes = (List<Map<String, Object>>) searchValue.get("codeList");
             cnt = Long.valueOf(codes.size());
             List<String> codeList = codes.stream().map(stringObjectMap -> stringObjectMap.get("code").toString()).collect(Collectors.toList());
             queryObject.setQuery("{\"code\":{$in:#}}");
             queryObject.addParameters(codeList);
         }else{
-            Map<String, Object> searchValue = JacksonUtil.jsonToMap(cmsBtExportTaskModel.getParameter());
-            cnt = feedInfoService.getCnt(cmsBtExportTaskModel.getChannelId(), searchValue);
+            cnt = feedInfoService.getCnt(channelId, searchValue);
             queryObject.setQuery(feedInfoService.getSearchQuery(searchValue));
         }
 
@@ -90,7 +92,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
                 $info("导出第" + pageNum + "页");
                 queryObject.setSkip((pageNum - 1) * pageSize);
                 queryObject.setLimit(pageSize);
-                List<CmsBtFeedInfoModel> cmsBtFeedInfoModels = feedInfoService.getList(cmsBtExportTaskModel.getChannelId(), queryObject);
+                List<CmsBtFeedInfoModel> cmsBtFeedInfoModels = feedInfoService.getList(channelId, queryObject);
                 rowIndexCode = writeCode(cmsBtFeedInfoModels, book, rowIndexCode);
                 $info("code写到第" + rowIndexCode + "行");
                 rowIndexSku = writeSku(cmsBtFeedInfoModels, book, rowIndexSku);
