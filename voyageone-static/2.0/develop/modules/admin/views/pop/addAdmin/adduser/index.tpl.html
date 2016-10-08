@@ -90,7 +90,7 @@
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
                                         <li class="btn-block" ng-repeat="role in ctrl.roleList" ng-style="{'background-color': ctrl.selectedRoleId==role.roleId? '#dcf3f9': 'white'}">
-                                            <a href="javascript:void(0)" ng-click="ctrl.selected({direction:left,value:role})">{{role.roleName}}</a>
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected({direction:'left',value:role})">{{role.roleName}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -113,7 +113,7 @@
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
                                         <li class="btn-block" ng-repeat="role in ctrl.roleAllList" ng-style="{'background-color': ctrl.selectedRoleId==role.roleId? '#dcf3f9': 'white'}">
-                                            <a href="javascript:void(0)" ng-click="ctrl.selected({direction:right,value:role})">{{role.roleName}}</a>
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected({direction:'right',value:role})">{{role.roleName}}</a>
                                         </li>
                                     </ul>
                                 </div>

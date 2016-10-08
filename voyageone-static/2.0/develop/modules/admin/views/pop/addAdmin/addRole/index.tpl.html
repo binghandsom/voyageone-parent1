@@ -86,7 +86,7 @@
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
                                         <li class="btn-block" ng-repeat="channel in ctrl.channelList" ng-style="{'background-color': ctrl.selectedChannelId==channel.orderChannelId? '#dcf3f9': 'white'}">
-                                            <a href="javascript:void(0)" ng-click="ctrl.selected(channel)">{{channel.name}}</a>
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected({direction:'left',value:channel})">{{channel.name}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -109,7 +109,7 @@
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
                                         <li class="btn-block" ng-repeat="channel in ctrl.channelAllList" ng-style="{'background-color': ctrl.selectedChannelId==channel.orderChannelId? '#dcf3f9': 'white'}">
-                                            <a href="javascript:void(0)" ng-click="ctrl.selected(channel)">{{channel.name}}</a>
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected({direction:'right',value:channel})">{{channel.name}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -134,7 +134,7 @@
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
                                         <li class="btn-block" ng-repeat="store in ctrl.storeList" ng-style="{'background-color': ctrl.selectedStoreId==store.storeId? '#dcf3f9': 'white'}">
-                                            <a href="javascript:void(0)" ng-click="ctrl.selected(store)">{{store.storeName}}</a>
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected({direction:'left',value:store})">{{store.storeName}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -157,7 +157,7 @@
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
                                         <li class="btn-block" ng-repeat="store in ctrl.storeAllList" ng-style="{'background-color': ctrl.selectedStoreId==store.storeId? '#dcf3f9': 'white'}">
-                                            <a href="javascript:void(0)" ng-click="ctrl.selected(store)">{{store.storeName}}</a>
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected({direction:'right',value:store})">{{store.storeName}}</a>
                                         </li>
                                     </ul>
                                 </div>

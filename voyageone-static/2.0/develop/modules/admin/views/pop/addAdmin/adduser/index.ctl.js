@@ -123,24 +123,36 @@ define([
                             self.data = _.find(self.roleAllList, function (role) {
                                 return role.roleId == self.selectedRoleId;
                             });
-                            self.roleList.push(self.data);
-                            self.roleAllList.splice(self.roleAllList.indexOf(self.data), 1);
-                            self.selectedRoleId = '';
-                            break;
+                            if (self.data == undefined) {
+                                self.alert('请在可选择角色区 选择角色后再点此按钮!');
+                                return;
+                            } else {
+                                self.roleList.push(self.data);
+                                self.roleAllList.splice(self.roleAllList.indexOf(self.data), 1);
+                                self.selectedRoleId = '';
+                                break;
+                            }
                         } else {
                             self.alert('请在可选择角色区 选择角色后再点此按钮!');
+                            return;
                         }
                     case 'exclude':
-                        if (self.leftSelectedFlg == true) {
+                        if (self.rightSelectedFlg == true) {
                             self.data = _.find(self.roleList, function (role) {
                                 return role.roleId == self.selectedRoleId;
                             });
-                            self.roleAllList.push(self.data);
-                            self.roleList.splice(self.roleList.indexOf(self.data), 1);
-                            self.selectedRoleId = '';
-                            break;
+                            if (self.data == undefined) {
+                                self.alert('请在已选择角色区 选择角色后再点此按钮!');
+                                return;
+                            } else {
+                                self.roleAllList.push(self.data);
+                                self.roleList.splice(self.roleList.indexOf(self.data), 1);
+                                self.selectedRoleId = '';
+                                break;
+                            }
                         } else {
                             self.alert('请在已选择角色区 选择角色后再点此按钮!');
+                            return;
                         }
                     case 'allExclude':
                         _.forEach(self.roleList, function (item) {

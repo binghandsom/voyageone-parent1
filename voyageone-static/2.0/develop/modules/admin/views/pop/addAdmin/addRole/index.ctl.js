@@ -5,9 +5,10 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('AddRoleController', (function () {
-        function AddRoleController(context, adminRoleService, adminOrgService, adminUserService, channelService, storeService, $uibModalInstance) {
+        function AddRoleController(context, alert, adminRoleService, adminOrgService, adminUserService, channelService, storeService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
+            this.alert = alert;
             this.adminRoleService = adminRoleService;
             this.adminOrgService = adminOrgService;
             this.adminUserService = adminUserService;
@@ -137,8 +138,13 @@ define([
             },
             selected: function (item) {
                 var self = this;
-                self.selectedChannelId = item.orderChannelId;
-                self.selectedStoreId = item.storeId;
+                if (item.value) {
+                    self.selectedChannelId = item.value.orderChannelId;
+                    self.selectedStoreId = item.value.storeId;
+                    item.direction == 'left' ? self.leftSelectedFlg = true : self.rightSelectedFlg = true;
+                } else {
+                    item.direction == 'left' ? self.leftSelectedFlg = false : self.rightSelectedFlg = false;
+                }
             },
             search: function (item) {
                 var self = this;
@@ -211,27 +217,51 @@ define([
                             break;
                         }
                     case 'include':
-                        self.data = _.find(self.channelAllList, function (channel) {
-                            return channel.orderChannelId == self.selectedChannelId;
-                        });
-                        self.channelList.push(self.data);
-                        self.channelAllList.splice(self.channelAllList.indexOf(self.data), 1);
-                        var data = self.search({'type': 'store', 'value': self.data.orderChannelId, 'isFilter': true});
-                        if (self.storeAllList.length < self.storeAllListCopy.length) {
-                            _.forEach(data, function (item) {
-                                self.storeAllList.push(item);
-                            })
+                        if (self.rightSelectedFlg == true) {
+                            self.data = _.find(self.channelAllList, function (channel) {
+                                return channel.orderChannelId == self.selectedChannelId;
+                            });
+                            if (self.data == undefined) {
+                                self.alert('请在可选择渠道区 选择渠道后再点此按钮!');
+                                return;
+                            } else {
+                                self.channelList.push(self.data);
+                                self.channelAllList.splice(self.channelAllList.indexOf(self.data), 1);
+                                var data = self.search({
+                                    'type': 'store',
+                                    'value': self.data.orderChannelId,
+                                    'isFilter': true
+                                });
+                                if (self.storeAllList.length < self.storeAllListCopy.length) {
+                                    _.forEach(data, function (item) {
+                                        self.storeAllList.push(item);
+                                    })
+                                } else {
+                                    self.storeAllList = data;
+                                }
+                                break;
+                            }
                         } else {
-                            self.storeAllList = data;
+                            self.alert('请在可选择渠道区 选择渠道后再点此按钮!');
+                            return;
                         }
-                        break;
                     case 'exclude':
-                        self.data = _.find(self.channelList, function (channel) {
-                            return channel.orderChannelId == self.selectedChannelId;
-                        });
-                        self.channelAllList.push(self.data);
-                        self.channelList.splice(self.channelList.indexOf(self.data), 1);
-                        break;
+                        if (self.rightSelectedFlg == true) {
+                            self.data = _.find(self.channelList, function (channel) {
+                                return channel.orderChannelId == self.selectedChannelId;
+                            });
+                            if (self.data == undefined) {
+                                self.alert('请在已选择渠道区 选择渠道后再点此按钮!');
+                                return;
+                            } else {
+                                self.channelAllList.push(self.data);
+                                self.channelList.splice(self.channelList.indexOf(self.data), 1);
+                                break;
+                            }
+                        } else {
+                            self.alert('请在已选择渠道区 选择渠道后再点此按钮!');
+                            return;
+                        }
                     case 'allExclude':
                         _.forEach(self.channelList, function (item) {
                             self.channelAllList.push(item);
@@ -276,19 +306,38 @@ define([
                             break;
                         }
                     case 'include':
-                        self.data = _.find(self.storeAllList, function (store) {
-                            return store.storeId == self.selectedStoreId;
-                        });
-                        self.storeList.push(self.data);
-                        self.storeAllList.splice(self.storeAllList.indexOf(self.data), 1);
-                        break;
+                        if (self.rightSelectedFlg == true) {
+                            self.data = _.find(self.storeAllList, function (store) {
+                                return store.storeId == self.selectedStoreId;
+                            });
+                            if (self.data == undefined) {
+                                self.alert('请在可选择仓库区 选择仓库后再点此按钮!');
+                                return;
+                            } else {
+                                self.storeList.push(self.data);
+                                self.storeAllList.splice(self.storeAllList.indexOf(self.data), 1);
+                                break;
+                            }
+                        } else {
+                            self.alert('请在可选择仓库区 选择仓库后再点此按钮!');
+                            return;
+                        }
                     case 'exclude':
-                        self.data = _.find(self.storeList, function (store) {
-                            return store.storeId == self.selectedStoreId;
-                        });
-                        self.storeAllList.push(self.data);
-                        self.storeList.splice(self.storeList.indexOf(self.data), 1);
-                        break;
+                        if (self.rightSelectedFlg == true) {
+                            self.data = _.find(self.storeList, function (store) {
+                                return store.storeId == self.selectedStoreId;
+                            });
+                            if (self.data == undefined) {
+                                self.alert('请在已选择仓库区 选择仓库后再点此按钮!');
+                                return;
+                            }
+                            self.storeAllList.push(self.data);
+                            self.storeList.splice(self.storeList.indexOf(self.data), 1);
+                            break;
+                        } else {
+                            self.alert('请在已选择仓库区 选择仓库后再点此按钮!');
+                            return;
+                        }
                     case 'allExclude':
                         _.forEach(self.storeList, function (item) {
                             self.storeAllList.push(item);
@@ -306,8 +355,8 @@ define([
                     return selectedApp.valid;
                 });
                 var selApp = [];
-                _.forEach(selectedAppList,function(app){
-                	selApp.push(app.application.toLowerCase());
+                _.forEach(selectedAppList, function (app) {
+                    selApp.push(app.application.toLowerCase());
                 })
                 self.sourceData.application = selApp;
 
