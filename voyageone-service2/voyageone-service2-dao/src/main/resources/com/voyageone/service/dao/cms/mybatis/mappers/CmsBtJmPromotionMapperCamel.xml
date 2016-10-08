@@ -7,7 +7,7 @@
         `brand`, `category`, `activity_start`, `activity_end`, `pre_period_start`, `pre_period_end`, 
         `created`, `creater`, `modified`, `modifier`, `active`, `comment`, `ref_tag_id`, 
         `status`, `recovery_status`, `promotion_type`, `is_promotion_down`, `is_promotion_full_minus`, 
-        `promotion_full_amount`, `promotion_minus_amount`, `is_promotion_give_coupons`
+        `promotion_full_amount`, `promotion_minus_amount`, `is_promotion_give_coupons`, `signup_deadline`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -100,6 +100,9 @@
             </if>
             <if test="isPromotionGiveCoupons != null" >
                 `is_promotion_give_coupons` = #{isPromotionGiveCoupons,jdbcType=BIT},
+            </if>
+            <if test="signupDeadline != null" >
+                `signup_deadline` = #{signupDeadline,jdbcType=TIMESTAMP},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -447,6 +450,9 @@
             <if test="isPromotionGiveCoupons != null" >
                 `is_promotion_give_coupons`,
             </if>
+            <if test="signupDeadline != null" >
+                `signup_deadline`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
@@ -535,6 +541,9 @@
             </if>
             <if test="isPromotionGiveCoupons != null" >
                 #{isPromotionGiveCoupons,jdbcType=BIT},
+            </if>
+            <if test="signupDeadline != null" >
+                `signup_deadline` = #{signupDeadline,jdbcType=TIMESTAMP},
             </if>
         </trim>
     </insert>

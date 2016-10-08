@@ -13,4 +13,7 @@
         #{item}
     </foreach>
     </delete>
+    <update id="updatePromotionPrice">
+            UPDATE  cms_bt_promotion_skus set promotion_price=#{promotionPrice} where id=#{id}
+    </update>
 </mapper>
