@@ -20,6 +20,7 @@ define([
             selCnt: context.selCnt,
             autoSynPrice: context.autoSynPrice
         };
+        $scope.vm.currentTime = new Date();
 
         $scope.initialize = initialize;
         $scope.save = save;
