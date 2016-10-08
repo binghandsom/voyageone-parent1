@@ -189,21 +189,9 @@ public class Jumei_027_Yoga_DictTest {
 
         // 生成内容
         {
-            // 详情描述 - 英文
-            MasterWord masterWordDescEn = new MasterWord("longDesEn");
-            ruleRoot.addRuleWord(masterWordDescEn);
-        }
-
-        {
-            // 回车
-            TextWord textWord = new TextWord("<br />");
-            ruleRoot.addRuleWord(textWord);
-        }
-
-        {
-            // 详情描述 - 中文
-            MasterWord masterWordDescCn = new MasterWord("longDesCn");
-            ruleRoot.addRuleWord(masterWordDescCn);
+            // 材质 - 中文
+            MasterWord masterWordmaterialCn = new MasterWord("materialCn");
+            ruleRoot.addRuleWord(masterWordmaterialCn);
         }
 
         {
