@@ -14,14 +14,13 @@ import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtJmMasterBrandModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,8 +33,8 @@ import java.util.Map;
  * Created by dell on 2016/3/18.
  */
 @Service
-public class CmsBtJmPromotionService {
-    private static final Logger log = LoggerFactory.getLogger(CmsBtJmPromotionService.class);
+public class CmsBtJmPromotionService extends BaseService {
+
     @Autowired
     CmsBtJmPromotionDao dao;
     @Autowired
@@ -90,6 +89,10 @@ public class CmsBtJmPromotionService {
         info.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
         return info;
     }
+
+    /**
+     * 新建聚美专场
+     */
     @VOTransactional
     public int saveModel(CmsBtJmPromotionSaveBean parameter,String userName, String channelId) {
         parameter.getModel().setChannelId(channelId);
@@ -105,6 +108,10 @@ public class CmsBtJmPromotionService {
         if (com.voyageone.common.util.StringUtils.isEmpty(parameter.getModel().getCategory())) {
             parameter.getModel().setCategory("");
         }
+        if (!StringUtils.isEmpty(parameter.getModel().getSignupDeadline())) {
+            parameter.getModel().setSignupDeadline(DateTimeUtil.parseStr(parameter.getModel().getSignupDeadline(), "yyyy-MM-dd HH:mm:ss"));
+        }
+
         if (parameter.getModel().getId() != null && parameter.getModel().getId() > 0) {//更新
             parameter.getModel().setModifier(userName);
             updateModel(parameter);
@@ -118,13 +125,23 @@ public class CmsBtJmPromotionService {
             List<MapModel> model = getListByWhere(param);
             if(model == null || model.size() == 0){
                 insertModel(parameter);
+                // 可能存在脏数据的情况，这里先检查一遍数据是否正确
+                Map<String, Object> map = new HashMap<>();
+                map.put("promotionId", parameter.getModel().getId());
+                map.put("cartId", CartEnums.Cart.JM.getValue());
+                CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
+                if (promotion != null) {
+                    $error("saveModel promotion表和jm_promotion表数据冲突 promotionId=" + parameter.getModel().getId());
+                    throw new BusinessException("promotion表和jm_promotion表数据冲突，请联系IT运维人员");
+                }
                 saveCmsBtPromotion(parameter.getModel());
-            }else{
+            } else {
                 throw new BusinessException("4000093");
             }
         }
         return 1;
     }
+
     public void  saveCmsBtPromotion(CmsBtJmPromotionModel model) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", model.getId());
