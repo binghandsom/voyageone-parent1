@@ -15,12 +15,14 @@
                             <option value="{{app.application}}" ng-repeat="app in ctrl.appList">&nbsp;{{app.application}}</option>
                         </select>
                     </div><!-- 全部权限 -->
-                    <label class="col-sm-2 control-label">全部权限</label>
-                    <div class="col-sm-4">
-                        <label class="checkbox-inline c-checkbox" >
-                            <input type="checkbox" value="1" ng-model="ctrl.hasAllAuth">
-                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;ALL
-                        </label>
+                    <div ng-if="ctrl.popType=='分配权限'">
+                        <label class="col-sm-2 control-label">全部权限</label>
+                        <div class="col-sm-4">
+                            <label class="checkbox-inline c-checkbox" >
+                                <input type="checkbox" value="1" ng-model="ctrl.hasAllAuth">
+                                <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;ALL
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="row form-group"><!-- 特定权限 -->

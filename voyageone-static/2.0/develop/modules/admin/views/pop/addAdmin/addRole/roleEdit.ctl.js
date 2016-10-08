@@ -50,22 +50,19 @@ define([
             },
             changeApp: function (app) {
                 var self = this;
+                self.selectedList = [];
                 self.init(app);
             },
             save: function () {
                 var self = this, saveInfo = {};
                 _.extend(saveInfo, {applications: [], roleIds: self.sourceData.roleIds, resIds: [], hasAllAuth: false});
                 saveInfo.applications.push(self.saveInfo.application);
-                if (self.hasAllAuth == true) {
-                    saveInfo.hasAllAuth = true;
-                    saveInfo.resIds = [];
-                } else {
-                    _.filter(self.selectedList, function (item) {
-                        return item.selected;
-                    }).forEach(function (item) {
-                        saveInfo.resIds.push(item.id);
-                    });
-                }
+                saveInfo.hasAllAuth = self.hasAllAuth == true ? true : false;
+                _.filter(self.selectedList, function (item) {
+                    return item.selected;
+                }).forEach(function (item) {
+                    saveInfo.resIds.push(item.id);
+                });
                 switch (self.sourceData.type) {
                     case 'set':
                         self.adminRoleService.setAuth(saveInfo).then(function (res) {
