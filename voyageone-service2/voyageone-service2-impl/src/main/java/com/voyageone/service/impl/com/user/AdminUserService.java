@@ -499,6 +499,7 @@ public class AdminUserService extends BaseService {
             model.setCompanyId(ct.getCompanyId());
             adminUserDaoExt.insert(model);
         }
+
     }
 
     @VOTransactional
@@ -622,22 +623,29 @@ public class AdminUserService extends BaseService {
             controller1.setOriginTable("ct_controller");
             controller1 = comResourceDao.selectOne(controller1);
 
-            ComResourceModel module1 = comResourceDao.select(controller1.getParentId());
+//            if(controller1 == null)
+//            {
+//                System.out.println(model.getName() + ":" + model.getId());
+//            }
 
-            if (module1 != null) {
-                ComResourceModel app = comResourceDao.select(module1.getParentId());
+            if (controller1 != null) {
+                ComResourceModel module1 = comResourceDao.select(controller1.getParentId());
+
+                if (module1 != null) {
+                    ComResourceModel app = comResourceDao.select(module1.getParentId());
 
 
-                res.setResUrl("/" + app.getResName().toLowerCase() + "/" + module1.getOriginName() + "/" + controller1.getOriginName() + "/" + model.getName());
-                res.setShowInMenu(false);
+                    res.setResUrl("/" + app.getResName().toLowerCase() + "/" + module1.getOriginName() + "/" + controller1.getOriginName() + "/" + model.getName());
+                    res.setShowInMenu(false);
 
-                res.setResKey(controller1.getResKey() + "_" + model.getName());
-                res.setResName(model.getName().toUpperCase());
-                res.setApplication(app.getApplication());
-                res.setParentId(controller1.getId());
-                res.setOriginTable("ct_action");
-                res.setMenuTitle("");
-                adminResService.addRes(res);
+                    res.setResKey(controller1.getResKey() + "_" + model.getName());
+                    res.setResName(model.getName().toUpperCase());
+                    res.setApplication(app.getApplication());
+                    res.setParentId(controller1.getId());
+                    res.setOriginTable("ct_action");
+                    res.setMenuTitle("");
+                    adminResService.addRes(res);
+                }
             }
         }
     }
@@ -789,6 +797,60 @@ public class AdminUserService extends BaseService {
         }
     }
 
+    @VOTransactional
+    public void addCsWmsPermission(String roleName)
+    {
+        ComRoleModel role = new ComRoleModel();
+        role.setRoleName(roleName);
+
+        role = comRoleDao.selectOne(role);
+
+        if(role != null) {
+            addAction(role, "doReturnListSearch");
+            addAction(role, "doReservationListSearch");
+        }
+
+    }
+
+    private void addAction(ComRoleModel role, String action) {
+        ComResourceModel res = new ComResourceModel();
+        res.setOriginTable("ct_action");
+        res.setOriginName(action);
+
+        ComResourceModel result = comResourceDao.selectOne(res);
+        if(result != null)
+        {
+            ComResRoleModel rr = new ComResRoleModel();
+            rr.setResId(result.getId());
+            rr.setRoleId(role.getId());
+
+            if (comResRoleDao.selectCount(rr) == 0) {
+                comResRoleDao.insert(rr);
+            }
+
+            String pIds = result.getParentIds();
+            String[] strPIds = pIds.split(",");
+
+            for (String strPId : strPIds) {
+                if (!"0".equals(strPId)) {
+                    Integer pId = Integer.valueOf(strPId);
+                    ComResourceModel pRes = comResourceDao.select(pId);
+                    if (pRes != null) {
+                        ComResRoleModel prr = new ComResRoleModel();
+                        prr.setResId(pRes.getId());
+                        prr.setRoleId(role.getId());
+
+                        if (comResRoleDao.selectCount(prr) == 0) {
+                            comResRoleDao.insert(prr);
+                        }
+                    }
+                }
+            }
+
+
+
+        }
+    }
 
     @VOTransactional
     public void movePermission(String channelId, Integer oldRoleId, String roleName) {
