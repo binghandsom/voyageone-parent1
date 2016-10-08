@@ -84,7 +84,7 @@ public class CmsBacthUpdateTask extends VOAbsLoggable {
                 stsCode = StringUtils.trimToEmpty((String) valObj.get("value"));
                 priorDate = StringUtils.trimToEmpty((String) valObj.get("priorTranslateDate"));
             }
-            updateTranslateStatus(prop_id, stsCode, codeList, channleId, userName, priorDate);
+            updateTranslateStatus(stsCode, codeList, channleId, userName, priorDate);
         }
     }
 
@@ -173,7 +173,7 @@ public class CmsBacthUpdateTask extends VOAbsLoggable {
     /**
      * 翻译状态更新
      */
-    private void updateTranslateStatus(String propId, String propValue, List<String> codeList, String channelId, String userName, String priorDate) {
+    private void updateTranslateStatus(String propValue, List<String> codeList, String channelId, String userName, String priorDate) {
         // 先找出所选商品的主商品code
         JongoQuery qryObj = new JongoQuery();
         qryObj.setQuery("{'productCodes':{$in:#},'cartId':0}");
