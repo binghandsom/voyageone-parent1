@@ -401,17 +401,28 @@ public class AdminRoleService extends BaseService {
         for (Integer roleId : roleIds) {
 //            updateConfig(apps, roleId, "all_permission");
 
-            if(hasAllAuth) {
-                ComRoleConfigModel comRoleConfigModel = new ComRoleConfigModel();
-                comRoleConfigModel.setRoleId(roleId);
-                comRoleConfigModel.setCfgName("all_permission");
-                comRoleConfigModel.setCfgVal1(app);
-                List<ComRoleConfigModel> confList = comRoleConfigDao.selectList(comRoleConfigModel);
+            ComRoleConfigModel comRoleConfigModel = new ComRoleConfigModel();
+            comRoleConfigModel.setRoleId(roleId);
+            comRoleConfigModel.setCfgName("all_permission");
+            comRoleConfigModel.setCfgVal1(app);
+            List<ComRoleConfigModel> confList = comRoleConfigDao.selectList(comRoleConfigModel);
 
+            if(hasAllAuth) {
                 if (confList == null || confList.size() == 0) {
                     comRoleConfigDao.insert(comRoleConfigModel);
                 }
             }
+            else
+            {
+                if (confList != null && confList.size() >0)
+                {
+                   for(ComRoleConfigModel conf : confList)
+                   {
+                       comRoleConfigDao.delete(conf.getId());
+                   }
+                }
+            }
+
 
             //查询该角色在app下的所有权限
             List<ComResRoleModel> olds = adminResourceDaoExt.selectResRoleList(roleId, app);
