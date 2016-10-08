@@ -64,19 +64,37 @@
                     <div class="wrapper" ng-controller="treeTable" style="max-height:500px;overflow: auto;">
                         <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
                             <thead>
-                                <tr><th style="padding: 5px;text-align: center;">菜单名</th></tr>
+                                <tr>
+                                    <th class="text-left mfb-xxt" translate="TXT_MENU_NAME" style="padding-left: 4px;"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_MENU_KEY"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_URL"></th>
+                                    <th class="text-center mfb-xt3" translate="TXT_TYPE"></th>
+                                </tr>
                             </thead>
                             <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-repeat="item in ctrl.authList"></tbody>
                         </table>
                         <script id="table_tree.html" type="text/ng-template">
-                            <tr ng-class="{parent: item.children}" ng-init="parentScope = $parent.$parent; initCheckbox(item, parentScope.item, ctrl.flatResList)">
-                                <td class="cell-name" ng-click="item.opened = !item.opened">
-                                    <div class="indent" style="padding-left: {{15*level}}px"></div>
-                                    {{item.resName}}
+                            <tr ng-class="{parent: item.children}" ng-init="initCheckbox(item, ctrl.selectedList, ctrl.flatResList, {isOpen:true})">
+                                <td class="mfb-xxt" ng-click="item.opened = !item.opened" ng-style="{'padding-left':item.children.length==0? '5px':'0'}">
+                                    <div class="indent" style="padding-left: {{5*level}}px"></div>
+                                    <label class="v-middle" ng-if="item.resName.length <= 22">{{item.resName}}</label>
+                                    <label class="v-middle" ng-if="item.resName.length > 22" uib-tooltip="{{item.resName}}"
+                                           tooltip-trigger="mouseenter" tooltip-placement="top">{{item.resName | stringCutter:true:22:' ...'}}</label>
                                 </td>
+                                <td class="text-left mfb-xxt">
+                                    <label class="v-middle" ng-if="item.resKey.length <= 38">{{item.resKey}}</label>
+                                    <label class="v-middle" ng-if="item.resKey.length > 38" uib-tooltip="{{item.resKey}}"
+                                           tooltip-trigger="mouseenter" tooltip-placement="top">{{item.resKey | stringCutter:true:38:' ...'}}</label>
+                                </td>
+                                <td class="text-left mfb-xxt">
+                                    <label class="v-middle" ng-if="item.resUrl.length <= 35">{{item.resUrl}}</label>
+                                    <label class="v-middle" ng-if="item.resUrl.length > 35" uib-tooltip="{{item.resUrl}}"
+                                           tooltip-trigger="mouseenter" tooltip-placement="top">{{item.resUrl | stringCutter:true:35:' ...'}}</label>
+                                </td>
+                                <td class="mfb-xt3 text-center" ng-class="{'text-center':level>=1}">{{ctrl.getResType(item.resType)}}</td>
                             </tr>
                             <tr class="children" ng-if="item.children&&item.children.length>0">
-                                <td>
+                                <td colspan="4">
                                     <table style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
                                         <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-init="level = level + 1" ng-repeat="item in item.children"></tbody>
                                     </table>

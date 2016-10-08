@@ -32,6 +32,19 @@ define([
                 }).then(function (res) {
                     self.authList = res.data;
                 })
+            },
+            getResType: function (type) {
+                switch (type) {
+                    case 0:
+                        return '系统';
+                        break;
+                    case 1:
+                        return '菜单';
+                        break;
+                    case 2:
+                        return 'Action';
+                        break;
+                }
             }
         };
         return authorityController;
