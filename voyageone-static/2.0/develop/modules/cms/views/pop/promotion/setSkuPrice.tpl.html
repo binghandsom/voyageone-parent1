@@ -1,0 +1,47 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-pencil"></i>&nbsp;Sku价格设置</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-1 control-label"><strong>Code:</strong></label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" ng-model="ctrl.code">
+                </div>
+            </div>
+        </form>
+        <div class="panel vo_panel tab_panel">
+            <div class="table-responsive">
+                <table class="table table-hover-new vo_table">
+                    <thead>
+                    <tr>
+                        <th class="text-center">skuCode</th>
+                        <th class="text-left">海外官网价格</th>
+                        <th class="text-left">中国官网价格</th>
+                        <th class="text-left">中国指导价格</th>
+                        <th class="text-left">中国最终售价</th>
+                        <th class="text-left">活动价</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="stockHistory in ctrl.stockHistoryList">
+                        <td class="text-center">{{$index + 1}}</td>
+                        <td class="text-left">{{stockHistory.type}}</td>
+                        <td class="text-left">{{stockHistory.taskName}}</td>
+                        <td class="text-left">{{stockHistory.qty}}</td>
+                        <td class="text-left">{{stockHistory.qty}}</td>
+                        <td class="text-left">{{stockHistory.qty}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_CLOSE' | translate}}</button>
+        <button class="btn btn-vo" ng-click="$dismiss()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+    </div>
+</div>
