@@ -15,17 +15,24 @@ define([
             this.channelService = channelService;
             this.storeService = storeService;
             this.popType = '修改角色';
-            this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
-            this.sourceData.allChannel = this.sourceData !== 'add' ? (this.sourceData.channelId != null ? this.sourceData.channelId.indexOf('ALL') > -1 ? '1' : '' : '') : '';
-            this.sourceData.allStore = this.sourceData !== 'add' ? (this.sourceData.storeId != null ? this.sourceData.storeId.indexOf('ALL') > -1 ? '1' : '' : '') : '';
             this.applicationList = [
                 {'id': 1, 'application': 'Admin', 'valid': false},
                 {'id': 2, 'application': 'CMS', 'valid': false},
                 {'id': 3, 'application': 'OMS', 'valid': false},
                 {'id': 4, 'application': 'WMS', 'valid': false}
             ];
-            this.sourceData.roleType = this.sourceData.roleType + '';
+            this.saveInfo = {
+                roleName: this.sourceData !== 'add' ? this.sourceData.roleName : '',
+                roleType: this.sourceData !== 'add' ? this.sourceData.roleType + '' : '',
+                description: this.sourceData !== 'add' ? this.sourceData.description : '',
+                active: this.sourceData !== 'add' ? this.sourceData.active : '',
+                allChannel: this.sourceData !== 'add' ? (this.sourceData.channelId != null ? this.sourceData.channelId.indexOf('ALL') > -1 ? '1' : '0' : '') : '',
+                allStore: this.sourceData !== 'add' ? (this.sourceData.storeId != null ? this.sourceData.storeId.indexOf('ALL') > -1 ? '1' : '0' : '') : '',
+                applications: this.sourceData !== 'add' ? this.sourceData.application : [],
+                channelIds: this.sourceData !== 'add' ? this.sourceData.channelId : [],
+                storeIds: this.sourceData !== 'add' ? this.sourceData.storeId : []
+            }
         }
 
         AddRoleController.prototype = {
@@ -350,33 +357,31 @@ define([
                 this.$uibModalInstance.close();
             },
             save: function () {
-                var self = this;
+                var self = this, selApp = [], result = {};
                 var selectedAppList = _.filter(self.applicationList, function (selectedApp) {
                     return selectedApp.valid;
                 });
-                var selApp = [];
                 _.forEach(selectedAppList, function (app) {
                     selApp.push(app.application.toLowerCase());
-                })
-                self.sourceData.application = selApp;
+                });
+                self.saveInfo.applications = selApp;
+                self.saveInfo.roleType = self.saveInfo.roleType - 0;
 
-                self.sourceData.channelId = [];
-                self.sourceData.storeId = [];
-                if (self.sourceData.allChannel == '0') {
+                self.saveInfo.channelIds = [];
+                self.saveInfo.storeIds = [];
+                if (self.saveInfo.allChannel == '0') {
                     _.forEach(self.channelList, function (item) {
-                        self.sourceData.channelId.push(item.orderChannelId);
+                        self.saveInfo.channelIds.push(item.orderChannelId);
                     });
                 }
-                if (self.sourceData.allStore == '0') {
+                if (self.saveInfo.allStore == '0') {
                     _.forEach(self.storeList, function (item) {
-                        self.sourceData.storeId.push(item.storeId);
+                        self.saveInfo.storeIds.push(item.storeId-0);
                     });
                 }
 
-
-                var result = {};
                 if (self.append == true) {
-                    self.adminRoleService.addRole(self.sourceData).then(function (res) {
+                    self.adminRoleService.addRole(self.saveInfo).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
@@ -388,13 +393,14 @@ define([
                         _.forEach(self.storeList, function (item) {
                             storeName.push(item.storeName);
                         });
-                        self.sourceData.channelName = channelName.join(',');
-                        self.sourceData.storeName = storeName.join(',');
+                        self.saveInfo.channelName = channelName.join(',');
+                        self.saveInfo.storeName = storeName.join(',');
                         _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
-                    self.adminRoleService.updateRole(self.sourceData).then(function (res) {
+                    _.extend(self.saveInfo, {id: self.sourceData.id});
+                    self.adminRoleService.updateRole(self.saveInfo).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
