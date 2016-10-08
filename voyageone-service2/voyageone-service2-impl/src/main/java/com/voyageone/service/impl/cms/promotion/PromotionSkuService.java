@@ -1,8 +1,11 @@
 package com.voyageone.service.impl.cms.promotion;
 
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.service.dao.cms.CmsBtPromotionSkusDao;
 import com.voyageone.service.daoext.cms.CmsBtPromotionSkusDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,8 @@ public class PromotionSkuService extends BaseService {
     @Autowired
     private CmsBtPromotionSkusDaoExt cmsPromotionSkuDao;
 
+    @Autowired
+    CmsBtPromotionSkusDao cmsBtPromotionSkusDao;
     public List<Map<String,Object>> getPromotionSkuList(Map<String,Object> params){
         return cmsPromotionSkuDao.selectPromotionSkuList(params);
     }
@@ -35,5 +40,12 @@ public class PromotionSkuService extends BaseService {
 
     public List<Map<String, Object>> getCmsBtPromotionSkuByPromotionIds(List<String> promotionIdList) {
        return cmsPromotionSkuDao.selectCmsBtPromotionSkuByPromotionIds(promotionIdList);
+    }
+
+    public List<CmsBtPromotionSkusModel> getListByWhere(Map<String,Object> map) {
+//        Map<String, Object> map = new HashedMap();
+//        map.put("promotionId", promotion_id);
+//        map.put("productId", product_id);
+        return cmsBtPromotionSkusDao.selectList(map);
     }
 }

@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.promotion.list;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
+import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
@@ -33,6 +34,9 @@ public class CmsPromotionDetailController extends CmsController {
     @Autowired
     private CmsPromotionDetailService cmsPromotionDetailService;
 
+    @Autowired
+    private PromotionSkuService promotionSkuService;
+
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_GROUP)
     public AjaxResponse getPromotionGroup(@RequestBody Map<String, Object> params) {
         int cartId = Integer.parseInt(getCmsSession().getPlatformType().get("cartId").toString());
@@ -47,7 +51,11 @@ public class CmsPromotionDetailController extends CmsController {
         // 返回用户信息
         return success(result);
     }
-
+    @RequestMapping(PROMOTION.LIST.DETAIL.GetPromotionSkuListByWhere)
+    public AjaxResponse getPromotionSkuListByWhere(@RequestBody Map<String, Object> params) {
+        Object data= promotionSkuService.getListByWhere(params);
+        return success(data);
+    }
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_CODE)
     public AjaxResponse getPromotionCode(@RequestBody Map<String, Object> params) {
         int cartId = Integer.parseInt(getCmsSession().getPlatformType().get("cartId").toString());

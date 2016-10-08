@@ -184,6 +184,7 @@ define(function () {
                     "delPromotionCode": "delPromotionCode",
                     "tmallJuhuasuanExport": "tmallJuhuasuanExport",
                     "tmallPromotionExport": "tmallPromotionExport",
+                    "getPromotionSkuListByWhere": "getPromotionSkuListByWhere"
                 }
             },
             "jmpromotion": {
