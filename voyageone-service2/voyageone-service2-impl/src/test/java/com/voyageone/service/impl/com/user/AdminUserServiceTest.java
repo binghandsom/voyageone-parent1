@@ -199,24 +199,27 @@ public class AdminUserServiceTest {
         adminUserService.addRole4User("cloris.li", cs1);
         adminUserService.addRole4User("doris.xu", cs1);
         adminUserService.addRole4User("lucy.geng", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("andy.zhao", cs1);
+        adminUserService.addRole4User("alisa.deng", cs1);
+        adminUserService.addRole4User("molly.yang", cs1);
+        adminUserService.addRole4User("lyric.zhang", cs1);
+        adminUserService.addRole4User("janus.guo", cs1);
+        adminUserService.addRole4User("archer.fu", cs1);
+        adminUserService.addRole4User("king.gao", cs1);
+        adminUserService.addRole4User("emi.ai", cs1);
+        adminUserService.addRole4User("fare.zou", cs1);
+        adminUserService.addRole4User("beca.zhao", cs1);
+        adminUserService.addRole4User("ganger.ma", cs1);
+        adminUserService.addRole4User("mike.song", cs1);
+        adminUserService.addRole4User("lucky.sun", cs1);
+        adminUserService.addRole4User("allion.shao", cs1);
+        adminUserService.addRole4User("bella.bi", cs1);
+        adminUserService.addRole4User("zola.wang", cs1);
+        adminUserService.addRole4User("jason.ma", cs1);
 
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
-        adminUserService.addRole4User("karl.sun", cs1);
+
+
+        adminUserService.addRole4User("lisa.lin", cs1com);
 
 
 
