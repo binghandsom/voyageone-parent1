@@ -131,6 +131,7 @@ public class CmsBtJmPromotionService extends BaseService {
                 map.put("cartId", CartEnums.Cart.JM.getValue());
                 CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
                 if (promotion != null) {
+                    // 正常情况下应该没有数据
                     $error("saveModel promotion表和jm_promotion表数据冲突 promotionId=" + parameter.getModel().getId());
                     throw new BusinessException("promotion表和jm_promotion表数据冲突，请联系IT运维人员");
                 }
