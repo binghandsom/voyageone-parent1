@@ -67,8 +67,6 @@ public class CmsPromotionDetailController extends CmsController {
         int cartId = Integer.parseInt(getCmsSession().getPlatformType().get("cartId").toString());
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
-
-
         int cnt = cmsPromotionDetailService.getPromotionCodeListCnt(params);
         List<CmsBtPromotionCodesBean> resultBean = cmsPromotionDetailService.getPromotionCode(params, cartId);
         Map<String,Object> result = new HashMap<>();
