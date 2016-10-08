@@ -359,7 +359,7 @@ public class CmsAdvSearchQueryService extends BaseService {
 
         // 获取翻译状态
         if (StringUtils.isNotEmpty(searchValue.getTransStsFlg())) {
-            if ("1".equals(searchValue.getTransStsFlg())) {
+            if ("1".equals(searchValue.getTransStsFlg()) || "2".equals(searchValue.getTransStsFlg())) {
                 queryObject.addQuery("{'common.fields.translateStatus':#}");
                 queryObject.addParameters(searchValue.getTransStsFlg());
             } else {
