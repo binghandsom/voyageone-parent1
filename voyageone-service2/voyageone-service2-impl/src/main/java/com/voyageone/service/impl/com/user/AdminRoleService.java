@@ -137,7 +137,7 @@ public class AdminRoleService extends BaseService {
      * @param allStore
      */
 
-    public void updateRole(ComRoleModel model, List<String> appList, List<String> channelIds, List<String> storeIds, String allChannel, String allStore) {
+    public void updateRole(ComRoleModel model, List<String> appList, List<String> channelIds, List<Integer> storeIds, String allChannel, String allStore) {
 
         checkParams(allChannel, allStore, appList, channelIds, storeIds);
 
@@ -155,7 +155,12 @@ public class AdminRoleService extends BaseService {
             //查找是否有ALL的记录,没有则新增
             insertIgnoreConfig(roleId, "store_id", "ALL");
         } else {
-            updateConfig(storeIds, roleId, "store_id");
+            List<String> strStores = new ArrayList<>();
+            for(Integer i : storeIds)
+            {
+                strStores.add(i.toString());
+            }
+            updateConfig(strStores, roleId, "store_id");
         }
         //修改授权系统
 
@@ -267,7 +272,7 @@ public class AdminRoleService extends BaseService {
         }
     }
 
-    private void checkParams(String allChannel, String allStore, List<String> appList, List<String> channelIds, List<String> storeIds) {
+    private void checkParams(String allChannel, String allStore, List<String> appList, List<String> channelIds, List<Integer> storeIds) {
         //只有选wms的才需要选仓库
         Set<String> appSet = appList.stream().collect(Collectors.toSet());
         if (appSet.contains("wms")) {
@@ -276,7 +281,7 @@ public class AdminRoleService extends BaseService {
 
                 List<String> sIds = wmsMtStoreDaoExt.selectIdsByChannel(channelIds);
 
-                for (String store : storeIds) {
+                for (Integer store : storeIds) {
                     if (sIds.stream().filter(w -> w.equals(store)).count() == 0) {
                         throw new BusinessException("仓库和渠道不匹配。");
                     }
@@ -289,7 +294,7 @@ public class AdminRoleService extends BaseService {
 
 
     @VOTransactional
-    public void addRole(ComRoleModel model, List<String> appList, List<String> channelIds, List<String> storeIds, String allChannel, String allStore) {
+    public void addRole(ComRoleModel model, List<String> appList, List<String> channelIds, List<Integer> storeIds, String allChannel, String allStore) {
 
         //检查roleName唯一性
         Map map = new HashMap<>();
@@ -317,8 +322,8 @@ public class AdminRoleService extends BaseService {
         if ("1".equals(allStore)) {
             insertConfig(roleId, "store_id", "ALL");
         } else {
-            for (String stId : storeIds) {
-                insertConfig(roleId, "store_id", stId);
+            for (Integer stId : storeIds) {
+                insertConfig(roleId, "store_id", stId.toString());
             }
         }
 

@@ -171,4 +171,56 @@ public class AdminUserServiceTest {
     public void testCreateRoles() throws Exception {
         adminUserService.createRoles();
     }
+
+    @Test
+    public void testAddRole4User() throws Exception {
+        List<String>  cs1 = new ArrayList<String>(){ {add("普通客服1组") ; add("仓库客服1组") ;}};
+        List<String>  cs1as = new ArrayList<String>(){ {add("普通客服1组") ;add("售后客服1组") ;add("仓库客服1组");}};
+        List<String>  cs1mgr = new ArrayList<String>(){ {add("普通客服1组") ;add("售后客服1组") ;add("仓库客服1组");add("客服主管1组");}};
+        List<String>  cs1com = new ArrayList<String>(){ {add("普通客服1组") ;}};
+
+        adminUserService.addRole4User("emma.han", cs1mgr);
+        adminUserService.addRole4User("wendy.liu", cs1mgr);
+        adminUserService.addRole4User("susie.wang", cs1mgr);
+        adminUserService.addRole4User("jon.jia", cs1mgr);
+
+        adminUserService.addRole4User("nik.guo", cs1as);
+        adminUserService.addRole4User("sunny.su", cs1as);
+        adminUserService.addRole4User("tina.wang", cs1as);
+        adminUserService.addRole4User("dora.zhang", cs1as);
+        adminUserService.addRole4User("angela.yuan", cs1as);
+        adminUserService.addRole4User("amy.li", cs1as);
+        adminUserService.addRole4User("sofina.zhen", cs1as);
+        adminUserService.addRole4User("elina.li", cs1as);
+        adminUserService.addRole4User("believe.wang", cs1as);
+
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("chard.cui", cs1);
+        adminUserService.addRole4User("cloris.li", cs1);
+        adminUserService.addRole4User("doris.xu", cs1);
+        adminUserService.addRole4User("lucy.geng", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+        adminUserService.addRole4User("karl.sun", cs1);
+
+
+
+
+
+    }
 }

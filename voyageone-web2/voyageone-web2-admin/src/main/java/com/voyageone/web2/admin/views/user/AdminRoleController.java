@@ -93,7 +93,7 @@ public class AdminRoleController extends AdminController {
 
         List<String> applications = (List<String>) requestMap.getOrDefault("applications",new ArrayList<>());
         List<String> channelIds = (List<String>) requestMap.getOrDefault("channelIds", new ArrayList<>());
-        List<String> storeIds = (List<String>) requestMap.getOrDefault("storeIds", new ArrayList<>());
+        List<Integer> storeIds = (List<Integer>) requestMap.getOrDefault("storeIds", new ArrayList<>());
         String allChannel = requestMap.getOrDefault("allChannel", "0").toString();
         String allStore = requestMap.getOrDefault("allStore", "0").toString();
 
@@ -120,9 +120,9 @@ public class AdminRoleController extends AdminController {
         BeanUtils.populate(model, requestMap);
         model.setCreater(getUser().getUserName());
 
-        List<String> applications = (List<String>) requestMap.getOrDefault("applications", "");
+        List<String> applications = (List<String>) requestMap.getOrDefault("applications", new ArrayList<>());
         List<String> channelIds = (List<String>) requestMap.getOrDefault("channelIds", new ArrayList<>());
-        List<String> storeIds = (List<String>) requestMap.getOrDefault("storeIds", new ArrayList<>());
+        List<Integer> storeIds = (List<Integer>) requestMap.getOrDefault("storeIds", new ArrayList<>());
         String allChannel = requestMap.getOrDefault("allChannel", "0").toString();
         String allStore = requestMap.getOrDefault("allStore", "0").toString();
         adminRoleService.updateRole(model, applications, channelIds, storeIds, allChannel, allStore);

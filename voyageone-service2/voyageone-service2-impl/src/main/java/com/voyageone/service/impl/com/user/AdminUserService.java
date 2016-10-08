@@ -732,7 +732,7 @@ public class AdminUserService extends BaseService {
             }
 
 
-            List<String> storeIds = new ArrayList<String>();
+            List<Integer> storeIds = new ArrayList<Integer>();
             if (comRoleDao.selectCount(model) == 0) {
                 adminRoleService.addRole(model, applications, channelIds, storeIds, "0", "1");
             }
@@ -812,6 +812,7 @@ public class AdminUserService extends BaseService {
 
     }
 
+    @VOTransactional
     private void addAction(ComRoleModel role, String action) {
         ComResourceModel res = new ComResourceModel();
         res.setOriginTable("ct_action");
@@ -916,4 +917,33 @@ public class AdminUserService extends BaseService {
     }
 
 
+    @VOTransactional
+    public void addRole4User(String username, List<String> roleNames)
+    {
+        ComUserModel user = new ComUserModel();
+        user.setUserAccount(username);
+
+        ComUserModel result = comUserDao.selectOne(user);
+        if(result == null)
+        {
+            System.out.println("username:" + username);
+        }
+
+        else {
+            for (String roleName : roleNames) {
+                ComRoleModel role = new ComRoleModel();
+                role.setRoleName(roleName);
+
+                ComRoleModel found = comRoleDao.selectOne(role);
+
+                ComUserRoleModel ur = new ComUserRoleModel();
+                ur.setUserId(result.getId());
+                ur.setRoleId(found.getId());
+                if(comUserRoleDao.selectCount(ur) == 0)
+                {
+                    comUserRoleDao.insert(ur);
+                }
+            }
+        }
+    }
 }
