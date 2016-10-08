@@ -5,9 +5,10 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('AddController', (function () {
-        function AddController(context, channelService, AdminCartService, $uibModalInstance) {
+        function AddController(context, alert, channelService, AdminCartService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
+            this.alert = alert;
             this.channelService = channelService;
             this.AdminCartService = AdminCartService;
             this.popType = '编辑';
@@ -66,7 +67,12 @@ define([
             },
             selected: function (item) {
                 var self = this;
-                self.selectedCartId = item.cartId;
+                if (item.value) {
+                    self.selectedCartId = item.value.cartId;
+                    item.direction == 'left' ? self.leftSelectedFlg = true : self.rightSelectedFlg = true;
+                } else {
+                    item.direction == 'left' ? self.leftSelectedFlg = false : self.rightSelectedFlg = false;
+                }
             },
             search: function (item) {
                 var self = this;
@@ -117,19 +123,39 @@ define([
                             break;
                         }
                     case 'include':
-                        self.data = _.find(self.cartAllList, function (cart) {
-                            return cart.cartId == self.selectedCartId;
-                        });
-                        self.cartList.push(self.data);
-                        self.cartAllList.splice(self.cartAllList.indexOf(self.data), 1);
-                        break;
+                        if (self.rightSelectedFlg == true) {
+                            self.data = _.find(self.cartAllList, function (cart) {
+                                return cart.cartId == self.selectedCartId;
+                            });
+                            if (self.data == undefined) {
+                                self.alert('请在可选择渠道区 选择渠道后再点此按钮!');
+                                return;
+                            } else {
+                                self.cartList.push(self.data);
+                                self.cartAllList.splice(self.cartAllList.indexOf(self.data), 1);
+                                break;
+                            }
+                        } else {
+                            self.alert('请在可选择渠道区 选择渠道后再点此按钮!');
+                            return;
+                        }
                     case 'exclude':
-                        self.data = _.find(self.cartList, function (cart) {
-                            return cart.cartId == self.selectedCartId;
-                        });
-                        self.cartAllList.push(self.data);
-                        self.cartList.splice(self.cartList.indexOf(self.data), 1);
-                        break;
+                        if (self.rightSelectedFlg == true) {
+                            self.data = _.find(self.cartList, function (cart) {
+                                return cart.cartId == self.selectedCartId;
+                            });
+                            if (self.data == undefined) {
+                                self.alert('请在已选择渠道区 选择渠道后再点此按钮!');
+                                return;
+                            } else {
+                                self.cartAllList.push(self.data);
+                                self.cartList.splice(self.cartList.indexOf(self.data), 1);
+                                break;
+                            }
+                        } else {
+                            self.alert('请在已选择渠道区 选择渠道后再点此按钮!');
+                            return;
+                        }
                     case 'allExclude':
                         _.forEach(self.cartList, function (item) {
                             self.cartAllList.push(item);
