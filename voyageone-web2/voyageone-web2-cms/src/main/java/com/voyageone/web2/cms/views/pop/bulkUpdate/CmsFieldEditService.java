@@ -185,42 +185,6 @@ public class CmsFieldEditService extends BaseViewService {
             productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, -1, EnumProductOperationType.BatchUpdate, msg, userInfo.getUserName());
             return rsMap;
 
-        } else if ("translateStatus".equals(prop_id)) {
-            // 翻译状态更新
-            String stsCode = null;
-            Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
-            if (valObj != null) {
-                stsCode = (String) valObj.get("value");
-            }
-            if (stsCode == null || stsCode.isEmpty()) {
-                $warn("没有设置变更项目 params=" + params.toString());
-                rsMap.put("ecd", 2);
-                return rsMap;
-            }
-
-            JongoUpdate updObj = new JongoUpdate();
-            updObj.setQuery("{'common.fields.code':{$in:#}}");
-            updObj.setQueryParameters(productCodes);
-            if ("0".equals(stsCode)) {
-                updObj.setUpdate("{$set:{'common.fields.translateStatus':'0','common.fields.translator':'','common.fields.translateTime':''}}");
-            } else if ("1".equals(stsCode)) {
-                updObj.setUpdate("{$set:{'common.fields.translateStatus':'1','common.fields.translator':#,'common.fields.translateTime':#}}");
-                updObj.setUpdateParameters(userInfo.getUserName(), DateTimeUtil.getNow());
-            } else {
-                $warn("设置了错误的变更项目值 params=" + params.toString());
-                rsMap.put("ecd", 2);
-                return rsMap;
-            }
-            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
-            $debug("翻译状态批量更新结果 " + rs.toString());
-
-            // 记录商品修改历史
-            stsCode = Types.getTypeName(TypeConfigEnums.MastType.translationStatus.getId(), "cn", stsCode);
-            productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, -1, EnumProductOperationType.BatchUpdate, "高级检索 批量更新：翻译状态--" + stsCode, userInfo.getUserName());
-
-            rsMap.put("ecd", 0);
-            return rsMap;
-
         } else if ("voRate".equals(prop_id)) {
             // 修改VO扣点值
             Number voRate = (Number) prop.get("value");
@@ -254,8 +218,8 @@ public class CmsFieldEditService extends BaseViewService {
             logParams.put("voRate", voRateVal);
             sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
 
-        } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id)) {
-            // 税号更新
+        } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id) || "translateStatus".equals(prop_id)) {
+            // 税号更新 /翻译状态更新
             String hsCode = null;
             Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
             if (valObj != null) {
