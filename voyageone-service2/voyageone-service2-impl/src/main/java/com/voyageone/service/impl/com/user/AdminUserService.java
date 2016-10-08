@@ -443,7 +443,7 @@ public class AdminUserService extends BaseService {
     private List<AdminResourceBean> findRoots(List<AdminResourceBean> allNodes) {
         List<AdminResourceBean> results = new ArrayList<>();
         for (AdminResourceBean node : allNodes) {
-            if (node.getParentId() == 0) {
+            if (node.getParentId().equals(0)) {
                 results.add(node);
             }
         }
@@ -458,7 +458,7 @@ public class AdminUserService extends BaseService {
         List<AdminResourceBean> children = new ArrayList<>();
 
         for (AdminResourceBean node : allNodes) {
-            if (node.getParentId() == root.getId()) {
+            if (node.getParentId().equals( root.getId())) {
                 children.add(node);
             }
         }
