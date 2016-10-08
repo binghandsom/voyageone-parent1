@@ -11,17 +11,17 @@
                     <div class="row form-group"><!-- 角色名 -->
                         <label class="col-sm-3 control-label">{{'TXT_ROLE_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <input class="form-control" ng-model="ctrl.sourceData.roleName" ng-disabled="ctrl.popType=='修改角色'"/>
+                            <input class="form-control" ng-model="ctrl.saveInfo.roleName" ng-disabled="ctrl.popType=='修改角色'"/>
                         </div>
                     </div>
                     <div class="row form-group"><!-- 状态 -->
                         <label class="col-sm-3 control-label">{{'TXT_STATUS' | translate}}</label>
                         <div class="col-sm-8">
                             <label class="checkbox-inline c-radio">
-                                <input type="radio" name="active" value="1" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> 启用
+                                <input type="radio" name="active" value="1" ng-model="ctrl.saveInfo.active" required><span class="fa fa-check"></span> 启用
                             </label>
                             <label class="checkbox-inline c-radio">
-                                <input type="radio" name="active" value="0" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> 禁用
+                                <input type="radio" name="active" value="0" ng-model="ctrl.saveInfo.active" required><span class="fa fa-check"></span> 禁用
                             </label>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                     <div class="row form-group"><!-- 角色类型 -->
                         <label class="col-sm-2 control-label">{{'TXT_ROLE_TYPE' | translate}}</label>
                         <div class="col-sm-10">
-                            <select class="form-control" ng-model="ctrl.sourceData.roleType">
+                            <select class="form-control" ng-model="ctrl.saveInfo.roleType">
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 <option value="{{roleType.id}}" ng-repeat="roleType in ctrl.roleTypeList">&nbsp;{{roleType.name}}</option>
                             </select>
@@ -63,7 +63,7 @@
                     <div class="row form-group"><!-- 说明 -->
                         <label class="col-sm-2 control-label">{{'TXT_INSTRUCTION' | translate}}</label>
                         <div class="col-sm-10">
-                            <textarea rows="3" class="form-control" maxlength="100" ng-model="ctrl.sourceData.description"></textarea>
+                            <textarea rows="3" class="form-control" maxlength="100" ng-model="ctrl.saveInfo.description"></textarea>
                         </div>
                     </div>
                 </div>
@@ -72,13 +72,13 @@
                 <div class="row form-group"><!-- 授权渠道 -->
                     <label class="col-sm-1 control-label">{{'TXT_ROLE_CHANNEL' | translate}}</label>
                     <label class="checkbox-inline c-radio">
-                        <input type="radio" name="allChannel" value="1" ng-model="ctrl.sourceData.allChannel"><span class="fa fa-check"></span> 所有渠道
+                        <input type="radio" name="allChannel" value="1" ng-model="ctrl.saveInfo.allChannel"><span class="fa fa-check"></span> 所有渠道
                     </label>
                     <label class="checkbox-inline c-radio">
-                        <input type="radio" name="allChannel" value="0" ng-model="ctrl.sourceData.allChannel"><span class="fa fa-check"></span> 选择特定渠道
+                        <input type="radio" name="allChannel" value="0" ng-model="ctrl.saveInfo.allChannel"><span class="fa fa-check"></span> 选择特定渠道
                     </label>
                 </div>
-                <div class="row form-group" ng-if="ctrl.sourceData.allChannel=='0'">
+                <div class="row form-group" ng-if="ctrl.saveInfo.allChannel=='0'">
                     <div class="col-sm-10 col-sm-offset-1">
                         <div class="col-sm-5">
                             <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label>
@@ -120,13 +120,13 @@
                 <div class="row form-group" ng-if="ctrl.applicationList[3].valid==true"><!-- 授权仓库 -->
                     <label class="col-sm-1 control-label">{{'TXT_ROLE_STORE' | translate}}</label>
                     <label class="checkbox-inline c-radio">
-                        <input type="radio" name="allStore" value="1" ng-model="ctrl.sourceData.allStore"><span class="fa fa-check"></span> 所有已选渠道的关联仓库
+                        <input type="radio" name="allStore" value="1" ng-model="ctrl.saveInfo.allStore"><span class="fa fa-check"></span> 所有已选渠道的关联仓库
                     </label>
                     <label class="checkbox-inline c-radio">
-                        <input type="radio" name="allStore" value="0" ng-model="ctrl.sourceData.allStore"><span class="fa fa-check"></span> 选择特定仓库
+                        <input type="radio" name="allStore" value="0" ng-model="ctrl.saveInfo.allStore"><span class="fa fa-check"></span> 选择特定仓库
                     </label>
                 </div>
-                <div class="row form-group" ng-if="ctrl.sourceData.allStore=='0'&&ctrl.applicationList[3].valid==true;">
+                <div class="row form-group" ng-if="ctrl.saveInfo.allStore=='0'&&ctrl.applicationList[3].valid==true;">
                     <div class="col-sm-10 col-sm-offset-1">
                         <div class="col-sm-5">
                             <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label>
