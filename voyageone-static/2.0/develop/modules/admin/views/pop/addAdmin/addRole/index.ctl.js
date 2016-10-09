@@ -109,7 +109,7 @@ define([
                             if (store.storeId == item) {
                                 self.storeList[index] = {
                                     'storeId': item,
-                                    'storeName': '(' + store.channelId + ')' + store.storeName
+                                    'storeName': store.storeName
                                 }
                             }
                             return self.storeList;
