@@ -253,7 +253,7 @@ define([
                             return;
                         }
                     case 'exclude':
-                        if (self.rightSelectedFlg == true) {
+                        if (self.leftSelectedFlg == true) {
                             self.data = _.find(self.channelList, function (channel) {
                                 return channel.orderChannelId == self.selectedChannelId;
                             });
@@ -330,7 +330,7 @@ define([
                             return;
                         }
                     case 'exclude':
-                        if (self.rightSelectedFlg == true) {
+                        if (self.leftSelectedFlg == true) {
                             self.data = _.find(self.storeList, function (store) {
                                 return store.storeId == self.selectedStoreId;
                             });
