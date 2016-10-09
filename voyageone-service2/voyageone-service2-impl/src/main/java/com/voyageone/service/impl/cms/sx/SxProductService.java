@@ -2641,7 +2641,14 @@ public class SxProductService extends BaseService {
         boolean isDarwin = sxData.isDarwin();
         if (!isDarwin) {
             // 不是达尔文
-            String styleCode = sxData.getMainProduct().getCommon().getFields().getModel();
+            // modified by morse.lu 2016/10/09 start
+            // 画面上可以填了,没填的话还是用model
+//            String styleCode = sxData.getMainProduct().getCommon().getFields().getModel();
+            String styleCode = (String) sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields().get("style_code");
+            if (StringUtils.isEmpty(styleCode)) {
+                styleCode = sxData.getMainProduct().getCommon().getFields().getModel();
+            }
+            // modified by morse.lu 2016/10/09 end
             // test用 start
 //            styleCode = "test." + styleCode;
             // test用 end
