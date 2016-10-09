@@ -1960,7 +1960,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                 }
                 // 商品状态
-                platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                // cartID是928的场合 状态直接是approved james.li
+                if(platform.getCartId() == CartEnums.Cart.USJGJ.getValue()){
+                    platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+                }else{
+                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                }
                 // 平台属性状态(新增时)
                 platform.setpAttributeStatus("0");    // add desmond 2016/07/05
 
@@ -2449,7 +2454,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         }
                     }
                     // 商品状态
-                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                    // cartID是928的场合 状态直接是approved james.li
+                    if(platform.getCartId() == CartEnums.Cart.USJGJ.getValue()){
+                        platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+                    }else{
+                        platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                    }
                     // 平台属性状态(更新时，新增PXX平台属性时)
                     platform.setpAttributeStatus("0");   // add desmond 2016/07/05
                     platforms.put("P" + typeChannelBean.getValue(), platform);
@@ -2475,6 +2485,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         }
                     }
                     // add desmond 2016/07/07 end
+
+                    // cartID是928的场合 状态直接是approved james.li
+                    CmsBtProductModel_Platform_Cart platform = platforms.get("P" + typeChannelBean.getValue());
+                    //
+                    if(platform.getCartId() == CartEnums.Cart.USJGJ.getValue()){
+                        platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+                    }
                 }
             }
 
