@@ -432,16 +432,19 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
                         continue;
                     }
                     // added by morse.lu 2016/08/17 start
-                    if (sku_skuIdField != null && fieldId.equals(sku_skuIdField.getId())) {
-                        ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
-                        if (complexValue != null) {
-                            Field oldField = complexValue.getValueField(fieldId);
-                            if (oldField != null) {
-                                skuFieldValue.setInputFieldValue(sku_skuIdField.getId(), ((InputField) oldField).getValue());
-                            }
-                        }
-                        continue;
-                    }
+                    // deleted by morse.lu 2016/10/08 start
+                    // 暂时不填，当作新的sku上传
+//                    if (sku_skuIdField != null && fieldId.equals(sku_skuIdField.getId())) {
+//                        ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
+//                        if (complexValue != null) {
+//                            Field oldField = complexValue.getValueField(fieldId);
+//                            if (oldField != null) {
+//                                skuFieldValue.setInputFieldValue(sku_skuIdField.getId(), ((InputField) oldField).getValue());
+//                            }
+//                        }
+//                        continue;
+//                    }
+                    // deleted by morse.lu 2016/10/08 end
                     if (sku_productIdField != null && fieldId.equals(sku_productIdField.getId())) {
                         ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
                         if (complexValue != null) {
