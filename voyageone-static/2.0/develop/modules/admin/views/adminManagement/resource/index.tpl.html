@@ -68,15 +68,15 @@
                         <td class="cell-input" style="padding: 4px;">
                             <input ng-change="toggleCheckbox(item, ctrl.selectedList)" ng-model="item.selected" type="checkbox" />
                         </td>
-                        <td class="cell-name text-left mfb-xxt" ng-click="item.opened = !item.opened" ng-style="{'padding-left':item.children.length==0? '18px':'0'}">
+                        <td class="cell-name text-left mfb-xxt" ng-click="item.opened = !item.opened" ng-style="{'padding-left':item.children.length==0? '18px':'0'}" style="word-break: break-all">
                             <div ng-class="{'indent': item.children.length>0}" style="padding-left: {{15*level}}px;">
                                 {{item.resName}}
                             </div>
                         </td>
-                        <td class="text-left mfb-xxt">{{item.resKey}}</td>
-                        <td class="text-left mfb-xxt">{{item.resUrl}}</td>
-                        <td class="text-center mfb-xt3">{{item.application}}</td>
-                        <td class="text-center mfb-xt">{{ctrl.getResType(item.resType)}}</td>
+                        <td class="text-left mfb-xxt" style="word-break: break-all">{{item.resKey}}</td>
+                        <td class="text-left mfb-xxt" style="word-break: break-all">{{item.resUrl}}</td>
+                        <td class="text-center mfb-xt3" style="word-break: break-all">{{item.application}}</td>
+                        <td class="text-center mfb-xt" style="word-break: break-all">{{ctrl.getResType(item.resType)}}</td>
                         <td class="text-center mfb-xt3" ng-bind="item.active!=null?item.active==1?'启用':'禁用':''"></td>
                         <td class="text-center mfb-xt">{{item.description}}</td>
                         <td class="text-center mfb-xt3">{{item.modifier}}</td>
