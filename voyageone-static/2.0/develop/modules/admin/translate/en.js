@@ -193,6 +193,7 @@ define(function () {
         /**按钮组*/
         "TXT_LOGOUT": "注销",
         "TXT_CHANGEPASS": "修改密码",
+        "TXT_RESET_PASS": "重置密码",
         "BTN_CANCEL": "取消",
         "BTN_SAVE": "保存",
         "BTN_OK": "确认",

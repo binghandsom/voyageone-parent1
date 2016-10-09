@@ -17,16 +17,15 @@
         <ng-include src="'msg.tpl.html'"></ng-include>
         <ul>
             <li>
+                <span style="padding-left: 12px;">Account:</span>
                 <input ng-model="username" type="text" class="text" placeholder="Username or Email">
                 <span class="small-icon login-user"></span>
             </li>
             <li>
+                <span style="padding-left: 12px;">Password:</span>
+                <span style="float: right;padding: 0 12px 0 0;"><a class="text-right" href="/adminForgetPass.html" target="_blank">忘记密码</a></span>
                 <input ng-model="password" type="password" placeholder="Password" enter-click="#btn-login">
                 <span class="small-icon login-lock"></span>
-            </li>
-            <li class="text-right">
-                <a class="text-right" href="/adminForgetPass.html" target="_blank">忘记密码</a>
-                <a class="text-right" href="/adminResetPass.html" target="_blank">重置密码</a>
             </li>
         </ul>
     </form>

@@ -157,6 +157,7 @@ define([
         $scope.initialize = initialize;
         $scope.logout = logout;
         $scope.changePassword = changePassword;
+        $scope.resetPassword = resetPassword;
         function initialize() {
             vm.userInfo = $localStorage.user || {};
         }
@@ -172,6 +173,13 @@ define([
          * changePassword.
          */
         function changePassword() {
+            $window.location = cCommonRoutes.resetPass.url;
+        }
+
+        /**
+         * resetPassword.
+         */
+        function resetPassword() {
             $window.location = cCommonRoutes.resetPass.url;
         }
     }

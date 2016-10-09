@@ -4,8 +4,7 @@
 </div>
 <!-- / navbar header -->
 <!-- navbar collapse -->
-<div class="collapse pos-rlt navbar-collapse box-shadow bg-black" ng-controller="headerCtrl as header"
-     ng-init="initialize()">
+<div class="collapse pos-rlt navbar-collapse box-shadow bg-black" ng-controller="headerCtrl as header" ng-init="initialize()">
     <ul class="nav navbar-nav navbar-right hidden-sm">
         <!-- user uib-dropdown -->
         <li class="dropdown" uib-dropdown>
@@ -15,10 +14,13 @@
             <!-- uib-dropdown -->
             <ul class="dropdown-menu arrow_box">
                 <li>
-                    <a href="" translate="TXT_LOGOUT" ng-click="logout()"></a>
+                    <a href="" translate="TXT_CHANGEPASS" ng-click="changePassword()"></a>
                 </li>
                 <li>
-                    <a href="" translate="TXT_CHANGEPASS" ng-click="changePassword()"></a>
+                    <a href="" translate="TXT_RESET_PASS" ng-click="resetPassword()"></a>
+                </li>
+                <li>
+                    <a href="" translate="TXT_LOGOUT" ng-click="logout()"></a>
                 </li>
             </ul>
             <!-- / uib-dropdown -->
