@@ -14,103 +14,95 @@
     from view_res_user_company
     <where >
             <if test="application != null" >
-                #{application,jdbcType=VARCHAR},
+                and   application = #{application,jdbcType=VARCHAR},
             </if>
             <if test="resName != null" >
-                #{resName,jdbcType=VARCHAR},
+                and res_name = #{resName,jdbcType=VARCHAR},
             </if>
             <if test="resKey != null" >
-                #{resKey,jdbcType=VARCHAR},
+                and res_key = #{resKey,jdbcType=VARCHAR},
             </if>
             <if test="resType != null" >
-                #{resType,jdbcType=INTEGER},
+                and res_type =#{resType,jdbcType=INTEGER},
             </if>
             <if test="parentId != null" >
-                #{parentId,jdbcType=INTEGER},
+                and parent_id =#{parentId,jdbcType=INTEGER},
             </if>
             <if test="parentIds != null" >
-                #{parentIds,jdbcType=VARCHAR},
+                and parent_ids =#{parentIds,jdbcType=VARCHAR},
             </if>
             <if test="weight != null" >
-                #{weight,jdbcType=INTEGER},
+                and weight = #{weight,jdbcType=INTEGER},
             </if>
             <if test="resUrl != null" >
-                #{resUrl,jdbcType=VARCHAR},
+                and res_url =#{resUrl,jdbcType=VARCHAR},
             </if>
             <if test="icon != null" >
-                #{icon,jdbcType=VARCHAR},
+                and icon =#{icon,jdbcType=VARCHAR},
             </if>
             <if test="active != null" >
-                #{active,jdbcType=INTEGER},
+                and active =#{active,jdbcType=INTEGER},
             </if>
             <if test="description != null" >
-                #{description,jdbcType=VARCHAR},
-            </if>
-            <if test="created == null" >
-                now(),
+                and description = #{description,jdbcType=VARCHAR},
             </if>
             <if test="created != null" >
-                #{created,jdbcType=TIMESTAMP},
+                and created = #{created,jdbcType=TIMESTAMP},
             </if>
             <if test="creater != null" >
-                #{creater,jdbcType=VARCHAR},
-            </if>
-            <if test="modified == null" >
-                now(),
+                and creater = #{creater,jdbcType=VARCHAR},
             </if>
             <if test="modified != null" >
-                #{modified,jdbcType=TIMESTAMP},
+                and modified = #{modified,jdbcType=TIMESTAMP},
             </if>
             <if test="modifier != null" >
-                #{modifier,jdbcType=VARCHAR},
+                and modifier = #{modifier,jdbcType=VARCHAR},
             </if>
-            <if test="modifier == null and creater != null" >
-                #{creater,jdbcType=VARCHAR},
-            </if>
+
             <if test="originId != null" >
-                #{originId,jdbcType=INTEGER},
+                and origin_id = #{originId,jdbcType=INTEGER},
             </if>
             <if test="originTable != null" >
-                #{originTable,jdbcType=VARCHAR},
+                and origin_table = #{originTable,jdbcType=VARCHAR},
             </if>
             <if test="originName != null" >
-                #{originName,jdbcType=VARCHAR},
+                and origin_name = #{originName,jdbcType=VARCHAR},
             </if>
             <if test="showInMenu != null" >
-                #{showInMenu,jdbcType=TINYINT},
+                and show_in_menu = #{showInMenu,jdbcType=TINYINT},
             </if>
             <if test="menuTitle != null" >
-                #{menuTitle,jdbcType=VARCHAR},
+                and menu_title = #{menuTitle,jdbcType=VARCHAR},
             </if>
             <if test="roleId != null" >
-                #{roleId,jdbcType=INTEGER},
+                and role_id = #{roleId,jdbcType=INTEGER},
             </if>
             <if test="roleType != null" >
-                #{roleType,jdbcType=INTEGER},
+                and role_type = #{roleType,jdbcType=INTEGER},
             </if>
             <if test="roleName != null" >
-                #{roleName,jdbcType=VARCHAR},
+                and role_name = #{roleName,jdbcType=VARCHAR},
             </if>
             <if test="channelId != null" >
-                #{channelId,jdbcType=LONGVARCHAR},
+                and channel_id = #{channelId,jdbcType=LONGVARCHAR},
             </if>
             <if test="companyId != null" >
-                #{companyId,jdbcType=INTEGER},
+                and company_id = #{companyId,jdbcType=INTEGER},
             </if>
             <if test="fullName != null" >
-                #{fullName,jdbcType=VARCHAR},
+                and full_name = #{fullName,jdbcType=VARCHAR},
             </if>
             <if test="company != null" >
-                #{company,jdbcType=VARCHAR},
+                and company = #{company,jdbcType=VARCHAR},
             </if>
             <if test="imgUrl != null" >
-                #{imgUrl,jdbcType=VARCHAR},
+                and img_url = #{imgUrl,jdbcType=VARCHAR},
             </if>
             <if test="userId != null" >
-                #{userId,jdbcType=INTEGER},
+                and user_id = #{userId,jdbcType=INTEGER},
             </if>
             <if test="userAccount != null" >
-                #{userAccount,jdbcType=VARCHAR},
+                and user_account = #{userAccount,jdbcType=VARCHAR},
             </if>
     </where>
     </select>
