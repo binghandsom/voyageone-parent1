@@ -253,6 +253,7 @@ define([
                 $scope.vm.skuList = res.data.resultData == null ? [] : res.data.resultData;
             })
         }
+
     };
     detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory', 'cookieService','cActions'];
     return detailController;
