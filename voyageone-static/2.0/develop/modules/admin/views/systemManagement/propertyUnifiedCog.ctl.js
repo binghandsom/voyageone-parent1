@@ -263,7 +263,7 @@ define([
                             return;
                         }
                         self.list = _.filter(self.portList, function (listItem) {
-                            return listItem.port == item.port;
+                            return listItem.code == item.port;
                         });
                         _.extend(item, {'port': self.list[0].port, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
