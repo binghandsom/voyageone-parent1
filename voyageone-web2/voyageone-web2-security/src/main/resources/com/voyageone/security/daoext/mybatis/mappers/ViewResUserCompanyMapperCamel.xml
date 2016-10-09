@@ -7,12 +7,8 @@
        id,application,res_name,res_key,res_type,parent_id,parent_ids,weight,res_url,icon,active,description,created,creater,modified,modifier,origin_id,origin_table,origin_name,show_in_menu,menu_title,role_id,role_type,role_name,channel_id,company_id,full_name,company,img_url,user_id,user_account
     </sql>
 
-
-    <select id="selectList" resultMap="BaseResultMap" >
-    select
-    <include refid="Base_Column_List" />
-    from view_res_user_company
-    <where >
+    <sql id="selectFilter">
+        <where >
             <if test="application != null" >
                 and   application = #{application,jdbcType=VARCHAR}
             </if>
@@ -104,7 +100,16 @@
             <if test="userAccount != null" >
                 and user_account = #{userAccount,jdbcType=VARCHAR}
             </if>
-    </where>
+        </where>
+    </sql>
+
+
+    <select id="selectList" resultMap="BaseResultMap" >
+    select
+    <include refid="Base_Column_List" />
+    from view_res_user_company
+        <include refid="selectFilter" />
+    GROUP BY res_key
     </select>
 
 </mapper>
