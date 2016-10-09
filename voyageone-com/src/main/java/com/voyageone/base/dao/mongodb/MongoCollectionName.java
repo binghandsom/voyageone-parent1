@@ -3,13 +3,18 @@ package com.voyageone.base.dao.mongodb;
 import com.voyageone.base.dao.mongodb.support.MongoCollection;
 import com.voyageone.common.util.StringUtils;
 
+import static java.util.stream.Collectors.joining;
+
 /**
  * MongoCollectionName
+ *
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
  */
-public class MongoCollectionName {
+class MongoCollectionName {
+    private static final String SEPARATOR = "_";
+
     public static String getCollectionName(Class<?> entityClass) {
         String className = entityClass.getSimpleName();
         String result = null;
@@ -17,20 +22,12 @@ public class MongoCollectionName {
         if (mongoCollection != null && !StringUtils.isEmpty(mongoCollection.value())) {
             result = mongoCollection.value();
         }
-		
+
         if (result == null) {
             result = toUnderlineName(className);
             if (result.endsWith("_model")) {
-                result = result.substring(0, result.length()-6);
+                result = result.substring(0, result.length() - 6);
             }
-        }
-        return result;
-    }
-
-    private static String getPartitionValue(String partStr, String split) {
-        String result = "";
-        if (partStr != null) {
-            result = "_" + split + partStr;
         }
         return result;
     }
@@ -47,35 +44,28 @@ public class MongoCollectionName {
         return null;
     }
 
-    private static final char SEPARATOR = '_';
-    public static String toUnderlineName(String s) {
+    private static String getPartitionValue(String partStr, String split) {
+        String result = "";
+        if (partStr != null) {
+            result = "_" + split + partStr;
+        }
+        return result;
+    }
+
+    private static String toUnderlineName(String s) {
         if (s == null) {
             return null;
         }
-
-        StringBuilder sb = new StringBuilder();
-        boolean upperCase = false;
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-
-            boolean nextUpperCase = true;
-
-            if (i < (s.length() - 1)) {
-                nextUpperCase = Character.isUpperCase(s.charAt(i + 1));
-            }
-
-            if ((i >= 0) && Character.isUpperCase(c)) {
-                if (!upperCase || !nextUpperCase) {
-                    if (i > 0) sb.append(SEPARATOR);
-                }
-                upperCase = true;
-            } else {
-                upperCase = false;
-            }
-
-            sb.append(Character.toLowerCase(c));
-        }
-
-        return sb.toString();
+        return s.chars()
+                .boxed()
+                .map(boxedCodePoint -> {
+                    int codePoint = boxedCodePoint;
+                    if (Character.isUpperCase(codePoint)) {
+                        return SEPARATOR + Character.toString((char) Character.toLowerCase(codePoint));
+                    } else {
+                        return Character.toString((char) codePoint);
+                    }
+                })
+                .collect(joining());
     }
 }
