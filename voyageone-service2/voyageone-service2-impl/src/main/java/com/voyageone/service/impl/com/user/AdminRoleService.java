@@ -282,7 +282,7 @@ public class AdminRoleService extends BaseService {
                 List<String> sIds = wmsMtStoreDaoExt.selectIdsByChannel(channelIds);
 
                 for (Integer store : storeIds) {
-                    if (sIds.stream().filter(w -> w.equals(store)).count() == 0) {
+                    if (sIds.stream().filter(w -> w.equals(store.toString())).count() == 0) {
                         throw new BusinessException("仓库和渠道不匹配。");
                     }
                 }
