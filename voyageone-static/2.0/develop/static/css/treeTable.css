@@ -10,7 +10,7 @@
     padding-left: 5px;
 }
 .table-nested td {
-    border-top: 1px solid;
+    border-top: 1px solid #ccc;
 }
 .table-nested td[colspan] {
     border: none;

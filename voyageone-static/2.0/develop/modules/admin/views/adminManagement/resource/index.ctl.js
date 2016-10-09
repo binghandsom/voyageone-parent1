@@ -85,13 +85,14 @@ define([
                         } else if (selectedList.length > 1) {
                             self.alert('只能选择一条数据哦！');
                         } else {
-                            _.forEach(self.flatResList, function (Info) {
-                                if (Info.id == self.selectedList[0].id) {
-                                    self.popups.openRes(Info).then(function () {
-                                        self.search(1);
-                                    });
-                                }
-                            })
+                            var data = _.filter(self.flatResList, function (Info) {
+                                return Info.id == self.selectedList[0].id
+                            });
+
+                            return self.popups.openRes(data[0]).then(function () {
+                                self.search(1);
+                            });
+
                         }
                     }
                 }
