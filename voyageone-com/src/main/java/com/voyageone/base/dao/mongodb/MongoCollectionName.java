@@ -13,7 +13,7 @@ import static java.util.stream.Collectors.joining;
  * @since 2.0.0
  */
 class MongoCollectionName {
-    private static final String SEPARATOR = "_";
+    private static final char SEPARATOR = '_';
 
     public static String getCollectionName(Class<?> entityClass) {
         String className = entityClass.getSimpleName();
@@ -56,16 +56,30 @@ class MongoCollectionName {
         if (s == null) {
             return null;
         }
-        return s.chars()
-                .boxed()
-                .map(boxedCodePoint -> {
-                    int codePoint = boxedCodePoint;
-                    if (Character.isUpperCase(codePoint)) {
-                        return SEPARATOR + Character.toString((char) Character.toLowerCase(codePoint));
-                    } else {
-                        return Character.toString((char) codePoint);
-                    }
-                })
-                .collect(joining());
+
+        StringBuilder sb = new StringBuilder();
+        boolean upperCase = false;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+
+            boolean nextUpperCase = true;
+
+            if (i < (s.length() - 1)) {
+                nextUpperCase = Character.isUpperCase(s.charAt(i + 1));
+            }
+
+            if ((i >= 0) && Character.isUpperCase(c)) {
+                if (!upperCase || !nextUpperCase) {
+                    if (i > 0) sb.append(SEPARATOR);
+                }
+                upperCase = true;
+            } else {
+                upperCase = false;
+            }
+
+            sb.append(Character.toLowerCase(c));
+        }
+
+        return sb.toString();
     }
 }
