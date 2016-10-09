@@ -76,14 +76,11 @@ public class ComUserService {
             ComUserModel userModel = new ComUserModel();
             userModel.setUserAccount(account);
             userModel =comUserDao.selectOne(userModel);
-            if(userModel!= null) {
-                String cryptoPassword = new Md5Hash(password, account + MD5_FIX_SALT, MD5_HASHITERATIONS).toHex();
-                if (!userModel.getPassword().equals(cryptoPassword)) {
-                    throw new BusinessException("A005", "authentication failed.", e);
-                }
+            if(userModel == null) {
+                throw new BusinessException("A005", "authentication failed.", e);
             }
-            else
-            {
+            String cryptoPassword = new Md5Hash(password, account + MD5_FIX_SALT, MD5_HASHITERATIONS).toHex();
+            if (!userModel.getPassword().equals(cryptoPassword)) {
                 throw new BusinessException("A005", "authentication failed.", e);
             }
         }
