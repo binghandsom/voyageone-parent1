@@ -2,7 +2,7 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="fa fa-pencil"></i>&nbsp;Sku价格设置</h5>
+        <h5 class="modal-title"><i class="fa fa-pencil"></i>&nbsp;{{'TXT_SKU_PRICE_SETTING' | translate}}</h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
@@ -20,34 +20,33 @@
                         <thead>
                         <tr>
                             <th class="mfb-xxs text-center">skuCode</th>
-                            <th class="mfb-xxx text-right">中国建议零售价</th>
-                            <th class="mfb-xxx text-right">中国指导价格</th>
-                            <th class="mfb-xxx text-right">中国最终售价</th>
-                            <th class="mfb-xxxs text-center">活动价</th>
+                            <th class="mfb-xxx text-right" translate="TXT_CHINA_MSRP_PRICE"></th>
+                            <th class="mfb-xxx text-right" translate="TXT_CHINA_RETAIL_PRICE"></th>
+                            <th class="mfb-xxx text-right" translate="TXT_FINAL_SALE_PRICE"></th>
+                            <th class="mfb-xxxs text-center" translate="TXT_PROMOTION_SALE_PRICE"></th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr ng-repeat="price in ctrl.dataList">
-                            <td class="mfb-xxs text-center">{{price.sku_code}}</td>
-                            <td class="mfb-xxx text-right">{{price.msrp_rmb}}</td>
-                            <td class="mfb-xxx text-right">{{price.retail_price}}</td>
-                            <td class="mfb-xxx text-right">{{price.sale_price}}</td>
+                            <td class="mfb-xxs text-center">{{price.productSku}}</td>
+                            <td class="mfb-xxx text-right">{{price.msrpRmb}}</td>
+                            <td class="mfb-xxx text-right">{{price.retailPrice}}</td>
+                            <td class="mfb-xxx text-right">{{price.salePrice}}</td>
                             <td class="mfb-xxxs text-center">
                                 <ng-form name="skuPriceForm" novalidate>
                                     <div class="col-md-4">
                                         <input type="number" name="promotionPrice" class="form-control text-right"
-                                               style="width: 100px" ng-model="price.promotion_price" scale="15,2" required>
+                                               style="width: 100px" ng-model="price.promotionPrice" scale="15,2" required>
                                     </div>
                                     <p class="col-md-8"
-                                       ng-class="{'text-u-red':price.msrp_rmb < price.promotion_price,'text-u-green':price.msrp_rmb > price.promotion_price}">
+                                       ng-class="{'text-u-red':price.msrpRmb < price.promotionPrice,'text-u-green':price.msrpRmb > price.promotionPrice}">
                                         【<span class="text-u-sub">
                                         <i class="glyphicon glyphicon-triangle-top"
-                                           ng-if="price.promotion_price > price.msrp_rmb"></i>
+                                           ng-if="price.promotionPrice > price.msrpRmb"></i>
                                         <i class="glyphicon glyphicon-triangle-bottom"
-                                           ng-if="price.promotion_price < price.msrp_rmb"></i>
-                                        </span>&nbsp;{{price.msrp_rmb-price.promotion_price | number: 2}}
-                                        {{(price.promotion_price  / price.msrp_rmb * 100).toFixed(2)}}{{'TXT_DISCOUNT_WORD' |
-                                        translate}}】
+                                           ng-if="price.promotionPrice < price.msrpRmb"></i>
+                                        </span>&nbsp;{{price.promotionPrice - price.msrpRmb | number: 2}}
+                                        {{ctrl.flowPercent(price.promotionPrice,price.msrpRmb)}}%】
                                     </p>
                                     <div class="col-md-6">
                                         <vo-message target="skuPriceForm.promotionPrice"></vo-message>{{proPriceForm.promotionPrice | json}}
@@ -60,10 +59,14 @@
                 </ng-form>
             </div>
         </div>
+        <div class="text-warnings no-master">
+            <i class="icon fa fa-bell-o"></i>&nbsp;活动价的涨幅百分比&nbsp;=&nbsp;活动价&nbsp;/&nbsp;中国建议零售价相比较
+        </div>
+
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_CLOSE' | translate}}
         </button>
-        <button class="btn btn-vo" ng-click="$dismiss()" ng-disabled="proPriceForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled="proPriceForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
     </div>
 </div>
