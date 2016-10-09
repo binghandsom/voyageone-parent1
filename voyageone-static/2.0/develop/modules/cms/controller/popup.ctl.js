@@ -305,7 +305,7 @@ define([
             "setSkuPrice":{
                 "templateUrl": "views/pop/promotion/setSkuPrice.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/promotion/setSkuPrice.ctl",
-                "controller": 'setSkuPriceCtl',
+                "controller": 'setSkuPriceCtl as ctrl',
                 "size":"lg"
             }
         },

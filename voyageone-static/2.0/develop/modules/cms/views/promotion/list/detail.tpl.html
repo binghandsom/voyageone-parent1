@@ -336,7 +336,7 @@
                                     </div>
                                 </td>
                                 <td class="mfb-xxt text-center">
-                                    <button class="btn btn-default btn-pop" ng-click="openSetSkuPrice()" ng-controller="popupCtrl">{{code.skuCount}}</button>
+                                    <button class="btn btn-default btn-pop" ng-click="openSetSkuPrice({productCode:code.productCode,productId:code.productId,promotionId:code.promotionId})" ng-controller="popupCtrl">{{code.skuCount}}</button>
                                 </td>
                                 <td class="mfb-xxt text-left">
                                     <small popover-trigger="mouseenter" popover-placement="left">

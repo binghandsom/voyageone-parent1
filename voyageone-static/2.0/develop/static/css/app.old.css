@@ -5285,7 +5285,10 @@ a.text-black:hover {
     vertical-align:sub;
 }
 .text-u-red{
-    color:#ff0000;
+    color: #ff4a37;
+}
+.text-u-green{
+    color: #78c547;
 }
 .text-active,
 .active > .text,
