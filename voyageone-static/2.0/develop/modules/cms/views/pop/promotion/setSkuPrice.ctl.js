@@ -9,15 +9,17 @@ define([
 
     return cms.controller('setSkuPriceCtl',(function(){
 
-        function SetSkuPriceController(context,promotionDetailService2){
+        function SetSkuPriceController(context,promotionDetailService){
             this.context = context;
-            this.promotionDetailService = promotionDetailService2;
+            this.promotionDetailService = promotionDetailService;
         }
 
         SetSkuPriceController.prototype.init = function(){
-            var self = this;
+            var self = this,
+                promotionDetailService = self.promotionDetailService,
+                context = self.context;
 
-            self.promotionDetailService.getPromotionSkuList().then(function(res){
+            promotionDetailService.getPromotionSkuList({productId:context.productId,promotionId:context.promotionId}).then(function(res){
                 self.dataList = res.data;
             });
         };
