@@ -14,29 +14,25 @@
     </resultMap>
 
     <select id="selectPermissionChannel" resultMap="ctUserChannelPermissionMap" >
-        SELECT DISTINCT (res_name) AS application , r.application_id , c.order_channel_id as channel_id ,c.full_name,c.img_url,c.company_id, co.company
-        from view_user_res r, Synship.tm_order_channel c  , Synship.ct_company co
-        where res_type = 0  and r.channel_id = c.order_channel_id and c.company_id = co.id
-        and r.channel_id &lt;&gt; 'ALL'
-        and r.active = 1
-        and c.active = 1
-        and co.active = 1
-        and user_id =  #{userId,jdbcType=INTEGER}
-        UNION
-        SELECT DISTINCT (res_name) AS application , r.application_id , c.order_channel_id as channel_id ,c.full_name,c.img_url,c.company_id, co.company
-        from view_user_res r, Synship.tm_order_channel c  , Synship.ct_company co
-        where res_type = 0  and c.company_id = co.id
-        and r.channel_id = 'ALL'
-        and r.active = 1
-        and c.active = 1
-        and co.active = 1
-        and user_id =  #{userId,jdbcType=INTEGER}
-
-
+        SELECT
+            re.application,
+            ap.id AS application_id,
+            re.channel_id,
+            re.full_name,
+            re.img_url,
+            re.company_id,
+            re.company
+        FROM
+            view_res_user_company re,
+            synship.ct_application ap
+        WHERE
+            res_type = 0
+        AND ap.application = re.application
+        AND user_id =  #{userId,jdbcType=INTEGER}
     </select>
 
     <select id="getPermissionUrls" resultType="java.lang.String">
-        SELECT DISTINCT res_url  from view_user_res
+        SELECT DISTINCT res_url  from view_res_user_company
         where res_type = 2 AND active = 1
         and user_id =  #{userId,jdbcType=INTEGER}
         and channel_id =  #{channelId,jdbcType=VARCHAR}
