@@ -187,7 +187,16 @@ public class CmsJmPromotionService extends BaseService {
             updObj.setQuery("{'platforms.P0.mainProductCode':{$in:#},'common.fields.translateStatus':{$in:[null,'','0']}}");
             updObj.setQueryParameters(mnCodeList);
             updObj.setUpdate("{$set:{'common.fields.translateStatus':'2','common.fields.translator':'','common.fields.translateTime':'','common.fields.priorTranslateDate':#}}");
-            updObj.setUpdateParameters("");
+            if (StringUtils.isEmpty(promotion.getSignupDeadline())) {
+                updObj.setUpdateParameters("");
+            } else {
+                if (promotion.getSignupDeadline().length() >= 10) {
+                    updObj.setUpdateParameters(promotion.getSignupDeadline().substring(0, 10));
+                } else {
+                    updObj.setUpdateParameters(promotion.getSignupDeadline());
+                }
+            }
+
             WriteResult rs = productDao.updateMulti(updObj, channelId);
             $debug("addJMPromotion 翻译状态批量更新结果 " + rs.toString());
 
