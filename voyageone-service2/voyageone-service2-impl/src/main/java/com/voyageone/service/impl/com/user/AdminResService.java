@@ -107,11 +107,14 @@ public class AdminResService extends BaseService {
 
 
         if (model.getWeight() == null) {
+            model.setWeight(0);
             map.clear();
             map.put("parentId", model.getParentId());
             List<ComResourceModel> siblings = comResourceDao.selectList(map);
-            int weight = siblings.stream().mapToInt(ComResourceModel::getWeight).max().getAsInt();
-            model.setWeight(++weight);
+            if(siblings != null && siblings.size() > 0) {
+                int weight = siblings.stream().mapToInt(ComResourceModel::getWeight).max().getAsInt();
+                model.setWeight(++weight);
+            }
         }
 
         if (parent != null) {
@@ -133,11 +136,14 @@ public class AdminResService extends BaseService {
 
 
         if (model.getWeight() == null) {
+            model.setWeight(0);
             map.clear();
             map.put("parentId", model.getParentId());
             List<ComResourceModel> siblings = comResourceDao.selectList(map);
-            int weight = siblings.stream().mapToInt(ComResourceModel::getWeight).max().getAsInt();
-            model.setWeight(++weight);
+            if(siblings != null && siblings.size() > 0) {
+                int weight = siblings.stream().mapToInt(ComResourceModel::getWeight).max().getAsInt();
+                model.setWeight(++weight);
+            }
         }
         if (parent != null) {
             model.setParentIds(parent.getParentIds() + "," + parent.getId());
