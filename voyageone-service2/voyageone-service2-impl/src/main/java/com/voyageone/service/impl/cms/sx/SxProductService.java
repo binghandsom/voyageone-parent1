@@ -2644,7 +2644,7 @@ public class SxProductService extends BaseService {
             // modified by morse.lu 2016/10/09 start
             // 画面上可以填了,没填的话还是用model
 //            String styleCode = sxData.getMainProduct().getCommon().getFields().getModel();
-            String styleCode = (String) sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields().get("style_code");
+            String styleCode = (String) sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields().get("productModel");
             if (StringUtils.isEmpty(styleCode)) {
                 styleCode = sxData.getMainProduct().getCommon().getFields().getModel();
             }
