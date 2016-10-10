@@ -6475,6 +6475,14 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
 #content img { height: 80px; margin-right: 10px; margin-bottom: 10px; border: 2px solid #043a6b; padding: 2px; }
 #content img:hover { border: 2px solid #fff; }
 
+.table_fixed{
+    table-layout: fixed;
+}
+.table_fixed>tbody > tr >td{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 /*category*/
 .table_main{
     margin:0px;

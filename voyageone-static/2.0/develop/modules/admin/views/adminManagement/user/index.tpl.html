@@ -118,7 +118,7 @@
                 </div>
             </div>
 
-            <table class="table table-hover-new table-hover table_main">
+            <table class="table table-hover-new table-hover table_main table_fixed">
                 <thead>
                 <tr>
                     <th class="text-left mfb-xt" ng-controller="selectRowsCtrl" style="padding-left: 0;padding-right: 0;">
@@ -128,11 +128,11 @@
                             <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                         </label>
                     </th>
-                    <th class="text-center mfb-xt" translate="TXT_ACCOUNT"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_ACCOUNT"></th>
                     <th class="text-left mfb-xt" translate="TXT_USER_NAME"></th>
-                    <th class="text-left mfb-xt" translate="TXT_EMAIL"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_EMAIL"></th>
                     <th class="text-center mfb-xxt" translate="TXT_ROLE"></th>
-                    <th class="text-center mfb-xt" translate="TXT_ORGANIZE"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_ORGANIZE"></th>
                     <th class="text-center mfb-xxt" translate="TXT_CHANNEL"></th>
                     <th class="text-left mfb-xxt" translate="TXT_STORE"></th>
                     <th class="text-center mfb-xt" translate="TXT_SYSTEM"></th>
@@ -154,17 +154,29 @@
                                 <span class="fa fa-check"></span>
                             </label>
                         </td>
-                        <td class="text-center v-middle">{{list.userAccount}}</td>
-                        <td class="text-left v-middle">{{list.userName}}</td>
-                        <td class="text-left v-middle">{{list.email}}</td>
-                        <td class="text-center v-middle">{{list.roleName}}</td>
+                        <td class="text-center v-middle" title="{{list.userAccount}}">{{list.userAccount}}</td>
+                        <td class="text-left v-middle" title="{{list.userName}}">{{list.userName}}</td>
+                        <td class="text-left v-middle">
+                            <a class="btn" uib-tooltip="{{list.email}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.email}}</a>
+                        </td>
+                        <td class="text-center v-middle">
+                            <a class="btn" uib-tooltip="{{list.roleName}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.roleName}}</a>
+                        </td>
                         <td class="text-center v-middle">{{ctrl.getName(list.orgId)}}</td>
-                        <td class="text-center v-middle">{{list.channelName}}</td>
-                        <td class="text-left v-middle">{{list.storeName}}</td>
-                        <td class="text-center v-middle">{{list.application}}</td>
+                        <td class="text-center v-middle">
+                            <a class="btn" uib-tooltip="{{list.channelName}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.channelName}}</a>
+                        </td>
+                        <td class="text-left v-middle">
+                            <a class="btn" uib-tooltip="{{list.storeName}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.storeName}}</a>
+                        </td>
+                        <td class="text-center v-middle">
+                            <a class="btn" uib-tooltip="{{list.application}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.application}}</a>
+                        </td>
                         <td class="text-center v-middle">{{ctrl.getActive(list.active)}}</td>
                         <td class="text-center v-middle">{{list.company}}</td>
-                        <td class="text-left v-middle">{{list.modifier}}</td>
+                        <td class="text-left v-middle">
+                            <a class="btn" uib-tooltip="{{list.modifier}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.modifier}}</a>
+                        </td>
                         <td class="text-center v-middle">{{list.modified}}</td>
                     </tr>
                 </tbody>
