@@ -1,12 +1,12 @@
 package com.voyageone.security.service;
 
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.security.bean.ComChannelPermissionBean;
-import com.voyageone.security.dao.ComLoginLogDao;
-import com.voyageone.security.dao.ComUserConfigDao;
-import com.voyageone.security.dao.ComUserDao;
-import com.voyageone.security.daoext.ComUserDaoExt;
-import com.voyageone.security.model.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
@@ -16,13 +16,19 @@ import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.security.bean.ComChannelPermissionBean;
+import com.voyageone.security.dao.ComLoginLogDao;
+import com.voyageone.security.dao.ComUserConfigDao;
+import com.voyageone.security.dao.ComUserDao;
+import com.voyageone.security.daoext.ComUserDaoExt;
+import com.voyageone.security.model.ComLoginLogModel;
+import com.voyageone.security.model.ComRoleModel;
+import com.voyageone.security.model.ComUserConfigModel;
+import com.voyageone.security.model.ComUserModel;
 
 /**
  * Created by Ethan Shi on 2016-08-12. */
@@ -94,11 +100,15 @@ public class ComUserService {
         {
             throw new BusinessException("A006", "need change password.", null);
         }
-
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         ComLoginLogModel model = new ComLoginLogModel();
         model.setApplication("admin");
         model.setCreater(account);
-        model.setIp(user.getSession().getHost());
+        String clientIP = request.getHeader("x-forwarded-for");
+        if (StringUtils.isEmpty(clientIP)) {
+        	clientIP = request.getRemoteAddr();
+        }
+        model.setIp(clientIP);
 
         comLoginLogDao.insert(model);
     }
