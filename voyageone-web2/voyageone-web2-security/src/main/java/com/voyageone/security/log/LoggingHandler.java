@@ -43,7 +43,10 @@ public class LoggingHandler {
 
         long start = System.currentTimeMillis();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String ip = request.getRemoteAddr();
+        String ip = request.getHeader("x-forwarded-for");
+        if (StringUtils.isEmpty(ip)) {
+        	ip = request.getRemoteAddr();
+        }
         String url = request.getRequestURI();
         String application = getApp(url);
         String user = SecurityUtils.getSubject().getPrincipal().toString();
