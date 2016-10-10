@@ -24,33 +24,72 @@ define([
      * @param orgChkStsMap 全选的collection  id是全路径要分割
      * @param selectedMap   选中的collection
      */
-    function canSave(orgChkStsMap,selectedMap){
-        var orgArr,selectedArr;
+    function canSave(orgChkStsMap, selectedMap) {
+        var orgArr, selectedArr;
 
-        orgArr = _.pluck(_.map(orgChkStsMap,function(value,key){
-            return {id: _.max(key.split("-")),value:value};
-        }).filter(function(item){
+        orgArr = _.pluck(_.map(orgChkStsMap, function (value, key) {
+            return {id: _.max(key.split("-")), value: value};
+        }).filter(function (item) {
             return item.value;
-        }),"id");
+        }), "id");
 
-        selectedArr = _.map(selectedMap,function(item){
+        selectedArr = _.map(selectedMap, function (item) {
             return item.selectedId;
         });
 
-        return compareArr(orgArr,selectedArr);
+        return compareArr(orgArr, selectedArr);
     }
 
     /**比较字符串数组是否值相等*/
-    function compareArr(arr1,arr2){
-        return arr1.length === arr2.length && _.every(arr1,function(element1){
-            return _.some(arr2,function(element2){
-                return element2 == element1;
+    function compareArr(arr1, arr2) {
+        return arr1.length === arr2.length && _.every(arr1, function (element1) {
+                return _.some(arr2, function (element2) {
+                    return element2 == element1;
+                });
             });
+    }
+
+    /**
+     * 切割路径，生成默认路径集合
+     */
+    function splitPath(orgPath) {
+        var pathArr = null,
+            reObj = {};
+
+        _.each(orgPath, function (value, key) {
+            if (value) {
+                pathArr = _.filter(key.split("-"), function (item) {
+                    return item != "";
+                });
+                _.extend(reObj,joinPaths(pathArr));
+            }
         });
+
+        function joinPaths(pathArr){
+            var selObj = {};
+
+            if (!pathArr)
+                return {};
+
+            angular.forEach(pathArr, function (value, key) {
+                var str = '';
+                for (var i = 0, length = key + 1; i < length; i++) {
+                    if (i != length-1)
+                        str = str + "-" + pathArr[i];
+                    else
+                        str = str + "-" + pathArr[i] + "-";
+                }
+                selObj[str] = true;
+            });
+
+            return selObj;
+        };
+
+        return reObj;
     }
 
     cms.controller('popFreeTagCtl', (function () {
-        function popFreeTagCtl(context, channelTagService, $uibModalInstance,alert) {
+        function popFreeTagCtl(context, channelTagService, $uibModalInstance, alert) {
             this.channelTagService = channelTagService;
             this.$uibModalInstance = $uibModalInstance;
             this.alert = alert;
@@ -98,16 +137,16 @@ define([
                             self.orgChkStsMap = {};
                             self._orgChkStsMap = {};
                         } else {
-                            self.orgChkStsMap = res.data.orgChkStsMap;
-                            self._orgChkStsMap = angular.copy(res.data.orgChkStsMap);
+                            self.orgChkStsMap = splitPath(res.data.orgChkStsMap);
+                            self._orgChkStsMap = angular.copy(self.orgChkStsMap);
                         }
                         /**checkbox半选状态*/
                         if (res.data.orgDispMap == undefined || res.data.orgDispMap == null) {
                             self.orgDispMap = {};
                             self._orgDispMap = {};
                         } else {
-                            self.orgDispMap = res.data.orgDispMap;
-                            self._orgDispMap = angular.copy(res.data.orgDispMap);
+                            self.orgDispMap = splitPath(res.data.orgDispMap);
+                            self._orgDispMap = angular.copy(self.orgDispMap);
                         }
                     }
                     self.search(0);
@@ -170,9 +209,9 @@ define([
                 var selCounts = 0;
 
                 /**因为半角中的id为全路径，要分割到最后一个，也就是数字为最大的*/
-                var orgDispArr = _.map(self.orgDispMap,function(value,key){
+                var orgDispArr = _.map(self.orgDispMap, function (value, key) {
                     return {id: _.max(key.split("-")), tagPath: value};
-                }).filter(function(item){
+                }).filter(function (item) {
                     return item.tagPath;
                 });
 
@@ -183,10 +222,10 @@ define([
                 });
 
                 /**在选中的当中半角的数量*/
-                _.each(selFlagArr,function(sel){
-                    if(_.some(orgDispArr,function(orgDis){
-                        return orgDis.id == sel.selectedId;
-                    })){
+                _.each(selFlagArr, function (sel) {
+                    if (_.some(orgDispArr, function (orgDis) {
+                            return orgDis.id == sel.selectedId;
+                        })) {
                         selCounts++;
                     }
                 });
@@ -218,6 +257,7 @@ define([
 
                     // 检查是否还有半选的情况
                     dispFlg = false;
+
                     for (var key in self.orgDispMap) {
                         if (self.orgDispMap[key] == true) {
                             dispFlg = true;
@@ -246,16 +286,16 @@ define([
             },
 
             // 点击tag的checkbox时的操作
-            selOrgDisp:function(id,path,event){
+            selOrgDisp: function (id, path, event) {
                 var self = this;
 
                 /**设置checkbox的选择状态*/
                 self.orgChkStsMap[path] = self.taglist.selFlag[id];
 
                 /**记录checkbox的半选状态*/
-                if(self.orgDispMap[path]){
+                if (self.orgDispMap[path]) {
                     // 如果初始是半选状态
-                    if(self.selOrgDispList.indexOf(path) < 0){
+                    if (self.selOrgDispList.indexOf(path) < 0) {
                         self.selOrgDispList.push(path);
                     }
                     self.orgDispMap[path] = false;
