@@ -65,6 +65,8 @@ public class CmsFeedSearchService extends BaseViewService {
     public Map<String, Object> getMasterData(UserSessionBean userInfo, String channelId, CmsSessionBean cmsSession, String language) throws IOException {
         Map<String, Object> masterData = new HashMap<>();
 
+        if(StringUtil.isEmpty(channelId)) channelId = userInfo.getSelChannelId();
+
         // 获取compare type
         masterData.put("compareTypeList", TypeConfigEnums.MastType.compareType.getList(language));
 
