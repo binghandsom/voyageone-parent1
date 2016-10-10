@@ -137,7 +137,7 @@ define([
                             return;
                         }
                     case 'exclude':
-                        if (self.rightSelectedFlg == true) {
+                        if (self.leftSelectedFlg == true) {
                             self.data = _.find(self.roleList, function (role) {
                                 return role.roleId == self.selectedRoleId;
                             });
