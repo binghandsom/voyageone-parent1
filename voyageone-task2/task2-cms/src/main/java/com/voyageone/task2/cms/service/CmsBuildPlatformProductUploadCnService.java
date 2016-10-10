@@ -4,6 +4,8 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.components.cn.service.CnSchemaService;
@@ -87,8 +89,9 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
+                ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
                 // 独立域名商品信息新增或更新
-                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()));
+                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
             }
         }
 
@@ -101,8 +104,9 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
      *
      * @param channelId String 渠道ID
      * @param cartId    String 平台ID
+     * @param shopBean 作为传进来,可以做测试程序
      */
-    public void doUpload(String channelId, int cartId) {
+    public void doUpload(String channelId, int cartId, ShopBean shopBean) {
         // 等待上传 的数据
         List<CmsBtSxCnInfoModel> listSxModel = cmsBtSxCnInfoDao.selectWaitingPublishData(channelId, PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE);
 
@@ -137,9 +141,16 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             String skuXml = cnSchemaService.writeSkuXmlString(listSkuFields);
             $debug("独立域名上传产品的xml:" + productXml);
             $debug("独立域名上传Sku的xml:" + skuXml);
-            // TODO: doPost
+            // doPost
             boolean isSuccess = false;
 
+            String result = cnSchemaService.postXml(productXml, shopBean);
+            if (result != null && result.indexOf("Success") >= 0) {
+                result = cnSchemaService.postXml(skuXml, shopBean);
+                if (result != null && result.indexOf("Success") >= 0) {
+                    isSuccess = true;
+                }
+            }
 
             if (!isSuccess) {
                 // 只有网络问题推送失败才会false，所以就打个log，不把status更新成error
