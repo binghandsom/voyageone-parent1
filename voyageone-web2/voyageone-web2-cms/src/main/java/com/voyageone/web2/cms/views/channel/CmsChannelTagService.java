@@ -89,24 +89,22 @@ public class CmsChannelTagService extends BaseViewService {
                     Map<String, Boolean> orgDispMap = new HashMap<>();
 
                     for (CmsBtTagBean tagBean : tagsList) {
-                        if (tagBean.getChildren() == null || tagBean.getChildren().size() == 0) {
-                            // 是子节点，遍历商品列表，查看是否勾选
-                            int selCnt = 0;
-                            for (CmsBtProductModel prodObj : prodList) {
-                                List<String> tags = prodObj.getFreeTags();
-                                if (tags == null || tags.isEmpty()) {
-                                    continue;
-                                }
-                                if (tags.indexOf(tagBean.getTagPath()) >= 0) {
-                                    // 有勾选
-                                    selCnt ++;
-                                }
+                        // 遍历商品列表，查看是否勾选(这里的tagsList是列表,不是树型结构)
+                        int selCnt = 0;
+                        for (CmsBtProductModel prodObj : prodList) {
+                            List<String> tags = prodObj.getFreeTags();
+                            if (tags == null || tags.isEmpty()) {
+                                continue;
                             }
-                            if (selCnt == prodList.size()) {
-                                orgChkStsMap.put(tagBean.getTagPath(), true);
-                            } else if (0 < selCnt && selCnt < prodList.size()) {
-                                orgDispMap.put(tagBean.getTagPath(), true);
+                            if (tags.indexOf(tagBean.getTagPath()) >= 0) {
+                                // 有勾选
+                                selCnt ++;
                             }
+                        }
+                        if (selCnt == prodList.size()) {
+                            orgChkStsMap.put(tagBean.getTagPath(), true);
+                        } else if (0 < selCnt && selCnt < prodList.size()) {
+                            orgDispMap.put(tagBean.getTagPath(), true);
                         }
                     }
                     result.put("orgChkStsMap", orgChkStsMap);
