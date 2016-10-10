@@ -76,14 +76,14 @@
                     <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.codeSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                 </div>
             </div>
-            <table class="table table-hover-new table-hover table_main">
+            <table class="table table-hover-new table-hover table_main table_fixed">
                 <thead>
                 <tr>
-                    <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
+                    <th class="text-left mfb-xt3" ng-controller="selectRowsCtrl">
                         <label class="checkbox-inline c-checkbox" style="height: 15px;">
                             <input type="checkbox" ng-click="selectAll(ctrl.codeSelList)"
                                    ng-checked="isAllSelected(ctrl.codeSelList)" >
-                            <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                            <span class="fa fa-check"></span>
                         </label>
                     </th>
                     <th class="text-left mfb-xt" translate="TXT_CODE_ID"></th>
@@ -91,8 +91,8 @@
                     <th class="text-left mfb-xxt" translate="TXT_CODE_NAME"></th>
                     <th class="text-left mfb-xxt">{{'TXT_CODE_NAME'|translate}}1</th>
                     <th class="text-left mfb-xxt" translate="TXT_CODE_DESC"></th>
-                    <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                    <th class="text-center mfb-xt3" translate="TXT_STATUS"></th>
+                    <th class="text-center mfb-xt" translate="TXT_CART_UPDATE_TIME"></th>
                     <th class="text-left mfb-xt" translate="TXT_UPDATER"></th>
                 </tr>
                 </thead>
