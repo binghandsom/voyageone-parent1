@@ -111,7 +111,7 @@ public class HtMallSkuPriceUpdateResponse extends BaseJMResponse {
                         sbMsg.append("该sku有在售的deal,不允许修改市场价");
                         break;
                     default:
-                        sbMsg.append(map.get("reason").toString());
+                        sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
                 }
                 sbMsg.append("] ");
                 this.setErrorMsg(sbMsg.toString() + this.body);
