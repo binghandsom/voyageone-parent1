@@ -86,7 +86,7 @@
                                                ng-checked="ctrl.orgChkStsMap[tag3.tagPath]"
                                                ui-indeterminate="ctrl.orgDispMap[tag3.tagPath]"
                                                ng-click = "ctrl.selOrgDisp(tag3.id , tag3.tagPath , $event)"
-                                               ng-disabled="ctrl.orgFlg == 2 && !tag3.isLeaf">
+                                               >
                                         {{tag3.tagChildrenName}}
                                     </label>
                                     <span class="pull-right text-muted" ng-if="tag3.isLeaf == false">
