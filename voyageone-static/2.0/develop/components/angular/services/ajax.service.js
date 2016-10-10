@@ -9,9 +9,8 @@ angular.module("voyageone.angular.services").service("$ajax", $Ajax).service("aj
     };
 }]);
 
-function $Ajax($http, blockUI, $q) {
+function $Ajax($http, $q) {
     this.$http = $http;
-    this.blockUI = blockUI;
     this.$q = $q;
 }
 
