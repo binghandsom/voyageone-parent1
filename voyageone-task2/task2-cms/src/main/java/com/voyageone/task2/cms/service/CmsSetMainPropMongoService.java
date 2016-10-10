@@ -2102,6 +2102,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             product.getFeed().setCustomIdsCn(mainFeedOrgAttsKeyCnList); // 自定义字段列表(中文)
             product.getFeed().setCatId(feed.getCatId());
             product.getFeed().setCatPath(feed.getCategory());
+            product.getFeed().setBrand(feed.getBrand());
 
             // --------- 商品Group信息设定 ------------------------------------------------------
             // 创建新的group
