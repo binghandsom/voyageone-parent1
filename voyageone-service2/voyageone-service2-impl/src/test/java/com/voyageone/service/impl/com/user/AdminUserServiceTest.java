@@ -137,6 +137,12 @@ public class AdminUserServiceTest {
         adminUserService.moveApplication();
     }
 
+    @Test
+    public void testMovePermission1() throws Exception {
+        adminUserService.movePermission("001", 1 , "WMS_ADMIN");
+        adminUserService.movePermission("014", 2 , "WMS_CS");
+        adminUserService.movePermission("001", 3 , "WMS_WHS");
+    }
 
     @Test
     public void testMovePermission() throws Exception {
