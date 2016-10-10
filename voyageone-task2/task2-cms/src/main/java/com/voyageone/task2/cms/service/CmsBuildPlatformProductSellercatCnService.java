@@ -2,6 +2,8 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
@@ -64,8 +66,9 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseTaskService {
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
+                ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
                 // 主处理
-                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()));
+                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
             }
         }
 
@@ -78,7 +81,7 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseTaskService {
      *
      * @param channelId String 渠道ID
      */
-    public void doUpload(String channelId, int cartId) {
+    public void doUpload(String channelId, int cartId, ShopBean shopBean) {
         List<List<Field>> result = new ArrayList<>();
 
         // 取得要更新的类目
@@ -101,9 +104,16 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseTaskService {
         String xml = cnSchemaService.writeCategoryProductXmlString(result);
         $debug("类目-产品xml:" + xml);
 
-        // TODO:doPost
-
+        // doPost
         boolean isSuccess = false;
+        try {
+            String resultPost = cnSchemaService.postXml(xml, shopBean);
+            if (resultPost != null && resultPost.indexOf("Success") >= 0) {
+                isSuccess = true;
+            }
+        } catch (Exception e) {
+            $error("推送类目-产品xml时发生异常!");
+        }
 
         if (isSuccess) {
             // 状态更新成 1:已处理

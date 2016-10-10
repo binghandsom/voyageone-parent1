@@ -6,6 +6,8 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.components.ComponentBase;
 
+import java.util.Map;
+
 /**
  * 对独立域名提供接口调用基础
  *
@@ -17,6 +19,10 @@ public abstract class CnBase extends ComponentBase {
     protected static final String trustStore_jc = "/opt/app-shared/voyageone_web/contents/other/third_party/004/cn_key/juicycouture_store";
 
     protected static final String trustStore_jc_password = "voyage1#";
+
+    protected String post(String apiAction, Map<String, Object> jsonMap, ShopBean shopBean) throws Exception {
+        return post(apiAction, new Gson().toJson(jsonMap), shopBean);
+    }
 
     protected String post(String apiAction, Object parameter, ShopBean shopBean) throws Exception {
         return post(apiAction, parameter, 3, 1000, shopBean);

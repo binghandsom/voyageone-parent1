@@ -44,6 +44,7 @@ public class ExcelImportUtil {
         String errorMsg;
         for (int i = columnRowIndex + 1; i <= LastRowNum; i++) {
             Row row = productSheet.getRow(i);//获取行
+            if(row == null) return;
             model = entityClass.newInstance();
             errorMsg = rowToModel(mapExcelColumn, listProductColumn, row, model, mapFiled);//行转model
             if (!StringUtils.isEmpty(errorMsg)) {//转换失败   保存错误行

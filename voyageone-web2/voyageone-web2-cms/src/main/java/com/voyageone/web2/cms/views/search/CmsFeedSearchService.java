@@ -65,6 +65,8 @@ public class CmsFeedSearchService extends BaseViewService {
     public Map<String, Object> getMasterData(UserSessionBean userInfo, String channelId, CmsSessionBean cmsSession, String language) throws IOException {
         Map<String, Object> masterData = new HashMap<>();
 
+        if(StringUtil.isEmpty(channelId)) channelId = userInfo.getSelChannelId();
+
         // 获取compare type
         masterData.put("compareTypeList", TypeConfigEnums.MastType.compareType.getList(language));
 
@@ -72,7 +74,7 @@ public class CmsFeedSearchService extends BaseViewService {
         // 获取brand list
         masterData.put("brandList", cmsMtChannelValuesService.getCmsMtChannelValuesListByChannelIdType(channelId, CmsMtChannelValuesService.BRAND));
         // 获取category list
-        List<CmsMtFeedCategoryTreeModel> feedCatList = cmsFeedCustPropService.getCategoryList(userInfo);
+        List<CmsMtFeedCategoryTreeModel> feedCatList = cmsFeedCustPropService.getCategoryList(channelId);
         if (!feedCatList.isEmpty()) {
             feedCatList.remove(0);
         }
