@@ -633,6 +633,8 @@ public class CmsProductDetailService extends BaseViewService {
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
         commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
         CmsBtProductModel oldProduct = productService.getProductById(channelId, prodId);
+
+        //编辑前后主类目发生变化后重新触发feed->mast导入
         if (oldProduct.getCommon().getCatId() == null) oldProduct.getCommon().setCatId("");
         if (commonModel.getCatId() == null) commonModel.setCatId("");
         if (!oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())) {
