@@ -310,11 +310,11 @@ public class NewShopService extends BaseService {
 		String sqlPath = Properties.readValue(AdminProperty.Props.ADMIN_SQL_PATH);
 		String sqlFileName = UUID.randomUUID().toString() + ".sql";
 		File sqlFile = new File(sqlPath, sqlFileName);
+		FileUtils.forceMkdir(new File(sqlPath));
 		// 生成开店的sql文件
 		try (
 			Writer output = new OutputStreamWriter(new FileOutputStream(sqlFile));
 		) {
-			FileUtils.forceMkdir(new File(sqlPath));
 			renderConfigTemplate(AdminProperty.Tpls.PROC_NEW_SHOP_SQL, sqlParams, output);
 		} 
 		

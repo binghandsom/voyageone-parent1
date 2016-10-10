@@ -11,6 +11,7 @@ package com.voyageone.service.model.com;
  * 
  */
 public class ComMtTaskModel extends AdminBaseModel {
+	
     protected Integer taskId;
 
     protected String taskType;
