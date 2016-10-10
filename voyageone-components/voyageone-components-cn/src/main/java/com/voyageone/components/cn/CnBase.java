@@ -17,8 +17,10 @@ public abstract class CnBase extends ComponentBase {
 
 
     protected static final String trustStore_jc = "/opt/app-shared/voyageone_web/contents/other/third_party/004/cn_key/juicycouture_store";
-
     protected static final String trustStore_jc_password = "voyage1#";
+
+    protected static final String trustStore_liking = "/opt/app-shared/voyageone_web/contents/other/third_party/004/cn_key/liking_store";
+    protected static final String trustStore_liking_password = "voyage1#";
 
     protected String post(String apiAction, Map<String, Object> jsonMap, ShopBean shopBean) throws Exception {
         return post(apiAction, new Gson().toJson(jsonMap), shopBean);
@@ -38,6 +40,8 @@ public abstract class CnBase extends ComponentBase {
                 if (shopBean.getOrder_channel_id().equals(ChannelConfigEnums.Channel.JC.getId())) {
 //                    return HttpUtils.post(shopBean.getApp_url() + apiAction, json, trustStore_jc, trustStore_jc_password, trustStore_jc_password);
                     return HttpUtils.post(shopBean.getApp_url() + apiAction, parameter.toString(), trustStore_jc, trustStore_jc_password, trustStore_jc_password);
+                } else if (shopBean.getOrder_channel_id().equals(ChannelConfigEnums.Channel.USJGJ.getId())) {
+                    return HttpUtils.post(shopBean.getApp_url() + apiAction, parameter.toString(), trustStore_liking, trustStore_liking_password, trustStore_liking_password);
                 } else {
 //                    return HttpUtils.post(shopBean.getApp_url() + apiAction, json);
                     return HttpUtils.post(shopBean.getApp_url() + apiAction, parameter.toString());

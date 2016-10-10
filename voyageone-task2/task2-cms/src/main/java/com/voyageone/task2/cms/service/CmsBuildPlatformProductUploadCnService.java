@@ -8,6 +8,7 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.cn.service.CnSchemaService;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -109,6 +110,9 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
     public void doUpload(String channelId, int cartId, ShopBean shopBean) {
         // 等待上传 的数据
         List<CmsBtSxCnInfoModel> listSxModel = cmsBtSxCnInfoDao.selectWaitingPublishData(channelId, PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE);
+        if (ListUtils.isNull(listSxModel)) {
+            return;
+        }
 
         // 把状态更新成 1:上传中，防止推过来更新的xml数据
         List<Long> listGroupId = listSxModel.stream().map(CmsBtSxCnInfoModel::getGroupId).collect(Collectors.toList());
