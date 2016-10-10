@@ -646,6 +646,11 @@ public class CmsProductDetailService extends BaseViewService {
             feedInfoService.updateFeedInfo(channelId, paraMap, valueMap);
 
         }
+        //产品编辑页翻译状态从0-》1的场合 翻译时间 和人 设置
+        if(!oldProduct.getCommon().getFields().getTranslateStatus().equalsIgnoreCase(commonModel.getFields().getTranslateStatus()) && "1".equalsIgnoreCase(commonModel.getFields().getTranslateStatus())){
+            commonModel.getFields().setTranslator(modifier);
+            commonModel.getFields().setTranslateTime(DateTimeUtil.getNowTimeStamp());
+        }
 
         Map<String, Object> result = productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
 
