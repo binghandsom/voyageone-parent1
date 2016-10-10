@@ -6,7 +6,8 @@ define([
 ], function (admin) {
     admin.controller('AddTypeAttrController', (function () {
         function AddTypeAttrController(context, channelService, popups, typeService, typeAttrService, $uibModalInstance) {
-            this.sourceData = context ? context : {};
+            this.context = context;
+            this.sourceData = context ? angular.copy(context) : {};
             this.append = context == 'add' ? true : false;
             this.popups = popups;
             this.channelService = channelService;
@@ -44,20 +45,15 @@ define([
             },
             save: function () {
                 var self = this;
-                var result = {};
+                self.sourceData.active = self.sourceData.active == '0' ? true : false;
+                _.extend(self.context, self.sourceData);
                 if (self.append == true) {
-                    self.sourceData.active = self.sourceData.active == '0' ? true : false;
-                    self.typeAttrService.addTypeAttribute(self.sourceData).then(function (res) {
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
-                        self.$uibModalInstance.close(result);
-                    })
+                    self.typeAttrService.addTypeAttribute(self.sourceData);
                 } else {
-                    self.sourceData.active = self.sourceData.active == '0' ? true : false;
-                    self.typeAttrService.updateTypeAttribute(self.sourceData).then(function (res) {
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
-                        self.$uibModalInstance.close(result);
-                    })
+                    self.typeAttrService.updateTypeAttribute(self.context);
                 }
+                self.sourceData.active = self.sourceData.active ? '0' : '1';
+                self.$uibModalInstance.close();
             }
         };
         return AddTypeAttrController;
