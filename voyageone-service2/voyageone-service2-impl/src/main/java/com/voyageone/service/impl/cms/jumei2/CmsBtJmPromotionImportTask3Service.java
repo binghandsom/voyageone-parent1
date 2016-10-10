@@ -425,7 +425,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         CmsBtProductModel productInfo = saveInfo.p_ProductInfo;// productService.getProductByCode(modelPromotion.getChannelId(), product.getProductCode());
         query.setQuery("{\"productCodes\":\"" + product.getProductCode() + "\",\"cartId\":" + CartEnums.Cart.JM.getValue() + "}");
         CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(modelPromotion.getChannelId(), query);
-        if(productInfo==null) return;
+        if (productInfo == null) return;
         //1.CmsBtPromotionCodesModel
         CmsBtPromotionCodesModel modelCodes = getByCmsBtPromotionCodesModel(product.getProductCode(), modelPromotion.getId(), modelPromotion.getChannelId());
         if (modelCodes == null) {
@@ -471,20 +471,25 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             if (groupModel != null) {
                 modelGroups.setNumIid(groupModel.getNumIId());
                 modelGroups.setModelId(groupModel.getGroupId().intValue());
-            }
-            else
-            {
+            } else {
                 modelGroups.setNumIid("");
                 modelGroups.setModelId(0);
             }
             saveInfo.groupsModel = modelGroups;
         }
+        List<BaseMongoMap<String, Object>> listSkuMongo = saveInfo.p_Platform_Cart.getSkus();
+
 
         //3.CmsBtPromotionSkusModel
         for (SkuImportBean skuImport : listSkuImport) {
             CmsBtPromotionSkusModel skusModel = getCmsBtPromotionSkusModel(modelPromotion.getId(), modelPromotion.getChannelId(), skuImport.getProductCode(), skuImport.getSkuCode());
-            if(skusModel==null) {
-                skusModel=new CmsBtPromotionSkusModel();
+
+
+            if (skusModel == null) {
+                CmsBtProductModel_Sku cmsBtProductModel_sku = saveInfo.p_ProductInfo.getCommon().getSku(skuImport.getSkuCode());
+                BaseMongoMap<String, Object> mapSkuPlatform = getJMPlatformSkuMongo(listSkuMongo, skuImport.getSkuCode());
+
+                skusModel = new CmsBtPromotionSkusModel();
                 skusModel.setProductId(Integer.valueOf(productInfo.getProdId().toString()));
                 skusModel.setProductCode(skuImport.getProductCode());
                 skusModel.setProductSku(skuImport.getSkuCode());
@@ -496,9 +501,21 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 skusModel.setOrgChannelId(productInfo.getOrgChannelId());
                 skusModel.setCreater(userName);
                 skusModel.setModifier(userName);
+
                 if (groupModel != null) {
                     skusModel.setNumIid(groupModel.getNumIId());
                     skusModel.setModelId(groupModel.getGroupId().intValue());
+                }
+                if (mapSkuPlatform != null) {
+                    Double priceMsrp = mapSkuPlatform.getDoubleAttribute("priceMsrp");
+                    Double priceRetail = mapSkuPlatform.getDoubleAttribute("priceRetail");
+                    Double priceSale = mapSkuPlatform.getDoubleAttribute("priceSale");
+                    skusModel.setMsrpRmb(new BigDecimal(priceMsrp));
+                    skusModel.setRetailPrice(new BigDecimal(priceRetail));
+                    skusModel.setSalePrice(new BigDecimal(priceSale));
+                }
+                if (cmsBtProductModel_sku != null) {
+                    skusModel.setMsrpUsd(new BigDecimal(cmsBtProductModel_sku.getClientMsrpPrice()));
                 }
                 saveInfo.skusModels.add(skusModel);
             }

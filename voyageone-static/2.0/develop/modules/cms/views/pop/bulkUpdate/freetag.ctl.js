@@ -137,7 +137,7 @@ define([
                             self.orgChkStsMap = {};
                             self._orgChkStsMap = {};
                         } else {
-                            self.orgChkStsMap = splitPath(res.data.orgChkStsMap);
+                            self.orgChkStsMap = res.data.orgChkStsMap;
                             self._orgChkStsMap = angular.copy(self.orgChkStsMap);
                         }
                         /**checkbox半选状态*/
@@ -145,7 +145,7 @@ define([
                             self.orgDispMap = {};
                             self._orgDispMap = {};
                         } else {
-                            self.orgDispMap = splitPath(res.data.orgDispMap);
+                            self.orgDispMap = res.data.orgDispMap;
                             self._orgDispMap = angular.copy(self.orgDispMap);
                         }
                     }

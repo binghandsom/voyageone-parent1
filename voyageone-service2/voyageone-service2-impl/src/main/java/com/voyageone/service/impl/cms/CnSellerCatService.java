@@ -35,7 +35,7 @@ public class CnSellerCatService {
             catFullId = catFullId + "-" + catId;
         }
         CnCategoryBean cnCategoryBean = cnCategoryService.createCnCategoryBean(catFullId, "-", catName, "");
-        cnCategoryService.uploadCnCategory(cnCategoryBean, false);
+        cnCategoryService.uploadCnCategory(cnCategoryBean, false, channelId);
 
         return catId;
     }
@@ -43,12 +43,12 @@ public class CnSellerCatService {
     {
         CmsBtSellerCatModel currentNode = cmsBtSellerCatDao.selectByCatId(channelId, catId);
         CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), "");
-        cnCategoryService.uploadCnCategory(cnCategoryBean,false);
+        cnCategoryService.uploadCnCategory(cnCategoryBean,false,channelId);
     }
     public void  deleteSellerCat(String channelId,String catId)
     {
         CmsBtSellerCatModel currentNode = cmsBtSellerCatDao.selectByCatId(channelId, catId);
         CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), "");
-        cnCategoryService.uploadCnCategory(cnCategoryBean,true);
+        cnCategoryService.uploadCnCategory(cnCategoryBean,true,channelId);
     }
 }
