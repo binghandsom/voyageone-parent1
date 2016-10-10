@@ -120,9 +120,9 @@
                     <th class="text-center mfb-xt" translate="TXT_SYSTEM"></th>
                     <th class="text-center mfb-xt" translate="TXT_ROLE_TYPE"></th>
                     <th class="text-center mfb-xt3" translate="TXT_STATUS"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_INSTRUCTION"></th>
+                    <th class="text-center mfb-xt" translate="TXT_INSTRUCTION"></th>
                     <th class="text-left mfb-xt3" translate="TXT_UPDATER"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                    <th class="text-center mfb-xt" translate="TXT_CART_UPDATE_TIME"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -137,10 +137,16 @@
                                 <span class="fa fa-check"></span>
                             </label>
                         </td>
-                        <td class="text-center v-middle">{{list.roleName}}</td>
-                        <td class="text-left v-middle">{{list.channelName}}</td>
-                        <td class="text-left v-middle">{{list.storeName}}</td>
-                        <td class="text-center v-middle">{{list.application}}</td>
+                        <td class="text-center v-middle" title="{{list.roleName}}">{{list.roleName}}</td>
+                        <td class="text-left v-middle">
+                            <a class="btn" uib-tooltip="{{list.channelName}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.channelName}}</a>
+                        </td>
+                        <td class="text-left v-middle">
+                            <a class="btn" uib-tooltip="{{list.storeName}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.storeName}}</a>
+                        </td>
+                        <td class="text-center v-middle">
+                            <a class="btn" uib-tooltip="{{list.application}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.application}}</a>
+                        </td>
                         <td class="text-center v-middle">{{ctrl.getRoleType(list.roleType)}}</td>
                         <td class="text-center v-middle" ng-bind="list.active!=null?(list.active== 1 ?'启用':'禁用'):''"></td>
                         <td class="text-center v-middle">{{list.description}}</td>
