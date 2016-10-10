@@ -38,7 +38,11 @@ public class LoggingHandler {
     protected void initXXX() {
     }
 
-    @Around("controller() && !getXXX() && !searchXXX() && !initXXX()")
+    @Pointcut("execution(public * com.voyageone.web2.admin.*.*.*Controller.is*(..))")
+    protected void isXXX() {
+    }
+
+    @Around("controller() && !getXXX() && !searchXXX() && !initXXX() && isXXX()")
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
 
         long start = System.currentTimeMillis();
