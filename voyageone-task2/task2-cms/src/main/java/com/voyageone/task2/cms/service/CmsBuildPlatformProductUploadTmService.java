@@ -424,6 +424,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             // add by morse.lu 2016/06/07 start
             // 取得sxData为空
             if (sxData == null) {
+                ex.printStackTrace();
                 sxData = new SxData();
                 sxData.setChannelId(channelId);
                 sxData.setCartId(cartId);
