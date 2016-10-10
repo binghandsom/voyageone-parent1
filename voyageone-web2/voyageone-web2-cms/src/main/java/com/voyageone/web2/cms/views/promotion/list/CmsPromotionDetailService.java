@@ -36,6 +36,7 @@ import org.springframework.util.CollectionUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -465,6 +466,15 @@ public class CmsPromotionDetailService extends BaseViewService {
             sku.setQty(getNumericCellValue(row.getCell(CmsConstants.CellNum.inventoryCellNum)).intValue());
         }
         sku.setProductSku(ExcelUtils.getString(row, CmsConstants.CellNum.skuCellNum));
+        sku.setMsrpRmb(new BigDecimal(getNumericCellValue(row.getCell(CmsConstants.CellNum.msrpRMBCellNum))));
+
+        sku.setMsrpUsd(new BigDecimal(getNumericCellValue(row.getCell(CmsConstants.CellNum.msrpUSCellNum))));
+
+        sku.setPromotionPrice(new BigDecimal(getNumericCellValue(row.getCell(CmsConstants.CellNum.promotionPriceCellNum))));
+
+        sku.setRetailPrice(new BigDecimal(getNumericCellValue(row.getCell(CmsConstants.CellNum.retailPriceCellNum))));
+
+        sku.setSalePrice(new BigDecimal(getNumericCellValue(row.getCell(CmsConstants.CellNum.salePriceCellNum))));
         return sku;
     }
 
