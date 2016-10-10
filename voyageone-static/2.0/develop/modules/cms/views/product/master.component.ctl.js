@@ -41,6 +41,7 @@ define([
                 scope.saveProduct = saveProduct;
                 scope.pageAnchor = pageAnchor;
                 scope.copyCommonProperty = copyCommonProperty;
+                scope.goDetail = goDetail;
 
                 /**
                  * 获取京东页面初始化数据
@@ -276,6 +277,11 @@ define([
                     var firstError = element.find("schema .ng-invalid:first");
                     firstError.focus();
                     firstError.addClass("focus-error");
+                }
+
+                function goDetail(){
+                    var url = scope.vm.currentImage;
+                    window.open(url);
                 }
 
             }
