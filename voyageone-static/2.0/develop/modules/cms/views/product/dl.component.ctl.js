@@ -271,7 +271,6 @@ define([
                                     productCode: scope.productInfo.masterField.code,
                                     platform: scope.vm.platform
                                 });
-
                                 callSave();
                             } else {
                                 callSave();

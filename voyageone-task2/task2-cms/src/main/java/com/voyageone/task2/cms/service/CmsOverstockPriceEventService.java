@@ -96,13 +96,15 @@ public class CmsOverstockPriceEventService extends BaseTaskService {
                             List<EventType> eventTypeListPara = new ArrayList<EventType>();
                             eventTypeListPara.add(eventTypeDetail.getEntity());
 
-                            for(EventType event:eventTypeListPara){
+                            for (EventType event : eventTypeListPara) {
                                 String sku = "024-" + event.getVariation().getFullSku();
+
                                 BigDecimal priceNet = event.getVariation().getSellingPrice().getAmount();
+                                $info(sku + ":" + priceNet);
                                 updatePriceNet(sku,priceNet);
                             }
 //                             调用API event 状态更新
-                            ret = updateHandledEvents(eventTypeListPara);
+//                            ret = updateHandledEvents(eventTypeListPara);
 
                             if (!ret) {
                                 break;
@@ -130,33 +132,35 @@ public class CmsOverstockPriceEventService extends BaseTaskService {
     }
 
     private void updatePriceNet(String sku, BigDecimal price) {
-        CmsBtProductModel cmsBtProductModel = productService.getProductBySku("024", sku);
-        if (cmsBtProductModel != null) {
-            for (CmsBtProductModel_Sku cmsBtProductModel_sku : cmsBtProductModel.getCommon().getSkus()) {
-                if (cmsBtProductModel_sku.getSkuCode().equalsIgnoreCase(sku)) {
-                    cmsBtProductModel_sku.setClientNetPrice(price.doubleValue());
-                    break;
-                }
-            }
-            productService.updateProductCommon("024",cmsBtProductModel.getProdId(),cmsBtProductModel.getCommon(),getTaskName(),false);
-        }
-        CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductBySku("024", sku);
-        if(cmsBtFeedInfoModel != null){
-            for (CmsBtFeedInfoModel_Sku feedSku : cmsBtFeedInfoModel.getSkus()) {
-                if (feedSku.getSku().equalsIgnoreCase(sku)) {
-                    feedSku.setPriceNet(price.doubleValue());
-                    if (cmsBtFeedInfoModel.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Succeed){
-                        cmsBtFeedInfoModel.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Pending);
+//        CmsBtProductModel cmsBtProductModel = productService.getProductBySku("024", sku);
+//        if (cmsBtProductModel != null) {
+//            for (CmsBtProductModel_Sku cmsBtProductModel_sku : cmsBtProductModel.getCommon().getSkus()) {
+//                if (cmsBtProductModel_sku.getSkuCode().equalsIgnoreCase(sku)) {
+//                    cmsBtProductModel_sku.setClientRetailPrice(price.doubleValue());
+//                    break;
+//                }
+//            }
+//            productService.updateProductCommon("024", cmsBtProductModel.getProdId(), cmsBtProductModel.getCommon(), getTaskName(), false);
+//        }
+        List<CmsBtFeedInfoModel> cmsBtFeedInfoModels = feedInfoService.getProductListBySku("024", sku);
+        if (cmsBtFeedInfoModels != null && cmsBtFeedInfoModels.size() > 0) {
+            cmsBtFeedInfoModels.forEach(cmsBtFeedInfoModel -> {
+                for (CmsBtFeedInfoModel_Sku feedSku : cmsBtFeedInfoModel.getSkus()) {
+                    if (feedSku.getSku().equalsIgnoreCase(sku)) {
+                        feedSku.setPriceClientRetail(price.doubleValue());
+                        if (cmsBtFeedInfoModel.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Succeed) {
+                            cmsBtFeedInfoModel.setUpdFlg(CmsConstants.FeedUpdFlgStatus.Pending);
+                        }
+                        feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);
+                        break;
                     }
-                    feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);
-                    break;
                 }
-            }
+            });
         }
     }
+
     /**
      * @description OverStock Event 状态更新
-     *
      */
     private boolean updateHandledEvents(List<EventType> eventTypeList) throws Exception {
         boolean ret = true;
