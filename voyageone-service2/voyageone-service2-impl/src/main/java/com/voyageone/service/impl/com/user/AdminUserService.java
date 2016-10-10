@@ -5,7 +5,6 @@ import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.mail.Mail;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.security.dao.*;
 import com.voyageone.security.model.*;
 import com.voyageone.service.bean.com.AdminResourceBean;
@@ -26,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
-import javax.mail.Store;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -87,7 +85,6 @@ public class AdminUserService extends BaseService {
 
     @Autowired
     AdminRoleService adminRoleService;
-
 
 
     /**
@@ -458,7 +455,7 @@ public class AdminUserService extends BaseService {
         List<AdminResourceBean> children = new ArrayList<>();
 
         for (AdminResourceBean node : allNodes) {
-            if (node.getParentId().equals( root.getId())) {
+            if (node.getParentId().equals(root.getId())) {
                 children.add(node);
             }
         }
@@ -511,22 +508,25 @@ public class AdminUserService extends BaseService {
         //添加顶级资源
         List<CtApplicationModel> allApps = ctApplicationDao.selectList(query);
         for (CtApplicationModel app : allApps) {
-            ComResourceModel res = new ComResourceModel();
-            res.setOriginId(app.getId());
-            res.setResType(0);
-            res.setActive(1);
-            res.setResName(app.getMenuTitle());
-            res.setResKey(app.getApplication());
-            res.setParentId(0);
-            res.setApplication(app.getApplication());
-            res.setWeight(app.getOrderBy());
-            res.setResUrl(app.getDefaultUrl());
-            res.setShowInMenu(app.getShowInMenu());
-            res.setDescription(app.getDescription());
-            res.setOriginTable("ct_application");
-            res.setOriginName(app.getApplication());
-            res.setMenuTitle(app.getMenuTitle());
-            adminResService.addRes(res);
+            if (app.getApplication().equals("core") || app.getApplication().equals("wms") || app.getApplication().equals("oms")) {
+                ComResourceModel res = new ComResourceModel();
+                res.setOriginId(app.getId());
+                res.setResType(0);
+                res.setActive(1);
+                res.setResName(app.getMenuTitle());
+                res.setResKey(app.getApplication());
+                res.setParentId(0);
+                res.setApplication(app.getApplication());
+                res.setWeight(app.getOrderBy());
+                res.setResUrl(app.getDefaultUrl());
+                res.setShowInMenu(app.getShowInMenu());
+                res.setDescription(app.getDescription());
+                res.setOriginTable("ct_application");
+                res.setOriginName(app.getApplication());
+                res.setMenuTitle(app.getMenuTitle());
+                res.setDescription(app.getMenuTitle());
+                adminResService.addRes(res);
+            }
         }
 
         //添加菜单资源
@@ -553,14 +553,17 @@ public class AdminUserService extends BaseService {
             app.setActive(1);
             app = comResourceDao.selectOne(app);
 
-            res.setResKey(app.getResKey() + "_" + model.getModule());
+            if (app != null) {
+                res.setResKey(app.getResKey() + "_" + model.getModule());
 //            res.setResName(StringUtils.isEmpty(model.getMenuTitle()) ? res.getResKey().toUpperCase() : model.getMenuTitle().toUpperCase());
-            res.setResName(res.getResKey().toUpperCase());
-            res.setApplication(app.getApplication());
-            res.setParentId(app.getId());
-            res.setOriginTable("ct_module");
-            res.setMenuTitle(model.getMenuTitle());
-            adminResService.addRes(res);
+                res.setResName(res.getResKey().toUpperCase());
+                res.setApplication(app.getApplication());
+                res.setParentId(app.getId());
+                res.setOriginTable("ct_module");
+                res.setMenuTitle(model.getMenuTitle());
+                res.setDescription(model.getMenuTitle());
+                adminResService.addRes(res);
+            }
         }
 
         //添加菜单资源
@@ -587,9 +590,8 @@ public class AdminUserService extends BaseService {
             module1.setOriginTable("ct_module");
             module1 = comResourceDao.selectOne(module1);
 
-            ComResourceModel app = comResourceDao.select(module1.getParentId());
-
-            if (app != null) {
+            if (module1 != null) {
+                ComResourceModel app = comResourceDao.select(module1.getParentId());
                 res.setResKey(module1.getResKey() + "_" + model.getController());
 //            res.setResName(StringUtils.isEmpty(model.getMenuTitle()) ? res.getResKey().toUpperCase() : module1.getResName() + "_" + model.getMenuTitle().toUpperCase());
                 res.setResName(res.getResKey().toUpperCase());
@@ -597,6 +599,7 @@ public class AdminUserService extends BaseService {
                 res.setParentId(module1.getId());
                 res.setOriginTable("ct_controller");
                 res.setMenuTitle(model.getMenuTitle());
+                res.setDescription(model.getMenuTitle());
                 adminResService.addRes(res);
             }
         }
@@ -631,30 +634,26 @@ public class AdminUserService extends BaseService {
             if (controller1 != null) {
                 ComResourceModel module1 = comResourceDao.select(controller1.getParentId());
 
-                if (module1 != null) {
-                    ComResourceModel app = comResourceDao.select(module1.getParentId());
+                ComResourceModel app = comResourceDao.select(module1.getParentId());
+                res.setResUrl("/" + app.getResName().toLowerCase() + "/" + module1.getOriginName() + "/" + controller1.getOriginName() + "/" + model.getName());
+                res.setShowInMenu(false);
 
+                res.setResKey(controller1.getResKey() + "_" + model.getName());
+                res.setResName(model.getName().toUpperCase());
+                res.setApplication(app.getApplication());
+                res.setParentId(controller1.getId());
+                res.setOriginTable("ct_action");
+                res.setMenuTitle("");
+                adminResService.addRes(res);
 
-                    res.setResUrl("/" + app.getResName().toLowerCase() + "/" + module1.getOriginName() + "/" + controller1.getOriginName() + "/" + model.getName());
-                    res.setShowInMenu(false);
-
-                    res.setResKey(controller1.getResKey() + "_" + model.getName());
-                    res.setResName(model.getName().toUpperCase());
-                    res.setApplication(app.getApplication());
-                    res.setParentId(controller1.getId());
-                    res.setOriginTable("ct_action");
-                    res.setMenuTitle("");
-                    adminResService.addRes(res);
-                }
             }
         }
     }
 
     @VOTransactional
-    public void createRoles()
-    {
+    public void createRoles() {
         //客服角色
-        for(int i =1 ; i < 6; i ++) {
+        for (int i = 1; i < 6; i++) {
             String team = i + "组";
             ComRoleModel model = new ComRoleModel();
             model.setRoleName("普通客服" + team);
@@ -670,25 +669,21 @@ public class AdminUserService extends BaseService {
             };
             List<String> channelIds = new ArrayList<>();
 
-            if( i == 1) {
+            if (i == 1) {
                 channelIds = new ArrayList<String>() {
                     {
                         add("001");
                         add("002");
                     }
                 };
-            }
-            else if(i == 2)
-            {
+            } else if (i == 2) {
                 channelIds = new ArrayList<String>() {
                     {
                         add("005");
                         add("008");
                     }
                 };
-            }
-            else if(i == 3)
-            {
+            } else if (i == 3) {
                 channelIds = new ArrayList<String>() {
                     {
                         add("012");
@@ -705,9 +700,7 @@ public class AdminUserService extends BaseService {
                         add("029");
                     }
                 };
-            }
-            else if(i == 4)
-            {
+            } else if (i == 4) {
                 channelIds = new ArrayList<String>() {
                     {
                         add("010");
@@ -718,9 +711,7 @@ public class AdminUserService extends BaseService {
                         add("928");
                     }
                 };
-            }
-            else if(i == 5)
-            {
+            } else if (i == 5) {
                 channelIds = new ArrayList<String>() {
                     {
                         add("018");
@@ -735,9 +726,7 @@ public class AdminUserService extends BaseService {
             List<Integer> storeIds = new ArrayList<Integer>();
             if (comRoleDao.selectCount(model) == 0) {
                 adminRoleService.addRole(model, applications, channelIds, storeIds, "0", "1");
-            }
-            else
-            {
+            } else {
                 ComRoleModel old = comRoleDao.selectOne(model);
                 model.setId(old.getId());
                 adminRoleService.updateRole(model, applications, channelIds, storeIds, "0", "1");
@@ -752,9 +741,7 @@ public class AdminUserService extends BaseService {
 
             if (comRoleDao.selectCount(model) == 0) {
                 adminRoleService.addRole(model, applications, channelIds, storeIds, "0", "1");
-            }
-            else
-            {
+            } else {
                 ComRoleModel old = comRoleDao.selectOne(model);
                 model.setId(old.getId());
                 adminRoleService.updateRole(model, applications, channelIds, storeIds, "0", "1");
@@ -769,9 +756,7 @@ public class AdminUserService extends BaseService {
 
             if (comRoleDao.selectCount(model) == 0) {
                 adminRoleService.addRole(model, applications, channelIds, storeIds, "0", "1");
-            }
-            else
-            {
+            } else {
                 ComRoleModel old = comRoleDao.selectOne(model);
                 model.setId(old.getId());
                 adminRoleService.updateRole(model, applications, channelIds, storeIds, "0", "1");
@@ -786,9 +771,7 @@ public class AdminUserService extends BaseService {
 
             if (comRoleDao.selectCount(model) == 0) {
                 adminRoleService.addRole(model, applications, channelIds, storeIds, "0", "1");
-            }
-            else
-            {
+            } else {
                 ComRoleModel old = comRoleDao.selectOne(model);
                 model.setId(old.getId());
                 adminRoleService.updateRole(model, applications, channelIds, storeIds, "0", "1");
@@ -798,14 +781,13 @@ public class AdminUserService extends BaseService {
     }
 
     @VOTransactional
-    public void addCsWmsPermission(String roleName)
-    {
+    public void addCsWmsPermission(String roleName) {
         ComRoleModel role = new ComRoleModel();
         role.setRoleName(roleName);
 
         role = comRoleDao.selectOne(role);
 
-        if(role != null) {
+        if (role != null) {
             addAction(role, "doReturnListSearch");
             addAction(role, "doReservationListSearch");
         }
@@ -819,8 +801,7 @@ public class AdminUserService extends BaseService {
         res.setOriginName(action);
 
         ComResourceModel result = comResourceDao.selectOne(res);
-        if(result != null)
-        {
+        if (result != null) {
             ComResRoleModel rr = new ComResRoleModel();
             rr.setResId(result.getId());
             rr.setRoleId(role.getId());
@@ -849,7 +830,6 @@ public class AdminUserService extends BaseService {
             }
 
 
-
         }
     }
 
@@ -860,7 +840,7 @@ public class AdminUserService extends BaseService {
 
         role = comRoleDao.selectOne(role);
 
-        if(role != null) {
+        if (role != null) {
             Integer newRoleId = role.getId();
 
             CtRolePermissionModel permissionModel = new CtRolePermissionModel();
@@ -918,18 +898,14 @@ public class AdminUserService extends BaseService {
 
 
     @VOTransactional
-    public void addRole4User(String username, List<String> roleNames)
-    {
+    public void addRole4User(String username, List<String> roleNames) {
         ComUserModel user = new ComUserModel();
         user.setUserAccount(username);
 
         ComUserModel result = comUserDao.selectOne(user);
-        if(result == null)
-        {
+        if (result == null) {
             System.out.println("username:" + username);
-        }
-
-        else {
+        } else {
             for (String roleName : roleNames) {
                 ComRoleModel role = new ComRoleModel();
                 role.setRoleName(roleName);
@@ -939,8 +915,7 @@ public class AdminUserService extends BaseService {
                 ComUserRoleModel ur = new ComUserRoleModel();
                 ur.setUserId(result.getId());
                 ur.setRoleId(found.getId());
-                if(comUserRoleDao.selectCount(ur) == 0)
-                {
+                if (comUserRoleDao.selectCount(ur) == 0) {
                     comUserRoleDao.insert(ur);
                 }
             }

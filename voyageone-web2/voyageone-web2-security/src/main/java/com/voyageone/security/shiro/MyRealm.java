@@ -192,7 +192,7 @@ public class MyRealm extends AuthorizingRealm {
 			);
 			// 把用户信息放在session里
 			Session session = SecurityUtils.getSubject().getSession();
-			session.setAttribute("userModel",userModel);
+			session.setAttribute("comUserModel",userModel);
 
 			return authenticationInfo;
 		} else {

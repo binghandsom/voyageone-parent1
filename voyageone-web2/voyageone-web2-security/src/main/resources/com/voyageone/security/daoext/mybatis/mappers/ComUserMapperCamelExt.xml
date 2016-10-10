@@ -23,11 +23,10 @@
             re.company_id,
             re.company
         FROM
-            view_res_user_company re,
+            view_user_application re,
             synship.ct_application ap
         WHERE
-            res_type = 0
-        AND ap.application = re.application
+        ap.application = re.application
         AND user_id =  #{userId,jdbcType=INTEGER}
     </select>
 

@@ -61,7 +61,7 @@ public class UserController extends BaseController {
         comUserService.login(username, password);
 
         Session session = SecurityUtils.getSubject().getSession();
-        ComUserModel userModel = (ComUserModel)session.getAttribute("userModel");
+        ComUserModel userModel = (ComUserModel)session.getAttribute("comUserModel");
         // 填充用户信息到 Session. 权限部分需要在选择了渠道后获取
         UserSessionBean userSessionBean = new UserSessionBean();
         userSessionBean.setUserId(userModel.getId());
