@@ -85,14 +85,14 @@
                     <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelSmsSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                 </div>
             </div>
-            <table class="table table-hover-new table-hover table_main">
+            <table class="table table-hover-new table-hover table_main table_fixed">
                 <thead>
                 <tr>
-                    <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
+                    <th class="text-left mfb-xt3" ng-controller="selectRowsCtrl">
                         <label class="checkbox-inline c-checkbox" style="height: 15px;">
                             <input type="checkbox" ng-click="selectAll(ctrl.channelSmsSelList)"
                                    ng-checked="isAllSelected(ctrl.channelSmsSelList)" >
-                            <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                            <span class="fa fa-check"></span>
                         </label>
                     </th>
                     <th class="text-left mfb-xt" translate="TXT_CHANNEL_NAME"></th>
@@ -102,7 +102,7 @@
                     <th class="text-left mfb-xxt" translate="TXT_CHANNEL_SMS_CONTENT"></th>
                     <th class="text-left mfb-xxt" translate="TXT_CHANNEL_SMS_DESC"></th>
                     <th class="text-left mfb-xt" translate="TXT_CHANNEL_SNS_DEL_TARGET"></th>
-                    <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
+                    <th class="text-center mfb-xt3" translate="TXT_STATUS"></th>
                     <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
                     <th class="text-left mfb-xt" translate="TXT_UPDATER"></th>
                 </tr>
@@ -120,10 +120,12 @@
                         </label>
                     </td>
                     <td class="text-left v-middle">{{list.channelName}}</td>
-                    <td class="text-left v-middle">{{list.smsType}}</td>
+                    <td class="text-left v-middle">
+                        <a class="btn" uib-tooltip="{{list.smsType}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.smsType}}</a>
+                    </td>
                     <td class="text-left v-middle">{{list.smsCode1}}</td>
                     <td class="text-left v-middle">{{list.smsCode2}}</td>
-                    <td class="text-left v-middle">{{list.content}}</td>
+                    <td class="text-left v-middle" style="white-space: normal">{{list.content}}</td>
                     <td class="text-left v-middle">{{list.describe}}</td>
                     <td class="text-left v-middle">{{list.delFlg!=null?list.delFlg=='1'?'删除':'未删除':''}}</td>
                     <td class="text-center v-middle">{{list.active!=null?list.active==true ? '启用':'禁用':''}}</td>

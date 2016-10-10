@@ -75,24 +75,24 @@
                     <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelThirdSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                 </div>
             </div>
-            <table class="table table-hover-new table-hover table_main" style="table-layout: fixed">
+            <table class="table table-hover-new table-hover table_main table_fixed" style="table-layout: fixed">
                 <thead>
                 <tr>
                     <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
                         <label class="checkbox-inline c-checkbox" style="height: 15px;">
                             <input type="checkbox" ng-click="selectAll(ctrl.channelThirdSelList)"
                                    ng-checked="isAllSelected(ctrl.channelThirdSelList)" >
-                            <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                            <span class="fa fa-check"></span>
                         </label>
                     </th>
-                    <th class="text-left mfb-xt" translate="TXT_CART_CHANNEL_NAME"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_CART_CHANNEL_NAME"></th>
                     <th class="text-left mfb-xxt" translate="TXT_PROPERTY_NAME"></th>
-                    <th class="text-left mfb-xt">{{'TXT_PROPERTY_VALUE'|translate}}1</th>
-                    <th class="text-left mfb-xt">{{'TXT_PROPERTY_VALUE'|translate}}2</th>
+                    <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}1</th>
+                    <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}2</th>
                     <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}3</th>
                     <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}4</th>
-                    <th class="text-left mfb-xt">{{'TXT_PROPERTY_VALUE'|translate}}5</th>
-                    <th class="text-left mfb-xt">{{'TXT_PROPERTY_VALUE'|translate}}6</th>
+                    <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}5</th>
+                    <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}6</th>
                     <th class="text-left mfb-xxt" translate="TXT_COMMENTS"></th>
                     <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
                     <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
@@ -113,44 +113,28 @@
                     </td>
                     <td class="text-left v-middle">{{list.channelName}}</td>
                     <td class="text-left v-middle">
-                        <label class="v-middle" ng-if="list.propName.length <= 15">{{list.propName}}</label>
-                        <label class="v-middle" ng-if="list.propName.length > 15" uib-tooltip="{{list.propName}}"
-                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propName | stringCutter:true:15:' ...'}}</label>
+                        <a class="btn" uib-tooltip="{{list.propName}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propName}}</a>
                     </td>
                     <td class="text-left v-middle">
-                        <label class="v-middle" ng-if="list.propVal1.length <= 15">{{list.propVal1}}</label>
-                        <label class="v-middle" ng-if="list.propVal1.length > 15" uib-tooltip="{{list.propVal1}}"
-                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal1 | stringCutter:true:15:' ...'}}</label>
+                        <a class="btn" uib-tooltip="{{list.propVal1}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propVal1}}</a>
                     </td>
                     <td class="text-left v-middle">
-                        <label class="v-middle" ng-if="list.propVal2.length <= 15">{{list.propVal2}}</label>
-                        <label class="v-middle" ng-if="list.propVal2.length > 15" uib-tooltip="{{list.propVal2}}"
-                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal2 | stringCutter:true:15:' ...'}}</label>
+                        <a class="btn" uib-tooltip="{{list.propVal2}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propVal2}}</a>
                     </td>
                     <td class="text-left v-middle">
-                        <label class="v-middle" ng-if="list.propVal3.length <= 15">{{list.propVal3}}</label>
-                        <label class="v-middle" ng-if="list.propVal3.length > 15" uib-tooltip="{{list.propVal3}}"
-                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal3 | stringCutter:true:15:' ...'}}</label>
+                        <a class="btn" uib-tooltip="{{list.propVal3}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propVal3}}</a>
                     </td>
                     <td class="text-left v-middle">
-                        <label class="v-middle" ng-if="list.propVal4.length <= 15">{{list.propVal4}}</label>
-                        <label class="v-middle" ng-if="list.propVal4.length > 15" uib-tooltip="{{list.propVal4}}"
-                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal4 | stringCutter:true:15:' ...'}}</label>
+                        <a class="btn" uib-tooltip="{{list.propVal4}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propVal4}}</a>
                     </td>
                     <td class="text-left v-middle">
-                        <label class="v-middle" ng-if="list.propVal5.length <= 15">{{list.propVal5}}</label>
-                        <label class="v-middle" ng-if="list.propVal5.length > 15" uib-tooltip="{{list.propVal5}}"
-                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal5 | stringCutter:true:15:' ...'}}</label>
+                        <a class="btn" uib-tooltip="{{list.propVal5}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propVal5}}</a>
                     </td>
                     <td class="text-left v-middle">
-                        <label class="v-middle" ng-if="list.propVal6.length <= 15">{{list.propVal6}}</label>
-                        <label class="v-middle" ng-if="list.propVal6.length > 15" uib-tooltip="{{list.propVal6}}"
-                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.propVal6 | stringCutter:true:15:' ...'}}</label>
+                        <a class="btn" uib-tooltip="{{list.propVal6}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propVal6}}</a>
                     </td>
                     <td class="text-left v-middle">
-                        <label class="v-middle" ng-if="list.comment.length <= 15">{{list.comment}}</label>
-                        <label class="v-middle" ng-if="list.comment.length > 15" uib-tooltip="{{list.comment}}"
-                              tooltip-trigger="mouseenter" tooltip-placement="top">{{list.comment | stringCutter:true:15:' ...'}}</label>
+                        <a class="btn" uib-tooltip="{{list.comment}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.comment}}</a>
                     </td>
                     <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
                     <td class="text-center v-middle">{{list.modified}}</td>
