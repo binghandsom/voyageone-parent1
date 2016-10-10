@@ -190,9 +190,9 @@ public class CmsBacthUpdateTask extends VOAbsLoggable {
         updObj.setQuery("{'platforms.P0.mainProductCode':{$in:#}}");
         updObj.setQueryParameters(mnCodeList);
         if ("0".equals(propValue)) {
-            updObj.setUpdate("{$set:{'common.fields.translateStatus':'0','common.fields.translator':'','common.fields.translateTime':''}}");
+            updObj.setUpdate("{$set:{'common.fields.translateStatus':'0','common.fields.translator':'','common.fields.translateTime':'','common.fields.priorTranslateDate':''}}");
         } else if ("1".equals(propValue)) {
-            updObj.setUpdate("{$set:{'common.fields.translateStatus':'1','common.fields.translator':#,'common.fields.translateTime':#}}");
+            updObj.setUpdate("{$set:{'common.fields.translateStatus':'1','common.fields.translator':#,'common.fields.translateTime':#,'common.fields.priorTranslateDate':''}}");
             updObj.setUpdateParameters(userName, DateTimeUtil.getNow());
         } else if ("2".equals(propValue)) {
             updObj.setUpdate("{$set:{'common.fields.translateStatus':'2','common.fields.translator':'','common.fields.translateTime':'','common.fields.priorTranslateDate':#}}");
