@@ -23,9 +23,6 @@ import java.io.*;
  * @version 1.3.0
  * @since 1.0.0
  *
- * INSERT INTO `tm_code` VALUES ('S7HTTP_CONFIG', 'Url', 'https://s7sps1ssl.scene7.com/scene7/UploadFile', '', 'Scene7HTTP设置：url');
- * INSERT INTO `tm_code` VALUES ('S7HTTP_CONFIG', 'UserName', 'admin@voyageone.com', '', 'Scene7HTTP设置：用户名');
- * INSERT INTO `tm_code` VALUES ('S7HTTP_CONFIG', 'Password', '2016Dirzh#1', '', 'Scene7HTTP设置：密码');
  */
 public class HttpScene7 {
     private final static Logger logger = LoggerFactory.getLogger(HttpScene7.class);
@@ -191,9 +188,9 @@ public class HttpScene7 {
         try {
             HttpResponse response = httpclient.execute(post);
             if (HttpStatus.SC_OK == response.getStatusLine().getStatusCode()) {
-                HttpEntity entitys = response.getEntity();
-                if (entity != null) {
-                    String message = EntityUtils.toString(entitys).replace("\n", "");
+                HttpEntity httpEntity = response.getEntity();
+                if (httpEntity != null) {
+                    String message = EntityUtils.toString(httpEntity).replace("\n", "");
                     String resultMsg = String.format("[file:%s,size:%s,message%s]", fileName, entity.getContentLength(), message);
                     if (message.indexOf("<jobHandle>") > 0) {
                         logger.info("uploadImageFileToS7 OK " + resultMsg);

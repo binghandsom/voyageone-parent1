@@ -23,7 +23,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsMtPlatformPropMappingCustomModel;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +62,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      * @return 返回的天猫platformProductId列表 (如果没有找到, 返回null)
      */
     public List<String> getProductIdFromTmall(ExpressionParser expressionParser, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel,
-                                              CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier){
+                                              CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier){
         // 产品id列表(返回值)
         List<String> platformProductIdList = new ArrayList<>();
         // 上新数据
@@ -190,7 +190,10 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         // added by morse.lu 2016/08/08 start
         // barCode对应的是否更新
         Map<String, SxDarwinSkuProps> mapBarcodeProps = new HashMap<>();
-        sxData.getMapDarwinSkuProps().forEach((sku, props)-> mapBarcodeProps.put(props.getBarcode(), props));
+        Map<String, SxDarwinSkuProps> mapDarwinSkuProps = sxData.getMapDarwinSkuProps();
+        if (mapDarwinSkuProps != null) {
+            mapDarwinSkuProps.forEach((sku, props)-> mapBarcodeProps.put(props.getBarcode(), props));
+        }
         // added by morse.lu 2016/08/08 end
 
         for (String pid : platformProductIdList)
@@ -291,6 +294,9 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                 // 产品规格
                 MultiComplexField cspuListField = (MultiComplexField) field;
                 for (Field subField : cspuListField.getFields()) {
+                    if (subField.getType() != FieldTypeEnum.COMPLEX) {
+                        continue;
+                    }
                     ComplexField cspuField = (ComplexField) subField;
                     Map<String, Field> mapFields = cspuField.getFieldMap();
                     String[] barcodeXml = ((InputField) mapFields.get("barcode")).getDefaultValue().split(":"); // 3:090891203253  1:3607342551800 冒号前面不知道是什么
@@ -358,7 +364,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      * @return 返回的产品上传成功的天猫productId
      */
     public String addTmallProduct(ExpressionParser expressionParser, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel,
-                                  CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
+                                  CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
         // 上传成功返回的产品id(返回值)
         String platformProductId = "";
         // 上新数据
@@ -401,6 +407,9 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         try {
             // 取得所有field对应的属性值
             sxProductService.constructMappingPlatformProps(fieldList, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, false);
+        } catch (BusinessException be) {
+            sxData.setErrorMessage(be.getMessage());
+            throw be;
         } catch (Exception ex) {
             String errMsg = String.format("天猫新增产品时根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformCategoryId);
@@ -479,7 +488,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      * @param shopBean ShopBean 店铺信息
      * @param modifier 更新者
      */
-    public void updateTmallProduct(ExpressionParser expressionParser, String platformProductId, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
+    public void updateTmallProduct(ExpressionParser expressionParser, String platformProductId, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
         // 上新数据
         SxData sxData = expressionParser.getSxData();
         StringBuffer failCause = new StringBuffer();
@@ -550,6 +559,9 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                 // 只把产品规格的field传进去设值
                 sxProductService.constructMappingPlatformProps(cspuListField, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, false);
             }
+        } catch (BusinessException be) {
+            sxData.setErrorMessage(be.getMessage());
+            throw be;
         } catch (Exception ex) {
             String errMsg = String.format("更新产品时,根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformProductId);

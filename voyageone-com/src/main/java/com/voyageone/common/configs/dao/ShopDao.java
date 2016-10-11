@@ -36,7 +36,6 @@ public class ShopDao extends BaseDao {
 
     /**
      * 获取所有cart
-     * @return
      */
     public List<CartBean> getAllCarts() {
         return selectList(Constants.DAO_NAME_SPACE_COMMON + "ct_cart_getAll");
@@ -52,7 +51,6 @@ public class ShopDao extends BaseDao {
 
     /**
      * 获取cart
-     * @return
      */
     public CartBean getCart(String cartId) {
         CartBean cartBean = new CartBean();

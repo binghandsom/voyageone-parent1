@@ -2,6 +2,7 @@ package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -27,6 +28,31 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
     public CmsBtFeedInfoModel selectProductBySku(String channelId, String sku) {
         String query = "{\"skus.sku\":\"" + sku + "\"}";
         return selectOneWithQuery(query, channelId);
+    }
+
+    public List<CmsBtFeedInfoModel> selectProductListBySku(String channelId, String sku) {
+        String query = "{\"skus.sku\":\"" + sku + "\"}";
+        return select(query, channelId);
+    }
+
+    /**
+     * 根据clientSku获取feed product信息
+     * @param channelId channel
+     * @param clientSku client sku
+     * @return feed product
+     */
+    public CmsBtFeedInfoModel selectProductByClientSku(String channelId, String clientSku) {
+        String query = "{\"skus.clientSku\":\"" + clientSku + "\"}";
+        return selectOneWithQuery(query, channelId);
+    }
+
+    public WriteResult updateFeedInfoSkuPrice(String channelId, String sku, Double price){
+        JongoUpdate updObj = new JongoUpdate();
+        updObj.setQuery("{\"skus.sku\":#}");
+        updObj.setQueryParameters(sku);
+        updObj.setUpdate("{$set:{\"skus.$.priceCurrent\":#,\"skus.$.priceNet\":#,\"skus.$.priceClientRetail\":#}}");
+        updObj.setUpdateParameters(price,price,price);
+        return updateMulti(updObj,channelId);
     }
 
     /**

@@ -9,7 +9,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.task.stock.StockIncrementExcelBean;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.StockSeparateService;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * Created by morse.lu on 2016/3/23.
  */
 @Service
-public class CmsTaskStockIncrementDetailService extends BaseAppService {
+public class CmsTaskStockIncrementDetailService extends BaseViewService {
     @Autowired
     private StockSeparateService stockSeparateService;
 

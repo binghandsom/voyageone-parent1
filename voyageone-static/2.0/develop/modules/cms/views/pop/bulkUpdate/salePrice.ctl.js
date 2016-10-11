@@ -13,7 +13,8 @@ define([
             cartList: context.cartList,
             _optStatus: false,
             priceTypeId: 0,
-            isRoundUp: true
+            roundType: 1,
+            skuUpdType: 1
         };
 
         $scope.save = function () {
@@ -45,11 +46,8 @@ define([
             $scope.vm.property.priceType = $scope.vm.priceType;
             $scope.vm.property.optionType = $scope.vm.optType;
             $scope.vm.property.priceValue = $scope.vm.priceValue;
-            if ($scope.vm.isRoundUp) {
-                $scope.vm.property.isRoundUp = '1';
-            } else {
-                $scope.vm.property.isRoundUp = '0';
-            }
+            $scope.vm.property.roundType = parseInt($scope.vm.roundType);
+            $scope.vm.property.skuUpdType = parseInt($scope.vm.skuUpdType);
             confirm($translate.instant('TXT_BULK_SETSALEPRICE')).then(function(){
                 _setProductFields($scope.vm.property);
             });
@@ -65,23 +63,23 @@ define([
                         alert($translate.instant('未选择商品，请选择后再操作'));
                         return;
                     }
-                    if (res.data.ecd == 2) {
-                        // 低于指导价
-                        alert("商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]的最终售价[" + $filter('number')(res.data.priceSale, 2) + "]低于指导价[" + $filter('number')(res.data.priceLimit, 2) + "]，请重新输入。");
-                        return;
-                    }
-                    if (res.data.ecd == 3) {
-                        // 大于阀值
-                        var errMsg = "商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]的最终售价[" + $filter('number')(res.data.priceSale, 2) + "]超过阈值[" + $filter('number')(res.data.priceLimit, 2) + "]，请确认。";
-                        errMsg += "<br><br>点击[" + $translate.instant('BTN_OK') + "]按钮将跳过所有此类问题，不更新最终售价，";
-                        errMsg += "<br>点击[" + $translate.instant('BTN_CANCEL') + "]按钮将退出更新。";
-
-                        confirm(errMsg).then(function () {
-                            $scope.vm.property.notChkPrice = 1;
-                            _setProductFields($scope.vm.property);
-                        });
-                        return;
-                    }
+                    //if (res.data.ecd == 2) {　下面注释掉的代码暂时保留，将来可能会有用
+                    //    // 低于指导价
+                    //    alert("商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]的最终售价[" + $filter('number')(res.data.priceSale, 2) + "]低于指导价[" + $filter('number')(res.data.priceLimit, 2) + "]，请重新输入。");
+                    //    return;
+                    //}
+                    //if (res.data.ecd == 3) {
+                    //    // 大于阀值
+                    //    var errMsg = "商品[code=" + res.data.prodCode + ", sku=" + res.data.skuCode + "]的最终售价[" + $filter('number')(res.data.priceSale, 2) + "]超过阈值[" + $filter('number')(res.data.priceLimit, 2) + "]，请确认。";
+                    //    errMsg += "<br><br>点击[" + $translate.instant('BTN_OK') + "]按钮将跳过所有此类问题，不更新最终售价，";
+                    //    errMsg += "<br>点击[" + $translate.instant('BTN_CANCEL') + "]按钮将退出更新。";
+                    //
+                    //    confirm(errMsg).then(function () {
+                    //        $scope.vm.property.notChkPrice = 1;
+                    //        _setProductFields($scope.vm.property);
+                    //    });
+                    //    return;
+                    //}
                     if (res.data.ecd == 6) {
                         // 数据错误
                         alert("商品[code=" + res.data.prodCode + "]的数据错误，没有skuCode。");
@@ -158,6 +156,7 @@ define([
         $scope.chkPriceType = function (priceTypeVal, typeTxt) {
             $scope.vm.priceTypeId = priceTypeVal;
             $scope.vm.priceValue = null;
+            $scope.vm.roundType = "1";
             if (priceTypeVal == 4) {
                 // 基准价格为None时只允许选等于号
                 $scope.vm._optStatus = true;
@@ -165,12 +164,14 @@ define([
                 $scope.vm._opeText = '';
                 $scope.vm._typeText = '';
                 $scope.vm.priceInputFlg = true;
+                $scope.vm.skuUpdType = "0";
             } else {
                 $scope.vm._optStatus = false;
                 $scope.vm.optType = '';
                 $scope.vm._opeText = '';
                 $scope.vm._typeText = $translate.instant(typeTxt);
                 $scope.vm.priceInputFlg = false;
+                $scope.vm.skuUpdType = "1";
             }
         };
     });

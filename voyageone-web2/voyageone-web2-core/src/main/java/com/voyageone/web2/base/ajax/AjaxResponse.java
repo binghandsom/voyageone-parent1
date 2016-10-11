@@ -2,6 +2,7 @@ package com.voyageone.web2.base.ajax;
 
 import com.voyageone.common.message.enums.DisplayType;
 import com.voyageone.service.bean.com.MessageBean;
+import com.voyageone.web2.base.BaseConstants;
 
 /**
  * 用于返回 Ajax 请求的结果数据
@@ -85,6 +86,7 @@ public class AjaxResponse {
     }
 
     public void setRedirectTo(String redirectTo) {
+        setCode(BaseConstants.CODE_SYS_REDIRECT);
         this.redirectTo = redirectTo;
     }
 }

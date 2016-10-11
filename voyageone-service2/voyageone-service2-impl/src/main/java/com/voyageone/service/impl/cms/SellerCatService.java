@@ -8,6 +8,7 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
@@ -16,17 +17,16 @@ import com.voyageone.components.jd.service.JdShopService;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
+import com.voyageone.service.bean.cms.cn.CnCategoryBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
-import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.sx.CnCategoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,7 +68,11 @@ public class SellerCatService extends BaseService {
 
     @Autowired
     private SxProductService sxProductService;
+@Autowired
+MongoSequenceService commSequenceMongoService;
 
+    @Autowired
+    CnSellerCatService cnSellerCatService;
 
     /**
      * 获取店铺自定义分类的相关配置参数
@@ -96,14 +100,12 @@ public class SellerCatService extends BaseService {
         return result;
     }
 
-
     /**
      * 取得Category 根据channelId， cartId
      */
     public List<CmsBtSellerCatModel> getSellerCatsByChannelCart(String channelId, int cartId) {
         return getSellerCatsByChannelCart(channelId, cartId, true);
     }
-
 
     /**
      * 取得Category Tree 根据channelId， cartId
@@ -136,6 +138,7 @@ public class SellerCatService extends BaseService {
         copyRoot.setCatId(node.getCatId());
         copyRoot.setCatName(node.getCatName());
         copyRoot.setParentCatId(node.getParentCatId());
+        copyRoot.setIsParent(node.getIsParent());
         copyRoot.setChannelId(node.getChannelId());
         copyRoot.setCartId(node.getCartId());
         copyRoot.setCreated(node.getCreated());
@@ -176,28 +179,25 @@ public class SellerCatService extends BaseService {
      * addSellerCat
      */
     public void addSellerCat(String channelId, int cartId, String cName, String parentCId, String creator) {
-
-
-        List<CmsBtSellerCatModel>  sellerCats = getSellerCatsByChannelCart(channelId, cartId, false);
-        if(isDuplicateNode(sellerCats,cName,parentCId))
-        {
-            throw  new BusinessException("重复的店铺内分类名!");
+        List<CmsBtSellerCatModel> sellerCats = getSellerCatsByChannelCart(channelId, cartId, false);
+        if (isDuplicateNode(sellerCats, cName, parentCId)) {
+            throw new BusinessException("重复的店铺内分类名!");
         }
-
         ShopBean shopBean = Shops.getShop(channelId, cartId);
+        if (shopBean == null) {
+            throw new BusinessException("未配置店铺的销售平台!");
+        }
         String cId = "";
         String shopCartId = shopBean.getCart_id();
 
-        if (isJDPlatform(shopCartId)) {
+        if (isJDPlatform(shopBean)) {
             cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
         } else if (isTMPlatform(shopCartId)) {
             cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
+        } else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+            ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
+          cId=cnSellerCatService.addSellerCat(channelId,parentCId,cName);
         }
-
-        //TestCode
-//        Random random = new Random();
-//        cId = String.valueOf(random.nextInt(1000) + 1000);
-
         if (!StringUtils.isNullOrBlank2(cId)) {
             cmsBtSellerCatDao.add(channelId, cartId, cName, parentCId, cId, creator);
         }
@@ -211,8 +211,6 @@ public class SellerCatService extends BaseService {
 
         List<CmsBtSellerCatModel>  sellercats = getSellerCatsByChannelCart(channelId, cartId, false);
         CmsBtSellerCatModel currentNode = sellercats.stream().filter(w ->w.getCatId().equals(cId)).findFirst().get();
-        currentNode.getParentCatId();
-
         if(isDuplicateNode(sellercats,cName,currentNode.getParentCatId()))
         {
             throw  new BusinessException("重复的店铺内分类!");
@@ -221,10 +219,13 @@ public class SellerCatService extends BaseService {
         ShopBean shopBean = Shops.getShop(channelId, cartId);
 
         String shopCartId = shopBean.getCart_id();
-        if (isJDPlatform(shopCartId)) {
+        if (isJDPlatform(shopBean)) {
             jdShopService.updateShopCategory(shopBean, cId, cName);
         } else if (isTMPlatform(shopCartId)) {
             tbSellerCatService.updateSellerCat(shopBean, cId, cName);
+        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+            ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
+            cnSellerCatService.updateSellerCat(channelId,cId);
         }
 
         List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
@@ -246,7 +247,7 @@ public class SellerCatService extends BaseService {
 
         String shopCartId = shopBean.getCart_id();
 
-        if (isJDPlatform(shopCartId)) {
+        if (isJDPlatform(shopBean)) {
             jdShopService.deleteShopCategory(shopBean, cId);
         } else if (isTMPlatform(shopCartId)) {
             //去TM平台取店铺分类
@@ -256,6 +257,8 @@ public class SellerCatService extends BaseService {
                     throw new BusinessException(shopBean.getShop_name() + ":请先到天猫后台删除店铺内分类后再在CMS中删除。");
                 }
             }
+        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+            cnSellerCatService.deleteSellerCat(channelId,cId);
         }
 
 
@@ -286,21 +289,11 @@ public class SellerCatService extends BaseService {
      */
     public List<CmsBtSellerCatModel> refreshSellerCat(String channelId, int cartId, String creator) {
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-
         String shopCartId = shopBean.getCart_id();
-
-        //JD TEST CODE
-//        shopCartId = "24";
-//
-//        shopBean.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
-//        shopBean.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
-//        shopBean.setSessionKey("8bac1a4d-3853-446b-832d-060ed9d8bb8c");
-//        shopBean.setApp_url("https://api.jd.com/routerjson");
-
 
         List<CmsBtSellerCatModel> sellerCat = new ArrayList<>();
 
-        if (isJDPlatform(shopCartId)) {
+        if (isJDPlatform(shopBean)) {
             List<ShopCategory> shopCategory = jdShopService.getShopCategoryList(shopBean);
             sellerCat = formatJDModel(shopCategory, channelId, cartId, creator);
 
@@ -315,12 +308,6 @@ public class SellerCatService extends BaseService {
     public void refeshAllProduct(String channelId, int cartId, String creator) {
 
         ShopBean shopBean = Shops.getShop(channelId, 23);
-//        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
-//        shopBean.setAppKey("21008948");
-//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-//        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
-//        shopBean.setShop_name("Jewelry海外旗舰店");
-
         String shopCartId = shopBean.getCart_id();
 
         List<CmsBtSellerCatModel> sellerCat = new ArrayList<>();
@@ -517,12 +504,8 @@ public class SellerCatService extends BaseService {
     /**
      * 是京东平台
      */
-    private boolean isJDPlatform(String shopCartId) {
-        if (shopCartId.equals(CartEnums.Cart.JD.getId()) || shopCartId.equals(CartEnums.Cart.JG.getId()) ||
-                shopCartId.equals(CartEnums.Cart.JGJ.getId()) || shopCartId.equals(CartEnums.Cart.JGY.getId())) {
-            return true;
-        }
-        return false;
+    private boolean isJDPlatform(ShopBean shopBean) {
+        return PlatFormEnums.PlatForm.JD.getId().equals(shopBean.getPlatform_id());
     }
 
 
@@ -531,7 +514,8 @@ public class SellerCatService extends BaseService {
      */
     private boolean isTMPlatform(String shopCartId) {
         if (shopCartId.equals(CartEnums.Cart.TM.getId()) || shopCartId.equals(CartEnums.Cart.TB.getId()) ||
-                shopCartId.equals(CartEnums.Cart.TG.getId()) || shopCartId.equals(CartEnums.Cart.TMM.getId())) {
+                shopCartId.equals(CartEnums.Cart.TG.getId()) || shopCartId.equals(CartEnums.Cart.TT.getId())
+                || shopCartId.equals(CartEnums.Cart.USTT.getId())) {
             return true;
         }
         return false;

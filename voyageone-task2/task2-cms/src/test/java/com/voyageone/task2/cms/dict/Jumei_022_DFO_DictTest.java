@@ -98,7 +98,8 @@ public class Jumei_022_DFO_DictTest {
 
 	/**
      * 聚美使用方法
-     * 1. 尺码图
+     * 1. 详情描述 - 中文
+     * 2. 尺码图
      */
     private RuleExpression doDict_聚美使用方法() {
 
@@ -106,6 +107,19 @@ public class Jumei_022_DFO_DictTest {
         RuleExpression ruleRoot = new RuleExpression();
 
         // 生成内容
+        {
+            // 详情描述 - 中文
+            // 注意：<br> 替换成 <br />，并删除所有*号。
+            MasterHtmlWord word = new MasterHtmlWord("longDesCn");
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // 回车一个
+            TextWord word = new TextWord(C_TEXT_BR);
+            ruleRoot.addRuleWord(word);
+        }
+
         {
             // 尺码图
             RuleExpression htmlTemplate = new RuleExpression();
@@ -153,7 +167,7 @@ public class Jumei_022_DFO_DictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
         }

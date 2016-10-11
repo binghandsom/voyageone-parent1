@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+          http://www.springframework.org/schema/task
+          http://www.springframework.org/schema/task/spring-task.xsd">
+    <task:scheduled-tasks scheduler="vms-job-scheduler">
+
+        <!-- vms batch add    -->
+        <!-- 扫描Vendor通过ftp上传的Csv文件 五分钟运行一次 -->
+        <!--<task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0/1 * * * * ?"/>-->
+        <task:scheduled ref="VmsFeedFileScanJob" method="run" cron="0 0/5 * * * ?"/>
+
+        <!-- 定期生成财务报表 每天零点十分触发一次-->
+        <task:scheduled ref="VmsMakeFinancialReportJob" method="run" cron="0 10 0 * * ?"/>
+
+        <!-- 取得Home页统计数据 每小时触发一次-->
+        <task:scheduled ref="VmsGetHomeInfoJob" method="run" cron="0 0 0/1 * * ?"/>
+
+        <!--扫描vendor通过ftp上传的csv文件 每个05m30s运行一次-->
+        <!--<task:scheduled ref="VmsPrcInvFileScanJob" method="run" cron="30 * * * * ?"/>-->
+        <task:scheduled ref="VmsPrcInvFileScanJob" method="run" cron="30 0/5 * * * ?"/>
+
+</task:scheduled-tasks>
+
+<!-- 必须需要 -->
+    <task:scheduler id="vms-job-scheduler" pool-size="3"/>
+</beans>

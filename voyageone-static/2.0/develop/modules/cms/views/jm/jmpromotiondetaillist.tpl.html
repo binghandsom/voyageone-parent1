@@ -158,11 +158,15 @@
                                             <span class="fa fa-check"></span> 未上传
                                         </label>
                                         <label class="checkbox-inline c-checkbox">
+                                            <input type="checkbox" value="1" ng-model="searchInfo.allStatus1" style="margin:0">
+                                            <span class="fa fa-check"></span> 处理中
+                                        </label>
+                                        <label class="checkbox-inline c-checkbox">
                                             <input type="checkbox" value="2" ng-model="searchInfo.synchStatus2" style="margin:0">
                                             <span class="fa fa-check"></span> 已上传
                                         </label>
                                         <label class="checkbox-inline c-checkbox">
-                                            <input type="checkbox" value="3" ng-model="searchInfo.synchStatus3" style="margin:0">
+                                            <input type="checkbox" value="3" ng-model="searchInfo.allErrorStatus" style="margin:0">
                                             <span class="fa fa-check"></span> 上传失败
                                         </label>
                                     </div>

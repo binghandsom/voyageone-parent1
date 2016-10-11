@@ -3,7 +3,7 @@ package com.voyageone.web2.core.views.menu;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.TypeBean;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -22,7 +22,7 @@ import java.util.*;
  * @version 2.0.0
  */
 @Service
-public class MenuService extends BaseAppService {
+public class MenuService extends BaseViewService {
 
     @Autowired
     private UserRolePropertyDao userRolePropertyDao;
@@ -109,5 +109,106 @@ public class MenuService extends BaseAppService {
         // 设置用户的默认语言
         if (userInfo.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID) != null)
             userInfo.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID).get(0).setCfg_val1(language);
+    }
+
+    /**
+     * 取得用的的Menu信息
+     */
+    public List<Map<String, Object>> getVendorMenuHInfo(UserSessionBean user) {
+        // MenuList
+        List<Map<String, Object>> menuList = new ArrayList<>();
+
+        // Feed
+        Map<String, Object> feedMenu = new HashMap<>();
+        feedMenu.put("name", "Feed");
+        List<Map<String, String>> feedMenuItems = new ArrayList<>();
+        // Feed->Feed File Upload
+        Map<String, String> feedFileUpload = new HashMap<>();
+        feedFileUpload.put("name", "Product Feed Upload");
+        feedFileUpload.put("url", "#/feed/product_feed_upload");
+        feedMenuItems.add(feedFileUpload);
+        // Feed->Feed Import Result
+        Map<String, String> feedImportResult = new HashMap<>();
+        feedImportResult.put("name", "Product Feed Import Status");
+        feedImportResult.put("url", "#/feed/product_feed_import_status");
+        feedMenuItems.add(feedImportResult);
+        // Feed->Feed Info Search
+        Map<String, String> feedInfoSearch = new HashMap<>();
+        feedInfoSearch.put("name", "Product Feed Search");
+        feedInfoSearch.put("url", "#/feed/product_feed_search");
+        feedMenuItems.add(feedInfoSearch);
+        feedMenu.put("items", feedMenuItems);
+
+        // Order
+        Map<String, Object> orderMenu = new HashMap<>();
+        orderMenu.put("name", "Order");
+        List<Map<String, String>> orderMenuItems = new ArrayList<>();
+        // Order->Order Info
+        Map<String, String> orderInfo = new HashMap<>();
+        orderInfo.put("name", "Order Info");
+        orderInfo.put("url", "#/order/order_info");
+        orderMenuItems.add(orderInfo);
+        orderMenu.put("items", orderMenuItems);
+
+
+        // Reports
+        Map<String, Object> reportsMenu = new HashMap<>();
+        reportsMenu.put("name", "Reports");
+        List<Map<String, String>> reportsMenuItems = new ArrayList<>();
+        // Reports->Financial Report
+        Map<String, String> financialReport = new HashMap<>();
+        financialReport.put("name", "Financial Report");
+        financialReport.put("url", "#/reports/financial_report");
+        reportsMenuItems.add(financialReport);
+        reportsMenu.put("items", reportsMenuItems);
+
+        // Inventory
+        Map<String, Object> inventoryMenu = new HashMap<>();
+        inventoryMenu.put("name", "Inventory");
+        List<Map<String, String>> inventoryMenuItems = new ArrayList<>();
+        // Inventory->Inventory Upload
+        Map<String, String> inventoryFileUpload = new HashMap<>();
+        inventoryFileUpload.put("name", "Inventory&Price Feed Upload");
+        inventoryFileUpload.put("url", "#/inventory/inventory_feed_upload");
+        inventoryMenuItems.add(inventoryFileUpload);
+        // Inventory->Inventory Import Status
+        Map<String, String> inventoryImportStatus = new HashMap<>();
+        inventoryImportStatus.put("name", "Inventory&Price Feed Import Status");
+        inventoryImportStatus.put("url", "#/inventory/inventory_import_status");
+        inventoryMenuItems.add(inventoryImportStatus);
+        inventoryMenu.put("items", inventoryMenuItems);
+
+        // Shipment
+        Map<String, Object> shipmentMenu = new HashMap<>();
+        shipmentMenu.put("name", "Shipment");
+        List<Map<String, String>> shipmentMenuItems = new ArrayList<>();
+        // Shipment->Shipment Info
+        Map<String, String> shipmentInfo = new HashMap<>();
+        shipmentInfo.put("name", "Shipment Info");
+        shipmentInfo.put("url", "#/shipment/shipment_info");
+        shipmentMenuItems.add(shipmentInfo);
+        shipmentMenu.put("items", shipmentMenuItems);
+
+        // Settings
+        Map<String, Object> settingsMenu = new HashMap<>();
+        settingsMenu.put("name", "Settings");
+        List<Map<String, String>> settingsItems = new ArrayList<>();
+        // Settings->Vendor Settings
+        Map<String, String> vendorSettings = new HashMap<>();
+        vendorSettings.put("name", "Vendor Settings");
+        vendorSettings.put("url", "#/settings/vendor_settings");
+        settingsItems.add(vendorSettings);
+        settingsMenu.put("items", settingsItems);
+
+
+        // TODO 在这里加Menu权限控制
+        menuList.add(feedMenu);
+        menuList.add(orderMenu);
+        menuList.add(reportsMenu);
+        menuList.add(inventoryMenu);
+        menuList.add(shipmentMenu);
+        menuList.add(settingsMenu);
+
+        return menuList;
     }
 }

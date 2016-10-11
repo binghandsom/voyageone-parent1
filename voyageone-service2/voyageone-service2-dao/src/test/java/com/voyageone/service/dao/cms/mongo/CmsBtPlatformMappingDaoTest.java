@@ -32,16 +32,16 @@ public class CmsBtPlatformMappingDaoTest {
 
         model.setCartId(23);
         model.setCategoryType(1);
-        model.setCategoryId("测试类目");
+        model.setCategoryPath("测试类目");
         model.setChannelId("010");
 
         platformMappingDao.insert(model);
 
         CmsBtPlatformMappingModel modelInDb = platformMappingDao.selectOne(model.getCartId(), model.getCategoryType(),
-                model.getCategoryId(), model.getChannelId());
+                model.getCategoryPath(), model.getChannelId());
 
         assertTrue(modelInDb.getCartId().equals(model.getCartId()));
-        assertTrue(modelInDb.getCategoryId().equals(model.getCategoryId()));
+        assertTrue(modelInDb.getCategoryPath().equals(model.getCategoryPath()));
         assertTrue(modelInDb.getCategoryType().equals(model.getCategoryType()));
 
         platformMappingDao.delete(modelInDb);

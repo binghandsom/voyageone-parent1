@@ -3,12 +3,11 @@ package com.voyageone.components.jumei.request;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * HtDealUpdateRequest
+ * HtDealUpdateRequest 修改Deal(特卖)信息
  *
  * @author peitao.sun, 2016/3/29
  * @version 2.0.0

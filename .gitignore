@@ -15,4 +15,8 @@ target/
 dependency-reduced-pom.xml
 npm-debug.log
 rebel.xml
+
+## Add by wangtd
 .project
+.gitignore
+.tern-project

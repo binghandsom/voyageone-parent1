@@ -20,6 +20,7 @@ define([
                 $scope.cus.customProps = res.data.customProps;
                 $scope.cus.commonProps = res.data.commonProps;
                 $scope.cus.salesTypeList = res.data.salesTypeList;
+                $scope.cus.biDataList = res.data.biDataList;
                 _.forEach($scope.cus.customProps, function (data) {
                     data.isChk = _.contains(res.data.custAttrList, data.feed_prop_original);
                 });
@@ -28,6 +29,9 @@ define([
                 });
                 _.forEach($scope.cus.salesTypeList, function (data) {
                     data.isChk = _.contains(res.data.selSalesTypeList, data.value);
+                });
+                _.forEach($scope.cus.biDataList, function (data) {
+                    data.isChk = _.contains(res.data.selBiDataList, data.value);
                 });
                 // 检查全选框
                 var chkSts = false;
@@ -65,6 +69,18 @@ define([
                 } else {
                     $scope.cus.all_salesType = false;
                 }
+
+                chkSts = false;
+                if ($scope.cus.biDataList && $scope.cus.biDataList.length > 0) {
+                    for (keyIdx in $scope.cus.biDataList) {
+                        if (!$scope.cus.biDataList[keyIdx].isChk) {
+                            chkSts = true;
+                        }
+                    }
+                    $scope.cus.all_biData = !chkSts;
+                } else {
+                    $scope.cus.all_biData = false;
+                }
             })
         };
 
@@ -90,10 +106,18 @@ define([
                     selSalesTypeList.push(data.value);
                 }
             });
+            var selBiDataList = [];
+            _.forEach($scope.cus.biDataList, function (data) {
+                if (data.isChk != undefined && data.isChk) {
+                    selBiDataList.push(data.value);
+                }
+            });
+
             var params = {};
             params.customProps = customProps;
             params.commonProps = commonProps;
             params.selSalesTypeList = selSalesTypeList;
+            params.selBiDataList = selBiDataList;
             $searchAdvanceService2.saveCustColumnsInfo(params).then(function() {
                 $modalInstance.close('');
             });
@@ -116,6 +140,10 @@ define([
             } else if (stsType == 3) {
                 _.forEach($scope.cus.salesTypeList, function (data) {
                     data.isChk = $scope.cus.all_salesType;
+                });
+            } else if (stsType == 4) {
+                _.forEach($scope.cus.biDataList, function (data) {
+                    data.isChk = $scope.cus.all_biData;
                 });
             }
         };
@@ -144,6 +172,13 @@ define([
                     }
                 }
                 $scope.cus.all_salesType = !chkSts;
+            } else if (stsType == 4) {
+                for (keyIdx in $scope.cus.biDataList) {
+                    if (!$scope.cus.biDataList[keyIdx].isChk) {
+                        chkSts = true;
+                    }
+                }
+                $scope.cus.all_biData = !chkSts;
             }
         };
     });

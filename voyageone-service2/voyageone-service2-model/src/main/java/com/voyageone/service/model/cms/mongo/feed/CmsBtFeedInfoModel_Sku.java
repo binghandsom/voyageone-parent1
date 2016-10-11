@@ -1,6 +1,8 @@
 package com.voyageone.service.model.cms.mongo.feed;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by james.li on 2015/11/27.
@@ -17,9 +19,23 @@ public class CmsBtFeedInfoModel_Sku {
     private String clientSku;
     private List<String> image;
     private Integer qty;
+    private String relationshipType;
+    private String variationTheme;
     private String weightOrg;
     private String weightOrgUnit;
     private String weightCalc;
+    private Integer isSale;
+
+    public int getIsSale() {
+        return isSale == null?1:isSale;
+    }
+
+    public void setIsSale(Integer isSale) {
+        this.isSale = isSale;
+    }
+
+    private Map<String, String> attribute = new HashMap<>();
+    private String errInfo;
     public Double getPriceCurrent() {
         return priceCurrent;
     }
@@ -105,6 +121,22 @@ public class CmsBtFeedInfoModel_Sku {
 
     public void setImage(List<String> image) { this.image = image; }
 
+    public String getRelationshipType() {
+        return relationshipType;
+    }
+
+    public void setRelationshipType(String relationshipType) {
+        this.relationshipType = relationshipType;
+    }
+
+    public String getVariationTheme() {
+        return variationTheme;
+    }
+
+    public void setVariationTheme(String variationTheme) {
+        this.variationTheme = variationTheme;
+    }
+
     @Override
     public boolean equals(Object obj) {
          return  this.sku.equalsIgnoreCase(((CmsBtFeedInfoModel_Sku)obj).getSku());
@@ -132,5 +164,21 @@ public class CmsBtFeedInfoModel_Sku {
 
     public void setWeightCalc(String weightCalc) {
         this.weightCalc = weightCalc;
+    }
+
+    public Map<String, String> getAttribute() {
+        return attribute;
+    }
+
+    public void setAttribute(Map<String, String> attribute) {
+        this.attribute = attribute;
+    }
+
+    public String getErrInfo() {
+        return errInfo;
+    }
+
+    public void setErrInfo(String errInfo) {
+        this.errInfo = errInfo;
     }
 }

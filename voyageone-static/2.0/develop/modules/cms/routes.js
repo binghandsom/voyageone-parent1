@@ -143,11 +143,11 @@ define(function () {
         "channel_default_attribute_list": {
             "hash": "/channel/default_attribute_list",
             "templateUrl": "views/channel/defaultAttribute/index.tpl.html",
-            "controllerUrl": "modules/cms/views/channel/defaultAttribute/index.ctl",
-            "controller": "defaultAttributeController as ctrl"
+            "controllerUrl": "modules/cms/views/channel/defaultAttribute/index.controller",
+            "controller": "DefaultAttributeController as ctrl"
         },
         "channel_default_attribute_detail": {
-            "hash": "/channel/default_attribute_detail/:upEntity",
+            "hash": "/channel/default_attribute_detail/:upEntity?",
             "templateUrl": "views/channel/defaultAttribute/detail.tpl.html",
             "controllerUrl": "modules/cms/views/channel/defaultAttribute/detail.ctl",
             "controller": "attributeDetailController as ctrl"
@@ -354,6 +354,12 @@ define(function () {
             "templateUrl": "views/tools/reprice/re.price.tpl.html",
             "controllerUrl": "modules/cms/views/tools/reprice/re.price.controller",
             "controller": "RePriceController as ctrl"
+        },
+        "black-brand": {
+            "hash": "/marketing/black-brand/:params?",
+            "templateUrl": "views/channel/black_brand/list.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/black_brand/list.controller",
+            "controller": "BlackBrandListController as ctrl"
         }
     };
 });

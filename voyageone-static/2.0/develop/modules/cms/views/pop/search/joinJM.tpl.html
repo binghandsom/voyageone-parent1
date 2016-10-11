@@ -3,7 +3,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"  ng-click="$dismiss()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span>
         </button>
-        <h5 class="modal-title"> Activity & Tags & Discount</h5>
+        <h5 class="modal-title"> {{'TXT_ACTIVITY_DISCOUNT' | translate}} </h5>
     </div>
     <form role="form" class="form-horizontal m-t-md m-l-lg m-b-lg ng-pristine ng-valid" name="addPromotionForm" novalidate>
         <div class="form-group">
@@ -68,7 +68,7 @@
                 <div class="row">
                     <div class="input-group">
                         <input name="discount" type="number" class="form-control" id="exampleInputAmount"
-                               ng-model="ctrl.discount" min="0" max="10" required>
+                               ng-model="ctrl.discount" scale="5,0" required>
                         <div class="input-group-addon">折</div>
                         <div>
                             <select class="form-control" ng-model="ctrl.priceType">

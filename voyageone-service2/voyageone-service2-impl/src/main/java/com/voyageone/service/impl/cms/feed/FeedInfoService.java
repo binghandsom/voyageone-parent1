@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.feed;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -42,6 +43,25 @@ public class FeedInfoService extends BaseService {
         return cmsBtFeedInfoDao.countByQuery(queryStr, channelId);
     }
 
+    public WriteResult updateFeedInfoSkuPrice(String channelId, String sku, Double price){
+        return  cmsBtFeedInfoDao.updateFeedInfoSkuPrice(channelId, sku,price);
+    }
+
+    /**
+     * getListForVendor
+     */
+    public List<CmsBtFeedInfoModel> getListForVendor(String channelId, JongoQuery queryObject) {
+        return cmsBtFeedInfoDao.select(queryObject, channelId);
+    }
+
+    /**
+     * getCntForVendor
+     */
+    public long getCntForVendor(String channelId, Map<String, Object> searchValue) {
+        String queryStr = getSearchQueryForVendor(searchValue);
+        return cmsBtFeedInfoDao.countByQuery(queryStr, channelId);
+    }
+
     /**
      * getProductByCode
      */
@@ -53,6 +73,13 @@ public class FeedInfoService extends BaseService {
         return cmsBtFeedInfoDao.selectProductBySku(channelId, sku);
     }
 
+    public List<CmsBtFeedInfoModel> getProductListBySku(String channelId, String sku) {
+        return cmsBtFeedInfoDao.selectProductListBySku(channelId, sku);
+    }
+
+    public CmsBtFeedInfoModel getProductByClientSku(String channelId, String clientSku) {
+        return cmsBtFeedInfoDao.selectProductByClientSku(channelId, clientSku);
+    }
     /**
      * 更新feed的产品信息
      *
@@ -70,6 +97,155 @@ public class FeedInfoService extends BaseService {
         Map<String, Object> valueMap = new HashMap<>(1);
         valueMap.put("$set", rsMap);
         return cmsBtFeedInfoDao.update(channelId, paraMap, valueMap);
+    }
+
+    /**
+     * 返回页面端的检索条件拼装成mongo使用的条件
+     */
+    public String getSearchQueryForVendor(Map<String, Object> searchValue) {
+        StringBuilder result = new StringBuilder();
+
+        // 获取code/sku
+        String code = (String) searchValue.get("code");
+        if (!StringUtils.isEmpty(code)) {
+            List<String> orSearch = new ArrayList<>();
+            orSearch.add(MongoUtils.splicingValue("code", code));
+            orSearch.add(MongoUtils.splicingValue("skus.clientSku", code));
+            result.append("{").append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
+            result.append("},");
+        }
+
+        // 获取product name
+        String name = (String) searchValue.get("name");
+        if (!StringUtils.isEmpty(name)) {
+            result.append("{").append(MongoUtils.splicingValue("name", replaceRegexReservedChar(name), "$regex"));
+            result.append("},");
+        }
+
+        // 获取category
+        List<String> categorys = (List<String>) searchValue.get("searchCats");
+        List<String> searchCategory = new ArrayList<>();
+        for (String category : categorys) {
+            String[] categoryArray = category.split("/");
+            category = "";
+            for (String categoryItem : categoryArray) {
+                // 不等于空的情况下，去掉首尾空格，并替换半角横杠为全角横杠，重新组装一下
+                if (!StringUtils.isEmpty(categoryItem)) {
+                    category += categoryItem.trim().replaceAll("-", "－") + "-";
+                }
+            }
+            // 去掉最后一个分隔符[-]
+            if (!StringUtils.isEmpty(category)) {
+                category = category.substring(0, category.length() - 1);
+                searchCategory.add(MongoUtils.splicingValue("category", replaceRegexReservedChar(category), "$regex"));
+            }
+        }
+        if (searchCategory.size() == 1) {
+            result.append("{").append(searchCategory.get(0));
+            result.append("},");
+        } else if (searchCategory.size() > 1) {
+            result.append("{").append(MongoUtils.splicingValue("", searchCategory.toArray(), "$or"));
+            result.append("},");
+        }
+
+        // 获取价格
+        Double priceSta = null;
+        Double priceEnd =  null;
+       if(searchValue.get("priceStart") != null){
+            if (StringUtils.isNumeric(String.valueOf(searchValue.get("priceStart")))) {
+                priceSta = Double.parseDouble(String.valueOf(searchValue.get("priceStart")));
+            }
+        }
+
+        if(searchValue.get("priceEnd") != null){
+            if (StringUtils.isNumeric(String.valueOf(searchValue.get("priceEnd")))) {
+                priceEnd = Double.parseDouble(String.valueOf(searchValue.get("priceEnd")));
+            }
+        }
+
+        if (priceSta != null || priceEnd != null) {
+            result.append("{\"skus\":{$elemMatch:{\"priceNet\":{");
+            if (priceSta != null) {
+                result.append(MongoUtils.splicingValue("$gte", priceSta));
+            }
+            if (priceEnd != null) {
+                if (priceSta != null) {
+                    result.append(",");
+                }
+                result.append(MongoUtils.splicingValue("$lte", priceEnd));
+            }
+            result.append("}}}},");
+        }
+
+        // 获取库存
+        Integer qtySta = null;
+        Integer qtyEnd =  null;
+        if(searchValue.get("qtyStart") != null){
+            if (StringUtils.isNumeric(String.valueOf(searchValue.get("qtyStart")))) {
+                qtySta = Integer.parseInt(String.valueOf(searchValue.get("qtyStart")));
+            }
+        }
+
+        if(searchValue.get("qtyEnd") != null){
+            if (StringUtils.isNumeric(String.valueOf(searchValue.get("qtyEnd")))) {
+                qtyEnd = Integer.parseInt(String.valueOf(searchValue.get("qtyEnd")));
+            }
+        }
+
+        if (qtySta != null || qtyEnd != null) {
+            result.append("{\"skus\":{$elemMatch:{\"qty\":{");
+            if (qtySta != null) {
+                result.append(MongoUtils.splicingValue("$gte", qtySta));
+            }
+            if (qtyEnd != null) {
+                if (qtySta != null) {
+                    result.append(",");
+                }
+                result.append(MongoUtils.splicingValue("$lte", qtyEnd));
+            }
+            result.append("}}}},");
+        }
+
+        if (!StringUtils.isEmpty(result.toString())) {
+            return "{$and:[" + result.toString().substring(0, result.toString().length() - 1) + "]}";
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * 转义正则表达式保留字
+     */
+    private String replaceRegexReservedChar(String regStr) {
+        // 替换保留字   \ * . ? + $ ^ [ ] ( ) { } |
+        char reservedChars[] = {'\\','*','.','?','+','$','^','[',']','(',')','{','}','|'};
+        for (char reservedChar : reservedChars) {
+            regStr = replace(regStr, reservedChar);
+        }
+
+        return regStr;
+    }
+
+    /**
+     * 替换转义字符
+     */
+    private String replace(String regStr, char replaceChar) {
+        if (regStr.indexOf(replaceChar) == -1) {
+            return regStr;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i< regStr.length(); i++) {
+            char c = regStr.charAt(i);
+            if (c == replaceChar) {
+                if (c != '\\') {
+                    sb.append("\\\\");
+                } else {
+                    sb.append("\\\\\\");
+                }
+            }
+            sb.append(c);
+        }
+        return sb.toString();
     }
 
     /**
@@ -145,11 +321,17 @@ public class FeedInfoService extends BaseService {
         }
 
         // 获取category
-        String category = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("category"));
-        if (category != null) {
-            result.append("{").append(MongoUtils.splicingValue("category", category));
-            result.append("},");
+        if(searchValue.get("category") != null){
+
+            List<String> categorys = (List<String>) searchValue.get("category");
+
+            if (!categorys.isEmpty()) {
+                StringBuffer categoryQuery = new StringBuffer();
+                categorys.forEach(s -> categoryQuery.append("^" + s + "|"));
+                result.append("{\"category\":{$regex: \"" + categoryQuery.toString().substring(0, categoryQuery.length() -1) + "\"}},");
+            }
         }
+
 
         // 获取product name
         String prodName = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("name"));
@@ -232,10 +414,21 @@ public class FeedInfoService extends BaseService {
         }
 
         // 获取status
-        String status = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("status"));
-        if (status != null) {
-            result.append("{").append(MongoUtils.splicingValue("updFlg", NumberUtils.toInt(status, -1)));
-            result.append("},");
+//        String status = org.apache.commons.lang3.StringUtils.trimToNull((String) searchValue.get("status"));
+//        if (status != null) {
+//            result.append("{").append(MongoUtils.splicingValue("updFlg", NumberUtils.toInt(status, -1)));
+//            result.append("},");
+//        }
+        if (searchValue.get("status") != null) {
+            List<Integer> statuss = (List<Integer>) searchValue.get("status");
+            if (!statuss.isEmpty()) {
+                List<String> orSearch = new ArrayList<>();
+                for (Integer status : statuss) {
+                    orSearch.add(MongoUtils.splicingValue("updFlg", status));
+                }
+                result.append("{").append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
+                result.append("},");
+            }
         }
 
         //

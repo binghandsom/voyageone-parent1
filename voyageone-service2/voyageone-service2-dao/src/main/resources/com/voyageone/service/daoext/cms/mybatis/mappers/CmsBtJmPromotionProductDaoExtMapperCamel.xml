@@ -156,22 +156,23 @@
             <if test="updateStatus!=null">
                 and a.update_status=#{updateStatus}
             </if>
-            <choose>
-                <when test="synchStatusList!=null and synchStatusList.size()!=0">
-                    and ( a.synch_status in<foreach item="item" index="i" collection="synchStatusList"
-                                                   open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-                    <if test="errorStatus!=null">
-                        or a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3 or a.stock_status=3
-                    </if> )
-                </when>
-                <when test="errorStatus!=null">
-                    and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3 or a.stock_status=3)
-                </when>
-                <otherwise>
-                </otherwise>
-            </choose>
+            <if test="hasStatus!=null">
+                and ( 1!=1
+                <if test="synchStatusList!=null and synchStatusList.size()!=0">
+                      or  a.synch_status in<foreach item="item" index="i" collection="synchStatusList"
+                                                open="(" separator="," close=")">
+                      #{item}
+                     </foreach>
+                </if>
+                <if test="allErrorStatus!=null">
+                    or a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3 or a.stock_status=3
+                </if>
+                <if test="allStatus1!=null">
+                    or a.synch_status=1 or a.`price_status`=1 or a.`deal_end_time_status`=1 or a.stock_status=1
+                </if>
+                )
+            </if>
+
             <if test="beginDiscount!=null">
                 and a.discount>=(#{beginDiscount}/10)
             </if>
@@ -330,7 +331,8 @@
                        LIMIT 1
     </select>
     <select id="selectDateRepeatByCode" resultMap="ResultMap">
-        SELECT * FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activityStart} &lt;=`activity_end`  and   #{activityEnd}>=`activity_start` and cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   limit 1
+        SELECT * FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activityStart} &lt;=`activity_end`
+         and   #{activityEnd}>=`activity_start` and cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   limit 1
     </select>
 
     <select id="existsCode" resultType="Boolean">

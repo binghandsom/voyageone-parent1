@@ -50,6 +50,7 @@ define([
             },
             searchBrands: function (page) {
                 var self = this;
+                if(!self.searchInfo.selectedCart) return;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
                 var params = {
                     'cartId': self.searchInfo.selectedCart,
@@ -72,14 +73,8 @@ define([
                 };
                 self.popups.openPlatformMappingSetting(self.mappingDetail).then(function (res) {
                     if (res.result == true) {
-                        self.brandMappingService.addNewBrandMapping({
-                            'cmsBrand': self.mappingDetail.masterName,
-                            'cartId': self.searchInfo.selectedCart,
-                            'brandId': res.brandId
-                        }).then(function () {
-                            self.searchBrands();
-                        });
-                    };
+                        self.searchBrands();
+                    }
                 })
             }
         };

@@ -22,12 +22,12 @@
                             <div class="data"><strong>{{ctrl.vm.taskSummary.unassginedCount}}</strong> {{'TXT_UN_TRANSLATION' | translate}}</div>
                         </li>
                         <li>
-                            <div class="data"><strong>{{ctrl.vm.taskSummary.incompleteCount}}</strong> {{'TXT_DISTRIBUTE_UN_TRANSLATION' | translate}}</div>
+                            <div class="data"><strong>{{ctrl.vm.taskSummary.completeCount}}</strong> {{'TXT_TRANSLATED' | translate}}</div>
                         </li>
                     </ul>
                     <ul class="data-display-boxes">
                         <li>
-                            <div class="data"><strong>{{ctrl.vm.taskSummary.completeCount}}</strong> {{'TXT_TRANSLATED' | translate}}</div>
+                            <div class="data"><strong>{{ctrl.vm.taskSummary.incompleteCount}}</strong> {{'TXT_DISTRIBUTE_UN_TRANSLATION' | translate}}</div>
                         </li>
                         <li>
                             <div class="data"><strong>{{ctrl.vm.taskSummary.userCompleteCount}}</strong> {{'TXT_PERSONAL_FINISHED_TRANSLATION' | translate}}
@@ -65,10 +65,13 @@
                         <div class="form-group">
                             <label for="fuzzy-search" class="control-label col-md-2" translate="TXT_FUZZY_SEARCH"></label>
                             <div class="col-md-6">
-                                <input id="fuzzy-search" class="form-control" ng-model="ctrl.assignInfo.keyWord" uib-tooltip="{{'TXT_TRANSLATION_FUZZY_SEARCH_TIP'|translate}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">
+                                <textarea id="fuzzy-search" class="form-control inherited" rows="3" ng-model="ctrl.assignInfo.keyWord" uib-tooltip="{{'TXT_TRANSLATION_FUZZY_SEARCH_TIP'|translate}}" tooltip-trigger="mouseenter" tooltip-placement="bottom"></textarea>
+                                <div class="text-warnings">
+                                    <i class="icon fa fa-bell-o"></i>&nbsp;换行分隔可批量输入产品Code，锁定【获取任务】范围.
+                                </div>
                             </div>
                             <div class="col-md-4">
-                                <button class="btn btn-success" ng-click="ctrl.assign()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
+                                <button class="btn btn-success" ng-disabled="ctrl.vm.taskSummary.unassginedCount == 0" ng-click="ctrl.assign()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK'|translate}}</button>
                             </div>
                         </div>
                     </div>
@@ -235,11 +238,11 @@
                             <textarea name="shortDesCn" class="form-control inherited" rows="4" ng-model="ctrl.vm.taskDetail.commonFields.shortDesCn"></textarea>
                         </div>
                     </div>
-<!--                    <div class="form-group">
-                        <div class="col-sm-2 col-sm-offset-2">
-                            <vo-message target="commonAttributeForm.shortDesCn"></vo-message>
-                        </div>
-                    </div>-->
+                    <!--                    <div class="form-group">
+                                            <div class="col-sm-2 col-sm-offset-2">
+                                                <vo-message target="commonAttributeForm.shortDesCn"></vo-message>
+                                            </div>
+                                        </div>-->
                     <div class="form-group">
                         <label class="col-sm-2 control-label s-not-required">{{'TXT_PRODUCT_EN_LONG_DESCRIPTION' | translate}}</label>
                         <div class="col-sm-8">
@@ -253,11 +256,11 @@
                             <textarea name="longDesCn" class="form-control inherited" rows="4" ng-model="ctrl.vm.taskDetail.commonFields.longDesCn"></textarea>
                         </div>
                     </div>
-<!--                    <div class="form-group">
-                        <div class="col-sm-2 col-sm-offset-2">
-                            <vo-message target="commonAttributeForm.longDesCn"></vo-message>
-                        </div>
-                    </div>-->
+                    <!--                    <div class="form-group">
+                                            <div class="col-sm-2 col-sm-offset-2">
+                                                <vo-message target="commonAttributeForm.longDesCn"></vo-message>
+                                            </div>
+                                        </div>-->
                     <div class="form-group">
                         <label class="col-sm-2 control-label s-not-required">{{'TXT_PRODUCT_EN_INSTRUCTIONS' | translate}}</label>
                         <div class="col-sm-8">
@@ -271,11 +274,23 @@
                             <textarea name="usageCn" class="form-control inherited" rows="4" ng-model="ctrl.vm.taskDetail.commonFields.usageCn"></textarea>
                         </div>
                     </div>
-<!--                    <div class="form-group">
-                        <div class="col-sm-2 col-sm-offset-2">
-                            <vo-message target="commonAttributeForm.usageCn"></vo-message>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label s-not-required">材质(英文)</label>
+                        <div class="col-sm-8">
+                            <textarea name="usageCn" class="form-control inherited" rows="4" readonly ng-model="ctrl.vm.taskDetail.commonFields.materialEn"></textarea>
                         </div>
-                    </div>-->
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label s-not-required">材质(中文)</label>
+                        <div class="col-sm-8">
+                            <textarea name="usageCn" class="form-control inherited" rows="4" ng-model="ctrl.vm.taskDetail.commonFields.materialCn"></textarea>
+                        </div>
+                    </div>
+                    <!--                    <div class="form-group">
+                                            <div class="col-sm-2 col-sm-offset-2">
+                                                <vo-message target="commonAttributeForm.usageCn"></vo-message>
+                                            </div>
+                                        </div>-->
                 </form>
             </uib-tab>
             <uib-tab>
@@ -302,12 +317,12 @@
                         </div>
                         <label class="col-sm-2 control-label">{{customProp.feedAttrCn}}</label>
                         <!--<ng-form name="innerForm">-->
-                            <div ng-class="{'col-sm-3':innerForm.cnAttribute.$valid,'col-sm-2':!innerForm.cnAttribute.$valid}">
-                                <input name="cnAttribute" class="form-control" ng-model="customProp.feedAttrValueCn">
-                            </div>
-<!--                            <div class="col-sm-1" ng-show="!innerForm.cnAttribute.$valid">
-                                <vo-message target="innerForm.cnAttribute"></vo-message>
-                            </div>-->
+                        <div ng-class="{'col-sm-3':innerForm.cnAttribute.$valid,'col-sm-2':!innerForm.cnAttribute.$valid}">
+                            <input name="cnAttribute" class="form-control" ng-model="customProp.feedAttrValueCn">
+                        </div>
+                        <!--                            <div class="col-sm-1" ng-show="!innerForm.cnAttribute.$valid">
+                                                        <vo-message target="innerForm.cnAttribute"></vo-message>
+                                                    </div>-->
                         <!--</ng-form>-->
                     </div>
                     <div class="col-sm-12 product-shema-detail">

@@ -82,7 +82,7 @@
         is = {};
 
         exists = function (target) {
-            return target !== null && target !== undefined;
+            return target !== null && target !== undefined && target !== "";
         };
 
         if (!window._)
@@ -152,18 +152,10 @@
     }
 
     /**
-     * 获取规则的依赖条件
-     */
-    function getDependExpressList(rule) {
-        var depends = rule.dependGroup;
-        return (depends ? depends.dependExpressList : null);
-    }
-
-    /**
      * 规则是否包含依赖条件
      */
     function hasDepend(rule) {
-        var dependExpressList = getDependExpressList(rule);
+        var dependExpressList = (rule && rule.dependGroup) ? rule.dependGroup.dependExpressList : null;
         return !!dependExpressList && !!dependExpressList.length;
     }
 
@@ -563,6 +555,10 @@
 
     /**
      * @class 为 multiComplex 字段的 values 提供包装
+     *
+     * 因为 multi complex 字段可以有多个 complex value，而每个 complex value 包含多个 field value
+     * 所以需要提供一个包装，最主要的是，提供对无值 field 的支持。因为有可能服务器端传递的 complex value 中不包含完整的 fields
+     * 这里可以参见 copyFrom 方法
      */
     function ComplexValue(fields) {
         // 生成 id 用来标记缓存
@@ -637,7 +633,15 @@
      */
     function DependentRule(rule, field, schema) {
 
-        this.dependExpressList = getDependExpressList(rule).map(function (dependExpress) {
+        var dependGroup = rule.dependGroup,
+            dependExpressList = dependGroup.dependExpressList,
+            operator = dependGroup.operator;
+
+        // Debug 信息
+        this.$key = '$Depend' + random();
+
+        this.checker = operator === "or" ? any : all;
+        this.dependExpressList = dependExpressList.map(function (dependExpress) {
 
             var field = searchField(dependExpress.fieldId, schema);
 
@@ -662,8 +666,7 @@
 
         // 如果这里直接把 field 存在 this 上, 就会造成递归访问, 无法将数据 JSON 化
         // 所以需要通过第三方存储来保存相互的关系
-        this.$fieldId = field.id;
-        DependentRule.fieldCache[field.id] = field;
+        DependentRule.fieldCache[(this.$fieldId = field.$name || field.id)] = field;
     }
 
     DependentRule.fieldCache = {};
@@ -679,7 +682,7 @@
             currentField = DependentRule.fieldCache[self.$fieldId],
             forceFail = false;
 
-        var result = all(dependExpressList, function (express) {
+        var result = self.checker(dependExpressList, function (express) {
 
             // 每一个表达式的计算, 都只支持简单处理
             // 如果后续需要, 请继续扩展
@@ -787,11 +790,14 @@
             disabledExpression,
             fieldElement,
             fieldScope;
+
         // 2016-07-08 11:11:54
         // 增加对 isDisplay 属性的支持
         // 当该属性为字符串 0 时, 不处理该字段, 否则其他任何值都处理
         if (field.isDisplay == "0")
             return;
+
+        field.$name = 'Field' + random();
 
         rules = getRules(field, schema);
         disableRule = rules.disableRule;
@@ -986,8 +992,6 @@
             };
 
             SchemaFieldController.prototype.setField = function (field) {
-                if (field)
-                    field.$name = 'f' + random();
                 this.field = field;
             };
 
@@ -1201,54 +1205,63 @@
                         case FIELD_TYPES.SINGLE_CHECK:
                             (function createSelectElements() {
 
-                                var nullValueObj;
+                                var nullValueObj, foundValueObject;
 
-                                var requiredRule = rules.requiredRule;
+                                var requiredRule = rules.requiredRule,
+                                    options = field.options,
+                                    valueObject = field.value;
 
-                                var options = field.options;
+                                // 要对 option 匹配, 就需要强类型转换
+                                // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
+                                // 所以要克隆新的出来使用
+                                options = options.map(function (option) {
+                                    var newOption = {};
+                                    newOption.__proto__ = option;
+                                    newOption.value = getInputValue(option.value, field);
+                                    return newOption;
+                                });
 
-                                if (!field.value)
-                                    field.value = {value: null};
-                                else {
+                                if (!valueObject) {
+                                    valueObject = {value: null};
+                                } else if (exists(valueObject.value)) {
                                     // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
                                     // 所以这一步做额外的处理
-                                    field.value.value = getInputValue(field.value.value, field);
+                                    valueObject.value = getInputValue(valueObject.value, field);
+
+                                    foundValueObject = _.find(options, function (optionItem) {
+                                        return optionItem.value == valueObject.value;
+                                    });
+
+                                    valueObject.value = foundValueObject ? foundValueObject.value : valueObject.value = null;
                                 }
 
                                 // 处理默认值, 判断基本同 input 类型, 参见 input 中的注释
-                                if (!exists(field.value.value) && exists(field.defaultValue)) {
-                                    field.value.value = getInputValue(field.defaultValue, field);
+                                if (!exists(valueObject.value) && exists(field.defaultValue)) {
+                                    valueObject.value = getInputValue(field.defaultValue, field);
                                 }
 
                                 if (!requiredRule) {
                                     // 非必填, 就创建空选项
-                                    // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
-                                    // 所以要克隆新的出来使用
-                                    options = options.map(function (option) {
-                                        var newOption = {};
-                                        newOption.__proto__ = option;
-                                        newOption.value = getInputValue(option.value, field);
-                                        return newOption;
-                                    });
-
                                     options.unshift(nullValueObj = {
-                                        displayName: '',
+                                        displayName: 'Select...',
                                         value: null
                                     });
 
                                     // 如果当前的选中值也木有, 就用这个默认的
-                                    if (!field.value.value) {
-                                        field.value = nullValueObj;
+                                    if (!valueObject.value) {
+                                        valueObject = nullValueObj;
                                     }
                                 }
 
                                 // 最终保存到 $scope 上, 供页面绑定使用
                                 scope.$options = options;
+                                field.value = valueObject;
 
-                                innerElement = angular.element('<select class="form-control">');
+                                innerElement = angular.element('<select class="form-control" chosen>');
                                 innerElement.attr('ng-options', 'option.value as option.displayName for option in $options');
                                 innerElement.attr('name', name);
                                 innerElement.attr('ng-model', 'field.value.value');
+                                innerElement.attr('width', '"100%"');
                                 innerElement.attr('title', field.name || field.id);
 
                                 bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');

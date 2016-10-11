@@ -75,6 +75,19 @@ public final class Mail {
         send(receiver, subjectTmp, content, fileAffix, priority);
     }
 
+
+    public static void sendReport(String receiverName, String subject, String content, List<String> fileAffix) throws MessagingException {
+
+        String receiver = getReceiver(receiverName);
+
+        MailInfo mail = new MailInfo(receiver);
+        mail.setSubject(subject);
+        mail.setContent(content);
+        mail.setPriority(false);
+        mail.setFileAffix(fileAffix);
+        mail.send();
+    }
+
     /**
      * 发送一封邮件
      *

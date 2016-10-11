@@ -1,0 +1,98 @@
+<div class="breadcrumbs" ng-init="ctrl.init()">
+    <div class="container">
+        <h4 class="pull-left" translate="TXT_SHIPMENT_INFO"></h4>
+        <ul class="pull-right breadcrumb">
+            <li><a href="#/home" translate="TXT_HOME"></a></li>
+            <li class="active disabled" translate="TXT_SHIPMENT"></li>
+            <li class="active selected" translate="TXT_SHIPMENT_INFO"></li>
+        </ul>
+    </div>
+</div>
+<div class="container content">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="form-inline col-sm-12">
+                <div class="form-group">
+                    <input id="Shipment Name" type="text" class="form-control input-sm"
+                           ng-attr-title="{{ctrl.configTitle('TXT_SHIPMENT_NAME', ctrl.searchInfo.shipmentName) | translate}}"
+                           ng-model="ctrl.searchInfo.shipmentName"
+                           ng-attr-placeholder="{{'TXT_SHIPMENT_NAME'|translate}}" enter-click="#searchButton">
+                    <input id="Tracking No" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.searchInfo.trackingNo"
+                           ng-attr-title="{{ctrl.configTitle('TXT_TRACKING_NO_', ctrl.searchInfo.trackingNo) | translate}}"
+                           ng-attr-placeholder="{{'TXT_TRACKING_NO_'|translate}}" enter-click="#searchButton">
+                    <label class="control-label" translate="TXT_STATUS"></label>
+                    <select name="SHIPMENT_STATUS" id="select" class="form-control input-sm" ng-model="ctrl.searchInfo.status"
+                            ng-options="option.value as option.name for option in ctrl.shipmentStatusList">
+                        <option value="" translate="TXT_ALL"></option>
+                    </select>
+                    <label class="control-label" TRANSLATE="TXT_SHIPPED_DATE"></label>
+                    <span class="input-group">
+                        <input type="date" class="form-control input-sm" ng-model="ctrl.shippedDateFrom"
+                               uib-datepicker-popup is-open="datepicker1" datepicker-options="{maxDate:ctrl.shippedDateTo}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default input-sm" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </span>
+                    <span>~</span>
+                    <span class="input-group">
+                        <input type="date" class="form-control input-sm" ng-model="ctrl.shippedDateTo"
+                               uib-datepicker-popup is-open="datepicker2" datepicker-options="{minDate:ctrl.shippedDateFrom}">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default input-sm" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </span>
+                    <button id="searchButton" class="btn btn-primary btn-sm" ng-click="ctrl.search(1)" translate="BTN_SEARCH"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-vo">
+        <div class="panel-body">
+            <div class="table-responsive" if-no-rows="ctrl.data">
+                <table class="table table-fixed table-vo table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th class="td-2-5 text-left v-middle" translate="TXT_SHIPMENT_NAME"></th>
+                        <th class="td-1-5 v-middle" translate="TXT_SHIPPED_DATE"></th>
+                        <th class="td-2 v-middle" translate="TXT_TRACKING_NO_"></th>
+                        <th class="td-2 v-middle" translate="TXT_PACKING_LIST_PRINTED"></th>
+                        <th class="td-1-5 text-center v-middle" translate="TXT_ORDER_TOTAL"></th>
+                        <th class="td-1-5 text-center v-middle" translate="TXT_SKU_TOTAL"></th>
+                        <th class="td-2 text-left v-middle" translate="TXT_STATUS"></th>
+                        <th class="td-3 v-middle" translate="TXT_COMMENTS"></th>
+                        <th class="td-1 text-center v-middle" translate="TXT_ACTION"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in ctrl.data">
+                        <td class="text-left v-middle word-wrap"><a ng-href="{{'#/shipment/shipment_info/shipment_detail/' + item.id}}">{{item.shipmentName}}</a></td>
+                        <td class="v-middle">{{(item.shippedDate | date: 'yyyy-MM-dd') || '-'}}</td>
+                        <td class="v-middle word-wrap">{{item.trackingNo || '-'}}</td>
+                        <td class="v-middle">{{ctrl.isPrinted(item) | translate}}</td>
+                        <td class="text-center v-middle">{{item.orderTotal}}</td>
+                        <td class="text-center v-middle">{{item.skuTotal}}</td>
+                        <td class="text-left v-middle">{{ctrl.getStatusName(item.status)}}</td>
+                        <td class="v-middle">
+                            <span class="v-middle" ng-if="item.comment.length <= 25">{{item.comment}}</span>
+                            <span class="v-middle" ng-if="item.comment.length > 25" uib-tooltip="{{item.comment}}"
+                                  tooltip-trigger="mouseenter" tooltip-placement="top">
+                                {{item.comment | stringCutter:true:25:' ...'}}
+                            </span>
+                        </td>
+                        <td class="text-center v-middle">
+                            <button class="btn btn-xs btn-success" ng-attr-title="{{'TXT_EDIT' | translate}}"
+                                    ng-click="ctrl.popShipment(item, 'edit')"><i
+                                    class="fa fa-pencil"></i></button>
+                            <a class="btn btn-xs btn-success" ng-attr-title="{{'TXT_DETAIL' | translate}}"
+                               ng-href="{{'#/shipment/shipment_info/shipment_detail/' + item.id}}"><i class="fa fa-inbox"></i></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-12 m-t-lg no-padding">
+                <vpagination config="ctrl.pageInfo" total="ctrl.pageInfo.total"></vpagination>
+            </div>
+        </div>
+    </div>
+</div>

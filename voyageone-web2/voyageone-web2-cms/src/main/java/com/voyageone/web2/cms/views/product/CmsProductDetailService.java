@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.product;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
@@ -25,6 +26,7 @@ import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.*;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
@@ -32,9 +34,7 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
-import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
+import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
@@ -43,7 +43,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
@@ -57,11 +57,14 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM.confPriceRetail;
+import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM.priceRetail;
+
 /**
  * Created by lewis on 15-12-16.
  */
 @Service
-public class CmsProductDetailService extends BaseAppService {
+public class CmsProductDetailService extends BaseViewService {
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
     private static final String COMPLETE_STATUS = "1";
@@ -85,15 +88,18 @@ public class CmsProductDetailService extends BaseAppService {
     private CategoryTreeAllService categoryTreeAllService;
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
-
     @Autowired
     private SxProductService sxProductService;
-
     @Autowired
     private ImsBtProductDao imsBtProductDao;
-
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private CmsBtPriceConfirmLogService cmsBtPriceConfirmLogService;
     @Autowired
     private PriceService priceService;
+    @Autowired
+    private CmsBtPriceLogService cmsBtPriceLogService;
 
     /**
      * 获取类目以及类目属性信息.
@@ -433,7 +439,7 @@ public class CmsProductDetailService extends BaseAppService {
 //        if (newProduct.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
 
         // 插入上新程序
-        productService.insertSxWorkLoad(channelId, newProduct, userName);
+        sxProductService.insertSxWorkLoad(newProduct, userName);
 
 //        }
 
@@ -644,9 +650,15 @@ public class CmsProductDetailService extends BaseAppService {
         Map<String, Object> result = productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);
 
         CmsBtProductModel newProduct = productService.getProductById(channelId, prodId);
-        if(!compareHsCode(commonModel.getFields().getHsCodePrivate(),oldProduct.getCommon().getFields().getHsCodePrivate())){
+        if (!compareHsCode(commonModel.getFields().getHsCodePrivate(), oldProduct.getCommon().getFields().getHsCodePrivate())) {
             try {
-                priceService.setPrice(newProduct);
+                // 税号从无到有的场后同步最终售价
+                if(StringUtil.isEmpty(oldProduct.getCommon().getFields().getHsCodePrivate())){
+                    priceService.setPrice(newProduct, true);
+                }else{
+                    priceService.setPrice(newProduct, false);
+                }
+
             } catch (PriceCalculateException e) {
                 throw new BusinessException("价格计算错误" + e.getMessage());
             } catch (IllegalPriceConfigException e) {
@@ -654,29 +666,39 @@ public class CmsProductDetailService extends BaseAppService {
                 e.printStackTrace();
             }
             newProduct.getPlatforms().forEach((s, platform) -> {
-                if(platform.getCartId() != 0){
-                    productService.updateProductPlatform(channelId,prodId,platform,modifier,false,"税号变更");
+                if (platform.getCartId() != 0) {
+
+                    if (platform.getSkus() != null && platform.getSkus().size() > 0 && !platform.getSkus().get(0).getStringAttribute("priceRetail").equalsIgnoreCase(platform.getSkus().get(0).getStringAttribute("confPriceRetail"))) {
+                        platform.getSkus().forEach(sku -> {
+                            sku.setAttribute(confPriceRetail.name(), sku.getDoubleAttribute(priceRetail.name()));
+                        });
+                        cmsBtPriceConfirmLogService.addConfirmed(channelId, newProduct.getCommon().getFields().getCode(), platform, modifier);
+                    }
+                    productService.updateProductPlatform(channelId, prodId, platform, modifier, false, EnumProductOperationType.WebEdit, "税号变更");
                 }
             });
+
         }
 
 
         return result;
     }
-    private Boolean compareHsCode(String hsCode1, String hsCode2){
-        String hs1="";
-        String hs2="";
-        if(hsCode1 != null){
-            String []temp = hsCode1.split(",");
-            if(temp.length >1) hs1 = temp[0];
+
+    private Boolean compareHsCode(String hsCode1, String hsCode2) {
+        String hs1 = "";
+        String hs2 = "";
+        if (hsCode1 != null) {
+            String[] temp = hsCode1.split(",");
+            if (temp.length > 1) hs1 = temp[0];
         }
 
-        if(hsCode2 != null){
-            String []temp = hsCode2.split(",");
-            if(temp.length >1) hs2 = temp[0];
+        if (hsCode2 != null) {
+            String[] temp = hsCode2.split(",");
+            if (temp.length > 1) hs2 = temp[0];
         }
         return hs1.equalsIgnoreCase(hs2);
     }
+
     private void changeMastCategory(CmsBtProductModel_Common commonModel, CmsBtProductModel oldProduct, String modifier) {
         List<CmsMtCategoryTreeAllModel_Platform> platformCategory = categoryTreeAllService.getCategoryByCatPath(commonModel.getCatPath()).getPlatformCategory();
         if (platformCategory == null || platformCategory.size() == 0) return;
@@ -1274,8 +1296,8 @@ public class CmsProductDetailService extends BaseAppService {
         platForm.remove("pStatus");
         productService.updateProductPlatform(parameter.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
         sxProductService.insertSxWorkLoad(parameter.getChannelId(), new ArrayList<String>(Arrays.asList(parameter.getProductCode())), parameter.getCartId(), modifier);
-        String comment=parameter.getComment();
-        productStatusHistoryService.insert(parameter.getChannelId(),cmsBtProductModel.getCommon().getFields().getCode(),platForm.getStatus(),parameter.getCartId(), EnumProductOperationType.Delisting,comment,modifier);
+        String comment = parameter.getComment();
+        productStatusHistoryService.insert(parameter.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), parameter.getCartId(), EnumProductOperationType.Delisting, comment, modifier);
 
         //2.1.3	Voyageone_ims. ims_bt_product(mysql) 根据 channel cartId 和code找到对应的记录 把 numIId字段设为0
         ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(parameter.getChannelId(), parameter.getCartId(), parameter.getProductCode());
@@ -1332,7 +1354,7 @@ public class CmsProductDetailService extends BaseAppService {
         platForm.remove("pStatus");
         productService.updateProductPlatform(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
         String comment = paramr.getComment();
-        productStatusHistoryService.insert(paramr.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), paramr.getCartId(), EnumProductOperationType.Delisting, comment, modifier);
+        productStatusHistoryService.insert(paramr.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), paramr.getCartId(), EnumProductOperationType.DelistinGroup, comment, modifier);
         ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(), paramr.getCartId(), code);
         if (imsBtProductModel != null) {
             imsBtProductModel.setNumIid("");
@@ -1355,20 +1377,22 @@ public class CmsProductDetailService extends BaseAppService {
         });
         cmsBtProductModel.getCommon().getFields().setHsCodePrivate(hsCode);
         try {
-            priceService.setPrice(cmsBtProductModel);
+            priceService.setPrice(cmsBtProductModel, false);
         } catch (PriceCalculateException e) {
             // 当捕获计算错误时, 可以继续 code 级别的计算
             throw new BusinessException("价格计算错误" + e.getMessage());
         } catch (IllegalPriceConfigException e) {
             // TODO 当捕获配置错误异常时, 需要停止 code 级别的计算
             e.printStackTrace();
+            // 当捕获计算错误时, 可以继续 code 级别的计算
+            throw new BusinessException("价格计算错误" + e.getMessage());
         }
         cmsBtProductModel.getPlatforms().forEach((s, platform) -> {
-            if (platform.getCartId() != 0) {
+            if (platform.getCartId() != 0 && platform.getCartId() != CartEnums.Cart.USJGJ.getValue()) {
                 prices.get(platform.getCartId()).get(platform.getSkus().get(0).getStringAttribute("skuCode")).add(platform.getSkus().get(0).getDoubleAttribute("priceRetail"));
 
-                for (BaseMongoMap<String, Object> sku : platform.getSkus()){
-                    if("5".equalsIgnoreCase(sku.getStringAttribute("priceDiffFlg"))){
+                for (BaseMongoMap<String, Object> sku : platform.getSkus()) {
+                    if ("5".equalsIgnoreCase(sku.getStringAttribute("priceDiffFlg"))) {
                         throw new BusinessException("税号修改后导致 中国最终售价低于指导价阀值请先修改最终销售价格！hscode调整后 指导价是：" + sku.getDoubleAttribute("priceRetail"));
                     }
                 }
@@ -1386,11 +1410,11 @@ public class CmsProductDetailService extends BaseAppService {
         CmsBtProductModel_Common mainCommon = mainProduct.getCommon();
 
 
-        if(StringUtil.isEmpty(common.getCatId())){
+        if (StringUtil.isEmpty(common.getCatId())) {
             common.setCatId(mainCommon.getCatId());
         }
 
-        if(StringUtil.isEmpty(common.getCatPath())) {
+        if (StringUtil.isEmpty(common.getCatPath())) {
             common.setCatPath(mainCommon.getCatPath());
         }
 
@@ -1399,17 +1423,17 @@ public class CmsProductDetailService extends BaseAppService {
                 if (StringUtils.isEmpty(common.getFields().get(s).toString())) {
                     common.getFields().put(s, o);
                 }
-            }else{
+            } else {
                 common.getFields().put(s, o);
             }
         });
-        if("1".equalsIgnoreCase(mainCommon.getFields().getHsCodeStatus())){
+        if ("1".equalsIgnoreCase(mainCommon.getFields().getHsCodeStatus())) {
             common.getFields().setHsCodeStatus("1");
         }
-        if("1".equalsIgnoreCase(mainCommon.getFields().getTranslateStatus())){
+        if ("1".equalsIgnoreCase(mainCommon.getFields().getTranslateStatus())) {
             common.getFields().setTranslateStatus("1");
         }
-        if("1".equalsIgnoreCase(mainCommon.getFields().getCategoryStatus())){
+        if ("1".equalsIgnoreCase(mainCommon.getFields().getCategoryStatus())) {
             common.getFields().setCategoryStatus("1");
         }
         List<Field> cmsMtCommonFields = commonSchemaService.getComSchemaModel().getFields();
@@ -1418,5 +1442,32 @@ public class CmsProductDetailService extends BaseAppService {
         common.put("schemaFields", cmsMtCommonFields);
 
         return common;
+    }
+
+    public void updateSkuPrice(String channelId, int cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform) {
+
+        //更新mongo数据
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+
+        updateMap.put("platforms.P" + platform.getCartId() + ".modified", DateTimeUtil.getNowTimeStamp());
+        updateMap.put("platforms.P" + platform.getCartId() + ".skus", platform.getSkus());
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
+
+        //更新价格履历
+        List<String> skus = new ArrayList<>();
+        platform.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
+        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, cartId, userName, "sku价格刷新");
+
+        //刷新价格
+        CmsBtProductModel productInfo = productService.getProductById(channelId, prodId);
+        priceService.updateSkuPrice(channelId, cartId, productInfo);
     }
 }

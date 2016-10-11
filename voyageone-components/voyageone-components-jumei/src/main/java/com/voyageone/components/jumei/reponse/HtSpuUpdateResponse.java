@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * HtSpuUpdateResponse
+ * HtSpuUpdateResponse 修改Spu信息
  * @author peitao.sun, 2016/3/29
  * @version 2.0.0
  * @since 2.0.0
@@ -74,12 +74,43 @@ public class HtSpuUpdateResponse extends BaseJMResponse {
             if (map.containsKey("reason") && "success".equals(map.get("reason"))) {
                 this.setIs_Success(true);
             } else {
-                this.setErrorMsg(this.body);
+                this.setIs_Success(false);
+                StringBuffer sbMsg = new StringBuffer(" 修改Spu信息(/v1/htSpu/update)时,发生错误[" + this.error_code + ":");
+                switch (this.error_code) {
+                    case "10002":
+                        sbMsg.append("client_id,client_key,sign 认证失败");
+                        break;
+                    case "100001":
+                        sbMsg.append("jumei_spu_no 参数格式错误");
+                        break;
+                    case "100002":
+                        sbMsg.append("update_data必须不为空的JSON,有效字段至少一个");
+                        break;
+                    case "100013":
+                        sbMsg.append("property，规格格式错误");
+                        break;
+                    case "100014":
+                        sbMsg.append("size，容量/尺码错误");
+                        break;
+                    case "100015":
+                        sbMsg.append("abroad_url,海外地址错误");
+                        break;
+                    case "100016":
+                        sbMsg.append("abroad_price， 海外官网价错误");
+                        break;
+                    case "100017":
+                        sbMsg.append("area_code，货币单位错误");
+                        break;
+                    default:
+                        sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
+                }
+                sbMsg.append("] ");
+                this.setErrorMsg(sbMsg.toString() + this.body);
             }
         } catch (Exception ex) {
             logger.error("setBody ",ex);
             this.setIs_Success(false);
-            this.setErrorMsg("返回参数解析错误" + this.body);
+            this.setErrorMsg("HtSpuUpdateResponse 返回参数解析错误" + this.body);
         }
     }
 }

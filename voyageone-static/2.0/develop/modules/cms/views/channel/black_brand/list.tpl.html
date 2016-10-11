@@ -1,0 +1,127 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="panel panel-vo">
+        <div class="panel-heading">
+            <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;<span translate="TXT_MARKETING_SETTING_COMMON_BLACK_LIST"></span></h4>
+        </div>
+        <div class="panel-body">
+            <div class="row form-inline">
+                <div class="col-sm-6">
+                    <label class="control-label col-md-4 text-right">{{'TXT_BRAND_CATEGORY'|translate}} &nbsp;&nbsp;</label>
+                    <div class="col-md-8">
+                        <select class="form-control" style="width: 200px" ng-model="ctrl.searchInfo.brandType" ng-change="ctrl.selectCarts()">
+                            <option value="0" translate="TXT_FEED_BRAND"></option>
+                            <option value="1" translate="TXT_MASTER_BRAND"></option>
+                            <option value="2" translate="TXT_PLATFORM_BRAND"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-6 text-left">
+                    <div class="form-group">
+                        <label>{{'TXT_BRAND_STATES'|translate}}&nbsp;&nbsp;</label>
+                        <span>&nbsp;</span>
+                        <label>
+                            <input name="state" type="radio" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_TRANSLATION_SEARCH_SELECT_ALL'|translate}}
+                        </label>&emsp;
+                        <label>
+                            <input name="state" type="radio" value="1" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_BLACK_LIST_IN'|translate}}
+                        </label>&emsp;
+                        <label>
+                            <input name="state" type="radio" value="0" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_BLACK_LIST_OUT'|translate}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-inline m-t-sm">
+                <div class="col-sm-6">
+                    <div class="col-md-8 col-md-offset-4" ng-if="ctrl.searchInfo.brandType == 2">
+                        <label ng-repeat="cart in ctrl.cartList">
+                            <input name="plateForm" type="checkbox" ng-model="ctrl.searchInfo.cart[cart.value]">&nbsp;{{cart.name}}&emsp;
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm-6 text-left">
+                    <div class="form-group">
+                        <label class="control-label col-md-3">{{'TXT_BRAND'|translate}} &nbsp;&nbsp;</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" style="width: 200px" ng-model="ctrl.searchInfo.brand" placeholder="{{'TXT_FUZZY_SEARCH'|translate}}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row m-t-md">
+                <div class="col-sm-12 text-center">
+                    <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'|translate}}</button>
+                    <button class="btn btn-vo" ng-click="ctrl.paging.curr = 1;ctrl.search()" ng-disabled="ctrl.searchInfo.brandType == 2 && !ctrl.checkCarts()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'|translate}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-5 col-md-offset-7 text-right">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-pop btn-default" ng-click="ctrl.batchUpdate(true,'TXT_BATCH_JOIN_BLACK_LIST')">
+                                <i class="glyphicon glyphicon-import"></i>&nbsp;{{'TXT_BATCH_JOIN_BLACK_LIST'|translate}}&nbsp;
+                            </button>
+                        </div>
+                        &nbsp;
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-pop btn-default" ng-click="ctrl.batchUpdate(false,'TXT_BATCH_REMOVE_BLACK_LIST')">
+                                <i class="glyphicon glyphicon-export"></i>&nbsp;{{'TXT_BATCH_REMOVE_BLACK_LIST'|translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+
+            <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                <thead>
+                <tr>
+                    <th class="text-center mfb-xt">
+                        <label class="checkbox-inline c-checkbox">
+                            <input type="checkbox" ng-model="ctrl.all" ng-click="ctrl.seletAll()">
+                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
+                        </label>
+                    </th>
+                    <th class="text-center mfb-xxx" translate="TXT_BRAND"></th>
+                    <th class="text-center mfb-xxx" translate="TXT_BRAND_CATEGORY"></th>
+                    <th class="text-center mfb-xxx" translate="TXT_PLATFORM_TYPE"></th>
+                    <th class="text-center mfb-xxx" translate="TXT_ACTION"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="model in ctrl.dataList">
+                    <td class="text-center mfb-xt">
+                        <label class="checkbox-inline c-checkbox">
+                            <input type="checkbox" ng-model = "model.selected">
+                            <span class="fa fa-check"></span>
+                        </label>
+                    </td>
+                    <td class="text-center mfb-xxx">{{model.brandName}}</td>
+                    <td class="text-center mfb-xxx">{{ctrl.$brandType[model.type]}}</td>
+                    <td class="text-center mfb-xxx">{{ctrl.cartEnums.valueOf(model.cartId).desc}}</td>
+                    <td class="text-center mfb-xxx">
+                        <button class="btn btn-success" ng-click="ctrl.update(true,'TXT_JOIN_BLACK_LIST', model)" ng-if="!model.blocked">
+                            <i class="fa fa-arrow-right"></i>&nbsp;{{'TXT_JOIN_BLACK_LIST'|translate}}
+                        </button>
+                        <button class="btn btn-danger" ng-click="ctrl.update(false,'TXT_REMOVE_BLACK_LIST', model)" ng-if="model.blocked">
+                            <i class="fa fa-arrow-left"></i>&nbsp;{{'TXT_REMOVE_BLACK_LIST'|translate}}
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="col-sm-12 m-t-lg m-b-lg">
+                <vpagination config="ctrl.paging"></vpagination>
+            </div>
+
+        </div>
+    </div>
+
+</div>

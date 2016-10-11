@@ -19,6 +19,8 @@ public class CmsZzFeedOverstockPriceModel extends BaseModel {
 
     protected String finalRmbPrice;
 
+    protected String msrpPrice;
+
     protected Integer updFlg;
 
     public String getSkuCode() {
@@ -51,5 +53,13 @@ public class CmsZzFeedOverstockPriceModel extends BaseModel {
 
     public void setUpdFlg(Integer updFlg) {
         this.updFlg = updFlg;
+    }
+
+    public String getMsrpPrice() {
+        return msrpPrice;
+    }
+
+    public void setMsrpPrice(String msrpPrice) {
+        this.msrpPrice = msrpPrice;
     }
 }

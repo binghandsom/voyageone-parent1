@@ -154,7 +154,7 @@ public class Tmall_024_OverStock_DictTest {
 					}
 				}
 
-				CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null);
+				CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
 				ruleRoot.addRuleWord(new CustomWord(word));
 			}
 
@@ -205,7 +205,7 @@ public class Tmall_024_OverStock_DictTest {
 
 				RuleExpression useOriUrl = null;
 
-				CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
+				CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
 				ruleRoot.addRuleWord(new CustomWord(word));
 			}
 		}

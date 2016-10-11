@@ -112,6 +112,10 @@
 			<groupId>commons-discovery</groupId>
 			<artifactId>commons-discovery</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+		</dependency>
 
 		<!-- junit -->
 		<dependency>
@@ -220,6 +224,10 @@
 			<groupId>taobao</groupId>
 			<artifactId>taobao-sdk-java</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>taobao</groupId>
+            <artifactId>taobao-sdk-java-ext</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>com.mchange</groupId>
 			<artifactId>c3p0</artifactId>
@@ -357,8 +365,13 @@
 			<groupId>com.github.miemiedev</groupId>
 			<artifactId>mybatis-paginator</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 	<build>
 		<finalName>voyageone-com</finalName>
 		<plugins>

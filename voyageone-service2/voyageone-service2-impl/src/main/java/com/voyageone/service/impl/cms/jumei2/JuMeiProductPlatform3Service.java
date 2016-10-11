@@ -21,11 +21,14 @@ import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.BaseService;
 //import com.voyageone.service.impl.cms.jumei.platform.JMShopBeanService;
 //import com.voyageone.service.impl.cms.jumei.platform.JuMeiProductAddPlatformService;
+import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.jumei.JMShopBeanService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +62,14 @@ public class JuMeiProductPlatform3Service extends BaseService {
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
     @Autowired
     ProductService productService;
+    @Autowired
+    FeedInfoService feedInfoService;
+    @Autowired
+    CmsBtBrandBlockService CmsBtBrandBlockService;
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
 
     public void updateJmByPromotionId(int promotionId) throws Exception {
+        HashMap<String,Boolean> mapMasterBrand =new HashMap<>();//
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(promotionId);
         ShopBean shopBean = serviceJMShopBean.getShopBean(modelCmsBtJmPromotion.getChannelId());
         LOG.info(promotionId + " 聚美上新开始");
@@ -69,12 +77,15 @@ public class JuMeiProductPlatform3Service extends BaseService {
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
                 LOG.info(promotionId + " code:" + model.getProductCode() + "上新begin");
-                updateJm(modelCmsBtJmPromotion, model, shopBean);
+                updateJm(modelCmsBtJmPromotion, model, shopBean,mapMasterBrand);
                 LOG.info(promotionId + " code:" + model.getProductCode() + "上新end");
             }
         } catch (Exception ex) {
             LOG.error("addProductAndDealByPromotionId上新失败", ex);
             ex.printStackTrace();
+        }
+        finally {
+            mapMasterBrand.clear();
         }
         LOG.info(promotionId + " 聚美上新end");
     }
@@ -89,10 +100,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
        if(parameter.platform==null){throw new  BusinessException("CmsBtProduct商品聚美信息不存在.");}
        return parameter;
    }
-    public void updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean) throws Exception {
+    public void updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean,HashMap<String,Boolean> mapMasterBrand) throws Exception {
         try {
             UpdateJmParameter parameter = getUpdateJmParameter(modelCmsBtJmPromotion, cmsBtJmPromotionProductModel, shopBean);
-            api_beforeCheck(parameter);//api调用前check
+            api_beforeCheck(parameter,mapMasterBrand);//api调用前check
             if (parameter.cmsBtJmPromotionProductModel.getSynchStatus() != 2) {
                 // 再售
                 if (StringUtil.isEmpty(parameter.cmsBtJmPromotionProductModel.getJmHashId())) {
@@ -122,6 +133,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
                     cmsBtJmPromotionProductModel.setErrorMsg(cmsBtJmPromotionProductModel.getErrorMsg().substring(0, 600));
                 }
                 daoCmsBtJmPromotionProduct.update(cmsBtJmPromotionProductModel);
+
             } catch (Exception cex) {
                 LOG.error("JuMeiProductPlatform3Service.addProductAndDealByPromotionId", cex);
             }
@@ -134,19 +146,54 @@ public class JuMeiProductPlatform3Service extends BaseService {
         productService.updateProductPlatform(parameter.cmsBtProductModel.getChannelId(), parameter.cmsBtProductModel.getProdId(), parameter.platform, parameter.cmsBtJmPromotionProductModel.getModifier());
     }
     //所有api调用前check
-    public void api_beforeCheck(UpdateJmParameter parameter) {
-
+    public void api_beforeCheck(UpdateJmParameter parameter, HashMap<String,Boolean> mapMasterBrand) {
         String errorMsg = "";
+        String platformBrandId = parameter.platform.getpBrandId();
+        String masterBrand = parameter.cmsBtProductModel.getCommon().getFields().getBrand();
+        LOG.info("jm黑名单:begin");
+        if (mapMasterBrand.containsKey(masterBrand)) {
+            if (mapMasterBrand.get(masterBrand)) {
+                errorMsg = "该商品品牌已在黑名单,操作失败";
+            }
+        } else {
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(parameter.cmsBtProductModel.getChannelId(), parameter.cmsBtProductModel.getCommon().getFields().getCode());
+            if(cmsBtFeedInfoModel != null) {
+                String feedBrand = cmsBtFeedInfoModel.getBrand();
+                LOG.info(String.format("begin ChannelId:%s,cartId:%s,feedBrand:%s,masterBrand:%s,platformBrandId:%s", parameter.cmsBtProductModel.getChannelId(), 27, feedBrand, masterBrand, platformBrandId));
+                if (CmsBtBrandBlockService.isBlocked(parameter.cmsBtProductModel.getChannelId(), 27, feedBrand, masterBrand, platformBrandId)) {
+                    errorMsg = "该商品品牌已在黑名单,操作失败";
+                    mapMasterBrand.put(masterBrand, true);
+                } else {
+                    mapMasterBrand.put(masterBrand, false);
+                }
+                LOG.info("end " + masterBrand + ":" + mapMasterBrand.get(masterBrand));
+            }
+        }
+        if (!StringUtils.isEmpty(errorMsg)) {
+
+        }
         // 6.0.1
-        if ("1".equalsIgnoreCase(parameter.cmsBtProductModel.getLock()))//1:lock, 0:unLock
+        else if ("1".equalsIgnoreCase(parameter.cmsBtProductModel.getLock()))//1:lock, 0:unLock
         {
             errorMsg = "商品被Lock，如确实需要上传商品，请先解锁";
         }
+        //parameter.platform.get
         //6.0.2
-        else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() >= parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
+        else if (parameter.cmsBtJmPromotionProductModel.getDealPrice().doubleValue() > parameter.cmsBtJmPromotionProductModel.getMarketPrice().doubleValue()) {
             errorMsg = "市场价必须大于团购价";
         }
-        if(!StringUtils.isEmpty(errorMsg)) {
+        if (!StringUtils.isEmpty(errorMsg)) {
+            if (parameter.cmsBtJmPromotionProductModel.getSynchStatus() != 2) {
+                parameter.cmsBtJmPromotionProductModel.setSynchStatus(3);
+            }
+            else if(parameter.cmsBtJmPromotionProductModel.getDealEndTimeStatus()==1)
+            {
+                parameter.cmsBtJmPromotionProductModel.setDealEndTimeStatus(3);
+            }
+            else if(parameter.cmsBtJmPromotionProductModel.getPriceStatus()==1)
+            {
+                parameter.cmsBtJmPromotionProductModel.setPriceStatus(3);
+            }
             throw new BusinessException(errorMsg);
         }
     }
@@ -169,12 +216,12 @@ public class JuMeiProductPlatform3Service extends BaseService {
         String errorMsg = "";
         if (parameter.cmsBtJmPromotionModel.getIsPromotionFullMinus())//满减专场
         {
-            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getCmsBtJmPromotionId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
             if (modelPromotionProduct != null) { //活动日期重叠
                 errorMsg = "该商品已于相关时间段内，在其它专场中完成上传，为避免财务结算问题，请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品";//取一个活动id
             }
         } else { //非满减专场 非大促
-            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectFullMinusDateRepeat(model.getId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectFullMinusDateRepeat(model.getCmsBtJmPromotionId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
             if (modelPromotionProduct != null) { //活动日期重叠
                 errorMsg = "该商品已在该大促时间范围内的其它未过期聚美专场中，完成上传，且开始时间与大促开始时间不一致。无法加入当前大促专场。聚美会监控大促专场的营销数据，禁止商品在活动启动前偷跑，大促商品必须有预热。请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品";//取一个活动id
 
@@ -182,7 +229,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
         if (StringUtils.isEmpty(errorMsg) && parameter.cmsBtJmPromotionModel.getPromotionType() == 2)//大促专场
         {
-            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+            CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getCmsBtJmPromotionId(), model.getChannelId(), model.getProductCode(), model.getActivityStart(), model.getActivityEnd());
             if (modelPromotionProduct != null && modelPromotionProduct.getActivityStart() != model.getActivityStart()) { //活动日期重叠 开始时间不相等
                 errorMsg = "该商品已于相关时间段内，在其它专场中完成上传，为避免财务结算问题，请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品";//取一个活动id
 
@@ -212,6 +259,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
             model.setErrorMsg("");
             model.setActivityEnd(modelCmsBtJmPromotion.getActivityEnd());
             daoCmsBtJmPromotionProduct.update(model);
+            LOG.info("延期成功:"+parameter.cmsBtJmPromotionProductModel.getProductCode());
         }
     }
 
@@ -289,7 +337,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
         } catch (Exception ex) {
             parameter.cmsBtJmPromotionProductModel.setSynchStatus(3);
             parameter.cmsBtJmPromotionProductModel.setPriceStatus(0);
-            parameter.cmsBtJmPromotionProductModel.setDealEndTimeStatus(0);
+            if(parameter.cmsBtJmPromotionProductModel.getDealEndTimeStatus()!=2) {
+                parameter.cmsBtJmPromotionProductModel.setDealEndTimeStatus(0);
+            }
             throw ex;
         }
     }
@@ -313,6 +363,8 @@ public class JuMeiProductPlatform3Service extends BaseService {
             long jmActivityEndTime = DateTimeUtilBeijing.toLocalTime(parameter.cmsBtJmPromotionModel.getActivityEnd());
             long sellJmEndTime = DateTimeUtilBeijing.toLocalTime(getDealByHashIDResponse.getEnd_time());
             long sellJmStartTime = DateTimeUtilBeijing.toLocalTime(getDealByHashIDResponse.getStart_time());
+            LOG.info("sellJmStartTime:"+getDealByHashIDResponse.getStart_time().toString());
+            LOG.info("sellJmEndTime:"+getDealByHashIDResponse.getEnd_time().toString());
             CmsBtJmPromotionModel sellJmPromotion = getCmsBtJmPromotionModelBySellHashId(response.getSell_hash_id());
             String sellJmPromotionName="";
                     if(sellJmPromotion!=null) {
@@ -324,8 +376,19 @@ public class JuMeiProductPlatform3Service extends BaseService {
                     }
             if(sellJmPromotion==null)
             {
-                errorMsg = String.format("该商品已加入专场【%s】，并上传成功.由于系统查不到该专场，请于专场【%s】结束后，再进行上传", sellJmPromotionName, sellJmPromotionName);
-                return errorMsg;
+                if (sellJmStartTime == jmActivityStartTime)//开始时间相等
+                {
+                    jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
+                    if (sellJmEndTime < jmActivityEndTime)//【sell_hash_id】的结束时间小于当前专场结束时间的场合
+                    {//调用延迟Deal结束时间API
+                        jmPromotionProduct.setDealEndTimeStatus(1);//设置为待延期
+                    }
+                    errorMsg = String.format("该商品已加入专场【%s】，并上传成功。介于开始时间相同，并进行了延期。如需变更价格，请重新点击【重刷】/【批量同步价格】。操作将影响关联专场，请慎重", sell_hash_id);
+                    return errorMsg;
+                } else {
+                    errorMsg = String.format("存在不属于任何专场的有效聚美【%s】，开始时间【%s】，结束时间【%s】，请确认其所属专场，并告知技术部以进行数据处理。", sell_hash_id, getDealByHashIDResponse.getStart_time(), getDealByHashIDResponse.getEnd_time());
+                    return errorMsg;
+                }
             }
             if (jmPromotion.getIsPromotionFullMinus())//当前专场为 满减专场
             { //4.2.3
@@ -384,9 +447,9 @@ public class JuMeiProductPlatform3Service extends BaseService {
             {
                 if (!sellJmPromotion.getIsPromotionFullMinus())//在售专场为非满减专场
                 {
-                    if (DateTimeUtil.addDays(jmPromotion.getActivityEnd(), -4).getTime() >= getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间4天或以上 时
+                    if (DateTimeUtil.addDays(jmPromotion.getActivityStart(), -4).getTime() >= getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间4天或以上 时
                     {
-                        errorMsg = String.format("该商品已加入专场【sellJmPromotion.getName()】，并上传成功。请于【sellJmPromotion.getActivityEnd()】（年月日 时分秒）之后，再进行上传", sellJmPromotionName, DateTimeUtil.format(getDealByHashIDResponse.getEnd_time(), "yyyy-MM-dd HH:mm:ss"));
+                        errorMsg = String.format("该商品已加入专场%s，并上传成功。请于【%s】（年月日 时分秒）之后，再进行上传", sellJmPromotionName, DateTimeUtil.format(getDealByHashIDResponse.getEnd_time(), "yyyy-MM-dd HH:mm:ss"));
                         return errorMsg;
                     }
                 }
@@ -396,17 +459,26 @@ public class JuMeiProductPlatform3Service extends BaseService {
             {
                 if (!sellJmPromotion.getIsPromotionFullMinus())//在售专场为非满减专场
                 {
-                    if (DateTimeUtil.addDays(jmPromotion.getActivityEnd(), -4).getTime() < getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
+                    if (DateTimeUtil.addDays(jmPromotion.getActivityStart(), -4).getTime() < getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
                     {
                         //4.2.9.1
                         jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
+                        errorMsg = String.format("该商品已加入专场【%s】，并上传成功。当前专场引用了同一HashID，并进行了延期。该商品无预热。如需变更价格，请重新点击【重刷】/【批量同步价格】。操作将影响关联专场，请慎重。", sellJmPromotionName);
+
                         //4.2.9.2 新HashID替换MongoDB中，该商品的Origin HashID 参考步骤6.0.3
                         //4.2.9.2 //在售专场的结束时间小于当前专场结束时间
                         if (sellJmEndTime < jmActivityEndTime) {
                             //调用延迟Deal结束时间API
                             jmPromotionProduct.setDealEndTimeStatus(1);
+                            jmPromotionProduct.setActivityEnd(getDealByHashIDResponse.getEnd_time());
+                            try {
+                                updateDealEndTime(parameter);//自动延期
+
+                            }
+                            catch (Exception ex) {
+                                errorMsg+=ex.getMessage();
+                            }
                         }
-                        errorMsg = String.format("该商品已加入专场【%s】，并上传成功。当前专场引用了同一HashID，并进行了延期。该商品无预热。如需变更价格，请重新点击【重刷】/【批量同步价格】。操作将影响关联专场，请慎重。", sellJmPromotionName);
                         return errorMsg;
                     }
                 }
@@ -476,6 +548,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
 
         try {
+            String errorMsg="";
             List<List<HtDeal_UpdateDealPriceBatch_UpdateData>> pageList = CommonUtil.splitList(list,10);
             for(List<HtDeal_UpdateDealPriceBatch_UpdateData> page:pageList) {
                 request.setUpdate_data(page);
@@ -483,8 +556,13 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 HtDealUpdateDealPriceBatchResponse response = serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
                 if (!response.is_Success()) {
                     model.setPriceStatus(3);
-                    throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+                  //  throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+                    errorMsg+=response.getErrorMsg();
                 }
+            }
+            if(!StringUtil.isEmpty(errorMsg))
+            {
+                throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + errorMsg);
             }
         }
         catch (Exception ex)
@@ -520,6 +598,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
 
         try {
+            String errorMsg="";
             List<List<HtDeal_UpdateDealStockBatch_UpdateData>> pageList = CommonUtil.splitList(list,10);
             for(List<HtDeal_UpdateDealStockBatch_UpdateData> page:pageList) {
                 request.setUpdate_data(page);
@@ -527,8 +606,14 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 HtDealUpdateDealStockBatchResponse response = serviceJumeiHtDeal.updateDealStockBatch(shopBean, request);
                 if (!response.is_Success()) {
                     model.setStockStatus(3);
-                    throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + response.getErrorMsg());
+                    //throw new BusinessException("productId:" + model.getId() + "jmHtDealUpdateDealStockBatch:" + response.getErrorMsg());
+                    errorMsg+=response.getErrorMsg();
                 }
+            }
+            if(!StringUtil.isEmpty(errorMsg))
+            {
+
+                throw new BusinessException("productId:" + model.getId() + "jmHtDealUpdateDealStockBatch:" + errorMsg);
             }
         }
         catch (Exception ex)

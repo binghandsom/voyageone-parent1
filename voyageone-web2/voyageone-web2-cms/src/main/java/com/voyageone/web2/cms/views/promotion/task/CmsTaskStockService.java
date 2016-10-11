@@ -19,7 +19,7 @@ import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.service.impl.wms.InventoryCenterService;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
  * Created by jeff.duan on 2016/03/04.
  */
 @Service
-public class CmsTaskStockService extends BaseAppService {
+public class CmsTaskStockService extends BaseViewService {
 
     /**
      * 增量/库存隔离状态 0：未进行

@@ -2,7 +2,7 @@ package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.service.impl.cms.promotion.PromotionTaskService;
 import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsTaskPriceService extends BaseAppService {
+public class CmsTaskPriceService extends BaseViewService {
 
     @Autowired
     private PromotionTaskService promotionTaskService;

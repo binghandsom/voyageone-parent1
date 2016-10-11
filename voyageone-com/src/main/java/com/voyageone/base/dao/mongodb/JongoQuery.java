@@ -265,4 +265,15 @@ public class JongoQuery extends BaseCondition {
         rs.append("; }");
         return rs.toString();
     }
+
+    /**
+     * 对单属性的简单查询提供一个简单的生成方法
+     *
+     * @param propertyName  查询的属性名
+     * @param propertyValue 查询的属性值
+     * @return 查询对象
+     */
+    public static JongoQuery simple(String propertyName, Object propertyValue) {
+        return new JongoQuery().setQuery("{\"" + propertyName + "\":#}").setParameters(propertyValue);
+    }
 }

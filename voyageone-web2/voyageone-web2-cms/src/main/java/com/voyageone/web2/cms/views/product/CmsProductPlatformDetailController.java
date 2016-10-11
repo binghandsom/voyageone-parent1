@@ -5,9 +5,11 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -37,6 +39,9 @@ public class CmsProductPlatformDetailController extends CmsController {
     @Autowired
     private PlatformCategoryService platformCategoryService;
 
+    @Autowired
+    private CmsBtPriceConfirmLogService cmsBtPriceConfirmLogService;
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_PLATFORM)
     public AjaxResponse doGetProductPlatform(@RequestBody Map params) {
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
@@ -60,7 +65,9 @@ public class CmsProductPlatformDetailController extends CmsController {
         String catId = String.valueOf(params.get("catId"));
         Map<String, Object> result = new HashMap<>();
 
-        result.put("platform", cmsProductPlatformDetailService.changePlatformCategory(channelId, prodId, cartId, catId, getLang()));
+        String catPath = (String) params.get("catPath");
+
+        result.put("platform", cmsProductPlatformDetailService.changePlatformCategory(channelId, prodId, cartId, catId, catPath, getLang()));
 
         return success(result);
     }
@@ -117,13 +124,28 @@ public class CmsProductPlatformDetailController extends CmsController {
         result.put("platform", cmsProductPlatformDetailService.copyPropertyFromMainProduct(getUser().getSelChannelId(), prodId, cartId, getLang()));
         return success(result);
     }
-
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PLATFORM_CATEGORIES)
     public AjaxResponse getPlatformCategories(@RequestBody Map<String, Integer> params) {
 
         Integer cartId = params.get("cartId");
 
         return success(cmsProductPlatformDetailService.getPlatformCategories(getUser(), cartId));
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.PriceConfirm)
+    public AjaxResponse priceConfirm(@RequestBody Map<String, Object> params) {
+
+        String productCode = String.valueOf(params.get("productCode"));
+
+        String channelId = getUser().getSelChannelId();
+
+        Map<String, Object> result = new HashMap<>();
+
+        Map<String, Object> platform = (Map<String, Object>) params.get("platform");
+
+        CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
+        cmsBtPriceConfirmLogService.addConfirmed(getUser().getSelChannelId(),productCode,platformModel,getUser().getUserName());
+        return success(true);
     }
 }
 

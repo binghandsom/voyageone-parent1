@@ -1,0 +1,119 @@
+html, body {
+    height: 100%;
+    font-family: "Microsoft Yahei", sans-serif;
+}
+
+.login-box {
+    width: 350px;
+    padding: 30px;
+    margin: auto;
+    border: 1px solid #eee;
+    box-shadow: 0 0 3px #eee;
+    position: relative;
+    top: 17%;
+}
+
+.login-btn-box {
+    text-align: right;
+}
+
+.logo-box {
+    text-align: center;
+}
+
+.logo-box img {
+    width: 215px;
+}
+
+.login-box .input-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.login-box .input-group-addon {
+    width: 40px;
+}
+
+.first-hidden {
+    display: none !important;
+}
+.wrapper {
+    position: relative;
+    min-height: 100%;
+    padding-bottom: 224px;
+}
+.login-wrap{
+    position: relative;
+    top: 50px;
+}
+.footer-wrap_footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.headline_footer {
+    display: block;
+    margin: 4px 0 25px 0;
+    border-bottom: 1px dotted #e4e9f0;
+}
+.headline_footer h2 {
+    border-bottom: 2px solid #72c02c;
+    margin: 0 0 -2px 0;
+    padding-bottom: 1px;
+    display: inline-block;
+    font-size: 22px;
+    font-family: 'Microsoft Yahei', sans-serif;
+}
+.copyright_footer {
+    font-size: 12px;
+    padding: 0;
+    background: #3e4753;
+    border-top: solid 1px #777;
+}
+.copyright_footer p {
+    color: #dadada;
+    margin-top: 12px;
+}
+.footer_footer {
+    color: #dadada;
+    background: #585f69;
+    padding: 21px 0 35px;
+    height: 182px;
+}
+.footer_footer h2 {
+    color: #e4e4e4;
+    background: none;
+    text-shadow: none;
+}
+.container_footer {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+@media (min-width: 768px) {
+    .container_footer {
+        width: 464px;
+    }
+}
+@media (min-width: 992px) {
+    .container_footer {
+        width: 1000px;
+    }
+}
+@media (min-width: 1024px) {
+    .container_footer {
+        width: 1021px;
+    }
+}
+@media (min-width: 1200px) {
+    .container_footer {
+        width: 1200px;
+    }
+}
+@media (min-width: 1400px) {
+    .container_footer {
+        width: 1389px;
+    }
+}

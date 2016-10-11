@@ -1,4 +1,7 @@
 package com.voyageone.common.configs.beans;
+
+import com.voyageone.common.util.JsonUtil;
+
 /**
  * Created by Jack on 4/21/2015.
  */
@@ -115,5 +118,10 @@ public class TypeChannelBean {
 
     public void setCartType(String cartType) {
         this.cartType = cartType;
+    }
+
+    @Override
+    public String toString() {
+        return JsonUtil.getJsonString(this);
     }
 }

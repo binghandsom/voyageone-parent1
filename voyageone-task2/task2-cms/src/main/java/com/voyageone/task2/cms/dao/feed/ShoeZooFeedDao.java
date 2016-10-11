@@ -31,4 +31,10 @@ public interface ShoeZooFeedDao {
     void delete();
 
     List<CmsBtFeedInfoShoeZooModel> selectSuperfeedModel(Map colums);
+
+    int fullCopyTemp();
+
+    int updateMd5();
+
+    int updateUpdateFlag();
 }

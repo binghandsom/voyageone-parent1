@@ -17,7 +17,7 @@ import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
 import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -41,7 +41,7 @@ import static com.voyageone.common.util.ExcelUtils.getString;
  * @version 2.0.0
  */
 @Service
-class CmsTaskPictureService extends BaseAppService {
+class CmsTaskPictureService extends BaseViewService {
 
     @Autowired
     private TaskService taskService;
