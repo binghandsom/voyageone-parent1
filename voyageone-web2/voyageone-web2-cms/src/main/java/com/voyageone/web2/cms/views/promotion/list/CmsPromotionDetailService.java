@@ -78,61 +78,61 @@ public class CmsPromotionDetailService extends BaseViewService {
 //    private static final int priceCellNum = 8;
 //    private static final int tagCellNum = 9;
 
-    /**
-     * promotion商品插入
-     *
-     * @param productPrices 需要插入的Product列表
-     * @param promotionId   活动ID
-     * @param operator      操作者
-     * @return Map  成功和失败的列表
-     */
-    public Map<String, List<String>> insertPromotionProduct(List<CmsPromotionProductPriceBean> productPrices, int promotionId, String operator) {
-
-        Map<String, List<String>> response = new HashMap<>();
-        response.put("succeed", new ArrayList<>());
-        response.put("fail", new ArrayList<>());
-
-        // 获取promotion信息
-        CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
-        if (promotion == null) {
-            $info("promotionId不存在：" + promotionId);
-            productPrices.forEach(m -> response.get("fail").add(m.getCode()));
-            return response;
-        }
-        // 获取Tag列表
-        List<CmsBtTagModel> tags = cmsPromotionSelectService.selectListByParentTagId(promotion.getRefTagId());
-        String channelId = promotion.getChannelId();
-        Integer cartId = promotion.getCartId();
-        productPrices.forEach(item -> {
-            boolean errflg = false;
-            try {
-                CmsBtTagModel tagId = searchTag(tags, item.getTag());
-                if (tagId == null) {
-                    throw (new Exception("Tag不存在"));
-                }
-
-                PromotionDetailAddBean request = new PromotionDetailAddBean();
-                request.setModifier(operator);
-                request.setChannelId(channelId);
-                request.setCartId(cartId);
-                request.setProductCode(item.getCode());
-                request.setPromotionId(promotionId);
-                request.setPromotionPrice(item.getPrice());
-                request.setTagId(tagId.getId());
-                request.setTagPath(tagId.getTagPath());
-
-                promotionDetailService.addPromotionDetail(request);
-
-            } catch (Exception e) {
-                response.get("fail").add(item.getCode());
-                errflg = true;
-            }
-            if (!errflg) {
-                response.get("succeed").add(item.getCode());
-            }
-        });
-        return response;
-    }
+//    /**
+//     * promotion商品插入
+//     *
+//     * @param productPrices 需要插入的Product列表
+//     * @param promotionId   活动ID
+//     * @param operator      操作者
+//     * @return Map  成功和失败的列表
+//     */
+//    public Map<String, List<String>> insertPromotionProduct(List<CmsPromotionProductPriceBean> productPrices, int promotionId, String operator) {
+//
+//        Map<String, List<String>> response = new HashMap<>();
+//        response.put("succeed", new ArrayList<>());
+//        response.put("fail", new ArrayList<>());
+//
+//        // 获取promotion信息
+//        CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
+//        if (promotion == null) {
+//            $info("promotionId不存在：" + promotionId);
+//            productPrices.forEach(m -> response.get("fail").add(m.getCode()));
+//            return response;
+//        }
+//        // 获取Tag列表
+//        List<CmsBtTagModel> tags = cmsPromotionSelectService.selectListByParentTagId(promotion.getRefTagId());
+//        String channelId = promotion.getChannelId();
+//        Integer cartId = promotion.getCartId();
+//        productPrices.forEach(item -> {
+//            boolean errflg = false;
+//            try {
+//                CmsBtTagModel tagId = searchTag(tags, item.getTag());
+//                if (tagId == null) {
+//                    throw (new Exception("Tag不存在"));
+//                }
+//
+//                PromotionDetailAddBean request = new PromotionDetailAddBean();
+//                request.setModifier(operator);
+//                request.setChannelId(channelId);
+//                request.setCartId(cartId);
+//                request.setProductCode(item.getCode());
+//                request.setPromotionId(promotionId);
+//                request.setPromotionPrice(item.getPrice());
+//                request.setTagId(tagId.getId());
+//                request.setTagPath(tagId.getTagPath());
+//
+//                promotionDetailService.addPromotionDetail(request);
+//
+//            } catch (Exception e) {
+//                response.get("fail").add(item.getCode());
+//                errflg = true;
+//            }
+//            if (!errflg) {
+//                response.get("succeed").add(item.getCode());
+//            }
+//        });
+//        return response;
+//    }
 
     public Map<String, List<String>> insertPromotionProduct2(List<CmsBtPromotionGroupsBean> productModels, int promotionId, String operator) {
 

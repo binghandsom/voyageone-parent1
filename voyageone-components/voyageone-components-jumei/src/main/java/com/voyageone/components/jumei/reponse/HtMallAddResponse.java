@@ -101,7 +101,7 @@ public class HtMallAddResponse extends BaseJMResponse {
                         sbMsg.append("mallInfo 参数错误");
                         break;
                     default:
-                        sbMsg.append(map.get("reason").toString());
+                        sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
                 }
                 sbMsg.append("] ");
                 this.setErrorMsg(sbMsg.toString() + this.body);
