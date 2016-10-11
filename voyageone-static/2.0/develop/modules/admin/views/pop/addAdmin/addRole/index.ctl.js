@@ -22,7 +22,6 @@ define([
                 {'id': 3, 'application': 'OMS', 'valid': false},
                 {'id': 4, 'application': 'WMS', 'valid': false}
             ];
-            this.showStore = false;
             this.saveInfo = {
                 roleName: this.sourceData !== 'add' ? this.sourceData.roleName : '',
                 roleType: this.sourceData !== 'add' ? this.sourceData.roleType + '' : '',
@@ -140,7 +139,6 @@ define([
                     _.forEach(self.applicationList, function (i) {
                         if (i.application.toLocaleLowerCase() == item) {
                             i.valid = true;
-                            if (i.application = 'WMS')self.showStore = true;
                         }
                     })
                 })
