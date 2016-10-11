@@ -8,7 +8,6 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.cms.bean.ShoeCityFeedBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
@@ -62,6 +61,12 @@ class SEAnalysisContext {
 
         sku.setQty(feedBean.getQty());
 
+        sku.setWeightCalc("4");
+
+        sku.setWeightOrgUnit("lb");
+
+        sku.setWeightOrg("4");
+
         CmsBtFeedInfoModel code = getProduct(feedBean);
 
         code.getSkus().add(sku);
@@ -93,14 +98,24 @@ class SEAnalysisContext {
         product.setImage(imageUrls);
         product.setBrand(feedBean.getBrand());
         product.setWeight("4");
-        product.setShortDescription("");
-        product.setLongDescription("");
+        product.setShortDescription(feedBean.getCategory());
+        product.setLongDescription(feedBean.getCategory());
         product.setSkus(new ArrayList<>());
-        product.setAttribute(new HashMap<>());
+        //增加属性
+        Map<String, List<String>> attribute = new HashMap<>();
+        List<String> productType = new ArrayList<>();
+        productType.add(feedBean.getProduct_type());
+        List<String> sizeType = new ArrayList<>();
+        sizeType.add(feedBean.getSize_type());
+        attribute.put("productType",productType);
+        attribute.put("sizeType",sizeType);
+        //增加属性结束
+        product.setAttribute(attribute);
         product.setUpdFlg(0);
         product.setChannelId(ChannelConfigEnums.Channel.SHOE_CITY.getId());
         product.setProductType(feedBean.getProduct_type());
-
+        product.setUsageEn(feedBean.getCategory());
+        product.setMaterial(feedBean.getCategory());
         codeList.add(product);
         codeMap.put(code, product);
 
@@ -148,7 +163,15 @@ class SEAnalysisContext {
      * 表达式常量
      */
     private class ExpParams {
-        double cost;
+
+        // 梁兄请不要删除一下常量 parseExpression会用
+        public final double ITEM_WEIGHT = 4D;
+        public final double ALIPAY_COMMISSION = 0D;
+        public final double TMALL_COMMISSION = 0.05D;
+        public final double RETURN_MANAGEMENT = 0.05D;
+        public final double ITEM_DUTY = 0.1D;
+        public final double EXCHANGE_RATE = 6.5D;
+        public double cost;
         ExpParams(ShoeCityFeedBean feedBean) {
             this.cost = feedBean.getCost().doubleValue();
         }

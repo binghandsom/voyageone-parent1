@@ -75,6 +75,9 @@ public class ProductStatusHistoryService extends BaseService {
 
     @VOTransactional
     public void insertList(String channelId, List<String> codes, String status, int cartId, EnumProductOperationType enumProductOperationType, String comment, String modifier) {
+        if (codes == null || codes.isEmpty()) {
+            return;
+        }
         List<CmsBtProductStatusHistoryModel> list = new ArrayList<>();
         CmsBtProductStatusHistoryModel productStatusHistory;
         for (String code : codes) {
@@ -87,6 +90,9 @@ public class ProductStatusHistoryService extends BaseService {
 
     @VOTransactional
     public void insertList(String channelId, List<String> codes, int cartId, EnumProductOperationType operationType, String comment, String modifier) {
+        if (codes == null || codes.isEmpty()) {
+            return;
+        }
         List<CmsBtProductStatusHistoryModel> list = new ArrayList<>();
         CmsBtProductStatusHistoryModel productStatusHistory;
 

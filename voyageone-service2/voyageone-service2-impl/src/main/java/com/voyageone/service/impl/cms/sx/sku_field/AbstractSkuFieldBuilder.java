@@ -8,16 +8,16 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtChannelSkuConfigDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropSkuDao;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +41,7 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
 
     protected abstract boolean init(List<Field> platformProps, int cartId);
 
-    public List<Field> buildSkuInfoField(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
+    public List<Field> buildSkuInfoField(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
         int cartId = expressionParser.getSxData().getCartId();
         if (getCartId() == -1) {
             // 未初期化
@@ -59,7 +59,7 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
         return buildSkuInfoFieldChild(platformProps, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
     }
 
-    public abstract List buildSkuInfoFieldChild(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception;
+    public abstract List buildSkuInfoFieldChild(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception;
 
     public void setDao(CmsMtPlatformPropSkuDao cmsMtPlatformPropSkuDao, CmsMtChannelSkuConfigDao cmsMtChannelSkuConfigDao) {
         this.cmsMtPlatformPropSkuDao = cmsMtPlatformPropSkuDao;
@@ -104,7 +104,7 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
                 try {
                     List<Map<String, Object>> listVal = (List<Map<String, Object>>) objSku;
                     Object objVal = null;
-                    if (StringUtils.isEmpty((String) listVal.get(0).get("sku_outerId"))) {
+                    if (ListUtils.isNull(listVal) || StringUtils.isEmpty((String) listVal.get(0).get("sku_outerId"))) {
                         // 画面没填的话，会有一条空的数据
                         return null;
                     }

@@ -1,0 +1,260 @@
+<div class="breadcrumbs" ng-init="ctrl.init()">
+    <div class="container">
+        <h4 class="pull-left" translate="TXT_ORDER_INFO"></h4>
+        <ul class="pull-right breadcrumb">
+            <li><a href="#/home" translate="TXT_HOME"></a></li>
+            <li class="active disabled" translate="TXT_ORDER"></li>
+            <li class="active selected" translate="TXT_ORDER_INFO"></li>
+        </ul>
+    </div>
+</div>
+<div class="container content">
+    <div class="center-block sr-only" ng-repeat="item in ctrl.data" style="width: 400px; height: 400px;">
+        <barcode ng-attr-id="{{'label' + $index}}" type="code128b" string="{{item.consolidationOrderId}}" options="ctrl.barcodeOpts"></barcode>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="form-inline">
+                <div class="form-group">
+                    <label class="control-label m-l-sm" translate="TXT_ORDER_ID"></label>
+                    <input id="ORDER_ID" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.consolidationOrderId" enter-click="#searchButton">
+                </div>
+                <div class="form-group">
+                    <label class="control-label m-l-sm" translate="TXT_SKU"></label>
+                    <input id="SKU" type="text" class="form-control input-sm" ng-model="ctrl.searchInfo.sku" enter-click="#searchButton">
+                </div>
+                <div class="form-group">
+                    <label class="control-label m-l-sm" translate="TXT_STATUS"></label>
+                    <select name="SKU_STATUS" id="select" class="form-control input-sm" ng-model="ctrl.searchInfo.status" ng-options="orderStatus.value as orderStatus.name for orderStatus in ctrl.orderStatusList">
+                        <option value="" translate="TXT_ALL"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" translate="TXT_ORDER_DATE"></label>
+                    <span class="input-group">
+                        <input name="activityStart" class="form-control input-sm" ng-attr-title="{{'TXT_FROM' | translate}}" type="date" ng-model="ctrl.orderDateFrom" uib-datepicker-popup datepicker-options="{maxDate:ctrl.orderDateTo}" is-open="datepicker3">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default input-sm" ng-click="datepicker3=!datepicker3"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </span>
+                    <span>~</span>
+                    <span class="input-group">
+                        <input name="activityStart" class="form-control input-sm" ng-attr-title="{{'TXT_TO' | translate}}" type="date" ng-model="ctrl.orderDateTo" uib-datepicker-popup datepicker-options="{minDate:ctrl.orderDateFrom}" is-open="datepicker4"> <span class="input-group-btn">
+                            <button class="btn btn-default input-sm" ng-click="datepicker4=!datepicker4"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </span>
+                </div>
+                <div class="pull-right">
+                    <button id="searchButton" ng-click="ctrl.pageInfo.curr=1;ctrl.search()" class="btn btn-primary btn-sm" translate="BTN_SEARCH"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row margin-bottom-10">
+        <div class="col-sm-9">
+            <button ng-if="!ctrl.currentShipment" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('new')" translate="BTN_NEW_SHIPMENT"></button>
+            <button ng-if="ctrl.currentShipment && ctrl.channelConfig.vendorOperateType == 'ORDER'" class="btn btn-success btn-sm" ng-click="ctrl.popShipment('end')" translate="BTN_END_SHIPMENT"></button>
+            <span class="form-text"> {{'TXT_CURRENT_SHIPMENT' | translate}} :
+                <a ng-if="ctrl.currentShipment" ng-click="ctrl.popShipment('edit')">{{ctrl.currentShipment.shipmentName}}</a>
+                <span ng-if="ctrl.currentShipment">
+                    -
+                    {{ctrl.currentShipment.orderTotal}}
+                    {{'TXT_ORDERS' | translate}}/{{ctrl.currentShipment.skuTotal}} {{'TXT_SKUS' | translate}}
+                    {{'TXT_SCANNED' | translate}}
+                </span>
+                <label ng-if="!ctrl.currentShipment" translate="TXT_NO_CURRENT_SHIPMENT"></label>
+            </span>
+            <button class="btn btn-xs btn-info" ng-if="ctrl.channelConfig.vendorOperateType == 'SKU' && ctrl.currentShipment"
+                    ng-click="ctrl.popAddToShipmentForSku()" translate="BTN_SCAN"></button>
+        </div>
+        <div class="col-sm-3" ng-if="!(ctrl.channelConfig.vendorOperateType == 'ORDER')"></div>
+        <div class="col-sm-3 text-right form-inline">
+            <label class="control-label" ng-if="ctrl.channelConfig.vendorOperateType == 'ORDER'" translate="TXT_ORDER_BY"></label>
+            <select id="select_order" class="form-control" ng-model="ctrl.sortParamBeanForDownload.columnName" ng-if="ctrl.channelConfig.vendorOperateType == 'ORDER'">
+                <option value="client_sku" translate="TXT_SKU"></option>
+                <option value="consolidation_order_id" translate="TXT_ORDER_ID"></option>
+                <option ng-attr-value="{{'attribute' + ($index + 1)}}" ng-repeat="value in ctrl.channelConfig.additionalAttributes">{{value}} </option>
+            </select>
+            <button class="btn btn-primary btn-sm" ng-click="ctrl.downloadPickingList()" translate="BTN_DOWNLOAD"></button>
+        </div>
+    </div>
+    <div class="panel panel-vo" ng-if="ctrl.channelConfig.vendorOperateType == 'ORDER'">
+        <div class="panel-body">
+            <div class="table-responsive" if-no-rows="ctrl.data">
+                <table class="table table-vo">
+                    <thead>
+                    <tr>
+                        <th class="text-right" style="width: 30px;" ng-click="ctrl.toggleAll()"><i
+                                ng-class="{'fa fa-plus': ctrl.collapse, 'fa fa-minus':!ctrl.collapse}"></i></th>
+                        <th class="v-middle td-1-5 vo-hover" ng-click="ctrl.changeSearchOrder('consolidation_order_id')">
+                            {{'TXT_ORDER_ID' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_id' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_id' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th class="v-middle td-2 vo-hover" ng-click="ctrl.changeSearchOrder('consolidation_order_time')">
+                            {{'TXT_ORDER_DATE' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_time' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_time' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th class="v-middle td-1">
+                            {{'TXT_SKU' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'client_sku' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'client_sku' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th class="v-middle td-2" translate="TXT_NAME">
+                            {{'TXT_NAME' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'name' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'name' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th class="v-middle td-1">
+                            {{'TXT_STATUS' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'status' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'status' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th class="v-middle td-1">
+                            {{'TXT_VO_PRICE' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'client_promotion_price' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'client_promotion_price' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th class="v-middle td-1" ng-if="ctrl.channelConfig.salePriceShow == '1'">
+                            {{'TXT_SALE_PRICE' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'retail_price' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'retail_price' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th ng-repeat="attribute in ctrl.channelConfig.additionalAttributes"
+                            ng-class="::ctrl.channelConfig.additionalAttributesClass[$index] + ' v-middle'">
+                            {{attribute}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + ($index + 1) && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + ($index + 1) && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th class="v-middle td-2-5" translate="TXT_ACTION"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat-start="item in ctrl.data" ng-class="::item.className">
+                        <td class="text-right v-middle" ng-click="item.collapse = !item.collapse"><i ng-class="{'fa fa-plus': item.collapse, 'fa fa-minus':!item.collapse}"></i>
+                        </td>
+                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderId}}</strong></td>
+                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{item.consolidationOrderTime | date: 'yyyy-MM-dd HH:mm:ss'}}</strong></td>
+                        <td ng-if="item.orderInfoBeanList.length == 1" class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{'(' + item.orderInfoBeanList.length + ' SKU)'}}</strong></td>
+                        <td ng-if="item.orderInfoBeanList.length > 1" class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{'(' + item.orderInfoBeanList.length + ' SKUs)'}}</strong></td>
+                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
+                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>{{ctrl.getStatusName(item.status)}}</strong></td>
+                        <td class="v-middle" ng-click="item.collapse = !item.collapse"><strong>${{item.totalVoPrice}}</strong></td>
+                        <td class="v-middle" ng-if="ctrl.channelConfig.salePriceShow == '1'" ng-click="item.collapse = !item.collapse"><strong>¥{{item.totalRetailPrice}}</strong>
+                        </td>
+                        <td ng-repeat="attribute in ctrl.channelConfig.additionalAttributes" class="v-middle" ng-click="item.collapse = !item.collapse"><strong>-</strong></td>
+                        <td class="v-middle">
+                            <button class="btn btn-xs btn-danger" ng-if="item.status == 1" ng-click="ctrl.cancelOrder(item)" translate="BTN_CANCEL"></button>
+                            <button class="btn btn-xs btn-info" ng-if="item.status == 1" ng-click="ctrl.popAddToShipmentForOrder(item)" ng-disabled="!ctrl.currentShipment" translate="BTN_ADD_TO_SHIPMENT"></button>
+                            <button class="btn btn-xs btn-primary" ng-click="ctrl.printLabel($index)" ng-if="item.status == 2 || item.status ==3" translate="BTN_LABEL"></button>
+                            <button class="btn btn-xs btn-primary" ng-click="ctrl.reopenOrder(item)"
+                                    ng-if="item.status == 7" translate="BTN_REOPEN"></button>
+                        </td>
+
+                    </tr>
+                    <tr ng-if="!item.collapse" ng-class="::item.subClassName" ng-repeat="detail in item.orderInfoBeanList" ng-repeat-end>
+                        <td class="v-middle"></td>
+                        <td class="v-middle"></td>
+                        <td class="v-middle">{{detail.consolidationOrderTime| date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="v-middle">{{detail.clientSku}}</td>
+                        <td class="v-middle">
+                            <span class="v-middle" ng-if="detail.name.length <= 25">{{detail.name}}</span>
+                            <span class="v-middle" ng-if="detail.name.length > 25" uib-tooltip="{{detail.name}}" tooltip-trigger="mouseenter" tooltip-placement="top">{{detail.name | stringCutter:true:25:' ...'}}</span>
+                        </td>
+                        <td class="v-middle">{{ctrl.getStatusName(detail.status)}}</td>
+                        <td class="v-middle">${{detail.voPrice}}</td>
+                        <td class="v-middle" ng-if="ctrl.channelConfig.salePriceShow == '1'">¥{{detail.salePrice}}</td>
+                        <td ng-repeat="attribute in ctrl.channelConfig.additionalAttributes" class="v-middle">{{detail["attribute" + ($index + 1)]}}</td>
+                        <td class="v-middle"></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="col-sm-12 m-t-lg no-padding">
+                <vpagination config="ctrl.pageInfo" total="ctrl.pageInfo.total"></vpagination>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-vo" ng-if="ctrl.channelConfig.vendorOperateType == 'SKU'">
+        <div class="panel-body">
+            <div class="table-responsive" if-no-rows="ctrl.data">
+                <table class="table table-fixed table-vo">
+                    <thead>
+                    <tr>
+                        <!--<th class="text-right" style="width: 30px" ng-click="ctrl.toggleAll()" ng-bind="ctrl.collapse ? '+' : '-'"></th>-->
+                        <th class="v-middle td-1-5 vo-hover" ng-click="ctrl.changeSearchOrder('consolidation_order_id')">
+                            {{'TXT_ORDER_ID' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_id' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_id' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th class="v-middle td-1-5 vo-hover" ng-click="ctrl.changeSearchOrder('consolidation_order_time')">
+                            {{'TXT_ORDER_DATE' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_time' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'consolidation_order_time' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th class="v-middle td-1-5 vo-hover"  ng-click="ctrl.changeSearchOrder('client_sku')">
+                            {{'TXT_SKU' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'client_sku' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'client_sku' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th class="v-middle td-3 vo-hover"  ng-click="ctrl.changeSearchOrder('name')">
+                            {{'TXT_NAME' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'name' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'name' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th class="v-middle td-1 vo-hover"  ng-click="ctrl.changeSearchOrder('status')">
+                            {{'TXT_STATUS' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'status' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'status' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th class="v-middle td-1 vo-hover"  ng-click="ctrl.changeSearchOrder('client_promotion_price')">
+                            {{'TXT_VO_PRICE' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'client_promotion_price' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'client_promotion_price' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th ng-if="ctrl.channelConfig.salePriceShow == '1'" class="v-middle td-1" ng-click="ctrl.changeSearchOrder('retail_price')">
+                            {{'TXT_SALE_PRICE' | translate}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'retail_price' && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'retail_price' && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th ng-repeat="attribute in ctrl.channelConfig.additionalAttributes"
+                            ng-class="::ctrl.channelConfig.additionalAttributesClass[$index] + ' vo-hover'"
+                            ng-click="ctrl.changeSearchOrder('attribute' + ($index + 1))">
+                            {{attribute}}
+                            <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + ($index + 1) && ctrl.searchInfo.sortParamBean.direction == 'ASC'" class="glyphicon glyphicon-chevron-up"></i>
+                        <i ng-if="ctrl.searchInfo.sortParamBean.columnName == 'attribute' + ($index + 1) && ctrl.searchInfo.sortParamBean.direction == 'DESC'" class="glyphicon glyphicon-chevron-down"></i>
+                        </th>
+                        <th class="v-middle td-1-5" translate="TXT_ACTION"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in ctrl.data" ng-class="::item.className">
+                        <!--<td class="text-right" ng-click="item.collapse = !item.collapse" ng-bind="item.collapse ? '+' : '-'"></td>-->
+                        <td class="v-middle">{{item.consolidationOrderId}}</td>
+                        <td class="v-middle">{{item.consolidationOrderTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="v-middle">{{item.clientSku}}</td>
+                        <td class="v-middle">
+                            <span class="v-middle" ng-if="item.name.length <= 30">{{item.name}}</span>
+                            <span class="v-middle" ng-if="item.name.length > 30" uib-tooltip="{{item.name}}"
+                                  tooltip-trigger="mouseenter" tooltip-placement="top">{{item.name | stringCutter:true:30:' ...'}}</span>
+                        </td>
+                        <td class="v-middle">{{ctrl.getStatusName(item.status)}}</td>
+                        <td class="v-middle">${{item.voPrice}}</td>
+                        <td class="v-middle" ng-if="ctrl.channelConfig.salePriceShow == '1'">¥{{item.salePrice}}</td>
+                        <td ng-repeat="attribute in ctrl.channelConfig.additionalAttributes" class="v-middle">{{item["attribute" + ($index + 1)]}}</td>
+                        <td class="v-middle">
+                            <button ng-if="item.status == 1" class="btn btn-xs btn-warning" ng-click="ctrl.cancelSku(item)" translate="BTN_CANCEL"></button>
+                            <button ng-if="item.status == 7" class="btn btn-xs btn-primary" ng-click="ctrl.reopenSku(item)" translate="BTN_REOPEN"></button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-12 m-t-lg no-padding">
+                <vpagination config="ctrl.pageInfo" total="ctrl.pageInfo.total"></vpagination>
+            </div>
+        </div>
+    </div>
+</div>

@@ -2,11 +2,10 @@ package com.voyageone.web2.cms.views.system.setting;
 
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.com.ComMtValueChannelDao;
 import com.voyageone.service.model.com.ComMtValueChannelModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,22 +18,26 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class ValueChannelService extends BaseAppService {
+public class ValueChannelService extends BaseViewService {
+
+    private final ComMtValueChannelDao comMtValueChannelDao;
 
     @Autowired
-    private ComMtValueChannelDao comMtValueChannelDao;
+    public ValueChannelService(ComMtValueChannelDao comMtValueChannelDao) {
+        this.comMtValueChannelDao = comMtValueChannelDao;
+    }
 
-    public boolean addHsCodes(String channelId, List<String> hsCodeList, Integer typeId, String modifier) {
+    boolean addHsCodes(String channelId, List<String> hsCodeList, Integer typeId, String modifier) {
 
         hsCodeList.forEach(s -> {
-            if(!StringUtil.isEmpty(s.trim())){
-                Map<String,Object> map = new HashMap<String, Object>();
-                map.put("channelId",channelId);
-                map.put("typeId",typeId);
-                map.put("name",s);
-                map.put("value",s);
+            if (!StringUtil.isEmpty(s.trim())) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("channelId", channelId);
+                map.put("typeId", typeId);
+                map.put("name", s);
+                map.put("value", s);
                 int cnt = comMtValueChannelDao.selectCount(map);
-                if(cnt == 0){
+                if (cnt == 0) {
                     ComMtValueChannelModel comMtValueChannelModel = new ComMtValueChannelModel();
                     comMtValueChannelModel.setChannelId(channelId);
                     comMtValueChannelModel.setLangId("cn");

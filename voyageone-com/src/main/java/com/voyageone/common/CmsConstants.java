@@ -38,8 +38,8 @@ public class CmsConstants {
         ToInStock 		// 在库
     }
 
-	/**
-	 * workload type
+    /**
+     * workload type
      */
     // TODO: 16/4/28 无人使用就删除了
     public enum WorkloadType {
@@ -79,8 +79,8 @@ public class CmsConstants {
         // 强制击穿阈值(例如: 10 表示的是10%)
         String MANDATORY_BREAK_THRESHOLD = "MANDATORY_BREAK_THRESHOLD";
 
-        // Feed导入Master时是否自动上新
-        String AUTO_APPROVE_PRODUCT_CHANGE = "AUTO_APPROVE_PRODUCT_CHANGE";
+        // Feed导入Master时变更需要自动同步的平台列表
+        String AUTO_SYNC_CARTS = "AUTO_SYNC_CARTS";
 
         // 店铺级别MSRP价格计算公式
         String PRICE_MSRP_CALC_FORMULA = "PRICE_MSRP_CALC_FORMULA";
@@ -122,6 +122,10 @@ public class CmsConstants {
         String PRICE_TEJIABAO_OPEN = ".tejiabao_open";
         String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
 
+        // 别名相关
+        String ALIAS = "ALIAS";
+        String COLOR_ALIAS = ".color_alias";
+
         String FEED_SEARCH_SORT = "FEED_SEARCH_SORT";
 
         // App端启用开关(用于控制所有平台的)
@@ -141,6 +145,15 @@ public class CmsConstants {
 
         // 新建product时是否自动设置PC端自拍商品图images6(1:自动设置  空，0:不设置)
         String AUTO_SET_IMAGES6_FLG = "AUTO_SET_IMAGES6_FLG";
+
+        // 该店铺每次feed-master导入最大件数
+        String FEED_IMPORT_MAX = "FEED_IMPORT_MAX";
+
+        // 是否只修改价格(1:只修改价格 空,0:修改全部属性)
+        String ONLY_UPDATE_PRICE_FLG = "ONLY_UPDATE_PRICE_FLG";
+
+        // feed增加状态属性
+        String AUTO_SET_FEED_IMPORT_FLG = "AUTO_SET_FEED_IMPORT_FLG";
     }
 
     public interface DataAmount {
@@ -230,6 +243,7 @@ public class CmsConstants {
         int errorNum = 2;       // 上新失败
         int uploadingNum = 3;   // 上新中(上新完成后回写状态的时候用)
         int review = 4;         // 达尔文产品审核中
+        int waitCnUpload = 5;  // 独立域名等待xml上传
     }
 
     public interface FeedUpdFlgStatus{
@@ -239,6 +253,15 @@ public class CmsConstants {
         int Fail = 2;     //导入失败
         int NotIMport = 3; //不导入
         int FeedErr = 8;  //Feed数据异常
+        int FeedBlackList = 7;  //黑名单
     }
 
+    /**
+     * feed product更新接口的参数方式
+     */
+    public interface FeedProductUpdateType {
+        int CMS_FEED = 0; //CMS feed 导入
+        int VMS_FEED = 80; //VMS feed 导入
+        int VMS_PRICE_INVENTORY = 81; //VMS price inventory 导入
+    }
 }

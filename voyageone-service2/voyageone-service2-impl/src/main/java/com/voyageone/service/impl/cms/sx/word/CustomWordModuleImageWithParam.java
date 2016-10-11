@@ -63,21 +63,30 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
             imageParams.add(imageParam);
         }
 
-        int deleteItemsCount =0;
-        for(Iterator<String> iterator=imageParams.iterator();iterator.hasNext();){
-            String param = iterator.next();
-            if(param == null || "".equals(param.trim())){
+        // 20160918 tom 逻辑修改 START
+        // 参数没有的场合, 认为这个参数不存在 -> 参数没有的场合, 认为这个参数值为空, 因为要保证顺序与设置的字典一致
+//        int deleteItemsCount =0;
+//        for(Iterator<String> iterator=imageParams.iterator();iterator.hasNext();){
+//            String param = iterator.next();
+//            if(param == null || "".equals(param.trim())){
+//
+//                iterator.remove();
+//
+//                deleteItemsCount++;
+//            }
+//
+//        }
+//
+//        for (int i=0;i<deleteItemsCount;i++){
+//            imageParams.add("");
+//        }
 
-                iterator.remove();
-
-                deleteItemsCount++;
+        for (int i = 0; i < imageParams.size(); i++) {
+            if (StringUtils.isEmpty(imageParams.get(i))) {
+                imageParams.set(i, "");
             }
-
         }
-
-        for (int i=0;i<deleteItemsCount;i++){
-            imageParams.add("");
-        }
+        // 20160918 tom 逻辑修改 END
 
         // 20160513 tom 图片服务器切换 START
         // modified by morse.lu 2016/07/13 start
@@ -85,10 +94,18 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
         String parseResult;
         if (Boolean.parseBoolean(useCmsBtImageTemplate)) {
             // 用图片管理模板
+            // added by morse.lu 2016/09/19 start
+            RuleExpression viewTypeExpression = customModuleUserParamImageWithParam.getViewType();
+            String viewType = expressionParser.parse(viewTypeExpression, shopBean, user, extParameter);
+            if (StringUtils.isEmpty(viewType)) {
+                viewType = "1"; // 默认 PC端
+            }
+            // added by morse.lu 2016/09/19 end
             parseResult = sxProductService.getImageTemplate(sxData.getChannelId(),
                                                             sxData.getCartId(),
                                                             4, // 4：参数模版
-                                                            1, // PC端
+//                                                            1, // PC端
+                                                            Integer.valueOf(viewType),
                                                             sxData.getMainProduct().getCommon().getFields().getBrand(),
                                                             sxData.getMainProduct().getCommon().getFields().getProductType(),
                                                             sxData.getMainProduct().getCommon().getFields().getSizeType(),

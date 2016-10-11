@@ -18,6 +18,10 @@ public class CmsBtSizeChartModel extends BaseMongoModel {
     private List<String> sizeType;
     private List<CmsBtSizeChartModelSizeMap> sizeMap = new ArrayList<>();
     private int active;
+
+
+
+
     public String getChannelId() {
         return channelId;
     }

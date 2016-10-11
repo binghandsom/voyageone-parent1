@@ -66,7 +66,7 @@ define([
         }
         
         $scope.updateAllStatus = function (synFlg) {
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
+            confirm($translate.instant('TXT_MSG_STARTUP_ITEM'))
                 .then(function () {
                     taskPriceService.updateTaskStatus({"promotionId": $routeParams.promotionId,"synFlg":synFlg,"errMsg":"","taskType":0}).then(function (res) {
                         _.each($scope.vm.priceList,function(item){
@@ -80,7 +80,7 @@ define([
         }
 
         $scope.updateAllFailStatus = function () {
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
+            confirm($translate.instant('TXT_MSG_STARTUP_ITEM'))
                 .then(function () {
                     taskPriceService.updateTaskStatus({"promotionId": $routeParams.promotionId,"synFlg":1,"errMsg":"","taskType":0,"selSynFlg":3}).then(function (res) {
                         _.each($scope.vm.priceList,function(item){

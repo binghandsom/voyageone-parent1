@@ -48,7 +48,7 @@
                         <div class="col-sm-10">
                             <label class="checkbox-inline c-checkbox" ng-repeat="app in ctrl.applicationList">
                                 <input type="checkbox" ng-value="app.application" style="margin: 0"
-                                       ng-model="app.valid" ng-change="ctrl.ifShow({app:app.application,valid:app.valid})"><span class="fa fa-check"></span> {{app.application}}
+                                       ng-model="app.valid"><span class="fa fa-check"></span> {{app.application}}
                             </label>
                             <span class="text-warnings">(必填)</span>
                             <div class="text-warnings" style="padding-left:0">
@@ -117,7 +117,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row form-group" ng-if="ctrl.showStore"><!-- 授权仓库 -->
+                <div class="row form-group" ng-if="ctrl.applicationList[3].valid==true"><!-- 授权仓库 -->
                     <label class="col-sm-1 control-label">{{'TXT_ROLE_STORE' | translate}}</label>
                     <label class="checkbox-inline c-radio">
                         <input type="radio" name="allStore" value="1" ng-model="ctrl.saveInfo.allStore"><span class="fa fa-check"></span> 所有已选渠道的关联仓库

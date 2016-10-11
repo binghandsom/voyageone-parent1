@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
  * @version 2.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class ProductSkuServiceTest {
 
     @Autowired

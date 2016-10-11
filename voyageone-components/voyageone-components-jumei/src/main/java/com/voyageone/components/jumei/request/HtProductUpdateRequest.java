@@ -4,12 +4,11 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.bean.HtProductUpdate_ProductInfo;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * HtProductUpdateRequest
+ * HtProductUpdateRequest 修改商品属性
  *
  * @author peitao.sun, 2016/3/29
  * @version 2.0.0

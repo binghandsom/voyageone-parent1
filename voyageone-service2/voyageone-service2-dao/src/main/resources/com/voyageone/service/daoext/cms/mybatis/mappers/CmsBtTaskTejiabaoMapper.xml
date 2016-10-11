@@ -211,6 +211,8 @@
             a.promotion_id = b.id
             and b.promotion_status = 1
             and b.is_all_promotion = 0
+			and b.tejiabao_id != 0
+			and b.tejiabao_id != ''
             and task_type = 0
             and b.channel_id = #{channelId}
             and b.cart_id = #{cartId}

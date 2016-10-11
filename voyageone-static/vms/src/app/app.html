@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VoyageOne Management System For Vendor</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="../assets/css/twitter-bootstrap/3.3.5/css/bootstrap.css">
+    <link rel="stylesheet" href="../assets/css/Simple-Line-Icons/simple-line-icons.css">
+    <link rel="stylesheet" href="../assets/css/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="../assets/js/angular-block-ui/0.2.1/angular-block-ui.min.css">
+    <link rel="stylesheet" href="../assets/js/chosen/1.4.2/chosen.min.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="header">
+        <div class="topbar" ng-controller="TopBarController as topbar">
+            <ul class="container list-inline">
+                <li ng-bind="topbar.userName"></li>
+                <li>(</li>
+                <li uib-dropdown ng-if="topbar.channelList.length > 0">
+                    <span class="dropdown-toggle-arr" uib-dropdown-toggle ng-bind="::topbar.selChannel.name"></span>
+                    <ul uib-dropdown-menu class="dropdown-menu dropdown-menu-sm">
+                        <li ng-repeat="channel in topbar.channelList" ng-click="topbar.setChannel(channel.id)"
+                            ng-bind="::channel.name">
+                        </li>
+                    </ul>
+                </li>
+                <li ng-if="topbar.channelList.length == 0">
+                    <span ng-bind="::topbar.selChannel.name"></span>
+                </li>
+                <li>)</li>
+                <li>|</li>
+                <li>UTC <span ng-bind="::topbar.timezone"></span></li>
+                <li>|</li>
+                <li><a href ng-click="topbar.logout()">Logout</a></li>
+            </ul>
+        </div>
+        <div class="navbar navbar-default">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="app.html">
+                        <img src="../assets/img/voyage_one_logo_3.png" alt="VoyageOne">
+                    </a>
+                </div>
+                <vo-menu></vo-menu>
+            </div>
+        </div>
+    </div><!-- === end .header === -->
+    <div class="view-wrap" ng-view></div>
+    <div class="footer-wrap_footer text-center">
+        <div class="copyright_footer">
+            <div class="container_footer">
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <p>
+                            <i class="fa fa-envelope"></i><span>&nbsp;</span>
+                            <a style="color: #dadada"
+                               href="mailto:vms-support@voyageone.cn">vms-support@voyageone.cn</a>
+                        </p>
+                        <p>
+                            2016 © VoyageOne Management System For Vendor. ALL Rights Reserved.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/js/require.js/2.2.0/require.js" data-main="main"></script>
+</body>
+</html>

@@ -3,6 +3,7 @@
 * cartId
 * numIId
 * platformPid
+* platformMallId ->聚美商城的商品id
 * publishTime
 * onSaleTime
 * inStockTime

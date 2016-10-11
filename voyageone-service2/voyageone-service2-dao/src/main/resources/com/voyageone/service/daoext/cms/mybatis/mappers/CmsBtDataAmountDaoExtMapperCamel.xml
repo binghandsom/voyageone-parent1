@@ -16,6 +16,6 @@
            SELECT cms_brand  FROM  `cms_mt_brands_mapping` WHERE `channel_id`=#{channelId} AND cart_id=#{cartId}
            ) AS b ON a.`value`=b.cms_brand
  WHERE `type_id`=41 AND `channel_id`=#{channelId} AND  `lang_id`="cn"
-    AND a.`id` IS NOT NULL
+   AND b.cms_brand IS NULL
     </select>
 </mapper>

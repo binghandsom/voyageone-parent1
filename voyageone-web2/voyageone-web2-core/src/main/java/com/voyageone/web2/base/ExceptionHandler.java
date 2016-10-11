@@ -8,6 +8,7 @@ import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.message.enums.DisplayType;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.com.MessageBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.base.log.LogService;
@@ -17,17 +18,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * 异常统一处理器
  * Created on 2015-11-26 16:10:23
  *
  * @author Jonas
- * @version 2.0.0
+ * @version 2.4.0
+ * @since 2.0.0
  */
 public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionResolver {
 
@@ -49,85 +53,80 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
 
     public ModelAndView resolveException(HttpServletRequest request,
                                          HttpServletResponse response, Object handler, Exception exception) {
-        try {
 
+        // 先创建默认的内容
+        AjaxResponse result = new AjaxResponse();
+        Object[] args = null;
+
+        // 默认信息以 alert 弹出显示
+        result.setDisplayType(DisplayType.ALERT);
+
+        try {
+            // 先尝试输出错误的信息到控制台
             log(request, exception);
 
-            Object val = request.getSession().getAttribute(BaseConstants.SESSION_LANG);
-
-            String lang = val == null ||
-                    (
-                            !val.equals(LANGUAGE.EN) &&
-                            !val.equals(LANGUAGE.CN) &&
-                            !val.equals(LANGUAGE.JP)
-                    )
-                    ? LANGUAGE.EN
-                    : val.toString();
-
-            // 业务异常记错误日志及堆栈信息，迁移到共通错误页面
+            // 汇总异常携带的信息
             if (exception instanceof BusinessException) {
-                return catchBusinessException(lang, (BusinessException) exception);
-            }
-            // 系统异常记错误日志及堆栈信息，迁移到共通错误页面
-            if (exception instanceof SystemException) {
-                return catchSystemException(lang, (SystemException) exception);
-
-                // 其他未知异常
+                BusinessException businessException = (BusinessException) exception;
+                result.setCode(businessException.getCode());
+                result.setMessage(businessException.getMessage());
+                args = businessException.getInfo();
+            } else if (exception instanceof SystemException) {
+                SystemException systemException = (SystemException) exception;
+                result.setCode(systemException.getCode());
+                result.setMessage(systemException.getMessage());
             } else {
+                // 其他未知异常
                 // 异常信息记录至数据库
                 insertLogToDB(request, exception);
-                return catchDefault(exception);
+                result.setMessage(getUnknownExceptionMessage(exception));
+                result.setCode(BaseConstants.UNKNOWN_ERROR_CODE);
             }
         } catch (Exception e) {
             $error(e);
-            return catchDefault(e);
-        }
-    }
-
-    /**
-     * 捕获业务异常
-     */
-    private ModelAndView catchBusinessException(String lang, BusinessException exception) {
-        // 如果携带的 code 为空, 则尝试使用异常的本来信息
-        if (!StringUtils.isEmpty(exception.getCode()))
-            return messageDeal(lang, exception.getCode(), exception.getInfo());
-
-        AjaxResponse ajaxResponse = new AjaxResponse();
-
-        ajaxResponse.setCode(exception.getCode());
-        ajaxResponse.setDisplayType(DisplayType.ALERT);
-        ajaxResponse.setMessage(exception.getMessage());
-
-        return jsonView(ajaxResponse);
-    }
-
-    /**
-     * 捕获系统异常处理
-     */
-    private ModelAndView catchSystemException(String lang, SystemException exception) {
-
-        AjaxResponse result = catchSysCode(exception);
-        if (result != null) {
-            return jsonView(result);
+            result.setMessage(getUnknownExceptionMessage(exception));
+            result.setCode(BaseConstants.UNKNOWN_ERROR_CODE);
         }
 
-        String code = exception.getCode();
-        MessageBean msgModel = messageService.getMessage(lang, code);
+        Object val = request.getSession().getAttribute(BaseConstants.SESSION_LANG);
 
-        if (msgModel != null) {
-            return messageDeal(lang, code, null);
+        String code = result.getCode(), lang = val == null ||
+                (
+                        !val.equals(LANGUAGE.EN) &&
+                                !val.equals(LANGUAGE.CN) &&
+                                !val.equals(LANGUAGE.JP)
+                )
+                ? LANGUAGE.EN
+                : val.toString();
+
+        // 如果 code 有并且是数字 (isNumeric 内部会判断 isEmpty), 就尝试去信息库查询
+        // 如果这个 code 取不到预定义的信息, 就放弃设置, 保留异常自身的信息。通常可能就是 code 或另一段描述信息
+        // 如果是预定义的系统 code, 则设置预定义的系统行为
+        if (StringUtils.isNumeric(code)) {
+
+            if (BaseConstants.CODE_SEL_CHANNEL.equals(code)) {
+                result.setRedirectTo("/channel.html");
+            } else {
+                MessageBean msgModel = messageService.getMessage(lang, code);
+                if (msgModel != null)
+                    result.setMessage(msgModel, args);
+                // 暂时未打开下部分代码, 因为现有的大部分情况
+                // 都是没有预定义信息, 而是直接返回信息
+                // else
+                //    result.setMessage(String.format("this msg_code [%s(%s)] is not exists !!", code, lang));
+            }
         }
 
-        String msg = exception.getMessage();
-        if (StringUtils.isEmpty(msg)) msg = exception.getClass().getName();
-        return exceptionDeal(msg, code);
+        return isAjax(request) ? jsonView(result) : textView(result);
     }
 
-    /**
-     * 捕获其他异常处理
-     */
-    private ModelAndView catchDefault(Exception exception) {
-        // 尝试根据信息获取指定的错误提示
+    private boolean isAjax(HttpServletRequest request) {
+        String header = request.getHeader("X-Requested-With");
+        return "XMLHttpRequest".equals(header);
+    }
+
+    private String getUnknownExceptionMessage(Exception exception) {
+
         String msg = exception.getMessage();
 
         if (isDebug()) msg = "Server Exception\nException Name: " + exception.getClass().getName() +
@@ -138,45 +137,7 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
         if (StringUtils.isEmpty(msg))
             msg = BaseConstants.UNKNOWN_ERROR_MSG;
 
-        return exceptionDeal(msg, BaseConstants.UNKNOWN_ERROR_CODE);
-    }
-
-    /**
-     * 信息类异常处理
-     *
-     * @param lang     选定语言
-     * @param code     信息代码
-     * @param args     格式化参数
-     */
-    private ModelAndView messageDeal(String lang, String code, Object[] args) {
-
-        AjaxResponse ajaxResponse = new AjaxResponse();
-
-        MessageBean msgModel = messageService.getMessage(lang, code);
-
-        if (msgModel == null) {
-            ajaxResponse.setCode(code);
-            ajaxResponse.setDisplayType(DisplayType.ALERT);
-            // TODO 暂时未处理根据Code来获取message
-//            ajaxResponse.setMessage(String.format("this msg_code [%s(%s)] is not exists !!", code, lang));
-            ajaxResponse.setMessage(code);
-        } else {
-            ajaxResponse.setMessage(msgModel, args);
-        }
-
-        return jsonView(ajaxResponse);
-    }
-
-    /**
-     * 业务以外异常时ajax返回处理
-     */
-    private ModelAndView exceptionDeal(String msg, String code) {
-
-        AjaxResponse ajaxResponse = new AjaxResponse();
-        ajaxResponse.setCode(code);
-        ajaxResponse.setMessage(msg);
-
-        return jsonView(ajaxResponse);
+        return msg;
     }
 
     private void insertLogToDB(HttpServletRequest request, Exception exception) {
@@ -214,30 +175,10 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
         logService.addExceptionLog(exceptionBean);
     }
 
-    /**
-     * 尝试抓取系统代码,这类代码不在 ct_message_info 中有定义,是一组特殊的功能代码
-     *
-     * @param exception 携带代码的异常
-     * @return 是否成功处理
-     */
-    private AjaxResponse catchSysCode(SystemException exception) {
-
-        switch (exception.getCode()) {
-            // 由权限拦截器返回的渠道跳转代码
-            case BaseConstants.CODE_SEL_CHANNEL:
-                AjaxResponse ajaxResponse = new AjaxResponse();
-                ajaxResponse.setCode(BaseConstants.CODE_SYS_REDIRECT);
-                ajaxResponse.setRedirectTo("/channel.html");
-                return ajaxResponse;
-        }
-
-        return null;
-    }
-
-    private boolean skipLog(Exception exception) {
+    private void log(HttpServletRequest request, Exception exception) {
 
         if (exception instanceof BusinessException)
-            return true;
+            return;
 
         if (exception instanceof SystemException) {
             SystemException systemException = (SystemException) exception;
@@ -247,18 +188,10 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
                     case BaseConstants.MSG_TIMEOUT:
                     case BaseConstants.MSG_DENIED:
                         $info(String.format("Break by SystemException with [ %s ]", exception.getMessage()));
-                        return true;
+                        return;
                 }
             }
         }
-
-        return false;
-    }
-
-    private void log(HttpServletRequest request, Exception exception) {
-
-        if (skipLog(exception))
-            return;
 
         String url = request.getRequestURI();
         String simpleMessage = exception.getMessage();
@@ -266,15 +199,36 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
         $error(String.format("%s => %s", url, simpleMessage), exception);
     }
 
-    private ModelAndView jsonView(AjaxResponse response) {
+    private ModelAndView jsonView(AjaxResponse ajaxResponse) {
         MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
         ModelAndView mav = new ModelAndView(jsonView);
-        mav.addObject("code", response.getCode());
-        mav.addObject("data", response.getData());
-        mav.addObject("displayType", response.getDisplayType());
-        mav.addObject("message", response.getMessage());
-        mav.addObject("redirectTo", response.getRedirectTo());
+        mav.addObject("code", ajaxResponse.getCode());
+        mav.addObject("data", ajaxResponse.getData());
+        mav.addObject("displayType", ajaxResponse.getDisplayType());
+        mav.addObject("message", ajaxResponse.getMessage());
+        mav.addObject("redirectTo", ajaxResponse.getRedirectTo());
         return mav;
+    }
+
+    private ModelAndView textView(AjaxResponse ajaxResponse) {
+
+        String json = JacksonUtil.bean2Json(ajaxResponse);
+
+        return new ModelAndView(new View() {
+            @Override
+            public String getContentType() {
+                return "text/html";
+            }
+
+            @Override
+            public void render(Map<String, ?> map, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+                // set Response ContentType & CharacterEncoding
+                httpServletResponse.setContentType(getContentType());
+                httpServletResponse.setCharacterEncoding("UTF-8");
+
+                httpServletResponse.getWriter().write(json);
+            }
+        });
     }
 }
 

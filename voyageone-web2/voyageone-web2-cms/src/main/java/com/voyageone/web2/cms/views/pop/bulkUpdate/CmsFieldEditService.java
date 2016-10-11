@@ -6,17 +6,16 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.*;
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.Types;
-import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.configs.beans.TypeBean;
-import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.configs.beans.*;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
@@ -27,6 +26,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.cache.CommCacheService;
@@ -39,7 +39,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -58,7 +58,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-public class CmsFieldEditService extends BaseAppService {
+public class CmsFieldEditService extends BaseViewService {
 
     @Autowired
     private CategorySchemaService categorySchemaService;
@@ -86,6 +86,8 @@ public class CmsFieldEditService extends BaseAppService {
     private MqSender sender;
     @Autowired
     private CommCacheService commCacheService;
+    @Autowired
+    private PriceService priceService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -151,7 +153,7 @@ public class CmsFieldEditService extends BaseAppService {
         Map<String, Object> prop = (Map<String, Object>) params.get("property");
         String prop_id = StringUtils.trimToEmpty((String) prop.get("id"));
         if ("productType".equals(prop_id) || "sizeType".equals(prop_id)) {
-            // 税号更新
+            // 产品分类/适用人群
             String stsCode = null;
             Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
             if (valObj != null) {
@@ -252,6 +254,27 @@ public class CmsFieldEditService extends BaseAppService {
             logParams.put("voRate", voRateVal);
             sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
 
+        } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id)) {
+            // 税号更新
+            String hsCode = null;
+            Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
+            if (valObj != null) {
+                hsCode = (String) valObj.get("value");
+            }
+            if (hsCode == null || hsCode.isEmpty()) {
+                $warn("没有设置变更项目 params=" + params.toString());
+                rsMap.put("ecd", 2);
+                return rsMap;
+            }
+
+            params.put("productIds", productCodes);
+            params.put("_taskName", "batchupdate");
+            params.put("_channleId",  userInfo.getSelChannelId());
+            params.put("_userName",  userInfo.getUserName());
+            sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+            rsMap.put("ecd", 0);
+            return rsMap;
+
         } else {
             $warn("CmsFieldEditService.setProductFields 错误的选择项 params=" + params.toString());
         }
@@ -302,14 +325,16 @@ public class CmsFieldEditService extends BaseAppService {
             List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
             cartList = new ArrayList<>();
             for (TypeChannelBean cartObj : cartTypeList) {
-                if (!CartEnums.Cart.JM.getId().equals(cartObj.getValue()) && !"3".equals(cartObj.getCartType())) {
+//                if (!CartEnums.Cart.JM.getId().equals(cartObj.getValue()) && !"3".equals(cartObj.getCartType())) {
+                if (!"3".equals(cartObj.getCartType())) {
                     cartList.add(NumberUtils.toInt(cartObj.getValue()));
                 }
             }
             cartList = cartTypeList.stream().map((cartType) -> NumberUtils.toInt(cartType.getValue())).collect(Collectors.toList());
         } else {
             TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, userInfo.getSelChannelId(), cartId.toString(), "en");
-            if (CartEnums.Cart.JM.getValue() != cartId && !"3".equals(cartObj.getCartType())) {
+//            if (CartEnums.Cart.JM.getValue() != cartId && !"3".equals(cartObj.getCartType())) {
+            if (!"3".equals(cartObj.getCartType())) {
                 cartList = new ArrayList<>(1);
                 cartList.add(cartId);
             }
@@ -672,17 +697,24 @@ public class CmsFieldEditService extends BaseAppService {
             productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
         }
         if (productCodes == null || productCodes.isEmpty()) {
-            $warn("没有code条件 params=" + params.toString());
+            $warn("批量修改商品价格 没有code条件 params=" + params.toString());
             rsMap.put("ecd", 1);
             return rsMap;
         }
 
         Integer cartId = (Integer) params.get("cartId");
         if (cartId == null || cartId == 0) {
-            $warn("没有cartId条件 params=" + params.toString());
+            $warn("批量修改商品价格 没有cartId条件 params=" + params.toString());
             rsMap.put("ecd", 1);
             return rsMap;
         }
+        ShopBean shopObj = Shops.getShop(userInfo.getSelChannelId(), cartId.toString());
+        CartBean cartObj = Carts.getCart(cartId);
+        if (shopObj == null) {
+            $error("批量修改商品价格 未配置平台 channelId=%s, cartId=%s", userInfo.getSelChannelId(), cartId.toString());
+            throw new BusinessException("本店铺未配置所销售平台");
+        }
+
         // 检查商品价格 notChkPrice=1时表示忽略价格超过阈值
         Integer notChkPriceFlg = (Integer) params.get("notChkPrice");
         if (notChkPriceFlg == null) {
@@ -692,7 +724,16 @@ public class CmsFieldEditService extends BaseAppService {
         String priceType = StringUtils.trimToNull((String) params.get("priceType"));
         String optionType = StringUtils.trimToNull((String) params.get("optionType"));
         String priceValue = StringUtils.trimToNull((String) params.get("priceValue"));
-        boolean isRoundUp = "1".equals((String) params.get("isRoundUp")) ? true : false;
+        // 小数点向上取整:1    个位向下取整:2    个位向上取整:3    无特殊处理:4
+        Integer roundType = (Integer) params.get("roundType");
+        if (roundType == null) {
+            roundType = 0;
+        }
+        // 商品内，SKU统一最高价:1 商品内，SKU统一最低价:2  商品内，SKU价格不统一:3
+        Integer skuUpdType = (Integer) params.get("skuUpdType");
+        if (skuUpdType == null) {
+            skuUpdType = 0;
+        }
 
         // 阀值
         CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.MANDATORY_BREAK_THRESHOLD);
@@ -705,7 +746,7 @@ public class CmsFieldEditService extends BaseAppService {
         JongoQuery qryObj = new JongoQuery();
         qryObj.setQuery("{'common.fields.code':{$in:#},'platforms.P" + cartId + ".skus.0':{$exists:true}}");
         qryObj.setParameters(productCodes);
-        qryObj.setProjection("{'common.fields.code':1,'prodId':1,'common.skus.skuCode':1,'common.skus.clientMsrpPrice':1,'common.skus.clientRetailPrice':1,'common.skus.clientNetPrice':1,'platforms.P" + cartId + ".skus':1,'_id':0}");
+        qryObj.setProjection("{'common.fields.code':1,'prodId':1,'common.skus.skuCode':1,'common.skus.clientMsrpPrice':1,'common.skus.clientRetailPrice':1,'common.skus.clientNetPrice':1,'platforms.P" + cartId + ".pNumIId':1,'platforms.P" + cartId + ".status':1,'platforms.P" + cartId + ".skus':1,'_id':0}");
 
         List<CmsBtPriceLogModel> priceLogList = new ArrayList<CmsBtPriceLogModel>();
         String skuCode = null;
@@ -719,6 +760,32 @@ public class CmsFieldEditService extends BaseAppService {
         for (CmsBtProductModel prodObj : prodObjList) {
             List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
             String prodCode = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
+
+            // 先取出最高价/最低价
+            Double maxPriceSale = null;
+            if (priceType != null) {
+                if (skuUpdType == 1) {
+                    // 统一最高价
+                    for (BaseMongoMap skuObj : skuList) {
+                        double befPriceSale = skuObj.getDoubleAttribute(priceType);
+                        if (maxPriceSale == null) {
+                            maxPriceSale = befPriceSale;
+                        } else if (maxPriceSale < befPriceSale) {
+                            maxPriceSale = befPriceSale;
+                        }
+                    }
+                } else if (skuUpdType == 2) {
+                    // 统一最低价
+                    for (BaseMongoMap skuObj : skuList) {
+                        double befPriceSale = skuObj.getDoubleAttribute(priceType);
+                        if (maxPriceSale == null) {
+                            maxPriceSale = befPriceSale;
+                        } else if (maxPriceSale > befPriceSale) {
+                            maxPriceSale = befPriceSale;
+                        }
+                    }
+                }
+            }
 
             for (BaseMongoMap skuObj : skuList) {
                 skuCode = skuObj.getStringAttribute("skuCode");
@@ -738,12 +805,17 @@ public class CmsFieldEditService extends BaseAppService {
                         rsMap.put("ecd", 7);
                         return rsMap;
                     }
-                    rs = getFinalSalePrice(null, optionType, priceValue, isRoundUp);
+                    rs = getFinalSalePrice(null, optionType, priceValue, roundType);
                 } else {
-                    Object basePrice = skuObj.getAttribute(priceType);
+                    Object basePrice = null;
+                    if (maxPriceSale == null) {
+                        basePrice = skuObj.getAttribute(priceType);
+                    } else {
+                        basePrice = maxPriceSale;
+                    }
                     if (basePrice != null) {
                         BigDecimal baseVal = new BigDecimal(basePrice.toString());
-                        rs = getFinalSalePrice(baseVal, optionType, priceValue, isRoundUp);
+                        rs = getFinalSalePrice(baseVal, optionType, priceValue, roundType);
                     } else {
                         $warn(String.format("setProductSalePrice: 缺少数据 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                         rsMap.put("ecd", 9);
@@ -811,24 +883,26 @@ public class CmsFieldEditService extends BaseAppService {
                     $info(String.format("setProductSalePrice: 输入的最终售价低于下限阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
                     prodPriceDownExList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (1 - breakThreshold)) + "\t " + rs);
                     continue;
-                } else if ("4".equals(diffFlg)) {
-                    $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-                    prodPriceUpList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (breakThreshold + 1)) + "\t " + rs);
-                    continue;
-                    // 超过阈值时不更新，(下面注释掉的代码暂时保留，将来可能会有用)
-//                    if (notChkPriceFlg == 1) {
-//                        // 忽略检查
-//                        $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，强制更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-//                    } else {
-//                        $warn(String.format("setProductSalePrice: 输入数据错误 大于阈值 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
-//                        rsMap.put("ecd", 3);
-//                        rsMap.put("prodCode", prodCode);
-//                        rsMap.put("skuCode", skuCode);
-//                        rsMap.put("priceSale", rs);
-//                        rsMap.put("priceLimit", result * (breakThreshold + 1));
-//                        return rsMap;
-//                    }
                 }
+                // DOC-161 价格向上击穿的阀值检查 取消
+//                else if ("4".equals(diffFlg)) {
+//                    $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，不更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+//                    prodPriceUpList.add(prodCode + "\t " + skuCode + "\t " + befPriceSale + "\t " + result + "\t " + (result * (breakThreshold + 1)) + "\t " + rs);
+//                    continue;
+//                    // 超过阈值时不更新，(下面注释掉的代码暂时保留，将来可能会有用)
+////                    if (notChkPriceFlg == 1) {
+////                        // 忽略检查
+////                        $info(String.format("setProductSalePrice: 输入的最终售价大于阈值，强制更新此sku的价格 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+////                    } else {
+////                        $warn(String.format("setProductSalePrice: 输入数据错误 大于阈值 code=%s, sku=%s, para=%s", prodCode, skuCode, params.toString()));
+////                        rsMap.put("ecd", 3);
+////                        rsMap.put("prodCode", prodCode);
+////                        rsMap.put("skuCode", skuCode);
+////                        rsMap.put("priceSale", rs);
+////                        rsMap.put("priceLimit", result * (breakThreshold + 1));
+////                        return rsMap;
+////                    }
+//                }
                 skuObj.setAttribute("priceSale", rs);
                 skuObj.setAttribute("priceDiffFlg", diffFlg);
 
@@ -851,12 +925,19 @@ public class CmsFieldEditService extends BaseAppService {
                     cmsBtPriceLogModel.setClientRetailPrice(comSku.getClientRetailPrice());
                     cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
                 }
-                cmsBtPriceLogModel.setComment("高级检索批量更新");
+                cmsBtPriceLogModel.setComment("高级检索 设置最终售价");
                 cmsBtPriceLogModel.setCreated(new Date());
                 cmsBtPriceLogModel.setCreater(userInfo.getUserName());
                 cmsBtPriceLogModel.setModified(new Date());
                 cmsBtPriceLogModel.setModifier(userInfo.getUserName());
                 priceLogList.add(cmsBtPriceLogModel);
+            }
+
+            // 是天猫平台时直接调用API更新sku价格(要求已上新)
+            try {
+                priceService.updateSkuPrice(userInfo.getSelChannelId(), cartId, prodObj);
+            } catch (Exception e) {
+                $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
             }
 
             // 更新产品的信息
@@ -881,13 +962,18 @@ public class CmsFieldEditService extends BaseAppService {
         int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(priceLogList);
         $debug("批量修改商品价格 记入价格变更履历结束 结果=" + cnt + " 耗时" + (System.currentTimeMillis() - sta));
 
-        // 插入上新程序
-        $debug("批量修改商品价格 开始记入SxWorkLoad表");
-        sta = System.currentTimeMillis();
-        sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartId, userInfo.getUserName());
-        $debug("批量修改商品价格 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+        if (!PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
+            // 不是天猫平台时插入上新程序
+            $debug("批量修改商品价格 开始记入SxWorkLoad表");
+            sta = System.currentTimeMillis();
+            sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartId, userInfo.getUserName());
+            $debug("批量修改商品价格 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+        }
 
         // 如果有未处理的商品，则放入缓存
+        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2");
+        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "3");
+        commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "4");
         if (prodPriceUpList.size() > 0) {
             commCacheService.setCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2", prodPriceUpList);
         }
@@ -902,7 +988,7 @@ public class CmsFieldEditService extends BaseAppService {
         return rsMap;
     }
 
-    private Double getFinalSalePrice(BigDecimal baseVal, String optionType, String priceValueStr, boolean isRoundUp) {
+    private Double getFinalSalePrice(BigDecimal baseVal, String optionType, String priceValueStr, int roundType) {
         BigDecimal priceValue = null;
         if (priceValueStr != null) {
             priceValue = new BigDecimal(priceValueStr);
@@ -921,13 +1007,34 @@ public class CmsFieldEditService extends BaseAppService {
         } else if ("*".equals(optionType)) {
             rs = baseVal.multiply(priceValue);
         } else if ("/".equals(optionType)) {
-            rs = baseVal.divide(priceValue, 2, BigDecimal.ROUND_CEILING);
+            rs = baseVal.divide(priceValue, 3, BigDecimal.ROUND_CEILING);
         }
         if (rs == null) {
             return null;
         } else {
-            if (isRoundUp) {
+            if (roundType == 1) {
+                // 小数点向上取整
                 return rs.setScale(0, BigDecimal.ROUND_CEILING).doubleValue();
+            } else if (roundType == 2) {
+                // 个位向下取整
+                BigDecimal multyValue = new BigDecimal("10");
+                if (rs.compareTo(multyValue) <= 0) {
+                    // 少于10的直接返回
+                    return rs.setScale(2, BigDecimal.ROUND_CEILING).doubleValue();
+                }
+
+                rs = rs.divide(multyValue);
+                rs = rs.setScale(0, BigDecimal.ROUND_DOWN);
+                rs = rs.multiply(multyValue);
+                return rs.doubleValue();
+            } else if (roundType == 3) {
+                // 个位向上取整
+                BigDecimal multyValue = new BigDecimal("10");
+                rs = rs.divide(multyValue);
+                rs = rs.setScale(1, BigDecimal.ROUND_UP);
+                rs = rs.setScale(0, BigDecimal.ROUND_CEILING);
+                rs = rs.multiply(multyValue);
+                return rs.doubleValue();
             } else {
                 return rs.setScale(2, BigDecimal.ROUND_CEILING).doubleValue();
             }
@@ -966,4 +1073,55 @@ public class CmsFieldEditService extends BaseAppService {
         }
         return rs.toString();
     }
+
+    /**
+     * 指导价变更批量确认 （与"重新计算指导售价"共用代码）
+     */
+    public Map<String, Object> confirmRetailPrice(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+        List<String> productCodes = (ArrayList<String>) params.get("productIds");
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+
+        Map<String, Object> rsMap = new HashMap<>();
+        if (isSelAll == 1) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+        }
+        if (productCodes == null || productCodes.isEmpty()) {
+            $warn("没有code条件 params=" + params.toString());
+            rsMap.put("ecd", 1);
+            return rsMap;
+        }
+
+        Integer cartId = (Integer) params.get("cartId");
+        List<Integer> cartList = null;
+        if (cartId == null || cartId == 0) {
+            // 表示全平台更新
+            // 店铺(cart/平台)列表
+            List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+            cartList = cartTypeList.stream().map((cartType) -> NumberUtils.toInt(cartType.getValue())).collect(Collectors.toList());
+            if (cartList == null || cartList.isEmpty()) {
+                $error("confirmRatailPrice 该店铺未设置平台 param=" + params.toString());
+                rsMap.put("ecd", 0);
+                return rsMap;
+            }
+        } else {
+            cartList = new ArrayList<>(1);
+            cartList.add(cartId);
+        }
+
+        $debug("指导价变更批量确认 开始批量处理");
+        params.put("productIds", productCodes);
+        params.put("cartIds", cartList);
+        params.put("_taskName", params.get("_option"));
+        params.put("_channleId",  userInfo.getSelChannelId());
+        params.put("_userName",  userInfo.getUserName());
+        sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+
+        rsMap.put("ecd", 0);
+        return rsMap;
+    }
+
 }

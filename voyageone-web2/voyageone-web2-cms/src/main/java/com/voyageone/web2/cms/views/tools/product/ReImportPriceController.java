@@ -6,7 +6,6 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.PlatformBean;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.MapUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformService;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -68,7 +68,10 @@ public class ReImportPriceController extends CmsController {
 
         List<Map<String, Object>> channelList = Stream.of(ChannelConfigEnums.Channel.values())
                 .filter(channel -> !channel.equals(ChannelConfigEnums.Channel.NONE))
-                .map(channel -> MapUtil.toMap("value", channel.getId(), "label", channel.getFullName()))
+                .map(channel -> new HashMap<String, Object>() {{
+                    put("value", channel.getId());
+                    put("label", channel.getFullName());
+                }})
                 .collect(toList());
 
         return success(channelList);
@@ -93,7 +96,10 @@ public class ReImportPriceController extends CmsController {
                 .distinct()
                 .filter(StringUtils::isNumeric)
                 .map(Double::valueOf)
-                .map(platformId -> MapUtil.toMap("value", platformId, "label", platformMap.get(platformId)))
+                .map(platformId -> new HashMap<String, Object>() {{
+                    put("value", platformId);
+                    put("label", platformMap.get(platformId));
+                }})
                 .collect(toList());
 
         return success(jsonList);
@@ -117,7 +123,10 @@ public class ReImportPriceController extends CmsController {
 
         List<Map<String, Object>> jsonList = channelShopList.stream()
                 .filter(shopBean -> Integer.valueOf(shopBean.getPlatform_id()).equals(platformId))
-                .map(shopBean -> MapUtil.toMap("value", shopBean.getCart_id(), "label", shopBean.getShop_name()))
+                .map(shopBean -> new HashMap<String, Object>() {{
+                    put("value", shopBean.getCart_id());
+                    put("label", shopBean.getShop_name());
+                }})
                 .collect(toList());
 
         return success(jsonList);

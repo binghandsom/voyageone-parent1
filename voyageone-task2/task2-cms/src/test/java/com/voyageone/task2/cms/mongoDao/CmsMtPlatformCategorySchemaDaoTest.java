@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.mongoDao;
 
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
@@ -34,11 +35,11 @@ public class CmsMtPlatformCategorySchemaDaoTest {
 
     @Test
     public void testGetAllSchemaKeys() throws Exception {
-        List<JSONObject> schemaKeyModels = schemaDao.selectAllSchemaKeys(23);
+        List<JSONObject> schemaKeyModels = schemaDao.selectAllSchemaKeys(27);
         int count =0;
         for (JSONObject keyMap:schemaKeyModels){
           String id =  keyMap.get("_id").toString();
-            CmsMtPlatformCategorySchemaModel schemaModel = schemaDao.selectPlatformCatSchemaModelById(id, 23);
+            CmsMtPlatformCategorySchemaModel schemaModel = schemaDao.selectPlatformCatSchemaModelById(id, 27);
             String itemSchema = schemaModel.getPropsItem();
             String productSchema = schemaModel.getPropsProduct();
             List<Field> itemFields =null;
@@ -50,6 +51,7 @@ public class CmsMtPlatformCategorySchemaDaoTest {
             if(itemFields!=null && productFields!=null){
                 itemFields.addAll(productFields);
             }
+            System.out.println(JacksonUtil.bean2Json(itemFields));
             System.out.println(count++);
         }
     }

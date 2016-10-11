@@ -89,7 +89,7 @@ public class CmsBuildPlatformCategoryTreeJdMqService extends BaseMQCmsService {
      *
      * @param shop 店铺信息
      */
-    private void doSetPlatformCategoryJd(ShopBean shop) {
+    protected void doSetPlatformCategoryJd(ShopBean shop) {
 
         List<Category> jdCategoryList = null;
 

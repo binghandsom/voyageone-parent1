@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.bi.BiVtSalesProductExt">
+
+    <insert id="insertWithList" parameterType="Map" useGeneratedKeys="true">
+        INSERT INTO voyageone_bi_source.bi_bt_spider_product_${tableTitleName}
+        <foreach collection="column" index="index" item="columnName" open="(" separator="," close=")">
+            ${columnName}
+        </foreach>
+        VALUES
+        <foreach collection="value" index="index" item="salesProductValuesList" separator=",">
+            ${salesProductValuesList}
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        <foreach collection="column" index="index" item="columnName" separator="," >
+            ${columnName} = VALUES(${columnName})
+        </foreach>
+    </insert>
+
+    <insert id="deleteWithList" parameterType="Map" useGeneratedKeys="true">
+        DELETE FROM voyageone_bi_source.bi_bt_spider_product_${tableTitleName} where cart_id=#{cartId} and channel_id=#{channelId} and process_date=#{processDate}
+    </insert>
+
+    <!-- 取得(指定时间范围内)产品的bi信息 -->
+    <select id="selectList" parameterType="Map" resultType="Map"><![CDATA[
+        select
+            a.num_iid, CAST(sum(a.pv) AS signed) pv, CAST(sum(a.uv) AS signed) uv,
+            ifnull(CAST(sum(a.product_cart_increment) AS signed), 0) as cartNums, CAST(sum(a.product_collector_number) AS signed) as collNums
+        from voyageone_bi_source.bi_bt_spider_product_${channelId} a
+        where
+            a.cart_id = #{cartId}
+            and (#{staDate} <= a.process_date and a.process_date <= #{endDate})
+		group by num_iid limit #{oIdx},#{oLimit}
+	]]></select>
+
+</mapper>

@@ -1,0 +1,90 @@
+// product 表合并
+db.cms_bt_product_c929.find({}).forEach((product)=> { 
+      var product28 = db.cms_bt_product_c928.findOne({"common.fields.code":product.common.fields.code});
+      if(!product28){
+          product.channelId = "928";
+          delete product._id;
+          db.cms_bt_product_c928.insert(product)
+          db.cms_bt_product_c929.remove({"common.fields.code":product.common.fields.code})
+      }else{
+          print(product28.common.fields.code)
+          product28.platforms.P29 = product.platforms.P29
+          db.cms_bt_product_c928.save(product28)
+          db.cms_bt_product_c929.remove({"common.fields.code":product.common.fields.code})
+      }
+});
+//group 合并
+db.cms_bt_product_group_c929.find({}).forEach((it)=> { 
+      var group928 = db.cms_bt_product_group_c928.findOne({productCodes:it.mainProductCode,cartId:it.cartId});
+      if(!group928){
+          it.channelId = "928";
+          delete it._id;
+          db.cms_bt_product_group_c928.insert(it);
+          db.cms_bt_product_group_c929.remove({mainProductCode:it.mainProductCode,cartId:it.cartId})
+      }else{
+          if(it.cartId == 0){
+              for(var i=0;i
+                  var flg = false;
+                for(var j=0;j
+                    if(it.productCodes[i] == group928.productCodes[j]){
+                        flg = true;
+                        break;
+                    }  
+                }
+                if(!flg){
+                    group928.productCodes.push(it.productCodes[i]);
+                }
+              }
+              db.cms_bt_product_group_c928.save(group928);
+              db.cms_bt_product_group_c929.remove({mainProductCode:it.mainProductCode,cartId:it.cartId})
+          }
+      }
+});
+//子店修改
+["017","020","025","026"].forEach((channelId)=>{
+    db.getCollection("cms_bt_product_c"+channelId).find({}).forEach((it)=> { 
+        if(it.platforms.P929){
+            it.platforms.P928 = it.platforms.P929;
+            it.platforms.P928.cartId = 928;
+            delete it.platforms.P929;
+            db.getCollection("cms_bt_product_c"+channelId).save(it);
+        }
+    });
+    db.getCollection("cms_bt_product_group_c"+channelId).update({cartId:929},{$set: {cartId:928}},false,true)
+})
+
+
+
+UPDATE tm_order_channel SET cart_ids='28,29' WHERE (order_channel_id='928')；
+
+// valuechannel合并
+INSERT INTO com_mt_value_channel SELECT DISTINCT
+NULL,
+type_id,
+'tmp',
+value,
+name,
+add_name1,
+add_name2,
+lang_id,
+display_order,
+'2016-09-08 00:00:00',
+'james',
+'2016-09-08 00:00:00',
+'james'
+FROM
+com_mt_value_channel
+WHERE
+channel_id IN ('928', '929');
+
+DELETE from com_mt_value_channel where channel_id IN ('928', '929');
+
+UPDATE com_mt_value_channel set channel_id = '928' where channel_id = 'tmp'
+
+//价格历史
+UPDATE voyageone_cms2.cms_bt_price_log set channel_id = '928' where channel_id = '929';
+
+UPDATE voyageone_cms2.cms_bt_product_status_history set channel_id = '928' where channel_id = '929';
+
+//店铺内分类
+db.cms_bt_seller_cat.update({"channelId":"929"},{$set: {"channelId":"928"}},false,true)

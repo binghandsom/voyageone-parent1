@@ -3,15 +3,12 @@ package com.voyageone.web2.core.views.user;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.security.bean.ComChannelPermissionBean;
-import com.voyageone.security.dao.ComUserConfigDao;
-import com.voyageone.security.daoext.ComUserDaoExt;
 import com.voyageone.security.model.ComUserConfigModel;
 import com.voyageone.security.service.ComUserService;
 import com.voyageone.service.bean.com.ChannelPermissionBean;
-import com.voyageone.service.bean.com.PermissionBean;
 import com.voyageone.service.bean.com.UserConfigBean;
 import com.voyageone.service.daoext.com.UserDao;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -34,7 +30,7 @@ import static java.util.stream.Collectors.toList;
  * @version 2.0.0
  */
 @Service
-public class UserService extends BaseAppService {
+public class UserService extends BaseViewService {
     @Autowired
     private UserDao userDao;
 
@@ -42,29 +38,23 @@ public class UserService extends BaseAppService {
     private ComUserService comUserService;
 
 
-
-
 //    @Autowired
 //    private UserConfigDao userConfigDao;
-
-
-
-
 //    public UserSessionBean login(String username, String password, int timezone) {
-//
+
 //        UserBean userBean = new UserBean();
 //        userBean.setUsername(username);
 //
 //        userBean = userDao.selectUser(userBean);
 //
 //        if (userBean == null)
-//            throw new BusinessException("没有用户");
+//            throw new BusinessException("UserName or Password is invalidate");
 //
 //        String cryptoPassword = new Md5Hash(password, username.toLowerCase() + CoreConstants.MD5_FIX_SALT,
 //                CoreConstants.MD5_HASHITERATIONS).toHex();
 //
 //        if (!userBean.getPassword().equals(cryptoPassword))
-//            throw new BusinessException("密码错误");
+//            throw new BusinessException("UserName or Password is invalidate.");
 //
 //        // 填充用户信息到 Session. 权限部分需要在选择了渠道后获取
 //        UserSessionBean userSessionBean = new UserSessionBean();
@@ -155,6 +145,17 @@ public class UserService extends BaseAppService {
             ret.add(bean);
         }
         return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
+    }
+
+//    private Map<String , List<UserConfigBean>> getUserConfig(int userId) {
+//        List<UserConfigBean> ret = userConfigDao.select(userId);
+//        return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
+//    }
+
+    public String getVendorUserLanguage (UserSessionBean user) {
+        List<UserConfigBean> languageInfo = user.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID);
+
+        return languageInfo != null && languageInfo.size() > 0 ? languageInfo.get(0).getCfg_val1() : "en";
     }
 
     private List<String> getPermissionUrls(UserSessionBean userSessionBean, String channelId) {

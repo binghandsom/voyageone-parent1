@@ -5,9 +5,9 @@ import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.idsnowflake.FactoryIdWorker;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
-import com.voyageone.common.util.MapUtil;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelImportUtil;
 import com.voyageone.service.bean.cms.CallResult;
@@ -17,9 +17,12 @@ import com.voyageone.service.bean.cms.jumei.SkuImportBean;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.*;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -84,6 +87,10 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     CmsBtJmPromotionImportSave3Service serviceCmsBtJmPromotionImportSave3;
     @Autowired
     CmsBtJmPromotionDaoExt  cmsBtJmPromotionDaoExt;
+    @Autowired
+    FeedInfoService feedInfoService;
+    @Autowired
+    CmsBtBrandBlockService cmsBtBrandBlockService;
     @Autowired
     TransactionRunner transactionRunner;
     public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
@@ -217,7 +224,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         if (isImport) {
             listProductModel.removeAll(listErroProduct);//移除不能导入的 product
         }
-        listProducctErrorMap.addAll(MapUtil.toMapList(listErroProduct));//返回  导出
+        listProducctErrorMap.addAll(BeanUtils.toMapList(listErroProduct));//返回  导出
         //sku
         String errorSkuMsg = "";
         List<SkuImportBean> listErroSku = new ArrayList<>();
@@ -228,7 +235,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 if (isImport) {
                     listErroSku.add(sku);
                 }
-            } else if (sku.getDealPrice() >= sku.getMarketPrice()) {
+            } else if (sku.getDealPrice() > sku.getMarketPrice()) {
                 sku.setErrorMsg("skuCode:" + sku.getSkuCode() + "请重新确认价格，市场价必须大于团购价！");
                 if (isImport) {
                     listErroSku.add(sku);
@@ -241,7 +248,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         if (isImport) {
             listSkuModel.removeAll(listErroSku);
         }
-        listSkuErrorMap.addAll(MapUtil.toMapList(listErroSku));//返回  导出
+        listSkuErrorMap.addAll(BeanUtils.toMapList(listErroSku));//返回  导出
     }
 
     //save
@@ -249,7 +256,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         //check
         check(model, listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap,isImportExcel);//check  if isImportExcel==true  移除不能导入的product
         List<ProductSaveInfo> listSaveInfo = new ArrayList<>();
-
+        HashMap<String,Boolean> mapMasterBrand=new HashMap<>();
         CmsBtPromotionModel modelPromotion=getCmsBtPromotionModel(model.getId());
         //初始化
         ProductSaveInfo saveInfo = null;
@@ -260,8 +267,13 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.p_ProductInfo = productService.getProductByCode(modelPromotion.getChannelId(), product.getProductCode());
             if (saveInfo.p_ProductInfo == null) {
                 product.setErrorMsg("不存在" + product.getProductCode());
-                listProducctErrorMap.add(MapUtil.toMap(product));
-                return;
+                listProducctErrorMap.add(BeanUtils.toMap(product));
+                break;
+            }
+            if(isBlocked(saveInfo.p_ProductInfo,mapMasterBrand)) {
+                product.setErrorMsg("该商品品牌已加入黑名单,不能导入" + product.getProductCode());
+                listProducctErrorMap.add(BeanUtils.toMap(product));
+                break;
             }
             saveInfo.p_Platform_Cart = saveInfo.p_ProductInfo.getPlatform(CartEnums.Cart.JM);
 
@@ -270,7 +282,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             loadCmsBtPromotionCodes(saveInfo, listProductSkuImport, product, modelPromotion, userName);
             if (saveInfo != null) {
                 if (saveInfo._listSkuImport.size() > 0) {
-                    listProducctErrorMap.addAll(MapUtil.toMapList(saveInfo._listSkuImport));//初始化失败的sku
+                    listProducctErrorMap.addAll(BeanUtils.toMapList(saveInfo._listSkuImport));//初始化失败的sku
                 }
                 listSaveInfo.add(saveInfo);
             }
@@ -286,11 +298,26 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 long requestId = FactoryIdWorker.nextId();
                 $error("serviceCmsBtJmPromotionImportSave3.saveProductSaveInfo" + requestId, ex);
                 info._importProduct.setErrorMsg("导入失败,请联系管理员" + requestId);
-                listProducctErrorMap.add(MapUtil.toMap(info._importProduct));
+                listProducctErrorMap.add(BeanUtils.toMap(info._importProduct));
             }
         }
         cmsBtJmPromotionDaoExt.updateSumbrandById(model.getId());//汇总品牌
         $info("保存结束");
+    }
+    public boolean isBlocked(CmsBtProductModel p_ProductInfo, HashMap<String,Boolean> mapMasterBrand) {
+        String errorMsg = "";
+        String platformBrandId = p_ProductInfo.getPlatform(27).getpBrandId();
+        String masterBrand = p_ProductInfo.getCommon().getFields().getBrand();
+        if (!mapMasterBrand.containsKey(masterBrand)) {
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(p_ProductInfo.getChannelId(), p_ProductInfo.getCommon().getFields().getCode());
+            String feedBrand = cmsBtFeedInfoModel.getBrand();
+            if (cmsBtBrandBlockService.isBlocked(p_ProductInfo.getChannelId(), 27, feedBrand, masterBrand, platformBrandId)) {
+                mapMasterBrand.put(masterBrand, true);
+            } else {
+                mapMasterBrand.put(masterBrand, false);
+            }
+        }
+        return mapMasterBrand.get(masterBrand);
     }
     public CmsBtPromotionModel  getCmsBtPromotionModel(int jmPromotionId)
     {
@@ -330,10 +357,10 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         } else {
             if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime() && saveInfo.jmProductModel.getSynchStatus() == 2) {
                 product.setErrorMsg("该商品预热已开始,不能导入");
-                listProducctErrorMap.add(MapUtil.toMap(product));
+                listProducctErrorMap.add(BeanUtils.toMap(product));
                 for (SkuImportBean skuImport : listProductSkuImport) {
                     skuImport.setErrorMsg("预热已开始,不能导入");
-                    listSkuErrorMap.add(MapUtil.toMap(skuImport));
+                    listSkuErrorMap.add(BeanUtils.toMap(skuImport));
                 }
                 return;
             }
@@ -418,10 +445,13 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             modelCodes.setProductCode(productInfo.getCommon().getFields().getCode());
             //modelCodes.setProductName(com.taobao.api.internal.util.StringUtils.isEmpty(productInfo.getCommon().getFields().get.getFields().getLongTitle()) ? productInfo.getFields().getProductNameEn() : productInfo.getFields().getLongTitle());
             CmsBtProductModel_Platform_Cart ptfObj = productInfo.getPlatform(CartEnums.Cart.JM.getValue());
-            if (ptfObj != null && ptfObj.getSkus() != null && ptfObj.getSkus().isEmpty()) {
+            if (ptfObj != null && ptfObj.getSkus() != null && ptfObj.getSkus().size() > 0) {
                 modelCodes.setSalePrice(ptfObj.getSkus().get(0).getDoubleAttribute("priceSale"));
                 modelCodes.setRetailPrice(ptfObj.getSkus().get(0).getDoubleAttribute("priceRetail"));
                 modelCodes.setMsrp(ptfObj.getSkus().get(0).getDoubleAttribute("priceMsrp"));
+                if (listSkuImport != null && listSkuImport.size() > 0) {
+                    modelCodes.setPromotionPrice(listSkuImport.get(0).getDealPrice());
+                }
                 modelCodes.setModifier(userName);
             }
             saveInfo.codesModel = modelCodes;
@@ -621,20 +651,20 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 
     public List<ExcelColumn> getProductImportColumn() {
         List<ExcelColumn> list = new ArrayList<>();
-        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_product", "商品代码",true));
+        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_product", "商品代码",false));
         list.add(new ExcelColumn("appId", "cms_bt_jm_promotion_product", "APP端模块ID",true));
         list.add(new ExcelColumn("pcId", "cms_bt_jm_promotion_product", "PC端模块ID",true));
         list.add(new ExcelColumn("limit", "cms_bt_jm_promotion_product", "Deal每人限购",true));
-        list.add(new ExcelColumn("promotionTag", "cms_bt_jm_promotion_product", "专场标签（以|分隔）",true));
+        list.add(new ExcelColumn("promotionTag", "cms_bt_jm_promotion_product", "专场标签（以|分隔）",false));
         return list;
     }
 
     public List<ExcelColumn> getSkuImportColumn() {
         List<ExcelColumn> list = new ArrayList<>();
-        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_sku", "商品代码",true));
-        list.add(new ExcelColumn("skuCode", "cms_bt_jm_promotion_sku", "规格代码",true));
-        list.add(new ExcelColumn("dealPrice", "cms_bt_jm_promotion_sku", "团购价",true));
-        list.add(new ExcelColumn("marketPrice", "cms_bt_jm_promotion_sku", "市场价",true));
+        list.add(new ExcelColumn("productCode", "cms_bt_jm_promotion_sku", "商品代码",false));
+        list.add(new ExcelColumn("skuCode", "cms_bt_jm_promotion_sku", "规格代码",false));
+        list.add(new ExcelColumn("dealPrice", "cms_bt_jm_promotion_sku", "团购价",false));
+        list.add(new ExcelColumn("marketPrice", "cms_bt_jm_promotion_sku", "市场价",false));
         return list;
     }
 

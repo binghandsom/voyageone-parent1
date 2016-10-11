@@ -1,8 +1,15 @@
 package com.voyageone.components.tmall.service;
 
 import com.taobao.api.ApiException;
-import com.taobao.api.request.*;
-import com.taobao.api.response.*;
+import com.taobao.api.domain.UpdateSkuPrice;
+import com.taobao.api.request.ItemSkusGetRequest;
+import com.taobao.api.request.TmallItemPriceUpdateRequest;
+import com.taobao.api.request.TmallItemSchemaUpdateRequest;
+import com.taobao.api.request.TmallItemUpdateSchemaGetRequest;
+import com.taobao.api.response.ItemSkusGetResponse;
+import com.taobao.api.response.TmallItemPriceUpdateResponse;
+import com.taobao.api.response.TmallItemSchemaUpdateResponse;
+import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
@@ -23,14 +30,12 @@ import java.util.List;
 @Component
 public class TbItemService extends TbBase {
     /**
-     * 淘宝接口名：tmall.item.update.schema.get。
-     * 文档地址：http://open.taobao.com/apidoc/api.htm?spm=a219a.7386789.1998342952.14.0uzLoC&path=scopeId:11430-apiId:23435
+     * 淘宝接口名：tmall.item.update.schema.get
+     * 文档地址：http://open.taobao.com/docs/api.htm?apiId=23435
      *
      * @param shopBean 店铺
      * @param num_iid  商品
      * @return 查询到的所有字段
-     * @throws ApiException
-     * @throws TopSchemaException
      */
     public TbItemSchema getUpdateSchema(ShopBean shopBean, long num_iid) throws ApiException, TopSchemaException, GetUpdateSchemaFailException {
 
@@ -45,14 +50,14 @@ public class TbItemService extends TbBase {
         // 转换 Schema Xml 到 Field bean 集合
         List<Field> fields = SchemaReader.readXmlForList(res.getUpdateItemResult());
 
-        return new TbItemSchema(num_iid, fields);
+        return new TbItemSchema(num_iid, fields, false);
     }
 
     /**
      * 全量更新淘宝的商品。
      * <p>
      * 淘宝接口名：tmall.item.schema.update
-     * 文档地址：http://open.taobao.com/apidoc/api.htm?spm=a219a.7386789.1998342952.66.rW9rTR&path=cid:4-apiId:23434
+     * 文档地址：http://open.taobao.com/docs/api.htm?apiId=23434
      */
     public TmallItemSchemaUpdateResponse updateFields(ShopBean shopBean, TbItemSchema tbItemSchema) throws ApiException, TopSchemaException {
 
@@ -69,8 +74,6 @@ public class TbItemService extends TbBase {
 
     /**
      * 根据商品ID列表获取SKU信息
-     *
-     * @throws ApiException
      */
     public ItemSkusGetResponse getSkuInfo(ShopBean shopBean, String numIid, String fields) throws ApiException {
 
@@ -87,42 +90,29 @@ public class TbItemService extends TbBase {
     }
 
     /**
-     * 商品上架
+     * 更新商品SKU的价格（天猫商品/SKU价格更新接口 tmall.item.price.update）
+     * numIid参数为必须，
+     * prodPrice，skuPriceList为可选，且互斥，即这两个只有一个有值
      */
-    public ItemUpdateListingResponse doWareUpdateListing(ShopBean shopBean, String numIid) {
-        logger.info("商品上架 " + numIid);
-        ItemUpdateListingRequest request = new ItemUpdateListingRequest ();
-        request.setNumIid(NumberUtils.toLong(numIid));
-        request.setNum(1L);
-        ItemUpdateListingResponse response = null;
-
-        try {
-            response = reqTaobaoApi(shopBean, request);
-        } catch (ApiException apiExp) {
-            logger.error("调用淘宝API商品上架时API出错", apiExp);
-        } catch (Exception exp) {
-            logger.error("调用淘宝API商品上架时出错", exp);
+    public TmallItemPriceUpdateResponse updateSkuPrice(ShopBean shopBean, String numIid, Double prodPrice, List<UpdateSkuPrice> skuPriceList) throws ApiException {
+        logger.info("更新商品SKU的价格 " + numIid);
+        TmallItemPriceUpdateRequest req = new TmallItemPriceUpdateRequest();
+        req.setItemId(NumberUtils.toLong(numIid));
+        if (prodPrice != null) {
+            req.setItemPrice(prodPrice.toString());
         }
-        return response;
-    }
-
-    /**
-     * 商品下架
-     */
-    public ItemUpdateDelistingResponse doWareUpdateDelisting(ShopBean shopBean, String numIid) {
-        logger.info("商品下架 " + numIid);
-        ItemUpdateDelistingRequest request = new ItemUpdateDelistingRequest();
-        request.setNumIid(NumberUtils.toLong(numIid));
-        ItemUpdateDelistingResponse response = null;
-
-        try {
-            response = reqTaobaoApi(shopBean, request);
-        } catch (ApiException apiExp) {
-            logger.error("调用淘宝API商品下架时API出错", apiExp);
-        } catch (Exception exp) {
-            logger.error("调用淘宝API商品下架时出错", exp);
+        if (skuPriceList != null && skuPriceList.size() > 0) {
+            req.setSkuPrices(skuPriceList);
         }
+
+        TmallItemPriceUpdateResponse response = reqTaobaoApi(shopBean, req);
+        if (response == null) {
+            return null;
+        }
+        if (response.getErrorCode() != null) {
+            logger.error(response.getSubMsg());
+        }
+        logger.info("更新商品SKU的价格 结果：" + response.getPriceUpdateResult());
         return response;
     }
 }
-

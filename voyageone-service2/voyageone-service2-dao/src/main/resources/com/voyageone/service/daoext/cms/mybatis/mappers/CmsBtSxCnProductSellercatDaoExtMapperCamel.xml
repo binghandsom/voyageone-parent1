@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtSxCnProductSellercatDaoExt">
+    <select id="selectListWaitingUpload" resultType="String">
+        select
+          `cat_id`
+        from cms_bt_sx_cn_product_sellercat
+        where channel_id=#{channelId}
+        and  upd_flg= '0'
+    </select>
+
+    <insert id="insertByList" >
+        insert into voyageone_cms2.cms_bt_sx_cn_product_sellercat (
+        channel_id,
+        cat_id,
+        upd_flg,
+        created,
+        creater,
+        modified,
+        modifier
+        ) value
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.channelId},
+            #{item.catId},
+            '0',
+            now(),
+            #{item.creater},
+            now(),
+            #{item.creater})
+        </foreach>
+    </insert>
+
+    <update id="updateFlgByCatIds">
+        update cms_bt_sx_cn_product_sellercat
+        <set>
+            `upd_flg` = #{updFlg,jdbcType=VARCHAR},
+            <if test="modifier != null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <where>
+            `channel_id` = #{channelId,jdbcType=VARCHAR}
+            and cat_id in
+            <foreach item="item" index="index" collection="listCatId"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
+    </update>
+</mapper>

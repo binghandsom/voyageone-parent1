@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 拦截管理器, 统一处理所有过滤操作
@@ -43,6 +45,14 @@ public class Interceptor extends VOAbsLoggable implements HandlerInterceptor {
 
         $info(request.getServletPath() + " is start.");
 
+//        $debug(this.getRequestBody(request));
+
+        // vms系统没有channel选择画面所以channelInterceptor不需要
+        if (request.getServletPath().startsWith("/vms")) {
+            return loginInterceptor.preHandle(request)
+                    && authorizationInterceptor.preHandle(request);
+        }
+
         return loginInterceptor.preHandle(request)
             && channelInterceptor.preHandle(request)
             && authorizationInterceptor.preHandle(request);
@@ -75,5 +85,18 @@ public class Interceptor extends VOAbsLoggable implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         // 暂时 Do nothing
+    }
+
+    private String getRequestBody(HttpServletRequest request) {
+        if (null != request && request.getContentLength() > 0) {
+            byte[] requestBody = new byte[request.getContentLength()];
+            try {
+                request.getInputStream().read(requestBody, 0, request.getContentLength());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return new String(requestBody);
+        }
+        return "";
     }
 }

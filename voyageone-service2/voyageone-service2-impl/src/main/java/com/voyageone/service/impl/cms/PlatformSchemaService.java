@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
@@ -35,7 +36,8 @@ import java.util.Map;
  * 平台Schema取得后，对应一些处理操作
  *
  * @author morse.lu 2016/06/22
- * @version 2.1.0
+ * @author jonas
+ * @version 2.4.0
  * @since 2.1.0
  */
 @Service
@@ -44,28 +46,66 @@ public class PlatformSchemaService extends BaseService {
     public static final String KEY_PRODUCT = "product";
     public static final String KEY_ITEM = "item";
 
+    private final PlatformCategoryService platformCategoryService;
+    private final CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
+    private final CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao;
+    private final CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao;
+
     @Autowired
-    private PlatformCategoryService platformCategoryService;
-    @Autowired
-    private CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
-    @Autowired
-    private CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao;
-    @Autowired
-    private CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao;
+    public PlatformSchemaService(PlatformCategoryService platformCategoryService,
+                                 CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao,
+                                 CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao,
+                                 CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao) {
+        this.platformCategoryService = platformCategoryService;
+        this.cmsMtPlatformPropMappingCustomDao = cmsMtPlatformPropMappingCustomDao;
+        this.cmsMtPlatformCategoryInvisibleFieldDao = cmsMtPlatformCategoryInvisibleFieldDao;
+        this.cmsMtPlatformCategoryExtendFieldDao = cmsMtPlatformCategoryExtendFieldDao;
+    }
+
+    /**
+     * 通过 categoryPath 查询类目 Schema 定义
+     *
+     * @param categoryPath 类目路径
+     * @param channelId    渠道
+     * @param cartId       平台(店铺)
+     * @return 使用 {@link PlatformSchemaService#KEY_ITEM} 和 {@link PlatformSchemaService#KEY_PRODUCT} 作为 KEY 的字段集合字典
+     */
+    public Map<String, List<Field>> getFieldsByCategoryPath(String categoryPath, String channelId, int cartId, String language) {
+
+        if (CartEnums.Cart.JM.getValue() == cartId)
+            return getFieldForProductImage(null, channelId, cartId, language);
+
+        CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
+
+        if (CartEnums.Cart.TM.getValue() == cartId || CartEnums.Cart.TG.getValue() == cartId) {
+            platformCategorySchemaModel = platformCategoryService.getTmallSchemaByCategoryPath(categoryPath, channelId, cartId);
+        } else {
+            platformCategorySchemaModel = platformCategoryService.getPlatformSchemaByCategoryPath(categoryPath, cartId);
+        }
+
+        if (platformCategorySchemaModel == null)
+            return null;
+
+        return getFieldListMap(platformCategorySchemaModel, channelId, language);
+    }
 
     /**
      * 产品画面属性list取得
      */
     public Map<String, List<Field>> getFieldForProductImage(String catId, String channelId, int cartId, String language) {
-        if (CartEnums.Cart.JM.getValue() == cartId) {
-            // 聚美的场合，因为只有一个catId，写死 catId = 1
+        if (CartEnums.Cart.JM.getValue() == cartId
+                || CartEnums.Cart.TT.getValue() == cartId
+                || CartEnums.Cart.USTT.getValue() == cartId
+                || CartEnums.Cart.CN.getValue() == cartId
+                ) {
+            // “聚美”或“天猫国际官网同购”或“Usjoi天猫国际官网同购”或"独立域名"的场合，因为只有一个catId，写死 catId = 1
             catId = "1";
         }
 
         // 20160727 tom 天猫schema结构变更修改 START
 //        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(catId, cartId);
 
-        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = null;
+        CmsMtPlatformCategorySchemaModel platformCatSchemaModel;
         if (CartEnums.Cart.TM.getValue() == cartId || CartEnums.Cart.TG.getValue() == cartId) {
             platformCatSchemaModel = platformCategoryService.getPlatformCatSchemaTm(catId, channelId, cartId);
         } else {
@@ -75,15 +115,29 @@ public class PlatformSchemaService extends BaseService {
         if (platformCatSchemaModel == null) {
             return null;
         }
+
+        return getFieldListMap(platformCatSchemaModel, channelId, language);
+    }
+
+    private Map<String, List<Field>> getFieldListMap(CmsMtPlatformCategorySchemaModel platformCatSchemaModel, String channelId, String language) {
+
+        String catId = platformCatSchemaModel.getCatId();
+
+        int cartId = platformCatSchemaModel.getCartId();
+
         CmsMtPlatformCategoryInvisibleFieldModel invisibleFieldModel = cmsMtPlatformCategoryInvisibleFieldDao.selectOneByCatId(catId, cartId);
         if (invisibleFieldModel == null) {
             // 自己没有的话，用共通catId=0
             invisibleFieldModel = cmsMtPlatformCategoryInvisibleFieldDao.selectOneByCatId("0", cartId);
         }
-        CmsMtPlatformCategoryExtendFieldModel extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId(catId, cartId);
+        CmsMtPlatformCategoryExtendFieldModel extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId(catId, cartId, channelId);
         if (extendFieldModel == null) {
             // 自己没有的话，用共通catId=0
-            extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId("0", cartId);
+            extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId("0", cartId, channelId);
+        }
+        if (extendFieldModel == null) {
+            // 还没有的话，用共通catId=0,channelId=000
+            extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId("0", cartId, ChannelConfigEnums.Channel.NONE.getId());
         }
 
         Map<String, List<Field>> retMap = new HashMap<>();
@@ -132,13 +186,44 @@ public class PlatformSchemaService extends BaseService {
      */
     private List<Field> getListFieldForProductImage(String channelId, String language, List<Field> listField, List<CmsMtPlatformCategoryInvisibleFieldModel_Field> listInvisibleField, List<CmsMtPlatformCategoryExtendFieldModel_Field> listExtendField) {
         Map<String, Field> mapField = new HashMap<>();
-        for (Field field : listField) {
-            mapField.put(field.getId(), field);
-        }
 
         // 删除不想显示的属性
         if (listInvisibleField != null && !listInvisibleField.isEmpty()) {
-            listInvisibleField.forEach(invisibleFieldModel -> getFieldById(mapField, StringUtil.replaceToDot(invisibleFieldModel.getFieldId()), CmsMtPlatformCategoryInvisibleFieldModel_Field.SEPARATOR, true));
+            Map<String, List<Field>> mapFieldName = new HashMap<>();
+            for (Field field : listField) {
+                List<Field> fields = mapFieldName.get(field.getName());
+                if (fields == null) {
+                    fields = new ArrayList<>();
+                    mapFieldName.put(field.getName(), fields);
+                }
+                fields.add(field);
+            }
+            // 先做name的删除
+            listInvisibleField.forEach(invisibleFieldModel ->
+            {
+                String fieldId = invisibleFieldModel.getFieldId();
+                if (StringUtils.isEmpty(fieldId)) {
+                    getFieldByName(mapFieldName, StringUtil.replaceToDot(invisibleFieldModel.getFieldName()), CmsMtPlatformCategoryInvisibleFieldModel_Field.SEPARATOR, true);
+                }
+            });
+
+            // 再做id的删除
+            List<Field> listFieldName = new ArrayList<>();
+            mapFieldName.forEach((key, value) -> listFieldName.addAll(value));
+            for (Field field : listFieldName) {
+                mapField.put(field.getId(), field);
+            }
+            listInvisibleField.forEach(invisibleFieldModel ->
+            {
+                String fieldId = invisibleFieldModel.getFieldId();
+                if (!StringUtils.isEmpty(fieldId)) {
+                    getFieldById(mapField, StringUtil.replaceToDot(invisibleFieldModel.getFieldId()), CmsMtPlatformCategoryInvisibleFieldModel_Field.SEPARATOR, true);
+                }
+            });
+        } else {
+            for (Field field : listField) {
+                mapField.put(field.getId(), field);
+            }
         }
 
         // 增加属性
@@ -287,7 +372,7 @@ public class PlatformSchemaService extends BaseService {
     /**
      * 取得指定Field
      *
-     * @param mapField     schema转换成的Map
+     * @param mapField     schema转换成的Map<field_id, Field>
      * @param fieldId      一级属性>二级属性>三级属性
      * @param separator    fieldId的分隔符
      * @param isNeedDelete true的话，检索到的同时在Map里删除
@@ -352,6 +437,101 @@ public class PlatformSchemaService extends BaseService {
     }
 
     /**
+     * 取得指定Field
+     *
+     * @param mapField     schema转换成的Map<field_name, Field>
+     * @param fieldName    一级属性>二级属性>三级属性
+     * @param separator    分隔符
+     * @param isNeedDelete true的话，检索到的同时在Map里删除
+     * @return Field
+     */
+    public List<Field> getFieldByName(Map<String, List<Field>> mapField, String fieldName, String separator, boolean isNeedDelete) {
+        String[] fieldNames;
+        if (separator == null) {
+            // 一级属性
+            fieldNames = new String[]{fieldName};
+        } else {
+            fieldNames = fieldName.split(separator);
+        }
+
+        List<Field> fields = mapField.get(fieldNames[0]);
+
+        if (fields == null) {
+            $info("没有找到指定的field");
+            return null;
+        }
+        if (fieldNames.length == 1) {
+            // 最后一层啦
+            if (isNeedDelete) {
+                // map里删除
+                mapField.remove(fieldNames[0]);
+            }
+            return fields;
+        } else {
+            String newFieldName = fieldNames[1];
+            for (int i = 2; i < fieldNames.length; i++) {
+                newFieldName = newFieldName + separator + fieldNames[i];
+            }
+
+            List<Field> retFields = new ArrayList<>();
+            for (Field field: fields) {
+                if (field.getType() == FieldTypeEnum.COMPLEX) {
+                    ComplexField complexField = (ComplexField) field;
+
+                    List<Field> listField = complexField.getFields();
+                    Map<String, List<Field>> mapFieldName = new HashMap<>();
+                    for (Field subField : listField) {
+                        List<Field> subFields = mapFieldName.get(subField.getName());
+                        if (subFields == null) {
+                            subFields = new ArrayList<>();
+                            mapFieldName.put(subField.getName(), subFields);
+                        }
+                        subFields.add(subField);
+                    }
+
+                    List<Field> findField = getFieldByName(mapFieldName, newFieldName, separator, isNeedDelete);
+                    if (findField != null && fieldNames.length == 2) {
+                        // 找到了, fieldIds.length == 2表示之后一次递归是最后一层啦
+                        if (isNeedDelete) {
+                            // map和list里删除
+                            findField.forEach(removeField -> complexField.getFields().remove(removeField));
+                        }
+                    }
+                    retFields.addAll(findField);
+                } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
+                    MultiComplexField multiComplexField = (MultiComplexField) field;
+
+                    List<Field> listField = multiComplexField.getFields();
+                    Map<String, List<Field>> mapFieldName = new HashMap<>();
+                    for (Field subField : listField) {
+                        List<Field> subFields = mapFieldName.get(subField.getName());
+                        if (subFields == null) {
+                            subFields = new ArrayList<>();
+                            mapFieldName.put(subField.getName(), subFields);
+                        }
+                        subFields.add(subField);
+                    }
+
+                    List<Field> findField = getFieldByName(mapFieldName, newFieldName, separator, isNeedDelete);
+                    if (findField != null && fieldNames.length == 2) {
+                        // 找到了, fieldIds.length == 2表示之后一次递归是最后一层啦
+                        if (isNeedDelete) {
+                            // list里删除
+                            findField.forEach(removeField -> multiComplexField.getFields().remove(removeField));
+                        }
+                    }
+                    retFields.addAll(findField);
+                } else {
+                    $warn(String.format("field_name=%s 不是复杂类型,没有下一层属性,无法取得%s", fieldNames[0], fieldName));
+                    return null;
+                }
+            }
+
+            return retFields;
+        }
+    }
+
+    /**
      * 增加指定Field(暂时做成相同id存在，不会增加不会覆盖)
      *
      * @param mapField  schema转换成的Map
@@ -388,7 +568,6 @@ public class PlatformSchemaService extends BaseService {
                 } else {
                     $warn("原先相同的field_id已经存在!");
                 }
-                return;
             } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
                 MultiComplexField multiComplexField = (MultiComplexField) field;
                 if (multiComplexField.getFieldMap().get(addField.getId()) == null) {
@@ -396,10 +575,8 @@ public class PlatformSchemaService extends BaseService {
                 } else {
                     $warn("原先相同的field_id已经存在!");
                 }
-                return;
             } else {
                 $warn(String.format("field_id=%s 不是复杂类型,无法增加属性", field.getId()));
-                return;
             }
         } else {
             String newFieldId = fieldIds[1];
@@ -415,7 +592,6 @@ public class PlatformSchemaService extends BaseService {
                 addExtendField(multiComplexField.getFieldMap(), newFieldId, separator, addField);
             } else {
                 $warn(String.format("field_id=%s 不是复杂类型,没有下一层属性,无法增加属性", field.getId()));
-                return;
             }
         }
     }
@@ -430,8 +606,13 @@ public class PlatformSchemaService extends BaseService {
 
     private void setOption(Field field, String channelId, String language) {
         if (field.getType() == FieldTypeEnum.SINGLECHECK) {
+            List<Option> defaultOptions = ((SingleCheckField) field).getOptions();
             if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
-                List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
+                String id = field.getInputOrgId();
+                if (StringUtils.isEmpty(id)) {
+                    id = field.getId();
+                }
+                List<TypeBean> typeBeanList = Types.getTypeList(id, language);
 
                 // 替换成field需要的样式
                 List<Option> options = new ArrayList<>();
@@ -442,11 +623,16 @@ public class PlatformSchemaService extends BaseService {
                         opt.setValue(typeBean.getValue());
                         options.add(opt);
                     }
+                    options.addAll(defaultOptions);
                     ((SingleCheckField) field).setOptions(options);
                 }
             } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+                String id = field.getInputOrgId();
+                if (StringUtils.isEmpty(id)) {
+                    id = field.getId();
+                }
                 // 获取type channel bean
-                List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeWithLang(field.getId(), channelId, language);
+                List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeWithLang(id, channelId, language);
 
                 // 替换成field需要的样式
                 List<Option> options = new ArrayList<>();
@@ -457,6 +643,7 @@ public class PlatformSchemaService extends BaseService {
                         opt.setValue(typeChannelBean.getValue());
                         options.add(opt);
                     }
+                    options.addAll(defaultOptions);
                     ((SingleCheckField) field).setOptions(options);
                 }
             }

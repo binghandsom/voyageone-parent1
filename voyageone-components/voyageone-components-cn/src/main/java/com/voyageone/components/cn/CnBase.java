@@ -24,15 +24,17 @@ public abstract class CnBase extends ComponentBase {
 
     private String post(String apiAction, Object parameter, int tryCount, int tryWait, ShopBean shopBean) throws Exception {
 
-        String json = new Gson().toJson(parameter);
+//        String json = new Gson().toJson(parameter);
 
         for (int i = 0; i < tryCount; i++) {
             try {
                 // JC官网需要证书认证
                 if (shopBean.getOrder_channel_id().equals(ChannelConfigEnums.Channel.JC.getId())) {
-                    return HttpUtils.post(shopBean.getApp_url() + apiAction, json, trustStore_jc, trustStore_jc_password, trustStore_jc_password);
+//                    return HttpUtils.post(shopBean.getApp_url() + apiAction, json, trustStore_jc, trustStore_jc_password, trustStore_jc_password);
+                    return HttpUtils.post(shopBean.getApp_url() + apiAction, parameter.toString(), trustStore_jc, trustStore_jc_password, trustStore_jc_password);
                 } else {
-                    return HttpUtils.post(shopBean.getApp_url() + apiAction, json);
+//                    return HttpUtils.post(shopBean.getApp_url() + apiAction, json);
+                    return HttpUtils.post(shopBean.getApp_url() + apiAction, parameter.toString());
                 }
 
             } catch (RuntimeException e) {

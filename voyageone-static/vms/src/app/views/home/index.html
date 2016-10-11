@@ -1,0 +1,60 @@
+<div class="breadcrumbs-v3">
+    <div class="container">
+        <h4 class="pull-left" translate="TXT_WELCOME"></h4>
+        <ul class="pull-right breadcrumb">
+            <li class="active selected" translate="TXT_HOME"></li>
+        </ul>
+    </div>
+</div>
+<div class="container content blank-content" ng-init="ctrl.init()">
+    <div class="col-sm-6 col-sm-offset-3">
+        <div class="form-group">
+            <div class="col-sm-6">
+                <div class="panel panel-default home_data hover-effect media-body">
+                    <div class="panel-heading home_data-head">
+                        <h3 class="panel-title"><i
+                                class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;{{'TXT_FULFILLMENT_STATUS' | translate}}<span
+                                class="text-right">Update
+                            every hour</span></h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="stat-boxes">
+                            <li ng-click="ctrl.gotoOrderInfo()">
+                                <div class="right data-priority-2">
+                                    <strong>{{ctrl.countOrder}}</strong>
+                                    {{'TXT_ORDERS_TO_BE_FULFILLED' | translate}}
+                                </div>
+                            </li>
+                            <li ng-click="ctrl.gotoOrderInfo()">
+                                <div class="right data-priority-2">
+                                    <strong>{{ctrl.countSku}}</strong>
+                                    {{'TXT_SKU_S_TO_BE_FULFILLED' | translate}}
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="panel panel-default home_data hover-effect media-body">
+                    <div class="panel-heading home_data-head">
+                        <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>
+                            &nbsp;&nbsp;{{'TXT_SHIPMENT_STATUS' | translate}}<span
+                                class="text-right">Last 10 days</span></h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="stat-boxes">
+                            <li ng-click="ctrl.gotoShipmentInfo()">
+                                <div class="right data-priority-2">
+                                    <strong>{{ctrl.countReceiveErrorShipment}}</strong>
+                                    {{'TXT_ERROR_SHIPMENTS' | translate}}
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

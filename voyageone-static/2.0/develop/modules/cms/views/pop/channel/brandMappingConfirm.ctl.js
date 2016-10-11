@@ -16,16 +16,19 @@ define([
             init: function () {
                 var self = this;
                 self.brandMappingService.searchMatchedBrands({
-                    'cartId': self.platformData.cartId, 'brandId': self.platformData.brandId
+                    'cartId': self.platformData.cartId,
+                    'brandId': self.platformData.brandId
                 }).then(function (res) {
                     self.matchedBrandList = res.data.matchedBrandList;
                 });
             },
             confirm: function () {
                 var self = this;
-                var confirmResult={
-                    result : true,
-                    brandId : self.platformData.brandId
+                var confirmResult = {
+                    result: true,
+                    brandId: self.platformData.brandId,
+                    cmsBrand: self.platformData.cmsBrand,
+                    pBrand: self.platformData.selectedPlatform
                 };
                 self.$uibModalInstance.close(confirmResult);
             }

@@ -103,6 +103,7 @@ public class OverStockPriceAnalysisService extends BaseTaskService {
                 overstockPrice.setSkuCode(reader.get(i++));
                 overstockPrice.setCostPrice(reader.get(i++));
                 overstockPrice.setFinalRmbPrice(reader.get(i++));
+                overstockPrice.setMsrpPrice(reader.get(i++));
                 overstockPrice.setUpdFlg(0);
                 overstockPrices.add(overstockPrice);
             }
@@ -133,11 +134,15 @@ public class OverStockPriceAnalysisService extends BaseTaskService {
 
     private void updateMastPrice(CmsZzFeedOverstockPriceModel cmsZzFeedOverstockPriceModel) {
         CmsBtProductModel cmsBtProductModel = productService.getProductBySku(OverStock.getId(), cmsZzFeedOverstockPriceModel.getSkuCode());
+        $info("code:" + cmsBtProductModel.getCommon().getFields().getCode());
         if (cmsBtProductModel != null) {
             CmsBtProductModel_Common common = cmsBtProductModel.getCommon();
             for (CmsBtProductModel_Sku sku : common.getSkus()) {
                 if (sku.getSkuCode().equalsIgnoreCase(cmsZzFeedOverstockPriceModel.getSkuCode())) {
                     sku.setClientNetPrice(Double.parseDouble(cmsZzFeedOverstockPriceModel.getCostPrice()));
+                    if(!StringUtils.isEmpty(cmsZzFeedOverstockPriceModel.getMsrpPrice())){
+                        sku.setPriceMsrp(Double.parseDouble(cmsZzFeedOverstockPriceModel.getMsrpPrice()));
+                    }
                     productService.updateProductCommon(OverStock.getId(), cmsBtProductModel.getProdId(), common, getTaskName(), false);
                     break;
                 }
@@ -145,12 +150,19 @@ public class OverStockPriceAnalysisService extends BaseTaskService {
 
             cmsBtProductModel.getPlatforms().forEach((s, cart) -> {
                 if (cart.getCartId() != 0){
-                    for (BaseMongoMap<String, Object> sku : cart.getSkus()) {
-                        if (sku.getStringAttribute("skuCode").equalsIgnoreCase(cmsZzFeedOverstockPriceModel.getSkuCode())) {
-                            sku.setAttribute("priceSale", Double.parseDouble(cmsZzFeedOverstockPriceModel.getFinalRmbPrice()));
-                            productService.updateProductPlatform(OverStock.getId(), cmsBtProductModel.getProdId(), cart, getTaskName(), false, "价格导入");
-                            break;
+                    if(cart.getSkus() != null){
+                        for (BaseMongoMap<String, Object> sku : cart.getSkus()) {
+                            if (sku.getStringAttribute("skuCode").equalsIgnoreCase(cmsZzFeedOverstockPriceModel.getSkuCode())) {
+                                sku.setAttribute("priceSale", Double.parseDouble(cmsZzFeedOverstockPriceModel.getFinalRmbPrice()));
+                                if(!StringUtils.isEmpty(cmsZzFeedOverstockPriceModel.getMsrpPrice())){
+                                    sku.setAttribute("priceMsrp", Double.parseDouble(cmsZzFeedOverstockPriceModel.getMsrpPrice()));
+                                }
+                                productService.updateProductPlatform(OverStock.getId(), cmsBtProductModel.getProdId(), cart, getTaskName(), false);
+                                break;
+                            }
                         }
+                    }else{
+                        $info("cartId = "+cart.getCartId()+"sku=null");
                     }
                 }
             });
@@ -163,6 +175,9 @@ public class OverStockPriceAnalysisService extends BaseTaskService {
             for (CmsBtFeedInfoModel_Sku sku : cmsBtFeedInfoModel.getSkus()) {
                 if (sku.getSku().equalsIgnoreCase(cmsZzFeedOverstockPriceModel.getSkuCode())) {
                     sku.setPriceNet(Double.parseDouble(cmsZzFeedOverstockPriceModel.getCostPrice()));
+                    if(!StringUtils.isEmpty(cmsZzFeedOverstockPriceModel.getMsrpPrice())){
+                        sku.setPriceMsrp(Double.parseDouble(cmsZzFeedOverstockPriceModel.getMsrpPrice()));
+                    }
                     cmsBtFeedInfoModel.setModifier(getTaskName());
                     cmsBtFeedInfoModel.setModified(DateTimeUtil.getNowTimeStamp());
                     feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);

@@ -28,14 +28,9 @@
             <name>Team Nexus Repository</name>
             <url>http://10.0.0.59:8081/nexus/content/groups/public</url>
         </repository>
-		<!-- 
-        <repository>
-            <id>local nexus repo</id>
-            <name>local office site</name>
-            <url>http://maven.oschina.net/content/groups/public/</url>
-        </repository>
- 		-->
+
     </repositories>
+
     <distributionManagement>
         <repository>
             <id>releases</id>
@@ -46,6 +41,7 @@
             <url>http://10.0.0.59:8081/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+
     <pluginRepositories>
         <pluginRepository>
             <id>nexus</id>
@@ -74,14 +70,13 @@
 
         <!-- voyageone.web2 version -->
         <voyageone.web2.core.version>2.0.0-SNAPSHOT</voyageone.web2.core.version>
+        <voyageone.web2.cms.version>2.7.0-SNAPSHOT</voyageone.web2.cms.version>
+        <voyageone.web2.vms.version>1.0.0-SNAPSHOT</voyageone.web2.vms.version>
         <voyageone.web2.admin.version>2.0.0-SNAPSHOT</voyageone.web2.admin.version>
-        <voyageone.web2.cms.version>2.3.0-SNAPSHOT</voyageone.web2.cms.version>
         <voyageone.web2.openapi.version>2.0.0-SNAPSHOT</voyageone.web2.openapi.version>
         <!-- voyageone.web2.sdk version -->
         <voyageone.web2.sdk.version>2.0.0-SNAPSHOT</voyageone.web2.sdk.version>
-        <voyageone.web2.vendor.version>2.0.0-SNAPSHOT</voyageone.web2.vendor.version>
         <voyageone.web2.security.version>2.0.0-SNAPSHOT</voyageone.web2.security.version>
-
         <!-- voyageone.service version -->
         <voyageone.service2.base.version>0.0.1-SNAPSHOT</voyageone.service2.base.version>
         <voyageone.service2.api.version>0.0.1-SNAPSHOT</voyageone.service2.api.version>
@@ -172,6 +167,19 @@
                 <version>${spring.version}</version>
             </dependency>
 
+            <!--org.apache.oltu.oauth2-->
+            <dependency>
+                <groupId>org.apache.oltu.oauth2</groupId>
+                <artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.oltu.oauth2</groupId>
+                <artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
+                <version>1.0.2</version>
+            </dependency>
+
+
             <!-- commons -->
             <dependency>
                 <groupId>commons-net</groupId>
@@ -213,6 +221,11 @@
                 <artifactId>commons-fileupload</artifactId>
                 <version>1.3.1</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.12</version>
+            </dependency>
 
             <!-- junit -->
             <dependency>
@@ -252,7 +265,7 @@
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>5.1.30</version>
+                <version>5.1.39-vo</version>
             </dependency>
             <dependency>
                 <groupId>org.mybatis</groupId>
@@ -271,6 +284,12 @@
                 <artifactId>javax.servlet-api</artifactId>
                 <version>3.1.0</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5-20110124</version>
+                <!--<scope>provided</scope>-->
             </dependency>
             <dependency>
                 <groupId>javax.servlet.jsp</groupId>
@@ -341,7 +360,12 @@
             <dependency>
                 <groupId>taobao</groupId>
                 <artifactId>taobao-sdk-java</artifactId>
-                <version>1457083595467</version>
+                <version>1457083595467-20160817</version>
+            </dependency>
+            <dependency>
+                <groupId>taobao</groupId>
+                <artifactId>taobao-sdk-java-ext</artifactId>
+                <version>20160825</version>
             </dependency>
             <!-- aliyun-sdk-oss -->
             <dependency>
@@ -412,14 +436,14 @@
                 <version>0.9.5.2</version>
             </dependency>
             <!--<dependency>-->
-                <!--<groupId>com.cloudhopper.proxool</groupId>-->
-                <!--<artifactId>proxool-cglib</artifactId>-->
-                <!--<version>0.9.1</version>-->
+            <!--<groupId>com.cloudhopper.proxool</groupId>-->
+            <!--<artifactId>proxool-cglib</artifactId>-->
+            <!--<version>0.9.1</version>-->
             <!--</dependency>-->
             <!--<dependency>-->
-                <!--<groupId>proxool</groupId>-->
-                <!--<artifactId>proxool</artifactId>-->
-                <!--<version>0.8.3</version>-->
+            <!--<groupId>proxool</groupId>-->
+            <!--<artifactId>proxool</artifactId>-->
+            <!--<version>0.8.3</version>-->
             <!--</dependency>-->
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -470,9 +494,9 @@
                 <version>3.12</version>
             </dependency>
             <!--<dependency>-->
-                <!--<groupId>com.voyageone</groupId>-->
-                <!--<artifactId>jd-open-api-sdk</artifactId>-->
-                <!--<version>2.0</version>-->
+            <!--<groupId>com.voyageone</groupId>-->
+            <!--<artifactId>jd-open-api-sdk</artifactId>-->
+            <!--<version>2.0</version>-->
             <!--</dependency>-->
             <dependency>
                 <groupId>com.voyageone</groupId>
@@ -481,9 +505,9 @@
             </dependency>
 
             <!--<dependency>-->
-                <!--<groupId>com.voyageone</groupId>-->
-                <!--<artifactId>javacsv</artifactId>-->
-                <!--<version>1.0</version>-->
+            <!--<groupId>com.voyageone</groupId>-->
+            <!--<artifactId>javacsv</artifactId>-->
+            <!--<version>1.0</version>-->
             <!--</dependency>-->
             <dependency>
                 <groupId>net.sourceforge.javacsv</groupId>
@@ -587,14 +611,15 @@
                         <target>${jdk.version}</target>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.18.1</version>
-                    <configuration>
-                        <skipTests>true</skipTests>
-                    </configuration>
-                </plugin>
+                <!--<plugin>-->
+                <!--surefire 插件用来在maven构建生命周期的test phase执行一个应用的单元测试-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-surefire-plugin</artifactId>-->
+                <!--<version>2.18.1</version>-->
+                <!--<configuration>-->
+                <!--<skipTests>true</skipTests>-->
+                <!--</configuration>-->
+                <!--</plugin>-->
             </plugins>
         </pluginManagement>
         <resources>

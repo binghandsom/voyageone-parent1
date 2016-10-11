@@ -7,6 +7,7 @@ import com.aliyun.oss.model.PutObjectResult;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public class AliYunOSSClient {
     private String endpoint;
@@ -81,4 +82,24 @@ public class AliYunOSSClient {
             }
         }
     }
+
+    /**
+     *
+     * @param inputStream 文件流
+     * @param bucketName      阿里云oss 存储区
+     * @param fileOSSFullPath 阿里云oss文件路径
+     */
+    public String putOSS(InputStream inputStream, String bucketName, String fileOSSFullPath) {
+        OSSClient client = null;
+        try {
+            client = create();
+            PutObjectResult result = client.putObject(bucketName, fileOSSFullPath, inputStream);
+            return result.toString();
+        } finally {
+            if (client != null) {
+                client.shutdown();
+            }
+        }
+    }
+
 }

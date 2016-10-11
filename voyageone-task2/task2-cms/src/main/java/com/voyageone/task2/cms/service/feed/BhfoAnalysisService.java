@@ -1,10 +1,7 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.csvreader.CsvReader;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.transaction.TransactionRunner;
-import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
@@ -12,12 +9,8 @@ import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.cms.bean.SuperFeedJEBean;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.cms.bean.SuperfeedBhfoBean;
 import com.voyageone.task2.cms.dao.feed.BhfoFeedDao;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoBhfoModel;
@@ -25,12 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.BHFO_MINIMALL;
@@ -460,6 +453,24 @@ public class BhfoAnalysisService extends BaseAnalysisService {
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());
             cmsBtFeedInfoModel.setAttribute(attribute);
+
+            //设置重量
+            List<CmsBtFeedInfoModel_Sku> skus = vtmModelBean.getSkus();
+            for (CmsBtFeedInfoModel_Sku sku : skus) {
+                String Weight = sku.getWeightOrg().trim();
+                Pattern pattern = Pattern.compile("[^0-9.]");
+                Matcher matcher = pattern.matcher(Weight);
+                if (matcher.find()) {
+                    int index = Weight.indexOf(matcher.group());
+                    if (index != -1) {
+                        String weightOrg = Weight.substring(0, index);
+                        sku.setWeightOrg(weightOrg);
+                    }
+                }
+                sku.setWeightOrgUnit(sku.getWeightOrgUnit());
+            }
+            cmsBtFeedInfoModel.setSkus(skus);
+            //设置重量结束
 
             if(codeMap.containsKey(cmsBtFeedInfoModel.getCode())){
                 CmsBtFeedInfoModel beforeFeed =  codeMap.get(cmsBtFeedInfoModel.getCode());

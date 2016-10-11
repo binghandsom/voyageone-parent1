@@ -7,43 +7,113 @@ define([
 ], function (cms) {
     cms.controller('popImageGroupAddCtl', (function () {
 
-        function PopImageGroupAddCtl(data, imageGroupService, alert, notify, $uibModalInstance) {
+        function PopImageGroupAddCtl(data, imageGroupService, sizeChartService, alert, notify, $uibModalInstance) {
             this.alert = alert;
             this.notify = notify;
             this.parent = data;
             this.imageGroupService = imageGroupService;
+            this.sizeChartService = sizeChartService;
             this.platformList = data.platformList;
             this.imageTypeList = data.imageTypeList;
             this.brandNameList = data.brandNameList;
             this.productTypeList = data.productTypeList;
             this.sizeTypeList = data.sizeTypeList;
             this.$uibModalInstance = $uibModalInstance;
-            this.platform = "";
-            this.imageGroupName = "";
-            this.viewType = "";
-            this.imageType = "";
-            this.brandName = [];
-            this.productType = [];
-            this.sizeType = [];
+            this.platform = data.platform ? data.platform : "";
+            this.imageGroupName = data.imageGroupName;
+            this.viewType = data.viewType ? data.viewType : "";
+            this.imageType = data.imageType ? data.imageType : "";
+            this.brandName = data.brandName ? data.brandName : [];
+            this.productType = data.productType ? data.productType : [];
+            this.sizeType = data.sizeType ? data.sizeType : [];
         }
+
         PopImageGroupAddCtl.prototype = {
+            init: function () {
+                var self = this;
+
+                if(self.parent.from !== 'detail')
+                    return;
+
+                self.imageGroupInfo = self.parent.imageGroupInfo;
+
+                if (self.imageGroupInfo.sizeChartId > 0) {
+                    self.selectedSize = {
+                        cartId: self.platform,
+                        sizeChartName: self.imageGroupInfo.sizeChartName,
+                        sizeChartId: self.imageGroupInfo.sizeChartId
+                    };
+
+                    self.chartType = "match";
+                    self.sizeChart = self.selectedSize;
+                }else{
+                    self.chartType = "setting";
+                }
+
+                self.getNoMatchList();
+            },
+            getNoMatchList: function () {
+                /**当为尺码图时获取未匹配尺码*/
+                var self = this;
+
+                if (self.imageType == 2) {
+                    self.sizeChartService.getNoMatchList({cartId: self.platform}).then(function (res) {
+                        self.noMathOpt = res.data;
+                        if(self.selectedSize)
+                            self.noMathOpt.push(self.selectedSize);
+                    });
+                } else {
+                    self.noMathOpt = null;
+                }
+            },
+            radioChange:function(){
+                var self = this;
+
+                if(self.sizeChart)
+                    self.chartOrg = self.sizeChart;
+
+                switch(self.chartType){
+                    case 'setting':
+                        self.sizeChart = null;
+                        break;
+                    case 'match':
+                        self.sizeChart = self.chartOrg;
+                        break;
+                    case 'new':
+                        self.sizeChart = "";
+                        break;
+                }
+            },
             save: function () {
-                var main = this;
-                main.imageGroupService.save({
-                    "platform" : main.platform,
-                    "imageGroupName" : main.imageGroupName,
-                    "viewType" : main.viewType,
-                    "imageType" : main.imageType,
-                    "brandName" : main.brandName,
-                    "productType" : main.productType,
-                    "sizeType" : main.sizeType
-                }).then(function (res) {
-                    main.notify.success('TXT_MSG_UPDATE_SUCCESS');
-                    main.$uibModalInstance.close();
-                    main.parent.search();
+                var self = this,
+                    listSizeChart;
+
+                if (self.sizeChart) {
+                    if (_.isObject(self.sizeChart)) {
+                        listSizeChart = self.sizeChart;
+                    } else {
+                        listSizeChart = {sizeChartName: self.sizeChart, sizeChartId: 0};
+                    }
+                }
+
+                var upEntity = _.extend({
+                    "imageGroupId":self.imageGroupInfo?self.imageGroupInfo.imageGroupId:0,
+                    "platform": self.platform,
+                    "imageGroupName": self.imageGroupName,
+                    "viewType": self.viewType,
+                    "imageType": self.imageType,
+                    "brandName": self.brandName,
+                    "productType": self.productType,
+                    "sizeType": self.sizeType
+                },listSizeChart);
+
+                self.imageGroupService.save(upEntity).then(function () {
+                    self.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                    self.$uibModalInstance.close();
+                    self.parent.search();
                 }, function (err) {
                     if (err.displayType == null) {
-                        main.alert('TXT_MSG_UPDATE_FAIL');
+                        self.alert('TXT_MSG_UPDATE_FAIL');
                     }
                 });
             },

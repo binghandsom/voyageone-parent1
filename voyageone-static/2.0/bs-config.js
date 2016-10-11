@@ -14,7 +14,6 @@ module.exports = {
         'develop/components/!**!/!*.js'
     ],*/
     notify: false,
-    browser: 'google chrome',
     middleware: [
         morgan('dev'),
         function (req, res, next) {

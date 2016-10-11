@@ -3,7 +3,7 @@ package com.voyageone.web2.cms.views.pop.history;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsPromotionHistoryService extends BaseAppService {
+public class CmsPromotionHistoryService extends BaseViewService {
 
     @Autowired
     private PromotionService promotionService;

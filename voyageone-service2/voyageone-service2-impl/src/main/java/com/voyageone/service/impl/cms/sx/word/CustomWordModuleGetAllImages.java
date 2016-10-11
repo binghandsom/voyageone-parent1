@@ -93,10 +93,18 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                 // added by morse.lu 2016/07/18 start
                 if (Boolean.parseBoolean(useCmsBtImageTemplate)) {
                     // 用图片管理模板
+                    // added by morse.lu 2016/09/19 start
+                    RuleExpression viewTypeExpression = customModuleUserParamGetAllImages.getViewType();
+                    String viewType = expressionParser.parse(viewTypeExpression, shopBean, user, extParameter);
+                    if (StringUtils.isEmpty(viewType)) {
+                        viewType = "1"; // 默认 PC端
+                    }
+                    // added by morse.lu 2016/09/19 end
                     completeImageUrl = sxProductService.getImageTemplate(sxData.getChannelId(),
                                                     sxData.getCartId(),
                                                     3, // 3：详情细节模版
-                                                    1, // PC端
+//                                                    1, // PC端
+                                                    Integer.valueOf(viewType),
                                                     sxData.getMainProduct().getCommon().getFields().getBrand(),
                                                     sxData.getMainProduct().getCommon().getFields().getProductType(),
                                                     sxData.getMainProduct().getCommon().getFields().getSizeType(),

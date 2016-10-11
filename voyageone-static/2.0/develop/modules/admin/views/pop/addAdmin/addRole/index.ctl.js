@@ -370,20 +370,6 @@ define([
                         break;
                 }
             },
-            /**
-             * 授权仓库只有在选择了WMS系统才显示
-             * 未选择WMS系统时，清空授权仓库的信息
-             */
-            ifShow: function (item) {
-                var self = this;
-                if (item.app == 'WMS' && item.valid == true) {
-                    self.showStore = true;
-                } else {
-                    self.showStore = false;
-                    self.saveInfo.allStore = '0';
-                    self.saveInfo.storeIds = [];
-                }
-            },
             cancel: function () {
                 this.$uibModalInstance.close();
             },
@@ -397,6 +383,7 @@ define([
                     selApp.push(app.application.toLowerCase());
                 });
                 self.saveInfo.applications = selApp;
+
                 self.saveInfo.roleType = self.saveInfo.roleType - 0;
 
                 self.saveInfo.channelIds = [];
@@ -407,9 +394,18 @@ define([
                     });
                 }
                 if (self.saveInfo.allStore == '0') {
-                    _.forEach(self.storeList, function (item) {
-                        self.saveInfo.storeIds.push(item.storeId - 0);
-                    });
+                    /**
+                     * 授权仓库只有在选择了WMS系统才显示
+                     * 未选择WMS系统时，清空授权仓库的信息
+                     */
+                    if (self.saveInfo.applications.indexOf('wms') < 0) {
+                        self.saveInfo.allStore = '0';
+                        self.saveInfo.storeIds = [];
+                    } else {
+                        _.forEach(self.storeList, function (item) {
+                            self.saveInfo.storeIds.push(item.storeId - 0);
+                        });
+                    }
                 }
 
                 if (self.append == true) {
