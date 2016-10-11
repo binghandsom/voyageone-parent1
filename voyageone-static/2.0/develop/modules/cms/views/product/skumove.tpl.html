@@ -45,27 +45,27 @@
     <div class="box"><!-- Group 检索 -->
         <div class="box-body container-fluid  product-shema-detail">
             <div class="col-sm-12"><!-- 请选择移动方式 -->
-                    <div class="form-group m-t-sm">
-                        <div class="col-sm-2">
-                            <hr>
-                            <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_CHOOSE_THE_MOVE_TYPE'|translate}}</span>
-                        </div>
+                <div class="form-group m-t-sm">
+                    <div class="col-sm-2">
+                        <hr>
+                        <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_CHOOSE_THE_MOVE_TYPE'|translate}}</span>
                     </div>
-                    <div class="form-group">
-                        <div class="">
-                            <label class="radio-inline c-radio">
-                                <input type="radio" name="type" value="0"  ng-model="ctrl.type"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_UNDER_NEW_GROUP'|translate}}
-                            </label>
-                            <label class="radio-inline c-radio">
-                                <input type="radio" name="type" value="1"  ng-model="ctrl.type"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_UNDER_OLD_GROUP'|translate}}
-                            </label>
-                            <label class="radio-inline c-radio">
-                                <input type="radio" name="type" value="2"  ng-model="ctrl.type[2]"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_CHOOSED_GROUP'|translate}}
-                            </label>
-                        </div>
+                </div>
+                <div class="form-group">
+                    <div class="">
+                        <label class="radio-inline c-radio">
+                            <input type="radio" name="type" value="0" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_UNDER_NEW_GROUP'|translate}}
+                        </label>
+                        <label class="radio-inline c-radio">
+                            <input type="radio" name="type" value="1" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_UNDER_OLD_GROUP'|translate}}
+                        </label>
+                        <label class="radio-inline c-radio">
+                            <input type="radio" name="type" value="2" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_CHOOSED_GROUP'|translate}}
+                        </label>
                     </div>
+                </div>
             </div>
-            <div class="col-sm-12" ng-if="ctrl.type[2]"><!-- Group 检索 -->
+            <div class="col-sm-12" ng-if="ctrl.show"><!-- Group 检索 -->
                 <div class="form-group m-t-sm">
                     <div class="col-sm-2">
                         <div class="form-group">
@@ -73,7 +73,7 @@
                             <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_GROUP_SEARCH'|translate}}</span>
                         </div>
                         <div class="form-group m-t-lg">
-                            <button class="btn btn-success col-sm-12"><i class="fa fa-arrow-circle-down"></i>&nbsp;&nbsp;{{'TXT_BUILD_PREVIEW'|translate}}</button>
+                            <button class="btn btn-success col-sm-12" ng-click="ctrl.ifShow({type:'buildView',value:true})"><i class="fa fa-arrow-circle-down"></i>&nbsp;&nbsp;{{'TXT_BUILD_PREVIEW'|translate}}</button>
                         </div>
                     </div>
                     <div class="col-sm-10">
@@ -82,7 +82,7 @@
                             <div class="col-sm-4">
                                 <input class="form-control" ng-model="vm.searchInfo.color">
                             </div>
-                            <button class="btn btn-vo" ng-click="search()" title="Search"><i class="fa fa-search"></i></button>
+                            <button class="btn btn-vo" ng-click="ctrl.search()" title="Search"><i class="fa fa-search"></i></button>
                         </div>
                         <div class="form-group">
                             <table class="table table-hover-new table-hover table_main m-t-sm">
@@ -136,7 +136,7 @@
             </div>
         </div>
     </div>
-    <div class="box"><!-- 移动后预览 -->
+    <div class="box" ng-if="ctrl.showView"><!-- 移动后预览 -->
         <div class="box-body container-fluid  product-shema-detail">
             <div class="col-sm-12"><!-- 移动后预览 -->
                 <div class="form-group m-t-sm">
