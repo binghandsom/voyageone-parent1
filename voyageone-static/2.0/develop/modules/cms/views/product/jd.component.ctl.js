@@ -280,7 +280,7 @@ define([
                             break;
                     }
 
-                    if (scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null) {
+                    if (scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null && mark != "temporary") {
                         var masterBrand = scope.productInfo.masterField.brand;
                         scope.vm.status = scope.vm.preStatus;
                         alert("该商品的品牌【" + masterBrand + "】没有与平台品牌建立关联，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置");
