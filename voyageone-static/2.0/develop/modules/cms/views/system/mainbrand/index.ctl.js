@@ -14,6 +14,9 @@ define([
 
         }
 
+        MainBrandController.prototype.init = function(){
+
+        };
 
         return MainBrandController;
 
