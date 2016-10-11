@@ -166,6 +166,17 @@ define([
                 }
                 switch (item.type) {
                     case'channel':
+                        // 从AllChannelList过滤出已经选择的channel，组成新的可以选择的list
+                        self.channelAllList = self.channelAllListCopy;
+                        _.forEach(self.channelList, function (item) {
+                            var index = -1;
+                            _.forEach(self.channelAllList, function (allItem, i) {
+                                if (allItem.orderChannelId == item.orderChannelId) {
+                                    index = i;
+                                }
+                            });
+                            if (index > -1) self.channelAllList.splice(index, 1);
+                        });
                         _.filter(self.channelAllList, function (data) {
                             if (data.name.toUpperCase().indexOf(item.value.toUpperCase()) > -1) {
                                 self.channelTempAllList.push(data)
