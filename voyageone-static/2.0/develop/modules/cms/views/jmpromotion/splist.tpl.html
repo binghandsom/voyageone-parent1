@@ -10,8 +10,91 @@
 					<div class="col-sm-4">
 						<div class="form-horizontal">
 							<div class="form-group">
-								<label class="col-sm-4 control-label" translate="TXT_CREATE_TIME"></label>
+								<label class="col-sm-3 control-label text-right" translate="TXT_PROMOTION_NAME"></label>
+								<div class="col-sm-7">
+									<input class="form-control" ng-model="searchInfo.promotionName">
+								</div>
+							</div>
+						</div>
+						<div class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right">主品牌</label>
+								<div class="col-sm-7">
+									<select class="form-control" ng-model="searchInfo.promotionStatus">
+										<option value='' translate="TXT_SELECT_NO_VALUE"></option>
+										<option ng-repeat="status in vm.promotionStatus" value={{status.value}}>{{status.name}}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right">有库存商品数</label>
+								<div class="col-sm-7" style="padding-left:0px">
+									<div class="col-sm-5">
+										<select class="form-control m-r-xs" style="margin-left:4px" ng-model="vm.searchInfo.compareType">
+											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+											<option value="<"><</option>
+											<option value=">">></option>
+										</select>
+									</div>
+									<div class="col-sm-5" style="margin-left:1px">
+										<input type="number" class="form-control" ng-model="vm.searchInfo.inventory" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="9">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-sm-4">
+						<div class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-4 control-label">预热时间</label>
 								<div class="col-sm-8 form-inline">
+									<div class="col-sm-5 input-group">
+										<input type="text" class="form-control" uib-datepicker-popup ng-model="searchInfo.promotionStart"
+											   max-date="searchInfo.promotionEnd" date-model-format="yyyy-MM-dd" is-open="datePicker3" ng-required="true" close-text="Close" />
+										  <span class="input-group-btn">
+											<button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
+										  </span>
+									</div>&nbsp;~&nbsp;
+									<div class="col-sm-5 input-group">
+										<input type="text" class="form-control" uib-datepicker-popup ng-model="searchInfo.promotionEnd"
+											   min-date="searchInfo.promotionStart" date-model-format="yyyy-MM-dd" is-open="datePicker4" ng-required="true" close-text="Close" />
+										  <span class="input-group-btn">
+											<button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
+										  </span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-4 control-label">活动编号</label>
+								<div class="col-sm-7">
+									<input class="form-control" ng-model="searchInfo.promotionName">
+								</div>
+							</div>
+						</div>
+						<div class="form-horizontal">
+							<div class="form-group" >
+								<label class="col-sm-4 control-label">活动主频道</label>
+								<div class="col-sm-7">
+									<select class="form-control" ng-model="searchInfo.promotionStatus">
+										<option value='' translate="TXT_SELECT_NO_VALUE"></option>
+										<option value="luxuryglobal">轻奢（luxuryglobal）</option>
+										<option value="food">食品（food）</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-sm-4">
+						<div class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-3 control-label">活动时间</label>
+								<div class="col-sm-7 form-inline">
 									<div class="col-sm-5 input-group">
 										<input type="text" class="form-control" uib-datepicker-popup ng-model="searchInfo.createdStart"
 											   max-date="searchInfo.createdEnd" date-model-format="yyyy-MM-dd" is-open="datePicker1" ng-required="true" close-text="Close" />
@@ -29,61 +112,25 @@
 								</div>
 							</div>
 						</div>
-					</div>
-
-					<div class="col-sm-4">
-						<div class="form-horizontal">
-							<div class="form-group" >
-								<label class="col-sm-4  control-label" translate="TXT_PROMOTION_STATUS"></label>
-								<div class="col-sm-7">
-									<select class="form-control" ng-model="searchInfo.promotionStatus">
-										<option value='' translate="TXT_SELECT_NO_VALUE"></option>
-										<option ng-repeat="status in vm.promotionStatus" value={{status.value}}>{{status.name}}</option>
-									</select>
-								</div>
-							</div><div class="form-group">
-							<label class="col-sm-4 control-label" translate="TXT_PROMOTION_TIME"></label>
-							<div class="col-sm-8 form-inline">
-								<div class="col-sm-5 input-group">
-									<input type="text" class="form-control" uib-datepicker-popup ng-model="searchInfo.promotionStart"
-										   max-date="searchInfo.promotionEnd" date-model-format="yyyy-MM-dd" is-open="datePicker3" ng-required="true" close-text="Close" />
-									  <span class="input-group-btn">
-										<button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
-									  </span>
-								</div>&nbsp;~&nbsp;
-								<div class="col-sm-5 input-group">
-									<input type="text" class="form-control" uib-datepicker-popup ng-model="searchInfo.promotionEnd"
-										   min-date="searchInfo.promotionStart" date-model-format="yyyy-MM-dd" is-open="datePicker4" ng-required="true" close-text="Close" />
-									  <span class="input-group-btn">
-										<button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
-									  </span>
-								</div>
-							</div>
-						</div>
-						</div>
-					</div>
-
-					<div class="col-sm-4">
 						<div class="form-horizontal">
 							<div class="form-group">
-								<label class="col-sm-4 control-label" translate="TXT_PROMOTION_NAME"></label>
+								<label class="col-sm-3 control-label">款号/Code/SKU</label>
 								<div class="col-sm-7">
-									<input class="form-control" ng-model="searchInfo.promotionName">
+									<textarea class="form-control inherited no-resize" rows="3" ng-model="vm.searchInfo.codeList" ></textarea>
+									<div class="text-warnings" style="padding-left:0px">
+										<i class="icon fa fa-bell-o"></i>&nbsp;多项查询(多项换行分割)，精确查询
+									</div>
 								</div>
 							</div>
-
-						</div><!-- .form-group -->
+						</div>
 					</div>
-					<div class="col-sm-12 text-center m-t-sm" ng-controller="popupCtrl">
+					<div class="col-sm-12 text-center" ng-controller="popupCtrl">
 						<div class="form-inline">
 							<button class="btn btn-default" ng-click="$parent.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 							<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
 							<button  type="button" class="btn btn-pop btn-default m-r-sm m-b-xs m-t-xs m-l-xs" style="margin-left:20px" ng-click="openJmPromotionDetail({search:search},search)">
 								新建聚美专场
 							</button>
-							<!--<button  type="button" class="btn btn-pop btn-default m-b-xs m-t-xs" ng-click="openMrbStock('lg',vm.groupSelList)">-->
-								<!--{{'TXT_SEPARATE_NEW_TASK'|translate}}-->
-							<!--</button>-->
 						</div>
 					</div>
 				</div>
@@ -97,15 +144,14 @@
 			<table class="table table-hover-new text-center" ng-controller="popupCtrl">
 				<thead>
 				<tr>
-					<th class="text-left mfb-x"></th>
+					<th class="text-left mfb-xt3"></th>
 					<th class="text-center" translate="TXT_SEQ"></th>
 					<th class="text-center">频道页入口图</th>
 					<th class="text-left" translate="TXT_PROMOTION_NAME"></th>
-					<th class="text-left" translate="TXT_STATUS"></th>
 					<th class="text-left">主品牌名称</th>
 					<th class="text-left" translate="TXT_PROMOTION_TIME"></th>
 					<th class="text-left" translate="TXT_PREHEATING_TIME"></th>
-					<th class="text-left" translate="TXT_PRE_SALE_TIME"></th>
+					<th class="text-left">准备期截止时间</th>
 					<th class="text-center">活动标记</th>
 					<th class="text-center">活动标题</th>
 					<th class="text-center">有库存商品数</th>
@@ -113,8 +159,8 @@
 				</tr>
 				</thead>
 				<tbody ng-if="vm.promotionList.length">
-				<tr ng-repeat="promotion in vm.promotionList | filter: {isAllPromotion : 0}">
-					<td class="text-left mfb-x">
+				<tr ng-repeat="promotion in vm.promotionList">
+					<td class="text-left mfb-xt3">
 						<label class="checkbox-inline c-checkbox">
 							<input type="checkbox" ng-model="vm.groupSelList.selFlag[promotion.id]" ng-controller="selectRowsCtrl"ng-click="selectOne(promotion.id, vm.groupSelList)">
 							<span class="fa fa-check"></span>
@@ -122,14 +168,11 @@
 					</td>
 					<td class="text-center">{{promotion.id}}</td>
 					<td class="text-center"></td>
-					<td class="text-left yellowLink">
-						<a href="#/jmpromotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a>
-						&nbsp;<span ng-if="promotion.tejiabaoId != 0">({{promotion.tejiabaoId}})</span></td>
-					<td class="text-left"><span ng-show="promotion.promotionStatus==1" class="label label-success-new m-r-lg"><a ng-click="setClosePromotionStatus(promotion)"> Open </a></span><span ng-show="promotion.promotionStatus==0" class="label label-yellow-new m-r-lg"><a ng-click="setOpenPromotionStatus(promotion)"> Close </a> </span></td>
-					<td class="text-left">品牌</td>
-					<td class="text-left">{{promotion.activityStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.activityEnd | date:'yyyy-MM-dd'}}</td>
-					<td class="text-left">{{promotion.prePeriodStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.prePeriodEnd | date:'yyyy-MM-dd'}}</td>
-					<td class="text-left">{{promotion.preSaleStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.preSaleEnd | date:'yyyy-MM-dd'}}</td>
+					<td class="text-left yellowLink"><a href="#/jmpromotion/detail/{{promotion.promId}}/{{promotion.id}}" target="_blank">{{promotion.name}}</a></td>
+					<td class="text-left">{{promotion.brand}}</td>
+					<td class="text-left">{{promotion.activityStart}}&nbsp;~&nbsp;{{promotion.activityEnd}}</td>
+					<td class="text-left">{{promotion.prePeriodStart}}</td>
+					<td class="text-left">{{promotion.signupDeadline}}</td>
 					<td class="text-center">APP：ppt_jordan_shoes_20161009_app<br>PC : ppt_jordan_shoes_20161009_pc</td>
 					<td class="text-left">耐克运动鞋专场</td>
 					<td class="text-center">23</td>
@@ -140,7 +183,7 @@
 				</tr>
 				</tbody>
 			</table>
-			<div  if-no-rows="vm.promotionList.length"></div>
+			<div if-no-rows="vm.promotionList.length"></div>
 		</div><!-- /.box-body -->
 		<div class="col-sm-12 m-t-lg m-b-lg">
 			<vpagination config="dataPageOption"></vpagination>

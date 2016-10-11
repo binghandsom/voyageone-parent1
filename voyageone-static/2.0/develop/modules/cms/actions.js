@@ -193,6 +193,7 @@ define(function () {
                     "root": "/cms/jmpromotion/index",
                     "init": "init",
                     "get": "get",
+                    "getJmPromList": "getJmPromList",
                     "getListByWhere": "getListByWhere",
                     "getEditModel": "getEditModel",
                     "saveModel": "saveModel",
@@ -389,9 +390,6 @@ define(function () {
                 "$addToPromotionService": {
                     "root": "/cms/pop/add_to_promotion",
                     "getPromotionTags": "getPromotionTags",
-
-
-
                     "addToPromotion": "addToPromotion",
                     "checkPromotionTags": "checkPromotionTags"
                 },
@@ -441,7 +439,6 @@ define(function () {
                     "search": "search",
                     "get": "get",
                     "submit": "submit"
-
                 }
             },
             "channel": {

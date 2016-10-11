@@ -20,6 +20,7 @@ import java.util.Map;
         method = RequestMethod.POST
 )
 public class CmsJmPromotionIndexController extends CmsController {
+
     @Autowired
     private CmsBtJmPromotionService service;
     @Autowired
@@ -65,6 +66,17 @@ public class CmsJmPromotionIndexController extends CmsController {
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GetTagListByPromotionId)
     public AjaxResponse getTagListByPromotionId(@RequestBody int promotionId) {
         return success(service3.getTagListByPromotionId(promotionId));
+    }
+
+    /**
+     * 查询聚美活动一览
+     * 聚美专场新增，不使用原有的"CmsPromotionIndexController.getPage (/cms/promotion/index/getPage)"
+     */
+    @RequestMapping("getJmPromList")
+    public AjaxResponse getJmPromotionList(@RequestBody Map params) {
+        String channelId = getUser().getSelChannelId();
+        params.put("channelId", channelId);
+        return success(service.getJmPromotionList(params));
     }
 
     @Autowired

@@ -351,7 +351,7 @@ define(function () {
             "controllerUrl": "modules/cms/views/jmpromotion/splist.ctl"
         },
         "jmpromotion_detail": {
-            "hash": "/jmpromotion/detail/:promId",
+            "hash": "/jmpromotion/detail/:promId/:jmpromId",
             "templateUrl": "views/jmpromotion/spdetail.tpl.html",
             "controllerUrl": "modules/cms/views/jmpromotion/spdetail.ctl"
         },

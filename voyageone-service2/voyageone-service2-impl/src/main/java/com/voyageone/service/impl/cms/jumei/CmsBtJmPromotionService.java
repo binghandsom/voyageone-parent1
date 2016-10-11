@@ -47,6 +47,7 @@ public class CmsBtJmPromotionService extends BaseService {
     CmsBtPromotionDao daoCmsBtPromotion;
     @Autowired
     CmsBtJmProductDaoExt cmsBtJmProductDaoExt;
+
     public Map<String, Object> init() {
         Map<String, Object> map = new HashMap<>();
         List<CmsBtJmMasterBrandModel> jmMasterBrandList = daoCmsBtJmMasterBrand.selectList(new HashMap<String, Object>());
@@ -57,6 +58,7 @@ public class CmsBtJmPromotionService extends BaseService {
     public CmsBtJmPromotionModel select(int id) {
         return dao.select(id);
     }
+
     @VOTransactional
    public void delete(int id) {
        CmsBtJmPromotionModel model = dao.select(id);
@@ -64,6 +66,7 @@ public class CmsBtJmPromotionService extends BaseService {
        dao.update(model);
        saveCmsBtPromotion(model);
    }
+
     public int update(CmsBtJmPromotionModel entity) {
         return dao.update(entity);
     }
@@ -98,7 +101,7 @@ public class CmsBtJmPromotionService extends BaseService {
      * 新建聚美专场
      */
     @VOTransactional
-    public int saveModel(CmsBtJmPromotionSaveBean parameter,String userName, String channelId) {
+    public int saveModel(CmsBtJmPromotionSaveBean parameter, String userName, String channelId) {
         parameter.getModel().setChannelId(channelId);
         if (parameter.getModel().getActivityAppId()==null) {
             parameter.getModel().setActivityAppId(0L);
@@ -123,17 +126,25 @@ public class CmsBtJmPromotionService extends BaseService {
         } else {//新增
             parameter.getModel().setModifier(userName);
             parameter.getModel().setCreater(userName);
+            // 设置品牌名
+            Map<String, Object> map = new HashMap<>();
+            map.put("jmMasterBrandId", parameter.getModel().getCmsBtJmMasterBrandId());
+            CmsBtJmMasterBrandModel jmMasterBrand = daoCmsBtJmMasterBrand.selectOne(map);
+            if (jmMasterBrand != null) {
+                parameter.getModel().setBrand(jmMasterBrand.getName());
+            }
+
             Map<String,Object> param = new HashMap<>();
             param.put("channelId",parameter.getModel().getChannelId());
             param.put("name",parameter.getModel().getName());
             List<MapModel> model = getListByWhere(param);
-            if(model == null || model.size() == 0){
+            if (model == null || model.size() == 0) {
                 insertModel(parameter);
                 // 可能存在脏数据的情况，这里先检查一遍数据是否正确
-                Map<String, Object> map = new HashMap<>();
-                map.put("promotionId", parameter.getModel().getId());
-                map.put("cartId", CartEnums.Cart.JM.getValue());
-                CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
+                Map<String, Object> qmap = new HashMap<>();
+                qmap.put("promotionId", parameter.getModel().getId());
+                qmap.put("cartId", CartEnums.Cart.JM.getValue());
+                CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(qmap);
                 if (promotion != null) {
                     // 正常情况下应该没有数据
                     $error("saveModel promotion表和jm_promotion表数据冲突 promotionId=" + parameter.getModel().getId());
@@ -147,7 +158,7 @@ public class CmsBtJmPromotionService extends BaseService {
         return 1;
     }
 
-    public void  saveCmsBtPromotion(CmsBtJmPromotionModel model) {
+    public void saveCmsBtPromotion(CmsBtJmPromotionModel model) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", model.getId());
         map.put("cartId", CartEnums.Cart.JM.getValue());
@@ -234,6 +245,7 @@ public class CmsBtJmPromotionService extends BaseService {
         });
         return dao.insert(model);
     }
+
     private int addTag(CmsBtJmPromotionModel model) {
         CmsBtTagModel modelTag = new CmsBtTagModel();
         modelTag.setChannelId(model.getChannelId());
@@ -281,5 +293,9 @@ public class CmsBtJmPromotionService extends BaseService {
         return daoExt.selectActivesOfChannel(params);
     }
 
+    public List<MapModel> getJmPromotionList(Map params) {
+
+        return daoExt.getJmPromotionList(params);
+    }
 }
 

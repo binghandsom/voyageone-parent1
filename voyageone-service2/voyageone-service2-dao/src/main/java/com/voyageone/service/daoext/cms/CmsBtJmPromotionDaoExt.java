@@ -10,6 +10,9 @@ import java.util.Map;
 
 @Repository
 public interface CmsBtJmPromotionDaoExt {
+
+    List<MapModel> getJmPromotionList(Map<String, Object> map);
+
     List<MapModel> selectListByWhere(Map<String, Object> map);
 
     /**
