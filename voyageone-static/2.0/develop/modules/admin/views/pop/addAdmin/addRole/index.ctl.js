@@ -22,6 +22,7 @@ define([
                 {'id': 3, 'application': 'OMS', 'valid': false},
                 {'id': 4, 'application': 'WMS', 'valid': false}
             ];
+            this.showStore = false;
             this.saveInfo = {
                 roleName: this.sourceData !== 'add' ? this.sourceData.roleName : '',
                 roleType: this.sourceData !== 'add' ? this.sourceData.roleType + '' : '',
@@ -139,6 +140,7 @@ define([
                     _.forEach(self.applicationList, function (i) {
                         if (i.application.toLocaleLowerCase() == item) {
                             i.valid = true;
+                            if (i.application = 'WMS')self.showStore = true;
                         }
                     })
                 })
@@ -351,6 +353,20 @@ define([
                         });
                         self.storeList = [];
                         break;
+                }
+            },
+            /**
+             * 授权仓库只有在选择了WMS系统才显示
+             * 未选择WMS系统时，清空授权仓库的信息
+             */
+            ifShow: function (item) {
+                var self = this;
+                if (item.app == 'WMS' && item.valid == true) {
+                    self.showStore = true;
+                } else {
+                    self.showStore = false;
+                    self.saveInfo.allStore = '';
+                    self.saveInfo.storeIds = [];
                 }
             },
             cancel: function () {
