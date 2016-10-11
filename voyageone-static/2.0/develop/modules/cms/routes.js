@@ -350,6 +350,11 @@ define(function () {
             "templateUrl": "views/jmpromotion/splist.tpl.html",
             "controllerUrl": "modules/cms/views/jmpromotion/splist.ctl"
         },
+        "jmpromotion_detail": {
+            "hash": "/jmpromotion/detail/:promId",
+            "templateUrl": "views/jmpromotion/spdetail.tpl.html",
+            "controllerUrl": "modules/cms/views/jmpromotion/spdetail.ctl"
+        },
         "image_create": {
             "hash": "/imagecreate/index",
             "templateUrl": "views/imagecreate/index.tpl.html",

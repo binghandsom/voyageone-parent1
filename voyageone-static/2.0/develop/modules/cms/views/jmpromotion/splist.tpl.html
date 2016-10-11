@@ -124,7 +124,7 @@
 					<td class="text-center">{{promotion.id}}</td>
 					<td class="text-center"></td>
 					<td class="text-left yellowLink">
-						<a href="#/jm/promotion_detail_list/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a>
+						<a href="#/jmpromotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a>
 						&nbsp;<span ng-if="promotion.tejiabaoId != 0">({{promotion.tejiabaoId}})</span></td>
 					<td class="text-left"><span ng-show="promotion.promotionStatus==1" class="label label-success-new m-r-lg"><a ng-click="setClosePromotionStatus(promotion)"> Open </a></span><span ng-show="promotion.promotionStatus==0" class="label label-yellow-new m-r-lg"><a ng-click="setOpenPromotionStatus(promotion)"> Close </a> </span></td>
 					<td class="text-left">品牌</td>
