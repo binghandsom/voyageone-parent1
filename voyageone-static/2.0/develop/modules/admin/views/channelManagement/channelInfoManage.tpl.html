@@ -115,7 +115,7 @@
                         <td class="text-center v-middle">{{list.isUsjoi!=null?list.isUsjoi==0 ? '否':'是':''}}</td>
                         <td class="text-left v-middle">{{list.cartName}}</td>
                         <td class="text-center v-middle">{{list.active!=null?list.active==1 ? '启用':'禁用':''}}</td>
-                        <td class="text-center v-middle">{{list.modified}}</td>
+                        <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="text-left v-middle">{{list.modifier}}</td>
                     </tr>
                 </tbody>

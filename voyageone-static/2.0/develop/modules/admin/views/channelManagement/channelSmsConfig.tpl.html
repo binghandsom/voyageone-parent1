@@ -129,7 +129,7 @@
                     <td class="text-left v-middle">{{list.describe}}</td>
                     <td class="text-left v-middle">{{list.delFlg!=null?list.delFlg=='1'?'删除':'未删除':''}}</td>
                     <td class="text-center v-middle">{{list.active!=null?list.active==true ? '启用':'禁用':''}}</td>
-                    <td class="text-center v-middle">{{list.modified}}</td>
+                    <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="text-left v-middle">{{list.modifier}}</td>
                 </tr>
                 </tbody>
