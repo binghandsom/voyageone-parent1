@@ -1,84 +1,94 @@
-<div class="wrapper-md">
+<div class="wrapper-md" ng-init="ctrl.init()">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;{{'TOOLS_COMMON_MASTER_BRAND_MAPPING' | translate}} </h4>
-                </div>
-                <div class="container-fluid m-t-xs m-b-xs">
-                    <div class="col-sm-12">
-                        <div class="col-sm-4">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label" translate="TXT_FEED_ALL_NUMBER"></label>
-                                    <div class="col-sm-7">
-                                        <input type="text" ng-model=" " class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label" translate="TXT_FEED_ALL_UNMAPPED_NUMBER"></label>
-                                    <div class="col-sm-7">
-                                        <input type="text" ng-model=" " class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label" translate="TXT_FEED_ALL_MAPPED_NUMBER"></label>
-                                    <div class="col-sm-7">
-                                        <input type="text" ng-model=" " class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 text-center m-b-sm">
-                        <div class="form-inline">
-                            <button class="btn btn-vo"><i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH' | translate}}</button>
-                        </div>
-                    </div>
+                    <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_MAIN_BRAND_MAPPING' | translate}}
+                    </h4>
                 </div>
             </div>
+
         </div>
     </div>
     <div class="box">
         <div class="box-body">
             <div class="table-responsive">
-                <div class="col-sm-12 dropdown_table_main">
-                    <table class="table table-hover-new vo_table tableWordBreak" >
-                        <thead>
-                            <tr>
-                                <th class="mfb-xt3 text-center text-nowrap"></th>
-                                <th class="mfb-xxt text-center text-nowrap"></th>
-                                <th class="mfb-xx text-center text-nowrap"></th>
-                                <th class="mfb-xx text-center text-nowrap"></th>
-                                <th class="mfb-xx text-center text-nowrap"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="mfb-xt3 text-center"></td>
-                                <td class="mfb-xxt text-center"></td>
-                                <td class="mfb-xt text-center"></td>
-                                <td class="mfb-xt text-center"></td>
-                                <td class="mfb-xt text-center"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div if-no-rows="vm.modelList.length"></div>
+                <div class="col-sm-1 m-t-sm">
+                    <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_MASTER_MAPPING_APPLICATION'
+                        | translate}}
+                    </button>
                 </div>
-
-            </div>
-            <div class="col-sm-12">
-                <vpagination config="dataPageOption"></vpagination>
             </div>
         </div>
+        <div class="box-body">
+            <div class="table-responsive">
+                <div class="col-sm-7 m-t-sm">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" translate="TXT_MASTER_MAPPING_SUATUS"></label>
 
+                            <div class="col-sm-8">
+                                <label class="checkbox-inline  c-checkbox">
+                                    <input type="checkbox" ng-model="ctrl.status[3]"><span class="fa fa-check"></span>
+                                    {{'TXT_INCOMPLETE'|translate}}
+                                </label>
+                                <label class="checkbox-inline  c-checkbox">
+                                    <input type="checkbox" ng-model="ctrl.status[2]"><span class="fa fa-check"></span>
+                                    {{'TXT_INCOMPLETE_REJECT'|translate}}
+                                </label>
+                                <label class="checkbox-inline  c-checkbox">
+                                    <input type="checkbox" ng-model="ctrl.status[0]"><span class="fa fa-check"></span>
+                                    {{'TXT_MASTER_MAPPING_APPLICATION'|translate}}
+                                </label>
+                                <label class="checkbox-inline c-checkbox">
+                                    <input type="checkbox" ng-model="ctrl.status[1]"><span class="fa fa-check"></span>
+                                    {{'TXT_COMPLETE'|translate}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 m-t-sm">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label" translate="TXT_MASTER_BRAND"></label>
+
+                            <div class="col-sm-7">
+                                <input type="text" ng-model="ctrl.selectedBrand" class="form-control"
+                                       placeholder="模糊查询">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-1 m-t-sm text-right">
+                    <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'
+                        | translate}}
+                    </button>
+                </div>
+                <div class="col-sm-12 dropdown_table_main">
+                    <table class="table table-hover-new vo_table tableWordBreak">
+                        <thead>
+                        <tr>
+                            <th class="mfb-xxt text-left" translate="TXT_FEED_BRAND"></th>
+                            <th class="mfb-xxt text-left" translate="TXT_MASTER_BRAND"></th>
+                            <th class="mfb-xt3 text-center" translate="TXT_ACTION"></th>
+                            <th class="mfb-xt3 text-center" translate="TXT_COMMENT"></th>
+                        </tr>
+                        </thead>
+                        <tbody ng-if="ctrl.masterBrandList.length > 0">
+                        <tr ng-repeat="list in ctrl.masterBrandList">
+                            <td class="mfb-xxt text-left">{{list.feedBrand}}</td>
+                            <td class="mfb-xxt text-left">{{list.feedBrand}}</td>
+                            <td class="mfb-xt3 text-center">
+                                <button class="btn btn-success btn-xs" ng-click="">{{list.masterFlag}}</button>
+                            </td>
+                            <td class="mfb-xxt text-center">{{list.comment}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <vpagination config="ctrl.prodPageOption"></vpagination>
     </div>
 </div>

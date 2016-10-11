@@ -749,6 +749,11 @@ public interface CmsUrlConstants {
 
             String CANCEL_HS_CODE_INFO = "cancelHsCodeInfo";
         }
+        interface COMMON {
+            String ROOT = "/cms/tools/common/";
+            String INIT_MASTER_BRAND_INFO = "initMasterBrandInfo";
+            String SEARCH_MASTER_BRAND_INFO = "searchMasterBrandInfo";
+        }
     }
 
     interface CMS_TOOLS_REPRICE {

@@ -787,6 +787,7 @@ define(function () {
         "TXT_BRAND_MAPPING_LIST": "平台品牌设置一览",
         "TXT_CART_NAME": "平台渠道名称",
         "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配状态",
+        "TXT_MASTER_MAPPING_APPLICATION": "Master品牌申请中",
         "TXT_FEED_BRAND":"Feed品牌",
         "TXT_MASTER_BRAND": "Master品牌",
         "TXT_PLATFORM_BRAND":"平台品牌",
@@ -815,6 +816,8 @@ define(function () {
         "TXT_BLACK_LIST_CONFIRM":"您确认要进行[{{content}}]操作吗？",
         "TXT_BATCH_JOIN_BLACK_LIST":"批量加入黑名单",
         "TXT_BATCH_REMOVE_BLACK_LIST":"批量移除黑名单",
-        "TXT_BLACK_LIST_BATCH_CONFIRM":"您确认要进行[{{content}}]操作吗？"
+        "TXT_BLACK_LIST_BATCH_CONFIRM":"您确认要进行[{{content}}]操作吗？",
+        "TXT_MAIN_BRAND_MAPPING": "主品牌匹配",
+        "TXT_INCOMPLETE_REJECT": "待匹配（审核驳回）",
     };
 });
