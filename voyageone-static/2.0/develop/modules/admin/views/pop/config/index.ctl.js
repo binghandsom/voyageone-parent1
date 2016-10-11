@@ -489,6 +489,7 @@ define([
                         break;
                 }
             },
+            //遍历取得所有的config列表数据，再将他们分页
             getConfigPaginationData: function (data, filterFn) {
                 var self = this;
                 var res = {
@@ -540,6 +541,7 @@ define([
                 });
             }
         };
+        //选择了config页面上的数据删除时，遍历元数据的config列表，找到这条数据并删除。
         function _forEach(parentData, subData, target) {
             _.forEach(parentData, function (item, x) {
                 var source = parentData;
@@ -577,6 +579,7 @@ define([
             });
         }
 
+        //选择了config页面上的数据添加时，遍历元数据的config列表，添加数据。
         function _forEachAdd(parentData, subData, target) {
             _.forEach(parentData, function (item, x) {
                 var source = parentData;

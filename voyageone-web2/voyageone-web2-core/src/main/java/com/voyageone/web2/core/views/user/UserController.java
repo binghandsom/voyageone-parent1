@@ -82,10 +82,10 @@ public class UserController extends BaseController {
     @RequestMapping(CoreUrlConstants.USER.VENDOR_LOGIN)
     public AjaxResponse vendorLogin(@RequestBody Map<String, Object> params) {
 
-//        String username = (String) params.get("username");
-//        String password = (String) params.get("password");
-//        int timezone = (int) params.get("timezone");
-//
+        String username = (String) params.get("username");
+        String password = (String) params.get("password");
+        int timezone = (int) params.get("timezone");
+
 //        // 验证在内部
 //        // 登录成功返回, 否则通过 BusinessException 返回
 //        UserSessionBean userSessionBean = userService.login(username, password, timezone);
@@ -103,6 +103,34 @@ public class UserController extends BaseController {
 //        } else {
 //            throw new BusinessException("Invalid  User.");
 //        }
+
+
+        comUserService.login(username, password);
+
+        Session session = SecurityUtils.getSubject().getSession();
+        ComUserModel userModel = (ComUserModel)session.getAttribute("comUserModel");
+        // 填充用户信息到 Session. 权限部分需要在选择了渠道后获取
+        UserSessionBean userSessionBean = new UserSessionBean();
+        userSessionBean.setUserId(userModel.getId());
+        userSessionBean.setUserName(userModel.getUserAccount());
+        userSessionBean.setTimeZone(timezone);
+        userSessionBean.setUserConfig(userService.getUserConfig(userModel.getId()));
+
+        session.setAttribute(BaseConstants.SESSION_USER, userSessionBean);
+
+//         保存用户的默认语言
+        getSession().setAttribute(BaseConstants.SESSION_LANG, userService.getVendorUserLanguage(userSessionBean));
+
+        // 取得user对应的channelId
+        List<UserConfigBean> userConfigBeanList = userSessionBean.getUserConfig().get("channel_id");
+
+        // 设置channel_id
+        if (userConfigBeanList != null && userConfigBeanList.size() > 0) {
+            userService.setSelectChannel(userSessionBean, userConfigBeanList.get(0).getCfg_val1(), "99", "vms");
+        } else {
+            throw new BusinessException("Invalid  User.");
+        }
+
 
         // 返回用户信息
         return success(true);
