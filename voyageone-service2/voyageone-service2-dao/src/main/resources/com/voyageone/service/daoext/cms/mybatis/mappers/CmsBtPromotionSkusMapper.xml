@@ -250,6 +250,21 @@
             <if test="modifier != null">
                 modifier = #{modifier,jdbcType=VARCHAR},
             </if>
+            <if test="msrpRmb != null" >
+                `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="retailPrice != null" >
+                `retail_price` = #{retailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="salePrice != null" >
+                `sale_price` = #{salePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="promotionPrice != null" >
+                `promotion_price` = #{promotionPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="msrpUsd != null" >
+                `msrp_usd` = #{msrpUsd,jdbcType=DECIMAL},
+            </if>
         </set>
         <where>
             <if test="promotionId != null">
