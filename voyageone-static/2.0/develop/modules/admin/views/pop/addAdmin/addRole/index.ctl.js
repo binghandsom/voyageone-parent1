@@ -380,7 +380,7 @@ define([
                     self.showStore = true;
                 } else {
                     self.showStore = false;
-                    self.saveInfo.allStore = '';
+                    self.saveInfo.allStore = '0';
                     self.saveInfo.storeIds = [];
                 }
             },
