@@ -59,7 +59,7 @@ public class CmsChannelTagService extends BaseViewService {
 
         Integer orgFlg = (Integer) param.get("orgFlg");
         if (orgFlg != null && orgFlg == 2) {
-            // 高级检索，设置自由标签的场合，需要检索一边所选择商品的自由标签设值，返回到前端
+            // 高级检索，设置自由标签的场合，需要检索一遍所选择商品的自由标签设值，返回到前端
             Integer isSelAll = (Integer) param.get("isSelAll");
             if (isSelAll == null) {
                 isSelAll = 0;
@@ -88,25 +88,41 @@ public class CmsChannelTagService extends BaseViewService {
                     // 用于标识是否半选（即不是所有商品都设置了该标签）
                     Map<String, Boolean> orgDispMap = new HashMap<>();
 
+                    for (CmsBtProductModel prodObj : prodList) {
+                        List<String> tags = prodObj.getFreeTags();
+                        if (tags == null || tags.isEmpty()) {
+                            continue;
+                        }
+                        // 先过滤一遍父节点
+                        for (int i = 0; i < tags.size(); i ++) {
+                            String tagPath = tags.get(i);
+                            for (String tagPath2 : tags) {
+                                if (tagPath != null && tagPath2 != null && tagPath2.length() > tagPath.length() && tagPath2.startsWith(tagPath)) {
+                                    tags.set(i, null);
+                                }
+                            }
+                        }
+                        tags = tags.stream().filter(tagPath -> tagPath != null).collect(Collectors.toList());
+                        prodObj.setFreeTags(tags);
+                    }
+
                     for (CmsBtTagBean tagBean : tagsList) {
-                        if (tagBean.getChildren() == null || tagBean.getChildren().size() == 0) {
-                            // 是子节点，遍历商品列表，查看是否勾选
-                            int selCnt = 0;
-                            for (CmsBtProductModel prodObj : prodList) {
-                                List<String> tags = prodObj.getFreeTags();
-                                if (tags == null || tags.isEmpty()) {
-                                    continue;
-                                }
-                                if (tags.indexOf(tagBean.getTagPath()) >= 0) {
-                                    // 有勾选
-                                    selCnt ++;
-                                }
+                        // 遍历商品列表，查看是否勾选(这里的tagsList是列表,不是树型结构)
+                        int selCnt = 0;
+                        for (CmsBtProductModel prodObj : prodList) {
+                            List<String> tags = prodObj.getFreeTags();
+                            if (tags == null || tags.isEmpty()) {
+                                continue;
                             }
-                            if (selCnt == prodList.size()) {
-                                orgChkStsMap.put(tagBean.getTagPath(), true);
-                            } else if (0 < selCnt && selCnt < prodList.size()) {
-                                orgDispMap.put(tagBean.getTagPath(), true);
+                            if (tags.indexOf(tagBean.getTagPath()) >= 0) {
+                                // 有勾选
+                                selCnt ++;
                             }
+                        }
+                        if (selCnt == prodList.size()) {
+                            orgChkStsMap.put(tagBean.getTagPath(), true);
+                        } else if (0 < selCnt && selCnt < prodList.size()) {
+                            orgDispMap.put(tagBean.getTagPath(), true);
                         }
                     }
                     result.put("orgChkStsMap", orgChkStsMap);

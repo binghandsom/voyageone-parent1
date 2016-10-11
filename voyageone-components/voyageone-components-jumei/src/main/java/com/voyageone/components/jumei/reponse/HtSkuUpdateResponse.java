@@ -96,7 +96,7 @@ public class HtSkuUpdateResponse extends BaseJMResponse {
                         sbMsg.append("发货仓库为保税区仓库时, 海关备案商品编码不能为空");
                         break;
                     default:
-                        sbMsg.append(map.get("reason").toString());
+                        sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
                 }
                 sbMsg.append("] ");
                 this.setErrorMsg(sbMsg.toString() + this.body);

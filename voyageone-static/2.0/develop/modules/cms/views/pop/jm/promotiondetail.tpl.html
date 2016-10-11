@@ -147,6 +147,7 @@
                         <div class="col-sm-5 input-group">
                             <input type="text" class="form-control" uib-datepicker-popup
                                    ng-model="editModel.model.signupDeadline"
+                                   max-date="editModel.model.prePeriodStart"
                                    date-model-format="yyyy-MM-dd"
                                    is-open="datePicker4" close-text="Close" />
                             <span class="input-group-btn">

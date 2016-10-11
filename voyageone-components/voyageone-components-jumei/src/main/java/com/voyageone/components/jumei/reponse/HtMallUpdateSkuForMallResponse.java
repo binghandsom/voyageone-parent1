@@ -105,7 +105,7 @@ public class HtMallUpdateSkuForMallResponse extends BaseJMResponse {
                         sbMsg.append("businessman_code不能重复，必须唯一");
                         break;
                     default:
-                        sbMsg.append(map.get("reason").toString());
+                        sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
                 }
                 sbMsg.append("] ");
                 this.setErrorMsg(sbMsg.toString() + this.body);

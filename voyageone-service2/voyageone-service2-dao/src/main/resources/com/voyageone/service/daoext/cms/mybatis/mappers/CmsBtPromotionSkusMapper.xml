@@ -121,6 +121,21 @@
             <if test="modifier != null">
                 modifier,
             </if>
+            <if test="msrpRmb != null" >
+                `msrp_rmb`,
+            </if>
+            <if test="retailPrice != null" >
+                `retail_price`,
+            </if>
+            <if test="salePrice != null" >
+                `sale_price`,
+            </if>
+            <if test="promotionPrice != null" >
+                `promotion_price`,
+            </if>
+            <if test="msrpUsd != null" >
+                `msrp_usd`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="promotionId != null">
@@ -166,6 +181,21 @@
             now(),
             <if test="modifier != null">
                 #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="msrpRmb != null" >
+                #{msrpRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="retailPrice != null" >
+                #{retailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="salePrice != null" >
+                #{salePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="promotionPrice != null" >
+                #{promotionPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="msrpUsd != null" >
+                #{msrpUsd,jdbcType=DECIMAL},
             </if>
         </trim>
     </insert>
@@ -219,6 +249,21 @@
             </if>
             <if test="modifier != null">
                 modifier = #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="msrpRmb != null" >
+                `msrp_rmb` = #{msrpRmb,jdbcType=DECIMAL},
+            </if>
+            <if test="retailPrice != null" >
+                `retail_price` = #{retailPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="salePrice != null" >
+                `sale_price` = #{salePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="promotionPrice != null" >
+                `promotion_price` = #{promotionPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="msrpUsd != null" >
+                `msrp_usd` = #{msrpUsd,jdbcType=DECIMAL},
             </if>
         </set>
         <where>

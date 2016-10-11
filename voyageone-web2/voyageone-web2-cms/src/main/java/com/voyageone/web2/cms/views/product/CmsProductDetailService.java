@@ -633,6 +633,8 @@ public class CmsProductDetailService extends BaseViewService {
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
         commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
         CmsBtProductModel oldProduct = productService.getProductById(channelId, prodId);
+
+        //编辑前后主类目发生变化后重新触发feed->mast导入
         if (oldProduct.getCommon().getCatId() == null) oldProduct.getCommon().setCatId("");
         if (commonModel.getCatId() == null) commonModel.setCatId("");
         if (!oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())) {
@@ -645,6 +647,11 @@ public class CmsProductDetailService extends BaseViewService {
             valueMap.put("updFlg", 0);
             feedInfoService.updateFeedInfo(channelId, paraMap, valueMap);
 
+        }
+        //产品编辑页翻译状态从0-》1的场合 翻译时间 和人 设置
+        if(!oldProduct.getCommon().getFields().getTranslateStatus().equalsIgnoreCase(commonModel.getFields().getTranslateStatus()) && "1".equalsIgnoreCase(commonModel.getFields().getTranslateStatus())){
+            commonModel.getFields().setTranslator(modifier);
+            commonModel.getFields().setTranslateTime(DateTimeUtil.getNowTimeStamp());
         }
 
         Map<String, Object> result = productService.updateProductCommon(channelId, prodId, commonModel, modifier, true);

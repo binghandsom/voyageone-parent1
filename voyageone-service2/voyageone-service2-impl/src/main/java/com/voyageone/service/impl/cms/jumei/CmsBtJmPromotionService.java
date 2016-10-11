@@ -75,6 +75,10 @@ public class CmsBtJmPromotionService extends BaseService {
     public CmsBtJmPromotionSaveBean getEditModel(int id) {
         CmsBtJmPromotionSaveBean info = new CmsBtJmPromotionSaveBean();
         CmsBtJmPromotionModel model = dao.select(id);
+        if (model == null) {
+            $warn("getEditModel 查询结果为空 id=" + id);
+            return info;
+        }
         info.setModel(model);
         if (model.getRefTagId()!=null&&model.getRefTagId() != 0) {
             Map<String, Object> map = new HashMap<String, Object>();

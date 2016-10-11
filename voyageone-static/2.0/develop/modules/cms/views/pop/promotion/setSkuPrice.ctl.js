@@ -22,7 +22,7 @@ define([
                 context = self.context;
 
             promotionDetailService.getPromotionSkuList({
-                productId: context.productId,
+                productCode: context.productCode,
                 promotionId: context.promotionId
             }).then(function (res) {
                 self.dataList = res.data;
